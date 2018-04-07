@@ -1,15 +1,12 @@
 package com.github.unknownstudio.knowndomain;
 
+import com.github.unknownstudio.knowndomain.game.GameMain;
+
 public class KnownDomain {
-    public static final String NAME = "KnownDomain";
-
-    private long window;
-
-    public void run() {
-
-    }
+    public static final int WIDTH = 550, HEIGHT = 400;
+    private static GameMain main;
 
     public static void main(String[] args) {
-        new KnownDomain().run();
+        main = new GameMain(WIDTH, HEIGHT);
     }
 }
