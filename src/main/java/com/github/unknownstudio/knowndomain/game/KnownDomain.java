@@ -1,6 +1,4 @@
-package com.github.unknownstudio.knowndomain;
-
-import com.github.unknownstudio.knowndomain.game.GameMain;
+package com.github.unknownstudio.knowndomain.game;
 
 public class KnownDomain {
     public static final int WIDTH = 550, HEIGHT = 400;

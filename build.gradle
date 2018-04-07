@@ -10,7 +10,7 @@ apply plugin: "application"
 
 sourceCompatibility = targetCompatibility = 1.8
 project.ext.lwjglVersion = "3.1.6"
-mainClassName = "com.github.unknownstudio.knowndomain.KnownDomain"
+mainClassName = "com.github.unknownstudio.knowndomain.game.KnownDomain"
 
 project.ext.lwjglVersion = "3.1.6"
 

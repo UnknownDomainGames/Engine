@@ -1,4 +1,4 @@
-package com.github.unknownstudio.knowndomain.game;
+package com.github.unknownstudio.knowndomain.engine;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -27,7 +27,7 @@ public class WindowDisplay {
     public void init() {
         setupErrCallback(System.err);
         if(!glfwInit()) throw new IllegalStateException("Unable to initialize GLFW");
-        setupWindowInit();
+        setupWindowHint();
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
         if(!checkCreated()) throw new RuntimeException("Failed to create the GLFW window");
         setupResizeCallback();
@@ -50,7 +50,7 @@ public class WindowDisplay {
         });
     }
 
-    private void setupWindowInit() {
+    private void setupWindowHint() {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
@@ -85,7 +85,7 @@ public class WindowDisplay {
     }
 
     public boolean shouldClose() {
-        return !glfwWindowShouldClose(handle);
+        return glfwWindowShouldClose(handle);
     }
 
     public boolean getKey(int keyCode, int action) {
@@ -93,6 +93,7 @@ public class WindowDisplay {
     }
 
     public void update() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwSwapBuffers(handle);
         glfwPollEvents();
     }
