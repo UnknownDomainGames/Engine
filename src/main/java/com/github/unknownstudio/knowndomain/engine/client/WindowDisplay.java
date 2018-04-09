@@ -1,4 +1,4 @@
-package com.github.unknownstudio.knowndomain.engine;
+package com.github.unknownstudio.knowndomain.engine.client;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
