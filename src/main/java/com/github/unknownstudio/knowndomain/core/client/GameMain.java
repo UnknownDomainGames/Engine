@@ -1,6 +1,6 @@
-package com.github.unknownstudio.knowndomain.game;
+package com.github.unknownstudio.knowndomain.core.client;
 
-import com.github.unknownstudio.knowndomain.engine.client.WindowDisplay;
+import com.github.unknownstudio.knowndomain.core.client.render.WindowDisplay;
 
 public class GameMain {
     WindowDisplay window;

@@ -1,4 +1,4 @@
-package com.github.unknownstudio.knowndomain.engine.client;
+package com.github.unknownstudio.knowndomain.core.client.render;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -47,6 +47,7 @@ public class WindowDisplay {
             this.width = width;
             this.height = height;
             this.resized = true;
+            //glViewport(0,0,width,height);
         });
     }
 
@@ -94,6 +95,9 @@ public class WindowDisplay {
 
     public void update() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+
         glfwSwapBuffers(handle);
         glfwPollEvents();
     }
