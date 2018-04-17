@@ -1,6 +1,9 @@
 package com.github.unknownstudio.knowndomain.coreapi.block;
 
-public class Block {
+import com.github.unknownstudio.knowndomain.coreapi.maths.BoundingBox;
+import com.github.unknownstudio.knowndomain.coreapi.registry.RegistyEntry;
+
+public class Block implements RegistyEntry<Block> {
 
     private int hardness;
 
@@ -8,5 +11,17 @@ public class Block {
 
     private int state;
 
+    private BoundingBox boundingBox;
 
+    private String registryName;
+
+    @Override
+    public String getRegistryName() {
+        return registryName;
+    }
+
+    @Override
+    public void setRegistryName(String name) {
+        registryName = name;
+    }
 }

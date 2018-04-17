@@ -20,6 +20,19 @@ public class AxisAlignedBB extends BoundingBox {
 
     @Override
     public boolean isCollided(BoundingBox others) {
-        return false; //TODO: collision checking
+        if (others instanceof AxisAlignedBB){
+            Vector3d[] pat = new Vector3d[]{((AxisAlignedBB) others).min, ((AxisAlignedBB) others).max};
+            for (int x = 0; x < 2; x++) {
+                for (int y = 0; y < 2; y++) {
+                    for (int z = 0; z < 2; z++) {
+                        if(min.getX() <= pat[x].getX() && pat[x].getX() <= max.getX() &&
+                                min.getY() <= pat[y].getY() && pat[y].getY() <= max.getY() &&
+                                min.getZ() <= pat[z].getZ() && pat[z].getZ() <= max.getZ())
+                            return true; // if any vertex of other bounding box is inside this bounding box, it must be collided
+                    }
+                }
+            } // iterate every vertex of other bounding box
+        }
+        return false;
     }
 }

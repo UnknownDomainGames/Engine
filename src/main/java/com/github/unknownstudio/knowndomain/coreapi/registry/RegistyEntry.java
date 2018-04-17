@@ -2,7 +2,7 @@ package com.github.unknownstudio.knowndomain.coreapi.registry;
 
 public interface RegistyEntry<T> {
 
-	String getRegistyName();
+	String getRegistryName();
 	
-	void setRegistyName(String name);
+	void setRegistryName(String name);
 }
