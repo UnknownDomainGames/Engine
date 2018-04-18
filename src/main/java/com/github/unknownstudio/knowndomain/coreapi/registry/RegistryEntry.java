@@ -1,6 +1,6 @@
 package com.github.unknownstudio.knowndomain.coreapi.registry;
 
-public interface RegistyEntry<T> {
+public interface RegistryEntry<T> {
 
 	String getRegistryName();
 	

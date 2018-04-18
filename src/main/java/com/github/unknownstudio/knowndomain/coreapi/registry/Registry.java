@@ -1,6 +1,6 @@
 package com.github.unknownstudio.knowndomain.coreapi.registry;
 
-public interface Registry<T extends RegistyEntry<?>> {
+public interface Registry<T extends RegistryEntry<?>> {
 	
 	T register(T obj);
 	

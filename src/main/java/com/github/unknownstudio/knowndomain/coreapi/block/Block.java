@@ -1,9 +1,9 @@
 package com.github.unknownstudio.knowndomain.coreapi.block;
 
 import com.github.unknownstudio.knowndomain.coreapi.maths.BoundingBox;
-import com.github.unknownstudio.knowndomain.coreapi.registry.RegistyEntry;
+import com.github.unknownstudio.knowndomain.coreapi.registry.RegistryEntry;
 
-public class Block implements RegistyEntry<Block> {
+public class Block implements RegistryEntry<Block> {
 
     private int hardness;
 
