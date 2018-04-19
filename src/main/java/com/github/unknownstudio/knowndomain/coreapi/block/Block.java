@@ -9,8 +9,6 @@ public class Block implements RegistryEntry<Block> {
 
     private int antiExplosive;
 
-    private int state;
-
     private BoundingBox boundingBox;
 
     private String registryName;
