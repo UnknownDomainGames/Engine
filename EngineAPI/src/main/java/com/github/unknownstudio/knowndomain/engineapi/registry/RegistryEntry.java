@@ -1,4 +1,4 @@
-package com.github.unknownstudio.knowndomain.engineapi.registy;
+package com.github.unknownstudio.knowndomain.engineapi.registry;
 
 public interface RegistryEntry<T> {
 

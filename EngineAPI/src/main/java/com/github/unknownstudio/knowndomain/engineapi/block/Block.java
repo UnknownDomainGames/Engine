@@ -1,7 +1,7 @@
 package com.github.unknownstudio.knowndomain.engineapi.block;
 
 import com.github.unknownstudio.knowndomain.engineapi.math.BoundingBox;
-import com.github.unknownstudio.knowndomain.engineapi.registy.RegistryEntry;
+import com.github.unknownstudio.knowndomain.engineapi.registry.RegistryEntry;
 
 public class Block implements RegistryEntry<Block> {
 
