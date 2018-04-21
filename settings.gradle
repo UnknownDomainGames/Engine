@@ -1,2 +1,4 @@
 rootProject.name = 'KnownDomain'
 
+include 'EngineAPI','Engine','EngineClient','EngineServer'
+include 'KnownDomainAPI','KnownDomainImpl'
