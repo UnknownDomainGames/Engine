@@ -1,3 +1,5 @@
 dependencies {
-    compile project(':EngineAPI')
+    compile(project(':EngineAPI')) {
+        exclude group:'org.lwjgl'
+    }
 }
