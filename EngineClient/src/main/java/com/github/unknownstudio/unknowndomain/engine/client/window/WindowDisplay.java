@@ -33,6 +33,7 @@ public class WindowDisplay {
         setupResizeCallback();
         setWindowPosCenter();
         glfwMakeContextCurrent(handle);
+        GL.createCapabilities();
         enableVSync();
         showWindow();
 
@@ -81,8 +82,9 @@ public class WindowDisplay {
 
     private void showWindow(){
         glfwShowWindow(handle);
-        GL.createCapabilities();
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        //glViewport(0,0,width,height);
+        //glOrtho(0,width,height,0,0,3000);
     }
 
     public boolean shouldClose() {
@@ -95,8 +97,9 @@ public class WindowDisplay {
 
     public void update() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //Input
 
-
+        //Render
 
         glfwSwapBuffers(handle);
         glfwPollEvents();
