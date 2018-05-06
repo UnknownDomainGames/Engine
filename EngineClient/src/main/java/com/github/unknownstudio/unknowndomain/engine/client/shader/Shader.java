@@ -7,5 +7,10 @@ public abstract class Shader {
 
     public abstract void deleteShader();
 
+    public abstract void linkShader();
+
     public abstract void useShader();
+
+    public abstract int getUniformLocation(String name);
+
 }
