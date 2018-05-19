@@ -22,6 +22,26 @@ public class BufferBuilder {
     private boolean useColor;
     private boolean useTex;
 
+    public boolean isDrawing() {
+        return isDrawing;
+    }
+
+    public int getDrawMode() {
+        return drawMode;
+    }
+
+    public boolean isColorEnabled() {
+        return useColor;
+    }
+
+    public boolean isPosEnabled() {
+        return usePos;
+    }
+
+    public boolean isTexEnabled() {
+        return useTex;
+    }
+
     public void begin(int mode, boolean pos, boolean color, boolean tex){
         if (isDrawing){
             throw new IllegalStateException("Already drawing!");
@@ -104,31 +124,41 @@ public class BufferBuilder {
         return byteBuffer.limit();
     }
 
+    public int getVertexCount() {
+        return vertexCount;
+    }
+
     public ByteBuffer build() {
         return byteBuffer;
     }
 
     public BufferBuilder pos(float x, float y, float z){
-        int i = vertexCount * getOffset();
-        byteBuffer.putFloat(i,x);
-        byteBuffer.putFloat(i+4,y);
-        byteBuffer.putFloat(i+8,z);
+        if(usePos) {
+            int i = vertexCount * getOffset();
+            byteBuffer.putFloat(i, x);
+            byteBuffer.putFloat(i + 4, y);
+            byteBuffer.putFloat(i + 8, z);
+        }
         return this;
     }
 
     public BufferBuilder color(float r,float g,float b,float a){
-        int i = vertexCount * getOffset() + Float.BYTES * 5;
-        byteBuffer.putFloat(i, r);
-        byteBuffer.putFloat(i+4, g);
-        byteBuffer.putFloat(i+8, b);
-        byteBuffer.putFloat(i+12, a);
+        if(useColor) {
+            int i = vertexCount * getOffset() + Float.BYTES * (useTex ? 5 : 3);
+            byteBuffer.putFloat(i, r);
+            byteBuffer.putFloat(i + 4, g);
+            byteBuffer.putFloat(i + 8, b);
+            byteBuffer.putFloat(i + 12, a);
+        }
         return this;
     }
 
     public BufferBuilder tex(float u, float v){
-        int i = vertexCount * getOffset() + Float.BYTES * 3;
-        byteBuffer.putFloat(i,u);
-        byteBuffer.putFloat(i + 4,v);
+        if(useTex) {
+            int i = vertexCount * getOffset() + Float.BYTES * 3;
+            byteBuffer.putFloat(i, u);
+            byteBuffer.putFloat(i + 4, v);
+        }
         return this;
     }
 

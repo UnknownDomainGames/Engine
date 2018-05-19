@@ -1,5 +1,6 @@
 package com.github.unknownstudio.unknowndomain.engine.client.window;
 
+import com.github.unknownstudio.unknowndomain.engine.client.GameMain;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -17,7 +18,11 @@ public class WindowDisplay {
     private String title;
     private boolean resized;
 
-    public WindowDisplay(int width, int height, String title) {
+    private GameMain gm;
+
+
+    public WindowDisplay(GameMain gameMain, int width, int height, String title) {
+        this.gm = gameMain;
         this.title = title;
         this.width = width;
         this.height = height;
@@ -100,6 +105,9 @@ public class WindowDisplay {
         //Input
 
         //Render
+
+
+        gm.getRenderer().render();
 
         glfwSwapBuffers(handle);
         glfwPollEvents();

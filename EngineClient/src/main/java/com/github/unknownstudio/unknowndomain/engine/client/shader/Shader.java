@@ -13,4 +13,9 @@ public abstract class Shader {
 
     public abstract int getUniformLocation(String name);
 
+    public abstract int getAttributeLocation(String name);
+
+    public abstract void enableVertexAttrib(int location);
+
+    public abstract void pointVertexAttribute(int location, int size, int stride, int offset);
 }

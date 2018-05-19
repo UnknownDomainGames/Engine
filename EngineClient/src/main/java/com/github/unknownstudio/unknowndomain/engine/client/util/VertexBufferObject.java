@@ -33,7 +33,7 @@ public class VertexBufferObject {
         bind();
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, builder.build(), GL15.GL_STATIC_DRAW);
         unbind();
-        this.count = builder.getCount();
+        this.count = builder.getVertexCount();
     }
 
     public void uploadData(ByteBuffer builder){

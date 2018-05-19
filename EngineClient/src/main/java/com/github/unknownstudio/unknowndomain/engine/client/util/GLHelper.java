@@ -3,10 +3,9 @@ package com.github.unknownstudio.unknowndomain.engine.client.util;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-public class GLUtil {
+public class GLHelper {
     public static Matrix4f ortho(float left, float right,
                                  float bottom, float top,
                                  float zNear, float zFar) {
@@ -114,7 +113,7 @@ public class GLUtil {
 
     public static String readText(String path){
         StringBuilder sb = new StringBuilder();
-        try(InputStream a = GLUtil.class.getResourceAsStream(path);
+        try(InputStream a = GLHelper.class.getResourceAsStream(path);
             BufferedReader reader = new BufferedReader(new InputStreamReader(a))){
             String str;
             while ((str = reader.readLine()) != null){
