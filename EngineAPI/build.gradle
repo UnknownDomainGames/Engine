@@ -60,7 +60,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.google.guava:guava:23.0'
     compile 'com.google.inject:guice:4.1.0'
-    //compile 'org.apache.commons:commons-lang3:3.6'
+    compile 'org.apache.commons:commons-lang3:3.6'
 	compile 'commons-io:commons-io:2.5'
     compile 'javax.vecmath:vecmath:1.5.2'
     compile 'io.netty:netty-all:4.1.14.Final'
