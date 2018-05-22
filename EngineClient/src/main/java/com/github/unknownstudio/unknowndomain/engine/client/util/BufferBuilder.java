@@ -1,5 +1,8 @@
 package com.github.unknownstudio.unknowndomain.engine.client.util;
 
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+
 import java.nio.*;
 
 public class BufferBuilder {
@@ -10,7 +13,7 @@ public class BufferBuilder {
     private FloatBuffer floatBuffer;
 
     public BufferBuilder(int size){
-        byteBuffer = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
+        byteBuffer = BufferUtils.createByteBuffer(size);
         intBuffer = byteBuffer.asIntBuffer();
         shortBuffer = byteBuffer.asShortBuffer();
         floatBuffer = byteBuffer.asFloatBuffer();
@@ -61,6 +64,25 @@ public class BufferBuilder {
         if (!isDrawing){
             throw new IllegalStateException("Not yet drawn!");
         }else{
+            if (drawMode == GL11.GL_QUADS || drawMode == GL11.GL_QUAD_STRIP){
+                if (vertexCount % 4 != 0)
+                    throw new IllegalArgumentException(String.format("Not enough vertexes! Expected: %d, Found: %d", (vertexCount / 4 + 1) * 4, vertexCount));
+                ByteBuffer bb = ByteBuffer.allocate(byteBuffer.capacity());
+                byteBuffer.rewind();
+                bb.put(byteBuffer);
+                byteBuffer.rewind();
+                byteBuffer.clear();
+                bb.flip();
+                for (int i = 0; i < vertexCount / 4; i++) {
+                    byte[] bs = new byte[getOffset() * 4];
+                    bb.get(bs,0, getOffset() * 4);
+                    byteBuffer.put(bs, 0, getOffset() * 3);
+                    byteBuffer.put(bs, getOffset() * 2, getOffset() * 2);
+                    byteBuffer.put(bs, 0, getOffset());
+                }
+                vertexCount = vertexCount / 4 * 6;
+                drawMode = drawMode == GL11.GL_QUAD_STRIP ? GL11.GL_TRIANGLE_STRIP : GL11.GL_TRIANGLES;
+            }
             isDrawing = false;
             byteBuffer.position(0);
             byteBuffer.limit(vertexCount * getOffset());
@@ -72,6 +94,7 @@ public class BufferBuilder {
         usePos = false;
         useColor = false;
         useTex = false;
+        vertexCount = 0;
     }
 
     public int getOffset(){

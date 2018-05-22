@@ -1,6 +1,6 @@
 package com.github.unknownstudio.unknowndomain.engine.client.shader;
 
-public abstract class Shader {
+public abstract class ShaderProgram {
 
 
     public abstract void createShader();

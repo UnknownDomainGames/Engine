@@ -54,7 +54,7 @@ public class WindowDisplay implements Window{
             this.width = width;
             this.height = height;
             this.resized = true;
-            //glViewport(0,0,width,height);
+            glViewport(0,0,width,height);
         });
     }
 
@@ -88,9 +88,8 @@ public class WindowDisplay implements Window{
 
     private void showWindow(){
         glfwShowWindow(handle);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        //glViewport(0,0,width,height);
-        //glOrtho(0,width,height,0,0,3000);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glViewport(0,0,width,height);
     }
 
     public boolean shouldClose() {

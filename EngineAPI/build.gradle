@@ -57,6 +57,8 @@ dependencies {
     compile "org.lwjgl:lwjgl-yoga:$lwjglVersion:$lwjglNatives"
     compile "org.lwjgl:lwjgl-zstd:$lwjglVersion:$lwjglNatives"
 
+    compile 'org.joml:joml:1.9.9'
+
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.google.guava:guava:23.0'
     compile 'com.google.inject:guice:4.1.0'
