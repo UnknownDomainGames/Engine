@@ -31,25 +31,24 @@ public class WindowDisplay implements Window{
     }
 
     public void init() {
-        setupErrCallback(System.err);
+        initErrorCallback(System.err);
         if(!glfwInit()) throw new IllegalStateException("Unable to initialize GLFW");
-        setupWindowHint();
+        initWindowHint();
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
         if(!checkCreated()) throw new RuntimeException("Failed to create the GLFW window");
-        setupResizeCallback();
+        initResizeCallback();
         setWindowPosCenter();
         glfwMakeContextCurrent(handle);
         GL.createCapabilities();
         enableVSync();
         showWindow();
-
     }
 
     private boolean checkCreated() {
         return handle != NULL;
     }
 
-    private void setupResizeCallback() {
+    private void initResizeCallback() {
         glfwSetFramebufferSizeCallback(handle, (window, width, height) -> {
             this.width = width;
             this.height = height;
@@ -58,7 +57,7 @@ public class WindowDisplay implements Window{
         });
     }
 
-    private void setupWindowHint() {
+    private void initWindowHint() {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
@@ -68,7 +67,7 @@ public class WindowDisplay implements Window{
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     }
 
-    private void setupErrCallback(PrintStream stream) {
+    private void initErrorCallback(PrintStream stream) {
         GLFWErrorCallback.createPrint(stream).set();
     }
 
