@@ -36,7 +36,7 @@ public class WindowDisplay implements Window{
         initWindowHint();
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
         if(!checkCreated()) throw new RuntimeException("Failed to create the GLFW window");
-        initResizeCallback();
+        initCallbacks();
         setWindowPosCenter();
         glfwMakeContextCurrent(handle);
         GL.createCapabilities();
@@ -48,13 +48,18 @@ public class WindowDisplay implements Window{
         return handle != NULL;
     }
 
-    private void initResizeCallback() {
+    private void initCallbacks() {
         glfwSetFramebufferSizeCallback(handle, (window, width, height) -> {
             this.width = width;
             this.height = height;
             this.resized = true;
             glViewport(0,0,width,height);
         });
+        glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> game.handleKeyPress(key, scancode, action, mods));
+        glfwSetCharModsCallback(handle, (window, codepoint, mods) -> game.handleTextInput(codepoint, mods));
+        glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> game.handleMousePress(button, action, mods));
+        glfwSetCursorPosCallback(handle, (window, xpos, ypos) -> game.handleCursorMove(xpos,ypos));
+        glfwSetScrollCallback(handle, (window, xoffset, yoffset) -> game.handleScroll(xoffset,yoffset));
     }
 
     private void initWindowHint() {
@@ -89,6 +94,7 @@ public class WindowDisplay implements Window{
         glfwShowWindow(handle);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glViewport(0,0,width,height);
+        hideCursor();
     }
 
     public boolean shouldClose() {
@@ -130,5 +136,13 @@ public class WindowDisplay implements Window{
 
     public boolean isResized() {
         return resized;
+    }
+
+    public void showCursor(){
+        glfwSetInputMode(handle,GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
+    public void hideCursor(){
+        glfwSetInputMode(handle,GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 }

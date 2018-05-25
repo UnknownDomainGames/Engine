@@ -1,10 +1,12 @@
 package com.github.unknownstudio.unknowndomain.engine.client.render;
 
+import com.github.unknownstudio.unknowndomain.engine.client.display.CameraDefault;
 import com.github.unknownstudio.unknowndomain.engine.client.resource.Texture2D;
 import com.github.unknownstudio.unknowndomain.engine.client.shader.ShaderProgram;
 import com.github.unknownstudio.unknowndomain.engine.client.shader.ShaderProgramDefault;
 import com.github.unknownstudio.unknowndomain.engine.client.util.BufferBuilder;
 import com.github.unknownstudio.unknowndomain.engine.client.util.VertexBufferObject;
+import com.github.unknownstudio.unknowndomain.engineapi.client.display.Camera;
 import org.lwjgl.opengl.GL11;
 
 import java.net.URISyntaxException;
@@ -14,12 +16,15 @@ public final class RenderGlobal extends Render {
     private ShaderProgram shader;
     private VertexBufferObject vbo;
     private BufferBuilder bufferBuilder;
+    private Camera camera;
 
     public RenderGlobal() {
         shader = new ShaderProgramDefault();
         shader.createShader();
         vbo = new VertexBufferObject();
         bufferBuilder = new BufferBuilder(1048576);
+        camera = new CameraDefault();
+        camera.moveTo(0,0,-5);
     }
 
     private Texture2D tmp;
@@ -37,6 +42,8 @@ public final class RenderGlobal extends Render {
     @Override
     public void render() {
         shader.useShader();
+        shader.setUniform("projection", camera.makeProjectionMatrix(854,480));
+        //shader.setUniform("view", camera.makeViewMatrix());
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);
@@ -117,8 +124,16 @@ public final class RenderGlobal extends Render {
 
     }
 
+    public void onCursorMoved(double x, double y){
+        camera.rotate(x,y);
+    }
+
     public void destroy() {
         vbo.delete();
         shader.deleteShader();
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }

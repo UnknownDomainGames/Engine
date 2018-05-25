@@ -111,6 +111,7 @@ public class ShaderProgramDefault extends ShaderProgram {
         GL20.glVertexAttribPointer(location, size, GL11.GL_FLOAT, false, stride, offset);
     }
 
+    @Override
     public void setUniform(int location, Matrix4f value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(4 * 4);
@@ -119,4 +120,8 @@ public class ShaderProgramDefault extends ShaderProgram {
         }
     }
 
+    @Override
+    public void setUniform(String location, Matrix4f value) {
+        setUniform(getUniformLocation(location), value);
+    }
 }
