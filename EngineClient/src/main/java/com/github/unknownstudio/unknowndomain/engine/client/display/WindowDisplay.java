@@ -3,8 +3,7 @@ package com.github.unknownstudio.unknowndomain.engine.client.display;
 import com.github.unknownstudio.unknowndomain.engine.client.GameClient;
 import com.github.unknownstudio.unknowndomain.engineapi.client.display.Window;
 
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 
 import java.io.PrintStream;
@@ -19,6 +18,9 @@ public class WindowDisplay implements Window{
     private int height;
     private String title;
     private boolean resized;
+    private GLFWMouseButtonCallback mouseBtnCallback;
+    private GLFWCursorPosCallback cursorPosCallback;
+    private GLFWKeyCallback keyCallback;
 
     private GameClient game;
 
@@ -41,7 +43,14 @@ public class WindowDisplay implements Window{
         glfwMakeContextCurrent(handle);
         GL.createCapabilities();
         enableVSync();
+        setupInput();
         showWindow();
+    }
+
+    private void setupInput() {
+        setupMouseCallback();
+        setupCursorCallback();
+        setupKeyCallback();
     }
 
     private boolean checkCreated() {
@@ -95,6 +104,39 @@ public class WindowDisplay implements Window{
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glViewport(0,0,width,height);
         hideCursor();
+    }
+
+    private void setupMouseCallback() {
+        mouseBtnCallback = new GLFWMouseButtonCallback(){
+            @Override
+            public void invoke(long window, int button, int action, int mods) {
+                if (window == handle) {
+                    game.handleMousePress(button, action, mods);
+                }
+            }
+        }.set(handle);
+    }
+
+    private void setupCursorCallback() {
+        cursorPosCallback = new GLFWCursorPosCallback(){
+            @Override
+            public void invoke(long window, double xpos, double ypos) {
+                if (window == handle) {
+                    game.handleCursorMove(xpos, ypos);
+                }
+            }
+        }.set(handle);
+    }
+
+    private void setupKeyCallback() {
+        keyCallback = new GLFWKeyCallback(){
+            @Override
+            public void invoke(long window, int key, int scancode, int action, int mods) {
+                if (window == handle) {
+                    game.handleKeyPress(key, scancode, action, mods);
+                }
+            }
+        }.set(handle);
     }
 
     public boolean shouldClose() {

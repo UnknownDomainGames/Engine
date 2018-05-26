@@ -3,6 +3,8 @@ package com.github.unknownstudio.unknowndomain.engine.client;
 import com.github.unknownstudio.unknowndomain.engine.client.display.WindowDisplay;
 import com.github.unknownstudio.unknowndomain.engine.client.render.RenderGlobal;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 
 public class GameClient implements com.github.unknownstudio.unknowndomain.engineapi.client.game.GameClient{
 	
