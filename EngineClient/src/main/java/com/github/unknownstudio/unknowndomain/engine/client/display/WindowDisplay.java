@@ -64,10 +64,7 @@ public class WindowDisplay implements Window{
             this.resized = true;
             glViewport(0,0,width,height);
         });
-        glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> game.handleKeyPress(key, scancode, action, mods));
         glfwSetCharModsCallback(handle, (window, codepoint, mods) -> game.handleTextInput(codepoint, mods));
-        glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> game.handleMousePress(button, action, mods));
-        glfwSetCursorPosCallback(handle, (window, xpos, ypos) -> game.handleCursorMove(xpos,ypos));
         glfwSetScrollCallback(handle, (window, xoffset, yoffset) -> game.handleScroll(xoffset,yoffset));
     }
 
@@ -149,10 +146,8 @@ public class WindowDisplay implements Window{
 
     public void update() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //Input
 
         //Render
-
 
         game.getRenderer().render();
 

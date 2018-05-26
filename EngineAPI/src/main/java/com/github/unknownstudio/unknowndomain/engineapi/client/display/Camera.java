@@ -10,18 +10,20 @@ public interface Camera {
      * @param y y-translate
      * @param z z-translate
      */
-    void move(double x,double y, double z);
+    void move(float x, float y, float z);
     /**
      * Move the camera to the given position
      * @param x x-translate
      * @param y y-translate
      * @param z z-translate
      */
-    void moveTo(double x,double y, double z);
+    void moveTo(float x, float y, float z);
 
-    void rotate(double yaw, double pitch);
+    void handleMove(int key, int action);
 
-    void rotateTo(double yaw, double pitch);
+    void rotate(float yaw, float pitch);
+
+    void rotateTo(float yaw, float pitch);
 
     /**
      * Rotate the camera

@@ -2,6 +2,7 @@ package com.github.unknownstudio.unknowndomain.engine.client;
 
 import com.github.unknownstudio.unknowndomain.engine.client.display.WindowDisplay;
 import com.github.unknownstudio.unknowndomain.engine.client.render.RenderGlobal;
+import com.github.unknownstudio.unknowndomain.engineapi.math.Timer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
@@ -11,16 +12,44 @@ public class GameClient implements com.github.unknownstudio.unknowndomain.engine
     private WindowDisplay window;
     private RenderGlobal renderer;
 
+    private Timer timer;
+
     public GameClient(int width, int height) {
         window = new WindowDisplay(this, width ,height, UnknownDomain.getName());
         window.init();
         renderer = new RenderGlobal();
+        timer = new Timer();
+        timer.init();
         gameLoop();
     }
 
     public void gameLoop() {
+        float elapsedTime;
+        float accumulator = 0f;
+        float interval = 1f / 30.0f;
         while (!window.shouldClose()) {
+            elapsedTime = timer.getElapsedTime();
+            accumulator += elapsedTime;
+
+            while (accumulator >= interval) {
+                //update(interval); //TODO: game logic
+                accumulator -= interval;
+            }
+
             window.update();
+
+            sync(); //TODO: check if use v-sync first
+        }
+    }
+
+    private void sync() {
+        float loopSlot = 1f / 60.0f;
+        double endTime = timer.getLastLoopTime() + loopSlot;
+        while (timer.getTime() < endTime) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ie) {
+            }
         }
     }
 
@@ -29,23 +58,10 @@ public class GameClient implements com.github.unknownstudio.unknowndomain.engine
     }
 
     public void handleKeyPress(int key, int scancode, int action, int modifiers){
-        if (action == GLFW.GLFW_PRESS){
-            double moveC = 0.05;
-            switch (key){
-                case GLFW.GLFW_KEY_W:
-                    renderer.getCamera().move(0,0,-1 * moveC);
-                    break;
-                case GLFW.GLFW_KEY_S:
-                    renderer.getCamera().move(0,0,1 * moveC);
-                    break;
-                case GLFW.GLFW_KEY_A:
-                    renderer.getCamera().move(-1 * moveC,0,0);
-                    break;
-                case GLFW.GLFW_KEY_D:
-                    renderer.getCamera().move(1 * moveC,0,0);
-                    break;
-            }
+        if(key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS){
+            GLFW.glfwSetWindowShouldClose(window.getHandle(), true);
         }
+        renderer.getCamera().handleMove(key,action);
     }
 
     public void handleTextInput(int codepoint, int modifiers){}

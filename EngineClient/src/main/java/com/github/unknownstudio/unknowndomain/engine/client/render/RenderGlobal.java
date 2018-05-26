@@ -25,6 +25,7 @@ public final class RenderGlobal extends Render {
         bufferBuilder = new BufferBuilder(1048576);
         camera = new CameraDefault();
         camera.moveTo(0,0,-5);
+        camera.rotateTo(90,0);
     }
 
     private Texture2D tmp;
@@ -43,7 +44,7 @@ public final class RenderGlobal extends Render {
     public void render() {
         shader.useShader();
         shader.setUniform("projection", camera.makeProjectionMatrix(854,480));
-        //shader.setUniform("view", camera.makeViewMatrix());
+        shader.setUniform("view", camera.makeViewMatrix());
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);
@@ -59,7 +60,7 @@ public final class RenderGlobal extends Render {
 
         //-VE X
         bufferBuilder.pos(-0.5f, 0.5f, 0.5f).color(1, 1, 1f, 1.0f).tex(1,0).endVertex();
-        bufferBuilder.pos(-.5f, 0.5f, -0.5f).color(0, 0, 1, 1.0f).tex(0,0).endVertex();
+        bufferBuilder.pos(-.5f, 0.5f, -0.5f).color(0, 1, 0, 1.0f).tex(0,0).endVertex();
         bufferBuilder.pos(-0.5f, -0.5f, -0.5f).color(0, 0, 1f, 1.0f).tex(0,1).endVertex();
         bufferBuilder.pos(-0.5f, -0.5f, 0.5f).color(1, 0, 0f, 1.0f).tex(1,1).endVertex();
         //-VE Y
@@ -125,7 +126,7 @@ public final class RenderGlobal extends Render {
     }
 
     public void onCursorMoved(double x, double y){
-        camera.rotate(x,y);
+        camera.rotate((float)x,(float)y);
     }
 
     public void destroy() {
