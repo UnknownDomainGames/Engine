@@ -2,10 +2,10 @@ package com.github.unknownstudio.unknowndomain.engineapi.event;
 
 public enum EventPriority {
 
-	HIGHEST,
-	HIGH,
-	NORMAL,
+	LOWEST,
 	LOW,
-	LOWEST;
+	NORMAL,
+	HIGH,
+	HIGHEST;
 	
 }

@@ -4,5 +4,5 @@ public interface Cancellable {
 	
 	boolean isCancelled();
 	
-	void setCancelled();
+	void setCancelled(boolean cancelled);
 }
