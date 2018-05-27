@@ -7,6 +7,7 @@ import com.github.unknownstudio.unknowndomain.engine.client.shader.ShaderProgram
 import com.github.unknownstudio.unknowndomain.engine.client.util.BufferBuilder;
 import com.github.unknownstudio.unknowndomain.engine.client.util.VertexBufferObject;
 import com.github.unknownstudio.unknowndomain.engineapi.client.display.Camera;
+import com.github.unknownstudio.unknowndomain.engineapi.client.render.Renderer;
 import org.lwjgl.opengl.GL11;
 
 import java.net.URISyntaxException;
@@ -14,14 +15,14 @@ import java.net.URISyntaxException;
 /**
  * render for the scene
  */
-public final class RenderGlobal extends Render {
+public final class RendererGlobal implements Renderer {
 
     private ShaderProgram shader;
     private VertexBufferObject vbo;
     private BufferBuilder bufferBuilder;
     private Camera camera;
 
-    public RenderGlobal() {
+    public RendererGlobal() {
         shader = new ShaderProgramDefault();
         shader.createShader();
         vbo = new VertexBufferObject();
@@ -35,7 +36,7 @@ public final class RenderGlobal extends Render {
 
     {
         try {
-            tmp = new Texture2D(RenderGlobal.class.getResource("/assets/tmp/tmp.png").toURI());
+            tmp = new Texture2D(RendererGlobal.class.getResource("/assets/tmp/tmp.png").toURI());
             if (!tmp.loadImage())
                 System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); //Stub
         } catch (URISyntaxException e) {
