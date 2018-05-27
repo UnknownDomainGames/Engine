@@ -11,6 +11,9 @@ import org.lwjgl.opengl.GL11;
 
 import java.net.URISyntaxException;
 
+/**
+ * render for the scene
+ */
 public final class RenderGlobal extends Render {
 
     private ShaderProgram shader;

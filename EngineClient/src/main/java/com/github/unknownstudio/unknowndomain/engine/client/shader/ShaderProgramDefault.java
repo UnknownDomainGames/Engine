@@ -12,9 +12,9 @@ import java.nio.FloatBuffer;
 
 public class ShaderProgramDefault extends ShaderProgram {
 
-    private int shaderId = -1;
-    private int vertexShaderId = -1;
-    private int fragmentShaderId = -1;
+    protected int shaderId = -1;
+    protected int vertexShaderId = -1;
+    protected int fragmentShaderId = -1;
 
     @Override
     public void createShader() {
