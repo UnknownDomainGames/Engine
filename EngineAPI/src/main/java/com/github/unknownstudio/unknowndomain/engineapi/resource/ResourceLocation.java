@@ -12,7 +12,7 @@ public class ResourceLocation {
 
     protected ResourceLocation() {}
 
-    public ResourceLocation(String domain,@Nonnull String path){
+    public ResourceLocation(String domain, @Nonnull String path){
         this.domain = Strings.nullToEmpty(domain);
         this.path = Validate.notEmpty(path);;
     }
@@ -50,9 +50,6 @@ public class ResourceLocation {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj == null)
-            return false;
-
         if(!(obj instanceof ResourceLocation))
             return false;
 
