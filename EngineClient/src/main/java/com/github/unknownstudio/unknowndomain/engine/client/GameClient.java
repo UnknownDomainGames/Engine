@@ -1,23 +1,21 @@
 package com.github.unknownstudio.unknowndomain.engine.client;
 
 import com.github.unknownstudio.unknowndomain.engine.client.display.WindowDisplay;
-import com.github.unknownstudio.unknowndomain.engine.client.render.RenderGlobal;
+import com.github.unknownstudio.unknowndomain.engine.client.render.RendererGlobal;
 import com.github.unknownstudio.unknowndomain.engineapi.math.Timer;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 
 public class GameClient implements com.github.unknownstudio.unknowndomain.engineapi.client.game.GameClient{
 	
     private WindowDisplay window;
-    private RenderGlobal renderer;
+    private RendererGlobal renderer;
 
     private Timer timer;
 
     public GameClient(int width, int height) {
         window = new WindowDisplay(this, width ,height, UnknownDomain.getName());
         window.init();
-        renderer = new RenderGlobal();
+        renderer = new RendererGlobal();
         timer = new Timer();
         timer.init();
         gameLoop();
@@ -70,7 +68,7 @@ public class GameClient implements com.github.unknownstudio.unknowndomain.engine
 
     }
 
-    public RenderGlobal getRenderer() {
+    public RendererGlobal getRenderer() {
         return renderer;
     }
 

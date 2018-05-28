@@ -2,17 +2,18 @@ package com.github.unknownstudio.unknowndomain.engine.client.render;
 
 import com.github.unknownstudio.unknowndomain.engine.client.shader.ShaderProgram;
 import com.github.unknownstudio.unknowndomain.engine.client.shader.ShaderProgramGui;
+import com.github.unknownstudio.unknowndomain.engineapi.client.render.Renderer;
 
 import static org.lwjgl.opengl.GL11.*;
 
 /**
  * render for any gui
  */
-public class RenderGui extends Render {
+public class RendererGui implements Renderer {
 
     private ShaderProgram shader;
 
-    public RenderGui(){
+    public RendererGui(){
         shader = new ShaderProgramGui();
 
     }
