@@ -1,9 +1,6 @@
 package com.github.unknownstudio.unknowndomain.engineapi.client.keybinding;
 
-import java.util.Map;
-import java.util.TreeMap;
-
-public enum Key {
+public enum KeyCode {
 	
 	/** Mouse buttons.*/
     MOUSE_BUTTON_LEFT(0),
@@ -144,21 +141,26 @@ public enum Key {
 
 	public final int code;
 
-	Key(int code) {
+	KeyCode(int code) {
 		this.code = code;
 	}
 
-	private static Map<Integer, Key> code2Key = new TreeMap<>();
+	private static KeyCode[] code2Key = new KeyCode[349];
 	static {
-		Key[] values = values();
-		for(int i = 0 ; i < values.length ; i++) {
-			Key key = values[i];
-			code2Key.put(key.code, key);
+		KeyCode[] values = values();
+		for (int i = 0; i < values.length; i++) {
+			KeyCode key = values[i];
+			if (key == KEY_UNKNOWN)
+				continue;
+
+			code2Key[i] = key;
 		}
 	}
-	
-	public static Key valueOf(int code) {
-		Key key = code2Key.get(code);
+
+	public static KeyCode valueOf(int code) {
+		if (code < 0 && code > 348)
+			return KEY_UNKNOWN;
+		KeyCode key = code2Key[code];
 		return key == null ? KEY_UNKNOWN : key;
 	}
 }
