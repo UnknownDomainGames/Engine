@@ -21,6 +21,7 @@ public class WindowDisplay implements Window{
     private GLFWMouseButtonCallback mouseBtnCallback;
     private GLFWCursorPosCallback cursorPosCallback;
     private GLFWKeyCallback keyCallback;
+    private GLFWScrollCallback scrollCallback;
 
     private GameClient game;
 
@@ -51,6 +52,7 @@ public class WindowDisplay implements Window{
         setupMouseCallback();
         setupCursorCallback();
         setupKeyCallback();
+        setupScrollCallback();
     }
 
     private boolean checkCreated() {
@@ -65,7 +67,6 @@ public class WindowDisplay implements Window{
             glViewport(0,0,width,height);
         });
         glfwSetCharModsCallback(handle, (window, codepoint, mods) -> game.handleTextInput(codepoint, mods));
-        glfwSetScrollCallback(handle, (window, xoffset, yoffset) -> game.handleScroll(xoffset,yoffset));
     }
 
     private void initWindowHint() {
@@ -107,9 +108,7 @@ public class WindowDisplay implements Window{
         mouseBtnCallback = new GLFWMouseButtonCallback(){
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                if (window == handle) {
-                    game.handleMousePress(button, action, mods);
-                }
+				game.handleMousePress(button, action, mods);
             }
         }.set(handle);
     }
@@ -118,9 +117,7 @@ public class WindowDisplay implements Window{
         cursorPosCallback = new GLFWCursorPosCallback(){
             @Override
             public void invoke(long window, double xpos, double ypos) {
-                if (window == handle) {
-                    game.handleCursorMove(xpos, ypos);
-                }
+				game.handleCursorMove(xpos, ypos);
             }
         }.set(handle);
     }
@@ -128,12 +125,19 @@ public class WindowDisplay implements Window{
     private void setupKeyCallback() {
         keyCallback = new GLFWKeyCallback(){
             @Override
-            public void invoke(long window, int key, int scancode, int action, int mods) {
-                if (window == handle) {
-                    game.handleKeyPress(key, scancode, action, mods);
-                }
-            }
+			public void invoke(long window, int key, int scancode, int action, int mods) {
+				game.handleKeyPress(key, scancode, action, mods);
+			}
         }.set(handle);
+    }
+    
+    private void setupScrollCallback() {
+    	scrollCallback = new GLFWScrollCallback() {
+			@Override
+			public void invoke(long window, double xoffset, double yoffset) {
+				game.handleScroll(xoffset, yoffset);
+			}
+		}.set(handle);
     }
 
     public boolean shouldClose() {
