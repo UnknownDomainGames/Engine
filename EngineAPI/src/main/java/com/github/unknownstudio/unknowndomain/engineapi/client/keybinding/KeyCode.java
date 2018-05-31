@@ -1,5 +1,8 @@
 package com.github.unknownstudio.unknowndomain.engineapi.client.keybinding;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum KeyCode {
 	
 	/** Mouse buttons.*/
@@ -136,6 +139,12 @@ public enum KeyCode {
 	KEY_RIGHT_SUPER(347),
 	KEY_MENU(348),
 	
+	/** The mouse wheel action. */
+	MOUSE_WHEEL_UP(400),
+	MOUSE_WHEEL_DOWN(401),
+	MOUSE_WHEEL_LEFT(402),
+	MOUSE_WHEEL_RIGHT(403),
+	
 	/** The unknown key. */
 	KEY_UNKNOWN(-1);
 
@@ -145,22 +154,16 @@ public enum KeyCode {
 		this.code = code;
 	}
 
-	private static KeyCode[] code2Key = new KeyCode[349];
+	private static Map<Integer,KeyCode> code2Key = new HashMap<>();
 	static {
 		KeyCode[] values = values();
 		for (int i = 0; i < values.length; i++) {
 			KeyCode key = values[i];
-			if (key == KEY_UNKNOWN)
-				continue;
-
-			code2Key[i] = key;
+			code2Key.put(key.code, key);
 		}
 	}
 
 	public static KeyCode valueOf(int code) {
-		if (code < 0 && code > 348)
-			return KEY_UNKNOWN;
-		KeyCode key = code2Key[code];
-		return key == null ? KEY_UNKNOWN : key;
+		return code2Key.getOrDefault(code , KEY_UNKNOWN);
 	}
 }

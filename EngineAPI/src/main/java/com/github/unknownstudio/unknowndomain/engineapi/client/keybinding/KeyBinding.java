@@ -1,6 +1,10 @@
 package com.github.unknownstudio.unknowndomain.engineapi.client.keybinding;
 
-public class KeyBinding {
+import com.github.unknownstudio.unknowndomain.engineapi.registry.RegistryEntry;
+
+public class KeyBinding implements RegistryEntry<KeyBinding>{
+	
+	private String registryName;
 	
 	private KeyCode code;
 	private KeyBindingMode mode;
@@ -28,9 +32,23 @@ public class KeyBinding {
 		return pressed;
 	}
 	
+	public long getPressedTime() {
+		return pressedTime;
+	}
+	
 	public void onPressed() {
 	}
 	
 	public void onReleased() {
+	}
+
+	@Override
+	public String getRegistryName() {
+		return registryName;
+	}
+
+	@Override
+	public void setRegistryName(String name) {
+		registryName = name;
 	}
 }
