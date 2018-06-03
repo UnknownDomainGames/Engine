@@ -68,11 +68,15 @@ public class ShaderProgramDefault extends ShaderProgram {
         projection = projection.perspective((float)Math.toRadians(60), 16.0f/9.0f, 0.01f,1000f); //TODO: Controlled by Camera
         int uniProjection = getUniformLocation("projection");
         setUniform(uniProjection, projection);
+
+
+        GL20.glUseProgram(0);
     }
 
     @Override
     public void deleteShader() {
 
+        GL20.glUseProgram(0);
         GL20.glDeleteShader(vertexShaderId);
         vertexShaderId = -1;
         GL20.glDeleteShader(fragmentShaderId);
@@ -99,25 +103,6 @@ public class ShaderProgramDefault extends ShaderProgram {
     @Override
     public int getAttributeLocation(String name){
         return GL20.glGetAttribLocation(shaderId, name);
-    }
-
-    @Override
-    public void enableVertexAttrib(int location){
-        GL20.glEnableVertexAttribArray(location);
-    }
-
-    @Override
-    public void pointVertexAttribute(int location, int size, int stride, int offset) {
-        GL20.glVertexAttribPointer(location, size, GL11.GL_FLOAT, false, stride, offset);
-    }
-
-    @Override
-    public void setUniform(int location, Matrix4f value) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer buffer = stack.mallocFloat(4 * 4);
-            value.get(buffer);
-            GL20.glUniformMatrix4fv(location, false, buffer);
-        }
     }
 
     @Override

@@ -1,11 +1,10 @@
 package com.github.unknownstudio.unknowndomain.engine.client.render;
 
 import com.github.unknownstudio.unknowndomain.engine.client.display.CameraDefault;
-import com.github.unknownstudio.unknowndomain.engine.client.resource.Texture2D;
+import com.github.unknownstudio.unknowndomain.engine.client.resource.FileTexture2D;
 import com.github.unknownstudio.unknowndomain.engine.client.shader.ShaderProgram;
 import com.github.unknownstudio.unknowndomain.engine.client.shader.ShaderProgramDefault;
 import com.github.unknownstudio.unknowndomain.engine.client.util.BufferBuilder;
-import com.github.unknownstudio.unknowndomain.engine.client.util.VertexBufferObject;
 import com.github.unknownstudio.unknowndomain.engineapi.client.display.Camera;
 import com.github.unknownstudio.unknowndomain.engineapi.client.render.Renderer;
 import org.lwjgl.opengl.GL11;
@@ -18,25 +17,23 @@ import java.net.URISyntaxException;
 public final class RendererGlobal implements Renderer {
 
     private ShaderProgram shader;
-    private VertexBufferObject vbo;
-    private BufferBuilder bufferBuilder;
     private Camera camera;
+    private RendererGui gui; //FIXME: maybe for test purpose only
 
     public RendererGlobal() {
         shader = new ShaderProgramDefault();
         shader.createShader();
-        vbo = new VertexBufferObject();
-        bufferBuilder = new BufferBuilder(1048576);
         camera = new CameraDefault();
         camera.moveTo(0,0,-5);
         camera.rotateTo(90,0);
+        gui = new RendererGui();
     }
 
-    private Texture2D tmp;
+    private FileTexture2D tmp;
 
     {
         try {
-            tmp = new Texture2D(RendererGlobal.class.getResource("/assets/tmp/tmp.png").toURI());
+            tmp = new FileTexture2D(RendererGlobal.class.getResource("/assets/tmp/tmp.png").toURI());
             if (!tmp.loadImage())
                 System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); //Stub
         } catch (URISyntaxException e) {
@@ -54,6 +51,10 @@ public final class RendererGlobal implements Renderer {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         tmp.useTexture();
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferBuilder = tessellator.getBuffer();
+
         bufferBuilder.begin(GL11.GL_QUADS, true, true, true);
 
         //FRONT
@@ -88,45 +89,12 @@ public final class RendererGlobal implements Renderer {
         bufferBuilder.pos(0.5f, -0.5f, 0.5f).color(0, 1, 0f, 1.0f).tex(0,1).endVertex();
         bufferBuilder.pos(0.5f, -0.5f, -0.5f).color(1, 1, 1f, 1.0f).tex(1,1).endVertex();
 
-        bufferBuilder.finish();
-        draw(bufferBuilder);
+        tessellator.draw();
+        gui.render();
     }
 
     public ShaderProgram getShader() {
         return shader;
-    }
-
-    public void draw(BufferBuilder buffer) {
-        if (buffer.isDrawing()) buffer.finish();
-        shader.useShader();
-        vbo.bind();
-        vbo.uploadData(buffer);
-        vbo.bind();
-
-        int posarr;
-        if (buffer.isPosEnabled()) {
-            posarr = shader.getAttributeLocation("position");
-            shader.pointVertexAttribute(posarr, 3, buffer.getOffset(), 0);
-            shader.enableVertexAttrib(posarr);
-        } else {
-        }
-        if (buffer.isTexEnabled()) {
-            posarr = shader.getAttributeLocation("texcoord");
-            shader.pointVertexAttribute(posarr, 2, buffer.getOffset(), (buffer.isPosEnabled() ? 3 : 0) * Float.BYTES);
-            shader.enableVertexAttrib(posarr);
-        }
-        if (buffer.isColorEnabled()) {
-            posarr = shader.getAttributeLocation("color");
-            shader.pointVertexAttribute(posarr, 4, buffer.getOffset(), ((buffer.isPosEnabled() ? 3 : 0) + (buffer.isTexEnabled() ? 2 : 0)) * Float.BYTES);
-            shader.enableVertexAttrib(posarr);
-        }
-        vbo.unbind();
-        vbo.bindVAO();
-
-        vbo.drawArrays(buffer.getDrawMode());
-        vbo.unbind();
-        buffer.reset();
-
     }
 
     public void onCursorMoved(double x, double y){
@@ -134,7 +102,6 @@ public final class RendererGlobal implements Renderer {
     }
 
     public void destroy() {
-        vbo.delete();
         shader.deleteShader();
     }
 

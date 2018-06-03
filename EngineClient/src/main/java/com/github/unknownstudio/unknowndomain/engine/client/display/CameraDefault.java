@@ -10,7 +10,7 @@ public class CameraDefault implements Camera {
 
     public static final Vector3f UP_VECTOR = new Vector3f(0, 1, 0);
     private Vector3f pos;
-    private float yaw, pitch;
+    private float yaw, pitch, roll;
     private double aX,aY,aZ;
     private double zoomRate;
 
@@ -67,6 +67,12 @@ public class CameraDefault implements Camera {
                     break;
                 case GLFW.GLFW_KEY_LEFT_SHIFT: case GLFW.GLFW_KEY_RIGHT_SHIFT:
                     move(0,-1 * moveC,0);
+                    break;
+                case GLFW.GLFW_KEY_Q:
+                    roll -= SENSIBILITY * 10;
+                    break;
+                case GLFW.GLFW_KEY_E:
+                    roll += SENSIBILITY * 10;
                     break;
             }
         }
@@ -130,11 +136,32 @@ public class CameraDefault implements Camera {
 
     @Override
     public Matrix4f makeViewMatrix() {
+//        Matrix4f mat = new Matrix4f();
+//        Matrix4f matroll = new Matrix4f().identity();
+//        matroll.rotate((float) Math.toRadians(roll), 0,0,1).transpose();
+//        Matrix4f matyaw = new Matrix4f().identity();
+//        matyaw.rotate((float) Math.toRadians(yaw), 0,1,0).transpose();
+//        Matrix4f matpitch = new Matrix4f().identity();
+//        matpitch.rotate((float) Math.toRadians(pitch), 1,0,0).transpose();
+//
+//        Matrix4f rotate = new Matrix4f();
+//
+//        matpitch.mul(matyaw, rotate);
+//        matroll.mul(rotate, rotate);
+//
+//        Matrix4f translate = new Matrix4f().identity();
+//        Vector3f p1 = new Vector3f();
+//        pos.negate(p1);
+//        translate.translate(p1);
+//
+//        rotate.mul(translate, mat);
+//        return mat;
         Vector3fc front = getFrontVector();
         Vector3f center = new Vector3f();
         pos.add(front, center);
         Vector3f up = new Vector3f(0,1,0);
-        return new Matrix4f().lookAt(pos,center, up);
+        //up.mulDirection(mat);
+        return new Matrix4f().lookAt(pos,center, up).rotateZ((float)Math.toRadians(roll));
     }
 
     private Vector3fc getFrontVector() {

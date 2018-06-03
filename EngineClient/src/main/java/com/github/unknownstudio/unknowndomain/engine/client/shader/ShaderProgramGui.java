@@ -54,12 +54,15 @@ public class ShaderProgramGui extends ShaderProgramDefault {
         setUniform(uniView, view);
 
 
-        Matrix4f projection = new Matrix4f();
-        projection = projection.ortho2D(0,854,480,0);
+        Matrix4f projection = new Matrix4f().identity();
+        projection = projection.ortho(0,854,480,0,-1000f,2000f);
         int uniProjection = getUniformLocation("projection");
         setUniform(uniProjection, projection);
 
         int unicolor = getUniformLocation("color");
         GL20.glUniform4fv(unicolor, new float[]{1f,1f,1f,1f});
+
+
+        GL20.glUseProgram(0);
     }
 }

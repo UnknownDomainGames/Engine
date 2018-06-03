@@ -3,19 +3,19 @@ package com.github.unknownstudio.unknowndomain.engine.client.render;
 import com.github.unknownstudio.unknowndomain.engineapi.client.render.Renderer;
 import org.lwjgl.opengl.GL11;
 
-import com.github.unknownstudio.unknowndomain.engine.client.resource.Texture2D;
+import com.github.unknownstudio.unknowndomain.engine.client.resource.FileTexture2D;
 
 import java.util.Arrays;
 
 public class RendererSkyBox implements Renderer {
 
-    public final Texture2D[] textures;
+    public final FileTexture2D[] textures;
 
     /**
      *
      * @param texes textures of skybox, order: E-S-W-N-U-D
      */
-    public RendererSkyBox(Texture2D[] texes){
+    public RendererSkyBox(FileTexture2D[] texes){
         if (texes.length < 6) throw new IllegalArgumentException();
         else if(texes.length > 6) texes = Arrays.copyOf(texes, 6);
         textures = texes;
