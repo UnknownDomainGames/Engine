@@ -1,4 +1,5 @@
 dependencies {
     compile project(':EngineAPI')
     compile project(':Engine')
+    compile project(':EngineServer')
 }

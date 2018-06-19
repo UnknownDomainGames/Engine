@@ -1,5 +1,6 @@
 package com.github.unknownstudio.unknowndomain.engine.client.render;
 
+import com.github.unknownstudio.unknowndomain.engine.client.shader.ShaderProgramDefault;
 import com.github.unknownstudio.unknowndomain.engineapi.client.render.Renderer;
 import org.lwjgl.opengl.GL11;
 

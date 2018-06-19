@@ -10,6 +10,8 @@ import com.github.unknownstudio.unknowndomain.engineapi.client.render.Renderer;
 import org.lwjgl.opengl.GL11;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * render for the scene
@@ -18,27 +20,19 @@ public final class RendererGlobal implements Renderer {
 
     private ShaderProgram shader;
     private Camera camera;
-    private RendererGui gui; //FIXME: maybe for test purpose only
+    private RendererGui gui;
+
+    private List<Renderer> renderList;
 
     public RendererGlobal() {
+        renderList = new ArrayList<>();
         shader = new ShaderProgramDefault();
         shader.createShader();
         camera = new CameraDefault();
-        camera.moveTo(0,0,-5);
-        camera.rotateTo(90,0);
         gui = new RendererGui();
-    }
-
-    private FileTexture2D tmp;
-
-    {
-        try {
-            tmp = new FileTexture2D(RendererGlobal.class.getResource("/assets/tmp/tmp.png").toURI());
-            if (!tmp.loadImage())
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); //Stub
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glCullFace(GL11.GL_BACK);
+        renderList.add(gui);
     }
 
     @Override
@@ -50,47 +44,8 @@ public final class RendererGlobal implements Renderer {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        tmp.useTexture();
 
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-
-        bufferBuilder.begin(GL11.GL_QUADS, true, true, true);
-
-        //FRONT
-        bufferBuilder.pos(-0.5f, -0.5f, 0.5f).color(1, 0, 0f, 1.0f).tex(0, 1).endVertex();
-        bufferBuilder.pos(0.5f, -0.5f, 0.5f).color(0, 1, 0f, 1.0f).tex(1, 1).endVertex();
-        bufferBuilder.pos(0.5f, 0.5f, 0.5f).color(0, 0, 1f, 1.0f).tex(1, 0).endVertex();
-        bufferBuilder.pos(-.5f, 0.5f, 0.5f).color(1, 1, 1, 1.0f).tex(0, 0).endVertex();
-
-        //-VE X
-        bufferBuilder.pos(-0.5f, 0.5f, 0.5f).color(1, 1, 1f, 1.0f).tex(1,0).endVertex();
-        bufferBuilder.pos(-.5f, 0.5f, -0.5f).color(0, 1, 0, 1.0f).tex(0,0).endVertex();
-        bufferBuilder.pos(-0.5f, -0.5f, -0.5f).color(0, 0, 1f, 1.0f).tex(0,1).endVertex();
-        bufferBuilder.pos(-0.5f, -0.5f, 0.5f).color(1, 0, 0f, 1.0f).tex(1,1).endVertex();
-        //-VE Y
-        bufferBuilder.pos(-0.5f, -0.5f, 0.5f).color(1, 0, 0f, 1.0f).tex(0,0).endVertex();
-        bufferBuilder.pos(0.5f, -0.5f, 0.5f).color(0, 1, 0f, 1.0f).tex(1,0).endVertex();
-        bufferBuilder.pos(.5f, -0.5f, -0.5f).color(1, 1, 1, 1.0f).tex(1,1).endVertex();
-        bufferBuilder.pos(-0.5f, -0.5f, -0.5f).color(0, 0, 1f, 1.0f).tex(0,1).endVertex();
-        //BACK
-        bufferBuilder.pos(-0.5f, -0.5f, -0.5f).color(0, 0, 1f, 1.0f).tex(0, 1).endVertex();
-        bufferBuilder.pos(0.5f, -0.5f, -0.5f).color(1, 1, 1f, 1.0f).tex(1, 1).endVertex();
-        bufferBuilder.pos(0.5f, 0.5f, -0.5f).color(1, 0, 0f, 1.0f).tex(1, 0).endVertex();
-        bufferBuilder.pos(-.5f, 0.5f, -0.5f).color(0, 1, 0, 1.0f).tex(0, 0).endVertex();
-        //+VE Y
-        bufferBuilder.pos(-.5f, 0.5f, -0.5f).color(0, 1, 0, 1.0f).tex(0,0).endVertex();
-        bufferBuilder.pos(-0.5f, 0.5f, 0.5f).color(1, 1, 1f, 1.0f).tex(0,1).endVertex();
-        bufferBuilder.pos(0.5f, 0.5f, 0.5f).color(0, 0, 1f, 1.0f).tex(1,1).endVertex();
-        bufferBuilder.pos(0.5f, 0.5f, -0.5f).color(1, 0, 0f, 1.0f).tex(1,0).endVertex();
-        //+VE X
-        bufferBuilder.pos(0.5f, 0.5f, -0.5f).color(1, 0, 0f, 1.0f).tex(1,0).endVertex();
-        bufferBuilder.pos(.5f, 0.5f, 0.5f).color(0, 0, 1, 1.0f).tex(0,0).endVertex();
-        bufferBuilder.pos(0.5f, -0.5f, 0.5f).color(0, 1, 0f, 1.0f).tex(0,1).endVertex();
-        bufferBuilder.pos(0.5f, -0.5f, -0.5f).color(1, 1, 1f, 1.0f).tex(1,1).endVertex();
-
-        tessellator.draw();
-        gui.render();
+        renderList.forEach(Renderer::render);
     }
 
     public ShaderProgram getShader() {

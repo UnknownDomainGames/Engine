@@ -1,6 +1,6 @@
 package com.github.unknownstudio.unknowndomain.engine.client.display;
 
-import com.github.unknownstudio.unknowndomain.engine.client.GameClient;
+import com.github.unknownstudio.unknowndomain.engine.client.EngineClient;
 import com.github.unknownstudio.unknowndomain.engineapi.client.display.Window;
 
 import org.lwjgl.glfw.*;
@@ -23,9 +23,9 @@ public class WindowDisplay implements Window{
     private GLFWKeyCallback keyCallback;
     private GLFWScrollCallback scrollCallback;
 
-    private GameClient game;
+    private EngineClient game;
 
-    public WindowDisplay(GameClient game, int width, int height, String title) {
+    public WindowDisplay(EngineClient game, int width, int height, String title) {
         this.game = game;
         this.title = title;
         this.width = width;

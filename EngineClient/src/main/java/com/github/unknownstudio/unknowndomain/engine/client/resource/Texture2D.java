@@ -1,5 +1,7 @@
 package com.github.unknownstudio.unknowndomain.engine.client.resource;
 
+import com.github.unknownstudio.unknowndomain.engineapi.registry.RegistryEntry;
+import com.github.unknownstudio.unknowndomain.engineapi.resource.ResourceLocation;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -8,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.nio.ByteBuffer;
 
-public class Texture2D {
+public class Texture2D implements RegistryEntry<Texture2D> {
     protected int texId = -1;
 
     private BufferedImage img;
@@ -74,8 +76,8 @@ public class Texture2D {
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, img.getWidth(), img.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
         GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+        enableRepeatingX(true);
+        enableRepeatingY(true);
 
 
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER,
@@ -87,10 +89,28 @@ public class Texture2D {
         if (!istexenabled) GL11.glDisable(GL11.GL_TEXTURE_2D);
     }
 
+    public Texture2D enableRepeatingX(boolean flag){
+        useTexture();
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, flag ? GL11.GL_REPEAT : GL11.GL_CLAMP);
+        unuseTexture();
+        return this;
+    }
+
+    public Texture2D enableRepeatingY(boolean flag){
+        useTexture();
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, flag ? GL11.GL_REPEAT : GL11.GL_CLAMP);
+        unuseTexture();
+        return this;
+    }
+
     public void useTexture() {
         if (texId != -1) {
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
         }
+    }
+
+    public static void unuseTexture(){
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
     }
 
     public void unloadImage() {
@@ -98,5 +118,23 @@ public class Texture2D {
             GL11.glDeleteTextures(texId);
             texId = -1;
         }
+    }
+
+    private ResourceLocation location;
+
+    @Override
+    public ResourceLocation getRegistryName() {
+        return location;
+    }
+
+    @Override
+    public String getRegistryNameString() {
+        return location.toString();
+    }
+
+    @Override
+    public Texture2D setRegistryName(ResourceLocation location) {
+        this.location = location;
+        return this;
     }
 }

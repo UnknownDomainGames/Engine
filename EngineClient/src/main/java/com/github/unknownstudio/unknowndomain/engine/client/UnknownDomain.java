@@ -6,10 +6,10 @@ public class UnknownDomain {
 	private static final String VERSION = "${project.version}";
 	
     public static final int WIDTH = 854, HEIGHT = 480;
-    private static GameClient game;
+    private static EngineClient engine;
 
     public static void main(String[] args) {
-        game = new GameClient(WIDTH, HEIGHT);
+        engine = new EngineClient(WIDTH, HEIGHT);
     }
     
     public static String getName() {

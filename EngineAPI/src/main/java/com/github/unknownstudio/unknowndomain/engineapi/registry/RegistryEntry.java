@@ -1,8 +1,16 @@
 package com.github.unknownstudio.unknowndomain.engineapi.registry;
 
+import com.github.unknownstudio.unknowndomain.engineapi.resource.ResourceLocation;
+
 public interface RegistryEntry<T> {
 
-	String getRegistryName();
-	
-	void setRegistryName(String name);
+	ResourceLocation getRegistryName();
+
+	String getRegistryNameString();
+
+	T setRegistryName(ResourceLocation location);
+
+	default T setRegistryName(String name){
+		return setRegistryName(new ResourceLocation(name));
+	}
 }
