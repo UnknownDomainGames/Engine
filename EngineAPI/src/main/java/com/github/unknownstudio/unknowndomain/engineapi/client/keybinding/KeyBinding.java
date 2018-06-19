@@ -1,13 +1,11 @@
 package com.github.unknownstudio.unknowndomain.engineapi.client.keybinding;
 
-import com.github.unknownstudio.unknowndomain.engineapi.registry.RegistryEntry;
+public class KeyBinding {
 
-public class KeyBinding implements RegistryEntry<KeyBinding>{
-	
-	private String registryName;
-	
 	private KeyCode code;
-	private KeyBindingMode mode;
+	private KeyMode[] mode;
+	private int modeCode;
+	private ActiveMode activeMode;
 	
 	private boolean pressed = false;
 	private long pressedTime;
@@ -20,12 +18,25 @@ public class KeyBinding implements RegistryEntry<KeyBinding>{
 		this.code = code;
 	}
 	
-	public KeyBindingMode getMode() {
+	public KeyMode[] getMode() {
 		return mode;
 	}
 
-	public void setMode(KeyBindingMode mode) {
+	public void setMode(KeyMode... mode) {
 		this.mode = mode;
+		this.modeCode = KeyMode.getCode(mode);
+	}
+	
+	public int getModeCode() {
+		return modeCode;
+	}
+
+	public ActiveMode getActiveMode() {
+		return activeMode;
+	}
+
+	public void setActiveMode(ActiveMode activeMode) {
+		this.activeMode = activeMode;
 	}
 
 	public boolean isPressed() {
@@ -42,13 +53,5 @@ public class KeyBinding implements RegistryEntry<KeyBinding>{
 	public void onReleased() {
 	}
 
-	@Override
-	public String getRegistryName() {
-		return registryName;
-	}
 
-	@Override
-	public void setRegistryName(String name) {
-		registryName = name;
-	}
 }
