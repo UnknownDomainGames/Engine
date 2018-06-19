@@ -477,7 +477,7 @@ public class VersionRange
             List<String> friendlyRestrictions = new ArrayList<String>(restrictions.size());
             for (Restriction restriction : restrictions)
             {
-                friendlyRestrictions.add(restriction.toStringFriendly());
+                friendlyRestrictions.add(restriction.toString());
             }
             return Joiner.on(", ").join(friendlyRestrictions);
         }
