@@ -6,6 +6,6 @@ import com.github.unknownstudio.unknowndomain.engine.registry.ResourceManagerDef
 /**
  * Lists of resources manager in client side
  */
-public class ResourcesManagersClient {
+public class ClientResourceManager {
     public static final ResourceManagerDefault<Texture2D> TEXTURE_MANAGER = new ResourceManagerDefault<>();
 }
