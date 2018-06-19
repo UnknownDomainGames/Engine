@@ -2,26 +2,15 @@ package com.github.unknownstudio.unknowndomain.engineapi.block;
 
 import com.github.unknownstudio.unknowndomain.engineapi.math.BlockPos;
 import com.github.unknownstudio.unknowndomain.engineapi.math.BoundingBox;
+import com.github.unknownstudio.unknowndomain.engineapi.registry.RegistryEntry;
 
-public class BlockBase implements Block {
+public class BlockBase extends RegistryEntry.Impl<Block> implements Block {
 
     private int hardness;
 
     private int antiExplosive;
 
     protected BoundingBox boundingBox;
-
-    private String registryName;
-
-    @Override
-    public String getRegistryName() {
-        return registryName;
-    }
-
-    @Override
-    public void setRegistryName(String name) {
-        registryName = name;
-    }
 
     @Override
     public boolean onBlockPlaced(BlockPos pos){
