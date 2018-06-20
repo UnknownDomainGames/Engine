@@ -2,6 +2,8 @@ package com.github.unknownstudio.unknowndomain.engine.client.util;
 
 import org.lwjgl.BufferUtils;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -68,5 +70,40 @@ public class GLHelper {
 
         buffer.flip();
         return buffer.slice();
+    }
+
+    public static ByteBuffer getByteBufferFromImage(BufferedImage img) {
+        int[] data = new int[img.getWidth() * img.getHeight()];
+        img.getRGB(0, 0, img.getWidth(), img.getHeight(), data, 0, img.getWidth());
+
+        ByteBuffer buffer = BufferUtils.createByteBuffer(img.getWidth() * img.getHeight() * 4);
+        boolean isAlpha = img.getType() == BufferedImage.TYPE_4BYTE_ABGR ||
+                img.getType() == BufferedImage.TYPE_4BYTE_ABGR_PRE ||
+                img.getType() == BufferedImage.TYPE_INT_ARGB ||
+                img.getType() == BufferedImage.TYPE_INT_ARGB_PRE;
+
+        for (int y = 0; y < img.getHeight(); y++) {
+            for (int x = 0; x < img.getWidth(); x++) {
+                int pixel = data[y * img.getWidth() + x];
+                buffer.put((byte) ((pixel >> 16) & 0xFF));     // Red component
+                buffer.put((byte) ((pixel >> 8) & 0xFF));      // Green component
+                buffer.put((byte) (pixel & 0xFF));               // Blue component
+                if (isAlpha)
+                    buffer.put((byte) ((pixel >> 24) & 0xFF));    // Alpha component. Only for RGBA
+                else {
+                    if (img.getType() == BufferedImage.TYPE_BYTE_INDEXED) {
+                        if (pixel == img.getColorModel().getRGB(((IndexColorModel) img.getColorModel()).getTransparentPixel())) {
+                            buffer.put((byte) 0);
+                        }else{
+                            buffer.put((byte) 255);
+                        }
+                    } else {
+                        buffer.put((byte) 255);
+                    }
+                }
+            }
+        }
+        buffer.flip();
+        return buffer;
     }
 }
