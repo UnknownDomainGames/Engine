@@ -1,11 +1,17 @@
 package com.github.unknownstudio.unknowndomain.engineapi.client.keybinding;
 
-public class KeyBinding {
+import com.github.unknownstudio.unknowndomain.engineapi.registry.RegistryEntry;
 
+public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
+
+	private KeyCode defaultCode;
+	private KeyMode[] defaultMode;
+	private ActionMode[] defaultActionMode;
+	
 	private KeyCode code;
 	private KeyMode[] mode;
 	private int modeCode;
-	private ActiveMode activeMode;
+	private ActionMode actionMode;
 	
 	private boolean pressed = false;
 	private long pressedTime;
@@ -31,12 +37,12 @@ public class KeyBinding {
 		return modeCode;
 	}
 
-	public ActiveMode getActiveMode() {
-		return activeMode;
+	public ActionMode getActionMode() {
+		return actionMode;
 	}
 
-	public void setActiveMode(ActiveMode activeMode) {
-		this.activeMode = activeMode;
+	public void setActionMode(ActionMode actionMode) {
+		this.actionMode = actionMode;
 	}
 
 	public boolean isPressed() {

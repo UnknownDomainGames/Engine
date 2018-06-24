@@ -1,6 +1,6 @@
 package com.github.unknownstudio.unknowndomain.engineapi.client.keybinding;
 
-public enum ActiveMode {
+public enum ActionMode {
 	CLICK,
 	PRESS,
 	SWITCH;
