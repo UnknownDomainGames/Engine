@@ -1,5 +1,5 @@
 package com.github.unknownstudio.unknowndomain.engineapi.client.display;
 
-public interface Window {
+public interface GameWindow {
 
 }

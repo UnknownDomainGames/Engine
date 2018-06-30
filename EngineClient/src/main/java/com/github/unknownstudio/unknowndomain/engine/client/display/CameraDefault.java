@@ -1,15 +1,16 @@
 package com.github.unknownstudio.unknowndomain.engine.client.display;
 
-import com.github.unknownstudio.unknowndomain.engineapi.client.display.Camera;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.lwjgl.glfw.GLFW;
 
+import com.github.unknownstudio.unknowndomain.engineapi.client.display.Camera;
+
 public class CameraDefault implements Camera {
 
     public static final Vector3f UP_VECTOR = new Vector3f(0, 1, 0);
-    private Vector3f pos;
+    private Vector3f pos = new Vector3f();
     private float yaw, pitch, roll;
     private double aX,aY,aZ;
     private double zoomRate;

@@ -1,19 +1,20 @@
 package com.github.unknownstudio.unknowndomain.engine.client;
 
-import com.github.unknownstudio.unknowndomain.engine.client.display.WindowDisplay;
-import com.github.unknownstudio.unknowndomain.engine.client.render.RendererGlobal;
+import com.github.unknownstudio.unknowndomain.engine.client.display.DefaultGameWindow;
+import com.github.unknownstudio.unknowndomain.engine.client.rendering.RendererGame;
+import com.github.unknownstudio.unknowndomain.engine.client.rendering.RendererGlobal;
 import com.github.unknownstudio.unknowndomain.engineapi.math.Timer;
 import org.lwjgl.glfw.GLFW;
 
-public class EngineClient implements com.github.unknownstudio.unknowndomain.engineapi.client.game.GameClient{
+public class EngineClient implements com.github.unknownstudio.unknowndomain.engineapi.client.GameClient{
 	
-    private WindowDisplay window;
+    private DefaultGameWindow window;
     private RendererGlobal renderer;
 
     private Timer timer;
 
     public EngineClient(int width, int height) {
-        window = new WindowDisplay(this, width ,height, UnknownDomain.getName());
+        window = new DefaultGameWindow(this, width ,height, UnknownDomain.getName());
 
         window.init();
         init();
@@ -68,14 +69,14 @@ public class EngineClient implements com.github.unknownstudio.unknowndomain.engi
     }
 
     public void handleCursorMove(double x, double y){
-        renderer.onCursorMoved(x,y);
+        renderer.getRendererGame().onCursorMoved(x,y);
     }
 
     public void handleKeyPress(int key, int scancode, int action, int modifiers){
         if(key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS){
             GLFW.glfwSetWindowShouldClose(window.getHandle(), true);
         }
-        renderer.getCamera().handleMove(key,action);
+        renderer.getRendererGame().getCamera().handleMove(key,action);
     }
 
     public void handleTextInput(int codepoint, int modifiers){}

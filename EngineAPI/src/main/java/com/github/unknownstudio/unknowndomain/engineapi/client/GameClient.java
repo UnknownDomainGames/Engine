@@ -1,4 +1,4 @@
-package com.github.unknownstudio.unknowndomain.engineapi.client.game;
+package com.github.unknownstudio.unknowndomain.engineapi.client;
 
 import com.github.unknownstudio.unknowndomain.engineapi.game.Game;
 
