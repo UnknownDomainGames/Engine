@@ -1,4 +1,4 @@
-package com.github.unknownstudio.unknowndomain.engineapi.client.keybinding;
+package com.github.unknownstudio.unknowndomain.engineapi.keybinding;
 
 import com.github.unknownstudio.unknowndomain.engineapi.registry.RegistryEntry;
 

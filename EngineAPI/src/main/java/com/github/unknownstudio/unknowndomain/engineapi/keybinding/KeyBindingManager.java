@@ -1,6 +1,6 @@
-package com.github.unknownstudio.unknowndomain.engineapi.client.keybinding;
+package com.github.unknownstudio.unknowndomain.engineapi.keybinding;
 
-public class KeyManager {
+public class KeyBindingManager {
 
 	public void onPressed(int key, int mods) {
 		

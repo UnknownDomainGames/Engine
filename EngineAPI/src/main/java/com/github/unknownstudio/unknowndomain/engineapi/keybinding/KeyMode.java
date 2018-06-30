@@ -1,4 +1,4 @@
-package com.github.unknownstudio.unknowndomain.engineapi.client.keybinding;
+package com.github.unknownstudio.unknowndomain.engineapi.keybinding;
 
 public enum KeyMode {
 
