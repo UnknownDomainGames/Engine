@@ -52,10 +52,10 @@ public class Sound extends RegistryEntry.Impl<Sound> {
             case AL_NO_ERROR:
                 break;
             case AL_INVALID_ENUM:
-                Platform.LOGGER.getLogger("Engine Client").warn("Cannot load sound! (Invalid enum) bit depth: {} channels: {}", bitDepth, channels);
+                Platform.getClientLogger().warn("Cannot load sound! (Invalid enum) bit depth: {} channels: {}", bitDepth, channels);
                 return false;
             case AL_OUT_OF_MEMORY:
-                Platform.LOGGER.getLogger("Engine Client").warn("Cannot load sound! (Out of memory)!");
+                Platform.getClientLogger().warn("Cannot load sound! (Out of memory)!");
                 return false;
         }
         return true;

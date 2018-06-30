@@ -33,7 +33,7 @@ public class ResourceManagerDefault<T extends RegistryEntry<T>> implements IReso
     public T register(T obj) {
         ResourceLocation location = obj.getRegistryName();
         if(registries.containsKey(location)){
-            Platform.LOGGER.getLogger("Engine Server").warn("Resource location {} is registered already! Registered entry: {} registering entry: ", location, registries.get(location), obj);
+            Platform.getServerLogger().warn("Resource location {} is registered already! Registered entry: {} registering entry: ", location, registries.get(location), obj);
             return registries.get(location);
         }
         registries.put(location, obj);

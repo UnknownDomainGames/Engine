@@ -53,12 +53,12 @@ public class EventBusUniversal implements EventBus {
         if(!registeredClazz.contains(type)) {
             for (Method method : ReflectionUtils.getAllMethods(subscriber.getClass(), ReflectionUtils.withAnnotation(Subscribe.class))) {
                 if (method.getParameterCount() != 1){
-                    Platform.LOGGER.getLogger().warn("cannot register method {}({}) as an event handler. (parameter count mismatch. required: 1 found: {})", method.getName(), Arrays.deepToString(method.getTypeParameters()), method.getParameterCount());
+                    Platform.getLogger().warn("cannot register method {}({}) as an event handler. (parameter count mismatch. required: 1 found: {})", method.getName(), Arrays.deepToString(method.getTypeParameters()), method.getParameterCount());
                 }
                 else{
                     Class<?> tmp = method.getParameterTypes()[0];
                     if (!Event.class.isAssignableFrom(tmp)){
-                        Platform.LOGGER.getLogger().warn("cannot register method {}({}) as an event handler. (parameter type mismatch. required subclass of Event.)", method.getName(), Arrays.deepToString(method.getTypeParameters()));
+                        Platform.getLogger().warn("cannot register method {}({}) as an event handler. (parameter type mismatch. required subclass of Event.)", method.getName(), Arrays.deepToString(method.getTypeParameters()));
                     }
                     else{
                         TypeToken event = TypeToken.of(tmp.asSubclass(Event.class));

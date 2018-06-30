@@ -55,10 +55,10 @@ public class FileSound extends Sound {
             return loadSound(raw, 16, rate, channel);
 
         } catch (FileNotFoundException e) {
-            Platform.LOGGER.getLogger("Engine Client").warn("Cannot load sound! (file not found) file: {}", file.getAbsolutePath());
+            Platform.getClientLogger().warn("Cannot load sound! (file not found) file: {}", file.getAbsolutePath());
             return false;
         } catch (IOException e) {
-            Platform.LOGGER.getLogger("Engine Client").warn("Cannot load sound! (IO exception) file: {}", file.getAbsolutePath());
+            Platform.getClientLogger().warn("Cannot load sound! (IO exception) file: {}", file.getAbsolutePath());
             return false;
         } finally {
             if (buf != null) {
