@@ -25,12 +25,14 @@ public interface RegistryEntry<T> {
 			return location;
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		public final T setRegistryName(ResourceLocation location) {
 			this.location = location;
 			return (T) this;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public final Class<T> getRegistryType() {
 			return (Class<T>) token.getRawType();
