@@ -9,7 +9,6 @@ import com.github.unknownstudio.unknowndomain.engineapi.client.shader.ShaderProg
 public abstract class GuiPanel {
 
     public abstract void draw(ShaderProgram shader);
-
-    public abstract Gui searchGui(double x, double y);
+    
 
 }
