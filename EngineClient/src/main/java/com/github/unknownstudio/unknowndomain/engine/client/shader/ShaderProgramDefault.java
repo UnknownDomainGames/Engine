@@ -1,14 +1,11 @@
 package com.github.unknownstudio.unknowndomain.engine.client.shader;
 
 import com.github.unknownstudio.unknowndomain.engine.client.util.GLHelper;
+import com.github.unknownstudio.unknowndomain.engineapi.client.shader.ShaderProgram;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.system.MemoryStack;
-
-import java.nio.FloatBuffer;
 
 public class ShaderProgramDefault extends ShaderProgram {
 

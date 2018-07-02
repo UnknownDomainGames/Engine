@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.unknownstudio.unknowndomain.engineapi.client.rendering.Renderer;
+import com.github.unknownstudio.unknowndomain.engineapi.client.rendering.RenderingLayer;
+import com.github.unknownstudio.unknowndomain.engineapi.client.shader.ShaderProgram;
 
-public class RendererGlobal implements Renderer {
+public class RendererGlobal {
 	
-	private final List<Renderer> renderers = new ArrayList<>();
+	private final List<RenderingLayer> renderers = new ArrayList<>();
 
 	// TODO: hard code.
 	private final RendererGame rendererGame;
@@ -20,7 +22,7 @@ public class RendererGlobal implements Renderer {
 		renderers.add(rendererGui);
 	}
 	
-	public List<Renderer> getRenderers() {
+	public List<RenderingLayer> getRenderers() {
 		return renderers;
 	}
 	
@@ -32,9 +34,8 @@ public class RendererGlobal implements Renderer {
 		return rendererGui;
 	}
 
-	@Override
 	public void render() {
-		for(Renderer renderer : renderers) {
+		for(RenderingLayer renderer : renderers) {
 			renderer.render();
 		}
 	}

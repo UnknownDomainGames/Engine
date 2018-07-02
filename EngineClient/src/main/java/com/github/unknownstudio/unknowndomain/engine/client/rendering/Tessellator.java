@@ -1,6 +1,6 @@
 package com.github.unknownstudio.unknowndomain.engine.client.rendering;
 
-import com.github.unknownstudio.unknowndomain.engine.client.shader.ShaderProgram;
+import com.github.unknownstudio.unknowndomain.engineapi.client.shader.ShaderProgram;
 import com.github.unknownstudio.unknowndomain.engine.client.util.BufferBuilder;
 import com.github.unknownstudio.unknowndomain.engine.client.util.VertexBufferObject;
 

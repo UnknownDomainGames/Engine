@@ -157,8 +157,7 @@ public enum KeyCode {
 	private static Map<Integer,KeyCode> code2Key = new HashMap<>();
 	static {
 		KeyCode[] values = values();
-		for (int i = 0; i < values.length; i++) {
-			KeyCode key = values[i];
+		for (KeyCode key : values) {
 			code2Key.put(key.code, key);
 		}
 	}

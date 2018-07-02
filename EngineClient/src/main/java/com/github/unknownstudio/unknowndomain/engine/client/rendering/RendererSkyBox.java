@@ -2,6 +2,7 @@ package com.github.unknownstudio.unknowndomain.engine.client.rendering;
 
 import com.github.unknownstudio.unknowndomain.engineapi.client.rendering.Renderer;
 
+import com.github.unknownstudio.unknowndomain.engineapi.client.shader.ShaderProgram;
 import org.lwjgl.opengl.GL11;
 
 import com.github.unknownstudio.unknowndomain.engine.client.resource.FileTexture2D;
@@ -22,7 +23,7 @@ public class RendererSkyBox implements Renderer {
         textures = texes;
     }
 
-    public void render(){
+    public void render(ShaderProgram shader){
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         for (int i = 0; i < 6; i++) {
             GL11.glPushMatrix();

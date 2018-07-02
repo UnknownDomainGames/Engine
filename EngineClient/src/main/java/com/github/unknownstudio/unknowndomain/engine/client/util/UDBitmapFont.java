@@ -32,7 +32,7 @@ import java.util.zip.GZIPOutputStream;
 public class UDBitmapFont {
     public static final byte[] MARKER = {0x55, 0x44, 0x62, 0x66};
     public static final byte[] ZERO_MARKER = {0,0,0,0,0,0,0,0};
-    private Map<Character, Rectangle> fontData;
+    private Map<Character, CharInfo> fontData;
 
     private int width;
 
@@ -46,7 +46,7 @@ public class UDBitmapFont {
     private BufferedImage data;
 
 
-    public UDBitmapFont(BufferedImage bitmap, Map<Character, Rectangle> data){
+    public UDBitmapFont(BufferedImage bitmap, Map<Character, CharInfo> data){
         texture = new Texture2D(bitmap);
         this.data = bitmap;
         width = bitmap.getWidth();
@@ -69,8 +69,8 @@ public class UDBitmapFont {
                 hei = ByteBuffer.wrap(bytes).getInt();
 
                 byte[] bytes1 = new byte[8];
+                Map<Character, CharInfo> fontdata = new HashMap<>();
                 fileInputStream.read(bytes1);
-                Map<Character, Rectangle> fontdata = new HashMap<>();
                 while (bytes1 != ZERO_MARKER){
                     ByteBuffer code = ByteBuffer.wrap(bytes1, 0, 4);
                     int x = ByteBuffer.wrap(bytes1, 4, 8).getInt();
@@ -80,7 +80,9 @@ public class UDBitmapFont {
                     int w = ByteBuffer.wrap(bytes).getInt();
                     fileInputStream.read(bytes);
                     int h = ByteBuffer.wrap(bytes).getInt();
-                    fontdata.put(StandardCharsets.UTF_16BE.decode(code).get(), new Rectangle(x,y,w,h));
+                    fileInputStream.read(bytes);
+                    int b = ByteBuffer.wrap(bytes).getInt();
+                    fontdata.put(StandardCharsets.UTF_16BE.decode(code).get(), new CharInfo(x,y,w,h,b));
                     fileInputStream.read(bytes1);
                 }
                 int bi = 0;
@@ -128,15 +130,16 @@ public class UDBitmapFont {
             fileOutputStream.write(MARKER);
             fileOutputStream.write(font.width);
             fileOutputStream.write(font.height);
-            for (Map.Entry<Character, Rectangle> entry:font.fontData.entrySet()) {
+            for (Map.Entry<Character, CharInfo> entry:font.fontData.entrySet()) {
                 byte[] bytes = new byte[4];
                 ByteBuffer buf = StandardCharsets.UTF_16BE.encode(String.valueOf(entry.getKey().charValue()));
                 buf.get(bytes, 4 - buf.limit(), buf.limit());
                 fileOutputStream.write(bytes);
-                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().x).array());
-                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().y).array());
+                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().posX).array());
+                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().posY).array());
                 fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().width).array());
                 fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().height).array());
+                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().baseline).array());
             }
             fileOutputStream.write(new byte[]{0,0,0,0,0,0,0,0});
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -152,6 +155,54 @@ public class UDBitmapFont {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public Map<Character, CharInfo> getFontData() {
+        return fontData;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public static class CharInfo{
+        private int width;
+        private int height;
+        private int posX;
+        private int posY;
+        private int baseline;
+
+        public CharInfo(int x, int y, int w, int h, int b) {
+            width = w;
+            height = h;
+            posX = x;
+            posY = y;
+            baseline = b;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public int getBaseline() {
+            return baseline;
+        }
+
+        public int getPosX() {
+            return posX;
+        }
+
+        public int getPosY() {
+            return posY;
+        }
+
+        public int getWidth() {
+            return width;
         }
     }
 }

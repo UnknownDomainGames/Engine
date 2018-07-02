@@ -49,6 +49,6 @@ public final class BlockPos {
 	
 	@Override
 	public String toString() {
-		return String.format("BlockPos(%i,%i,%i)", x, y, z);
+		return String.format("BlockPos(%d,%d,%d)", x, y, z);
 	}
 }

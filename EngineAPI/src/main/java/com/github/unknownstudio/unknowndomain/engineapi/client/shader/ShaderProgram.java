@@ -1,4 +1,4 @@
-package com.github.unknownstudio.unknowndomain.engine.client.shader;
+package com.github.unknownstudio.unknowndomain.engineapi.client.shader;
 
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;

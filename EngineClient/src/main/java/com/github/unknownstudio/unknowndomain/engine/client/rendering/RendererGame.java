@@ -1,17 +1,17 @@
 package com.github.unknownstudio.unknowndomain.engine.client.rendering;
 
 import com.github.unknownstudio.unknowndomain.engine.client.display.CameraDefault;
-import com.github.unknownstudio.unknowndomain.engine.client.shader.ShaderProgram;
+import com.github.unknownstudio.unknowndomain.engineapi.client.shader.ShaderProgram;
 import com.github.unknownstudio.unknowndomain.engine.client.shader.ShaderProgramDefault;
 import com.github.unknownstudio.unknowndomain.engineapi.client.display.Camera;
-import com.github.unknownstudio.unknowndomain.engineapi.client.rendering.Renderer;
 
+import com.github.unknownstudio.unknowndomain.engineapi.client.rendering.RenderingLayer;
 import org.lwjgl.opengl.GL11;
 
 /**
  * render for the scene
  */
-public final class RendererGame implements Renderer {
+public final class RendererGame implements RenderingLayer {
 
     private ShaderProgram shader;
     private Camera camera;
@@ -33,6 +33,7 @@ public final class RendererGame implements Renderer {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        RenderingLayer.super.render(shader);
     }
 
     public ShaderProgram getShader() {
