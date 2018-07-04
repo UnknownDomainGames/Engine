@@ -8,7 +8,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.reflect.TypeToken;
 
-public class SimpleRegistry<T extends RegistryEntry<?>> implements Registry<T> {
+public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 	
 	private final BiMap<ResourceLocation, T> registeredItems = HashBiMap.create();
 	@SuppressWarnings("serial")
@@ -56,6 +56,11 @@ public class SimpleRegistry<T extends RegistryEntry<?>> implements Registry<T> {
 	@Override
 	public Set<ResourceLocation> getKeys() {
 		return registeredItems.keySet();
+	}
+	
+	@Override
+	public Set<T> getValues() {
+		return registeredItems.values();
 	}
 
 	@Override
