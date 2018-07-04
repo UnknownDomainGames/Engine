@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import org.apache.commons.lang3.Validate;
 
 public class ResourceLocation {
+	
     private String domain;
     private String path;
 
