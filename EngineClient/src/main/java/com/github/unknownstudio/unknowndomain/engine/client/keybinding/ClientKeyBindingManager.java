@@ -35,7 +35,7 @@ public class ClientKeyBindingManager extends SimpleRegistry<KeyBinding>{
 		pressedMods = keyMods;
 		Collection<KeyBinding> keyBindings = codeToKeyBinding.get(keyCode.code | ((mods & 0x07) << 9));
 		for(KeyBinding keyBinding : keyBindings) {
-			keyBinding.setPressed(true);
+			keyBinding.handleKey(true);
 		}
 	}
 	
@@ -46,7 +46,7 @@ public class ClientKeyBindingManager extends SimpleRegistry<KeyBinding>{
 		pressedMods = keyMods;
 		Collection<KeyBinding> keyBindings = codeToKeyBinding.get(keyCode.code | ((mods & 0x07) << 9));
 		for(KeyBinding keyBinding : keyBindings) {
-			keyBinding.setPressed(false);
+			keyBinding.handleKey(false);
 		}
 	}
 	

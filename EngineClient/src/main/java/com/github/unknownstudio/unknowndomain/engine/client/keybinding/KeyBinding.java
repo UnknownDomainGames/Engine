@@ -1,11 +1,30 @@
 package com.github.unknownstudio.unknowndomain.engine.client.keybinding;
 
+import java.util.function.Consumer;
+
 import com.github.unknownstudio.unknowndomain.engineapi.keybinding.ActionMode;
 import com.github.unknownstudio.unknowndomain.engineapi.keybinding.KeyCode;
 import com.github.unknownstudio.unknowndomain.engineapi.keybinding.KeyModifier;
 import com.github.unknownstudio.unknowndomain.engineapi.registry.RegistryEntry;
 
 public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
+	
+	public static KeyBinding create(KeyCode code, ActionMode actionMode, Consumer<Void> onActive,
+			Consumer<Void> onInactive, KeyModifier... keyMods) {
+		return new KeyBinding(code, actionMode, keyMods) {
+			@Override
+			public void onActive() {
+				if(onActive != null)
+					onActive.accept(null);
+			}
+			
+			@Override
+			public void onInactive() {
+				if(onInactive != null)
+					onInactive.accept(null);
+			}
+		};
+	}
 
 	private final KeyCode defaultCode;
 	private final KeyModifier[] defaultMods;
@@ -16,7 +35,18 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
 	private ActionMode actionMode;
 	
 	private boolean actived = false;
-	private long lastStateChangeTime;
+	
+	public KeyBinding(KeyCode code) {
+		this(code, ActionMode.PRESS, KeyModifier.EMPTY);
+	}
+	
+	public KeyBinding(KeyCode code, ActionMode actionMode) {
+		this(code, actionMode, KeyModifier.EMPTY);
+	}
+	
+	public KeyBinding(KeyCode code, KeyModifier... keyMods) {
+		this(code, ActionMode.PRESS, keyMods);
+	}
 	
 	public KeyBinding(KeyCode code, ActionMode actionMode, KeyModifier... keyMods) {
 		this.defaultCode = code != null ? code : KeyCode.KEY_UNKNOWN;
@@ -67,14 +97,17 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
 		return actived;
 	}
 	
-	public long getLastStateChangeTime() {
-		return System.currentTimeMillis() - lastStateChangeTime;
+	public void handleKey(boolean pressed) {
+		if(getActionMode() == ActionMode.SWITCH && pressed) {
+			setActived(!isActived());
+		} else {
+			setActived(pressed);
+		}
 	}
 	
-	void setPressed(boolean pressed) {
-		actived = pressed;
-		lastStateChangeTime = System.currentTimeMillis();
-		if(pressed)
+	private void setActived(boolean actived) {
+		this.actived = actived;
+		if(actived)
 			onActive();
 		else 
 			onInactive();
