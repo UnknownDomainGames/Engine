@@ -1,7 +1,7 @@
 package com.github.unknownstudio.unknowndomain.engine.client;
 
 import com.github.unknownstudio.unknowndomain.engine.client.display.DefaultGameWindow;
-import com.github.unknownstudio.unknowndomain.engine.client.rendering.RendererGame;
+import com.github.unknownstudio.unknowndomain.engine.client.keybinding.ClientKeyBindingManager;
 import com.github.unknownstudio.unknowndomain.engine.client.rendering.RendererGlobal;
 import com.github.unknownstudio.unknowndomain.engineapi.math.Timer;
 import org.lwjgl.glfw.GLFW;
@@ -10,6 +10,7 @@ public class EngineClient implements com.github.unknownstudio.unknowndomain.engi
 	
     private DefaultGameWindow window;
     private RendererGlobal renderer;
+    private ClientKeyBindingManager keyBindingManager = new ClientKeyBindingManager();
 
     private Timer timer;
 
@@ -21,19 +22,17 @@ public class EngineClient implements com.github.unknownstudio.unknowndomain.engi
         gameLoop();
     }
 
-    @Override
     public void init() {
+    	keyBindingManager.update();
         renderer = new RendererGlobal();
         timer = new Timer();
         timer.init();
     }
 
-    @Override
     public void loop() {
 
     }
 
-    @Override
     public void terminate() {
 
     }
@@ -73,6 +72,16 @@ public class EngineClient implements com.github.unknownstudio.unknowndomain.engi
     }
 
     public void handleKeyPress(int key, int scancode, int action, int modifiers){
+    	switch (action) {
+		case GLFW.GLFW_PRESS:
+			getKeyBindingManager().handlePress(key, modifiers);
+			break;
+		case GLFW.GLFW_RELEASE:
+			getKeyBindingManager().handleRelease(key, modifiers);
+			break;
+		default:
+			break;
+		}
         if(key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS){
             GLFW.glfwSetWindowShouldClose(window.getHandle(), true);
         }
@@ -82,14 +91,27 @@ public class EngineClient implements com.github.unknownstudio.unknowndomain.engi
     public void handleTextInput(int codepoint, int modifiers){}
 
     public void handleMousePress(int button, int action, int modifiers){
-
+    	switch (action) {
+		case GLFW.GLFW_PRESS:
+			getKeyBindingManager().handlePress(button + 400, modifiers);
+			break;
+		case GLFW.GLFW_RELEASE:
+			getKeyBindingManager().handleRelease(button + 400, modifiers);
+			break;
+		default:
+			break;
+		}
+    }
+    
+    public void handleScroll(double xoffset, double yoffset) {
+        //renderer.getCamera().zoom((-yoffset / window.getHeight() * 2 + 1)*1.5);
     }
 
     public RendererGlobal getRenderer() {
         return renderer;
     }
 
-    public void handleScroll(double xoffset, double yoffset) {
-        //renderer.getCamera().zoom((-yoffset / window.getHeight() * 2 + 1)*1.5);
-    }
+	public ClientKeyBindingManager getKeyBindingManager() {
+		return keyBindingManager;
+	}
 }

@@ -4,16 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum KeyCode {
-	
-	/** Mouse buttons.*/
-    MOUSE_BUTTON_LEFT(0),
-    MOUSE_BUTTON_RIGHT(1),
-    MOUSE_BUTTON_3(2),
-    MOUSE_BUTTON_4(3),
-    MOUSE_BUTTON_5(4),
-    MOUSE_BUTTON_6(5),
-    MOUSE_BUTTON_7(6),
-    MOUSE_BUTTON_8(7),
 
 	/** Printable keys. */
 	KEY_SPACE(32), 
@@ -139,11 +129,21 @@ public enum KeyCode {
 	KEY_RIGHT_SUPER(347),
 	KEY_MENU(348),
 	
+	/** Mouse buttons.*/
+    MOUSE_BUTTON_LEFT(400),
+    MOUSE_BUTTON_RIGHT(401),
+    MOUSE_BUTTON_3(402),
+    MOUSE_BUTTON_4(403),
+    MOUSE_BUTTON_5(404),
+    MOUSE_BUTTON_6(405),
+    MOUSE_BUTTON_7(406),
+    MOUSE_BUTTON_8(407),
+	
 	/** The mouse wheel action. */
-	MOUSE_WHEEL_UP(400),
-	MOUSE_WHEEL_DOWN(401),
-	MOUSE_WHEEL_LEFT(402),
-	MOUSE_WHEEL_RIGHT(403),
+	MOUSE_WHEEL_UP(410),
+	MOUSE_WHEEL_DOWN(411),
+	MOUSE_WHEEL_LEFT(412),
+	MOUSE_WHEEL_RIGHT(413),
 	
 	/** The unknown key. */
 	KEY_UNKNOWN(-1);

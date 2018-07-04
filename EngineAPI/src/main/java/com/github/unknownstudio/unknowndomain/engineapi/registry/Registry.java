@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.github.unknownstudio.unknowndomain.engineapi.resource.ResourceLocation;
 
-public interface Registry<T extends RegistryEntry<?>> {
+public interface Registry<T extends RegistryEntry<T>> {
 
 	Class<T> getRegistryEntryType();
 
@@ -29,6 +29,8 @@ public interface Registry<T extends RegistryEntry<?>> {
 	boolean containsValue(T value);
 
 	Set<ResourceLocation> getKeys();
+	
+	Set<T> getValues();
 	
 	Set<Entry<ResourceLocation, T>> getEntries();
 }
