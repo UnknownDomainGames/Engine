@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL11.*;
 /**
  * render for any gui
  */
-public class RendererGui implements RenderingLayer {
+public class RendererGui extends RenderingLayer {
 
     private ShaderProgram shader;
     private AWTFontRenderer fontRenderer;
@@ -35,13 +35,13 @@ public class RendererGui implements RenderingLayer {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         fontRenderer.drawText("The quick brown fox jumps over the lazy dog.", 0,0,0xffffffff);
-        RenderingLayer.super.render(shader);
+        super.render();
     }
 
     @Override
     public void putRenderer(Renderer renderer) {
         if(renderer instanceof Gui){
-            RenderingLayer.super.putRenderer(renderer);
+            super.putRenderer(renderer);
         }
     }
 }

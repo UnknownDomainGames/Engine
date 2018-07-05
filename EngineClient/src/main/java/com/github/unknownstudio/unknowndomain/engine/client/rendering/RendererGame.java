@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 /**
  * render for the scene
  */
-public final class RendererGame implements RenderingLayer {
+public final class RendererGame extends RenderingLayer {
 
     private ShaderProgram shader;
     private Camera camera;
@@ -33,7 +33,7 @@ public final class RendererGame implements RenderingLayer {
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        RenderingLayer.super.render(shader);
+        super.render();
     }
 
     public ShaderProgram getShader() {

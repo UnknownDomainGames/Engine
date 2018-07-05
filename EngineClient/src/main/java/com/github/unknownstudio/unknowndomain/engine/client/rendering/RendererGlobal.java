@@ -3,9 +3,7 @@ package com.github.unknownstudio.unknowndomain.engine.client.rendering;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.unknownstudio.unknowndomain.engineapi.client.rendering.Renderer;
 import com.github.unknownstudio.unknowndomain.engineapi.client.rendering.RenderingLayer;
-import com.github.unknownstudio.unknowndomain.engineapi.client.shader.ShaderProgram;
 
 public class RendererGlobal {
 	
