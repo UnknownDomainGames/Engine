@@ -1,8 +1,8 @@
 package com.github.unknownstudio.unknowndomain.engineapi.resource;
 
-public interface ResourceReceiver {
+public interface ResourceListener<T extends Resource> {
 	/**
 	 * Update when ResourceManager update
 	 */
-	public void update(Resource resource);
+	public void update(T resource);
 }
