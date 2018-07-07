@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * The source represent the zip file
+ */
 public class ResourseSourceZip implements ResourceSource {
     private ZipFile zip;
 
