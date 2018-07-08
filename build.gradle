@@ -3,8 +3,8 @@ import org.gradle.internal.os.OperatingSystem
 apply plugin: "application"
 
 group 'com.github.unknownstudio'
-version '1.0-SNAPSHOT'
-mainClassName = "com.github.unknownstudio.unknowndomain.core.client.UnknownDomain"
+version '1.0.0'
+mainClassName = "unknowndomain.engine.client.UnknownDomain"
 
 project.ext.lwjglVersion = "3.1.6"
 
