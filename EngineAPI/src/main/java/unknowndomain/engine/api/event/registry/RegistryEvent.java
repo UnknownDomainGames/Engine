@@ -1,4 +1,4 @@
-package unknowndomain.engine.registry;
+package unknowndomain.engine.api.event.registry;
 
 import unknowndomain.engine.api.event.Event;
 import unknowndomain.engine.api.registry.Registry;
