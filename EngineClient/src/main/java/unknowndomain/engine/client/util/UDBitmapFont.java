@@ -11,9 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -136,11 +134,11 @@ public class UDBitmapFont {
                 ByteBuffer buf = StandardCharsets.UTF_16BE.encode(String.valueOf(entry.getKey().charValue()));
                 buf.get(bytes, 4 - buf.limit(), buf.limit());
                 fileOutputStream.write(bytes);
-                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().posX).array());
-                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().posY).array());
-                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().width).array());
-                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().height).array());
-                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().baseline).array());
+                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().getPosX()).array());
+                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().getPosY()).array());
+                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().getWidth()).array());
+                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().getHeight()).array());
+                fileOutputStream.write(ByteBuffer.allocate(4).putInt(entry.getValue().getBaseline()).array());
             }
             fileOutputStream.write(new byte[]{0,0,0,0,0,0,0,0});
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -179,12 +177,14 @@ public class UDBitmapFont {
         private int baseline;
 
         public CharInfo(int x, int y, int w, int h, int b) {
-            width = w;
-            height = h;
-            posX = x;
-            posY = y;
-            baseline = b;
+            setWidth(w);
+            setHeight(h);
+            setPosX(x);
+            setPosY(y);
+            setBaseline(b);
         }
+
+
 
         public int getHeight() {
             return height;
@@ -204,6 +204,26 @@ public class UDBitmapFont {
 
         public int getWidth() {
             return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public void setPosX(int posX) {
+            this.posX = posX;
+        }
+
+        public void setPosY(int posY) {
+            this.posY = posY;
+        }
+
+        public void setBaseline(int baseline) {
+            this.baseline = baseline;
         }
     }
 }

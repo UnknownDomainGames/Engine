@@ -104,7 +104,7 @@ public class ShaderProgramDefault extends ShaderProgram {
     }
 
     @Override
-    public void setUniform(String location, Matrix4f value) {
+    public void setUniform(String location, Object value) {
         setUniform(getUniformLocation(location), value);
     }
 }

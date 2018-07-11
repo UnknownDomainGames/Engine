@@ -1,7 +1,7 @@
 package unknowndomain.engine.api.mod;
 
 import unknowndomain.engine.api.util.versioning.ComparableVersion;
-
+//TODO: collect mod's class loader, instance of mod main class, mod config, mod looger, config dir.
 public class ModContainer {
 	
     private final String modid;

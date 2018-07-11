@@ -65,6 +65,8 @@ public class GLHelper {
                         buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2); // 50%
                     }
                 }
+            }catch (Exception e){
+                throw new IOException(String.format("cannot load resource: %s", resource), e);
             }
         }
 

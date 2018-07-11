@@ -8,7 +8,7 @@ dependencies {
     // compile "org.lwjgl:lwjgl-jemalloc:$lwjglVersion"
     // compile "org.lwjgl:lwjgl-lmdb:$lwjglVersion"
     // compile "org.lwjgl:lwjgl-lz4:$lwjglVersion"
-    // compile "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-nanovg:$lwjglVersion"
     // compile "org.lwjgl:lwjgl-nfd:$lwjglVersion"
     // compile "org.lwjgl:lwjgl-nuklear:$lwjglVersion"
     // compile "org.lwjgl:lwjgl-odbc:$lwjglVersion"
@@ -37,14 +37,14 @@ dependencies {
     // compile "org.lwjgl:lwjgl-jemalloc:$lwjglVersion:$lwjglNatives"
     // compile "org.lwjgl:lwjgl-lmdb:$lwjglVersion:$lwjglNatives"
     // compile "org.lwjgl:lwjgl-lz4:$lwjglVersion:$lwjglNatives"
-    // compile "org.lwjgl:lwjgl-nanovg:$lwjglVersion:$lwjglNatives"
+    compile "org.lwjgl:lwjgl-nanovg:$lwjglVersion:$lwjglNatives"
     // compile "org.lwjgl:lwjgl-nfd:$lwjglVersion:$lwjglNatives"
     // compile "org.lwjgl:lwjgl-nuklear:$lwjglVersion:$lwjglNatives"
     compile "org.lwjgl:lwjgl-openal:$lwjglVersion:$lwjglNatives"
     compile "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives"
     // compile "org.lwjgl:lwjgl-opengles:$lwjglVersion:$lwjglNatives"
     // compile "org.lwjgl:lwjgl-openvr:$lwjglVersion:$lwjglNatives"
-    //FIXME compile "org.lwjgl:lwjgl-ovr:$lwjglVersion:$lwjglNatives"
+    // compile "org.lwjgl:lwjgl-ovr:$lwjglVersion:$lwjglNatives"
     // compile "org.lwjgl:lwjgl-par:$lwjglVersion:$lwjglNatives"
     // compile "org.lwjgl:lwjgl-remotery:$lwjglVersion:$lwjglNatives"
     // compile "org.lwjgl:lwjgl-rpmalloc:$lwjglVersion:$lwjglNatives"
@@ -58,7 +58,6 @@ dependencies {
     // compile "org.lwjgl:lwjgl-zstd:$lwjglVersion:$lwjglNatives"
 
     compile 'org.joml:joml:1.9.9'
-    compile 'javax.vecmath:vecmath:1.5.2'
 
     compile 'com.google.code.gson:gson:2.8.5'
     compile 'com.google.guava:guava:25.1-jre'

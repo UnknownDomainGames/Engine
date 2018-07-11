@@ -8,6 +8,11 @@ import org.lwjgl.opengl.GL30;
 import unknowndomain.engine.client.util.GLHelper;
 
 public class ShaderProgramGui extends ShaderProgramDefault {
+
+    private boolean useAlphaChannel;
+
+    private boolean useTexture;
+
     @Override
     public void createShader() {
 
@@ -65,5 +70,23 @@ public class ShaderProgramGui extends ShaderProgramDefault {
 
 
         GL20.glUseProgram(0);
+    }
+
+    public boolean isUsingAlphaChannel() {
+        return useAlphaChannel;
+    }
+
+    public void setUseAlphaChannel(boolean useAlphaChannel) {
+        this.useAlphaChannel = useAlphaChannel;
+        setUniform("usingAlpha", useAlphaChannel);
+    }
+
+    public boolean isUsingTexture() {
+        return useTexture;
+    }
+
+    public void setUseTexture(boolean useTexture) {
+        this.useTexture = useTexture;
+        setUniform("usingTex", useAlphaChannel);
     }
 }
