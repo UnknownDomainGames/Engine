@@ -1,38 +1,24 @@
 package unknowndomain.engine.api.mod;
 
+import java.nio.file.Path;
+
+import org.slf4j.Logger;
+
 import unknowndomain.engine.api.util.versioning.ComparableVersion;
-//TODO: collect mod's class loader, instance of mod main class, mod config, mod looger, config dir.
-public class ModContainer {
+
+public interface ModContainer {
+
+	String getModId();
+
+	ComparableVersion getVersion();
+
+	Object getMainClassInstance();
 	
-    private final String modid;
-    private final ComparableVersion version;
-    
-    private String name;
-    
-    private Object instance;
-
-    public ModContainer(String modid, String version){
-        this.modid = modid;
-        this.version = new ComparableVersion(version);
-    }
-
-	public String getModid() {
-		return modid;
-	}
-
-	public ComparableVersion getVersion() {
-		return version;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Object getInstance() {
-		return instance;
-	}
+	Path getSource();
+	
+	Logger getLogger();
+	
+	boolean isEnable();
+	
+	void setEnable(boolean enable);
 }
