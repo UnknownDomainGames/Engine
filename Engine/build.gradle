@@ -1,5 +1,6 @@
 dependencies {
     compile(project(':EngineAPI')) {
-        exclude group:'org.lwjgl'
+        exclude group: 'org.lwjgl'
+        exclude group: 'org.joml'
     }
 }
