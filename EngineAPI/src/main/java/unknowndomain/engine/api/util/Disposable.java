@@ -1,6 +1,6 @@
 package unknowndomain.engine.api.util;
 
-public interface Dispose {
+public interface Disposable {
 
 	void dispose();
 }
