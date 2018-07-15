@@ -1,8 +1,9 @@
 package unknowndomain.engine.api.mod;
 
 import java.util.List;
+import java.util.Map;
 
-public interface ModDescriptor {
+public interface ModMetadata {
 	
 	String getName();
 
@@ -13,4 +14,6 @@ public interface ModDescriptor {
 	List<String> getAuthors();
 	
 	String getLogoFile();
+	
+	Map<String, Object> getMetadata();
 }

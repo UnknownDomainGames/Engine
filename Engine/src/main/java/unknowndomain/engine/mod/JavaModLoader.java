@@ -8,11 +8,11 @@ import org.apache.commons.lang3.Validate;
 import unknowndomain.engine.api.mod.ModContainer;
 import unknowndomain.engine.api.mod.ModLoader;
 
-public class PathModLoader implements ModLoader {
+public class JavaModLoader implements ModLoader {
 	
 	private final Path path;
 	
-	public PathModLoader(Path path) {
+	public JavaModLoader(Path path) {
 		Validate.notNull(path);
 		if(!Files.exists(path))
 			throw new IllegalArgumentException(path.toAbsolutePath() + " don't exist.");
@@ -23,9 +23,21 @@ public class PathModLoader implements ModLoader {
 	}
 
 	@Override
-	public ModContainer findMod(String modId) {
+	public ModContainer loadMod(String modId) {
 		// TODO 自动生成的方法存根
 		return null;
 	}
 
+	@Override
+	public ModContainer getModContainer(String modId) {
+		// TODO 自动生成的方法存根
+		return null;
+	}
+
+	@Override
+	public boolean hasMod(String modId) {
+		// TODO 自动生成的方法存根
+		return false;
+	}
+	
 }

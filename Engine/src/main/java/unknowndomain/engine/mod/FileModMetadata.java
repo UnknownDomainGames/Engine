@@ -1,10 +1,11 @@
 package unknowndomain.engine.mod;
 
 import java.util.List;
+import java.util.Map;
 
-import unknowndomain.engine.api.mod.ModDescriptor;
+import unknowndomain.engine.api.mod.ModMetadata;
 
-public class FileModDescriptor implements ModDescriptor {
+public class FileModMetadata implements ModMetadata {
 	
 	private String name;
 	private String description;
@@ -38,6 +39,12 @@ public class FileModDescriptor implements ModDescriptor {
 
 	@Override
 	public String getLogoFile() {
+		// TODO 自动生成的方法存根
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getMetadata() {
 		// TODO 自动生成的方法存根
 		return null;
 	}

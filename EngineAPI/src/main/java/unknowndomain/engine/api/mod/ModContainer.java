@@ -21,4 +21,6 @@ public interface ModContainer {
 	boolean isEnable();
 	
 	void setEnable(boolean enable);
+	
+	ModMetadata getMetadata();
 }

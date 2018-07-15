@@ -1,16 +1,19 @@
 package unknowndomain.engine.mod;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import unknowndomain.engine.api.mod.ModDescriptor;
+import unknowndomain.engine.api.mod.ModMetadata;
 
-public class SimpleModDescriptor implements ModDescriptor {
+public class SimpleModMetadata implements ModMetadata {
 	
 	private String name;
 	private String description;
 	private String url;
 	private List<String> authors;
 	private String logoFile;
+	private final Map<String, Object> metadata = new HashMap<>();
 	
 	@Override
 	public String getName() {
@@ -55,5 +58,10 @@ public class SimpleModDescriptor implements ModDescriptor {
 	
 	public void setLogoFile(String logoFile) {
 		this.logoFile = logoFile;
+	}
+
+	@Override
+	public Map<String, Object> getMetadata() {
+		return metadata;
 	}
 }

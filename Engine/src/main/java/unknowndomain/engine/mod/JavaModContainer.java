@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import unknowndomain.engine.api.mod.ModContainer;
+import unknowndomain.engine.api.mod.ModMetadata;
 import unknowndomain.engine.api.util.versioning.ComparableVersion;
 //TODO: collect mod's class loader, instance of mod main class, mod config, mod looger, config dir.
 public class JavaModContainer implements ModContainer {
@@ -16,6 +17,8 @@ public class JavaModContainer implements ModContainer {
     private final Logger logger;
     
     private Object instance;
+    
+    private ModMetadata metadata;
 
     public JavaModContainer(String modid, String version){
         this.modid = modid;
@@ -59,5 +62,10 @@ public class JavaModContainer implements ModContainer {
 	public void setEnable(boolean enable) {
 		// TODO 自动生成的方法存根
 		
+	}
+
+	@Override
+	public ModMetadata getMetadata() {
+		return metadata;
 	}
 }
