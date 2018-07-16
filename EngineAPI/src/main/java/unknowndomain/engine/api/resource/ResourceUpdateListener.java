@@ -10,7 +10,7 @@ public interface ResourceUpdateListener<T extends Resource> extends ResourceList
 	public Collection<String> getListenPaths();
 	@Override
 	public default void update(T resource) {
-		if (this.getListenPaths().contains(resource.getURL().getPath())) {
+		if (this.getListenPaths().contains(resource.getPath())) {
 			this.updateResource(resource);
 		}
 	}

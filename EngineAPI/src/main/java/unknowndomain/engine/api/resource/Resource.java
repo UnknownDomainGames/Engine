@@ -1,8 +1,5 @@
 package unknowndomain.engine.api.resource;
 
-import java.net.URL;
-import java.nio.file.Path;
-
 public interface Resource {
 	/**
 	 * 
@@ -13,5 +10,5 @@ public interface Resource {
 	 * 
 	 * @return resource path
 	 */
-	public Path getPath();
+	public String getPath();
 }

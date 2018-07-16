@@ -18,7 +18,7 @@ public class LanguageResource extends JsonResource {
     }
 
     public Locale getLocale() {
-        return Locale.forLanguageTag(FilenameUtils.getBaseName(getPath().getFileName().toString()));
+        return Locale.forLanguageTag(FilenameUtils.getBaseName(getJPath().getFileName().toString()));
     }
 
     public Map<String, String> getLanguageMap() {

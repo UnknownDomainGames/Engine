@@ -17,7 +17,7 @@ public class FileResource implements Resource {
     @Override
     public byte[] getContent() {
         try {
-            return Files.readAllBytes(getPath());
+            return Files.readAllBytes(getJPath());
         } catch (IOException e) {
             Platform.getLogger().error("Cannot read resource " + getPath(), e);
             return new byte[0];
@@ -25,8 +25,12 @@ public class FileResource implements Resource {
     }
 
     @Override
-    public Path getPath() {
-        return path;
+    public String getPath() {
+        return path.toString();
+    }
+    
+    protected Path getJPath() {
+    	return path;
     }
 
     public String toString() {
@@ -34,6 +38,6 @@ public class FileResource implements Resource {
     }
 
     public JsonResource toJsonResource() {
-        return getPath().endsWith(".json") ? new JsonResource(getPath()) : null;
+        return getPath().endsWith(".json") ? new JsonResource(getJPath()) : null;
     }
 }

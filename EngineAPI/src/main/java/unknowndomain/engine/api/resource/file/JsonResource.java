@@ -19,7 +19,7 @@ public class JsonResource extends FileResource {
 
     public JsonObject toJsonObject() {
         try {
-            return gson.fromJson(Files.newBufferedReader(getPath()), JsonObject.class);
+            return gson.fromJson(Files.newBufferedReader(getJPath()), JsonObject.class);
         } catch (IOException e) {
             Platform.getLogger().error("Cannot read JSON", e);
             return new JsonObject();
@@ -28,7 +28,7 @@ public class JsonResource extends FileResource {
 
     public <T> T deserialize(Type type) {
         try {
-            return gson.fromJson(Files.newBufferedReader(getPath()), type);
+            return gson.fromJson(Files.newBufferedReader(getJPath()), type);
         } catch (IOException e) {
             Platform.getLogger().error("Cannot read JSON", e);
             return null;
@@ -36,6 +36,6 @@ public class JsonResource extends FileResource {
     }
 
     public LanguageResource toLanguageResource() {
-        return getPath().toString().contains("lang/") ? new LanguageResource(getPath()) : null;
+        return getPath().toString().contains("lang/") ? new LanguageResource(getJPath()) : null;
     }
 }
