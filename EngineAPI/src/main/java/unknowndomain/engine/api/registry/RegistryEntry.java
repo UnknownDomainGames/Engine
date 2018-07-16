@@ -2,37 +2,39 @@ package unknowndomain.engine.api.registry;
 
 import com.google.common.reflect.TypeToken;
 
+import unknowndomain.engine.api.util.DomainedPath;
+
 public interface RegistryEntry<T> {
 
-	RegistryName getRegistryName();
+	DomainedPath getRegistryName();
 
-	T setRegistryName(RegistryName location);
+	T setRegistryName(DomainedPath location);
 	
 	Class<T> getRegistryType();
 
 	default T setRegistryName(String name){
-		return setRegistryName(new RegistryName(name));
+		return setRegistryName(new DomainedPath(name));
 	}
 	
 	public static abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<T> {
 		
 		private final TypeToken<T> token = new TypeToken<T>(getClass()){};
-		private RegistryName location;
+		private DomainedPath location;
 		
 		@Override
-		public final RegistryName getRegistryName() {
+		public final DomainedPath getRegistryName() {
 			return location;
 		}
 		
 		@SuppressWarnings("unchecked")
 		@Override
-		public final T setRegistryName(RegistryName location) {
+		public final T setRegistryName(DomainedPath location) {
 			this.location = location;
 			return (T) this;
 		}
 		
 		public final T setRegistryName(String domain, String path) {
-			return setRegistryName(new RegistryName(domain, path));
+			return setRegistryName(new DomainedPath(domain, path));
 		}
 		
 		public final T setRegistryName(String path) {

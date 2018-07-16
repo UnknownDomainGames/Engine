@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import unknowndomain.engine.api.Platform;
 
-import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;

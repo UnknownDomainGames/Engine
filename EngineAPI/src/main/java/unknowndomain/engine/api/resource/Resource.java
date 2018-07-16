@@ -1,14 +1,8 @@
 package unknowndomain.engine.api.resource;
 
+import unknowndomain.engine.api.util.DomainedPath;
+
 public interface Resource {
-	/**
-	 * 
-	 * @return content whitch you want to write
-	 */
-	public byte[] getContent();
-	/**
-	 * 
-	 * @return resource path
-	 */
-	public String getPath();
+	
+	public DomainedPath getPath();
 }

@@ -1,12 +1,14 @@
 package unknowndomain.engine.api.registry;
 
+import unknowndomain.engine.api.util.DomainedPath;
+
 public interface IdentifiedRegistry<T extends RegistryEntry<T>> extends Registry<T>{
 
 	int getId(T obj);
 	
-	int getId(RegistryName key);
+	int getId(DomainedPath key);
 	
-	RegistryName getKey(int id);
+	DomainedPath getKey(int id);
 	
 	T getValue(int id);
 }

@@ -1,4 +1,4 @@
-package unknowndomain.engine.api.registry;
+package unknowndomain.engine.api.util;
 
 import com.google.common.base.Strings;
 
@@ -6,19 +6,19 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.Validate;
 
-public class RegistryName {
+public class DomainedPath {
 	
     private String domain;
     private String path;
 
-    protected RegistryName() {}
+    protected DomainedPath() {}
 
-    public RegistryName(String domain, @Nonnull String path){
+    public DomainedPath(String domain, @Nonnull String path){
         this.domain = Strings.nullToEmpty(domain);
         this.path = Validate.notEmpty(path);;
     }
 
-    public RegistryName(@Nonnull String resource){
+    public DomainedPath(@Nonnull String resource){
     	Validate.notEmpty(resource);
 
         String args[] = resource.split(":", 2);
@@ -58,10 +58,10 @@ public class RegistryName {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!(obj instanceof RegistryName))
+		if (!(obj instanceof DomainedPath))
 			return false;
 		
-		RegistryName other = (RegistryName) obj;
+		DomainedPath other = (DomainedPath) obj;
 		
 		if (!domain.equals(other.domain))
 			return false;
