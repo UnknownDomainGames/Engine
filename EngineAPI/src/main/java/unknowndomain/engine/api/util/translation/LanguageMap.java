@@ -1,13 +1,11 @@
 package unknowndomain.engine.api.util.translation;
 
-import unknowndomain.engine.api.resource.ResourceLocation;
-
 public interface LanguageMap {
     default String format(String key) {
-        return format(new ResourceLocation(key));
+        return format("", key);
     }
 
-    default String format(ResourceLocation key, Object... params) {
+    default String format(String domain, String key, Object... params) {
         return String.format(format(key), params);
     }
 
@@ -21,7 +19,7 @@ public interface LanguageMap {
      * @param key Translation key, grouped in Mod.
      * @return Localized message
      */
-    String format(ResourceLocation key);
+    String format(String domain, String key);
 
-    boolean hasKey(ResourceLocation key);
+    boolean hasKey(String domain, String key);
 }

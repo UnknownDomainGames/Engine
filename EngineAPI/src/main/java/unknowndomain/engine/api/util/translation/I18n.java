@@ -1,7 +1,5 @@
 package unknowndomain.engine.api.util.translation;
 
-import unknowndomain.engine.api.resource.ResourceLocation;
-
 import javax.annotation.Nonnull;
 
 public final class I18n {
@@ -14,7 +12,7 @@ public final class I18n {
         return getLanguageMap().format(key);
     }
 
-    public static String format(ResourceLocation key, Object... params) {
+    public static String format(String domain, String key, Object... params) {
         return getLanguageMap().format(key, params);
     }
 
@@ -22,7 +20,7 @@ public final class I18n {
         return getLanguageMap().format(key, params);
     }
 
-    public static String format(ResourceLocation key) {
+    public static String format(String domain, String key) {
         return getLanguageMap().format(key);
     }
 }

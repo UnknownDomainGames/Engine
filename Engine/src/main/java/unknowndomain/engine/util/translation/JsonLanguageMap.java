@@ -2,8 +2,6 @@ package unknowndomain.engine.util.translation;
 
 import com.google.common.collect.Lists;
 import unknowndomain.engine.api.Platform;
-import unknowndomain.engine.api.mod.ModContainer;
-import unknowndomain.engine.api.resource.ResourceLocation;
 import unknowndomain.engine.api.resource.file.FileResource;
 import unknowndomain.engine.api.resource.file.LanguageResource;
 import unknowndomain.engine.api.util.translation.LanguageMap;
@@ -31,9 +29,9 @@ public class JsonLanguageMap implements LanguageMap {
     }
 
     @Override
-    public String format(ResourceLocation key) {
+    public String format(String domain, String key) {
         try {
-            String formatted = languageMap.get(key.getDomain()).get(Platform.getLocale()).get(key.getPath());
+            String formatted = languageMap.get(domain).get(Platform.getLocale()).get(key);
             return formatted == null ? key.toString() : formatted;
         } catch (NullPointerException e) {
             return key.toString();
@@ -41,9 +39,9 @@ public class JsonLanguageMap implements LanguageMap {
     }
 
     @Override
-    public boolean hasKey(ResourceLocation key) {
+    public boolean hasKey(String domain, String key) {
         try {
-            return languageMap.get(key.getDomain()).get(Platform.getLocale()).containsKey(key.getPath());
+            return languageMap.get(domain).get(Platform.getLocale()).containsKey(key);
         } catch (NullPointerException e) {
             return false;
         }
