@@ -1,6 +1,6 @@
 package unknowndomain.engine.client;
 
-import unknowndomain.engine.api.client.GameClient;
+import unknowndomain.engine.api.Engine;
 import unknowndomain.engine.api.math.Timer;
 import unknowndomain.engine.api.mod.ModManager;
 import unknowndomain.engine.api.resource.ResourcePackManager;
@@ -10,7 +10,7 @@ import unknowndomain.engine.client.rendering.RendererGlobal;
 
 import org.lwjgl.glfw.GLFW;
 
-public class EngineClient implements GameClient {
+public class EngineClient implements Engine {
 	
     private DefaultGameWindow window;
     private RendererGlobal renderer;

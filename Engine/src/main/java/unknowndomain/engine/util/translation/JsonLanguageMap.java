@@ -14,7 +14,7 @@ public class JsonLanguageMap implements LanguageMap {
     public Map<String, Map<Locale, Map<String, String>>> languageMap = new HashMap<>();
 
     public void reload() {
-        Lists.reverse(Platform.getGame().getResourcePackManager().getResources()).forEach(resourcePack -> resourcePack.getResources().forEach(resource -> {
+        Lists.reverse(Platform.getEngine().getResourcePackManager().getResources()).forEach(resourcePack -> resourcePack.getResources().forEach(resource -> {
             FileResource fileResource = (FileResource) resource;
             if (fileResource.toJsonResource() != null && fileResource.toJsonResource().toLanguageResource() != null) {
                 LanguageResource languageResource = fileResource.toJsonResource().toLanguageResource();
