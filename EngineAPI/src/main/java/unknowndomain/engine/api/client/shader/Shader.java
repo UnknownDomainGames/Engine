@@ -27,11 +27,11 @@ public class Shader {
         try {
             glShaderSource(shaderId, IOUtils.toString(IOUtils.resourceToURL(location, Shader.class.getClassLoader()), "utf-8"));
         } catch (IOException e) {
-            Platform.getClientLogger().warn(String.format("Error reading shader code for %s", location), e);
+            Platform.getLogger().warn(String.format("Error reading shader code for %s", location), e);
         }
         glCompileShader(shaderId);
         if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
-            Platform.getClientLogger().warn(String.format("Error compiling shader code for %s, log: %s", location, glGetShaderInfoLog(shaderId, 2048)));
+            Platform.getLogger().warn(String.format("Error compiling shader code for %s, log: %s", location, glGetShaderInfoLog(shaderId, 2048)));
         }
     }
 
