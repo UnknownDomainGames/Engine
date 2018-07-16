@@ -1,13 +1,16 @@
 package unknowndomain.engine.client;
 
+import unknowndomain.engine.api.client.GameClient;
 import unknowndomain.engine.api.math.Timer;
+import unknowndomain.engine.api.mod.ModManager;
+import unknowndomain.engine.api.resource.ResourcePackManager;
 import unknowndomain.engine.client.display.DefaultGameWindow;
 import unknowndomain.engine.client.keybinding.ClientKeyBindingManager;
 import unknowndomain.engine.client.rendering.RendererGlobal;
 
 import org.lwjgl.glfw.GLFW;
 
-public class EngineClient implements unknowndomain.engine.api.client.GameClient{
+public class EngineClient implements GameClient {
 	
     private DefaultGameWindow window;
     private RendererGlobal renderer;
@@ -115,4 +118,14 @@ public class EngineClient implements unknowndomain.engine.api.client.GameClient{
 	public ClientKeyBindingManager getKeyBindingManager() {
 		return keyBindingManager;
 	}
+
+    @Override
+    public ModManager getModManager() {
+        return null; // TODO Inject Mod Manager
+    }
+
+    @Override
+    public ResourcePackManager getResourcePackManager() {
+        return null;
+    }
 }

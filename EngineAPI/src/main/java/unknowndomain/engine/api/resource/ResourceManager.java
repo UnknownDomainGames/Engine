@@ -1,16 +1,20 @@
 package unknowndomain.engine.api.resource;
 
 
+import java.util.List;
+
 public interface ResourceManager<T extends Resource> {
 	/**
 	 * 
 	 * @param url
 	 * @return resource
 	 */
-	public T getResource(String path);
+	T getResource(String path);
 	/**
 	 * 
 	 * @param resource
 	 */
-	public void updateResource(T resource);
+	void updateResource(T resource);
+
+	List<T> getResources();
 }

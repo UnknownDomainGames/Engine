@@ -23,4 +23,6 @@ public interface ModContainer {
 	void setEnable(boolean enable);
 	
 	ModMetadata getMetadata();
+
+	ClassLoader getClassLoader();
 }

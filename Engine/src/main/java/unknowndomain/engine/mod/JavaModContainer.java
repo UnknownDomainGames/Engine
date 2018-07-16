@@ -68,4 +68,9 @@ public class JavaModContainer implements ModContainer {
 	public ModMetadata getMetadata() {
 		return metadata;
 	}
+
+	@Override
+	public ClassLoader getClassLoader() {
+		return null;
+	}
 }
