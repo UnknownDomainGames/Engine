@@ -1,4 +1,4 @@
-package unknowndomain.engine.api.resource;
+package unknowndomain.engine.api.registry;
 
 import com.google.common.base.Strings;
 
@@ -6,19 +6,19 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.Validate;
 
-public class ResourceLocation {
+public class RegistryName {
 	
     private String domain;
     private String path;
 
-    protected ResourceLocation() {}
+    protected RegistryName() {}
 
-    public ResourceLocation(String domain, @Nonnull String path){
+    public RegistryName(String domain, @Nonnull String path){
         this.domain = Strings.nullToEmpty(domain);
         this.path = Validate.notEmpty(path);;
     }
 
-    public ResourceLocation(@Nonnull String resource){
+    public RegistryName(@Nonnull String resource){
     	Validate.notEmpty(resource);
 
         String args[] = resource.split(":", 2);
@@ -50,27 +50,28 @@ public class ResourceLocation {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof ResourceLocation))
-            return false;
+	public int hashCode() {
+		return domain.hashCode() * 31 + path.hashCode();
+	}
 
-        ResourceLocation resourceLocation = (ResourceLocation) obj;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof RegistryName))
+			return false;
+		
+		RegistryName other = (RegistryName) obj;
+		
+		if (!domain.equals(other.domain))
+			return false;
+		if (!path.equals(other.path))
+			return false;
+		
+		return true;
+	}
 
-        if(!resourceLocation.getDomain().equals(getDomain()))
-            return false;
-
-        if(!resourceLocation.getPath().equals(getPath()))
-            return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return getDomain().hashCode()*31+getPath().hashCode();
-    }
-
-    @Override
+	@Override
     public String toString() {
         return Strings.isNullOrEmpty(getDomain())?getPath():getDomain()+":"+getPath();
     }

@@ -2,35 +2,43 @@ package unknowndomain.engine.api.registry;
 
 import com.google.common.reflect.TypeToken;
 
-import unknowndomain.engine.api.resource.ResourceLocation;
-
 public interface RegistryEntry<T> {
 
-	ResourceLocation getRegistryName();
+	RegistryName getRegistryName();
 
-	T setRegistryName(ResourceLocation location);
+	T setRegistryName(RegistryName location);
 	
 	Class<T> getRegistryType();
 
 	default T setRegistryName(String name){
-		return setRegistryName(new ResourceLocation(name));
+		return setRegistryName(new RegistryName(name));
 	}
 	
 	public static abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<T> {
 		
 		private final TypeToken<T> token = new TypeToken<T>(getClass()){};
-		private ResourceLocation location;
+		private RegistryName location;
 		
 		@Override
-		public final ResourceLocation getRegistryName() {
+		public final RegistryName getRegistryName() {
 			return location;
 		}
 		
 		@SuppressWarnings("unchecked")
 		@Override
-		public final T setRegistryName(ResourceLocation location) {
+		public final T setRegistryName(RegistryName location) {
 			this.location = location;
 			return (T) this;
+		}
+		
+		public final T setRegistryName(String domain, String path) {
+			return setRegistryName(new RegistryName(domain, path));
+		}
+		
+		public final T setRegistryName(String path) {
+			throw new UnsupportedOperationException();
+			//TODO: 
+			//return setRegistryName(new ResourceLocation(domain, path));
 		}
 
 		@SuppressWarnings("unchecked")

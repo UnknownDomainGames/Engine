@@ -7,11 +7,9 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.reflect.TypeToken;
 
-import unknowndomain.engine.api.resource.ResourceLocation;
-
 public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 	
-	private final BiMap<ResourceLocation, T> registeredItems = HashBiMap.create();
+	private final BiMap<RegistryName, T> registeredItems = HashBiMap.create();
 	@SuppressWarnings("serial")
 	private final TypeToken<T> token = new TypeToken<T>(getClass()) {};
 	
@@ -26,7 +24,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
 	@Override
 	public T register(T obj) {
-		ResourceLocation key = obj.getRegistryName();
+		RegistryName key = obj.getRegistryName();
 		if(registeredItems.containsKey(key))
 			throw new RegisterException("\""+key+"\" has been registered.");
 		
@@ -35,17 +33,17 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 	}
 
 	@Override
-	public T getValue(ResourceLocation key) {
+	public T getValue(RegistryName key) {
 		return registeredItems.get(key);
 	}
 
 	@Override
-	public ResourceLocation getKey(T value) {
+	public RegistryName getKey(T value) {
 		return registeredItems.inverse().get(value);
 	}
 
 	@Override
-	public boolean containsKey(ResourceLocation key) {
+	public boolean containsKey(RegistryName key) {
 		return registeredItems.containsKey(key);
 	}
 
@@ -55,7 +53,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 	}
 
 	@Override
-	public Set<ResourceLocation> getKeys() {
+	public Set<RegistryName> getKeys() {
 		return registeredItems.keySet();
 	}
 	
@@ -65,7 +63,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 	}
 
 	@Override
-	public Set<Entry<ResourceLocation, T>> getEntries() {
+	public Set<Entry<RegistryName, T>> getEntries() {
 		return registeredItems.entrySet();
 	}
 }

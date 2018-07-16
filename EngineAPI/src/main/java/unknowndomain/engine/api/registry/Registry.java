@@ -1,9 +1,6 @@
 package unknowndomain.engine.api.registry;
 
 import java.util.Map.Entry;
-
-import unknowndomain.engine.api.resource.ResourceLocation;
-
 import java.util.Set;
 
 public interface Registry<T extends RegistryEntry<T>> {
@@ -17,21 +14,21 @@ public interface Registry<T extends RegistryEntry<T>> {
 			register(obj);
 	}
 
-	T getValue(ResourceLocation registryName);
+	T getValue(RegistryName registryName);
 
 	default T getValue(String registryName) {
-		return getValue(new ResourceLocation(registryName));
+		return getValue(new RegistryName(registryName));
 	}
 	
-	ResourceLocation getKey(T value);
+	RegistryName getKey(T value);
 
-	boolean containsKey(ResourceLocation key);
+	boolean containsKey(RegistryName key);
 
 	boolean containsValue(T value);
 
-	Set<ResourceLocation> getKeys();
+	Set<RegistryName> getKeys();
 	
 	Set<T> getValues();
 	
-	Set<Entry<ResourceLocation, T>> getEntries();
+	Set<Entry<RegistryName, T>> getEntries();
 }
