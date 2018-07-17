@@ -1,8 +1,9 @@
-package unknowndomain.engine.api.unclassified;
+package unknowndomain.engine.api.resource;
+
+import unknowndomain.engine.api.util.DomainedPath;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ public class ResourseSourceZip implements MinecraftResourcePack {
     }
 
     @Override
-    public Resource load(URL path) {
+    public Resource load(DomainedPath path) {
         String p = String.format("assets/%s", path.getPath());
         ZipEntry entry = zip.getEntry(p);
         if (entry == null) return null;

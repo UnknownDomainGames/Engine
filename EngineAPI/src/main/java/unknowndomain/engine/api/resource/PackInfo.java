@@ -1,4 +1,4 @@
-package unknowndomain.engine.api.unclassified;
+package unknowndomain.engine.api.resource;
 
 public interface PackInfo {
     String name();
