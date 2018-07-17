@@ -1,20 +1,10 @@
 package unknowndomain.engine.api.resource;
 
+import unknowndomain.engine.api.util.DomainedPath;
 
-import java.util.List;
+public interface ResourceManager {
 
-public interface ResourceManager<T extends Resource> {
-	/**
-	 * 
-	 * @param url
-	 * @return resource
-	 */
-	T getResource(String path);
-	/**
-	 * 
-	 * @param resource
-	 */
-	void updateResource(T resource);
+	boolean exists(DomainedPath path);
 
-	List<T> getResources();
+	boolean isFile(DomainedPath path);
 }
