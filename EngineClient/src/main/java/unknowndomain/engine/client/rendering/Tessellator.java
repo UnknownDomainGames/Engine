@@ -43,6 +43,10 @@ public class Tessellator {
             ShaderProgram.pointVertexAttribute(1, 4, buffer.getOffset(), ((buffer.isPosEnabled() ? 3 : 0) + (buffer.isTexEnabled() ? 2 : 0)) * Float.BYTES);
             ShaderProgram.enableVertexAttrib(1);
         }
+        if (buffer.isNormalEnabled()) {
+            ShaderProgram.pointVertexAttribute(3, 3, buffer.getOffset(), ((buffer.isPosEnabled() ? 3 : 0) + (buffer.isTexEnabled() ? 2 : 0) + (buffer.isColorEnabled() ? 4 : 0)) * Float.BYTES);
+            ShaderProgram.enableVertexAttrib(3);
+        }
         vbo.unbind();
         vbo.bindVAO();
 

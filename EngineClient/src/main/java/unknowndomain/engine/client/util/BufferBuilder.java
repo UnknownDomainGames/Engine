@@ -24,6 +24,7 @@ public class BufferBuilder {
     private boolean usePos;
     private boolean useColor;
     private boolean useTex;
+    private boolean useNormal;
 
     public boolean isDrawing() {
         return isDrawing;
@@ -45,7 +46,11 @@ public class BufferBuilder {
         return useTex;
     }
 
-    public void begin(int mode, boolean pos, boolean color, boolean tex){
+    public boolean isNormalEnabled() {
+        return useNormal;
+    }
+
+    public void begin(int mode, boolean pos, boolean color, boolean tex, boolean normal){
         if (isDrawing){
             throw new IllegalStateException("Already drawing!");
         }
@@ -56,6 +61,7 @@ public class BufferBuilder {
             usePos = pos;
             useColor = color;
             useTex = tex;
+            useNormal = normal;
             byteBuffer.limit(byteBuffer.capacity());
         }
     }
@@ -94,11 +100,12 @@ public class BufferBuilder {
         usePos = false;
         useColor = false;
         useTex = false;
+        useNormal = false;
         vertexCount = 0;
     }
 
     public int getOffset(){
-        return (usePos ? Float.BYTES * 3 : 0) + (useColor ? Float.BYTES * 4 : 0) + (useTex ? Float.BYTES * 2 : 0);
+        return (usePos ? Float.BYTES * 3 : 0) + (useColor ? Float.BYTES * 4 : 0) + (useTex ? Float.BYTES * 2 : 0) + (useNormal ? Float.BYTES * 3 : 0);
     }
 
     public void grow(int deltaLen){
@@ -167,7 +174,7 @@ public class BufferBuilder {
 
     public BufferBuilder color(float r,float g,float b,float a){
         if(useColor) {
-            int i = vertexCount * getOffset() + Float.BYTES * (useTex ? 5 : 3);
+            int i = vertexCount * getOffset() + Float.BYTES * ((useTex ? 2 : 0) + (usePos ? 3 : 0));
             byteBuffer.putFloat(i, r);
             byteBuffer.putFloat(i + 4, g);
             byteBuffer.putFloat(i + 8, b);
@@ -178,9 +185,19 @@ public class BufferBuilder {
 
     public BufferBuilder tex(float u, float v){
         if(useTex) {
-            int i = vertexCount * getOffset() + Float.BYTES * 3;
+            int i = vertexCount * getOffset() + Float.BYTES * (usePos ? 3 : 0);
             byteBuffer.putFloat(i, u);
             byteBuffer.putFloat(i + 4, v);
+        }
+        return this;
+    }
+
+    public BufferBuilder normal(float nx, float ny, float nz){
+        if(useNormal){
+            int i = vertexCount * getOffset() + Float.BYTES * ((useColor ? 4 : 0)+(useTex ? 2 : 0) + (usePos ? 3 : 0));
+            byteBuffer.putFloat(i, nx);
+            byteBuffer.putFloat(i + 4, ny);
+            byteBuffer.putFloat(i + 8, nz);
         }
         return this;
     }

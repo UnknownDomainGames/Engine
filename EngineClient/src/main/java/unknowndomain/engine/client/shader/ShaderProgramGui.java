@@ -17,8 +17,8 @@ public class ShaderProgramGui extends ShaderProgramDefault {
     private boolean useTexture;
 
     public ShaderProgramGui(){
-        vertexShader = new Shader("/assets/unknowndomain/shader/gui.vert", ShaderType.VERTEX_SHADER);
-        fragmentShader = new Shader("/assets/unknowndomain/shader/gui.frag", ShaderType.FRAGMENT_SHADER);
+        vertexShader = new Shader("assets/unknowndomain/shader/gui.vert", ShaderType.VERTEX_SHADER);
+        fragmentShader = new Shader("assets/unknowndomain/shader/gui.frag", ShaderType.FRAGMENT_SHADER);
     }
 
     @Override

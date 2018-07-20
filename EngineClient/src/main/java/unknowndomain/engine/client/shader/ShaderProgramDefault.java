@@ -17,8 +17,8 @@ public class ShaderProgramDefault extends ShaderProgram {
     protected Shader fragmentShader;
 
     public ShaderProgramDefault(){
-        vertexShader = new Shader("/assets/unknowndomain/shader/default.vert", ShaderType.VERTEX_SHADER);
-        fragmentShader = new Shader("/assets/unknowndomain/shader/default.frag", ShaderType.FRAGMENT_SHADER);
+        vertexShader = new Shader("assets/unknowndomain/shader/default.vert", ShaderType.VERTEX_SHADER);
+        fragmentShader = new Shader("assets/unknowndomain/shader/default.frag", ShaderType.FRAGMENT_SHADER);
     }
 
     @Override
