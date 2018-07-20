@@ -13,6 +13,11 @@ public class JavaModContainer implements ModContainer {
 	
     private final String modid;
     private final ComparableVersion version;
+
+    /**
+     * Class loader of the mod.
+     */
+    private ModClassLoader classLoader;
     
     private final Logger logger;
     
@@ -20,10 +25,13 @@ public class JavaModContainer implements ModContainer {
     
     private ModMetadata metadata;
 
-    public JavaModContainer(String modid, String version){
+    private final Path source;
+
+    public JavaModContainer(String modid, String version, Path src){
         this.modid = modid;
         this.version = new ComparableVersion(version);
         this.logger = LoggerFactory.getLogger(modid);
+        source = src;
     }
 
     @Override
@@ -48,19 +56,19 @@ public class JavaModContainer implements ModContainer {
 
 	@Override
 	public Path getSource() {
-		// TODO 自动生成的方法存根
-		return null;
+		return source;
 	}
+
+	private boolean enabled;
 
 	@Override
 	public boolean isEnable() {
-		// TODO 自动生成的方法存根
-		return false;
+		return enabled;
 	}
 
 	@Override
 	public void setEnable(boolean enable) {
-		// TODO 自动生成的方法存根
+		this.enabled = enable;
 		
 	}
 
@@ -69,8 +77,18 @@ public class JavaModContainer implements ModContainer {
 		return metadata;
 	}
 
+	public void setMetadata(ModMetadata metadata) {
+		this.metadata = metadata;
+	}
+
 	@Override
 	public ClassLoader getClassLoader() {
-		return null;
+		return classLoader;
 	}
+
+    public void setClassLoader(ModClassLoader classLoader) {
+        if(this.classLoader != null)
+            throw new IllegalStateException("Class loader has already set!");
+        this.classLoader = classLoader;
+    }
 }

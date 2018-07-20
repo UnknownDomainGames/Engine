@@ -1,5 +1,6 @@
 package unknowndomain.engine.mod;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,38 +16,38 @@ public class FileModMetadata implements ModMetadata {
 
 	@Override
 	public String getName() {
-		// TODO 自动生成的方法存根
-		return null;
+		return name;
 	}
 
 	@Override
 	public String getDescription() {
-		// TODO 自动生成的方法存根
-		return null;
+		return description;
 	}
 
 	@Override
 	public String getUrl() {
-		// TODO 自动生成的方法存根
-		return null;
+		return url;
 	}
 
 	@Override
 	public List<String> getAuthors() {
-		// TODO 自动生成的方法存根
-		return null;
+		return authors;
 	}
 
 	@Override
 	public String getLogoFile() {
-		// TODO 自动生成的方法存根
-		return null;
+		return logoFile;
 	}
 
 	@Override
 	public Map<String, Object> getMetadata() {
-		// TODO 自动生成的方法存根
-		return null;
+		Map<String, Object> map = new HashMap<>();
+		map.put("name", name);
+		map.put("description", description);
+		map.put("url", url);
+		map.put("authors", authors);
+		map.put("logoFile", logoFile);
+		return map;
 	}
 
 }
