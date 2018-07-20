@@ -75,6 +75,15 @@ public class JavaModLoader implements ModLoader {
                 ModClassLoader loader = new ModClassLoader(container, Thread.currentThread().getContextClassLoader());
                 loader.addPath(mod);
                 container.setClassLoader(loader);
+                if(!jo.has("mainClass")){
+                    Platform.getLogger().warn("mod %s does not identify its main class! Contact the mod authors to correct it.", modId);
+                    return null;
+                }else{
+                    String mainclazz = jo.get("mainClass").getAsString();
+                    Class mainClazzType = loader.loadClass(mainclazz);
+                    Object mainInstance = mainClazzType.newInstance();
+                    container.setInstance(mainInstance);
+                }
                 if (jo.has("name")) {
                     meta.setName(jo.get("name").getAsString());
                 }
@@ -101,6 +110,10 @@ public class JavaModLoader implements ModLoader {
                 return container;
             } catch (IOException e) {
                 Platform.getLogger().warn(String.format("cannot load mod %s!", modId), e);
+            } catch (ClassNotFoundException e) {
+                Platform.getLogger().warn(String.format("cannot find the main class for mod %s!", modId), e);
+            } catch (IllegalAccessException | InstantiationException e) {
+                Platform.getLogger().warn(String.format("cannot instantiate the main class for mod %s!", modId), e);
             }
         }
 

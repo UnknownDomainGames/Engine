@@ -91,4 +91,8 @@ public class JavaModContainer implements ModContainer {
             throw new IllegalStateException("Class loader has already set!");
         this.classLoader = classLoader;
     }
+
+    public void setInstance(Object instance) {
+        this.instance = instance;
+    }
 }
