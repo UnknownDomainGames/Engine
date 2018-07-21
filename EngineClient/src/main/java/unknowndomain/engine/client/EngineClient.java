@@ -1,6 +1,7 @@
 package unknowndomain.engine.client;
 
 import unknowndomain.engine.api.Engine;
+import unknowndomain.engine.api.game.Game;
 import unknowndomain.engine.api.math.Timer;
 import unknowndomain.engine.api.mod.ModManager;
 //import unknowndomain.engine.api.resource.ResourcePackManager;
@@ -28,6 +29,8 @@ public class EngineClient implements Engine {
 
     private ClientKeyBindingManager keyBindingManager;
     private ResourceManager resourceManager;
+    
+    private Game game;
 
     private Timer timer;
 
@@ -144,4 +147,9 @@ public class EngineClient implements Engine {
     public ResourceManager getResourcePackManager() {
         return null;
     }
+
+	@Override
+	public Game getGame() {
+		return game;
+	}
 }
