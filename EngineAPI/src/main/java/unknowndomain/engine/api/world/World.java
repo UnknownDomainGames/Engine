@@ -2,6 +2,7 @@ package unknowndomain.engine.api.world;
 
 import unknowndomain.engine.api.block.Block;
 import unknowndomain.engine.api.math.BlockPos;
+import unknowndomain.engine.api.math.ChunkPos;
 
 public interface World {
 	
@@ -11,4 +12,7 @@ public interface World {
 	
 	Block getBlock(BlockPos pos);
 
+	Chunk getChunk(int chunkX, int chunkY, int chunkZ);
+
+	Chunk getChunk(ChunkPos pos);
 }
