@@ -108,7 +108,7 @@ public class AWTFontRenderer {
                 textures.get(info.getPage()).useTexture();
                 lastpage = info.getPage();
             }
-            buffer.begin(GL11.GL_QUADS, true, true, true);
+            buffer.begin(GL11.GL_QUADS, true, true, true, false);
             buffer.pos(x + startX, y, 0)
                     .color(((color >> 16) & 255) / 255f, ((color >> 8) & 255) / 255f, (color & 255) / 255f, ((color >> 24) & 255) / 255f)
                     .tex(info.getStartX() / (float) width, info.getStartY() / (float)height).endVertex();

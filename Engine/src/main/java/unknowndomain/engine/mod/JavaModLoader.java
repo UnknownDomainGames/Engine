@@ -1,31 +1,29 @@
 package unknowndomain.engine.mod;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.Validate;
 
 import unknowndomain.engine.api.Platform;
 import unknowndomain.engine.api.mod.ModContainer;
 import unknowndomain.engine.api.mod.ModLoader;
-import unknowndomain.engine.api.mod.ModMetadata;
 
 public class JavaModLoader implements ModLoader {
 

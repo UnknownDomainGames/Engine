@@ -1,15 +1,10 @@
 package unknowndomain.engine.client.resource;
 
-import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
-
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.net.URI;
-import java.nio.ByteBuffer;
+
+import javax.imageio.ImageIO;
 
 /**
  * 2D Texture

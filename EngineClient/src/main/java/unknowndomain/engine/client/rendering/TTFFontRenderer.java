@@ -35,19 +35,19 @@ public class TTFFontRenderer {
     private float contentScaleX;
     private float contentScaleY;
 
-    public TTFFontRenderer(String ttf){
+    public TTFFontRenderer(String ttf) {
         try {
-            ttfBuf = GLHelper.getResourcesAsBuffer(ttf, 512*1024);
+            ttfBuf = GLHelper.getResourcesAsBuffer(ttf, 512 * 1024);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
         fontinfo = STBTTFontinfo.create();
-        if (!stbtt_InitFont(fontinfo, ttfBuf)){
+        if (!stbtt_InitFont(fontinfo, ttfBuf)) {
             throw new IllegalStateException("Failed in initializing ttf font info");
         }
         try (MemoryStack stack = stackPush()) {
-            IntBuffer pAscent  = stack.mallocInt(1);
+            IntBuffer pAscent = stack.mallocInt(1);
             IntBuffer pDescent = stack.mallocInt(1);
             IntBuffer pLineGap = stack.mallocInt(1);
 
@@ -61,7 +61,7 @@ public class TTFFontRenderer {
             FloatBuffer p1 = stack.mallocFloat(1);
             FloatBuffer p2 = stack.mallocFloat(1);
 
-            GLFW.glfwGetMonitorContentScale(moniter, p1,p2);
+            GLFW.glfwGetMonitorContentScale(moniter, p1, p2);
             contentScaleX = p1.get(0);
             contentScaleY = p2.get(0);
         }
@@ -70,13 +70,13 @@ public class TTFFontRenderer {
 
     private Map<Integer, Pair<Integer, STBTTBakedChar.Buffer>> bufMap = new HashMap<>();
 
-    private Pair<Integer, STBTTBakedChar.Buffer> getCharDataBuffer(int fontHeight){
+    private Pair<Integer, STBTTBakedChar.Buffer> getCharDataBuffer(int fontHeight) {
         if (!bufMap.containsKey(fontHeight)) {
             int texId = GL11.glGenTextures();
             STBTTBakedChar.Buffer cdata = STBTTBakedChar.malloc(SUPPORTING_CHARACTER_COUNT);
             int side = getBitmapSide(fontHeight, SUPPORTING_CHARACTER_COUNT);
-            ByteBuffer bitmap = BufferUtils.createByteBuffer(side*side);
-            stbtt_BakeFontBitmap(ttfBuf, fontHeight, bitmap, side,side,0,cdata);
+            ByteBuffer bitmap = BufferUtils.createByteBuffer(side * side);
+            stbtt_BakeFontBitmap(ttfBuf, fontHeight, bitmap, side, side, 0, cdata);
 
             glEnable(GL_TEXTURE_2D);
 
@@ -90,14 +90,14 @@ public class TTFFontRenderer {
         return bufMap.get(fontHeight);
     }
 
-    private void cleanCharDataBuffer(int fontHeight){
-        if(bufMap.containsKey(fontHeight)){
+    private void cleanCharDataBuffer(int fontHeight) {
+        if (bufMap.containsKey(fontHeight)) {
             glDeleteTextures(bufMap.get(fontHeight).getLeft());
             bufMap.remove(fontHeight);
         }
     }
 
-    public void drawText(String text, float x, float y, int color, int fontHeight){
+    public void drawText(String text, float x, float y, int color, int fontHeight) {
         float scale = stbtt_ScaleForPixelHeight(fontinfo, fontHeight);
         Pair<Integer, STBTTBakedChar.Buffer> pair = getCharDataBuffer(fontHeight);
         glEnable(GL_TEXTURE_2D);
@@ -105,11 +105,11 @@ public class TTFFontRenderer {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         STBTTBakedChar.Buffer cdata = pair.getRight();
-        try (MemoryStack stack = MemoryStack.stackPush()){
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer pcp = stack.mallocInt(1);
             FloatBuffer bx = stack.floats(x);
             FloatBuffer by = stack.floats(y + fontHeight);
-            
+
             float factorX = 1.0f / getContentScaleX();
             float factorY = 1.0f / getContentScaleY();
 
@@ -124,8 +124,8 @@ public class TTFFontRenderer {
             STBTTAlignedQuad q = STBTTAlignedQuad.mallocStack(stack);
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder builder = tessellator.getBuffer();
-            builder.begin(GL_QUADS, true,true,true);
-            for(int i = 0; i < text.length();){
+            builder.begin(GL_QUADS, true, true, true, false);
+            for (int i = 0; i < text.length();) {
                 i += getCodePoint(text, i, pcp);
 
                 int cp = pcp.get(0);
@@ -137,21 +137,19 @@ public class TTFFontRenderer {
                     getCodePoint(text, i, pcp);
                     bx.put(0, bx.get(0) + stbtt_GetCodepointKernAdvance(fontinfo, cp, pcp.get(0)) * scale);
                 }
-                float
-                        x0 = scale(x, q.x0(), factorX),
-                        x1 = scale(x, q.x1(), factorX),
-                        y0 = scale(lineY, q.y0(), factorY),
-                        y1 = scale(lineY, q.y1(), factorY);
-                builder.pos(x0,y0,0).color(r,g,b,a).tex(q.s0(),q.t0()).endVertex();
-                builder.pos(x0,y1,0).color(r,g,b,a).tex(q.s0(),q.t1()).endVertex();
-                builder.pos(x1,y1,0).color(r,g,b,a).tex(q.s1(),q.t1()).endVertex();
-                builder.pos(x1,y0,0).color(r,g,b,a).tex(q.s1(),q.t0()).endVertex();
+                float x0 = scale(x, q.x0(), factorX), x1 = scale(x, q.x1(), factorX),
+                        y0 = scale(lineY, q.y0(), factorY), y1 = scale(lineY, q.y1(), factorY);
+                builder.pos(x0, y0, 0).color(r, g, b, a).tex(q.s0(), q.t0()).endVertex();
+                builder.pos(x0, y1, 0).color(r, g, b, a).tex(q.s0(), q.t1()).endVertex();
+                builder.pos(x1, y1, 0).color(r, g, b, a).tex(q.s1(), q.t1()).endVertex();
+                builder.pos(x1, y0, 0).color(r, g, b, a).tex(q.s1(), q.t0()).endVertex();
             }
             tessellator.draw();
 
-            renderLineBoundingBox(text, 0, text.length(), x,y + fontHeight,scale, fontHeight);
+            renderLineBoundingBox(text, 0, text.length(), x, y + fontHeight, scale, fontHeight);
         }
     }
+
     private void renderLineBoundingBox(String text, int from, int to, float x, float y, float scale, int fontHeight) {
         glDisable(GL_TEXTURE_2D);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -161,11 +159,11 @@ public class TTFFontRenderer {
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
-        builder.begin(GL_QUADS, true, true, false);
-        builder.pos(x, y,0).color(1,1,1,1).endVertex();
-        builder.pos(x + width, y,0).color(1,1,1,1).endVertex();
-        builder.pos(x + width, y - fontHeight,0).color(1,1,1,1).endVertex();
-        builder.pos(x, y - fontHeight,0).color(1,1,1,1).endVertex();
+        builder.begin(GL_QUADS, true, true, false, false);
+        builder.pos(x, y, 0).color(1, 1, 1, 1).endVertex();
+        builder.pos(x + width, y, 0).color(1, 1, 1, 1).endVertex();
+        builder.pos(x + width, y - fontHeight, 0).color(1, 1, 1, 1).endVertex();
+        builder.pos(x, y - fontHeight, 0).color(1, 1, 1, 1).endVertex();
 
         tessellator.draw();
 
@@ -177,8 +175,8 @@ public class TTFFontRenderer {
         int width = 0;
 
         try (MemoryStack stack = stackPush()) {
-            IntBuffer pCodePoint       = stack.mallocInt(1);
-            IntBuffer pAdvancedWidth   = stack.mallocInt(1);
+            IntBuffer pCodePoint = stack.mallocInt(1);
+            IntBuffer pAdvancedWidth = stack.mallocInt(1);
             IntBuffer pLeftSideBearing = stack.mallocInt(1);
 
             int i = from;
@@ -211,8 +209,8 @@ public class TTFFontRenderer {
         return 1;
     }
 
-    private int getBitmapSide(int fontHeight, int countOfChar){
-        return (int)Math.ceil((fontHeight + 2 * fontHeight / 16.0f) * Math.sqrt(countOfChar));
+    private int getBitmapSide(int fontHeight, int countOfChar) {
+        return (int) Math.ceil((fontHeight + 2 * fontHeight / 16.0f) * Math.sqrt(countOfChar));
     }
 
     public float getContentScaleX() {
