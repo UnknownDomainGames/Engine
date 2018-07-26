@@ -46,6 +46,7 @@ public class DefaultGameWindow implements GameWindow {
 		setWindowPosCenter();
 		glfwMakeContextCurrent(handle);
 		GL.createCapabilities();
+		System.out.println("a");
 		enableVSync();
 		setupInput();
 		showWindow();

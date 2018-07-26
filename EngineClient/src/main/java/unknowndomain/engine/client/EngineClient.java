@@ -2,15 +2,21 @@ package unknowndomain.engine.client;
 
 import unknowndomain.engine.api.Engine;
 import unknowndomain.engine.api.game.Game;
+import unknowndomain.engine.api.math.BlockPos;
 import unknowndomain.engine.api.math.Timer;
 import unknowndomain.engine.api.mod.ModManager;
 //import unknowndomain.engine.api.resource.ResourcePackManager;
 import unknowndomain.engine.api.resource.ResourceManager;
+import unknowndomain.engine.api.world.World;
+import unknowndomain.engine.client.block.Grass;
 import unknowndomain.engine.client.display.DefaultGameWindow;
+import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.keybinding.ClientKeyBindingManager;
 import unknowndomain.engine.client.rendering.RendererGlobal;
+import unknowndomain.engine.client.world.FlatWorld;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL;
 
 public class EngineClient implements Engine {
 
@@ -45,10 +51,16 @@ public class EngineClient implements Engine {
 
     public void init() {
         window.init();
+        
         keyBindingManager.update();
         renderer = new RendererGlobal();
         timer = new Timer();
         timer.init();
+        World flatWorld=new FlatWorld("FlatWorld");
+        game=new GameClient();
+        game.addWorld(flatWorld);;//TODO test
+        BlockPos blockPos=new BlockPos(0,0,0);
+        flatWorld.setBlock(blockPos, new Grass(flatWorld,blockPos));
     }
 
     public void loop() {
@@ -69,6 +81,8 @@ public class EngineClient implements Engine {
 
             while (accumulator >= interval) {
                 //update(interval); //TODO: game logic
+            	System.out.println("tick");
+            	game.tick();
                 accumulator -= interval;
             }
 

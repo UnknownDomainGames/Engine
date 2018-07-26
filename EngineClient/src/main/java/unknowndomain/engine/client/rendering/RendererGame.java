@@ -26,6 +26,7 @@ public final class RendererGame extends RenderingLayer {
 
     @Override
     public void render() {
+    	System.out.println("render");
         shader.useShader();
         shader.setUniform("projection", camera.makeProjectionMatrix(854,480));
         shader.setUniform("view", camera.makeViewMatrix());
