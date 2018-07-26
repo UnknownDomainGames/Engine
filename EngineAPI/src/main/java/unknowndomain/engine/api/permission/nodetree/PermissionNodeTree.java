@@ -10,35 +10,35 @@ public class PermissionNodeTree {
 	public boolean hasPermission(String permission) {
 		String[] parts=permission.toLowerCase().split(SPLITTER);
 		if(parts.length==0)return false;
-		Node tempRootNode=rootNode;
+		Node tempNode=rootNode;
 		for(int i=0;i<parts.length-1;i++) {
-			Node value=tempRootNode.children.get(parts[i]);
-			if(value!=null) {
-				if(value.content.equals(WILDCARD))return true;//é€šé…ç¬?
-				if(value.content.equals(parts[i+1]))
-					tempRootNode=value;
+			Node permissionNode=tempNode.children.get(parts[i]);
+			if(permissionNode!=null) {
+				if(permissionNode.content.equals(WILDCARD))return true;//Í¨Åä·û
+				if(permissionNode.content.equals(parts[i+1]))
+					tempNode=permissionNode;
 			}else {
 				return false;
 			}
 		}
-		if(tempRootNode.isEnd&&tempRootNode.hasPermission)
+		if(tempNode.isEnd&&tempNode.hasPermission)
 			return true;
 		return false;
 	}
 	public void setPermission(String permission,boolean setValue) {
 		String[] parts=permission.toLowerCase().split(SPLITTER);
-		Node tempRootNode=rootNode;
+		Node tempNode=rootNode;
 		for(int i=0;i<parts.length-1;i++) {
-			Node value=tempRootNode.children.get(parts[i]);
+			Node value=tempNode.children.get(parts[i]);
 			if(value!=null&&value.content.equals(parts[i])) {
-				tempRootNode=value;
+				tempNode=value;
 			}else {
 				Node node =new Node(parts[i+1]);
-				tempRootNode.children.put(parts[i], node);
-				tempRootNode=node;
+				tempNode.children.put(parts[i], node);
+				tempNode=node;
 			}
 		}
-		tempRootNode.hasPermission=setValue;
-		tempRootNode.isEnd=true;
+		tempNode.hasPermission=setValue;
+		tempNode.isEnd=true;
 	}
 }

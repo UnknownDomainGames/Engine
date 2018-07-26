@@ -38,12 +38,12 @@ public class PermissionManagerMapImpl implements PermissionManager{
 	}
 
 	@Override
-	public void setPermission(Permissable persimissable, String persimission, boolean value) {
-		HashMap<String,Boolean> childPermissionDataMap=rootPermissionDataMap.get(persimissable);
+	public void setPermission(Permissable permissable, String permission, boolean value) {
+		HashMap<String,Boolean> childPermissionDataMap=rootPermissionDataMap.get(permissable);
 		if(childPermissionDataMap==null) {
 			childPermissionDataMap=new HashMap<>();
-			rootPermissionDataMap.put(persimissable, childPermissionDataMap);
+			rootPermissionDataMap.put(permissable, childPermissionDataMap);
 		}
-		childPermissionDataMap.put(persimission, value);
+		childPermissionDataMap.put(permission, value);
 	}
 }
