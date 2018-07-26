@@ -3,6 +3,8 @@ package unknowndomain.engine.api.permission;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.base.Strings;
+
 public class PermissionProvider implements PermissionAPI {
 	
 	public static final String WILDCARD = "*";
@@ -16,6 +18,9 @@ public class PermissionProvider implements PermissionAPI {
 
 	@Override
 	public boolean hasPermission(Permissable permissable, String permission) {
+		if(Strings.isNullOrEmpty(permission))
+			return false;
+		
 		Map<String, Boolean> permissions = permissableToPermissions.get(permissable);
 		if (permissions == null) {
 			permissableToPermissions.put(permissable, new HashMap<>());
@@ -27,7 +32,7 @@ public class PermissionProvider implements PermissionAPI {
 			if (value != null)
 				return value;
 
-			if (permission.isEmpty())
+			if (WILDCARD.equals(permission))
 				return false;
 
 			int lastSplitIndex = permission.lastIndexOf(SPLITTER);
