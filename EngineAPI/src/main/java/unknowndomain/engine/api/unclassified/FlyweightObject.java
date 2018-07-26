@@ -19,9 +19,9 @@ public interface FlyweightObject<E extends RuntimeEntity<C>, C extends RuntimeEn
     E createEntity(C context);
 
     @Nullable
-    <T> T getModule(@Nonnull Class<T> type);
+    <T> T getBehavior(@Nonnull Class<T> type);
 
-    void putModule(@Nonnull Object module);
+    boolean putBehavior(@Nonnull Object module);
 
-    <T> void unloadModule(@Nonnull Class<T> type);
+    <T> void unloadBehavior(@Nonnull Class<T> type);
 }
