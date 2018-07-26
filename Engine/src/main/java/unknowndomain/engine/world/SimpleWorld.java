@@ -45,4 +45,10 @@ public class SimpleWorld implements World {
     public Chunk getChunk(ChunkPos pos) {
         return chunkMap.get(pos);
     }
+
+	@Override
+	public void setBlock(BlockPos pos, Block block) {
+		// TODO Auto-generated method stub
+		
+	}
 }
