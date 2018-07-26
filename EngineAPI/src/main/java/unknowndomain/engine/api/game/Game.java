@@ -12,4 +12,8 @@ public interface Game {
 	
 	@Nullable
 	World getWorld(String name);
+	
+	void tick();
+	
+	void addWorld(World world);
 }

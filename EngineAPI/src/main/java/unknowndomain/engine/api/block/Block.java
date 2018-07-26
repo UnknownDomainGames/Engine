@@ -12,4 +12,5 @@ public interface Block extends RegistryEntry<Block> {
     
     boolean onBlockDestroyed(BlockPos pos, boolean harvested);
 
+    BlockPos getBlockPos();
 }

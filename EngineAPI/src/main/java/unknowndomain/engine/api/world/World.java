@@ -11,6 +11,8 @@ public interface World {
 	Block getBlock(int x, int y, int z);
 	
 	Block getBlock(BlockPos pos);
+	
+	void setBlock(BlockPos pos,Block block);
 
 	Chunk getChunk(int chunkX, int chunkY, int chunkZ);
 

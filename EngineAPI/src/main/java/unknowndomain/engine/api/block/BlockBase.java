@@ -26,4 +26,10 @@ public class BlockBase extends RegistryEntry.Impl<Block> implements Block {
     public BoundingBox getBoundingBox(){
         return boundingBox;
     }
+
+	@Override
+	public BlockPos getBlockPos() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
