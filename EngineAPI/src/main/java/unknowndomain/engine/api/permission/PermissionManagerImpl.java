@@ -3,40 +3,42 @@ package unknowndomain.engine.api.permission;
 import java.util.HashMap;
 
 public class PermissionManagerImpl implements PersimissionManager{
-	protected HashMap<Permissable,HashMap<String,Boolean>> rootPermissionDataMap;
-	private String wildCard="*";
-	private String splitChar=".";
+	public static final String WILDCARD="*";
+	public static final String SPLITTER=".";
 	
+	private final HashMap<Permissable,HashMap<String,Boolean>> rootPermissionDataMap;
 	public PermissionManagerImpl() {
 		rootPermissionDataMap=new HashMap<>();
 	}
 	
 	@Override
-	public boolean hasPersimission(Permissable permissable, String permission) {
+	public boolean hasPermission(Permissable permissable, String permission) {
 		HashMap<String,Boolean> childPermissionDataMap=rootPermissionDataMap.get(permissable);
 		if(childPermissionDataMap==null) {
-			rootPermissionDataMap.put(permissable, new HashMap<>());
+			childPermissionDataMap=new HashMap<>();
+			rootPermissionDataMap.put(permissable, childPermissionDataMap);
 			return false;
 		}
 		Boolean permissionValue=childPermissionDataMap.get(permission);
-		if(permissionValue!=null&&permissionValue) {
-			return true;
-		}else {
-			String[] permissionSplitArray=permission.split("\\.");
-			String permissionWithWildChar=permissionSplitArray[0]+splitChar;//有通配符
-			for(int i=1;i<permissionSplitArray.length;i++) {
-				Boolean permissionWithWildCharValue=childPermissionDataMap.get(permissionWithWildChar+wildCard);//带有通配符的权限
-				if(permissionWithWildCharValue!=null&&permissionWithWildCharValue) {
-					return true;
-				}
-				permissionWithWildChar=permissionWithWildChar+permissionSplitArray[i]+splitChar;
+		while(true) {
+			if(permissionValue!=null&&permissionValue) {
+				return true;
 			}
-			return false;
+			if(permission.isEmpty()) {
+				Boolean wildCardValue=childPermissionDataMap.get(WILDCARD);
+				return wildCardValue==null ? false:wildCardValue;
+			}
+			int lastSplitIndex=permission.lastIndexOf(SPLITTER);
+			permission=lastSplitIndex==-1 ? "" :permission.substring(0, lastSplitIndex);
+			Boolean valueWithWildCard=childPermissionDataMap.get(permission+SPLITTER+WILDCARD);
+			if(valueWithWildCard!=null&&valueWithWildCard) {
+				return true;
+			}
 		}
 	}
 
 	@Override
-	public void setPersimission(Permissable persimissable, String persimission, boolean value) {
+	public void setPermission(Permissable persimissable, String persimission, boolean value) {
 		HashMap<String,Boolean> childPermissionDataMap=rootPermissionDataMap.get(persimissable);
 		if(childPermissionDataMap==null) {
 			childPermissionDataMap=new HashMap<>();
