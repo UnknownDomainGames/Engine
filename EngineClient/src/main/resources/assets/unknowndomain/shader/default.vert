@@ -18,7 +18,7 @@ void main() {
     vertexColor = color;
     textureCoord = texcoord;
     mat4 mvp = projection * view * model;
-    vertexNormal = normal((view * model) * vec4(normal, 0.0)).xyz;
+    vertexNormal = normalize((view * model) * vec4(normal, 0.0)).xyz;
     vertexMv = (view * model * vec4(position, 1.0)).xyz;
     gl_Position = mvp * vec4(position, 1.0);
 }
