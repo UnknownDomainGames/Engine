@@ -84,12 +84,35 @@ public abstract class ShaderProgram {
         }
     }
 
-    public abstract void setUniform(String location, int value);
-    public abstract void setUniform(String location, float value);
-    public abstract void setUniform(String location, boolean value);
-    public abstract void setUniform(String location, Vector2f value);
-    public abstract void setUniform(String location, Vector3f value);
-    public abstract void setUniform(String location, Vector4f value);
-    public abstract void setUniform(String location, Matrix3f value);
-    public abstract void setUniform(String location, Matrix4f value);
+    public void setUniform(String location, int value) {
+        setUniform(getUniformLocation(location), value);
+    }
+
+    public void setUniform(String location, float value) {
+        setUniform(getUniformLocation(location), value);
+    }
+
+    public void setUniform(String location, boolean value) {
+        setUniform(getUniformLocation(location), value);
+    }
+
+    public void setUniform(String location, Vector2f value) {
+        setUniform(getUniformLocation(location), value);
+    }
+
+    public void setUniform(String location, Vector3f value) {
+        setUniform(getUniformLocation(location), value);
+    }
+
+    public void setUniform(String location, Vector4f value) {
+        setUniform(getUniformLocation(location), value);
+    }
+
+    public void setUniform(String location, Matrix3f value) {
+        setUniform(getUniformLocation(location), value);
+    }
+
+    public void setUniform(String location, Matrix4f value) {
+        setUniform(getUniformLocation(location), value);
+    }
 }

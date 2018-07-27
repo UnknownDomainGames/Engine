@@ -1,6 +1,8 @@
 package unknowndomain.engine.client.block;
 
 import unknowndomain.engine.api.block.Block;
+import unknowndomain.engine.api.block.BlockBase;
+import unknowndomain.engine.api.math.AxisAlignedBB;
 import unknowndomain.engine.api.math.BlockPos;
 import unknowndomain.engine.api.math.BoundingBox;
 import unknowndomain.engine.api.math.Vector3d;
@@ -11,7 +13,7 @@ import unknowndomain.engine.client.block.model.GameItem;
 import unknowndomain.engine.client.block.model.Mesh;
 import unknowndomain.engine.client.block.model.Texture;
 
-public class Grass implements Block{
+public class Grass extends BlockBase {
 	private BoundingBox box;
 	private World world;
 	private BlockPos blockPos;
@@ -19,22 +21,11 @@ public class Grass implements Block{
 	private final GameItem gameItem;
 	
 	public Grass(World world,BlockPos blockPos) {
-		box=new BoundingBox() {
-			@Override
-			public Vector3d getCentre() {
-				return null;
-			}
-
-			@Override
-			public boolean isCollided(BoundingBox others) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-		};
+		box=new AxisAlignedBB(0,0,0,1,1,1);
 		this.world=world;
 		this.blockPos=blockPos;
 		try {
-			setTexture(new Texture("/textures/grassblock.png"));
+			setTexture(new Texture("textures/grassblock.png"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -43,23 +34,6 @@ public class Grass implements Block{
 				, BasicData.INSTANCE.getIndices(), texture);
 		gameItem=new GameItem(mesh);
 		gameItem.setPosition(blockPos);
-	}
-	
-	@Override
-	public DomainedPath getRegistryName() {
-		return null;
-	}
-
-	@Override
-	public Block setRegistryName(DomainedPath location) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Class<Block> getRegistryType() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

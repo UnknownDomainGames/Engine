@@ -34,7 +34,7 @@ public class RendererGlobal {
 
 	public void render() {
 		for(RenderingLayer renderer : renderers) {
-			//renderer.render();
+			//renderer.render();  //TODO: uncomment it when suitable
 		}
 	}
 

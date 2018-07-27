@@ -30,11 +30,11 @@ public class ShaderProgramGui extends ShaderProgramDefault {
 
         Matrix4f model = new Matrix4f();
         model.identity();
-        setUniform("model", model);
 
         Matrix4f view = new Matrix4f();
         view.identity();
-        setUniform("view", view);
+        view.mul(model);
+        setUniform("modelView", view);
 
 
         Matrix4f projection = new Matrix4f().identity();

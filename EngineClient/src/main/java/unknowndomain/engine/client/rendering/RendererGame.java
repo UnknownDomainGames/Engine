@@ -29,7 +29,7 @@ public final class RendererGame extends RenderingLayer {
     	System.out.println("render");
         shader.useShader();
         shader.setUniform("projection", camera.makeProjectionMatrix(854,480));
-        shader.setUniform("view", camera.makeViewMatrix());
+        shader.setUniform("modelView", camera.makeViewMatrix());
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_BLEND);

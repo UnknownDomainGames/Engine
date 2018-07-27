@@ -41,13 +41,12 @@ public class ShaderProgramDefault extends ShaderProgram {
 
         Matrix4f model = new Matrix4f();
         model.identity();
-        setUniform("model", model);
 
         Matrix4f view = new Matrix4f();
         view.identity();
         view = view.lookAt(new Vector3f(0,0,-5f),new Vector3f(0,0,0f),new Vector3f(0,1,0)); //TODO: Controlled by Camera
-        int uniView = getUniformLocation("view");
-        setUniform(uniView, view);
+        view.mul(model);
+        setUniform("modelView", view);
 
 
         Matrix4f projection = new Matrix4f();
@@ -89,36 +88,4 @@ public class ShaderProgramDefault extends ShaderProgram {
         return GL20.glGetAttribLocation(shaderId, name);
     }
 
-    @Override
-    public void setUniform(String location, int value) {
-        setUniform(getUniformLocation(location), value);
-    }
-    @Override
-    public void setUniform(String location, float value) {
-        setUniform(getUniformLocation(location), value);
-    }
-    @Override
-    public void setUniform(String location, boolean value) {
-        setUniform(getUniformLocation(location), value);
-    }
-    @Override
-    public void setUniform(String location, Vector2f value) {
-        setUniform(getUniformLocation(location), value);
-    }
-    @Override
-    public void setUniform(String location, Vector3f value) {
-        setUniform(getUniformLocation(location), value);
-    }
-    @Override
-    public void setUniform(String location, Vector4f value) {
-        setUniform(getUniformLocation(location), value);
-    }
-    @Override
-    public void setUniform(String location, Matrix3f value) {
-        setUniform(getUniformLocation(location), value);
-    }
-    @Override
-    public void setUniform(String location, Matrix4f value) {
-        setUniform(getUniformLocation(location), value);
-    }
 }

@@ -24,10 +24,8 @@ public class EngineClient implements Engine {
      * Rendering section
      */
 
-
     private DefaultGameWindow window;
     private RendererGlobal renderer;
-
 
     /*
      * Managers section
@@ -57,7 +55,7 @@ public class EngineClient implements Engine {
         timer = new Timer();
         timer.init();
         World flatWorld=new FlatWorld("FlatWorld");
-        game=new GameClient();
+        game=new GameClient(this);
         game.addWorld(flatWorld);;//TODO test
         BlockPos blockPos=new BlockPos(0,0,0);
         flatWorld.setBlock(blockPos, new Grass(flatWorld,blockPos));

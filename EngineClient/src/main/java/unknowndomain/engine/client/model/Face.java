@@ -1,10 +1,15 @@
 package unknowndomain.engine.client.model;
 
+import unknowndomain.engine.api.util.DomainedPath;
+import unknowndomain.engine.client.resource.Texture2D;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Face {
     public List<? extends VertexR> vertices;
+
+    public DomainedPath texture;
 
     public Face(List<? extends VertexR> vertices){
         this.vertices = new ArrayList<>(vertices);

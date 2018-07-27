@@ -16,7 +16,11 @@ public class UnknownDomain {
         }
         engine = new EngineClient(WIDTH, HEIGHT);
     }
-    
+
+    public static EngineClient getEngine() {
+        return engine;
+    }
+
     public static String getName() {
     	return NAME;
     }

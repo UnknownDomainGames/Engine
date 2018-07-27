@@ -26,6 +26,10 @@ public class Texture2D extends RegistryEntry.Impl<Texture2D> {
         loadImage();
     }
 
+    public boolean isLoaded(){
+        return texId != -1;
+    }
+
     public boolean loadImage(){
         if(img != null){
         loadImage(img);
