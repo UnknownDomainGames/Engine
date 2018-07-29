@@ -1,11 +1,13 @@
 package unknowndomain.engine.client.block.model;
-/** 
-* 纹理
-* 来自 教程
-*/
-//import de.matthiasmann.twl.utils.PNGDecoder;
-//import de.matthiasmann.twl.utils.PNGDecoder.Format;
+/**
+ * 纹理
+ * 来自 教程
+ */
+
+import de.matthiasmann.twl.utils.PNGDecoder;
+
 import java.nio.ByteBuffer;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
@@ -30,14 +32,13 @@ public class Texture {
     }
 
     private static int loadTexture(String fileName) throws Exception {
-    	/**
-    	 * // Load Texture file
+        // Load Texture file
         PNGDecoder decoder = new PNGDecoder(Texture.class.getResourceAsStream(fileName));
 
         // Load texture contents into a byte buffer
         ByteBuffer buf = ByteBuffer.allocateDirect(
                 4 * decoder.getWidth() * decoder.getHeight());
-        decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
+        decoder.decode(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
         buf.flip();
 
         // Create a new OpenGL texture 
@@ -57,9 +58,6 @@ public class Texture {
         // Generate Mip Map
         glGenerateMipmap(GL_TEXTURE_2D);//渐远纹理
         return textureId;
-    	 */
-        return 0;
-        
     }
 
     public void cleanup() {

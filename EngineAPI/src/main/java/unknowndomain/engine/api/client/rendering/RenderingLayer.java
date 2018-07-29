@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class RenderingLayer implements Renderer {
-
 	private final List<Renderer> renderers = new ArrayList<>();
 	
 	protected RenderingLayer() {

@@ -15,13 +15,9 @@ import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryUtil;
 
 public class Mesh {
-
     private final int vaoId;
-
     private final List<Integer> vboIdList;
-
     private final int vertexCount;
-
     private final Texture texture;
 
     public Mesh(float[] positions, float[] textCoords, int[] indices, Texture texture) {

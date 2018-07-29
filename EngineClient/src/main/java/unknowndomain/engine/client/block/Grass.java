@@ -22,7 +22,7 @@ public class Grass extends BlockBase {
         this.world = world;
         this.blockPos = blockPos;
         try {
-            setTexture(new Texture("textures/grassblock.png"));
+//            setTexture(new Texture("textures/grassblock.png"));
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

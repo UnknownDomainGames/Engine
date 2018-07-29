@@ -18,13 +18,13 @@ public class GameClient implements Game {
 
     private final EngineClient engine;
     private Map<String, World> worldsMap = new HashMap<>();
-    private Transformation transformation;
+    //    private Transformation transformation;
     private ShaderProgram shaderProgram;
-    private Camera camera;
+//    private Camera camera;
 
     public GameClient(EngineClient engine) {
         this.engine = engine;
-        transformation = new Transformation();
+//        transformation = new Transformation();
 
         try {
             shaderProgram = new ShaderProgram();
@@ -38,7 +38,7 @@ public class GameClient implements Game {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        camera = new Camera();
+//        camera = new Camera();
     }
 
     @Override
@@ -57,12 +57,12 @@ public class GameClient implements Game {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Collection<World> worlds = getWorlds();
         for (World world : worlds) {
-            Matrix4d viewMatrix = transformation.getViewMatrix(camera);
+//            Matrix4d viewMatrix = transformation.getViewMatrix(camera);
             Grass block = (Grass) world.getBlock(0, 0, 0);
             GameItem gameItem = block.getGameItem();
             // Render the mes for this game item
-            Matrix4d modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
-            shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
+//            Matrix4d modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
+//            shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
 //            System.out.println(block);
         }
 

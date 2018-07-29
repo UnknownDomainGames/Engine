@@ -5,22 +5,16 @@ import java.util.List;
 
 import unknowndomain.engine.api.client.display.Camera;
 import unknowndomain.engine.api.client.rendering.RenderingLayer;
+import unknowndomain.engine.client.display.CameraDefault;
 
 public class RendererGlobal {
 
     private final List<RenderingLayer> renderers = new ArrayList<>();
-    private Camera camera;
+    private Camera camera = new CameraDefault();
 
     public RendererGlobal() {
-//		rendererGame = new RendererGame();
-//		rendererGui = new RendererGui();
-        renderers.add(new RenderCommon());
-//		renderers.add(rendererGui);
+        renderers.add(new RenderCommon(camera));
     }
-
-    // TODO: hard code.
-//	private final RendererGame rendererGame;
-//	private final RendererGui rendererGui;
 
     public Camera getCamera() {
         return camera;
@@ -29,14 +23,6 @@ public class RendererGlobal {
     public List<RenderingLayer> getRenderers() {
         return renderers;
     }
-
-//	public RendererGame getRendererGame() {
-//		return rendererGame;
-//	}
-
-//	public RendererGui getRendererGui() {
-//		return rendererGui;
-//	}
 
     public void render() {
         for (RenderingLayer renderer : renderers) {

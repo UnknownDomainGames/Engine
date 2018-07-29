@@ -1,25 +1,21 @@
 package unknowndomain.engine.client;
 
-import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.api.Engine;
 import unknowndomain.engine.api.client.display.Camera;
 import unknowndomain.engine.api.game.Game;
 import unknowndomain.engine.api.math.BlockPos;
 import unknowndomain.engine.api.math.Timer;
 import unknowndomain.engine.api.mod.ModManager;
-//import unknowndomain.engine.api.resource.ResourcePackManager;
 import unknowndomain.engine.api.resource.ResourceManager;
 import unknowndomain.engine.api.world.World;
 import unknowndomain.engine.client.block.Grass;
 import unknowndomain.engine.client.display.DefaultGameWindow;
-import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.keybinding.ClientKeyBindingManager;
-import unknowndomain.engine.client.rendering.RenderCommon;
 import unknowndomain.engine.client.rendering.RendererGlobal;
 import unknowndomain.engine.client.world.FlatWorld;
 
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL;
+//import unknowndomain.engine.api.resource.ResourcePackManager;
 
 public class EngineClient implements Engine {
 
@@ -83,7 +79,7 @@ public class EngineClient implements Engine {
             while (accumulator >= interval) {
                 //update(interval); //TODO: game logic
 //                System.out.println("tick");
-                game.tick();
+//                game.tick();
                 accumulator -= interval;
             }
 
@@ -124,43 +120,32 @@ public class EngineClient implements Engine {
         }
         Camera camera = renderer.getCamera();
         if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
-            float moveC = 0.05f;
-            Vector3f tmp = new Vector3f();
             switch (key) {
                 case GLFW.GLFW_KEY_W:
-                    camera.getFrontVector().mul(moveC, tmp);
-                    pos.add(tmp);
+                    camera.forward();
                     break;
                 case GLFW.GLFW_KEY_S:
-                    getFrontVector().mul(moveC, tmp);
-                    pos.sub(tmp);
+                    camera.backward();
                     break;
                 case GLFW.GLFW_KEY_A:
-                    getFrontVector().cross(UP_VECTOR, tmp);
-                    tmp.mul(moveC);
-                    pos.sub(tmp);
+                    camera.left();
                     break;
                 case GLFW.GLFW_KEY_D:
-                    getFrontVector().cross(UP_VECTOR, tmp);
-                    tmp.mul(moveC);
-                    pos.add(tmp);
+                    camera.right();
                     break;
                 case GLFW.GLFW_KEY_SPACE:
-                    move(0, 1 * moveC, 0);
+                    camera.move(0, 1, 0);
                     break;
                 case GLFW.GLFW_KEY_LEFT_SHIFT:
                 case GLFW.GLFW_KEY_RIGHT_SHIFT:
-                    move(0, -1 * moveC, 0);
+                    camera.move(0, -0.1f, 0);
                     break;
                 case GLFW.GLFW_KEY_Q:
-                    roll -= SENSIBILITY * 10;
                     break;
                 case GLFW.GLFW_KEY_E:
-                    roll += SENSIBILITY * 10;
                     break;
             }
         }
-        camera.handleMove(key, action);
     }
 
     public void handleTextInput(int codepoint, int modifiers) {
