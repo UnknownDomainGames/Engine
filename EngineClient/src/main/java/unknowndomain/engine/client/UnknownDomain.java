@@ -15,6 +15,7 @@ public class UnknownDomain {
             System.setProperty(SystemUtils.JAVA_AWT_HEADLESS, "true");
         }
         engine = new EngineClient(WIDTH, HEIGHT);
+        engine.init();
     }
 
     public static EngineClient getEngine() {

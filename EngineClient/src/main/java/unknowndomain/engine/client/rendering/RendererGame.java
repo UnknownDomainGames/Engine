@@ -15,6 +15,7 @@ public final class RendererGame extends RenderingLayer {
 
     private ShaderProgram shader;
     private Camera camera;
+    private RendererWorld rendererWorld;
 
     public RendererGame() {
         shader = new ShaderProgramDefault();
@@ -22,6 +23,7 @@ public final class RendererGame extends RenderingLayer {
         camera = new CameraDefault();
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_BACK);
+        rendererWorld=new RendererWorld();
     }
 
     @Override
@@ -34,6 +36,7 @@ public final class RendererGame extends RenderingLayer {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         super.render();
+        rendererWorld.render();
     }
 
     public ShaderProgram getShader() {

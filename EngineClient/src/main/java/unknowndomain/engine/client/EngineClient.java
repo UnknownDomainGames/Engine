@@ -42,9 +42,6 @@ public class EngineClient implements Engine {
         window = new DefaultGameWindow(this, width, height, UnknownDomain.getName());
         resourceManager = new ResourceManager();
         keyBindingManager = new ClientKeyBindingManager();
-
-        init();
-        gameLoop();
     }
 
     public void init() {
@@ -57,8 +54,9 @@ public class EngineClient implements Engine {
         keyBindingManager.update();
         game.addWorld(flatWorld);//TODO test
         
-        flatWorld.setBlock(new BlockPos(1,1,0), new Grass(flatWorld,new BlockPos(1,1,0)));
+        flatWorld.setBlock(new BlockPos(0,0,-1), new Grass(flatWorld,new BlockPos(0,0,-1)));
         
+        gameLoop();
     }
 
     public void loop() {

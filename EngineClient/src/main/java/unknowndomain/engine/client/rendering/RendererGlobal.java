@@ -13,9 +13,11 @@ public class RendererGlobal {
 	private final RendererGame rendererGame;
 	private final RendererGui rendererGui;
 	
+	
 	public RendererGlobal() {
 		rendererGame = new RendererGame();
 		rendererGui = new RendererGui();
+		
 		renderers.add(rendererGame);
 		renderers.add(rendererGui);
 	}
@@ -34,7 +36,7 @@ public class RendererGlobal {
 
 	public void render() {
 		for(RenderingLayer renderer : renderers) {
-			//renderer.render();  //TODO: uncomment it when suitable
+			renderer.render(); 
 		}
 	}
 
