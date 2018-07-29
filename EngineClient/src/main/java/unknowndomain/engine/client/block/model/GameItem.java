@@ -6,8 +6,6 @@ import unknowndomain.engine.api.math.BlockPos;
 * @author byxiaobai
 * 来自教程
 */
-
-
 public class GameItem {
 
     private final Mesh mesh;

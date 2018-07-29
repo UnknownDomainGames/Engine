@@ -15,7 +15,7 @@ public class DomainedPath {
 
     public DomainedPath(String domain, @Nonnull String path){
         this.domain = Strings.nullToEmpty(domain);
-        this.path = Validate.notEmpty(path);;
+        this.path = Validate.notEmpty(path);
     }
 
     public DomainedPath(@Nonnull String resource){

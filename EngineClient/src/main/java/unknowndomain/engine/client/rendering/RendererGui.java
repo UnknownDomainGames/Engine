@@ -18,14 +18,14 @@ import static org.lwjgl.opengl.GL11.*;
 public class RendererGui extends RenderingLayer {
 
     private ShaderProgramGui shader;
-    private AWTFontRenderer fontRenderer;
+    //    private AWTFontRenderer fontRenderer;
     private TTFFontRenderer fontRenderer1;
 
     public RendererGui(){
-        shader = new ShaderProgramGui();
+//        shader = new ShaderProgramGui();
         shader.createShader();
         //fontRenderer = new AWTFontRenderer(new Font("Microsoft JhengHei UI", Font.PLAIN, 16), "ascii");
-        fontRenderer1 = new TTFFontRenderer("assets/unknowndomain/fonts/arial.ttf");
+//        fontRenderer1 = new TTFFontRenderer("assets/unknowndomain/fonts/arial.ttf");
     }
 
     @Override
@@ -36,7 +36,7 @@ public class RendererGui extends RenderingLayer {
         glEnable(GL_TEXTURE_2D);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         shader.setUseAlphaChannel(true);
-        fontRenderer1.drawText("The quick brown fox jumps over the lazy dog.", 0,0,0xffffffff, 16);
+//        fontRenderer1.drawText("The quick brown fox jumps over the lazy dog.", 0,0,0xffffffff, 16);
         super.render();
     }
 

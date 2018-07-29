@@ -15,7 +15,7 @@ public class SimpleWorld implements World {
 
     private Map<ChunkPos, SimpleChunk> chunkMap;
 
-    public SimpleWorld(String name){
+    public SimpleWorld(String name) {
         worldName = name;
         chunkMap = new HashMap<>();
     }
@@ -27,13 +27,14 @@ public class SimpleWorld implements World {
 
     @Override
     public Block getBlock(int x, int y, int z) {
-        return getBlock(new BlockPos(x,y,z));
+        return getBlock(new BlockPos(x, y, z));
     }
 
     @Override
     public Block getBlock(BlockPos pos) {
         ChunkPos chunkPos = ChunkPos.fromBlockPos(pos);
-        return getChunk(chunkPos).getBlock(chunkPos.getChunkCoordBlock(pos));
+        return null;
+//        return getChunk(chunkPos).getBlock(chunkPos.getChunkCoordBlock(pos));
     }
 
     @Override
@@ -46,9 +47,9 @@ public class SimpleWorld implements World {
         return chunkMap.get(pos);
     }
 
-	@Override
-	public void setBlock(BlockPos pos, Block block) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void setBlock(BlockPos pos, Block block) {
+        // TODO Auto-generated method stub
+
+    }
 }

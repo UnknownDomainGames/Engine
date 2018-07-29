@@ -12,39 +12,38 @@ public class CameraDefault implements Camera {
     public static final Vector3f UP_VECTOR = new Vector3f(0, 1, 0);
     private Vector3f pos = new Vector3f();
     private float yaw, pitch, roll;
-    private double aX,aY,aZ;
+    private double aX, aY, aZ;
     private double zoomRate;
 
-    public CameraDefault(){
+    public CameraDefault() {
         zoomRate = 1;
     }
 
     @Override
     public void move(float x, float y, float z) {
-        pos.add(x,y,z);
+        pos.add(x, y, z);
     }
 
-    public void move(float x, float y, float z, boolean applyRotation){
-        if(applyRotation){
-            Matrix4f mat = new Matrix4f().translate(x,y,z).rotateY(yaw).rotateX(pitch);
+    public void move(float x, float y, float z, boolean applyRotation) {
+        if (applyRotation) {
+            Matrix4f mat = new Matrix4f().translate(x, y, z).rotateY(yaw).rotateX(pitch);
             mat.transformPosition(pos);
-        }
-        else{
-            pos.add(x,y,z);
+        } else {
+            pos.add(x, y, z);
         }
     }
 
     @Override
     public void moveTo(float x, float y, float z) {
-        pos = new Vector3f(x,y,z);
+        pos = new Vector3f(x, y, z);
     }
 
     @Override
     public void handleMove(int key, int action) {
-        if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT){
+        if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
             float moveC = 0.05f;
             Vector3f tmp = new Vector3f();
-            switch (key){
+            switch (key) {
                 case GLFW.GLFW_KEY_W:
                     getFrontVector().mul(moveC, tmp);
                     pos.add(tmp);
@@ -64,10 +63,11 @@ public class CameraDefault implements Camera {
                     pos.add(tmp);
                     break;
                 case GLFW.GLFW_KEY_SPACE:
-                    move(0,1 * moveC,0);
+                    move(0, 1 * moveC, 0);
                     break;
-                case GLFW.GLFW_KEY_LEFT_SHIFT: case GLFW.GLFW_KEY_RIGHT_SHIFT:
-                    move(0,-1 * moveC,0);
+                case GLFW.GLFW_KEY_LEFT_SHIFT:
+                case GLFW.GLFW_KEY_RIGHT_SHIFT:
+                    move(0, -1 * moveC, 0);
                     break;
                 case GLFW.GLFW_KEY_Q:
                     roll -= SENSIBILITY * 10;
@@ -90,12 +90,11 @@ public class CameraDefault implements Camera {
         double pitch = (lastY - y) * SENSIBILITY;
         lastX = x;
         lastY = y;
-        if(setupLast){
+        if (setupLast) {
             this.pitch += pitch;
             this.pitch = Math.min(89.0f, Math.max(-89.0f, this.pitch));
             this.yaw += yaw;
-        }
-        else setupLast = true;
+        } else setupLast = true;
     }
 
     @Override
@@ -160,17 +159,17 @@ public class CameraDefault implements Camera {
         Vector3fc front = getFrontVector();
         Vector3f center = new Vector3f();
         pos.add(front, center);
-        Vector3f up = new Vector3f(0,1,0);
+        Vector3f up = new Vector3f(0, 1, 0);
         //up.mulDirection(mat);
-        return new Matrix4f().lookAt(pos,center, up).rotateZ((float)Math.toRadians(roll));
+        return new Matrix4f().lookAt(pos, center, up).rotateZ((float) Math.toRadians(roll));
     }
 
     private Vector3fc getFrontVector() {
-        return new Vector3f((float)(Math.cos(Math.toRadians(pitch)) * Math.cos(Math.toRadians(yaw))), (float)Math.sin(Math.toRadians(pitch)), (float)(Math.cos(Math.toRadians(pitch)) * Math.sin(Math.toRadians(yaw)))).normalize();
+        return new Vector3f((float) (Math.cos(Math.toRadians(pitch)) * Math.cos(Math.toRadians(yaw))), (float) Math.sin(Math.toRadians(pitch)), (float) (Math.cos(Math.toRadians(pitch)) * Math.sin(Math.toRadians(yaw)))).normalize();
     }
 
     @Override
     public Matrix4f makeProjectionMatrix(float width, float height) {
-        return new Matrix4f().perspective((float)(Math.toRadians(Math.max(1.0, Math.min(90.0, 60.0f * zoomRate)))), width / height, 0.01f, 1000f);
+        return new Matrix4f().perspective((float) (Math.toRadians(Math.max(1.0, Math.min(90.0, 60.0f * zoomRate)))), width / height, 0.01f, 1000f);
     }
 }

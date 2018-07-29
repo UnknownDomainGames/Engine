@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.rendering;
 
+import org.lwjgl.opengl.GL33;
 import unknowndomain.engine.api.client.display.Camera;
 import unknowndomain.engine.api.client.rendering.RenderingLayer;
 import unknowndomain.engine.api.client.shader.ShaderProgram;
@@ -39,10 +40,6 @@ public final class RendererGame extends RenderingLayer {
 
     public ShaderProgram getShader() {
         return shader;
-    }
-
-    public void onCursorMoved(double x, double y){
-        camera.rotate((float)x,(float)y);
     }
 
     public void destroy() {

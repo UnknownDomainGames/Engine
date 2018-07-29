@@ -1,14 +1,12 @@
 package unknowndomain.engine.client.block.model;
-/** 
-* @author byxiaobai
-* 基础数据
-*/
+
+/**
+ * @author byxiaobai
+ * 基础数据
+ */
 public class BasicData {
-	public static final BasicData INSTANCE=new BasicData();
-	private BasicData(){
-		
-	}
-	private float[] positions = new float[]{
+    public static final BasicData INSTANCE = new BasicData();
+    private float[] positions = new float[]{
             // V0
             -0.5f, 0.5f, 0.5f,
             // V1
@@ -53,7 +51,7 @@ public class BasicData {
             -0.5f, -0.5f, 0.5f,
             // V19: V2 repeated
             0.5f, -0.5f, 0.5f,};
-       private float[] textCoords = new float[]{
+    private float[] textCoords = new float[]{
             0.0f, 0.0f,
             0.0f, 0.5f,
             0.5f, 0.5f,
@@ -78,7 +76,7 @@ public class BasicData {
             1.0f, 0.0f,
             0.5f, 0.5f,
             1.0f, 0.5f,};
-       private int[] indices = new int[]{
+    private int[] indices = new int[]{
             // Front face
             0, 1, 3, 3, 1, 2,
             // Top Face
@@ -91,14 +89,21 @@ public class BasicData {
             16, 18, 19, 17, 16, 19,
             // Back face
             4, 6, 7, 5, 4, 7,};
-	public int[] getIndices() {
-		return indices.clone();
-	}
-	public float[] getTextCoords() {
-		return textCoords.clone();
-	}
-	public float[] getPositions() {
-		return positions.clone();
-	}
-       
+
+    private BasicData() {
+
+    }
+
+    public int[] getIndices() {
+        return indices.clone();
+    }
+
+    public float[] getTextCoords() {
+        return textCoords.clone();
+    }
+
+    public float[] getPositions() {
+        return positions.clone();
+    }
+
 }

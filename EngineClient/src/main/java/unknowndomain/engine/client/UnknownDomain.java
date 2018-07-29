@@ -11,7 +11,7 @@ public class UnknownDomain {
     private static EngineClient engine;
 
     public static void main(String[] args) {
-        if(SystemUtils.IS_OS_MAC){ //TODO: require review: where should we put this OS checking
+        if (SystemUtils.IS_OS_MAC && SystemUtils.JAVA_AWT_HEADLESS != null) { //TODO: require review: where should we put this OS checking
             System.setProperty(SystemUtils.JAVA_AWT_HEADLESS, "true");
         }
         engine = new EngineClient(WIDTH, HEIGHT);

@@ -1,43 +1,58 @@
 package unknowndomain.engine.api.unclassified;
 
-import javax.annotation.Nonnull;
+import com.google.common.collect.ImmutableList;
 
-public interface Block extends FlyweightObject<BlockEntity, World> {
+import java.util.List;
+import java.util.Optional;
 
-    @Nonnull
-    PlaceBehavior placeBehavior();
-
-    @Nonnull
-    ActiveBehavior activeBehavior();
-
-    @Nonnull
-    TouchBehavior touchBehavior();
-
-    @Nonnull
-    DestroyBehavior distroyBahavior();
-
+public abstract class Block implements Prototype<BlockObject, World> {
     // all these behaviors are missing arguments
     // fill those arguments later
 
-    interface PlaceBehavior {
-        boolean onPrePlace(BlockEntity block);
+    public abstract List<BlockObject> getAllStates();
 
-        void onPlaced(BlockEntity block);
+    public interface TickBehavior {
+        void tick(BlockObject object);
     }
 
-    interface ActiveBehavior { // right click entity
-        boolean onActivate(BlockEntity block);
+    public interface PlaceBehavior {
+        boolean onPrePlace(BlockObject block);
 
-        void onActivated(BlockEntity block);
+        void onPlaced(BlockObject block);
     }
 
-    interface TouchBehavior { // left click entity
-        boolean onTouch(BlockEntity block);
+    public interface ActiveBehavior { // right click entity
+        boolean onActivate(BlockObject block);
 
-        void onTouched(BlockEntity block);
+        void onActivated(BlockObject block);
     }
 
-    interface DestroyBehavior {
+    public interface TouchBehavior { // left click entity
+        boolean onTouch(BlockObject block);
+
+        void onTouched(BlockObject block);
+    }
+
+    public interface DestroyBehavior {
 
     }
+
+    public interface Property<T extends Comparable<T>> {
+        String getName();
+
+        ImmutableList<T> getValues();
+
+        /**
+         * The class of the values of this property
+         */
+        Class<T> getValueClass();
+
+        Optional<T> parseValue(String value);
+
+        /**
+         * Get the name for the given value.
+         */
+        String getName(T value);
+    }
+
 }
