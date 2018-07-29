@@ -49,16 +49,15 @@ public class EngineClient implements Engine {
 
     public void init() {
         window.init();
-        
-        keyBindingManager.update();
         renderer = new RendererGlobal();
         timer = new Timer();
         timer.init();
         World flatWorld=new FlatWorld("FlatWorld");
         game=new GameClient(this);
-        game.addWorld(flatWorld);;//TODO test
+        keyBindingManager.update();
+        game.addWorld(flatWorld);//TODO test
         
-        flatWorld.setBlock(new BlockPos(0,0,0), new Grass(flatWorld,new BlockPos(0,0,0)));
+        flatWorld.setBlock(new BlockPos(1,1,0), new Grass(flatWorld,new BlockPos(1,1,0)));
         
     }
 
@@ -164,5 +163,8 @@ public class EngineClient implements Engine {
 	@Override
 	public Game getGame() {
 		return game;
+	}
+	public DefaultGameWindow getGameWindow() {
+		return this.window;
 	}
 }

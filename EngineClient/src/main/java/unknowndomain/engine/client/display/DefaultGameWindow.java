@@ -46,7 +46,6 @@ public class DefaultGameWindow implements GameWindow {
 		setWindowPosCenter();
 		glfwMakeContextCurrent(handle);
 		GL.createCapabilities();
-		System.out.println("a");
 		enableVSync();
 		setupInput();
 		showWindow();
@@ -99,7 +98,7 @@ public class DefaultGameWindow implements GameWindow {
 
 	private void showWindow() {
 		glfwShowWindow(handle);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glViewport(0, 0, width, height);
 		hideCursor();
 	}
@@ -154,7 +153,6 @@ public class DefaultGameWindow implements GameWindow {
 		// Render
 
 		game.getRenderer().render();
-
 		glfwSwapBuffers(handle);
 		glfwPollEvents();
 	}

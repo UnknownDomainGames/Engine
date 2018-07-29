@@ -97,7 +97,7 @@ public class Mesh {
         glEnableVertexAttribArray(1);
 
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
-
+        
         // Restore state
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);

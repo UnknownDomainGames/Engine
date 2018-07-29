@@ -3,7 +3,7 @@ package unknowndomain.engine.client.rendering;
 import unknowndomain.engine.api.client.display.Camera;
 import unknowndomain.engine.api.client.rendering.RenderingLayer;
 import unknowndomain.engine.api.client.shader.ShaderProgram;
-import unknowndomain.engine.client.display.CameraDefault;
+import unknowndomain.engine.client.camera.CameraDefault;
 import unknowndomain.engine.client.shader.ShaderProgramDefault;
 
 import org.lwjgl.opengl.GL11;
