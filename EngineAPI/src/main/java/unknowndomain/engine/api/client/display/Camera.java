@@ -2,6 +2,8 @@ package unknowndomain.engine.api.client.display;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public interface Camera {
 
@@ -12,6 +14,9 @@ public interface Camera {
      * @param z z-translate
      */
     void move(float x, float y, float z);
+    
+    void move(float x, float y, float z, boolean applyRotation);
+    
     /**
      * Move the camera to the given position
      * @param x x-translate
@@ -59,7 +64,9 @@ public interface Camera {
      * @param ratio zoom ratio
      */
     void zoomTo(double ratio);
-
+    
+    Vector3fc getFrontVector();
+    
     /**
      * create view matrix for shader to use
      * @return
@@ -73,6 +80,7 @@ public interface Camera {
      */
     Matrix4f makeProjectionMatrix(float width, float height);
     
-	Vector3d getPosition();
+	Vector3f getPosition();
+
 	Vector3d getRotation();
 }

@@ -25,6 +25,7 @@ public class CameraDefault implements Camera {
         pos.add(x,y,z);
     }
 
+    @Override
     public void move(float x, float y, float z, boolean applyRotation){
         if(applyRotation){
             Matrix4f mat = new Matrix4f().translate(x,y,z).rotateY(yaw).rotateX(pitch);
@@ -42,42 +43,7 @@ public class CameraDefault implements Camera {
 
     @Override
     public void handleMove(int key, int action) {
-        if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT){
-            float moveC = 0.05f;
-            Vector3f tmp = new Vector3f();
-            switch (key){
-                case GLFW.GLFW_KEY_W:
-                    getFrontVector().mul(moveC, tmp);
-                    pos.add(tmp);
-                    break;
-                case GLFW.GLFW_KEY_S:
-                    getFrontVector().mul(moveC, tmp);
-                    pos.sub(tmp);
-                    break;
-                case GLFW.GLFW_KEY_A:
-                    getFrontVector().cross(UP_VECTOR, tmp);
-                    tmp.mul(moveC);
-                    pos.sub(tmp);
-                    break;
-                case GLFW.GLFW_KEY_D:
-                    getFrontVector().cross(UP_VECTOR, tmp);
-                    tmp.mul(moveC);
-                    pos.add(tmp);
-                    break;
-                case GLFW.GLFW_KEY_SPACE:
-                    move(0,1 * moveC,0);
-                    break;
-                case GLFW.GLFW_KEY_LEFT_SHIFT: case GLFW.GLFW_KEY_RIGHT_SHIFT:
-                    move(0,-1 * moveC,0);
-                    break;
-                case GLFW.GLFW_KEY_Q:
-                    roll -= SENSIBILITY * 10;
-                    break;
-                case GLFW.GLFW_KEY_E:
-                    roll += SENSIBILITY * 10;
-                    break;
-            }
-        }
+        
     }
 
     private double lastX, lastY;
@@ -166,7 +132,7 @@ public class CameraDefault implements Camera {
         return new Matrix4f().lookAt(pos,center, up).rotateZ((float)Math.toRadians(roll));
     }
 
-    private Vector3fc getFrontVector() {
+    public Vector3fc getFrontVector() {
         return new Vector3f((float)(Math.cos(Math.toRadians(pitch)) * Math.cos(Math.toRadians(yaw))), (float)Math.sin(Math.toRadians(pitch)), (float)(Math.cos(Math.toRadians(pitch)) * Math.sin(Math.toRadians(yaw)))).normalize();
     }
 
@@ -176,12 +142,13 @@ public class CameraDefault implements Camera {
     }
 
 	@Override
-	public Vector3d getPosition() {
-		return new Vector3d(pos.x,pos.y,pos.z);
+	public Vector3f getPosition() {
+		return pos;
 	}
 
 	@Override
 	public Vector3d getRotation() {
-		return new Vector3d(0,0,0);//TODO BUG
+		// TODO Auto-generated method stub
+		return new Vector3d(0,0,0);
 	}
 }

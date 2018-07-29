@@ -12,29 +12,57 @@ import unknowndomain.engine.api.client.display.Camera;
 import unknowndomain.engine.api.keybinding.ActionMode;
 import unknowndomain.engine.api.keybinding.KeyCode;
 import unknowndomain.engine.api.keybinding.KeyModifier;
+import unknowndomain.engine.api.util.DomainedPath;
 import unknowndomain.engine.client.keybinding.ClientKeyBindingManager;
 import unknowndomain.engine.client.keybinding.KeyBinding;
 
 public class CameraController {
+	public static final Vector3f UP_VECTOR = new Vector3f(0, 1, 0);
 	private Camera camera;
 	public CameraController(ClientKeyBindingManager clientKeyBindingManager,Camera camera) {
+		float moveC = 0.05f;
+        Vector3f tmp = new Vector3f();
 		this.camera=camera;
-		KeyBinding keyW=KeyBinding.create(KeyCode.KEY_W,ActionMode.PRESS,new Consumer<Void>(){
+		Consumer<Void> emptyConsumer=new Consumer<Void>(){
+			@Override
+			public void accept(Void t) {}
+		};
+		
+		KeyBinding keyW=KeyBinding.create(KeyCode.KEY_W,ActionMode.PRESS,new Consumer<Void>(){//TODO: BUG
 			@Override
 			public void accept(Void t) {
-				System.out.println("HELLO");
-				camera.move(1, 0, 0);
+				camera.move(0, 0, -1);
 			}
 			
-		}, new Consumer<Void>(){
-
+		},emptyConsumer, KeyModifier.EMPTY);
+		keyW.setRegistryName(new DomainedPath("","key_w"));
+		
+		KeyBinding keyA=KeyBinding.create(KeyCode.KEY_A,ActionMode.PRESS,new Consumer<Void>(){
 			@Override
 			public void accept(Void t) {
-				System.out.println("BYE");
+				camera.getFrontVector().mul(moveC, tmp);
+				camera.getPosition().sub(tmp);
 			}
 			
-		}, KeyModifier.EMPTY);
+		},emptyConsumer, KeyModifier.EMPTY);
+		keyA.setRegistryName(new DomainedPath("","key_a"));
+		
+		KeyBinding keyS=KeyBinding.create(KeyCode.KEY_S,ActionMode.PRESS,new Consumer<Void>(){
+			@Override
+			public void accept(Void t) {
+				camera.getFrontVector().cross(UP_VECTOR, tmp);
+                tmp.mul(moveC);
+                camera.getPosition().add(tmp);
+			}
+			
+		},emptyConsumer, KeyModifier.EMPTY);
+		keyS.setRegistryName(new DomainedPath("","key_s"));
+		//TODO: undone
 		clientKeyBindingManager.register(keyW);
+		clientKeyBindingManager.register(keyA);
+		clientKeyBindingManager.register(keyS);
+		//clientKeyBindingManager.register(keyS);
+		//clientKeyBindingManager.register(keyD);
 	}
 	
 

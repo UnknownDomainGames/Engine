@@ -31,7 +31,7 @@ public class Transformation {
     }
     
     public Matrix4d getViewMatrix(Camera camera) {
-        Vector3d cameraPos = camera.getPosition();
+        Vector3f cameraPos = camera.getPosition();
         Vector3d rotation = camera.getRotation();
         viewMatrix.identity();
         // First do the rotation so camera rotates over its position
