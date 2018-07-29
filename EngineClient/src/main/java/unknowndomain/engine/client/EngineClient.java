@@ -57,8 +57,9 @@ public class EngineClient implements Engine {
         World flatWorld=new FlatWorld("FlatWorld");
         game=new GameClient(this);
         game.addWorld(flatWorld);;//TODO test
-        BlockPos blockPos=new BlockPos(0,0,0);
-        flatWorld.setBlock(blockPos, new Grass(flatWorld,blockPos));
+        
+        flatWorld.setBlock(new BlockPos(0,0,0), new Grass(flatWorld,new BlockPos(0,0,0)));
+        
     }
 
     public void loop() {

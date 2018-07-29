@@ -7,7 +7,7 @@ import unknowndomain.engine.api.keybinding.KeyCode;
 import unknowndomain.engine.api.keybinding.KeyModifier;
 import unknowndomain.engine.api.registry.RegistryEntry;
 
-public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
+public abstract class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
 	
 	public static KeyBinding create(KeyCode code, ActionMode actionMode, Consumer<Void> onActive,
 			Consumer<Void> onInactive, KeyModifier... keyMods) {

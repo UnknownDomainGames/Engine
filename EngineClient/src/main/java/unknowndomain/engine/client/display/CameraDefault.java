@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.display;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.lwjgl.glfw.GLFW;
@@ -173,4 +174,14 @@ public class CameraDefault implements Camera {
     public Matrix4f makeProjectionMatrix(float width, float height) {
         return new Matrix4f().perspective((float)(Math.toRadians(Math.max(1.0, Math.min(90.0, 60.0f * zoomRate)))), width / height, 0.01f, 1000f);
     }
+
+	@Override
+	public Vector3d getPosition() {
+		return new Vector3d(pos.x,pos.y,pos.z);
+	}
+
+	@Override
+	public Vector3d getRotation() {
+		return new Vector3d(0,0,0);//TODO BUG
+	}
 }

@@ -18,22 +18,25 @@ public class Grass extends BlockBase {
 	private World world;
 	private BlockPos blockPos;
 	private Texture texture;
-	private final GameItem gameItem;
+	private GameItem gameItem;
 	
 	public Grass(World world,BlockPos blockPos) {
 		box=new AxisAlignedBB(0,0,0,1,1,1);
 		this.world=world;
 		this.blockPos=blockPos;
 		try {
-			setTexture(new Texture("textures/grassblock.png"));
+			this.texture=new Texture("/assets/unknowndomain/textures/block/grassblock.png");
+			System.out.println("texture:"+texture);
+			Mesh mesh = new Mesh(BasicData.INSTANCE.getPositions(), BasicData.INSTANCE.getTextCoords()
+					, BasicData.INSTANCE.getIndices(), texture);
+			gameItem=new GameItem(mesh);
+			gameItem.setPosition(blockPos);
+			System.out.println("Grass TEST");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Mesh mesh = new Mesh(BasicData.INSTANCE.getPositions(), BasicData.INSTANCE.getTextCoords()
-				, BasicData.INSTANCE.getIndices(), texture);
-		gameItem=new GameItem(mesh);
-		gameItem.setPosition(blockPos);
+		
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package unknowndomain.engine.api.client.display;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3d;
 
 public interface Camera {
 
@@ -71,4 +72,7 @@ public interface Camera {
      * @param height
      */
     Matrix4f makeProjectionMatrix(float width, float height);
+    
+	Vector3d getPosition();
+	Vector3d getRotation();
 }

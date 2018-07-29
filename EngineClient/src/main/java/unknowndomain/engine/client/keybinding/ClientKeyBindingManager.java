@@ -30,12 +30,14 @@ public class ClientKeyBindingManager extends SimpleRegistry<KeyBinding>{
 	}
 	
 	public void handlePress(int code, int mods) {
+		
 		KeyCode keyCode = KeyCode.valueOf(code);
 		KeyModifier[] keyMods = KeyModifier.valueOf(mods);
 		pressedKey.add(keyCode);
 		pressedMods = keyMods;
 		Collection<KeyBinding> keyBindings = codeToKeyBinding.get(keyCode.code | ((mods & 0x07) << 9));
 		for(KeyBinding keyBinding : keyBindings) {
+			System.out.println("HELLO");
 			keyBinding.handleKey(true);
 		}
 	}

@@ -7,6 +7,8 @@ import org.joml.Matrix4d;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
+import unknowndomain.engine.api.client.display.Camera;
+
 public class Transformation {
 
     private final Matrix4d projectionMatrix;

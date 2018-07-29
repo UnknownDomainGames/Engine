@@ -1,8 +1,7 @@
 package unknowndomain.engine.client.world;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import unknowndomain.engine.api.block.Block;
 import unknowndomain.engine.api.math.BlockPos;
@@ -38,6 +37,10 @@ public class FlatWorld implements World{
 			blockData.put(pos, block);
 		}
 		return block;
+	}
+	
+	public Collection<Block> getAllBlock() {
+		return this.blockData.values();
 	}
 
 	@Override
