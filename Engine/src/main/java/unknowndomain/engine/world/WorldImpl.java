@@ -1,4 +1,4 @@
-package unknowndomain.engine.unclassified;
+package unknowndomain.engine.world;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -6,6 +6,7 @@ import unknowndomain.engine.api.math.BlockPos;
 import unknowndomain.engine.api.math.ChunkPos;
 import unknowndomain.engine.api.unclassified.*;
 import unknowndomain.engine.api.world.Chunk;
+import unknowndomain.engine.unclassified.ChunkImpl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,8 +63,8 @@ public class WorldImpl implements World {
     }
 
     public void tick() {
-        for (ChunkImpl chunk : chunkTable.values()) {
-            executor.execute(chunk::tick);
-        }
+//        for (ChunkImpl chunk : chunkTable.values()) {
+//            executor.execute(chunk::tick);
+//        }
     }
 }

@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import unknowndomain.engine.api.client.display.Camera;
+import unknowndomain.engine.api.client.rendering.Renderer;
 import unknowndomain.engine.api.client.rendering.RenderingLayer;
 import unknowndomain.engine.client.display.CameraDefault;
 
 public class RendererGlobal {
-
-    private final List<RenderingLayer> renderers = new ArrayList<>();
+    private final List<Renderer> renderers = new ArrayList<>();
     private Camera camera = new CameraDefault();
 
     public RendererGlobal() {
@@ -20,12 +20,12 @@ public class RendererGlobal {
         return camera;
     }
 
-    public List<RenderingLayer> getRenderers() {
+    public List<Renderer> getRenderers() {
         return renderers;
     }
 
     public void render() {
-        for (RenderingLayer renderer : renderers) {
+        for (Renderer renderer : renderers) {
             renderer.render();
         }
     }
