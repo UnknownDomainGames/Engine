@@ -1,18 +1,21 @@
 package unknowndomain.engine.client.game;
 
-import org.joml.Matrix4d;
-import unknowndomain.engine.api.Engine;
-import unknowndomain.engine.api.game.Game;
-import unknowndomain.engine.api.world.World;
-import unknowndomain.engine.client.EngineClient;
-import unknowndomain.engine.client.block.Grass;
-import unknowndomain.engine.client.block.model.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.lwjgl.opengl.GL11.*;
+import unknowndomain.engine.api.game.Game;
+import unknowndomain.engine.api.world.World;
+import unknowndomain.engine.client.EngineClient;
+import unknowndomain.engine.client.block.Grass;
+import unknowndomain.engine.client.block.model.GameItem;
+import unknowndomain.engine.client.block.model.ShaderProgram;
+import unknowndomain.engine.client.block.model.Utils;
 
 public class GameClient implements Game {
 

@@ -1,14 +1,11 @@
 package unknowndomain.engine.client.shader;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 
 import unknowndomain.engine.api.client.shader.Shader;
 import unknowndomain.engine.api.client.shader.ShaderType;
-import unknowndomain.engine.client.util.GLHelper;
 
 public class ShaderProgramGui extends ShaderProgramDefault {
 

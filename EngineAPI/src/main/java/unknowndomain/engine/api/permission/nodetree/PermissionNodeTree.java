@@ -14,7 +14,7 @@ public class PermissionNodeTree {
 		for(int i=0;i<parts.length-1;i++) {
 			Node permissionNode=tempNode.children.get(parts[i]);
 			if(permissionNode!=null) {
-				if(permissionNode.content.equals(WILDCARD))return true;//Í¨Åä·û
+				if(permissionNode.content.equals(WILDCARD))return true;
 				if(permissionNode.content.equals(parts[i+1]))
 					tempNode=permissionNode;
 			}else {
