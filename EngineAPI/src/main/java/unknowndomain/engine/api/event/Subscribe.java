@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 public @interface Subscribe {
 	
-	EventPriority priority() default EventPriority.NORMAL;
+	Order order() default Order.DEFAULT;
 
 	boolean receiveCancelled() default false;
 }
