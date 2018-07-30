@@ -9,6 +9,7 @@ import unknowndomain.engine.api.math.ChunkPos;
 import unknowndomain.engine.api.world.Chunk;
 import unknowndomain.engine.api.world.World;
 import unknowndomain.engine.client.block.Air;
+import unknowndomain.engine.client.block.Grass;
 
 public class FlatWorld implements World{
 	private String name="FlatWorld";
@@ -16,6 +17,7 @@ public class FlatWorld implements World{
 	
 	public FlatWorld(String worldName) {
 		this.name=worldName;
+		this.setBlock(new BlockPos(0,0,-1), new Grass(this,new BlockPos(0,0,-1)));//TODO: hardcode
 	}
 	
 	@Override

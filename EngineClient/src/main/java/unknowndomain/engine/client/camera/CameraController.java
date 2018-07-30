@@ -2,12 +2,7 @@ package unknowndomain.engine.client.camera;
 
 import java.util.function.Consumer;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3d;
 import org.joml.Vector3f;
-import org.joml.Vector3fc;
-import org.lwjgl.glfw.GLFW;
-
 import unknowndomain.engine.api.client.display.Camera;
 import unknowndomain.engine.api.keybinding.ActionMode;
 import unknowndomain.engine.api.keybinding.KeyCode;
@@ -21,49 +16,57 @@ public class CameraController {
 	private Camera camera;
 	public CameraController(ClientKeyBindingManager clientKeyBindingManager,Camera camera) {
 		float moveC = 0.05f;
-        Vector3f tmp = new Vector3f();
-		this.camera=camera;
+		this.setCamera(camera);
 		Consumer<Void> emptyConsumer=new Consumer<Void>(){
 			@Override
 			public void accept(Void t) {}
 		};
-		
-		KeyBinding keyW=KeyBinding.create(KeyCode.KEY_W,ActionMode.PRESS,new Consumer<Void>(){//TODO: BUG
+		boolean b=false;
+		KeyBinding keyW=new KeyBinding(KeyCode.KEY_W) {
 			@Override
-			public void accept(Void t) {
+			public void onActive() {
 				camera.move(0, 0, -1);
 			}
-			
-		},emptyConsumer, KeyModifier.EMPTY);
+			@Override
+			public void onInactive() {
+				System.out.println("UN W");
+			}
+		};
 		keyW.setRegistryName(new DomainedPath("","key_w"));
 		
 		KeyBinding keyA=KeyBinding.create(KeyCode.KEY_A,ActionMode.PRESS,new Consumer<Void>(){
 			@Override
 			public void accept(Void t) {
-				camera.getFrontVector().mul(moveC, tmp);
-				camera.getPosition().sub(tmp);
+				camera.move(-1, 0, 0);
 			}
-			
 		},emptyConsumer, KeyModifier.EMPTY);
 		keyA.setRegistryName(new DomainedPath("","key_a"));
 		
 		KeyBinding keyS=KeyBinding.create(KeyCode.KEY_S,ActionMode.PRESS,new Consumer<Void>(){
 			@Override
 			public void accept(Void t) {
-				camera.getFrontVector().cross(UP_VECTOR, tmp);
-                tmp.mul(moveC);
-                camera.getPosition().add(tmp);
+                camera.move(0, 0, 1);
 			}
-			
 		},emptyConsumer, KeyModifier.EMPTY);
 		keyS.setRegistryName(new DomainedPath("","key_s"));
-		//TODO: undone
+		
+		KeyBinding keyD=KeyBinding.create(KeyCode.KEY_D,ActionMode.PRESS,new Consumer<Void>(){
+			@Override
+			public void accept(Void t) {
+				camera.move(1, 0, 0);
+			}
+		},emptyConsumer, KeyModifier.EMPTY);
+		keyS.setRegistryName(new DomainedPath("","key_d"));
+		
 		clientKeyBindingManager.register(keyW);
 		clientKeyBindingManager.register(keyA);
 		clientKeyBindingManager.register(keyS);
-		//clientKeyBindingManager.register(keyS);
-		//clientKeyBindingManager.register(keyD);
+		clientKeyBindingManager.register(keyD);
 	}
-	
-
+	public Camera getCamera() {
+		return camera;
+	}
+	public void setCamera(Camera camera) {
+		this.camera = camera;
+	}
 }

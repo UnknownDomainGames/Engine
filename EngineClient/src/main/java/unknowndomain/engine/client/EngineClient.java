@@ -53,9 +53,6 @@ public class EngineClient implements Engine {
         game=new GameClient(this);
         keyBindingManager.update();
         game.addWorld(flatWorld);//TODO test
-        
-        flatWorld.setBlock(new BlockPos(0,0,-1), new Grass(flatWorld,new BlockPos(0,0,-1)));
-        
         gameLoop();
     }
 
@@ -77,7 +74,6 @@ public class EngineClient implements Engine {
 
             while (accumulator >= interval) {
                 //update(interval); //TODO: game logic
-            	System.out.println("tick");
             	game.tick();
                 accumulator -= interval;
             }
