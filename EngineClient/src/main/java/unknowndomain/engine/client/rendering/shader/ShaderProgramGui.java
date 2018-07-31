@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.shader;
+package unknowndomain.engine.client.rendering.shader;
 
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
