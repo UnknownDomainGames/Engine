@@ -8,9 +8,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -18,7 +18,8 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class ModelManager {
     private ResourceManager resourceManager;
-    private Map<DomainedPath, GLMesh> managedMesh = new WeakHashMap<>();
+    private Map<DomainedPath, GLMesh> managedMesh = new HashMap<>();
+    private Map<DomainedPath, Mesh> meshMap = new HashMap<>();
     private Map<DomainedPath, Model> managedModels = new HashMap<>();
 
     public ModelManager(ResourceManager resourceManager) {
@@ -77,7 +78,7 @@ public class ModelManager {
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindVertexArray(0);
 
-            return new GLMesh(vaoId, vboIdList, vertexCount);
+            return new GLMesh(vaoId, vboIdList, vertexCount, GL_TRIANGLES);
         } finally {
             if (posBuffer != null) {
                 MemoryUtil.memFree(posBuffer);

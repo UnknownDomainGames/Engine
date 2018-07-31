@@ -1,0 +1,31 @@
+package unknowndomain.engine.client.model;
+
+public class Mesh {
+    private float[] vertices;
+    private float[] uv;
+    private float[] normals;
+    private int[] indices;
+
+    public Mesh(float[] vertices, float[] uv, float[] normals, int[] indices) {
+        this.vertices = vertices;
+        this.uv = uv;
+        this.normals = normals;
+        this.indices = indices;
+    }
+
+    public int[] getIndices() {
+        return indices;
+    }
+
+    public float[] getVertices() {
+        return vertices;
+    }
+
+    public float[] getUv() {
+        return uv;
+    }
+
+    public float[] getNormals() {
+        return normals;
+    }
+}

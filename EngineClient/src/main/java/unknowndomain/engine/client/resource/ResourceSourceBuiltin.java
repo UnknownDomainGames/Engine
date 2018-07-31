@@ -12,7 +12,7 @@ import java.net.URL;
 public class ResourceSourceBuiltin implements ResourceSource {
     @Override
     public Resource load(DomainedPath path) throws IOException {
-        String absPath = String.format("assets/%s", path.getPath());
+        String absPath = String.format("/assets/%s", path.getPath());
         final URL url = ResourceSourceBuiltin.class.getResource(absPath);
         if (url == null) return null;
         return new Resource() {

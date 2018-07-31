@@ -16,6 +16,7 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 public class TextureManager {
     private ResourceManager resourceManager;
     private Map<DomainedPath, GLTexture> textures = new WeakHashMap<>();
+    private GLTexture textureMap;
 
     public TextureManager(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -48,6 +49,11 @@ public class TextureManager {
         glGenerateMipmap(GL_TEXTURE_2D);//渐远纹理
     }
 
+    public int[] requireTexture(DomainedPath path) {
+
+        return new int[2];
+    }
+
     public GLTexture loadTexture(DomainedPath path) {
         GLTexture texture = this.textures.get(path);
         if (texture != null) return texture;
@@ -59,6 +65,10 @@ public class TextureManager {
             glDeleteTextures(id);
         }
         return texture;
+    }
+
+    public GLTexture getTextureMap() {
+        return textureMap;
     }
 
     public GLTexture loadTexture(DomainedPath path, boolean force) {
