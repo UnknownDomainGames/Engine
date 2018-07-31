@@ -1,12 +1,8 @@
 package unknowndomain.engine.client.util;
 
 
-import org.apache.commons.io.Charsets;
-import org.joml.Vector2f;
-
 import unknowndomain.engine.client.resource.Texture2D;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;

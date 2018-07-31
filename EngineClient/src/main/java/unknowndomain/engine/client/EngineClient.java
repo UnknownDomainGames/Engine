@@ -2,6 +2,7 @@ package unknowndomain.engine.client;
 
 import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.api.Engine;
+import unknowndomain.engine.api.client.GameClient;
 import unknowndomain.engine.api.client.display.Camera;
 import unknowndomain.engine.api.game.Game;
 import unknowndomain.engine.api.math.BlockPos;
@@ -11,8 +12,10 @@ import unknowndomain.engine.api.resource.ResourceManager;
 import unknowndomain.engine.api.world.World;
 import unknowndomain.engine.client.block.Grass;
 import unknowndomain.engine.client.display.DefaultGameWindow;
-import unknowndomain.engine.client.keybinding.ClientKeyBindingManager;
+import unknowndomain.engine.client.keybinding.KeyBindingManager;
+import unknowndomain.engine.client.model.ModelManager;
 import unknowndomain.engine.client.rendering.RendererGlobal;
+import unknowndomain.engine.client.texture.TextureManager;
 import unknowndomain.engine.client.world.FlatWorld;
 
 //import unknowndomain.engine.api.resource.ResourcePackManager;
@@ -30,17 +33,23 @@ public class EngineClient implements Engine {
      * Managers section
      */
 
-    private ClientKeyBindingManager keyBindingManager;
     private ResourceManager resourceManager;
+    private TextureManager textureManager;
+    private ModelManager modelManager;
+    private KeyBindingManager keyBindingManager;
 
-    private Game game;
+    private GameClientImpl game;
 
     private Timer timer;
 
     public EngineClient(int width, int height) {
         window = new DefaultGameWindow(this, width, height, UnknownDomain.getName());
+
         resourceManager = new ResourceManager();
-        keyBindingManager = new ClientKeyBindingManager();
+
+        modelManager = new ModelManager(resourceManager);
+        textureManager = new TextureManager(resourceManager);
+        keyBindingManager = new KeyBindingManager(resourceManager);
 
         init();
         gameLoop();
@@ -51,13 +60,9 @@ public class EngineClient implements Engine {
 
         keyBindingManager.update();
         renderer = new RendererGlobal();
+
         timer = new Timer();
         timer.init();
-        World flatWorld = new FlatWorld("FlatWorld");
-//        game = new GameClient(this);
-//        game.addWorld(flatWorld);
-        BlockPos blockPos = new BlockPos(0, 0, 0);
-        flatWorld.setBlock(blockPos, new Grass(flatWorld, blockPos));
     }
 
     public void loop() {
@@ -172,7 +177,7 @@ public class EngineClient implements Engine {
         return renderer;
     }
 
-    public ClientKeyBindingManager getKeyBindingManager() {
+    public KeyBindingManager getKeyBindingManager() {
         return keyBindingManager;
     }
 
@@ -188,6 +193,6 @@ public class EngineClient implements Engine {
 
     @Override
     public Game getGame() {
-        return game;
+        return null;
     }
 }

@@ -29,7 +29,7 @@ public class AWTFontRenderer {
 
 
     private List<Texture2D> textures;
-    private Texture2D texture;
+//    private Texture2D texture;
 
     public AWTFontRenderer(Font font, String charset) {
         this.font = font;

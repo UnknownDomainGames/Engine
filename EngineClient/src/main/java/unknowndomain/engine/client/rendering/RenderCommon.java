@@ -1,26 +1,24 @@
 package unknowndomain.engine.client.rendering;
 
-import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.api.client.display.Camera;
 import unknowndomain.engine.api.client.rendering.Renderer;
-import unknowndomain.engine.api.client.rendering.RenderingLayer;
 import unknowndomain.engine.api.client.shader.ShaderProgram;
-import unknowndomain.engine.client.block.model.BasicData;
-import unknowndomain.engine.client.block.model.Mesh;
-import unknowndomain.engine.client.block.model.Texture;
-import unknowndomain.engine.client.shader.ShaderProgramCommon;
+import unknowndomain.engine.client.model.Model;
+import unknowndomain.engine.client.rendering.shader.ShaderProgramCommon;
 
+import java.util.Collections;
+import java.util.List;
 
-public class RenderCommon extends RenderingLayer {
+public class RenderCommon implements Renderer {
     private ShaderProgram shader;
     private Camera camera;
     private int u_Projection, u_View, u_Model;
+    private List<Model> modelList = Collections.emptyList();
 
     public RenderCommon(Camera camera) {
         this.camera = camera;
         this.shader = new ShaderProgramCommon();
-        this.putRenderer(new GrassBlockRenderer());
 
         shader.createShader();
 
@@ -44,29 +42,9 @@ public class RenderCommon extends RenderingLayer {
         ShaderProgram.setUniform(u_Projection, camera.projection());
         ShaderProgram.setUniform(u_View, camera.view());
 
-        super.render();
-    }
-
-    class GrassBlockRenderer implements Renderer {
-        Mesh mesh;
-
-        private GrassBlockRenderer() {
-            try {
-                this.mesh = new Mesh(BasicData.INSTANCE.getPositions(), BasicData.INSTANCE.getTextCoords()
-                        , BasicData.INSTANCE.getIndices(), new Texture("/assets/unknowndomain/textures/block/grassblock.png"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        for (Model model : modelList) {
+            model.render();
         }
-
-        @Override
-        public void render() {
-            ShaderProgram.setUniform(u_Model, new Matrix4f()
-                    .setTranslation(2f, 0, 0)
-                    .rotateY((float) Math.toRadians(90)));
-            mesh.render();
-//            ShaderProgram.setUniform(u_Model, new Matrix4f().setTranslation(0, 0, -2));
-//            mesh.render();
-        }
+//        super.render();
     }
 }

@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.shader;
+package unknowndomain.engine.client.rendering.shader;
 
 import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.api.client.shader.Shader;

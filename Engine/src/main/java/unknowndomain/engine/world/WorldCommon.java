@@ -1,4 +1,4 @@
-package unknowndomain.engine.unclassified;
+package unknowndomain.engine.world;
 
 import unknowndomain.engine.api.unclassified.Game;
 import unknowndomain.engine.api.unclassified.World;

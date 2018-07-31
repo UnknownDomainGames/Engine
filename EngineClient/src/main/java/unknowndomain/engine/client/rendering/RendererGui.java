@@ -2,13 +2,10 @@ package unknowndomain.engine.client.rendering;
 
 import unknowndomain.engine.api.client.rendering.Renderer;
 import unknowndomain.engine.api.client.rendering.RenderingLayer;
-import unknowndomain.engine.api.client.shader.ShaderProgram;
 import unknowndomain.engine.client.gui.Gui;
-import unknowndomain.engine.client.shader.ShaderProgramGui;
+import unknowndomain.engine.client.rendering.shader.ShaderProgramGui;
 
 import org.joml.Matrix4f;
-
-import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.*;
 

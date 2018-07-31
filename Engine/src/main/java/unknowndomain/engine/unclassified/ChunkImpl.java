@@ -8,6 +8,8 @@ import unknowndomain.engine.api.unclassified.BlockObject;
 import unknowndomain.engine.api.unclassified.Prototype;
 import unknowndomain.engine.api.unclassified.RuntimeObject;
 import unknowndomain.engine.api.world.Chunk;
+import unknowndomain.engine.unclassified.BlockObjectRuntime;
+import unknowndomain.engine.unclassified.Entity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,7 +25,7 @@ public class ChunkImpl implements Chunk {
     private Map<BlockPos, BlockObject> blockObjects = Maps.newHashMap();
     private Map<String, Object> components;
 
-    void tick() {
+    public void tick() {
         for (Entity entity : entities) {
             entity.tick();
         }
