@@ -52,7 +52,7 @@ public class Mesh {
             textCoordsBuffer.put(textCoords).flip();
             glBindBuffer(GL_ARRAY_BUFFER, vboId);
             glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
-            glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+            glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0);
 
             //顶点
             vboId = glGenBuffers();
@@ -94,13 +94,13 @@ public class Mesh {
         // Draw the mesh
         glBindVertexArray(getVaoId());
         glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
 
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
         
         // Restore state
         glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
         glBindVertexArray(0);
     }
 

@@ -1,14 +1,21 @@
 package unknowndomain.engine.client.rendering;
 
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL31;
 import unknowndomain.engine.api.client.shader.ShaderProgram;
 import unknowndomain.engine.client.util.BufferBuilder;
+import unknowndomain.engine.client.util.OpenGLHelper;
 import unknowndomain.engine.client.util.VertexBufferObject;
+
+import java.nio.ByteBuffer;
 
 public class Tessellator {
 
     private BufferBuilder buffer;
     private VertexBufferObject vbo;
-    
+
+    private int vertexStatusBufId;
     private static final Tessellator INSTANCE = new Tessellator(1048576);
 
     public static Tessellator getInstance() {
@@ -18,6 +25,11 @@ public class Tessellator {
     public Tessellator(int bufferSize){
         vbo = new VertexBufferObject();
         buffer = new BufferBuilder(bufferSize);
+
+        vertexStatusBufId = GL15.glGenBuffers();
+        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, vertexStatusBufId);
+        GL15.glBufferData(GL31.GL_UNIFORM_BUFFER, 4*4, GL15.GL_STATIC_DRAW);
+        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, 0);
     }
 
     public BufferBuilder getBuffer() {
@@ -26,6 +38,15 @@ public class Tessellator {
     
     public void draw(){
         buffer.finish();
+
+        int status = GL31.glGetUniformBlockIndex(OpenGLHelper.getCurrentShaderId(), "VertexStatus");
+        GL31.glUniformBlockBinding(OpenGLHelper.getCurrentShaderId(), status, 0);
+        GL30.glBindBufferBase(GL31.GL_UNIFORM_BUFFER, 2, vertexStatusBufId);
+
+        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, vertexStatusBufId);
+        ByteBuffer bb = ByteBuffer.wrap(new byte[]{(byte) (buffer.isPosEnabled() ? 1 : 0), (byte) (buffer.isColorEnabled() ? 1 : 0), (byte) (buffer.isTexEnabled() ? 1 : 0), (byte) (buffer.isNormalEnabled() ? 1 : 0)});
+        GL15.glBufferSubData(GL31.GL_UNIFORM_BUFFER, 0, bb);
+        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, 0);
         vbo.bind();
         vbo.uploadData(buffer);
         vbo.bind();
@@ -50,7 +71,12 @@ public class Tessellator {
         vbo.unbind();
         vbo.bindVAO();
 
-        vbo.drawArrays(buffer.getDrawMode());
+        if(buffer.isUsingIndex()){
+            vbo.drawElements(buffer.getDrawMode());
+        }
+        else {
+            vbo.drawArrays(buffer.getDrawMode());
+        }
         vbo.unbind();
         buffer.reset();
     }

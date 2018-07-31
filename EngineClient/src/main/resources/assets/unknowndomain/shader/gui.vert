@@ -9,12 +9,21 @@ out vec4 vertexColor;
 out vec2 textureCoord;
 
 
-uniform mat4 modelView;
+uniform mat4 model;
+uniform mat4 view;
 uniform mat4 projection;
+
+
+layout(std140) uniform VertexStatus{
+    bool usepos;
+    bool usecolor;
+    bool usetex;
+    bool usenormal;
+};
 
 void main()
 {
-    gl_Position = projection * modelView * vec4(position, 1.0);
+    gl_Position = projection * view * model * vec4(position, 1.0);
     vertexColor = color;
     textureCoord = texCoord;
 }

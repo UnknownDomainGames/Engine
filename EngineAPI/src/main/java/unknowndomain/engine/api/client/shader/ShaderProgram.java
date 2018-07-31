@@ -1,10 +1,13 @@
 package unknowndomain.engine.api.client.shader;
 
 import org.joml.*;
+import org.lwjgl.Version;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL40;
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 
 public abstract class ShaderProgram {
@@ -12,6 +15,10 @@ public abstract class ShaderProgram {
     protected int shaderId = -1;
 
     public abstract void createShader();
+
+    public int getShaderProgramId(){
+        return shaderId;
+    }
 
     public abstract void deleteShader();
 
@@ -81,6 +88,18 @@ public abstract class ShaderProgram {
             FloatBuffer buffer = stack.mallocFloat(4 * 4);
             value.get(buffer);
             GL20.glUniformMatrix4fv(location, false, buffer);
+
+        }
+    }
+    public static void setUniform(int location, Matrix4d value) {
+        if(Version.getVersion().startsWith("4")){
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            DoubleBuffer buffer = stack.mallocDouble(4 * 4);
+            value.get(buffer);
+            GL40.glUniformMatrix4dv(location, false, buffer);
+        }}
+        else {
+            setUniform(location, new Matrix4f(value));
         }
     }
 
@@ -113,6 +132,9 @@ public abstract class ShaderProgram {
     }
 
     public void setUniform(String location, Matrix4f value) {
+        setUniform(getUniformLocation(location), value);
+    }
+    public void setUniform(String location, Matrix4d value) {
         setUniform(getUniformLocation(location), value);
     }
 }

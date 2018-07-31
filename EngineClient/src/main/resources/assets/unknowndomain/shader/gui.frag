@@ -6,9 +6,15 @@ in vec3 mvPos;
 out vec4 fragColor;
 
 uniform sampler2D texImage;
-uniform vec4 color;
 uniform bool usingAlpha;
-uniform bool usingTex;
+
+
+layout(std140) uniform VertexStatus{
+    bool pos;
+    bool color;
+    bool tex;
+    bool normal;
+};
 
 void main()
 {
@@ -16,7 +22,7 @@ void main()
         fragColor = vec4(vertexColor.rgb, texture2D(texImage, textureCoord).r * vertexColor.a);
     }
     else{
-        if(usingTex){
+        if(tex){
             fragColor = vertexColor * texture2D(texImage, textureCoord);
         }
         else{

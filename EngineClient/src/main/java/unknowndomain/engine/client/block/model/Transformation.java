@@ -42,13 +42,19 @@ public class Transformation {
         return viewMatrix;
     }
 
-    public Matrix4d getModelViewMatrix(GameItem gameItem, Matrix4d viewMatrix) {
+    public Matrix4d getModelMatrix(GameItem gameItem){
         Vector3d rotation = gameItem.getRotation();
-        modelViewMatrix.identity().translate(gameItem.getPosition()).
+        Matrix4d model = new Matrix4d();
+        model.identity().translate(gameItem.getPosition()).
                 rotateX((float)Math.toRadians(-rotation.x)).
                 rotateY((float)Math.toRadians(-rotation.y)).
                 rotateZ((float)Math.toRadians(-rotation.z)).
                 scale(gameItem.getScale());
+        return model;
+    }
+
+    public Matrix4d getModelViewMatrix(GameItem gameItem, Matrix4d viewMatrix) {
+        getModelMatrix(gameItem).get(modelViewMatrix);
         Matrix4d viewCurr = new Matrix4d(viewMatrix);
         return viewCurr.mul(modelViewMatrix);
     }

@@ -10,7 +10,7 @@ public class Utils {
 		return "#version 330\n" + 
 				"\n" + 
 				"layout (location=0) in vec3 position;\n" + 
-				"layout (location=1) in vec2 texCoord;\n" + 
+				"layout (location=2) in vec2 texCoord;\n" +
 				"\n" + 
 				"out vec2 outTexCoord;\n" + 
 				"\n" + 
