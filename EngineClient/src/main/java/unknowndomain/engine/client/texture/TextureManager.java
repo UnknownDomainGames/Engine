@@ -5,7 +5,9 @@ import unknowndomain.engine.api.resource.Resource;
 import unknowndomain.engine.api.resource.ResourceManager;
 import unknowndomain.engine.api.util.DomainedPath;
 
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -16,7 +18,7 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 public class TextureManager {
     private ResourceManager resourceManager;
     private Map<DomainedPath, GLTexture> textures = new WeakHashMap<>();
-    private GLTexture textureMap;
+    private TextureMap textureMap;
 
     public TextureManager(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
@@ -50,7 +52,27 @@ public class TextureManager {
     }
 
     public int[] requireTexture(DomainedPath path) {
+        try {
+            Resource load = resourceManager.load(path);
+            InputStream stream = load.open();
+            DataInputStream datainputstream = new DataInputStream(stream);
 
+            if (datainputstream.readLong() != -8552249625308161526L)
+                throw new IOException("Bad PNG Signature");
+            else if (datainputstream.readInt() != 13)
+                throw new IOException("Bad length for IHDR chunk!");
+            else if (datainputstream.readInt() != 1229472850)
+                throw new IOException("Bad type for IHDR chunk!");
+            else {
+                int w = datainputstream.readInt();
+                int h = datainputstream.readInt();
+
+                if (w != h) return null;
+                return textureMap.require(w, h);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return new int[2];
     }
 

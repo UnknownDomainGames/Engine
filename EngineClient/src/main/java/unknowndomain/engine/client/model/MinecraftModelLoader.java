@@ -54,6 +54,9 @@ public class MinecraftModelLoader {
             }
             if (path == null) continue;
             int[] offset = textureManager.requireTexture(new DomainedPath("", ""));
+            if (offset == null) {
+                return null;
+            }
             textureOffsets.put(variant, offset);
         }
         float[] vertices = new float[model.elements.length * 24 * 3];

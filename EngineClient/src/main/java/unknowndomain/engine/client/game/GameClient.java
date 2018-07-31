@@ -18,7 +18,6 @@ import unknowndomain.engine.client.block.model.ShaderProgram;
 import unknowndomain.engine.client.block.model.Utils;
 
 public class GameClient implements Game {
-
     private final EngineClient engine;
     private Map<String, World> worldsMap = new HashMap<>();
     //    private Transformation transformation;
