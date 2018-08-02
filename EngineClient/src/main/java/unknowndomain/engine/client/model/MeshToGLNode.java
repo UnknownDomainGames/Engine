@@ -1,8 +1,6 @@
 package unknowndomain.engine.client.model;
 
 import org.lwjgl.system.MemoryUtil;
-import unknowndomain.engine.client.model.GLMesh;
-import unknowndomain.engine.client.model.Mesh;
 import unknowndomain.engine.client.resource.pipeline.ResourcePipeline;
 
 import java.nio.FloatBuffer;
