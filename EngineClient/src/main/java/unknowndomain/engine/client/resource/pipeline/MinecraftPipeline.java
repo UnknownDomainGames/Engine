@@ -9,7 +9,7 @@ public class MinecraftPipeline {
         pipeline.add("ModelPaths", new ResolveModelsNode())
                 .add("ResolvedModels", new ResolveTextureUVNode())
                 .add("MappedResolvedModels", new BakeMeshNode())
-                .add("BakedMeshes", new MeshToGLNode());
+                .add("Meshes", new MeshToGLNode());
         return pipeline;
     }
 }

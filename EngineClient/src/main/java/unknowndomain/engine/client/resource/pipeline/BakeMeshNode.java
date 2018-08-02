@@ -22,156 +22,162 @@ class BakeMeshNode implements ResourcePipeline.Node {
 
             // front
             thisUv = element.faces.north.uv;
-            System.arraycopy(element.from, 0, vertices, vertIndex, 3);
-            vertIndex += 3;
+            vertices[vertIndex++] = element.from[X];
+            vertices[vertIndex++] = element.from[Y];
+            vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.from[Z];
-            uv[uvIndex++] = thisUv[3];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.from[Z];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[4];
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.from[Z];
+            uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[2];
 
 
             // left
             thisUv = element.faces.west.uv;
-            System.arraycopy(element.from, 0, vertices, vertIndex, 3);
-            vertIndex += 3;
+            vertices[vertIndex++] = element.from[X];
+            vertices[vertIndex++] = element.from[Y];
+            vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.from[Z];
-            uv[uvIndex++] = thisUv[3];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[4];
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[2];
 
             // bottom
             thisUv = element.faces.down.uv;
-            System.arraycopy(element.from, 0, vertices, vertIndex, 3);
-            vertIndex += 3;
+            vertices[vertIndex++] = element.from[X];
+            vertices[vertIndex++] = element.from[Y];
+            vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.to[Z];
-            uv[uvIndex++] = thisUv[3];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[4];
 
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.from[Z];
+            uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[2];
 
             // back
             thisUv = element.faces.north.uv;
-            System.arraycopy(element.to, 0, vertices, vertIndex, 3);
-            vertIndex += 3;
+            vertices[vertIndex++] = element.from[X];
+            vertices[vertIndex++] = element.from[Y];
+            vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.to[Z];
-            uv[uvIndex++] = thisUv[3];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[1];
 
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[4];
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[2];
 
             // right
             thisUv = element.faces.east.uv;
-            System.arraycopy(element.to, 0, vertices, vertIndex, 3);
-            vertIndex += 3;
+            vertices[vertIndex++] = element.from[X];
+            vertices[vertIndex++] = element.from[Y];
+            vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.from[Z];
-            uv[uvIndex++] = thisUv[3];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.from[Z];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[4];
 
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[2];
 
             // top
             thisUv = element.faces.up.uv;
-            System.arraycopy(element.from, 0, vertices, vertIndex, 3);
-            vertIndex += 3;
+            vertices[vertIndex++] = element.from[X];
+            vertices[vertIndex++] = element.from[Y];
+            vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.to[Z];
-            uv[uvIndex++] = thisUv[3];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[1];
 
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.from[Z];
+            uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[4];
 
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.from[Z];
+            uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[3];
-            uv[uvIndex++] = thisUv[2];
 
         }
         return new Mesh(vertices, uv, normals, indices, GL11.GL_QUADS);
@@ -179,11 +185,11 @@ class BakeMeshNode implements ResourcePipeline.Node {
 
     @Override
     public void process(ResourcePipeline.Context context) {
-        List<Model> models = context.in("MappedResolvedModel");
+        List<Model> models = context.in("MappedResolvedModels");
         List<Mesh> meshes = new ArrayList<>(models.size());
         for (Model model : models) {
             meshes.add(bakeModel(model));
         }
-        context.out("BakedMeshes", meshes);
+        context.out("Meshes", meshes);
     }
 }

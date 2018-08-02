@@ -15,10 +15,7 @@ public class UnknownDomain {
         if (SystemUtils.IS_OS_MAC && SystemUtils.JAVA_AWT_HEADLESS != null) { //TODO: require review: where should we put this OS checking
             System.setProperty(SystemUtils.JAVA_AWT_HEADLESS, "true");
         }
-//        engine = new EngineClient(WIDTH, HEIGHT);
-
-        new ResourceManager();
-
+        engine = new EngineClient(WIDTH, HEIGHT);
     }
 
     public static EngineClient getEngine() {

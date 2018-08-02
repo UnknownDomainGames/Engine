@@ -19,7 +19,7 @@ class ResolveTextureUVNode implements ResourcePipeline.Node {
     @Override
     public void process(ResourcePipeline.Context context) throws Exception {
         ResourceManager manager = context.manager();
-        List<Model> models = context.in("models");
+        List<Model> models = context.in("ResolvedModels");
         Map<String, TexturePart> required = new HashMap<>();
         List<TexturePart> parts = Lists.newArrayList();
         for (Model model : models) {
@@ -37,7 +37,7 @@ class ResolveTextureUVNode implements ResourcePipeline.Node {
                     continue;
                 model.textures.put(variant, path);
                 if (!required.containsKey(path)) {
-                    Resource resource = manager.load(new DomainedPath("", path));
+                    Resource resource = manager.load(new DomainedPath("", "minecraft/textures/" + path + ".png"));
                     PNGDecoder decoder = new PNGDecoder(resource.open());
                     ByteBuffer buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
                     decoder.decodeFlipped(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
@@ -65,8 +65,9 @@ class ResolveTextureUVNode implements ResourcePipeline.Node {
             for (Model.Element e : m.elements) {
                 Lists.newArrayList(e.faces.up, e.faces.down, e.faces.north, e.faces.west, e.faces.east, e.faces.south)
                         .forEach((face) -> {
-                            String path = m.textures.get(face.texture);
+                            String path = m.textures.get(face.texture.substring(1));
                             TexturePart p = required.get(path);
+                            if (face.uv == null) face.uv = new float[]{0, 0, 16, 16};
                             face.uv[0] = (face.uv[0] + p.offsetX) / dimension;
                             face.uv[1] = (face.uv[1] + p.offsetY) / dimension;
                             face.uv[2] = (face.uv[2] + p.offsetX) / dimension;

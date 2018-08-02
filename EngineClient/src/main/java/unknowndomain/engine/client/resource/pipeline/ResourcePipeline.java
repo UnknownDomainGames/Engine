@@ -42,6 +42,8 @@ public class ResourcePipeline {
 
             @Override
             public void out(String name, Object o) {
+                System.out.println("OUT " + name);
+                System.out.println(o.toString());
                 cached.put(name, o);
                 Node node = nodeMap.get(name);
                 if (node != null) {

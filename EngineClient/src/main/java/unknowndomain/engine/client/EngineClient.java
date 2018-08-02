@@ -1,5 +1,6 @@
 package unknowndomain.engine.client;
 
+import com.google.common.collect.Lists;
 import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.api.Engine;
 import unknowndomain.engine.api.client.GameClient;
@@ -9,12 +10,16 @@ import unknowndomain.engine.api.math.BlockPos;
 import unknowndomain.engine.api.math.Timer;
 import unknowndomain.engine.api.mod.ModManager;
 import unknowndomain.engine.api.resource.ResourceManager;
+import unknowndomain.engine.api.util.DomainedPath;
 import unknowndomain.engine.api.world.World;
 import unknowndomain.engine.client.block.Grass;
 import unknowndomain.engine.client.display.DefaultGameWindow;
 import unknowndomain.engine.client.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.model.ModelManager;
 import unknowndomain.engine.client.rendering.RendererGlobal;
+import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
+import unknowndomain.engine.client.resource.pipeline.MinecraftPipeline;
+import unknowndomain.engine.client.resource.pipeline.ResourcePipeline;
 import unknowndomain.engine.client.texture.TextureManager;
 import unknowndomain.engine.client.world.FlatWorld;
 
@@ -34,8 +39,6 @@ public class EngineClient implements Engine {
      */
 
     private ResourceManager resourceManager;
-    private TextureManager textureManager;
-    private ModelManager modelManager;
     private KeyBindingManager keyBindingManager;
 
     private GameClientImpl game;
@@ -46,9 +49,10 @@ public class EngineClient implements Engine {
         window = new DefaultGameWindow(this, width, height, UnknownDomain.getName());
 
         resourceManager = new ResourceManager();
+        resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
-        modelManager = new ModelManager(resourceManager);
-        textureManager = new TextureManager(resourceManager);
+//        modelManager = new ModelManager(resourceManager);
+//        textureManager = new TextureManager(resourceManager);
         keyBindingManager = new KeyBindingManager(resourceManager);
 
         init();
@@ -57,6 +61,16 @@ public class EngineClient implements Engine {
 
     public void init() {
         window.init();
+
+        ResourcePipeline pipeline = MinecraftPipeline.create(resourceManager);
+        pipeline.add("GLMeshes", context -> {
+            System.out.println(context.in("GLMeshes").toString());
+        });
+        try {
+            pipeline.push("ModelPaths", Lists.newArrayList(new DomainedPath("", "/minecraft/models/block/stone.json")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         keyBindingManager.update();
         renderer = new RendererGlobal();

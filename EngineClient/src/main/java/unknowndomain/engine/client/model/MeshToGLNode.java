@@ -81,12 +81,12 @@ public class MeshToGLNode implements ResourcePipeline.Node {
 
     @Override
     public void process(ResourcePipeline.Context context) {
-        List<Mesh> meshes = context.in("BlockMeshes");
+        List<Mesh> meshes = context.in("Meshes");
         List<GLMesh> glMeshes = new ArrayList<>();
         for (Mesh mesh : meshes) {
             glMeshes.add(convert(mesh));
         }
-        context.out("GLBlockMeshes", glMeshes);
+        context.out("GLMeshes", glMeshes);
 
     }
 }
