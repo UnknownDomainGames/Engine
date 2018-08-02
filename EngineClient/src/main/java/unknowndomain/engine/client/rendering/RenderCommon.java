@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.api.client.display.Camera;
 import unknowndomain.engine.api.client.rendering.Renderer;
 import unknowndomain.engine.api.client.shader.ShaderProgram;
-import unknowndomain.engine.client.model.Model;
+//import unknowndomain.engine.client.model.Model;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramCommon;
 
 import java.util.Collections;
@@ -14,7 +14,7 @@ public class RenderCommon implements Renderer {
     private ShaderProgram shader;
     private Camera camera;
     private int u_Projection, u_View, u_Model;
-    private List<Model> modelList = Collections.emptyList();
+//    private List<Model> modelList = Collections.emptyList();
 
     public RenderCommon(Camera camera) {
         this.camera = camera;
@@ -41,10 +41,10 @@ public class RenderCommon implements Renderer {
 
         ShaderProgram.setUniform(u_Projection, camera.projection());
         ShaderProgram.setUniform(u_View, camera.view());
-
-        for (Model model : modelList) {
-            model.render();
-        }
+//
+//        for (Model model : modelList) {
+//            model.render();
+//        }
 //        super.render();
     }
 }

@@ -1,20 +1,10 @@
 package unknowndomain.engine.client.model;
 
-import org.lwjgl.system.MemoryUtil;
 import unknowndomain.engine.api.resource.ResourceManager;
 import unknowndomain.engine.api.util.DomainedPath;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class ModelManager {
     private ResourceManager resourceManager;

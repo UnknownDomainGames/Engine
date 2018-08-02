@@ -1,25 +1,23 @@
 package unknowndomain.engine.client.model;
 
+import org.lwjgl.system.MemoryUtil;
+import unknowndomain.engine.client.model.GLMesh;
+import unknowndomain.engine.client.model.Mesh;
+import unknowndomain.engine.client.resource.pipeline.ResourcePipeline;
+
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.function.Function;
-
-import org.lwjgl.system.MemoryUtil;
-
-class MeshToGLNode implements Function<Mesh, GLMesh> {
-	@Override
-	public GLMesh apply(Mesh t) {
+public class MeshToGLNode implements ResourcePipeline.Node {
+    private GLMesh convert(Mesh t) {
         FloatBuffer posBuffer = null;
         FloatBuffer textCoordsBuffer = null;
         IntBuffer indicesBuffer = null;
@@ -81,5 +79,16 @@ class MeshToGLNode implements Function<Mesh, GLMesh> {
                 MemoryUtil.memFree(indicesBuffer);
             }
         }
-	}
+    }
+
+    @Override
+    public void process(ResourcePipeline.Context context) {
+        List<Mesh> meshes = context.in("BlockMeshes");
+        List<GLMesh> glMeshes = new ArrayList<>();
+        for (Mesh mesh : meshes) {
+            glMeshes.add(convert(mesh));
+        }
+        context.out("GLBlockMeshes", glMeshes);
+
+    }
 }
