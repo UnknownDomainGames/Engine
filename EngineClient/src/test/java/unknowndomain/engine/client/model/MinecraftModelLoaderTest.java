@@ -8,7 +8,7 @@ import unknowndomain.engine.client.texture.TextureManager;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MinecraftModelLoaderTest {
 
@@ -19,6 +19,6 @@ public class MinecraftModelLoaderTest {
         manager.addResourceSource(new ResourceSourceBuiltin());
         MinecraftModelLoader loader = new MinecraftModelLoader(manager, textureManager);
         MinecraftModelLoader.Model resolve = loader.resolve(new DomainedPath("", "minecraft/models/block/sand.json"));
-        assertNotNull("Should resolve object", resolve);
+        assertNotNull(resolve, "Should resolve object");
     }
 }

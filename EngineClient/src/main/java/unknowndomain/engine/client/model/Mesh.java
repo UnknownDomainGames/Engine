@@ -5,12 +5,21 @@ public class Mesh {
     private float[] uv;
     private float[] normals;
     private int[] indices;
+    private int mode;
 
-    public Mesh(float[] vertices, float[] uv, float[] normals, int[] indices) {
+    public Mesh(float[] vertices, float[] uv, float[] normals, int[] indices, int mode) {
         this.vertices = vertices;
         this.uv = uv;
         this.normals = normals;
         this.indices = indices;
+        this.mode = mode;
+    }
+
+    /**
+     * @return the mode
+     */
+    public int getMode() {
+        return mode;
     }
 
     public int[] getIndices() {
