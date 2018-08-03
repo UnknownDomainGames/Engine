@@ -34,17 +34,15 @@ class ResolveModelsNode implements ResourcePipeline.Node {
     }
 
     @Override
-    public void process(ResourcePipeline.Context context) throws IOException {
+    public Object process(ResourcePipeline.Context context, Object in) throws IOException {
         ResourceManager manager = context.manager();
-        List<DomainedPath> paths = context.in("ModelPaths");
+        List<DomainedPath> paths = (List<DomainedPath>) in;
         List<Model> models = new ArrayList<>();
         for (DomainedPath path : paths) {
             Model loaded = load(manager, path);
-            if (loaded != null) {
-                models.add(loaded);
-            }
+            models.add(loaded);
         }
-        context.out("ResolvedModels", models);
+        return models;
     }
 
 }

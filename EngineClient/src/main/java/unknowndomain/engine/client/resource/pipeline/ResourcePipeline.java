@@ -8,26 +8,24 @@ import java.util.List;
 import java.util.Map;
 
 public class ResourcePipeline {
-    private Map<String, Node> nodeMap = new HashMap<>();
+    private Map<String, List<Node>> pipes = new HashMap<>();
+
     private ResourceManager manager;
 
     public ResourcePipeline(ResourceManager manager) {
         this.manager = manager;
     }
 
-    public ResourcePipeline add(String name, Node node) {
-        nodeMap.put(name, node);
+    public ResourcePipeline add(String line, Node node) {
+        List<Node> nodes = pipes.computeIfAbsent(line, (k) -> new ArrayList<>());
+        nodes.add(node);
         return this;
     }
 
     public void push(String name, Object o) throws Exception {
         List<Exception> exceptions = new ArrayList<>();
+        Map<String, Object> cached = new HashMap<>();
         Context context = new Context() {
-            Map<String, Object> cached = new HashMap<>();
-
-            {
-                cached.put(name, o);
-            }
 
             @Override
             public ResourceManager manager() {
@@ -36,26 +34,28 @@ public class ResourcePipeline {
 
             @Override
             @SuppressWarnings("unchecked")
-            public <T> T in(String name) {
+            public <T> T get(String name) {
                 return (T) cached.get(name);
             }
 
             @Override
-            public void out(String name, Object o) {
-                System.out.println("OUT " + name);
-                System.out.println(o.toString());
-                cached.put(name, o);
-                Node node = nodeMap.get(name);
-                if (node != null) {
+            public void emit(String name, Object o) {
+                List<Node> nodes = pipes.get(name);
+                if (nodes != null && nodes.size() != 0) {
                     try {
-                        node.process(this);
+                        Object pack = o;
+                        for (Node node : nodes) {
+                            pack = node.process(this, pack);
+                        }
+                        cached.put(name, pack);
                     } catch (Exception e) {
                         exceptions.add(e);
                     }
                 }
             }
         };
-        context.out(name, o);
+        context.emit(name, o);
+
         if (exceptions.size() != 0) {
             Exception ex = new Exception("Some errors occurred when we process the " + name);
             for (Exception e : exceptions) {
@@ -68,12 +68,12 @@ public class ResourcePipeline {
     public interface Context {
         ResourceManager manager();
 
-        <T> T in(String name);
+        <T> T get(String name);
 
-        void out(String name, Object o);
+        void emit(String name, Object o);
     }
 
     public interface Node {
-        void process(Context context) throws Exception;
+        Object process(Context context, Object in) throws Exception;
     }
 }

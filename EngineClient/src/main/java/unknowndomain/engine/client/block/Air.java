@@ -1,12 +1,9 @@
 package unknowndomain.engine.client.block;
 
-import unknowndomain.engine.api.block.Block;
 import unknowndomain.engine.api.block.BlockBase;
 import unknowndomain.engine.api.math.AxisAlignedBB;
 import unknowndomain.engine.api.math.BlockPos;
 import unknowndomain.engine.api.math.BoundingBox;
-import unknowndomain.engine.api.math.Vector3d;
-import unknowndomain.engine.api.util.DomainedPath;
 import unknowndomain.engine.api.world.World;
 
 public class Air extends BlockBase {

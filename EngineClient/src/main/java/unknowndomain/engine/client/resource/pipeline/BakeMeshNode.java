@@ -7,6 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 class BakeMeshNode implements ResourcePipeline.Node {
+    @Override
+    public Object process(ResourcePipeline.Context context, Object in) {
+        List<Model> models = (List<Model>) in;
+        List<Mesh> meshes = new ArrayList<>(models.size());
+        for (Model model : models) {
+            meshes.add(bakeModel(model));
+        }
+        return meshes;
+    }
+
     Mesh bakeModel(Model model) {
         float[] vertices = new float[model.elements.length * 24 * 3];
         float[] uv = new float[model.elements.length * 24 * 2];
@@ -15,7 +25,8 @@ class BakeMeshNode implements ResourcePipeline.Node {
         int vertIndex = 0;
         int uvIndex = 0;
         final int X = 0, Y = 1, Z = 2;
-        for (int i = 0; i < indices.length; i++) indices[i] = i;
+        for (int i = 0; i < indices.length; i++)
+            indices[i] = i;
 
         for (Model.Element element : model.elements) {
             float[] thisUv;
@@ -45,7 +56,6 @@ class BakeMeshNode implements ResourcePipeline.Node {
             vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[3];
-
 
             // left
             thisUv = element.faces.west.uv;
@@ -101,9 +111,9 @@ class BakeMeshNode implements ResourcePipeline.Node {
 
             // back
             thisUv = element.faces.north.uv;
-            vertices[vertIndex++] = element.from[X];
-            vertices[vertIndex++] = element.from[Y];
-            vertices[vertIndex++] = element.from[Z];
+            vertices[vertIndex++] = element.to[X];
+            vertices[vertIndex++] = element.to[Y];
+            vertices[vertIndex++] = element.to[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
 
@@ -112,7 +122,6 @@ class BakeMeshNode implements ResourcePipeline.Node {
             vertices[vertIndex++] = element.to[Z];
             uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[1];
-
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.from[Y];
@@ -128,9 +137,9 @@ class BakeMeshNode implements ResourcePipeline.Node {
 
             // right
             thisUv = element.faces.east.uv;
-            vertices[vertIndex++] = element.from[X];
-            vertices[vertIndex++] = element.from[Y];
-            vertices[vertIndex++] = element.from[Z];
+            vertices[vertIndex++] = element.to[X];
+            vertices[vertIndex++] = element.to[Y];
+            vertices[vertIndex++] = element.to[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
 
@@ -154,9 +163,9 @@ class BakeMeshNode implements ResourcePipeline.Node {
 
             // top
             thisUv = element.faces.up.uv;
-            vertices[vertIndex++] = element.from[X];
-            vertices[vertIndex++] = element.from[Y];
-            vertices[vertIndex++] = element.from[Z];
+            vertices[vertIndex++] = element.to[X];
+            vertices[vertIndex++] = element.to[Y];
+            vertices[vertIndex++] = element.to[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
 
@@ -165,7 +174,6 @@ class BakeMeshNode implements ResourcePipeline.Node {
             vertices[vertIndex++] = element.to[Z];
             uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[1];
-
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.to[Y];
@@ -178,18 +186,8 @@ class BakeMeshNode implements ResourcePipeline.Node {
             vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[3];
-
         }
         return new Mesh(vertices, uv, normals, indices, GL11.GL_QUADS);
     }
 
-    @Override
-    public void process(ResourcePipeline.Context context) {
-        List<Model> models = context.in("MappedResolvedModels");
-        List<Mesh> meshes = new ArrayList<>(models.size());
-        for (Model model : models) {
-            meshes.add(bakeModel(model));
-        }
-        context.out("Meshes", meshes);
-    }
 }

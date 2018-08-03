@@ -43,14 +43,19 @@ public class GLMesh {
         glBindVertexArray(vao);
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
+        // glEnableVertexAttribArray(2);
 
         glDrawElements(mode, counts, GL_UNSIGNED_INT, 0);
 
         // Restore state
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
+        // glDisableVertexAttribArray(2);
         glBindVertexArray(0);
+    }
+
+    @Override
+    public String toString() {
+        return "GLMesh { vao: " + vao + ", count: " + counts + " }" ;
     }
 }

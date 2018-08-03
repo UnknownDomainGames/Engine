@@ -6,6 +6,7 @@ import unknowndomain.engine.client.resource.pipeline.ResourcePipeline;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -15,7 +16,21 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class MeshToGLNode implements ResourcePipeline.Node {
+    @Override
+    public Object process(ResourcePipeline.Context context, Object in) {
+        List<Mesh> meshes = (List<Mesh>) in;
+        List<GLMesh> glMeshes = new ArrayList<>();
+        for (Mesh mesh : meshes) {
+            glMeshes.add(convert(mesh));
+        }
+        return glMeshes;
+    }
+
     private GLMesh convert(Mesh t) {
+        System.out.println(Arrays.toString(t.getVertices()));
+        System.out.println(Arrays.toString(t.getUv()));
+        System.out.println(Arrays.toString(t.getIndices()));
+
         FloatBuffer posBuffer = null;
         FloatBuffer textCoordsBuffer = null;
         IntBuffer indicesBuffer = null;
@@ -26,7 +41,7 @@ public class MeshToGLNode implements ResourcePipeline.Node {
         int mode = t.getMode();
         try {
             int vertexCount = indices.length;
-            int[] vboIdList = new int[vertexCount];
+            int[] vboIdList = new int[3];
 
             int vaoId = glGenVertexArrays();
             glBindVertexArray(vaoId);
@@ -47,16 +62,16 @@ public class MeshToGLNode implements ResourcePipeline.Node {
             glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
             glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
-            vboId = glGenBuffers();
-            vboIdList[2] = (vboId);
-            textCoordsBuffer = MemoryUtil.memAllocFloat(normals.length);
-            textCoordsBuffer.put(normals).flip();
-            glBindBuffer(GL_ARRAY_BUFFER, vboId);
-            glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
-            glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
+            // vboId = glGenBuffers();
+            // vboIdList[2] = (vboId);
+            // textCoordsBuffer = MemoryUtil.memAllocFloat(normals.length);
+            // textCoordsBuffer.put(normals).flip();
+            // glBindBuffer(GL_ARRAY_BUFFER, vboId);
+            // glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
+            // glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
 
             vboId = glGenBuffers();
-            vboIdList[3] = (vboId);
+            vboIdList[2] = (vboId);
             indicesBuffer = MemoryUtil.memAllocInt(indices.length);
             indicesBuffer.put(indices).flip();
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
@@ -77,16 +92,5 @@ public class MeshToGLNode implements ResourcePipeline.Node {
                 MemoryUtil.memFree(indicesBuffer);
             }
         }
-    }
-
-    @Override
-    public void process(ResourcePipeline.Context context) {
-        List<Mesh> meshes = context.in("Meshes");
-        List<GLMesh> glMeshes = new ArrayList<>();
-        for (Mesh mesh : meshes) {
-            glMeshes.add(convert(mesh));
-        }
-        context.out("GLMeshes", glMeshes);
-
     }
 }

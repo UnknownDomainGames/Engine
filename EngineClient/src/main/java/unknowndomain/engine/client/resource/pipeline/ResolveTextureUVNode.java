@@ -1,28 +1,43 @@
 package unknowndomain.engine.client.resource.pipeline;
 
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_UNPACK_ALIGNMENT;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glGenTextures;
+import static org.lwjgl.opengl.GL11.glPixelStorei;
+import static org.lwjgl.opengl.GL11.glTexSubImage2D;
+import static org.lwjgl.opengl.GL11.nglTexImage2D;
+import static org.lwjgl.opengl.GL30.glGenerateMipmap;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+
 import com.google.common.collect.Lists;
+
 import de.matthiasmann.twl.utils.PNGDecoder;
 import unknowndomain.engine.api.resource.Resource;
 import unknowndomain.engine.api.resource.ResourceManager;
 import unknowndomain.engine.api.util.DomainedPath;
-import unknowndomain.engine.client.texture.GLTexture;
-
-import java.nio.ByteBuffer;
-import java.util.*;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.glGenerateMipmap;
+import unknowndomain.engine.client.texture.GLTextureMap;
 
 class ResolveTextureUVNode implements ResourcePipeline.Node {
     private int dimension = 256;
 
     @Override
-    public void process(ResourcePipeline.Context context) throws Exception {
+    public Object process(ResourcePipeline.Context context, Object in) throws Exception {
         ResourceManager manager = context.manager();
-        List<Model> models = context.in("ResolvedModels");
+        List<Model> models = (List<Model>) in;
         Map<String, TexturePart> required = new HashMap<>();
         List<TexturePart> parts = Lists.newArrayList();
         for (Model model : models) {
+            if (model == null) continue;
             for (String variant : model.textures.keySet()) {
                 String path = model.textures.get(variant);
                 while (path.startsWith("#")) {
@@ -49,7 +64,7 @@ class ResolveTextureUVNode implements ResourcePipeline.Node {
         }
 
         int dimension = stitch(parts);
-        GLTexture glTexture = new GLTexture(glGenTextures());
+        GLTextureMap glTexture = new GLTextureMap(glGenTextures(), dimension);
         glBindTexture(GL_TEXTURE_2D, glTexture.id);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         nglTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, dimension, dimension, 0,
@@ -62,6 +77,7 @@ class ResolveTextureUVNode implements ResourcePipeline.Node {
 
 
         for (Model m : models) {
+            if (m == null) continue;
             for (Model.Element e : m.elements) {
                 Lists.newArrayList(e.faces.up, e.faces.down, e.faces.north, e.faces.west, e.faces.east, e.faces.south)
                         .forEach((face) -> {
@@ -75,8 +91,8 @@ class ResolveTextureUVNode implements ResourcePipeline.Node {
                         });
             }
         }
-        context.out("MappedResolvedModels", models);
-        context.out("TextureMap", glTexture);
+        context.emit("TextureMap", glTexture);
+        return models;
     }
 
     int stitch(List<TexturePart> parts) {

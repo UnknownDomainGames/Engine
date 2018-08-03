@@ -1,20 +1,22 @@
 package unknowndomain.engine.client.rendering;
 
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
+
 import unknowndomain.engine.api.client.display.Camera;
 import unknowndomain.engine.api.client.rendering.Renderer;
 import unknowndomain.engine.api.client.shader.ShaderProgram;
-//import unknowndomain.engine.client.model.Model;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramCommon;
-
-import java.util.Collections;
-import java.util.List;
+import unknowndomain.engine.client.block.model.BasicData;
+import unknowndomain.engine.client.block.model.Mesh;
+import unknowndomain.engine.client.block.model.Texture;
 
 public class RenderCommon implements Renderer {
     private ShaderProgram shader;
     private Camera camera;
-    private int u_Projection, u_View, u_Model;
-//    private List<Model> modelList = Collections.emptyList();
+    protected int u_Projection, u_View, u_Model;
+
+    private Debug debug = new Debug();
 
     public RenderCommon(Camera camera) {
         this.camera = camera;
@@ -41,10 +43,33 @@ public class RenderCommon implements Renderer {
 
         ShaderProgram.setUniform(u_Projection, camera.projection());
         ShaderProgram.setUniform(u_View, camera.view());
-//
-//        for (Model model : modelList) {
-//            model.render();
-//        }
-//        super.render();
+
+        debug.render();
+    }
+
+    class Debug {
+        private Mesh mesh;
+
+        public Debug() {
+            Texture texture;
+            try {
+                texture = new Texture("/textures/grassblock.png");
+                this.mesh = new Mesh(BasicData.INSTANCE.getPositions(), BasicData.INSTANCE.getTextCoords(),
+                        BasicData.INSTANCE.getIndices(), texture);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+
+        public void render() {
+            for (int i = 0; i < 100; i++) {
+                for (int j = 0; j < 100; j++) {
+                    ShaderProgram.setUniform(u_Model, new Matrix4f().setTranslation(i, 0, j));
+                    mesh.render();
+                }
+            }
+        }
     }
 }

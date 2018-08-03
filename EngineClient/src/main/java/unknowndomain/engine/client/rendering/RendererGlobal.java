@@ -5,7 +5,6 @@ import java.util.List;
 
 import unknowndomain.engine.api.client.display.Camera;
 import unknowndomain.engine.api.client.rendering.Renderer;
-import unknowndomain.engine.api.client.rendering.RenderingLayer;
 import unknowndomain.engine.client.display.CameraDefault;
 
 public class RendererGlobal {
@@ -22,6 +21,11 @@ public class RendererGlobal {
 
     public List<Renderer> getRenderers() {
         return renderers;
+    }
+
+    public RendererGlobal add(Renderer renderer) {
+        renderers.add(renderer);
+        return this;
     }
 
     public void render() {
