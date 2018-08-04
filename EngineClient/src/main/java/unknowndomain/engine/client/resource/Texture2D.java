@@ -1,6 +1,6 @@
 package unknowndomain.engine.client.resource;
 
-import unknowndomain.engine.api.registry.RegistryEntry;
+import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.client.util.GLHelper;
 
 import org.lwjgl.opengl.GL11;

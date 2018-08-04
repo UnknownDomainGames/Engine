@@ -9,11 +9,11 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 
-import unknowndomain.engine.api.math.BlockPos;
-import unknowndomain.engine.api.registry.IdentifiedRegistry;
-import unknowndomain.engine.api.unclassified.Block;
-import unknowndomain.engine.api.unclassified.BlockObject;
-import unknowndomain.engine.api.world.Chunk;
+import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.registry.IdentifiedRegistry;
+import unknowndomain.engine.world.Chunk;
 
 public class ChunkImpl implements Chunk {
     private IdentifiedRegistry<BlockObject> reg;

@@ -2,10 +2,10 @@ package unknowndomain.engine.world;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import unknowndomain.engine.api.math.BlockPos;
-import unknowndomain.engine.api.math.ChunkPos;
-import unknowndomain.engine.api.unclassified.*;
-import unknowndomain.engine.api.world.Chunk;
+import unknowndomain.engine.game.Game;
+import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.math.ChunkPos;
+import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.unclassified.ChunkImpl;
 
 import javax.annotation.Nonnull;

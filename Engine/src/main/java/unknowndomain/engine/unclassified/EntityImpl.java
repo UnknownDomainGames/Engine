@@ -1,8 +1,6 @@
 package unknowndomain.engine.unclassified;
 
-import unknowndomain.engine.api.unclassified.Prototype;
-import unknowndomain.engine.api.unclassified.RuntimeObject;
-import unknowndomain.engine.api.unclassified.World;
+import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

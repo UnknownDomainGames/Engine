@@ -1,8 +1,5 @@
 package unknowndomain.engine.mod;
 
-import unknowndomain.engine.api.mod.ModContainer;
-import unknowndomain.engine.api.mod.ModManager;
-
 import java.io.File;
 import java.util.List;
 

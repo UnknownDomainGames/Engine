@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import unknowndomain.engine.api.mod.ModMetadata;
-
 public class SimpleModMetadata implements ModMetadata {
 	
 	private String name;

@@ -1,17 +1,17 @@
 package unknowndomain.engine.client.game;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
+import unknowndomain.engine.RuntimeObject;
+import unknowndomain.engine.client.EngineClient;
+import unknowndomain.engine.game.Game;
+import unknowndomain.engine.world.World;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import unknowndomain.engine.api.game.Game;
-import unknowndomain.engine.api.world.World;
-import unknowndomain.engine.client.EngineClient;
+import static org.lwjgl.opengl.GL11.*;
 
 public class GameClient implements Game {
     private final EngineClient engine;
@@ -68,8 +68,30 @@ public class GameClient implements Game {
 
     @Override
     public void addWorld(World world) {
-        worldsMap.put(world.getName(), world);
+//        worldsMap.put(world.getName(), world);
     }
 
 
+    @Override
+    public RuntimeObject createObject(Game context) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public <T> T getComponent(@Nonnull String name) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public <T> T getComponent(@Nonnull Class<T> type) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public <T> T getBehavior(Class<T> type) {
+        return null;
+    }
 }

@@ -1,19 +1,25 @@
 package unknowndomain.engine.client.rendering;
 
 import org.joml.Matrix4f;
+import org.joml.Rayd;
+import org.joml.Rayf;
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.api.client.shader.Shader;
-import unknowndomain.engine.api.resource.Pipeline;
+import unknowndomain.engine.client.shader.Shader;
+import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.Mesh;
 import unknowndomain.engine.client.model.MeshToGLNode;
 import unknowndomain.engine.client.texture.GLTexture;
+import unknowndomain.engine.client.world.EasyWorld;
+import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.block.BlockObject;
 
-import java.util.List;
+import java.util.Map;
 
 public class RenderDebug extends RendererShaderProgramCommon implements Pipeline.Endpoint {
     private GLTexture texture;
-    private List<GLMesh> meshList;
+    private EasyWorld world;
+    private Map<BlockObject, GLMesh> meshMap;
 
     private GLMesh textureMap;
 
@@ -35,8 +41,10 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
         }, GL11.GL_TRIANGLES));
     }
 
-    public RenderDebug(Shader vertexShader, Shader fragmentShader) {
+    public RenderDebug(Shader vertexShader, Shader fragmentShader, EasyWorld world, Map<BlockObject, GLMesh> meshMap) {
         super(vertexShader, fragmentShader);
+        this.world = world;
+        this.meshMap = meshMap;
     }
 
     /**
@@ -61,12 +69,23 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
             texture.bind();
         Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
         textureMap.render();
-        if (meshList != null && texture != null) {
-            texture.bind();
-            for (int i = 0; i < meshList.size(); i++) {
-                Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 0, i - 5));
-                GLMesh glMesh = meshList.get(i);
-                if (glMesh != null) glMesh.render();
+
+        BlockPos pick = world.pick(context.getCamera().getPosition(), context.getCamera().getFrontVector(), 10);
+
+        for (Map.Entry<BlockPos, BlockObject> entry : world.getAllBlock()) {
+            BlockPos pos = entry.getKey();
+            BlockObject value = entry.getValue();
+            GLMesh mesh = meshMap.get(value);
+
+            boolean match = pick != null && pick.equals(pos);
+            if (match) {
+                this.setUniform("u_Picked", 1);
+            }
+
+            Shader.setUniform(u_Model, new Matrix4f().setTranslation(pos.getX(), pos.getY(), pos.getZ()));
+            mesh.render();
+            if (match) {
+                this.setUniform("u_Picked", 0);
             }
         }
     }
@@ -76,9 +95,6 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
         switch (source) {
             case "TextureMap":
                 this.texture = (GLTexture) content;
-                break;
-            case "BlockModels":
-                this.meshList = (List<GLMesh>) content;
                 break;
         }
     }

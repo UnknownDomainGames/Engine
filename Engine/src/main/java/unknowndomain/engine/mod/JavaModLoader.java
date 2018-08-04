@@ -21,9 +21,7 @@ import com.google.gson.JsonParser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.Validate;
 
-import unknowndomain.engine.api.Platform;
-import unknowndomain.engine.api.mod.ModContainer;
-import unknowndomain.engine.api.mod.ModLoader;
+import unknowndomain.engine.Platform;
 
 public class JavaModLoader implements ModLoader {
 

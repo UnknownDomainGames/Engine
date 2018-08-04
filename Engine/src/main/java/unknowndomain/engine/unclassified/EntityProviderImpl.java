@@ -1,6 +1,6 @@
 package unknowndomain.engine.unclassified;
 
-import unknowndomain.engine.api.unclassified.World;
+import unknowndomain.engine.world.World;
 
 public class EntityProviderImpl implements EntityProvider {
     @Override

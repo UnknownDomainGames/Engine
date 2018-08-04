@@ -1,7 +1,7 @@
 package unknowndomain.engine.unclassified;
 
-import unknowndomain.engine.api.unclassified.Prototype;
-import unknowndomain.engine.api.unclassified.World;
+import unknowndomain.engine.Prototype;
+import unknowndomain.engine.world.World;
 
 public interface EntityProvider extends Prototype<Entity, World> {
 }

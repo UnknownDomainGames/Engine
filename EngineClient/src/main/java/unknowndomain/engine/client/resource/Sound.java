@@ -2,8 +2,8 @@ package unknowndomain.engine.client.resource;
 
 import java.nio.ShortBuffer;
 
-import unknowndomain.engine.api.Platform;
-import unknowndomain.engine.api.registry.RegistryEntry;
+import unknowndomain.engine.Platform;
+import unknowndomain.engine.registry.RegistryEntry;
 
 import static org.lwjgl.openal.AL10.*;
 

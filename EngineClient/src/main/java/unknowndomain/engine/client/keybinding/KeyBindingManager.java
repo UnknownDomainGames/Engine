@@ -7,10 +7,10 @@ import java.util.Set;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
-import unknowndomain.engine.api.keybinding.KeyCode;
-import unknowndomain.engine.api.keybinding.KeyModifier;
-import unknowndomain.engine.api.registry.SimpleRegistry;
-import unknowndomain.engine.api.resource.ResourceManager;
+import unknowndomain.engine.client.keybinding.KeyCode;
+import unknowndomain.engine.client.keybinding.KeyModifier;
+import unknowndomain.engine.registry.SimpleRegistry;
+import unknowndomain.engine.client.resource.ResourceManager;
 
 public class KeyBindingManager extends SimpleRegistry<KeyBinding> {
     private final Multimap<Integer, KeyBinding> codeToKeyBinding = LinkedListMultimap.create();

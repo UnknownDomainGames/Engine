@@ -1,9 +1,11 @@
 package unknowndomain.engine.unclassified;
 
 import com.google.common.collect.ImmutableMap;
-import unknowndomain.engine.api.registry.RegistryEntry;
-import unknowndomain.engine.api.unclassified.Block;
-import unknowndomain.engine.api.unclassified.BlockObject;
+import org.joml.AABBd;
+import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.math.BoundingBox;
+import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,6 +40,11 @@ class BlockObjectRuntime extends RegistryEntry.Impl<BlockObject> implements Bloc
     public <T extends Comparable<T>> BlockObject cycleProperty(Block.Property<T> property) {
         shared = shared.cycleProperty(property);
         return this;
+    }
+
+    @Override
+    public AABBd getBoundingBox() {
+        return shared.getBoundingBox();
     }
 
     @Override

@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import unknowndomain.engine.api.mod.ModContainer;
-
 public class ModClassLoader extends URLClassLoader {
 	
 	private static final String JAVA_PACKAGE_PREFIX = "java.";

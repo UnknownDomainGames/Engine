@@ -1,9 +1,8 @@
 package unknowndomain.engine.util.translation;
 
-import unknowndomain.engine.api.Platform;
+import unknowndomain.engine.Platform;
 //import unknowndomain.engine.api.resource.file.FileResource;
 //import unknowndomain.engine.api.resource.file.LanguageResource;
-import unknowndomain.engine.api.util.translation.LanguageMap;
 
 import java.util.HashMap;
 import java.util.Locale;

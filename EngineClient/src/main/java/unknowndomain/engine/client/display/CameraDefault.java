@@ -3,9 +3,6 @@ package unknowndomain.engine.client.display;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.lwjgl.glfw.GLFW;
-
-import unknowndomain.engine.api.client.display.Camera;
 
 public class CameraDefault implements Camera {
 
@@ -20,6 +17,16 @@ public class CameraDefault implements Camera {
 
     public CameraDefault() {
         zoomRate = 1;
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        return pos;
+    }
+
+    @Override
+    public Vector3f getLookAt() {
+        return getFrontVector().add(pos);
     }
 
     @Override
@@ -110,8 +117,7 @@ public class CameraDefault implements Camera {
         zoomRate = ratio;
     }
 
-
-    private Vector3fc getFrontVector() {
+    public Vector3f getFrontVector() {
         return new Vector3f((float) (Math.cos(Math.toRadians(pitch)) * Math.cos(Math.toRadians(yaw))), (float) Math.sin(Math.toRadians(pitch)), (float) (Math.cos(Math.toRadians(pitch)) * Math.sin(Math.toRadians(yaw)))).normalize();
     }
 

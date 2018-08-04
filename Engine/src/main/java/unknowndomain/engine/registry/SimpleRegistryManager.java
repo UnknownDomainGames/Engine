@@ -7,11 +7,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.Validate;
 
-import unknowndomain.engine.api.registry.Registry;
-import unknowndomain.engine.api.registry.RegistryEntry;
-import unknowndomain.engine.api.registry.RegistryManager;
-import unknowndomain.engine.api.registry.SimpleRegistry;
-
 public class SimpleRegistryManager implements RegistryManager {
 	
 	private Map<Class<?>, Registry<?>> registries = new HashMap<>();

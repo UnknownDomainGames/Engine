@@ -1,6 +1,5 @@
 package unknowndomain.engine.client.display;
 
-import unknowndomain.engine.api.client.display.GameWindow;
 import unknowndomain.engine.client.EngineClient;
 
 import org.lwjgl.glfw.*;

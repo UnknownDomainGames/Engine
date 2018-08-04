@@ -11,7 +11,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
 
-import unknowndomain.engine.api.Platform;
+import unknowndomain.engine.Platform;
 
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_memory;
 import static org.lwjgl.system.MemoryStack.*;

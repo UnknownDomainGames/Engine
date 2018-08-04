@@ -1,14 +1,13 @@
 package unknowndomain.engine.client.rendering.shader;
 
 import org.apache.commons.io.IOUtils;
-import unknowndomain.engine.api.Platform;
-import unknowndomain.engine.api.client.shader.Shader;
-import unknowndomain.engine.api.client.shader.ShaderType;
-import unknowndomain.engine.api.resource.Pipeline;
-import unknowndomain.engine.api.resource.ResourceManager;
-import unknowndomain.engine.api.resource.ResourcePath;
+import unknowndomain.engine.Platform;
+import unknowndomain.engine.client.shader.Shader;
+import unknowndomain.engine.client.shader.ShaderType;
+import unknowndomain.engine.client.resource.Pipeline;
+import unknowndomain.engine.client.resource.ResourceManager;
+import unknowndomain.engine.client.resource.ResourcePath;
 
-import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 
 import static org.lwjgl.opengl.GL20.*;

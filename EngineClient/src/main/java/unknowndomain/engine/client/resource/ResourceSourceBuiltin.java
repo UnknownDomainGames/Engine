@@ -1,7 +1,5 @@
 package unknowndomain.engine.client.resource;
 
-import unknowndomain.engine.api.resource.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;

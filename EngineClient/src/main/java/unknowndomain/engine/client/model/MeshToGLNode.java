@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.model;
 
 import org.lwjgl.system.MemoryUtil;
-import unknowndomain.engine.api.resource.Pipeline;
+import unknowndomain.engine.client.resource.Pipeline;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;

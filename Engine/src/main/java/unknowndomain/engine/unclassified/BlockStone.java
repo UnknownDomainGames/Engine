@@ -1,9 +1,9 @@
 package unknowndomain.engine.unclassified;
 
-import unknowndomain.engine.api.unclassified.Block;
-import unknowndomain.engine.api.unclassified.BlockObject;
-import unknowndomain.engine.api.unclassified.World;
-import unknowndomain.engine.api.resource.ResourcePath;
+import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.client.resource.ResourcePath;
+import unknowndomain.engine.world.World;
 
 import java.util.List;
 

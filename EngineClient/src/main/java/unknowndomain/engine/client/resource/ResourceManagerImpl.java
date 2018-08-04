@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.resource;
 
 import org.apache.commons.lang3.tuple.Pair;
-import unknowndomain.engine.api.resource.*;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.texture.GLTextureMap;
 

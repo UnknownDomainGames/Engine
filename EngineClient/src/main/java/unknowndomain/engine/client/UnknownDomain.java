@@ -1,7 +1,6 @@
 package unknowndomain.engine.client;
 
 import org.apache.commons.lang3.SystemUtils;
-import unknowndomain.engine.api.resource.ResourceManager;
 
 public class UnknownDomain {
 	

@@ -21,6 +21,7 @@ public class GLTexture {
     public void dispose() {
         glDeleteTextures(id);
     }
+
     @Override
     public String toString() {
         return "GLTexture { id: " + id + " }";

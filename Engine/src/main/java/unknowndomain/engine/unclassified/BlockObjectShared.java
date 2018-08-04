@@ -3,22 +3,25 @@ package unknowndomain.engine.unclassified;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
-import unknowndomain.engine.api.registry.RegistryEntry;
-import unknowndomain.engine.api.unclassified.Block;
-import unknowndomain.engine.api.unclassified.BlockObject;
+import org.joml.AABBd;
+import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 class BlockObjectShared extends RegistryEntry.Impl<BlockObject> implements BlockObject {
     ImmutableTable<Block.Property<?>, Comparable<?>, BlockObjectShared> propertiesTable;
+    private AABBd boundingBox;
     private Block.PlaceBehavior placeBehavior;
     private Block.ActiveBehavior activeBehavior;
     private Block.TouchBehavior touchBehavior;
     private Block.DestroyBehavior destroyBehavior;
     private ImmutableMap<Block.Property<?>, Comparable<?>> properties;
 
-    BlockObjectShared(Block.PlaceBehavior placeBehavior, Block.ActiveBehavior activeBehavior, Block.TouchBehavior touchBehavior, Block.DestroyBehavior destroyBehavior, ImmutableMap<Block.Property<?>, Comparable<?>> properties) {
+    BlockObjectShared(AABBd boundingBox, Block.PlaceBehavior placeBehavior, Block.ActiveBehavior activeBehavior, Block.TouchBehavior touchBehavior, Block.DestroyBehavior destroyBehavior, ImmutableMap<Block.Property<?>, Comparable<?>> properties) {
+        this.boundingBox = boundingBox;
         this.placeBehavior = placeBehavior;
         this.activeBehavior = activeBehavior;
         this.touchBehavior = touchBehavior;
@@ -96,6 +99,11 @@ class BlockObjectShared extends RegistryEntry.Impl<BlockObject> implements Block
             }
         }
         throw new Error("Hummmm");
+    }
+
+    @Override
+    public AABBd getBoundingBox() {
+        return boundingBox;
     }
 
     @Nullable

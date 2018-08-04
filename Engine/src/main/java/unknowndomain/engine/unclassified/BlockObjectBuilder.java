@@ -2,8 +2,12 @@ package unknowndomain.engine.unclassified;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
-import unknowndomain.engine.api.resource.ResourcePath;
-import unknowndomain.engine.api.unclassified.*;
+import org.joml.AABBd;
+import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.client.resource.ResourcePath;
+import unknowndomain.engine.math.AxisAlignedBB;
+import unknowndomain.engine.math.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,14 +16,25 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BlockObjectBuilder {
+    private AABBd boundingBox = new AABBd(0, 0, 0, 1, 1, 1);
+
     private Block.PlaceBehavior placeBehavior;
     private Block.ActiveBehavior activeBehavior;
     private Block.TouchBehavior touchBehavior;
     private Block.DestroyBehavior destroyBehavior;
+
+    public static BlockObjectBuilder create() {
+        return new BlockObjectBuilder();
+    }
     private Map<String, Object> map = new HashMap<>();
 
     private List<Block.Property<?>> properties = new ArrayList<>();
     private ResourcePath path;
+
+    public BlockObjectBuilder setBoundingBox(AABBd boundingBox) {
+        this.boundingBox = boundingBox;
+        return this;
+    }
 
     public BlockObjectBuilder setPath(ResourcePath path) {
         this.path = path;
@@ -83,7 +98,7 @@ public class BlockObjectBuilder {
         List<ImmutableMap<Block.Property<?>, Comparable<?>>> compute = this.compute(props);
         ImmutableTable.Builder<Block.Property<?>, Comparable<?>, BlockObjectShared> builder = ImmutableTable.builder();
 
-        List<BlockObjectShared> collect = compute.stream().map(m -> new BlockObjectShared(placeBehavior, activeBehavior, touchBehavior, destroyBehavior, m)).collect(Collectors.toList());
+        List<BlockObjectShared> collect = compute.stream().map(m -> new BlockObjectShared(boundingBox, placeBehavior, activeBehavior, touchBehavior, destroyBehavior, m)).collect(Collectors.toList());
 
         for (BlockObjectShared shared : collect) {
             ImmutableMap<Block.Property<?>, Comparable<?>> properties = shared.getProperties();

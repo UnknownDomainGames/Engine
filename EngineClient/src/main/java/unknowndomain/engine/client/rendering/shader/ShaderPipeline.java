@@ -1,8 +1,8 @@
 package unknowndomain.engine.client.rendering.shader;
 
-import unknowndomain.engine.api.client.shader.Shader;
-import unknowndomain.engine.api.client.shader.ShaderType;
-import unknowndomain.engine.api.resource.Pipeline;
+import unknowndomain.engine.client.shader.Shader;
+import unknowndomain.engine.client.shader.ShaderType;
+import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.rendering.RendererShaderProgramCommon;
 
 import java.util.Map;

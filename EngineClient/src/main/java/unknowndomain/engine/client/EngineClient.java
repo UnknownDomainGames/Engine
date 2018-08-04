@@ -1,29 +1,40 @@
 package unknowndomain.engine.client;
 
+import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Lists;
 
+import com.google.common.collect.Maps;
 import org.lwjgl.glfw.GLFW;
 
-import unknowndomain.engine.api.Engine;
-import unknowndomain.engine.api.client.display.Camera;
-import unknowndomain.engine.api.client.shader.Shader;
-import unknowndomain.engine.api.client.shader.ShaderType;
-import unknowndomain.engine.api.game.Game;
-import unknowndomain.engine.api.math.Timer;
-import unknowndomain.engine.api.mod.ModManager;
-import unknowndomain.engine.api.resource.ResourceManager;
+import unknowndomain.engine.Engine;
+import unknowndomain.engine.client.block.Player;
+import unknowndomain.engine.client.display.Camera;
+import unknowndomain.engine.client.model.GLMesh;
+import unknowndomain.engine.client.shader.Shader;
+import unknowndomain.engine.client.shader.ShaderType;
+import unknowndomain.engine.client.world.EasyWorld;
+import unknowndomain.engine.game.Game;
+import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.math.Timer;
+import unknowndomain.engine.mod.ModManager;
+import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.rendering.shader.CreateShaderNode;
 import unknowndomain.engine.client.resource.ResourceManagerImpl;
-import unknowndomain.engine.api.resource.ResourcePath;
+import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.client.display.DefaultGameWindow;
 import unknowndomain.engine.client.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.model.MeshToGLNode;
 import unknowndomain.engine.client.rendering.RenderDebug;
 import unknowndomain.engine.client.rendering.RendererGlobal;
 import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
-import unknowndomain.engine.client.resource.pipeline.ModelToMeshNode;
-import unknowndomain.engine.client.resource.pipeline.ResolveModelsNode;
-import unknowndomain.engine.client.resource.pipeline.ResolveTextureUVNode;
+import unknowndomain.engine.client.model.pipeline.ModelToMeshNode;
+import unknowndomain.engine.client.model.pipeline.ResolveModelsNode;
+import unknowndomain.engine.client.model.pipeline.ResolveTextureUVNode;
+import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.unclassified.BlockObjectBuilder;
+
+import java.util.List;
+import java.util.Map;
 
 public class EngineClient implements Engine {
 
@@ -42,6 +53,8 @@ public class EngineClient implements Engine {
     private KeyBindingManager keyBindingManager;
 
     private GameClientImpl game;
+    BlockObject testObj;
+    private EasyWorld world;
 
     private Timer timer;
 
@@ -52,12 +65,16 @@ public class EngineClient implements Engine {
         gameLoop();
     }
 
+    private Player player;
+
     public void init() {
         window.init();
+
 
         keyBindingManager = new KeyBindingManager(resourceManager);
         resourceManager = new ResourceManagerImpl();
         renderer = new RendererGlobal();
+        player = new Player(renderer.getCamera());
 
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
@@ -79,26 +96,36 @@ public class EngineClient implements Engine {
 
     private void test() {
         try {
-//            EnumMap<ShaderType, Shader> push = resourceManager.push("Shader", "common");
             Shader v = new Shader(0, ShaderType.VERTEX_SHADER);
             v.loadShader("assets/unknowndomain/shader/common.vert");
             Shader f = new Shader(0, ShaderType.FRAGMENT_SHADER);
             f.loadShader("assets/unknowndomain/shader/common.frag");
-//            RendererShaderProgramCommon common = new RendererShaderProgramCommon(v, f);
-//            renderer.add(common);
-            RenderDebug block = new RenderDebug(v, f);
-            renderer.add(block);
-            resourceManager.subscribe("BlockModels", block);
-            resourceManager.subscribe("TextureMap", block);
-            resourceManager.push("BlockModels", Lists.newArrayList(
-//                    new ResourcePath("", "/minecraft/models/block/stone.json"),
+
+
+            Map<BlockObject, GLMesh> map = Maps.newHashMap();
+            world = new EasyWorld();
+            RenderDebug easy = new RenderDebug(v, f, world, map);
+            resourceManager.subscribe("TextureMap", easy);
+
+            BlockObject stone = BlockObjectBuilder.create().build().get(0);
+            List<GLMesh> meshList = resourceManager.push("BlockModels", Lists.newArrayList(
+                    new ResourcePath("", "/minecraft/models/block/stone.json")
 //                    new ResourcePath("", "/minecraft/models/block/sand.json"),
 //                    new ResourcePath("", "/minecraft/models/block/brick.json"),
 //                    new ResourcePath("", "/minecraft/models/block/clay.json"),
-                    new ResourcePath("", "/minecraft/models/block/furnace.json")
+//                    new ResourcePath("", "/minecraft/models/block/furnace.json")
 //                    new ResourcePath("", "/minecraft/models/block/birch_stairs.json"),
 //                    new ResourcePath("", "/minecraft/models/block/lever.json"),
             ));
+            testObj = stone;
+            map.put(stone, meshList.get(0));
+
+            world.setBlock(new BlockPos(0, 0, 0), stone);
+            world.setBlock(new BlockPos(1, 0, 0), stone);
+            world.setBlock(new BlockPos(2, 0, 0), stone);
+            world.setBlock(new BlockPos(3, 0, 0), stone);
+
+            renderer.add(easy);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -128,6 +155,7 @@ public class EngineClient implements Engine {
             }
 
             window.update();
+            player.update();
 
             sync(); // TODO: check if use v-sync first
         }
@@ -163,32 +191,35 @@ public class EngineClient implements Engine {
             GLFW.glfwSetWindowShouldClose(window.getHandle(), true);
         }
         Camera camera = renderer.getCamera();
-        if (action == GLFW.GLFW_PRESS || action == GLFW.GLFW_REPEAT) {
+        if (action != GLFW.GLFW_REPEAT) {
+            int behav = 0;
             switch (key) {
                 case GLFW.GLFW_KEY_W:
-                    camera.forward();
+                    behav = Player.MoveBehavior.FORWARD;
                     break;
                 case GLFW.GLFW_KEY_S:
-                    camera.backward();
+                    behav = Player.MoveBehavior.BACKWARD;
                     break;
                 case GLFW.GLFW_KEY_A:
-                    camera.left();
+                    behav = Player.MoveBehavior.LEFT;
                     break;
                 case GLFW.GLFW_KEY_D:
-                    camera.right();
+                    behav = Player.MoveBehavior.RIGHT;
                     break;
                 case GLFW.GLFW_KEY_SPACE:
-                    camera.move(0, 1, 0);
+                    behav = Player.MoveBehavior.JUMPING;
                     break;
                 case GLFW.GLFW_KEY_LEFT_SHIFT:
                 case GLFW.GLFW_KEY_RIGHT_SHIFT:
-                    camera.move(0, -0.1f, 0);
+                    behav = Player.MoveBehavior.SNEAKING;
                     break;
                 case GLFW.GLFW_KEY_Q:
                     break;
                 case GLFW.GLFW_KEY_E:
                     break;
             }
+            player.onAction(behav,
+                    action == GLFW.GLFW_PRESS ? Player.Phase.START : Player.Phase.STOP);
         }
     }
 
@@ -205,6 +236,11 @@ public class EngineClient implements Engine {
                 break;
             default:
                 break;
+        }
+        if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
+            BlockPos pick = world.pickBeside(renderer.getCamera().getPosition(), renderer.getCamera().getFrontVector(), 10);
+            if (pick != null)
+                world.setBlock(pick, testObj);
         }
     }
 

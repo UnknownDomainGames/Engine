@@ -5,9 +5,7 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import unknowndomain.engine.api.mod.ModContainer;
-import unknowndomain.engine.api.mod.ModMetadata;
-import unknowndomain.engine.api.util.versioning.ComparableVersion;
+import unknowndomain.engine.util.versioning.ComparableVersion;
 //TODO: collect mod's class loader, instance of mod main class, mod config, mod looger, config dir.
 public class JavaModContainer implements ModContainer {
 	

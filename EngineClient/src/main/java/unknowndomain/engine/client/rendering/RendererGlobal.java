@@ -1,15 +1,10 @@
 package unknowndomain.engine.client.rendering;
 
-import unknowndomain.engine.api.client.display.Camera;
-import unknowndomain.engine.api.client.rendering.Renderer;
-import unknowndomain.engine.api.client.shader.Shader;
-import unknowndomain.engine.api.client.shader.ShaderType;
-import unknowndomain.engine.api.resource.Pipeline;
-import unknowndomain.engine.api.resource.ResourceManager;
+import unknowndomain.engine.client.display.Camera;
+import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.display.CameraDefault;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
 
 public class RendererGlobal implements Renderer.Context, Pipeline.Endpoint {
