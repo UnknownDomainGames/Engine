@@ -1,16 +1,37 @@
 package unknowndomain.engine.api.resource;
 
-import unknowndomain.engine.api.util.DomainedPath;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public abstract class ResourceBase implements Resource {
-    private DomainedPath location;
+    private ResourcePath location;
+    private byte[] cache;
 
-    public ResourceBase(DomainedPath location) {
+    public ResourceBase(ResourcePath location) {
         this.location = location;
     }
 
-    public DomainedPath location() {
+    public ResourcePath location() {
         return location;
+    }
+
+    @Override
+    public byte[] cache() throws IOException {
+        if (cache != null) return cache;
+        InputStream open = this.open();
+        if (open != null) {
+            cache = IOUtils.toByteArray(open);
+            open.close();
+            return cache;
+        }
+        return null;
+    }
+
+    @Override
+    public void invalidate() {
+        this.cache = null;
     }
 }

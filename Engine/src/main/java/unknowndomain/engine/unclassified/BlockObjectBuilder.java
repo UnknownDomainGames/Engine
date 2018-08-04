@@ -2,8 +2,8 @@ package unknowndomain.engine.unclassified;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
+import unknowndomain.engine.api.resource.ResourcePath;
 import unknowndomain.engine.api.unclassified.*;
-import unknowndomain.engine.api.util.DomainedPath;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,9 +19,9 @@ public class BlockObjectBuilder {
     private Map<String, Object> map = new HashMap<>();
 
     private List<Block.Property<?>> properties = new ArrayList<>();
-    private DomainedPath path;
+    private ResourcePath path;
 
-    public BlockObjectBuilder setPath(DomainedPath path) {
+    public BlockObjectBuilder setPath(ResourcePath path) {
         this.path = path;
         return this;
     }

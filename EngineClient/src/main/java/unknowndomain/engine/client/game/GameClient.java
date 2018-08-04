@@ -12,16 +12,12 @@ import java.util.Map;
 import unknowndomain.engine.api.game.Game;
 import unknowndomain.engine.api.world.World;
 import unknowndomain.engine.client.EngineClient;
-import unknowndomain.engine.client.block.Grass;
-import unknowndomain.engine.client.block.model.GameItem;
-import unknowndomain.engine.client.block.model.ShaderProgram;
-import unknowndomain.engine.client.block.model.Utils;
 
 public class GameClient implements Game {
     private final EngineClient engine;
     private Map<String, World> worldsMap = new HashMap<>();
     //    private Transformation transformation;
-    private ShaderProgram shaderProgram;
+//    private ShaderProgram shaderProgram;
 //    private Camera camera;
 
     public GameClient(EngineClient engine) {
@@ -29,13 +25,13 @@ public class GameClient implements Game {
 //        transformation = new Transformation();
 
         try {
-            shaderProgram = new ShaderProgram();
-            shaderProgram.createVertexShader(Utils.getVertex());
-            shaderProgram.createFragmentShader(Utils.getFragment());
-            shaderProgram.link();
-            shaderProgram.createUniform("projectionMatrix");
-            shaderProgram.createUniform("modelViewMatrix");
-            shaderProgram.createUniform("texture_sampler");//纹理
+//            shaderProgram = new ShaderProgram();
+//            shaderProgram.createVertexShader(Utils.getVertex());
+//            shaderProgram.createFragmentShader(Utils.getFragment());
+//            shaderProgram.link();
+//            shaderProgram.createUniform("projectionMatrix");
+//            shaderProgram.createUniform("modelViewMatrix");
+//            shaderProgram.createUniform("texture_sampler");//纹理
             System.out.println("BasicRender INIT");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -60,8 +56,8 @@ public class GameClient implements Game {
         Collection<World> worlds = getWorlds();
         for (World world : worlds) {
 //            Matrix4d viewMatrix = transformation.getViewMatrix(camera);
-            Grass block = (Grass) world.getBlock(0, 0, 0);
-            GameItem gameItem = block.getGameItem();
+//            Grass block = (Grass) world.getBlock(0, 0, 0);
+//            GameItem gameItem = block.getGameItem();
             // Render the mes for this game item
 //            Matrix4d modelViewMatrix = transformation.getModelViewMatrix(gameItem, viewMatrix);
 //            shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);

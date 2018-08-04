@@ -1,19 +1,30 @@
 package unknowndomain.engine.client.resource.pipeline;
 
+import com.google.gson.Gson;
+import unknowndomain.engine.api.resource.Pipeline;
+import unknowndomain.engine.api.resource.Resource;
+import unknowndomain.engine.api.resource.ResourceManager;
+import unknowndomain.engine.api.resource.ResourcePath;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
+public class ResolveModelsNode implements Pipeline.Node {
+    @Override
+    public Object process(Pipeline.Context context, Object in) throws IOException {
+        ResourceManager manager = context.manager();
+        List<ResourcePath> paths = (List<ResourcePath>) in;
+        List<Model> models = new ArrayList<>();
+        for (ResourcePath path : paths) {
+            Model loaded = load(manager, path);
+            models.add(loaded);
+        }
+        return models;
+    }
 
-import unknowndomain.engine.api.resource.Resource;
-import unknowndomain.engine.api.resource.ResourceManager;
-import unknowndomain.engine.api.util.DomainedPath;
-
-class ResolveModelsNode implements ResourcePipeline.Node {
-
-    private Model load(ResourceManager manager, DomainedPath path) throws IOException {
+    private Model load(ResourceManager manager, ResourcePath path) throws IOException {
         Resource load = manager.load(path);
         if (load == null) {
             return null;
@@ -21,7 +32,7 @@ class ResolveModelsNode implements ResourcePipeline.Node {
 
         Model model = new Gson().fromJson(new InputStreamReader(load.open()), Model.class);
         if (model.parent != null) {
-            Model parent = load(manager, new DomainedPath("", "minecraft/models/" + model.parent + ".json"));
+            Model parent = load(manager, new ResourcePath("", "minecraft/models/" + model.parent + ".json"));
             if (parent == null) throw new IllegalArgumentException("Missing parent");
             if (model.elements == null) model.elements = parent.elements;
             if (model.ambientocclusion == null) model.ambientocclusion = parent.ambientocclusion;
@@ -33,16 +44,5 @@ class ResolveModelsNode implements ResourcePipeline.Node {
         return model;
     }
 
-    @Override
-    public Object process(ResourcePipeline.Context context, Object in) throws IOException {
-        ResourceManager manager = context.manager();
-        List<DomainedPath> paths = (List<DomainedPath>) in;
-        List<Model> models = new ArrayList<>();
-        for (DomainedPath path : paths) {
-            Model loaded = load(manager, path);
-            models.add(loaded);
-        }
-        return models;
-    }
 
 }

@@ -2,7 +2,7 @@ package unknowndomain.engine.api.registry;
 
 import java.util.Map.Entry;
 
-import unknowndomain.engine.api.util.DomainedPath;
+import unknowndomain.engine.api.resource.ResourcePath;
 
 import java.util.Set;
 
@@ -17,21 +17,21 @@ public interface Registry<T extends RegistryEntry<T>> {
 			register(obj);
 	}
 
-	T getValue(DomainedPath registryName);
+    T getValue(ResourcePath registryName);
 
 	default T getValue(String registryName) {
-		return getValue(new DomainedPath(registryName));
+        return getValue(new ResourcePath(registryName));
 	}
-	
-	DomainedPath getKey(T value);
 
-	boolean containsKey(DomainedPath key);
+    ResourcePath getKey(T value);
+
+    boolean containsKey(ResourcePath key);
 
 	boolean containsValue(T value);
 
-	Set<DomainedPath> getKeys();
+    Set<ResourcePath> getKeys();
 	
 	Set<T> getValues();
-	
-	Set<Entry<DomainedPath, T>> getEntries();
+
+    Set<Entry<ResourcePath, T>> getEntries();
 }

@@ -7,11 +7,11 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.reflect.TypeToken;
 
-import unknowndomain.engine.api.util.DomainedPath;
+import unknowndomain.engine.api.resource.ResourcePath;
 
 public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
-	
-	private final BiMap<DomainedPath, T> registeredItems = HashBiMap.create();
+
+    private final BiMap<ResourcePath, T> registeredItems = HashBiMap.create();
 	@SuppressWarnings("serial")
 	private final TypeToken<T> token = new TypeToken<T>(getClass()) {};
 	
@@ -26,7 +26,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
 	@Override
 	public T register(T obj) {
-		DomainedPath key = obj.getRegistryName();
+        ResourcePath key = obj.getRegistryName();
 		if(registeredItems.containsKey(key))
 			throw new RegisterException("\""+key+"\" has been registered.");
 		
@@ -35,17 +35,17 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 	}
 
 	@Override
-	public T getValue(DomainedPath key) {
+    public T getValue(ResourcePath key) {
 		return registeredItems.get(key);
 	}
 
 	@Override
-	public DomainedPath getKey(T value) {
+    public ResourcePath getKey(T value) {
 		return registeredItems.inverse().get(value);
 	}
 
 	@Override
-	public boolean containsKey(DomainedPath key) {
+    public boolean containsKey(ResourcePath key) {
 		return registeredItems.containsKey(key);
 	}
 
@@ -55,7 +55,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 	}
 
 	@Override
-	public Set<DomainedPath> getKeys() {
+    public Set<ResourcePath> getKeys() {
 		return registeredItems.keySet();
 	}
 	
@@ -65,7 +65,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 	}
 
 	@Override
-	public Set<Entry<DomainedPath, T>> getEntries() {
+    public Set<Entry<ResourcePath, T>> getEntries() {
 		return registeredItems.entrySet();
 	}
 }

@@ -1,12 +1,11 @@
 package unknowndomain.engine.client.model;
 
 import org.lwjgl.system.MemoryUtil;
-import unknowndomain.engine.client.resource.pipeline.ResourcePipeline;
+import unknowndomain.engine.api.resource.Pipeline;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -15,9 +14,9 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-public class MeshToGLNode implements ResourcePipeline.Node {
+public class MeshToGLNode implements Pipeline.Node {
     @Override
-    public Object process(ResourcePipeline.Context context, Object in) {
+    public Object process(Pipeline.Context context, Object in) {
         List<Mesh> meshes = (List<Mesh>) in;
         List<GLMesh> glMeshes = new ArrayList<>();
         for (Mesh mesh : meshes) {
@@ -26,10 +25,8 @@ public class MeshToGLNode implements ResourcePipeline.Node {
         return glMeshes;
     }
 
-    private GLMesh convert(Mesh t) {
-        System.out.println(Arrays.toString(t.getVertices()));
-        System.out.println(Arrays.toString(t.getUv()));
-        System.out.println(Arrays.toString(t.getIndices()));
+    public GLMesh convert(Mesh t) {
+        if (t == null) return null;
 
         FloatBuffer posBuffer = null;
         FloatBuffer textCoordsBuffer = null;

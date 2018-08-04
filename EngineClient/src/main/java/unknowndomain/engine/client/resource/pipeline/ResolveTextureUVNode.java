@@ -1,14 +1,6 @@
 package unknowndomain.engine.client.resource.pipeline;
 
-import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_UNPACK_ALIGNMENT;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glGenTextures;
-import static org.lwjgl.opengl.GL11.glPixelStorei;
-import static org.lwjgl.opengl.GL11.glTexSubImage2D;
-import static org.lwjgl.opengl.GL11.nglTexImage2D;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 import java.nio.ByteBuffer;
@@ -22,16 +14,14 @@ import java.util.PriorityQueue;
 import com.google.common.collect.Lists;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
-import unknowndomain.engine.api.resource.Resource;
-import unknowndomain.engine.api.resource.ResourceManager;
-import unknowndomain.engine.api.util.DomainedPath;
+import unknowndomain.engine.api.resource.*;
 import unknowndomain.engine.client.texture.GLTextureMap;
 
-class ResolveTextureUVNode implements ResourcePipeline.Node {
+public class ResolveTextureUVNode implements Pipeline.Node {
     private int dimension = 256;
 
     @Override
-    public Object process(ResourcePipeline.Context context, Object in) throws Exception {
+    public Object process(Pipeline.Context context, Object in) throws Exception {
         ResourceManager manager = context.manager();
         List<Model> models = (List<Model>) in;
         Map<String, TexturePart> required = new HashMap<>();
@@ -41,7 +31,7 @@ class ResolveTextureUVNode implements ResourcePipeline.Node {
             for (String variant : model.textures.keySet()) {
                 String path = model.textures.get(variant);
                 while (path.startsWith("#")) {
-                    String next = model.textures.get(path.substring(1, path.length()));
+                    String next = model.textures.get(path.substring(1));
                     if (next == null) {
                         path = null;
                         break;
@@ -52,10 +42,11 @@ class ResolveTextureUVNode implements ResourcePipeline.Node {
                     continue;
                 model.textures.put(variant, path);
                 if (!required.containsKey(path)) {
-                    Resource resource = manager.load(new DomainedPath("", "minecraft/textures/" + path + ".png"));
+                    Resource resource = manager.load(new ResourcePath("", "minecraft/textures/" + path + ".png"));
                     PNGDecoder decoder = new PNGDecoder(resource.open());
                     ByteBuffer buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
-                    decoder.decodeFlipped(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
+                    decoder.decode(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
+                    buf.flip();
                     TexturePart part = new TexturePart(decoder.getWidth(), decoder.getHeight(), buf);
                     required.put(path, part);
                     parts.add(part);
@@ -67,14 +58,16 @@ class ResolveTextureUVNode implements ResourcePipeline.Node {
         GLTextureMap glTexture = new GLTextureMap(glGenTextures(), dimension);
         glBindTexture(GL_TEXTURE_2D, glTexture.id);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
         nglTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, dimension, dimension, 0,
                 GL_RGBA, GL_UNSIGNED_BYTE, 0);
         for (TexturePart part : parts) {
-            glTexSubImage2D(GL_TEXTURE_2D, 0, part.offsetX, part.offsetY, part.width, part.height,
+            glTexSubImage2D(GL_TEXTURE_2D, 0, part.offsetX, dimension - part.offsetY - part.height, part.width, part.height,
                     GL_RGBA, GL_UNSIGNED_BYTE, part.buffer);
         }
         glGenerateMipmap(GL_TEXTURE_2D);
-
 
         for (Model m : models) {
             if (m == null) continue;
@@ -85,9 +78,9 @@ class ResolveTextureUVNode implements ResourcePipeline.Node {
                             TexturePart p = required.get(path);
                             if (face.uv == null) face.uv = new float[]{0, 0, 16, 16};
                             face.uv[0] = (face.uv[0] + p.offsetX) / dimension;
-                            face.uv[1] = (face.uv[1] + p.offsetY) / dimension;
+                            face.uv[1] = 1 - (face.uv[1] + p.offsetY) / dimension;
                             face.uv[2] = (face.uv[2] + p.offsetX) / dimension;
-                            face.uv[3] = (face.uv[3] + p.offsetY) / dimension;
+                            face.uv[3] = 1 - (face.uv[3] + p.offsetY) / dimension;
                         });
             }
         }

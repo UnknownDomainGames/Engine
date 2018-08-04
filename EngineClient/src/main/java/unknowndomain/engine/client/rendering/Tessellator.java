@@ -1,6 +1,6 @@
 package unknowndomain.engine.client.rendering;
 
-import unknowndomain.engine.api.client.shader.ShaderProgram;
+import unknowndomain.engine.api.client.shader.Shader;
 import unknowndomain.engine.client.util.BufferBuilder;
 import unknowndomain.engine.client.util.VertexBufferObject;
 
@@ -32,20 +32,20 @@ public class Tessellator {
 
         int posarr;
         if (buffer.isPosEnabled()) {
-            ShaderProgram.pointVertexAttribute(0, 3, buffer.getOffset(), 0);
-            ShaderProgram.enableVertexAttrib(0);
+            Shader.pointVertexAttribute(0, 3, buffer.getOffset(), 0);
+            Shader.enableVertexAttrib(0);
         }
         if (buffer.isTexEnabled()) {
-            ShaderProgram.pointVertexAttribute(2, 2, buffer.getOffset(), (buffer.isPosEnabled() ? 3 : 0) * Float.BYTES);
-            ShaderProgram.enableVertexAttrib(2);
+            Shader.pointVertexAttribute(2, 2, buffer.getOffset(), (buffer.isPosEnabled() ? 3 : 0) * Float.BYTES);
+            Shader.enableVertexAttrib(2);
         }
         if (buffer.isColorEnabled()) {
-            ShaderProgram.pointVertexAttribute(1, 4, buffer.getOffset(), ((buffer.isPosEnabled() ? 3 : 0) + (buffer.isTexEnabled() ? 2 : 0)) * Float.BYTES);
-            ShaderProgram.enableVertexAttrib(1);
+            Shader.pointVertexAttribute(1, 4, buffer.getOffset(), ((buffer.isPosEnabled() ? 3 : 0) + (buffer.isTexEnabled() ? 2 : 0)) * Float.BYTES);
+            Shader.enableVertexAttrib(1);
         }
         if (buffer.isNormalEnabled()) {
-            ShaderProgram.pointVertexAttribute(3, 3, buffer.getOffset(), ((buffer.isPosEnabled() ? 3 : 0) + (buffer.isTexEnabled() ? 2 : 0) + (buffer.isColorEnabled() ? 4 : 0)) * Float.BYTES);
-            ShaderProgram.enableVertexAttrib(3);
+            Shader.pointVertexAttribute(3, 3, buffer.getOffset(), ((buffer.isPosEnabled() ? 3 : 0) + (buffer.isTexEnabled() ? 2 : 0) + (buffer.isColorEnabled() ? 4 : 0)) * Float.BYTES);
+            Shader.enableVertexAttrib(3);
         }
         vbo.unbind();
         vbo.bindVAO();

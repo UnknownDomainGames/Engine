@@ -14,7 +14,9 @@ public class CameraDefault implements Camera {
     private float yaw, pitch, roll;
     private double zoomRate;
 
-    private int width = 854, height = 480;
+    private float width = 854, height = 480;
+    private float moveC = 0.1f;
+
 
     public CameraDefault() {
         zoomRate = 1;
@@ -32,7 +34,6 @@ public class CameraDefault implements Camera {
 
     @Override
     public void forward() {
-        float moveC = 0.05f;
         Vector3f tmp = new Vector3f();
         getFrontVector().mul(moveC, tmp);
         pos.add(tmp);
@@ -40,7 +41,6 @@ public class CameraDefault implements Camera {
 
     @Override
     public void backward() {
-        float moveC = 0.05f;
         Vector3f tmp = new Vector3f();
         getFrontVector().mul(moveC, tmp);
         pos.sub(tmp);
@@ -48,7 +48,6 @@ public class CameraDefault implements Camera {
 
     @Override
     public void left() {
-        float moveC = 0.05f;
         Vector3f tmp = new Vector3f();
         getFrontVector().cross(UP_VECTOR, tmp);
         tmp.mul(moveC);
@@ -57,7 +56,6 @@ public class CameraDefault implements Camera {
 
     @Override
     public void right() {
-        float moveC = 0.05f;
         Vector3f tmp = new Vector3f();
         getFrontVector().cross(UP_VECTOR, tmp);
         tmp.mul(moveC);

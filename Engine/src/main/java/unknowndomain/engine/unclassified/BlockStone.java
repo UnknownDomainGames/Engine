@@ -3,7 +3,7 @@ package unknowndomain.engine.unclassified;
 import unknowndomain.engine.api.unclassified.Block;
 import unknowndomain.engine.api.unclassified.BlockObject;
 import unknowndomain.engine.api.unclassified.World;
-import unknowndomain.engine.api.util.DomainedPath;
+import unknowndomain.engine.api.resource.ResourcePath;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class BlockStone extends Block {
 
     public BlockStone() {
         all = new BlockObjectBuilder()
-                .setPath(new DomainedPath("ud", "stone"))
+                .setPath(new ResourcePath("ud", "stone"))
                 .build();
     }
 

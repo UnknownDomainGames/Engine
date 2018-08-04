@@ -2,19 +2,18 @@ package unknowndomain.engine.client.resource.pipeline;
 
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
-import unknowndomain.engine.api.resource.ResourceManager;
-import unknowndomain.engine.api.util.DomainedPath;
+import unknowndomain.engine.api.resource.Pipeline;
+import unknowndomain.engine.client.resource.ResourceManagerImpl;
+import unknowndomain.engine.api.resource.ResourcePath;
 import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MinecraftPipelineTest {
 
     @Test
     void create() throws Exception {
-        ResourceManager resourceManager = new ResourceManager();
+        ResourceManagerImpl resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
-        ResourcePipeline pipeline = MinecraftPipeline.create(resourceManager);
-        pipeline.push("ModelPaths", Lists.newArrayList(new DomainedPath("", "/minecraft/models/block/stone.json")));
+//        Pipeline pipeline = MinecraftPipeline.create(resourceManager);
+//        pipeline.push("ModelPaths", Lists.newArrayList(new ResourcePath("", "/minecraft/models/block/stone.json")));
     }
 }
