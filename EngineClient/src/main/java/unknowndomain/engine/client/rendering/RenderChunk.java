@@ -44,7 +44,7 @@ public class RenderChunk extends RendererShaderProgramCommon implements Pipeline
             long pos = cpos.getX() << 16L | cpos.getY() << 8L | cpos.getZ();
             GLMesh mesh = loadedChunk.get(pos);
             if (mesh != null) {
-                BlockPos inChunk = data.pos.inChunk();
+                BlockPos inChunk = data.pos.pack();
             }
 //            loadedChunk.put()
         }

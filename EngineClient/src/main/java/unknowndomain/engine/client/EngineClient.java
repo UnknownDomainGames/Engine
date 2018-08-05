@@ -1,18 +1,19 @@
 package unknowndomain.engine.client;
 
-import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Lists;
 
 import com.google.common.collect.Maps;
+import io.netty.util.collection.IntObjectHashMap;
+import io.netty.util.collection.IntObjectMap;
 import org.lwjgl.glfw.GLFW;
 
 import unknowndomain.engine.Engine;
+import unknowndomain.engine.RuntimeContext;
 import unknowndomain.engine.client.block.Player;
-import unknowndomain.engine.client.display.Camera;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.shader.ShaderType;
-import unknowndomain.engine.client.world.EasyWorld;
+import unknowndomain.engine.world.LogicWorld;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.Timer;
@@ -49,12 +50,13 @@ public class EngineClient implements Engine {
      * Managers section
      */
 
+    private SimpleIdentifiedRegistry<BlockObject> blockObjectReg = new SimpleIdentifiedRegistry<>();
     private ResourceManagerImpl resourceManager;
     private KeyBindingManager keyBindingManager;
 
     private GameClientImpl game;
     BlockObject testObj;
-    private EasyWorld world;
+    private LogicWorld world;
 
     private Timer timer;
 
@@ -70,10 +72,10 @@ public class EngineClient implements Engine {
     public void init() {
         window.init();
 
-
         keyBindingManager = new KeyBindingManager(resourceManager);
         resourceManager = new ResourceManagerImpl();
         renderer = new RendererGlobal();
+        world = new LogicWorld(new RuntimeContext(blockObjectReg));
         player = new Player(renderer.getCamera());
 
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
@@ -94,6 +96,11 @@ public class EngineClient implements Engine {
         timer.init();
     }
 
+    private void initBlocks() {
+        blockObjectReg.register(BlockObjectBuilder.create().setPath(new ResourcePath("block.air")).build());
+        blockObjectReg.register(BlockObjectBuilder.create().setPath(new ResourcePath("block.stone")).build());
+    }
+
     private void test() {
         try {
             Shader v = new Shader(0, ShaderType.VERTEX_SHADER);
@@ -101,13 +108,13 @@ public class EngineClient implements Engine {
             Shader f = new Shader(0, ShaderType.FRAGMENT_SHADER);
             f.loadShader("assets/unknowndomain/shader/common.frag");
 
-
             Map<BlockObject, GLMesh> map = Maps.newHashMap();
-            world = new EasyWorld();
+            IntObjectMap<GLMesh> meshMap = new IntObjectHashMap<>();
+
             RenderDebug easy = new RenderDebug(v, f, world, map);
             resourceManager.subscribe("TextureMap", easy);
 
-            BlockObject stone = BlockObjectBuilder.create().build().get(0);
+
             List<GLMesh> meshList = resourceManager.push("BlockModels", Lists.newArrayList(
                     new ResourcePath("", "/minecraft/models/block/stone.json")
 //                    new ResourcePath("", "/minecraft/models/block/sand.json"),
@@ -117,6 +124,7 @@ public class EngineClient implements Engine {
 //                    new ResourcePath("", "/minecraft/models/block/birch_stairs.json"),
 //                    new ResourcePath("", "/minecraft/models/block/lever.json"),
             ));
+            BlockObject stone = blockObjectReg.getValue(1);
             testObj = stone;
             map.put(stone, meshList.get(0));
 
@@ -155,7 +163,7 @@ public class EngineClient implements Engine {
             }
 
             window.update();
-            player.update();
+            world.tick();
 
             sync(); // TODO: check if use v-sync first
         }

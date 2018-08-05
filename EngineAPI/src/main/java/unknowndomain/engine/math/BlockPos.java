@@ -58,11 +58,15 @@ public final class BlockPos {
         return ChunkPos.fromBlockPos(this);
     }
 
-    public BlockPos inChunk() {
-        return new BlockPos(x & 16, y & 16, z & 16);
-    }
+//    public BlockPos pack() {
+//        return new BlockPos(x & 16, y & 16, z & 16);
+//    }
 
     public ChunkPos toChunk(Chunk chunk) {
         return ChunkPos.fromBlockPos(this, chunk);
+    }
+
+    public int pack() {
+        return ((x << 8) & 0xF) | ((y << 4) & 0xF) | (z & 0xF);
     }
 }

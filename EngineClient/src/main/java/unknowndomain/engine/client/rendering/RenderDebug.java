@@ -1,25 +1,35 @@
 package unknowndomain.engine.client.rendering;
 
+import io.netty.util.collection.IntObjectHashMap;
+import io.netty.util.collection.IntObjectMap;
 import org.joml.Matrix4f;
-import org.joml.Rayd;
-import org.joml.Rayf;
+import org.joml.Vector3i;
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.client.shader.Shader;
-import unknowndomain.engine.client.resource.Pipeline;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.Mesh;
 import unknowndomain.engine.client.model.MeshToGLNode;
+import unknowndomain.engine.client.resource.Pipeline;
+import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.texture.GLTexture;
-import unknowndomain.engine.client.world.EasyWorld;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.block.BlockObject;
-
-import java.util.Map;
+import unknowndomain.engine.math.ChunkPos;
+import unknowndomain.engine.world.LogicChunk;
+import unknowndomain.engine.world.LogicWorld;
 
 public class RenderDebug extends RendererShaderProgramCommon implements Pipeline.Endpoint {
     private GLTexture texture;
-    private EasyWorld world;
-    private Map<BlockObject, GLMesh> meshMap;
+    private IntObjectMap<RenderChunk> loadChunk = new IntObjectHashMap<>(16);
+    private BlockPos pick;
+    private GLMesh[] mesheRegistry;
+
+    public RenderDebug(Shader vertexShader, Shader fragmentShader) {
+        super(vertexShader, fragmentShader);
+    }
+
+//    private RenderChunk getRenderChunk() {
+//
+//    }
 
     private GLMesh textureMap;
 
@@ -41,10 +51,40 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
         }, GL11.GL_TRIANGLES));
     }
 
-    public RenderDebug(Shader vertexShader, Shader fragmentShader, EasyWorld world, Map<BlockObject, GLMesh> meshMap) {
-        super(vertexShader, fragmentShader);
-        this.world = world;
-        this.meshMap = meshMap;
+    @Override
+    public void render(Context context) {
+        super.render(context);
+
+        if (texture != null)
+            texture.bind();
+        Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
+        textureMap.render();
+
+        loadChunk.forEach((pos, chunk) -> {
+            for (int i = 0; i < 16; i++) {
+                if (chunk.valid[i]) {
+                    int[] blocks = chunk.blocks[i];
+                    for (int j = 0; j < 256; j++) {
+                        if (blocks[j] == 0) continue;
+                        int id = blocks[j];
+                        int cx = pos >> 16;
+                        int cy = i * 16;
+                        int cz = pos & 0xFFFF;
+                        int x = (j >> 8) & 0xF + cx;
+                        int y = (j >> 4) & 0xF + cy;
+                        int z = j & 0xF + cz;
+                        boolean picked = pick.getX() == x && pick.getY() == y && pick.getZ() == z;
+
+                        Shader.setUniform(u_Model, new Matrix4f().setTranslation(
+                                x, y, z));
+                        if (picked) this.setUniform("u_Picked", 1);
+                        mesheRegistry[id].render();
+                        if (picked) this.setUniform("u_Picked", 0);
+
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -61,31 +101,45 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
         this.texture = texture;
     }
 
-    @Override
-    public void render(Context context) {
-        super.render(context);
+    public void handleMessage(Object message) {
+        if (message instanceof LogicWorld.ChunkLoad) {
+            LogicWorld.ChunkLoad load = (LogicWorld.ChunkLoad) message;
+            ChunkPos pos = load.pos;
+            RenderChunk chunk = new RenderChunk(load.blocks);
+            loadChunk.put(pos.compact(), chunk);
 
-        if (texture != null)
-            texture.bind();
-        Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
-        textureMap.render();
-
-        BlockPos pick = world.pick(context.getCamera().getPosition(), context.getCamera().getFrontVector(), 10);
-
-        for (Map.Entry<BlockPos, BlockObject> entry : world.getAllBlock()) {
-            BlockPos pos = entry.getKey();
-            BlockObject value = entry.getValue();
-            GLMesh mesh = meshMap.get(value);
-
-            boolean match = pick != null && pick.equals(pos);
-            if (match) {
-                this.setUniform("u_Picked", 1);
+        } else if (message instanceof LogicChunk.BlockChange) {
+            LogicChunk.BlockChange change = (LogicChunk.BlockChange) message;
+            BlockPos pos = change.pos;
+            ChunkPos cp = pos.toChunk();
+            RenderChunk chunk = loadChunk.get(cp.compact());
+            if (chunk == null) {
+                Platform.getLogger().error("WTF, The chunk load not report?");
+                return;
             }
+            chunk.blocks[(pos.getY() & 255) / 16][pos.pack()] = change.blockId;
+            if (change.blockId != 0 && !chunk.valid[pos.getY() / 16]) {
+                chunk.valid[pos.getY() / 16] = true;
+            }
+        }
+    }
 
-            Shader.setUniform(u_Model, new Matrix4f().setTranslation(pos.getX(), pos.getY(), pos.getZ()));
-            mesh.render();
-            if (match) {
-                this.setUniform("u_Picked", 0);
+    class RenderChunk {
+        int[][] blocks;
+        boolean[] valid = new boolean[16];
+
+        public RenderChunk(int[][] blocks) {
+            this.blocks = blocks;
+            for (int i = 0; i < blocks.length; i++) {
+                int[] ck = blocks[i];
+                boolean none = true;
+                for (int j = 0; j < ck.length; j++) {
+                    if (ck[j] != 0) {
+                        none = false;
+                        break;
+                    }
+                }
+                valid[i] = none;
             }
         }
     }

@@ -24,6 +24,7 @@ public class BlockObjectBuilder {
     public static BlockObjectBuilder create() {
         return new BlockObjectBuilder();
     }
+
     private Map<String, Object> map = new HashMap<>();
 
     private List<Block.Property<?>> properties = new ArrayList<>();
@@ -89,7 +90,11 @@ public class BlockObjectBuilder {
         }
     }
 
-    public List<BlockObject> build() {
+    public BlockObject build() {
+        return new BlockObjectShared(boundingBox, placeBehavior, activeBehavior, touchBehavior, destroyBehavior, null).setRegistryName(path);
+    }
+
+    public List<BlockObject> buildAll() {
 //        if (this.map != null)
 //            return Lists.newArrayList(new BlockObjectRuntime(block, placeBehavior, activeBehavior, touchBehavior, destroyBehavior, map));
         Block.Property<?>[] props = this.properties.toArray(new Block.Property[this.properties.size()]);

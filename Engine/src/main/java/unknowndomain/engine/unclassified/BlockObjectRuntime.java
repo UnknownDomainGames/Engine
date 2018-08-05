@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-class BlockObjectRuntime extends RegistryEntry.Impl<BlockObject> implements BlockObject {
+public class BlockObjectRuntime extends RegistryEntry.Impl<BlockObject> implements BlockObject {
     private Map<String, Object> map;
     private BlockObject shared;
 

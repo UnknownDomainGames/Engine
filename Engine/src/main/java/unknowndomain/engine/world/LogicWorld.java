@@ -1,28 +1,30 @@
-package unknowndomain.engine.client.world;
+package unknowndomain.engine.world;
 
-import org.joml.AABBd;
-import org.joml.Rayd;
-import org.joml.Vector2d;
-import org.joml.Vector3f;
+import io.netty.util.collection.LongObjectHashMap;
+import io.netty.util.collection.LongObjectMap;
+import org.joml.*;
+import unknowndomain.engine.RuntimeContext;
+import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.world.Chunk;
-import unknowndomain.engine.world.World;
+import unknowndomain.engine.math.ChunkPos;
+import unknowndomain.engine.Entity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.Math;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-public class EasyWorld implements World {
-    private Map<BlockPos, BlockObject> blockData = new HashMap<>();
+public class LogicWorld implements World {
+    private LongObjectMap<Chunk> chunks = new LongObjectHashMap<>();
+    private ChunkProvider chunkProvider = new ChunkProviderDummy();
+    private List<Entity> entityList = new ArrayList<>();
+    private RuntimeContext context;
 
-    public EasyWorld() {
-    }
-
-    public Collection<Map.Entry<BlockPos, BlockObject>> getAllBlock() {
-        return blockData.entrySet();
+    public LogicWorld(RuntimeContext context) {
+        this.context = context;
     }
 
     public BlockPos pickBeside(Vector3f from, Vector3f dir, int distance) {
@@ -32,7 +34,7 @@ public class EasyWorld implements World {
         for (int i = 0; i < distance; i++) {
             cur.add(step);
             BlockPos pos = new BlockPos((int) cur.x, (int) cur.y, (int) cur.z);
-            BlockObject object = blockData.get(pos);
+            BlockObject object = getBlock(pos);
             if (object != null) {
                 Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
                 AABBd box = object.getBoundingBox();
@@ -68,7 +70,7 @@ public class EasyWorld implements World {
         for (int i = 0; i < distance; i++) {
             cur.add(step);
             BlockPos pos = new BlockPos((int) cur.x, (int) cur.y, (int) cur.z);
-            BlockObject object = blockData.get(pos);
+            BlockObject object = getBlock(pos);
             if (object != null) {
                 Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
                 AABBd box = object.getBoundingBox();
@@ -84,18 +86,65 @@ public class EasyWorld implements World {
         return null;
     }
 
+    public void tick() {
+        for (Entity entity : entityList) {
+            Vector3f motion = entity.getMotion();
+
+            if (motion.y > 0) motion.y -= 0.01f;
+            else if (motion.y < 0) motion.y += 0.01f;
+            if (Math.abs(motion.y) <= 0.01f) motion.y = 0; // physics update
+        }
+        chunks.forEach(this::tickChunk);
+
+        for (Entity entity : entityList) {
+            entity.tick(); // state machine update
+        }
+    }
+
+    private void tickChunk(long pos, Chunk chunk) {
+        Collection<BlockObject> blockObjects = chunk.getRuntimeBlock();
+        if (blockObjects.size() != 0) {
+            for (BlockObject object : blockObjects) {
+                Block.TickBehavior behavior = object.getBehavior(Block.TickBehavior.class);
+                if (behavior != null) {
+                    behavior.tick(object);
+                }
+            }
+        }
+    }
+
     @Override
     public Chunk getChunk(int x, int z) {
-        return null;
+        long pos = (long) x << 32 | z;
+        return chunks.get(pos);
     }
 
     public BlockObject getBlock(BlockPos pos) {
-        return blockData.get(pos);
+        ChunkPos chunkPos = pos.toChunk();
+        long cp = (long) chunkPos.getChunkX() << 32 | chunkPos.getChunkZ();
+        Chunk chunk = this.chunks.get(cp);
+        if (chunk != null)
+            return chunk.getBlock(pos);
+        else {
+            Chunk nchunk = chunkProvider.provideChunk(this.context, pos); // TODO async load
+            chunks.put(cp, nchunk);
+            return nchunk.getBlock(pos);
+        }
     }
 
     @Override
     public BlockObject setBlock(BlockPos pos, BlockObject block) {
-        return blockData.put(pos, block);
+        ChunkPos chunkPos = pos.toChunk();
+        long cp = (long) chunkPos.getChunkX() << 32 | chunkPos.getChunkZ();
+        Chunk chunk = this.chunks.get(cp);
+        if (chunk != null)
+            chunk.setBlock(pos, block);
+        else {
+            Chunk nchunk = chunkProvider.provideChunk(this.context, pos); // TODO async load
+            this.chunks.put(cp, nchunk);
+            nchunk.setBlock(pos, block);
+        }
+        return null;
     }
 
     @Nullable
@@ -114,5 +163,23 @@ public class EasyWorld implements World {
     @Override
     public <T> T getBehavior(Class<T> type) {
         return null;
+    }
+
+    public static class ChunkLoad {
+        public final ChunkPos pos;
+        public final int[][] blocks;
+
+        public ChunkLoad(ChunkPos pos, int[][] blocks) {
+            this.pos = pos;
+            this.blocks = blocks;
+        }
+    }
+
+    public static class ChunkUnload {
+        public final Vector3i pos;
+
+        public ChunkUnload(Vector3i pos) {
+            this.pos = pos;
+        }
     }
 }

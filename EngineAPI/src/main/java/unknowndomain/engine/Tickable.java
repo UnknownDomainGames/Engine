@@ -1,4 +1,4 @@
-package unknowndomain.engine.unclassified;
+package unknowndomain.engine;
 
 public interface Tickable {
     void tick();

@@ -38,6 +38,8 @@ Just process the path to get dimension, get world, and get block or entity.
     - the data in logic thread are changed by event (the event could toggle by network/user input)
     - after the logic thread receive event, it should emit the change which only exposed to renderer thread  
     - the data in renderer thread only receives the change provide by logic thread; ideally it won't query logic thread data by it self
-    
+- face culling
+    - https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
+    - http://www.lighthouse3d.com/tutorials/view-frustum-culling/
     
 

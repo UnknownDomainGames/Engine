@@ -1,5 +1,6 @@
 package unknowndomain.engine.registry;
 
+import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -60,12 +61,12 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 	}
 	
 	@Override
-	public Set<T> getValues() {
+	public Collection<T> getValues() {
 		return registeredItems.values();
 	}
 
-	@Override
-    public Set<Entry<ResourcePath, T>> getEntries() {
-		return registeredItems.entrySet();
-	}
+//	@Override
+//    public Collection<Entry<ResourcePath, T>> getEntries() {
+//		return registeredItems.entrySet();
+//	}
 }

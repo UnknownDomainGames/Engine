@@ -1,8 +1,12 @@
 package unknowndomain.engine.world;
 
+import unknowndomain.engine.Entity;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.RuntimeObject;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface Chunk extends RuntimeObject {
     /**
@@ -16,6 +20,10 @@ public interface Chunk extends RuntimeObject {
     default BlockObject getBlock(int x, int y, int z) {
         return getBlock(new BlockPos(x, y, z));
     }
+
+    Collection<BlockObject> getRuntimeBlock();
+
+    List<Entity> getEntities();
 
     BlockObject getBlock(BlockPos pos);
 

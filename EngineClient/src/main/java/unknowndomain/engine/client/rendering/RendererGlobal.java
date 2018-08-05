@@ -35,4 +35,5 @@ public class RendererGlobal implements Renderer.Context, Pipeline.Endpoint {
 //        }
 //        add((Renderer) content);
     }
+
 }

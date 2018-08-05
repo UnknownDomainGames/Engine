@@ -143,4 +143,12 @@ public class ChunkPos {
     public String toString() {
         return String.format("ChunkPos(%d,%d,%d)", chunkX, chunkY, chunkZ);
     }
+
+    public int compact() {
+        return getChunkX() << 16 | (getChunkZ() & 0xFFFF);
+    }
+
+    public long fat() {
+        return ((long) getChunkX() << 32) | getChunkZ();
+    }
 }

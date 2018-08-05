@@ -1,9 +1,9 @@
 package unknowndomain.engine.registry;
 
-import java.util.Map.Entry;
-
 import unknowndomain.engine.client.resource.ResourcePath;
 
+import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public interface Registry<T extends RegistryEntry<T>> {
@@ -30,8 +30,8 @@ public interface Registry<T extends RegistryEntry<T>> {
 	boolean containsValue(T value);
 
     Set<ResourcePath> getKeys();
-	
-	Set<T> getValues();
 
-    Set<Entry<ResourcePath, T>> getEntries();
+	Collection<T> getValues();
+
+//    Collection<Entry<ResourcePath, T>> getEntries();
 }
