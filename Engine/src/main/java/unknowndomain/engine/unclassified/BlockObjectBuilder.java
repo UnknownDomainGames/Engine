@@ -6,8 +6,6 @@ import org.joml.AABBd;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.client.resource.ResourcePath;
-import unknowndomain.engine.math.AxisAlignedBB;
-import unknowndomain.engine.math.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;

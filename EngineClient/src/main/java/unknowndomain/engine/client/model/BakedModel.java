@@ -1,25 +1,27 @@
 package unknowndomain.engine.client.model;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import unknowndomain.engine.client.texture.GLTexture;
 
 public class BakedModel {
     private GLMesh mesh;
     private GLTexture texture;
 
-    private Matrix4f translate = new Matrix4f();
-    private Matrix4f rotation = new Matrix4f();
+    private Vector3f translate = new Vector3f();
+    private Quaternionf rotation = new Quaternionf();
 
     public BakedModel(GLMesh mesh, GLTexture texture) {
         this.mesh = mesh;
         this.texture = texture;
     }
 
-    public Matrix4f getRotation() {
+    public Quaternionf getRotation() {
         return rotation;
     }
 
-    public Matrix4f getTranslate() {
+    public Vector3f getTranslate() {
         return translate;
     }
 
@@ -29,6 +31,6 @@ public class BakedModel {
     }
 
     public Matrix4f getTransform() {
-        return new Matrix4f(translate).mul(rotation);
+        return new Matrix4f().setTranslation(translate).rotate(rotation);
     }
 }

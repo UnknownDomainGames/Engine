@@ -172,8 +172,11 @@ public class EngineClient implements Engine {
         }
     }
 
+    boolean paused = false;
+
     public void handleCursorMove(double x, double y) {
-        renderer.getCamera().rotate((float) x, (float) y);
+        if (!paused)
+            renderer.getCamera().rotate((float) x, (float) y);
     }
 
     public void handleKeyPress(int key, int scancode, int action, int modifiers) {
@@ -188,38 +191,13 @@ public class EngineClient implements Engine {
                 break;
         }
         if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
-            GLFW.glfwSetWindowShouldClose(window.getHandle(), true);
-        }
-        Camera camera = renderer.getCamera();
-        if (action != GLFW.GLFW_REPEAT) {
-            int behav = 0;
-            switch (key) {
-                case GLFW.GLFW_KEY_W:
-                    behav = Player.MoveBehavior.FORWARD;
-                    break;
-                case GLFW.GLFW_KEY_S:
-                    behav = Player.MoveBehavior.BACKWARD;
-                    break;
-                case GLFW.GLFW_KEY_A:
-                    behav = Player.MoveBehavior.LEFT;
-                    break;
-                case GLFW.GLFW_KEY_D:
-                    behav = Player.MoveBehavior.RIGHT;
-                    break;
-                case GLFW.GLFW_KEY_SPACE:
-                    behav = Player.MoveBehavior.JUMPING;
-                    break;
-                case GLFW.GLFW_KEY_LEFT_SHIFT:
-                case GLFW.GLFW_KEY_RIGHT_SHIFT:
-                    behav = Player.MoveBehavior.SNEAKING;
-                    break;
-                case GLFW.GLFW_KEY_Q:
-                    break;
-                case GLFW.GLFW_KEY_E:
-                    break;
+            if (paused) {
+                window.hideCursor();
+                paused = false;
+            } else {
+                window.showCursor();
+                paused = true;
             }
-            player.onAction(behav,
-                    action == GLFW.GLFW_PRESS ? Player.Phase.START : Player.Phase.STOP);
         }
     }
 

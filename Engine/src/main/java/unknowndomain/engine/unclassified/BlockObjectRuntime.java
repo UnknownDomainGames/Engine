@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import org.joml.AABBd;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockObject;
-import unknowndomain.engine.math.BoundingBox;
 import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;

@@ -65,7 +65,6 @@ public class DefaultGameWindow implements GameWindow {
             this.width = width;
             this.height = height;
             this.resized = true;
-            System.out.println(width + " " + height);
             glViewport(0, 0, width, height);
         });
         glfwSetCharModsCallback(handle, (window, codepoint, mods) -> game.handleTextInput(codepoint, mods));
