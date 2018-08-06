@@ -10,4 +10,5 @@ public interface ModManager {
 
 	List<ModContainer> getAllLoadedMods();
 
+	ModContainer whichMod(Class<?> clazz);
 }
