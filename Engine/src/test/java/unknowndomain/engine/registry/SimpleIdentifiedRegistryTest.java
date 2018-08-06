@@ -1,6 +1,7 @@
 package unknowndomain.engine.registry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -46,5 +47,21 @@ public class SimpleIdentifiedRegistryTest {
 
         assertEquals(0, id);
         assertEquals(1, anotherId);
+    }
+
+    @Test
+    void registerDuplicated() {
+        SimpleIdentifiedRegistry<BlockObject> registry = new SimpleIdentifiedRegistry<>();
+        ResourcePath path = new ResourcePath("test", "test");
+        BlockObject object = BlockObjectBuilder.create().setPath(path).build();
+        registry.register(object);
+        assertThrows(RegisterException.class, () -> {
+            registry.register(object);
+        });
+
+        BlockObject another = BlockObjectBuilder.create().setPath(path).build();
+        assertThrows(RegisterException.class, () -> {
+            registry.register(another);
+        });
     }
 }
