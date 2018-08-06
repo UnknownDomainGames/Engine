@@ -112,7 +112,7 @@ public class AsmEventBus implements EventBus {
 
 			int modifiers = method.getModifiers();
 
-			if (!Modifier.isPublic(modifiers) || Modifier.isStatic(modifiers)) {
+			if (!Modifier.isPublic(modifiers) || Modifier.isStatic(modifiers) || Modifier.isAbstract(modifiers)) {
 				continue; // TODO: Warning.
 			}
 
