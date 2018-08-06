@@ -1,4 +1,4 @@
-package unknowndomain.engine.client;
+package unknowndomain.engine.registry;
 
 import com.google.common.collect.HashBiMap;
 import io.netty.util.collection.IntObjectHashMap;

@@ -18,6 +18,8 @@ import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.Timer;
 import unknowndomain.engine.mod.ModManager;
+import unknowndomain.engine.registry.IdentifiedRegistry;
+import unknowndomain.engine.registry.SimpleIdentifiedRegistry;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.rendering.shader.CreateShaderNode;
 import unknowndomain.engine.client.resource.ResourceManagerImpl;
@@ -50,7 +52,7 @@ public class EngineClient implements Engine {
      * Managers section
      */
 
-    private SimpleIdentifiedRegistry<BlockObject> blockObjectReg = new SimpleIdentifiedRegistry<>();
+    private IdentifiedRegistry<BlockObject> blockObjectReg = new SimpleIdentifiedRegistry<>();
     private ResourceManagerImpl resourceManager;
     private KeyBindingManager keyBindingManager;
 
@@ -111,7 +113,7 @@ public class EngineClient implements Engine {
             Map<BlockObject, GLMesh> map = Maps.newHashMap();
             IntObjectMap<GLMesh> meshMap = new IntObjectHashMap<>();
 
-            RenderDebug easy = new RenderDebug(v, f, world, map);
+            RenderDebug easy = new RenderDebug(v, f);
             resourceManager.subscribe("TextureMap", easy);
 
 
