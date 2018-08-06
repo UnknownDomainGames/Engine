@@ -115,7 +115,6 @@ public class ResourceManagerImpl implements Pipeline.Endpoint, ResourceManager, 
             }
 
             @Override
-            @SuppressWarnings("unchecked")
             public <T> T get(String name) {
                 return (T) cached.get(name);
             }

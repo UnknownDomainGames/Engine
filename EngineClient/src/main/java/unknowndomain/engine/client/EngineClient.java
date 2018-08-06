@@ -57,7 +57,6 @@ public class EngineClient implements Engine {
     private KeyBindingManager keyBindingManager;
 
     private GameClientImpl game;
-    BlockObject testObj;
     private LogicWorld world;
 
     private Timer timer;
@@ -70,28 +69,37 @@ public class EngineClient implements Engine {
     }
 
     private Player player;
+    private RenderDebug debug;
 
     public void init() {
         window.init();
 
+        Shader v = new Shader(0, ShaderType.VERTEX_SHADER);
+        v.loadShader("assets/unknowndomain/shader/common.vert");
+        Shader f = new Shader(0, ShaderType.FRAGMENT_SHADER);
+        f.loadShader("assets/unknowndomain/shader/common.frag");
+
+        RenderDebug easy = new RenderDebug(v, f);
+        debug = easy;
+
         keyBindingManager = new KeyBindingManager(resourceManager);
         resourceManager = new ResourceManagerImpl();
         renderer = new RendererGlobal();
-        world = new LogicWorld(new RuntimeContext(blockObjectReg));
+        world = new LogicWorld(new RuntimeContext(blockObjectReg, easy::handleMessage));
         player = new Player(renderer.getCamera());
+
+        resourceManager.subscribe("TextureMap", easy);
+        renderer.add(easy);
 
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
-        resourceManager.add("BlockModels",
-                new ResolveModelsNode(),
-                new ResolveTextureUVNode(),
-                new ModelToMeshNode(),
-                new MeshToGLNode())
-                .subscribe("BlockModels", resourceManager);
+        resourceManager.add("BlockModels", new ResolveModelsNode(), new ResolveTextureUVNode(), new ModelToMeshNode(),
+                new MeshToGLNode()).subscribe("BlockModels", resourceManager);
         resourceManager.subscribe("TextureMap", resourceManager);
         resourceManager.add("Shader", new CreateShaderNode());
-//                .subscribe("Shader", renderer);
+        // .subscribe("Shader", renderer);
         keyBindingManager.update();
+        initBlocks();
         test();
 
         timer = new Timer();
@@ -103,39 +111,29 @@ public class EngineClient implements Engine {
         blockObjectReg.register(BlockObjectBuilder.create().setPath(new ResourcePath("block.stone")).build());
     }
 
+    BlockObject testObj;
+
     private void test() {
         try {
-            Shader v = new Shader(0, ShaderType.VERTEX_SHADER);
-            v.loadShader("assets/unknowndomain/shader/common.vert");
-            Shader f = new Shader(0, ShaderType.FRAGMENT_SHADER);
-            f.loadShader("assets/unknowndomain/shader/common.frag");
-
-            Map<BlockObject, GLMesh> map = Maps.newHashMap();
-            IntObjectMap<GLMesh> meshMap = new IntObjectHashMap<>();
-
-            RenderDebug easy = new RenderDebug(v, f);
-            resourceManager.subscribe("TextureMap", easy);
-
-
-            List<GLMesh> meshList = resourceManager.push("BlockModels", Lists.newArrayList(
-                    new ResourcePath("", "/minecraft/models/block/stone.json")
-//                    new ResourcePath("", "/minecraft/models/block/sand.json"),
-//                    new ResourcePath("", "/minecraft/models/block/brick.json"),
-//                    new ResourcePath("", "/minecraft/models/block/clay.json"),
-//                    new ResourcePath("", "/minecraft/models/block/furnace.json")
-//                    new ResourcePath("", "/minecraft/models/block/birch_stairs.json"),
-//                    new ResourcePath("", "/minecraft/models/block/lever.json"),
-            ));
+            List<GLMesh> meshList = resourceManager.push("BlockModels",
+                    Lists.newArrayList(new ResourcePath("", "/minecraft/models/block/stone.json")
+                    // new ResourcePath("", "/minecraft/models/block/sand.json"),
+                    // new ResourcePath("", "/minecraft/models/block/brick.json"),
+                    // new ResourcePath("", "/minecraft/models/block/clay.json"),
+                    // new ResourcePath("", "/minecraft/models/block/furnace.json")
+                    // new ResourcePath("", "/minecraft/models/block/birch_stairs.json"),
+                    // new ResourcePath("", "/minecraft/models/block/lever.json"),
+                    ));
             BlockObject stone = blockObjectReg.getValue(1);
             testObj = stone;
-            map.put(stone, meshList.get(0));
+            GLMesh[] reg = new GLMesh[]{null, meshList.get(0)} ;
+            debug.setMesheRegistry(reg);
 
             world.setBlock(new BlockPos(0, 0, 0), stone);
             world.setBlock(new BlockPos(1, 0, 0), stone);
             world.setBlock(new BlockPos(2, 0, 0), stone);
             world.setBlock(new BlockPos(3, 0, 0), stone);
 
-            renderer.add(easy);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -191,14 +189,14 @@ public class EngineClient implements Engine {
 
     public void handleKeyPress(int key, int scancode, int action, int modifiers) {
         switch (action) {
-            case GLFW.GLFW_PRESS:
-                getKeyBindingManager().handlePress(key, modifiers);
-                break;
-            case GLFW.GLFW_RELEASE:
-                getKeyBindingManager().handleRelease(key, modifiers);
-                break;
-            default:
-                break;
+        case GLFW.GLFW_PRESS:
+            getKeyBindingManager().handlePress(key, modifiers);
+            break;
+        case GLFW.GLFW_RELEASE:
+            getKeyBindingManager().handleRelease(key, modifiers);
+            break;
+        default:
+            break;
         }
         if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
             if (paused) {
@@ -216,17 +214,18 @@ public class EngineClient implements Engine {
 
     public void handleMousePress(int button, int action, int modifiers) {
         switch (action) {
-            case GLFW.GLFW_PRESS:
-                getKeyBindingManager().handlePress(button + 400, modifiers);
-                break;
-            case GLFW.GLFW_RELEASE:
-                getKeyBindingManager().handleRelease(button + 400, modifiers);
-                break;
-            default:
-                break;
+        case GLFW.GLFW_PRESS:
+            getKeyBindingManager().handlePress(button + 400, modifiers);
+            break;
+        case GLFW.GLFW_RELEASE:
+            getKeyBindingManager().handleRelease(button + 400, modifiers);
+            break;
+        default:
+            break;
         }
         if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
-            BlockPos pick = world.pickBeside(renderer.getCamera().getPosition(), renderer.getCamera().getFrontVector(), 10);
+            BlockPos pick = world.pickBeside(renderer.getCamera().getPosition(), renderer.getCamera().getFrontVector(),
+                    10);
             if (pick != null)
                 world.setBlock(pick, testObj);
         }

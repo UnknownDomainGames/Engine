@@ -27,10 +27,6 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
         super(vertexShader, fragmentShader);
     }
 
-//    private RenderChunk getRenderChunk() {
-//
-//    }
-
     private GLMesh textureMap;
 
     {
@@ -101,20 +97,27 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
         this.texture = texture;
     }
 
+    /**
+     * @param mesheRegistry the mesheRegistry to set
+     */
+    public void setMesheRegistry(GLMesh[] mesheRegistry) {
+        this.mesheRegistry = mesheRegistry;
+    }
+
     public void handleMessage(Object message) {
         if (message instanceof LogicWorld.ChunkLoad) {
             LogicWorld.ChunkLoad load = (LogicWorld.ChunkLoad) message;
             ChunkPos pos = load.pos;
             RenderChunk chunk = new RenderChunk(load.blocks);
             loadChunk.put(pos.compact(), chunk);
-
+            System.out.println("LOAD CHUNK");
         } else if (message instanceof LogicChunk.BlockChange) {
             LogicChunk.BlockChange change = (LogicChunk.BlockChange) message;
             BlockPos pos = change.pos;
             ChunkPos cp = pos.toChunk();
             RenderChunk chunk = loadChunk.get(cp.compact());
             if (chunk == null) {
-                Platform.getLogger().error("WTF, The chunk load not report?");
+                // Platform.getLogger().error("WTF, The chunk load not report?");
                 return;
             }
             chunk.blocks[(pos.getY() & 255) / 16][pos.pack()] = change.blockId;
