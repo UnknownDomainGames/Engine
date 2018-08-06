@@ -69,14 +69,13 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
                         int x = (j >> 8) & 0xF + cx;
                         int y = (j >> 4) & 0xF + cy;
                         int z = j & 0xF + cz;
-                        boolean picked = pick.getX() == x && pick.getY() == y && pick.getZ() == z;
+                        boolean picked = pick != null && pick.getX() == x && pick.getY() == y && pick.getZ() == z;
 
                         Shader.setUniform(u_Model, new Matrix4f().setTranslation(
                                 x, y, z));
                         if (picked) this.setUniform("u_Picked", 1);
                         mesheRegistry[id].render();
                         if (picked) this.setUniform("u_Picked", 0);
-
                     }
                 }
             }
@@ -110,7 +109,6 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
             ChunkPos pos = load.pos;
             RenderChunk chunk = new RenderChunk(load.blocks);
             loadChunk.put(pos.compact(), chunk);
-            System.out.println("LOAD CHUNK");
         } else if (message instanceof LogicChunk.BlockChange) {
             LogicChunk.BlockChange change = (LogicChunk.BlockChange) message;
             BlockPos pos = change.pos;

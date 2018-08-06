@@ -2,13 +2,11 @@ package unknowndomain.engine.client;
 
 import com.google.common.collect.Lists;
 
-import com.google.common.collect.Maps;
-import io.netty.util.collection.IntObjectHashMap;
-import io.netty.util.collection.IntObjectMap;
 import org.lwjgl.glfw.GLFW;
 
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.RuntimeContext;
+import unknowndomain.engine.GameContext;
+import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.client.block.Player;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.shader.Shader;
@@ -37,7 +35,6 @@ import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.unclassified.BlockObjectBuilder;
 
 import java.util.List;
-import java.util.Map;
 
 public class EngineClient implements Engine {
 
@@ -71,6 +68,10 @@ public class EngineClient implements Engine {
     private Player player;
     private RenderDebug debug;
 
+    public Player getPlayer() {
+        return player;
+    }
+
     public void init() {
         window.init();
 
@@ -82,10 +83,10 @@ public class EngineClient implements Engine {
         RenderDebug easy = new RenderDebug(v, f);
         debug = easy;
 
-        keyBindingManager = new KeyBindingManager(resourceManager);
+        keyBindingManager = new KeyBindingManager();
         resourceManager = new ResourceManagerImpl();
         renderer = new RendererGlobal();
-        world = new LogicWorld(new RuntimeContext(blockObjectReg, easy::handleMessage));
+        world = new LogicWorld(new GameContext(blockObjectReg, easy::handleMessage));
         player = new Player(renderer.getCamera());
 
         resourceManager.subscribe("TextureMap", easy);
@@ -98,7 +99,7 @@ public class EngineClient implements Engine {
         resourceManager.subscribe("TextureMap", resourceManager);
         resourceManager.add("Shader", new CreateShaderNode());
         // .subscribe("Shader", renderer);
-        keyBindingManager.update();
+//        keyBindingManager.update();
         initBlocks();
         test();
 
@@ -117,16 +118,16 @@ public class EngineClient implements Engine {
         try {
             List<GLMesh> meshList = resourceManager.push("BlockModels",
                     Lists.newArrayList(new ResourcePath("", "/minecraft/models/block/stone.json")
-                    // new ResourcePath("", "/minecraft/models/block/sand.json"),
-                    // new ResourcePath("", "/minecraft/models/block/brick.json"),
-                    // new ResourcePath("", "/minecraft/models/block/clay.json"),
-                    // new ResourcePath("", "/minecraft/models/block/furnace.json")
-                    // new ResourcePath("", "/minecraft/models/block/birch_stairs.json"),
-                    // new ResourcePath("", "/minecraft/models/block/lever.json"),
+                            // new ResourcePath("", "/minecraft/models/block/sand.json"),
+                            // new ResourcePath("", "/minecraft/models/block/brick.json"),
+                            // new ResourcePath("", "/minecraft/models/block/clay.json"),
+                            // new ResourcePath("", "/minecraft/models/block/furnace.json")
+                            // new ResourcePath("", "/minecraft/models/block/birch_stairs.json"),
+                            // new ResourcePath("", "/minecraft/models/block/lever.json"),
                     ));
             BlockObject stone = blockObjectReg.getValue(1);
             testObj = stone;
-            GLMesh[] reg = new GLMesh[]{null, meshList.get(0)} ;
+            GLMesh[] reg = new GLMesh[]{null, meshList.get(0)};
             debug.setMesheRegistry(reg);
 
             world.setBlock(new BlockPos(0, 0, 0), stone);
@@ -189,14 +190,14 @@ public class EngineClient implements Engine {
 
     public void handleKeyPress(int key, int scancode, int action, int modifiers) {
         switch (action) {
-        case GLFW.GLFW_PRESS:
-            getKeyBindingManager().handlePress(key, modifiers);
-            break;
-        case GLFW.GLFW_RELEASE:
-            getKeyBindingManager().handleRelease(key, modifiers);
-            break;
-        default:
-            break;
+            case GLFW.GLFW_PRESS:
+                getKeyBindingManager().handlePress(key, modifiers);
+                break;
+            case GLFW.GLFW_RELEASE:
+                getKeyBindingManager().handleRelease(key, modifiers);
+                break;
+            default:
+                break;
         }
         if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
             if (paused) {
@@ -214,14 +215,14 @@ public class EngineClient implements Engine {
 
     public void handleMousePress(int button, int action, int modifiers) {
         switch (action) {
-        case GLFW.GLFW_PRESS:
-            getKeyBindingManager().handlePress(button + 400, modifiers);
-            break;
-        case GLFW.GLFW_RELEASE:
-            getKeyBindingManager().handleRelease(button + 400, modifiers);
-            break;
-        default:
-            break;
+            case GLFW.GLFW_PRESS:
+                getKeyBindingManager().handlePress(button + 400, modifiers);
+                break;
+            case GLFW.GLFW_RELEASE:
+                getKeyBindingManager().handleRelease(button + 400, modifiers);
+                break;
+            default:
+                break;
         }
         if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
             BlockPos pick = world.pickBeside(renderer.getCamera().getPosition(), renderer.getCamera().getFrontVector(),
@@ -250,6 +251,11 @@ public class EngineClient implements Engine {
 
     @Override
     public ResourceManager getResourcePackManager() {
+        return null;
+    }
+
+    @Override
+    public ActionManager getActionManager() {
         return null;
     }
 

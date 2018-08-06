@@ -1,5 +1,7 @@
 package unknowndomain.engine;
 
+import unknowndomain.engine.registry.RegistryEntry;
+
 import java.util.List;
 
 /**
@@ -12,16 +14,15 @@ public interface Prototype<E extends RuntimeObject, C extends RuntimeObject> {
     /**
      * e.g. in minecraft block corresponds to tileentity and the item corresponds to itemstack
      *
-     *
-     * @param runtimeContext The global runtime context
-     * @param context The context of it depends
+     * @param gameContext The global runtime context
+     * @param context        The context of it depends
      * @return The created entity
      */
-    E createObject(RuntimeContext runtimeContext, C context);
+    E createObject(GameContext gameContext, C context);
 
-    List<Action<E, C>> getActions();
+//    List<Action<E, C>> getActions();
 
-    interface Action<E extends RuntimeObject, C extends RuntimeObject> {
-        void perform(C context, E object);
-    }
+//    interface Action<E extends RuntimeObject, C extends RuntimeObject> extends RegistryEntry<Action<E, C>> {
+//        void perform(C context, E object);
+//    }
 }

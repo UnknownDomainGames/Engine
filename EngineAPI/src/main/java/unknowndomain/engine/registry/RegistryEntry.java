@@ -30,6 +30,7 @@ public interface RegistryEntry<T> {
         @SuppressWarnings("unchecked")
         @Override
         public final T setRegistryName(ResourcePath location) {
+            if (this.location != null) throw new Error("Duplicated register");
             this.location = location;
             return (T) this;
         }

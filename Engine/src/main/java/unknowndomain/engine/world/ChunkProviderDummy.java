@@ -1,7 +1,6 @@
 package unknowndomain.engine.world;
 
-import org.joml.Vector3i;
-import unknowndomain.engine.RuntimeContext;
+import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
@@ -9,7 +8,7 @@ import unknowndomain.engine.registry.IdentifiedRegistry;
 
 public class ChunkProviderDummy implements ChunkProvider {
     @Override
-    public Chunk provideChunk(RuntimeContext context, BlockPos pos) {
+    public Chunk provideChunk(GameContext context, BlockPos pos) {
         LogicChunk chunk = new LogicChunk(context);
 
         IdentifiedRegistry<BlockObject> reg = context.getBlockRegistry();

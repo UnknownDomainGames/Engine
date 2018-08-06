@@ -1,13 +1,11 @@
 package unknowndomain.engine.world;
 
 import com.google.common.collect.Maps;
-import org.joml.Vector3i;
 import unknowndomain.engine.Entity;
-import unknowndomain.engine.RuntimeContext;
+import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.unclassified.BlockObjectRuntime;
-import unknowndomain.engine.world.Chunk;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,9 +17,9 @@ import java.util.Map;
 public class LogicChunk implements Chunk {
 
     int[][] data = new int[16][16 * 16 * 16];
-    private RuntimeContext context;
+    private GameContext context;
 
-    public LogicChunk(RuntimeContext context) {
+    public LogicChunk(GameContext context) {
         this.context = context;
     }
     private List<Entity> entities = new ArrayList<>();

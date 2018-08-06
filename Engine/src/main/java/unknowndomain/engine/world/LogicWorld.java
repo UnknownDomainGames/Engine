@@ -3,7 +3,7 @@ package unknowndomain.engine.world;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import org.joml.*;
-import unknowndomain.engine.RuntimeContext;
+import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.math.BlockPos;
@@ -21,9 +21,9 @@ public class LogicWorld implements World {
     private LongObjectMap<Chunk> chunks = new LongObjectHashMap<>();
     private ChunkProvider chunkProvider = new ChunkProviderDummy();
     private List<Entity> entityList = new ArrayList<>();
-    private RuntimeContext context;
+    private GameContext context;
 
-    public LogicWorld(RuntimeContext context) {
+    public LogicWorld(GameContext context) {
         this.context = context;
     }
 
