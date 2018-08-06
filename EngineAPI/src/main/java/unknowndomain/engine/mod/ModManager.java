@@ -1,4 +1,4 @@
-package unknowndomain.engine.mod;
+package unknowndomain.engine.api.mod;
 
 import java.util.List;
 
@@ -10,4 +10,5 @@ public interface ModManager {
 
 	List<ModContainer> getAllLoadedMods();
 
+	ModContainer whichMod(Class<?> clazz);
 }

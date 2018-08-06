@@ -1,4 +1,4 @@
-package unknowndomain.engine.event;
+package unknowndomain.engine.api.event;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -8,9 +8,9 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target(METHOD)
-public @interface Subscribe {
+public @interface Listener {
+	
+	Order order() default Order.DEFAULT;
 
-    Order order() default Order.DEFAULT;
-
-    boolean receiveCancelled() default false;
+	boolean receiveCancelled() default false;
 }
