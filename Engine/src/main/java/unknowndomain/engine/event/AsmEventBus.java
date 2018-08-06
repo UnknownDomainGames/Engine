@@ -18,6 +18,9 @@ import java.util.Map.Entry;
 import static org.objectweb.asm.Opcodes.*;
 
 public class AsmEventBus implements EventBus {
+    static {
+        Internal0.ASM = AsmEventBus::new;
+    }
 
     private final Map<Class<?>, Map<Order, Collection<RegisteredListener>>> eventListeners = new HashMap<>();
     private final Map<Object, Collection<RegisteredListener>> registeredListeners = new HashMap<>();

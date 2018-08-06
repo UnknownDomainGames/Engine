@@ -8,12 +8,12 @@ import unknowndomain.engine.registry.RegistryEntry;
 public interface Action extends RegistryEntry<Action> {
     static ActionBuilder builder(ResourcePath path) {
         Preconditions.checkNotNull(path);
-        return new ActionBuilder(path);
+        return Internal0.INTERAL.apply(path);
     }
 
     static ActionBuilder builder(String id) {
         Preconditions.checkNotNull(id);
-        return new ActionBuilder(new ResourcePath(id));
+        return Internal0.INTERAL.apply(new ResourcePath(id));
     }
 
     void onAction(GameContext context);

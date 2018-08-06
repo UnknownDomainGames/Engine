@@ -2,13 +2,17 @@ package unknowndomain.engine.event;
 
 public interface EventBus {
 
-	/**
-	 * @param event
-	 * @return True if cancelled, false if not.
-	 */
-	boolean post(Event event);
+    static EventBus create() {
+        return Internal0.ASM.get();
+    }
 
-	void register(Object listener);
+    /**
+     * @param event
+     * @return True if cancelled, false if not.
+     */
+    boolean post(Event event);
 
-	void unregister(Object listener);
+    void register(Object listener);
+
+    void unregister(Object listener);
 }
