@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+import unknowndomain.engine.client.display.Camera;
 
 public class CameraDefault implements Camera {
 

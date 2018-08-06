@@ -10,9 +10,7 @@ import com.google.common.collect.Multimap;
 import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.client.UnknownDomain;
 
-public enum KeyBindingManager {
-    INSTANCE;
-
+public class KeyBindingManager {
     private final Multimap<Integer, KeyBinding> codeToBinding = LinkedListMultimap.create();
 
     private final Set<KeyCode> pressedKey = new HashSet<>();

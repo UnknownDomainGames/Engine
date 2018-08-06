@@ -1,8 +1,8 @@
 package unknowndomain.engine.client.rendering;
 
+import unknowndomain.engine.client.camera.CameraDefault;
 import unknowndomain.engine.client.display.Camera;
 import unknowndomain.engine.client.resource.Pipeline;
-import unknowndomain.engine.client.display.CameraDefault;
 
 import java.util.ArrayList;
 import java.util.List;

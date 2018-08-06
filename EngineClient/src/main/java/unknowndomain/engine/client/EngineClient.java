@@ -53,7 +53,7 @@ public class EngineClient implements Engine {
     private ResourceManagerImpl resourceManager;
     private KeyBindingManager keyBindingManager;
 
-    private GameClientImpl game;
+    //    private GameClientImpl game;
     private LogicWorld world;
 
     private Timer timer;
@@ -157,12 +157,19 @@ public class EngineClient implements Engine {
             accumulator += elapsedTime;
 
             while (accumulator >= interval) {
-                // update(interval); //TODO: game logic
-                // System.out.println("tick");
-                // game.tick();
+                //update(interval); //TODO: game logic
+//                game.tick();
+                accumulator -= interval;
+            }
 
             window.update();
+            sync();
+        }
     }
+
+    private void sync() {
+        float loopSlot = 1f / 60.0f;
+        double endTime = timer.getLastLoopTime() + loopSlot;
         while (timer.getTime() < endTime) {
             try {
                 Thread.sleep(1);
