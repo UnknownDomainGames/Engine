@@ -1,9 +1,9 @@
-package unknowndomain.engine.api.event;
+package unknowndomain.engine.event;
 
-public class ExampleChildEvent extends ExampleParentEvent{
+public class ExampleChildEvent extends ExampleParentEvent {
 
-	public ExampleChildEvent(String value) {
-		super(value);
-	}
+    public ExampleChildEvent(String value) {
+        super(value);
+    }
 
 }

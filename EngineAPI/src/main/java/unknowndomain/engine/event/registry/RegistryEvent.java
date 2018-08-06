@@ -1,10 +1,9 @@
 package unknowndomain.engine.event.registry;
 
-import unknowndomain.engine.event.Event;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryEntry;
 
-public class RegistryEvent<T extends RegistryEntry<T>> implements Event {
+public class RegistryEvent<T extends RegistryEntry<T>> {
 
     private final Registry<T> registry;
 

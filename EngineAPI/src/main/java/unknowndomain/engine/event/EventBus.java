@@ -1,4 +1,4 @@
-package unknowndomain.engine.api.event;
+package unknowndomain.engine.event;
 
 public interface EventBus {
 
@@ -7,8 +7,8 @@ public interface EventBus {
 	 * @return True if cancelled, false if not.
 	 */
 	boolean post(Event event);
-	
+
 	void register(Object listener);
-	
+
 	void unregister(Object listener);
 }

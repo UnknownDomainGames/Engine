@@ -28,10 +28,10 @@ public class SimpleModManager implements ModManager {
 		return javaModLoader.getLoadedModsList();
 	}
 
-	@Override
-	public ModContainer whichMod(Class<?> clazz) {
-		// TODO 自动生成的方法存根
-		return null;
-	}
+    @Override
+    public ModContainer whichMod(Class<?> clazz) {
+        // TODO 自动生成的方法存根
+        return null;
+    }
 
 }

@@ -1,12 +1,10 @@
-package unknowndomain.engine.api.event;
-
-import unknowndomain.engine.event.Event;
+package unknowndomain.engine.event;
 
 public class ExampleParentEvent implements Event {
-	
-	public String value;
 
-	public ExampleParentEvent(String value) {
-		this.value = value;
-	}
+    public String value;
+
+    public ExampleParentEvent(String value) {
+        this.value = value;
+    }
 }

@@ -1,4 +1,4 @@
-package unknowndomain.engine.api.event;
+package unknowndomain.engine.event;
 
 public interface Event {
 
