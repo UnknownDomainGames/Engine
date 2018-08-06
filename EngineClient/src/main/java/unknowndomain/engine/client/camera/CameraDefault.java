@@ -1,6 +1,7 @@
-package unknowndomain.engine.client.display;
+package unknowndomain.engine.client.camera;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 

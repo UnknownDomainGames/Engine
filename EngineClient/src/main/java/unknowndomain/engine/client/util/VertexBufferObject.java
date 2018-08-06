@@ -6,41 +6,42 @@ import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public class VertexBufferObject {
     private int vaoId = -1;
     private int id = -1;
+    private int eleid = -1;
     private int count;
 
     public VertexBufferObject(){
         id = GL15.glGenBuffers();
+        eleid = GL15.glGenBuffers();
         vaoId = GL30.glGenVertexArrays();
     }
 
     public void bind(){
-        bind(GL15.GL_ARRAY_BUFFER);
+        bindVAO();
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, id);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, eleid);
     }
 
-    public void bind(int target){
-        bindVAO();
-        GL15.glBindBuffer(target, id);
-    }
     public void bindVAO(){
         GL30.glBindVertexArray(vaoId);
     }
 
     public void unbind(){
-        unbind(GL15.GL_ARRAY_BUFFER);
-    }
-
-    public void unbind(int target){
-        GL15.glBindBuffer(target, 0);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
         GL30.glBindVertexArray(0);
     }
+
 
     public void uploadData(BufferBuilder builder){
         bind();
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, builder.build(), GL15.GL_STATIC_DRAW);
+        if(builder.isUsingIndex())
+            GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, builder.build(), GL15.GL_STATIC_DRAW);
         unbind();
         this.count = builder.getVertexCount();
     }
@@ -63,6 +64,12 @@ public class VertexBufferObject {
         unbind();
         this.count = vertex;
     }
+    public void uploadElementData(IntBuffer builder, int vertex){
+        bind();
+        GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, builder, GL15.GL_STATIC_DRAW);
+        unbind();
+        this.count = vertex;
+    }
     private void allocateData(){
 
         bind();
@@ -74,6 +81,12 @@ public class VertexBufferObject {
     public void drawArrays(int mode){
         bind();
         GL11.glDrawArrays(mode,0,this.count);
+        unbind();
+    }
+
+    public void drawElements(int mode) {
+        bind();
+        GL11.glDrawElements(mode,this.count, GL11.GL_UNSIGNED_INT, 0);
         unbind();
     }
 

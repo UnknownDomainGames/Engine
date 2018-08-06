@@ -2,6 +2,7 @@ package unknowndomain.engine.client.util;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
 
 import java.nio.*;
 
@@ -12,12 +13,15 @@ public class BufferBuilder {
     private ShortBuffer shortBuffer;
     private FloatBuffer floatBuffer;
 
+    private IntBuffer indicesBuffer;
     public BufferBuilder(int size){
         byteBuffer = BufferUtils.createByteBuffer(size);
         intBuffer = byteBuffer.asIntBuffer();
         shortBuffer = byteBuffer.asShortBuffer();
         floatBuffer = byteBuffer.asFloatBuffer();
+        indicesBuffer = BufferUtils.createIntBuffer(size / 16);
     }
+
 
     private boolean isDrawing;
     private int drawMode;
@@ -25,6 +29,7 @@ public class BufferBuilder {
     private boolean useColor;
     private boolean useTex;
     private boolean useNormal;
+    private boolean useIndex;
 
     public boolean isDrawing() {
         return isDrawing;
@@ -50,7 +55,14 @@ public class BufferBuilder {
         return useNormal;
     }
 
+    public boolean isUsingIndex(){
+        return useIndex;
+    }
+
     public void begin(int mode, boolean pos, boolean color, boolean tex, boolean normal){
+        begin(mode, pos, color, tex, normal, false);
+    }
+    public void begin(int mode, boolean pos, boolean color, boolean tex, boolean normal, boolean index){
         if (isDrawing){
             throw new IllegalStateException("Already drawing!");
         }
@@ -62,6 +74,7 @@ public class BufferBuilder {
             useColor = color;
             useTex = tex;
             useNormal = normal;
+            useIndex = index;
             byteBuffer.limit(byteBuffer.capacity());
         }
     }
@@ -73,25 +86,44 @@ public class BufferBuilder {
             if (drawMode == GL11.GL_QUADS || drawMode == GL11.GL_QUAD_STRIP){
                 if (vertexCount % 4 != 0)
                     throw new IllegalArgumentException(String.format("Not enough vertexes! Expected: %d, Found: %d", (vertexCount / 4 + 1) * 4, vertexCount));
-                ByteBuffer bb = ByteBuffer.allocate(byteBuffer.capacity());
-                byteBuffer.rewind();
-                bb.put(byteBuffer);
-                byteBuffer.rewind();
-                byteBuffer.clear();
-                bb.flip();
-                for (int i = 0; i < vertexCount / 4; i++) {
-                    byte[] bs = new byte[getOffset() * 4];
-                    bb.get(bs,0, getOffset() * 4);
-                    byteBuffer.put(bs, 0, getOffset() * 3);
-                    byteBuffer.put(bs, getOffset() * 2, getOffset() * 2);
-                    byteBuffer.put(bs, 0, getOffset());
+                if(useIndex){
+                    IntBuffer ib = IntBuffer.allocate(indicesBuffer.capacity());
+                    indicesBuffer.rewind();
+                    ib.put(indicesBuffer);
+                    indicesBuffer.rewind();
+                    indicesBuffer.clear();
+                    ib.flip();
+                    for (int i = 0; i < vertexCount / 4; i++) {
+                        int[] ints = new int[4];
+                        ib.get(ints, 0, 4);
+                        indicesBuffer.put(ints, 0, 3);
+                        indicesBuffer.put(ints, 2, 2);
+                        indicesBuffer.put(ints, 0, 1);
+                    }
+                }else{
+                    ByteBuffer bb = ByteBuffer.allocate(byteBuffer.capacity());
+                    byteBuffer.rewind();
+                    bb.put(byteBuffer);
+                    byteBuffer.rewind();
+                    byteBuffer.clear();
+                    bb.flip();
+                    for (int i = 0; i < vertexCount / 4; i++) {
+                        byte[] bs = new byte[getOffset() * 4];
+                        bb.get(bs,0, getOffset() * 4);
+                        byteBuffer.put(bs, 0, getOffset() * 3);
+                        byteBuffer.put(bs, getOffset() * 2, getOffset() * 2);
+                        byteBuffer.put(bs, 0, getOffset());
+                    }
+                    pointsCount = pointsCount / 4 * 6;
                 }
                 vertexCount = vertexCount / 4 * 6;
                 drawMode = drawMode == GL11.GL_QUAD_STRIP ? GL11.GL_TRIANGLE_STRIP : GL11.GL_TRIANGLES;
             }
             isDrawing = false;
             byteBuffer.position(0);
-            byteBuffer.limit(vertexCount * getOffset());
+            byteBuffer.limit(pointsCount * getOffset());
+            indicesBuffer.position(0);
+            indicesBuffer.limit(vertexCount);
         }
     }
 
@@ -102,6 +134,7 @@ public class BufferBuilder {
         useTex = false;
         useNormal = false;
         vertexCount = 0;
+        pointsCount = 0;
     }
 
     public int getOffset(){
@@ -149,6 +182,7 @@ public class BufferBuilder {
     }
 
     private int vertexCount;
+    private int pointsCount;
 
     public int getCount() {
         return byteBuffer.limit();
@@ -160,6 +194,9 @@ public class BufferBuilder {
 
     public ByteBuffer build() {
         return byteBuffer;
+    }
+    public IntBuffer buildIndices() {
+        return indicesBuffer;
     }
 
     public BufferBuilder pos(float x, float y, float z){
@@ -202,8 +239,18 @@ public class BufferBuilder {
         return this;
     }
 
+    public BufferBuilder indices(int... indexes){
+        if(useIndex){
+            indicesBuffer.put(indexes);
+            vertexCount += indexes.length;
+        }
+        return this;
+    }
+
     public void endVertex(){
-        ++vertexCount;
+        if(!useIndex)
+            ++vertexCount;
+        ++pointsCount;
         grow(getOffset());
     }
 }

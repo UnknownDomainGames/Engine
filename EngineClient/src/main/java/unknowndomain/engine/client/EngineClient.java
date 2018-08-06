@@ -160,19 +160,9 @@ public class EngineClient implements Engine {
                 // update(interval); //TODO: game logic
                 // System.out.println("tick");
                 // game.tick();
-                accumulator -= interval;
-            }
 
             window.update();
-            world.tick();
-
-            sync(); // TODO: check if use v-sync first
-        }
     }
-
-    private void sync() {
-        float loopSlot = 1f / 60.0f;
-        double endTime = timer.getLastLoopTime() + loopSlot;
         while (timer.getTime() < endTime) {
             try {
                 Thread.sleep(1);

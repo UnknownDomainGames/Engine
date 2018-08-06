@@ -2,7 +2,7 @@ package unknowndomain.engine.permission;
 
 import java.util.HashMap;
 
-public class PermissionManagerMapImpl implements PermissionManager{
+public class PermissionManagerMapImpl implements PermissionManager {
 	public static final String WILDCARD="*";
 	public static final String SPLITTER=".";
 	private final HashMap<Permissable,HashMap<String,Boolean>> rootPermissionDataMap;
