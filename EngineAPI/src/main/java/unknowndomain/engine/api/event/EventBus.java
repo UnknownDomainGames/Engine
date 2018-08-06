@@ -2,9 +2,13 @@ package unknowndomain.engine.api.event;
 
 public interface EventBus {
 
-	void post(Event event);
+	/**
+	 * @param event
+	 * @return True if cancelled, false if not.
+	 */
+	boolean post(Event event);
 	
-	void register(Object subscriber);
+	void register(Object listener);
 	
-	void unregister(Object subscriber);
+	void unregister(Object listener);
 }
