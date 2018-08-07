@@ -1,6 +1,9 @@
 package unknowndomain.engine.world;
 
 import com.google.common.collect.Maps;
+
+import org.apache.commons.lang3.Validate;
+
 import unknowndomain.engine.Entity;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.BlockObject;
@@ -15,14 +18,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class LogicChunk implements Chunk {
+public class LogicChunk implements Chunk { // nvm the name and package position, they can be changed easily
+    private GameContext context; // how do you think about this
+    
+    // how to share a context in game
+    // single instance can have problem on server
+
 
     int[][] data = new int[16][16 * 16 * 16];
-    private GameContext context;
 
     public LogicChunk(GameContext context) {
         this.context = context;
     }
+
     private List<Entity> entities = new ArrayList<>();
     private Map<BlockPos, BlockObject> blockObjects = Maps.newHashMap();
     private Map<String, Object> components;
@@ -39,6 +47,7 @@ public class LogicChunk implements Chunk {
 
     @Override
     public BlockObject getBlock(BlockPos pos) {
+        Validate.notNull(pos);
         BlockObject object = blockObjects.get(pos);
         if (object != null) return object;
 
@@ -51,6 +60,8 @@ public class LogicChunk implements Chunk {
 
     @Override
     public void setBlock(BlockPos pos, BlockObject destBlock) {
+        Validate.notNull(pos);
+        Validate.notNull(destBlock);
         int x = pos.getX() & 0xF;
         int y = pos.getY() & 0xF;
         int z = pos.getZ() & 0xF;

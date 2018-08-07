@@ -2,18 +2,15 @@ package unknowndomain.engine.registry;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.reflect.TypeToken;
 
 import unknowndomain.engine.client.resource.ResourcePath;
 
 public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
-    private final Map<ResourcePath, T> registeredItems = Maps.newHashMap();
+    protected final Map<ResourcePath, T> registeredItems = Maps.newHashMap();
     @SuppressWarnings("serial")
     private final TypeToken<T> token = new TypeToken<T>(getClass()) {
     };
