@@ -3,24 +3,38 @@ package unknowndomain.engine;
 import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.registry.IdentifiedRegistry;
 import unknowndomain.engine.registry.RegistryManager;
+import unknowndomain.engine.event.Event;
+import unknowndomain.engine.event.EventBus;
 
-import java.util.function.Consumer;
-
-public class GameContext {
+public class GameContext implements EventBus {
     private RegistryManager manager;
-    private IdentifiedRegistry<BlockObject> blockRegistry;
-    private Consumer<Object> bus; // replace to event bus
+    private EventBus bus;
 
-    public GameContext(IdentifiedRegistry<BlockObject> blockRegistry, Consumer<Object> bus) {
-        this.blockRegistry = blockRegistry;
+    public GameContext(RegistryManager manager, EventBus bus) {
+        this.manager = manager;
         this.bus = bus;
+    }
+    
+    public RegistryManager getManager() {
+        return manager;
     }
 
     public IdentifiedRegistry<BlockObject> getBlockRegistry() {
-        return blockRegistry;
+        return (IdentifiedRegistry<BlockObject>) manager.getRegistry(BlockObject.class);
     }
 
-    public void send(Object o) {
-        bus.accept(o);
-    }
+	@Override
+	public boolean post(Event event) {
+		return bus.post(event);
+	}
+
+	@Override
+	public void register(Object listener) {
+		bus.register(listener);
+	}
+
+	@Override
+	public void unregister(Object listener) {
+		bus.unregister(listener);
+	}
 }

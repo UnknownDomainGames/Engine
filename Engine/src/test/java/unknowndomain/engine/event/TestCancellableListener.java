@@ -1,7 +1,6 @@
 package unknowndomain.engine.event;
 
-import org.junit.Assert;
-
+import org.junit.jupiter.api.*;
 public class TestCancellableListener {
 
     @Listener(order = Order.FIRST)
@@ -16,6 +15,6 @@ public class TestCancellableListener {
 
     @Listener(receiveCancelled = true)
     public void onHandle1(ExampleCancellableEvent event) {
-        Assert.assertTrue(event.isCancelled());
+        Assertions.assertTrue(event.isCancelled());
     }
 }

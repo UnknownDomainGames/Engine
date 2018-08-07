@@ -20,7 +20,7 @@ public class ChunkProviderDummy implements ChunkProvider {
         }
 
         ChunkPos chunkPos = pos.toChunk();
-        context.send(new LogicWorld.ChunkLoad(chunkPos, chunk.data));
+        context.post(new LogicWorld.ChunkLoad(chunkPos, chunk.data));
         return chunk;
     }
 }

@@ -11,6 +11,8 @@ import unknowndomain.engine.client.block.Player;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.shader.ShaderType;
+import unknowndomain.engine.event.AsmEventBus;
+import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.world.LogicWorld;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
@@ -18,6 +20,7 @@ import unknowndomain.engine.math.Timer;
 import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.registry.IdentifiedRegistry;
 import unknowndomain.engine.registry.SimpleIdentifiedRegistry;
+import unknowndomain.engine.registry.SimpleRegistryManager;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.rendering.shader.CreateShaderNode;
 import unknowndomain.engine.client.resource.ResourceManagerImpl;
@@ -86,7 +89,7 @@ public class EngineClient implements Engine {
         keyBindingManager = new KeyBindingManager();
         resourceManager = new ResourceManagerImpl();
         renderer = new RendererGlobal();
-        world = new LogicWorld(new GameContext(blockObjectReg, easy::handleMessage));
+        world = new LogicWorld(new GameContext(new SimpleRegistryManager(), new AsmEventBus()));
         player = new Player(renderer.getCamera());
 
         resourceManager.subscribe("TextureMap", easy);

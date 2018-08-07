@@ -6,6 +6,7 @@ import org.joml.*;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.Entity;
@@ -165,7 +166,7 @@ public class LogicWorld implements World {
         return null;
     }
 
-    public static class ChunkLoad {
+    public static class ChunkLoad implements Event {
         public final ChunkPos pos;
         public final int[][] blocks;
 
@@ -175,7 +176,7 @@ public class LogicWorld implements World {
         }
     }
 
-    public static class ChunkUnload {
+    public static class ChunkUnload implements Event {
         public final Vector3i pos;
 
         public ChunkUnload(Vector3i pos) {

@@ -1,12 +1,13 @@
 package unknowndomain.engine.event;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.*;
+
 
 public class TestParentChildListener {
 
     @Listener(order = Order.LAST)
     public void onHandle(ExampleChildEvent event) {
-        Assert.assertEquals(event.value, "Hello! Parent!");
+        Assertions.assertEquals(event.value, "Hello! Parent!");
     }
 
     @Listener

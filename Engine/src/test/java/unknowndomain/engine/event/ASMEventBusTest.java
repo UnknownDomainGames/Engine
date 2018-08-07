@@ -1,14 +1,12 @@
 package unknowndomain.engine.event;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.*;
 
-public class EventBusTest {
+public class ASMEventBusTest {
 
     private static EventBus eventBus;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         eventBus = new AsmEventBus();
         eventBus.register(new TestOrderListener());
@@ -18,16 +16,16 @@ public class EventBusTest {
 
     @Test
     public void testOrder() {
-        Assert.assertFalse(eventBus.post(new ExampleEvent("Hello! AsmEventBus!")));
+        Assertions.assertFalse(eventBus.post(new ExampleEvent("Hello! AsmEventBus!")));
     }
 
     @Test
     public void testCancellable() {
-        Assert.assertTrue(eventBus.post(new ExampleCancellableEvent()));
+        Assertions.assertTrue(eventBus.post(new ExampleCancellableEvent()));
     }
 
     @Test
     public void testParent() {
-        Assert.assertFalse(eventBus.post(new ExampleChildEvent("Hello! AsmEventBus!")));
+        Assertions.assertFalse(eventBus.post(new ExampleChildEvent("Hello! AsmEventBus!")));
     }
 }

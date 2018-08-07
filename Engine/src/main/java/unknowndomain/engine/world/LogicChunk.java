@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import unknowndomain.engine.Entity;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.unclassified.BlockObjectRuntime;
 
@@ -66,7 +67,7 @@ public class LogicChunk implements Chunk {
         int id = context.getBlockRegistry().getId(destBlock);
         data[y / 16][x << 8 | y << 4 | z] = id;
 
-        context.send(new BlockChange(pos, id));
+        context.post(new BlockChange(pos, id));
     }
 
     public void addEntity(Entity entity) {
@@ -77,7 +78,7 @@ public class LogicChunk implements Chunk {
 
     }
 
-    public static class BlockChange {
+    public static class BlockChange implements Event {
         public final BlockPos pos;
         public final int blockId;
 
