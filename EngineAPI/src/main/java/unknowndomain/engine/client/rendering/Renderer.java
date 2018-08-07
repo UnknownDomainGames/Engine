@@ -2,9 +2,10 @@ package unknowndomain.engine.client.rendering;
 
 
 import unknowndomain.engine.client.display.Camera;
+import unknowndomain.engine.client.resource.ResourceManager;
 
 public interface Renderer {
-    void init();
+    void init(ResourceManager resourceManager);
 
     void render(Context context);
 

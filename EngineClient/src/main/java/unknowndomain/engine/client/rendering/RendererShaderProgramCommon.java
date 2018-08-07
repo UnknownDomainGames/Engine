@@ -2,6 +2,8 @@ package unknowndomain.engine.client.rendering;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+
+import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.shader.RendererShaderProgram;
 import unknowndomain.engine.client.shader.Shader;
 
@@ -17,14 +19,13 @@ public class RendererShaderProgramCommon extends RendererShaderProgram {
     }
     protected int u_Projection, u_View, u_Model;
 
-    public void init() {
+    public void init(ResourceManager resourceManager) {
         createShader();
 
         useShader();
         u_Projection = getUniformLocation("u_ProjMatrix");
         u_View = getUniformLocation("u_ViewMatrix");
         u_Model = getUniformLocation("u_ModelMatrix");
-
     }
 
     protected void createShader() {

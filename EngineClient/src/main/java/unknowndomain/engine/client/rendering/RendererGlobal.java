@@ -3,6 +3,7 @@ package unknowndomain.engine.client.rendering;
 import unknowndomain.engine.client.camera.CameraDefault;
 import unknowndomain.engine.client.display.Camera;
 import unknowndomain.engine.client.resource.Pipeline;
+import unknowndomain.engine.client.resource.ResourceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +16,12 @@ public class RendererGlobal implements Renderer.Context, Pipeline.Endpoint {
         return camera;
     }
 
+    public void init(ResourceManager manager) {
+        renderers.forEach(r -> r.init(manager));
+    }
+
     public RendererGlobal add(Renderer renderer) {
         renderers.add(renderer);
-        renderer.init();
         return this;
     }
 
@@ -29,11 +33,11 @@ public class RendererGlobal implements Renderer.Context, Pipeline.Endpoint {
 
     @Override
     public void accept(String source, Object content) {
-//        if (source.equals("Shader") && content instanceof EnumMap) {
-//            EnumMap<ShaderType, Shader> map = (EnumMap<ShaderType, Shader>) content;
-//            Shader shader = map.get(ShaderType.VERTEX_SHADER);
-//        }
-//        add((Renderer) content);
+        // if (source.equals("Shader") && content instanceof EnumMap) {
+        // EnumMap<ShaderType, Shader> map = (EnumMap<ShaderType, Shader>) content;
+        // Shader shader = map.get(ShaderType.VERTEX_SHADER);
+        // }
+        // add((Renderer) content);
     }
 
 }
