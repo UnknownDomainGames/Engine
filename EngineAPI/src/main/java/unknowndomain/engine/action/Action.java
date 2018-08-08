@@ -8,19 +8,19 @@ import unknowndomain.engine.registry.RegistryEntry;
 public interface Action extends RegistryEntry<Action> {
     static ActionBuilder builder(ResourcePath path) {
         Preconditions.checkNotNull(path);
-        return Internal0.INTERAL.apply(path);
+        return new ActionBuilderImpl(path);
     }
 
     static ActionBuilder builder(String id) {
         Preconditions.checkNotNull(id);
-        return Internal0.INTERAL.apply(new ResourcePath(id));
+        return new ActionBuilderImpl(new ResourcePath(id));
     }
 
-    void onAction(GameContext context);
+    void onActionStart(GameContext context);
 
     interface Keepable extends Action {
-        void onActionStart(GameContext context);
+        void onActionKeep(GameContext context, int tickElapsed);
 
-        void onActionEnd(GameContext context);
+        void onActionEnd(GameContext context, int tickElapsed);
     }
 }

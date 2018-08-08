@@ -1,41 +1,42 @@
 package unknowndomain.engine.client;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-
 import org.lwjgl.glfw.GLFW;
-
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.GameContext;
+import unknowndomain.engine.action.Action;
 import unknowndomain.engine.action.ActionManager;
-import unknowndomain.engine.client.block.Player;
+import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.client.block.PlayerClient;
+import unknowndomain.engine.client.display.DefaultGameWindow;
+import unknowndomain.engine.client.keybinding.KeyBindingManager;
+import unknowndomain.engine.client.keybinding.Keybindings;
 import unknowndomain.engine.client.model.GLMesh;
+import unknowndomain.engine.client.model.MeshToGLNode;
+import unknowndomain.engine.client.model.pipeline.ModelToMeshNode;
+import unknowndomain.engine.client.model.pipeline.ResolveModelsNode;
+import unknowndomain.engine.client.model.pipeline.ResolveTextureUVNode;
+import unknowndomain.engine.client.rendering.RenderDebug;
+import unknowndomain.engine.client.rendering.RendererGlobal;
+import unknowndomain.engine.client.rendering.shader.CreateShaderNode;
+import unknowndomain.engine.client.resource.ResourceManager;
+import unknowndomain.engine.client.resource.ResourceManagerImpl;
+import unknowndomain.engine.client.resource.ResourcePath;
+import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
 import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.event.AsmEventBus;
-import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.world.LogicWorld;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.Timer;
 import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.registry.IdentifiedRegistry;
+import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.SimpleIdentifiedRegistry;
 import unknowndomain.engine.registry.SimpleRegistryManager;
-import unknowndomain.engine.client.resource.ResourceManager;
-import unknowndomain.engine.client.rendering.shader.CreateShaderNode;
-import unknowndomain.engine.client.resource.ResourceManagerImpl;
-import unknowndomain.engine.client.resource.ResourcePath;
-import unknowndomain.engine.client.display.DefaultGameWindow;
-import unknowndomain.engine.client.keybinding.KeyBindingManager;
-import unknowndomain.engine.client.model.MeshToGLNode;
-import unknowndomain.engine.client.rendering.RenderDebug;
-import unknowndomain.engine.client.rendering.RendererGlobal;
-import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
-import unknowndomain.engine.client.model.pipeline.ModelToMeshNode;
-import unknowndomain.engine.client.model.pipeline.ResolveModelsNode;
-import unknowndomain.engine.client.model.pipeline.ResolveTextureUVNode;
-import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.unclassified.BlockObjectBuilder;
+import unknowndomain.engine.world.LogicWorld;
 
 import java.util.List;
 
@@ -52,57 +53,83 @@ public class EngineClient implements Engine {
      * Managers section
      */
 
-    private IdentifiedRegistry<BlockObject> blockObjectReg = new SimpleIdentifiedRegistry<>();
     private ResourceManagerImpl resourceManager;
     private KeyBindingManager keyBindingManager;
 
-    //    private GameClientImpl game;
+    // private GameClientImpl game;
     private LogicWorld world;
 
     private Timer timer;
+    private PlayerClient player;
+    private GameContext context;
+    private RenderDebug debug;
+    private ActionManagerImpl actionManager;
 
-    public EngineClient(int width, int height) {
+    EngineClient(int width, int height) {
         window = new DefaultGameWindow(this, width, height, UnknownDomain.getName());
-
-        init();
-        gameLoop();
     }
 
-    private Player player;
-    private RenderDebug debug;
+    public GameContext getContext() {
+        return context;
+    }
 
-    public Player getPlayer() {
+    public PlayerClient getPlayer() {
         return player;
     }
 
-    public void init() {
-        window.init();
+    public LogicWorld getWorld() {
+        return world;
+    }
+
+    private void setupContext() {
+        SimpleRegistryManager registryManager = new SimpleRegistryManager(
+                ImmutableMap.<Class<?>, Registry<?>>builder().put(BlockObject.class, new SimpleIdentifiedRegistry<>())
+                        .build()
+        );
+        context = new GameContext(registryManager, new AsmEventBus());
+        actionManager = new ActionManagerImpl(context);
+    }
+
+    private void setupRenderer() {
+        renderer = new RendererGlobal();
 
         Shader v = new Shader(0, ShaderType.VERTEX_SHADER);
         v.loadShader("assets/unknowndomain/shader/common.vert");
         Shader f = new Shader(0, ShaderType.FRAGMENT_SHADER);
         f.loadShader("assets/unknowndomain/shader/common.frag");
 
-        RenderDebug easy = new RenderDebug(v, f);
-        debug = easy;
+        debug = new RenderDebug(v, f);
+        renderer.add(debug);
+
+        renderer.init(this.resourceManager);
+    }
+
+    public void init() {
+        window.init();
+
+
+        setupContext();
+
+        resourceManager = new ResourceManagerImpl();
+        resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
         keyBindingManager = new KeyBindingManager();
-        resourceManager = new ResourceManagerImpl();
-        renderer = new RendererGlobal();
-        world = new LogicWorld(new GameContext(new SimpleRegistryManager(), new AsmEventBus()));
-        player = new Player(renderer.getCamera());
+        setupRenderer();
 
-        resourceManager.subscribe("TextureMap", easy);
-        renderer.add(easy);
+        player = new PlayerClient(renderer.getCamera());
+        for (Action action : player.getActions()) {
+            actionManager.register(action);
+        }
 
-        resourceManager.addResourceSource(new ResourceSourceBuiltin());
+        world = new LogicWorld(context);
+
+        Keybindings.INSTANCE.setup(keyBindingManager);
 
         resourceManager.add("BlockModels", new ResolveModelsNode(), new ResolveTextureUVNode(), new ModelToMeshNode(),
                 new MeshToGLNode()).subscribe("BlockModels", resourceManager);
         resourceManager.subscribe("TextureMap", resourceManager);
         resourceManager.add("Shader", new CreateShaderNode());
-        // .subscribe("Shader", renderer);
-//        keyBindingManager.update();
+
         initBlocks();
         test();
 
@@ -111,14 +138,18 @@ public class EngineClient implements Engine {
     }
 
     private void initBlocks() {
-        blockObjectReg.register(BlockObjectBuilder.create().setPath(new ResourcePath("block.air")).build());
-        blockObjectReg.register(BlockObjectBuilder.create().setPath(new ResourcePath("block.stone")).build());
+        IdentifiedRegistry<BlockObject> blockRegistry = context.getBlockRegistry();
+        blockRegistry.register(BlockObjectBuilder.create(new ResourcePath("block.air")).build());
+        blockRegistry.register(BlockObjectBuilder.create(new ResourcePath("block.stone")).build());
     }
-
-    BlockObject testObj;
 
     private void test() {
         try {
+
+            context.register(debug);
+            resourceManager.subscribe("TextureMap", debug);
+
+            IdentifiedRegistry<BlockObject> blockRegistry = context.getBlockRegistry();
             List<GLMesh> meshList = resourceManager.push("BlockModels",
                     Lists.newArrayList(new ResourcePath("", "/minecraft/models/block/stone.json")
                             // new ResourcePath("", "/minecraft/models/block/sand.json"),
@@ -128,16 +159,15 @@ public class EngineClient implements Engine {
                             // new ResourcePath("", "/minecraft/models/block/birch_stairs.json"),
                             // new ResourcePath("", "/minecraft/models/block/lever.json"),
                     ));
-            BlockObject stone = blockObjectReg.getValue(1);
-            testObj = stone;
             GLMesh[] reg = new GLMesh[]{null, meshList.get(0)};
             debug.setMesheRegistry(reg);
 
+            BlockObject stone = blockRegistry.getValue(1);
             world.setBlock(new BlockPos(0, 0, 0), stone);
             world.setBlock(new BlockPos(1, 0, 0), stone);
             world.setBlock(new BlockPos(2, 0, 0), stone);
             world.setBlock(new BlockPos(3, 0, 0), stone);
-
+            world.addEntity(player);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -160,11 +190,13 @@ public class EngineClient implements Engine {
             accumulator += elapsedTime;
 
             while (accumulator >= interval) {
-                //update(interval); //TODO: game logic
-//                game.tick();
+                // update(interval); //TODO: game logic
+                // game.tick();
                 accumulator -= interval;
             }
 
+            world.tick();
+//            player.tick();
             window.update();
             sync();
         }
@@ -224,12 +256,6 @@ public class EngineClient implements Engine {
             default:
                 break;
         }
-        if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
-            BlockPos pick = world.pickBeside(renderer.getCamera().getPosition(), renderer.getCamera().getFrontVector(),
-                    10);
-            if (pick != null)
-                world.setBlock(pick, testObj);
-        }
     }
 
     public void handleScroll(double xoffset, double yoffset) {
@@ -251,12 +277,12 @@ public class EngineClient implements Engine {
 
     @Override
     public ResourceManager getResourcePackManager() {
-        return null;
+        return resourceManager;
     }
 
     @Override
     public ActionManager getActionManager() {
-        return null;
+        return this.actionManager;
     }
 
     @Override

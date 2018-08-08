@@ -16,6 +16,7 @@ public class UnknownDomain {
         }
         engine = new EngineClient(WIDTH, HEIGHT);
         engine.init();
+        engine.gameLoop();
     }
 
     public static EngineClient getEngine() {

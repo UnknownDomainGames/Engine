@@ -17,6 +17,13 @@ public class KeyBinding {
         this.mods = keyMods;
     }
 
+    public static KeyBinding create(String target, KeyCode code, ActionMode actionMode, KeyModifier... keyMods) {
+        return new KeyBinding(new ResourcePath(target),
+                code == null ? KeyCode.KEY_UNKNOWN : code,
+                actionMode != null ? actionMode : ActionMode.PRESS,
+                keyMods == null ? KeyModifier.EMPTY : keyMods);
+    }
+
     public static KeyBinding create(ResourcePath target, KeyCode code, ActionMode actionMode, KeyModifier... keyMods) {
         return new KeyBinding(target,
                 code == null ? KeyCode.KEY_UNKNOWN : code,

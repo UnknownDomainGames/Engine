@@ -3,7 +3,6 @@ package unknowndomain.engine.client.rendering;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.joml.Vector3fc;
 import unknowndomain.engine.client.display.Camera;
 
 public class FreePerspectiveCamera implements Camera.Perspective {
@@ -92,7 +91,7 @@ public class FreePerspectiveCamera implements Camera.Perspective {
 
     @Override
     public void rotateTo(float x, float y) {
-//        new Vector3f().rotate(new Quaternionf().rotationTo(target.sub(pos, new Vector3f()),
+//        new Vector3f().rotate(new Quaternionf().rotationTo(target.sub(position, new Vector3f()),
 //                new V))
     }
 

@@ -1,19 +1,17 @@
 package unknowndomain.engine.client.block;
 
-import unknowndomain.engine.Prototype;
 import unknowndomain.engine.GameContext;
+import unknowndomain.engine.Prototype;
 import unknowndomain.engine.world.World;
 
-import java.util.List;
-
-public class PlayerProvider implements Prototype<Player, World> {
+public class PlayerProvider implements Prototype<PlayerClient, World> {
     @Override
-    public Player createObject(GameContext gameContext, World context) {
-        return new Player(null);
+    public PlayerClient createObject(GameContext gameContext, World context) {
+        return new PlayerClient(null);
     }
 
 //    @Override
-//    public List<Action<Player, World>> getActions() {
+//    public List<Action<PlayerClient, World>> getActions() {
 //        return null;
 //    }
 }

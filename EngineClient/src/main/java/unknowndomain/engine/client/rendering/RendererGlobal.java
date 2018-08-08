@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.rendering;
 
+import org.apache.commons.lang3.Validate;
 import unknowndomain.engine.client.camera.CameraDefault;
 import unknowndomain.engine.client.display.Camera;
 import unknowndomain.engine.client.resource.Pipeline;
@@ -21,6 +22,7 @@ public class RendererGlobal implements Renderer.Context, Pipeline.Endpoint {
     }
 
     public RendererGlobal add(Renderer renderer) {
+        Validate.notNull(renderer);
         renderers.add(renderer);
         return this;
     }

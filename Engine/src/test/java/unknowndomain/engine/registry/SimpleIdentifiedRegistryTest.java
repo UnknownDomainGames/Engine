@@ -1,20 +1,19 @@
 package unknowndomain.engine.registry;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.junit.jupiter.api.Test;
-
 import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.unclassified.BlockObjectBuilder;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SimpleIdentifiedRegistryTest {
     @Test
     void registerOne() {
         SimpleIdentifiedRegistry<BlockObject> registry = new SimpleIdentifiedRegistry<>();
         ResourcePath path = new ResourcePath("test", "test");
-        BlockObject object = BlockObjectBuilder.create().setPath(path).build();
+        BlockObject object = BlockObjectBuilder.create(path).build();
         registry.register(object);
         assertEquals(object, registry.getValue(path));
         assertEquals(path, registry.getKey(object));
@@ -27,8 +26,8 @@ public class SimpleIdentifiedRegistryTest {
     void registerTwo() {
         SimpleIdentifiedRegistry<BlockObject> registry = new SimpleIdentifiedRegistry<>();
         ResourcePath path = new ResourcePath("test", "test1"), another = new ResourcePath("test", "test2");
-        BlockObject object = BlockObjectBuilder.create().setPath(path).build(),
-                anotherObject = BlockObjectBuilder.create().setPath(another).build();
+        BlockObject object = BlockObjectBuilder.create(path).build(),
+                anotherObject = BlockObjectBuilder.create(another).build();
         registry.register(object);
         registry.register(anotherObject);
 
@@ -53,13 +52,13 @@ public class SimpleIdentifiedRegistryTest {
     void registerDuplicated() {
         SimpleIdentifiedRegistry<BlockObject> registry = new SimpleIdentifiedRegistry<>();
         ResourcePath path = new ResourcePath("test", "test");
-        BlockObject object = BlockObjectBuilder.create().setPath(path).build();
+        BlockObject object = BlockObjectBuilder.create(path).build();
         registry.register(object);
         assertThrows(RegisterException.class, () -> {
             registry.register(object);
         });
 
-        BlockObject another = BlockObjectBuilder.create().setPath(path).build();
+        BlockObject another = BlockObjectBuilder.create(path).build();
         assertThrows(RegisterException.class, () -> {
             registry.register(another);
         });
