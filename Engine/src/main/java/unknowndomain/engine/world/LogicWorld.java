@@ -3,13 +3,13 @@ package unknowndomain.engine.world;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import org.joml.*;
+import unknowndomain.engine.Entity;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
-import unknowndomain.engine.Entity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,6 +26,10 @@ public class LogicWorld implements World {
 
     public LogicWorld(GameContext context) {
         this.context = context;
+    }
+
+    public void addEntity(Entity entity) {
+        entityList.add(entity);
     }
 
     public BlockPos pickBeside(Vector3f from, Vector3f dir, int distance) {

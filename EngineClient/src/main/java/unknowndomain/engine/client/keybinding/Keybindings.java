@@ -1,18 +1,15 @@
 package unknowndomain.engine.client.keybinding;
 
-import org.lwjgl.glfw.GLFW;
-import unknowndomain.engine.client.block.Player;
 
 public enum Keybindings {
     INSTANCE;
 
     public void setup(KeyBindingManager manager) {
-//        manager.register(new KeyBinding(KeyCode.KEY_W, ActionMode.PRESS));
-//        manager.register(new KeyBinding(KeyCode.KEY_E, ActionMode.PRESS));
-//        manager.register(new KeyBinding(KeyCode.KEY_S, ActionMode.PRESS));
-//        manager.register(new KeyBinding(KeyCode.KEY_D, ActionMode.PRESS));
-//        manager.register(new KeyBinding(KeyCode.KEY_SPACE, ActionMode.PRESS));
-//        manager.register(new KeyBinding(KeyCode.KEY_LEFT_SHIFT, ActionMode.PRESS));
-
+        manager.add(KeyBinding.create("player.move.forward", KeyCode.KEY_W, ActionMode.PRESS));
+        manager.add(KeyBinding.create("player.move.backward", KeyCode.KEY_S, ActionMode.PRESS));
+        manager.add(KeyBinding.create("player.move.left", KeyCode.KEY_A, ActionMode.PRESS));
+        manager.add(KeyBinding.create("player.move.right", KeyCode.KEY_D, ActionMode.PRESS));
+        manager.add(KeyBinding.create("player.move.jump", KeyCode.KEY_SPACE, ActionMode.PRESS));
+        manager.add(KeyBinding.create("player.move.sneak", KeyCode.KEY_LEFT_SHIFT, ActionMode.PRESS, KeyModifier.SHIFT));
     }
 }

@@ -1,9 +1,5 @@
 package unknowndomain.engine;
 
-import unknowndomain.engine.registry.RegistryEntry;
-
-import java.util.List;
-
 /**
  * The flyweight object in game. Once it's loaded, it will not be unload unless the "owner" of this is unloaded
  *
@@ -23,6 +19,6 @@ public interface Prototype<E extends RuntimeObject, C extends RuntimeObject> {
 //    List<Action<E, C>> getActions();
 
 //    interface Action<E extends RuntimeObject, C extends RuntimeObject> extends RegistryEntry<Action<E, C>> {
-//        void perform(C context, E object);
+//        void start(C context, E object);
 //    }
 }

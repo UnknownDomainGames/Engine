@@ -3,10 +3,8 @@ package unknowndomain.engine.registry;
 import com.google.common.collect.HashBiMap;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
+import org.apache.commons.lang3.Validate;
 import unknowndomain.engine.client.resource.ResourcePath;
-import unknowndomain.engine.registry.IdentifiedRegistry;
-import unknowndomain.engine.registry.RegistryEntry;
-import unknowndomain.engine.registry.SimpleRegistry;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,11 +16,13 @@ public class SimpleIdentifiedRegistry<T extends RegistryEntry<T>> extends Simple
 
     @Override
     public int getId(T obj) {
+        Validate.notNull(obj);
         return nameToId.get(obj.getRegistryName());
     }
 
     @Override
     public int getId(ResourcePath key) {
+        Validate.notNull(key);
         return nameToId.get(key);
     }
 
