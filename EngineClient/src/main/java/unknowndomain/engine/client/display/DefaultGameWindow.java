@@ -31,6 +31,34 @@ public class DefaultGameWindow implements GameWindow {
         this.height = height;
         resized = false;
     }
+    
+    @Override
+    public int getWidth() {
+        return width;
+    }
+    
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+    
+	@Override
+	public void setSize(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.resized = true;
+        glViewport(0, 0, width, height);
+	}
+
+	@Override
+	public void setTitle(String title) {
+		glfwSetWindowTitle(handle, title);
+	}
 
     public void init() {
         initErrorCallback(System.err);
@@ -62,10 +90,7 @@ public class DefaultGameWindow implements GameWindow {
 
     private void initCallbacks() {
         glfwSetFramebufferSizeCallback(handle, (window, width, height) -> {
-            this.width = width;
-            this.height = height;
-            this.resized = true;
-            glViewport(0, 0, width, height);
+            setSize(width, height);
         });
         glfwSetCharModsCallback(handle, (window, codepoint, mods) -> game.handleTextInput(codepoint, mods));
     }
@@ -154,18 +179,6 @@ public class DefaultGameWindow implements GameWindow {
 
         glfwSwapBuffers(handle);
         glfwPollEvents();
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public long getHandle() {
