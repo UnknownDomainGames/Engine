@@ -4,11 +4,12 @@ import com.google.common.collect.Lists;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import unknowndomain.engine.action.Action;
-import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.block.Block;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.display.Camera;
 import unknowndomain.engine.event.Cancellable;
 import unknowndomain.engine.event.Event;
+import unknowndomain.engine.item.Item;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.LogicWorld;
 
@@ -23,17 +24,17 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
     private MoveSystem moveSystem = new MoveSystem();
     private Vector3f motion = new Vector3f(0, 0, 0);
     private Vector3f position = new Vector3f(0, 0, 0);
-    private BlockObject mainHand;
+    private Item mainHand;
 
     public PlayerClient(Camera camera) {
         this.camera = camera;
     }
 
-    public BlockObject getMainHand() {
+    public Item getMainHand() {
         return mainHand;
     }
 
-    public void setMainHand(BlockObject mainHand) {
+    public void setMainHand(Item mainHand) {
         this.mainHand = mainHand;
     }
 
@@ -42,7 +43,7 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
     }
 
     @Override
-    public UUID getUUid() {
+    public UUID getUUID() {
         return null;
     }
 
@@ -53,19 +54,14 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
     public List<Action> getActions() {
         List<Action> list = moveSystem.getActions();
         list.addAll(Lists.newArrayList(
-                Action.builder("player.item.use").setStartHandler((c) -> {
+                Action.builder("player.mouse.right").setStartHandler((c) -> {
                     LogicWorld world = UnknownDomain.getEngine().getWorld();
-                    BlockPos pick = world.pickBeside(camera.getPosition(), camera.getFrontVector(), 10);
-                    if (pick != null)
-                        if (mainHand != null)
-                            world.setBlock(pick, mainHand); // this should be trigger item
-//                        else use item
-                }).build(),
-                Action.builder("player.item.place").setStartHandler((c) -> {
-                    LogicWorld world = UnknownDomain.getEngine().getWorld();
-                    BlockPos pick = world.pickBeside(camera.getPosition(), camera.getFrontVector(), 10);
-                    if (pick != null && mainHand != null)
-                        world.setBlock(pick, mainHand);
+                    Block.Hit hit = world.rayHit(camera.getPosition(), camera.getFrontVector(), 10);
+                    if (hit != null) {
+                        mainHand.onUseBlockStart(world, this, mainHand, hit);
+                    } else {
+                        mainHand.onUseStart(world, this, mainHand);
+                    }
                 }).build()
         ));
         return list;

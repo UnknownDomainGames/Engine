@@ -13,13 +13,13 @@ public abstract class RendererShaderProgramCommon extends RendererShaderProgram 
 
     protected int u_Projection, u_View, u_Model;
 
-    protected abstract Shader loadVertexShader(ResourceManager resourceManager);
-
-    protected abstract Shader loadFragmentShader(ResourceManager resourceManager);
+    public RendererShaderProgramCommon(Shader vertexShader, Shader fragmentShader) {
+        this.vertexShader = vertexShader;
+        this.fragmentShader = fragmentShader;
+    }
 
     public void init(ResourceManager resourceManager) {
         createShader();
-
         useShader();
         u_Projection = getUniformLocation("u_ProjMatrix");
         u_View = getUniformLocation("u_ViewMatrix");

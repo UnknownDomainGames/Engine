@@ -1,16 +1,14 @@
 package unknowndomain.engine.client.keybinding;
 
-import unknowndomain.engine.client.resource.ResourcePath;
-
 public class KeyBinding {
     private final KeyCode code;
     private final KeyModifier[] mods;
     private final ActionMode actionMode;
-    private final ResourcePath target;
+    private final String target;
     private boolean active = false;
     private boolean valid = true;
 
-    private KeyBinding(ResourcePath target, KeyCode code, ActionMode actionMode, KeyModifier... keyMods) {
+    private KeyBinding(String target, KeyCode code, ActionMode actionMode, KeyModifier... keyMods) {
         this.target = target;
         this.code = code;
         this.actionMode = actionMode;
@@ -18,20 +16,13 @@ public class KeyBinding {
     }
 
     public static KeyBinding create(String target, KeyCode code, ActionMode actionMode, KeyModifier... keyMods) {
-        return new KeyBinding(new ResourcePath(target),
-                code == null ? KeyCode.KEY_UNKNOWN : code,
-                actionMode != null ? actionMode : ActionMode.PRESS,
-                keyMods == null ? KeyModifier.EMPTY : keyMods);
-    }
-
-    public static KeyBinding create(ResourcePath target, KeyCode code, ActionMode actionMode, KeyModifier... keyMods) {
         return new KeyBinding(target,
                 code == null ? KeyCode.KEY_UNKNOWN : code,
                 actionMode != null ? actionMode : ActionMode.PRESS,
                 keyMods == null ? KeyModifier.EMPTY : keyMods);
     }
 
-    public ResourcePath getTarget() {
+    public String getTarget() {
         return target;
     }
 

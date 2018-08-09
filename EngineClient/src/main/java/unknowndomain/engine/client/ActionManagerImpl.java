@@ -3,14 +3,13 @@ package unknowndomain.engine.client;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.action.ActionManager;
-import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.registry.SimpleRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ActionManagerImpl extends SimpleRegistry<Action> implements ActionManager {
-    private Map<ResourcePath, ActionRuntime> runningAction = new HashMap<>();
+    private Map<String, ActionRuntime> runningAction = new HashMap<>();
     private GameContext context;
 
     public ActionManagerImpl(GameContext context) {
@@ -24,7 +23,7 @@ public class ActionManagerImpl extends SimpleRegistry<Action> implements ActionM
     }
 
     @Override
-    public void start(ResourcePath action) {
+    public void start(String action) {
         if (runningAction.containsKey(action)) return;
 
         Action value = getValue(action);
@@ -36,7 +35,7 @@ public class ActionManagerImpl extends SimpleRegistry<Action> implements ActionM
         }
     }
 
-    public void end(ResourcePath action) {
+    public void end(String action) {
         ActionRuntime value = runningAction.get(action);
         if (value != null) {
             value.action.onActionEnd(context, value.tickElapsed);

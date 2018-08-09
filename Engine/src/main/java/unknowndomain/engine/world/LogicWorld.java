@@ -10,6 +10,7 @@ import unknowndomain.engine.block.BlockObject;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
+import unknowndomain.engine.util.Facing;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,6 +31,44 @@ public class LogicWorld implements World {
 
     public void addEntity(Entity entity) {
         entityList.add(entity);
+    }
+
+
+    public Block.Hit rayHit(Vector3f from, Vector3f dir, int distance) {
+        Vector3f step = dir;
+        Vector3f cur = new Vector3f(from);
+
+        for (int i = 0; i < distance; i++) {
+            cur.add(step);
+            BlockPos pos = new BlockPos((int) cur.x, (int) cur.y, (int) cur.z);
+            BlockObject object = getBlock(pos);
+            if (object != null) {
+                Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
+                AABBd box = object.getBoundingBox();
+                Vector2d result = new Vector2d();
+                boolean hit = box.intersectRay(new Rayd(local.x, local.y, local.z, dir.x, dir.y, dir.z), result);
+                if (hit) {
+                    Vector3f hitPoint = local.add(dir.mul((float) result.x, new Vector3f()));
+                    Facing facing = Facing.NORTH;
+                    if (hitPoint.x == 0f) {
+                        facing = Facing.WEST;
+                    } else if (hitPoint.x == 1f) {
+                        facing = Facing.EAST;
+                    } else if (hitPoint.y == 0f) {
+                        facing = Facing.BOTTOM;
+                    } else if (hitPoint.y == 1f) {
+                        facing = Facing.TOP;
+                    } else if (hitPoint.z == 0f) {
+                        facing = Facing.SOUTH;
+                    } else if (hitPoint.z == 1f) {
+                        facing = Facing.NORTH;
+                    }
+                    return new Block.Hit(pos, object, hitPoint, facing);
+                }
+            }
+            cur.add(step);
+        }
+        return null;
     }
 
     public BlockPos pickBeside(Vector3f from, Vector3f dir, int distance) {
@@ -68,28 +107,6 @@ public class LogicWorld implements World {
         return null;
     }
 
-    public BlockPos pick(Vector3f from, Vector3f dir, int distance) {
-        Vector3f step = dir;
-        Vector3f cur = new Vector3f(from);
-
-        for (int i = 0; i < distance; i++) {
-            cur.add(step);
-            BlockPos pos = new BlockPos((int) cur.x, (int) cur.y, (int) cur.z);
-            BlockObject object = getBlock(pos);
-            if (object != null) {
-                Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
-                AABBd box = object.getBoundingBox();
-                Vector2d result = new Vector2d();
-                boolean hit = box.intersectRay(new Rayd(local.x, local.y, local.z, dir.x, dir.y, dir.z), result);
-                if (hit) {
-//                    Vector3f hitPoint = local.add(dir.mul((float) result.x, new Vector3f()));
-                    return pos;
-                }
-            }
-            cur.add(step);
-        }
-        return null;
-    }
 
     public void tick() {
         for (Entity entity : entityList) {

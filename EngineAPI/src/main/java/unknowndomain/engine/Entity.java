@@ -1,12 +1,11 @@
 package unknowndomain.engine;
 
 import org.joml.Vector3f;
-import unknowndomain.engine.RuntimeObject;
 
 import java.util.UUID;
 
 public interface Entity extends RuntimeObject, Tickable {
-    UUID getUUid();
+    UUID getUUID();
 
     Vector3f getPosition();
 

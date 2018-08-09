@@ -1,7 +1,6 @@
 package unknowndomain.engine.client;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.GameContext;
@@ -12,33 +11,19 @@ import unknowndomain.engine.client.block.PlayerClient;
 import unknowndomain.engine.client.display.DefaultGameWindow;
 import unknowndomain.engine.client.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.keybinding.Keybindings;
-import unknowndomain.engine.client.model.GLMesh;
-import unknowndomain.engine.client.model.MeshToGLNode;
-import unknowndomain.engine.client.model.pipeline.ModelToMeshNode;
-import unknowndomain.engine.client.model.pipeline.ResolveModelsNode;
-import unknowndomain.engine.client.model.pipeline.ResolveTextureUVNode;
-import unknowndomain.engine.client.rendering.RenderDebug;
 import unknowndomain.engine.client.rendering.RendererGlobal;
-import unknowndomain.engine.client.rendering.shader.CreateShaderNode;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourceManagerImpl;
-import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
-import unknowndomain.engine.client.shader.Shader;
-import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.game.Game;
-import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.item.Item;
 import unknowndomain.engine.math.Timer;
 import unknowndomain.engine.mod.ModManager;
-import unknowndomain.engine.registry.IdentifiedRegistry;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.SimpleIdentifiedRegistry;
 import unknowndomain.engine.registry.SimpleRegistryManager;
-import unknowndomain.engine.unclassified.BlockObjectBuilder;
 import unknowndomain.engine.world.LogicWorld;
-
-import java.util.List;
 
 public class EngineClient implements Engine {
 
@@ -59,11 +44,9 @@ public class EngineClient implements Engine {
 
     // private GameClientImpl game;
     private LogicWorld world;
-
     private Timer timer;
     private PlayerClient player;
     private GameContext context;
-    private RenderDebug debug;
 
     EngineClient(int width, int height) {
         window = new DefaultGameWindow(this, width, height, UnknownDomain.getName());
@@ -81,53 +64,51 @@ public class EngineClient implements Engine {
         return world;
     }
 
+    private MinecraftMod minecraftMod = new MinecraftMod();
+
     private void setupContext() {
         SimpleRegistryManager registryManager = new SimpleRegistryManager(
-                ImmutableMap.<Class<?>, Registry<?>>builder().put(BlockObject.class, new SimpleIdentifiedRegistry<>())
+                ImmutableMap.<Class<?>, Registry<?>>builder()
+                        .put(BlockObject.class, new SimpleIdentifiedRegistry<>())
+                        .put(Item.class, new SimpleIdentifiedRegistry<>())
                         .build()
         );
         context = new GameContext(registryManager, new AsmEventBus());
         actionManager = new ActionManagerImpl(context);
     }
 
-    private void setupRenderer() {
-        renderer = new RendererGlobal();
-        renderer.add(new RenderDebug());
-
-        renderer.init(this.resourceManager);
-    }
-
     public void init() {
         window.init();
-
         setupContext();
-        initBlocks();
+        renderer = new RendererGlobal();
+
         world = new LogicWorld(context);
 
         resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
         keyBindingManager = new KeyBindingManager();
-        setupRenderer();
 
         player = new PlayerClient(renderer.getCamera());
         for (Action action : player.getActions()) {
             actionManager.register(action);
         }
+        world.addEntity(player);
 
         Keybindings.INSTANCE.setup(keyBindingManager);
 
-        resourceManager.add("BlockModels", new ResolveModelsNode(), new ResolveTextureUVNode(), new ModelToMeshNode(),
-                new MeshToGLNode()).subscribe("BlockModels", resourceManager);
-        resourceManager.subscribe("TextureMap", resourceManager);
-        resourceManager.add("Shader", new CreateShaderNode());
+        minecraftMod.init(context);
+        try {
+            minecraftMod.setupResource(context, resourceManager);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        minecraftMod.setupRender(context, resourceManager, renderer);
+
+        renderer.init(resourceManager);
 
         timer = new Timer();
         timer.init();
-    }
-
-    private void initBlocks() {
-       
     }
 
     public void loop() {

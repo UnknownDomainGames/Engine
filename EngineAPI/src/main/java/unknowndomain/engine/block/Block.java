@@ -1,7 +1,10 @@
 package unknowndomain.engine.block;
 
 import com.google.common.collect.ImmutableList;
+import org.joml.Vector3f;
 import unknowndomain.engine.Prototype;
+import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.World;
 
 import java.util.List;
@@ -12,6 +15,20 @@ public abstract class Block implements Prototype<BlockObject, World> {
     // fill those arguments later
 
     public abstract List<BlockObject> getAllStates();
+
+    public static class Hit {
+        public final BlockPos position;
+        public final BlockObject block;
+        public final Vector3f hit;
+        public final Facing face;
+
+        public Hit(BlockPos position, BlockObject block, Vector3f hit, Facing face) {
+            this.position = position;
+            this.block = block;
+            this.hit = hit;
+            this.face = face;
+        }
+    }
 
     public interface TickBehavior {
         void tick(BlockObject object);

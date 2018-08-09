@@ -1,21 +1,30 @@
 package unknowndomain.engine.util;
 
-public enum Facing {
+import unknowndomain.engine.math.BlockPos;
 
-	NORTH(1),
-	SOUTH(0),
-	EAST(3),
-	WEST(2),
-	TOP(5),
-	BOTTOM(4);
-	
-	private final int opposite;
-	
-	Facing(int opposite){
-		this.opposite = opposite;
-	}
-	
-	public Facing opposite() {
-		return values()[opposite];
-	}
+public enum Facing {
+    NORTH(1, 0, 0, 1),
+    SOUTH(0, 0, 0, -1),
+    EAST(3, 1, 0, 0),
+    WEST(2, -1, 0, 0),
+    TOP(5, 0, 1, 0),
+    BOTTOM(4, 0, -1, 0);
+
+    private final int opposite;
+    private final int offsetX, offsetY, offsetZ;
+
+    Facing(int opposite, int offsetX, int offsetY, int offsetZ) {
+        this.opposite = opposite;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+        this.offsetZ = offsetZ;
+    }
+
+    public Facing opposite() {
+        return values()[opposite];
+    }
+
+    public BlockPos side(BlockPos pos) {
+        return pos.add(offsetX, offsetY, offsetZ);
+    }
 }
