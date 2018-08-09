@@ -9,7 +9,7 @@ import unknowndomain.engine.client.resource.ResourceManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RendererGlobal implements Renderer.Context, Pipeline.Endpoint {
+public class RendererGlobal implements Renderer.Context {
     private final List<Renderer> renderers = new ArrayList<>();
     private Camera camera = new CameraDefault();
 
@@ -32,14 +32,4 @@ public class RendererGlobal implements Renderer.Context, Pipeline.Endpoint {
             renderer.render(this);
         }
     }
-
-    @Override
-    public void accept(String source, Object content) {
-        // if (source.equals("Shader") && content instanceof EnumMap) {
-        // EnumMap<ShaderType, Shader> map = (EnumMap<ShaderType, Shader>) content;
-        // Shader shader = map.get(ShaderType.VERTEX_SHADER);
-        // }
-        // add((Renderer) content);
-    }
-
 }

@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimpleIdentifiedRegistry<T extends RegistryEntry<T>> extends SimpleRegistry<T> implements IdentifiedRegistry<T> {
     private IntObjectMap<T> idToObject = new IntObjectHashMap<>();
-    private Map<ResourcePath, Integer> nameToId = HashBiMap.create();
+    private Map<String, Integer> nameToId = HashBiMap.create();
     private AtomicInteger id = new AtomicInteger();
 
     @Override
@@ -21,13 +21,13 @@ public class SimpleIdentifiedRegistry<T extends RegistryEntry<T>> extends Simple
     }
 
     @Override
-    public int getId(ResourcePath key) {
+    public int getId(String key) {
         Validate.notNull(key);
         return nameToId.get(key);
     }
 
     @Override
-    public ResourcePath getKey(int id) {
+    public String getKey(int id) {
         return idToObject.get(id).getRegistryName();
     }
 

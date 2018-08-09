@@ -6,14 +6,9 @@ import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.registry.RegistryEntry;
 
 public interface Action extends RegistryEntry<Action> {
-    static ActionBuilder builder(ResourcePath path) {
+    static ActionBuilder builder(String path) {
         Preconditions.checkNotNull(path);
         return new ActionBuilderImpl(path);
-    }
-
-    static ActionBuilder builder(String id) {
-        Preconditions.checkNotNull(id);
-        return new ActionBuilderImpl(new ResourcePath(id));
     }
 
     void onActionStart(GameContext context);

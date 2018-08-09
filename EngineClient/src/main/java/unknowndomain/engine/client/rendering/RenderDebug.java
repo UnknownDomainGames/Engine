@@ -8,7 +8,9 @@ import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.Mesh;
 import unknowndomain.engine.client.model.MeshToGLNode;
 import unknowndomain.engine.client.resource.Pipeline;
+import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.shader.Shader;
+import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.client.texture.GLTexture;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.math.BlockPos;
@@ -21,10 +23,6 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
     private IntObjectMap<RenderChunk> loadChunk = new IntObjectHashMap<>(16);
     private BlockPos pick;
     private GLMesh[] mesheRegistry;
-
-    public RenderDebug(Shader vertexShader, Shader fragmentShader) {
-        super(vertexShader, fragmentShader);
-    }
 
     private GLMesh textureMap;
 
@@ -62,31 +60,31 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
         Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
         textureMap.render();
 
-//        loadChunk.forEach((pos, chunk) -> {
-//            for (int i = 0; i < 16; i++) {
-//                if (chunk.valid[i]) {
-//                    int[] blocks = chunk.blocks[i];
-//                    for (int j = 0; j < 256; j++) {
-//                        if (blocks[j] == 0) continue;
-//                        int id = blocks[j];
-//                        int cx = pos >> 16;
-//                        int cy = i * 16;
-//                        int cz = pos & 0xFFFF;
-//                        int x = (j >> 8) & 0xF + cx;
-//                        int y = (j >> 4) & 0xF + cy;
-//                        int z = j & 0xF + cz;
-//                        boolean picked = pick != null && pick.getX() == x && pick.getY() == y && pick.getZ() == z;
-//
-//                        Shader.setUniform(u_Model, new Matrix4f().setTranslation(x, y, z));
-////                        Shader.setUniform(u_Model, new Matrix4f().setTranslation(0, 0, 0));
-//
-//                        if (picked) this.setUniform("u_Picked", 1);
-//                        mesheRegistry[id].render();
-//                        if (picked) this.setUniform("u_Picked", 0);
-//                    }
-//                }
-//            }
-//        });
+       loadChunk.forEach((pos, chunk) -> {
+           for (int i = 0; i < 16; i++) {
+               if (chunk.valid[i]) {
+                   int[] blocks = chunk.blocks[i];
+                   for (int j = 0; j < 256; j++) {
+                       if (blocks[j] == 0) continue;
+                       int id = blocks[j];
+                       int cx = pos >> 16;
+                       int cy = i * 16;
+                       int cz = pos & 0xFFFF;
+                       int x = (j >> 8) & 0xF + cx;
+                       int y = (j >> 4) & 0xF + cy;
+                       int z = j & 0xF + cz;
+                       boolean picked = pick != null && pick.getX() == x && pick.getY() == y && pick.getZ() == z;
+
+                       Shader.setUniform(u_Model, new Matrix4f().setTranslation(x, y, z));
+//                        Shader.setUniform(u_Model, new Matrix4f().setTranslation(0, 0, 0));
+
+                       if (picked) this.setUniform("u_Picked", 1);
+                       mesheRegistry[id].render();
+                       if (picked) this.setUniform("u_Picked", 0);
+                   }
+               }
+           }
+       });
     }
 
     /**
@@ -157,9 +155,21 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
         switch (source) {
             case "TextureMap":
                 this.texture = (GLTexture) content;
-                System.out.println("textmap");
-                System.out.println(content);
                 break;
         }
     }
+
+	@Override
+	protected Shader loadVertexShader(ResourceManager resourceManager) {
+        Shader v = new Shader(0, ShaderType.VERTEX_SHADER);
+        v.loadShader("assets/unknowndomain/shader/common.vert");
+		return v;
+	}
+
+	@Override
+	protected Shader loadFragmentShader(ResourceManager resourceManager) {
+        Shader f = new Shader(0, ShaderType.FRAGMENT_SHADER);
+        f.loadShader("assets/unknowndomain/shader/common.frag");
+		return f;
+	}
 }

@@ -12,7 +12,7 @@ public class SimpleIdentifiedRegistryTest {
     @Test
     void registerOne() {
         SimpleIdentifiedRegistry<BlockObject> registry = new SimpleIdentifiedRegistry<>();
-        ResourcePath path = new ResourcePath("test", "test");
+        String path = "test";
         BlockObject object = BlockObjectBuilder.create(path).build();
         registry.register(object);
         assertEquals(object, registry.getValue(path));
@@ -25,7 +25,7 @@ public class SimpleIdentifiedRegistryTest {
     @Test
     void registerTwo() {
         SimpleIdentifiedRegistry<BlockObject> registry = new SimpleIdentifiedRegistry<>();
-        ResourcePath path = new ResourcePath("test", "test1"), another = new ResourcePath("test", "test2");
+        String path = "test1", another = "test2";
         BlockObject object = BlockObjectBuilder.create(path).build(),
                 anotherObject = BlockObjectBuilder.create(another).build();
         registry.register(object);
@@ -51,7 +51,7 @@ public class SimpleIdentifiedRegistryTest {
     @Test
     void registerDuplicated() {
         SimpleIdentifiedRegistry<BlockObject> registry = new SimpleIdentifiedRegistry<>();
-        ResourcePath path = new ResourcePath("test", "test");
+        String path = "test";
         BlockObject object = BlockObjectBuilder.create(path).build();
         registry.register(object);
         assertThrows(RegisterException.class, () -> {

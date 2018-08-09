@@ -55,6 +55,7 @@ public class EngineClient implements Engine {
 
     private ResourceManagerImpl resourceManager;
     private KeyBindingManager keyBindingManager;
+    private ActionManagerImpl actionManager;
 
     // private GameClientImpl game;
     private LogicWorld world;
@@ -63,7 +64,6 @@ public class EngineClient implements Engine {
     private PlayerClient player;
     private GameContext context;
     private RenderDebug debug;
-    private ActionManagerImpl actionManager;
 
     EngineClient(int width, int height) {
         window = new DefaultGameWindow(this, width, height, UnknownDomain.getName());
@@ -92,14 +92,7 @@ public class EngineClient implements Engine {
 
     private void setupRenderer() {
         renderer = new RendererGlobal();
-
-        Shader v = new Shader(0, ShaderType.VERTEX_SHADER);
-        v.loadShader("assets/unknowndomain/shader/common.vert");
-        Shader f = new Shader(0, ShaderType.FRAGMENT_SHADER);
-        f.loadShader("assets/unknowndomain/shader/common.frag");
-
-        debug = new RenderDebug(v, f);
-        renderer.add(debug);
+        renderer.add(new RenderDebug());
 
         renderer.init(this.resourceManager);
     }
@@ -107,8 +100,9 @@ public class EngineClient implements Engine {
     public void init() {
         window.init();
 
-
         setupContext();
+        initBlocks();
+        world = new LogicWorld(context);
 
         resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
@@ -121,8 +115,6 @@ public class EngineClient implements Engine {
             actionManager.register(action);
         }
 
-        world = new LogicWorld(context);
-
         Keybindings.INSTANCE.setup(keyBindingManager);
 
         resourceManager.add("BlockModels", new ResolveModelsNode(), new ResolveTextureUVNode(), new ModelToMeshNode(),
@@ -130,47 +122,12 @@ public class EngineClient implements Engine {
         resourceManager.subscribe("TextureMap", resourceManager);
         resourceManager.add("Shader", new CreateShaderNode());
 
-        initBlocks();
-        test();
-
         timer = new Timer();
         timer.init();
     }
 
     private void initBlocks() {
-        IdentifiedRegistry<BlockObject> blockRegistry = context.getBlockRegistry();
-        blockRegistry.register(BlockObjectBuilder.create(new ResourcePath("block.air")).build());
-        blockRegistry.register(BlockObjectBuilder.create(new ResourcePath("block.stone")).build());
-    }
-
-    private void test() {
-        try {
-
-            context.register(debug);
-            resourceManager.subscribe("TextureMap", debug);
-
-            IdentifiedRegistry<BlockObject> blockRegistry = context.getBlockRegistry();
-            List<GLMesh> meshList = resourceManager.push("BlockModels",
-                    Lists.newArrayList(new ResourcePath("", "/minecraft/models/block/stone.json")
-                            // new ResourcePath("", "/minecraft/models/block/sand.json"),
-                            // new ResourcePath("", "/minecraft/models/block/brick.json"),
-                            // new ResourcePath("", "/minecraft/models/block/clay.json"),
-                            // new ResourcePath("", "/minecraft/models/block/furnace.json")
-                            // new ResourcePath("", "/minecraft/models/block/birch_stairs.json"),
-                            // new ResourcePath("", "/minecraft/models/block/lever.json"),
-                    ));
-            GLMesh[] reg = new GLMesh[]{null, meshList.get(0)};
-            debug.setMesheRegistry(reg);
-
-            BlockObject stone = blockRegistry.getValue(1);
-            world.setBlock(new BlockPos(0, 0, 0), stone);
-            world.setBlock(new BlockPos(1, 0, 0), stone);
-            world.setBlock(new BlockPos(2, 0, 0), stone);
-            world.setBlock(new BlockPos(3, 0, 0), stone);
-            world.addEntity(player);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+       
     }
 
     public void loop() {
@@ -191,12 +148,11 @@ public class EngineClient implements Engine {
 
             while (accumulator >= interval) {
                 // update(interval); //TODO: game logic
+                world.tick();
                 // game.tick();
                 accumulator -= interval;
             }
 
-            world.tick();
-//            player.tick();
             window.update();
             sync();
         }

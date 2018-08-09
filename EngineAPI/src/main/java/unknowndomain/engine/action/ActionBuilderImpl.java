@@ -2,18 +2,17 @@ package unknowndomain.engine.action;
 
 import org.apache.commons.lang3.Validate;
 import unknowndomain.engine.GameContext;
-import unknowndomain.engine.client.resource.ResourcePath;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 class ActionBuilderImpl implements ActionBuilder {
-    private ResourcePath path;
+    private String path;
     private Consumer<GameContext> startHandler;
     private BiConsumer<GameContext, Integer> keepHandler;
     private BiConsumer<GameContext, Integer> endHandler;
 
-    ActionBuilderImpl(ResourcePath path) {
+    ActionBuilderImpl(String path) {
         this.path = path;
     }
 

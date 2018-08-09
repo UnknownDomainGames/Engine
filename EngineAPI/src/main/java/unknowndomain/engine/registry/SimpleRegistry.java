@@ -13,7 +13,7 @@ import com.google.common.reflect.TypeToken;
 import unknowndomain.engine.client.resource.ResourcePath;
 
 public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
-    private final Map<ResourcePath, T> registeredItems = Maps.newHashMap();
+    private final Map<String, T> registeredItems = Maps.newHashMap();
     @SuppressWarnings("serial")
     private final TypeToken<T> token = new TypeToken<T>(getClass()) {
     };
@@ -29,7 +29,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
     @Override
     public T register(T obj) {
-        ResourcePath key = obj.getRegistryName();
+        String key = obj.getRegistryName();
         if (registeredItems.containsKey(key))
             throw new RegisterException("\"" + key + "\" has been registered.");
 
@@ -38,17 +38,17 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     }
 
     @Override
-    public T getValue(ResourcePath key) {
+    public T getValue(String key) {
         return registeredItems.get(key);
     }
 
     @Override
-    public ResourcePath getKey(T value) {
+    public String getKey(T value) {
         return value.getRegistryName();
     }
 
     @Override
-    public boolean containsKey(ResourcePath key) {
+    public boolean containsKey(String key) {
         return registeredItems.containsKey(key);
     }
 
@@ -58,7 +58,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     }
 
     @Override
-    public Set<ResourcePath> getKeys() {
+    public Set<String> getKeys() {
         return registeredItems.keySet();
     }
 

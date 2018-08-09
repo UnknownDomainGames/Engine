@@ -6,17 +6,16 @@ import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.shader.RendererShaderProgram;
 import unknowndomain.engine.client.shader.Shader;
 
-
-public class RendererShaderProgramCommon extends RendererShaderProgram {
+public abstract class RendererShaderProgramCommon extends RendererShaderProgram {
     protected final int A_POSITION = 0, A_TEXTCOORD = 1, A_NORMAL = 2, A_COLOR = 3;
     private Shader vertexShader;
     private Shader fragmentShader;
 
-    public RendererShaderProgramCommon(Shader vertexShader, Shader fragmentShader) {
-        this.vertexShader = vertexShader;
-        this.fragmentShader = fragmentShader;
-    }
     protected int u_Projection, u_View, u_Model;
+
+    protected abstract Shader loadVertexShader(ResourceManager resourceManager);
+
+    protected abstract Shader loadFragmentShader(ResourceManager resourceManager);
 
     public void init(ResourceManager resourceManager) {
         createShader();
@@ -45,9 +44,9 @@ public class RendererShaderProgramCommon extends RendererShaderProgram {
     protected void useShader() {
         super.useShader();
 
-//        GL11.glEnable(GL11.GL_CULL_FACE);
-//        GL11.glFrontFace(GL11.GL_CW);
-//        GL11.glCullFace(GL11.GL_BACK);
+        // GL11.glEnable(GL11.GL_CULL_FACE);
+        // GL11.glFrontFace(GL11.GL_CW);
+        // GL11.glCullFace(GL11.GL_BACK);
     }
 
     public void render(Context context) {
@@ -70,6 +69,5 @@ public class RendererShaderProgramCommon extends RendererShaderProgram {
         GL20.glDeleteProgram(shaderId);
         shaderId = -1;
     }
-
 
 }

@@ -1,13 +1,11 @@
 package unknowndomain.engine.registry;
 
-import unknowndomain.engine.client.resource.ResourcePath;
-
 public interface IdentifiedRegistry<T extends RegistryEntry<T>> extends Registry<T> {
     int getId(T obj);
 
-    int getId(ResourcePath key);
+    int getId(String key);
 
-    ResourcePath getKey(int id);
+    String getKey(int id);
 
     T getValue(int id);
 }

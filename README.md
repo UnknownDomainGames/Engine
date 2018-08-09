@@ -69,7 +69,8 @@ There could be sub-named blocks and items. For block, it might be produced by co
     2. download missing mod and resource
 3. initialize action manager
 4. initialize keybinding, requiring action manager
-5. load all mods by mod manager
+5. initialize game context
+6. load all mods by mod manager
     1. mod register all block/item/entity
     2. resource manager loads all required resources by mod
     3. use custom mod resource process pipeline to process resource

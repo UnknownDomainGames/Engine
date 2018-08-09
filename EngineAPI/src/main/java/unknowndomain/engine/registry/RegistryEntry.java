@@ -2,47 +2,31 @@ package unknowndomain.engine.registry;
 
 import com.google.common.reflect.TypeToken;
 
-import unknowndomain.engine.client.resource.ResourcePath;
-
 public interface RegistryEntry<T> {
 
-    ResourcePath getRegistryName();
+    String getRegistryName();
 
     Class<T> getRegistryType();
 
-    T setRegistryName(ResourcePath location);
-
-    default T setRegistryName(String name) {
-        return setRegistryName(new ResourcePath(name));
-    }
+    T setRegistryName(String location);
 
     abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<T> {
 
         private final TypeToken<T> token = new TypeToken<T>(getClass()) {
         };
-        private ResourcePath location;
+        private String location;
 
         @Override
-        public final ResourcePath getRegistryName() {
+        public final String getRegistryName() {
             return location;
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public final T setRegistryName(ResourcePath location) {
+        public final T setRegistryName(String location) {
             if (this.location != null) throw new Error("Duplicated register");
             this.location = location;
             return (T) this;
-        }
-
-        public final T setRegistryName(String domain, String path) {
-            return setRegistryName(new ResourcePath(domain, path));
-        }
-
-        public final T setRegistryName(String path) {
-            throw new UnsupportedOperationException();
-            //TODO:
-            //return setRegistryName(new ResourceLocation(domain, path));
         }
 
         @SuppressWarnings("unchecked")
@@ -50,7 +34,5 @@ public interface RegistryEntry<T> {
         public final Class<T> getRegistryType() {
             return (Class<T>) token.getRawType();
         }
-
-        ;
     }
 }

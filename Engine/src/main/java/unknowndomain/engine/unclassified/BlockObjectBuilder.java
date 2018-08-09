@@ -6,14 +6,13 @@ import org.apache.commons.lang3.Validate;
 import org.joml.AABBd;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockObject;
-import unknowndomain.engine.client.resource.ResourcePath;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class BlockObjectBuilder {
     private AABBd boundingBox = new AABBd(0, 0, 0, 1, 1, 1);
-    private ResourcePath path;
+    private String path;
     private Map<String, Object> map = new HashMap<>();
     private List<Block.Property<?>> properties = new ArrayList<>();
 
@@ -22,11 +21,11 @@ public class BlockObjectBuilder {
     private Block.TouchBehavior touchBehavior;
     private Block.DestroyBehavior destroyBehavior;
 
-    private BlockObjectBuilder(ResourcePath path) {
+    private BlockObjectBuilder(String path) {
         this.path = path;
     }
 
-    public static BlockObjectBuilder create(ResourcePath path) {
+    public static BlockObjectBuilder create(String path) {
         Validate.notNull(path);
         return new BlockObjectBuilder(path);
     }
@@ -111,7 +110,7 @@ public class BlockObjectBuilder {
                 String value = entry.getValue().toString();
                 postfix.append(".").append(name).append("=").append(value);
             }
-            shared.setRegistryName(new ResourcePath(this.path.getDomain(), this.path.getPath() + postfix));
+            shared.setRegistryName(this.path + postfix);
             return shared;
         }).collect(Collectors.toList());
 

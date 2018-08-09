@@ -1,7 +1,5 @@
 package unknowndomain.engine.registry;
 
-import unknowndomain.engine.client.resource.ResourcePath;
-
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -17,19 +15,19 @@ public interface Registry<T extends RegistryEntry<T>> {
 			register(obj);
 	}
 
-    T getValue(ResourcePath registryName);
+    T getValue(String registryName);
 
-	default T getValue(String registryName) {
-        return getValue(new ResourcePath(registryName));
-	}
+	// default T getValue(String registryName) {
+    //     return getValue(new ResourcePath(registryName));
+	// }
 
-    ResourcePath getKey(T value);
+    String getKey(T value);
 
-    boolean containsKey(ResourcePath key);
+    boolean containsKey(String key);
 
 	boolean containsValue(T value);
 
-    Set<ResourcePath> getKeys();
+    Set<String> getKeys();
 
 	Collection<T> getValues();
 
