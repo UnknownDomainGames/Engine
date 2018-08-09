@@ -26,6 +26,55 @@ After the loading stage of a game, all the resource transformed out. The raw byt
 The `GameObject` should managed by its parent. We don't need to do anything special to it.
 Just process the path to get dimension, get world, and get block or entity.
 
+### About the Registry Convenience
+
+The ideal way to register a thing is only providing its id without any redundant information. The Mod should not consider too much about conflicting with other Mod. 
+
+```java
+Registry<BlockObject> registry;
+registry.register(block.setRegistryName('air')); // infer the query full path is <current modid>.block.air
+Registry<ItemObject> itemRegistry;
+itemRegistry.register(item.setRegisterName('stone')); // infer the query full path is <current modid>.item.stone
+
+RegistryManager manager;
+manager.register(block.setRegistryName('stone'));  // infer the query full path is <current modid>.block.stone
+
+// when we want to get a registered object
+manager.get('unknowndomain.block.stone'); // get the stone block
+```
+
+### About the Register Name
+
+I suggest we all use the snake case (split word with low_dash) for register name. 
+
+The name should not contain any dot/period (.)
+
+### About Sub Registry Namespace (Suggestion)
+
+There could be sub-named blocks and items. For block, it might be produced by combining properties.
+
+
+### Booting Progress (Draft)
+
+1. initialize glfw opengl, window and other hook
+2. initialize resource manager, pull default resource source
+3. initialize mod manager
+4. initialize default renderer, which will require load default textures and objects
+
+### Start Game Loading Progress (Draft)
+
+1. initialize player profile, login information (GUI show to let player login if there is no local cached profile) 
+2. pull the resources/mod manifest from server
+    1. check local if they exist
+    2. download missing mod and resource
+3. initialize action manager
+4. initialize keybinding, requiring action manager
+5. load all mods by mod manager
+    1. mod register all block/item/entity
+    2. resource manager loads all required resources by mod
+    3. use custom mod resource process pipeline to process resource
+
+
 ### Key algorithm/problem
 
 - physics and collision
