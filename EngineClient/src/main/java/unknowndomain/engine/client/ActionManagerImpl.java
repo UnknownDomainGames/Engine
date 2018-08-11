@@ -18,7 +18,8 @@ public class ActionManagerImpl extends SimpleRegistry<Action> implements ActionM
 
     public void tick() {
         for (ActionRuntime runtime : runningAction.values()) {
-            runtime.action.onActionKeep(context, runtime.tickElapsed++);
+            runtime.action.onActionKeep(context, runtime.tickElapsed);
+            ++runtime.tickElapsed;
         }
     }
 

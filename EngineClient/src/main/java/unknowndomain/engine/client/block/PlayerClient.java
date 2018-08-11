@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import unknowndomain.engine.action.Action;
-import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.display.Camera;
 import unknowndomain.engine.event.Cancellable;
@@ -56,11 +56,18 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
         list.addAll(Lists.newArrayList(
                 Action.builder("player.mouse.right").setStartHandler((c) -> {
                     LogicWorld world = UnknownDomain.getEngine().getWorld();
-                    Block.Hit hit = world.rayHit(camera.getPosition(), camera.getFrontVector(), 10);
+                    BlockPrototype.Hit hit = world.rayHit(camera.getPosition(), camera.getFrontVector(), 10);
+                    if (mainHand != null) {
+                        if (hit != null) {
+                            mainHand.onUseBlockStart(world, this, mainHand, hit);
+                        } else {
+                            mainHand.onUseStart(world, this, mainHand);
+                        }
+                    }
                     if (hit != null) {
-                        mainHand.onUseBlockStart(world, this, mainHand, hit);
-                    } else {
-                        mainHand.onUseStart(world, this, mainHand);
+                        if (hit.block.shouldActivated(world, this, hit.position, hit.block)) {
+                            hit.block.onActivated(world, this, hit.position, hit.block);
+                        }
                     }
                 }).build()
         ));
@@ -141,7 +148,7 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
             this.phases[action] = phase;
 
             Vector3f movingDirection = this.movingDirection;
-            float factor = 0.1f;
+            float factor = 0.07f;
             switch (action) {
                 case FORWARD:
                 case BACKWARD:
@@ -159,21 +166,16 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
                     if (this.phases[RIGHT]) movingDirection.x = factor;
                     else if (this.phases[LEFT]) movingDirection.x = -factor;
                     break;
-
                 case RUNNING:
                     break;
                 case JUMPING:
                 case SNEAKING:
                     if (this.phases[JUMPING] && !this.phases[SNEAKING]) {
                         movingDirection.y = factor;
+                    } else if (this.phases[SNEAKING] && !this.phases[JUMPING]) {
+                        movingDirection.y = -factor;
                     } else {
                         movingDirection.y = 0;
-                    }
-                    if (this.phases[JUMPING]) {
-                        movingDirection.y = factor;
-                    }
-                    if (this.phases[SNEAKING]) {
-                        movingDirection.y = -factor;
                     }
                     break;
             }
