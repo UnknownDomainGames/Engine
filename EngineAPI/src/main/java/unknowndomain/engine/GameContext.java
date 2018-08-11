@@ -1,6 +1,6 @@
 package unknowndomain.engine;
 
-import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.block.Block;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.item.Item;
@@ -20,8 +20,8 @@ public class GameContext implements EventBus {
         return manager;
     }
 
-    public IdentifiedRegistry<BlockObject> getBlockRegistry() {
-        return (IdentifiedRegistry<BlockObject>) manager.getRegistry(BlockObject.class);
+    public IdentifiedRegistry<Block> getBlockRegistry() {
+        return (IdentifiedRegistry<Block>) manager.getRegistry(Block.class);
     }
 
     public IdentifiedRegistry<Item> getItemRegistry() {

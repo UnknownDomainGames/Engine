@@ -1,13 +1,13 @@
 package unknowndomain.engine.world;
 
-import unknowndomain.engine.block.BlockObject;
-import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.RuntimeObject;
+import unknowndomain.engine.block.Block;
+import unknowndomain.engine.math.BlockPos;
 
 public interface World extends RuntimeObject {
     Chunk getChunk(int x, int z);
 
-    BlockObject getBlock(BlockPos pos);
+    Block getBlock(BlockPos pos);
 
-    BlockObject setBlock(BlockPos pos, BlockObject block);
+    Block setBlock(BlockPos pos, Block block);
 }

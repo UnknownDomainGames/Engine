@@ -1,77 +1,23 @@
 package unknowndomain.engine.block;
 
-import com.google.common.collect.ImmutableList;
-import org.joml.Vector3f;
-import unknowndomain.engine.Prototype;
-import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.util.Facing;
-import unknowndomain.engine.world.World;
+import com.google.common.collect.ImmutableMap;
+import org.joml.AABBd;
+import unknowndomain.engine.RuntimeObject;
+import unknowndomain.engine.registry.RegistryEntry;
 
-import java.util.List;
-import java.util.Optional;
 
-public abstract class Block implements Prototype<BlockObject, World> {
-    // all these behaviors are missing arguments
-    // fill those arguments later
+public interface Block extends RegistryEntry<Block>, RuntimeObject, BlockPrototype.PlaceBehavior, BlockPrototype.ActiveBehavior, BlockPrototype.DestroyBehavior, BlockPrototype.TouchBehavior {
+    // think about blockstate and tileentity...
 
-    public abstract List<BlockObject> getAllStates();
+    AABBd MAX_BOUNDING_BOX = new AABBd(0, 0, 0, 1, 1, 1);
 
-    public static class Hit {
-        public final BlockPos position;
-        public final BlockObject block;
-        public final Vector3f hit;
-        public final Facing face;
+    ImmutableMap<BlockPrototype.Property<?>, Comparable<?>> getProperties();
 
-        public Hit(BlockPos position, BlockObject block, Vector3f hit, Facing face) {
-            this.position = position;
-            this.block = block;
-            this.hit = hit;
-            this.face = face;
-        }
-    }
+    <T extends Comparable<T>> T getProperty(BlockPrototype.Property<T> property);
 
-    public interface TickBehavior {
-        void tick(BlockObject object);
-    }
+    <T extends Comparable<T>, V extends T> Block withProperty(BlockPrototype.Property<T> property, V value);
 
-    public interface PlaceBehavior {
-        boolean onPrePlace(BlockObject block);
+    <T extends Comparable<T>> Block cycleProperty(BlockPrototype.Property<T> property);
 
-        void onPlaced(BlockObject block);
-    }
-
-    public interface ActiveBehavior { // right click entity
-        boolean onActivate(BlockObject block);
-
-        void onActivated(BlockObject block);
-    }
-
-    public interface TouchBehavior { // left click entity
-        boolean onTouch(BlockObject block);
-
-        void onTouched(BlockObject block);
-    }
-
-    public interface DestroyBehavior {
-
-    }
-
-    public interface Property<T extends Comparable<T>> {
-        String getName();
-
-        ImmutableList<T> getValues();
-
-        /**
-         * The class of the values of this property
-         */
-        Class<T> getValueClass();
-
-        Optional<T> parseValue(String value);
-
-        /**
-         * Get the name for the given value.
-         */
-        String getName(T value);
-    }
-
+    AABBd getBoundingBox();
 }

@@ -1,12 +1,17 @@
 package unknowndomain.engine.world;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
-import org.joml.*;
+import org.joml.AABBd;
+import org.joml.Vector2d;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
 import unknowndomain.engine.Entity;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
@@ -14,10 +19,7 @@ import unknowndomain.engine.util.Facing;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.Math;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class LogicWorld implements World {
     private LongObjectMap<Chunk> chunks = new LongObjectHashMap<>();
@@ -33,88 +35,70 @@ public class LogicWorld implements World {
         entityList.add(entity);
     }
 
+    public BlockPrototype.Hit rayHit(Vector3f from, Vector3f dir, int distance) {
+        return rayHit(from, dir, distance, Sets.newHashSet(context.getBlockRegistry().getValue(0)));
+    }
 
-    public Block.Hit rayHit(Vector3f from, Vector3f dir, int distance) {
-        Vector3f step = dir;
-        Vector3f cur = new Vector3f(from);
+    public BlockPrototype.Hit rayHit(Vector3f from, Vector3f dir, int distance, Set<Block> ignore) {
+        Vector3f rayOffset = dir.normalize(new Vector3f()).mul(distance);
+        Vector3f dist = rayOffset.add(from, new Vector3f());
 
-        for (int i = 0; i < distance; i++) {
-            cur.add(step);
-            BlockPos pos = new BlockPos((int) cur.x, (int) cur.y, (int) cur.z);
-            BlockObject object = getBlock(pos);
-            if (object != null) {
-                Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
-                AABBd box = object.getBoundingBox();
-                Vector2d result = new Vector2d();
-                boolean hit = box.intersectRay(new Rayd(local.x, local.y, local.z, dir.x, dir.y, dir.z), result);
-                if (hit) {
-                    Vector3f hitPoint = local.add(dir.mul((float) result.x, new Vector3f()));
-                    Facing facing = Facing.NORTH;
-                    if (hitPoint.x == 0f) {
-                        facing = Facing.WEST;
-                    } else if (hitPoint.x == 1f) {
-                        facing = Facing.EAST;
-                    } else if (hitPoint.y == 0f) {
-                        facing = Facing.BOTTOM;
-                    } else if (hitPoint.y == 1f) {
-                        facing = Facing.TOP;
-                    } else if (hitPoint.z == 0f) {
-                        facing = Facing.SOUTH;
-                    } else if (hitPoint.z == 1f) {
-                        facing = Facing.NORTH;
-                    }
-                    return new Block.Hit(pos, object, hitPoint, facing);
+        BlockPos fromPos = new BlockPos((int) from.x, (int) from.y, (int) from.z);
+        BlockPos toPos = new BlockPos((int) dist.x, (int) dist.y, (int) dist.z);
+
+        List<BlockPos> all = Lists.newArrayList();
+        int fromX = Math.min(fromPos.getX(), toPos.getX()) - 1,
+                toX = Math.max(fromPos.getX(), toPos.getX()) + 1,
+                fromY = Math.min(fromPos.getY(), toPos.getY()) - 1,
+                toY = Math.max(fromPos.getY(), toPos.getY()) + 1,
+                fromZ = Math.min(fromPos.getZ(), toPos.getZ()) - 1,
+                toZ = Math.max(fromPos.getZ(), toPos.getZ()) + 1;
+        for (int i = fromX; i <= toX; i++) {
+            for (int j = fromY; j <= toY; j++) {
+                for (int k = fromZ; k <= toZ; k++) {
+                    all.add(new BlockPos(i, j, k));
                 }
             }
-            cur.add(step);
+        }
+        all.sort(Comparator.comparingInt(a -> a.sqDistanceBetween(fromPos)));
+
+        for (BlockPos pos : all) {
+            Block object = getBlock(pos);
+            if (ignore.contains(object)) continue;
+            Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
+            AABBd box = object.getBoundingBox();
+            Vector2d result = new Vector2d();
+            boolean hit = box.intersectRay(local.x, local.y, local.z, rayOffset.x, rayOffset.y, rayOffset.z, result);
+            if (hit) {
+//                    System.out.println(pos);
+                Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
+                Facing facing = Facing.NORTH;
+                if (hitPoint.x == 0f) {
+                    facing = Facing.WEST;
+                } else if (hitPoint.x == 1f) {
+                    facing = Facing.EAST;
+                } else if (hitPoint.y == 0f) {
+                    facing = Facing.BOTTOM;
+                } else if (hitPoint.y == 1f) {
+                    facing = Facing.TOP;
+                } else if (hitPoint.z == 0f) {
+                    facing = Facing.SOUTH;
+                } else if (hitPoint.z == 1f) {
+                    facing = Facing.NORTH;
+                }
+                return new BlockPrototype.Hit(pos, object, hitPoint, facing);
+            }
         }
         return null;
     }
-
-    public BlockPos pickBeside(Vector3f from, Vector3f dir, int distance) {
-        Vector3f step = dir;
-        Vector3f cur = new Vector3f(from);
-
-        for (int i = 0; i < distance; i++) {
-            cur.add(step);
-            BlockPos pos = new BlockPos((int) cur.x, (int) cur.y, (int) cur.z);
-            BlockObject object = getBlock(pos);
-            if (object != null) {
-                Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
-                AABBd box = object.getBoundingBox();
-                Vector2d result = new Vector2d();
-                boolean hit = box.intersectRay(new Rayd(local.x, local.y, local.z, dir.x, dir.y, dir.z), result);
-                if (hit) {
-                    Vector3f hitPoint = local.add(dir.mul((float) result.x, new Vector3f()));
-                    if (hitPoint.x == 0f) {
-                        return pos.add(-1, 0, 0);
-                    } else if (hitPoint.x == 1f) {
-                        return pos.add(1, 0, 0);
-                    } else if (hitPoint.y == 0f) {
-                        return pos.add(0, -1, 0);
-                    } else if (hitPoint.y == 1f) {
-                        return pos.add(0, 1, 0);
-                    } else if (hitPoint.z == 0f) {
-                        return pos.add(0, 0, -1);
-                    } else if (hitPoint.z == 1f) {
-                        return pos.add(0, 0, 1);
-                    }
-                    return pos;
-                }
-            }
-            cur.add(step);
-        }
-        return null;
-    }
-
 
     public void tick() {
         for (Entity entity : entityList) {
             Vector3f motion = entity.getMotion();
 
-            if (motion.y > 0) motion.y -= 0.01f;
-            else if (motion.y < 0) motion.y += 0.01f;
-            if (Math.abs(motion.y) <= 0.01f) motion.y = 0; // physics update
+//            if (motion.y > 0) motion.y -= 0.01f;
+//            else if (motion.y < 0) motion.y += 0.01f;
+//            if (Math.abs(motion.y) <= 0.01f) motion.y = 0; // physics update
         }
         chunks.forEach(this::tickChunk);
 
@@ -124,10 +108,10 @@ public class LogicWorld implements World {
     }
 
     private void tickChunk(long pos, Chunk chunk) {
-        Collection<BlockObject> blockObjects = chunk.getRuntimeBlock();
-        if (blockObjects.size() != 0) {
-            for (BlockObject object : blockObjects) {
-                Block.TickBehavior behavior = object.getBehavior(Block.TickBehavior.class);
+        Collection<Block> blocks = chunk.getRuntimeBlock();
+        if (blocks.size() != 0) {
+            for (Block object : blocks) {
+                BlockPrototype.TickBehavior behavior = object.getBehavior(BlockPrototype.TickBehavior.class);
                 if (behavior != null) {
                     behavior.tick(object);
                 }
@@ -141,7 +125,7 @@ public class LogicWorld implements World {
         return chunks.get(pos);
     }
 
-    public BlockObject getBlock(BlockPos pos) {
+    public Block getBlock(BlockPos pos) {
         ChunkPos chunkPos = pos.toChunk();
         long cp = (long) chunkPos.getChunkX() << 32 | chunkPos.getChunkZ();
         Chunk chunk = this.chunks.get(cp);
@@ -155,7 +139,7 @@ public class LogicWorld implements World {
     }
 
     @Override
-    public BlockObject setBlock(BlockPos pos, BlockObject block) {
+    public Block setBlock(BlockPos pos, Block block) {
         ChunkPos chunkPos = pos.toChunk();
         long cp = (long) chunkPos.getChunkX() << 32 | chunkPos.getChunkZ();
         Chunk chunk = this.chunks.get(cp);

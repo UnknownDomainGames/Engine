@@ -2,7 +2,6 @@ package unknowndomain.engine.action;
 
 import com.google.common.base.Preconditions;
 import unknowndomain.engine.GameContext;
-import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.registry.RegistryEntry;
 
 public interface Action extends RegistryEntry<Action> {

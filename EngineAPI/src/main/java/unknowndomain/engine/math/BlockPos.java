@@ -3,7 +3,6 @@ package unknowndomain.engine.math;
 import unknowndomain.engine.world.Chunk;
 
 public final class BlockPos {
-
     public static final BlockPos ZERO = new BlockPos(0, 0, 0);
 
     private final int x, y, z;
@@ -58,6 +57,13 @@ public final class BlockPos {
         return ChunkPos.fromBlockPos(this);
     }
 
+    public int sqDistanceBetween(BlockPos another) {
+        int x = this.x - another.x;
+        int y = this.y - another.y;
+        int z = this.z - another.z;
+        return x * x + y * y + z * z;
+    }
+
 //    public BlockPos pack() {
 //        return new BlockPos(x & 16, y & 16, z & 16);
 //    }
@@ -67,6 +73,6 @@ public final class BlockPos {
     }
 
     public int pack() {
-        return ((x << 8) & 0xF) | ((y << 4) & 0xF) | (z & 0xF);
+        return ((x & 0xF) << 8) | ((y & 0xF) << 4) | (z & 0xF);
     }
 }

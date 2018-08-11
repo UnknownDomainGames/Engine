@@ -24,9 +24,9 @@ public class ChunkPos {
 
     public static ChunkPos fromBlockPos(BlockPos pos, @Nullable Chunk referring) {
         if (referring == null) {
-            return new ChunkPos(pos.getX() / Chunk.DEFAULT_X_SIZE, pos.getY() / Chunk.DEFAULT_Y_SIZE, pos.getZ() / Chunk.DEFAULT_Z_SIZE);
+            return new ChunkPos(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
         } else {
-            return new ChunkPos(pos.getX() / referring.getXSize(), pos.getY() / referring.getYSize(), pos.getZ() / referring.getZSize());
+            return new ChunkPos(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
         }
     }
 

@@ -3,10 +3,10 @@ package unknowndomain.engine.world;
 import com.google.common.collect.Maps;
 import unknowndomain.engine.Entity;
 import unknowndomain.engine.GameContext;
-import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.block.Block;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.unclassified.BlockObjectRuntime;
+import unknowndomain.engine.unclassified.BlockRuntime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,12 +23,13 @@ public class LogicChunk implements Chunk {
     public LogicChunk(GameContext context) {
         this.context = context;
     }
+
     private List<Entity> entities = new ArrayList<>();
-    private Map<BlockPos, BlockObject> blockObjects = Maps.newHashMap();
+    private Map<BlockPos, Block> blockObjects = Maps.newHashMap();
     private Map<String, Object> components;
 
     @Override
-    public Collection<BlockObject> getRuntimeBlock() {
+    public Collection<Block> getRuntimeBlock() {
         return blockObjects.values();
     }
 
@@ -38,34 +39,42 @@ public class LogicChunk implements Chunk {
     }
 
     @Override
-    public BlockObject getBlock(BlockPos pos) {
-        BlockObject object = blockObjects.get(pos);
+    public Block getBlock(BlockPos pos) {
+        Block object = blockObjects.get(pos);
         if (object != null) return object;
 
+        int rawY = Math.max(pos.getY(), 0);
+
         int x = pos.getX() & 0xF;
-        int y = pos.getY() & 0xF;
+        int y = rawY & 0xF;
         int z = pos.getZ() & 0xF;
 
-        return context.getBlockRegistry().getValue(data[y / 16][x << 8 | y << 4 | z]);
+        int heightIndex = rawY >> 4;
+        int posIndex = (x << 8) | (y << 4) | z;
+        int id = data[heightIndex][posIndex];
+        return context.getBlockRegistry().getValue(id);
     }
 
     @Override
-    public void setBlock(BlockPos pos, BlockObject destBlock) {
+    public void setBlock(BlockPos pos, Block destBlock) {
+        int rawY = Math.max(pos.getY(), 0);
+
         int x = pos.getX() & 0xF;
-        int y = pos.getY() & 0xF;
+        int y = rawY & 0xF;
         int z = pos.getZ() & 0xF;
 
-        BlockObject prev = blockObjects.get(pos);
+
+        Block prev = blockObjects.get(pos);
         if (prev != null) {
             blockObjects.remove(pos);
         }
 
-        if (destBlock instanceof BlockObjectRuntime) {
+        if (destBlock instanceof BlockRuntime) {
             blockObjects.put(pos, destBlock);
         }
 
         int id = context.getBlockRegistry().getId(destBlock);
-        data[y / 16][x << 8 | y << 4 | z] = id;
+        data[rawY >> 4][(x << 8) | (y << 4) | z] = id;
 
         context.post(new BlockChange(pos, id));
     }

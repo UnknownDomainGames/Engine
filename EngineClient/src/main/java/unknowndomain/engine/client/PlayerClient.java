@@ -1,11 +1,10 @@
-package unknowndomain.engine.client.block;
+package unknowndomain.engine.client;
 
 import com.google.common.collect.Lists;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.block.BlockPrototype;
-import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.display.Camera;
 import unknowndomain.engine.event.Cancellable;
 import unknowndomain.engine.event.Event;
@@ -56,7 +55,7 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
         list.addAll(Lists.newArrayList(
                 Action.builder("player.mouse.right").setStartHandler((c) -> {
                     LogicWorld world = UnknownDomain.getEngine().getWorld();
-                    BlockPrototype.Hit hit = world.rayHit(camera.getPosition(), camera.getFrontVector(), 10);
+                    BlockPrototype.Hit hit = world.rayHit(camera.getPosition(), camera.getFrontVector(), 3);
                     if (mainHand != null) {
                         if (hit != null) {
                             mainHand.onUseBlockStart(world, this, mainHand, hit);

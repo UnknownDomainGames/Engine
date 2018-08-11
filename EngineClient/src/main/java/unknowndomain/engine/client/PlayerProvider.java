@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.block;
+package unknowndomain.engine.client;
 
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.Prototype;

@@ -2,41 +2,44 @@ package unknowndomain.engine.unclassified;
 
 import com.google.common.collect.ImmutableMap;
 import org.joml.AABBd;
+import unknowndomain.engine.Entity;
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.RegistryEntry;
+import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class BlockObjectRuntime extends RegistryEntry.Impl<BlockObject> implements BlockObject {
+public class BlockRuntime extends RegistryEntry.Impl<Block> implements Block {
     private Map<String, Object> map;
-    private BlockObject shared;
+    private Block shared;
 
-    BlockObjectRuntime(Map<String, Object> map, BlockObject shared) {
+    BlockRuntime(Map<String, Object> map, Block shared) {
         this.map = map;
         this.shared = shared;
     }
 
     @Override
-    public ImmutableMap<Block.Property<?>, Comparable<?>> getProperties() {
+    public ImmutableMap<BlockPrototype.Property<?>, Comparable<?>> getProperties() {
         return shared.getProperties();
     }
 
     @Override
-    public <T extends Comparable<T>> T getProperty(Block.Property<T> property) {
+    public <T extends Comparable<T>> T getProperty(BlockPrototype.Property<T> property) {
         return shared.getProperty(property);
     }
 
     @Override
-    public <T extends Comparable<T>, V extends T> BlockObject withProperty(Block.Property<T> property, V value) {
+    public <T extends Comparable<T>, V extends T> Block withProperty(BlockPrototype.Property<T> property, V value) {
         shared = shared.withProperty(property, value);
         return this;
     }
 
     @Override
-    public <T extends Comparable<T>> BlockObject cycleProperty(Block.Property<T> property) {
+    public <T extends Comparable<T>> Block cycleProperty(BlockPrototype.Property<T> property) {
         shared = shared.cycleProperty(property);
         return this;
     }
@@ -47,32 +50,32 @@ public class BlockObjectRuntime extends RegistryEntry.Impl<BlockObject> implemen
     }
 
     @Override
-    public boolean onPrePlace(BlockObject block) {
-        return shared.onPrePlace(block);
+    public boolean canPlace(World world, Entity entity, Block block) {
+        return shared.canPlace(world, entity, block);
     }
 
     @Override
-    public void onPlaced(BlockObject block) {
-        shared.onPlaced(block);
+    public void onPlaced(World world, Entity entity, Block block) {
+        shared.onPlaced(world, entity, block);
     }
 
     @Override
-    public boolean onActivate(BlockObject block) {
-        return shared.onActivate(block);
+    public boolean shouldActivated(World world, Entity entity, BlockPos blockPos, Block block) {
+        return shared.shouldActivated(world, entity, blockPos, block);
     }
 
     @Override
-    public void onActivated(BlockObject block) {
-        shared.onActivated(block);
+    public void onActivated(World world, Entity entity, BlockPos pos, Block block) {
+        shared.onActivated(world, entity, pos, block);
     }
 
     @Override
-    public boolean onTouch(BlockObject block) {
+    public boolean onTouch(Block block) {
         return shared.onTouch(block);
     }
 
     @Override
-    public void onTouched(BlockObject block) {
+    public void onTouched(Block block) {
         shared.onTouched(block);
     }
 

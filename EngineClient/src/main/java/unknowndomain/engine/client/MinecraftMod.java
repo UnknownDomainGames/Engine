@@ -2,7 +2,7 @@ package unknowndomain.engine.client;
 
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockObject;
+import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.MeshToGLNode;
 import unknowndomain.engine.client.model.pipeline.ModelToMeshNode;
@@ -24,7 +24,7 @@ import unknowndomain.engine.item.ItemPrototype;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.IdentifiedRegistry;
 import unknowndomain.engine.registry.Registry;
-import unknowndomain.engine.unclassified.BlockObjectBuilder;
+import unknowndomain.engine.unclassified.BlockBuilder;
 import unknowndomain.engine.world.World;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class MinecraftMod {
         f.loadShader("assets/unknowndomain/shader/common.frag");
         RenderDebug debug = new RenderDebug(v, f);
         debug.setTexture(textureMap);
-        debug.setMesheRegistry(meshRegistry);
+        debug.setMeshRegistry(meshRegistry);
         renderer.add(debug);
         context.register(debug);
     }
@@ -53,9 +53,9 @@ public class MinecraftMod {
                 new MeshToGLNode())
                 .add("Shader", new CreateShaderNode());
 
-        Registry<BlockObject> registry = context.getManager().getRegistry(BlockObject.class);
+        Registry<Block> registry = context.getManager().getRegistry(Block.class);
         List<ResourcePath> pathList = new ArrayList<>();
-        for (BlockObject value : registry.getValues()) {
+        for (Block value : registry.getValues()) {
             if (value.getRegistryName().equals("air")) continue;
             String path = "/minecraft/models/block/" + value.getRegistryName() + ".json";
             pathList.add(new ResourcePath(path));
@@ -70,17 +70,18 @@ public class MinecraftMod {
         }
     }
 
-    private Item createPlace(BlockObject object) {
+    private Item createPlace(Block object) {
         class PlaceBlock implements ItemPrototype.UseBlockBehavior {
-            private BlockObject object;
+            private Block object;
 
-            private PlaceBlock(BlockObject object) {
+            private PlaceBlock(Block object) {
                 this.object = object;
             }
 
             @Override
-            public void onUseBlockStart(World world, Player player, Item item, Block.Hit hit) {
+            public void onUseBlockStart(World world, Player player, Item item, BlockPrototype.Hit hit) {
                 BlockPos side = hit.face.side(hit.position);
+                System.out.println("HIT: " + hit.position + " " + hit.face + " " + hit.hit + " SIDE: " + side);
                 world.setBlock(side, object);
             }
         }
@@ -90,20 +91,24 @@ public class MinecraftMod {
     }
 
     void init(GameContext context) {
-        IdentifiedRegistry<BlockObject> blockRegistry = context.getBlockRegistry();
-        blockRegistry.register(BlockObjectBuilder.create("air").build());
-        blockRegistry.register(BlockObjectBuilder.create("stone").build());
+        IdentifiedRegistry<Block> blockRegistry = context.getBlockRegistry();
+        blockRegistry.register(BlockBuilder.create("air").build());
+        blockRegistry.register(BlockBuilder.create("stone").build());
 
         IdentifiedRegistry<Item> itemRegistry = context.getItemRegistry();
-        Item stone = itemRegistry.register(createPlace(blockRegistry.getValue("stone")));
-
-        UnknownDomain.getEngine().getPlayer().setMainHand(stone);
-
-        // BlockObject stone = blockRegistry.getValue(1);
+        itemRegistry.register(createPlace(blockRegistry.getValue("stone")));
+        // Block stone = blockRegistry.getValue(1);
         // world.setBlock(new BlockPos(0, 0, 0), stone);
-        // world.setBlock(new BlockPos(1, 0, 0), stone);
         // world.setBlock(new BlockPos(2, 0, 0), stone);
         // world.setBlock(new BlockPos(3, 0, 0), stone);
         // world.addEntity(player);
+    }
+
+    void postInit(GameContext context) {
+        IdentifiedRegistry<Item> itemRegistry = context.getItemRegistry();
+        IdentifiedRegistry<Block> blockRegistry = context.getBlockRegistry();
+        Item stone = itemRegistry.getValue("stone_placer");
+        UnknownDomain.getEngine().getPlayer().setMainHand(stone);
+        UnknownDomain.getEngine().getWorld().setBlock(new BlockPos(1, 0, 0), blockRegistry.getValue(1));
     }
 }

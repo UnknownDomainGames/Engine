@@ -1,6 +1,6 @@
 package unknowndomain.engine.item;
 
-import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.world.World;
@@ -13,7 +13,7 @@ class ItemImpl extends RegistryEntry.Impl<Item> implements Item {
     private ItemPrototype.HitBlockBehavior hitBlockBehavior;
     private ItemPrototype.UseBehavior useBehavior;
 
-    public ItemImpl(ItemPrototype.UseBlockBehavior useBlockBehavior, ItemPrototype.HitBlockBehavior hitBlockBehavior, ItemPrototype.UseBehavior useBehavior) {
+    ItemImpl(ItemPrototype.UseBlockBehavior useBlockBehavior, ItemPrototype.HitBlockBehavior hitBlockBehavior, ItemPrototype.UseBehavior useBehavior) {
         this.useBlockBehavior = useBlockBehavior;
         this.hitBlockBehavior = hitBlockBehavior;
         this.useBehavior = useBehavior;
@@ -35,23 +35,23 @@ class ItemImpl extends RegistryEntry.Impl<Item> implements Item {
     }
 
     @Override
-    public void onHit(Player player, Item item, Block.Hit hit) {
-        hitBlockBehavior.onHit(player, item, hit);
+    public void onHit(World world, Player player, Item item, BlockPrototype.Hit hit) {
+        hitBlockBehavior.onHit(world, player, item, hit);
     }
 
 
     @Override
-    public void onUseBlockStart(World world, Player player, Item item, Block.Hit hit) {
+    public void onUseBlockStart(World world, Player player, Item item, BlockPrototype.Hit hit) {
         useBlockBehavior.onUseBlockStart(world, player, item, hit);
     }
 
     @Override
-    public boolean onUsingBlock(Player player, Item item, Block.Hit hit, int tickElapsed) {
+    public boolean onUsingBlock(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed) {
         return useBlockBehavior.onUsingBlock(player, item, hit, tickElapsed);
     }
 
     @Override
-    public void onUseBlockStop(Player player, Item item, Block.Hit hit, int tickElapsed) {
+    public void onUseBlockStop(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed) {
         useBlockBehavior.onUseBlockStop(player, item, hit, tickElapsed);
     }
 

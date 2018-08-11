@@ -3,9 +3,9 @@ package unknowndomain.engine.item;
 import org.apache.commons.lang3.Validate;
 
 public class ItemBuilder {
-    private ItemPrototype.UseBlockBehavior useBlockBehavior;
-    private ItemPrototype.HitBlockBehavior hitBlockBehavior;
-    private ItemPrototype.UseBehavior useBehavior;
+    private ItemPrototype.UseBlockBehavior useBlockBehavior = ItemPrototype.DEFAULT_USE_BLOCK;
+    private ItemPrototype.HitBlockBehavior hitBlockBehavior = ItemPrototype.DEFAULT_HIT_BLOCK;
+    private ItemPrototype.UseBehavior useBehavior = ItemPrototype.DEFAULT_USE;
 
     private String id;
 

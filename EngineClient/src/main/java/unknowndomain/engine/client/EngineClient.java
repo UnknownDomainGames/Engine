@@ -6,8 +6,7 @@ import unknowndomain.engine.Engine;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.action.ActionManager;
-import unknowndomain.engine.block.BlockObject;
-import unknowndomain.engine.client.block.PlayerClient;
+import unknowndomain.engine.block.Block;
 import unknowndomain.engine.client.display.DefaultGameWindow;
 import unknowndomain.engine.client.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.keybinding.Keybindings;
@@ -69,7 +68,7 @@ public class EngineClient implements Engine {
     private void setupContext() {
         SimpleRegistryManager registryManager = new SimpleRegistryManager(
                 ImmutableMap.<Class<?>, Registry<?>>builder()
-                        .put(BlockObject.class, new SimpleIdentifiedRegistry<>())
+                        .put(Block.class, new SimpleIdentifiedRegistry<>())
                         .put(Item.class, new SimpleIdentifiedRegistry<>())
                         .build()
         );
@@ -82,18 +81,13 @@ public class EngineClient implements Engine {
         setupContext();
         renderer = new RendererGlobal();
 
-        world = new LogicWorld(context);
 
         resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
         keyBindingManager = new KeyBindingManager();
 
-        player = new PlayerClient(renderer.getCamera());
-        for (Action action : player.getActions()) {
-            actionManager.register(action);
-        }
-        world.addEntity(player);
+        //old
 
         Keybindings.INSTANCE.setup(keyBindingManager);
 
@@ -106,6 +100,18 @@ public class EngineClient implements Engine {
         minecraftMod.setupRender(context, resourceManager, renderer);
 
         renderer.init(resourceManager);
+
+        // new
+        world = new LogicWorld(context);
+
+        player = new PlayerClient(renderer.getCamera());
+        for (Action action : player.getActions()) {
+            actionManager.register(action);
+        }
+        world.addEntity(player);
+
+        minecraftMod.postInit(context);
+
 
         timer = new Timer();
         timer.init();
