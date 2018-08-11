@@ -69,11 +69,14 @@ public class LogicChunk implements Chunk {
             blockObjects.remove(pos);
         }
 
-        if (destBlock instanceof BlockRuntime) {
-            blockObjects.put(pos, destBlock);
+        int id = 0;
+        if (destBlock != null) {
+            if (destBlock instanceof BlockRuntime) {
+                blockObjects.put(pos, destBlock);
+            }
+            id = context.getBlockRegistry().getId(destBlock);
         }
 
-        int id = context.getBlockRegistry().getId(destBlock);
         data[rawY >> 4][(x << 8) | (y << 4) | z] = id;
 
         context.post(new BlockChange(pos, id));

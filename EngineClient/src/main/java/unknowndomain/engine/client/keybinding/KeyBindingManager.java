@@ -32,6 +32,9 @@ public class KeyBindingManager {
         pressedKey.add(keyCode);
         Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code | ((mods & 0x07) << 9));
         for (KeyBinding binding : keyBindings) {
+            for (KeyModifier modifier : binding.getModifier()) {
+
+            }
             UnknownDomain.getEngine().getActionManager().start(binding.getTarget());
         }
     }

@@ -64,7 +64,7 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
 //        }
         Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
         textureMap.render();
-        BlockPrototype.Hit hit = UnknownDomain.getEngine().getWorld().rayHit(context.getCamera().getPosition(), context.getCamera().getFrontVector(), 3);
+        BlockPrototype.Hit hit = UnknownDomain.getEngine().getWorld().rayHit(context.getCamera().getPosition(), context.getCamera().getFrontVector(), 5);
 
 
         loadChunk.forEach((pos, chunk) -> {

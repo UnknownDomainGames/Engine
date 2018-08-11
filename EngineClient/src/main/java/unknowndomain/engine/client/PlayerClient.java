@@ -55,7 +55,7 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
         list.addAll(Lists.newArrayList(
                 Action.builder("player.mouse.right").setStartHandler((c) -> {
                     LogicWorld world = UnknownDomain.getEngine().getWorld();
-                    BlockPrototype.Hit hit = world.rayHit(camera.getPosition(), camera.getFrontVector(), 3);
+                    BlockPrototype.Hit hit = world.rayHit(camera.getPosition(), camera.getFrontVector(), 5);
                     if (mainHand != null) {
                         if (hit != null) {
                             mainHand.onUseBlockStart(world, this, mainHand, hit);
@@ -67,6 +67,24 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
                         if (hit.block.shouldActivated(world, this, hit.position, hit.block)) {
                             hit.block.onActivated(world, this, hit.position, hit.block);
                         }
+                    }
+                }).build(),
+                Action.builder("player.mouse.left").setStartHandler((c) -> {
+                    LogicWorld world = UnknownDomain.getEngine().getWorld();
+                    BlockPrototype.Hit hit = world.rayHit(camera.getPosition(), camera.getFrontVector(), 5);
+                    if (mainHand != null) {
+                        if (hit != null) {
+                            world.setBlock(hit.position, null);
+//                            mainHand.onUseBlockStart(world, this, mainHand, hit);
+                        } else {
+//                            mainHand.onUseStart(world, this, mainHand);
+                        }
+                    }
+                    if (hit != null) {
+                        world.setBlock(hit.position, null);
+//                        if (hit.block.shouldActivated(world, this, hit.position, hit.block)) {
+//                            hit.block.onActivated(world, this, hit.position, hit.block);
+//                        }
                     }
                 }).build()
         ));

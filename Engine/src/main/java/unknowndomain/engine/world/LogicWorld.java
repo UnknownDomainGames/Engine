@@ -1,6 +1,5 @@
 package unknowndomain.engine.world;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
@@ -16,10 +15,14 @@ import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.util.Facing;
+import unknowndomain.engine.util.FastVoxelRayCast;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 public class LogicWorld implements World {
     private LongObjectMap<Chunk> chunks = new LongObjectHashMap<>();
@@ -43,24 +46,27 @@ public class LogicWorld implements World {
         Vector3f rayOffset = dir.normalize(new Vector3f()).mul(distance);
         Vector3f dist = rayOffset.add(from, new Vector3f());
 
-        BlockPos fromPos = new BlockPos((int) from.x, (int) from.y, (int) from.z);
-        BlockPos toPos = new BlockPos((int) dist.x, (int) dist.y, (int) dist.z);
+        List<BlockPos> all;
+        all = FastVoxelRayCast.ray(from, dist);
 
-        List<BlockPos> all = Lists.newArrayList();
-        int fromX = Math.min(fromPos.getX(), toPos.getX()) - 1,
-                toX = Math.max(fromPos.getX(), toPos.getX()) + 1,
-                fromY = Math.min(fromPos.getY(), toPos.getY()) - 1,
-                toY = Math.max(fromPos.getY(), toPos.getY()) + 1,
-                fromZ = Math.min(fromPos.getZ(), toPos.getZ()) - 1,
-                toZ = Math.max(fromPos.getZ(), toPos.getZ()) + 1;
-        for (int i = fromX; i <= toX; i++) {
-            for (int j = fromY; j <= toY; j++) {
-                for (int k = fromZ; k <= toZ; k++) {
-                    all.add(new BlockPos(i, j, k));
-                }
-            }
-        }
-        all.sort(Comparator.comparingInt(a -> a.sqDistanceBetween(fromPos)));
+//        BlockPos fromPos = new BlockPos((int) from.x, (int) from.y, (int) from.z);
+//        BlockPos toPos = new BlockPos((int) dist.x, (int) dist.y, (int) dist.z);
+
+//        all = Lists.newArrayList();
+//        int fromX = Math.min(fromPos.getX(), toPos.getX()) - 1,
+//                toX = Math.max(fromPos.getX(), toPos.getX()) + 1,
+//                fromY = Math.min(fromPos.getY(), toPos.getY()) - 1,
+//                toY = Math.max(fromPos.getY(), toPos.getY()) + 1,
+//                fromZ = Math.min(fromPos.getZ(), toPos.getZ()) - 1,
+//                toZ = Math.max(fromPos.getZ(), toPos.getZ()) + 1;
+//        for (int i = fromX; i <= toX; i++) {
+//            for (int j = fromY; j <= toY; j++) {
+//                for (int k = fromZ; k <= toZ; k++) {
+//                    all.add(new BlockPos(i, j, k));
+//                }
+//            }
+//        }
+//        all.sort(Comparator.comparingInt(a -> a.sqDistanceBetween(fromPos)));
 
         for (BlockPos pos : all) {
             Block object = getBlock(pos);

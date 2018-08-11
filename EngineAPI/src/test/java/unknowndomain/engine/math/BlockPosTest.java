@@ -64,9 +64,10 @@ class BlockPosTest {
         BlockPos pos = new BlockPos(1, 0, 0);
         BlockPos dest = new BlockPos(0, 2, 0);
 //
-        List<BlockPos> all = getAll(pos, dest);
 
-        System.out.println(all);
+//        List<BlockPos> all = getAll(pos, dest);
+
+//        System.out.println(all);
 //        System.out.println(Lists.newArrayList(new BlockPos(2, 0, 0), new BlockPos(2, 0, 0)));
 //        for (int x = pos.getX(); x < dest; x++) {
 //
