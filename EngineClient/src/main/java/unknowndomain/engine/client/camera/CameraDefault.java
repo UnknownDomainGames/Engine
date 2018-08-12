@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.camera;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import unknowndomain.engine.client.display.Camera;
@@ -38,7 +37,7 @@ public class CameraDefault implements Camera {
 
     @Override
     public void moveTo(float x, float y, float z) {
-        pos = new Vector3f(x, y, z);
+        pos.set(x, y, z);
     }
 
     @Override

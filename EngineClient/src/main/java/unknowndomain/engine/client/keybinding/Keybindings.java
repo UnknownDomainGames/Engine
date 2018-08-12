@@ -14,5 +14,10 @@ public enum Keybindings {
         manager.add(KeyBinding.create("player.move.sneak", KeyCode.KEY_LEFT_SHIFT, ActionMode.PRESS));
         manager.add(KeyBinding.create("player.mouse.left", KeyCode.MOUSE_BUTTON_LEFT, ActionMode.PRESS));
         manager.add(KeyBinding.create("player.mouse.right", KeyCode.MOUSE_BUTTON_RIGHT, ActionMode.PRESS));
+
+        manager.add(KeyBinding.create("player.debug.addZ", KeyCode.KEY_I, ActionMode.PRESS));
+        manager.add(KeyBinding.create("player.debug.subZ", KeyCode.KEY_O, ActionMode.PRESS));
+        manager.add(KeyBinding.create("player.debug.addX", KeyCode.KEY_K, ActionMode.PRESS));
+        manager.add(KeyBinding.create("player.debug.subX", KeyCode.KEY_L, ActionMode.PRESS));
     }
 }

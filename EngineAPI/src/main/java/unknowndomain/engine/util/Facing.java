@@ -11,7 +11,7 @@ public enum Facing {
     BOTTOM(4, 0, -1, 0);
 
     private final int opposite;
-    private final int offsetX, offsetY, offsetZ;
+    public final int offsetX, offsetY, offsetZ;
 
     Facing(int opposite, int offsetX, int offsetY, int offsetZ) {
         this.opposite = opposite;

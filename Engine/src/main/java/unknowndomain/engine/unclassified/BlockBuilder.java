@@ -12,9 +12,11 @@ import java.util.stream.Collectors;
 
 public class BlockBuilder {
     private AABBd boundingBox = new AABBd(0, 0, 0, 1, 1, 1);
+    private List<AABBd> aabBds = new ArrayList<>();
     private String path;
     private Map<String, Object> map = new HashMap<>();
     private List<BlockPrototype.Property<?>> properties = new ArrayList<>();
+    private boolean noCollision = false;
 
     private BlockPrototype.PlaceBehavior placeBehavior = BlockPrototype.DEFAULT_PLACE;
     private BlockPrototype.ActiveBehavior activeBehavior = BlockPrototype.DEFAULT_ACTIVE;
@@ -25,13 +27,18 @@ public class BlockBuilder {
         this.path = path;
     }
 
+    public BlockBuilder setNoCollision() {
+        this.noCollision = true;
+        return this;
+    }
+
     public static BlockBuilder create(String path) {
         Validate.notNull(path);
         return new BlockBuilder(path);
     }
 
-    public BlockBuilder setBoundingBox(AABBd boundingBox) {
-        this.boundingBox = boundingBox;
+    public BlockBuilder addBoundingBox(AABBd boundingBox) {
+        aabBds.add(boundingBox);
         return this;
     }
 
@@ -87,7 +94,8 @@ public class BlockBuilder {
     }
 
     public Block build() {
-        return new BlockShared(boundingBox, placeBehavior, activeBehavior, touchBehavior, destroyBehavior, null)
+        AABBd[] boxes = noCollision ? new AABBd[0] : aabBds.size() == 0 ? new AABBd[]{boundingBox} : aabBds.toArray(new AABBd[aabBds.size()]);
+        return new BlockShared(boxes, placeBehavior, activeBehavior, touchBehavior, destroyBehavior, null)
                 .setRegistryName(path);
     }
 
@@ -99,9 +107,10 @@ public class BlockBuilder {
         List<ImmutableMap<BlockPrototype.Property<?>, Comparable<?>>> compute = this.compute(props);
         ImmutableTable.Builder<BlockPrototype.Property<?>, Comparable<?>, BlockShared> builder = ImmutableTable.builder();
 
+        AABBd[] boxes = noCollision ? new AABBd[0] : aabBds.size() == 0 ? new AABBd[]{boundingBox} : aabBds.toArray(new AABBd[aabBds.size()]);
+
         List<BlockShared> collect = compute.stream().map(m -> {
-            BlockShared shared = new BlockShared(boundingBox, placeBehavior, activeBehavior, touchBehavior,
-                    destroyBehavior, m);
+            BlockShared shared = new BlockShared(boxes, placeBehavior, activeBehavior, touchBehavior, destroyBehavior, m);
             List<Map.Entry<BlockPrototype.Property<?>, Comparable<?>>> entries = new ArrayList<>(m.entrySet());
             entries.sort(Comparator.comparing(a -> a.getKey().getName()));
             StringBuilder postfix = new StringBuilder();

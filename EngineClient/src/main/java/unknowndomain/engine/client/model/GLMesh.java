@@ -45,6 +45,8 @@ public class GLMesh {
         glEnableVertexAttribArray(1);
         // glEnableVertexAttribArray(2);
 
+//        glDrawElements(GL_LINES, counts, GL_UNSIGNED_INT, 0);
+
         glDrawElements(mode, counts, GL_UNSIGNED_INT, 0);
 
         // Restore state
@@ -56,6 +58,6 @@ public class GLMesh {
 
     @Override
     public String toString() {
-        return "GLMesh { vao: " + vao + ", count: " + counts + " }" ;
+        return "GLMesh { vao: " + vao + ", count: " + counts + " }";
     }
 }

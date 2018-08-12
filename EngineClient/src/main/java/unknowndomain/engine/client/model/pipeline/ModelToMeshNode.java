@@ -1,8 +1,8 @@
 package unknowndomain.engine.client.model.pipeline;
 
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.model.Mesh;
+import unknowndomain.engine.client.resource.Pipeline;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class ModelToMeshNode implements Pipeline.Node {
         return meshes;
     }
 
-    Mesh bakeModel(Model model) {
+    public Mesh bakeModel(Model model) {
         if (model == null) return null;
         float[] vertices = new float[model.elements.length * 24 * 3];
         float[] uv = new float[model.elements.length * 24 * 2];

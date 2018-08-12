@@ -45,8 +45,8 @@ public class BlockRuntime extends RegistryEntry.Impl<Block> implements Block {
     }
 
     @Override
-    public AABBd getBoundingBox() {
-        return shared.getBoundingBox();
+    public AABBd[] getBoundingBoxes() {
+        return shared.getBoundingBoxes();
     }
 
     @Override

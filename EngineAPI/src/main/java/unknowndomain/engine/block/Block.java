@@ -19,5 +19,5 @@ public interface Block extends RegistryEntry<Block>, RuntimeObject, BlockPrototy
 
     <T extends Comparable<T>> Block cycleProperty(BlockPrototype.Property<T> property);
 
-    AABBd getBoundingBox();
+    AABBd[] getBoundingBoxes();
 }

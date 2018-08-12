@@ -16,14 +16,14 @@ import javax.annotation.Nullable;
 
 class BlockShared extends RegistryEntry.Impl<Block> implements Block {
     ImmutableTable<BlockPrototype.Property<?>, Comparable<?>, BlockShared> propertiesTable;
-    private AABBd boundingBox;
+    private AABBd[] boundingBox;
     private BlockPrototype.PlaceBehavior placeBehavior;
     private BlockPrototype.ActiveBehavior activeBehavior;
     private BlockPrototype.TouchBehavior touchBehavior;
     private BlockPrototype.DestroyBehavior destroyBehavior;
     private ImmutableMap<BlockPrototype.Property<?>, Comparable<?>> properties;
 
-    BlockShared(AABBd boundingBox, BlockPrototype.PlaceBehavior placeBehavior, BlockPrototype.ActiveBehavior activeBehavior, BlockPrototype.TouchBehavior touchBehavior, BlockPrototype.DestroyBehavior destroyBehavior, ImmutableMap<BlockPrototype.Property<?>, Comparable<?>> properties) {
+    BlockShared(AABBd[] boundingBox, BlockPrototype.PlaceBehavior placeBehavior, BlockPrototype.ActiveBehavior activeBehavior, BlockPrototype.TouchBehavior touchBehavior, BlockPrototype.DestroyBehavior destroyBehavior, ImmutableMap<BlockPrototype.Property<?>, Comparable<?>> properties) {
         this.boundingBox = boundingBox;
         this.placeBehavior = placeBehavior;
         this.activeBehavior = activeBehavior;
@@ -105,7 +105,7 @@ class BlockShared extends RegistryEntry.Impl<Block> implements Block {
     }
 
     @Override
-    public AABBd getBoundingBox() {
+    public AABBd[] getBoundingBoxes() {
         return boundingBox;
     }
 
@@ -120,4 +120,5 @@ class BlockShared extends RegistryEntry.Impl<Block> implements Block {
     public <T> T getComponent(@Nonnull Class<T> type) {
         return null;
     }
+
 }
