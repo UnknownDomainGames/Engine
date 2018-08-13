@@ -8,6 +8,7 @@ import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.Mesh;
 import unknowndomain.engine.client.model.MeshToGLNode;
+import unknowndomain.engine.client.rendering.gui.TTFFontRenderer;
 import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.texture.GLTexture;
@@ -24,6 +25,8 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
     //    private IntObjectMap<RenderChunk> loadChunk = new IntObjectHashMap<>(16);
     private Map<ChunkPos, RenderChunk> loadChunk = Maps.newHashMap();
     private GLMesh[] meshRegistry;
+
+    private TTFFontRenderer fontRenderer;
 
     private GLMesh textureMap;
 
@@ -93,6 +96,11 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
                 }
             }
         });
+        fontRenderer.drawText("ABC", 0.01F, 0.01F, 0, 1);
+    }
+
+    public void setFontRenderer(TTFFontRenderer fontRenderer) {
+        this.fontRenderer = fontRenderer;
     }
 
     /**

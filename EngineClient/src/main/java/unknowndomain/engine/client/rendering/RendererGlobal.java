@@ -3,9 +3,9 @@ package unknowndomain.engine.client.rendering;
 import org.apache.commons.lang3.Validate;
 import unknowndomain.engine.client.camera.CameraDefault;
 import unknowndomain.engine.client.display.Camera;
-import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.resource.ResourceManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +17,10 @@ public class RendererGlobal implements Renderer.Context {
         return camera;
     }
 
-    public void init(ResourceManager manager) {
-        renderers.forEach(r -> r.init(manager));
+    public void init(ResourceManager manager) throws IOException {
+        for (Renderer renderer : renderers) {
+            renderer.init(manager);
+        }
     }
 
     public RendererGlobal add(Renderer renderer) {

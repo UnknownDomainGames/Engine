@@ -1,17 +1,16 @@
-package unknowndomain.engine.client.rendering;
+package unknowndomain.engine.client.rendering.gui;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.stb.*;
+import org.lwjgl.stb.STBTTAlignedQuad;
+import org.lwjgl.stb.STBTTBakedChar;
+import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
 import unknowndomain.engine.client.util.BufferBuilder;
-import unknowndomain.engine.client.util.GLHelper;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -22,8 +21,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-public class TTFFontRenderer {
-
+class TTFFontRenderer {
     private ByteBuffer ttfBuf;
 
     private final STBTTFontinfo fontinfo;
@@ -35,13 +33,8 @@ public class TTFFontRenderer {
     private float contentScaleX;
     private float contentScaleY;
 
-    public TTFFontRenderer(String ttf) {
-        try {
-            ttfBuf = GLHelper.getResourcesAsBuffer(ttf, 512 * 1024);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public TTFFontRenderer(ByteBuffer ttfBuf) {
+        this.ttfBuf = ttfBuf;
         fontinfo = STBTTFontinfo.create();
         if (!stbtt_InitFont(fontinfo, ttfBuf)) {
             throw new IllegalStateException("Failed in initializing ttf font info");
@@ -65,7 +58,6 @@ public class TTFFontRenderer {
             contentScaleX = p1.get(0);
             contentScaleY = p2.get(0);
         }
-
     }
 
     private Map<Integer, Pair<Integer, STBTTBakedChar.Buffer>> bufMap = new HashMap<>();
@@ -125,7 +117,7 @@ public class TTFFontRenderer {
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder builder = tessellator.getBuffer();
             builder.begin(GL_QUADS, true, true, true, false);
-            for (int i = 0; i < text.length();) {
+            for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, pcp);
 
                 int cp = pcp.get(0);

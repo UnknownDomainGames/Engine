@@ -41,11 +41,12 @@ public class MinecraftMod {
         v.loadShader("assets/unknowndomain/shader/common.vert");
         Shader f = new Shader(0, ShaderType.FRAGMENT_SHADER);
         f.loadShader("assets/unknowndomain/shader/common.frag");
-       RenderDebug debug = new RenderDebug(v, f);
-       debug.setTexture(textureMap);
-       debug.setMeshRegistry(meshRegistry);
-       renderer.add(debug);
-       context.register(debug);
+        RenderDebug debug = new RenderDebug(v, f);
+        debug.setTexture(textureMap);
+        debug.setMeshRegistry(meshRegistry);
+        renderer.add(debug);
+        context.register(debug);
+
 
         v = new Shader(0, ShaderType.VERTEX_SHADER);
         v.loadShader("assets/unknowndomain/shader/frame.vert");

@@ -16,7 +16,8 @@ public class KeyBindingManager {
     public void add(KeyBinding keybinding) {
         int code = keybinding.getCode().code;
         byte mods = KeyModifier.getCode(keybinding.getModifier());
-        int store = code | ((mods & 0x07) << 9);
+//        int store = code | ((mods & 0x07) << 9);
+        int store = code;
         codeToBinding.put(store, keybinding);
     }
 
@@ -30,11 +31,9 @@ public class KeyBindingManager {
     public void handlePress(int code, int mods) {
         KeyCode keyCode = KeyCode.valueOf(code);
         pressedKey.add(keyCode);
-        Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code | ((mods & 0x07) << 9));
+//        Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code | ((mods & 0x07) << 9));
+        Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code);
         for (KeyBinding binding : keyBindings) {
-            for (KeyModifier modifier : binding.getModifier()) {
-
-            }
             UnknownDomain.getEngine().getActionManager().start(binding.getTarget());
         }
     }
@@ -42,7 +41,8 @@ public class KeyBindingManager {
     public void handleRelease(int code, int mods) {
         KeyCode keyCode = KeyCode.valueOf(code);
         pressedKey.add(keyCode);
-        Collection<KeyBinding> keyBindings = codeToBinding.get(((mods & 0x07) << 9 | keyCode.code));
+//        Collection<KeyBinding> keyBindings = codeToBinding.get(((mods & 0x07) << 9 | keyCode.code));
+        Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code);
         for (KeyBinding binding : keyBindings) {
             UnknownDomain.getEngine().getActionManager().end(binding.getTarget());
         }

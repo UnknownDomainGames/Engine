@@ -12,10 +12,6 @@ public interface Resource {
 
     void invalidate();
 
-    interface Manifest {
-        Manifest require(ResourcePath... path);
-    }
-
     // not impl yet
     // this api need more discussion...
     // Map<String, String> metadata();

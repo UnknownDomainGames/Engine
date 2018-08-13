@@ -27,6 +27,7 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
 //    private AABBd boundingBox = new AABBd(-10, -10, -10, 10, 10, 10);
     private Item mainHand;
 
+
     public PlayerClient(Camera camera) {
         this.camera = camera;
     }
@@ -170,6 +171,7 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
 
         private Vector3f movingDirection = new Vector3f();
         private boolean[] phases = new boolean[16];
+        float factor = 0.1f;
 
         public List<Action> getActions() {
             return Lists.newArrayList(
@@ -193,7 +195,6 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
             this.phases[action] = phase;
 
             Vector3f movingDirection = this.movingDirection;
-            float factor = 0.07f;
             switch (action) {
                 case FORWARD:
                 case BACKWARD:
