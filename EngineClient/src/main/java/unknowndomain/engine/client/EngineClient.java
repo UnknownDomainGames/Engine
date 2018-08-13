@@ -67,11 +67,8 @@ public class EngineClient implements Engine {
 
     private void setupContext() {
         SimpleRegistryManager registryManager = new SimpleRegistryManager(
-                ImmutableMap.<Class<?>, Registry<?>>builder()
-                        .put(Block.class, new SimpleIdentifiedRegistry<>())
-                        .put(Item.class, new SimpleIdentifiedRegistry<>())
-                        .build()
-        );
+                ImmutableMap.<Class<?>, Registry<?>>builder().put(Block.class, new SimpleIdentifiedRegistry<>())
+                        .put(Item.class, new SimpleIdentifiedRegistry<>()).build());
         context = new GameContext(registryManager, new AsmEventBus());
         actionManager = new ActionManagerImpl(context);
     }
@@ -81,13 +78,12 @@ public class EngineClient implements Engine {
         setupContext();
         renderer = new RendererGlobal();
 
-
         resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
         keyBindingManager = new KeyBindingManager();
 
-        //old
+        // old
 
         Keybindings.INSTANCE.setup(keyBindingManager);
 
@@ -110,8 +106,9 @@ public class EngineClient implements Engine {
         }
         world.addEntity(player);
 
-        minecraftMod.postInit(context);
+        player.getPosition().set(1, 2, 1);
 
+        minecraftMod.postInit(context);
 
         timer = new Timer();
         timer.init();
@@ -165,14 +162,14 @@ public class EngineClient implements Engine {
 
     public void handleKeyPress(int key, int scancode, int action, int modifiers) {
         switch (action) {
-            case GLFW.GLFW_PRESS:
-                getKeyBindingManager().handlePress(key, modifiers);
-                break;
-            case GLFW.GLFW_RELEASE:
-                getKeyBindingManager().handleRelease(key, modifiers);
-                break;
-            default:
-                break;
+        case GLFW.GLFW_PRESS:
+            getKeyBindingManager().handlePress(key, modifiers);
+            break;
+        case GLFW.GLFW_RELEASE:
+            getKeyBindingManager().handleRelease(key, modifiers);
+            break;
+        default:
+            break;
         }
         if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
             if (paused) {
@@ -190,14 +187,14 @@ public class EngineClient implements Engine {
 
     public void handleMousePress(int button, int action, int modifiers) {
         switch (action) {
-            case GLFW.GLFW_PRESS:
-                getKeyBindingManager().handlePress(button + 400, modifiers);
-                break;
-            case GLFW.GLFW_RELEASE:
-                getKeyBindingManager().handleRelease(button + 400, modifiers);
-                break;
-            default:
-                break;
+        case GLFW.GLFW_PRESS:
+            getKeyBindingManager().handlePress(button + 400, modifiers);
+            break;
+        case GLFW.GLFW_RELEASE:
+            getKeyBindingManager().handleRelease(button + 400, modifiers);
+            break;
+        default:
+            break;
         }
     }
 
