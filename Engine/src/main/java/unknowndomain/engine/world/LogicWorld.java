@@ -91,7 +91,7 @@ public class LogicWorld implements World {
             Vector3f position = entity.getPosition();
             AABBd box = entity.getBoundingBox();
 
-//            BlockPos localPos = new BlockPos(((int) position.x), ((int) position.y), ((int) position.z));
+           BlockPos localPos = new BlockPos(((int) Math.floor(position.x)), ((int) Math.floor(position.y)), ((int) Math.floor(position.z)));
 //
             int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
                     directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
@@ -99,9 +99,9 @@ public class LogicWorld implements World {
 
             AABBd entityBox = AABBs.translate(box, position.add(direction, new Vector3f()), new AABBd());
             List<BlockPos>[] around = AABBs.around(entityBox, motion);
-//            for (List<BlockPos> ls : around) {
-//                ls.add(localPos);
-//            }
+           for (List<BlockPos> ls : around) {
+               ls.add(localPos);
+           }
             List<BlockPos> faceX = around[0],
                     faceY = around[1],
                     faceZ = around[2];
@@ -152,8 +152,11 @@ public class LogicWorld implements World {
                 motion.x = 0;
             if (Integer.MAX_VALUE != yFix)
                 motion.y = 0;
-            if (Integer.MAX_VALUE != zFix)
-                motion.z = 0;
+            if (Integer.MAX_VALUE != zFix) {
+                System.out.println(zFix);
+                motion.z += directionZ > 0 ? -zFix : zFix;
+                // motion.z = 0;
+            }
 //                motion.z += directionZ > 0 ? -zFix : zFix;
 
             position.add(motion);

@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 
 public class BlockBuilder {
     private AABBd boundingBox = new AABBd(0, 0, 0, 1, 1, 1);
+    // private AABBd boundingBox = new AABBd(-.5, 0, -.5, .5, 1, .5);
+
     private List<AABBd> aabBds = new ArrayList<>();
     private String path;
     private Map<String, Object> map = new HashMap<>();

@@ -36,19 +36,22 @@ public class AABBs {
             double src = directionX == -1 ? aabb.maxX : directionX == 1 ? aabb.minX : 0;
             for (double i = aabb.minZ; i <= aabb.maxZ; i++)
                 for (double j = aabb.minY; j <= aabb.maxY; j++)
-                    offsets[0].add(new BlockPos((int) src + directionX, (int) j, (int) i));
+                    offsets[0].add(
+                            new BlockPos((int) Math.floor(src + directionX), (int) Math.floor(j), (int) Math.floor(i)));
         }
         if (directionY != 0) {
             double src = directionY == -1 ? aabb.maxY : directionY == 1 ? aabb.minY : 0;
             for (double i = aabb.minZ; i <= aabb.maxZ; i++)
                 for (double j = aabb.minX; j <= aabb.maxX; j++)
-                    offsets[1].add(new BlockPos((int) j, (int) src + directionY, (int) i));
+                    offsets[1].add(
+                            new BlockPos((int) Math.floor(j), (int) Math.floor(src + directionY), (int) Math.floor(i)));
         }
         if (directionZ != 0) {
             double src = directionZ == -1 ? aabb.maxZ : directionZ == 1 ? aabb.minZ : 0;
             for (double i = aabb.minY; i <= aabb.maxY; i++)
                 for (double j = aabb.minX; j <= aabb.maxX; j++)
-                    offsets[2].add(new BlockPos((int) j, (int) i, (int) src + directionZ));
+                    offsets[2].add(
+                            new BlockPos((int) Math.floor(j), (int) Math.floor(i), (int) Math.floor(src + directionZ)));
         }
         return offsets;
     }
