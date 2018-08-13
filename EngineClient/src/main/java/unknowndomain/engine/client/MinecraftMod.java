@@ -9,6 +9,7 @@ import unknowndomain.engine.client.model.pipeline.ModelToMeshNode;
 import unknowndomain.engine.client.model.pipeline.ResolveModelsNode;
 import unknowndomain.engine.client.model.pipeline.ResolveTextureUVNode;
 import unknowndomain.engine.client.rendering.RenderBoundingBox;
+import unknowndomain.engine.client.rendering.RenderDebug;
 import unknowndomain.engine.client.rendering.RendererGlobal;
 import unknowndomain.engine.client.rendering.shader.CreateShaderNode;
 import unknowndomain.engine.client.resource.Pipeline;
@@ -40,11 +41,11 @@ public class MinecraftMod {
         v.loadShader("assets/unknowndomain/shader/common.vert");
         Shader f = new Shader(0, ShaderType.FRAGMENT_SHADER);
         f.loadShader("assets/unknowndomain/shader/common.frag");
-//        RenderDebug debug = new RenderDebug(v, f);
-//        debug.setTexture(textureMap);
-//        debug.setMeshRegistry(meshRegistry);
-//        renderer.add(debug);
-//        context.register(debug);
+       RenderDebug debug = new RenderDebug(v, f);
+       debug.setTexture(textureMap);
+       debug.setMeshRegistry(meshRegistry);
+       renderer.add(debug);
+       context.register(debug);
 
         v = new Shader(0, ShaderType.VERTEX_SHADER);
         v.loadShader("assets/unknowndomain/shader/frame.vert");
