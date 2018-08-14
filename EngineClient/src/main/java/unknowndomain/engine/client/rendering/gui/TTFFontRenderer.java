@@ -5,7 +5,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.stb.STBEasyFont;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTFontinfo;
@@ -133,7 +132,7 @@ class TTFFontRenderer {
                 }
                 float x0 = scale(x, stbQuad.x0(), factorX), x1 = scale(x, stbQuad.x1(), factorX),
                         y0 = scale(lineY, stbQuad.y0(), factorY), y1 = scale(lineY, stbQuad.y1(), factorY);
-                System.out.println(x0 + " " + x1 + " " + y0 + " " + y1);
+//                System.out.println(x0 + " " + x1 + " " + y0 + " " + y1);
                 builder.pos(x0, y0, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t0()).endVertex();
                 builder.pos(x0, y1, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t1()).endVertex();
                 builder.pos(x1, y1, 0).color(r, g, b, a).tex(stbQuad.s1(), stbQuad.t1()).endVertex();

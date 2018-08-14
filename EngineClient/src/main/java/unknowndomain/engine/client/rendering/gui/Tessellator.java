@@ -1,13 +1,8 @@
 package unknowndomain.engine.client.rendering.gui;
 
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL31;
 import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.util.BufferBuilder;
 import unknowndomain.engine.client.util.VertexBufferObject;
-
-import java.nio.ByteBuffer;
 
 class Tessellator {
     private static final Tessellator INSTANCE = new Tessellator(1048576);
@@ -20,10 +15,10 @@ class Tessellator {
         vbo = new VertexBufferObject();
         buffer = new BufferBuilder(bufferSize);
 
-        vertexStatusBufId = GL15.glGenBuffers();
-        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, vertexStatusBufId);
-        GL15.glBufferData(GL31.GL_UNIFORM_BUFFER, 4 * 4, GL15.GL_STATIC_DRAW);
-        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, 0);
+//        vertexStatusBufId = GL15.glGenBuffers();
+//        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, vertexStatusBufId);
+//        GL15.glBufferData(GL31.GL_UNIFORM_BUFFER, 4 * 4, GL15.GL_STATIC_DRAW);
+//        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, 0);
     }
 
     static Tessellator getInstance() {
@@ -33,9 +28,9 @@ class Tessellator {
     public void setShaderId(int shaderId) {
         this.shaderId = shaderId;
 
-        int status = GL31.glGetUniformBlockIndex(shaderId, "VertexStatus");
-        GL31.glUniformBlockBinding(shaderId, status, 0);
-        GL30.glBindBufferBase(GL31.GL_UNIFORM_BUFFER, 2, vertexStatusBufId);
+//        int status = GL31.glGetUniformBlockIndex(shaderId, "VertexStatus");
+//        GL31.glUniformBlockBinding(shaderId, status, 0);
+//        GL30.glBindBufferBase(GL31.GL_UNIFORM_BUFFER, 2, vertexStatusBufId);
     }
 
     public BufferBuilder getBuffer() {
@@ -45,10 +40,10 @@ class Tessellator {
     void draw() {
         buffer.finish();
 
-        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, vertexStatusBufId);
-        ByteBuffer bb = ByteBuffer.wrap(new byte[]{(byte) (buffer.isPosEnabled() ? 1 : 0), (byte) (buffer.isColorEnabled() ? 1 : 0), (byte) (buffer.isTexEnabled() ? 1 : 0), (byte) (buffer.isNormalEnabled() ? 1 : 0)});
-        GL15.glBufferSubData(GL31.GL_UNIFORM_BUFFER, 0, bb);
-        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, 0);
+//        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, vertexStatusBufId);
+//        ByteBuffer bb = ByteBuffer.wrap(new byte[]{(byte) (buffer.isPosEnabled() ? 1 : 0), (byte) (buffer.isColorEnabled() ? 1 : 0), (byte) (buffer.isTexEnabled() ? 1 : 0), (byte) (buffer.isNormalEnabled() ? 1 : 0)});
+//        GL15.glBufferSubData(GL31.GL_UNIFORM_BUFFER, 0, bb);
+//        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, 0);
         vbo.bind();
         vbo.uploadData(buffer);
         vbo.bind();
