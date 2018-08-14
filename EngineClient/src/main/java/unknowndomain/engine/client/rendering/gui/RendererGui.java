@@ -51,7 +51,7 @@ public class RendererGui extends RendererShaderProgram {
 
     @Override
     public void init(ResourceManager manager) throws IOException {
-        vertexShader = Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(),
+        vertexShader = Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(),
                 ShaderType.VERTEX_SHADER);
 
         fragShader = Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(),

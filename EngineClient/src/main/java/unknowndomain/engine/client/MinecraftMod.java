@@ -9,7 +9,7 @@ import unknowndomain.engine.client.model.MeshToGLNode;
 import unknowndomain.engine.client.model.pipeline.ModelToMeshNode;
 import unknowndomain.engine.client.model.pipeline.ResolveModelsNode;
 import unknowndomain.engine.client.model.pipeline.ResolveTextureUVNode;
-import unknowndomain.engine.client.rendering.RenderDebug;
+import unknowndomain.engine.client.rendering.RendererDebug;
 import unknowndomain.engine.client.rendering.RendererGlobal;
 import unknowndomain.engine.client.rendering.gui.RendererGui;
 import unknowndomain.engine.client.rendering.shader.CreateShaderNode;
@@ -56,7 +56,7 @@ public class MinecraftMod {
             meshRegistry[i] = meshList.get(i);
         }
 
-        RenderDebug debug = new RenderDebug();
+        RendererDebug debug = new RendererDebug();
         debug.setTexture(textureMap);
         debug.setMeshRegistry(meshRegistry);
         renderer.add(debug);

@@ -140,7 +140,7 @@ class TTFFontRenderer {
             }
             tessellator.draw();
 
-            // renderLineBoundingBox(text, 0, text.length(), x, y + fontHeight, scale, fontHeight);
+            renderLineBoundingBox(text, 0, text.length(), x, y + fontHeight, scale, fontHeight);
         }
     }
 

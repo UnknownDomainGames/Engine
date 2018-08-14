@@ -20,7 +20,7 @@ import unknowndomain.engine.world.LogicWorld;
 
 import java.util.Map;
 
-public class RenderDebug extends RendererShaderProgramCommon implements Pipeline.Endpoint {
+public class RendererDebug extends RendererShaderProgramCommon implements Pipeline.Endpoint {
     private GLTexture texture;
     // private IntObjectMap<RenderChunk> loadChunk = new IntObjectHashMap<>(16);
     private Map<ChunkPos, RenderChunk> loadChunk = Maps.newHashMap();
