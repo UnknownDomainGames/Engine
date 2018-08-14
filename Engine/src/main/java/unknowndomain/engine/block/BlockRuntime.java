@@ -1,10 +1,8 @@
-package unknowndomain.engine.unclassified;
+package unknowndomain.engine.block;
 
 import com.google.common.collect.ImmutableMap;
 import org.joml.AABBd;
 import unknowndomain.engine.Entity;
-import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.world.World;

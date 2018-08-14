@@ -2,7 +2,7 @@ package unknowndomain.engine.registry;
 
 import org.junit.jupiter.api.Test;
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.unclassified.BlockBuilder;
+import unknowndomain.engine.block.BlockBuilder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

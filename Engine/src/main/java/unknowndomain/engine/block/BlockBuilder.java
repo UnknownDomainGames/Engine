@@ -1,11 +1,9 @@
-package unknowndomain.engine.unclassified;
+package unknowndomain.engine.block;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
 import org.apache.commons.lang3.Validate;
 import org.joml.AABBd;
-import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockPrototype;
 
 import java.util.*;
 import java.util.stream.Collectors;

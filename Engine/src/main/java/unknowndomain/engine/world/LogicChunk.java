@@ -4,9 +4,9 @@ import com.google.common.collect.Maps;
 import unknowndomain.engine.Entity;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockRuntime;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.unclassified.BlockRuntime;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
