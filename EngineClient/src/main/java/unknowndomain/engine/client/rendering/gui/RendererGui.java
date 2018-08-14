@@ -1,31 +1,40 @@
 package unknowndomain.engine.client.rendering.gui;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import org.apache.commons.io.IOUtils;
+import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+
 import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.client.shader.RendererShaderProgram;
 import unknowndomain.engine.client.shader.Shader;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import unknowndomain.engine.client.shader.ShaderType;
 
 /**
  * render for any gui
  */
 public class RendererGui extends RendererShaderProgram {
     private TTFFontRenderer fontRenderer;
-    private Shader guiShader;
+    private Shader vertexShader, fragShader;
 
     private void createShader() {
 
         shaderId = GL20.glCreateProgram();
 
-        attachShader(guiShader);
+        attachShader(vertexShader);
+        attachShader(fragShader);
 
         linkShader();
         useShader();
+
+        vertexShader.deleteShader();
+        fragShader.deleteShader();
 
         GL20.glValidateProgram(shaderId);
 
@@ -33,12 +42,26 @@ public class RendererGui extends RendererShaderProgram {
     }
 
     @Override
-    public void init(ResourceManager manager) throws IOException {
+    protected void useShader() {
+        super.useShader();
 
-//        manager.load(new ResourcePath("", "unknowndomain/"))
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    @Override
+    public void init(ResourceManager manager) throws IOException {
+        vertexShader = Shader.create(
+                new String(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(), "utf-8"),
+                ShaderType.VERTEX_SHADER);
+
+        fragShader = Shader.create(
+                new String(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(), "utf-8"),
+                ShaderType.FRAGMENT_SHADER);
 
         createShader();
-
 
         Tessellator.getInstance().setShaderId(shaderId);
         Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
@@ -51,7 +74,17 @@ public class RendererGui extends RendererShaderProgram {
 
     @Override
     public void render(Context context) {
+        
+        useShader();
+        // this.setUniform("projection", context.getCamera().projection());
+        // this.setUniform("view", context.getCamera().view());
+        setUniform("projection", new Matrix4f().identity().ortho(0, 854f, 480f, 0, -1000f, 2000f));
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        setUniform("usingAlpha", true);
 
+        fontRenderer.drawText("The quick brown fox jumps over the lazy dog.", 0, 0, 0xffffffff, 16);
     }
 
     @Override

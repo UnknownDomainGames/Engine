@@ -10,8 +10,6 @@ public class ChunkPos {
     private int chunkY; //TODO: required review for necessity
     private int chunkZ;
 
-    private Chunk referringChunk;
-
     public ChunkPos(int cx, int cy, int cz) {
         chunkX = cx;
         chunkY = cy;
@@ -54,68 +52,24 @@ public class ChunkPos {
         return chunkZ;
     }
 
-    public void setReferringChunk(Chunk referringChunk) {
-        this.referringChunk = referringChunk;
-    }
-
-    public Chunk getReferringChunk() {
-        return referringChunk;
-    }
-
     public BlockPos getLowEdge() {
-        return getLowEdge(referringChunk);
+        return new BlockPos(chunkX * Chunk.DEFAULT_X_SIZE, chunkY * Chunk.DEFAULT_Y_SIZE, chunkZ * Chunk.DEFAULT_Z_SIZE);
     }
 
     public BlockPos getHighEdge() {
-        return getHighEdge(referringChunk);
-    }
-
-    public BlockPos getLowEdge(@Nullable Chunk referring) {
-        if (referring == null) {
-            return new BlockPos(chunkX * Chunk.DEFAULT_X_SIZE, chunkY * Chunk.DEFAULT_Y_SIZE, chunkZ * Chunk.DEFAULT_Z_SIZE);
-        } else {
-            return new BlockPos(chunkX * referring.getXSize(), chunkY * referring.getYSize(), chunkZ * referring.getZSize());
-        }
-    }
-
-    public BlockPos getHighEdge(@Nullable Chunk referring) {
-        if (referring == null) {
-            return new BlockPos((chunkX + 1) * Chunk.DEFAULT_X_SIZE - 1, (chunkY + 1) * Chunk.DEFAULT_Y_SIZE - 1, (chunkZ + 1) * Chunk.DEFAULT_Z_SIZE - 1);
-        } else {
-            return new BlockPos((chunkX + 1) * referring.getXSize() - 1, (chunkY + 1) * referring.getYSize() - 1, (chunkZ + 1) * referring.getZSize() - 1);
-        }
+        return new BlockPos((chunkX + 1) * Chunk.DEFAULT_X_SIZE - 1, (chunkY + 1) * Chunk.DEFAULT_Y_SIZE - 1, (chunkZ + 1) * Chunk.DEFAULT_Z_SIZE - 1);
     }
 
     public BlockPos getWorldCoordBlock(int x, int y, int z) {
-        return getWorldCoordBlock(x, y, z, referringChunk);
-    }
-
-    public BlockPos getWorldCoordBlock(int x, int y, int z, @Nullable Chunk referring) {
-        if (referring == null) {
-            return new BlockPos(chunkX * Chunk.DEFAULT_X_SIZE + x, chunkY * Chunk.DEFAULT_Y_SIZE + y, chunkZ * Chunk.DEFAULT_Z_SIZE + z);
-        } else {
-            return new BlockPos(chunkX * referring.getXSize() + x, chunkY * referring.getYSize() + y, chunkZ * referring.getZSize() + z);
-        }
-    }
-
-    public BlockPos getChunkCoordBlock(int x, int y, int z) {
-        return getChunkCoordBlock(x, y, z, referringChunk);
+        return new BlockPos(chunkX * Chunk.DEFAULT_X_SIZE + x, chunkY * Chunk.DEFAULT_Y_SIZE + y, chunkZ * Chunk.DEFAULT_Z_SIZE + z);
     }
 
     public BlockPos getChunkCoordBlock(BlockPos pos) {
-        return getChunkCoordBlock(pos, referringChunk);
+        return getChunkCoordBlock(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public BlockPos getChunkCoordBlock(BlockPos pos, @Nullable Chunk referring) {
-        return getChunkCoordBlock(pos.getX(), pos.getY(), pos.getZ(), referring);
-    }
-
-    public BlockPos getChunkCoordBlock(int x, int y, int z, @Nullable Chunk referring) {
-        if (referring == null) {
-            return new BlockPos(x - chunkX * Chunk.DEFAULT_X_SIZE, y - chunkY * Chunk.DEFAULT_Y_SIZE, z - chunkZ * Chunk.DEFAULT_Z_SIZE);
-        } else {
-            return new BlockPos(x - chunkX * referring.getXSize(), y - chunkY * referring.getYSize(), z - chunkZ * referring.getZSize());
-        }
+    public BlockPos getChunkCoordBlock(int x, int y, int z) {
+        return new BlockPos(x - chunkX * Chunk.DEFAULT_X_SIZE, y - chunkY * Chunk.DEFAULT_Y_SIZE, z - chunkZ * Chunk.DEFAULT_Z_SIZE);
     }
 
     @Override

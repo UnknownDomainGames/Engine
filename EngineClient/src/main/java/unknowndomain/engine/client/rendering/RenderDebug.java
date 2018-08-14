@@ -8,8 +8,8 @@ import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.Mesh;
 import unknowndomain.engine.client.model.MeshToGLNode;
-import unknowndomain.engine.client.rendering.gui.TTFFontRenderer;
 import unknowndomain.engine.client.resource.Pipeline;
+import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.texture.GLTexture;
 import unknowndomain.engine.event.Listener;
@@ -22,85 +22,65 @@ import java.util.Map;
 
 public class RenderDebug extends RendererShaderProgramCommon implements Pipeline.Endpoint {
     private GLTexture texture;
-    //    private IntObjectMap<RenderChunk> loadChunk = new IntObjectHashMap<>(16);
+    // private IntObjectMap<RenderChunk> loadChunk = new IntObjectHashMap<>(16);
     private Map<ChunkPos, RenderChunk> loadChunk = Maps.newHashMap();
     private GLMesh[] meshRegistry;
-
-    private TTFFontRenderer fontRenderer;
 
     private GLMesh textureMap;
 
     {
-        textureMap = new MeshToGLNode().convert(new Mesh(new float[]{
-                0, 0, 0,
-                2, 0, 0,
-                2, 2, 0,
-                0, 2, 0,
-        }, new float[]{
-                0, 1,
-                1, 1,
-                1, 0,
-                0, 0,
-        }, new float[]{
+        textureMap = new MeshToGLNode().convert(new Mesh(new float[] { 0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 2, 0, },
+                new float[] { 0, 1, 1, 1, 1, 0, 0, 0, }, new float[] {
 
-        }, new int[]{
-                0, 2, 1, 0, 3, 2
-        }, GL11.GL_TRIANGLES));
-    }
-
-    public RenderDebug(Shader vertexShader, Shader fragmentShader) {
-        super(vertexShader, fragmentShader);
+                }, new int[] { 0, 2, 1, 0, 3, 2 }, GL11.GL_TRIANGLES));
     }
 
     @Override
     public void render(Context context) {
         super.render(context);
 
-        if (texture != null)
-            texture.bind();
-
+        texture.bind();
         Shader.setUniform(u_Model, new Matrix4f().setTranslation(1, 1, 1));
 
-//        for (GLMesh mesh : meshRegistry) {
-//            if (mesh != null)
-//                mesh.render();
-//        }
+        // for (GLMesh mesh : meshRegistry) {
+        // if (mesh != null)
+        // mesh.render();
+        // }
         Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
         textureMap.render();
-        BlockPrototype.Hit hit = UnknownDomain.getEngine().getWorld().rayHit(context.getCamera().getPosition(), context.getCamera().getFrontVector(), 5);
-
+        BlockPrototype.Hit hit = UnknownDomain.getEngine().getWorld().rayHit(context.getCamera().getPosition(),
+                context.getCamera().getFrontVector(), 5);
 
         loadChunk.forEach((pos, chunk) -> {
             for (int i = 0; i < 16; i++) {
                 if (chunk.valid[i]) {
                     int[] blocks = chunk.blocks[i];
                     for (int j = 0; j < 4096; j++) {
-                        if (blocks[j] == 0) continue;
+                        if (blocks[j] == 0)
+                            continue;
                         int id = blocks[j];
                         int cy = i * 16;
-//                        int cz = pos & 0xFFFF;
+                        // int cz = pos & 0xFFFF;
 
                         int x = ((j >> 8) & 0xF) + (pos.getChunkX() * 16);
                         int y = ((j >> 4) & 0xF) + cy * 16;
                         int z = (j & 0xF) + pos.getChunkZ() * 16;
-//                        System.out.println("Render block at " + x + " " + y + " " + z);
-                        boolean picked = hit != null && hit.position.getX() == x && hit.position.getY() == y && hit.position.getZ() == z;
+                        // System.out.println("Render block at " + x + " " + y + " " + z);
+                        boolean picked = hit != null && hit.position.getX() == x && hit.position.getY() == y
+                                && hit.position.getZ() == z;
 
                         Shader.setUniform(u_Model, new Matrix4f().setTranslation(x, y, z));
-//                        Shader.setUniform(u_Model, new Matrix4f().setTranslation(0, 0, 0));
+                        // Shader.setUniform(u_Model, new Matrix4f().setTranslation(0, 0, 0));
 
-                        if (picked) this.setUniform("u_Picked", 1);
+                        if (picked)
+                            this.setUniform("u_Picked", 1);
                         meshRegistry[id - 1].render();
-                        if (picked) this.setUniform("u_Picked", 0);
+                        if (picked)
+                            this.setUniform("u_Picked", 0);
                     }
                 }
             }
         });
-        fontRenderer.drawText("ABC", 0.01F, 0.01F, 0, 1);
-    }
-
-    public void setFontRenderer(TTFFontRenderer fontRenderer) {
-        this.fontRenderer = fontRenderer;
     }
 
     /**
@@ -129,7 +109,7 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
         System.out.println("CHUNK LOAD");
         ChunkPos pos = event.pos;
         RenderChunk chunk = new RenderChunk(event.blocks);
-//        loadChunk.put(pos.compact(), chunk);
+        // loadChunk.put(pos.compact(), chunk);
         loadChunk.put(pos, chunk);
     }
 
@@ -138,7 +118,7 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
         System.out.println("BLOCK CHANGE");
         BlockPos pos = event.pos;
         ChunkPos cp = pos.toChunk();
-//        RenderChunk chunk = loadChunk.get(cp.compact());
+        // RenderChunk chunk = loadChunk.get(cp.compact());
         RenderChunk chunk = loadChunk.get(cp);
         if (chunk == null) {
             // Platform.getLogger().error("WTF, The chunk load not report?");
@@ -177,10 +157,15 @@ public class RenderDebug extends RendererShaderProgramCommon implements Pipeline
 
     @Override
     public void accept(String source, Object content) {
-        switch (source) {
-            case "TextureMap":
-                this.texture = (GLTexture) content;
-                break;
-        }
+    }
+
+    @Override
+    protected ResourcePath vertexShader() {
+        return new ResourcePath("", "unknowndomain/shader/common.vert");
+    }
+
+    @Override
+    protected ResourcePath fragmentShader() {
+        return new ResourcePath("", "unknowndomain/shader/common.frag");
     }
 }

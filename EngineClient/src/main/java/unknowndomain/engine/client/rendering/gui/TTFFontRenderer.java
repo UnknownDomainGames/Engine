@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.stb.STBEasyFont;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTFontinfo;
@@ -94,13 +95,14 @@ class TTFFontRenderer {
         Pair<Integer, STBTTBakedChar.Buffer> pair = getCharDataBuffer(fontHeight);
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, pair.getLeft());
+
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         STBTTBakedChar.Buffer cdata = pair.getRight();
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer pcp = stack.mallocInt(1);
-            FloatBuffer bx = stack.floats(x);
-            FloatBuffer by = stack.floats(y + fontHeight);
+            IntBuffer charPointBuffer = stack.mallocInt(1);
+            FloatBuffer posX = stack.floats(x);
+            FloatBuffer posY = stack.floats(y + fontHeight);
 
             float factorX = 1.0f / getContentScaleX();
             float factorY = 1.0f / getContentScaleY();
@@ -113,32 +115,33 @@ class TTFFontRenderer {
             float lineY = y + fontHeight;
 
             int side = getBitmapSide(fontHeight, SUPPORTING_CHARACTER_COUNT);
-            STBTTAlignedQuad q = STBTTAlignedQuad.mallocStack(stack);
+            STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder builder = tessellator.getBuffer();
             builder.begin(GL_QUADS, true, true, true, false);
             for (int i = 0; i < text.length(); ) {
-                i += getCodePoint(text, i, pcp);
+                i += getCodePoint(text, i, charPointBuffer);
 
-                int cp = pcp.get(0);
+                int charPoint = charPointBuffer.get(0);
 
-                float cpX = bx.get(0);
-                stbtt_GetBakedQuad(cdata, side, side, cp, bx, by, q, true);
-                bx.put(0, scale(cpX, bx.get(0), factorX));
+                float cpX = posX.get(0);
+                stbtt_GetBakedQuad(cdata, side, side, charPoint, posX, posY, stbQuad, true);
+                posX.put(0, scale(cpX, posX.get(0), factorX));
                 if (i < text.length()) {
-                    getCodePoint(text, i, pcp);
-                    bx.put(0, bx.get(0) + stbtt_GetCodepointKernAdvance(fontinfo, cp, pcp.get(0)) * scale);
+                    getCodePoint(text, i, charPointBuffer);
+                    posX.put(0, posX.get(0) + stbtt_GetCodepointKernAdvance(fontinfo, charPoint, charPointBuffer.get(0)) * scale);
                 }
-                float x0 = scale(x, q.x0(), factorX), x1 = scale(x, q.x1(), factorX),
-                        y0 = scale(lineY, q.y0(), factorY), y1 = scale(lineY, q.y1(), factorY);
-                builder.pos(x0, y0, 0).color(r, g, b, a).tex(q.s0(), q.t0()).endVertex();
-                builder.pos(x0, y1, 0).color(r, g, b, a).tex(q.s0(), q.t1()).endVertex();
-                builder.pos(x1, y1, 0).color(r, g, b, a).tex(q.s1(), q.t1()).endVertex();
-                builder.pos(x1, y0, 0).color(r, g, b, a).tex(q.s1(), q.t0()).endVertex();
+                float x0 = scale(x, stbQuad.x0(), factorX), x1 = scale(x, stbQuad.x1(), factorX),
+                        y0 = scale(lineY, stbQuad.y0(), factorY), y1 = scale(lineY, stbQuad.y1(), factorY);
+                System.out.println(x0 + " " + x1 + " " + y0 + " " + y1);
+                builder.pos(x0, y0, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t0()).endVertex();
+                builder.pos(x0, y1, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t1()).endVertex();
+                builder.pos(x1, y1, 0).color(r, g, b, a).tex(stbQuad.s1(), stbQuad.t1()).endVertex();
+                builder.pos(x1, y0, 0).color(r, g, b, a).tex(stbQuad.s1(), stbQuad.t0()).endVertex();
             }
             tessellator.draw();
 
-            renderLineBoundingBox(text, 0, text.length(), x, y + fontHeight, scale, fontHeight);
+            // renderLineBoundingBox(text, 0, text.length(), x, y + fontHeight, scale, fontHeight);
         }
     }
 

@@ -1,10 +1,14 @@
 package unknowndomain.engine.client.rendering;
 
+import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.client.resource.ResourceManager;
+import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.client.shader.RendererShaderProgram;
 import unknowndomain.engine.client.shader.Shader;
+import unknowndomain.engine.client.shader.ShaderType;
 
 public abstract class RendererShaderProgramCommon extends RendererShaderProgram {
     protected final int A_POSITION = 0, A_TEXTCOORD = 1, A_NORMAL = 2, A_COLOR = 3;
@@ -13,12 +17,13 @@ public abstract class RendererShaderProgramCommon extends RendererShaderProgram 
 
     protected int u_Projection, u_View, u_Model;
 
-    public RendererShaderProgramCommon(Shader vertexShader, Shader fragmentShader) {
-        this.vertexShader = vertexShader;
-        this.fragmentShader = fragmentShader;
-    }
+    protected abstract ResourcePath vertexShader();
 
-    public void init(ResourceManager resourceManager) {
+    protected abstract ResourcePath fragmentShader();
+
+    public void init(ResourceManager resourceManager) throws IOException {
+        vertexShader = Shader.create(resourceManager.load(vertexShader()).cache(), ShaderType.VERTEX_SHADER);
+        fragmentShader = Shader.create(resourceManager.load(fragmentShader()).cache(), ShaderType.FRAGMENT_SHADER);
         createShader();
         useShader();
         u_Projection = getUniformLocation("u_ProjMatrix");
@@ -35,7 +40,10 @@ public abstract class RendererShaderProgramCommon extends RendererShaderProgram 
         linkShader();
         useShader();
 
-        GL20.glValidateProgram(shaderId);
+        GL20.glValidateProgram(shaderId);   
+
+        vertexShader.deleteShader();
+        fragmentShader.deleteShader();
 
         GL20.glUseProgram(0);
     }
@@ -44,12 +52,13 @@ public abstract class RendererShaderProgramCommon extends RendererShaderProgram 
     protected void useShader() {
         super.useShader();
 
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glFrontFace(GL11.GL_CW);
-        GL11.glCullFace(GL11.GL_BACK);
+        // GL11.glEnable(GL11.GL_CULL_FACE);
+        // GL11.glFrontFace(GL11.GL_CW);
+        // GL11.glCullFace(GL11.GL_BACK);
     }
 
     public void render(Context context) {
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         useShader();
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);

@@ -52,6 +52,8 @@ public class Pipeline {
                     } else if (pair.getRight().size() != 0) {
                         pair.getRight().forEach(e -> e.accept(name, o));
                     }
+                } else {
+                    cached.put(name, o);
                 }
             }
         };

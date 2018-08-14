@@ -90,10 +90,10 @@ public class EngineClient implements Engine {
         minecraftMod.init(context);
         try {
             minecraftMod.setupResource(context, resourceManager);
+            minecraftMod.setupRender(context, resourceManager, renderer);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        minecraftMod.setupRender(context, resourceManager, renderer);
 
         renderer.init(resourceManager);
 

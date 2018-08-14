@@ -6,6 +6,7 @@ import unknowndomain.engine.client.EngineClient;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.model.Mesh;
 import unknowndomain.engine.client.model.pipeline.BoundingBoxToMesh;
+import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.client.shader.Shader;
 
 import java.nio.FloatBuffer;
@@ -20,10 +21,6 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 public class RenderBoundingBox extends RendererShaderProgramCommon {
     private int vao = -1;
     private int count = -1;
-
-    public RenderBoundingBox(Shader vertexShader, Shader fragmentShader) {
-        super(vertexShader, fragmentShader);
-    }
 
     private void gen() {
         EngineClient engine = UnknownDomain.getEngine();
@@ -68,4 +65,14 @@ public class RenderBoundingBox extends RendererShaderProgramCommon {
             glBindVertexArray(0);
         }
     }
+
+	@Override
+	protected ResourcePath vertexShader() {
+		return new ResourcePath("", "unknowndomain/shader/frame.vert");
+	}
+
+	@Override
+	protected ResourcePath fragmentShader() {
+		return new ResourcePath("", "unknowndomain/shader/frame.frag");
+	}
 }

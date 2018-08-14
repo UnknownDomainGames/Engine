@@ -11,6 +11,7 @@ import unknowndomain.engine.client.model.pipeline.ResolveTextureUVNode;
 import unknowndomain.engine.client.rendering.RenderBoundingBox;
 import unknowndomain.engine.client.rendering.RenderDebug;
 import unknowndomain.engine.client.rendering.RendererGlobal;
+import unknowndomain.engine.client.rendering.gui.RendererGui;
 import unknowndomain.engine.client.rendering.shader.CreateShaderNode;
 import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.resource.ResourceManager;
@@ -36,36 +37,16 @@ public class MinecraftMod {
     private GLTexture textureMap;
     private GLMesh[] meshRegistry;
 
-    void setupRender(GameContext context, ResourceManager manager, RendererGlobal renderer) {
-        Shader v = new Shader(0, ShaderType.VERTEX_SHADER);
-        v.loadShader("assets/unknowndomain/shader/common.vert");
-        Shader f = new Shader(0, ShaderType.FRAGMENT_SHADER);
-        f.loadShader("assets/unknowndomain/shader/common.frag");
-        RenderDebug debug = new RenderDebug(v, f);
-        debug.setTexture(textureMap);
-        debug.setMeshRegistry(meshRegistry);
-        renderer.add(debug);
-        context.register(debug);
-
-
-        v = new Shader(0, ShaderType.VERTEX_SHADER);
-        v.loadShader("assets/unknowndomain/shader/frame.vert");
-        f = new Shader(0, ShaderType.FRAGMENT_SHADER);
-        f.loadShader("assets/unknowndomain/shader/frame.frag");
-        RenderBoundingBox frame = new RenderBoundingBox(v, f);
-        renderer.add(frame);
-    }
-
-    void setupResource(GameContext context, ResourceManager manager) throws Exception {
+    void setupRender(GameContext context, ResourceManager manager, RendererGlobal renderer) throws Exception {
         Pipeline pipeline = new Pipeline(manager);
         pipeline.add("BlockModels", new ResolveModelsNode(), new ResolveTextureUVNode(), new ModelToMeshNode(),
-                new MeshToGLNode())
-                .add("Shader", new CreateShaderNode());
+                new MeshToGLNode()).add("Shader", new CreateShaderNode());
 
         Registry<Block> registry = context.getManager().getRegistry(Block.class);
         List<ResourcePath> pathList = new ArrayList<>();
         for (Block value : registry.getValues()) {
-            if (value.getRegistryName().equals("air")) continue;
+            if (value.getRegistryName().equals("air"))
+                continue;
             String path = "/minecraft/models/block/" + value.getRegistryName() + ".json";
             pathList.add(new ResourcePath(path));
         }
@@ -77,6 +58,25 @@ public class MinecraftMod {
         for (int i = 0; i < meshList.size(); i++) {
             meshRegistry[i] = meshList.get(i);
         }
+
+        RenderDebug debug = new RenderDebug();
+        debug.setTexture(textureMap);
+        debug.setMeshRegistry(meshRegistry);
+        renderer.add(debug);
+        context.register(debug);
+
+        // v = new Shader(0, ShaderType.VERTEX_SHADER);
+        // v.loadShader("assets/unknowndomain/shader/frame.vert");
+        // f = new Shader(0, ShaderType.FRAGMENT_SHADER);
+        // f.loadShader("assets/unknowndomain/shader/frame.frag");
+        // RenderBoundingBox frame = new RenderBoundingBox(v, f);
+        // renderer.add(frame);
+
+        RendererGui gui = new RendererGui();
+        renderer.add(gui);
+    }
+
+    void setupResource(GameContext context, ResourceManager manager) throws Exception {
     }
 
     private Item createPlace(Block object) {
@@ -94,8 +94,7 @@ public class MinecraftMod {
                 world.setBlock(side, object);
             }
         }
-        return ItemBuilder.create(object.getRegistryName() + "_placer")
-                .setUseBlockBehavior(new PlaceBlock(object))
+        return ItemBuilder.create(object.getRegistryName() + "_placer").setUseBlockBehavior(new PlaceBlock(object))
                 .build();
     }
 
@@ -106,11 +105,6 @@ public class MinecraftMod {
 
         IdentifiedRegistry<Item> itemRegistry = context.getItemRegistry();
         itemRegistry.register(createPlace(blockRegistry.getValue("stone")));
-        // Block stone = blockRegistry.getValue(1);
-        // world.setBlock(new BlockPos(0, 0, 0), stone);
-        // world.setBlock(new BlockPos(2, 0, 0), stone);
-        // world.setBlock(new BlockPos(3, 0, 0), stone);
-        // world.addEntity(player);
     }
 
     void postInit(GameContext context) {

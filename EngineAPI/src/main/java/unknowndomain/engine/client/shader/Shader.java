@@ -85,30 +85,13 @@ public class Shader {
         }
     }
 
-    public void loadShader(String location) {
-        shaderId = glCreateShader(type.getGlEnum());
-
-        try {
-            glShaderSource(shaderId, IOUtils.toString(IOUtils.resourceToURL(location, Shader.class.getClassLoader()), "utf-8"));
-        } catch (IOException e) {
-            Platform.getLogger().warn(String.format("Error reading shader code for %s", location), e);
-        }
-        glCompileShader(shaderId);
-        if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
-            Platform.getLogger().warn(String.format("Error compiling shader code for %s, log: %s", location, glGetShaderInfoLog(shaderId, 2048)));
-        }
-    }
-
     public ShaderType getType() {
         return type;
     }
 
     @Override
     public String toString() {
-        return "Shader{" +
-                "shaderId=" + shaderId +
-                ", type=" + type +
-                '}';
+        return "Shader{" + "shaderId=" + shaderId + ", type=" + type + '}';
     }
 
     public void deleteShader() {
@@ -120,5 +103,21 @@ public class Shader {
 
     public int getShaderId() {
         return shaderId;
+    }
+
+    public static Shader create(byte[] content, ShaderType type) throws IOException {
+        return create(IOUtils.toString(content, "utf-8"), type);
+    }
+
+    public static Shader create(String content, ShaderType type) {
+        int shaderId = glCreateShader(type.getGlEnum());
+        glShaderSource(shaderId, content);
+
+        glCompileShader(shaderId);
+        if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
+            Platform.getLogger().warn(String.format("Error compiling shader code for %s, log: %s", content,
+                    glGetShaderInfoLog(shaderId, 2048)));
+        }
+        return new Shader(shaderId, type);
     }
 }

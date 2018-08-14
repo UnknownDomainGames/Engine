@@ -32,6 +32,10 @@ class Tessellator {
 
     public void setShaderId(int shaderId) {
         this.shaderId = shaderId;
+
+        int status = GL31.glGetUniformBlockIndex(shaderId, "VertexStatus");
+        GL31.glUniformBlockBinding(shaderId, status, 0);
+        GL30.glBindBufferBase(GL31.GL_UNIFORM_BUFFER, 2, vertexStatusBufId);
     }
 
     public BufferBuilder getBuffer() {
@@ -40,10 +44,6 @@ class Tessellator {
 
     void draw() {
         buffer.finish();
-
-        int status = GL31.glGetUniformBlockIndex(shaderId, "VertexStatus");
-        GL31.glUniformBlockBinding(shaderId, status, 0);
-        GL30.glBindBufferBase(GL31.GL_UNIFORM_BUFFER, 2, vertexStatusBufId);
 
         GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, vertexStatusBufId);
         ByteBuffer bb = ByteBuffer.wrap(new byte[]{(byte) (buffer.isPosEnabled() ? 1 : 0), (byte) (buffer.isColorEnabled() ? 1 : 0), (byte) (buffer.isTexEnabled() ? 1 : 0), (byte) (buffer.isNormalEnabled() ? 1 : 0)});

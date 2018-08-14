@@ -17,9 +17,13 @@ public class RendererGlobal implements Renderer.Context {
         return camera;
     }
 
-    public void init(ResourceManager manager) throws IOException {
-        for (Renderer renderer : renderers) {
-            renderer.init(manager);
+    public void init(ResourceManager manager) {
+        try {
+            for (Renderer renderer : renderers) {
+                renderer.init(manager);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
         }
     }
 
