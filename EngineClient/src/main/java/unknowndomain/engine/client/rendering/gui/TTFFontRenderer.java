@@ -32,6 +32,7 @@ class TTFFontRenderer {
     public static final int SUPPORTING_CHARACTER_COUNT = 256;
     private float contentScaleX;
     private float contentScaleY;
+    private Map<Integer, Pair<Integer, STBTTBakedChar.Buffer>> bufMap = new HashMap<>();
 
     public TTFFontRenderer(ByteBuffer ttfBuf) {
         this.ttfBuf = ttfBuf;
@@ -49,6 +50,7 @@ class TTFFontRenderer {
             ascent = pAscent.get(0);
             descent = pDescent.get(0);
             lineGap = pLineGap.get(0);
+
             long moniter = GLFW.glfwGetPrimaryMonitor();
 
             FloatBuffer p1 = stack.mallocFloat(1);
@@ -60,8 +62,6 @@ class TTFFontRenderer {
         }
     }
 
-    private Map<Integer, Pair<Integer, STBTTBakedChar.Buffer>> bufMap = new HashMap<>();
-
     private Pair<Integer, STBTTBakedChar.Buffer> getCharDataBuffer(int fontHeight) {
         if (!bufMap.containsKey(fontHeight)) {
             int texId = GL11.glGenTextures();
@@ -70,13 +70,12 @@ class TTFFontRenderer {
             ByteBuffer bitmap = BufferUtils.createByteBuffer(side * side);
             stbtt_BakeFontBitmap(ttfBuf, fontHeight, bitmap, side, side, 0, cdata);
 
-            glEnable(GL_TEXTURE_2D);
-
             glBindTexture(GL_TEXTURE_2D, texId);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, side, side, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
             glBindTexture(GL_TEXTURE_2D, 0);
+            glEnable(GL_TEXTURE_2D);
             bufMap.put(fontHeight, new ImmutablePair<>(texId, cdata));
         }
         return bufMap.get(fontHeight);
@@ -111,33 +110,46 @@ class TTFFontRenderer {
             float b = (color & 255) / 255f;
             float a = ((color >> 24) & 255) / 255f;
 
-            float lineY = y + fontHeight;
+            float centerY = y + fontHeight;
 
             int side = getBitmapSide(fontHeight, SUPPORTING_CHARACTER_COUNT);
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder builder = tessellator.getBuffer();
             builder.begin(GL_QUADS, true, true, true, false);
-            for (int i = 0; i < text.length(); ) {
+            for (int i = 0; i < text.length();) {
                 i += getCodePoint(text, i, charPointBuffer);
 
                 int charPoint = charPointBuffer.get(0);
 
-                float cpX = posX.get(0);
+                float centerX = posX.get(0);
                 stbtt_GetBakedQuad(cdata, side, side, charPoint, posX, posY, stbQuad, true);
-                posX.put(0, scale(cpX, posX.get(0), factorX));
+                posX.put(0, scale(centerX, posX.get(0), factorX));
                 if (i < text.length()) {
                     getCodePoint(text, i, charPointBuffer);
-                    posX.put(0, posX.get(0) + stbtt_GetCodepointKernAdvance(fontinfo, charPoint, charPointBuffer.get(0)) * scale);
+                    posX.put(0, posX.get(0)
+                            + stbtt_GetCodepointKernAdvance(fontinfo, charPoint, charPointBuffer.get(0)) * scale);
                 }
-                float x0 = scale(x, stbQuad.x0(), factorX), x1 = scale(x, stbQuad.x1(), factorX),
-                        y0 = scale(lineY, stbQuad.y0(), factorY), y1 = scale(lineY, stbQuad.y1(), factorY);
-//                System.out.println(x0 + " " + x1 + " " + y0 + " " + y1);
+                // System.out.println(stbQuad.x0() + " " + stbQuad.y0() + " " + stbQuad.x1() + "
+                // " + stbQuad.y1());
+                float x0 = scale(centerX, stbQuad.x0(), factorX), x1 = scale(centerX, stbQuad.x1(), factorX),
+                        y0 = scale(centerY, stbQuad.y0(), factorY), y1 = scale(centerY, stbQuad.y1(), factorY);
+                System.out.println(factorX);
+                System.out.println(x);
+                System.out.println(x0 + " " + x1 + " " + y0 + " " + y1);
+                // System.out.println(stbQuad.s0() + " " + stbQuad.t0() + " " + stbQuad.s1() + "
+                // " + stbQuad.t1());
                 builder.pos(x0, y0, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t0()).endVertex();
                 builder.pos(x0, y1, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t1()).endVertex();
                 builder.pos(x1, y1, 0).color(r, g, b, a).tex(stbQuad.s1(), stbQuad.t1()).endVertex();
                 builder.pos(x1, y0, 0).color(r, g, b, a).tex(stbQuad.s1(), stbQuad.t0()).endVertex();
+                // builder.pos(x0, y0, 0).color(r, g, b, a).tex(0, 0).endVertex();
+                // builder.pos(x0, y1, 0).color(r, g, b, a).tex(0, 1).endVertex();
+                // builder.pos(x1, y1, 0).color(r, g, b, a).tex(1, 1).endVertex();
+                // builder.pos(x1, y0, 0).color(r, g, b, a).tex(1, 0).endVertex();
             }
+            // System.out.println();
+
             tessellator.draw();
 
             renderLineBoundingBox(text, 0, text.length(), x, y + fontHeight, scale, fontHeight);

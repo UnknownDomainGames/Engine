@@ -12,38 +12,34 @@ import unknowndomain.engine.client.shader.ShaderType;
 
 public abstract class RendererShaderProgramCommon extends RendererShaderProgram {
     protected final int A_POSITION = 0, A_TEXTCOORD = 1, A_NORMAL = 2, A_COLOR = 3;
-    private Shader vertexShader;
-    private Shader fragmentShader;
 
     protected int u_Projection, u_View, u_Model;
 
     protected abstract ResourcePath vertexShader();
-
     protected abstract ResourcePath fragmentShader();
 
     public void init(ResourceManager resourceManager) throws IOException {
-        vertexShader = Shader.create(resourceManager.load(vertexShader()).cache(), ShaderType.VERTEX_SHADER);
-        fragmentShader = Shader.create(resourceManager.load(fragmentShader()).cache(), ShaderType.FRAGMENT_SHADER);
-        createShader();
+        createShader(Shader.create(resourceManager.load(vertexShader()).cache(), ShaderType.VERTEX_SHADER),
+                Shader.create(resourceManager.load(fragmentShader()).cache(), ShaderType.FRAGMENT_SHADER));
         useShader();
         u_Projection = getUniformLocation("u_ProjMatrix");
         u_View = getUniformLocation("u_ViewMatrix");
         u_Model = getUniformLocation("u_ModelMatrix");
     }
 
-    protected void createShader() {
+    private void createShader(Shader... shaders) {
         shaderId = GL20.glCreateProgram();
 
-        attachShader(vertexShader);
-        attachShader(fragmentShader);
+        for (Shader s : shaders)
+            attachShader(s);
 
         linkShader();
         useShader();
 
-        GL20.glValidateProgram(shaderId);   
+        GL20.glValidateProgram(shaderId);
 
-        vertexShader.deleteShader();
-        fragmentShader.deleteShader();
+        for (Shader s : shaders)
+            s.deleteShader();
 
         GL20.glUseProgram(0);
     }
@@ -73,8 +69,6 @@ public abstract class RendererShaderProgramCommon extends RendererShaderProgram 
     @Override
     public void dispose() {
         GL20.glUseProgram(0);
-        vertexShader.deleteShader();
-        fragmentShader.deleteShader();
         GL20.glDeleteProgram(shaderId);
         shaderId = -1;
     }

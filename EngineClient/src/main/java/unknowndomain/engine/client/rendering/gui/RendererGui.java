@@ -19,10 +19,8 @@ import java.nio.ByteBuffer;
  */
 public class RendererGui extends RendererShaderProgram {
     private TTFFontRenderer fontRenderer;
-    private Shader vertexShader, fragShader;
 
-    private void createShader() {
-
+    private void createShader(Shader vertexShader, Shader fragShader) {
         shaderId = GL20.glCreateProgram();
 
         attachShader(vertexShader);
@@ -51,13 +49,11 @@ public class RendererGui extends RendererShaderProgram {
 
     @Override
     public void init(ResourceManager manager) throws IOException {
-        vertexShader = Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(),
-                ShaderType.VERTEX_SHADER);
-
-        fragShader = Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(),
-                ShaderType.FRAGMENT_SHADER);
-
-        createShader();
+        createShader(
+                Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(),
+                        ShaderType.VERTEX_SHADER),
+                Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(),
+                        ShaderType.FRAGMENT_SHADER));
 
         Tessellator.getInstance().setShaderId(shaderId);
         Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
@@ -70,17 +66,17 @@ public class RendererGui extends RendererShaderProgram {
 
     @Override
     public void render(Context context) {
-        
         useShader();
         // this.setUniform("projection", context.getCamera().projection());
         // this.setUniform("view", context.getCamera().view());
-        setUniform("projection", new Matrix4f().identity().ortho(0, 854f, 480f, 0, -1000f, 2000f));
+        // setUniform("projection", new Matrix4f().identity().ortho(0, 854f, 480f, 0, -1000f, 2000f));
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         setUniform("usingAlpha", true);
 
-        fontRenderer.drawText("The quick brown fox jumps over the lazy dog.", 0, 0, 0xffffffff, 16);
+        setUniform("model", new Matrix4f().scale(0.01F));
+        fontRenderer.drawText("abcd", 0, 0, 0xffffffff, 16);
     }
 
     @Override
