@@ -3,14 +3,17 @@ package unknowndomain.engine.client.rendering;
 import com.google.common.collect.Maps;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.Mesh;
 import unknowndomain.engine.client.model.MeshToGLNode;
-import unknowndomain.engine.client.resource.Pipeline;
+import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.client.shader.Shader;
+import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.client.texture.GLTexture;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.math.BlockPos;
@@ -18,26 +21,43 @@ import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.world.LogicChunk;
 import unknowndomain.engine.world.LogicWorld;
 
+import java.io.IOException;
 import java.util.Map;
 
-public class RendererDebug extends RendererShaderProgramCommon implements Pipeline.Endpoint {
+public class RendererDebug extends RendererShaderProgramCommon {
+    protected final int A_POSITION = 0;
+    protected final int A_TEXTCOORD = 1;
+    protected final int A_NORMAL = 2;
+    protected final int A_COLOR = 3;
+
+    protected int u_Projection;
+    protected int u_View;
+    protected int u_Model;
     private GLTexture texture;
-    // private IntObjectMap<RenderChunk> loadChunk = new IntObjectHashMap<>(16);
     private Map<ChunkPos, RenderChunk> loadChunk = Maps.newHashMap();
     private GLMesh[] meshRegistry;
 
     private GLMesh textureMap;
 
     {
-        textureMap = new MeshToGLNode().convert(new Mesh(new float[] { 0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 2, 0, },
-                new float[] { 0, 1, 1, 1, 1, 0, 0, 0, }, new float[] {
+        textureMap = new MeshToGLNode().convert(new Mesh(new float[]{0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 2, 0,},
+                new float[]{0, 1, 1, 1, 1, 0, 0, 0,}, new float[]{
 
-                }, new int[] { 0, 2, 1, 0, 3, 2 }, GL11.GL_TRIANGLES));
+        }, new int[]{0, 2, 1, 0, 3, 2}, GL11.GL_TRIANGLES));
     }
 
     @Override
     public void render(Context context) {
-        super.render(context);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        useProgram();
+
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        Shader.setUniform(u_Projection, context.getCamera().projection());
+        Shader.setUniform(u_View, context.getCamera().view());
 
         texture.bind();
         Shader.setUniform(u_Model, new Matrix4f().setTranslation(1, 1, 1));
@@ -48,6 +68,7 @@ public class RendererDebug extends RendererShaderProgramCommon implements Pipeli
         // }
         Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
         textureMap.render();
+
         BlockPrototype.Hit hit = UnknownDomain.getEngine().getWorld().rayHit(context.getCamera().getPosition(),
                 context.getCamera().getFrontVector(), 5);
 
@@ -121,7 +142,7 @@ public class RendererDebug extends RendererShaderProgramCommon implements Pipeli
         // RenderChunk chunk = loadChunk.get(cp.compact());
         RenderChunk chunk = loadChunk.get(cp);
         if (chunk == null) {
-            // Platform.getLogger().error("WTF, The chunk load not report?");
+            Platform.getLogger().error("WTF, The chunk load not report?");
             return;
         }
 
@@ -133,6 +154,31 @@ public class RendererDebug extends RendererShaderProgramCommon implements Pipeli
         if (event.blockId != 0 && !chunk.valid[yIndex]) {
             chunk.valid[yIndex] = true;
         }
+    }
+
+    public void init(ResourceManager resourceManager) throws IOException {
+        createShader(Shader.create(resourceManager.load(vertexShader()).cache(), ShaderType.VERTEX_SHADER),
+                Shader.create(resourceManager.load(fragmentShader()).cache(), ShaderType.FRAGMENT_SHADER));
+        useProgram();
+        u_Projection = getUniformLocation("u_ProjMatrix");
+        u_View = getUniformLocation("u_ViewMatrix");
+        u_Model = getUniformLocation("u_ModelMatrix");
+    }
+
+    @Override
+    protected void useProgram() {
+        super.useProgram();
+
+        GL11.glEnable(GL11.GL_CULL_FACE);
+//        GL11.glFrontFace(GL11.GL_CW);
+//        GL11.glCullFace(GL11.GL_BACK);
+    }
+
+    @Override
+    public void dispose() {
+        GL20.glUseProgram(0);
+        GL20.glDeleteProgram(programId);
+        programId = -1;
     }
 
     class RenderChunk {
@@ -155,16 +201,10 @@ public class RendererDebug extends RendererShaderProgramCommon implements Pipeli
         }
     }
 
-    @Override
-    public void accept(String source, Object content) {
-    }
-
-    @Override
     protected ResourcePath vertexShader() {
         return new ResourcePath("", "unknowndomain/shader/common.vert");
     }
 
-    @Override
     protected ResourcePath fragmentShader() {
         return new ResourcePath("", "unknowndomain/shader/common.frag");
     }

@@ -91,7 +91,7 @@ public class Shader {
 
     @Override
     public String toString() {
-        return "Shader{" + "shaderId=" + shaderId + ", type=" + type + '}';
+        return "Shader{" + "programId=" + shaderId + ", type=" + type + '}';
     }
 
     public void deleteShader() {

@@ -12,7 +12,6 @@ import unknowndomain.engine.client.model.pipeline.ResolveTextureUVNode;
 import unknowndomain.engine.client.rendering.RendererDebug;
 import unknowndomain.engine.client.rendering.RendererGlobal;
 import unknowndomain.engine.client.rendering.gui.RendererGui;
-import unknowndomain.engine.client.rendering.shader.CreateShaderNode;
 import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
@@ -37,7 +36,7 @@ public class MinecraftMod {
     void setupRender(GameContext context, ResourceManager manager, RendererGlobal renderer) throws Exception {
         Pipeline pipeline = new Pipeline(manager);
         pipeline.add("BlockModels", new ResolveModelsNode(), new ResolveTextureUVNode(), new ModelToMeshNode(),
-                new MeshToGLNode()).add("Shader", new CreateShaderNode());
+                new MeshToGLNode());
 
         Registry<Block> registry = context.getManager().getRegistry(Block.class);
         List<ResourcePath> pathList = new ArrayList<>();

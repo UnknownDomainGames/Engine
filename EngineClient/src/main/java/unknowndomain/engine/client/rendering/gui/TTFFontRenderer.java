@@ -117,7 +117,7 @@ class TTFFontRenderer {
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder builder = tessellator.getBuffer();
             builder.begin(GL_QUADS, true, true, true, false);
-            for (int i = 0; i < text.length();) {
+            for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, charPointBuffer);
 
                 int charPoint = charPointBuffer.get(0);
@@ -130,29 +130,17 @@ class TTFFontRenderer {
                     posX.put(0, posX.get(0)
                             + stbtt_GetCodepointKernAdvance(fontinfo, charPoint, charPointBuffer.get(0)) * scale);
                 }
-                // System.out.println(stbQuad.x0() + " " + stbQuad.y0() + " " + stbQuad.x1() + "
-                // " + stbQuad.y1());
                 float x0 = scale(centerX, stbQuad.x0(), factorX), x1 = scale(centerX, stbQuad.x1(), factorX),
                         y0 = scale(centerY, stbQuad.y0(), factorY), y1 = scale(centerY, stbQuad.y1(), factorY);
-                System.out.println(factorX);
-                System.out.println(x);
-                System.out.println(x0 + " " + x1 + " " + y0 + " " + y1);
-                // System.out.println(stbQuad.s0() + " " + stbQuad.t0() + " " + stbQuad.s1() + "
-                // " + stbQuad.t1());
                 builder.pos(x0, y0, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t0()).endVertex();
                 builder.pos(x0, y1, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t1()).endVertex();
                 builder.pos(x1, y1, 0).color(r, g, b, a).tex(stbQuad.s1(), stbQuad.t1()).endVertex();
                 builder.pos(x1, y0, 0).color(r, g, b, a).tex(stbQuad.s1(), stbQuad.t0()).endVertex();
-                // builder.pos(x0, y0, 0).color(r, g, b, a).tex(0, 0).endVertex();
-                // builder.pos(x0, y1, 0).color(r, g, b, a).tex(0, 1).endVertex();
-                // builder.pos(x1, y1, 0).color(r, g, b, a).tex(1, 1).endVertex();
-                // builder.pos(x1, y0, 0).color(r, g, b, a).tex(1, 0).endVertex();
-            }
-            // System.out.println();
 
+            }
             tessellator.draw();
 
-            renderLineBoundingBox(text, 0, text.length(), x, y + fontHeight, scale, fontHeight);
+//            renderLineBoundingBox(text, 0, text.length(), x, y + fontHeight, scale, fontHeight);
         }
     }
 

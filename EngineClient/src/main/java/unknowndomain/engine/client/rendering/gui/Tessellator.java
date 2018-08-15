@@ -28,8 +28,8 @@ class Tessellator {
     public void setShaderId(int shaderId) {
         this.shaderId = shaderId;
 
-//        int status = GL31.glGetUniformBlockIndex(shaderId, "VertexStatus");
-//        GL31.glUniformBlockBinding(shaderId, status, 0);
+//        int status = GL31.glGetUniformBlockIndex(programId, "VertexStatus");
+//        GL31.glUniformBlockBinding(programId, status, 0);
 //        GL30.glBindBufferBase(GL31.GL_UNIFORM_BUFFER, 2, vertexStatusBufId);
     }
 

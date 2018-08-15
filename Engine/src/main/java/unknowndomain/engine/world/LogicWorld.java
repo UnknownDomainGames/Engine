@@ -153,9 +153,9 @@ public class LogicWorld implements World {
             if (Integer.MAX_VALUE != yFix)
                 motion.y = 0;
             if (Integer.MAX_VALUE != zFix) {
-                System.out.println(zFix);
-                motion.z += directionZ > 0 ? -zFix : zFix;
-                // motion.z = 0;
+//                System.out.println(zFix);
+//                motion.z += directionZ > 0 ? -zFix : zFix;
+                motion.z = 0;
             }
 //                motion.z += directionZ > 0 ? -zFix : zFix;
 
