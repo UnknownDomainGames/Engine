@@ -49,46 +49,47 @@ public class ModelToMeshNode implements Pipeline.Node {
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.to[Z];
-            uv[uvIndex++] = thisUv[0];
-            uv[uvIndex++] = thisUv[1];
-
-            vertices[vertIndex++] = element.from[X];
-            vertices[vertIndex++] = element.to[Y];
-            vertices[vertIndex++] = element.to[Z];
-            uv[uvIndex++] = thisUv[0];
-            uv[uvIndex++] = thisUv[3];
-
-            vertices[vertIndex++] = element.to[X];
-            vertices[vertIndex++] = element.to[Y];
-            vertices[vertIndex++] = element.to[Z];
             uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[3];
 
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.from[Y];
+            vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[0];
+            uv[uvIndex++] = thisUv[3];
+
+            vertices[vertIndex++] = element.to[X];
+            vertices[vertIndex++] = element.to[Y];
+            vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[0];
+            uv[uvIndex++] = thisUv[1];
+            
+
+            vertices[vertIndex++] = element.from[X];
+            vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.to[Z];
             uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[1];
 
             // south
             thisUv = element.faces.south.uv;
-            vertices[vertIndex++] = element.to[X];
-            vertices[vertIndex++] = element.from[Y];
-            vertices[vertIndex++] = element.from[Z];
-            uv[uvIndex++] = thisUv[0];
-            uv[uvIndex++] = thisUv[1];
-
-            vertices[vertIndex++] = element.to[X];
-            vertices[vertIndex++] = element.to[Y];
-            vertices[vertIndex++] = element.from[Z];
-            uv[uvIndex++] = thisUv[0];
-            uv[uvIndex++] = thisUv[3];
-
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[3];
+
+            vertices[vertIndex++] = element.to[X];
+            vertices[vertIndex++] = element.to[Y];
+            vertices[vertIndex++] = element.from[Z];
+            uv[uvIndex++] = thisUv[0];
+            uv[uvIndex++] = thisUv[3];
+
+            vertices[vertIndex++] = element.to[X];
+            vertices[vertIndex++] = element.from[Y];
+            vertices[vertIndex++] = element.from[Z];
+            uv[uvIndex++] = thisUv[0];
+            uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.from[Y];
@@ -102,46 +103,47 @@ public class ModelToMeshNode implements Pipeline.Node {
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.from[Z];
-            uv[uvIndex++] = thisUv[0];
-            uv[uvIndex++] = thisUv[1];
-
-            vertices[vertIndex++] = element.from[X];
-            vertices[vertIndex++] = element.to[Y];
-            vertices[vertIndex++] = element.from[Z];
-            uv[uvIndex++] = thisUv[0];
-            uv[uvIndex++] = thisUv[3];
-
-            vertices[vertIndex++] = element.from[X];
-            vertices[vertIndex++] = element.to[Y];
-            vertices[vertIndex++] = element.to[Z];
             uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[3];
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[0];
+            uv[uvIndex++] = thisUv[3];
+
+            vertices[vertIndex++] = element.from[X];
+            vertices[vertIndex++] = element.to[Y];
+            vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[0];
+            uv[uvIndex++] = thisUv[1];
+            
+
+            vertices[vertIndex++] = element.from[X];
+            vertices[vertIndex++] = element.to[Y];
+            vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[1];
 
             // right
             thisUv = element.faces.east.uv;
             vertices[vertIndex++] = element.to[X];
-            vertices[vertIndex++] = element.from[Y];
-            vertices[vertIndex++] = element.to[Z];
-            uv[uvIndex++] = thisUv[0];
-            uv[uvIndex++] = thisUv[1];
-
-            vertices[vertIndex++] = element.to[X];
-            vertices[vertIndex++] = element.to[Y];
-            vertices[vertIndex++] = element.to[Z];
-            uv[uvIndex++] = thisUv[0];
-            uv[uvIndex++] = thisUv[3];
-
-            vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.to[Y];
             vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[3];
+
+            vertices[vertIndex++] = element.to[X];
+            vertices[vertIndex++] = element.to[Y];
+            vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[0];
+            uv[uvIndex++] = thisUv[3];
+
+            vertices[vertIndex++] = element.to[X];
+            vertices[vertIndex++] = element.from[Y];
+            vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[0];
+            uv[uvIndex++] = thisUv[1];
 
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.from[Y];
