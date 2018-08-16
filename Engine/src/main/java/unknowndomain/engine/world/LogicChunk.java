@@ -57,9 +57,9 @@ public class LogicChunk implements Chunk {
     }
 
     @Override
-    public void setBlock(BlockPos pos, Block destBlock) {
+    public Block setBlock(BlockPos pos, Block destBlock) {
         if (pos.getY() < 0) {
-            return;
+            return context.getBlockRegistry().getValue(0);
         }
         int x = pos.getX() & 0xF;
         int y = pos.getY() & 0xF;
@@ -79,9 +79,15 @@ public class LogicChunk implements Chunk {
             id = context.getBlockRegistry().getId(destBlock);
         }
 
+        if (prev == null) {
+            prev = context.getBlockRegistry().getValue(data[pos.getY() >> 4][(x << 8) | (y << 4) | z]);
+        }
+
         data[pos.getY() >> 4][(x << 8) | (y << 4) | z] = id;
 
         context.post(new BlockChange(pos, id));
+
+        return prev;
     }
 
     public void addEntity(Entity entity) {

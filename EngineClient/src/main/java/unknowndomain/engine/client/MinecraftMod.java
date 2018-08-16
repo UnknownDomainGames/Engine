@@ -1,5 +1,8 @@
 package unknowndomain.engine.client;
 
+import io.netty.util.collection.LongObjectHashMap;
+import io.netty.util.collection.LongObjectMap;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockBuilder;
@@ -21,17 +24,43 @@ import unknowndomain.engine.item.Item;
 import unknowndomain.engine.item.ItemBuilder;
 import unknowndomain.engine.item.ItemPrototype;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.registry.IdentifiedRegistry;
 import unknowndomain.engine.registry.Registry;
+import unknowndomain.engine.world.Chunk;
+import unknowndomain.engine.world.LogicChunk;
 import unknowndomain.engine.world.World;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public class MinecraftMod {
     private GLTexture textureMap;
     private GLMesh[] meshRegistry;
+
+    class ChunkProvider0 implements Chunk.Provider {
+        // should do the io operation to load chunk
+        private LongObjectMap<Chunk> chunks = new LongObjectHashMap<>();
+        private LogicChunk EMPTY = new LogicChunk(null);
+
+        @Override
+        public Collection<Chunk> getChunks() {
+            return chunks.values();
+        }
+
+        @NonNull
+        @Override
+        public Chunk getChunk(@NonNull GameContext gameContext, @NonNull BlockPos pos) {
+            ChunkPos chunkPos = pos.toChunk();
+            long cp = (long) chunkPos.getChunkX() << 32 | chunkPos.getChunkZ();
+            Chunk chunk = this.chunks.get(cp);
+            if (chunk != null)
+                return chunk;
+            return EMPTY;
+        }
+    }
 
     void setupRender(GameContext context, ResourceManager manager, RendererGlobal renderer) throws Exception {
         Pipeline pipeline = new Pipeline(manager);

@@ -69,7 +69,7 @@ public class EngineClient implements Engine {
         SimpleRegistryManager registryManager = new SimpleRegistryManager(
                 ImmutableMap.<Class<?>, Registry<?>>builder().put(Block.class, new SimpleIdentifiedRegistry<>())
                         .put(Item.class, new SimpleIdentifiedRegistry<>()).build());
-        context = new GameContext(registryManager, new AsmEventBus());
+        context = new GameContext(registryManager, new AsmEventBus(), nextTick);
         actionManager = new ActionManagerImpl(context);
     }
 

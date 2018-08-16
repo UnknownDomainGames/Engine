@@ -7,13 +7,17 @@ import unknowndomain.engine.item.Item;
 import unknowndomain.engine.registry.IdentifiedRegistry;
 import unknowndomain.engine.registry.RegistryManager;
 
+import java.util.List;
+
 public class GameContext implements EventBus {
     private RegistryManager manager;
     private EventBus bus;
+    private List<Runnable> nextTick;
 
-    public GameContext(RegistryManager manager, EventBus bus) {
+    public GameContext(RegistryManager manager, EventBus bus, List<Runnable> nextTick) {
         this.manager = manager;
         this.bus = bus;
+        this.nextTick = nextTick;
     }
 
     public RegistryManager getManager() {
@@ -41,5 +45,9 @@ public class GameContext implements EventBus {
     @Override
     public void unregister(Object listener) {
         bus.unregister(listener);
+    }
+
+    public void nextTick(Runnable runnable) {
+        nextTick.add(runnable);
     }
 }

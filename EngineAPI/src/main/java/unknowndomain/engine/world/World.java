@@ -1,21 +1,29 @@
 package unknowndomain.engine.world;
 
 import org.joml.Vector3f;
+import unknowndomain.engine.Entity;
 import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.math.BlockPos;
 
+import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Set;
 
 public interface World extends RuntimeObject {
-    BlockPrototype.Hit rayHit(Vector3f from, Vector3f dir, float distance);
+    List<Entity> getEntities();
 
-    BlockPrototype.Hit rayHit(Vector3f from, Vector3f dir, float distance, Set<Block> ignore);
+    BlockPrototype.Hit raycast(Vector3f from, Vector3f dir, float distance);
 
-    Chunk getChunk(int x, int z);
+    BlockPrototype.Hit raycast(Vector3f from, Vector3f dir, float distance, Set<Block> ignore);
 
-    Block getBlock(BlockPos pos);
+//    @Nonnull
+//    Chunk getChunk(int x, int z);
 
-    Block setBlock(BlockPos pos, Block block);
+    @Nonnull
+    Block getBlock(@Nonnull BlockPos pos);
+
+    @Nonnull
+    Block setBlock(@Nonnull BlockPos pos, Block block);
 }

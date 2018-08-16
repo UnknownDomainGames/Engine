@@ -1,10 +1,12 @@
 package unknowndomain.engine.world;
 
 import unknowndomain.engine.Entity;
+import unknowndomain.engine.GameContext;
 import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.math.BlockPos;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,11 +36,11 @@ public interface Chunk extends RuntimeObject {
      * @param y y-coordinate of the block related to chunk coordinate system
      * @param z z-coordinate of the block related to chunk coordinate system
      */
-    default void setBlock(int x, int y, int z, Block destBlock) {
-        setBlock(new BlockPos(x, y, z), destBlock);
+    default Block setBlock(int x, int y, int z, Block destBlock) {
+        return setBlock(new BlockPos(x, y, z), destBlock);
     }
 
-    void setBlock(BlockPos pos, Block destBlock);
+    Block setBlock(BlockPos pos, Block destBlock);
 
     int DEFAULT_X_SIZE = 16;
     int DEFAULT_Y_SIZE = 256;
@@ -56,4 +58,10 @@ public interface Chunk extends RuntimeObject {
         return DEFAULT_Z_SIZE;
     }
 
+    interface Provider {
+        Collection<Chunk> getChunks();
+
+        @Nonnull
+        Chunk getChunk(@Nonnull GameContext gameContext, @Nonnull BlockPos pos);
+    }
 }

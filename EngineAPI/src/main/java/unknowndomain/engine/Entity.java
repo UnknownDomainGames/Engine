@@ -10,6 +10,8 @@ public interface Entity extends RuntimeObject, Tickable {
 
     Vector3f getPosition();
 
+    Vector3f getRotation();
+
     Vector3f getMotion();
 
     AABBd getBoundingBox();

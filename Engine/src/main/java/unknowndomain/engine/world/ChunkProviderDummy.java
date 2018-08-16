@@ -1,12 +1,14 @@
 package unknowndomain.engine.world;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
 
-public class ChunkProviderDummy implements ChunkProvider {
+public class ChunkProviderDummy implements Chunk.Provider {
+    @NonNull
     @Override
-    public Chunk provideChunk(GameContext context, BlockPos pos) {
+    public Chunk getChunk(@NonNull GameContext context, @NonNull BlockPos pos) {
         LogicChunk chunk = new LogicChunk(context);
         System.out.println("CREATE CHUNK");
 

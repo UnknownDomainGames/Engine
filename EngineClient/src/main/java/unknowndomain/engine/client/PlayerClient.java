@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.joml.AABBd;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import unknowndomain.engine.GameContext;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.display.Camera;
@@ -43,6 +44,11 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
     }
 
     @Override
+    public Vector3f getRotation() {
+        return camera.getFrontVector();
+    }
+
+    @Override
     public UUID getUUID() {
         return null;
     }
@@ -61,7 +67,7 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
         list.addAll(Lists.newArrayList(
                 Action.builder("player.mouse.right").setStartHandler((c) -> {
                     LogicWorld world = UnknownDomain.getEngine().getWorld();
-                    BlockPrototype.Hit hit = world.rayHit(camera.getPosition(), camera.getFrontVector(), 5);
+                    BlockPrototype.Hit hit = world.raycast(camera.getPosition(), camera.getFrontVector(), 5);
                     if (mainHand != null) {
                         if (hit != null) {
                             mainHand.onUseBlockStart(world, this, mainHand, hit);
@@ -77,7 +83,7 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
                 }).build(),
                 Action.builder("player.mouse.left").setStartHandler((c) -> {
                     LogicWorld world = UnknownDomain.getEngine().getWorld();
-                    BlockPrototype.Hit hit = world.rayHit(camera.getPosition(), camera.getFrontVector(), 5);
+                    BlockPrototype.Hit hit = world.raycast(camera.getPosition(), camera.getFrontVector(), 5);
                     if (mainHand != null) {
                         if (hit != null) {
                             world.setBlock(hit.position, null);
@@ -137,7 +143,7 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
     }
 
     @Override
-    public void tick() {
+    public void tick(GameContext context) {
 //        UnknownDomain.getEngine().getWorld().getBlock();
 //        camera.move(motion.x, motion.y, motion.z); // this should not be here...
     }

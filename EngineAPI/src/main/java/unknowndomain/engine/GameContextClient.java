@@ -8,7 +8,7 @@ public class GameContextClient extends GameContext {
     private Player player;
 
     public GameContextClient(RegistryManager manager, EventBus bus, Player player) {
-        super(manager, bus);
+        super(manager, bus, nextTick);
         this.player = player;
     }
 

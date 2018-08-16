@@ -89,7 +89,7 @@ public class RendererGui extends RendererShaderProgram {
         AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
 
         LogicWorld world = UnknownDomain.getEngine().getWorld();
-        BlockPrototype.Hit hit = world.rayHit(context.getCamera().getPosition(),
+        BlockPrototype.Hit hit = world.raycast(context.getCamera().getPosition(),
                 context.getCamera().getFrontVector(), 5);
         if (hit != null) {
 

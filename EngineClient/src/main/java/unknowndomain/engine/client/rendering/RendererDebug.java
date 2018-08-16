@@ -60,16 +60,10 @@ public class RendererDebug extends RendererShaderProgramCommon {
         Shader.setUniform(u_View, context.getCamera().view());
 
         texture.bind();
-        Shader.setUniform(u_Model, new Matrix4f().setTranslation(1, 1, 1));
-
-        // for (GLMesh mesh : meshRegistry) {
-        // if (mesh != null)
-        // mesh.render();
-        // }
         Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
         textureMap.render();
 
-        BlockPrototype.Hit hit = UnknownDomain.getEngine().getWorld().rayHit(context.getCamera().getPosition(),
+        BlockPrototype.Hit hit = UnknownDomain.getEngine().getWorld().raycast(context.getCamera().getPosition(),
                 context.getCamera().getFrontVector(), 5);
 
         loadChunk.forEach((pos, chunk) -> {
@@ -135,7 +129,7 @@ public class RendererDebug extends RendererShaderProgramCommon {
 
     @Listener
     public void handleBlockChange(LogicChunk.BlockChange event) {
-        System.out.println("BLOCK CHANGE");
+        Platform.getLogger().info("BLOCK CHANGE");
         BlockPos pos = event.pos;
         ChunkPos cp = pos.toChunk();
         // RenderChunk chunk = loadChunk.get(cp.compact());
@@ -147,7 +141,7 @@ public class RendererDebug extends RendererShaderProgramCommon {
 
         int yIndex = (pos.getY() & 255) >> 4;
         int xIndex = pos.pack();
-        System.out.println(pos + " -> " + xIndex);
+        Platform.getLogger().info(pos + " -> " + xIndex);
 
         chunk.blocks[yIndex][xIndex] = event.blockId;
         if (event.blockId != 0 && !chunk.valid[yIndex]) {
@@ -156,8 +150,8 @@ public class RendererDebug extends RendererShaderProgramCommon {
     }
 
     public void init(ResourceManager resourceManager) throws IOException {
-        createShader(Shader.create(resourceManager.load(vertexShader()).cache(), ShaderType.VERTEX_SHADER),
-                Shader.create(resourceManager.load(fragmentShader()).cache(), ShaderType.FRAGMENT_SHADER));
+        createShader(Shader.create(resourceManager.load(new ResourcePath("", "unknowndomain/shader/common.vert")).cache(), ShaderType.VERTEX_SHADER),
+                Shader.create(resourceManager.load(new ResourcePath("", "unknowndomain/shader/common.frag")).cache(), ShaderType.FRAGMENT_SHADER));
         useProgram();
         u_Projection = getUniformLocation("u_ProjMatrix");
         u_View = getUniformLocation("u_ViewMatrix");
@@ -169,8 +163,6 @@ public class RendererDebug extends RendererShaderProgramCommon {
         super.useProgram();
 
         GL11.glEnable(GL11.GL_CULL_FACE);
-//        GL11.glFrontFace(GL11.GL_CW);
-//        GL11.glCullFace(GL11.GL_BACK);
     }
 
     @Override
@@ -198,13 +190,5 @@ public class RendererDebug extends RendererShaderProgramCommon {
                 valid[i] = none;
             }
         }
-    }
-
-    protected ResourcePath vertexShader() {
-        return new ResourcePath("", "unknowndomain/shader/common.vert");
-    }
-
-    protected ResourcePath fragmentShader() {
-        return new ResourcePath("", "unknowndomain/shader/common.frag");
     }
 }

@@ -1,5 +1,5 @@
 package unknowndomain.engine;
 
 public interface Tickable {
-    void tick();
+    void tick(GameContext context);
 }
