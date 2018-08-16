@@ -63,7 +63,7 @@ public class ModelToMeshNode implements Pipeline.Node {
             vertices[vertIndex++] = element.to[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
-            
+
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.to[Y];
@@ -117,7 +117,7 @@ public class ModelToMeshNode implements Pipeline.Node {
             vertices[vertIndex++] = element.to[Z];
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
-            
+
 
             vertices[vertIndex++] = element.from[X];
             vertices[vertIndex++] = element.to[Y];
@@ -160,24 +160,23 @@ public class ModelToMeshNode implements Pipeline.Node {
             uv[uvIndex++] = thisUv[0];
             uv[uvIndex++] = thisUv[1];
 
-            vertices[vertIndex++] = element.from[X];
-            vertices[vertIndex++] = element.from[Y];
-            vertices[vertIndex++] = element.to[Z];
-            uv[uvIndex++] = thisUv[0];
-            uv[uvIndex++] = thisUv[3];
-
-            vertices[vertIndex++] = element.to[X];
-            vertices[vertIndex++] = element.from[Y];
-            vertices[vertIndex++] = element.to[Z];
-            uv[uvIndex++] = thisUv[2];
-            uv[uvIndex++] = thisUv[3];
-
             vertices[vertIndex++] = element.to[X];
             vertices[vertIndex++] = element.from[Y];
             vertices[vertIndex++] = element.from[Z];
             uv[uvIndex++] = thisUv[2];
             uv[uvIndex++] = thisUv[1];
 
+            vertices[vertIndex++] = element.to[X];
+            vertices[vertIndex++] = element.from[Y];
+            vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[2];
+            uv[uvIndex++] = thisUv[3];
+
+            vertices[vertIndex++] = element.from[X];
+            vertices[vertIndex++] = element.from[Y];
+            vertices[vertIndex++] = element.to[Z];
+            uv[uvIndex++] = thisUv[0];
+            uv[uvIndex++] = thisUv[3];
 
             // top
             thisUv = element.faces.up.uv;
