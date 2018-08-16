@@ -130,7 +130,6 @@ public class RendererDebug extends RendererShaderProgramCommon {
         System.out.println("CHUNK LOAD");
         ChunkPos pos = event.pos;
         RenderChunk chunk = new RenderChunk(event.blocks);
-        // loadChunk.put(pos.compact(), chunk);
         loadChunk.put(pos, chunk);
     }
 

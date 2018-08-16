@@ -22,9 +22,7 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
     private Camera camera;
     private MoveSystem moveSystem = new MoveSystem();
     private Vector3f motion = new Vector3f(0, 0, 0);
-    //    private AABBd boundingBox = new AABBd(-0.4, -0.5, -0.4, 0.4, 0.5, 0.4);
-    private AABBd boundingBox = new AABBd(-0.5, -2, -0.5, 0.5, 0, 0.5);
-    //    private AABBd boundingBox = new AABBd(-10, -10, -10, 10, 10, 10);
+    private AABBd boundingBox = new AABBd(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
     private Item mainHand;
 
 
@@ -61,26 +59,6 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
     public List<Action> getActions() {
         List<Action> list = moveSystem.getActions();
         list.addAll(Lists.newArrayList(
-                Action.builder("player.debug.addZ").setStartHandler(c -> {
-                    this.boundingBox.minZ += 0.05;
-                    this.boundingBox.maxZ += 0.05;
-                    System.out.println(this.boundingBox.minZ);
-                }).build(),
-                Action.builder("player.debug.subZ").setStartHandler(c -> {
-                    this.boundingBox.minZ -= 0.05;
-                    this.boundingBox.maxZ -= 0.05;
-                    System.out.println(this.boundingBox.minZ);
-                }).build(),
-                Action.builder("player.debug.addX").setStartHandler(c -> {
-                    this.boundingBox.minX += 0.05;
-                    this.boundingBox.maxX += 0.05;
-                    System.out.println(this.boundingBox.minX);
-                }).build(),
-                Action.builder("player.debug.subX").setStartHandler(c -> {
-                    this.boundingBox.minX -= 0.05;
-                    this.boundingBox.maxX -= 0.05;
-                    System.out.println(this.boundingBox.minX);
-                }).build(),
                 Action.builder("player.mouse.right").setStartHandler((c) -> {
                     LogicWorld world = UnknownDomain.getEngine().getWorld();
                     BlockPrototype.Hit hit = world.rayHit(camera.getPosition(), camera.getFrontVector(), 5);
