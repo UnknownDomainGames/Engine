@@ -91,5 +91,41 @@ There could be sub-named blocks and items. For block, it might be produced by co
 - face culling
     - https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
     - http://www.lighthouse3d.com/tutorials/view-frustum-culling/
-    
+
+#### RenderChunk 
+
+A block model **A** has N vertices, then it vertex length is N * 3
+
+[x0 y0 z0 x1 y1 z1 ... xn yn zn]
+
+Bake the chunk as combination of block model:
+
+blockAt (0,0,0) (0,0,1) ....
+
+[x0 y0 z0 x1 y1 z1 ... xn yn zn] [x0 y0 z0 x1 y1 z1 ... xn yn zn] ...
+
+Suppose `len(m)` is the vertices count of model `m`. 
+
+We maintains a summed list `L` where `L[x] = L[x - 1] + len(model at index x)`
+
+When a block is changed in chunk, we update the render chunk data by swap the block vertex:
+
+Suppose the block at position `(x, y, z)` changed,
+
+```java
+float[] newVertices; // passed by param
+int index = (x & 0xF) < 8 | (y & 0xF) < 4 | (z & 0xF);
+int leftSum = L[index - 1];
+int rightSum = L[index];
+int totalLength = L[(0xF) < 8 | (0xF) < 4 | (0xF)];
+
+int newRightSum = leftSum + newVertices.length;
+int oldVerticesCount = rightSum - leftSum;
+
+// these are not real gl commands
+// shift the right vertices
+glCopy(rightSum, newRightSum, totalLength - rightSum);
+// upload the new block vertices to the correct position
+glUpload(newVertices, leftSum);
+```
 
