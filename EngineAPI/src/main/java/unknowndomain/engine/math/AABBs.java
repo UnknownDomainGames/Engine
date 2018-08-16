@@ -22,6 +22,7 @@ public class AABBs {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public static List<BlockPos>[] around(AABBd aabb, Vector3f movement) {
         List<BlockPos>[] offsets = new List[3];
         for (int i = 0; i < offsets.length; i++) {
