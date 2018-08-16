@@ -27,31 +27,38 @@ public class AABBs {
         for (int i = 0; i < offsets.length; i++) {
             offsets[i] = new ArrayList<>();
         }
+        aabb = translate(aabb, movement, new AABBd());
 
         int directionX = movement.x == -0 ? 0 : Float.compare(movement.x, 0),
                 directionY = movement.y == -0 ? 0 : Float.compare(movement.y, 0),
                 directionZ = movement.z == -0 ? 0 : Float.compare(movement.z, 0);
+        int minX = (int) Math.floor(aabb.minX),
+            minY = (int) Math.floor(aabb.minY),
+            minZ = (int) Math.floor(aabb.minZ),
+            maxX = (int) Math.floor(aabb.maxX),
+            maxY = (int) Math.floor(aabb.maxY),
+            maxZ = (int) Math.floor(aabb.maxZ);
 
         if (directionX != 0) {
-            double src = directionX == -1 ? aabb.maxX : directionX == 1 ? aabb.minX : 0;
-            for (double i = aabb.minZ; i <= aabb.maxZ; i++)
-                for (double j = aabb.minY; j <= aabb.maxY; j++)
+            double src = directionX == -1 ? minX : directionX == 1 ? maxX : 0;
+            for (double i = minZ; i <= maxZ; i++)
+                for (double j = minY; j <= maxY; j++)
                     offsets[0].add(
-                            new BlockPos((int) Math.floor(src + directionX), (int) Math.floor(j), (int) Math.floor(i)));
+                            new BlockPos((int) Math.floor(src), (int) Math.floor(j), (int) Math.floor(i)));
         }
         if (directionY != 0) {
-            double src = directionY == -1 ? aabb.maxY : directionY == 1 ? aabb.minY : 0;
-            for (double i = aabb.minZ; i <= aabb.maxZ; i++)
-                for (double j = aabb.minX; j <= aabb.maxX; j++)
+            double src = directionY == -1 ? minY : directionY == 1 ? maxY : 0;
+            for (double i = minZ; i <= maxZ; i++)
+                for (double j = minX; j <= maxX; j++)
                     offsets[1].add(
-                            new BlockPos((int) Math.floor(j), (int) Math.floor(src + directionY), (int) Math.floor(i)));
+                            new BlockPos((int) Math.floor(j), (int) Math.floor(src), (int) Math.floor(i)));
         }
         if (directionZ != 0) {
-            double src = directionZ == -1 ? aabb.maxZ : directionZ == 1 ? aabb.minZ : 0;
-            for (double i = aabb.minY; i <= aabb.maxY; i++)
-                for (double j = aabb.minX; j <= aabb.maxX; j++)
+            double src = directionZ == -1 ? minZ : directionZ == 1 ? maxZ : 0;
+            for (double i = minY; i <= maxY; i++)
+                for (double j = minX; j <= maxX; j++)
                     offsets[2].add(
-                            new BlockPos((int) Math.floor(j), (int) Math.floor(i), (int) Math.floor(src + directionZ)));
+                            new BlockPos((int) Math.floor(j), (int) Math.floor(i), (int) Math.floor(src)));
         }
         return offsets;
     }

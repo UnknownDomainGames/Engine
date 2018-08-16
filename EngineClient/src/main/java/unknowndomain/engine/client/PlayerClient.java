@@ -23,7 +23,7 @@ public class PlayerClient implements unknowndomain.engine.entity.Player {
     private MoveSystem moveSystem = new MoveSystem();
     private Vector3f motion = new Vector3f(0, 0, 0);
     //    private AABBd boundingBox = new AABBd(-0.4, -0.5, -0.4, 0.4, 0.5, 0.4);
-    private AABBd boundingBox = new AABBd(0, -1, 0, 1, 1, 1);
+    private AABBd boundingBox = new AABBd(-0.5, -2, -0.5, 0.5, 0, 0.5);
     //    private AABBd boundingBox = new AABBd(-10, -10, -10, 10, 10, 10);
     private Item mainHand;
 
