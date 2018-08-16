@@ -1,12 +1,14 @@
 package unknowndomain.engine.mod;
 
-import java.io.File;
+import unknowndomain.engine.mod.java.JavaModLoader;
+
+import java.nio.file.Paths;
 import java.util.List;
 
 public class SimpleModManager implements ModManager {
 
 	//TODO: receive home directory of the game and direct to mods folder
-	private JavaModLoader javaModLoader = new JavaModLoader(new File("/mods/").toPath());
+	private JavaModLoader javaModLoader = new JavaModLoader(Paths.get("mods"));
 
 	@Override
 	public ModContainer getMod(String modId) {

@@ -17,6 +17,7 @@ public class ModClassLoader extends URLClassLoader {
 	public ModClassLoader(ModContainer mod, ClassLoader parent) {
 		super(new URL[0], parent);
 		this.mod = mod;
+		addPath(mod.getSource());
 	}
 	
 	public ModContainer getMod() {
