@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.model;
 
+import com.google.common.collect.Lists;
 import org.lwjgl.system.MemoryUtil;
 import unknowndomain.engine.client.resource.Pipeline;
 
@@ -17,12 +18,18 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 public class MeshToGLNode implements Pipeline.Node {
     @Override
     public Object process(Pipeline.Context context, Object in) {
-        List<Mesh> meshes = (List<Mesh>) in;
-        List<GLMesh> glMeshes = new ArrayList<>();
-        for (Mesh mesh : meshes) {
-            glMeshes.add(convert(mesh));
+        if (in instanceof Mesh) {
+            return convert((Mesh) in);
+        } else if (in instanceof List) {
+            List<Mesh> meshes = (List<Mesh>) in;
+            List<GLMesh> glMeshes = new ArrayList<>();
+            for (Mesh mesh : meshes) {
+                glMeshes.add(convert(mesh));
+            }
+            return glMeshes;
+        } else {
+            return new ArrayList<Mesh>();
         }
-        return glMeshes;
     }
 
     public GLMesh convert(Mesh t) {

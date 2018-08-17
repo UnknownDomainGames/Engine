@@ -10,12 +10,18 @@ import java.util.List;
 public class ModelToMeshNode implements Pipeline.Node {
     @Override
     public Object process(Pipeline.Context context, Object in) {
-        List<Model> models = (List<Model>) in;
-        List<Mesh> meshes = new ArrayList<>(models.size());
-        for (Model model : models) {
-            meshes.add(bakeModel(model));
+        if (in instanceof Model) {
+            return bakeModel((Model) in);
+        } else if (in instanceof List) {
+            List<Model> models = (List<Model>) in;
+            List<Mesh> meshes = new ArrayList<>(models.size());
+            for (Model model : models) {
+                meshes.add(bakeModel(model));
+            }
+            return meshes;
+        } else {
+            return new ArrayList<Model>();
         }
-        return meshes;
     }
 
     public Mesh bakeModel(Model model) {

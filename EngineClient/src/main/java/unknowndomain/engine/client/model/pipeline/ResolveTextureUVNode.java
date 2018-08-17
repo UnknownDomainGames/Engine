@@ -26,7 +26,14 @@ public class ResolveTextureUVNode implements Pipeline.Node {
     @Override
     public Object process(Pipeline.Context context, Object in) throws Exception {
         ResourceManager manager = context.manager();
-        List<Model> models = (List<Model>) in;
+        List<Model> models = new ArrayList<>();
+        if (in instanceof Model) {
+            models.add((Model) in);
+        } else if (in instanceof List) {
+            models = (List<Model>) in;
+        } else {
+            return models;
+        }
         Map<String, TexturePart> required = new HashMap<>();
         List<TexturePart> parts = Lists.newArrayList();
         for (Model model : models) {
@@ -103,6 +110,9 @@ public class ResolveTextureUVNode implements Pipeline.Node {
             while (!accepted) {
                 while (!queue.isEmpty()) {
                     FreeSpace free = queue.poll();
+                    if(free == null){
+                        break;
+                    }
                     if (free.accept(queue, part)) {
                         accepted = true;
                         break;

@@ -15,13 +15,19 @@ public class ResolveModelsNode implements Pipeline.Node {
     @Override
     public Object process(Pipeline.Context context, Object in) throws IOException {
         ResourceManager manager = context.manager();
-        List<ResourcePath> paths = (List<ResourcePath>) in;
-        List<Model> models = new ArrayList<>();
-        for (ResourcePath path : paths) {
-            Model loaded = load(manager, path);
-            models.add(loaded);
+        if (in instanceof ResourcePath) {
+            return load(manager, (ResourcePath) in);
+        } else if (in instanceof List) {
+            List<ResourcePath> paths = (List<ResourcePath>) in;
+            List<Model> models = new ArrayList<>();
+            for (ResourcePath path : paths) {
+                Model loaded = load(manager, path);
+                models.add(loaded);
+            }
+            return models;
+        } else {
+            return new ArrayList<Model>();
         }
-        return models;
     }
 
     private Model load(ResourceManager manager, ResourcePath path) throws IOException {
