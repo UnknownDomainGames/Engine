@@ -31,7 +31,7 @@ public class Texture2D extends RegistryEntry.Impl<Texture2D> {
     }
 
     public boolean loadImage(){
-        if(img != null){
+        if(img != null && !isLoaded()){
         loadImage(img);
         return true;
         }
@@ -76,7 +76,7 @@ public class Texture2D extends RegistryEntry.Impl<Texture2D> {
     }
 
     public void useTexture() {
-        if (texId != -1) {
+        if (isLoaded()) {
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
         }
     }
@@ -86,7 +86,7 @@ public class Texture2D extends RegistryEntry.Impl<Texture2D> {
     }
 
     public void unloadImage() {
-        if (texId != -1) {
+        if (isLoaded()) {
             GL11.glDeleteTextures(texId);
             texId = -1;
         }

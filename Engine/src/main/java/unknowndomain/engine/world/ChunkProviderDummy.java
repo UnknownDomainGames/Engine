@@ -5,11 +5,31 @@ import unknowndomain.engine.GameContext;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
 
+import java.util.*;
+
 public class ChunkProviderDummy implements Chunk.Provider {
+
+    private Map<ChunkPos, Chunk> chunks;
+
+    public ChunkProviderDummy(){
+        chunks = new HashMap<>();
+    }
+
+    @Override
+    public Collection<Chunk> getChunks() {
+        return chunks.values();
+    }
+
     @NonNull
     @Override
     public Chunk getChunk(@NonNull GameContext context, @NonNull BlockPos pos) {
+        ChunkPos chunkPos = pos.toChunk();
+        if(chunks.containsKey(chunkPos)){
+            return chunks.get(chunkPos);
+        }
+
         LogicChunk chunk = new LogicChunk(context);
+        chunks.put(chunkPos,chunk);
         System.out.println("CREATE CHUNK");
 
         int[][] data = new int[16][16 * 16 * 16];
@@ -22,8 +42,6 @@ public class ChunkProviderDummy implements Chunk.Provider {
             }
         }
         chunk.data = data;
-
-        ChunkPos chunkPos = pos.toChunk();
         context.post(new LogicWorld.ChunkLoad(chunkPos, chunk.data));
         return chunk;
     }

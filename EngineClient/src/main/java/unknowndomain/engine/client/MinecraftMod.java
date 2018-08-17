@@ -14,6 +14,7 @@ import unknowndomain.engine.client.model.pipeline.ResolveModelsNode;
 import unknowndomain.engine.client.model.pipeline.ResolveTextureUVNode;
 import unknowndomain.engine.client.rendering.RendererDebug;
 import unknowndomain.engine.client.rendering.RendererGlobal;
+import unknowndomain.engine.client.rendering.RendererSkybox;
 import unknowndomain.engine.client.rendering.gui.RendererGui;
 import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.resource.ResourceManager;
@@ -89,6 +90,8 @@ public class MinecraftMod {
         debug.setMeshRegistry(meshRegistry);
         renderer.add(debug);
         context.register(debug);
+        RendererSkybox skybox = new RendererSkybox();
+        renderer.add(skybox);
 
         // v = new Shader(0, ShaderType.VERTEX_SHADER);
         // v.loadShader("assets/unknowndomain/shader/frame.vert");
