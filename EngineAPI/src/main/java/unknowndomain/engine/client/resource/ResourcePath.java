@@ -1,18 +1,16 @@
 package unknowndomain.engine.client.resource;
 
 import com.google.common.base.Strings;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang3.Validate;
-
 public class ResourcePath {
-
-    private String domain;
+    private String type;
     private String path;
 
-    public ResourcePath(String domain, @Nonnull String path) {
-        this.domain = Strings.nullToEmpty(domain);
+    public ResourcePath(String type, @Nonnull String path) {
+        this.type = Strings.nullToEmpty(type);
         this.path = Validate.notEmpty(path);
     }
 
@@ -21,21 +19,25 @@ public class ResourcePath {
 
         String args[] = resource.split(":", 2);
         if (args.length < 2) {
-            this.domain = "";
+            this.type = "";
             this.path = args[0];
         } else {
-            this.domain = args[0];
+            this.type = args[0];
             this.path = args[1];
         }
     }
 
-    @Nonnull
-    public String getDomain() {
-        return domain;
+    public static ResourcePath of(String type, @Nonnull String path) {
+        return new ResourcePath(type, path);
     }
 
-    protected void setDomain(@Nonnull String domain) {
-        this.domain = Validate.notEmpty(domain);
+    public static ResourcePath of(@Nonnull String path) {
+        return new ResourcePath(path);
+    }
+
+    @Nonnull
+    public String getType() {
+        return type;
     }
 
     @Nonnull
@@ -43,13 +45,9 @@ public class ResourcePath {
         return path;
     }
 
-    protected void setPath(@Nonnull String path) {
-        this.path = Validate.notEmpty(path);
-    }
-
     @Override
     public int hashCode() {
-        return domain.hashCode() * 31 + path.hashCode();
+        return type.hashCode() * 31 + path.hashCode();
     }
 
     @Override
@@ -61,7 +59,7 @@ public class ResourcePath {
 
         ResourcePath other = (ResourcePath) obj;
 
-        if (!domain.equals(other.domain))
+        if (!type.equals(other.type))
             return false;
         if (!path.equals(other.path))
             return false;
@@ -71,7 +69,7 @@ public class ResourcePath {
 
     @Override
     public String toString() {
-        return Strings.isNullOrEmpty(getDomain()) ? getPath() : getDomain() + ":" + getPath();
+        return Strings.isNullOrEmpty(getType()) ? getPath() : getType() + ":" + getPath();
     }
 
 }

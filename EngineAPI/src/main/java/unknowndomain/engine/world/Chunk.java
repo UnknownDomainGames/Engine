@@ -1,9 +1,8 @@
 package unknowndomain.engine.world;
 
-import unknowndomain.engine.Entity;
-import unknowndomain.engine.GameContext;
 import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
 
 import javax.annotation.Nonnull;
@@ -12,12 +11,12 @@ import java.util.List;
 
 public interface Chunk extends RuntimeObject {
     /**
-     * Get block in a specific location
+     * Get block in a specific path
      *
      * @param x x-coordinate of the block related to chunk coordinate system
      * @param y y-coordinate of the block related to chunk coordinate system
      * @param z z-coordinate of the block related to chunk coordinate system
-     * @return the block in the specified location
+     * @return the block in the specified path
      */
     default Block getBlock(int x, int y, int z) {
         return getBlock(new BlockPos(x, y, z));
@@ -25,12 +24,13 @@ public interface Chunk extends RuntimeObject {
 
     Collection<Block> getRuntimeBlock();
 
+    @Nonnull
     List<Entity> getEntities();
 
     Block getBlock(BlockPos pos);
 
     /**
-     * Set block in a specific location
+     * Set block in a specific path
      *
      * @param x x-coordinate of the block related to chunk coordinate system
      * @param y y-coordinate of the block related to chunk coordinate system
@@ -58,10 +58,24 @@ public interface Chunk extends RuntimeObject {
         return DEFAULT_Z_SIZE;
     }
 
-    interface Provider {
+    interface Store {
         Collection<Chunk> getChunks();
 
         @Nonnull
-        Chunk getChunk(@Nonnull GameContext gameContext, @Nonnull BlockPos pos);
+        Chunk getChunk(@Nonnull BlockPos pos);
+
+        /**
+         * Touch the chunk at the the position, ensure it loaded
+         *
+         * @param chunkPos
+         */
+        void touchChunk(@Nonnull BlockPos chunkPos);
+
+        /**
+         * Dispose the chunk at the position
+         *
+         * @param chunkPos
+         */
+        void discardChunk(@Nonnull BlockPos chunkPos);
     }
 }

@@ -38,7 +38,7 @@ public interface RegistryEntry<T> {
         @Override
         public String toString() {
             return token + "{" +
-                    "location='" + location + '\'' +
+                    "path='" + location + '\'' +
                     '}';
         }
     }

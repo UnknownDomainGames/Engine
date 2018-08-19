@@ -14,7 +14,7 @@ public abstract class ResourceBase implements Resource {
         this.location = location;
     }
 
-    public ResourcePath location() {
+    public ResourcePath path() {
         return location;
     }
 

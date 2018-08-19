@@ -2,20 +2,18 @@ package unknowndomain.engine.client.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
 public class ResourceSourceBuiltin implements ResourceSource {
     @Override
-    public Resource load(ResourcePath path) throws IOException {
-        String absPath = String.format("/assets/%s", path.getPath());
-        final URL url = ResourceSourceBuiltin.class.getResource(absPath);
-        if (url == null) return null;
-        return new ResourceBase(path) {
-            @Override
-            public InputStream open() throws IOException {
-                return url.openStream();
-            }
-        };
+    public boolean has(String path) {
+        String absPath = String.format("/assets/%s", path);
+        return ResourceSourceBuiltin.class.getResource(absPath) != null;
+    }
+
+    @Override
+    public InputStream open(String path) throws IOException {
+        String absPath = String.format("/assets/%s", path);
+        return ResourceSourceBuiltin.class.getResourceAsStream(absPath);
     }
 
     @Override

@@ -2,8 +2,8 @@ package unknowndomain.engine.block;
 
 import com.google.common.collect.ImmutableList;
 import org.joml.Vector3f;
-import unknowndomain.engine.Entity;
 import unknowndomain.engine.Prototype;
+import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.World;

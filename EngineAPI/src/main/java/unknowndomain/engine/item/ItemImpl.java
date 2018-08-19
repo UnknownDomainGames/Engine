@@ -1,6 +1,7 @@
 package unknowndomain.engine.item;
 
 import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.world.World;
@@ -20,8 +21,8 @@ class ItemImpl extends RegistryEntry.Impl<Item> implements Item {
     }
 
     @Override
-    public void onUseStart(World world, Player player, Item item) {
-        useBehavior.onUseStart(world, player, item);
+    public void onUseStart(World world, Entity entity, Item item) {
+        useBehavior.onUseStart(world, entity, item);
     }
 
     @Override
@@ -41,8 +42,8 @@ class ItemImpl extends RegistryEntry.Impl<Item> implements Item {
 
 
     @Override
-    public void onUseBlockStart(World world, Player player, Item item, BlockPrototype.Hit hit) {
-        useBlockBehavior.onUseBlockStart(world, player, item, hit);
+    public void onUseBlockStart(World world, Entity entity, Item item, BlockPrototype.Hit hit) {
+        useBlockBehavior.onUseBlockStart(world, entity, item, hit);
     }
 
     @Override

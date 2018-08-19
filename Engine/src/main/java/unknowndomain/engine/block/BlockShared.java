@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableTable;
 import org.joml.AABBd;
-import unknowndomain.engine.Entity;
+import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.world.World;

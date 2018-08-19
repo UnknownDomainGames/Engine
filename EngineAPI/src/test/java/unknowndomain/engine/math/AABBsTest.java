@@ -5,12 +5,27 @@ import org.joml.Vector3f;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class AABBsTest {
 
     @Test
     void translate() {
+        int radius = 2;
+        List<BlockPos> poses = new ArrayList<>();
+        BlockPos pos = BlockPos.of(0, 0, 0);
+        for (int i = -radius; i <= radius; i++) {
+            if (i <= 0) {
+                int zOff = i + radius;
+                for (int j = -zOff; j <= zOff; j++)
+                    poses.add(pos.add(i, 0, j));
+            } else {
+                int zOff = radius - i;
+                for (int j = -zOff; j <= zOff; j++)
+                    poses.add(pos.add(i, 0, j));
+            }
+        }
     }
 
     @Test

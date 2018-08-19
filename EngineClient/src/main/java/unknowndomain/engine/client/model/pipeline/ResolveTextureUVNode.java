@@ -1,24 +1,18 @@
 package unknowndomain.engine.client.model.pipeline;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.glGenerateMipmap;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-
 import com.google.common.collect.Lists;
-
 import de.matthiasmann.twl.utils.PNGDecoder;
-import unknowndomain.engine.client.texture.GLTextureMap;
 import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
+import unknowndomain.engine.client.texture.GLTextureMap;
+
+import java.nio.ByteBuffer;
+import java.util.*;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class ResolveTextureUVNode implements Pipeline.Node {
     private int dimension = 256;

@@ -1,16 +1,13 @@
 package unknowndomain.engine.client.rendering.gui;
 
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.client.resource.Texture2D;
 import unknowndomain.engine.client.util.BufferBuilder;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 
 class AWTFontRenderer {
@@ -24,14 +21,14 @@ class AWTFontRenderer {
     private int width;
 
 
-    private List<Texture2D> textures;
-//    private Texture2D texture;
+//    private List<TextureBufferedImage> textures;
+//    private TextureBufferedImage texture;
 
     public AWTFontRenderer(Font font, String charset) {
         this.font = font;
         this.charset = charset;
 
-        textures = new ArrayList<>();
+//        textures = new ArrayList<>();
         charMap = new HashMap<>();
         initTexture();
     }
@@ -78,7 +75,7 @@ class AWTFontRenderer {
                     g2d.drawString(String.valueOf(allChars.charAt(k1 * 256 + j1 * 16 + i1)), i1 * font.getSize(), metrics.getAscent() + j1 * metrics.getHeight());
                 }
             g2d.dispose();
-            textures.add(new Texture2D(img));
+//            textures.add(new TextureBufferedImage(img));
         }
     }
 
@@ -101,7 +98,7 @@ class AWTFontRenderer {
         for (int i = 0; i < text.length(); i++) {
             CharInfo info = charMap.get(text.charAt(i));
             if (lastpage != info.getPage()) {
-                textures.get(info.getPage()).useTexture();
+//                textures.get(info.getPage()).useTexture();
                 lastpage = info.getPage();
             }
             buffer.begin(GL11.GL_QUADS, true, true, true, false);
