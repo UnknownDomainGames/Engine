@@ -129,3 +129,6 @@ glCopy(rightSum, newRightSum, totalLength - rightSum);
 glUpload(newVertices, leftSum);
 ```
 
+### Render Progress Introduction
+
+http://fragmentbuffer.com/gpu-performance-for-game-artists/
