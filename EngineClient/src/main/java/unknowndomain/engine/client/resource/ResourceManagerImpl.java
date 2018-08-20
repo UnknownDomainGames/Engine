@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.resource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,9 +18,8 @@ public class ResourceManagerImpl implements ResourceManager {
     private Map<String, Resource> cache = new HashMap<>();
     private List<ResourceSource> sources = new ArrayList<>();
 
-
     private Resource putCache(Resource res) {
-        this.cache.put(res.location().toString(), res);
+        this.cache.put(res.path().toString(), res);
         return res;
     }
 
@@ -58,8 +58,13 @@ public class ResourceManagerImpl implements ResourceManager {
         if (cached != null) return cached;
 
         for (ResourceSource src : sources) {
-            Resource loaded = src.load(location);
-            if (loaded == null) continue;
+            if (!src.has(location.getPath())) continue;
+            Resource loaded = new ResourceBase(location) {
+                @Override
+                public InputStream open() throws IOException {
+                    return src.open(location.getPath());
+                }
+            };
             return this.putCache(loaded);
         }
 

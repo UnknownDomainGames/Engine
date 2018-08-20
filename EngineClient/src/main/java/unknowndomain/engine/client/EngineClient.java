@@ -1,6 +1,7 @@
 package unknowndomain.engine.client;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.GameContext;
@@ -10,10 +11,13 @@ import unknowndomain.engine.block.Block;
 import unknowndomain.engine.client.display.DefaultGameWindow;
 import unknowndomain.engine.client.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.keybinding.Keybindings;
+import unknowndomain.engine.client.player.FirstPersonController;
+import unknowndomain.engine.client.player.PlayerController;
 import unknowndomain.engine.client.rendering.RendererGlobal;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourceManagerImpl;
 import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
+import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.item.Item;
@@ -23,6 +27,9 @@ import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.SimpleIdentifiedRegistry;
 import unknowndomain.engine.registry.SimpleRegistryManager;
 import unknowndomain.engine.world.LogicWorld;
+
+import java.util.List;
+import java.util.UUID;
 
 public class EngineClient implements Engine {
 
@@ -44,8 +51,9 @@ public class EngineClient implements Engine {
     // private GameClientImpl game;
     private LogicWorld world;
     private Timer timer;
-    private PlayerClient player;
+    private PlayerController playerController = new FirstPersonController();
     private GameContext context;
+    private List<Runnable> nextTicks = Lists.newArrayList();
 
     EngineClient(int width, int height) {
         window = new DefaultGameWindow(this, width, height, UnknownDomain.getName());
@@ -55,8 +63,8 @@ public class EngineClient implements Engine {
         return context;
     }
 
-    public PlayerClient getPlayer() {
-        return player;
+    public PlayerController getController() {
+        return playerController;
     }
 
     public LogicWorld getWorld() {
@@ -69,14 +77,16 @@ public class EngineClient implements Engine {
         SimpleRegistryManager registryManager = new SimpleRegistryManager(
                 ImmutableMap.<Class<?>, Registry<?>>builder().put(Block.class, new SimpleIdentifiedRegistry<>())
                         .put(Item.class, new SimpleIdentifiedRegistry<>()).build());
-        context = new GameContext(registryManager, new AsmEventBus(), nextTick);
+        context = new GameContext(registryManager, new AsmEventBus(), this.nextTicks);
         actionManager = new ActionManagerImpl(context);
     }
 
     public void init() {
         window.init();
         setupContext();
+
         renderer = new RendererGlobal();
+        playerController.setCamera(renderer.getCamera());
 
         resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
@@ -98,15 +108,15 @@ public class EngineClient implements Engine {
         renderer.init(resourceManager);
 
         // new
-        world = new LogicWorld(context);
+        world = new LogicWorld(context, new MinecraftMod.ChunkStore0(context));
 
-        player = new PlayerClient(renderer.getCamera());
-        for (Action action : player.getActions()) {
+        Player player = world.playerJoin(new Player.Data(UUID.randomUUID(), 12));
+        playerController.setPlayer(player);
+        for (Action action : playerController.getActions()) {
             actionManager.register(action);
         }
-        world.addEntity(player);
 
-        player.getPosition().set(1, 2, 1);
+        player.getMountingEntity().getPosition().set(1, 2, 1);
 
         minecraftMod.postInit(context);
 
@@ -162,14 +172,14 @@ public class EngineClient implements Engine {
 
     public void handleKeyPress(int key, int scancode, int action, int modifiers) {
         switch (action) {
-        case GLFW.GLFW_PRESS:
-            getKeyBindingManager().handlePress(key, modifiers);
-            break;
-        case GLFW.GLFW_RELEASE:
-            getKeyBindingManager().handleRelease(key, modifiers);
-            break;
-        default:
-            break;
+            case GLFW.GLFW_PRESS:
+                getKeyBindingManager().handlePress(key, modifiers);
+                break;
+            case GLFW.GLFW_RELEASE:
+                getKeyBindingManager().handleRelease(key, modifiers);
+                break;
+            default:
+                break;
         }
         if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
             if (paused) {
@@ -187,14 +197,14 @@ public class EngineClient implements Engine {
 
     public void handleMousePress(int button, int action, int modifiers) {
         switch (action) {
-        case GLFW.GLFW_PRESS:
-            getKeyBindingManager().handlePress(button + 400, modifiers);
-            break;
-        case GLFW.GLFW_RELEASE:
-            getKeyBindingManager().handleRelease(button + 400, modifiers);
-            break;
-        default:
-            break;
+            case GLFW.GLFW_PRESS:
+                getKeyBindingManager().handlePress(button + 400, modifiers);
+                break;
+            case GLFW.GLFW_RELEASE:
+                getKeyBindingManager().handleRelease(button + 400, modifiers);
+                break;
+            default:
+                break;
         }
     }
 

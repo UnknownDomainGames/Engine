@@ -1,21 +1,21 @@
 package unknowndomain.engine.item;
 
-import unknowndomain.engine.Entity;
 import unknowndomain.engine.Prototype;
 import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.world.World;
 
-public interface ItemPrototype extends Prototype<Item, Player> {
-    UseBehavior DEFAULT_USE = (world, player, item) -> {
+public interface ItemPrototype extends Prototype<Item, Entity> {
+    UseBehavior DEFAULT_USE = (world, entity, item) -> {
     };
-    UseBlockBehavior DEFAULT_USE_BLOCK = (world, player, item, hit) -> {
+    UseBlockBehavior DEFAULT_USE_BLOCK = (world, entity, item, hit) -> {
     };
     HitBlockBehavior DEFAULT_HIT_BLOCK = (world, player, item, hit) -> {
     };
 
     interface UseBehavior {
-        void onUseStart(World world, Player player, Item item);
+        void onUseStart(World world, Entity entity, Item item);
 
         default boolean onUsing(World world, Player player, Item item, int tickElapsed) {
             return false;
@@ -26,7 +26,7 @@ public interface ItemPrototype extends Prototype<Item, Player> {
     }
 
     interface UseBlockBehavior {
-        void onUseBlockStart(World world, Player player, Item item, BlockPrototype.Hit hit);
+        void onUseBlockStart(World world, Entity entity, Item item, BlockPrototype.Hit hit);
 
         default boolean onUsingBlock(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed) {
             return false;

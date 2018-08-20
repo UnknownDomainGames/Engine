@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public interface Resource {
-    ResourcePath location();
+    ResourcePath path();
 
     InputStream open() throws IOException;
 

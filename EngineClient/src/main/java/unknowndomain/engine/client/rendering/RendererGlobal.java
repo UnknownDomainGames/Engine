@@ -5,13 +5,13 @@ import unknowndomain.engine.client.camera.CameraDefault;
 import unknowndomain.engine.client.display.Camera;
 import unknowndomain.engine.client.resource.ResourceManager;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RendererGlobal implements Renderer.Context {
     private final List<Renderer> renderers = new ArrayList<>();
     private Camera camera = new CameraDefault();
+    private boolean inited = false;
 
     public Camera getCamera() {
         return camera;
@@ -22,8 +22,10 @@ public class RendererGlobal implements Renderer.Context {
             for (Renderer renderer : renderers) {
                 renderer.init(manager);
             }
+            inited = true;
         } catch (Exception e) {
             // TODO: handle exception
+            inited = false;
         }
     }
 
@@ -34,6 +36,7 @@ public class RendererGlobal implements Renderer.Context {
     }
 
     public void render() {
+        if (!inited) return;
         for (Renderer renderer : renderers) {
             renderer.render(this);
         }

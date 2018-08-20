@@ -8,11 +8,15 @@ import unknowndomain.engine.registry.IdentifiedRegistry;
 import unknowndomain.engine.registry.RegistryManager;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.function.Supplier;
 
 public class GameContext implements EventBus {
     private RegistryManager manager;
     private EventBus bus;
     private List<Runnable> nextTick;
+    private ExecutorService executorService;
 
     public GameContext(RegistryManager manager, EventBus bus, List<Runnable> nextTick) {
         this.manager = manager;
@@ -49,5 +53,17 @@ public class GameContext implements EventBus {
 
     public void nextTick(Runnable runnable) {
         nextTick.add(runnable);
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public <T> CompletableFuture<T> async(Supplier<T> action) {
+        return CompletableFuture.supplyAsync(action, executorService);
+    }
+
+    public CompletableFuture<Void> async(Runnable action) {
+        return CompletableFuture.runAsync(action, executorService);
     }
 }

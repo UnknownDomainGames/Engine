@@ -6,14 +6,17 @@ import org.joml.AABBd;
 import org.joml.Vector2d;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-import unknowndomain.engine.Entity;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.entity.EntityImpl;
+import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
+import unknowndomain.engine.player.PlayerImpl;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayCast;
 
@@ -25,17 +28,33 @@ import java.util.List;
 import java.util.Set;
 
 public class LogicWorld implements World {
-
-    private Chunk.Provider chunkProvider;
-    private List<Entity> entityList = new ArrayList<>();
     private GameContext context;
-
+    private Chunk.Store chunkStore;
+    private List<Entity> entityList = new ArrayList<>();
+    private List<Player> players = new ArrayList<>();
     private PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
 
-    public LogicWorld(GameContext context) {
+    public LogicWorld(GameContext context, Chunk.Store chunkStore) {
         this.context = context;
-        chunkProvider = new ChunkProviderDummy();
+        this.chunkStore = chunkStore;
     }
+//    private AreaOfInterest aoi;
+
+    public void spawnEntity(Entity entity) {
+        BlockPos pos = BlockPos.of(entity.getPosition());
+        Chunk chunk = chunkStore.getChunk(pos);
+        chunk.getEntities().add(entity);
+//        aoi.onEntity(entity, pos);
+    }
+
+    public Player playerJoin(Player.Data data) {
+        EntityImpl entity = new EntityImpl(entityList.size(), new Vector3f(), new Vector3f(), new Vector3f(), data.getBoundingBox());
+        spawnEntity(entity);
+        PlayerImpl player = new PlayerImpl(data, this, entity);
+        players.add(player);
+        return player;
+    }
+
 
     @Override
     public List<Entity> getEntities() {
@@ -45,10 +64,6 @@ public class LogicWorld implements World {
     @Override
     public BlockPrototype.Hit raycast(Vector3f from, Vector3f dir, float distance) {
         return raycast(from, dir, distance, Sets.newHashSet(context.getBlockRegistry().getValue(0)));
-    }
-
-    public void addEntity(Entity entity) {
-        entityList.add(entity);
     }
 
     @Override
@@ -92,9 +107,9 @@ public class LogicWorld implements World {
 
     public void tick() {
         physicsSystem.tick(this);
-        chunkProvider.getChunks().forEach(this::tickChunk);
+        chunkStore.getChunks().forEach(this::tickChunk);
         for (Entity entity : entityList)
-            entity.tick(); // state machine update
+            entity.tick(context); // state machine update
     }
 
     private void tickChunk(Chunk chunk) {
@@ -111,21 +126,13 @@ public class LogicWorld implements World {
 
     @NonNull
     public Block getBlock(@NonNull BlockPos pos) {
-        return chunkProvider.getChunk(context, pos).getBlock(pos);
+        return chunkStore.getChunk(pos).getBlock(pos);
     }
-
-//    @NonNull
-//    @Override
-//    public Chunk getChunk(int x, int z) {
-//        chunkProvider.getChunk()
-//        long pos = (long) x << 32 | z;
-//        return chunks.get(pos);
-//    }
 
     @NonNull
     @Override
     public Block setBlock(@NonNull BlockPos pos, Block block) {
-        return chunkProvider.getChunk(context, pos).setBlock(pos, block);
+        return chunkStore.getChunk(pos).setBlock(pos, block);
     }
 
     static class PhysicsSystem {

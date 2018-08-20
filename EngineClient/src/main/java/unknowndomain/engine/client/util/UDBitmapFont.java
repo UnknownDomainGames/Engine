@@ -1,8 +1,6 @@
 package unknowndomain.engine.client.util;
 
 
-import unknowndomain.engine.client.resource.Texture2D;
-
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -36,13 +34,13 @@ public class UDBitmapFont {
     /**
      * Texture of this UDBitmapFont. Only be used in Unknown Domain Game itself, not for Creator Kit
      */
-    private Texture2D texture;
+//    private TextureBufferedImage texture;
 
     private BufferedImage data;
 
 
     public UDBitmapFont(BufferedImage bitmap, Map<Character, CharInfo> data){
-        texture = new Texture2D(bitmap);
+//        texture = new TextureBufferedImage(bitmap);
         this.data = bitmap;
         width = bitmap.getWidth();
         height = bitmap.getHeight();

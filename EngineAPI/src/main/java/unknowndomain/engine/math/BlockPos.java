@@ -1,5 +1,6 @@
 package unknowndomain.engine.math;
 
+import org.joml.Vector3f;
 import unknowndomain.engine.world.Chunk;
 
 public final class BlockPos {
@@ -62,6 +63,14 @@ public final class BlockPos {
         int y = this.y - another.y;
         int z = this.z - another.z;
         return x * x + y * y + z * z;
+    }
+
+    public static BlockPos of(int x, int y, int z) {
+        return new BlockPos(x, y, z);
+    }
+
+    public static BlockPos of(Vector3f vector3f) {
+        return new BlockPos((int) Math.floor(vector3f.x), (int) Math.floor(vector3f.y), (int) Math.floor(vector3f.z));
     }
 
 //    public BlockPos pack() {

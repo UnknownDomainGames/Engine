@@ -44,10 +44,6 @@ public class ChunkPos {
         return chunkX;
     }
 
-    public int getChunkY() {
-        return chunkY;
-    }
-
     public int getChunkZ() {
         return chunkZ;
     }

@@ -15,7 +15,6 @@ public class CameraDefault implements Camera {
     private float width = 854, height = 480;
     private float moveC = 0.1f;
 
-
     public CameraDefault() {
         zoomRate = 1;
     }

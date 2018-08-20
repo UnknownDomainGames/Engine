@@ -1,10 +1,10 @@
 package unknowndomain.engine.world;
 
 import org.joml.Vector3f;
-import unknowndomain.engine.Entity;
 import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
 
 import javax.annotation.Nonnull;

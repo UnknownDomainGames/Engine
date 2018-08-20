@@ -4,12 +4,10 @@ import unknowndomain.engine.Prototype;
 import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.world.World;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
-import javax.annotation.Nullable;
-
 public interface Game extends RuntimeObject, Prototype<RuntimeObject, Game> {
-    
 	Collection<World> getWorlds();
 	
 	@Nullable

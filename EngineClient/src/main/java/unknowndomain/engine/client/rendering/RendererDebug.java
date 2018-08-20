@@ -6,33 +6,33 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.client.MinecraftMod;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.Mesh;
-import unknowndomain.engine.client.model.MeshToGLNode;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
+import unknowndomain.engine.client.shader.RendererShaderProgram;
 import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.client.texture.GLTexture;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
-import unknowndomain.engine.world.LogicChunk;
 import unknowndomain.engine.world.LogicWorld;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class RendererDebug extends RendererShaderProgramCommon {
+public class RendererDebug extends RendererShaderProgram {
     protected final int A_POSITION = 0;
     protected final int A_TEXTCOORD = 1;
     protected final int A_NORMAL = 2;
     protected final int A_COLOR = 3;
 
-    protected int u_Projection;
-    protected int u_View;
-    protected int u_Model;
+    private int u_Projection;
+    private int u_View;
+    private int u_Model;
     private GLTexture texture;
     private Map<ChunkPos, RenderChunk> loadChunk = Maps.newHashMap();
     private GLMesh[] meshRegistry;
@@ -40,7 +40,7 @@ public class RendererDebug extends RendererShaderProgramCommon {
     private GLMesh textureMap;
 
     {
-        textureMap = new MeshToGLNode().convert(new Mesh(new float[]{0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 2, 0,},
+        textureMap = GLMesh.of(new Mesh(new float[]{0, 0, 0, 2, 0, 0, 2, 2, 0, 0, 2, 0,},
                 new float[]{0, 1, 1, 1, 1, 0, 0, 0,}, new float[]{
 
         }, new int[]{0, 2, 1, 0, 3, 2}, GL11.GL_TRIANGLES));
@@ -66,7 +66,7 @@ public class RendererDebug extends RendererShaderProgramCommon {
         BlockPrototype.Hit hit = UnknownDomain.getEngine().getWorld().raycast(context.getCamera().getPosition(),
                 context.getCamera().getFrontVector(), 5);
 
-        loadChunk.forEach((pos, chunk) -> {
+        loadChunk.forEach((pos, chunk) -> { // TODO modify here to the baked chunk
             for (int i = 0; i < 16; i++) {
                 if (chunk.valid[i]) {
                     int[] blocks = chunk.blocks[i];
@@ -121,14 +121,14 @@ public class RendererDebug extends RendererShaderProgramCommon {
 
     @Listener
     public void handleChunkLoad(LogicWorld.ChunkLoad event) {
-        System.out.println("CHUNK LOAD");
+        Platform.getLogger().info("CHUNK LOAD " + event.pos);
         ChunkPos pos = event.pos;
         RenderChunk chunk = new RenderChunk(event.blocks);
         loadChunk.put(pos, chunk);
     }
 
     @Listener
-    public void handleBlockChange(LogicChunk.BlockChange event) {
+    public void handleBlockChange(MinecraftMod.LogicChunk.BlockChange event) {
         Platform.getLogger().info("BLOCK CHANGE");
         BlockPos pos = event.pos;
         ChunkPos cp = pos.toChunk();
@@ -180,14 +180,14 @@ public class RendererDebug extends RendererShaderProgramCommon {
             this.blocks = blocks;
             for (int i = 0; i < blocks.length; i++) {
                 int[] ck = blocks[i];
-                boolean none = true;
+                boolean valid0 = false;
                 for (int j = 0; j < ck.length; j++) {
-                    if (ck[j] == 0) {
-                        none = false;
+                    if (ck[j] != 0) {
+                        valid0 = true;
                         break;
                     }
                 }
-                valid[i] = none;
+                valid[i] = valid0;
             }
         }
     }

@@ -1,24 +1,18 @@
 package unknowndomain.engine.client.model.pipeline;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.glGenerateMipmap;
-
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-
 import com.google.common.collect.Lists;
-
 import de.matthiasmann.twl.utils.PNGDecoder;
-import unknowndomain.engine.client.texture.GLTextureMap;
 import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
+import unknowndomain.engine.client.texture.GLTextureMap;
+
+import java.nio.ByteBuffer;
+import java.util.*;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class ResolveTextureUVNode implements Pipeline.Node {
     private int dimension = 256;
@@ -26,7 +20,14 @@ public class ResolveTextureUVNode implements Pipeline.Node {
     @Override
     public Object process(Pipeline.Context context, Object in) throws Exception {
         ResourceManager manager = context.manager();
-        List<Model> models = (List<Model>) in;
+        List<Model> models = new ArrayList<>();
+        if (in instanceof Model) {
+            models.add((Model) in);
+        } else if (in instanceof List) {
+            models = (List<Model>) in;
+        } else {
+            return models;
+        }
         Map<String, TexturePart> required = new HashMap<>();
         List<TexturePart> parts = Lists.newArrayList();
         for (Model model : models) {
@@ -103,6 +104,9 @@ public class ResolveTextureUVNode implements Pipeline.Node {
             while (!accepted) {
                 while (!queue.isEmpty()) {
                     FreeSpace free = queue.poll();
+                    if(free == null){
+                        break;
+                    }
                     if (free.accept(queue, part)) {
                         accepted = true;
                         break;
