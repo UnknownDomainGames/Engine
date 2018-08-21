@@ -41,7 +41,7 @@ public class JavaModContainer implements ModContainer {
 	}
 
 	@Override
-	public Object getMainClassInstance() {
+	public Object getInstance() {
 		return instance;
 	}
 
@@ -77,7 +77,6 @@ public class JavaModContainer implements ModContainer {
 		this.metadata = metadata;
 	}
 
-	@Override
 	public ClassLoader getClassLoader() {
 		return classLoader;
 	}

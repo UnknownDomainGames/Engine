@@ -10,7 +10,7 @@ public interface ModContainer {
 
 	String getModId();
 
-	Object getMainClassInstance();
+	Object getInstance();
 	
 	Path getSource();
 	
@@ -21,8 +21,6 @@ public interface ModContainer {
 	void setEnable(boolean enable);
 	
 	ModMetadata getMetadata();
-
-	ClassLoader getClassLoader();
 
 	ModState getState();
 }
