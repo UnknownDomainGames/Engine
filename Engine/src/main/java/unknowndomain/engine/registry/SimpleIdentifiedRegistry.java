@@ -9,10 +9,17 @@ import unknowndomain.engine.client.resource.ResourcePath;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class SimpleIdentifiedRegistry<T extends RegistryEntry<T>> extends SimpleRegistry<T> implements IdentifiedRegistry<T> {
+public class SimpleIdentifiedRegistry<T extends RegistryEntry<T>> extends SimpleRegistry<T>
+        implements IdentifiedRegistry<T> {
     private IntObjectMap<T> idToObject = new IntObjectHashMap<>();
     private Map<String, Integer> nameToId = HashBiMap.create();
     private AtomicInteger id = new AtomicInteger();
+
+    public static <T extends RegistryEntry<T>> IdentifiedRegistry<T> synchronize(IdentifiedRegistry<T> src,
+            Map<String, Integer> nameToId) {
+
+        return null;
+    }
 
     @Override
     public int getId(T obj) {
@@ -45,8 +52,8 @@ public class SimpleIdentifiedRegistry<T extends RegistryEntry<T>> extends Simple
         return obj;
     }
 
-    //    @Override
-//    public Collection<Map.Entry<ResourcePath, T>> getEntries() {
-//        return null;
-//    }
+    // @Override
+    // public Collection<Map.Entry<ResourcePath, T>> getEntries() {
+    // return null;
+    // }
 }
