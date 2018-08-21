@@ -8,7 +8,7 @@ public interface ResourceSource {
 
     InputStream open(String path) throws IOException;
 
-    PackInfo info() throws IOException;
+    ResourceSourceInfo info() throws IOException;
 
     String type();
 }

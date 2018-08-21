@@ -17,7 +17,7 @@ public class ResourceSourceBuiltin implements ResourceSource {
     }
 
     @Override
-    public PackInfo info() throws IOException {
+    public ResourceSourceInfo info() throws IOException {
         return null;
     }
 

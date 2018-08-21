@@ -1,4 +1,7 @@
-package unknowndomain.engine.client.resource;
+package unknowndomain.engine.client.resource.source;
+
+import unknowndomain.engine.client.resource.ResourceSourceInfo;
+import unknowndomain.engine.client.resource.ResourceSource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,7 +12,7 @@ import java.util.zip.ZipFile;
 /**
  * The source represent the zip file
  */
-public class ResourseSourceZip implements MinecraftResourcePack {
+public class ResourseSourceZip implements ResourceSource {
     private ZipFile zip;
 
     public ResourseSourceZip(ZipFile file) {
@@ -31,7 +34,6 @@ public class ResourseSourceZip implements MinecraftResourcePack {
         return ResourseSourceZip.this.zip.getInputStream(entry);
     }
 
-    @Override
     public String[] domains() {
         Predicate<Character> atoz = (c) -> c >= 'a' && c <= 'z';
         return zip.stream()
@@ -43,7 +45,7 @@ public class ResourseSourceZip implements MinecraftResourcePack {
     }
 
     @Override
-    public PackInfo info() {
+    public ResourceSourceInfo info() {
         return null;
     }
 

@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.resource;
 
-public interface PackInfo {
+public interface ResourceSourceInfo {
+
     String name();
 
     String description();
