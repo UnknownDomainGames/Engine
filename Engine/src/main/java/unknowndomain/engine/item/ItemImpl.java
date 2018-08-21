@@ -3,13 +3,13 @@ package unknowndomain.engine.item;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.Player;
-import unknowndomain.engine.registry.RegistryEntry;
+import unknowndomain.engine.registry.Impl;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-class ItemImpl extends RegistryEntry.Impl<Item> implements Item {
+class ItemImpl extends Impl<Item> implements Item {
     private ItemPrototype.UseBlockBehavior useBlockBehavior;
     private ItemPrototype.HitBlockBehavior hitBlockBehavior;
     private ItemPrototype.UseBehavior useBehavior;

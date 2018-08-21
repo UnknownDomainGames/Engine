@@ -73,6 +73,10 @@ public final class BlockPos {
         return new BlockPos((int) Math.floor(vector3f.x), (int) Math.floor(vector3f.y), (int) Math.floor(vector3f.z));
     }
 
+    public static boolean inSameChunk(BlockPos a, BlockPos b) {
+        return ((a.x >> 4) == (b.x >> 4)) && ((a.y >> 4) == (b.y >> 4)) && ((a.z >> 4) == (b.z >> 4));
+    }
+
 //    public BlockPos pack() {
 //        return new BlockPos(x & 16, y & 16, z & 16);
 //    }

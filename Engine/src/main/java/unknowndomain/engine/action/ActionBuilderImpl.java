@@ -6,14 +6,18 @@ import unknowndomain.engine.GameContext;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-class ActionBuilderImpl implements ActionBuilder {
+public class ActionBuilderImpl implements ActionBuilder {
     private String path;
     private Consumer<GameContext> startHandler;
     private BiConsumer<GameContext, Integer> keepHandler;
     private BiConsumer<GameContext, Integer> endHandler;
 
-    ActionBuilderImpl(String path) {
+    private ActionBuilderImpl(String path) {
         this.path = path;
+    }
+
+    public static ActionBuilder create(String path) {
+        return new ActionBuilderImpl(path);
     }
 
     @Override

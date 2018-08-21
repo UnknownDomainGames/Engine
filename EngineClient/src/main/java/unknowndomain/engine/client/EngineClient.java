@@ -1,13 +1,8 @@
 package unknowndomain.engine.client;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.GameContext;
-import unknowndomain.engine.action.Action;
 import unknowndomain.engine.action.ActionManager;
-import unknowndomain.engine.block.Block;
 import unknowndomain.engine.client.display.DefaultGameWindow;
 import unknowndomain.engine.client.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.keybinding.Keybindings;
@@ -17,19 +12,14 @@ import unknowndomain.engine.client.rendering.RendererGlobal;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourceManagerImpl;
 import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
-import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.event.AsmEventBus;
+import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.game.Game;
-import unknowndomain.engine.item.Item;
+import unknowndomain.engine.game.GameImpl;
 import unknowndomain.engine.math.Timer;
 import unknowndomain.engine.mod.ModManager;
-import unknowndomain.engine.registry.Registry;
-import unknowndomain.engine.registry.SimpleIdentifiedRegistry;
-import unknowndomain.engine.registry.SimpleRegistryManager;
-import unknowndomain.engine.world.LogicWorld;
-
-import java.util.List;
-import java.util.UUID;
+import unknowndomain.engine.mod.SimpleModManager;
+import unknowndomain.engine.world.World0;
 
 public class EngineClient implements Engine {
 
@@ -49,76 +39,67 @@ public class EngineClient implements Engine {
     private ActionManagerImpl actionManager;
 
     // private GameClientImpl game;
-    private LogicWorld world;
     private Timer timer;
     private PlayerController playerController = new FirstPersonController();
-    private GameContext context;
-    private List<Runnable> nextTicks = Lists.newArrayList();
+    private GameImpl game;
+    private EventBus bus;
+    private SimpleModManager modManager;
 
     EngineClient(int width, int height) {
         window = new DefaultGameWindow(this, width, height, UnknownDomain.getName());
-    }
-
-    public GameContext getContext() {
-        return context;
     }
 
     public PlayerController getController() {
         return playerController;
     }
 
-    public LogicWorld getWorld() {
-        return world;
+    public World0 getWorld() {
+        return null;
+//        return world;
     }
 
     private MinecraftMod minecraftMod = new MinecraftMod();
 
-    private void setupContext() {
-        SimpleRegistryManager registryManager = new SimpleRegistryManager(
-                ImmutableMap.<Class<?>, Registry<?>>builder().put(Block.class, new SimpleIdentifiedRegistry<>())
-                        .put(Item.class, new SimpleIdentifiedRegistry<>()).build());
-        context = new GameContext(registryManager, new AsmEventBus(), this.nextTicks);
-        actionManager = new ActionManagerImpl(context);
-    }
-
     public void init() {
         window.init();
-        setupContext();
 
-        renderer = new RendererGlobal();
-        playerController.setCamera(renderer.getCamera());
+        bus = new AsmEventBus();
 
         resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
-        keyBindingManager = new KeyBindingManager();
+        modManager = new SimpleModManager(bus);
+        modManager.getMod("unknowndomain");
 
-        // old
+        game = new GameImpl();
+        game.preInit(bus);
+
+        renderer = new RendererGlobal();
+        playerController.setCamera(renderer.getCamera());
+
+        keyBindingManager = new KeyBindingManager();
 
         Keybindings.INSTANCE.setup(keyBindingManager);
 
-        minecraftMod.init(context);
-        try {
-            minecraftMod.setupResource(context, resourceManager);
-            minecraftMod.setupRender(context, resourceManager, renderer);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        minecraftMod.init(context);
+//        try {
+//            minecraftMod.setupResource(context, resourceManager, renderer);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         renderer.init(resourceManager);
 
         // new
-        world = new LogicWorld(context, new MinecraftMod.ChunkStore0(context));
+//        Player player = world.playerJoin(new Player.Data(UUID.randomUUID(), 12));
+//        playerController.setPlayer(player);
+//        for (Action action : playerController.getActions()) {
+//            actionManager.register(action);
+//        }
+//
+//        player.getMountingEntity().getPosition().set(1, 2, 1);
 
-        Player player = world.playerJoin(new Player.Data(UUID.randomUUID(), 12));
-        playerController.setPlayer(player);
-        for (Action action : playerController.getActions()) {
-            actionManager.register(action);
-        }
-
-        player.getMountingEntity().getPosition().set(1, 2, 1);
-
-        minecraftMod.postInit(context);
+//        minecraftMod.postInit(context);
 
         timer = new Timer();
         timer.init();
@@ -142,7 +123,8 @@ public class EngineClient implements Engine {
 
             while (accumulator >= interval) {
                 // update(interval); //TODO: game logic
-                world.tick();
+                playerController.tick();
+                game.tick();
                 // game.tick();
                 accumulator -= interval;
             }

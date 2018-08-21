@@ -10,6 +10,11 @@ import java.util.Collection;
 import java.util.List;
 
 public interface Chunk extends RuntimeObject {
+
+    int DEFAULT_X_SIZE = 16;
+    int DEFAULT_Y_SIZE = 256;
+    int DEFAULT_Z_SIZE = 16;
+
     /**
      * Get block in a specific path
      *
@@ -42,22 +47,6 @@ public interface Chunk extends RuntimeObject {
 
     Block setBlock(BlockPos pos, Block destBlock);
 
-    int DEFAULT_X_SIZE = 16;
-    int DEFAULT_Y_SIZE = 256;
-    int DEFAULT_Z_SIZE = 16;
-
-    default int getXSize() {
-        return DEFAULT_X_SIZE;
-    }
-
-    default int getYSize() {
-        return DEFAULT_Y_SIZE;
-    }
-
-    default int getZSize() {
-        return DEFAULT_Z_SIZE;
-    }
-
     interface Store {
         Collection<Chunk> getChunks();
 
@@ -66,15 +55,11 @@ public interface Chunk extends RuntimeObject {
 
         /**
          * Touch the chunk at the the position, ensure it loaded
-         *
-         * @param chunkPos
          */
         void touchChunk(@Nonnull BlockPos chunkPos);
 
         /**
          * Dispose the chunk at the position
-         *
-         * @param chunkPos
          */
         void discardChunk(@Nonnull BlockPos chunkPos);
     }

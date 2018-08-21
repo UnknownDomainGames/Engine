@@ -2,6 +2,7 @@ package unknowndomain.engine.client.model.pipeline;
 
 import com.google.common.collect.Lists;
 import de.matthiasmann.twl.utils.PNGDecoder;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourceManager;
@@ -37,13 +38,17 @@ public class ResolveTextureUVNode implements Pipeline.Node {
                 while (path.startsWith("#")) {
                     String next = model.textures.get(path.substring(1));
                     if (next == null) {
+                        Platform.getLogger().warn("Missing texture for " + variant);
                         path = null;
                         break;
                     }
                     path = next;
                 }
-                if (path == null)
+
+                if (path == null) {
+                    Platform.getLogger().warn("Missing texture for " + model);
                     continue;
+                }
                 model.textures.put(variant, path);
                 if (!required.containsKey(path)) {
                     Resource resource = manager.load(new ResourcePath("", "minecraft/textures/" + path + ".png"));
@@ -78,6 +83,7 @@ public class ResolveTextureUVNode implements Pipeline.Node {
             for (Model.Element e : m.elements) {
                 Lists.newArrayList(e.faces.up, e.faces.down, e.faces.north, e.faces.west, e.faces.east, e.faces.south)
                         .forEach((face) -> {
+                            if (face == null) return;
                             String path = m.textures.get(face.texture.substring(1));
                             TexturePart p = required.get(path);
                             if (face.uv == null) face.uv = new float[]{0, 0, 16, 16};
@@ -104,7 +110,7 @@ public class ResolveTextureUVNode implements Pipeline.Node {
             while (!accepted) {
                 while (!queue.isEmpty()) {
                     FreeSpace free = queue.poll();
-                    if(free == null){
+                    if (free == null) {
                         break;
                     }
                     if (free.accept(queue, part)) {

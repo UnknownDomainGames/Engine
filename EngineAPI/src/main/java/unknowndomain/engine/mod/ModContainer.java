@@ -1,26 +1,23 @@
 package unknowndomain.engine.mod;
 
-import java.nio.file.Path;
-
 import org.slf4j.Logger;
 
-import unknowndomain.engine.util.versioning.ComparableVersion;
+import java.nio.file.Path;
 
 public interface ModContainer {
+    String getModId();
 
-	String getModId();
+    Object getInstance();
 
-	Object getInstance();
-	
-	Path getSource();
-	
-	Logger getLogger();
-	
-	boolean isEnable();
-	
-	void setEnable(boolean enable);
-	
-	ModMetadata getMetadata();
+    Path getSource();
 
-	ModState getState();
+    Logger getLogger();
+
+    boolean isEnable();
+
+    void setEnable(boolean enable);
+
+    ModMetadata getMetadata();
+
+    ModState getState();
 }

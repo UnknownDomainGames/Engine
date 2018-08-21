@@ -6,13 +6,13 @@ import com.google.common.collect.ImmutableTable;
 import org.joml.AABBd;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.registry.RegistryEntry;
+import unknowndomain.engine.registry.Impl;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-class BlockShared extends RegistryEntry.Impl<Block> implements Block {
+class BlockShared extends Impl<Block> implements Block {
     ImmutableTable<BlockPrototype.Property<?>, Comparable<?>, BlockShared> propertiesTable;
     private AABBd[] boundingBox;
     private BlockPrototype.PlaceBehavior placeBehavior;

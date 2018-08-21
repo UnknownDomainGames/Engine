@@ -5,5 +5,5 @@ import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.world.World;
 
-public interface EntityPrototype extends Prototype<Entity, World>, RegistryEntry<EntityPrototype> {
+public interface EntityType extends Prototype<Entity, World>, RegistryEntry<EntityType> {
 }

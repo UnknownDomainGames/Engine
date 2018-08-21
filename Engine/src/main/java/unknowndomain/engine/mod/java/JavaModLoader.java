@@ -1,6 +1,21 @@
 package unknowndomain.engine.mod.java;
 
-import java.io.*;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.Validate;
+import unknowndomain.engine.Platform;
+import unknowndomain.engine.event.EventBus;
+import unknowndomain.engine.event.ModStartLoadEvent;
+import unknowndomain.engine.mod.*;
+import unknowndomain.engine.mod.java.harvester.HarvestedAnnotation;
+import unknowndomain.engine.mod.java.harvester.HarvestedInfo;
+import unknowndomain.engine.mod.metadata.FileModMetadata;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -8,28 +23,14 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.Validate;
-
-import unknowndomain.engine.Platform;
-import unknowndomain.engine.mod.*;
-import unknowndomain.engine.mod.java.harvester.HarvestedAnnotation;
-import unknowndomain.engine.mod.java.harvester.HarvestedInfo;
-import unknowndomain.engine.mod.metadata.FileModMetadata;
-import unknowndomain.engine.mod.metadata.SimpleModMetadata;
-import unknowndomain.engine.util.versioning.ComparableVersion;
-
 public class JavaModLoader implements ModLoader {
-
+    private EventBus eventBus;
     private final Path path;
 
     private Map<String, ModContainer> mods;
 
-    public JavaModLoader(Path path) {
+    public JavaModLoader(EventBus eventBus, Path path) {
+        this.eventBus = eventBus;
         Validate.notNull(path);
         if (!Files.exists(path))
             throw new IllegalArgumentException(path.toAbsolutePath() + " don't exist.");
@@ -55,7 +56,9 @@ public class JavaModLoader implements ModLoader {
                 JarEntry entry = jarFile.getJarEntry("metadata.json");
 
                 ModMetadata metadata = FileModMetadata.create(jarFile.getInputStream(entry));
+                eventBus.post(new ModStartLoadEvent(modId, metadata));
                 JavaModContainer container = new JavaModContainer(modId, mod);
+
                 ModClassLoader loader = new ModClassLoader(container, Thread.currentThread().getContextClassLoader());
 
                 loader.addPath(mod);
@@ -107,6 +110,7 @@ public class JavaModLoader implements ModLoader {
                             } else {
                                 modIdMap.put(jo.get("modid").getAsString(), mod);
                             }
+                            inputStream.close();
                         }
                     } catch (IOException e) {
                         Platform.getLogger().warn("cannot open mod", e);

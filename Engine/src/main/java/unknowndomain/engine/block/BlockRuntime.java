@@ -4,14 +4,14 @@ import com.google.common.collect.ImmutableMap;
 import org.joml.AABBd;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.registry.RegistryEntry;
+import unknowndomain.engine.registry.Impl;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class BlockRuntime extends RegistryEntry.Impl<Block> implements Block {
+public class BlockRuntime extends Impl<Block> implements Block {
     private Map<String, Object> map;
     private Block shared;
 

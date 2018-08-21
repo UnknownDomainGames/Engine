@@ -4,7 +4,7 @@ import unknowndomain.engine.block.Block;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.item.Item;
-import unknowndomain.engine.registry.IdentifiedRegistry;
+import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 
 import java.util.List;
@@ -28,12 +28,12 @@ public class GameContext implements EventBus {
         return manager;
     }
 
-    public IdentifiedRegistry<Block> getBlockRegistry() {
-        return (IdentifiedRegistry<Block>) manager.getRegistry(Block.class);
+    public Registry<Block> getBlockRegistry() {
+        return manager.getRegistry(Block.class);
     }
 
-    public IdentifiedRegistry<Item> getItemRegistry() {
-        return (IdentifiedRegistry<Item>) manager.getRegistry(Item.class);
+    public Registry<Item> getItemRegistry() {
+        return manager.getRegistry(Item.class);
     }
 
     @Override

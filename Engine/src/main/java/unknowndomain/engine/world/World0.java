@@ -1,5 +1,6 @@
 package unknowndomain.engine.world;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.joml.AABBd;
@@ -15,7 +16,6 @@ import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.player.PlayerImpl;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayCast;
@@ -27,34 +27,33 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-public class LogicWorld implements World {
+public class World0 implements World {
     private GameContext context;
     private Chunk.Store chunkStore;
     private List<Entity> entityList = new ArrayList<>();
     private List<Player> players = new ArrayList<>();
     private PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
 
-    public LogicWorld(GameContext context, Chunk.Store chunkStore) {
+    public World0(GameContext context, Chunk.Store chunkStore) {
         this.context = context;
         this.chunkStore = chunkStore;
     }
-//    private AreaOfInterest aoi;
 
     public void spawnEntity(Entity entity) {
         BlockPos pos = BlockPos.of(entity.getPosition());
         Chunk chunk = chunkStore.getChunk(pos);
         chunk.getEntities().add(entity);
-//        aoi.onEntity(entity, pos);
+        entityList.add(entity);
     }
 
     public Player playerJoin(Player.Data data) {
-        EntityImpl entity = new EntityImpl(entityList.size(), new Vector3f(), new Vector3f(), new Vector3f(), data.getBoundingBox());
+        EntityImpl entity = new EntityImpl(entityList.size(), new Vector3f(), new Vector3f(), new Vector3f(), data.getBoundingBox(),
+                ImmutableMap.<String, Object>builder().put(Entity.TwoHands.class.getName(), new EntityImpl.TwoHandImpl()).build());
         spawnEntity(entity);
         PlayerImpl player = new PlayerImpl(data, this, entity);
         players.add(player);
         return player;
     }
-
 
     @Override
     public List<Entity> getEntities() {
@@ -107,6 +106,23 @@ public class LogicWorld implements World {
 
     public void tick() {
         physicsSystem.tick(this);
+
+        for (Entity entity : this.getEntities()) {
+            Vector3f position = entity.getPosition();
+            Vector3f motion = entity.getMotion();
+            BlockPos oldPosition = BlockPos.of(position);
+            position.add(motion);
+            BlockPos newPosition = BlockPos.of(position);
+
+            if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
+                Chunk oldChunk = chunkStore.getChunk(oldPosition),
+                        newChunk = chunkStore.getChunk(newPosition);
+                oldChunk.getEntities().remove(entity);
+                newChunk.getEntities().add(entity);
+                // entity leaving and enter chunk event
+            }
+        }
+
         chunkStore.getChunks().forEach(this::tickChunk);
         for (Entity entity : entityList)
             entity.tick(context); // state machine update
@@ -139,7 +155,7 @@ public class LogicWorld implements World {
         public void tick(World world) {
             List<Entity> entityList = world.getEntities();
             for (Entity entity : entityList) {
-                Vector3f motion = new Vector3f(entity.getMotion());
+                Vector3f motion = entity.getMotion();
                 Vector3f direction = new Vector3f(motion);
                 if (motion.x == 0 && motion.y == 0 && motion.z == 0) continue;
                 Vector3f position = entity.getPosition();
@@ -210,7 +226,6 @@ public class LogicWorld implements World {
                     motion.z = 0;
                 }
 
-                position.add(motion);
 //            if (motion.y > 0) motion.y -= 0.01f;
 //            else if (motion.y < 0) motion.y += 0.01f;
 //            if (Math.abs(motion.y) <= 0.01f) motion.y = 0; // physics update
@@ -234,16 +249,6 @@ public class LogicWorld implements World {
     @Override
     public <T> T getBehavior(Class<T> type) {
         return null;
-    }
-
-    public static class ChunkLoad implements Event {
-        public final ChunkPos pos;
-        public final int[][] blocks;
-
-        public ChunkLoad(ChunkPos pos, int[][] blocks) {
-            this.pos = pos;
-            this.blocks = blocks;
-        }
     }
 
     public static class ChunkUnload implements Event {

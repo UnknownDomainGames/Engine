@@ -15,7 +15,7 @@ import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
-import unknowndomain.engine.world.LogicWorld;
+import unknowndomain.engine.world.World0;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -84,12 +84,13 @@ public class RendererGui extends RendererShaderProgram {
         Entity player = UnknownDomain.getEngine().getController().getPlayer().getMountingEntity();
         AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
 
-        LogicWorld world = UnknownDomain.getEngine().getWorld();
+        World0 world = UnknownDomain.getEngine().getWorld();
         BlockPrototype.Hit hit = world.raycast(context.getCamera().getPosition(),
                 context.getCamera().getFrontVector(), 5);
-        fontRenderer.drawText("Unknown Domain 0.0.0", 0, 0, 0xffffffff, 16);
+        fontRenderer.drawText("Blocks 0.0.0", 0, 0, 0xffffffff, 16);
         fontRenderer.drawText(String.format("Playerlocation: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 25, 0xffffffff, 16);
         fontRenderer.drawText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 45, 0xffffffff, 16);
+        fontRenderer.drawText(player.getBehavior(Entity.TwoHands.class).getMainHand().getRegisteredName(), 0, 64, 0xffffffff, 16);
 
         if (hit != null) {
 

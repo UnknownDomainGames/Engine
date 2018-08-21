@@ -1,34 +1,45 @@
 package unknowndomain.engine.registry;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.Pair;
 
-class ImmtableRegistry<T extends RegistryEntry<T>> implements IdentifiedRegistry<T> {
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+class ImmutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     private final Class<T> registryType;
     private final ImmutableMap<String, T> nameToObject;
     private final ImmutableMap<String, Integer> nameToId;
     private final ImmutableList<T> idToObject;
 
-    static <T extends RegistryEntry<T>> ImmtableRegistry<T> synchronize(IdentifiedRegistry<T> registry,
-            Map<String, Integer> mapping) {
-        Collection<T> values = registry.getValues();
-        return null;
-        // return new ImmtableRegistry<T>(registry.getClass(),
-        // ImmutableMap.builder().put(entry));
-    }
-
-    ImmtableRegistry(Class<T> registryType, ImmutableMap<String, T> nameToObject,
-            ImmutableMap<String, Integer> nameToId, ImmutableList<T> idToObject) {
+    private ImmutableRegistry(Class<T> registryType, ImmutableMap<String, T> nameToObject,
+                              ImmutableMap<String, Integer> nameToId, ImmutableList<T> idToObject) {
         this.registryType = registryType;
         this.nameToObject = nameToObject;
         this.nameToId = nameToId;
         this.idToObject = idToObject;
+    }
+
+    static <T extends RegistryEntry<T>> ImmutableRegistry<T> freeze(Registry<T> registry) {
+        return new ImmutableRegistry<>(registry.getRegistryEntryType(),
+                ImmutableMap.<String, T>builder().putAll(registry.getEntries()).build(),
+                ImmutableMap.<String, Integer>builder().putAll(registry.getValues().stream().map(v -> Pair.of(v.getRegisteredName(), registry.getId(v.getRegisteredName()))).collect(Collectors.toList())).build(),
+                ImmutableList.sortedCopyOf(Comparator.comparingInt(registry::getId), registry.getValues())
+        );
+    }
+
+    static <T extends RegistryEntry<T>> ImmutableRegistry<T> synchronize(Registry<T> registry,
+                                                                         Map<String, Integer> mapping) {
+        return new ImmutableRegistry<>(registry.getRegistryEntryType(),
+                ImmutableMap.<String, T>builder().putAll(registry.getEntries()).build(),
+                ImmutableMap.<String, Integer>builder().putAll(registry.getValues().stream().map(v -> Pair.of(v.getRegisteredName(), mapping.get(v.getRegisteredName()))).collect(Collectors.toList())).build(),
+                ImmutableList.sortedCopyOf(Comparator.comparingInt(a -> mapping.get(a.getRegisteredName())), registry.getValues())
+        );
     }
 
     @Override
@@ -50,7 +61,7 @@ class ImmtableRegistry<T extends RegistryEntry<T>> implements IdentifiedRegistry
     @Override
     public String getKey(T value) {
         Validate.notNull(value);
-        return value.getRegistryName();
+        return value.getRegisteredName();
     }
 
     @Override
@@ -62,7 +73,7 @@ class ImmtableRegistry<T extends RegistryEntry<T>> implements IdentifiedRegistry
     @Override
     public boolean containsValue(T value) {
         Validate.notNull(value);
-        return nameToObject.containsKey(value.getRegistryName());
+        return nameToObject.containsKey(value.getRegisteredName());
     }
 
     @Override
@@ -78,7 +89,7 @@ class ImmtableRegistry<T extends RegistryEntry<T>> implements IdentifiedRegistry
     @Override
     public int getId(T obj) {
         Validate.notNull(obj);
-        return nameToId.get(obj.getRegistryName());
+        return nameToId.get(obj.getRegisteredName());
     }
 
     @Override
@@ -89,11 +100,16 @@ class ImmtableRegistry<T extends RegistryEntry<T>> implements IdentifiedRegistry
 
     @Override
     public String getKey(int id) {
-        return idToObject.get(id).getRegistryName();
+        return idToObject.get(id).getRegisteredName();
     }
 
     @Override
     public T getValue(int id) {
         return idToObject.get(id);
+    }
+
+    @Override
+    public Collection<Map.Entry<String, T>> getEntries() {
+        return nameToObject.entrySet();
     }
 }

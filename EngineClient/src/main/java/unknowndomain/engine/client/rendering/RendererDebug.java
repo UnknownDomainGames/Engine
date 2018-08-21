@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.block.BlockPrototype;
-import unknowndomain.engine.client.MinecraftMod;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.Mesh;
@@ -19,7 +18,8 @@ import unknowndomain.engine.client.texture.GLTexture;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
-import unknowndomain.engine.world.LogicWorld;
+import unknowndomain.engine.world.BlockChangeEvent;
+import unknowndomain.engine.world.ChunkLoadEvent;
 
 import java.io.IOException;
 import java.util.Map;
@@ -120,7 +120,7 @@ public class RendererDebug extends RendererShaderProgram {
     }
 
     @Listener
-    public void handleChunkLoad(LogicWorld.ChunkLoad event) {
+    public void handleChunkLoad(ChunkLoadEvent event) {
         Platform.getLogger().info("CHUNK LOAD " + event.pos);
         ChunkPos pos = event.pos;
         RenderChunk chunk = new RenderChunk(event.blocks);
@@ -128,7 +128,7 @@ public class RendererDebug extends RendererShaderProgram {
     }
 
     @Listener
-    public void handleBlockChange(MinecraftMod.LogicChunk.BlockChange event) {
+    public void handleBlockChange(BlockChangeEvent event) {
         Platform.getLogger().info("BLOCK CHANGE");
         BlockPos pos = event.pos;
         ChunkPos cp = pos.toChunk();

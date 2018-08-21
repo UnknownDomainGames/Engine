@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import unknowndomain.engine.action.Action;
+import unknowndomain.engine.action.ActionBuilderImpl;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.display.Camera;
@@ -27,7 +28,7 @@ public class FirstPersonController extends PlayerController {
     public List<Action> getActions() {
         List<Action> list = moveSystem.getActions();
         list.addAll(Lists.newArrayList(
-                Action.builder("player.mouse.right").setStartHandler((c) -> {
+                ActionBuilderImpl.create("player.mouse.right").setStartHandler((c) -> {
                     Player player = getPlayer();
 
                     if (player == null) return;
@@ -55,7 +56,7 @@ public class FirstPersonController extends PlayerController {
                         }
                     }
                 }).build(),
-                Action.builder("player.mouse.left").setStartHandler((c) -> {
+                ActionBuilderImpl.create("player.mouse.left").setStartHandler((c) -> {
                     Player player = getPlayer();
 
                     if (player == null) return;
@@ -97,17 +98,17 @@ public class FirstPersonController extends PlayerController {
 
         public List<Action> getActions() {
             return Lists.newArrayList(
-                    Action.builder("player.move.forward").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), FORWARD, true))
+                    ActionBuilderImpl.create("player.move.forward").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), FORWARD, true))
                             .setEndHandler((c, i) -> accept(UnknownDomain.getEngine().getController(), FORWARD, false)).build(),
-                    Action.builder("player.move.backward").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), BACKWARD, true))
+                    ActionBuilderImpl.create("player.move.backward").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), BACKWARD, true))
                             .setEndHandler((c, i) -> accept(UnknownDomain.getEngine().getController(), BACKWARD, false)).build(),
-                    Action.builder("player.move.left").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), LEFT, true))
+                    ActionBuilderImpl.create("player.move.left").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), LEFT, true))
                             .setEndHandler((c, i) -> accept(UnknownDomain.getEngine().getController(), LEFT, false)).build(),
-                    Action.builder("player.move.right").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), RIGHT, true))
+                    ActionBuilderImpl.create("player.move.right").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), RIGHT, true))
                             .setEndHandler((c, i) -> accept(UnknownDomain.getEngine().getController(), RIGHT, false)).build(),
-                    Action.builder("player.move.jump").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), JUMPING, true))
+                    ActionBuilderImpl.create("player.move.jump").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), JUMPING, true))
                             .setEndHandler((c, i) -> accept(UnknownDomain.getEngine().getController(), JUMPING, false)).build(),
-                    Action.builder("player.move.sneak").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), SNEAKING, true))
+                    ActionBuilderImpl.create("player.move.sneak").setStartHandler((c) -> accept(UnknownDomain.getEngine().getController(), SNEAKING, true))
                             .setEndHandler((c, i) -> accept(UnknownDomain.getEngine().getController(), SNEAKING, false)).build()
             );
         }
