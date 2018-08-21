@@ -10,9 +10,7 @@ public interface ModContainer {
 
 	String getModId();
 
-	ComparableVersion getVersion();
-
-	Object getMainClassInstance();
+	Object getInstance();
 	
 	Path getSource();
 	
@@ -24,5 +22,5 @@ public interface ModContainer {
 	
 	ModMetadata getMetadata();
 
-	ClassLoader getClassLoader();
+	ModState getState();
 }

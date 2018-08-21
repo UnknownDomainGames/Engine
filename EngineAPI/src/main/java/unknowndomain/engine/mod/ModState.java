@@ -1,10 +1,11 @@
 package unknowndomain.engine.mod;
 
 public enum ModState {
-	
-	LOADED,
-	INITED,
+
 	DISABLED,
-	ERROR,
+	LOADING,
+	INITIALING,
+	ENABLED,
+	ERROR
 
 }
