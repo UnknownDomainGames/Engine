@@ -11,6 +11,9 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 
+/**
+ *
+ */
 public interface World extends RuntimeObject {
     List<Entity> getEntities();
 

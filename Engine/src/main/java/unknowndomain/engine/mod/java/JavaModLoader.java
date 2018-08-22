@@ -1,5 +1,6 @@
 package unknowndomain.engine.mod.java;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.io.FilenameUtils;
@@ -10,7 +11,7 @@ import unknowndomain.engine.event.ModStartLoadEvent;
 import unknowndomain.engine.mod.*;
 import unknowndomain.engine.mod.java.harvester.HarvestedAnnotation;
 import unknowndomain.engine.mod.java.harvester.HarvestedInfo;
-import unknowndomain.engine.mod.metadata.FileModMetadata;
+import unknowndomain.engine.util.versioning.ComparableVersion;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +28,9 @@ public class JavaModLoader implements ModLoader {
     private EventBus eventBus;
     private final Path path;
 
+    private List<Source> sources;
     private Map<String, ModContainer> mods;
+    private Map<String, Path> modIdMap;
 
     public JavaModLoader(EventBus eventBus, Path path) {
         this.eventBus = eventBus;
@@ -40,10 +43,58 @@ public class JavaModLoader implements ModLoader {
         this.path = path;
         this.mods = new HashMap<>();
         modIdMap = new HashMap<>();
+        sources = Lists.newArrayList();
     }
 
+    public static ModContainer load(EventBus eventBus, Path jar) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        JarFile jarFile = new JarFile(jar.toFile());
+        JarEntry entry = jarFile.getJarEntry("metadata.json");
 
-    private Map<String, Path> modIdMap;
+        ModMetadata metadata = ModMetadata.fromJson(new JsonParser().parse(new InputStreamReader(jarFile.getInputStream(entry))).getAsJsonObject());
+        eventBus.post(new ModStartLoadEvent(metadata.getModid(), metadata));
+        JavaModContainer container = new JavaModContainer(metadata.getModid(), jar);
+
+        ModClassLoader loader = new ModClassLoader(container, Thread.currentThread().getContextClassLoader());
+        loader.addPath(jar);
+        container.setClassLoader(loader);
+        container.setMetadata(metadata);
+
+        HarvestedInfo harvestedInfo = new HarvestedInfo(jar);
+        harvestedInfo.startHarvest();
+        Collection<HarvestedAnnotation> annos = harvestedInfo.getHarvestedAnnotations(Mod.class);
+        if (annos.isEmpty()) {
+            Platform.getLogger().warn(String.format("cannot find the main class for mod %s!", metadata.getModid()));
+            return null;
+        }
+
+        Class<?> mainClass = Class.forName(annos.toArray(new HarvestedAnnotation[annos.size()])[0].getOwnerType().getClassName(), true, loader);
+        Object instance = mainClass.newInstance();
+        container.setInstance(instance);
+        return container;
+    }
+
+    public Collection<ModMetadata> getLocalIndices() {
+        return null;
+    }
+
+    public ModContainer find(ModIdentifier identifier) {
+        ModContainer container = mods.get(identifier.getModid());
+        if (container != null)
+            if (container.getMetadata().getVersion().equals(new ComparableVersion(identifier.getVersion())))
+                return container;
+            else return null;
+
+        for (Source source : sources) {
+            try {
+                if (source.has(identifier)) {
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 
     @Override
     public ModContainer loadMod(String modId) {
@@ -55,7 +106,7 @@ public class JavaModLoader implements ModLoader {
             try (JarFile jarFile = new JarFile(mod.toFile())) {
                 JarEntry entry = jarFile.getJarEntry("metadata.json");
 
-                ModMetadata metadata = FileModMetadata.create(jarFile.getInputStream(entry));
+                ModMetadata metadata = ModMetadata.fromJson(new JsonParser().parse(new InputStreamReader(jarFile.getInputStream(entry))).getAsJsonObject());
                 eventBus.post(new ModStartLoadEvent(modId, metadata));
                 JavaModContainer container = new JavaModContainer(modId, mod);
 

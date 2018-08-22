@@ -7,7 +7,6 @@ import unknowndomain.engine.item.Item;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
@@ -23,7 +22,7 @@ public class GameContext implements EventBus {
         // this.nextTick = nextTick;
     }
 
-    public RegistryManager getManager() {
+    public RegistryManager getRegistry() {
         return manager;
     }
 

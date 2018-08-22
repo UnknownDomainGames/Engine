@@ -23,6 +23,11 @@ class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
     private String activeMod;
 
+    MutableRegistry(Class<T> registryType) {
+        this.registryType = registryType;
+        this.name = registryType.getSimpleName().toLowerCase();
+    }
+
     MutableRegistry(Class<T> registryType, String name) {
         this.registryType = registryType;
         this.name = name;

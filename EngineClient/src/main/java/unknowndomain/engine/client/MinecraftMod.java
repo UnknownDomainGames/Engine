@@ -5,18 +5,16 @@ import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockBuilder;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.model.GLMesh;
-import unknowndomain.engine.client.model.Mesh;
-import unknowndomain.engine.client.model.pipeline.ModelToMeshNode;
-import unknowndomain.engine.client.model.pipeline.ResolveModelsNode;
-import unknowndomain.engine.client.model.pipeline.ResolveTextureUVNode;
+import unknowndomain.engine.client.model.MinecraftModelFactory;
 import unknowndomain.engine.client.rendering.RendererDebug;
 import unknowndomain.engine.client.rendering.RendererGlobal;
 import unknowndomain.engine.client.rendering.gui.RendererGui;
-import unknowndomain.engine.client.resource.Pipeline;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.client.texture.GLTexture;
 import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.event.Listener;
+import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.item.ItemBuilder;
 import unknowndomain.engine.item.ItemPrototype;
@@ -26,18 +24,18 @@ import unknowndomain.engine.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MinecraftMod {
     private GLTexture textureMap;
     private GLMesh[] meshRegistry;
 
-    void setupResource(GameContext context, ResourceManager manager, RendererGlobal renderer) throws Exception {
-        Pipeline pipeline = new Pipeline(manager);
-        pipeline.add("BlockModels", new ResolveModelsNode(), new ResolveTextureUVNode(), new ModelToMeshNode(),
-                new MeshToGLNode());
+    @Listener
+    public void registerEvent(RegisterEvent event) {
 
-        Registry<Block> registry = context.getManager().getRegistry(Block.class);
+    }
+
+    void setupResource(GameContext context, ResourceManager manager, RendererGlobal renderer) throws Exception {
+        Registry<Block> registry = context.getRegistry().getRegistry(Block.class);
         List<ResourcePath> pathList = new ArrayList<>();
         for (Block value : registry.getValues()) {
             if (value.getRegisteredName().equals("air"))
@@ -46,13 +44,9 @@ public class MinecraftMod {
             pathList.add(new ResourcePath(path));
         }
 
-        Map<String, Object> result = pipeline.push("BlockModels", pathList);
-        textureMap = (GLTexture) result.get("TextureMap");
-        List<GLMesh> meshList = (List<GLMesh>) result.get("BlockModels");
-        meshRegistry = new GLMesh[meshList.size()];
-        for (int i = 0; i < meshList.size(); i++) {
-            meshRegistry[i] = meshList.get(i);
-        }
+        MinecraftModelFactory.Result feed = MinecraftModelFactory.process(manager, pathList);
+        textureMap = feed.textureMap;
+        meshRegistry = feed.meshes.stream().map(GLMesh::of).toArray(GLMesh[]::new);
 
         RendererDebug debug = new RendererDebug();
         debug.setTexture(textureMap);
@@ -61,14 +55,6 @@ public class MinecraftMod {
         context.register(debug);
 //        RendererSkybox skybox = new RendererSkybox();
 //        renderer.add(skybox);
-
-        // v = new Shader(0, ShaderType.VERTEX_SHADER);
-        // v.loadShader("assets/unknowndomain/shader/frame.vert");
-        // f = new Shader(0, ShaderType.FRAGMENT_SHADER);
-        // f.loadShader("assets/unknowndomain/shader/frame.frag");
-        // RenderBoundingBox frame = new RenderBoundingBox(v, f);
-        // renderer.add(frame);
-
         RendererGui gui = new RendererGui();
         renderer.add(gui);
     }
@@ -110,23 +96,4 @@ public class MinecraftMod {
         itemRegistry.register(createPlace(blockRegistry.getValue("stone")));
         itemRegistry.register(createPlace(blockRegistry.getValue("grass_normal")));
     }
-
-    public static class MeshToGLNode implements Pipeline.Node {
-        @Override
-        public Object process(Pipeline.Context context, Object in) {
-            if (in instanceof Mesh) {
-                return GLMesh.of((Mesh) in);
-            } else if (in instanceof List) {
-                List<Mesh> meshes = (List<Mesh>) in;
-                List<GLMesh> glMeshes = new ArrayList<>();
-                for (Mesh mesh : meshes) {
-                    glMeshes.add(GLMesh.of(mesh));
-                }
-                return glMeshes;
-            } else {
-                return new ArrayList<Mesh>();
-            }
-        }
-    }
-
 }
