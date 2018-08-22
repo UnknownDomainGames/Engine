@@ -15,13 +15,12 @@ import java.util.function.Supplier;
 public class GameContext implements EventBus {
     private RegistryManager manager;
     private EventBus bus;
-    private List<Runnable> nextTick;
     private ExecutorService executorService;
 
-    public GameContext(RegistryManager manager, EventBus bus, List<Runnable> nextTick) {
+    public GameContext(RegistryManager manager, EventBus bus) {
         this.manager = manager;
         this.bus = bus;
-        this.nextTick = nextTick;
+        // this.nextTick = nextTick;
     }
 
     public RegistryManager getManager() {
@@ -51,9 +50,9 @@ public class GameContext implements EventBus {
         bus.unregister(listener);
     }
 
-    public void nextTick(Runnable runnable) {
-        nextTick.add(runnable);
-    }
+    // public void nextTick(Runnable runnable) {
+    //     nextTick.add(runnable);
+    // }
 
     public ExecutorService getExecutorService() {
         return executorService;

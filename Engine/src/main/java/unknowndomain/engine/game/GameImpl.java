@@ -10,7 +10,7 @@ import unknowndomain.engine.item.Item;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.SimpleRegistryManager;
-import unknowndomain.engine.unclassified.EntityType;
+import unknowndomain.engine.entity.EntityType;
 import unknowndomain.engine.world.ChunkStore;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.World0;
@@ -19,23 +19,21 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CyclicBarrier;
 
 public class GameImpl implements Game {
     private GameContext context;
-    private List<Runnable> nextTicks = Lists.newArrayList();
-    private World world;
+    private Map<String, World> worlds;
+
+    // private CyclicBarrier barrier = new CyclicBarrier(parties);
 
     public void preInit(EventBus bus) {
-        RegistryManager all = SimpleRegistryManager.collectAll(
-                bus,
-                Registry.Type.of("action", Action.class),
-
-                Registry.Type.of("block", Block.class),
-                Registry.Type.of("item", Item.class),
-                Registry.Type.of("entity", EntityType.class)
-        );
-        this.context = new GameContext(all, bus, this.nextTicks);
-        this.world = new World0(context, new ChunkStore(context));
+        RegistryManager all = SimpleRegistryManager.collectAll(bus, Registry.Type.of("action", Action.class),
+                Registry.Type.of("block", Block.class), Registry.Type.of("item", Item.class),
+                Registry.Type.of("entity", EntityType.class));
+        this.context = new GameContext(all, bus);
+        this.worlds.put("default", new World0(context, new ChunkStore(context)));
     }
 
     @Override
@@ -45,27 +43,17 @@ public class GameImpl implements Game {
 
     @Override
     public Collection<World> getWorlds() {
-        return null;
+        return worlds.values();
     }
 
     @Nullable
     @Override
     public World getWorld(String name) {
-        return null;
+        return worlds.get(name);
     }
 
     @Override
     public void tick() {
-        if (nextTicks.size() != 0) {
-            for (Runnable tick : nextTicks) { // TODO: limit time
-                tick.run();
-            }
-        }
-    }
-
-    @Override
-    public void addWorld(World world) {
-
     }
 
     @Override

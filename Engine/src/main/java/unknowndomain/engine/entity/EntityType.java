@@ -1,4 +1,4 @@
-package unknowndomain.engine.unclassified;
+package unknowndomain.engine.entity;
 
 import unknowndomain.engine.Prototype;
 import unknowndomain.engine.entity.Entity;

@@ -8,6 +8,9 @@ import unknowndomain.engine.world.World;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
+/**
+ * The game shares the same set of mod and resources pack manifest
+ */
 public interface Game extends RuntimeObject, Prototype<RuntimeObject, Game> {
     GameContext getContext();
 
@@ -18,5 +21,5 @@ public interface Game extends RuntimeObject, Prototype<RuntimeObject, Game> {
 
     void tick();
 
-    void addWorld(World world);
+    // World spawnWorld(WorldConfig? config); // TODO: design this
 }

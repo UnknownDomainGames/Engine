@@ -113,6 +113,7 @@ public class EngineClient implements Engine {
 
     }
 
+    // https://github.com/lwjglgamedev/lwjglbook/blob/master/chapter02/src/main/java/org/lwjglb/engine/GameEngine.java
     public void gameLoop() {
         float elapsedTime;
         float accumulator = 0f;
@@ -125,13 +126,12 @@ public class EngineClient implements Engine {
                 // update(interval); //TODO: game logic
                 playerController.tick();
                 game.tick();
-                // game.tick();
                 accumulator -= interval;
             }
 
             window.update();
             sync();
-        }
+        }   
     }
 
     private void sync() {

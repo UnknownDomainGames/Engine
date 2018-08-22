@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 public class World0 implements World {
     private GameContext context;
@@ -33,6 +34,8 @@ public class World0 implements World {
     private List<Entity> entityList = new ArrayList<>();
     private List<Player> players = new ArrayList<>();
     private PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
+    private List<Runnable> nextTick = new ArrayList<>();
+    private ExecutorService service;
 
     public World0(GameContext context, Chunk.Store chunkStore) {
         this.context = context;
@@ -47,8 +50,9 @@ public class World0 implements World {
     }
 
     public Player playerJoin(Player.Data data) {
-        EntityImpl entity = new EntityImpl(entityList.size(), new Vector3f(), new Vector3f(), new Vector3f(), data.getBoundingBox(),
-                ImmutableMap.<String, Object>builder().put(Entity.TwoHands.class.getName(), new EntityImpl.TwoHandImpl()).build());
+        EntityImpl entity = new EntityImpl(entityList.size(), new Vector3f(), new Vector3f(), new Vector3f(),
+                data.getBoundingBox(), ImmutableMap.<String, Object>builder()
+                        .put(Entity.TwoHands.class.getName(), new EntityImpl.TwoHandImpl()).build());
         spawnEntity(entity);
         PlayerImpl player = new PlayerImpl(data, this, entity);
         players.add(player);
@@ -75,12 +79,14 @@ public class World0 implements World {
 
         for (BlockPos pos : all) {
             Block object = getBlock(pos);
-            if (ignore.contains(object)) continue;
+            if (ignore.contains(object))
+                continue;
             Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
             AABBd[] boxes = object.getBoundingBoxes();
             Vector2d result = new Vector2d();
             for (AABBd box : boxes) {
-                boolean hit = box.intersectRay(local.x, local.y, local.z, rayOffset.x, rayOffset.y, rayOffset.z, result);
+                boolean hit = box.intersectRay(local.x, local.y, local.z, rayOffset.x, rayOffset.y, rayOffset.z,
+                        result);
                 if (hit) {
                     Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
                     Facing facing = Facing.NORTH;
@@ -105,6 +111,11 @@ public class World0 implements World {
     }
 
     public void tick() {
+        if (nextTick.size() != 0) {
+            for (Runnable tick : nextTick) { // TODO: limit time
+                tick.run();
+            }
+        }
         physicsSystem.tick(this);
 
         for (Entity entity : this.getEntities()) {
@@ -115,8 +126,7 @@ public class World0 implements World {
             BlockPos newPosition = BlockPos.of(position);
 
             if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
-                Chunk oldChunk = chunkStore.getChunk(oldPosition),
-                        newChunk = chunkStore.getChunk(newPosition);
+                Chunk oldChunk = chunkStore.getChunk(oldPosition), newChunk = chunkStore.getChunk(newPosition);
                 oldChunk.getEntities().remove(entity);
                 newChunk.getEntities().add(entity);
                 // entity leaving and enter chunk event
@@ -157,12 +167,14 @@ public class World0 implements World {
             for (Entity entity : entityList) {
                 Vector3f motion = entity.getMotion();
                 Vector3f direction = new Vector3f(motion);
-                if (motion.x == 0 && motion.y == 0 && motion.z == 0) continue;
+                if (motion.x == 0 && motion.y == 0 && motion.z == 0)
+                    continue;
                 Vector3f position = entity.getPosition();
                 AABBd box = entity.getBoundingBox();
 
-                BlockPos localPos = new BlockPos(((int) Math.floor(position.x)), ((int) Math.floor(position.y)), ((int) Math.floor(position.z)));
-//
+                BlockPos localPos = new BlockPos(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
+                        ((int) Math.floor(position.z)));
+                //
                 int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
                         directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
                         directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
@@ -172,22 +184,20 @@ public class World0 implements World {
                 for (List<BlockPos> ls : around) {
                     ls.add(localPos);
                 }
-                List<BlockPos> faceX = around[0],
-                        faceY = around[1],
-                        faceZ = around[2];
+                List<BlockPos> faceX = around[0], faceY = around[1], faceZ = around[2];
 
-                double xFix = Integer.MAX_VALUE,
-                        yFix = Integer.MAX_VALUE,
-                        zFix = Integer.MAX_VALUE;
+                double xFix = Integer.MAX_VALUE, yFix = Integer.MAX_VALUE, zFix = Integer.MAX_VALUE;
                 if (faceX.size() != 0) {
                     for (BlockPos pos : faceX) {
                         Block block = world.getBlock(pos);
                         AABBd[] blockBoxes = block.getBoundingBoxes();
                         if (blockBoxes.length != 0)
                             for (AABBd blockBoxLocal : blockBoxes) {
-                                AABBd blockBox = AABBs.translate(blockBoxLocal, new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
+                                AABBd blockBox = AABBs.translate(blockBoxLocal,
+                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
                                 if (blockBox.testAABB(entityBox)) {
-                                    xFix = Math.min(xFix, Math.min(Math.abs(blockBox.maxX - entityBox.minX), Math.abs(blockBox.minX - entityBox.maxX)));
+                                    xFix = Math.min(xFix, Math.min(Math.abs(blockBox.maxX - entityBox.minX),
+                                            Math.abs(blockBox.minX - entityBox.maxX)));
                                 }
                             }
                     }
@@ -198,9 +208,11 @@ public class World0 implements World {
                         AABBd[] blockBoxes = block.getBoundingBoxes();
                         if (blockBoxes.length != 0)
                             for (AABBd blockBox : blockBoxes) {
-                                AABBd translated = AABBs.translate(blockBox, new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
+                                AABBd translated = AABBs.translate(blockBox,
+                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
                                 if (translated.testAABB(entityBox)) {
-                                    yFix = Math.min(yFix, Math.min(Math.abs(translated.maxY - entityBox.minY), Math.abs(translated.minY - entityBox.maxY)));
+                                    yFix = Math.min(yFix, Math.min(Math.abs(translated.maxY - entityBox.minY),
+                                            Math.abs(translated.minY - entityBox.maxY)));
                                 }
                             }
                     }
@@ -211,9 +223,11 @@ public class World0 implements World {
                         AABBd[] blockBoxes = block.getBoundingBoxes();
                         if (blockBoxes.length != 0)
                             for (AABBd blockBox : blockBoxes) {
-                                AABBd translated = AABBs.translate(blockBox, new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
+                                AABBd translated = AABBs.translate(blockBox,
+                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
                                 if (translated.testAABB(entityBox)) {
-                                    zFix = Math.min(zFix, Math.min(Math.abs(translated.maxZ - entityBox.minZ), Math.abs(translated.minZ - entityBox.maxZ)));
+                                    zFix = Math.min(zFix, Math.min(Math.abs(translated.maxZ - entityBox.minZ),
+                                            Math.abs(translated.minZ - entityBox.maxZ)));
                                 }
                             }
                     }
@@ -226,9 +240,9 @@ public class World0 implements World {
                     motion.z = 0;
                 }
 
-//            if (motion.y > 0) motion.y -= 0.01f;
-//            else if (motion.y < 0) motion.y += 0.01f;
-//            if (Math.abs(motion.y) <= 0.01f) motion.y = 0; // physics update
+                // if (motion.y > 0) motion.y -= 0.01f;
+                // else if (motion.y < 0) motion.y += 0.01f;
+                // if (Math.abs(motion.y) <= 0.01f) motion.y = 0; // physics update
             }
         }
     }
