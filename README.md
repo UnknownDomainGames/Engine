@@ -132,3 +132,28 @@ glUpload(newVertices, leftSum);
 ### Render Progress Introduction
 
 http://fragmentbuffer.com/gpu-performance-for-game-artists/
+
+
+### Game Loop
+
+[LWJGL book Fix Step](
+https://github.com/lwjglgamedev/lwjglbook/blob/master/chapter02/src/main/java/org/lwjglb/engine/GameEngine.java)
+
+[What is the point of update independent rendering in a game loop?](
+https://gamedev.stackexchange.com/questions/132831/what-is-the-point-of-update-independent-rendering-in-a-game-loop)
+
+[Dynamic Tick vs Fix Step Tick](https://gamedev.stackexchange.com/questions/56956/how-do-i-make-a-game-tick-method)
+[Introduce Game Loop](http://gameprogrammingpatterns.com/game-loop.html)
+
+Splitting Between Logic and Render
+
+- Logic
+    - update independently
+    - update world and various world subsystem
+        - update world physics between entity
+- Renderer
+    - update progress depending on the partial progress of logic 
+    - maintains block/entity model part transformation
+    - maintains batch particles system
+    - render update
+
