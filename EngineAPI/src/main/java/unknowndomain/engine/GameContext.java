@@ -12,8 +12,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 public class GameContext implements EventBus {
-    private RegistryManager manager;
     private EventBus bus;
+    private RegistryManager manager;
     private ExecutorService executorService;
 
     public GameContext(RegistryManager manager, EventBus bus) {

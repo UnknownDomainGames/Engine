@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
+ * World instance, should spawn by {@link unknowndomain.engine.game.Game}
  */
 public interface World extends RuntimeObject {
     List<Entity> getEntities();
@@ -20,9 +20,6 @@ public interface World extends RuntimeObject {
     BlockPrototype.Hit raycast(Vector3f from, Vector3f dir, float distance);
 
     BlockPrototype.Hit raycast(Vector3f from, Vector3f dir, float distance, Set<Block> ignore);
-
-//    @Nonnull
-//    Chunk getChunk(int x, int z);
 
     @Nonnull
     Block getBlock(@Nonnull BlockPos pos);

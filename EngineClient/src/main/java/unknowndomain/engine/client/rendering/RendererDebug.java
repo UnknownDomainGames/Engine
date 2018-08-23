@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import unknowndomain.engine.Platform;
+import unknowndomain.engine.Engine;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.model.GLMesh;
@@ -121,7 +121,7 @@ public class RendererDebug extends RendererShaderProgram {
 
     @Listener
     public void handleChunkLoad(ChunkLoadEvent event) {
-        Platform.getLogger().info("CHUNK LOAD " + event.pos);
+        Engine.getLogger().info("CHUNK LOAD " + event.pos);
         ChunkPos pos = event.pos;
         RenderChunk chunk = new RenderChunk(event.blocks);
         loadChunk.put(pos, chunk);
@@ -129,19 +129,19 @@ public class RendererDebug extends RendererShaderProgram {
 
     @Listener
     public void handleBlockChange(BlockChangeEvent event) {
-        Platform.getLogger().info("BLOCK CHANGE");
+        Engine.getLogger().info("BLOCK CHANGE");
         BlockPos pos = event.pos;
         ChunkPos cp = pos.toChunk();
         // RenderChunk chunk = loadChunk.get(cp.compact());
         RenderChunk chunk = loadChunk.get(cp);
         if (chunk == null) {
-            Platform.getLogger().error("WTF, The chunk load not report?");
+            Engine.getLogger().error("WTF, The chunk load not report?");
             return;
         }
 
         int yIndex = (pos.getY() & 255) >> 4;
         int xIndex = pos.pack();
-        Platform.getLogger().info(pos + " -> " + xIndex);
+        Engine.getLogger().info(pos + " -> " + xIndex);
 
         chunk.blocks[yIndex][xIndex] = event.blockId;
         if (event.blockId != 0 && !chunk.valid[yIndex]) {

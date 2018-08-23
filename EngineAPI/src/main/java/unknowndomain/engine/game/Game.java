@@ -11,9 +11,15 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
- * The game shares the same set of mod and resources pack manifest
+ * The game shares the same set of mod and resources pack manifest.
+ * <p>The game manages the complex life cycle of mods, configs, worlds.</p>
+ * <p>I used to decide to construct all the dependency (mod, config) before game instance creation.</p>
+ * <p>But, its complexity makes me feel that it should manage all these by itself (after it create)</p>
+ *
+ * <p>
+ * Each world should hold a separated thread
  */
-public interface Game extends RuntimeObject, Prototype<RuntimeObject, Game> {
+public interface Game extends RuntimeObject, Prototype<RuntimeObject, Game>, Runnable {
     GameContext getContext();
 
     Collection<World> getWorlds();
@@ -21,13 +27,16 @@ public interface Game extends RuntimeObject, Prototype<RuntimeObject, Game> {
     @Nullable
     World getWorld(String name);
 
-    void tick();
+//    World spawnWorld(); // TODO: spawn world by config
 
-    interface Manifest {
+    boolean isTerminated();
+
+    interface Config {
         ModIdentifier[] mods();
 
         ResourcePath[] resources();
     }
+
 
     // World spawnWorld(WorldConfig? config); // TODO: design this
 }

@@ -16,6 +16,7 @@ import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.player.PlayerImpl;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayCast;
@@ -28,18 +29,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
-public class World0 implements World {
+public class WorldCommon implements World, Runnable {
     private GameContext context;
-    private Chunk.Store chunkStore;
-    private List<Entity> entityList = new ArrayList<>();
-    private List<Player> players = new ArrayList<>();
+
     private PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
+
+    private Chunk.Store chunkStore;
+    private List<Player> players = new ArrayList<>();
+    private List<Entity> entityList = new ArrayList<>();
     private List<Runnable> nextTick = new ArrayList<>();
+
+    private FixStepTicker ticker;
     private ExecutorService service;
 
-    public World0(GameContext context, Chunk.Store chunkStore) {
+    public WorldCommon(GameContext context, Chunk.Store chunkStore) {
         this.context = context;
         this.chunkStore = chunkStore;
+        this.ticker = new FixStepTicker(this::tick, 20); // TODO: make tps configurable
     }
 
     public void spawnEntity(Entity entity) {
@@ -52,7 +58,7 @@ public class World0 implements World {
     public Player playerJoin(Player.Profile data) {
         EntityImpl entity = new EntityImpl(entityList.size(), new Vector3f(), new Vector3f(), new Vector3f(),
                 data.getBoundingBox(), ImmutableMap.<String, Object>builder()
-                        .put(Entity.TwoHands.class.getName(), new EntityImpl.TwoHandImpl()).build());
+                .put(Entity.TwoHands.class.getName(), new EntityImpl.TwoHandImpl()).build());
         spawnEntity(entity);
         PlayerImpl player = new PlayerImpl(data, this, entity);
         players.add(player);
@@ -110,7 +116,7 @@ public class World0 implements World {
         return null;
     }
 
-    public void tick() {
+    protected void tick() {
         if (nextTick.size() != 0) {
             for (Runnable tick : nextTick) { // TODO: limit time
                 tick.run();
@@ -135,7 +141,7 @@ public class World0 implements World {
 
         chunkStore.getChunks().forEach(this::tickChunk);
         for (Entity entity : entityList)
-            entity.tick(context); // state machine update
+            entity.tick(); // state machine update
     }
 
     private void tickChunk(Chunk chunk) {
@@ -159,6 +165,15 @@ public class World0 implements World {
     @Override
     public Block setBlock(@NonNull BlockPos pos, Block block) {
         return chunkStore.getChunk(pos).setBlock(pos, block);
+    }
+
+    @Override
+    public void run() {
+        ticker.start();
+    }
+
+    public void stop() {
+        this.ticker.stop();
     }
 
     static class PhysicsSystem {

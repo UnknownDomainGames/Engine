@@ -3,7 +3,6 @@ package unknowndomain.engine.entity;
 import com.google.common.collect.ImmutableMap;
 import org.joml.AABBd;
 import org.joml.Vector3f;
-import unknowndomain.engine.GameContext;
 import unknowndomain.engine.item.Item;
 
 import javax.annotation.Nonnull;
@@ -40,7 +39,7 @@ public class EntityImpl implements Entity {
     }
 
     @Override
-    public void tick(GameContext context) {
+    public void tick() {
 //        UnknownDomain.getEngine().getWorld().getBlock();
 //        camera.move(motion.x, motion.y, motion.z); // this should not be here...
     }

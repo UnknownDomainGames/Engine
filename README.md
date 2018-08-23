@@ -64,7 +64,7 @@ There could be sub-named blocks and items. For block, it might be produced by co
 ### Start Game Loading Progress (Draft)
 
 1. initialize player profile, login information (GUI show to let player login if there is no local cached profile) 
-2. pull the resources/mod manifest from server
+2. pull the resources/mod config from server
     1. check local if they exist
     2. download missing mod and resource
 3. initialize action manager

@@ -14,9 +14,8 @@ import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.Timer;
-import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.mod.SimpleModManager;
-import unknowndomain.engine.world.World0;
+import unknowndomain.engine.world.WorldCommon;
 
 public class EngineClient implements Engine {
 
@@ -52,14 +51,13 @@ public class EngineClient implements Engine {
     }
 
 
-    public World0 getWorld() {
+    public WorldCommon getWorld() {
         return null;
         // return world;
     }
 
 
-    private Game buildGame(Game.Manifest manifest) {
-
+    private Game buildGame(Game.Config config) {
         return null;
     }
 
@@ -74,8 +72,8 @@ public class EngineClient implements Engine {
         // modManager = new SimpleModManager(bus);
         // modManager.getMod("unknowndomain");
 
-        game = new GameClient();
-        game.preInit(bus);
+//        game = new GameClient();
+//        game.preInit(bus);
 
         // minecraftMod.init(context);
         // try {
@@ -119,9 +117,8 @@ public class EngineClient implements Engine {
             accumulator += elapsedTime;
 
             while (accumulator >= interval) {
-                // update(interval); //TODO: game logic
                 playerController.tick();
-                game.tick();
+//                game.tick();
                 accumulator -= interval;
             }
 
@@ -141,23 +138,28 @@ public class EngineClient implements Engine {
         }
     }
 
-    @Override
-    public ModManager getModManager() {
-        return modManager;
-    }
-
-    @Override
+    //    @Override
     public ResourceManager getResourceManager() {
         return resourceManager;
     }
 
-    @Override
+    //    @Override
     public ActionManager getActionManager() {
         return this.actionManager;
     }
 
     @Override
-    public Game getGame() {
+    public Side getSide() {
+        return Side.CLIENT;
+    }
+
+    @Override
+    public Game startGame(Game.Config config) {
+        return null;
+    }
+
+    @Override
+    public Game getCurrentGame() {
         return game;
     }
 }

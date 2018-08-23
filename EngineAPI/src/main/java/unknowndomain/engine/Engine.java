@@ -1,16 +1,35 @@
 package unknowndomain.engine;
 
-import unknowndomain.engine.action.ActionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import unknowndomain.engine.game.Game;
-import unknowndomain.engine.mod.ModManager;
-import unknowndomain.engine.client.resource.ResourceManager;
 
+/**
+ * really, just the game starter, nothing else
+ */
 public interface Engine {
-    ModManager getModManager();
+    Logger LOGGER = LoggerFactory.getLogger("Engine");
 
-    Game getGame();
+    static Logger getLogger() {
+        return LOGGER;
+    }
 
-    ResourceManager getResourceManager();
+    Side getSide();
 
-    ActionManager getActionManager();
+    /**
+     * Start a new game, each engine only support one game at the time?
+     *
+     * @param config The game config
+     */
+    Game startGame(Game.Config config);
+
+    // TODO: add getter for mod repository
+
+    // TODO: add getter for resource repository
+
+    Game getCurrentGame();
+
+    enum Side {
+        SERVER, CLIENT
+    }
 }

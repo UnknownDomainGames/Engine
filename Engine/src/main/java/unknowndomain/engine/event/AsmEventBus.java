@@ -6,7 +6,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-import unknowndomain.engine.Platform;
+import unknowndomain.engine.Engine;
 import unknowndomain.engine.util.SafeClassDefiner;
 
 import java.lang.reflect.Constructor;
@@ -91,7 +91,7 @@ public class AsmEventBus implements EventBus {
         try {
             executor.invoke(event);
         } catch (Exception e) {
-            Platform.getLogger().warn("Failed to handle event.", new EventException(e));
+            Engine.getLogger().warn("Failed to handle event.", new EventException(e));
         }
     }
 
@@ -113,16 +113,19 @@ public class AsmEventBus implements EventBus {
             int modifiers = method.getModifiers();
 
             if (!Modifier.isPublic(modifiers) || Modifier.isStatic(modifiers) || Modifier.isAbstract(modifiers)) {
-                continue; // TODO: Warning.
+                Engine.getLogger().warn("Require event bus listened method is public and not static/abstract! " + clazz); // TODO: support static
+                continue;
             }
 
             if (method.getParameterCount() != 1) {
-                continue; // TODO: Warning.
+                Engine.getLogger().warn("Require event bus listened method has only one event parameter! " + clazz);
+                continue;
             }
 
             Class<?> eventType = method.getParameterTypes()[0];
             if (!Event.class.isAssignableFrom(eventType)) {
-                continue; // TODO: Warning.
+                Engine.getLogger().warn("Require event bus listened method has only one event parameter! " + clazz);
+                continue;
             }
 
             try {
@@ -131,7 +134,7 @@ public class AsmEventBus implements EventBus {
                 listenerExecutors.add(executor);
                 addEventListener(eventType, executor);
             } catch (ReflectiveOperationException e) {
-                Platform.getLogger().warn(String.format("Failed to register listener %s.%s .",
+                Engine.getLogger().warn(String.format("Failed to register listener %s.%s .",
                         listener.getClass().getSimpleName(), method.getName()), new EventException(e));
             }
 

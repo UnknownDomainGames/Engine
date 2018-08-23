@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.Platform;
+import unknowndomain.engine.Engine;
 import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
@@ -88,7 +88,7 @@ public final class MinecraftModelFactory {
                 while (path.startsWith("#")) {
                     String next = model.textures.get(path.substring(1));
                     if (next == null) {
-                        Platform.getLogger().warn("Missing texture for " + variant);
+                        Engine.getLogger().warn("Missing texture for " + variant);
                         path = null;
                         break;
                     }
@@ -96,7 +96,7 @@ public final class MinecraftModelFactory {
                 }
 
                 if (path == null) {
-                    Platform.getLogger().warn("Missing texture for " + model);
+                    Engine.getLogger().warn("Missing texture for " + model);
                     continue;
                 }
                 model.textures.put(variant, path);

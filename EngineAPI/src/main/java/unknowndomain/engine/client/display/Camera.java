@@ -3,6 +3,10 @@ package unknowndomain.engine.client.display;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+/**
+ * The lifecycle of camera is interesting... A camera can be killed after a game die.
+ * <p>So im considering bind camera to {@link unknowndomain.engine.game.Game}</p>
+ */
 public interface Camera {
     Vector3f getPosition();
 

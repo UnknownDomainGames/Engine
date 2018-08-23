@@ -15,7 +15,7 @@ import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
-import unknowndomain.engine.world.World0;
+import unknowndomain.engine.world.WorldCommon;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -84,7 +84,7 @@ public class RendererGui extends RendererShaderProgram {
         Entity player = UnknownDomain.getEngine().getController().getPlayer().getMountingEntity();
         AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
 
-        World0 world = UnknownDomain.getEngine().getWorld();
+        WorldCommon world = UnknownDomain.getEngine().getWorld();
         BlockPrototype.Hit hit = world.raycast(context.getCamera().getPosition(),
                 context.getCamera().getFrontVector(), 5);
         fontRenderer.drawText("Blocks 0.0.0", 0, 0, 0xffffffff, 16);

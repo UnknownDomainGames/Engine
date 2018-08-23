@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.Validate;
-import unknowndomain.engine.Platform;
+import unknowndomain.engine.Engine;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.ModStartLoadEvent;
 import unknowndomain.engine.mod.*;
@@ -63,7 +63,7 @@ public class JavaModLoader implements ModLoader {
         harvestedInfo.startHarvest();
         Collection<HarvestedAnnotation> annos = harvestedInfo.getHarvestedAnnotations(Mod.class);
         if (annos.isEmpty()) {
-            Platform.getLogger().warn(String.format("cannot find the main class for mod %s!", metadata.getModid()));
+            Engine.getLogger().warn(String.format("cannot find the main class for mod %s!", metadata.getModid()));
             return null;
         }
 
@@ -120,7 +120,7 @@ public class JavaModLoader implements ModLoader {
                 harvestedInfo.startHarvest();
                 Collection<HarvestedAnnotation> annos = harvestedInfo.getHarvestedAnnotations(Mod.class);
                 if (annos.isEmpty()) {
-                    Platform.getLogger().warn(String.format("cannot find the main class for mod %s!", modId));
+                    Engine.getLogger().warn(String.format("cannot find the main class for mod %s!", modId));
                     return null;
                 }
 
@@ -131,11 +131,11 @@ public class JavaModLoader implements ModLoader {
                 mods.put(modId, container);
                 return container;
             } catch (IOException e) {
-                Platform.getLogger().warn(String.format("cannot load mod %s!", modId), e);
+                Engine.getLogger().warn(String.format("cannot load mod %s!", modId), e);
             } catch (ClassNotFoundException e) {
-                Platform.getLogger().warn(String.format("cannot find the main class for mod %s!", modId), e);
+                Engine.getLogger().warn(String.format("cannot find the main class for mod %s!", modId), e);
             } catch (IllegalAccessException | InstantiationException e) {
-                Platform.getLogger().warn(String.format("cannot instantiate the main class for mod %s!", modId), e);
+                Engine.getLogger().warn(String.format("cannot instantiate the main class for mod %s!", modId), e);
             }
         }
 
@@ -146,30 +146,30 @@ public class JavaModLoader implements ModLoader {
         try {
             for (Path mod : Files.list(path).collect(Collectors.toList())) {
                 if (!"jar".equals(FilenameUtils.getExtension(mod.toFile().getAbsolutePath()))) {
-                    Platform.getLogger().debug("file %s is probably not a mod file, skip it", mod);
+                    Engine.getLogger().debug("file %s is probably not a mod file, skip it", mod);
                 } else {
                     try (JarFile jarFile = new JarFile(mod.toFile())) {
                         JarEntry entry = jarFile.getJarEntry("metadata.json");
                         if (entry == null) {
-                            Platform.getLogger().warn("mod file %s contains no mod metadata file at root dir! Contact the mod authors to correct it.", mod);
+                            Engine.getLogger().warn("mod file %s contains no mod metadata file at root dir! Contact the mod authors to correct it.", mod);
                         } else {
                             InputStream inputStream = jarFile.getInputStream(entry);
                             Reader reader = new InputStreamReader(inputStream, "utf-8");
                             JsonObject jo = new JsonParser().parse(reader).getAsJsonObject();
                             if (!jo.has("modid")) {
-                                Platform.getLogger().warn("metadata of mod file %s does not provide its modid! Contact the mod authors to correct it.", mod);
+                                Engine.getLogger().warn("metadata of mod file %s does not provide its modid! Contact the mod authors to correct it.", mod);
                             } else {
                                 modIdMap.put(jo.get("modid").getAsString(), mod);
                             }
                             inputStream.close();
                         }
                     } catch (IOException e) {
-                        Platform.getLogger().warn("cannot open mod", e);
+                        Engine.getLogger().warn("cannot open mod", e);
                     }
                 }
             }
         } catch (IOException e) {
-            Platform.getLogger().warn("cannot load mods in the path!", e);
+            Engine.getLogger().warn("cannot load mods in the path!", e);
         }
     }
 
