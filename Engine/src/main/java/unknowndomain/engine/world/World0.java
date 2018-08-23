@@ -49,7 +49,7 @@ public class World0 implements World {
         entityList.add(entity);
     }
 
-    public Player playerJoin(Player.Data data) {
+    public Player playerJoin(Player.Profile data) {
         EntityImpl entity = new EntityImpl(entityList.size(), new Vector3f(), new Vector3f(), new Vector3f(),
                 data.getBoundingBox(), ImmutableMap.<String, Object>builder()
                         .put(Entity.TwoHands.class.getName(), new EntityImpl.TwoHandImpl()).build());

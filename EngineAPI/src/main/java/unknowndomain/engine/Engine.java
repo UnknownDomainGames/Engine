@@ -10,7 +10,7 @@ public interface Engine {
 
     Game getGame();
 
-    ResourceManager getResourcePackManager();
+    ResourceManager getResourceManager();
 
     ActionManager getActionManager();
 }

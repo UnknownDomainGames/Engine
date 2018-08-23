@@ -7,7 +7,7 @@ import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.MinecraftModelFactory;
 import unknowndomain.engine.client.rendering.RendererDebug;
-import unknowndomain.engine.client.rendering.RendererGlobal;
+import unknowndomain.engine.client.rendering.RendererContext;
 import unknowndomain.engine.client.rendering.gui.RendererGui;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
@@ -34,7 +34,7 @@ public class MinecraftMod {
 
     }
 
-    void setupResource(GameContext context, ResourceManager manager, RendererGlobal renderer) throws Exception {
+    void setupResource(GameContext context, ResourceManager manager, RendererContext renderer) throws Exception {
         Registry<Block> registry = context.getRegistry().getRegistry(Block.class);
         List<ResourcePath> pathList = new ArrayList<>();
         for (Block value : registry.getValues()) {

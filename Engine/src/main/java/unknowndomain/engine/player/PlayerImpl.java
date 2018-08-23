@@ -10,18 +10,18 @@ import unknowndomain.engine.world.Chunk;
 import unknowndomain.engine.world.World;
 
 public class PlayerImpl implements Player {
-    private Data data;
+    private Profile profile;
     private World world;
     private Entity mounting;
 
-    public PlayerImpl(Data data, World world, Entity mounting) {
-        this.data = data;
+    public PlayerImpl(Profile data, World world, Entity mounting) {
+        this.profile = data;
         this.world = world;
         this.mounting = mounting;
     }
 
     public void enter(Chunk.Store chunkStore) {
-        int radius = this.data.trackingChunkRadius;
+        int radius = this.profile.trackingChunkRadius;
         Entity entity = this.getMountingEntity();
         BlockPos pos = BlockPos.of(entity.getPosition());
         for (int i = -radius; i <= radius; i++) {
@@ -56,8 +56,8 @@ public class PlayerImpl implements Player {
     }
 
     @Override
-    public Player.Data getData() {
-        return data;
+    public Player.Profile getProfile() {
+        return profile;
     }
 
     @NonNull

@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 public interface Player {
     @Nonnull
-    Data getData();
+    Profile getProfile();
 
     /**
      * @return the binding world of this player
@@ -40,13 +40,13 @@ public interface Player {
     @Nonnull
     Entity mountEntity(@Nullable Entity entity);
 
-    class Data {
+    class Profile {
         public final UUID uuid;
         public final int trackingChunkRadius;
         private AABBd boundingBox = new AABBd(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
         private String mountingEntity;
 
-        public Data(UUID uuid, int trackingChunkRadius) {
+        public Profile(UUID uuid, int trackingChunkRadius) {
             this.uuid = uuid;
             this.trackingChunkRadius = trackingChunkRadius;
         }

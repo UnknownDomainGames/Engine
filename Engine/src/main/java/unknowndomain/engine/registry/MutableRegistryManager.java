@@ -12,29 +12,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class MutableRegistryManager implements RegistryManager {
-    private Map<Class<?>, Registry<?>> registries;
+class MutableRegistryManager implements RegistryManager.Mutable {
+    Map<Class<?>, Registry<?>> registries;
 
-    private MutableRegistryManager() {
-        this.registries = Maps.newHashMap();
-    }
-
-    private MutableRegistryManager(Map<Class<?>, Registry<?>> registries) {
+    MutableRegistryManager(Map<Class<?>, Registry<?>> registries) {
         this.registries = registries;
-    }
-
-    public static RegistryManager collectAll(EventBus bus, Registry.Type<? extends RegistryEntry<?>>... tps) {
-        Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
-        for (Registry.Type<?> tp : tps) {
-            maps.put(tp.type, new MutableRegistry<>(tp.type, tp.name));
-        }
-        MutableRegistryManager manager = new MutableRegistryManager(maps);
-        bus.post(new RegisterEvent(manager));
-
-        ImmutableMap.Builder<Class<?>, Registry<?>> builder = ImmutableMap.builder();
-        for (Entry<Class<?>, Registry<?>> entry : manager.registries.entrySet())
-            builder.put(entry.getKey(), ImmutableRegistry.freeze(entry.getValue()));
-        return new Frozen(builder.build());
     }
 
     @Override
@@ -56,16 +38,5 @@ public class MutableRegistryManager implements RegistryManager {
     @Override
     public Collection<Entry<Class<?>, Registry<?>>> getEntries() {
         return registries.entrySet();
-    }
-
-    private static class Frozen extends MutableRegistryManager {
-        Frozen(Map<Class<?>, Registry<?>> registries) {
-            super(registries);
-        }
-
-        @Override
-        public <T extends RegistryEntry<T>> void register(@NonNull T obj) {
-            throw new Error();
-        }
     }
 }

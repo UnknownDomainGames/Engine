@@ -70,5 +70,4 @@ public class ResourceManagerImpl implements ResourceManager {
 
         return null;
     }
-
 }

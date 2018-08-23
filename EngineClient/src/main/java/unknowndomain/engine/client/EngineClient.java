@@ -1,21 +1,18 @@
 package unknowndomain.engine.client;
 
-import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.client.display.DefaultGameWindow;
-import unknowndomain.engine.client.keybinding.KeyBindingManager;
-import unknowndomain.engine.client.keybinding.Keybindings;
+import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.player.FirstPersonController;
 import unknowndomain.engine.client.player.PlayerController;
-import unknowndomain.engine.client.rendering.RendererGlobal;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourceManagerImpl;
 import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
+import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.game.Game;
-import unknowndomain.engine.game.GameImpl;
 import unknowndomain.engine.math.Timer;
 import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.mod.SimpleModManager;
@@ -28,22 +25,23 @@ public class EngineClient implements Engine {
      */
 
     private DefaultGameWindow window;
-    private RendererGlobal renderer;
 
     /*
      * Managers section
      */
 
     private ResourceManagerImpl resourceManager;
-    private KeyBindingManager keyBindingManager;
-    private ActionManagerImpl actionManager;
-
-    // private GameClientImpl game;
-    private Timer timer;
     private PlayerController playerController = new FirstPersonController();
-    private GameImpl game;
-    private EventBus bus;
+
+    private ActionManagerImpl actionManager;
     private SimpleModManager modManager;
+    private Player.Profile playerProfile;
+
+    private Timer timer;
+    private EventBus bus;
+
+    private GameClient game;
+    private MinecraftMod minecraftMod = new MinecraftMod();
 
     EngineClient(int width, int height) {
         window = new DefaultGameWindow(this, width, height, UnknownDomain.getName());
@@ -53,12 +51,17 @@ public class EngineClient implements Engine {
         return playerController;
     }
 
+
     public World0 getWorld() {
         return null;
-//        return world;
+        // return world;
     }
 
-    private MinecraftMod minecraftMod = new MinecraftMod();
+
+    private Game buildGame(Game.Manifest manifest) {
+
+        return null;
+    }
 
     public void init() {
         window.init();
@@ -68,38 +71,31 @@ public class EngineClient implements Engine {
         resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
-        modManager = new SimpleModManager(bus);
-        modManager.getMod("unknowndomain");
+        // modManager = new SimpleModManager(bus);
+        // modManager.getMod("unknowndomain");
 
-        game = new GameImpl();
+        game = new GameClient();
         game.preInit(bus);
 
-        renderer = new RendererGlobal();
-        playerController.setCamera(renderer.getCamera());
+        // minecraftMod.init(context);
+        // try {
+        // minecraftMod.setupResource(context, resourceManager, renderer);
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // }
 
-        keyBindingManager = new KeyBindingManager();
-
-        Keybindings.INSTANCE.setup(keyBindingManager);
-
-//        minecraftMod.init(context);
-//        try {
-//            minecraftMod.setupResource(context, resourceManager, renderer);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-        renderer.init(resourceManager);
+        // renderer.init(resourceManager);
 
         // new
-//        Player player = world.playerJoin(new Player.Data(UUID.randomUUID(), 12));
-//        playerController.setPlayer(player);
-//        for (Action action : playerController.getActions()) {
-//            actionManager.register(action);
-//        }
-//
-//        player.getMountingEntity().getPosition().set(1, 2, 1);
+        // Player player = world.playerJoin(new Player.Data(UUID.randomUUID(), 12));
+        // playerController.setPlayer(player);
+        // for (Action action : playerController.getActions()) {
+        // actionManager.register(action);
+        // }
+        //
+        // player.getMountingEntity().getPosition().set(1, 2, 1);
 
-//        minecraftMod.postInit(context);
+        // minecraftMod.postInit(context);
 
         timer = new Timer();
         timer.init();
@@ -131,7 +127,7 @@ public class EngineClient implements Engine {
 
             window.update();
             sync();
-        }   
+        }
     }
 
     private void sync() {
@@ -145,70 +141,13 @@ public class EngineClient implements Engine {
         }
     }
 
-    boolean paused = false;
-
-    public void handleCursorMove(double x, double y) {
-        if (!paused)
-            renderer.getCamera().rotate((float) x, (float) y);
-    }
-
-    public void handleKeyPress(int key, int scancode, int action, int modifiers) {
-        switch (action) {
-            case GLFW.GLFW_PRESS:
-                getKeyBindingManager().handlePress(key, modifiers);
-                break;
-            case GLFW.GLFW_RELEASE:
-                getKeyBindingManager().handleRelease(key, modifiers);
-                break;
-            default:
-                break;
-        }
-        if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
-            if (paused) {
-                window.hideCursor();
-                paused = false;
-            } else {
-                window.showCursor();
-                paused = true;
-            }
-        }
-    }
-
-    public void handleTextInput(int codepoint, int modifiers) {
-    }
-
-    public void handleMousePress(int button, int action, int modifiers) {
-        switch (action) {
-            case GLFW.GLFW_PRESS:
-                getKeyBindingManager().handlePress(button + 400, modifiers);
-                break;
-            case GLFW.GLFW_RELEASE:
-                getKeyBindingManager().handleRelease(button + 400, modifiers);
-                break;
-            default:
-                break;
-        }
-    }
-
-    public void handleScroll(double xoffset, double yoffset) {
-        // renderer.getCamera().zoom((-yoffset / window.getHeight() * 2 + 1)*1.5);
-    }
-
-    public RendererGlobal getRenderer() {
-        return renderer;
-    }
-
-    public KeyBindingManager getKeyBindingManager() {
-        return keyBindingManager;
-    }
-
     @Override
     public ModManager getModManager() {
-        return null; // TODO Inject Mod Manager
+        return modManager;
     }
 
     @Override
-    public ResourceManager getResourcePackManager() {
+    public ResourceManager getResourceManager() {
         return resourceManager;
     }
 
@@ -219,6 +158,6 @@ public class EngineClient implements Engine {
 
     @Override
     public Game getGame() {
-        return null;
+        return game;
     }
 }
