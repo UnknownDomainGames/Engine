@@ -5,10 +5,11 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import unknowndomain.engine.mod.ModClassLoader;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.mod.ModState;
+import unknowndomain.engine.mod.java.harvester.HarvestedInfo;
+
 //TODO: collect mod's class loader, instance of mod main class, mod config, mod looger, config dir.
 public class JavaModContainer implements ModContainer {
 
@@ -29,10 +30,12 @@ public class JavaModContainer implements ModContainer {
 
     private ModState state;
 
-    public JavaModContainer(String modid, Path src){
+    private HarvestedInfo harvestedInfo;
+
+    public JavaModContainer(String modid, Path source){
         this.modid = modid;
         this.logger = LoggerFactory.getLogger(modid);
-        source = src;
+        this.source = source;
     }
 
     @Override
@@ -55,26 +58,9 @@ public class JavaModContainer implements ModContainer {
 		return source;
 	}
 
-	private boolean enabled;
-
-	@Override
-	public boolean isEnable() {
-		return enabled;
-	}
-
-	@Override
-	public void setEnable(boolean enable) {
-		this.enabled = enable;
-		
-	}
-
 	@Override
 	public ModMetadata getMetadata() {
 		return metadata;
-	}
-
-	void setMetadata(ModMetadata metadata) {
-		this.metadata = metadata;
 	}
 
 	public ClassLoader getClassLoader() {
@@ -86,13 +72,12 @@ public class JavaModContainer implements ModContainer {
 		return state;
 	}
 
-	void setClassLoader(ModClassLoader classLoader) {
-        if(this.classLoader != null)
-            throw new IllegalStateException("Class loader has already set!");
-        this.classLoader = classLoader;
-    }
-
-    void setInstance(Object instance) {
-        this.instance = instance;
-    }
+	void initialize(ModClassLoader classLoader, ModMetadata metadata, HarvestedInfo harvestedInfo, Object instance) {
+		if(this.classLoader != null)
+			throw new IllegalStateException("Mod has already initilaized!");
+		this.classLoader = classLoader;
+		this.metadata = metadata;
+		this.harvestedInfo = harvestedInfo;
+		this.instance = instance;
+	}
 }

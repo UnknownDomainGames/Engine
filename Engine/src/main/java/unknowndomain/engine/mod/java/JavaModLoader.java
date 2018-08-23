@@ -8,7 +8,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -19,15 +18,9 @@ import unknowndomain.engine.Platform;
 import unknowndomain.engine.mod.*;
 import unknowndomain.engine.mod.java.harvester.HarvestedAnnotation;
 import unknowndomain.engine.mod.java.harvester.HarvestedInfo;
-import unknowndomain.engine.mod.metadata.FileModMetadata;
-import unknowndomain.engine.mod.metadata.SimpleModMetadata;
-import unknowndomain.engine.util.versioning.ComparableVersion;
 
 public class JavaModLoader implements ModLoader {
-
     private final Path path;
-
-    private Map<String, ModContainer> mods;
 
     public JavaModLoader(Path path) {
         Validate.notNull(path);
@@ -37,53 +30,47 @@ public class JavaModLoader implements ModLoader {
             throw new IllegalArgumentException(path.toAbsolutePath() + " isn't a directory.");
 
         this.path = path;
-        this.mods = new HashMap<>();
-        modIdMap = new HashMap<>();
     }
 
-
-    private Map<String, Path> modIdMap;
+    protected Path getPath(ModIdentity identity) {
+        return path.resolve(identity.getGroup()).resolve(identity.getId() + "-" + identity.getVersion() + ".jar");
+    }
 
     @Override
-    public ModContainer loadMod(String modId) {
-        if (modIdMap.isEmpty()) {
-            initModidForwardMap();
-        }
-        if (modIdMap.containsKey(modId)) {
-            Path mod = modIdMap.get(modId);
-            try (JarFile jarFile = new JarFile(mod.toFile())) {
-                JarEntry entry = jarFile.getJarEntry("metadata.json");
+    public ModContainer loadMod(ModIdentity modId) {
 
-                ModMetadata metadata = FileModMetadata.create(jarFile.getInputStream(entry));
-                JavaModContainer container = new JavaModContainer(modId, mod);
-                ModClassLoader loader = new ModClassLoader(container, Thread.currentThread().getContextClassLoader());
+        Path mod = this.getPath(modid);
+        try (JarFile jarFile = new JarFile(mod.toFile())) {
+            JarEntry entry = jarFile.getJarEntry("metadata.json");
 
-                loader.addPath(mod);
-                container.setClassLoader(loader);
-                container.setMetadata(metadata);
+            ModMetadata metadata; // = ModMetadata.fromJson( jarFile.getInputStream(entry));
+            JavaModContainer container = new JavaModContainer(modId, mod);
+            ModClassLoader classLoader = new ModClassLoader(container, Thread.currentThread().getContextClassLoader());
 
-                HarvestedInfo harvestedInfo = new HarvestedInfo(mod);
-                harvestedInfo.startHarvest();
-                Collection<HarvestedAnnotation> annos = harvestedInfo.getHarvestedAnnotations(Mod.class);
-                if (annos.isEmpty()) {
-                    Platform.getLogger().warn(String.format("cannot find the main class for mod %s!", modId));
-                    return null;
-                }
-
-                Class<?> mainClass = Class.forName(annos.toArray(new HarvestedAnnotation[annos.size()])[0].getOwnerType().getClassName(), true, loader);
-                Object instance = mainClass.newInstance();
-                container.setInstance(instance);
-
-                mods.put(modId, container);
-                return container;
-            } catch (IOException e) {
-                Platform.getLogger().warn(String.format("cannot load mod %s!", modId), e);
-            } catch (ClassNotFoundException e) {
-                Platform.getLogger().warn(String.format("cannot find the main class for mod %s!", modId), e);
-            } catch (IllegalAccessException | InstantiationException e) {
-                Platform.getLogger().warn(String.format("cannot instantiate the main class for mod %s!", modId), e);
+            HarvestedInfo harvestedInfo = new HarvestedInfo(mod);
+            harvestedInfo.startHarvest();
+            Collection<HarvestedAnnotation> annos = harvestedInfo.getHarvestedAnnotations(Mod.class);
+            if (annos.isEmpty()) {
+                Platform.getLogger().warn(String.format("cannot find the main class for mod %s!", modId));
+                return null;
             }
+
+            Class<?> mainClass = Class.forName(
+                    annos.toArray(new HarvestedAnnotation[annos.size()])[0].getOwnerType().getClassName(), true,
+                    classLoader);
+            Object instance = mainClass.newInstance();
+
+            container.initialize(classLoader, metadata, harvestedInfo, instance);
+
+            return container;
+        } catch (IOException e) {
+            Platform.getLogger().warn(String.format("cannot load mod %s!", modId), e);
+        } catch (ClassNotFoundException e) {
+            Platform.getLogger().warn(String.format("cannot find the main class for mod %s!", modId), e);
+        } catch (IllegalAccessException | InstantiationException e) {
+            Platform.getLogger().warn(String.format("cannot instantiate the main class for mod %s!", modId), e);
         }
+        // }
 
         return null;
     }
@@ -97,13 +84,17 @@ public class JavaModLoader implements ModLoader {
                     try (JarFile jarFile = new JarFile(mod.toFile())) {
                         JarEntry entry = jarFile.getJarEntry("metadata.json");
                         if (entry == null) {
-                            Platform.getLogger().warn("mod file %s contains no mod metadata file at root dir! Contact the mod authors to correct it.", mod);
+                            Platform.getLogger().warn(
+                                    "mod file %s contains no mod metadata file at root dir! Contact the mod authors to correct it.",
+                                    mod);
                         } else {
                             InputStream inputStream = jarFile.getInputStream(entry);
                             Reader reader = new InputStreamReader(inputStream, "utf-8");
                             JsonObject jo = new JsonParser().parse(reader).getAsJsonObject();
                             if (!jo.has("modid")) {
-                                Platform.getLogger().warn("metadata of mod file %s does not provide its modid! Contact the mod authors to correct it.", mod);
+                                Platform.getLogger().warn(
+                                        "metadata of mod file %s does not provide its modid! Contact the mod authors to correct it.",
+                                        mod);
                             } else {
                                 modIdMap.put(jo.get("modid").getAsString(), mod);
                             }
@@ -119,29 +110,8 @@ public class JavaModLoader implements ModLoader {
     }
 
     @Override
-    public ModContainer getModContainer(String modId) {
-        if (!mods.containsKey(modId)) {
-            ModContainer mc = loadMod(modId);
-            if (mc == null) return null;
-            mods.put(modId, mc);
-        }
-        return mods.get(modId);
+    public boolean hasMod(ModIdentity modId) {
+        Path mod = this.getPath(modid);
+        return Files.exists(mod);
     }
-
-    @Override
-    public boolean hasMod(String modId) {
-        if (modIdMap.isEmpty()) {
-            initModidForwardMap();
-        }
-        return modIdMap.containsKey(modId);
-    }
-
-    public Map<String, ModContainer> getLoadedMods() {
-        return mods;
-    }
-
-    public List<ModContainer> getLoadedModsList() {
-        return new ArrayList<>(mods.values());
-    }
-
 }

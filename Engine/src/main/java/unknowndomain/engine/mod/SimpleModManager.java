@@ -3,31 +3,30 @@ package unknowndomain.engine.mod;
 import unknowndomain.engine.mod.java.JavaModLoader;
 
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SimpleModManager implements ModManager {
+
+	private final Map<String, ModContainer> loadedMods = new HashMap<>();
 
 	//TODO: receive home directory of the game and direct to mods folder
 	private JavaModLoader javaModLoader = new JavaModLoader(Paths.get("mods"));
 
 	@Override
-	public ModContainer getMod(String modId) {
-	    ModContainer container = javaModLoader.getModContainer(modId);
-	    if(container != null) return container;
-	    //TODO: there might be more mod loader
-		return null;
+	public ModContainer getLoadedMod(String modId) {
+	    return loadedMods.get(modId);
 	}
 
 	@Override
 	public boolean isModLoaded(String modId) {
-	    //TODO: there might be more mod loader
-		return javaModLoader.getLoadedMods().containsKey(modId);
+		return loadedMods.containsKey(modId);
 	}
 
 	@Override
-	public List<ModContainer> getAllLoadedMods() {
-	    //TODO: there might be more mod loader
-		return javaModLoader.getLoadedModsList();
+	public Collection<ModContainer> getLoadedMods() {
+		return loadedMods.values();
 	}
 
     @Override

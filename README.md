@@ -13,7 +13,7 @@ Discuss the things we need to identify in game.
 | Action | The abstract action, like command, but this should include the action like "player move forward" | By string id (player.move.forward) | We need to bind key or command or other input way to these to control game |
 | Game Object Type | The type of ingame object, like block prototype, item prototype, entity type. | By semantic string id (block.stone) | Majorly used for (de)serialization on network or disk | 
 | Game Object | The important things ingame, mostly the object under the world life cycle (entity, block, item)| By hierarchy structure string. (block requires location, entity requires id) e.g. /\<dimension id>/\<world id>/\<position> | We need to have a universal way to refer an ingame object which provides a easy way to communicate between client and server |
-| Resource | The game resource in disk (or remote) | By its string path | We need to load resources obviously | 
+| Resource | The game resource in disk (or remote) | By its string dir | We need to loadOrder resources obviously | 
 
 We have to manage these things differently though.
 
@@ -24,7 +24,7 @@ The resource will transform to other form (Texture, Model, Sound, Animation) and
 After the loading stage of a game, all the resource transformed out. The raw bytes cache should be cleared.
 
 The `GameObject` should managed by its parent. We don't need to do anything special to it.
-Just process the path to get dimension, get world, and get block or entity.
+Just process the dir to get dimension, get world, and get block or entity.
 
 ### About the Registry Convenience
 
@@ -32,12 +32,12 @@ The ideal way to register a thing is only providing its id without any redundant
 
 ```java
 Registry<BlockObject> registry;
-registry.register(block.setRegistryName('air')); // infer the query full path is <current modid>.block.air
+registry.register(block.setRegistryName('air')); // infer the query full dir is <current modid>.block.air
 Registry<ItemObject> itemRegistry;
-itemRegistry.register(item.setRegisterName('stone')); // infer the query full path is <current modid>.item.stone
+itemRegistry.register(item.setRegisterName('stone')); // infer the query full dir is <current modid>.item.stone
 
 RegistryManager manager;
-manager.register(block.setRegistryName('stone'));  // infer the query full path is <current modid>.block.stone
+manager.register(block.setRegistryName('stone'));  // infer the query full dir is <current modid>.block.stone
 
 // when we want to get a registered object
 manager.get('unknowndomain.block.stone'); // get the stone block
@@ -59,7 +59,7 @@ There could be sub-named blocks and items. For block, it might be produced by co
 1. initialize glfw opengl, window and other hook
 2. initialize resource manager, pull default resource source
 3. initialize mod manager
-4. initialize default renderer, which will require load default textures and objects
+4. initialize default renderer, which will require loadOrder default textures and objects
 
 ### Start Game Loading Progress (Draft)
 
@@ -70,7 +70,7 @@ There could be sub-named blocks and items. For block, it might be produced by co
 3. initialize action manager
 4. initialize keybinding, requiring action manager
 5. initialize game context
-6. load all mods by mod manager
+6. loadOrder all mods by mod manager
     1. mod register all block/item/entity
     2. resource manager loads all required resources by mod
     3. use custom mod resource process pipeline to process resource

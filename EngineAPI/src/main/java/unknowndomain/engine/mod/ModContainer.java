@@ -16,11 +16,9 @@ public interface ModContainer {
 	
 	Logger getLogger();
 	
-	boolean isEnable();
-	
-	void setEnable(boolean enable);
-	
 	ModMetadata getMetadata();
 
 	ModState getState();
+
+	Path getDataDir();
 }
