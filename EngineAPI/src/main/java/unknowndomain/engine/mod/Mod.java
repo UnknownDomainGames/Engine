@@ -13,8 +13,8 @@ import java.lang.annotation.Target;
 @Target(TYPE)
 public @interface Mod {
 
-	/**
-	 * Mod identified name.
-	 */
-	String value();
+    /**
+     * Mod identified name.
+     */
+    String value();
 }

@@ -18,7 +18,5 @@ public interface ModContainer {
 	
 	ModMetadata getMetadata();
 
-	ModState getState();
-
 	Path getDataDir();
 }

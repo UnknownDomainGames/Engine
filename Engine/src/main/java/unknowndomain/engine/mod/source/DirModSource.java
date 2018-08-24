@@ -1,17 +1,14 @@
 package unknowndomain.engine.mod.source;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.Validate;
 import unknowndomain.engine.Platform;
-import unknowndomain.engine.mod.ModIdentity;
-import unknowndomain.engine.mod.ModMetadata;
-import unknowndomain.engine.mod.ModSource;
-import unknowndomain.engine.mod.ModSourceRefreshException;
+import unknowndomain.engine.mod.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -19,35 +16,47 @@ public class DirModSource implements ModSource {
 
     private final Path dir;
 
-    private List<ModMetadata> loadableMods;
+    private Map<String, LoadableMod> loadableMods;
 
     public DirModSource(Path dir) {
+        Validate.notNull(dir);
+        if (!Files.exists(dir)) {
+            throw new IllegalArgumentException(dir.toAbsolutePath() + " don't exist.");
+        }
+        if (!Files.isDirectory(dir))
+            throw new IllegalArgumentException(dir.toAbsolutePath() + " isn't a directory.");
         this.dir = dir;
+        refresh();
     }
 
     @Override
-    public List<ModMetadata> getLoadableMods() {
-        return loadableMods;
+    public Collection<LoadableMod> getLoadableMods() {
+        return loadableMods.values();
     }
 
     @Override
-    public Path getModPath(ModIdentity modId) {
-        return null;
+    public LoadableMod getLoadableMod(String modId) {
+        return loadableMods.get(modId);
+    }
+
+    @Override
+    public boolean hasLoadableMod(String modId) {
+        return loadableMods.containsKey(modId);
     }
 
     @Override
     public void refresh() {
-        List<ModMetadata> loadableMods = new ArrayList<>();
+        Map<String, LoadableMod> loadableMods = new HashMap<>();
         try {
             Files.walk(dir, 1).filter(file -> file.getFileName().toString().endsWith(".jar")).forEach(file -> {
                 try (JarFile jarFile = new JarFile(file.toFile())) {
                     ZipEntry entry = jarFile.getEntry("metadata.json");
                     if (entry == null) {
-                        Platform.getLogger().warn(""); // TODO: warn
+                        Platform.getLogger().warn("metadata.json isn't exists. Path: " + file.toAbsolutePath().toString());
                         return;
                     }
                     ModMetadata metadata = ModMetadata.fromJsonStream(jarFile.getInputStream(entry));
-                    loadableMods.add(metadata);
+                    loadableMods.put(metadata.getModId(), new LoadableMod(file, metadata));
                 } catch (IOException e) {
                     Platform.getLogger().warn(e.getMessage(), e); // TODO: warn
                 }
@@ -55,6 +64,6 @@ public class DirModSource implements ModSource {
         } catch (IOException e) {
             throw new ModSourceRefreshException(e);
         }
-        this.loadableMods = ImmutableList.copyOf(loadableMods);
+        this.loadableMods = ImmutableMap.copyOf(loadableMods);
     }
 }

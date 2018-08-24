@@ -1,13 +1,14 @@
 package unknowndomain.engine.mod;
 
-import java.nio.file.Path;
-import java.util.List;
+import java.util.Collection;
 
 public interface ModSource {
 
-    List<ModMetadata> getLoadableMods();
-    
-    Path getModPath(ModIdentity modId);
+    Collection<LoadableMod> getLoadableMods();
+
+    LoadableMod getLoadableMod(String modId);
+
+    boolean hasLoadableMod(String modId);
 
     void refresh();
 }
