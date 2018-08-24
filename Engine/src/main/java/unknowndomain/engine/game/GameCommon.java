@@ -38,6 +38,18 @@ public class GameCommon implements Game {
         this.bus = bus;
     }
 
+    @Override
+    public World spawnWorld(World.Config config) {
+        if (config == null) {
+            WorldCommon w = new WorldCommon(context, new ChunkStore(context));
+            this.worlds.put("default", w);
+            this.internalWorlds.add(w);
+            this.worldThreads.add(new Thread(w));
+            return w;
+        }
+        return null;
+    }
+
     /**
      * Construct stage, collect mod and resource according to it config
      */
@@ -72,11 +84,7 @@ public class GameCommon implements Game {
      * final stage of the
      */
     protected void finishStage() {
-        WorldCommon w = new WorldCommon(context, new ChunkStore(context));
-        this.worlds.put("default", w);
-        this.internalWorlds.add(w);
-        this.worldThreads.add(new Thread(w));
-
+        spawnWorld(null);
         // TODO: post finish stage event to mods
     }
 
@@ -100,7 +108,6 @@ public class GameCommon implements Game {
     public boolean isTerminated() {
         return false;
     }
-
 
     @Override
     public RuntimeObject createObject(GameContext gameContext, Game context) {
@@ -135,7 +142,6 @@ public class GameCommon implements Game {
         for (Thread thread : this.worldThreads) {
             thread.start();
         }
-        // it should maintain game loop by itself
     }
 
     public void terminate() {
@@ -145,4 +151,5 @@ public class GameCommon implements Game {
 
         // TODO: unload mod/resource here
     }
+
 }

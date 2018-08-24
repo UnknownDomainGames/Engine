@@ -173,7 +173,7 @@ public class WorldCommon implements World, Runnable {
     }
 
     public void stop() {
-        this.ticker.stop();
+        ticker.stop();
     }
 
     static class PhysicsSystem {
@@ -190,9 +190,9 @@ public class WorldCommon implements World, Runnable {
                 BlockPos localPos = new BlockPos(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
                         ((int) Math.floor(position.z)));
                 //
-                int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
-                        directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
-                        directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
+                // int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
+                //         directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
+                //         directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
 
                 AABBd entityBox = AABBs.translate(box, position.add(direction, new Vector3f()), new AABBd());
                 List<BlockPos>[] around = AABBs.around(entityBox, motion);

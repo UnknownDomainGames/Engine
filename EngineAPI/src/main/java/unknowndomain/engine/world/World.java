@@ -26,4 +26,8 @@ public interface World extends RuntimeObject {
 
     @Nonnull
     Block setBlock(@Nonnull BlockPos pos, Block block);
+
+    interface Config {
+        
+    }
 }

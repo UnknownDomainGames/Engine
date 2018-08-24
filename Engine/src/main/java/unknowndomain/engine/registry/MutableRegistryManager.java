@@ -1,16 +1,13 @@
 package unknowndomain.engine.registry;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import org.apache.commons.lang3.Validate;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.event.registry.RegisterEvent;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Nonnull;
+
+import org.apache.commons.lang3.Validate;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 class MutableRegistryManager implements RegistryManager.Mutable {
     Map<Class<?>, Registry<?>> registries;

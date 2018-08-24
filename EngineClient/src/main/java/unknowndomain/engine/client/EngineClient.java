@@ -50,15 +50,9 @@ public class EngineClient implements Engine {
         return playerController;
     }
 
-
     public WorldCommon getWorld() {
         return null;
         // return world;
-    }
-
-
-    private Game buildGame(Game.Config config) {
-        return null;
     }
 
     public void init() {
@@ -66,14 +60,11 @@ public class EngineClient implements Engine {
 
         bus = new AsmEventBus();
 
-        resourceManager = new ResourceManagerImpl();
-        resourceManager.addResourceSource(new ResourceSourceBuiltin());
+        // resourceManager = new ResourceManagerImpl();
+        // resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
-        // modManager = new SimpleModManager(bus);
-        // modManager.getMod("unknowndomain");
-
-//        game = new GameClient();
-//        game.preInit(bus);
+        game = new GameClient(null, bus);
+        // game.preInit(bus);
 
         // minecraftMod.init(context);
         // try {
@@ -118,7 +109,7 @@ public class EngineClient implements Engine {
 
             while (accumulator >= interval) {
                 playerController.tick();
-//                game.tick();
+                // game.tick();
                 accumulator -= interval;
             }
 
@@ -138,12 +129,7 @@ public class EngineClient implements Engine {
         }
     }
 
-    //    @Override
-    public ResourceManager getResourceManager() {
-        return resourceManager;
-    }
-
-    //    @Override
+    // @Override
     public ActionManager getActionManager() {
         return this.actionManager;
     }
@@ -159,7 +145,7 @@ public class EngineClient implements Engine {
     }
 
     @Override
-    public Game getCurrentGame() {
+    public GameClient getCurrentGame() {
         return game;
     }
 }

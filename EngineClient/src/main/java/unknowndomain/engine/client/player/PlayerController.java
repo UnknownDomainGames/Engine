@@ -13,14 +13,8 @@ import org.lwjgl.glfw.GLFW;
 
 public abstract class PlayerController {
     protected Camera camera = new CameraDefault();
-    protected KeyBindingManager keyBindingManager;
     protected Player player;
     protected boolean paused = false;
-
-    {
-        keyBindingManager = new KeyBindingManager();
-        Keybindings.INSTANCE.setup(keyBindingManager);
-    }
 
     public Player getPlayer() {
         return player;
@@ -46,31 +40,6 @@ public abstract class PlayerController {
     public void handleCursorMove(double x, double y) {
         if (!paused)
             camera.rotate((float) x, (float) y);
-    }
-
-    public void handleKeyPress(int key, int scancode, int action, int modifiers) {
-        switch (action) {
-        case GLFW.GLFW_PRESS:
-            keyBindingManager.handlePress(key, modifiers);
-            break;
-        case GLFW.GLFW_RELEASE:
-            keyBindingManager.handleRelease(key, modifiers);
-            break;
-        default:
-            break;
-        }
-        // if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
-        // if (paused) {
-        // window.hideCursor();
-        // paused = false;
-        // } else {
-        // window.showCursor();
-        // paused = true;
-        // }
-        // }
-    }
-
-    public void handleTextInput(int codepoint, int modifiers) {
     }
 
     public void handleMousePress(int button, int action, int modifiers) {

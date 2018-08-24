@@ -12,9 +12,17 @@ import java.util.Collection;
 
 /**
  * The game shares the same set of mod and resources pack manifest.
- * <p>The game manages the complex life cycle of mods, configs, worlds.</p>
- * <p>I used to decide to construct all the dependency (mod, config) before game instance creation.</p>
- * <p>But, its complexity makes me feel that it should manage all these by itself (after it create)</p>
+ * <p>
+ * The game manages the complex life cycle of mods, configs, worlds.
+ * </p>
+ * <p>
+ * I used to decide to construct all the dependency (mod, config) before game
+ * instance creation.
+ * </p>
+ * <p>
+ * But, its complexity makes me feel that it should manage all these by itself
+ * (after it create)
+ * </p>
  *
  * <p>
  * Each world should hold a separated thread
@@ -27,7 +35,7 @@ public interface Game extends RuntimeObject, Prototype<RuntimeObject, Game>, Run
     @Nullable
     World getWorld(String name);
 
-//    World spawnWorld(); // TODO: spawn world by config
+    World spawnWorld(World.Config config);
 
     boolean isTerminated();
 
@@ -37,6 +45,4 @@ public interface Game extends RuntimeObject, Prototype<RuntimeObject, Game>, Run
         ResourcePath[] resources();
     }
 
-
-    // World spawnWorld(WorldConfig? config); // TODO: design this
 }

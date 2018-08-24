@@ -46,4 +46,9 @@ public class RendererContext implements Renderer.Context, Renderer {
             renderer.dispose();
         }
     }
+
+    @Override
+    public double partialTick() {
+        return 0;
+    }
 }

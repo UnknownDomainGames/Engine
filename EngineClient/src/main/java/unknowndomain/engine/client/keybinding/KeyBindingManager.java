@@ -2,6 +2,10 @@ package unknowndomain.engine.client.keybinding;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+
+import org.lwjgl.glfw.GLFW;
+
+import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.client.UnknownDomain;
 
 import java.util.Collection;
@@ -12,11 +16,17 @@ public class KeyBindingManager {
     private final Multimap<Integer, KeyBinding> codeToBinding = LinkedListMultimap.create();
 
     private final Set<KeyCode> pressedKey = new HashSet<>();
+    private final ActionManager actionManager;
+
+    public KeyBindingManager(ActionManager actionManager) {
+        this.actionManager = actionManager;
+
+    }
 
     public void add(KeyBinding keybinding) {
         int code = keybinding.getCode().code;
         byte mods = KeyModifier.getCode(keybinding.getModifier());
-//        int store = code | ((mods & 0x07) << 9);
+        // int store = code | ((mods & 0x07) << 9);
         int store = code;
         codeToBinding.put(store, keybinding);
     }
@@ -31,21 +41,44 @@ public class KeyBindingManager {
     public void handlePress(int code, int mods) {
         KeyCode keyCode = KeyCode.valueOf(code);
         pressedKey.add(keyCode);
-//        Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code | ((mods & 0x07) << 9));
+        // Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code | ((mods
+        // & 0x07) << 9));
         Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code);
         for (KeyBinding binding : keyBindings) {
-            UnknownDomain.getEngine().getActionManager().start(binding.getTarget());
+            actionManager.start(binding.getTarget());
         }
     }
 
     public void handleRelease(int code, int mods) {
         KeyCode keyCode = KeyCode.valueOf(code);
         pressedKey.add(keyCode);
-//        Collection<KeyBinding> keyBindings = codeToBinding.get(((mods & 0x07) << 9 | keyCode.code));
+        // Collection<KeyBinding> keyBindings = codeToBinding.get(((mods & 0x07) << 9 |
+        // keyCode.code));
         Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code);
         for (KeyBinding binding : keyBindings) {
-            UnknownDomain.getEngine().getActionManager().end(binding.getTarget());
+            actionManager.end(binding.getTarget());
         }
     }
 
+    public void handleKeyPress(int key, int scancode, int action, int modifiers) {
+        switch (action) {
+        case GLFW.GLFW_PRESS:
+            handlePress(key, modifiers);
+            break;
+        case GLFW.GLFW_RELEASE:
+            handleRelease(key, modifiers);
+            break;
+        default:
+            break;
+        }
+        // if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
+        // if (paused) {
+        // window.hideCursor();
+        // paused = false;
+        // } else {
+        // window.showCursor();
+        // paused = true;
+        // }
+        // }
+    }
 }

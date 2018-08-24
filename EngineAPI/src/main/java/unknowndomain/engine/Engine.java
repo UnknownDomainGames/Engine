@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import unknowndomain.engine.game.Game;
 
 /**
- * really, just the game starter, nothing else
+ * really, just the {@link Game} starter, nothing else
  */
 public interface Engine {
     Logger LOGGER = LoggerFactory.getLogger("Engine");

@@ -15,5 +15,7 @@ public interface Renderer {
 
     interface Context {
         Camera getCamera();
+
+        double partialTick();
     }
 }
