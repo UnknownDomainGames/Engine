@@ -58,7 +58,7 @@ public class WorldCommon implements World, Runnable {
     public Player playerJoin(Player.Profile data) {
         EntityImpl entity = new EntityImpl(entityList.size(), new Vector3f(), new Vector3f(), new Vector3f(),
                 data.getBoundingBox(), ImmutableMap.<String, Object>builder()
-                .put(Entity.TwoHands.class.getName(), new EntityImpl.TwoHandImpl()).build());
+                        .put(Entity.TwoHands.class.getName(), new EntityImpl.TwoHandImpl()).build());
         spawnEntity(entity);
         PlayerImpl player = new PlayerImpl(data, this, entity);
         players.add(player);
@@ -172,6 +172,10 @@ public class WorldCommon implements World, Runnable {
         ticker.start();
     }
 
+    public boolean isStop() {
+        return ticker.isStop();
+    }
+
     public void stop() {
         ticker.stop();
     }
@@ -191,8 +195,8 @@ public class WorldCommon implements World, Runnable {
                         ((int) Math.floor(position.z)));
                 //
                 // int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
-                //         directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
-                //         directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
+                // directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
+                // directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
 
                 AABBd entityBox = AABBs.translate(box, position.add(direction, new Vector3f()), new AABBd());
                 List<BlockPos>[] around = AABBs.around(entityBox, motion);

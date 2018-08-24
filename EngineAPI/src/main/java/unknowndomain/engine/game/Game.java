@@ -30,14 +30,16 @@ import java.util.Collection;
 public interface Game extends RuntimeObject, Prototype<RuntimeObject, Game>, Runnable {
     GameContext getContext();
 
-    Collection<World> getWorlds();
-
-    @Nullable
-    World getWorld(String name);
-
     World spawnWorld(World.Config config);
 
     boolean isTerminated();
+
+    interface Server extends Game {
+        Collection<World> getWorlds();
+
+        @Nullable
+        World getWorld(String name);
+    }
 
     interface Config {
         ModIdentifier[] mods();

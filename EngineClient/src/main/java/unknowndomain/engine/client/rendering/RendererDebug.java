@@ -63,7 +63,7 @@ public class RendererDebug extends RendererShaderProgram {
         Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
         textureMap.render();
 
-        BlockPrototype.Hit hit = UnknownDomain.getEngine().getWorld().raycast(context.getCamera().getPosition(),
+        BlockPrototype.Hit hit = UnknownDomain.getGame().getWorld().raycast(context.getCamera().getPosition(),
                 context.getCamera().getFrontVector(), 5);
 
         loadChunk.forEach((pos, chunk) -> { // TODO modify here to the baked chunk

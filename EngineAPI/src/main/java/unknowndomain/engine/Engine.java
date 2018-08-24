@@ -29,6 +29,8 @@ public interface Engine {
 
     Game getCurrentGame();
 
+    // TODO: client should add player profile manager here, to perform login, logout, fetch skin and other operation 
+
     enum Side {
         SERVER, CLIENT
     }

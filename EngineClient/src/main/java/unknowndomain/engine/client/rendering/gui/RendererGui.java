@@ -84,7 +84,7 @@ public class RendererGui extends RendererShaderProgram {
         Entity player = UnknownDomain.getEngine().getController().getPlayer().getMountingEntity();
         AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
 
-        WorldCommon world = UnknownDomain.getEngine().getWorld();
+        WorldCommon world = UnknownDomain.getGame().getWorld();
         BlockPrototype.Hit hit = world.raycast(context.getCamera().getPosition(),
                 context.getCamera().getFrontVector(), 5);
         fontRenderer.drawText("Blocks 0.0.0", 0, 0, 0xffffffff, 16);

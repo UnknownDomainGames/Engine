@@ -3,7 +3,7 @@ package unknowndomain.engine.client;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.client.display.DefaultGameWindow;
-import unknowndomain.engine.client.game.GameClient;
+import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.player.FirstPersonController;
 import unknowndomain.engine.client.player.PlayerController;
 import unknowndomain.engine.client.resource.ResourceManager;
@@ -39,7 +39,7 @@ public class EngineClient implements Engine {
     private Timer timer;
     private EventBus bus;
 
-    private GameClient game;
+    private GameClientStandalone game;
     private MinecraftMod minecraftMod = new MinecraftMod();
 
     EngineClient(int width, int height) {
@@ -50,11 +50,6 @@ public class EngineClient implements Engine {
         return playerController;
     }
 
-    public WorldCommon getWorld() {
-        return null;
-        // return world;
-    }
-
     public void init() {
         window.init();
 
@@ -63,7 +58,7 @@ public class EngineClient implements Engine {
         // resourceManager = new ResourceManagerImpl();
         // resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
-        game = new GameClient(null, bus);
+        game = new GameClientStandalone(null, bus);
         // game.preInit(bus);
 
         // minecraftMod.init(context);
@@ -88,14 +83,6 @@ public class EngineClient implements Engine {
 
         timer = new Timer();
         timer.init();
-    }
-
-    public void loop() {
-
-    }
-
-    public void terminate() {
-
     }
 
     // https://github.com/lwjglgamedev/lwjglbook/blob/master/chapter02/src/main/java/org/lwjglb/engine/GameEngine.java
@@ -145,7 +132,7 @@ public class EngineClient implements Engine {
     }
 
     @Override
-    public GameClient getCurrentGame() {
+    public GameClientStandalone getCurrentGame() {
         return game;
     }
 }

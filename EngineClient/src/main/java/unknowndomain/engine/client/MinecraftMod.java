@@ -83,7 +83,7 @@ public class MinecraftMod {
         Registry<Block> blockRegistry = context.getBlockRegistry();
         Item stone = itemRegistry.getValue("stone_placer");
         UnknownDomain.getEngine().getController().getPlayer().getMountingEntity().getBehavior(Entity.TwoHands.class).setMainHand(stone);
-        UnknownDomain.getEngine().getWorld().setBlock(new BlockPos(1, 0, 0), blockRegistry.getValue(1));
+        UnknownDomain.getGame().getWorld().setBlock(new BlockPos(1, 0, 0), blockRegistry.getValue(1));
     }
 
     void init(GameContext context) {

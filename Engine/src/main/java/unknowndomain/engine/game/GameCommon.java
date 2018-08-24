@@ -24,13 +24,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class GameCommon implements Game {
+public abstract class GameCommon implements Game {
     protected final Config config;
     protected final EventBus bus;
     protected GameContext context;
-    protected Map<String, World> worlds;
-    protected List<WorldCommon> internalWorlds;
-    protected List<Thread> worldThreads;
     protected ModManager modManager;
 
     public GameCommon(Config config, EventBus bus) {
@@ -38,26 +35,10 @@ public class GameCommon implements Game {
         this.bus = bus;
     }
 
-    @Override
-    public World spawnWorld(World.Config config) {
-        if (config == null) {
-            WorldCommon w = new WorldCommon(context, new ChunkStore(context));
-            this.worlds.put("default", w);
-            this.internalWorlds.add(w);
-            this.worldThreads.add(new Thread(w));
-            return w;
-        }
-        return null;
-    }
-
     /**
      * Construct stage, collect mod and resource according to it config
      */
     protected void constructStage() {
-        this.worlds = Maps.newTreeMap();
-        this.internalWorlds = Lists.newArrayList();
-        this.worldThreads = Lists.newArrayList();
-
         modManager = new SimpleModManager(this.bus);
 
         // TODO: collect mod from remote or local here
@@ -91,17 +72,6 @@ public class GameCommon implements Game {
     @Override
     public GameContext getContext() {
         return context;
-    }
-
-    @Override
-    public Collection<World> getWorlds() {
-        return worlds.values();
-    }
-
-    @Nullable
-    @Override
-    public World getWorld(String name) {
-        return worlds.get(name);
     }
 
     @Override
@@ -139,16 +109,14 @@ public class GameCommon implements Game {
         resourceStage();
         finishStage();
 
-        for (Thread thread : this.worldThreads) {
-            thread.start();
-        }
+        // TODO: loop to check if we need to gc the world
+
+        // for (WorldCommon worldCommon : internalWorlds) {
+        // worldCommon.stop();
+        // }
     }
 
     public void terminate() {
-        for (WorldCommon worldCommon : internalWorlds) {
-            worldCommon.stop();
-        }
-
         // TODO: unload mod/resource here
     }
 

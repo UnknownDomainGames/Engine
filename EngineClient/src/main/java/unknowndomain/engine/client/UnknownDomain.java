@@ -2,7 +2,7 @@ package unknowndomain.engine.client;
 
 import org.apache.commons.lang3.SystemUtils;
 
-import unknowndomain.engine.client.game.GameClient;
+import unknowndomain.engine.client.game.GameClientStandalone;
 
 public class UnknownDomain {
 
@@ -26,7 +26,7 @@ public class UnknownDomain {
         return engine;
     }
 
-    public static GameClient getGame() {
+    public static GameClientStandalone getGame() {
         return engine.getCurrentGame();
     }
 

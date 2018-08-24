@@ -40,8 +40,6 @@ public class EntityImpl implements Entity {
 
     @Override
     public void tick() {
-//        UnknownDomain.getEngine().getWorld().getBlock();
-//        camera.move(motion.x, motion.y, motion.z); // this should not be here...
     }
 
     @Override

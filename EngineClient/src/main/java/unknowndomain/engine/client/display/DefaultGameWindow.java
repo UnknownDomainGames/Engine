@@ -31,12 +31,12 @@ public class DefaultGameWindow implements GameWindow {
         this.height = height;
         resized = false;
     }
-    
+
     @Override
     public int getWidth() {
         return width;
     }
-    
+
     @Override
     public int getHeight() {
         return height;
@@ -46,19 +46,19 @@ public class DefaultGameWindow implements GameWindow {
     public String getTitle() {
         return title;
     }
-    
-	@Override
-	public void setSize(int width, int height) {
+
+    @Override
+    public void setSize(int width, int height) {
         this.width = width;
         this.height = height;
         this.resized = true;
         glViewport(0, 0, width, height);
-	}
+    }
 
-	@Override
-	public void setTitle(String title) {
-		glfwSetWindowTitle(handle, title);
-	}
+    @Override
+    public void setTitle(String title) {
+        glfwSetWindowTitle(handle, title);
+    }
 
     public void init() {
         initErrorCallback(System.err);
@@ -122,7 +122,7 @@ public class DefaultGameWindow implements GameWindow {
     private void showWindow() {
         glfwShowWindow(handle);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-//        glViewport(0, 0, width, height);
+        // glViewport(0, 0, width, height);
         hideCursor();
     }
 
@@ -170,13 +170,11 @@ public class DefaultGameWindow implements GameWindow {
         return glfwGetKey(handle, keyCode) == action;
     }
 
-    public void update() {
+    public void beginDraw() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
-        // Render
-
-        game.getRenderer().render();
-
+    public void endDraw() {
         glfwSwapBuffers(handle);
         glfwPollEvents();
     }

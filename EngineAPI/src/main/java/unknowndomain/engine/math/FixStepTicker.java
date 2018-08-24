@@ -6,13 +6,15 @@ import unknowndomain.engine.Tickable;
  * http://gameprogrammingpatterns.com/game-loop.html
  */
 public class FixStepTicker {
-    private final Tickable runnable;
-    private final float interval;
-    private boolean stop = false;
+    protected final Tickable fix;
+    protected final float interval;
+    protected boolean stop = false;
+    protected final int tps;
 
     public FixStepTicker(Tickable task, int tps) {
-        runnable = task;
+        fix = task;
         interval = 1F / tps;
+        this.tps = tps;
     }
 
     public void stop() {
@@ -37,8 +39,34 @@ public class FixStepTicker {
             lag += elapsed;
 
             while (lag >= interval) {
-                runnable.tick();
+                fix.tick();
                 lag -= interval;
+            }
+        }
+    }
+
+    public static class Dynamic extends FixStepTicker {
+        private final Tickable.Partial dynamic;
+
+        public Dynamic(Tickable task, Tickable.Partial dyn, int tps) {
+            super(task, tps);
+            dynamic = dyn;
+        }
+
+        public void start() {
+            double previous = getCurrentTime();
+            double lag = 0.0;
+            while (!stop) {
+                double current = getCurrentTime();
+                double elapsed = current - previous;
+                previous = current;
+                lag += elapsed;
+
+                while (lag >= interval) {
+                    fix.tick();
+                    lag -= interval;
+                }
+                dynamic.tick(lag / tps);
             }
         }
     }
