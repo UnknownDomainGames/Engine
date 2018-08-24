@@ -50,7 +50,7 @@ public class ResourceManagerImpl implements ResourceManager {
     }
 
     /**
-     * Load the resource by iterating the sources
+     * LoadOrder the resource by iterating the sources
      */
     @Override
     public Resource load(ResourcePath location) throws IOException {

@@ -5,94 +5,80 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import unknowndomain.engine.mod.ModClassLoader;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModMetadata;
-import unknowndomain.engine.mod.ModState;
+import unknowndomain.engine.mod.java.harvester.HarvestedInfo;
+
 //TODO: collect mod's class loader, instance of mod main class, mod config, mod looger, config dir.
 public class JavaModContainer implements ModContainer {
 
-	private final Path source;
+    private final Path source;
 
-    private final String modid;
+    private final String modId;
 
     private final Logger logger;
 
-	/**
-	 * Class loader of the mod.
-	 */
-	private ModClassLoader classLoader;
+    /**
+     * Class loader of the mod.
+     */
+    private ModClassLoader classLoader;
 
     private Object instance;
-    
+
     private ModMetadata metadata;
 
-    private ModState state;
+    private HarvestedInfo harvestedInfo;
 
-    public JavaModContainer(String modid, Path src){
-        this.modid = modid;
-        this.logger = LoggerFactory.getLogger(modid);
-        source = src;
+    public JavaModContainer(String modId, Path source) {
+        this.modId = modId;
+        this.logger = LoggerFactory.getLogger(modId);
+        this.source = source;
     }
 
     @Override
-	public String getModId() {
-		return modid;
-	}
-
-	@Override
-	public Object getInstance() {
-		return instance;
-	}
-
-	@Override
-	public Logger getLogger() {
-		return logger;
-	}
-
-	@Override
-	public Path getSource() {
-		return source;
-	}
-
-	private boolean enabled;
-
-	@Override
-	public boolean isEnable() {
-		return enabled;
-	}
-
-	@Override
-	public void setEnable(boolean enable) {
-		this.enabled = enable;
-		
-	}
-
-	@Override
-	public ModMetadata getMetadata() {
-		return metadata;
-	}
-
-	void setMetadata(ModMetadata metadata) {
-		this.metadata = metadata;
-	}
-
-	public ClassLoader getClassLoader() {
-		return classLoader;
-	}
-
-	@Override
-	public ModState getState() {
-		return state;
-	}
-
-	void setClassLoader(ModClassLoader classLoader) {
-        if(this.classLoader != null)
-            throw new IllegalStateException("Class loader has already set!");
-        this.classLoader = classLoader;
+    public String getModId() {
+        return modId;
     }
 
-    void setInstance(Object instance) {
+    @Override
+    public Object getInstance() {
+        return instance;
+    }
+
+    @Override
+    public Logger getLogger() {
+        return logger;
+    }
+
+    @Override
+    public Path getSource() {
+        return source;
+    }
+
+    @Override
+    public ModMetadata getMetadata() {
+        return metadata;
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public HarvestedInfo getHarvestedInfo() {
+        return harvestedInfo;
+    }
+
+    @Override
+    public Path getDataDir() {
+        return null;
+    }
+
+    void initialize(ModClassLoader classLoader, ModMetadata metadata, HarvestedInfo harvestedInfo, Object instance) {
+        if (this.classLoader != null)
+            throw new IllegalStateException("Mod has already initilaized!");
+        this.classLoader = classLoader;
+        this.metadata = metadata;
+        this.harvestedInfo = harvestedInfo;
         this.instance = instance;
     }
 }

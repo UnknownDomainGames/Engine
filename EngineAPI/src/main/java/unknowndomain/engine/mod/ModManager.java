@@ -1,14 +1,14 @@
 package unknowndomain.engine.mod;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface ModManager {
 
-    ModContainer getMod(String modId);
+    ModContainer getLoadedMod(String modId);
 
     boolean isModLoaded(String modId);
 
-    List<ModContainer> getAllLoadedMods();
+    Collection<ModContainer> getLoadedMods();
 
     ModContainer whichMod(Class<?> clazz);
 }
