@@ -57,7 +57,7 @@ public class DirModSource implements ModSource {
                     }
                     ModMetadata metadata = ModMetadata.fromJsonStream(jarFile.getInputStream(entry));
                     loadableMods.put(metadata.getModId(), new LoadableMod(file, metadata));
-                } catch (IOException e) {
+                } catch (IOException | ModDependencyException e) {
                     Platform.getLogger().warn(e.getMessage(), e); // TODO: warn
                 }
             });

@@ -1,18 +1,8 @@
 package unknowndomain.engine.mod.java;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.stream.Collectors;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.Validate;
 
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.mod.*;
@@ -20,9 +10,6 @@ import unknowndomain.engine.mod.java.harvester.HarvestedAnnotation;
 import unknowndomain.engine.mod.java.harvester.HarvestedInfo;
 
 public class JavaModLoader implements ModLoader {
-
-    public JavaModLoader() {
-    }
 
     @Override
     public ModContainer load(LoadableMod loadableMod) {
@@ -34,14 +21,13 @@ public class JavaModLoader implements ModLoader {
 
             HarvestedInfo harvestedInfo = new HarvestedInfo(source);
             harvestedInfo.startHarvest();
-            Collection<HarvestedAnnotation> modAnnos = harvestedInfo.getHarvestedAnnotations(Mod.class);
-            if (modAnnos.isEmpty()) {
-                Platform.getLogger().warn(String.format("cannot find the main class for mod %s!", metadata.getModId()));
-                return null;
+
+            HarvestedAnnotation modAnno = getModAnno(metadata.getModId(), harvestedInfo.getHarvestedAnnotations(Mod.class));
+            if (modAnno == null) {
+                throw new ModLoadException(String.format("Can't find the main class for mod %s!", metadata.getModId()));
             }
 
-            Class<?> mainClass = Class.forName(
-                    modAnnos.toArray(new HarvestedAnnotation[modAnnos.size()])[0].getOwnerType().getClassName(), true,
+            Class<?> mainClass = Class.forName(modAnno.getOwnerType().getClassName(), true,
                     classLoader);
             Object instance = mainClass.newInstance();
 
@@ -49,13 +35,21 @@ public class JavaModLoader implements ModLoader {
 
             return container;
         } catch (IOException e) {
-            Platform.getLogger().warn(String.format("cannot load mod %s!", metadata.getModId()), e);
+            throw new ModLoadException(String.format("Can't load mod %s!", metadata.getModId()), e);
         } catch (ClassNotFoundException e) {
-            Platform.getLogger().warn(String.format("cannot find the main class for mod %s!",  metadata.getModId()), e);
+            throw new ModLoadException(String.format("Can't find the main class for mod %s!", metadata.getModId()), e);
         } catch (IllegalAccessException | InstantiationException e) {
-            Platform.getLogger().warn(String.format("cannot instantiate the main class for mod %s!",  metadata.getModId()), e);
+            throw new ModLoadException(String.format("Can't instantiate the main class for mod %s!", metadata.getModId()), e);
+        } catch (Exception e) {
+            throw new ModLoadException(String.format("Catch unknown exception when loading mod %s !", metadata.getModId()), e);
         }
+    }
 
+    private HarvestedAnnotation getModAnno(String modId, Collection<HarvestedAnnotation> harvestedAnnos) {
+        for (HarvestedAnnotation anno : harvestedAnnos) {
+            if (modId.equals(anno.getHarvestedInfo().get("value")))
+                return anno;
+        }
         return null;
     }
 }

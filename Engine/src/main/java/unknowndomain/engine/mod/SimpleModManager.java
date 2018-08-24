@@ -1,5 +1,6 @@
 package unknowndomain.engine.mod;
 
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.mod.java.JavaModLoader;
 import unknowndomain.engine.mod.source.DirModSource;
 
@@ -35,20 +36,50 @@ public class SimpleModManager implements ModManager {
         List<LoadableMod> loadableMods = new LinkedList<>();
         loadableMods.addAll(localModSource.getLoadableMods());
 
+        sortLoadableMods(loadableMods);
+
         for (LoadableMod loadableMod : loadableMods) {
-            ModContainer container = javaModLoader.load(loadableMod);
-            loadedMods.put(container.getModId(), container);
+            try {
+                ModContainer container = javaModLoader.load(loadableMod);
+                loadedMods.put(container.getModId(), container);
+            } catch (ModLoadException e) {
+                Platform.getLogger().warn(e.getMessage(), e);
+            }
         }
     }
 
     private void sortLoadableMods(List<LoadableMod> loadableMods) {
-        // TODO:
-        Collections.sort(loadableMods, new Comparator<LoadableMod>() {
-            @Override
-            public int compare(LoadableMod o1, LoadableMod o2) {
-                return 0;
-            }
-        });
+        Collections.sort(loadableMods, (mod1, mod2) -> {
+                    final String modId1 = mod1.getMetadata().getModId(), modId2 = mod2.getMetadata().getModId();
+                    for (ModDependencyEntry entry : mod1.getMetadata().getDependencies()) {
+                        if (!entry.getModId().equals(modId2))
+                            continue;
+
+                        switch (entry.getLoadOrder()) {
+                            case AFTER:
+                            case REQUIRED:
+                                return 1; // After o2 load
+                            case BEFORE:
+                                return -1; // Before o2 load
+                        }
+                    }
+
+                    for (ModDependencyEntry entry : mod2.getMetadata().getDependencies()) {
+                        if (!entry.getModId().equals(modId1))
+                            continue;
+
+                        switch (entry.getLoadOrder()) {
+                            case AFTER:
+                            case REQUIRED:
+                                return -1; // After o1 load
+                            case BEFORE:
+                                return 1; // Before o1 load
+                        }
+                    }
+
+                    return 0;
+                }
+        );
     }
 
     @Override

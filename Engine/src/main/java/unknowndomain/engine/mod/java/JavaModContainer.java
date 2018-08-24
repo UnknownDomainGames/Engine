@@ -18,9 +18,6 @@ public class JavaModContainer implements ModContainer {
 
     private final Logger logger;
 
-    /**
-     * Class loader of the mod.
-     */
     private ModClassLoader classLoader;
 
     private Object instance;
@@ -28,6 +25,8 @@ public class JavaModContainer implements ModContainer {
     private ModMetadata metadata;
 
     private HarvestedInfo harvestedInfo;
+
+    private Path dataDir;
 
     public JavaModContainer(String modId, Path source) {
         this.modId = modId;
@@ -70,7 +69,7 @@ public class JavaModContainer implements ModContainer {
 
     @Override
     public Path getDataDir() {
-        return null;
+        return dataDir;
     }
 
     void initialize(ModClassLoader classLoader, ModMetadata metadata, HarvestedInfo harvestedInfo, Object instance) {
