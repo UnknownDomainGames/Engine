@@ -8,12 +8,12 @@ A 3D sandbox game by Java.
 
 Discuss the things we need to identify in game.
 
-| Name | What does it referring? | How to identify? | Why? |
-| ---  | --- |--------------- | ----------------------- |
-| Action | The abstract action, like command, but this should include the action like "player move forward" | By string id (player.move.forward) | We need to bind key or command or other input way to these to control game |
-| Game Object Type | The type of ingame object, like block prototype, item prototype, entity type. | By semantic string id (block.stone) | Majorly used for (de)serialization on network or disk | 
-| Game Object | The important things ingame, mostly the object under the world life cycle (entity, block, item)| By hierarchy structure string. (block requires location, entity requires id) e.g. /\<dimension id>/\<world id>/\<position> | We need to have a universal way to refer an ingame object which provides a easy way to communicate between client and server |
-| Resource | The game resource in disk (or remote) | By its string dir | We need to loadOrder resources obviously | 
+| Name             | What does it referring?                                                                          | How to identify?                                                                                                           | Why?                                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Action           | The abstract action, like command, but this should include the action like "player move forward" | By string id (player.move.forward)                                                                                         | We need to bind key or command or other input way to these to control game                                                   |
+| Game Object Type | The type of ingame object, like block prototype, item prototype, entity type.                    | By semantic string id (block.stone)                                                                                        | Majorly used for (de)serialization on network or disk                                                                        |
+| Game Object      | The important things ingame, mostly the object under the world life cycle (entity, block, item)  | By hierarchy structure string. (block requires location, entity requires id) e.g. /\<dimension id>/\<world id>/\<position> | We need to have a universal way to refer an ingame object which provides a easy way to communicate between client and server |
+| Resource         | The game resource in disk (or remote)                                                            | By its string dir                                                                                                          | We need to loadOrder resources obviously                                                                                     |
 
 We have to manage these things differently though.
 
@@ -157,3 +157,53 @@ Splitting Between Logic and Render
     - maintains batch particles system
     - render update
 
+## Some Humble Design Thought
+
+When we want to create some object. There always some precondition, re-configuration the object may have. Normally, we pass them as the parameter to the object. But, when the object is complex. This way won't really work.
+
+These are three pattern to create a object:
+
+Whent the object is really simple, like data class. We can use constuctor.
+
+```java
+class A {
+    public A(String paramA, int paramB) {
+        this.a = paramA;
+        this.b = paramB;
+    }
+}
+```
+
+If there are some transformation or other calculation which **only** related to this object creation, such as load resources from disk. We can have a static create method to manage that.
+
+```java
+class A {
+    public static A create(String paramA, int paramB) {
+        // perform some transformation to paramA
+        // perform some transformation to paramB
+        // perform complex transformation
+        return new A(transformedA, transformedB, transformed C);
+    }
+    private A(...) {
+    }
+}
+```
+
+If the object lifecycle is really complex, we usually pass a config to constuctor. Then, a initialization function there to trigger the complex initialization. (Maybe multiple init function). 
+
+This is the case that the object will pass through multiple stages changes. 
+
+
+```java
+class A {
+    public A(Config config) {
+        this.config = config;
+    }
+
+    public start(Context otherContext) throws Exception {
+        preInit();
+        init();
+        postInit();
+    }
+}
+```
