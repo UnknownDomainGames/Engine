@@ -1,50 +1,80 @@
 package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
-
-import unknowndomain.engine.Engine;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import unknowndomain.engine.action.Action;
+import unknowndomain.engine.action.ActionBuilderImpl;
 import unknowndomain.engine.action.ActionManager;
+import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.ActionManagerImpl;
+import unknowndomain.engine.client.camera.CameraController;
+import unknowndomain.engine.client.camera.CameraDefault;
+import unknowndomain.engine.client.camera.FirstPersonController;
+import unknowndomain.engine.client.display.Camera;
 import unknowndomain.engine.client.display.DefaultGameWindow;
+import unknowndomain.engine.client.display.Projection;
+import unknowndomain.engine.client.display.ProjectionPerspective;
 import unknowndomain.engine.client.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.keybinding.Keybindings;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.RendererContext;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourceManagerImpl;
+import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
+import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.game.GameCommon;
+import unknowndomain.engine.event.Listener;
+import unknowndomain.engine.event.registry.ClientRegistryEvent;
+import unknowndomain.engine.event.registry.RegisterEvent;
+import unknowndomain.engine.event.registry.ResourceSetupEvent;
 import unknowndomain.engine.game.GameServer;
+import unknowndomain.engine.item.Item;
 import unknowndomain.engine.math.FixStepTicker;
-import unknowndomain.engine.math.Timer;
+import unknowndomain.engine.mod.ModRepository;
+import unknowndomain.engine.mod.ModStore;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
 
-import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class GameClientStandalone extends GameServer {
     private RendererContext gameRenderer;
     private ResourceManager resourceManager;
     private ActionManagerImpl actionManager;
+
     private KeyBindingManager keyBindingManager;
+    private CameraController cameraController;
+    private MotionController motionController;
+
+    private Projection projection;
+    private Camera camera;
 
     private WorldCommon world;
+    private Player player;
     private FixStepTicker.Dynamic ticker;
 
     private boolean closed;
     private DefaultGameWindow window;
 
-    public GameClientStandalone(Config config, EventBus bus, DefaultGameWindow window) {
-        super(config, bus);
+    public GameClientStandalone(Option option, ModRepository repository, ModStore store, EventBus bus, DefaultGameWindow window) {
+        super(option, repository, store, bus);
         this.window = window;
-        // this.ticker = new FixStepTicker.Dynamic();
+        this.ticker = new FixStepTicker.Dynamic(this::updateRenderData, this::render, 60);
+    }
+
+
+    /**
+     * Get player client
+     */
+    public Player getPlayer() {
+        return player;
     }
 
     /**
-     * @return the world
+     * @return the client world
      */
     public WorldCommon getWorld() {
         return world;
@@ -71,51 +101,79 @@ public class GameClientStandalone extends GameServer {
         return keyBindingManager;
     }
 
+    public CameraController getController() {
+        return cameraController;
+    }
+
     @Override
     protected void constructStage() {
         super.constructStage();
         resourceManager = new ResourceManagerImpl();
+        resourceManager.addResourceSource(new ResourceSourceBuiltin());
+
         // TODO: collect resource sources
+    }
+
+    @Listener
+    public void regEvent(RegisterEvent event) {
+        for (Action action : buildActions())
+            event.getRegistry().register(action);
     }
 
     @Override
     protected void registerStage() {
+        motionController = new MotionController();
+        bus.register(this);
         super.registerStage();
+        bus.unregister(this);
 
         actionManager = new ActionManagerImpl(context, this.context.getRegistry().getRegistry(Action.class));
         keyBindingManager = new KeyBindingManager(actionManager);
         Keybindings.INSTANCE.setup(keyBindingManager); // hardcode setup
 
-        List<Renderer> renderers = Lists.newArrayList();
-        // TODO: collect renderers
-        gameRenderer = new RendererContext(renderers, null);
+        List<Renderer.Factory> factories = Lists.newArrayList();
+        ClientRegistryEvent clientRegistryEvent = new ClientRegistryEvent(factories);
+        bus.post(clientRegistryEvent);
 
+        camera = new CameraDefault();
+        projection = new ProjectionPerspective(window.getWidth(), window.getHeight());
+
+        cameraController = new FirstPersonController(camera);
+        gameRenderer = new RendererContext(factories, camera, projection);
     }
 
     @Override
     protected void resourceStage() {
-        try {
-            gameRenderer.init(resourceManager);
-        } catch (IOException e) {
-            Engine.getLogger().warn("Catch an error during game construct stage.");
-            // TODO: handle exception
-            e.printStackTrace();
-        }
+        bus.post(new ResourceSetupEvent(context, resourceManager));
+        gameRenderer.build(context, resourceManager);
+    }
+
+    @Override
+    protected void finishStage() {
+        super.finishStage();
+        world = (WorldCommon) getWorld("default");
+        player = world.playerJoin(new Player.Profile(UUID.randomUUID(), 12));
+
+        player.getMountingEntity().getPosition().set(1, 3, 1);
     }
 
     @Override
     public void run() {
         super.run();
+        ticker.start(); // start to tick
     }
 
     private void updateRenderData() {
 
+        // TODO update particle physics here
     }
 
-    private void render() {
+    private void render(double partialTic) {
+        cameraController.update(player.getMountingEntity().getPosition(), player.getMountingEntity().getRotation());
         window.beginDraw();
-        this.gameRenderer.render(null);
+        this.gameRenderer.render(partialTic);
         window.endDraw();
+        System.out.println("end");
     }
 
     // https://github.com/lwjglgamedev/lwjglbook/blob/master/chapter02/src/main/java/org/lwjglb/engine/GameEngine.java
@@ -123,10 +181,6 @@ public class GameClientStandalone extends GameServer {
         long lastTime;
         while (!closed) {
             lastTime = System.currentTimeMillis();
-
-            window.beginDraw();
-            this.gameRenderer.render(null);
-            window.endDraw();
 
             long diff = System.currentTimeMillis() - lastTime;
             while (diff < (1000 / 60)) {
@@ -151,8 +205,137 @@ public class GameClientStandalone extends GameServer {
     // }
     // }
 
-    @Override
-    public World spawnWorld(unknowndomain.engine.world.World.Config config) {
-        return null;
+    // dirty things below...
+
+    private List<Action> buildActions() {
+        List<Action> list = motionController.getActions();
+        list.addAll(Lists.newArrayList(
+                ActionBuilderImpl.create("player.mouse.right").setStartHandler((c) -> {
+                    Player player = this.player;
+                    Camera camera = this.camera;
+
+                    if (player == null) return;
+                    Entity mountingEntity = player.getMountingEntity();
+                    World world = player.getWorld();
+
+                    if (mountingEntity == null || world == null) return;
+
+                    Entity.TwoHands twoHands = mountingEntity.getBehavior(Entity.TwoHands.class);
+                    if (twoHands == null) return;
+
+                    BlockPrototype.Hit hit = world.raycast(camera.getPosition(), camera.getFrontVector(), 5);
+
+                    Item hand = twoHands.getMainHand();
+                    if (hand != null) {
+                        if (hit != null) {
+                            hand.onUseBlockStart(world, mountingEntity, hand, hit);
+                        } else {
+                            hand.onUseStart(world, mountingEntity, hand);
+                        }
+                    }
+                    if (hit != null) {
+                        if (hit.block.shouldActivated(world, mountingEntity, hit.position, hit.block)) {
+                            hit.block.onActivated(world, mountingEntity, hit.position, hit.block);
+                        }
+                    }
+                }).build(),
+                ActionBuilderImpl.create("player.mouse.left").setStartHandler((c) -> {
+                    Player player = this.player;
+                    Camera camera = this.cameraController.getCamera();
+
+                    if (player == null) return;
+                    Entity mountingEntity = player.getMountingEntity();
+                    World world = player.getWorld();
+
+                    if (mountingEntity == null || world == null) return;
+
+                    Entity.TwoHands twoHands = mountingEntity.getBehavior(Entity.TwoHands.class);
+                    if (twoHands == null) return;
+
+                    BlockPrototype.Hit hit = world.raycast(camera.getPosition(), camera.getFrontVector(), 5);
+                    if (twoHands.getMainHand() != null) {
+                        if (hit != null) {
+                            world.setBlock(hit.position, null);
+//                            mainHand.onUseBlockStart(world, this, mainHand, hit);
+                        } else {
+//                            mainHand.onUseStart(world, this, mainHand);
+                        }
+                    }
+                    if (hit != null) {
+                        world.setBlock(hit.position, null);
+//                        if (hit.block.shouldActivated(world, this, hit.position, hit.block)) {
+//                            hit.block.onActivated(world, this, hit.position, hit.block);
+//                        }
+                    }
+                }).build()
+        ));
+        return list;
+    }
+
+    class MotionController {
+        static final int RUNNING = 0, SNEAKING = 1,
+                FORWARD = 2, BACKWARD = 3, LEFT = 4, RIGHT = 5,
+                JUMPING = 6;
+        float factor = 0.1f;
+        private Vector3f movingDirection = new Vector3f();
+        private boolean[] phases = new boolean[16];
+
+        List<Action> getActions() {
+            return Lists.newArrayList(
+                    ActionBuilderImpl.create("player.move.forward").setStartHandler((c) -> accept(FORWARD, true))
+                            .setEndHandler((c, i) -> accept(FORWARD, false)).build(),
+                    ActionBuilderImpl.create("player.move.backward").setStartHandler((c) -> accept(BACKWARD, true))
+                            .setEndHandler((c, i) -> accept(BACKWARD, false)).build(),
+                    ActionBuilderImpl.create("player.move.left").setStartHandler((c) -> accept(LEFT, true))
+                            .setEndHandler((c, i) -> accept(LEFT, false)).build(),
+                    ActionBuilderImpl.create("player.move.right").setStartHandler((c) -> accept(RIGHT, true))
+                            .setEndHandler((c, i) -> accept(RIGHT, false)).build(),
+                    ActionBuilderImpl.create("player.move.jump").setStartHandler((c) -> accept(JUMPING, true))
+                            .setEndHandler((c, i) -> accept(JUMPING, false)).build(),
+                    ActionBuilderImpl.create("player.move.sneak").setStartHandler((c) -> accept(SNEAKING, true))
+                            .setEndHandler((c, i) -> accept(SNEAKING, false)).build()
+            );
+        }
+
+        private void accept(int action, boolean phase) {
+            if (phases[action] == phase) return;
+            this.phases[action] = phase;
+
+            Vector3f movingDirection = this.movingDirection;
+            switch (action) {
+                case FORWARD:
+                case BACKWARD:
+                    if (this.phases[FORWARD] == this.phases[BACKWARD]) {
+                        movingDirection.z = 0;
+                    }
+                    if (this.phases[FORWARD]) movingDirection.z = -factor;
+                    else if (this.phases[BACKWARD]) movingDirection.z = +factor;
+                    break;
+                case LEFT:
+                case RIGHT:
+                    if (this.phases[LEFT] == this.phases[RIGHT]) {
+                        movingDirection.x = 0;
+                    }
+                    if (this.phases[RIGHT]) movingDirection.x = factor;
+                    else if (this.phases[LEFT]) movingDirection.x = -factor;
+                    break;
+                case RUNNING:
+                    break;
+                case JUMPING:
+                case SNEAKING:
+                    if (this.phases[JUMPING] && !this.phases[SNEAKING]) {
+                        movingDirection.y = factor;
+                    } else if (this.phases[SNEAKING] && !this.phases[JUMPING]) {
+                        movingDirection.y = -factor;
+                    } else {
+                        movingDirection.y = 0;
+                    }
+                    break;
+            }
+            Vector3f f = camera.getFrontVector();
+            f.y = 0;
+            movingDirection.rotate(new Quaternionf().rotateTo(new Vector3f(0, 0, -1), f),
+                    player.getMountingEntity().getMotion());
+        }
     }
 }

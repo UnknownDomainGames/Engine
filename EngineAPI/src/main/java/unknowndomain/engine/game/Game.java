@@ -4,11 +4,12 @@ import unknowndomain.engine.GameContext;
 import unknowndomain.engine.Prototype;
 import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.client.resource.ResourcePath;
-import unknowndomain.engine.mod.ModIdentifier;
+import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * The game shares the same set of mod and resources pack manifest.
@@ -41,10 +42,23 @@ public interface Game extends RuntimeObject, Prototype<RuntimeObject, Game>, Run
         World getWorld(String name);
     }
 
-    interface Config {
-        ModIdentifier[] mods();
+    class Option {
+        private List<ModMetadata> mods;
+        private List<ResourcePath> resources;
 
-        ResourcePath[] resources();
+        public Option(List<ModMetadata> mods, List<ResourcePath> resources) {
+            this.mods = mods;
+            this.resources = resources;
+        }
+
+        public List<ResourcePath> getResources() {
+            return resources;
+        }
+
+        public List<ModMetadata> getMods() {
+            return mods;
+        }
     }
+
 
 }

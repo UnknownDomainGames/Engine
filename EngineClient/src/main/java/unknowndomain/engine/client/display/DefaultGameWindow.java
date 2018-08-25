@@ -1,15 +1,14 @@
 package unknowndomain.engine.client.display;
 
-import unknowndomain.engine.client.EngineClient;
-
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
+import unknowndomain.engine.client.EngineClient;
 
 import java.io.PrintStream;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class DefaultGameWindow implements GameWindow {
     private long handle;
@@ -22,10 +21,10 @@ public class DefaultGameWindow implements GameWindow {
     private GLFWKeyCallback keyCallback;
     private GLFWScrollCallback scrollCallback;
 
-    private EngineClient game;
+    private EngineClient engineClient;
 
     public DefaultGameWindow(EngineClient game, int width, int height, String title) {
-        this.game = game;
+        this.engineClient = game;
         this.title = title;
         this.width = width;
         this.height = height;
@@ -92,7 +91,7 @@ public class DefaultGameWindow implements GameWindow {
         glfwSetFramebufferSizeCallback(handle, (window, width, height) -> {
             setSize(width, height);
         });
-        glfwSetCharModsCallback(handle, (window, codepoint, mods) -> game.handleTextInput(codepoint, mods));
+//        glfwSetCharModsCallback(handle, (window, codepoint, mods) -> engineClient.handleTextInput(codepoint, mods));
     }
 
     private void initWindowHint() {
@@ -126,11 +125,21 @@ public class DefaultGameWindow implements GameWindow {
         hideCursor();
     }
 
+
+    private void setupKeyCallback() {
+        keyCallback = new GLFWKeyCallback() {
+            @Override
+            public void invoke(long window, int key, int scancode, int action, int mods) {
+                engineClient.getCurrentGame().getKeyBindingManager().handleKeyPress(key, scancode, action, mods);
+            }
+        }.set(handle);
+    }
+
     private void setupMouseCallback() {
         mouseBtnCallback = new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                game.handleMousePress(button, action, mods);
+                engineClient.getCurrentGame().getKeyBindingManager().handleMousePress(button, action, mods);
             }
         }.set(handle);
     }
@@ -139,25 +148,17 @@ public class DefaultGameWindow implements GameWindow {
         cursorPosCallback = new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
-                game.handleCursorMove(xpos, ypos);
+                engineClient.getCurrentGame().getController().handleCursorMove(xpos, ypos);
             }
         }.set(handle);
     }
 
-    private void setupKeyCallback() {
-        keyCallback = new GLFWKeyCallback() {
-            @Override
-            public void invoke(long window, int key, int scancode, int action, int mods) {
-                game.handleKeyPress(key, scancode, action, mods);
-            }
-        }.set(handle);
-    }
 
     private void setupScrollCallback() {
         scrollCallback = new GLFWScrollCallback() {
             @Override
             public void invoke(long window, double xoffset, double yoffset) {
-                game.handleScroll(xoffset, yoffset);
+                engineClient.getCurrentGame().getController().handleScroll(xoffset, yoffset);
             }
         }.set(handle);
     }

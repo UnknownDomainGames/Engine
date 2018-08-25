@@ -7,21 +7,19 @@ import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.UnknownDomain;
+import unknowndomain.engine.client.display.Camera;
 import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.Mesh;
-import unknowndomain.engine.client.resource.ResourceManager;
-import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.client.shader.RendererShaderProgram;
 import unknowndomain.engine.client.shader.Shader;
-import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.client.texture.GLTexture;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.world.BlockChangeEvent;
 import unknowndomain.engine.world.ChunkLoadEvent;
+import unknowndomain.engine.world.WorldCommon;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class RendererDebug extends RendererShaderProgram {
@@ -46,8 +44,23 @@ public class RendererDebug extends RendererShaderProgram {
         }, new int[]{0, 2, 1, 0, 3, 2}, GL11.GL_TRIANGLES));
     }
 
+    public RendererDebug(Shader vertex, Shader frag, GLTexture texMap, GLMesh[] meshRegistry) {
+        createShader(vertex, frag);
+
+        useProgram();
+        u_Projection = getUniformLocation("u_ProjMatrix");
+        u_View = getUniformLocation("u_ViewMatrix");
+        u_Model = getUniformLocation("u_ModelMatrix");
+
+        this.texture = texMap;
+        this.meshRegistry = meshRegistry;
+    }
+
     @Override
     public void render(Context context) {
+        Camera camera = context.getCamera();
+        WorldCommon world = UnknownDomain.getGame().getWorld();
+
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
         useProgram();
 
@@ -56,15 +69,16 @@ public class RendererDebug extends RendererShaderProgram {
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        Shader.setUniform(u_Projection, context.getCamera().projection());
-        Shader.setUniform(u_View, context.getCamera().view());
+        Shader.setUniform(u_Projection, context.getProjection().projection());
+
+        Shader.setUniform(u_View, camera.view());
 
         texture.bind();
         Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
         textureMap.render();
 
-        BlockPrototype.Hit hit = UnknownDomain.getGame().getWorld().raycast(context.getCamera().getPosition(),
-                context.getCamera().getFrontVector(), 5);
+        BlockPrototype.Hit hit = world.raycast(camera.getPosition(),
+                camera.getFrontVector(), 5);
 
         loadChunk.forEach((pos, chunk) -> { // TODO modify here to the baked chunk
             for (int i = 0; i < 16; i++) {
@@ -147,15 +161,6 @@ public class RendererDebug extends RendererShaderProgram {
         if (event.blockId != 0 && !chunk.valid[yIndex]) {
             chunk.valid[yIndex] = true;
         }
-    }
-
-    public void init(ResourceManager resourceManager) throws IOException {
-        createShader(Shader.create(resourceManager.load(new ResourcePath("", "unknowndomain/shader/common.vert")).cache(), ShaderType.VERTEX_SHADER),
-                Shader.create(resourceManager.load(new ResourcePath("", "unknowndomain/shader/common.frag")).cache(), ShaderType.FRAGMENT_SHADER));
-        useProgram();
-        u_Projection = getUniformLocation("u_ProjMatrix");
-        u_View = getUniformLocation("u_ViewMatrix");
-        u_Model = getUniformLocation("u_ModelMatrix");
     }
 
     @Override

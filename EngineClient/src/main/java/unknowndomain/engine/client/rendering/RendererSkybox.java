@@ -22,7 +22,7 @@ public class RendererSkybox extends RendererShaderProgram {
 
     private GLMesh glMesh;
 
-    @Override
+    //    @Override
     public void init(ResourceManager resourceManager) throws IOException {
         createShader(Shader.create(resourceManager.load(vertexShader()).cache(), ShaderType.VERTEX_SHADER),
                 Shader.create(resourceManager.load(fragmentShader()).cache(), ShaderType.FRAGMENT_SHADER));
@@ -116,7 +116,7 @@ public class RendererSkybox extends RendererShaderProgram {
 
         useProgram();
 
-        Matrix4f pro = context.getCamera().projection();
+        Matrix4f pro = context.getProjection().projection();
         Matrix4f view = new Matrix4f(context.getCamera().view());
         view.m30(0).m31(0).m32(0);
         Shader.setUniform(u_Projection, pro);

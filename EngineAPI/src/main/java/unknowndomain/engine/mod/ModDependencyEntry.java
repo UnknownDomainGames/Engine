@@ -22,7 +22,7 @@ public class ModDependencyEntry {
 
     public static ModDependencyEntry create(String spec) {
         String[] args = spec.split(":", 3);
-        if(args.length < 3)
+        if (args.length < 3)
             throw new ModDependencyException("Failed to create dependency entry. Source: " + spec);
 
         try {

@@ -16,7 +16,8 @@ public abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<
     @SuppressWarnings("unchecked")
     @Override
     public final T setRegistryName(String location) {
-        if (this.registeredName != null) throw new Error("Duplicated register");
+        // TODO a policy to freeze
+//        if (this.registeredName != null) throw new Error("Duplicated register " + location);
         this.registeredName = location;
         return (T) this;
     }

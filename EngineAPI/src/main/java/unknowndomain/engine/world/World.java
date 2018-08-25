@@ -5,7 +5,9 @@ import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.util.Owner;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -14,6 +16,7 @@ import java.util.Set;
 /**
  * World instance, should spawn by {@link unknowndomain.engine.game.Game}
  */
+@Owner(Game.class)
 public interface World extends RuntimeObject {
     List<Entity> getEntities();
 
@@ -28,6 +31,6 @@ public interface World extends RuntimeObject {
     Block setBlock(@Nonnull BlockPos pos, Block block);
 
     interface Config {
-        
+
     }
 }

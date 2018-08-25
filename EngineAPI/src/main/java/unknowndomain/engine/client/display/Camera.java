@@ -8,57 +8,22 @@ import org.joml.Vector3f;
  * <p>So im considering bind camera to {@link unknowndomain.engine.game.Game}</p>
  */
 public interface Camera {
+    Vector3f UP_VECTOR = new Vector3f(0, 1, 0);
+
     Vector3f getPosition();
 
     Vector3f getLookAt();
 
-    Vector3f getFrontVector();
-
-    /**
-     * Move the camera
-     *
-     * @param x x-translate
-     * @param y y-translate
-     * @param z z-translate
-     */
-    void move(float x, float y, float z);
-
-    /**
-     * Move the camera to the given position
-     *
-     * @param x x-translate
-     * @param y y-translate
-     * @param z z-translate
-     */
-    void moveTo(float x, float y, float z);
-
-    void forward();
-
-    void backward();
-
-    void left();
-
-    void right();
-
-    void rotate(float dx, float dy);
-
-    void rotateTo(float dx, float dy);
+    default Vector3f getFrontVector() {
+        return getLookAt().sub(getPosition(), new Vector3f());
+    }
 
     /**
      * create view matrix for shader to use
      *
      * @return
      */
-    Matrix4f view();
-
-    /**
-     * create projection matrix for shader to use
-     *
-     * @return
-     */
-    Matrix4f projection();
-
-    interface Perspective extends Camera {
-
+    default Matrix4f view() {
+        return new Matrix4f().lookAt(getPosition(), getLookAt(), UP_VECTOR);
     }
 }

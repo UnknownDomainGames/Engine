@@ -1,61 +1,65 @@
 package unknowndomain.engine.mod;
 
+import java.net.URL;
 import java.util.Objects;
 
 public class ModIdentifier {
-    private String modid;
-    private String version;
+    private final String group, id, version;
 
-    private ModIdentifier(String modid, String version) {
-        this.modid = modid;
+    protected ModIdentifier(String group, String id, String version) {
+        this.group = group;
+        this.id = id;
         this.version = version;
     }
 
     /**
      * TODO check the modid style
-     *
-     * @param modid
-     * @param version
-     * @return
      */
-    public static ModIdentifier of(String modid, String version) {
+    public static ModIdentifier of(String group, String modid, String version) {
         Objects.requireNonNull(modid);
         Objects.requireNonNull(version);
-        return new ModIdentifier(modid, version);
+        return new ModIdentifier(group, modid, version);
     }
 
     public static ModIdentifier from(String s) {
         String[] split = s.split(":");
-        if (split.length != 2 || split[0].equals("") || split[1].equals(""))
+        if (split.length != 3 || split[0].equals("") || split[1].equals("") || split[2].equals(""))
             throw new IllegalArgumentException("Invalid mod identifier syntax: " + s);
-        return new ModIdentifier(split[0], split[1]);
+        return new ModIdentifier(split[0], split[1], split[2]);
     }
 
-    public String getModid() {
-        return modid;
+    public String getGroup() {
+        return group;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getVersion() {
         return version;
     }
 
-    @Override
     public String toString() {
-        return modid + ":" + version;
+        return group + ":" + id + ":" + version;
     }
 
+    public URL toURL() {
+        return null; // TODO implement this
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ModIdentifier that = (ModIdentifier) o;
-        return Objects.equals(modid, that.modid) &&
+        return Objects.equals(group, that.group) &&
+                Objects.equals(id, that.id) &&
                 Objects.equals(version, that.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(modid, version);
+        return Objects.hash(group, id, version);
     }
 }

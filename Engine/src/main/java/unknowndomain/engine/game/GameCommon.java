@@ -1,7 +1,5 @@
 package unknowndomain.engine.game;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.action.Action;
@@ -10,37 +8,41 @@ import unknowndomain.engine.entity.EntityType;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.mod.ModManager;
+import unknowndomain.engine.mod.ModRepository;
+import unknowndomain.engine.mod.ModStore;
 import unknowndomain.engine.mod.SimpleModManager;
 import unknowndomain.engine.registry.FrozenRegistryManager;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
-import unknowndomain.engine.world.ChunkStore;
-import unknowndomain.engine.world.World;
-import unknowndomain.engine.world.WorldCommon;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 public abstract class GameCommon implements Game {
-    protected final Config config;
+    protected final Option option;
     protected final EventBus bus;
+    protected final ModRepository modRepository;
+    protected final ModStore modStore;
+
     protected GameContext context;
     protected ModManager modManager;
 
-    public GameCommon(Config config, EventBus bus) {
-        this.config = config;
+    public GameCommon(Option option, ModRepository repository,
+                      ModStore store, EventBus bus) {
+        this.option = option;
+        this.modStore = store;
+        this.modRepository = repository;
         this.bus = bus;
     }
 
     /**
-     * Construct stage, collect mod and resource according to it config
+     * Construct stage, collect mod and resource according to it option
      */
     protected void constructStage() {
-        modManager = new SimpleModManager(this.bus);
-
+        modManager = SimpleModManager.load(
+                modStore,
+                modRepository,
+                option.getMods());
         // TODO: collect mod from remote or local here
     }
 

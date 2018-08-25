@@ -7,13 +7,14 @@ import unknowndomain.engine.Tickable;
  */
 public class FixStepTicker {
     protected final Tickable fix;
-    protected final float interval;
+    protected final double interval;
     protected boolean stop = false;
     protected final int tps;
+    protected double lag = 0.0;
 
     public FixStepTicker(Tickable task, int tps) {
         fix = task;
-        interval = 1F / tps;
+        interval = 1D / tps;
         this.tps = tps;
     }
 
@@ -25,13 +26,15 @@ public class FixStepTicker {
         return stop;
     }
 
+    /**
+     * @return current time in second
+     */
     protected double getCurrentTime() {
-        return System.nanoTime() / 1_000_000_000.0;
+        return System.nanoTime() / 1e9;
     }
 
     public void start() {
         double previous = getCurrentTime();
-        double lag = 0.0;
         while (!stop) {
             double current = getCurrentTime();
             double elapsed = current - previous;
@@ -43,6 +46,10 @@ public class FixStepTicker {
                 lag -= interval;
             }
         }
+    }
+
+    public double partialTick() {
+        return lag / tps;
     }
 
     public static class Dynamic extends FixStepTicker {
@@ -58,6 +65,8 @@ public class FixStepTicker {
             double lag = 0.0;
             while (!stop) {
                 double current = getCurrentTime();
+                System.out.println("dyn " + current);
+
                 double elapsed = current - previous;
                 previous = current;
                 lag += elapsed;

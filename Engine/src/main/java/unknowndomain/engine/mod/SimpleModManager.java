@@ -1,60 +1,66 @@
 package unknowndomain.engine.mod;
 
-import unknowndomain.engine.mod.java.JavaModLoader;
-import unknowndomain.engine.mod.source.DirModSource;
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.Validate;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import unknowndomain.engine.Engine;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class SimpleModManager implements ModManager {
+    private Map<String, ModContainer> idToMods;
+    private Map<Class, ModContainer> typeToMods;
 
-    public static final Path LOCAL_MODS_DIR = Paths.get("mods");
+    private SimpleModManager(Map<String, ModContainer> idToMods, Map<Class, ModContainer> typeToMods) {
+        this.idToMods = idToMods;
+        this.typeToMods = typeToMods;
+    }
 
-    private final Map<String, ModContainer> loadedMods = new HashMap<>();
-
-    private final ModLoader javaModLoader = new JavaModLoader();
-    private final ModSource localModSource = new DirModSource(LOCAL_MODS_DIR);
+    public static ModManager load(ModStore store, ModRepository modRepository, List<ModMetadata> mods) {
+        ImmutableMap.Builder<String, ModContainer> idToMapBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<Class, ModContainer> typeToMapBuilder = ImmutableMap.builder();
+        // TODO: sort here
+        for (ModMetadata mod : mods) {
+            if (!store.exists(mod)) {
+                if (!modRepository.contains(mod)) {
+                    Engine.getLogger().warn("Cannot find mod " + mod + " from local or other sources! Skip to load!");
+                    continue;
+                }
+                store.store(mod, modRepository.open(mod));
+            }
+            ModContainer load = store.load(mod);
+            if (load == null) {
+                Engine.getLogger().warn("Some exceptions happened during loading mod {0} from local! Skip to load!", mod);
+                continue;
+            }
+            idToMapBuilder.put(mod.getId(), load);
+            typeToMapBuilder.put(load.getSource().getClass(), load);
+        }
+        return new SimpleModManager(idToMapBuilder.build(), typeToMapBuilder.build());
+    }
 
     @Override
-    public ModContainer getLoadedMod(String modId) {
-        return loadedMods.get(modId);
+    public ModContainer findMod(String modId) {
+        return idToMods.get(Validate.notNull(modId));
+    }
+
+    @Override
+    public ModContainer findMod(Class<?> clazz) {
+        return typeToMods.get(Validate.notNull(clazz));
     }
 
     @Override
     public boolean isModLoaded(String modId) {
-        return loadedMods.containsKey(modId);
+        return idToMods.containsKey(Validate.notNull(modId));
     }
 
+    @NonNull
     @Override
     public Collection<ModContainer> getLoadedMods() {
-        return loadedMods.values();
+        return idToMods.values();
     }
 
-    public void load() {
-        List<LoadableMod> loadableMods = new LinkedList<>();
-        loadableMods.addAll(localModSource.getLoadableMods());
-
-        for (LoadableMod loadableMod : loadableMods) {
-            ModContainer container = javaModLoader.load(loadableMod);
-            loadedMods.put(container.getModId(), container);
-        }
-    }
-
-    private void sortLoadableMods(List<LoadableMod> loadableMods) {
-        // TODO:
-        Collections.sort(loadableMods, new Comparator<LoadableMod>() {
-            @Override
-            public int compare(LoadableMod o1, LoadableMod o2) {
-                return 0;
-            }
-        });
-    }
-
-    @Override
-    public ModContainer whichMod(Class<?> clazz) {
-        // TODO 自动生成的方法存根
-        return null;
-    }
 
 }

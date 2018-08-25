@@ -1,46 +1,56 @@
 package unknowndomain.engine.client.rendering;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.apache.commons.lang3.Validate;
-
+import unknowndomain.engine.GameContext;
 import unknowndomain.engine.client.display.Camera;
+import unknowndomain.engine.client.display.Projection;
 import unknowndomain.engine.client.resource.ResourceManager;
 
-public class RendererContext implements Renderer.Context, Renderer {
-    private final List<Renderer> renderers;
-    private final Camera camera;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-    public RendererContext(List<Renderer> renderers, Camera camera) {
-        this.renderers = renderers;
+public class RendererContext implements Renderer.Context {
+    private final List<Renderer> renderers = new ArrayList<>();
+    private final Camera camera;
+    private final Projection projection;
+    private final List<Renderer.Factory> factories;
+    private double partialTick;
+
+    public RendererContext(List<Renderer.Factory> factories, Camera camera, Projection projection) {
+        this.factories = factories;
         this.camera = camera;
+        this.projection = projection;
+    }
+
+    public void build(GameContext context, ResourceManager resourceManager) {
+        this.renderers.clear();
+        for (Renderer.Factory factory : factories) {
+            try {
+                Renderer renderer = factory.create(context, resourceManager);
+                this.renderers.add(renderer);
+            } catch (IOException e) {
+                // TODO: warning
+                e.printStackTrace();
+            }
+        }
     }
 
     public Camera getCamera() {
         return camera;
     }
 
-    public void init(ResourceManager manager) throws IOException {
-        for (Renderer renderer : renderers) {
-            renderer.init(manager);
-        }
-    }
-
-    public RendererContext add(Renderer renderer) {
-        Validate.notNull(renderer);
-        renderers.add(renderer);
-        return this;
-    }
-
     @Override
-    public void render(Context context) {
+    public Projection getProjection() {
+        return projection;
+    }
+
+    public void render(double partial) {
+        this.partialTick = partial;
         for (Renderer renderer : renderers) {
             renderer.render(this);
         }
     }
 
-    @Override
     public void dispose() {
         for (Renderer renderer : renderers) {
             renderer.dispose();
@@ -49,6 +59,6 @@ public class RendererContext implements Renderer.Context, Renderer {
 
     @Override
     public double partialTick() {
-        return 0;
+        return partialTick;
     }
 }

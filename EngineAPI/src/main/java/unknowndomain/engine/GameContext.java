@@ -3,14 +3,17 @@ package unknowndomain.engine;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.event.EventBus;
+import unknowndomain.engine.game.Game;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
+import unknowndomain.engine.util.Owner;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
+@Owner(Game.class)
 public class GameContext implements EventBus {
     private EventBus bus;
     private RegistryManager manager;

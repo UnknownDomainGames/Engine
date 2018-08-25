@@ -1,7 +1,6 @@
 package unknowndomain.engine.client;
 
 import org.apache.commons.lang3.SystemUtils;
-
 import unknowndomain.engine.client.game.GameClientStandalone;
 
 public class UnknownDomain {
@@ -14,12 +13,12 @@ public class UnknownDomain {
 
     public static void main(String[] args) {
         if (SystemUtils.IS_OS_MAC && SystemUtils.JAVA_AWT_HEADLESS != null) { // TODO: require review: where should we
-                                                                              // put this OS checking
+            // put this OS checking
             System.setProperty(SystemUtils.JAVA_AWT_HEADLESS, "true");
         }
         engine = new EngineClient(WIDTH, HEIGHT);
-        engine.init();
-        engine.gameLoop();
+        engine.start();
+        engine.startGame(null);
     }
 
     public static EngineClient getEngine() {

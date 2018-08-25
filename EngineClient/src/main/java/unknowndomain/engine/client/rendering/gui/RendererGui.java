@@ -7,17 +7,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.UnknownDomain;
-import unknowndomain.engine.client.resource.Resource;
-import unknowndomain.engine.client.resource.ResourceManager;
-import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.client.shader.RendererShaderProgram;
 import unknowndomain.engine.client.shader.Shader;
-import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
-import unknowndomain.engine.world.WorldCommon;
+import unknowndomain.engine.world.World;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 
@@ -27,7 +22,13 @@ import java.text.DecimalFormat;
 public class RendererGui extends RendererShaderProgram {
     private TTFFontRenderer fontRenderer;
 
-    private void createShader(Shader vertexShader, Shader fragShader) {
+    public RendererGui(ByteBuffer fontRenderer, Shader vertexShader, Shader fragShader) {
+        this.fontRenderer = new TTFFontRenderer(fontRenderer);
+        createShader(vertexShader, fragShader);
+    }
+
+
+    protected void createShader(Shader vertexShader, Shader fragShader) {
         programId = GL20.glCreateProgram();
 
         attachShader(vertexShader);
@@ -39,9 +40,15 @@ public class RendererGui extends RendererShaderProgram {
         vertexShader.deleteShader();
         fragShader.deleteShader();
 
+
         GL20.glValidateProgram(programId);
 
+        setUniform("projection", new Matrix4f().setOrtho(0, 854f, 480f, 0, 1, -1));
+        setUniform("model", new Matrix4f().identity());
+
         GL20.glUseProgram(0);
+
+        Tessellator.getInstance().setShaderId(programId);
     }
 
     @Override
@@ -55,24 +62,6 @@ public class RendererGui extends RendererShaderProgram {
     }
 
     @Override
-    public void init(ResourceManager manager) throws IOException {
-        createShader(
-                Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(),
-                        ShaderType.VERTEX_SHADER),
-                Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(),
-                        ShaderType.FRAGMENT_SHADER));
-
-        Tessellator.getInstance().setShaderId(programId);
-        Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
-        byte[] cache = resource.cache();
-        this.fontRenderer = new TTFFontRenderer((ByteBuffer) ByteBuffer.allocateDirect(cache.length).put(cache).flip());
-
-        useProgram();
-        setUniform("projection", new Matrix4f().setOrtho(0, 854f, 480f, 0, 1, -1));
-        setUniform("model", new Matrix4f().identity());
-    }
-
-    @Override
     public void render(Context context) {
         useProgram();
         setUniform("usingAlpha", true);
@@ -81,10 +70,10 @@ public class RendererGui extends RendererShaderProgram {
     }
 
     void debug(Context context) {
-        Entity player = UnknownDomain.getEngine().getController().getPlayer().getMountingEntity();
+        Entity player = UnknownDomain.getGame().getPlayer().getMountingEntity();
         AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
+        World world = UnknownDomain.getGame().getPlayer().getWorld();
 
-        WorldCommon world = UnknownDomain.getGame().getWorld();
         BlockPrototype.Hit hit = world.raycast(context.getCamera().getPosition(),
                 context.getCamera().getFrontVector(), 5);
         fontRenderer.drawText("Blocks 0.0.0", 0, 0, 0xffffffff, 16);

@@ -1,32 +1,25 @@
 package unknowndomain.engine.mod.java;
 
-import java.nio.file.Path;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.mod.java.harvester.HarvestedInfo;
 
-//TODO: collect mod's class loader, instance of mod main class, mod config, mod looger, config dir.
+import java.nio.file.Path;
+
+//TODO: collect mod's class loader, instance of mod main class, mod option, mod looger, option dir.
 public class JavaModContainer implements ModContainer {
-
     private final Path source;
-
     private final String modId;
-
     private final Logger logger;
 
     /**
      * Class loader of the mod.
      */
     private ModClassLoader classLoader;
-
     private Object instance;
-
     private ModMetadata metadata;
-
     private HarvestedInfo harvestedInfo;
 
     public JavaModContainer(String modId, Path source) {
