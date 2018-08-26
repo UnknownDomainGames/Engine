@@ -22,7 +22,7 @@ import unknowndomain.engine.world.WorldCommon;
 
 import java.util.Map;
 
-public class RendererDebug extends RendererShaderProgram {
+public class RendererWorld extends RendererShaderProgram {
     protected final int A_POSITION = 0;
     protected final int A_TEXTCOORD = 1;
     protected final int A_NORMAL = 2;
@@ -34,6 +34,7 @@ public class RendererDebug extends RendererShaderProgram {
     private GLTexture texture;
     private Map<ChunkPos, RenderChunk> loadChunk = Maps.newHashMap();
     private GLMesh[] meshRegistry;
+    private Mesh[] meshes;
 
     private GLMesh textureMap;
 
@@ -44,7 +45,8 @@ public class RendererDebug extends RendererShaderProgram {
         }, new int[]{0, 2, 1, 0, 3, 2}, GL11.GL_TRIANGLES));
     }
 
-    public RendererDebug(Shader vertex, Shader frag, GLTexture texMap, GLMesh[] meshRegistry) {
+    public RendererWorld(Shader vertex, Shader frag, GLTexture texMap, GLMesh[] meshRegistry, Mesh[] meshes) {
+        this.meshes = meshes;
         createShader(vertex, frag);
 
         useProgram();
@@ -110,27 +112,6 @@ public class RendererDebug extends RendererShaderProgram {
                 }
             }
         });
-    }
-
-    /**
-     * @return the texture
-     */
-    public GLTexture getTexture() {
-        return texture;
-    }
-
-    /**
-     * @param texture the texture to set
-     */
-    public void setTexture(GLTexture texture) {
-        this.texture = texture;
-    }
-
-    /**
-     * @param meshRegistry the meshRegistry to set
-     */
-    public void setMeshRegistry(GLMesh[] meshRegistry) {
-        this.meshRegistry = meshRegistry;
     }
 
     @Listener

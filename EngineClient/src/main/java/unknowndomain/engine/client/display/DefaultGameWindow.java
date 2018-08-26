@@ -22,6 +22,7 @@ public class DefaultGameWindow implements GameWindow {
     private GLFWScrollCallback scrollCallback;
 
     private EngineClient engineClient;
+    private boolean paused;
 
     public DefaultGameWindow(EngineClient game, int width, int height, String title) {
         this.engineClient = game;
@@ -130,6 +131,16 @@ public class DefaultGameWindow implements GameWindow {
         keyCallback = new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
+                if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
+                    if (paused) {
+                        hideCursor();
+                        paused = false;
+                    } else {
+                        showCursor();
+                        paused = true;
+                    }
+                }
+
                 engineClient.getCurrentGame().getKeyBindingManager().handleKeyPress(key, scancode, action, mods);
             }
         }.set(handle);

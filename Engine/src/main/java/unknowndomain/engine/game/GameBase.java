@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.util.Map;
 
-public abstract class GameCommon implements Game {
+public abstract class GameBase implements Game {
     protected final Option option;
     protected final EventBus bus;
     protected final ModRepository modRepository;
@@ -33,8 +33,8 @@ public abstract class GameCommon implements Game {
             .setVersion("0.0.1")
             .setGroup("none").build();
 
-    public GameCommon(Option option, ModRepository repository,
-                      ModStore store, EventBus bus) {
+    public GameBase(Option option, ModRepository repository,
+                    ModStore store, EventBus bus) {
         this.option = option;
         this.modStore = new ModStore() {
             @Override

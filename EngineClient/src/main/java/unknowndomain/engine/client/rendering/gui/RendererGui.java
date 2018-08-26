@@ -69,14 +69,33 @@ public class RendererGui extends RendererShaderProgram {
         debug(context);
     }
 
+    private long lastFPS = getTime();
+    private int fps = 0;
+    private int displayFPS = 0;
+
+    public long getTime() {
+        return System.nanoTime() / 1000000;
+    }
+
+    public void updateFPS() {
+        long time = getTime();
+        if (time - lastFPS > 1000) {
+            displayFPS = fps;
+            fps = 0; //reset the FPS counter
+            lastFPS += 1000; //add one second
+        }
+        fps++;
+    }
+
     void debug(Context context) {
+        updateFPS();
         Entity player = UnknownDomain.getGame().getPlayer().getMountingEntity();
         AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
         World world = UnknownDomain.getGame().getPlayer().getWorld();
 
         BlockPrototype.Hit hit = world.raycast(context.getCamera().getPosition(),
                 context.getCamera().getFrontVector(), 5);
-        fontRenderer.drawText("Blocks 0.0.0", 0, 0, 0xffffffff, 16);
+        fontRenderer.drawText("fps " + displayFPS, 0, 0, 0xffffffff, 16);
         fontRenderer.drawText(String.format("Playerlocation: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 25, 0xffffffff, 16);
         fontRenderer.drawText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 45, 0xffffffff, 16);
         fontRenderer.drawText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourceManager;
@@ -14,10 +15,14 @@ import unknowndomain.engine.client.texture.GLTextureMap;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.*;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.glGenerateMipmap;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.*;
 
 public final class MinecraftModelFactory {
     private int dimension = 256;
@@ -25,6 +30,307 @@ public final class MinecraftModelFactory {
 
     private MinecraftModelFactory(ResourceManager manager) {
         this.manager = manager;
+    }
+
+    public void cull(BakedBlock[] chunk) {
+        ChunkBaker bakeChunk = new ChunkBaker();
+
+        int[] offsets = new int[]{256, -256, 16, -16, 1, -1};
+        BakedBlock[] facesCache = new BakedBlock[6];
+        for (int pos = 0; pos < 4096; pos++) {
+            BakedBlock cur = chunk[pos];
+            if (cur == null) continue; // if no block here, ignore
+
+            Arrays.fill(facesCache, null);
+            for (int face = 0; face < 6; face++) {
+                BakedBlock other = null;
+                int offset = offsets[face];
+                int idx = face + offset;
+                if (idx < 4096 && idx >= 0)
+                    other = chunk[idx];
+                facesCache[face] = other;
+            }
+
+            boolean allAround = true;
+            for (int i = 0; i < 6; i++)
+                if (facesCache[i] == null || !facesCache[i].isFull) {
+                    allAround = false;
+                    break;
+                }
+            if (allAround) continue; // rounded block will never be rendered.
+
+            int x = ((pos >> 8) & 0xF);
+            int y = ((pos >> 4) & 0xF);
+            int z = (pos & 0xF);
+
+            if (!cur.isFull) {
+                for (int i = 0; i < cur.faces.length; i++)
+                    for (int j = 0; j < 6; j++)
+                        bakeChunk.face(cur.faces[i][j], x, y, z);
+            } else {
+                Mesh[] faces = cur.faces[0];
+                for (int face = 0; face < 6; face++)
+                    if (facesCache[face] == null)
+                        bakeChunk.face(faces[face], x, y, z);
+            }
+        }
+    }
+
+    Mesh bakeModel(Model model) {
+        if (model == null) return null;
+        float[] vertices = new float[model.elements.length * 24 * 3];
+        float[] uv = new float[model.elements.length * 24 * 2];
+        float[] normals = new float[model.elements.length * 24 * 3];
+
+        List<Integer> indices = new ArrayList<>();
+        int vertIndex = 0;
+        int uvIndex = 0;
+        int indx = 0;
+        final int X = 0, Y = 1, Z = 2;
+
+        for (Model.Element e : model.elements) {
+            for (int i = 0; i < e.from.length; i++) {
+                e.from[i] /= 16f;
+            }
+            for (int i = 0; i < e.to.length; i++) {
+                e.to[i] /= 16f;
+            }
+        }
+
+        for (Model.Element element : model.elements) {
+            float[] thisUv;
+
+            // north
+            if (element.faces.north != null) {
+                thisUv = element.faces.north.uv;
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[1];
+
+
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[1];
+
+
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[3];
+
+
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[3];
+
+                indices.add(indx);
+                indices.add(indx + 1);
+                indices.add(indx + 2);
+                indices.add(indx);
+                indices.add(indx + 2);
+                indices.add(indx + 3);
+                indx += 4;
+            }
+
+            // south
+            if (element.faces.south != null) {
+                thisUv = element.faces.south.uv;
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[3];
+
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[3];
+
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[1];
+
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[1];
+
+                indices.add(indx);
+                indices.add(indx + 1);
+                indices.add(indx + 2);
+                indices.add(indx);
+                indices.add(indx + 2);
+                indices.add(indx + 3);
+                indx += 4;
+            }
+
+
+            // left
+            if (element.faces.west != null) {
+                thisUv = element.faces.west.uv;
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[1];
+
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[1];
+
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[3];
+
+
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[3];
+
+
+                indices.add(indx);
+                indices.add(indx + 1);
+                indices.add(indx + 2);
+                indices.add(indx);
+                indices.add(indx + 2);
+                indices.add(indx + 3);
+                indx += 4;
+            }
+
+            if (element.faces.east != null) {
+                // right
+                thisUv = element.faces.east.uv;
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[3];
+
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[3];
+
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[1];
+
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[1];
+
+                indices.add(indx);
+                indices.add(indx + 1);
+                indices.add(indx + 2);
+                indices.add(indx);
+                indices.add(indx + 2);
+                indices.add(indx + 3);
+                indx += 4;
+            }
+
+            // bottom
+            if (element.faces.down != null) {
+                thisUv = element.faces.down.uv;
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[1];
+
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[1];
+
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[3];
+
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.from[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[3];
+
+                indices.add(indx);
+                indices.add(indx + 1);
+                indices.add(indx + 2);
+                indices.add(indx);
+                indices.add(indx + 2);
+                indices.add(indx + 3);
+                indx += 4;
+            }
+
+            // top
+            if (element.faces.up != null) {
+                thisUv = element.faces.up.uv;
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[1];
+
+                vertices[vertIndex++] = element.to[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[0];
+                uv[uvIndex++] = thisUv[3];
+
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.from[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[3];
+
+                vertices[vertIndex++] = element.from[X];
+                vertices[vertIndex++] = element.to[Y];
+                vertices[vertIndex++] = element.to[Z];
+                uv[uvIndex++] = thisUv[2];
+                uv[uvIndex++] = thisUv[1];
+
+                indices.add(indx);
+                indices.add(indx + 1);
+                indices.add(indx + 2);
+                indices.add(indx);
+                indices.add(indx + 2);
+                indices.add(indx + 3);
+                indx += 4;
+            }
+
+        }
+        int[] ind = new int[indices.size()];
+        for (int i = 0; i < indices.size(); i++) ind[i] = indices.get(i);
+        return new Mesh(vertices, uv, normals, ind, GL11.GL_TRIANGLES);
+    }
+
+    public static class BakedBlock {
+        Mesh[][] faces;
+        boolean isFull;
     }
 
     public static Result process(ResourceManager manager, List<ResourcePath> paths) throws IOException {
@@ -202,253 +508,81 @@ public final class MinecraftModelFactory {
         return dimension;
     }
 
-    Mesh bakeModel(Model model) {
-        if (model == null) return null;
-        float[] vertices = new float[model.elements.length * 24 * 3];
-        float[] uv = new float[model.elements.length * 24 * 2];
-        float[] normals = new float[model.elements.length * 24 * 3];
+    class ChunkBaker {
+        ByteBuffer bb = ByteBuffer.allocate(1048576);
+        FloatBuffer fb = bb.asFloatBuffer();
 
-        List<Integer> indices = new ArrayList<>();
-        int vertIndex = 0;
-        int uvIndex = 0;
-        int indx = 0;
-        final int X = 0, Y = 1, Z = 2;
+        IntBuffer ind = IntBuffer.allocate(1048576);
 
-        for (Model.Element e : model.elements) {
-            for (int i = 0; i < e.from.length; i++) {
-                e.from[i] /= 16f;
+        int vCount = 0;
+        int mode;
+
+        void face(Mesh fa, int x, int y, int z) {
+            float[] faceVertCpy = Arrays.copyOf(fa.getVertices(), 12);
+            for (int i = 0; i < 12; i += 3) {
+                faceVertCpy[i] += x;
+                faceVertCpy[i + 1] += y;
+                faceVertCpy[i + 2] += z;
             }
-            for (int i = 0; i < e.to.length; i++) {
-                e.to[i] /= 16f;
+            fb.put(faceVertCpy)
+                    .put(fa.getUv())
+                    .put(fa.getNormals());
+            int[] indCpy = Arrays.copyOf(fa.getIndices(), 6);
+            for (int i = 0; i < 6; i++) {
+                indCpy[i] += vCount;
             }
+            ind.put(indCpy);
+
+            vCount += 4;
         }
 
-        for (Model.Element element : model.elements) {
-            float[] thisUv;
+        GLMesh bake() {
+            fb.flip();
+            ind.flip();
 
-            // north
-            if (element.faces.north != null) {
-                thisUv = element.faces.north.uv;
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[3];
+            FloatBuffer dataBuf = null;
+            IntBuffer indicesBuf = null;
+            int vboId;
+            try {
+                int vertexCount = ind.limit();
+                int[] vboIdList = new int[2];
 
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[3];
+                int vaoId = glGenVertexArrays();
+                glBindVertexArray(vaoId);
 
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[1];
+                vboIdList[0] = vboId = glGenBuffers();
 
+                dataBuf = MemoryUtil.memAllocFloat(fb.limit());
+                dataBuf.put(fb).flip();
 
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[1];
+                glBindBuffer(GL_ARRAY_BUFFER, vboId);
+                glBufferData(GL_ARRAY_BUFFER, dataBuf, GL_STATIC_DRAW);
 
-                indices.add(indx);
-                indices.add(indx + 1);
-                indices.add(indx + 2);
-                indices.add(indx);
-                indices.add(indx + 2);
-                indices.add(indx + 3);
-                indx += 4;
+                int stride = 8 * Float.BYTES;
+                glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
+                glVertexAttribPointer(1, 2, GL_FLOAT, false, stride, 3 * Float.BYTES);
+                glVertexAttribPointer(2, 3, GL_FLOAT, false, stride, 5 * Float.BYTES);
+
+                vboIdList[1] = vboId = glGenBuffers();
+
+                indicesBuf = MemoryUtil.memAllocInt(ind.limit());
+                indicesBuf.put(ind).flip();
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuf, GL_STATIC_DRAW);
+
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                glBindVertexArray(0);
+
+                return new GLMesh(vaoId, vboIdList, vertexCount, new byte[]{0, 1, 2}, mode);
+            } finally {
+                if (dataBuf != null) {
+                    MemoryUtil.memFree(dataBuf);
+                }
+                if (indicesBuf != null) {
+                    MemoryUtil.memFree(indicesBuf);
+                }
             }
-
-            // south
-            if (element.faces.south != null) {
-                thisUv = element.faces.south.uv;
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[3];
-
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[3];
-
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[1];
-
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[1];
-
-                indices.add(indx);
-                indices.add(indx + 1);
-                indices.add(indx + 2);
-                indices.add(indx);
-                indices.add(indx + 2);
-                indices.add(indx + 3);
-                indx += 4;
-            }
-
-
-            // left
-            if (element.faces.west != null) {
-                thisUv = element.faces.west.uv;
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[3];
-
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[3];
-
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[1];
-
-
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[1];
-
-                indices.add(indx);
-                indices.add(indx + 1);
-                indices.add(indx + 2);
-                indices.add(indx);
-                indices.add(indx + 2);
-                indices.add(indx + 3);
-                indx += 4;
-            }
-
-            if (element.faces.east != null) {
-                // right
-                thisUv = element.faces.east.uv;
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[3];
-
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[3];
-
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[1];
-
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[1];
-
-                indices.add(indx);
-                indices.add(indx + 1);
-                indices.add(indx + 2);
-                indices.add(indx);
-                indices.add(indx + 2);
-                indices.add(indx + 3);
-                indx += 4;
-            }
-
-            // bottom
-            if (element.faces.down != null) {
-                thisUv = element.faces.down.uv;
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[1];
-
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[1];
-
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[3];
-
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.from[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[3];
-
-                indices.add(indx);
-                indices.add(indx + 1);
-                indices.add(indx + 2);
-                indices.add(indx);
-                indices.add(indx + 2);
-                indices.add(indx + 3);
-                indx += 4;
-            }
-
-            // top
-            if (element.faces.up != null) {
-                thisUv = element.faces.up.uv;
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[1];
-
-                vertices[vertIndex++] = element.to[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[0];
-                uv[uvIndex++] = thisUv[3];
-
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.from[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[3];
-
-                vertices[vertIndex++] = element.from[X];
-                vertices[vertIndex++] = element.to[Y];
-                vertices[vertIndex++] = element.to[Z];
-                uv[uvIndex++] = thisUv[2];
-                uv[uvIndex++] = thisUv[1];
-
-                indices.add(indx);
-                indices.add(indx + 1);
-                indices.add(indx + 2);
-                indices.add(indx);
-                indices.add(indx + 2);
-                indices.add(indx + 3);
-                indx += 4;
-            }
-
         }
-        int[] ind = new int[indices.size()];
-        for (int i = 0; i < indices.size(); i++) ind[i] = indices.get(i);
-        return new Mesh(vertices, uv, normals, ind, GL11.GL_TRIANGLES);
     }
 
     static class TexturePart {

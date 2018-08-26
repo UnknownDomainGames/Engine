@@ -5,6 +5,9 @@ import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 
+/**
+ * The resource path. I'm considering remove this thing....
+ */
 public class ResourcePath {
     private String type;
     private String path;

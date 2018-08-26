@@ -80,14 +80,6 @@ public class KeyBindingManager {
             default:
                 break;
         }
-        // if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
-        // if (paused) {
-        // window.hideCursor();
-        // paused = false;
-        // } else {
-        // window.showCursor();
-        // paused = true;
-        // }
-        // }
+
     }
 }

@@ -5,10 +5,33 @@ import org.joml.Vector3f;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 class AABBsTest {
+
+    int encode(int x, int y, int z) {
+        return (x << 8) | (y << 4) | z;
+    }
+
+    @Test
+    void testDirection() {
+        int pos = encode(10, 2, 8);
+
+        int x = ((pos >> 8) & 0xF);
+        int y = ((pos >> 4) & 0xF);
+        int z = (pos & 0xF);
+
+        System.out.println(x + " " + y + " " + z);
+        int npos = encode(9, 2, 8);
+        System.out.println(npos - pos);
+
+        IntBuffer i = IntBuffer.allocate(1024);
+        i.put(4).put(4).flip();
+        System.out.println(i.limit());
+
+    }
 
     @Test
     void translate() {

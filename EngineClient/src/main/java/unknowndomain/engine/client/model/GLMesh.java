@@ -14,14 +14,15 @@ public class GLMesh {
     private int vao;
     private int[] vbos;
     private int counts;
-    private byte[] attributes = new byte[]{0, 1};
+    private byte[] attributes;
 
     private int mode; // gl draw mode
 
-    GLMesh(int vao, int[] vbos, int counts, int mode) {
+    GLMesh(int vao, int[] vbos, int counts, byte[] attributes, int mode) {
         this.vao = vao;
         this.vbos = vbos;
         this.counts = counts;
+        this.attributes = attributes;
         this.mode = mode;
     }
 
@@ -92,7 +93,7 @@ public class GLMesh {
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindVertexArray(0);
 
-            return new GLMesh(vaoId, vboIdList, vertexCount, mode);
+            return new GLMesh(vaoId, vboIdList, vertexCount, new byte[]{0, 1}, mode);
         } finally {
             if (posBuffer != null) {
                 MemoryUtil.memFree(posBuffer);

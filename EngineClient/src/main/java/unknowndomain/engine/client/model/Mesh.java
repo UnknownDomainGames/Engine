@@ -37,4 +37,15 @@ public class Mesh {
     public float[] getNormals() {
         return normals;
     }
+
+//    public static class Builder {
+//        public static Builder create() {
+//            return new Builder();
+//        }
+//
+//        public Builder vertex(float x, float y, float z) {
+//
+//            return this;
+//        }
+//    }
 }

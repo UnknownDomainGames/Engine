@@ -133,6 +133,9 @@ glUpload(newVertices, leftSum);
 
 http://fragmentbuffer.com/gpu-performance-for-game-artists/
 
+[MVP Camera Matrix Transformation](http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/)
+
+[Shadow Mapping](https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping)
 
 ### Game Loop
 
@@ -207,3 +210,5 @@ class A {
     }
 }
 ```
+
+

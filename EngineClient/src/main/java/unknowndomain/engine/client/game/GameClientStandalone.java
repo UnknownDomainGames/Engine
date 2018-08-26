@@ -30,7 +30,7 @@ import unknowndomain.engine.event.registry.ClientRegistryEvent;
 import unknowndomain.engine.event.registry.GameReadyEvent;
 import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.event.registry.ResourceSetupEvent;
-import unknowndomain.engine.game.GameServer;
+import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.mod.ModRepository;
@@ -41,7 +41,7 @@ import unknowndomain.engine.world.WorldCommon;
 import java.util.List;
 import java.util.UUID;
 
-public class GameClientStandalone extends GameServer {
+public class GameClientStandalone extends GameServerFullAsync {
     private RendererContext gameRenderer;
     private ResourceManager resourceManager;
     private ActionManagerImpl actionManager;
@@ -63,7 +63,7 @@ public class GameClientStandalone extends GameServer {
     public GameClientStandalone(Option option, ModRepository repository, ModStore store, EventBus bus, DefaultGameWindow window) {
         super(option, repository, store, bus);
         this.window = window;
-        this.ticker = new FixStepTicker.Dynamic(this::updateRenderData, this::render, 60);
+        this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, 60);
     }
 
 
@@ -157,12 +157,16 @@ public class GameClientStandalone extends GameServer {
         ticker.start(); // start to tick
     }
 
-    private void updateRenderData() {
-
+    private void clientTick() {
         // TODO update particle physics here
     }
 
-    private void render(double partialTic) {
+    /**
+     * Actual render call
+     *
+     * @param partialTic
+     */
+    private void renderTick(double partialTic) {
         cameraController.update(player.getMountingEntity().getPosition(), player.getMountingEntity().getRotation());
         window.beginDraw();
         this.gameRenderer.render(partialTic);

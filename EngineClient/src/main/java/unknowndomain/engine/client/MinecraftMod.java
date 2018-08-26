@@ -6,8 +6,9 @@ import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockBuilder;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.model.GLMesh;
+import unknowndomain.engine.client.model.Mesh;
 import unknowndomain.engine.client.model.MinecraftModelFactory;
-import unknowndomain.engine.client.rendering.RendererDebug;
+import unknowndomain.engine.client.rendering.RendererWorld;
 import unknowndomain.engine.client.rendering.gui.RendererGui;
 import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourcePath;
@@ -34,6 +35,7 @@ import java.util.List;
 
 public class MinecraftMod {
     private GLTexture textureMap;
+    private Mesh[] meshes;
     private GLMesh[] meshRegistry;
 
     @Listener
@@ -53,11 +55,11 @@ public class MinecraftMod {
     public void clientRegisterEvent(ClientRegistryEvent event) {
         event.registerRenderer((context, manager) ->
                 {
-                    RendererDebug debug = new RendererDebug(
+                    RendererWorld debug = new RendererWorld(
                             Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/common.vert")).cache(), ShaderType.VERTEX_SHADER),
                             Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/common.frag")).cache(), ShaderType.FRAGMENT_SHADER),
                             textureMap,
-                            meshRegistry);
+                            meshRegistry, meshes);
                     context.register(debug);
                     return debug;
                 }
@@ -95,6 +97,7 @@ public class MinecraftMod {
         try {
             feed = MinecraftModelFactory.process(event.getResourceManager(), pathList);
             textureMap = feed.textureMap;
+            meshes = feed.meshes.toArray(new Mesh[0]);
             meshRegistry = feed.meshes.stream().map(GLMesh::of).toArray(GLMesh[]::new);
         } catch (IOException e) {
             e.printStackTrace();
