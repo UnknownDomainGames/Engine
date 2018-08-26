@@ -45,8 +45,8 @@ public class ActionBuilderImpl implements ActionBuilder {
     public Action build() {
         if (startHandler == null) throw new Error("Start action cannot be null!");
         if (keepHandler != null || endHandler != null) {
-            return new ActionBase.Keepable(startHandler, keepHandler, endHandler).setRegistryName(path);
+            return new ActionBase.Keepable(startHandler, keepHandler, endHandler).localName(path);
         }
-        return new ActionBase(startHandler).setRegistryName(path);
+        return new ActionBase(startHandler).localName(path);
     }
 }

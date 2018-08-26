@@ -5,13 +5,14 @@ import com.google.common.collect.Maps;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
 import org.apache.commons.lang3.Validate;
+import unknowndomain.engine.mod.ModContainer;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
+public class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     private final Class<T> registryType;
     private final String name;
 
@@ -21,36 +22,45 @@ class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
     private AtomicInteger id = new AtomicInteger();
 
-    private String activeMod;
+    private ModContainer activeMod = null;
 
     MutableRegistry(Class<T> registryType) {
         this.registryType = registryType;
         this.name = registryType.getSimpleName().toLowerCase();
     }
 
-    MutableRegistry(Class<T> registryType, String name) {
+    public MutableRegistry(Class<T> registryType, String name) {
         this.registryType = registryType;
         this.name = name;
     }
 
-    public void setActiveMod(String activeMod) {
+    public void setActiveMod(ModContainer activeMod) {
         this.activeMod = activeMod;
     }
 
     @Override
     public T register(T obj) {
         Validate.notNull(obj);
-        obj.setRegistryName(String.join(".", activeMod, name, obj.getRegisteredName()));
+
+        ((Impl) obj).setup(activeMod, this);
+
+        String regId = obj.getUniqueName();
+
         int next = id.getAndIncrement();
-        nameToObject.put(obj.getRegisteredName(), obj);
+        nameToObject.put(regId, obj);
         idToObject.put(next, obj);
-        nameToId.put(obj.getRegisteredName(), next);
+        nameToId.put(regId, next);
         return obj;
     }
 
     @Override
     public Class<T> getRegistryEntryType() {
         return registryType;
+    }
+
+    @Override
+    public String getRegistryName() {
+        return name;
     }
 
     @Override
@@ -62,7 +72,7 @@ class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     @Override
     public String getKey(T value) {
         Validate.notNull(value);
-        return value.getRegisteredName();
+        return value.getUniqueName();
     }
 
     @Override
@@ -74,7 +84,8 @@ class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     @Override
     public boolean containsValue(T value) {
         Validate.notNull(value);
-        return nameToObject.containsKey(value.getRegisteredName());
+        String regId = value.getUniqueName();
+        return nameToObject.containsKey(regId);
     }
 
     @Override
@@ -90,7 +101,8 @@ class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     @Override
     public int getId(T obj) {
         Validate.notNull(obj);
-        return nameToId.get(obj.getRegisteredName());
+        String regId = obj.getUniqueName();
+        return nameToId.get(regId);
     }
 
     @Override
@@ -101,7 +113,7 @@ class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
     @Override
     public String getKey(int id) {
-        return idToObject.get(id).getRegisteredName();
+        return idToObject.get(id).getLocalName();
     }
 
     @Override

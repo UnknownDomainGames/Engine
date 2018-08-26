@@ -10,105 +10,105 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ModClassLoader extends URLClassLoader {
-	
-	private static final String JAVA_PACKAGE_PREFIX = "java.";
-	
-	private final ModContainer mod;
-	private final List<ClassLoader> dependencyClassLoaders = new ArrayList<>();
 
-	public ModClassLoader(ModContainer mod, ClassLoader parent) {
-		super(new URL[0], parent);
-		this.mod = mod;
-		addPath(mod.getSource());
-	}
-	
-	public ModContainer getMod() {
-		return mod;
-	}
+    private static final String JAVA_PACKAGE_PREFIX = "java.";
 
-	@Override
-	public void addURL(URL url) {
-		super.addURL(url);
-	}
+    private final ModContainer mod;
+    private final List<ClassLoader> dependencyClassLoaders = new ArrayList<>();
 
-	public void addPath(Path path) {
-		try {
-			addURL(path.toUri().toURL());
-		} catch (MalformedURLException e) {
-			mod.getLogger().error(e.getMessage(), e);
-		}
-	}
+    public ModClassLoader(ModContainer mod, Path src, ClassLoader parent) {
+        super(new URL[0], parent);
+        this.mod = mod;
+        addPath(src);
+    }
 
-	public List<ClassLoader> getDependencyClassLoaders() {
-		return dependencyClassLoaders;
-	}
+    public ModContainer getMod() {
+        return mod;
+    }
 
-	@Override
-	public URL getResource(String name) {
-		URL resource = findResource(name);
-		if (resource != null)
-			return resource;
+    @Override
+    public void addURL(URL url) {
+        super.addURL(url);
+    }
 
-		resource = findResourceFromDependencies(name);
-		if (resource != null)
-			return resource;
+    public void addPath(Path path) {
+        try {
+            addURL(path.toUri().toURL());
+        } catch (MalformedURLException e) {
+            mod.getLogger().error(e.getMessage(), e);
+        }
+    }
 
-		return super.getResource(name);
-	}
+    public List<ClassLoader> getDependencyClassLoaders() {
+        return dependencyClassLoaders;
+    }
 
-	@Override
-	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		synchronized (getClassLoadingLock(name)) {
-			if (name.startsWith(JAVA_PACKAGE_PREFIX)) {
-				return findSystemClass(name);
-			}
-			
-			Class<?> loadedClass;
+    @Override
+    public URL getResource(String name) {
+        URL resource = findResource(name);
+        if (resource != null)
+            return resource;
 
-			loadedClass = findLoadedClass(name);
-			if (loadedClass != null) {
-				return loadedClass;
-			}
+        resource = findResourceFromDependencies(name);
+        if (resource != null)
+            return resource;
 
-			try {
-				return super.loadClass(name);
-			} catch (ClassNotFoundException e) {
+        return super.getResource(name);
+    }
 
-			}
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        synchronized (getClassLoadingLock(name)) {
+            if (name.startsWith(JAVA_PACKAGE_PREFIX)) {
+                return findSystemClass(name);
+            }
 
-			try {
-				return findClass(name);
-			} catch (ClassNotFoundException e) {
+            Class<?> loadedClass;
 
-			}
+            loadedClass = findLoadedClass(name);
+            if (loadedClass != null) {
+                return loadedClass;
+            }
 
-			loadedClass = loadClassFromDependencies(name);
-			if (loadedClass != null) {
-				return loadedClass;
-			}
+            try {
+                return super.loadClass(name);
+            } catch (ClassNotFoundException e) {
 
-			throw new ClassNotFoundException(name);
-		}
-	}
+            }
 
-	private Class<?> loadClassFromDependencies(String name) {
-		for (ClassLoader classLoader : dependencyClassLoaders) {
-			try {
-				return classLoader.loadClass(name);
-			} catch (ClassNotFoundException e) {
-				// Try load class from next dependency.
-			}
-		}
-		return null;
-	}
+            try {
+                return findClass(name);
+            } catch (ClassNotFoundException e) {
 
-	private URL findResourceFromDependencies(String name) {
-		URL resource;
-		for (ClassLoader classLoader : dependencyClassLoaders) {
-			resource = classLoader.getResource(name);
-			if (resource != null)
-				return resource;
-		}
-		return null;
-	}
+            }
+
+            loadedClass = loadClassFromDependencies(name);
+            if (loadedClass != null) {
+                return loadedClass;
+            }
+
+            throw new ClassNotFoundException(name);
+        }
+    }
+
+    private Class<?> loadClassFromDependencies(String name) {
+        for (ClassLoader classLoader : dependencyClassLoaders) {
+            try {
+                return classLoader.loadClass(name);
+            } catch (ClassNotFoundException e) {
+                // Try load class from next dependency.
+            }
+        }
+        return null;
+    }
+
+    private URL findResourceFromDependencies(String name) {
+        URL resource;
+        for (ClassLoader classLoader : dependencyClassLoaders) {
+            resource = classLoader.getResource(name);
+            if (resource != null)
+                return resource;
+        }
+        return null;
+    }
 }

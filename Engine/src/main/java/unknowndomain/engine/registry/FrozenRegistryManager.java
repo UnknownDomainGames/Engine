@@ -1,38 +1,17 @@
 package unknowndomain.engine.registry;
 
+import org.apache.commons.lang3.Validate;
+
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
-import org.apache.commons.lang3.Validate;
-
-import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.event.registry.RegisterEvent;
-
 public class FrozenRegistryManager implements RegistryManager {
-    private final Map<Class<?>, Registry<?>> registries;
+    private final Map<Class<?>, ImmutableRegistry<?>> registries;
 
-    private FrozenRegistryManager(Map<Class<?>, Registry<?>> registries) {
+    public FrozenRegistryManager(Map<Class<?>, ImmutableRegistry<?>> registries) {
         this.registries = registries;
-    }
-
-    public static RegistryManager collectAll(EventBus bus, Registry.Type<? extends RegistryEntry<?>>... tps) {
-        Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
-        for (Registry.Type<?> tp : tps) {
-            maps.put(tp.type, new MutableRegistry<>(tp.type, tp.name));
-        }
-        MutableRegistryManager manager = new MutableRegistryManager(maps);
-        bus.post(new RegisterEvent(manager));
-
-        ImmutableMap.Builder<Class<?>, Registry<?>> builder = ImmutableMap.builder();
-        for (Entry<Class<?>, Registry<?>> entry : manager.registries.entrySet())
-            builder.put(entry.getKey(), ImmutableRegistry.freeze(entry.getValue()));
-        return new FrozenRegistryManager(builder.build());
     }
 
     @Override
@@ -47,7 +26,8 @@ public class FrozenRegistryManager implements RegistryManager {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<Entry<Class<?>, Registry<?>>> getEntries() {
-        return registries.entrySet();
+        return (Collection<Entry<Class<?>, Registry<?>>>) (Object) registries.entrySet();
     }
 }

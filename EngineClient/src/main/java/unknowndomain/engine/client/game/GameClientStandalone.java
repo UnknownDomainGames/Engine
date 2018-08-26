@@ -27,6 +27,7 @@ import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.registry.ClientRegistryEvent;
+import unknowndomain.engine.event.registry.GameReadyEvent;
 import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.event.registry.ResourceSetupEvent;
 import unknowndomain.engine.game.GameServer;
@@ -110,22 +111,13 @@ public class GameClientStandalone extends GameServer {
         super.constructStage();
         resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
-
-        // TODO: collect resource sources
-    }
-
-    @Listener
-    public void regEvent(RegisterEvent event) {
-        for (Action action : buildActions())
-            event.getRegistry().register(action);
     }
 
     @Override
     protected void registerStage() {
         motionController = new MotionController();
-        bus.register(this);
+
         super.registerStage();
-        bus.unregister(this);
 
         actionManager = new ActionManagerImpl(context, this.context.getRegistry().getRegistry(Action.class));
         keyBindingManager = new KeyBindingManager(actionManager);
@@ -150,11 +142,13 @@ public class GameClientStandalone extends GameServer {
 
     @Override
     protected void finishStage() {
-        super.finishStage();
+        spawnWorld(null);
+
         world = (WorldCommon) getWorld("default");
         player = world.playerJoin(new Player.Profile(UUID.randomUUID(), 12));
-
         player.getMountingEntity().getPosition().set(1, 3, 1);
+
+        bus.post(new GameReadyEvent(context));
     }
 
     @Override
@@ -173,7 +167,6 @@ public class GameClientStandalone extends GameServer {
         window.beginDraw();
         this.gameRenderer.render(partialTic);
         window.endDraw();
-        System.out.println("end");
     }
 
     // https://github.com/lwjglgamedev/lwjglbook/blob/master/chapter02/src/main/java/org/lwjglb/engine/GameEngine.java
@@ -206,6 +199,13 @@ public class GameClientStandalone extends GameServer {
     // }
 
     // dirty things below...
+
+    @Listener
+    public void reg(RegisterEvent event) {
+        for (Action action : buildActions()) {
+            event.getRegistry().register(action);
+        }
+    }
 
     private List<Action> buildActions() {
         List<Action> list = motionController.getActions();

@@ -51,7 +51,7 @@ public class ModIdentifier {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof ModIdentifier)) return false;
         ModIdentifier that = (ModIdentifier) o;
         return Objects.equals(group, that.group) &&
                 Objects.equals(id, that.id) &&

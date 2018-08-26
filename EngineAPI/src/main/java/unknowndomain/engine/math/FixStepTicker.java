@@ -65,7 +65,7 @@ public class FixStepTicker {
             double lag = 0.0;
             while (!stop) {
                 double current = getCurrentTime();
-                System.out.println("dyn " + current);
+//                System.out.println("dyn " + current);
 
                 double elapsed = current - previous;
                 previous = current;

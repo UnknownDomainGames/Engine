@@ -11,40 +11,50 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-class ImmutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
+public class ImmutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     private final Class<T> registryType;
+    private final String name;
     private final ImmutableMap<String, T> nameToObject;
     private final ImmutableMap<String, Integer> nameToId;
     private final ImmutableList<T> idToObject;
 
-    private ImmutableRegistry(Class<T> registryType, ImmutableMap<String, T> nameToObject,
+    private ImmutableRegistry(Class<T> registryType, String name, ImmutableMap<String, T> nameToObject,
                               ImmutableMap<String, Integer> nameToId, ImmutableList<T> idToObject) {
         this.registryType = registryType;
+        this.name = name;
         this.nameToObject = nameToObject;
         this.nameToId = nameToId;
         this.idToObject = idToObject;
     }
 
-    static <T extends RegistryEntry<T>> ImmutableRegistry<T> freeze(Registry<T> registry) {
+    public static <T extends RegistryEntry<T>> ImmutableRegistry<T> freeze(Registry<T> registry) {
         return new ImmutableRegistry<>(registry.getRegistryEntryType(),
-                ImmutableMap.<String, T>builder().putAll(registry.getEntries()).build(),
-                ImmutableMap.<String, Integer>builder().putAll(registry.getValues().stream().map(v -> Pair.of(v.getRegisteredName(), registry.getId(v.getRegisteredName()))).collect(Collectors.toList())).build(),
+                registry.getRegistryName(), ImmutableMap.<String, T>builder().putAll(registry.getEntries()).build(),
+                ImmutableMap.<String, Integer>builder().putAll(registry.getValues().stream().map(v ->
+                        Pair.of(v.getUniqueName(),
+                                registry.getId(v.getUniqueName())))
+                        .collect(Collectors.toList())).build(),
                 ImmutableList.sortedCopyOf(Comparator.comparingInt(registry::getId), registry.getValues())
         );
     }
 
-    static <T extends RegistryEntry<T>> ImmutableRegistry<T> synchronize(Registry<T> registry,
-                                                                         Map<String, Integer> mapping) {
+    public static <T extends RegistryEntry<T>> ImmutableRegistry<T> synchronize(Registry<T> registry,
+                                                                                Map<String, Integer> mapping) {
         return new ImmutableRegistry<>(registry.getRegistryEntryType(),
-                ImmutableMap.<String, T>builder().putAll(registry.getEntries()).build(),
-                ImmutableMap.<String, Integer>builder().putAll(registry.getValues().stream().map(v -> Pair.of(v.getRegisteredName(), mapping.get(v.getRegisteredName()))).collect(Collectors.toList())).build(),
-                ImmutableList.sortedCopyOf(Comparator.comparingInt(a -> mapping.get(a.getRegisteredName())), registry.getValues())
+                registry.getRegistryName(), ImmutableMap.<String, T>builder().putAll(registry.getEntries()).build(),
+                ImmutableMap.<String, Integer>builder().putAll(registry.getValues().stream().map(v -> Pair.of(v.getLocalName(), mapping.get(v.getLocalName()))).collect(Collectors.toList())).build(),
+                ImmutableList.sortedCopyOf(Comparator.comparingInt(a -> mapping.get(a.getLocalName())), registry.getValues())
         );
     }
 
     @Override
     public Class<T> getRegistryEntryType() {
         return registryType;
+    }
+
+    @Override
+    public String getRegistryName() {
+        return name;
     }
 
     @Override
@@ -61,7 +71,7 @@ class ImmutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     @Override
     public String getKey(T value) {
         Validate.notNull(value);
-        return value.getRegisteredName();
+        return value.getUniqueName();
     }
 
     @Override
@@ -73,7 +83,7 @@ class ImmutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     @Override
     public boolean containsValue(T value) {
         Validate.notNull(value);
-        return nameToObject.containsKey(value.getRegisteredName());
+        return nameToObject.containsKey(value.getUniqueName());
     }
 
     @Override
@@ -89,7 +99,7 @@ class ImmutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     @Override
     public int getId(T obj) {
         Validate.notNull(obj);
-        return nameToId.get(obj.getRegisteredName());
+        return nameToId.get(obj.getUniqueName());
     }
 
     @Override
@@ -100,7 +110,7 @@ class ImmutableRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
     @Override
     public String getKey(int id) {
-        return idToObject.get(id).getRegisteredName();
+        return idToObject.get(id).getLocalName();
     }
 
     @Override

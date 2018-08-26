@@ -35,6 +35,11 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
+    public String getRegistryName() {
+        return delegate.getRegistryName();
+    }
+
+    @Override
     public Action register(Action obj) throws RegisterException {
         return delegate.register(obj);
     }

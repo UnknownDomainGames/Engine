@@ -4,8 +4,15 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
 
+/**
+ * The registry of the a type of object
+ *
+ * @param <T> The managed type
+ */
 public interface Registry<T extends RegistryEntry<T>> {
     Class<T> getRegistryEntryType();
+
+    String getRegistryName();
 
     T register(T obj) throws RegisterException;
 
@@ -16,12 +23,21 @@ public interface Registry<T extends RegistryEntry<T>> {
 
     boolean containsValue(T value);
 
+    /**
+     * Get the registered object by the unique name of the object.
+     *
+     * @param registryName The unique name of the object
+     * @return The object
+     * @see RegistryEntry#getUniqueName()
+     */
     T getValue(String registryName);
 
-    // default T getValue(String registryName) {
-    //     return getValue(new ResourcePath(registryName));
-    // }
-
+    /**
+     * Well... this method is not really...
+     *
+     * @return The unique name of the object
+     * @see RegistryEntry#getUniqueName()
+     */
     String getKey(T value);
 
     boolean containsKey(String key);

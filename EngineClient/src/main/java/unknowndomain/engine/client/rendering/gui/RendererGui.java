@@ -79,7 +79,7 @@ public class RendererGui extends RendererShaderProgram {
         fontRenderer.drawText("Blocks 0.0.0", 0, 0, 0xffffffff, 16);
         fontRenderer.drawText(String.format("Playerlocation: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 25, 0xffffffff, 16);
         fontRenderer.drawText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 45, 0xffffffff, 16);
-        fontRenderer.drawText(player.getBehavior(Entity.TwoHands.class).getMainHand().getRegisteredName(), 0, 64, 0xffffffff, 16);
+        fontRenderer.drawText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);
 
         if (hit != null) {
 

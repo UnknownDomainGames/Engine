@@ -38,6 +38,6 @@ public class ItemBuilder {
     }
 
     public Item build() {
-        return new ItemImpl(useBlockBehavior, hitBlockBehavior, useBehavior).setRegistryName(id);
+        return new ItemImpl(useBlockBehavior, hitBlockBehavior, useBehavior).localName(id);
     }
 }

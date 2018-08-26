@@ -263,7 +263,7 @@ public class AsmEventBus implements EventBus {
     }
 
     private String getUniqueName(String ownerName, String handlerName, String eventName) {
-        return "AsmEventBus_" + ownerName + "_" + handlerName + "_" + eventName + "_" + (uniqueId++);
+        return "AsmEventBus_" + this.hashCode() + "_" + ownerName + "_" + handlerName + "_" + eventName + "_" + (uniqueId++);
     }
 
     public static abstract class RegisteredListener implements Comparable<RegisteredListener> {

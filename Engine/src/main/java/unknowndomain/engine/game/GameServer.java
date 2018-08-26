@@ -23,7 +23,6 @@ public class GameServer extends GameCommon {
         super(option, repository, store, bus);
     }
 
-
     @Override
     public World spawnWorld(World.Config config) {
         if (config == null) {

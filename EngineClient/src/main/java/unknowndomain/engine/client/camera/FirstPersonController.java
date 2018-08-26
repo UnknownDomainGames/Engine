@@ -15,7 +15,11 @@ public class FirstPersonController extends CameraController {
 
     @Override
     public void update(Vector3f position, Vector3f rotation) {
-        position.set(camera.getPosition());
+        camera.getPosition().set(position);
+
+        Vector3f front = new Vector3f((float) (Math.cos(Math.toRadians(this.pitch)) * Math.cos(Math.toRadians(this.yaw))), (float) Math.sin(Math.toRadians(this.pitch)), (float) (Math.cos(Math.toRadians(this.pitch)) * Math.sin(Math.toRadians(this.yaw)))).normalize();
+        camera.getPosition().add(front, camera.getLookAt());
+
         rotation.set(camera.getLookAt());
     }
 
@@ -31,9 +35,6 @@ public class FirstPersonController extends CameraController {
                 this.pitch = Math.min(89.0f, Math.max(-89.0f, this.pitch));
                 this.yaw += yaw;
             } else setupLast = true;
-
-            Vector3f front = new Vector3f((float) (Math.cos(Math.toRadians(this.pitch)) * Math.cos(Math.toRadians(this.yaw))), (float) Math.sin(Math.toRadians(this.pitch)), (float) (Math.cos(Math.toRadians(this.pitch)) * Math.sin(Math.toRadians(this.yaw)))).normalize();
-            camera.getPosition().add(front, camera.getLookAt());
         }
     }
 }

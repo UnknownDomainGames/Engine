@@ -1,5 +1,6 @@
 package unknowndomain.engine.client;
 
+import com.google.common.collect.Lists;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockBuilder;
@@ -44,18 +45,23 @@ public class MinecraftMod {
         event.getRegistry().register(stone);
         event.getRegistry().register(grass);
 
-        event.getRegistry().register(createPlace(stone));
-        event.getRegistry().register(createPlace(grass));
+        event.getRegistry().register(createPlace(stone, "stone"));
+        event.getRegistry().register(createPlace(grass, "grass"));
     }
 
     @Listener
     public void clientRegisterEvent(ClientRegistryEvent event) {
         event.registerRenderer((context, manager) ->
-                new RendererDebug(
-                        Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/common.vert")).cache(), ShaderType.VERTEX_SHADER),
-                        Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/common.frag")).cache(), ShaderType.FRAGMENT_SHADER),
-                        textureMap,
-                        meshRegistry))
+                {
+                    RendererDebug debug = new RendererDebug(
+                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/common.vert")).cache(), ShaderType.VERTEX_SHADER),
+                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/common.frag")).cache(), ShaderType.FRAGMENT_SHADER),
+                            textureMap,
+                            meshRegistry);
+                    context.register(debug);
+                    return debug;
+                }
+        )
                 .registerRenderer((context, manager) -> {
                     Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
                     byte[] cache = resource.cache();
@@ -76,9 +82,12 @@ public class MinecraftMod {
         }
         List<ResourcePath> pathList = new ArrayList<>();
         for (Block value : registry.getValues()) {
-            if (value.getRegisteredName().equals("air"))
+            if (value.getLocalName().equals("air"))
                 continue;
-            String path = "/minecraft/models/block/" + value.getRegisteredName() + ".json";
+            String[] split = value.getUniqueName().split("\\.");
+            ArrayList<String> ls = Lists.newArrayList(split);
+            ls.add(1, "models");
+            String path = "/" + String.join("/", ls) + ".json";
             pathList.add(new ResourcePath(path));
         }
 
@@ -97,13 +106,14 @@ public class MinecraftMod {
         GameContext context = event.getContext();
         Registry<Item> itemRegistry = context.getItemRegistry();
         Registry<Block> blockRegistry = context.getBlockRegistry();
-        Item stone = itemRegistry.getValue("stone_placer");
-//        UnknownDomain.getEngine().getController().getPlayer().getMountingEntity().getBehavior(Entity.TwoHands.class).setMainHand(stone);
-//        UnknownDomain.getGame().getWorld().setBlock(new BlockPos(1, 0, 0), blockRegistry.getValue(1));
+        Item stone = itemRegistry.getValue("minecraft.item.stone_placer");
+        UnknownDomain.getGame().getPlayer().getMountingEntity().getBehavior(Entity.TwoHands.class).setMainHand(stone);
+//        UnknownDomain.getGame().getPlayer().getMountingEntity().getPosition().set(0, 2, 0);
+        UnknownDomain.getGame().getWorld().setBlock(new BlockPos(1, 0, 0), blockRegistry.getValue(1));
     }
 
 
-    private Item createPlace(Block object) {
+    private Item createPlace(Block object, String name) {
         class PlaceBlock implements ItemPrototype.UseBlockBehavior {
             private Block object;
 
@@ -118,7 +128,7 @@ public class MinecraftMod {
                 world.setBlock(side, object);
             }
         }
-        return ItemBuilder.create(object.getRegisteredName() + "_placer").setUseBlockBehavior(new PlaceBlock(object))
+        return ItemBuilder.create(name + "_placer").setUseBlockBehavior(new PlaceBlock(object))
                 .build();
     }
 }

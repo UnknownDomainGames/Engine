@@ -119,16 +119,20 @@ public class ModMetadata extends ModIdentifier {
     }
 
     public static class Builder {
-        protected String group;
-        protected String id;
-        protected String version;
-        protected String name;
-        protected String description;
-        protected String url;
-        protected List<String> authors;
-        protected String logo;
-        protected List<String> dependency;
-        protected Map<String, Object> properties;
+        protected String group = "";
+        protected String id = "";
+        protected String version = "";
+        protected String name = "";
+        protected String description = "";
+        protected String url = "";
+        protected List<String> authors = Collections.emptyList();
+        protected String logo = "";
+        protected List<String> dependency = Collections.emptyList();
+        protected Map<String, Object> properties = Collections.emptyMap();
+
+        public static Builder create() {
+            return new Builder();
+        }
 
         public Builder setGroup(String group) {
             this.group = group;

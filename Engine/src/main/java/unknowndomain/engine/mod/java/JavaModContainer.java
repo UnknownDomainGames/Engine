@@ -6,11 +6,8 @@ import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.mod.java.harvester.HarvestedInfo;
 
-import java.nio.file.Path;
-
 //TODO: collect mod's class loader, instance of mod main class, mod option, mod looger, option dir.
 public class JavaModContainer implements ModContainer {
-    private final Path source;
     private final String modId;
     private final Logger logger;
 
@@ -22,10 +19,9 @@ public class JavaModContainer implements ModContainer {
     private ModMetadata metadata;
     private HarvestedInfo harvestedInfo;
 
-    public JavaModContainer(String modId, Path source) {
+    JavaModContainer(String modId) {
         this.modId = modId;
         this.logger = LoggerFactory.getLogger(modId);
-        this.source = source;
     }
 
     @Override
@@ -44,11 +40,6 @@ public class JavaModContainer implements ModContainer {
     }
 
     @Override
-    public Path getSource() {
-        return source;
-    }
-
-    @Override
     public ModMetadata getMetadata() {
         return metadata;
     }
@@ -59,11 +50,6 @@ public class JavaModContainer implements ModContainer {
 
     public HarvestedInfo getHarvestedInfo() {
         return harvestedInfo;
-    }
-
-    @Override
-    public Path getDataDir() {
-        return null;
     }
 
     void initialize(ModClassLoader classLoader, ModMetadata metadata, HarvestedInfo harvestedInfo, Object instance) {

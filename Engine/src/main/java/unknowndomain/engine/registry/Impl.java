@@ -1,26 +1,15 @@
 package unknowndomain.engine.registry;
 
 import com.google.common.reflect.TypeToken;
+import unknowndomain.engine.mod.ModContainer;
 
 public abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<T> {
-
     private final TypeToken<T> token = new TypeToken<T>(getClass()) {
     };
     private String registeredName;
 
-    @Override
-    public final String getRegisteredName() {
-        return registeredName;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public final T setRegistryName(String location) {
-        // TODO a policy to freeze
-//        if (this.registeredName != null) throw new Error("Duplicated register " + location);
-        this.registeredName = location;
-        return (T) this;
-    }
+    private ModContainer modContainer;
+    private Registry<? extends RegistryEntry<T>> registry;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -34,4 +23,40 @@ public abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<
                 "path='" + registeredName + '\'' +
                 '}';
     }
+
+    @Override
+    public final String getLocalName() {
+        return registeredName;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public final T localName(String name) {
+        if (this.registeredName != null) throw new Error("Duplicated register " + name);
+        this.registeredName = name;
+        return (T) this;
+    }
+
+    void setup(ModContainer modContainer, Registry<? extends RegistryEntry<T>> registry) {
+        if (this.modContainer == null)
+            this.modContainer = modContainer;
+        if (this.registry == null)
+            this.registry = registry;
+    }
+
+    @Override
+    public ModContainer getOwner() {
+        if (modContainer == null)
+            throw new IllegalStateException("This method can only be called after the register stage of the game!");
+        return modContainer;
+    }
+
+    @Override
+    public Registry<? extends RegistryEntry<T>> getAssignedRegistry() {
+        if (registry == null)
+            throw new IllegalStateException("This method can only be called after the register stage of the game!");
+        return registry;
+    }
+
+
 }

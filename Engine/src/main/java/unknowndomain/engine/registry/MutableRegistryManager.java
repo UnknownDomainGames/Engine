@@ -1,18 +1,17 @@
 package unknowndomain.engine.registry;
 
+import org.apache.commons.lang3.Validate;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.Nonnull;
+public class MutableRegistryManager implements RegistryManager.Mutable {
+    private Map<Class<?>, Registry<?>> registries;
 
-import org.apache.commons.lang3.Validate;
-import org.checkerframework.checker.nullness.qual.NonNull;
-
-class MutableRegistryManager implements RegistryManager.Mutable {
-    Map<Class<?>, Registry<?>> registries;
-
-    MutableRegistryManager(Map<Class<?>, Registry<?>> registries) {
+    public MutableRegistryManager(Map<Class<?>, Registry<?>> registries) {
         this.registries = registries;
     }
 

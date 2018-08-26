@@ -56,9 +56,12 @@ public class WorldCommon implements World, Runnable {
     }
 
     public Player playerJoin(Player.Profile data) {
-        EntityImpl entity = new EntityImpl(entityList.size(), new Vector3f(), new Vector3f(), new Vector3f(),
+        EntityImpl entity = new EntityImpl(entityList.size(),
+                new Vector3f(0, 2, 0),
+                new Vector3f(0, 0, 1),
+                new Vector3f(),
                 data.getBoundingBox(), ImmutableMap.<String, Object>builder()
-                        .put(Entity.TwoHands.class.getName(), new EntityImpl.TwoHandImpl()).build());
+                .put(Entity.TwoHands.class.getName(), new EntityImpl.TwoHandImpl()).build());
         spawnEntity(entity);
         PlayerImpl player = new PlayerImpl(data, this, entity);
         players.add(player);

@@ -57,8 +57,8 @@ public class JavaModStore implements ModStore {
 
             ModMetadata metadata = ModMetadata.fromJsonStream(jarFile.getInputStream(entry));
 
-            JavaModContainer container = new JavaModContainer(metadata.getId(), source);
-            ModClassLoader classLoader = new ModClassLoader(container, Thread.currentThread().getContextClassLoader());
+            JavaModContainer container = new JavaModContainer(metadata.getId());
+            ModClassLoader classLoader = new ModClassLoader(container, source, Thread.currentThread().getContextClassLoader());
 
             HarvestedInfo harvestedInfo = new HarvestedInfo(source);
             harvestedInfo.startHarvest();

@@ -54,9 +54,10 @@ public final class MinecraftModelFactory {
      */
     Model loadModel(ResourcePath path) throws IOException {
         Resource load = manager.load(path);
-        if (load == null)
+        if (load == null) {
+            Engine.getLogger().warn("Cannot load model " + path);
             return null;
-
+        }
         Model model = new Gson().fromJson(new InputStreamReader(load.open()), Model.class);
         if (model.parent != null) {
             Model parent = loadModel(new ResourcePath("", "minecraft/models/" + model.parent + ".json"));

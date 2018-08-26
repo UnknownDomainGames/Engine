@@ -96,7 +96,7 @@ public class BlockBuilder {
     public Block build() {
         AABBd[] boxes = noCollision ? new AABBd[0] : aabBds.size() == 0 ? new AABBd[]{boundingBox} : aabBds.toArray(new AABBd[aabBds.size()]);
         return new BlockShared(boxes, placeBehavior, activeBehavior, touchBehavior, destroyBehavior, null)
-                .setRegistryName(path);
+                .localName(path);
     }
 
     public List<Block> buildAll() {
@@ -119,7 +119,7 @@ public class BlockBuilder {
                 String value = entry.getValue().toString();
                 postfix.append(".").append(name).append("=").append(value);
             }
-            shared.setRegistryName(this.path + postfix);
+            shared.localName(this.path + postfix);
             return shared;
         }).collect(Collectors.toList());
 
