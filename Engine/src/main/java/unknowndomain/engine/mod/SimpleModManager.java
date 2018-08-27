@@ -10,6 +10,7 @@ import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.registry.*;
+import unknowndomain.engine.mod.java.JavaModLoader;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +20,7 @@ public class SimpleModManager implements ModManager {
     private Map<String, ModContainer> idToMods;
     private Map<Class, ModContainer> typeToMods;
 
-    private SimpleModManager(Map<String, ModContainer> idToMods, Map<Class, ModContainer> typeToMods) {
+    public SimpleModManager(Map<String, ModContainer> idToMods, Map<Class, ModContainer> typeToMods) {
         this.idToMods = idToMods;
         this.typeToMods = typeToMods;
     }
@@ -56,34 +57,6 @@ public class SimpleModManager implements ModManager {
         return manager;
     }
 
-    public static ModManager load(ModStore store, ModRepository modRepository, List<ModMetadata> mods) {
-        ImmutableMap.Builder<String, ModContainer> idToMapBuilder = ImmutableMap.builder();
-        ImmutableMap.Builder<Class, ModContainer> typeToMapBuilder = ImmutableMap.builder();
-        // TODO: sort here
-        for (ModMetadata mod : mods) {
-            try {
-                if (!store.exists(mod)) {
-                    if (!modRepository.contains(mod)) {
-                        Engine.getLogger().warn("Cannot find mod " + mod + " from local or other sources! Skip to load!");
-                        continue;
-                    }
-                    store.store(mod, modRepository.open(mod));
-                }
-                ModContainer load = store.load(mod);
-                if (load == null) {
-                    Engine.getLogger().warn("Some exceptions happened during loading mod {0} from local! Skip to load!", mod);
-                    continue;
-                }
-                idToMapBuilder.put(mod.getId(), load);
-                typeToMapBuilder.put(load.getInstance().getClass(), load);
-            } catch (Exception e) {
-                Engine.getLogger().warn("Fain to load mod " + mod.getId());
-                e.printStackTrace();
-            }
-        }
-        return new SimpleModManager(idToMapBuilder.build(), typeToMapBuilder.build());
-    }
-
     @Override
     public ModContainer findMod(String modId) {
         return idToMods.get(Validate.notNull(modId));
@@ -104,6 +77,4 @@ public class SimpleModManager implements ModManager {
     public Collection<ModContainer> getLoadedMods() {
         return idToMods.values();
     }
-
-
 }

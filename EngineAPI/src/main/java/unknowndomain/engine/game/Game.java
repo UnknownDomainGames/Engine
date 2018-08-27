@@ -10,6 +10,7 @@ import unknowndomain.engine.world.World;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * The game shares the same set of mod and resources pack manifest.

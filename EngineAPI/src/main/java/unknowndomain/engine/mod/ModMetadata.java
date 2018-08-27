@@ -94,6 +94,13 @@ public class ModMetadata extends ModIdentifier {
         }
     }
 
+    /**
+     * @return the dependency
+     */
+    public List<String> getDependency() {
+        return dependency;
+    }
+    
     public String getName() {
         return name;
     }

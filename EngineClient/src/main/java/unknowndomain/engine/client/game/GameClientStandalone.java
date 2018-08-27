@@ -191,6 +191,8 @@ public class GameClientStandalone extends GameServerFullAsync {
         }
     }
 
+    
+
     // private void sync() {
     // float loopSlot = 1f / 60.0f;
     // double endTime = timer.getLastLoopTime() + loopSlot;

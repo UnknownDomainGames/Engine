@@ -1,7 +1,5 @@
 package unknowndomain.engine.mod.java;
 
-import unknowndomain.engine.mod.ModContainer;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -9,21 +7,24 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModClassLoader extends URLClassLoader {
+import org.slf4j.Logger;
 
+public class ModClassLoader extends URLClassLoader {
     private static final String JAVA_PACKAGE_PREFIX = "java.";
 
-    private final ModContainer mod;
+    private Logger logger;
     private final List<ClassLoader> dependencyClassLoaders = new ArrayList<>();
+    private final List<ClassLoader> isDenpendedBy = new ArrayList<>();
 
-    public ModClassLoader(ModContainer mod, Path src, ClassLoader parent) {
+    public ModClassLoader(Logger logger, Path src, ClassLoader parent) {
         super(new URL[0], parent);
-        this.mod = mod;
+        this.logger = logger;
         addPath(src);
     }
 
-    public ModContainer getMod() {
-        return mod;
+    public static void addDependency(ModClassLoader loader, ModClassLoader dependency) {
+        loader.dependencyClassLoaders.add(dependency);
+        dependency.isDenpendedBy.add(loader);
     }
 
     @Override
@@ -35,7 +36,7 @@ public class ModClassLoader extends URLClassLoader {
         try {
             addURL(path.toUri().toURL());
         } catch (MalformedURLException e) {
-            mod.getLogger().error(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
     }
 

@@ -6,12 +6,20 @@ import unknowndomain.engine.util.Owner;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 /**
  * The mod store responses to grab mod from disk and load into runtime instance.
- * <p>Since we have already decide all the mod will be downloaded to local.</p>
- * <p>The loader could confirm that it can only load from disk</p>
- * <p>Otherwise, we will have a much pure api: (InputStream)->ModContainer, and won't have contains method</p>
+ * <p>
+ * Since we have already decide all the mod will be downloaded to local.
+ * </p>
+ * <p>
+ * The loader could confirm that it can only load from disk
+ * </p>
+ * <p>
+ * Otherwise, we will have a much pure api: (InputStream)->ModContainer, and
+ * won't have contains method
+ * </p>
  */
 @Owner(Engine.class)
 public interface ModStore {
@@ -20,12 +28,7 @@ public interface ModStore {
      */
     boolean exists(@Nonnull ModIdentifier identifier);
 
-    /**
-     * Load the mod according to identifier.
-     * <p>Return null if no such mod.</p>
-     */
-    @Nullable
-    ModContainer load(@Nonnull ModIdentifier identifier);
+    Path path(@Nonnull ModIdentifier identifier);
 
     /**
      * Dump the mod data source into local.

@@ -17,40 +17,30 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class HarvestedInfo {
+    private final Multimap<Type, HarvestedAnnotation> harvestedAnnotations;
 
-    private final Path source;
-
-    private final Multimap<Type, HarvestedAnnotation> harvestedAnnotations = HashMultimap.create();
-
-    public HarvestedInfo(Path source) {
-        this.source = source;
+    private HarvestedInfo(Multimap<Type, HarvestedAnnotation> info) {
+        harvestedAnnotations = info;
     }
 
-    public void startHarvest() throws IOException {
-        AnnotationParser annotationParser = new AnnotationParser(anno -> harvestedAnnotations.put(anno.getAnnotationType(), anno));
+    public static HarvestedInfo harvest(JarFile source) throws IOException {
+        Multimap<Type, HarvestedAnnotation> harvestedAnnotations = HashMultimap.create();
+        AnnotationParser annotationParser = new AnnotationParser(
+                anno -> harvestedAnnotations.put(anno.getAnnotationType(), anno));
+
         ClassHarvester classHarvester = new ClassHarvester(annotationParser);
-        if (Files.isDirectory(source)) {
-            Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (file.getFileName().toString().endsWith(".class"))
-                        startHarvestClass(Files.newInputStream(file), classHarvester);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        } else if (source.getFileName().toString().endsWith(".jar")) {
-            try(JarFile jarFile = new JarFile(source.toFile())) {
-                Enumeration<JarEntry> jarEntries = jarFile.entries();
-                while (jarEntries.hasMoreElements()) {
-                    JarEntry entry = jarEntries.nextElement();
-                    if (!entry.isDirectory() && entry.getName().endsWith(".class"))
-                        startHarvestClass(jarFile.getInputStream(entry), classHarvester);
-                }
+        try (JarFile jarFile = source) {
+            Enumeration<JarEntry> jarEntries = jarFile.entries();
+            while (jarEntries.hasMoreElements()) {
+                JarEntry entry = jarEntries.nextElement();
+                if (!entry.isDirectory() && entry.getName().endsWith(".class"))
+                    startHarvestClass(jarFile.getInputStream(entry), classHarvester);
             }
         }
+        return new HarvestedInfo(harvestedAnnotations);
     }
 
-    private void startHarvestClass(InputStream inputStream, ClassHarvester classHarvester) {
+    private static void startHarvestClass(InputStream inputStream, ClassHarvester classHarvester) {
         try {
             ClassReader classReader = new ClassReader(inputStream);
             classReader.accept(classHarvester, 0);
