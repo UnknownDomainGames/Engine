@@ -1,8 +1,25 @@
 # UnknownDomain
 A 3D sandbox game by Java.
 
+- [UnknownDomain](#unknowndomain)
+    - [Current Design Situation](#current-design-situation)
+        - [What should we identify in game?](#what-should-we-identify-in-game)
+        - [About the Registry](#about-the-registry)
+            - [About the Register Name](#about-the-register-name)
+            - [About Sub Registry Namespace](#about-sub-registry-namespace)
+        - [Game Startup Progress (Draft)](#game-startup-progress-draft)
+        - [Key algorithm/problem](#key-algorithmproblem)
+            - [Raycasting](#raycasting)
+            - [Entity Body Collision Detection (Problematic)](#entity-body-collision-detection-problematic)
+            - [Texture Atlas (Build Texture Map)](#texture-atlas-build-texture-map)
+            - [Update Baked Chunk](#update-baked-chunk)
+            - [Game Loop](#game-loop)
+        - [Render Progress Introduction](#render-progress-introduction)
+            - [Some Helper Classes to manage the GL stuff](#some-helper-classes-to-manage-the-gl-stuff)
+    - [Some Humble Design Thought](#some-humble-design-thought)
 
-## Some Design Anaysis
+
+## Current Design Situation
 
 ### What should we identify in game?
 
@@ -26,7 +43,7 @@ After the loading stage of a game, all the resource transformed out. The raw byt
 The `GameObject` should managed by its parent. We don't need to do anything special to it.
 Just process the dir to get dimension, get world, and get block or entity.
 
-### About the Registry Convenience
+### About the Registry
 
 The ideal way to register a thing is only providing its id without any redundant information. The Mod should not consider too much about conflicting with other Mod. 
 
@@ -43,46 +60,36 @@ manager.register(block.setRegistryName('stone'));  // infer the query full dir i
 manager.get('unknowndomain.block.stone'); // get the stone block
 ```
 
-### About the Register Name
+#### About the Register Name
 
 I suggest we all use the snake case (split word with low_dash) for register name. 
 
 The name should not contain any dot/period (.)
 
-### About Sub Registry Namespace (Suggestion)
+#### About Sub Registry Namespace
 
-There could be sub-named blocks and items. For block, it might be produced by combining properties.
+There might be sub-named blocks and items. For block, it might be produced by combining properties.
 
 
-### Booting Progress (Draft)
+### Game Startup Progress (Draft)
 
 1. initialize glfw opengl, window and other hook
-2. initialize resource manager, pull default resource source
-3. initialize mod manager
-4. initialize default renderer, which will require loadOrder default textures and objects
-
-### Start Game Loading Progress (Draft)
-
-1. initialize player profile, login information (GUI show to let player login if there is no local cached profile) 
-2. pull the resources/mod config from server
-    1. check local if they exist
-    2. download missing mod and resource
-3. initialize action manager
-4. initialize keybinding, requiring action manager
-5. initialize game context
-6. loadOrder all mods by mod manager
-    1. mod register all block/item/entity
-    2. resource manager loads all required resources by mod
-    3. use custom mod resource process pipeline to process resource
-
+2. init engine
+    1. initialize player profile, login information from disk (later GUI show to let player login if there is no local cached profile) 
+    2. grab game config from disk
+    3. create game
+        1. pull the resources/mod config from server
+        2. construct stage: load mods (asm, classloading)
+        3. register stage: register all block/item/entity/action/renderer factory
+        4. resource stage: call mods to load resources
+        5. finish stage: initialize world
+        6. game loop start
 
 ### Key algorithm/problem
 
 - physics and collision
     - use joml AABB to deal with bonding
     - maybe a general manager under `World` to manage physics?
-- raycasting to pick block or entity
-    - use joml Ray to deal with picking
 - logic/render object state management and update cycle
     - naive idea is that we keep two different form of data in game and renderer thread.
     - the data in logic thread are changed by event (the event could toggle by network/user input)
@@ -92,7 +99,37 @@ There could be sub-named blocks and items. For block, it might be produced by co
     - https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
     - http://www.lighthouse3d.com/tutorials/view-frustum-culling/
 
-#### RenderChunk 
+#### Raycasting
+
+Narrowphase use use `joml` package's `Ray` to deal with picking.
+
+Boardphase we use [A Fast Voxel Traversal Algorithm](http://www.cse.yorku.ca/~amana/research/grid.pdf) with the [implementation](https://stackoverflow.com/questions/12367071/how-do-i-initialize-the-t-variables-in-a-fast-voxel-traversal-algorithm-for-ray).
+
+
+#### Entity Body Collision Detection (Problematic)
+
+The basic idea is get three "faces" of blocks according to current entity motion vector and entity AABB,
+and test the theses blocks AABB with entity AABB.
+
+e.g.
+
+To get these blocks' positions. The entity's motion vector is `(x,y,z)`.
+
+For the `x` axis, we first figure out that the direction of `x`, positive or negative.
+Then, pick the correct face from 6 faces of current entity AABB. If `x` is positve, pick the AABB face with `maxX`. Else we pick the `minX` face.
+
+*Please notice that the AABB is represented in two vector: (minX, minY, minZ), (maxX, maxY, maxZ)*
+
+Suppose we pick the face by `x` axis called `X`. The face `X` is defined by 4 vertices. We translate this face by the motion vector `x` axis value. 
+Then we get all the block between the translated face area. 
+
+
+
+#### Texture Atlas (Build Texture Map)
+
+[Space-optimized texture atlas](http://www.cs.upc.edu/~jmartinez/slides/masterThesisSlides.pdf)
+
+#### Update Baked Chunk 
 
 A block model **A** has N vertices, then it vertex length is N * 3
 
@@ -129,24 +166,16 @@ glCopy(rightSum, newRightSum, totalLength - rightSum);
 glUpload(newVertices, leftSum);
 ```
 
-### Render Progress Introduction
+#### Game Loop
 
-http://fragmentbuffer.com/gpu-performance-for-game-artists/
+Some reference articles:
 
-[MVP Camera Matrix Transformation](http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/)
-
-[Shadow Mapping](https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping)
-
-### Game Loop
-
-[LWJGL book Fix Step](
+- [LWJGL book Fix Step](
 https://github.com/lwjglgamedev/lwjglbook/blob/master/chapter02/src/main/java/org/lwjglb/engine/GameEngine.java)
-
-[What is the point of update independent rendering in a game loop?](
+- [What is the point of update independent rendering in a game loop?](
 https://gamedev.stackexchange.com/questions/132831/what-is-the-point-of-update-independent-rendering-in-a-game-loop)
-
-[Dynamic Tick vs Fix Step Tick](https://gamedev.stackexchange.com/questions/56956/how-do-i-make-a-game-tick-method)
-[Introduce Game Loop](http://gameprogrammingpatterns.com/game-loop.html)
+- [Dynamic Tick vs Fix Step Tick](https://gamedev.stackexchange.com/questions/56956/how-do-i-make-a-game-tick-method)
+- [Introduce Game Loop](http://gameprogrammingpatterns.com/game-loop.html)
 
 Splitting Between Logic and Render
 
@@ -159,6 +188,24 @@ Splitting Between Logic and Render
     - maintains block/entity model part transformation
     - maintains batch particles system
     - render update
+
+### Render Progress Introduction
+
+These are some background:
+
+- [How GPU work](http://fragmentbuffer.com/gpu-performance-for-game-artists/)
+- [MVP Camera Matrix Transformation](http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/)
+- [Shadow Mapping](https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping)
+
+Current render process is naive. Just a collection of `Renderer` objects, which will be called `void render(double partialTick)` each render tick in order.
+
+#### Some Helper Classes to manage the GL stuff
+
+OpenGL managed things by its id. The GL allocated objects, like VAO, VBO, or textures, are all identified by ids. Therefore, we should have some unified wrapper for this. 
+
+Currently, we have wrapper for texture, the `GLTexture` class, which has `bind` function to bind texture, and `dispose` to deallocate this GL resource.
+
+Also, another class called `GLMesh` is using to represent an model data. But, it's not a really good design. I might change it later...
 
 ## Some Humble Design Thought
 
