@@ -1,4 +1,6 @@
-package unknowndomain.engine.client.gui;
+package unknowndomain.engine.client.gui.component;
+
+import unknowndomain.engine.client.gui.Component;
 
 public class Label extends Component {
 

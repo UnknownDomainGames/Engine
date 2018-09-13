@@ -1,19 +1,29 @@
 package unknowndomain.engine.client.gui;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class Container extends Component {
 
-    public abstract List<Component> getChildren();
+    private final List<Component> children = new LinkedList<>();
+    private final List<Component> unmodifiableChildren = Collections.unmodifiableList(children);
 
-    public abstract boolean addChild(Component component);
-
-    public boolean addChildren(Component... components){
-        return addChildren(Stream.of(components).collect(Collectors.toList()));
+    protected List<Component> getChildren() {
+        return children;
     }
 
-    public abstract boolean addChildren(List<Component>... components);
+    public List<Component> getUnmodifiableChildren() {
+        return unmodifiableChildren;
+    }
 
+    public void requestLayout() {
+    }
+
+    public void layoutChildren() {
+
+    }
 }

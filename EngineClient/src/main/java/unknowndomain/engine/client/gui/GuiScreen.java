@@ -12,6 +12,8 @@ public class GuiScreen {
         return root;
     }
 
-    public void render(){}
+    public void render() {
+
+    }
 
 }
