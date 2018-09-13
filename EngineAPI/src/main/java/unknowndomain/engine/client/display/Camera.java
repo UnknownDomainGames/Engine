@@ -19,7 +19,7 @@ public interface Camera {
     }
 
     /**
-     * create view matrix for shader to use
+     * parse view matrix for shader to use
      *
      * @return
      */

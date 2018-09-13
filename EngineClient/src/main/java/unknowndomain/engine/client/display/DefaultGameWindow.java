@@ -67,7 +67,7 @@ public class DefaultGameWindow implements GameWindow {
         initWindowHint();
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
         if (!checkCreated())
-            throw new RuntimeException("Failed to create the GLFW window");
+            throw new RuntimeException("Failed to parse the GLFW window");
         initCallbacks();
         setWindowPosCenter();
         glfwMakeContextCurrent(handle);

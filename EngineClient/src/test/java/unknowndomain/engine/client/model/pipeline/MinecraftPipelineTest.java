@@ -10,7 +10,7 @@ class MinecraftPipelineTest {
     void create() throws Exception {
         ResourceManagerImpl resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
-//        Pipeline pipeline = MinecraftPipeline.create(resourceManager);
+//        Pipeline pipeline = MinecraftPipeline.parse(resourceManager);
 //        pipeline.push("ModelPaths", Lists.newArrayList(new ResourcePath("", "/minecraft/models/block/stone.json")));
     }
 }

@@ -26,7 +26,7 @@ public interface Renderer {
 
     /**
      * The factory object the mod will need to register.
-     * <p>The mod won't directly register the renderer, but register this to create renderer each time.</p>
+     * <p>The mod won't directly register the renderer, but register this to parse renderer each time.</p>
      */
     interface Factory {
         Renderer create(GameContext context, ResourceManager resourceManager) throws IOException;

@@ -20,10 +20,10 @@ public class ModDependencyEntry {
         BEFORE;
     }
 
-    public static ModDependencyEntry create(String spec) {
+    public static ModDependencyEntry parse(String spec) {
         String[] args = spec.split(":", 3);
         if (args.length < 3)
-            throw new ModDependencyException("Failed to create dependency entry. Source: " + spec);
+            throw new ModDependencyException("Failed to parse dependency entry. Source: " + spec);
 
         try {
             LoadOrder loadOrder = LoadOrder.valueOf(args[0].toUpperCase());
@@ -31,9 +31,9 @@ public class ModDependencyEntry {
             VersionRange range = VersionRange.createFromVersionSpec(args[2]);
             return new ModDependencyEntry(loadOrder, modId, range);
         } catch (InvalidVersionSpecificationException e) {
-            throw new ModDependencyException("Failed to create dependency entry, invalid version range. Range: " + args[2], e);
+            throw new ModDependencyException("Failed to parse dependency entry, invalid version range. Range: " + args[2], e);
         } catch (IllegalArgumentException e) {
-            throw new ModDependencyException("Failed to create dependency entry, illegal load order. Load order: " + args[0], e);
+            throw new ModDependencyException("Failed to parse dependency entry, illegal load order. Load order: " + args[0], e);
         }
     }
 

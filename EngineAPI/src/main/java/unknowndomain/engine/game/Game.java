@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  * </p>
  * <p>
  * But, its complexity makes me feel that it should manage all these by itself
- * (after it create)
+ * (after it parse)
  * </p>
  *
  * <p>

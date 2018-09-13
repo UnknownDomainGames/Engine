@@ -75,7 +75,7 @@ public class ModMetadata extends ModIdentifier {
         if (jo.has("dependencies")) {
             dependencies = new ArrayList<>();
             for (JsonElement je : jo.getAsJsonArray("dependencies")) {
-                dependencies.add(ModDependencyEntry.create(je.getAsString()));
+                dependencies.add(ModDependencyEntry.parse(je.getAsString()));
             }
         }
         if (jo.has("properties")) {
@@ -160,6 +160,11 @@ public class ModMetadata extends ModIdentifier {
 
         public Builder setVersion(ComparableVersion version) {
             this.version = version;
+            return this;
+        }
+
+        public Builder setVersion(String version) {
+            this.version = new ComparableVersion(version);
             return this;
         }
 

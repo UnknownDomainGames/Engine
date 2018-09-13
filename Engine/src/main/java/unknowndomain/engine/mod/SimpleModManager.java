@@ -25,7 +25,7 @@ public class SimpleModManager implements ModManager {
 
     /**
      * This is really dirty, to make sure that the registry manager actually switch in mod loading context.
-     * <p>We have direct method to create a temp event bus to handle this thing</p>
+     * <p>We have direct method to parse a temp event bus to handle this thing</p>
      * <p>This design is not very pretty. Maybe redo later.</p>
      */
     public static RegistryManager register(Collection<ModContainer> containers, Registry.Type... tps) {

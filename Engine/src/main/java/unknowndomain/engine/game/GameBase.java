@@ -74,7 +74,7 @@ public abstract class GameBase implements Game {
         List<ModMetadata> mods = option.getMods();
         Map<ModMetadata, ModDependencyEntry[]> map = mods.stream()
                 .map(m -> Pair.of(m,
-                        m.getDependency().stream().map(ModDependencyEntry::create).toArray(ModDependencyEntry[]::new)))
+                        m.getDependencies().stream().toArray(ModDependencyEntry[]::new)))
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
         mods.sort((a, b) -> {
             ModDependencyEntry[] entriesA = map.get(a);

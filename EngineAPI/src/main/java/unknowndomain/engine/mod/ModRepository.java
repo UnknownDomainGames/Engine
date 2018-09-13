@@ -2,6 +2,7 @@ package unknowndomain.engine.mod;
 
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.util.Owner;
+import unknowndomain.engine.util.versioning.ComparableVersion;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -23,8 +24,8 @@ public interface ModRepository {
         private String sha256;
         private long size;
 
-        protected RemoteModMetadata(String group, String id, String version, String name, String description, String url, List<String> authors, String logo, List<String> dependency, Map<String, Object> properties, String sha256, long size) {
-            super(group, id, version, name, description, url, authors, logo, dependency, properties);
+        protected RemoteModMetadata(String group, String id, ComparableVersion version, String name, String description, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, Object> properties, String sha256, long size) {
+            super(group, id, version, name, description, url, authors, logoFile, dependencies, properties);
             this.sha256 = sha256;
             this.size = size;
         }

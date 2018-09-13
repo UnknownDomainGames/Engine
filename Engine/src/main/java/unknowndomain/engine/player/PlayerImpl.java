@@ -48,7 +48,7 @@ public class PlayerImpl implements Player {
     public Entity mountEntity(Entity entity) {
         Entity old = mounting;
         if (entity == null) {
-            // create phantom entity if is god, else create default player
+            // parse phantom entity if is god, else parse default player
         }
         mounting = entity;
         // fire event;

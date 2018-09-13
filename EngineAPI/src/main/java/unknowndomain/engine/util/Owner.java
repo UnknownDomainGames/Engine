@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates who create (control the lifecycle) the object of annotated class.
+ * Indicates who parse (control the lifecycle) the object of annotated class.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
