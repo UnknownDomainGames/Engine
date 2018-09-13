@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import unknowndomain.engine.util.JsonUtils;
+import unknowndomain.engine.util.versioning.ComparableVersion;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,32 +14,35 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.*;
 
-
 public class ModMetadata extends ModIdentifier {
+
+    public static final ComparableVersion UNKNOWN_VERSION = new ComparableVersion("unknown");
+
     private final String name;
     private final String description;
     private final String url;
     private final List<String> authors;
-    private final String logo; // base 64 logo
-    private final List<String> dependency;
+    private final String logoFile; // base 64 logo?
+    private final List<ModDependencyEntry> dependencies;
     private final Map<String, Object> properties;
 
-    protected ModMetadata(String group, String id, String version, String name, String description, String url, List<String> authors, String logo, List<String> dependency, Map<String, Object> properties) {
+    protected ModMetadata(String group, String id, ComparableVersion version, String name, String description, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, Object> properties) {
         super(group, id, version);
         this.name = name;
         this.description = description;
         this.url = url;
         this.authors = authors;
-        this.logo = logo;
-        this.dependency = dependency;
+        this.logoFile = logoFile;
+        this.dependencies = dependencies;
         this.properties = properties;
     }
 
     public static ModMetadata fromJson(JsonObject jo) {
         String modid = "", name = "", url = "", description = "", logoFile = "";
         List<String> authors = Collections.emptyList();
+        List<ModDependencyEntry> dependencies = Collections.emptyList();
         Map<String, Object> properties = Collections.emptyMap();
-        String version = "";
+        ComparableVersion version = UNKNOWN_VERSION;
         // TODO make default and validate id & version in metadata
 
         if (jo.has("id")) {
@@ -48,7 +52,7 @@ public class ModMetadata extends ModIdentifier {
             name = jo.get("name").getAsString();
         }
         if (jo.has("version")) {
-            version = jo.get("version").getAsString();
+            version = new ComparableVersion(jo.get("version").getAsString());
         }
         if (jo.has("description")) {
             description = jo.get("description").getAsString();
@@ -56,8 +60,8 @@ public class ModMetadata extends ModIdentifier {
         if (jo.has("url")) {
             url = jo.get("url").getAsString();
         }
-        if (jo.has("logo")) {
-            logoFile = jo.get("logo").getAsString();
+        if (jo.has("logoFile")) {
+            logoFile = jo.get("logoFile").getAsString();
         }
         if (jo.has("authors")) {
             authors = new ArrayList<>();
@@ -67,6 +71,12 @@ public class ModMetadata extends ModIdentifier {
                 }
             }
             authors = ImmutableList.copyOf(authors);
+        }
+        if (jo.has("dependencies")) {
+            dependencies = new ArrayList<>();
+            for (JsonElement je : jo.getAsJsonArray("dependencies")) {
+                dependencies.add(ModDependencyEntry.create(je.getAsString()));
+            }
         }
         if (jo.has("properties")) {
             properties = new HashMap<>();
@@ -94,13 +104,6 @@ public class ModMetadata extends ModIdentifier {
         }
     }
 
-    /**
-     * @return the dependency
-     */
-    public List<String> getDependency() {
-        return dependency;
-    }
-    
     public String getName() {
         return name;
     }
@@ -117,8 +120,12 @@ public class ModMetadata extends ModIdentifier {
         return authors;
     }
 
-    public String getLogo() {
-        return logo;
+    public String getLogoFile() {
+        return logoFile;
+    }
+
+    public List<ModDependencyEntry> getDependencies() {
+        return dependencies;
     }
 
     public Map<String, Object> getProperties() {
@@ -128,13 +135,13 @@ public class ModMetadata extends ModIdentifier {
     public static class Builder {
         protected String group = "";
         protected String id = "";
-        protected String version = "";
+        protected ComparableVersion version = UNKNOWN_VERSION;
         protected String name = "";
         protected String description = "";
         protected String url = "";
         protected List<String> authors = Collections.emptyList();
         protected String logo = "";
-        protected List<String> dependency = Collections.emptyList();
+        protected List<ModDependencyEntry> dependency = Collections.emptyList();
         protected Map<String, Object> properties = Collections.emptyMap();
 
         public static Builder create() {
@@ -151,7 +158,7 @@ public class ModMetadata extends ModIdentifier {
             return this;
         }
 
-        public Builder setVersion(String version) {
+        public Builder setVersion(ComparableVersion version) {
             this.version = version;
             return this;
         }
@@ -186,7 +193,7 @@ public class ModMetadata extends ModIdentifier {
             return this;
         }
 
-        public Builder setDependency(List<String> dependency) {
+        public Builder setDependency(List<ModDependencyEntry> dependency) {
             this.dependency = dependency;
             return this;
         }

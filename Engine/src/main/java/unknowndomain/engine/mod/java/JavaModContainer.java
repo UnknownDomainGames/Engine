@@ -11,9 +11,6 @@ public class JavaModContainer implements ModContainer {
     private final String modId;
     private final Logger logger;
 
-    /**
-     * Class loader of the mod.
-     */
     private ModClassLoader classLoader;
     private Object instance;
     private ModMetadata metadata;

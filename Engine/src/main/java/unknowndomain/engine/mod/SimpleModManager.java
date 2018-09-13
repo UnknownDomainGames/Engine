@@ -10,11 +10,9 @@ import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.registry.*;
-import unknowndomain.engine.mod.java.JavaModLoader;
+import unknowndomain.engine.Platform;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SimpleModManager implements ModManager {
     private Map<String, ModContainer> idToMods;
@@ -71,6 +69,56 @@ public class SimpleModManager implements ModManager {
     public boolean isModLoaded(String modId) {
         return idToMods.containsKey(Validate.notNull(modId));
     }
+
+//    public void load() {
+//        List<LoadableMod> loadableMods = new LinkedList<>();
+//        loadableMods.addAll(localModSource.getLoadableMods());
+//
+//        sortLoadableMods(loadableMods);
+//
+//        for (LoadableMod loadableMod : loadableMods) {
+//            try {
+//                ModContainer container = javaModLoader.load(loadableMod);
+//                loadedMods.put(container.getModId(), container);
+//            } catch (ModLoadException e) {
+//                Platform.getLogger().warn(e.getMessage(), e);
+//            }
+//        }
+//    }
+
+//    private void sortLoadableMods(List<LoadableMod> loadableMods) {
+//        Collections.sort(loadableMods, (mod1, mod2) -> {
+//                    final String modId1 = mod1.getMetadata().getModId(), modId2 = mod2.getMetadata().getModId();
+//                    for (ModDependencyEntry entry : mod1.getMetadata().getDependencies()) {
+//                        if (!entry.getModId().equals(modId2))
+//                            continue;
+//
+//                        switch (entry.getLoadOrder()) {
+//                            case AFTER:
+//                            case REQUIRED:
+//                                return 1; // After o2 load
+//                            case BEFORE:
+//                                return -1; // Before o2 load
+//                        }
+//                    }
+//
+//                    for (ModDependencyEntry entry : mod2.getMetadata().getDependencies()) {
+//                        if (!entry.getModId().equals(modId1))
+//                            continue;
+//
+//                        switch (entry.getLoadOrder()) {
+//                            case AFTER:
+//                            case REQUIRED:
+//                                return -1; // After o1 load
+//                            case BEFORE:
+//                                return 1; // Before o1 load
+//                        }
+//                    }
+//
+//                    return 0;
+//                }
+//        );
+//    }
 
     @NonNull
     @Override

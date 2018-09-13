@@ -448,3 +448,6 @@ manifest.mf
 
 # gradle
 .gradle/
+
+# visual studio code
+.vscode/

@@ -49,12 +49,12 @@ The ideal way to register a thing is only providing its id without any redundant
 
 ```java
 Registry<BlockObject> registry;
-registry.register(block.setRegistryName('air')); // infer the query full dir is <current modid>.block.air
+registry.register(block.setRegistryName('air')); // infer the query full dir is <current modId>.block.air
 Registry<ItemObject> itemRegistry;
-itemRegistry.register(item.setRegisterName('stone')); // infer the query full dir is <current modid>.item.stone
+itemRegistry.register(item.setRegisterName('stone')); // infer the query full dir is <current modId>.item.stone
 
 RegistryManager manager;
-manager.register(block.setRegistryName('stone'));  // infer the query full dir is <current modid>.block.stone
+manager.register(block.setRegistryName('stone'));  // infer the query full dir is <current modId>.block.stone
 
 // when we want to get a registered object
 manager.get('unknowndomain.block.stone'); // get the stone block

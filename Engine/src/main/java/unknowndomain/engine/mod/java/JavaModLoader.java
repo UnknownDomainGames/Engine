@@ -14,13 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.mod.Mod;
-import unknowndomain.engine.mod.ModContainer;
-import unknowndomain.engine.mod.ModDependencyEntry;
-import unknowndomain.engine.mod.ModIdentifier;
-import unknowndomain.engine.mod.ModLoader;
-import unknowndomain.engine.mod.ModMetadata;
-import unknowndomain.engine.mod.ModStore;
+import unknowndomain.engine.mod.*;
+import unknowndomain.engine.mod.java.JavaModContainer;
 import unknowndomain.engine.mod.java.harvester.HarvestedAnnotation;
 import unknowndomain.engine.mod.java.harvester.HarvestedInfo;
 
@@ -53,7 +48,7 @@ public class JavaModLoader implements ModLoader {
             ModClassLoader classLoader = new ModClassLoader(log, source,
                     Thread.currentThread().getContextClassLoader());
 
-            metadata.getDependency().stream().map(ModDependencyEntry::create).forEach(d -> {
+            metadata.getDependencies().stream().forEach(d -> {
                 if (d.getLoadOrder() == ModDependencyEntry.LoadOrder.REQUIRED) {
                     JavaModContainer dep = cache.get(d.getModId());
                     if (dep == null) {
@@ -71,10 +66,14 @@ public class JavaModLoader implements ModLoader {
                 return null;
             }
 
-            Class<?> mainClass = Class.forName(
-                    modAnnos.toArray(new HarvestedAnnotation[modAnnos.size()])[0].getOwnerType().getClassName(), true,
+            HarvestedAnnotation modAnno = getModAnno(metadata.getId(), info.getHarvestedAnnotations(Mod.class));
+            if (modAnno == null) {
+                throw new ModLoadException(String.format("Can't find the main class for mod %s!", metadata.getId()));
+            }
+
+            Class<?> mainClass = Class.forName(modAnno.getOwnerType().getClassName(), true,
                     classLoader);
-            Object instance = mainClass.newInstance();
+            Object instance = mainClass.newInstance(); // TODO: Inject and register listener
 
             JavaModContainer container = new JavaModContainer(metadata.getId());
             container.initialize(classLoader, metadata, info, instance);
@@ -87,6 +86,14 @@ public class JavaModLoader implements ModLoader {
         } catch (IllegalAccessException | InstantiationException e) {
             Engine.getLogger().warn(String.format("cannot instantiate the main class for mod %s!", source.toString()),
                     e);
+        }
+        return null;
+    }
+
+    private HarvestedAnnotation getModAnno(String modId, Collection<HarvestedAnnotation> harvestedAnnos) {
+        for (HarvestedAnnotation anno : harvestedAnnos) {
+            if (modId.equals(anno.getHarvestedInfo().get("value")))
+                return anno;
         }
         return null;
     }
