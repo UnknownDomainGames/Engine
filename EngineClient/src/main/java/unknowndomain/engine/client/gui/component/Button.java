@@ -1,9 +1,10 @@
 package unknowndomain.engine.client.gui.component;
 
 import unknowndomain.engine.client.gui.Component;
+import unknowndomain.engine.client.gui.Container;
 
 //TODO: everything that can communicate with program and user should extends 'Control'
-public class Button extends Component {
+public class Button extends Container {
 
     private Component content;
 

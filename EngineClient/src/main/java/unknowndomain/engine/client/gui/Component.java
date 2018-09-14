@@ -1,9 +1,14 @@
 package unknowndomain.engine.client.gui;
 
+import unknowndomain.engine.client.gui.renderer.ComponentRenderer;
+
 public abstract class Component {
 
     private GuiScreen screen;
     private Container parent;
+
+    private int screenX;
+    private int screenY;
 
     private int x;
     private int y;
@@ -11,11 +16,13 @@ public abstract class Component {
     private int width;
     private int height;
 
+    private ComponentRenderer<Component> renderer;
+
     public Container getParent() {
         return parent;
     }
 
-    void updateParent(Container container) {
+    void updateParent(Container parent) {
         this.parent = parent;
     }
 
@@ -65,4 +72,12 @@ public abstract class Component {
     }
 
     public void resize() {}
+
+    public ComponentRenderer<Component> getRenderer() {
+        if(renderer == null)
+            renderer = createDefaultRenderer();
+        return renderer;
+    }
+
+    protected abstract ComponentRenderer<Component> createDefaultRenderer();
 }
