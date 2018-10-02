@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.rendering.gui;
+package unknowndomain.engine.client.rendering.gui.font;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -9,6 +9,8 @@ import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
+import unknowndomain.engine.client.rendering.gui.Tessellator;
+import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.util.BufferBuilder;
 
 import java.nio.ByteBuffer;
@@ -21,7 +23,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-class TTFFontRenderer {
+public class TTFFontRenderer implements FontRenderer {
     private ByteBuffer ttfBuf;
 
     private final STBTTFontinfo fontinfo;
@@ -88,7 +90,12 @@ class TTFFontRenderer {
         }
     }
 
-    public void drawText(String text, float x, float y, int color, int fontHeight) {
+    @Override
+    public void drawText(CharSequence text, float x, float y, int color) {
+        drawText(text, x, y, color, 16);
+    }
+
+    public void drawText(CharSequence text, float x, float y, int color, int fontHeight) {
         float scale = stbtt_ScaleForPixelHeight(fontinfo, fontHeight);
         Pair<Integer, STBTTBakedChar.Buffer> pair = getCharDataBuffer(fontHeight);
         glEnable(GL_TEXTURE_2D);
@@ -190,7 +197,7 @@ class TTFFontRenderer {
         return (offset - center) * factor + center;
     }
 
-    private static int getCodePoint(String text, int i, IntBuffer cpOut) {
+    private static int getCodePoint(CharSequence text, int i, IntBuffer cpOut) {
         char c1 = text.charAt(i);
         if (Character.isHighSurrogate(c1) && i + 1 < text.length()) {
             char c2 = text.charAt(i + 1);

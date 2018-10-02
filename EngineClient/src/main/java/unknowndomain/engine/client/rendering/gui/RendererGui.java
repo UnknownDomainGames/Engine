@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.UnknownDomain;
+import unknowndomain.engine.client.rendering.gui.font.TTFFontRenderer;
 import unknowndomain.engine.client.shader.RendererShaderProgram;
 import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.entity.Entity;
@@ -96,9 +97,9 @@ public class RendererGui extends RendererShaderProgram {
         BlockPrototype.Hit hit = world.raycast(context.getCamera().getPosition(),
                 context.getCamera().getFrontVector(), 5);
         fontRenderer.drawText("fps " + displayFPS, 0, 0, 0xffffffff, 16);
-        fontRenderer.drawText(String.format("Playerlocation: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 25, 0xffffffff, 16);
+        fontRenderer.drawText(String.format("Player location: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 25, 0xffffffff, 16);
         fontRenderer.drawText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 45, 0xffffffff, 16);
-        fontRenderer.drawText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);
+        //fontRenderer.drawText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);
 
         if (hit != null) {
 

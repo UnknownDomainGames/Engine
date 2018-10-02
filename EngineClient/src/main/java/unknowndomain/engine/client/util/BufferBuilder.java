@@ -59,6 +59,10 @@ public class BufferBuilder {
         return useIndex;
     }
 
+    public void begin(int mode, boolean pos, boolean color, boolean tex) {
+        begin(mode, pos, color, tex, false, false);
+    }
+
     public void begin(int mode, boolean pos, boolean color, boolean tex, boolean normal) {
         begin(mode, pos, color, tex, normal, false);
     }
@@ -204,6 +208,13 @@ public class BufferBuilder {
         return this;
     }
 
+    public BufferBuilder color(int color) {
+        if (useColor) {
+           color(((color >> 16) & 255) / 255f, ((color >> 8) & 255) / 255f, (color & 255) / 255f, ((color >> 24) & 255) / 255f);
+        }
+        return this;
+    }
+
     public BufferBuilder color(float r, float g, float b, float a) {
         if (useColor) {
             int i = vertexCount * getOffset() + Float.BYTES * (usePos ? 3 : 0);
@@ -211,6 +222,7 @@ public class BufferBuilder {
             byteBuffer.putFloat(i + 4, g);
             byteBuffer.putFloat(i + 8, b);
             byteBuffer.putFloat(i + 12, a);
+
         }
         return this;
     }

@@ -4,7 +4,7 @@ import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.util.BufferBuilder;
 import unknowndomain.engine.client.util.VertexBufferObject;
 
-class Tessellator {
+public class Tessellator {
     private static final Tessellator INSTANCE = new Tessellator(1048576);
     private BufferBuilder buffer;
     private VertexBufferObject vbo;
@@ -21,7 +21,7 @@ class Tessellator {
 //        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, 0);
     }
 
-    static Tessellator getInstance() {
+    public static Tessellator getInstance() {
         return INSTANCE;
     }
 
@@ -37,7 +37,7 @@ class Tessellator {
         return buffer;
     }
 
-    void draw() {
+    public void draw() {
         buffer.finish();
 
 //        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, vertexStatusBufId);

@@ -1,12 +1,14 @@
-package unknowndomain.engine.client.rendering.gui;
+package unknowndomain.engine.client.rendering.gui.font;
 
 import org.lwjgl.opengl.GL11;
+import unknowndomain.engine.client.rendering.gui.Tessellator;
+import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.util.BufferBuilder;
 import unknowndomain.engine.client.util.UDBitmapFont;
 
 import java.io.File;
 
-class UDBitmapFontRenderer {
+public class UDBitmapFontRenderer implements FontRenderer {
     private final UDBitmapFont font;
 
     public UDBitmapFontRenderer(File file) {
@@ -23,11 +25,12 @@ class UDBitmapFontRenderer {
      * @param y     y-coordinate of text, where baseline is located
      * @param color
      */
-    public void drawText(String text, float x, float y, int color) {
+    public void drawText(CharSequence text, float x, float y, int color) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         float startX = 0;
-        for (char c : text.toCharArray()) {
+        for (int i = 0, size = text.length(); i < size ; i++) {
+            char c = text.charAt(i);
             UDBitmapFont.CharInfo info = font.getFontData().get(c);
             if (info == null) {
                 info = font.getFontData().get(' ');

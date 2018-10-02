@@ -1,6 +1,8 @@
-package unknowndomain.engine.client.rendering.gui;
+package unknowndomain.engine.client.rendering.gui.font;
 
 import org.lwjgl.opengl.GL11;
+import unknowndomain.engine.client.rendering.gui.Tessellator;
+import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.util.BufferBuilder;
 
 import java.awt.*;
@@ -10,7 +12,7 @@ import java.nio.charset.CharsetEncoder;
 import java.util.HashMap;
 
 
-class AWTFontRenderer {
+public class AWTFontRenderer implements FontRenderer {
 
     private float SIDE_RATIO = 10.0f / 256.0f;
 
@@ -90,7 +92,8 @@ class AWTFontRenderer {
         return sb.toString();
     }
 
-    public void drawText(String text, float x, float y, int color) {
+    @Override
+    public void drawText(CharSequence text, float x, float y, int color) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         int lastpage = -1;
@@ -119,7 +122,6 @@ class AWTFontRenderer {
             startX += info.getWidth();
         }
     }
-
 
     public static class CharInfo {
 
