@@ -19,7 +19,7 @@ public class KeyBinding {
         return new KeyBinding(target,
                 code == null ? KeyCode.KEY_UNKNOWN : code,
                 actionMode != null ? actionMode : ActionMode.PRESS,
-                keyMods == null ? KeyModifier.EMPTY : keyMods);
+                keyMods == null || keyMods.length == 0 ? KeyModifier.EMPTY : keyMods);
     }
 
     public String getTarget() {
