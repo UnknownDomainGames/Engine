@@ -11,15 +11,12 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class DefaultGameWindow implements GameWindow {
+
     private long handle;
     private int width;
     private int height;
     private String title;
-    private boolean resized;
-    private GLFWMouseButtonCallback mouseBtnCallback;
-    private GLFWCursorPosCallback cursorPosCallback;
-    private GLFWKeyCallback keyCallback;
-    private GLFWScrollCallback scrollCallback;
+    private boolean resized = false;
 
     private EngineClient engineClient;
     private boolean paused;
@@ -29,7 +26,6 @@ public class DefaultGameWindow implements GameWindow {
         this.title = title;
         this.width = width;
         this.height = height;
-        resized = false;
     }
 
     @Override
@@ -43,11 +39,6 @@ public class DefaultGameWindow implements GameWindow {
     }
 
     @Override
-    public String getTitle() {
-        return title;
-    }
-
-    @Override
     public void setSize(int width, int height) {
         this.width = width;
         this.height = height;
@@ -56,8 +47,49 @@ public class DefaultGameWindow implements GameWindow {
     }
 
     @Override
+    public boolean isResized() {
+        return resized;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
     public void setTitle(String title) {
         glfwSetWindowTitle(handle, title);
+    }
+
+    @Override
+    public void showCursor() {
+        glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
+    @Override
+    public void disableCursor() {
+        glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+
+    public boolean shouldClose() {
+        return glfwWindowShouldClose(handle);
+    } // TODO: Remove it.
+
+    public void beginDraw() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    public void endDraw() {
+        glfwSwapBuffers(handle);
+
+        if(isResized())
+            resized = false;
+
+        glfwPollEvents();
+    }
+
+    public long getHandle() {
+        return handle;
     }
 
     public void init() {
@@ -123,22 +155,26 @@ public class DefaultGameWindow implements GameWindow {
         glfwShowWindow(handle);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         // glViewport(0, 0, width, height);
-        hideCursor();
+        disableCursor();
     }
 
 
     private void setupKeyCallback() {
-        keyCallback = new GLFWKeyCallback() {
+        new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
                     if (paused) {
-                        hideCursor();
+                        disableCursor();
                         paused = false;
                     } else {
                         showCursor();
                         paused = true;
                     }
+                }
+
+                if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
+                    System.exit(0); //FIXME: we need a way for exit game.
                 }
 
                 engineClient.getCurrentGame().getKeyBindingManager().handleKeyPress(key, scancode, action, mods);
@@ -147,7 +183,7 @@ public class DefaultGameWindow implements GameWindow {
     }
 
     private void setupMouseCallback() {
-        mouseBtnCallback = new GLFWMouseButtonCallback() {
+        new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
                 engineClient.getCurrentGame().getKeyBindingManager().handleMousePress(button, action, mods);
@@ -156,7 +192,7 @@ public class DefaultGameWindow implements GameWindow {
     }
 
     private void setupCursorCallback() {
-        cursorPosCallback = new GLFWCursorPosCallback() {
+        new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
                 engineClient.getCurrentGame().getController().handleCursorMove(xpos, ypos);
@@ -166,44 +202,11 @@ public class DefaultGameWindow implements GameWindow {
 
 
     private void setupScrollCallback() {
-        scrollCallback = new GLFWScrollCallback() {
+        new GLFWScrollCallback() {
             @Override
             public void invoke(long window, double xoffset, double yoffset) {
                 engineClient.getCurrentGame().getController().handleScroll(xoffset, yoffset);
             }
         }.set(handle);
-    }
-
-    public boolean shouldClose() {
-        return glfwWindowShouldClose(handle);
-    }
-
-    public boolean getKey(int keyCode, int action) {
-        return glfwGetKey(handle, keyCode) == action;
-    }
-
-    public void beginDraw() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    public void endDraw() {
-        glfwSwapBuffers(handle);
-        glfwPollEvents();
-    }
-
-    public long getHandle() {
-        return handle;
-    }
-
-    public boolean isResized() {
-        return resized;
-    }
-
-    public void showCursor() {
-        glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    }
-
-    public void hideCursor() {
-        glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 }

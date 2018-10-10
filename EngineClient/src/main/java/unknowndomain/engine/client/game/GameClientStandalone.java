@@ -8,6 +8,7 @@ import unknowndomain.engine.action.ActionBuilderImpl;
 import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.ActionManagerImpl;
+import unknowndomain.engine.client.MinecraftMod;
 import unknowndomain.engine.client.camera.CameraController;
 import unknowndomain.engine.client.camera.CameraDefault;
 import unknowndomain.engine.client.camera.FirstPersonController;
@@ -19,9 +20,10 @@ import unknowndomain.engine.client.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.keybinding.Keybindings;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.RendererContext;
-import unknowndomain.engine.client.resource.ResourceManager;
-import unknowndomain.engine.client.resource.ResourceManagerImpl;
-import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
+import unknowndomain.engine.client.rendering.gui.RendererGui;
+import unknowndomain.engine.client.resource.*;
+import unknowndomain.engine.client.shader.Shader;
+import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.event.EventBus;
@@ -38,6 +40,7 @@ import unknowndomain.engine.mod.ModStore;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
 
@@ -127,11 +130,23 @@ public class GameClientStandalone extends GameServerFullAsync {
         ClientRegistryEvent clientRegistryEvent = new ClientRegistryEvent(factories);
         bus.post(clientRegistryEvent);
 
+        // FIXME: Don't initialize renderer at here. It should be initialized in Engine
+        factories.add((context, manager) -> {
+            Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
+            byte[] cache = resource.cache();
+            return new RendererGui(
+                    (ByteBuffer) ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
+                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(),
+                            ShaderType.VERTEX_SHADER),
+                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(),
+                            ShaderType.FRAGMENT_SHADER));
+        });
+
         camera = new CameraDefault();
         projection = new ProjectionPerspective(window.getWidth(), window.getHeight());
 
         cameraController = new FirstPersonController(camera);
-        gameRenderer = new RendererContext(factories, camera, projection);
+        gameRenderer = new RendererContext(factories, camera, projection, window);
     }
 
     @Override

@@ -3,6 +3,7 @@ package unknowndomain.engine.client.rendering;
 
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.client.display.Camera;
+import unknowndomain.engine.client.display.GameWindow;
 import unknowndomain.engine.client.display.Projection;
 import unknowndomain.engine.client.resource.ResourceManager;
 
@@ -20,6 +21,8 @@ public interface Renderer {
         Camera getCamera();
 
         Projection getProjection();
+
+        GameWindow getWindow();
 
         double partialTick();
     }

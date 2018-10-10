@@ -1,7 +1,9 @@
 package unknowndomain.engine.client.rendering;
 
+import afu.org.checkerframework.checker.oigj.qual.O;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.client.display.Camera;
+import unknowndomain.engine.client.display.GameWindow;
 import unknowndomain.engine.client.display.Projection;
 import unknowndomain.engine.client.resource.ResourceManager;
 
@@ -14,12 +16,14 @@ public class RendererContext implements Renderer.Context {
     private final Camera camera;
     private final Projection projection;
     private final List<Renderer.Factory> factories;
+    private final GameWindow window;
     private double partialTick;
 
-    public RendererContext(List<Renderer.Factory> factories, Camera camera, Projection projection) {
+    public RendererContext(List<Renderer.Factory> factories, Camera camera, Projection projection, GameWindow window) {
         this.factories = factories;
         this.camera = camera;
         this.projection = projection;
+        this.window = window;
     }
 
     public void build(GameContext context, ResourceManager resourceManager) {
@@ -35,6 +39,7 @@ public class RendererContext implements Renderer.Context {
         }
     }
 
+    @Override
     public Camera getCamera() {
         return camera;
     }
@@ -42,6 +47,11 @@ public class RendererContext implements Renderer.Context {
     @Override
     public Projection getProjection() {
         return projection;
+    }
+
+    @Override
+    public GameWindow getWindow() {
+        return window;
     }
 
     public void render(double partial) {

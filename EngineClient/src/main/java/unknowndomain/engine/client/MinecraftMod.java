@@ -9,8 +9,6 @@ import unknowndomain.engine.client.model.GLMesh;
 import unknowndomain.engine.client.model.Mesh;
 import unknowndomain.engine.client.model.MinecraftModelFactory;
 import unknowndomain.engine.client.rendering.RendererWorld;
-import unknowndomain.engine.client.rendering.gui.RendererGui;
-import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.shader.ShaderType;
@@ -63,17 +61,17 @@ public class MinecraftMod {
                     context.register(debug);
                     return debug;
                 }
-        )
-                .registerRenderer((context, manager) -> {
-                    Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
-                    byte[] cache = resource.cache();
-                    return new RendererGui(
-                            (ByteBuffer) ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
-                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(),
-                                    ShaderType.VERTEX_SHADER),
-                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(),
-                                    ShaderType.FRAGMENT_SHADER));
-                });
+        );
+//                .registerRenderer((context, manager) -> {
+//                    Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
+//                    byte[] cache = resource.cache();
+//                    return new RendererGui(
+//                            (ByteBuffer) ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
+//                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(),
+//                                    ShaderType.VERTEX_SHADER),
+//                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(),
+//                                    ShaderType.FRAGMENT_SHADER));
+//                });
     }
 
     @Listener

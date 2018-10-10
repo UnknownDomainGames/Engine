@@ -2,6 +2,7 @@ package unknowndomain.engine.client.rendering.gui.font;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -77,7 +78,6 @@ public class TTFFontRenderer implements FontRenderer {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, side, side, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
             glBindTexture(GL_TEXTURE_2D, 0);
-            glEnable(GL_TEXTURE_2D);
             bufMap.put(fontHeight, new ImmutablePair<>(texId, cdata));
         }
         return bufMap.get(fontHeight);
@@ -93,6 +93,15 @@ public class TTFFontRenderer implements FontRenderer {
     @Override
     public void drawText(CharSequence text, float x, float y, int color) {
         drawText(text, x, y, color, 16);
+    }
+
+    @Override
+    public Vector2f sizeText(CharSequence text) {
+        return sizeText(text, 16);
+    }
+
+    public Vector2f sizeText(CharSequence text, int fontHeight) {
+        return new Vector2f(getStringWidth(fontinfo, text, fontHeight), - descent * stbtt_ScaleForPixelHeight(fontinfo, fontHeight));
     }
 
     public void drawText(CharSequence text, float x, float y, int color, int fontHeight) {
@@ -138,7 +147,7 @@ public class TTFFontRenderer implements FontRenderer {
                             + stbtt_GetCodepointKernAdvance(fontinfo, charPoint, charPointBuffer.get(0)) * scale);
                 }
                 float x0 = scale(centerX, stbQuad.x0(), factorX), x1 = scale(centerX, stbQuad.x1(), factorX),
-                        y0 = scale(centerY, stbQuad.y0(), factorY), y1 = scale(centerY, stbQuad.y1(), factorY);
+                        y0 = scale(centerY, stbQuad.y0(), factorY), y1 = scale(centerY, stbQuad.y1(), factorY); // FIXME: Incorrect y0
                 builder.pos(x0, y0, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t0()).endVertex();
                 builder.pos(x0, y1, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t1()).endVertex();
                 builder.pos(x1, y1, 0).color(r, g, b, a).tex(stbQuad.s1(), stbQuad.t1()).endVertex();
@@ -147,20 +156,23 @@ public class TTFFontRenderer implements FontRenderer {
             }
             tessellator.draw();
 
-//            renderLineBoundingBox(text, 0, text.length(), x, y + fontHeight, scale, fontHeight);
+            //renderLineBoundingBox(text, x, y + fontHeight, scale, fontHeight);
+            glDisable(GL_TEXTURE_2D);
+            glDisable(GL_BLEND);
         }
     }
 
-    private void renderLineBoundingBox(String text, int from, int to, float x, float y, float scale, int fontHeight) {
+    private void renderLineBoundingBox(CharSequence text, float x, float y, float scale, int fontHeight) {
         glDisable(GL_TEXTURE_2D);
+        glDisable(GL_BLEND);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        float width = getStringWidth(fontinfo, text, from, to, fontHeight);
+        float width = getStringWidth(fontinfo, text, fontHeight);
         y -= descent * scale;
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
-        builder.begin(GL_QUADS, true, true, false, false);
+        builder.begin(GL_LINE_LOOP, true, true, false, false);
         builder.pos(x, y, 0).color(1, 1, 1, 1).endVertex();
         builder.pos(x + width, y, 0).color(1, 1, 1, 1).endVertex();
         builder.pos(x + width, y - fontHeight, 0).color(1, 1, 1, 1).endVertex();
@@ -169,10 +181,11 @@ public class TTFFontRenderer implements FontRenderer {
         tessellator.draw();
 
         glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    private float getStringWidth(STBTTFontinfo info, String text, int from, int to, int fontHeight) {
+    private float getStringWidth(STBTTFontinfo info, CharSequence text, int fontHeight) {
         int width = 0;
 
         try (MemoryStack stack = stackPush()) {
@@ -180,8 +193,8 @@ public class TTFFontRenderer implements FontRenderer {
             IntBuffer pAdvancedWidth = stack.mallocInt(1);
             IntBuffer pLeftSideBearing = stack.mallocInt(1);
 
-            int i = from;
-            while (i < to) {
+            int i = 0;
+            while (i < text.length()) {
                 i += getCodePoint(text, i, pCodePoint);
                 int cp = pCodePoint.get(0);
 

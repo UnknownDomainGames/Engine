@@ -4,80 +4,65 @@ import unknowndomain.engine.client.gui.renderer.ComponentRenderer;
 
 public abstract class Component {
 
-    private GuiScreen screen;
+    public static final int USE_PREF_VALUE = -1;
+
+    private Scene screen;
     private Container parent;
 
-    private int screenX;
-    private int screenY;
+    private int x, y;
+    private int width, height;
 
-    private int x;
-    private int y;
-
-    private int width;
-    private int height;
-
-    private ComponentRenderer<Component> renderer;
+    private ComponentRenderer<?> renderer;
 
     public Container getParent() {
         return parent;
-    }
-
-    void updateParent(Container parent) {
-        this.parent = parent;
-    }
-
-    void updateScreen(GuiScreen screen) {
-        this.screen = screen;
     }
 
     public int getX() {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getY() {
         return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
     }
 
     public int getWidth() {
         return width;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
     public int getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
-        this.height = height;
+    public int minWidth() {
+        return 0;
     }
 
-    public void setSize(int width, int height) {
-        setWidth(width);
-        setHeight(height);
+    public int minHeight() {
+        return 0;
+    }
+
+    abstract public int prefWidth();
+
+    abstract public int prefHeight();
+
+    public int maxWidth() {
+        return Integer.MAX_VALUE;
+    }
+
+    public int maxHeight() {
+        return Integer.MAX_VALUE;
     }
 
     public boolean contains(int x, int y) {
         return x >= getX() && x <= getWidth() && y >= getY() && y <= getHeight();
     }
 
-    public void resize() {}
-
-    public ComponentRenderer<Component> getRenderer() {
-        if(renderer == null)
+    public ComponentRenderer<?> getRenderer() {
+        if (renderer == null)
             renderer = createDefaultRenderer();
         return renderer;
     }
 
-    protected abstract ComponentRenderer<Component> createDefaultRenderer();
+    protected abstract ComponentRenderer<?> createDefaultRenderer();
 }

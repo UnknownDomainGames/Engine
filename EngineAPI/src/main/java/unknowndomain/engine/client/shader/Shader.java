@@ -49,7 +49,7 @@ public class Shader {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(2);
             value.get(buffer);
-            GL20.glUniformMatrix2fv(location, false, buffer);
+            GL20.glUniform2fv(location, buffer);
         }
     }
 
@@ -57,7 +57,7 @@ public class Shader {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(3);
             value.get(buffer);
-            GL20.glUniformMatrix3fv(location, false, buffer);
+            GL20.glUniform3fv(location, buffer);
         }
     }
 
@@ -65,7 +65,7 @@ public class Shader {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(4);
             value.get(buffer);
-            GL20.glUniformMatrix4fv(location, false, buffer);
+            GL20.glUniform4fv(location, buffer);
         }
     }
 

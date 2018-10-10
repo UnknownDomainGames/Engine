@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.gui.renderer;
 
 import unknowndomain.engine.client.gui.Component;
+import unknowndomain.engine.client.gui.Graphics;
 
 public abstract class ComponentRenderer<C extends Component> {
 
@@ -14,5 +15,7 @@ public abstract class ComponentRenderer<C extends Component> {
         return component;
     }
 
-    public abstract void render();
+    abstract public void render(Graphics graphics);
+
+    public void dispose() {}
 }

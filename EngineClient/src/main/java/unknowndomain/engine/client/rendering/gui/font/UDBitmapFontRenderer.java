@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.rendering.gui.font;
 
+import org.joml.Vector2f;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
@@ -61,5 +62,10 @@ public class UDBitmapFontRenderer implements FontRenderer {
             tessellator.draw();
             startX += info.getWidth();
         }
+    }
+
+    @Override
+    public Vector2f sizeText(CharSequence text) {
+        return null;
     }
 }

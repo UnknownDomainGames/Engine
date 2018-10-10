@@ -13,14 +13,9 @@ public abstract class Container extends Component {
         return children;
     }
 
-    public List<Component> getUnmodifiableChildren() {
+    public final List<Component> getUnmodifiableChildren() {
         return unmodifiableChildren;
     }
 
-    public void requestLayout() {
-    }
-
-    public void layoutChildren() {
-
-    }
+    abstract public void layoutChildren();
 }
