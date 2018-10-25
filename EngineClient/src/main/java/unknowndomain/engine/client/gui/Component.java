@@ -7,30 +7,33 @@ public abstract class Component {
     public static final int USE_PREF_VALUE = -1;
 
     private Scene screen;
-    private Container parent;
 
-    private int x, y;
-    private int width, height;
+    Container parent; //FIXME:
+
+    int x, y;
+    int width, height;
+
+    private boolean visible = true;
 
     private ComponentRenderer<?> renderer;
 
-    public Container getParent() {
+    public final Container getParent() {
         return parent;
     }
 
-    public int getX() {
+    public final int getX() {
         return x;
     }
 
-    public int getY() {
+    public final int getY() {
         return y;
     }
 
-    public int getWidth() {
+    public final int getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public final int getHeight() {
         return height;
     }
 
@@ -52,6 +55,14 @@ public abstract class Component {
 
     public int maxHeight() {
         return Integer.MAX_VALUE;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     public boolean contains(int x, int y) {

@@ -5,8 +5,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.UnknownDomain;
+import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.Graphics;
 import unknowndomain.engine.client.gui.Scene;
+import unknowndomain.engine.client.gui.component.Label;
+import unknowndomain.engine.client.gui.layout.Panel;
 import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFFontRenderer;
 import unknowndomain.engine.client.shader.RendererShaderProgram;
@@ -17,6 +20,7 @@ import unknowndomain.engine.world.World;
 
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,7 +29,7 @@ import java.util.List;
 public class RendererGui extends RendererShaderProgram {
 
     private Scene guiScene;
-    private List<Scene> hudScene;
+    private final List<Scene> hudScene = new LinkedList<>();
 
     private FontRenderer fontRenderer;
     private Graphics graphics;
@@ -34,6 +38,11 @@ public class RendererGui extends RendererShaderProgram {
         this.fontRenderer = new TTFFontRenderer(fontRenderer);
         this.graphics = new GraphicsImpl(this.fontRenderer);
         createShader(vertexShader, fragShader);
+
+        Panel panel = new Panel();
+        panel.getChildren().add(new Label("Hello GUI"));
+        Scene scene = new Scene(panel);
+        hudScene.add(scene);
     }
 
     protected void createShader(Shader vertexShader, Shader fragShader) {
@@ -81,7 +90,7 @@ public class RendererGui extends RendererShaderProgram {
     public void render(Context context) {
         useProgram();
 
-        if(context.getWindow().isResized()) {
+        if (context.getWindow().isResized()) {
             int width = context.getWindow().getWidth(), height = context.getWindow().getHeight();
             setUniform("projection", new Matrix4f().setOrtho(0, width, height, 0, 1, -1));
             setUniform("windowSize", new Vector2f(width, height));
@@ -90,9 +99,25 @@ public class RendererGui extends RendererShaderProgram {
         //setUniform("projection", new Matrix4f().setOrtho(0, context.getProjection().getWidth(), context.getProjection().getHeight(), 0, 1, -1));
         setUniform("usingAlpha", true);
 
-        debug(context);
+        // render scene
+        if (guiScene != null)
+            renderScene(guiScene);
+
+        for (Scene scene : hudScene) {
+            renderScene(scene);
+        }
+
+        //debug(context);
 
         unuseProgram();
+    }
+
+    private void renderScene(Scene scene) {
+        Container root = scene.getRoot();
+        if (!root.isVisible())
+            return;
+
+        root.getRenderer().render(graphics);
     }
 
     private long lastFPS = getTime();

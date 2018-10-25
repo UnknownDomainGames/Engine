@@ -6,6 +6,8 @@ version '1.0.0'
 mainClassName = "unknowndomain.engine.client.UnknownDomain"
 
 dependencies {
+    compile fileTree("libs/")
+
     compile project(':EngineAPI')
     compile project(':EngineServer')
 

@@ -6,6 +6,7 @@ import unknowndomain.engine.client.gui.renderer.LabelRenderer;
 
 public class Label extends Component {
 
+    private int color = 0xffffffff;
     private String text;
 
     public Label(String content){
@@ -13,12 +14,20 @@ public class Label extends Component {
     }
 
     public void setText(String text){
-        //TODO: event
+        //TODO: fire event
         this.text = text;
     }
 
     public String getText(){
         return text;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
     @Override

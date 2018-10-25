@@ -5,9 +5,9 @@ import unknowndomain.engine.client.gui.renderer.RegionRenderer;
 
 public class Region extends Container {
 
-    private int minWidth, minHeight;
+    private int minWidth = 0, minHeight = 0;
     private int prefWidth, prefHeight;
-    private int maxWidth, maxHeight;
+    private int maxWidth = Integer.MAX_VALUE, maxHeight = Integer.MAX_VALUE;
 
     public int getMinWidth() {
         return minWidth;
@@ -58,13 +58,33 @@ public class Region extends Container {
     }
 
     @Override
+    public int minWidth() {
+        return minWidth;
+    }
+
+    @Override
+    public int minHeight() {
+        return minHeight;
+    }
+
+    @Override
     public int prefWidth() {
-        return 0;
+        return prefWidth;
     }
 
     @Override
     public int prefHeight() {
-        return 0;
+        return prefHeight;
+    }
+
+    @Override
+    public int maxWidth() {
+        return maxWidth;
+    }
+
+    @Override
+    public int maxHeight() {
+        return maxHeight;
     }
 
     @Override
@@ -74,6 +94,8 @@ public class Region extends Container {
 
     @Override
     public void layoutChildren() {
-
+        for (Component component : getChildren()) {
+            layoutInArea(component, component.getX(), component.getY(), component.prefWidth(), component.prefHeight());
+        }
     }
 }

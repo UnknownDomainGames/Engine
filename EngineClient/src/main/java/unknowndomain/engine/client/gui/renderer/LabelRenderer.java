@@ -11,6 +11,7 @@ public class LabelRenderer extends ComponentRenderer<Label> {
 
     @Override
     public void render(Graphics graphics) {
+        graphics.setColor(getComponent().getColor());
         graphics.drawText(getComponent().getText(), 0, 0);
     }
 }

@@ -11,7 +11,6 @@ import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
-import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.util.BufferBuilder;
 
 import java.nio.ByteBuffer;

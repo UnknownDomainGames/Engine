@@ -37,7 +37,7 @@ public class EngineClient implements Engine {
         window = new DefaultGameWindow(this, width, height, UnknownDomain.getName());
     }
 
-    void start() {
+    void init() {
         window.init();
 
         bus = new AsmEventBus();
