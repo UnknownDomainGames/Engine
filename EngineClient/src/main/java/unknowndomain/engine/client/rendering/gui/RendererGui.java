@@ -71,6 +71,8 @@ public class RendererGui extends RendererShaderProgram {
     protected void useProgram() {
         super.useProgram();
 
+//        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+//        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
 //        GL11.glEnable(GL11.GL_TEXTURE_2D);
 //        GL11.glEnable(GL11.GL_DEPTH_TEST);
 //        GL11.glEnable(GL11.GL_BLEND);
@@ -81,6 +83,7 @@ public class RendererGui extends RendererShaderProgram {
     protected void unuseProgram() {
         super.useProgram();
 
+//        GL11.glDisable(GL11.GL_LINE_SMOOTH);
 //        GL11.glDisable(GL11.GL_TEXTURE_2D);
 //        GL11.glDisable(GL11.GL_DEPTH_TEST);
 //        GL11.glDisable(GL11.GL_BLEND);

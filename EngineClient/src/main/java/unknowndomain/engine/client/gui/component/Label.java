@@ -3,10 +3,11 @@ package unknowndomain.engine.client.gui.component;
 import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.gui.renderer.ComponentRenderer;
 import unknowndomain.engine.client.gui.renderer.LabelRenderer;
+import unknowndomain.engine.client.util.Color;
 
 public class Label extends Component {
 
-    private int color = 0xffffffff;
+    private Color color = Color.WRITE;
     private String text;
 
     public Label(String content){
@@ -22,11 +23,11 @@ public class Label extends Component {
         return text;
     }
 
-    public int getColor() {
+    public Color getColor() {
         return color;
     }
 
-    public void setColor(int color) {
+    public void setColor(Color color) {
         this.color = color;
     }
 

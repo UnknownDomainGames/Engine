@@ -1,24 +1,31 @@
 package unknowndomain.engine.client.gui;
 
 import unknowndomain.engine.client.texture.GLTexture;
+import unknowndomain.engine.client.util.Color;
 
 public interface Graphics {
 
-    int getColor();
+    Color getColor();
 
-    void setColor(int color);
+    void setColor(Color color);
 
-    void drawLine(int x1, int y1, int x2, int y2);
+    void drawLine(float x1, float y1, float x2, float y2);
 
-    void drawRect(int x, int y, int width, int height);
+    void drawRect(float x, float y, float width, float height);
 
-    void fillRect(int x, int y, int width, int height);
+    void fillRect(float x, float y, float width, float height);
 
-    void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight);
+    void drawRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight);
 
-    void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight);
+    void fillRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight);
 
-    void drawText(CharSequence text, int x, int y);
+    void drawQuadraticBelzierCurve(float startX, float startY, float endX, float endY, float px, float py);
 
-    void drawTexture(GLTexture texture, int x, int y, int width, int height);
+    void drawBelzierCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2);
+
+    void drawEllipticalArc(float startX, float startY, float endX, float endY, float rx, float ry, float xRotation, boolean largeArc, boolean sweep);
+
+    void drawText(CharSequence text, float x, float y);
+
+    void drawTexture(GLTexture texture, float x, float y, float width, float height, float u, float v);
 }

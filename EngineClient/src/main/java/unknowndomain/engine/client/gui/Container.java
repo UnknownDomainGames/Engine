@@ -10,7 +10,7 @@ import java.util.List;
 public abstract class Container extends Component {
 
     private final ObservableList<Component> children = ObservableCollections.observableList(new LinkedList<>());
-    private final List<Component> unmodifiableChildren = Collections.unmodifiableList(children);
+    private final ObservableList<Component> unmodifiableChildren = ObservableCollections.unmodifiableObservableList(children);
 
     public Container() {
         children.addChangeListener(change -> {
@@ -25,7 +25,7 @@ public abstract class Container extends Component {
         return children;
     }
 
-    public final List<Component> getUnmodifiableChildren() {
+    public final ObservableList<Component> getUnmodifiableChildren() {
         return unmodifiableChildren;
     }
 

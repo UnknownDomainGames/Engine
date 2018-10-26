@@ -208,6 +208,13 @@ public class BufferBuilder {
         return this;
     }
 
+    public BufferBuilder color(Color color) {
+        if (useColor) {
+            color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+        }
+        return this;
+    }
+
     public BufferBuilder color(int color) {
         if (useColor) {
            color(((color >> 16) & 255) / 255f, ((color >> 8) & 255) / 255f, (color & 255) / 255f, ((color >> 24) & 255) / 255f);
@@ -222,7 +229,6 @@ public class BufferBuilder {
             byteBuffer.putFloat(i + 4, g);
             byteBuffer.putFloat(i + 8, b);
             byteBuffer.putFloat(i + 12, a);
-
         }
         return this;
     }
