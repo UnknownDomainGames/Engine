@@ -79,11 +79,11 @@ public class Color {
     }
 
     public int toRGB() {
-        return getRedAsInt() << 16 | getGreenAsInt() << 8 | getBlueAsInt();
+        return (getRedAsInt() << 16) | (getGreenAsInt() << 8) | getBlueAsInt();
     }
 
     public int toRGBA() {
-        return getAlphaAsInt() << 24 | toRGB();
+        return (getAlphaAsInt() << 24) | toRGB();
     }
 
     @Override

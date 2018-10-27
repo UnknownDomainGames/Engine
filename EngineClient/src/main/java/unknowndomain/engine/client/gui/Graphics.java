@@ -23,7 +23,7 @@ public interface Graphics {
 
     void drawBelzierCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2);
 
-    void drawEllipticalArc(float startX, float startY, float endX, float endY, float rx, float ry, float xRotation, boolean largeArc, boolean sweep);
+    void drawEllipticalArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag);
 
     void drawText(CharSequence text, float x, float y);
 
