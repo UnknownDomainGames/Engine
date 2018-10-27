@@ -6,10 +6,13 @@ version '1.0.0'
 mainClassName = "unknowndomain.engine.client.UnknownDomain"
 
 dependencies {
-    compile fileTree("libs/")
+    //compile fileTree("libs/")
 
     compile project(':EngineAPI')
     compile project(':EngineServer')
 
     compile "org.l33tlabs.twl:pngdecoder:1.0"
+
+    compile 'com.github.Mouse0w0.Lib4j:lib4j-observable:1.0.1'
+    compile 'com.github.Mouse0w0.Lib4j:lib4j-event:1.0.1'
 }
