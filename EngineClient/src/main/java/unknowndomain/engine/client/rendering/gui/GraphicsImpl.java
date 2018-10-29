@@ -58,15 +58,15 @@ public class GraphicsImpl implements Graphics {
     public void drawRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight) {
         float x2 = x + width, y2 = y + height;
         BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_LINE_STRIP, true, true, false, false);
-        line(buffer, x + arcWidth, y, x2 - arcWidth, y);
-        quadraticBelzierCurve(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
-        line(buffer, x2, y + arcHeight, x2, y2 - arcHeight);
-        quadraticBelzierCurve(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
-        line(buffer, x2 - arcWidth, y2, x + arcWidth, y2);
-        quadraticBelzierCurve(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
-        line(buffer, x, y2 - arcHeight, x, y + arcHeight);
-        quadraticBelzierCurve(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
+        buffer.begin(GL_LINE_LOOP, true, true, false, false);
+        point(buffer,x2 - arcWidth, y);
+        quadraticCurveTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
+        point(buffer, x2, y2 - arcHeight);
+        quadraticCurveTo(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
+        point(buffer, x + arcWidth, y2);
+        quadraticCurveTo(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
+        point(buffer, x, y + arcHeight);
+        quadraticCurveTo(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
         tessellator.draw();
     }
 
@@ -75,14 +75,14 @@ public class GraphicsImpl implements Graphics {
         float x2 = x + width, y2 = y + height;
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_POLYGON, true, true, false, false);
-        line(buffer, x + arcWidth, y, x2 - arcWidth, y);
-        quadraticBelzierCurve(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
-        line(buffer, x2, y + arcHeight, x2, y2 - arcHeight);
-        quadraticBelzierCurve(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
-        line(buffer, x2 - arcWidth, y2, x + arcWidth, y2);
-        quadraticBelzierCurve(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
-        line(buffer, x, y2 - arcHeight, x, y + arcHeight);
-        quadraticBelzierCurve(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
+        point(buffer,x2 - arcWidth, y);
+        quadraticCurveTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
+        point(buffer, x2, y2 - arcHeight);
+        quadraticCurveTo(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
+        point(buffer, x + arcWidth, y2);
+        quadraticCurveTo(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
+        point(buffer, x, y + arcHeight);
+        quadraticCurveTo(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
         tessellator.draw();
     }
 
@@ -90,7 +90,8 @@ public class GraphicsImpl implements Graphics {
     public void drawQuadraticBelzierCurve(float startX, float startY, float endX, float endY, float px, float py) {
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_LINE_STRIP, true, true, false, false);
-        quadraticBelzierCurve(buffer, startX, startY, endX, endY, px, py);
+        point(buffer, startX, startY);
+        quadraticCurveTo(buffer, startX, startY, endX, endY, px, py);
         tessellator.draw();
     }
 
@@ -98,7 +99,8 @@ public class GraphicsImpl implements Graphics {
     public void drawBelzierCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_LINE_STRIP, true, true, false, false);
-        belzierCurve(buffer, startX, startY, endX, endY, px1, py1, px2, py2);
+        point(buffer, startX, startY);
+        curveTo(buffer, startX, startY, endX, endY, px1, py1, px2, py2);
         tessellator.draw();
     }
 
@@ -106,7 +108,8 @@ public class GraphicsImpl implements Graphics {
     public void drawEllipticalArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_LINE_STRIP, true, true, false, false);
-        ellipticalArc(buffer, startX, startY, endX, endY, radiusX, radiusY, xAxisRotation, largeArcFlag, sweepFlag);
+        point(buffer, startX, startY);
+        arcTo(buffer, startX, startY, endX, endY, radiusX, radiusY, xAxisRotation, largeArcFlag, sweepFlag);
         tessellator.draw();
     }
 
@@ -124,42 +127,44 @@ public class GraphicsImpl implements Graphics {
 
     }
 
+    private void point(BufferBuilder buffer, float x, float y) {
+        buffer.pos(x, y, 0).color(color).endVertex();
+    }
+
     private void line(BufferBuilder buffer, float x1, float y1, float x2, float y2) {
-        buffer.pos(x1, y1, 0).color(color).endVertex();
-        buffer.pos(x2, y2, 0).color(color).endVertex();
+        point(buffer, x1, y1);
+        point(buffer, x2, y2);
     }
 
     private void rect(BufferBuilder buffer, float x, float y, float width, float height) {
         float x2 = x + width, y2 = y + height;
-        buffer.pos(x, y, 0).color(color).endVertex();
-        buffer.pos(x2, y, 0).color(color).endVertex();
-        buffer.pos(x2, y2, 0).color(color).endVertex();
-        buffer.pos(x, y2, 0).color(color).endVertex();
+        point(buffer, x, y);
+        point(buffer, x2, y);
+        point(buffer, x2, y2);
+        point(buffer, x, y2);
     }
 
-    private void quadraticBelzierCurve(BufferBuilder buffer, float startX, float startY, float endX, float endY, float px, float py) {
+    private void quadraticCurveTo(BufferBuilder buffer, float startX, float startY, float endX, float endY, float px, float py) {
         float step = 12f / (Math.abs(startX - px) + Math.abs(px - endX) + Math.abs(startY - py) + Math.abs(py - endY)); //TODO: optimization
-        buffer.pos(startX, startY, 0).color(color).endVertex();
         for (float f = step; f < 1f; f += step) {
             float f2 = 1 - f;
-            buffer.pos(startX * f2 * f2 + px * f2 * f * 2 + endX * f * f, startY * f2 * f2 + py * f2 * f * 2 + endY * f * f, 0).color(color).endVertex();
+            point(buffer, startX * f2 * f2 + px * f2 * f * 2 + endX * f * f, startY * f2 * f2 + py * f2 * f * 2 + endY * f * f);
         }
-        buffer.pos(endX, endY, 0).color(color).endVertex();
+        point(buffer, endX, endY);
     }
 
-    private void belzierCurve(BufferBuilder buffer, float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
+    private void curveTo(BufferBuilder buffer, float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
         float step = 36f / (Math.abs(startX - px1) + Math.abs(px1 - px2) + Math.abs(px2 - endX) + Math.abs(startY - py1) + Math.abs(py1 - py2) + Math.abs(py2 - endY)); //TODO: optimization
-        buffer.pos(startX, startY, 0).color(color).endVertex();
         for (float f = step; f < 1f; f += step) {
             float f2 = 1 - f;
-            buffer.pos(startX * f2 * f2 * f2 + px1 * f2 * f2 * f * 3 + px2 * f2 * f * f * 3 + endX * f * f * f,
-                    startY * f2 * f2 * f2 + py1 * f2 * f2 * f * 3 + py2 * f2 * f * f * 3 + endY * f * f * f, 0).color(color).endVertex();
+            point(buffer, startX * f2 * f2 * f2 + px1 * f2 * f2 * f * 3 + px2 * f2 * f * f * 3 + endX * f * f * f,
+                    startY * f2 * f2 * f2 + py1 * f2 * f2 * f * 3 + py2 * f2 * f * f * 3 + endY * f * f * f);
         }
-        buffer.pos(endX, endY, 0).color(color).endVertex();
+        point(buffer, endX, endY);
     }
 
     // https://stackoverflow.com/questions/43946153/approximating-svg-elliptical-arc-in-canvas-with-javascript
-    private void ellipticalArc(BufferBuilder buffer, float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
+    private void arcTo(BufferBuilder buffer, float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
         float phi = (float) Math.toRadians(xAxisRotation);
         float rX = Math.abs(radiusX);
         float rY = Math.abs(radiusY);
@@ -220,7 +225,7 @@ public class GraphicsImpl implements Graphics {
 
         float alpha = (float) (Math.sin(n2 - n1) * (Math.sqrt(4 + 3 * Math.pow(Math.tan((n2 - n1) / 2), 2)) - 1) / 3);
 
-        belzierCurve(buffer, startX, startY, endX, endY, en1[0] + alpha * edn1[0], en1[1] + alpha * edn1[1], en2[0] - alpha * edn2[0], en2[1] - alpha * edn2[1]);
+        curveTo(buffer, startX, startY, endX, endY, en1[0] + alpha * edn1[0], en1[1] + alpha * edn1[1], en2[0] - alpha * edn2[0], en2[1] - alpha * edn2[1]);
     }
 
     private float[] E(float n, float cx, float cy, float rx, float ry, float phi) {
