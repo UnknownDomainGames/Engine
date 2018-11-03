@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.keybinding;
+package unknowndomain.engine.client.input.keybinding;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;

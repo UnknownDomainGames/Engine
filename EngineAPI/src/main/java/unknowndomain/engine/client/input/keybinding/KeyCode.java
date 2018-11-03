@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.keybinding;
+package unknowndomain.engine.client.input.keybinding;
 
 import java.util.HashMap;
 import java.util.Map;

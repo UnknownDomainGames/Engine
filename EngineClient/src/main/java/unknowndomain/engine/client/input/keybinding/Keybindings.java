@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.keybinding;
+package unknowndomain.engine.client.input.keybinding;
 
 
 public enum Keybindings {
