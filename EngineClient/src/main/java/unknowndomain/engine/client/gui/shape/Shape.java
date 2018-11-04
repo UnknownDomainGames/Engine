@@ -1,4 +1,4 @@
 package unknowndomain.engine.client.gui.shape;
 
-public class Shape {
+public abstract class Shape {
 }
