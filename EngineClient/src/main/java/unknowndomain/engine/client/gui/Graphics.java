@@ -19,11 +19,43 @@ public interface Graphics {
 
     void fillRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight);
 
-    void drawQuadraticBelzierCurve(float startX, float startY, float endX, float endY, float px, float py);
+    /**
+     * Draw a quadratic Belzier curve
+     * @param startX
+     * @param startY
+     * @param endX
+     * @param endY
+     * @param px
+     * @param py
+     */
+    void drawQuad(float startX, float startY, float endX, float endY, float px, float py);
 
-    void drawBelzierCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2);
+    /**
+     * Draw a Belazier curve
+     * @param startX
+     * @param startY
+     * @param endX
+     * @param endY
+     * @param px1
+     * @param py1
+     * @param px2
+     * @param py2
+     */
+    void drawCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2);
 
-    void drawEllipticalArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag);
+    /**
+     * Draw a elliptical arc
+     * @param startX
+     * @param startY
+     * @param endX
+     * @param endY
+     * @param radiusX
+     * @param radiusY
+     * @param xAxisRotation
+     * @param largeArcFlag
+     * @param sweepFlag
+     */
+    void drawArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag);
 
     void drawText(CharSequence text, float x, float y);
 

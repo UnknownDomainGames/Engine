@@ -59,14 +59,14 @@ public class GraphicsImpl implements Graphics {
         float x2 = x + width, y2 = y + height;
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_LINE_LOOP, true, true, false, false);
-        point(buffer,x2 - arcWidth, y);
-        quadraticCurveTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
-        point(buffer, x2, y2 - arcHeight);
-        quadraticCurveTo(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
-        point(buffer, x + arcWidth, y2);
-        quadraticCurveTo(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
-        point(buffer, x, y + arcHeight);
-        quadraticCurveTo(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
+        pointTo(buffer,x2 - arcWidth, y);
+        quadTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
+        pointTo(buffer, x2, y2 - arcHeight);
+        quadTo(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
+        pointTo(buffer, x + arcWidth, y2);
+        quadTo(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
+        pointTo(buffer, x, y + arcHeight);
+        quadTo(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
         tessellator.draw();
     }
 
@@ -75,40 +75,40 @@ public class GraphicsImpl implements Graphics {
         float x2 = x + width, y2 = y + height;
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_POLYGON, true, true, false, false);
-        point(buffer,x2 - arcWidth, y);
-        quadraticCurveTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
-        point(buffer, x2, y2 - arcHeight);
-        quadraticCurveTo(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
-        point(buffer, x + arcWidth, y2);
-        quadraticCurveTo(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
-        point(buffer, x, y + arcHeight);
-        quadraticCurveTo(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
+        pointTo(buffer,x2 - arcWidth, y);
+        quadTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
+        pointTo(buffer, x2, y2 - arcHeight);
+        quadTo(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
+        pointTo(buffer, x + arcWidth, y2);
+        quadTo(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
+        pointTo(buffer, x, y + arcHeight);
+        quadTo(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
         tessellator.draw();
     }
 
     @Override
-    public void drawQuadraticBelzierCurve(float startX, float startY, float endX, float endY, float px, float py) {
+    public void drawQuad(float startX, float startY, float endX, float endY, float px, float py) {
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_LINE_STRIP, true, true, false, false);
-        point(buffer, startX, startY);
-        quadraticCurveTo(buffer, startX, startY, endX, endY, px, py);
+        pointTo(buffer, startX, startY);
+        quadTo(buffer, startX, startY, endX, endY, px, py);
         tessellator.draw();
     }
 
     @Override
-    public void drawBelzierCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
+    public void drawCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_LINE_STRIP, true, true, false, false);
-        point(buffer, startX, startY);
+        pointTo(buffer, startX, startY);
         curveTo(buffer, startX, startY, endX, endY, px1, py1, px2, py2);
         tessellator.draw();
     }
 
     @Override
-    public void drawEllipticalArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
+    public void drawArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_LINE_STRIP, true, true, false, false);
-        point(buffer, startX, startY);
+        pointTo(buffer, startX, startY);
         arcTo(buffer, startX, startY, endX, endY, radiusX, radiusY, xAxisRotation, largeArcFlag, sweepFlag);
         tessellator.draw();
     }
@@ -127,40 +127,40 @@ public class GraphicsImpl implements Graphics {
 
     }
 
-    private void point(BufferBuilder buffer, float x, float y) {
+    private void pointTo(BufferBuilder buffer, float x, float y) {
         buffer.pos(x, y, 0).color(color).endVertex();
     }
 
     private void line(BufferBuilder buffer, float x1, float y1, float x2, float y2) {
-        point(buffer, x1, y1);
-        point(buffer, x2, y2);
+        pointTo(buffer, x1, y1);
+        pointTo(buffer, x2, y2);
     }
 
     private void rect(BufferBuilder buffer, float x, float y, float width, float height) {
         float x2 = x + width, y2 = y + height;
-        point(buffer, x, y);
-        point(buffer, x2, y);
-        point(buffer, x2, y2);
-        point(buffer, x, y2);
+        pointTo(buffer, x, y);
+        pointTo(buffer, x2, y);
+        pointTo(buffer, x2, y2);
+        pointTo(buffer, x, y2);
     }
 
-    private void quadraticCurveTo(BufferBuilder buffer, float startX, float startY, float endX, float endY, float px, float py) {
+    private void quadTo(BufferBuilder buffer, float startX, float startY, float endX, float endY, float px, float py) {
         float step = 12f / (Math.abs(startX - px) + Math.abs(px - endX) + Math.abs(startY - py) + Math.abs(py - endY)); //TODO: optimization
         for (float f = step; f < 1f; f += step) {
             float f2 = 1 - f;
-            point(buffer, startX * f2 * f2 + px * f2 * f * 2 + endX * f * f, startY * f2 * f2 + py * f2 * f * 2 + endY * f * f);
+            pointTo(buffer, startX * f2 * f2 + px * f2 * f * 2 + endX * f * f, startY * f2 * f2 + py * f2 * f * 2 + endY * f * f);
         }
-        point(buffer, endX, endY);
+        pointTo(buffer, endX, endY);
     }
 
     private void curveTo(BufferBuilder buffer, float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
         float step = 36f / (Math.abs(startX - px1) + Math.abs(px1 - px2) + Math.abs(px2 - endX) + Math.abs(startY - py1) + Math.abs(py1 - py2) + Math.abs(py2 - endY)); //TODO: optimization
         for (float f = step; f < 1f; f += step) {
             float f2 = 1 - f;
-            point(buffer, startX * f2 * f2 * f2 + px1 * f2 * f2 * f * 3 + px2 * f2 * f * f * 3 + endX * f * f * f,
+            pointTo(buffer, startX * f2 * f2 * f2 + px1 * f2 * f2 * f * 3 + px2 * f2 * f * f * 3 + endX * f * f * f,
                     startY * f2 * f2 * f2 + py1 * f2 * f2 * f * 3 + py2 * f2 * f * f * 3 + endY * f * f * f);
         }
-        point(buffer, endX, endY);
+        pointTo(buffer, endX, endY);
     }
 
     // https://stackoverflow.com/questions/43946153/approximating-svg-elliptical-arc-in-canvas-with-javascript
