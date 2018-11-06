@@ -14,6 +14,7 @@ import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.util.BufferBuilder;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.memUTF16;
 
 public class TTFFontRenderer implements FontRenderer {
     private ByteBuffer ttfBuf;
@@ -62,6 +64,12 @@ public class TTFFontRenderer implements FontRenderer {
             contentScaleX = p1.get(0);
             contentScaleY = p2.get(0);
         }
+//        for (int i = 0; i <= Short.MAX_VALUE; i++) {
+//            ByteBuffer value = stbtt_GetFontNameString(fontinfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, i);
+//            if (value != null) {
+//                System.out.println(i + " - " + memUTF16(value.order(ByteOrder.BIG_ENDIAN)));
+//            }
+//        }
     }
 
     private Pair<Integer, STBTTBakedChar.Buffer> getCharDataBuffer(int fontHeight) {
@@ -100,7 +108,7 @@ public class TTFFontRenderer implements FontRenderer {
     }
 
     public Vector2f sizeText(CharSequence text, int fontHeight) {
-        return new Vector2f(getStringWidth(fontinfo, text, fontHeight), - descent * stbtt_ScaleForPixelHeight(fontinfo, fontHeight));
+        return new Vector2f(getStringWidth(fontinfo, text, fontHeight), -descent * stbtt_ScaleForPixelHeight(fontinfo, fontHeight));
     }
 
     public void drawText(CharSequence text, float x, float y, int color, int fontHeight) {
