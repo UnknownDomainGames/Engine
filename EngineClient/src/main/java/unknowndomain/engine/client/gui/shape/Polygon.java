@@ -1,5 +1,7 @@
 package unknowndomain.engine.client.gui.shape;
 
+import java.util.Arrays;
+
 public class Polygon extends Shape {
 
     private final float[] points;
@@ -10,5 +12,9 @@ public class Polygon extends Shape {
 
     public float[] getPoints() {
         return points;
+    }
+
+    public static Polygon fromPath(Path path){
+        return new Polygon(Arrays.copyOf(path.getPoints(), path.getLength() * 2));
     }
 }
