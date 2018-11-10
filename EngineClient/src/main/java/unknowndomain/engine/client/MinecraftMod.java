@@ -14,6 +14,7 @@ import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.client.texture.GLTexture;
 import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.entity.TwoHands;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.registry.ClientRegistryEvent;
 import unknowndomain.engine.event.registry.GameReadyEvent;
@@ -108,7 +109,7 @@ public class MinecraftMod {
         Registry<Item> itemRegistry = context.getItemRegistry();
         Registry<Block> blockRegistry = context.getBlockRegistry();
         Item stone = itemRegistry.getValue("minecraft.item.stone_placer");
-        UnknownDomain.getGame().getPlayer().getMountingEntity().getBehavior(Entity.TwoHands.class).setMainHand(stone);
+        UnknownDomain.getGame().getPlayer().getMountingEntity().getBehavior(TwoHands.class).setMainHand(stone);
 //        UnknownDomain.getGame().getPlayer().getMountingEntity().getPosition().set(0, 2, 0);
         UnknownDomain.getGame().getWorld().setBlock(new BlockPos(1, 0, 0), blockRegistry.getValue(1));
     }

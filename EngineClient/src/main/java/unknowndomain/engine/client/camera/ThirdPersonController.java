@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.camera;
 
 import org.joml.Quaternionf;
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import unknowndomain.engine.client.display.Camera;
 
@@ -10,7 +11,7 @@ public class ThirdPersonController extends CameraController {
     }
 
     @Override
-    public void update(Vector3f position, Vector3f rotation) {
+    public void update(Vector3d position, Vector3f rotation) {
     }
 
     @Override

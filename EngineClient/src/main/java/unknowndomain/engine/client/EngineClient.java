@@ -1,7 +1,6 @@
 package unknowndomain.engine.client;
 
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.UUID;
 
 import com.google.common.collect.Lists;
@@ -9,14 +8,14 @@ import com.google.common.collect.Lists;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.client.display.DefaultGameWindow;
 import unknowndomain.engine.client.game.GameClientStandalone;
-import unknowndomain.engine.entity.Player;
+import unknowndomain.engine.player.Player;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.game.Game;
-import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.mod.ModRepositoryCollection;
 import unknowndomain.engine.mod.ModStore;
 import unknowndomain.engine.mod.ModStoreLocal;
+import unknowndomain.engine.player.Profile;
 
 public class EngineClient implements Engine {
 
@@ -30,7 +29,7 @@ public class EngineClient implements Engine {
 
     private ModStore store;
     private ModRepositoryCollection repository;
-    private Player.Profile playerProfile;
+    private Profile playerProfile;
     private GameClientStandalone game;
 
     EngineClient(int width, int height) {
@@ -43,7 +42,7 @@ public class EngineClient implements Engine {
         bus = new AsmEventBus();
         store = new ModStoreLocal(Paths.get("mods"));
         repository = new ModRepositoryCollection();
-        playerProfile = new Player.Profile(UUID.randomUUID(), 12);
+        playerProfile = new Profile(UUID.randomUUID(), 12);
     }
 
     @Override

@@ -3,26 +3,27 @@ package unknowndomain.engine.world;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.joml.AABBd;
-import org.joml.Vector2d;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
+import org.joml.*;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.entity.EntityImpl;
-import unknowndomain.engine.entity.Player;
+import unknowndomain.engine.entity.EntityBase;
+import unknowndomain.engine.entity.PlayerEntity;
+import unknowndomain.engine.entity.TwoHands;
+import unknowndomain.engine.player.Player;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.player.PlayerImpl;
+import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayCast;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -55,13 +56,12 @@ public class WorldCommon implements World, Runnable {
         entityList.add(entity);
     }
 
-    public Player playerJoin(Player.Profile data) {
-        EntityImpl entity = new EntityImpl(entityList.size(),
-                new Vector3f(0, 2, 0),
-                new Vector3f(0, 0, 1),
-                new Vector3f(),
-                data.getBoundingBox(), ImmutableMap.<String, Object>builder()
-                .put(Entity.TwoHands.class.getName(), new EntityImpl.TwoHandImpl()).build());
+    public Player playerJoin(Profile data) {
+        PlayerEntity entity = new PlayerEntity(entityList.size(), ImmutableMap.<String, Object>builder()
+                .put(TwoHands.class.getName(), new PlayerEntity.TwoHandImpl()).build());
+        entity.getPosition().set(0, 2, 0);
+        entity.getRotation().set(0, 0, 0);
+        entity.setBoundingBox(data.getBoundingBox());
         spawnEntity(entity);
         PlayerImpl player = new PlayerImpl(data, this, entity);
         players.add(player);
@@ -128,7 +128,7 @@ public class WorldCommon implements World, Runnable {
         physicsSystem.tick(this);
 
         for (Entity entity : this.getEntities()) {
-            Vector3f position = entity.getPosition();
+            Vector3d position = entity.getPosition();
             Vector3f motion = entity.getMotion();
             BlockPos oldPosition = BlockPos.of(position);
             position.add(motion);
@@ -191,7 +191,7 @@ public class WorldCommon implements World, Runnable {
                 Vector3f direction = new Vector3f(motion);
                 if (motion.x == 0 && motion.y == 0 && motion.z == 0)
                     continue;
-                Vector3f position = entity.getPosition();
+                Vector3d position = entity.getPosition();
                 AABBd box = entity.getBoundingBox();
 
                 BlockPos localPos = new BlockPos(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
@@ -201,7 +201,7 @@ public class WorldCommon implements World, Runnable {
                 // directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
                 // directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
 
-                AABBd entityBox = AABBs.translate(box, position.add(direction, new Vector3f()), new AABBd());
+                AABBd entityBox = AABBs.translate(box, position.add(direction, new Vector3d()), new AABBd());
                 List<BlockPos>[] around = AABBs.around(entityBox, motion);
                 for (List<BlockPos> ls : around) {
                     ls.add(localPos);

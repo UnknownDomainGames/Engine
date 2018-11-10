@@ -3,7 +3,7 @@ package unknowndomain.engine.item;
 import unknowndomain.engine.Prototype;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.entity.Player;
+import unknowndomain.engine.player.Player;
 import unknowndomain.engine.world.World;
 
 public interface ItemPrototype extends Prototype<Item, Entity> {

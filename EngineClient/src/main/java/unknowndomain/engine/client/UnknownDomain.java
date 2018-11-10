@@ -5,8 +5,8 @@ import unknowndomain.engine.client.game.GameClientStandalone;
 
 public class UnknownDomain {
 
-    private static final String NAME = "${project.name}";
-    private static final String VERSION = "${project.version}";
+    private static final String NAME = "UnknownDomain";
+    private static final String VERSION = "0.0.1";
 
     public static final int WIDTH = 854, HEIGHT = 480;
     private static EngineClient engine;

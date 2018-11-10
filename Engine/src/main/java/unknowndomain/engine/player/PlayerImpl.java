@@ -2,7 +2,6 @@ package unknowndomain.engine.player;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.entity.Player;
 import unknowndomain.engine.event.Cancellable;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
@@ -56,7 +55,7 @@ public class PlayerImpl implements Player {
     }
 
     @Override
-    public Player.Profile getProfile() {
+    public Profile getProfile() {
         return profile;
     }
 

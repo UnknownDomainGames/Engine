@@ -24,7 +24,8 @@ import unknowndomain.engine.client.resource.*;
 import unknowndomain.engine.client.shader.Shader;
 import unknowndomain.engine.client.shader.ShaderType;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.entity.Player;
+import unknowndomain.engine.entity.TwoHands;
+import unknowndomain.engine.player.Player;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.registry.ClientRegistryEvent;
@@ -36,6 +37,7 @@ import unknowndomain.engine.item.Item;
 import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.mod.ModRepository;
 import unknowndomain.engine.mod.ModStore;
+import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
 
@@ -159,7 +161,7 @@ public class GameClientStandalone extends GameServerFullAsync {
         spawnWorld(null);
 
         world = (WorldCommon) getWorld("default");
-        player = world.playerJoin(new Player.Profile(UUID.randomUUID(), 12));
+        player = world.playerJoin(new Profile(UUID.randomUUID(), 12));
         player.getMountingEntity().getPosition().set(1, 3, 1);
 
         bus.post(new GameReadyEvent(context));
@@ -240,7 +242,7 @@ public class GameClientStandalone extends GameServerFullAsync {
 
                     if (mountingEntity == null || world == null) return;
 
-                    Entity.TwoHands twoHands = mountingEntity.getBehavior(Entity.TwoHands.class);
+                    TwoHands twoHands = mountingEntity.getBehavior(TwoHands.class);
                     if (twoHands == null) return;
 
                     BlockPrototype.Hit hit = world.raycast(camera.getPosition(), camera.getFrontVector(), 5);
@@ -269,7 +271,7 @@ public class GameClientStandalone extends GameServerFullAsync {
 
                     if (mountingEntity == null || world == null) return;
 
-                    Entity.TwoHands twoHands = mountingEntity.getBehavior(Entity.TwoHands.class);
+                    TwoHands twoHands = mountingEntity.getBehavior(TwoHands.class);
                     if (twoHands == null) return;
 
                     BlockPrototype.Hit hit = world.raycast(camera.getPosition(), camera.getFrontVector(), 5);

@@ -2,7 +2,7 @@ package unknowndomain.engine.item;
 
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.entity.Player;
+import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Impl;
 import unknowndomain.engine.world.World;
 

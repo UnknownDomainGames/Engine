@@ -1,5 +1,6 @@
 package unknowndomain.engine.math;
 
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import unknowndomain.engine.world.Chunk;
 
@@ -71,6 +72,10 @@ public final class BlockPos {
 
     public static BlockPos of(Vector3f vector3f) {
         return new BlockPos((int) Math.floor(vector3f.x), (int) Math.floor(vector3f.y), (int) Math.floor(vector3f.z));
+    }
+
+    public static BlockPos of(Vector3d vector3d) {
+        return new BlockPos((int) Math.floor(vector3d.x), (int) Math.floor(vector3d.y), (int) Math.floor(vector3d.z));
     }
 
     public static boolean inSameChunk(BlockPos a, BlockPos b) {

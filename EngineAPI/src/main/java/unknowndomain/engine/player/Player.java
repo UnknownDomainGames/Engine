@@ -1,11 +1,10 @@
-package unknowndomain.engine.entity;
+package unknowndomain.engine.player;
 
-import org.joml.AABBd;
+import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 /**
  * The player in world instance, the lifecycle is binding to world
@@ -39,24 +38,4 @@ public interface Player {
      */
     @Nonnull
     Entity mountEntity(@Nullable Entity entity);
-
-    class Profile {
-        public final UUID uuid;
-        public final int trackingChunkRadius;
-        private AABBd boundingBox = new AABBd(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
-        private String mountingEntity;
-
-        public Profile(UUID uuid, int trackingChunkRadius) {
-            this.uuid = uuid;
-            this.trackingChunkRadius = trackingChunkRadius;
-        }
-
-        public AABBd getBoundingBox() {
-            return boundingBox;
-        }
-
-        public String getMountingEntity() {
-            return mountingEntity;
-        }
-    }
 }

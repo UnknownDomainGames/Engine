@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.camera;
 
+import org.joml.Vector3d;
 import org.joml.Vector3f;
 import unknowndomain.engine.client.display.Camera;
 
@@ -15,7 +16,7 @@ public abstract class CameraController {
         return camera;
     }
 
-    public abstract void update(Vector3f position, Vector3f rotation);
+    public abstract void update(Vector3d position, Vector3f rotation);
 
     public abstract void handleCursorMove(double x, double y);
 
