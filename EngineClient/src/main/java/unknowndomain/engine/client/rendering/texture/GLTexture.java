@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.texture;
+package unknowndomain.engine.client.rendering.texture;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 

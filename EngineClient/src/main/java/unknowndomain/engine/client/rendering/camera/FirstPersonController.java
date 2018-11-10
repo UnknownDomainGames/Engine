@@ -1,8 +1,8 @@
-package unknowndomain.engine.client.camera;
+package unknowndomain.engine.client.rendering.camera;
 
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import unknowndomain.engine.client.display.Camera;
+import unknowndomain.engine.client.rendering.display.Camera;
 
 public class FirstPersonController extends CameraController {
     private static final float SENSIBILITY = 0.05f;

@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.model;
+package unknowndomain.engine.client.rendering.model;
 
 import org.lwjgl.system.MemoryUtil;
 

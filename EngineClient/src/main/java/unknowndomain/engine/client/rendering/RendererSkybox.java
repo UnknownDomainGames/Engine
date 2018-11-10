@@ -3,14 +3,14 @@ package unknowndomain.engine.client.rendering;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import unknowndomain.engine.client.model.GLMesh;
-import unknowndomain.engine.client.model.Mesh;
+import unknowndomain.engine.client.rendering.model.GLMesh;
+import unknowndomain.engine.client.rendering.model.Mesh;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
-import unknowndomain.engine.client.shader.RendererShaderProgram;
-import unknowndomain.engine.client.shader.Shader;
-import unknowndomain.engine.client.shader.ShaderType;
-import unknowndomain.engine.client.texture.GLTexture;
+import unknowndomain.engine.client.rendering.shader.RendererShaderProgram;
+import unknowndomain.engine.client.rendering.shader.Shader;
+import unknowndomain.engine.client.rendering.shader.ShaderType;
+import unknowndomain.engine.client.rendering.texture.GLTexture;
 
 import java.io.IOException;
 

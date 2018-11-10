@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.model;
+package unknowndomain.engine.client.rendering.model;
 
 public class Mesh {
     private float[] vertices;

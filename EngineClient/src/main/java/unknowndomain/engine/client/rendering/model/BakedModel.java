@@ -1,9 +1,9 @@
-package unknowndomain.engine.client.model;
+package unknowndomain.engine.client.rendering.model;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import unknowndomain.engine.client.texture.GLTexture;
+import unknowndomain.engine.client.rendering.texture.GLTexture;
 
 public class BakedModel {
     private GLMesh mesh;

@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.display;
+package unknowndomain.engine.client.rendering.display;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;

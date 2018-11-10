@@ -1,8 +1,8 @@
-package unknowndomain.engine.client.camera;
+package unknowndomain.engine.client.rendering.camera;
 
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import unknowndomain.engine.client.display.Camera;
+import unknowndomain.engine.client.rendering.display.Camera;
 
 public abstract class CameraController {
     protected Camera camera;

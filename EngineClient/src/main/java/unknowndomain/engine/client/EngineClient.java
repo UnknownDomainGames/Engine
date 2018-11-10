@@ -6,9 +6,8 @@ import java.util.UUID;
 import com.google.common.collect.Lists;
 
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.client.display.DefaultGameWindow;
+import unknowndomain.engine.client.rendering.display.DefaultGameWindow;
 import unknowndomain.engine.client.game.GameClientStandalone;
-import unknowndomain.engine.player.Player;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.game.Game;

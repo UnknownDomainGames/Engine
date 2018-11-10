@@ -5,14 +5,14 @@ import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockBuilder;
 import unknowndomain.engine.block.BlockPrototype;
-import unknowndomain.engine.client.model.GLMesh;
-import unknowndomain.engine.client.model.Mesh;
-import unknowndomain.engine.client.model.MinecraftModelFactory;
+import unknowndomain.engine.client.rendering.model.GLMesh;
+import unknowndomain.engine.client.rendering.model.Mesh;
+import unknowndomain.engine.client.rendering.model.MinecraftModelFactory;
 import unknowndomain.engine.client.rendering.RendererWorld;
 import unknowndomain.engine.client.resource.ResourcePath;
-import unknowndomain.engine.client.shader.Shader;
-import unknowndomain.engine.client.shader.ShaderType;
-import unknowndomain.engine.client.texture.GLTexture;
+import unknowndomain.engine.client.rendering.shader.Shader;
+import unknowndomain.engine.client.rendering.shader.ShaderType;
+import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.TwoHands;
 import unknowndomain.engine.event.Listener;
@@ -28,7 +28,6 @@ import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.world.World;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 

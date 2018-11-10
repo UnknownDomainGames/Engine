@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.rendering.gui;
 
 import org.joml.*;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.UnknownDomain;
@@ -12,8 +11,8 @@ import unknowndomain.engine.client.gui.component.Label;
 import unknowndomain.engine.client.gui.layout.Panel;
 import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFFontRenderer;
-import unknowndomain.engine.client.shader.RendererShaderProgram;
-import unknowndomain.engine.client.shader.Shader;
+import unknowndomain.engine.client.rendering.shader.RendererShaderProgram;
+import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.world.World;

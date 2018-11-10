@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.shader;
+package unknowndomain.engine.client.rendering.shader;
 
 import org.apache.commons.io.IOUtils;
 import org.joml.*;

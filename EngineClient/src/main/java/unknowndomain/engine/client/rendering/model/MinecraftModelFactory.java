@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.model;
+package unknowndomain.engine.client.rendering.model;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -9,8 +9,8 @@ import unknowndomain.engine.Engine;
 import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
-import unknowndomain.engine.client.texture.GLTexture;
-import unknowndomain.engine.client.texture.GLTextureMap;
+import unknowndomain.engine.client.rendering.texture.GLTexture;
+import unknowndomain.engine.client.rendering.texture.GLTextureMap;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

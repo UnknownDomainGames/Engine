@@ -1,9 +1,9 @@
-package unknowndomain.engine.client.camera;
+package unknowndomain.engine.client.rendering.camera;
 
 import org.joml.Quaternionf;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import unknowndomain.engine.client.display.Camera;
+import unknowndomain.engine.client.rendering.display.Camera;
 
 public class ThirdPersonController extends CameraController {
     public ThirdPersonController(Camera camera) {

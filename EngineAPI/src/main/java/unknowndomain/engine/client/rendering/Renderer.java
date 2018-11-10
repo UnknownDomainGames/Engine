@@ -2,9 +2,9 @@ package unknowndomain.engine.client.rendering;
 
 
 import unknowndomain.engine.GameContext;
-import unknowndomain.engine.client.display.Camera;
-import unknowndomain.engine.client.display.GameWindow;
-import unknowndomain.engine.client.display.Projection;
+import unknowndomain.engine.client.rendering.display.Camera;
+import unknowndomain.engine.client.rendering.display.GameWindow;
+import unknowndomain.engine.client.rendering.display.Projection;
 import unknowndomain.engine.client.resource.ResourceManager;
 
 import java.io.IOException;

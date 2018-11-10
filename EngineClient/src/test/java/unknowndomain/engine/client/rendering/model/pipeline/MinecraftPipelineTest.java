@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.model.pipeline;
+package unknowndomain.engine.client.rendering.model.pipeline;
 
 import org.junit.jupiter.api.Test;
 import unknowndomain.engine.client.resource.ResourceManagerImpl;

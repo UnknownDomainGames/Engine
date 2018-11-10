@@ -1,6 +1,6 @@
 package unknowndomain.engine.client.gui;
 
-import unknowndomain.engine.client.texture.GLTexture;
+import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.util.Color;
 
 public interface Graphics {
