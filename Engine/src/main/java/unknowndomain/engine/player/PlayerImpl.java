@@ -5,8 +5,8 @@ import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.event.Cancellable;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.world.Chunk;
 import unknowndomain.engine.world.World;
+import unknowndomain.engine.world.chunk.Chunk;
 
 public class PlayerImpl implements Player {
     private Profile profile;

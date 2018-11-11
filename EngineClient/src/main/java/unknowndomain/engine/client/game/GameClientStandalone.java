@@ -8,6 +8,11 @@ import unknowndomain.engine.action.ActionBuilderImpl;
 import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.ActionManagerImpl;
+import unknowndomain.engine.client.DefaultGameMode;
+import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
+import unknowndomain.engine.client.input.keybinding.Keybindings;
+import unknowndomain.engine.client.rendering.Renderer;
+import unknowndomain.engine.client.rendering.RendererContext;
 import unknowndomain.engine.client.rendering.camera.CameraController;
 import unknowndomain.engine.client.rendering.camera.CameraDefault;
 import unknowndomain.engine.client.rendering.camera.FirstPersonController;
@@ -15,17 +20,12 @@ import unknowndomain.engine.client.rendering.display.Camera;
 import unknowndomain.engine.client.rendering.display.DefaultGameWindow;
 import unknowndomain.engine.client.rendering.display.Projection;
 import unknowndomain.engine.client.rendering.display.ProjectionPerspective;
-import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
-import unknowndomain.engine.client.input.keybinding.Keybindings;
-import unknowndomain.engine.client.rendering.Renderer;
-import unknowndomain.engine.client.rendering.RendererContext;
 import unknowndomain.engine.client.rendering.gui.RendererGui;
-import unknowndomain.engine.client.resource.*;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
+import unknowndomain.engine.client.resource.*;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.TwoHands;
-import unknowndomain.engine.player.Player;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.registry.ClientRegistryEvent;
@@ -37,6 +37,7 @@ import unknowndomain.engine.item.Item;
 import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.mod.ModRepository;
 import unknowndomain.engine.mod.ModStore;
+import unknowndomain.engine.player.Player;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
@@ -68,6 +69,9 @@ public class GameClientStandalone extends GameServerFullAsync {
         super(option, repository, store, bus);
         this.window = window;
         this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, 60);
+
+        // TODO:
+        bus.register(new DefaultGameMode());
     }
 
 

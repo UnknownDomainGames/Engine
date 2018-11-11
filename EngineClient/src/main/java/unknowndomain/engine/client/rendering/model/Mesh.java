@@ -1,11 +1,11 @@
 package unknowndomain.engine.client.rendering.model;
 
 public class Mesh {
-    private float[] vertices;
-    private float[] uv;
-    private float[] normals;
-    private int[] indices;
-    private int mode;
+    private final float[] vertices;
+    private final float[] uv;
+    private final float[] normals;
+    private final int[] indices;
+    private final int mode;
 
     public Mesh(float[] vertices, float[] uv, float[] normals, int[] indices, int mode) {
         this.vertices = vertices;

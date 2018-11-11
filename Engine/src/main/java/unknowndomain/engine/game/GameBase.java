@@ -1,43 +1,24 @@
 package unknowndomain.engine.game;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang3.tuple.Pair;
-
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.GameContext;
-import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.entity.EntityType;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.registry.GameReadyEvent;
 import unknowndomain.engine.item.Item;
-import unknowndomain.engine.mod.InnerModContainer;
-import unknowndomain.engine.mod.ModContainer;
-import unknowndomain.engine.mod.ModDependencyEntry;
-import unknowndomain.engine.mod.ModIdentifier;
-import unknowndomain.engine.mod.ModLoader;
-import unknowndomain.engine.mod.ModLoaderWrapper;
-import unknowndomain.engine.mod.ModManager;
-import unknowndomain.engine.mod.ModMetadata;
-import unknowndomain.engine.mod.ModRepository;
-import unknowndomain.engine.mod.ModStore;
-import unknowndomain.engine.mod.SimpleModManager;
+import unknowndomain.engine.mod.*;
 import unknowndomain.engine.mod.java.JavaModLoader;
-import unknowndomain.engine.registry.FrozenRegistryManager;
-import unknowndomain.engine.registry.ImmutableRegistry;
-import unknowndomain.engine.registry.MutableRegistryManager;
-import unknowndomain.engine.registry.Registry;
-import unknowndomain.engine.registry.RegistryManager;
+import unknowndomain.engine.registry.*;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class GameBase implements Game {
     protected final Option option;
@@ -163,11 +144,6 @@ public abstract class GameBase implements Game {
     @Override
     public boolean isTerminated() {
         return false;
-    }
-
-    @Override
-    public RuntimeObject createObject(GameContext gameContext, Game context) {
-        return null;
     }
 
     @Nullable

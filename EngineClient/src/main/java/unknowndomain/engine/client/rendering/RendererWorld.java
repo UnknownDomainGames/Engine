@@ -126,7 +126,7 @@ public class RendererWorld extends RendererShaderProgram {
     public void handleBlockChange(BlockChangeEvent event) {
         Engine.getLogger().info("BLOCK CHANGE");
         BlockPos pos = event.pos;
-        ChunkPos cp = pos.toChunk();
+        ChunkPos cp = pos.toChunkPos();
         // RenderChunk chunk = loadChunk.get(cp.compact());
         RenderChunk chunk = loadChunk.get(cp);
         if (chunk == null) {

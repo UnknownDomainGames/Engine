@@ -1,6 +1,5 @@
-package unknowndomain.engine.world;
+package unknowndomain.engine.world.chunk;
 
-import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
@@ -9,12 +8,13 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.List;
 
-public interface Chunk extends RuntimeObject {
+public interface Chunk {
 
     int DEFAULT_X_SIZE = 16;
     int DEFAULT_Y_SIZE = 256;
     int DEFAULT_Z_SIZE = 16;
 
+    // FIXME:
     /**
      * Get block in a specific path
      *

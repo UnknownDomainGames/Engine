@@ -48,13 +48,13 @@ public class BlockRuntime extends Impl<Block> implements Block {
     }
 
     @Override
-    public boolean canPlace(World world, Entity entity, Block block) {
-        return shared.canPlace(world, entity, block);
+    public boolean canPlace(World world, Entity entity, BlockPos blockPos, Block block) {
+        return shared.canPlace(world,entity,blockPos,block);
     }
 
     @Override
-    public void onPlaced(World world, Entity entity, Block block) {
-        shared.onPlaced(world, entity, block);
+    public void onPlaced(World world, Entity entity, BlockPos blockPos, Block block) {
+        shared.onPlaced(world,entity,blockPos,block);
     }
 
     @Override
@@ -75,6 +75,16 @@ public class BlockRuntime extends Impl<Block> implements Block {
     @Override
     public void onTouched(Block block) {
         shared.onTouched(block);
+    }
+
+    @Override
+    public boolean canDestroy(World world, Entity entity, BlockPos blockPos, Block block) {
+        return shared.canDestroy(world, entity, blockPos, block);
+    }
+
+    @Override
+    public void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block) {
+        shared.onDestroyed(world, entity, blockPos, block);
     }
 
     @Override

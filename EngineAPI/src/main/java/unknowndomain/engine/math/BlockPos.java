@@ -2,7 +2,6 @@ package unknowndomain.engine.math;
 
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import unknowndomain.engine.world.Chunk;
 
 public final class BlockPos {
     public static final BlockPos ZERO = new BlockPos(0, 0, 0);
@@ -55,11 +54,11 @@ public final class BlockPos {
         return String.format("BlockPos(%d,%d,%d)", x, y, z);
     }
 
-    public ChunkPos toChunk() {
+    public ChunkPos toChunkPos() {
         return ChunkPos.fromBlockPos(this);
     }
 
-    public int sqDistanceBetween(BlockPos another) {
+    public int squareDistanceTo(BlockPos another) {
         int x = this.x - another.x;
         int y = this.y - another.y;
         int z = this.z - another.z;
@@ -85,10 +84,6 @@ public final class BlockPos {
 //    public BlockPos pack() {
 //        return new BlockPos(x & 16, y & 16, z & 16);
 //    }
-
-    public ChunkPos toChunk(Chunk chunk) {
-        return ChunkPos.fromBlockPos(this, chunk);
-    }
 
     public int pack() {
         return ((x & 0xF) << 8) | ((y & 0xF) << 4) | (z & 0xF);

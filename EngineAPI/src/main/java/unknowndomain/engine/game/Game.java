@@ -1,7 +1,6 @@
 package unknowndomain.engine.game;
 
 import unknowndomain.engine.GameContext;
-import unknowndomain.engine.Prototype;
 import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.mod.ModMetadata;
@@ -10,7 +9,6 @@ import unknowndomain.engine.world.World;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * The game shares the same set of mod and resources pack manifest.
@@ -29,7 +27,7 @@ import java.util.function.Supplier;
  * <p>
  * Each world should hold a separated thread
  */
-public interface Game extends RuntimeObject, Prototype<RuntimeObject, Game>, Runnable {
+public interface Game extends RuntimeObject, Runnable {
     GameContext getContext();
 
     World spawnWorld(World.Config config);

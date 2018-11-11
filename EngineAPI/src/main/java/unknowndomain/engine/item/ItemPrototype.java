@@ -1,12 +1,11 @@
 package unknowndomain.engine.item;
 
-import unknowndomain.engine.Prototype;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.world.World;
 
-public interface ItemPrototype extends Prototype<Item, Entity> {
+public interface ItemPrototype {
     UseBehavior DEFAULT_USE = (world, entity, item) -> {
     };
     UseBlockBehavior DEFAULT_USE_BLOCK = (world, entity, item, hit) -> {

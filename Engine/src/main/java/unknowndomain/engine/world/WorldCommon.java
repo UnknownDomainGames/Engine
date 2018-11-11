@@ -8,18 +8,18 @@ import unknowndomain.engine.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.entity.EntityBase;
 import unknowndomain.engine.entity.PlayerEntity;
 import unknowndomain.engine.entity.TwoHands;
-import unknowndomain.engine.player.Player;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.FixStepTicker;
+import unknowndomain.engine.player.Player;
 import unknowndomain.engine.player.PlayerImpl;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayCast;
+import unknowndomain.engine.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,20 +28,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 public class WorldCommon implements World, Runnable {
-    private GameContext context;
+    private final GameContext context;
 
-    private PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
+    private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
 
-    private Chunk.Store chunkStore;
-    private List<Player> players = new ArrayList<>();
-    private List<Entity> entityList = new ArrayList<>();
-    private List<Runnable> nextTick = new ArrayList<>();
+    private final Chunk.Store chunkStore;
+    private final List<Player> players = new ArrayList<>();
+    private final List<Entity> entityList = new ArrayList<>();
+    private final List<Runnable> nextTick = new ArrayList<>();
 
-    private FixStepTicker ticker;
-    private ExecutorService service;
+    private final FixStepTicker ticker;
+//    private ExecutorService service;
 
     public WorldCommon(GameContext context, Chunk.Store chunkStore) {
         this.context = context;

@@ -2,7 +2,6 @@ package unknowndomain.engine.block;
 
 import com.google.common.collect.ImmutableList;
 import org.joml.Vector3f;
-import unknowndomain.engine.Prototype;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.Facing;
@@ -11,13 +10,26 @@ import unknowndomain.engine.world.World;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class BlockPrototype implements Prototype<Block, World> {
+public abstract class BlockPrototype {
     // all these behaviors are missing arguments
     // fill those arguments later
 
-    public static PlaceBehavior DEFAULT_PLACE = (world, entity, block) -> {
+    public static PlaceBehavior DEFAULT_PLACE = (world, entity, blockPos, block) -> {
     };
     public static ActiveBehavior DEFAULT_ACTIVE = (world, entity, pos, block) -> {
+    };
+    public static TouchBehavior DEFAULT_TOUCH = new TouchBehavior() {
+        @Override
+        public boolean onTouch(Block block) {
+            return true;
+        }
+
+        @Override
+        public void onTouched(Block block) {
+
+        }
+    };
+    public static DestroyBehavior DEFAULT_DESTROY = (world, entity, blockPos, block) -> {
     };
 
     public abstract List<Block> getAllStates();
@@ -27,11 +39,11 @@ public abstract class BlockPrototype implements Prototype<Block, World> {
     }
 
     public interface PlaceBehavior {
-        default boolean canPlace(World world, Entity entity, Block block) {
+        default boolean canPlace(World world, Entity entity, BlockPos blockPos, Block block) {
             return true;
         }
 
-        void onPlaced(World world, Entity entity, Block block);
+        void onPlaced(World world, Entity entity, BlockPos blockPos, Block block);
     }
 
     public interface ActiveBehavior { // right click entity
@@ -48,6 +60,14 @@ public abstract class BlockPrototype implements Prototype<Block, World> {
         void onTouched(Block block);
     }
 
+    public interface DestroyBehavior {
+        default boolean canDestroy(World world, Entity entity, BlockPos blockPos, Block block) {
+            return true;
+        }
+
+        void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block);
+    }
+
     public static class Hit {
         public final BlockPos position;
         public final Block block;
@@ -60,10 +80,6 @@ public abstract class BlockPrototype implements Prototype<Block, World> {
             this.hit = hit;
             this.face = face;
         }
-    }
-
-    public interface DestroyBehavior {
-
     }
 
     public interface Property<T extends Comparable<T>> {

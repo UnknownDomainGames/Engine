@@ -11,10 +11,10 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
 public class GLMesh {
-    private int vao;
-    private int[] vbos;
-    private int counts;
-    private byte[] attributes;
+    private final int vao;
+    private final int[] vbos;
+    private final int counts;
+    private final byte[] attributes;
 
     private int mode; // gl draw mode
 

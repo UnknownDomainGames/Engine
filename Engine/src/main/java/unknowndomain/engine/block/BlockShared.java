@@ -30,12 +30,14 @@ class BlockShared extends Impl<Block> implements Block {
         this.properties = properties;
     }
 
-    public boolean canPlace(World world, Entity entity, Block block) {
-        return placeBehavior.canPlace(world, entity, block);
+    @Override
+    public boolean canPlace(World world, Entity entity, BlockPos blockPos, Block block) {
+        return placeBehavior.canPlace(world,entity,blockPos,block);
     }
 
-    public void onPlaced(World world, Entity entity, Block block) {
-        placeBehavior.onPlaced(world, entity, block);
+    @Override
+    public void onPlaced(World world, Entity entity, BlockPos blockPos, Block block) {
+        placeBehavior.onPlaced(world,entity,blockPos,block);
     }
 
     @Override
@@ -56,6 +58,16 @@ class BlockShared extends Impl<Block> implements Block {
     @Override
     public void onTouched(Block block) {
         touchBehavior.onTouched(block);
+    }
+
+    @Override
+    public boolean canDestroy(World world, Entity entity, BlockPos blockPos, Block block) {
+        return destroyBehavior.canDestroy(world, entity, blockPos, block);
+    }
+
+    @Override
+    public void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block) {
+        destroyBehavior.onDestroyed(world, entity, blockPos, block);
     }
 
     @Nullable
@@ -118,5 +130,4 @@ class BlockShared extends Impl<Block> implements Block {
     public <T> T getComponent(@Nonnull Class<T> type) {
         return null;
     }
-
 }

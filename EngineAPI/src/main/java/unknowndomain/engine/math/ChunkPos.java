@@ -1,14 +1,12 @@
 package unknowndomain.engine.math;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import unknowndomain.engine.world.Chunk;
-
-import javax.annotation.Nullable;
+import unknowndomain.engine.world.chunk.Chunk;
 
 public class ChunkPos {
-    private int chunkX;
-    private int chunkY; //TODO: required review for necessity
-    private int chunkZ;
+    private final int chunkX;
+    private final int chunkY; //TODO: required review for necessity
+    private final int chunkZ;
 
     public ChunkPos(int cx, int cy, int cz) {
         chunkX = cx;
@@ -17,15 +15,7 @@ public class ChunkPos {
     }
 
     public static ChunkPos fromBlockPos(BlockPos pos) {
-        return fromBlockPos(pos, null);
-    }
-
-    public static ChunkPos fromBlockPos(BlockPos pos, @Nullable Chunk referring) {
-        if (referring == null) {
-            return new ChunkPos(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
-        } else {
-            return new ChunkPos(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
-        }
+        return new ChunkPos(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
     }
 
     public int getX() {

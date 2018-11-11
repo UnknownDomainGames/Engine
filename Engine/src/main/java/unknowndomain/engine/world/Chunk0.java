@@ -7,9 +7,8 @@ import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockRuntime;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.world.chunk.Chunk;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -88,25 +87,4 @@ public class Chunk0 implements Chunk {
 
         return prev;
     }
-
-    @Nullable
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T getComponent(@Nonnull String name) {
-        return (T) components.get(name);
-    }
-
-    @Nullable
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T getComponent(@Nonnull Class<T> type) {
-        return (T) components.get(type.getName());
-    }
-
-    @Nullable
-    @Override
-    public <T> T getBehavior(Class<T> type) {
-        return null;
-    }
-
 }

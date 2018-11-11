@@ -20,8 +20,8 @@ public class BlockBuilder {
 
     private BlockPrototype.PlaceBehavior placeBehavior = BlockPrototype.DEFAULT_PLACE;
     private BlockPrototype.ActiveBehavior activeBehavior = BlockPrototype.DEFAULT_ACTIVE;
-    private BlockPrototype.TouchBehavior touchBehavior;
-    private BlockPrototype.DestroyBehavior destroyBehavior;
+    private BlockPrototype.TouchBehavior touchBehavior = BlockPrototype.DEFAULT_TOUCH;
+    private BlockPrototype.DestroyBehavior destroyBehavior = BlockPrototype.DEFAULT_DESTROY;
 
     private BlockBuilder(String path) {
         this.path = path;

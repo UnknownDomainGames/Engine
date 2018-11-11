@@ -6,6 +6,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import unknowndomain.engine.GameContext;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
+import unknowndomain.engine.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -27,35 +28,32 @@ public class ChunkStore implements Chunk.Store {
     @NonNull
     @Override
     public Chunk getChunk(@NonNull BlockPos pos) {
-        ChunkPos chunkPos = pos.toChunk();
-        long cp = (long) chunkPos.getChunkX() << 32 | chunkPos.getChunkZ();
+        long cp = getChunkPos(pos);
         Chunk chunk = this.chunks.get(cp);
         if (chunk != null)
             return chunk;
         Chunk0 c = new Chunk0(gameContext);
         c.data = decorateChunk();
         this.chunks.put(cp, c);
-        gameContext.post(new ChunkLoadEvent(pos.toChunk(), c.data));
+        gameContext.post(new ChunkLoadEvent(pos.toChunkPos(), c.data));
         return c;
     }
 
     @Override
     public void touchChunk(@Nonnull BlockPos pos) {
-        ChunkPos chunkPos = pos.toChunk();
-        long cp = (long) chunkPos.getChunkX() << 32 | chunkPos.getChunkZ();
+        long cp = getChunkPos(pos);
         Chunk chunk = this.chunks.get(cp);
         if (chunk != null) {
             Chunk0 c = new Chunk0(gameContext);
             c.data = decorateChunk();
             this.chunks.put(cp, c);
-            gameContext.post(new ChunkLoadEvent(pos.toChunk(), c.data));
+            gameContext.post(new ChunkLoadEvent(pos.toChunkPos(), c.data));
         }
     }
 
     @Override
     public void discardChunk(@Nonnull BlockPos pos) {
-        ChunkPos chunkPos = pos.toChunk();
-        long cp = (long) chunkPos.getChunkX() << 32 | chunkPos.getChunkZ();
+        long cp = getChunkPos(pos);
         Chunk remove = this.chunks.remove(cp);
         // save this chunk?
     }
@@ -71,5 +69,10 @@ public class ChunkStore implements Chunk.Store {
             }
         }
         return data;
+    }
+
+    private long getChunkPos(BlockPos blockPos) {
+        ChunkPos chunkPos = blockPos.toChunkPos();
+        return (long) chunkPos.getChunkX() << 42 | blockPos.getY() << 21 | chunkPos.getChunkZ();
     }
 }
