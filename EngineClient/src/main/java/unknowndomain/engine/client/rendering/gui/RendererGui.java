@@ -11,7 +11,7 @@ import unknowndomain.engine.client.gui.component.Label;
 import unknowndomain.engine.client.gui.layout.Panel;
 import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFFontRenderer;
-import unknowndomain.engine.client.rendering.shader.RendererShaderProgram;
+import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * render for any gui
  */
-public class RendererGui extends RendererShaderProgram {
+public class RendererGui extends ShaderProgram {
 
     private Scene guiScene;
     private final List<Scene> hudScene = new LinkedList<>();

@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.rendering.display;
 
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import unknowndomain.engine.client.EngineClient;
@@ -13,10 +14,12 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class DefaultGameWindow implements GameWindow {
 
     private long handle;
+    private String title;
+
     private int width;
     private int height;
-    private String title;
     private boolean resized = false;
+    private Matrix4f projection;
 
     private EngineClient engineClient;
     private boolean paused;
@@ -44,6 +47,14 @@ public class DefaultGameWindow implements GameWindow {
         this.height = height;
         this.resized = true;
         glViewport(0, 0, width, height);
+    }
+
+    @Override
+    public Matrix4f projection() {
+        if (resized || projection == null) {
+            projection = new Matrix4f().perspective((float) (Math.toRadians(Math.max(1.0, Math.min(90.0, 60.0f)))), width / (float) height, 0.01f, 1000f);
+        }
+        return projection;
     }
 
     @Override
@@ -82,7 +93,7 @@ public class DefaultGameWindow implements GameWindow {
     public void endDraw() {
         glfwSwapBuffers(handle);
 
-        if(isResized())
+        if (isResized())
             resized = false;
 
         glfwPollEvents();
