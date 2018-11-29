@@ -1,6 +1,8 @@
 package unknowndomain.engine.client.util;
 
 
+import unknowndomain.engine.client.rendering.util.GLHelper;
+
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.ByteBuffer;

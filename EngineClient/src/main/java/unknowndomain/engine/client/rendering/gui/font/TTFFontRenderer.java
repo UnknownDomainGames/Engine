@@ -11,10 +11,9 @@ import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
-import unknowndomain.engine.client.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.util.BufferBuilder;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashMap;

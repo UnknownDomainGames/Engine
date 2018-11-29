@@ -7,14 +7,14 @@ import unknowndomain.engine.client.rendering.model.GLMesh;
 import unknowndomain.engine.client.rendering.model.Mesh;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
-import unknowndomain.engine.client.rendering.shader.RendererShaderProgram;
+import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 
 import java.io.IOException;
 
-public class RendererSkybox extends RendererShaderProgram {
+public class RendererSkybox extends ShaderProgram {
     protected int u_Projection;
     protected int u_View;
     protected int u_Model;
@@ -116,7 +116,7 @@ public class RendererSkybox extends RendererShaderProgram {
 
         useProgram();
 
-        Matrix4f pro = context.getProjection().projection();
+        Matrix4f pro = context.getWindow().projection();
         Matrix4f view = new Matrix4f(context.getCamera().view());
         view.m30(0).m31(0).m32(0);
         Shader.setUniform(u_Projection, pro);

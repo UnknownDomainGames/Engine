@@ -4,7 +4,7 @@ import org.joml.*;
 import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.client.rendering.Renderer;
 
-public abstract class RendererShaderProgram implements Renderer {
+public abstract class ShaderProgram implements Renderer {
     protected int programId = -1;
 
     protected void attachShader(Shader shader) {
@@ -46,6 +46,14 @@ public abstract class RendererShaderProgram implements Renderer {
 
     public int getAttributeLocation(String name) {
         return GL20.glGetAttribLocation(programId, name);
+    }
+
+    @Override
+    public void dispose() {
+        unuseProgram();
+
+        GL20.glDeleteProgram(programId);
+        programId = -1;
     }
 
     public void setUniform(String location, int value) {

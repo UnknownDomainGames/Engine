@@ -1,8 +1,8 @@
 package unknowndomain.engine.client.rendering.gui;
 
 import unknowndomain.engine.client.rendering.shader.Shader;
-import unknowndomain.engine.client.util.BufferBuilder;
-import unknowndomain.engine.client.util.VertexBufferObject;
+import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.util.VertexBufferObject;
 
 public class Tessellator {
     private static final Tessellator INSTANCE = new Tessellator(1048576);
