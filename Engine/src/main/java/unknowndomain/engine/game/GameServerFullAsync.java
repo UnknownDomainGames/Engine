@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.mod.ModRepository;
 import unknowndomain.engine.mod.ModStore;
-import unknowndomain.engine.world.ChunkStore;
+import unknowndomain.engine.world.chunk.ChunkStore;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
 

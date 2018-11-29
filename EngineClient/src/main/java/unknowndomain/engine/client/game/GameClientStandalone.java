@@ -18,8 +18,6 @@ import unknowndomain.engine.client.rendering.camera.CameraDefault;
 import unknowndomain.engine.client.rendering.camera.FirstPersonController;
 import unknowndomain.engine.client.rendering.display.Camera;
 import unknowndomain.engine.client.rendering.display.DefaultGameWindow;
-import unknowndomain.engine.client.rendering.display.Projection;
-import unknowndomain.engine.client.rendering.display.ProjectionPerspective;
 import unknowndomain.engine.client.rendering.gui.RendererGui;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
@@ -55,7 +53,6 @@ public class GameClientStandalone extends GameServerFullAsync {
     private CameraController cameraController;
     private MotionController motionController;
 
-    private Projection projection;
     private Camera camera;
 
     private WorldCommon world;
@@ -148,10 +145,8 @@ public class GameClientStandalone extends GameServerFullAsync {
         });
 
         camera = new CameraDefault();
-        projection = new ProjectionPerspective(window.getWidth(), window.getHeight());
-
         cameraController = new FirstPersonController(camera);
-        gameRenderer = new RendererContext(factories, camera, projection, window);
+        gameRenderer = new RendererContext(factories, camera, window);
     }
 
     @Override

@@ -1,12 +1,11 @@
-package unknowndomain.engine.world;
+package unknowndomain.engine.world.chunk;
 
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import unknowndomain.engine.GameContext;
+import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
-import unknowndomain.engine.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -32,10 +31,9 @@ public class ChunkStore implements Chunk.Store {
         Chunk chunk = this.chunks.get(cp);
         if (chunk != null)
             return chunk;
-        Chunk0 c = new Chunk0(gameContext);
-        c.data = decorateChunk();
+        ChunkImpl c = new ChunkImpl(gameContext);
+//        c.data = decorateChunk();
         this.chunks.put(cp, c);
-        gameContext.post(new ChunkLoadEvent(pos.toChunkPos(), c.data));
         return c;
     }
 
@@ -44,10 +42,9 @@ public class ChunkStore implements Chunk.Store {
         long cp = getChunkPos(pos);
         Chunk chunk = this.chunks.get(cp);
         if (chunk != null) {
-            Chunk0 c = new Chunk0(gameContext);
-            c.data = decorateChunk();
+            ChunkImpl c = new ChunkImpl(gameContext);
+//            c.data = decorateChunk();
             this.chunks.put(cp, c);
-            gameContext.post(new ChunkLoadEvent(pos.toChunkPos(), c.data));
         }
     }
 
@@ -58,18 +55,16 @@ public class ChunkStore implements Chunk.Store {
         // save this chunk?
     }
 
-    private int[][] decorateChunk() {
-        int[][] data = new int[16][16 * 16 * 16];
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 16; j++) {
-                int x = i;
-                int y = 0;
-                int z = j;
-                data[y / 16][x << 8 | y << 4 | z] = 2;
-            }
-        }
-        return data;
-    }
+//    private int[] decorateChunk() {
+//        int[] data = new int[16 * 16 * 16];
+//        for (int x = 0; x < 16; x++) {
+//            for (int z = 0; z < 16; z++) {
+//                int y = 0;
+//                data[x << 8 | y << 4 | z] = 2;
+//            }
+//        }
+//        return data;
+//    }
 
     private long getChunkPos(BlockPos blockPos) {
         ChunkPos chunkPos = blockPos.toChunkPos();

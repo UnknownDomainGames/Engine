@@ -1,11 +1,11 @@
 package unknowndomain.engine.client;
 
 import com.google.common.collect.Lists;
-import unknowndomain.engine.GameContext;
+import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockBuilder;
 import unknowndomain.engine.block.BlockPrototype;
-import unknowndomain.engine.client.rendering.RendererWorld;
+import unknowndomain.engine.client.rendering.world.RendererWorld;
 import unknowndomain.engine.client.rendering.model.GLMesh;
 import unknowndomain.engine.client.rendering.model.Mesh;
 import unknowndomain.engine.client.rendering.model.MinecraftModelFactory;

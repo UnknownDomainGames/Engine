@@ -1,9 +1,8 @@
 package unknowndomain.engine.client.rendering;
 
-import unknowndomain.engine.GameContext;
+import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.client.rendering.display.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
-import unknowndomain.engine.client.rendering.display.Projection;
 import unknowndomain.engine.client.resource.ResourceManager;
 
 import java.io.IOException;
@@ -13,15 +12,13 @@ import java.util.List;
 public class RendererContext implements Renderer.Context {
     private final List<Renderer> renderers = new ArrayList<>();
     private final Camera camera;
-    private final Projection projection;
     private final List<Renderer.Factory> factories;
     private final GameWindow window;
     private double partialTick;
 
-    public RendererContext(List<Renderer.Factory> factories, Camera camera, Projection projection, GameWindow window) {
+    public RendererContext(List<Renderer.Factory> factories, Camera camera, GameWindow window) {
         this.factories = factories;
         this.camera = camera;
-        this.projection = projection;
         this.window = window;
     }
 
@@ -41,11 +38,6 @@ public class RendererContext implements Renderer.Context {
     @Override
     public Camera getCamera() {
         return camera;
-    }
-
-    @Override
-    public Projection getProjection() {
-        return projection;
     }
 
     @Override
