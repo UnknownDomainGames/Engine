@@ -1,6 +1,6 @@
 package unknowndomain.engine.action;
 
-import unknowndomain.engine.GameContext;
+import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.registry.Impl;
 
 import java.util.function.BiConsumer;

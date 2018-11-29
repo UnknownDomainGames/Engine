@@ -1,26 +1,23 @@
 package unknowndomain.engine.client.rendering;
 
 
-import unknowndomain.engine.GameContext;
+import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.client.rendering.display.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
-import unknowndomain.engine.client.rendering.display.Projection;
 import unknowndomain.engine.client.resource.ResourceManager;
+import unknowndomain.engine.util.Disposable;
 
 import java.io.IOException;
 
 /**
  * The base renderer for the game. A Mod need to have this if it want to render new things...
  */
-public interface Renderer {
-    void render(Context context);
+public interface Renderer extends Disposable {
 
-    void dispose();
+    void render(Context context);
 
     interface Context {
         Camera getCamera();
-
-        Projection getProjection();
 
         GameWindow getWindow();
 

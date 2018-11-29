@@ -1,4 +1,4 @@
-package unknowndomain.engine;
+package unknowndomain.engine.game;
 
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.event.Event;

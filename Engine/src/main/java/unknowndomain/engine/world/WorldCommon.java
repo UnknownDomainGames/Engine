@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.joml.*;
-import unknowndomain.engine.GameContext;
+import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
@@ -147,15 +147,15 @@ public class WorldCommon implements World, Runnable {
     }
 
     private void tickChunk(Chunk chunk) {
-        Collection<Block> blocks = chunk.getRuntimeBlock();
-        if (blocks.size() != 0) {
-            for (Block object : blocks) {
-                BlockPrototype.TickBehavior behavior = object.getBehavior(BlockPrototype.TickBehavior.class);
-                if (behavior != null) {
-                    behavior.tick(object);
-                }
-            }
-        }
+//        Collection<Block> blocks = chunk.getRuntimeBlock();
+//        if (blocks.size() != 0) {
+//            for (Block object : blocks) {
+//                BlockPrototype.TickBehavior behavior = object.getBehavior(BlockPrototype.TickBehavior.class);
+//                if (behavior != null) {
+//                    behavior.tick(object);
+//                }
+//            }
+//        }
     }
 
     @NonNull

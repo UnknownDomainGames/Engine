@@ -3,7 +3,6 @@ package unknowndomain.engine.game;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.tuple.Pair;
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.GameContext;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.entity.EntityType;
