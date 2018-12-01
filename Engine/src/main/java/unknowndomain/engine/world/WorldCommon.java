@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.joml.*;
+import unknowndomain.engine.game.Game;
 import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
@@ -20,6 +21,7 @@ import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayCast;
 import unknowndomain.engine.world.chunk.Chunk;
+import unknowndomain.engine.world.chunk.ChunkStore;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 public class WorldCommon implements World, Runnable {
-    private final GameContext context;
+    private final Game game;
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
 
@@ -42,9 +44,9 @@ public class WorldCommon implements World, Runnable {
     private final FixStepTicker ticker;
 //    private ExecutorService service;
 
-    public WorldCommon(GameContext context, Chunk.Store chunkStore) {
-        this.context = context;
-        this.chunkStore = chunkStore;
+    public WorldCommon(Game game) {
+        this.game = game;
+        this.chunkStore = new ChunkStore(this);
         this.ticker = new FixStepTicker(this::tick, 20); // TODO: make tps configurable
     }
 
@@ -68,13 +70,18 @@ public class WorldCommon implements World, Runnable {
     }
 
     @Override
+    public Game getGame() {
+        return game;
+    }
+
+    @Override
     public List<Entity> getEntities() {
         return entityList;
     }
 
     @Override
     public BlockPrototype.Hit raycast(Vector3f from, Vector3f dir, float distance) {
-        return raycast(from, dir, distance, Sets.newHashSet(context.getBlockRegistry().getValue(0)));
+        return raycast(from, dir, distance, Sets.newHashSet(game.getContext().getBlockRegistry().getValue(0)));
     }
 
     @Override

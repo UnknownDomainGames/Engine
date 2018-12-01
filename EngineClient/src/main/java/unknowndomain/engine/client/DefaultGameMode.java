@@ -1,6 +1,7 @@
 package unknowndomain.engine.client;
 
 import com.google.common.collect.Lists;
+import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockBuilder;
@@ -38,10 +39,11 @@ public class DefaultGameMode {
 
     @Listener
     public void registerEvent(RegisterEvent event) {
+        System.out.println("Hello");
         Block stone = BlockBuilder.create("stone").build(),
                 grass = BlockBuilder.create("grass_normal").build();
 
-        event.getRegistry().register(BlockBuilder.create("air").setNoCollision().build());
+        event.getRegistry().register(BlockAir.AIR);
         event.getRegistry().register(stone);
         event.getRegistry().register(grass);
 

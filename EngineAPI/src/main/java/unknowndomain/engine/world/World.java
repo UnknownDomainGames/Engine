@@ -18,6 +18,9 @@ import java.util.Set;
  */
 @Owner(Game.class)
 public interface World extends RuntimeObject {
+
+    Game getGame();
+
     List<Entity> getEntities();
 
     BlockPrototype.Hit raycast(Vector3f from, Vector3f dir, float distance);

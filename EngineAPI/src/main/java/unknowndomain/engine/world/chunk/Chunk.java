@@ -4,6 +4,7 @@ import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -44,6 +45,8 @@ public interface Chunk extends RuntimeObject {
     default Block setBlock(BlockPos pos, Block destBlock) {
         return setBlock(pos.getX(), pos.getY(), pos.getZ(), destBlock);
     }
+
+    World getWorld();
 
     interface Store {
         Collection<Chunk> getChunks();

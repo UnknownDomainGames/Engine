@@ -6,17 +6,19 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
+import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
 public class ChunkStore implements Chunk.Store {
     // should do the io operation to load chunk
-    private LongObjectMap<Chunk> chunks = new LongObjectHashMap<>();
-    private GameContext gameContext;
+    private final World world;
 
-    public ChunkStore(GameContext gameContext) {
-        this.gameContext = gameContext;
+    private LongObjectMap<Chunk> chunks = new LongObjectHashMap<>();
+
+    public ChunkStore(World world) {
+        this.world = world;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class ChunkStore implements Chunk.Store {
         Chunk chunk = this.chunks.get(cp);
         if (chunk != null)
             return chunk;
-        ChunkImpl c = new ChunkImpl(gameContext);
+        ChunkImpl c = new ChunkImpl(world);
 //        c.data = decorateChunk();
         this.chunks.put(cp, c);
         return c;
@@ -42,7 +44,7 @@ public class ChunkStore implements Chunk.Store {
         long cp = getChunkPos(pos);
         Chunk chunk = this.chunks.get(cp);
         if (chunk != null) {
-            ChunkImpl c = new ChunkImpl(gameContext);
+            ChunkImpl c = new ChunkImpl(world);
 //            c.data = decorateChunk();
             this.chunks.put(cp, c);
         }

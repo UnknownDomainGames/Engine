@@ -54,8 +54,9 @@ public abstract class BlockPrototype {
         void onActivated(World world, Entity entity, BlockPos pos, Block block);
     }
 
+    // TODO:
     public interface TouchBehavior { // left click entity
-        boolean onTouch(Block block);
+        default boolean onTouch(Block block) { return false; }
 
         void onTouched(Block block);
     }

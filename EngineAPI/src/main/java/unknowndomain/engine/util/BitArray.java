@@ -76,4 +76,8 @@ public class BitArray {
 
         return (int) (oldValue & maxEntryValue);
     }
+
+    public long[] getBackingArray() {
+        return array;
+    }
 }
