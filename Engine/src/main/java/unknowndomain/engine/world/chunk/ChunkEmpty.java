@@ -1,13 +1,12 @@
 package unknowndomain.engine.world.chunk;
 
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class ChunkEmpty implements Chunk {
@@ -15,18 +14,17 @@ public class ChunkEmpty implements Chunk {
     public static final ChunkEmpty INSTANCE = new ChunkEmpty();
 
     private ChunkEmpty() {
-
     }
 
     @Nonnull
     @Override
     public List<Entity> getEntities() {
-        return Collections.emptyList();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Block getBlock(int x, int y, int z) {
-        return null; // TODO: Return air block.
+        return BlockAir.AIR;
     }
 
     @Override
@@ -42,18 +40,18 @@ public class ChunkEmpty implements Chunk {
     @Nullable
     @Override
     public <T> T getComponent(@Nonnull String name) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Nullable
     @Override
     public <T> T getComponent(@Nonnull Class<T> type) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Nullable
     @Override
     public <T> T getBehavior(Class<T> type) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

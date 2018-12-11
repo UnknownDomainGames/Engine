@@ -8,6 +8,7 @@ import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.Owner;
+import unknowndomain.engine.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -32,6 +33,8 @@ public interface World extends RuntimeObject {
 
     @Nonnull
     Block setBlock(@Nonnull BlockPos pos, Block block);
+
+    Chunk getChunk(@Nonnull BlockPos pos);
 
     interface Config {
 

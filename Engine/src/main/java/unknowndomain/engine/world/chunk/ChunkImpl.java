@@ -1,9 +1,8 @@
 package unknowndomain.engine.world.chunk;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import unknowndomain.engine.block.BlockAir;
-import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.world.World;
 
@@ -16,7 +15,7 @@ public class ChunkImpl implements Chunk {
 
     private final World world;
     private final List<Entity> entities = new ArrayList<>();
-    private final BlockStore[] blockStores = new BlockStore[16];
+    private BlockStorage blockStorage;
 
     public ChunkImpl(World world) {
         this.world = world;
@@ -29,17 +28,11 @@ public class ChunkImpl implements Chunk {
 
     @Override
     public Block getBlock(int x, int y, int z) {
-        int groupIndex = x >> 4;
-        if (groupIndex >= blockStores.length) {
+        if (blockStorage == null) {
             return BlockAir.AIR;
         }
 
-        BlockStore blockStore = blockStores[groupIndex];
-        if (blockStore == null) {
-            return BlockAir.AIR;
-        }
-
-        return blockStore.getBlock(x, y, z);
+        return blockStorage.getBlock(x, y, z);
     }
 
     @NonNull
@@ -50,19 +43,11 @@ public class ChunkImpl implements Chunk {
 
     @Override
     public Block setBlock(int x, int y, int z, Block destBlock) {
-        int groupIndex = x >> 4;
-        if (groupIndex >= blockStores.length) {
-            // TODO: throw or increase.
-            throw new IllegalArgumentException("Illegal height value of " + y);
+        if (blockStorage == null) {
+            blockStorage = new BlockStorage(this);
         }
 
-        BlockStore blockStore = blockStores[groupIndex];
-        if (blockStore == null) {
-            blockStore = new BlockStore(this);
-            blockStores[groupIndex] = blockStore;
-        }
-
-        return blockStore.setBlock(x, y, z, destBlock);
+        return blockStorage.setBlock(x, y, z, destBlock);
     }
 
     @Nullable

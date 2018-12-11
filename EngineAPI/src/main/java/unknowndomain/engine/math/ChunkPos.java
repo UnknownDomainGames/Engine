@@ -30,14 +30,6 @@ public class ChunkPos {
         return chunkZ;
     }
 
-    public int getChunkX() {
-        return chunkX;
-    }
-
-    public int getChunkZ() {
-        return chunkZ;
-    }
-
     public BlockPos getLowEdge() {
         return new BlockPos(chunkX * Chunk.DEFAULT_X_SIZE, chunkY * Chunk.DEFAULT_Y_SIZE, chunkZ * Chunk.DEFAULT_Z_SIZE);
     }
@@ -82,13 +74,5 @@ public class ChunkPos {
     @Override
     public String toString() {
         return String.format("ChunkPos(%d,%d,%d)", chunkX, chunkY, chunkZ);
-    }
-
-    public int compact() {
-        return getChunkX() << 16 | (getChunkZ() & 0xFFFF);
-    }
-
-    public long fat() {
-        return ((long) getChunkX() << 32) | getChunkZ();
     }
 }

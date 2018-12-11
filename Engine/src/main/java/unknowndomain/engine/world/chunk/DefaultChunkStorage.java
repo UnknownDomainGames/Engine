@@ -3,7 +3,6 @@ package unknowndomain.engine.world.chunk;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.world.World;
@@ -11,13 +10,13 @@ import unknowndomain.engine.world.World;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
-public class ChunkStore implements Chunk.Store {
+public class DefaultChunkStorage implements ChunkStorage {
     // should do the io operation to load chunk
     private final World world;
 
     private LongObjectMap<Chunk> chunks = new LongObjectHashMap<>();
 
-    public ChunkStore(World world) {
+    public DefaultChunkStorage(World world) {
         this.world = world;
     }
 
@@ -70,6 +69,6 @@ public class ChunkStore implements Chunk.Store {
 
     private long getChunkPos(BlockPos blockPos) {
         ChunkPos chunkPos = blockPos.toChunkPos();
-        return (long) chunkPos.getChunkX() << 42 | blockPos.getY() << 21 | chunkPos.getChunkZ();
+        return (long) chunkPos.getX() << 42 | blockPos.getY() << 21 | chunkPos.getZ();
     }
 }

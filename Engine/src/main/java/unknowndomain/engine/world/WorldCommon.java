@@ -4,14 +4,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.joml.*;
-import unknowndomain.engine.game.Game;
-import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.PlayerEntity;
 import unknowndomain.engine.entity.TwoHands;
 import unknowndomain.engine.event.Event;
+import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.FixStepTicker;
@@ -21,13 +20,13 @@ import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayCast;
 import unknowndomain.engine.world.chunk.Chunk;
-import unknowndomain.engine.world.chunk.ChunkStore;
+import unknowndomain.engine.world.chunk.ChunkStorage;
+import unknowndomain.engine.world.chunk.DefaultChunkStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.Math;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +35,7 @@ public class WorldCommon implements World, Runnable {
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
 
-    private final Chunk.Store chunkStore;
+    private final ChunkStorage chunkStorage;
     private final List<Player> players = new ArrayList<>();
     private final List<Entity> entityList = new ArrayList<>();
     private final List<Runnable> nextTick = new ArrayList<>();
@@ -46,13 +45,13 @@ public class WorldCommon implements World, Runnable {
 
     public WorldCommon(Game game) {
         this.game = game;
-        this.chunkStore = new ChunkStore(this);
+        this.chunkStorage = new DefaultChunkStorage(this);
         this.ticker = new FixStepTicker(this::tick, 20); // TODO: make tps configurable
     }
 
     public void spawnEntity(Entity entity) {
         BlockPos pos = BlockPos.of(entity.getPosition());
-        Chunk chunk = chunkStore.getChunk(pos);
+        Chunk chunk = chunkStorage.getChunk(pos);
         chunk.getEntities().add(entity);
         entityList.add(entity);
     }
@@ -141,14 +140,14 @@ public class WorldCommon implements World, Runnable {
             BlockPos newPosition = BlockPos.of(position);
 
             if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
-                Chunk oldChunk = chunkStore.getChunk(oldPosition), newChunk = chunkStore.getChunk(newPosition);
+                Chunk oldChunk = chunkStorage.getChunk(oldPosition), newChunk = chunkStorage.getChunk(newPosition);
                 oldChunk.getEntities().remove(entity);
                 newChunk.getEntities().add(entity);
                 // entity leaving and enter chunk event
             }
         }
 
-        chunkStore.getChunks().forEach(this::tickChunk);
+        chunkStorage.getChunks().forEach(this::tickChunk);
         for (Entity entity : entityList)
             entity.tick(); // state machine update
     }
@@ -167,13 +166,18 @@ public class WorldCommon implements World, Runnable {
 
     @NonNull
     public Block getBlock(@NonNull BlockPos pos) {
-        return chunkStore.getChunk(pos).getBlock(pos);
+        return chunkStorage.getChunk(pos).getBlock(pos);
     }
 
     @NonNull
     @Override
     public Block setBlock(@NonNull BlockPos pos, Block block) {
-        return chunkStore.getChunk(pos).setBlock(pos, block);
+        return chunkStorage.getChunk(pos).setBlock(pos, block);
+    }
+
+    @Override
+    public Chunk getChunk(@Nonnull BlockPos pos) {
+        return chunkStorage.getChunk(pos);
     }
 
     @Override

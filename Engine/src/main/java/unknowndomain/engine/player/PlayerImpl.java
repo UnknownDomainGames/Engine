@@ -6,7 +6,7 @@ import unknowndomain.engine.event.Cancellable;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
-import unknowndomain.engine.world.chunk.Chunk;
+import unknowndomain.engine.world.chunk.ChunkStorage;
 
 public class PlayerImpl implements Player {
     private Profile profile;
@@ -19,7 +19,7 @@ public class PlayerImpl implements Player {
         this.mounting = mounting;
     }
 
-    public void enter(Chunk.Store chunkStore) {
+    public void enter(ChunkStorage chunkStore) {
         int radius = this.profile.trackingChunkRadius;
         Entity entity = this.getMountingEntity();
         BlockPos pos = BlockPos.of(entity.getPosition());

@@ -26,6 +26,10 @@ public class BitArray {
         return length;
     }
 
+    public long getMaxEntryValue() {
+        return maxEntryValue;
+    }
+
     public int get(int index) {
         int bitStartIndex = index * bitsPreEntry;
         int arrayStartIndex = bitStartIndex >>> 6; // bitStartIndex / 64

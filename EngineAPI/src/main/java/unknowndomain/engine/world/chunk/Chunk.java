@@ -7,7 +7,6 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
 import java.util.List;
 
 public interface Chunk extends RuntimeObject {
@@ -47,21 +46,4 @@ public interface Chunk extends RuntimeObject {
     }
 
     World getWorld();
-
-    interface Store {
-        Collection<Chunk> getChunks();
-
-        @Nonnull
-        Chunk getChunk(@Nonnull BlockPos pos);
-
-        /**
-         * Touch the chunk at the the position, ensure it loaded
-         */
-        void touchChunk(@Nonnull BlockPos chunkPos);
-
-        /**
-         * Dispose the chunk at the position
-         */
-        void discardChunk(@Nonnull BlockPos chunkPos);
-    }
 }

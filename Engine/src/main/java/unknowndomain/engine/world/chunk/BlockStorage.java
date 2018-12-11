@@ -2,12 +2,12 @@ package unknowndomain.engine.world.chunk;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.util.BitArray;
 
-public class BlockStore {
+public class BlockStorage {
 
     private final Chunk chunk;
     private final BitArray data;
 
-    public BlockStore(Chunk chunk) {
+    public BlockStorage(Chunk chunk) {
         this.chunk = chunk;
         this.data = new BitArray(16, 4096);
     }
