@@ -23,14 +23,14 @@ public class BlockStorage {
         return chunk.getWorld().getGame().getContext().getBlockRegistry().getValue(data.get(posIndex));
     }
 
-    public Block setBlock(int x, int y, int z, Block destBlock) {
+    public Block setBlock(int x, int y, int z, Block block) {
 //        if (y < 0) {
 //            return context.getBlockRegistry().getValue(0);
 //        }
-        return setBlock((short) (((x & 0xF) << 8) | ((y & 0xF) << 4) | z & 0xF), destBlock);
+        return setBlock((short) (((x & 0xF) << 8) | ((y & 0xF) << 4) | z & 0xF), block);
     }
 
-    private Block setBlock(short posIndex, Block destBlock) {
-        return chunk.getWorld().getGame().getContext().getBlockRegistry().getValue(data.getAndSet(posIndex, chunk.getWorld().getGame().getContext().getBlockRegistry().getId(destBlock)));
+    private Block setBlock(short posIndex, Block block) {
+        return chunk.getWorld().getGame().getContext().getBlockRegistry().getValue(data.getAndSet(posIndex, chunk.getWorld().getGame().getContext().getBlockRegistry().getId(block)));
     }
 }

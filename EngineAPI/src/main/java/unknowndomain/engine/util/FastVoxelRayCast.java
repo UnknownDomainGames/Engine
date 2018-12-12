@@ -67,7 +67,7 @@ public class FastVoxelRayCast {
                 }
             }
             if (tMaxX > 1 && tMaxY > 1 && tMaxZ > 1) break;
-            container.add(new BlockPos(voxel.x, voxel.y, voxel.z));
+            container.add(BlockPos.of(voxel.x, voxel.y, voxel.z));
         }
         return container;
     }

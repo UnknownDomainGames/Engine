@@ -28,7 +28,7 @@ public class ChunkEmpty implements Chunk {
     }
 
     @Override
-    public Block setBlock(int x, int y, int z, Block destBlock) {
+    public Block setBlock(int x, int y, int z, Block block) {
         throw new UnsupportedOperationException("Empty chunk cannot set block.");
     }
 

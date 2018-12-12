@@ -42,12 +42,12 @@ public class ChunkImpl implements Chunk {
     }
 
     @Override
-    public Block setBlock(int x, int y, int z, Block destBlock) {
+    public Block setBlock(int x, int y, int z, Block block) {
         if (blockStorage == null) {
             blockStorage = new BlockStorage(this);
         }
 
-        return blockStorage.setBlock(x, y, z, destBlock);
+        return blockStorage.setBlock(x, y, z, block);
     }
 
     @Nullable

@@ -3,6 +3,7 @@ package unknowndomain.engine.math;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import unknowndomain.engine.world.chunk.Chunk;
 
+@Deprecated
 public class ChunkPos {
     private final int chunkX;
     private final int chunkY; //TODO: required review for necessity
@@ -15,7 +16,11 @@ public class ChunkPos {
     }
 
     public static ChunkPos fromBlockPos(BlockPos pos) {
-        return new ChunkPos(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
+        return fromBlockPos(pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    public static ChunkPos fromBlockPos(int x, int y, int z) {
+        return new ChunkPos(x >> 4, y >> 4, z >> 4);
     }
 
     public int getX() {
@@ -31,15 +36,15 @@ public class ChunkPos {
     }
 
     public BlockPos getLowEdge() {
-        return new BlockPos(chunkX * Chunk.DEFAULT_X_SIZE, chunkY * Chunk.DEFAULT_Y_SIZE, chunkZ * Chunk.DEFAULT_Z_SIZE);
+        return BlockPos.of(chunkX * Chunk.DEFAULT_X_SIZE, chunkY * Chunk.DEFAULT_Y_SIZE, chunkZ * Chunk.DEFAULT_Z_SIZE);
     }
 
     public BlockPos getHighEdge() {
-        return new BlockPos((chunkX + 1) * Chunk.DEFAULT_X_SIZE - 1, (chunkY + 1) * Chunk.DEFAULT_Y_SIZE - 1, (chunkZ + 1) * Chunk.DEFAULT_Z_SIZE - 1);
+        return BlockPos.of((chunkX + 1) * Chunk.DEFAULT_X_SIZE - 1, (chunkY + 1) * Chunk.DEFAULT_Y_SIZE - 1, (chunkZ + 1) * Chunk.DEFAULT_Z_SIZE - 1);
     }
 
     public BlockPos getWorldCoordBlock(int x, int y, int z) {
-        return new BlockPos(chunkX * Chunk.DEFAULT_X_SIZE + x, chunkY * Chunk.DEFAULT_Y_SIZE + y, chunkZ * Chunk.DEFAULT_Z_SIZE + z);
+        return BlockPos.of(chunkX * Chunk.DEFAULT_X_SIZE + x, chunkY * Chunk.DEFAULT_Y_SIZE + y, chunkZ * Chunk.DEFAULT_Z_SIZE + z);
     }
 
     public BlockPos getChunkCoordBlock(BlockPos pos) {
@@ -47,7 +52,7 @@ public class ChunkPos {
     }
 
     public BlockPos getChunkCoordBlock(int x, int y, int z) {
-        return new BlockPos(x - chunkX * Chunk.DEFAULT_X_SIZE, y - chunkY * Chunk.DEFAULT_Y_SIZE, z - chunkZ * Chunk.DEFAULT_Z_SIZE);
+        return BlockPos.of(x - chunkX * Chunk.DEFAULT_X_SIZE, y - chunkY * Chunk.DEFAULT_Y_SIZE, z - chunkZ * Chunk.DEFAULT_Z_SIZE);
     }
 
     @Override
@@ -73,6 +78,10 @@ public class ChunkPos {
 
     @Override
     public String toString() {
-        return String.format("ChunkPos(%d,%d,%d)", chunkX, chunkY, chunkZ);
+        return "ChunkPos{" +
+                "chunkX=" + chunkX +
+                ", chunkY=" + chunkY +
+                ", chunkZ=" + chunkZ +
+                '}';
     }
 }

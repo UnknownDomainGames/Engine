@@ -6,7 +6,6 @@ import unknowndomain.engine.event.Cancellable;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
-import unknowndomain.engine.world.chunk.ChunkStorage;
 
 public class PlayerImpl implements Player {
     private Profile profile;
@@ -19,22 +18,22 @@ public class PlayerImpl implements Player {
         this.mounting = mounting;
     }
 
-    public void enter(ChunkStorage chunkStore) {
-        int radius = this.profile.trackingChunkRadius;
-        Entity entity = this.getMountingEntity();
-        BlockPos pos = BlockPos.of(entity.getPosition());
-        for (int i = -radius; i <= radius; i++) {
-            if (i <= 0) {
-                int zOff = i + radius;
-                for (int j = -zOff; j <= zOff; j++)
-                    chunkStore.touchChunk(pos.add(i * 16, 0, j * 16));
-            } else {
-                int zOff = radius - i;
-                for (int j = -zOff; j <= zOff; j++)
-                    chunkStore.touchChunk(pos.add(i * 16, 0, j * 16));
-            }
-        }
-    }
+//    public void enter(ChunkStorage chunkStore) {
+//        int radius = this.profile.trackingChunkRadius;
+//        Entity entity = this.getMountingEntity();
+//        BlockPos pos = BlockPos.of(entity.getPosition());
+//        for (int i = -radius; i <= radius; i++) {
+//            if (i <= 0) {
+//                int zOff = i + radius;
+//                for (int j = -zOff; j <= zOff; j++)
+//                    chunkStore.touchChunk(pos.add(i * 16, 0, j * 16));
+//            } else {
+//                int zOff = radius - i;
+//                for (int j = -zOff; j <= zOff; j++)
+//                    chunkStore.touchChunk(pos.add(i * 16, 0, j * 16));
+//            }
+//        }
+//    }
 
     @NonNull
     @Override

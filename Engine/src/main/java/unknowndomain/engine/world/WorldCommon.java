@@ -2,7 +2,6 @@ package unknowndomain.engine.world;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.joml.*;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
@@ -21,7 +20,6 @@ import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayCast;
 import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkStorage;
-import unknowndomain.engine.world.chunk.DefaultChunkStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,7 +43,7 @@ public class WorldCommon implements World, Runnable {
 
     public WorldCommon(Game game) {
         this.game = game;
-        this.chunkStorage = new DefaultChunkStorage(this);
+        this.chunkStorage = new ChunkStorage(this);
         this.ticker = new FixStepTicker(this::tick, 20); // TODO: make tps configurable
     }
 
@@ -164,20 +162,21 @@ public class WorldCommon implements World, Runnable {
 //        }
     }
 
-    @NonNull
-    public Block getBlock(@NonNull BlockPos pos) {
-        return chunkStorage.getChunk(pos).getBlock(pos);
+    @Nonnull
+    @Override
+    public Block getBlock(int x, int y, int z) {
+        return chunkStorage.getChunk(x, y, z).getBlock(x, y, z);
     }
 
-    @NonNull
+    @Nonnull
     @Override
-    public Block setBlock(@NonNull BlockPos pos, Block block) {
-        return chunkStorage.getChunk(pos).setBlock(pos, block);
+    public Block setBlock(int x, int y, int z, @Nonnull Block block) {
+        return chunkStorage.getChunk(x, y, z).setBlock(x, y, z, block);
     }
 
     @Override
-    public Chunk getChunk(@Nonnull BlockPos pos) {
-        return chunkStorage.getChunk(pos);
+    public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
+        return chunkStorage.getChunk(chunkX, chunkY, chunkZ);
     }
 
     @Override
@@ -204,7 +203,7 @@ public class WorldCommon implements World, Runnable {
                 Vector3d position = entity.getPosition();
                 AABBd box = entity.getBoundingBox();
 
-                BlockPos localPos = new BlockPos(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
+                BlockPos localPos = BlockPos.of(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
                         ((int) Math.floor(position.z)));
                 //
                 // int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),

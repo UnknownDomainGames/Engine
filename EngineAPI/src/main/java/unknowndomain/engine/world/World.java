@@ -7,6 +7,7 @@ import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.util.Owner;
 import unknowndomain.engine.world.chunk.Chunk;
 
@@ -18,7 +19,7 @@ import java.util.Set;
  * World instance, should spawn by {@link unknowndomain.engine.game.Game}
  */
 @Owner(Game.class)
-public interface World extends RuntimeObject {
+public interface World extends RuntimeObject, BlockAccessor {
 
     Game getGame();
 
@@ -28,13 +29,15 @@ public interface World extends RuntimeObject {
 
     BlockPrototype.Hit raycast(Vector3f from, Vector3f dir, float distance, Set<Block> ignore);
 
-    @Nonnull
-    Block getBlock(@Nonnull BlockPos pos);
+    default Chunk getChunk(@Nonnull BlockPos pos) {
+        return getChunk(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
+    }
 
-    @Nonnull
-    Block setBlock(@Nonnull BlockPos pos, Block block);
+    default Chunk getChunk(@Nonnull ChunkPos pos) {
+        return getChunk(pos.getX(), pos.getY(), pos.getZ());
+    }
 
-    Chunk getChunk(@Nonnull BlockPos pos);
+    Chunk getChunk(int chunkX, int chunkY, int chunkZ);
 
     interface Config {
 
