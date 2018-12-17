@@ -3,9 +3,9 @@ package unknowndomain.engine.entity;
 import com.google.common.collect.ImmutableMap;
 import unknowndomain.engine.item.Item;
 
-public class PlayerEntity extends EntityBase {
+public class EntityPlayer extends EntityBase {
 
-    public PlayerEntity(int id, ImmutableMap<String, Object> behaviors) {
+    public EntityPlayer(int id, ImmutableMap<String, Object> behaviors) {
         super(id, behaviors);
     }
 

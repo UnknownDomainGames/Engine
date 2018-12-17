@@ -1,13 +1,11 @@
 package unknowndomain.engine.world;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.joml.*;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.entity.PlayerEntity;
-import unknowndomain.engine.entity.TwoHands;
+import unknowndomain.engine.entity.EntityCamera;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.AABBs;
@@ -55,9 +53,8 @@ public class WorldCommon implements World, Runnable {
     }
 
     public Player playerJoin(Profile data) {
-        PlayerEntity entity = new PlayerEntity(entityList.size(), ImmutableMap.<String, Object>builder()
-                .put(TwoHands.class.getName(), new PlayerEntity.TwoHandImpl()).build());
-        entity.getPosition().set(0, 2, 0);
+        EntityCamera entity = new EntityCamera(entityList.size());
+        entity.getPosition().set(0, 0, 0);
         entity.getRotation().set(0, 0, 0);
         entity.setBoundingBox(data.getBoundingBox());
         spawnEntity(entity);

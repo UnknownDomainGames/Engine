@@ -1,12 +1,9 @@
 package unknowndomain.engine.entity;
 
 import com.google.common.collect.ImmutableMap;
-import javafx.geometry.BoundingBox;
 import org.joml.AABBd;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import org.joml.Vector3fc;
-import unknowndomain.engine.item.Item;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
@@ -21,6 +18,10 @@ public abstract class EntityBase implements Entity {
     private Vector3f motion = new Vector3f();
     private AABBd boundingBox;
     private ImmutableMap<String, Object> behaviors;
+
+    public EntityBase(int id) {
+        this(id, ImmutableMap.of());
+    }
 
     public EntityBase(int id, ImmutableMap<String, Object> behaviors) {
         this.id = id;
