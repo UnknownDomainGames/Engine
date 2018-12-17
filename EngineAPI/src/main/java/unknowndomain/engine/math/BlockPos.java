@@ -117,7 +117,7 @@ public abstract class BlockPos {
 
     public static class Mutable extends BlockPos {
 
-        private int x, y, z;
+        public int x, y, z;
         private BlockPos immutable;
 
         public Mutable(BlockPos pos) {

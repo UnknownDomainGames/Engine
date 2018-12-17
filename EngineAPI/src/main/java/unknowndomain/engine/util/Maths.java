@@ -1,5 +1,6 @@
 package unknowndomain.engine.util;
 
+@Deprecated
 public class Maths {
     public static int sign(short x) {
         return (x >> 31) | (-x >>> 31);

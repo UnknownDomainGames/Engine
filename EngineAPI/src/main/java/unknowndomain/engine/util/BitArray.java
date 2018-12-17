@@ -11,7 +11,7 @@ public class BitArray {
     private final int length;
 
     public BitArray(int bitsPreEntry, int length) {
-        Validate.inclusiveBetween(1L, 32L, bitsPreEntry);
+        Validate.inclusiveBetween(1L, 31L, bitsPreEntry); // TODO: Support 32bits.
         this.bitsPreEntry = bitsPreEntry;
         this.maxEntryValue = (1L << bitsPreEntry) - 1;
         this.length = length;
