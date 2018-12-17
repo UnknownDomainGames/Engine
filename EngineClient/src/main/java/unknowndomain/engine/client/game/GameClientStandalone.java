@@ -179,12 +179,12 @@ public class GameClientStandalone extends GameServerFullAsync {
     /**
      * Actual render call
      *
-     * @param partialTic
+     * @param partialTick
      */
-    private void renderTick(double partialTic) {
+    private void renderTick(double partialTick) {
         cameraController.update(player.getMountingEntity().getPosition(), player.getMountingEntity().getRotation());
         window.beginDraw();
-        this.gameRenderer.render(partialTic);
+        this.gameRenderer.render(partialTick);
         window.endDraw();
     }
 
