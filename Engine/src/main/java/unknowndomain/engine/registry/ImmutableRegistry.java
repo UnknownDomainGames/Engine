@@ -58,7 +58,7 @@ public class ImmutableRegistry<T extends RegistryEntry<T>> implements Registry<T
     }
 
     @Override
-    public T register(T obj) throws RegisterException {
+    public T register(RegistryEntry<T> obj) throws RegisterException {
         throw new RegisterException();
     }
 
@@ -69,7 +69,7 @@ public class ImmutableRegistry<T extends RegistryEntry<T>> implements Registry<T
     }
 
     @Override
-    public String getKey(T value) {
+    public String getKey(RegistryEntry<T> value) {
         Validate.notNull(value);
         return value.getUniqueName();
     }
@@ -81,7 +81,7 @@ public class ImmutableRegistry<T extends RegistryEntry<T>> implements Registry<T
     }
 
     @Override
-    public boolean containsValue(T value) {
+    public boolean containsValue(RegistryEntry<T> value) {
         Validate.notNull(value);
         return nameToObject.containsKey(value.getUniqueName());
     }
@@ -97,7 +97,7 @@ public class ImmutableRegistry<T extends RegistryEntry<T>> implements Registry<T
     }
 
     @Override
-    public int getId(T obj) {
+    public int getId(RegistryEntry<T> obj) {
         Validate.notNull(obj);
         return nameToId.get(obj.getUniqueName());
     }

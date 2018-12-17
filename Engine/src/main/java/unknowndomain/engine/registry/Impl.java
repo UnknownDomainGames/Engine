@@ -9,7 +9,7 @@ public abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<
     private String registeredName;
 
     private ModContainer modContainer;
-    private Registry<? extends RegistryEntry<T>> registry;
+    private Registry<T> registry;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -37,7 +37,7 @@ public abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<
         return (T) this;
     }
 
-    void setup(ModContainer modContainer, Registry<? extends RegistryEntry<T>> registry) {
+    void setup(ModContainer modContainer, Registry<T> registry) {
         if (this.modContainer == null)
             this.modContainer = modContainer;
         if (this.registry == null)
@@ -52,11 +52,16 @@ public abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<
     }
 
     @Override
-    public Registry<? extends RegistryEntry<T>> getAssignedRegistry() {
+    public Registry<T> getAssignedRegistry() {
         if (registry == null)
             throw new IllegalStateException("This method can only be called after the register stage of the game!");
         return registry;
     }
+
+	@Override
+	public int getID() {
+		return getAssignedRegistry().getId(this);
+	}
 
 
 }

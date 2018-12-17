@@ -1,15 +1,16 @@
 package unknowndomain.engine.client;
 
-import unknowndomain.engine.game.GameContext;
-import unknowndomain.engine.action.Action;
-import unknowndomain.engine.action.ActionManager;
-import unknowndomain.engine.registry.RegisterException;
-import unknowndomain.engine.registry.Registry;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import unknowndomain.engine.action.Action;
+import unknowndomain.engine.action.ActionManager;
+import unknowndomain.engine.game.GameContext;
+import unknowndomain.engine.registry.RegisterException;
+import unknowndomain.engine.registry.Registry;
+import unknowndomain.engine.registry.RegistryEntry;
 
 public class ActionManagerImpl implements ActionManager {
     private Map<String, ActionRuntime> runningAction = new HashMap<>();
@@ -40,7 +41,7 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public Action register(Action obj) throws RegisterException {
+    public Action register(RegistryEntry<Action> obj) throws RegisterException {
         return delegate.register(obj);
     }
 
@@ -50,7 +51,7 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public String getKey(Action value) {
+    public String getKey(RegistryEntry<Action> value) {
         return delegate.getKey(value);
     }
 
@@ -60,7 +61,7 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public boolean containsValue(Action value) {
+    public boolean containsValue(RegistryEntry<Action> value) {
         return delegate.containsValue(value);
     }
 
@@ -75,7 +76,7 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public int getId(Action obj) {
+    public int getId(RegistryEntry<Action> obj) {
         return delegate.getId(obj);
     }
 
@@ -101,7 +102,9 @@ public class ActionManagerImpl implements ActionManager {
 
     @Override
     public void start(String action) {
-        if (runningAction.containsKey(action)) return;
+        if (runningAction.containsKey(action)) {
+            return;
+        }
 
         Action value = getValue(action);
         if (value != null) {
@@ -112,6 +115,7 @@ public class ActionManagerImpl implements ActionManager {
         }
     }
 
+    @Override
     public void end(String action) {
         ActionRuntime value = runningAction.get(action);
         if (value != null) {

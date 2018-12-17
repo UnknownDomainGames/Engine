@@ -58,4 +58,5 @@ public interface RegistryEntry<T> {
                 .concat(getAssignedRegistry().getRegistryName()).concat(".")
                 .concat(getLocalName());
     }
+    int getID();
 }

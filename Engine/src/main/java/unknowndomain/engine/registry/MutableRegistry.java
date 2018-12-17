@@ -16,8 +16,8 @@ public class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> 
     private final Class<T> registryType;
     private final String name;
 
-    private final Map<String, T> nameToObject = Maps.newHashMap();
-    private IntObjectMap<T> idToObject = new IntObjectHashMap<>();
+    private final Map<String, RegistryEntry<T>> nameToObject = Maps.newHashMap();
+    private IntObjectMap<RegistryEntry<T>> idToObject = new IntObjectHashMap<>();
     private Map<String, Integer> nameToId = HashBiMap.create();
 
     private AtomicInteger id = new AtomicInteger();
@@ -39,7 +39,7 @@ public class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> 
     }
 
     @Override
-    public T register(T obj) {
+    public T register(RegistryEntry<T> obj) {
         Validate.notNull(obj);
 
         ((Impl) obj).setup(activeMod, this);
@@ -50,7 +50,7 @@ public class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> 
         nameToObject.put(regId, obj);
         idToObject.put(next, obj);
         nameToId.put(regId, next);
-        return obj;
+        return (T) obj;
     }
 
     @Override
@@ -66,11 +66,11 @@ public class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> 
     @Override
     public T getValue(String registryName) {
         Validate.notNull(registryName);
-        return nameToObject.get(registryName);
+        return (T) nameToObject.get(registryName);
     }
 
     @Override
-    public String getKey(T value) {
+    public String getKey(RegistryEntry<T> value) {
         Validate.notNull(value);
         return value.getUniqueName();
     }
@@ -82,7 +82,7 @@ public class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> 
     }
 
     @Override
-    public boolean containsValue(T value) {
+    public boolean containsValue(RegistryEntry<T> value) {
         Validate.notNull(value);
         String regId = value.getUniqueName();
         return nameToObject.containsKey(regId);
@@ -95,11 +95,11 @@ public class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> 
 
     @Override
     public Collection<T> getValues() {
-        return nameToObject.values();
+        return (Collection<T>) nameToObject.values();
     }
 
     @Override
-    public int getId(T obj) {
+    public int getId(RegistryEntry<T> obj) {
         Validate.notNull(obj);
         String regId = obj.getUniqueName();
         return nameToId.get(regId);
@@ -118,11 +118,11 @@ public class MutableRegistry<T extends RegistryEntry<T>> implements Registry<T> 
 
     @Override
     public T getValue(int id) {
-        return idToObject.get(id);
+        return (T) idToObject.get(id);
     }
 
     @Override
     public Collection<Map.Entry<String, T>> getEntries() {
-        return nameToObject.entrySet();
+        return (Collection<Map.Entry<String, T>>)(Object)nameToObject.entrySet();
     }
 }
