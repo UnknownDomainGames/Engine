@@ -3,4 +3,6 @@ dependencies {
         exclude group: 'org.lwjgl'
 //        exclude group: 'org.joml'
     }
+
+    testCompile 'junit:junit:4.12'
 }

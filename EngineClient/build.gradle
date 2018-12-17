@@ -15,4 +15,6 @@ dependencies {
 
     compile 'com.github.Mouse0w0.Lib4j:lib4j-observable:1.0.2'
     compile 'com.github.Mouse0w0.Lib4j:lib4j-event:1.0.2'
+
+    testCompile 'junit:junit:4.12'
 }
