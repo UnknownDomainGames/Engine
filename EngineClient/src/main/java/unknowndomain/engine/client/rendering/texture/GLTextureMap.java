@@ -4,7 +4,7 @@ public class GLTextureMap extends GLTexture {
     private int dimension;
 
     public GLTextureMap(int id, int dimension) {
-        super(id);
+        super(id, 16, 16);
         this.dimension = dimension;
     }
 
@@ -17,6 +17,6 @@ public class GLTextureMap extends GLTexture {
 
     @Override
     public String toString() {
-        return "GLTexture { id: " + id + ", dimension: " + dimension + " }";
+        return "GLTexture { id: " + getId() + ", dimension: " + dimension + " }";
     }
 }

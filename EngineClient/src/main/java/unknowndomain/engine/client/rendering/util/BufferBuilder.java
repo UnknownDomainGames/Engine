@@ -3,6 +3,7 @@ package unknowndomain.engine.client.rendering.util;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.util.Color;
+import unknowndomain.engine.util.Math2;
 
 import java.nio.*;
 
@@ -147,10 +148,9 @@ public class BufferBuilder {
     }
 
     public void grow(int deltaLen) {
-        if (roundUp(deltaLen, 4) / 4 > intBuffer.remaining() || vertexCount * getOffset() + deltaLen > byteBuffer.capacity()) {
-
+        if (Math2.roundUp(deltaLen, 4) / 4 > intBuffer.remaining() || vertexCount * getOffset() + deltaLen > byteBuffer.capacity()) {
             int i = this.byteBuffer.capacity();
-            int j = i + roundUp(deltaLen, 2097152);
+            int j = i + Math2.roundUp(deltaLen, 2097152);
             int k = intBuffer.position();
             ByteBuffer bytebuffer = ByteBuffer.allocateDirect(j).order(ByteOrder.nativeOrder());
             this.byteBuffer.position(0);
@@ -162,21 +162,6 @@ public class BufferBuilder {
             intBuffer.position(k);
             shortBuffer = this.byteBuffer.asShortBuffer();
             shortBuffer.position(k << 1);
-        }
-    }
-
-    private int roundUp(int number, int interval) {
-        if (interval == 0) {
-            return 0;
-        } else if (number == 0) {
-            return interval;
-        } else {
-            if (number < 0) {
-                interval *= -1;
-            }
-
-            int i = number % interval;
-            return i == 0 ? number : number + interval - i;
         }
     }
 

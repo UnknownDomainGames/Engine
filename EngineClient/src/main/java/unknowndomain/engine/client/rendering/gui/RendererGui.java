@@ -7,12 +7,10 @@ import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.Graphics;
 import unknowndomain.engine.client.gui.Scene;
-import unknowndomain.engine.client.gui.component.Label;
-import unknowndomain.engine.client.gui.layout.Panel;
 import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFFontRenderer;
-import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.Shader;
+import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.world.World;
@@ -37,11 +35,6 @@ public class RendererGui extends ShaderProgram {
         this.fontRenderer = new TTFFontRenderer(fontRenderer);
         this.graphics = new GraphicsImpl(this.fontRenderer);
         createShader(vertexShader, fragShader);
-
-        Panel panel = new Panel();
-        panel.getChildren().add(new Label("Hello GUI"));
-        Scene scene = new Scene(panel);
-        hudScene.add(scene);
     }
 
     protected void createShader(Shader vertexShader, Shader fragShader) {
@@ -109,7 +102,7 @@ public class RendererGui extends ShaderProgram {
             renderScene(scene);
         }
 
-        //debug(context);
+        debug(context);
 
         unuseProgram();
     }
@@ -150,7 +143,8 @@ public class RendererGui extends ShaderProgram {
                 context.getCamera().getFrontVector(), 5);
         fontRenderer.drawText("FPS: " + displayFPS, 0, 0, 0xffffffff);
         fontRenderer.drawText(String.format("Player location: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 19, 0xffffffff);
-        fontRenderer.drawText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 38, 0xffffffff);
+        fontRenderer.drawText(String.format("Player look at: %f, %f, %f", player.getRotation().x, player.getRotation().y, player.getRotation().z), 0, 38, 0xffffffff);
+        fontRenderer.drawText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 19 * 3, 0xffffffff);
         //fontRenderer.drawText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);
 
         if (hit != null) {

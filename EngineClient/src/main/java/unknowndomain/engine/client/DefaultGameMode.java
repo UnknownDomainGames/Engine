@@ -1,24 +1,21 @@
 package unknowndomain.engine.client;
 
 import com.google.common.collect.Lists;
-import unknowndomain.engine.block.BlockAir;
-import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.block.BlockBuilder;
 import unknowndomain.engine.block.BlockPrototype;
-import unknowndomain.engine.client.rendering.world.RendererWorld;
 import unknowndomain.engine.client.rendering.model.GLMesh;
 import unknowndomain.engine.client.rendering.model.Mesh;
 import unknowndomain.engine.client.rendering.model.MinecraftModelFactory;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
+import unknowndomain.engine.client.rendering.world.RendererWorld;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.entity.TwoHands;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.registry.ClientRegistryEvent;
-import unknowndomain.engine.event.registry.GameReadyEvent;
 import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.event.registry.ResourceSetupEvent;
 import unknowndomain.engine.item.Item;
@@ -104,16 +101,16 @@ public class DefaultGameMode {
         }
     }
 
-    @Listener
-    public void onGameReady(GameReadyEvent event) {
-        GameContext context = event.getContext();
-        Registry<Item> itemRegistry = context.getItemRegistry();
-        Registry<Block> blockRegistry = context.getBlockRegistry();
-        Item stone = itemRegistry.getValue("minecraft.item.stone_placer");
-        UnknownDomain.getGame().getPlayer().getMountingEntity().getBehavior(TwoHands.class).setMainHand(stone);
-//        UnknownDomain.getGame().getPlayer().getMountingEntity().getPosition().set(0, 2, 0);
-        UnknownDomain.getGame().getWorld().setBlock(new BlockPos(1, 0, 0), blockRegistry.getValue(1));
-    }
+//    @Listener
+//    public void onGameReady(GameReadyEvent event) {
+//        GameContext context = event.getContext();
+//        Registry<Item> itemRegistry = context.getItemRegistry();
+//        Registry<Block> blockRegistry = context.getBlockRegistry();
+//        Item stone = itemRegistry.getValue("minecraft.item.stone_placer");
+//        UnknownDomain.getGame().getPlayer().getMountingEntity().getBehavior(TwoHands.class).setMainHand(stone);
+////        UnknownDomain.getGame().getPlayer().getMountingEntity().getPosition().set(0, 2, 0);
+//        UnknownDomain.getGame().getWorld().setBlock(BlockPos.of(1, 0, 0), blockRegistry.getValue(1));
+//    }
 
 
     private Item createPlace(Block object, String name) {
@@ -126,7 +123,7 @@ public class DefaultGameMode {
 
             @Override
             public void onUseBlockStart(World world, Entity entity, Item item, BlockPrototype.Hit hit) {
-                BlockPos side = hit.face.side(hit.position);
+                BlockPos side = hit.face.offset(hit.position);
                 System.out.println("HIT: " + hit.position + " " + hit.face + " " + hit.hit + " SIDE: " + side);
                 world.setBlock(side, object);
             }

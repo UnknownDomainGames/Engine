@@ -10,10 +10,14 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class GLTexture {
-    public final int id;
 
-    public GLTexture(int id) {
+    private final int id;
+    private final int width, height;
+
+    public GLTexture(int id, int width, int height) {
         this.id = id;
+        this.width = width;
+        this.height = height;
     }
 
     public void bind() {
@@ -27,7 +31,7 @@ public class GLTexture {
             direct.put(buf);
             buf = direct;
         }
-        GLTexture glTexture = new GLTexture(glGenTextures());
+        GLTexture glTexture = new GLTexture(glGenTextures(), width, height);
         glBindTexture(GL_TEXTURE_2D, glTexture.id);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -62,5 +66,17 @@ public class GLTexture {
 
     public void unbind() {
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getId() {
+        return id;
     }
 }

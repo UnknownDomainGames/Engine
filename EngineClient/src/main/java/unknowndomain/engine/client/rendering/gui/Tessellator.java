@@ -44,7 +44,6 @@ public class Tessellator {
 //        ByteBuffer bb = ByteBuffer.wrap(new byte[]{(byte) (buffer.isPosEnabled() ? 1 : 0), (byte) (buffer.isColorEnabled() ? 1 : 0), (byte) (buffer.isTexEnabled() ? 1 : 0), (byte) (buffer.isNormalEnabled() ? 1 : 0)});
 //        GL15.glBufferSubData(GL31.GL_UNIFORM_BUFFER, 0, bb);
 //        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, 0);
-        vbo.bind();
         vbo.uploadData(buffer);
         vbo.bind();
 
@@ -64,8 +63,6 @@ public class Tessellator {
             Shader.pointVertexAttribute(3, 3, buffer.getOffset(), ((buffer.isPosEnabled() ? 3 : 0) + (buffer.isTexEnabled() ? 2 : 0) + (buffer.isColorEnabled() ? 4 : 0)) * Float.BYTES);
             Shader.enableVertexAttrib(3);
         }
-        vbo.unbind();
-        vbo.bindVAO();
 
         if (buffer.isUsingIndex()) {
             vbo.drawElements(buffer.getDrawMode());
@@ -73,6 +70,5 @@ public class Tessellator {
             vbo.drawArrays(buffer.getDrawMode());
         }
         vbo.unbind();
-        buffer.reset();
     }
 }
