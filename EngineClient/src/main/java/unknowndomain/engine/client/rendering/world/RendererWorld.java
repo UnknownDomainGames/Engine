@@ -95,7 +95,7 @@ public class RendererWorld extends ShaderProgram {
 
         Shader.setUniform(u_View, camera.view());
 
-        Shader.setUniform(u_Model, new Matrix4f().setTranslation(camera.getLookAt()));
+        Shader.setUniform(u_Model, new Matrix4f().setTranslation(0,0,0));
 
 //        texture.bind();
 //        Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
