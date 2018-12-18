@@ -54,7 +54,11 @@ public interface RegistryEntry<T extends RegistryEntry<T>> {
      * @see #getOwner()
      */
     default String getUniqueName() {
-        return getOwner().getModId().concat(".")
+        // TODO: Fix it
+//        return getOwner().getModId().concat(".")
+//                .concat(getAssignedRegistry().getRegistryName()).concat(".")
+//                .concat(getLocalName());
+        return "unknowndomain".concat(".")
                 .concat(getAssignedRegistry().getRegistryName()).concat(".")
                 .concat(getLocalName());
     }

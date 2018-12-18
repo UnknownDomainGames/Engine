@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.rendering.display;
 
 import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import unknowndomain.engine.client.EngineClient;
@@ -206,7 +207,7 @@ public class DefaultGameWindow implements GameWindow {
         new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
-                engineClient.getCurrentGame().getController().handleCursorMove(xpos, ypos);
+                engineClient.getCurrentGame().getEntityController().handleCursorMove(xpos, ypos);
             }
         }.set(handle);
     }
@@ -216,7 +217,7 @@ public class DefaultGameWindow implements GameWindow {
         new GLFWScrollCallback() {
             @Override
             public void invoke(long window, double xoffset, double yoffset) {
-                engineClient.getCurrentGame().getController().handleScroll(xoffset, yoffset);
+//                engineClient.getCurrentGame().getEntityController().handleScroll(xoffset, yoffset);
             }
         }.set(handle);
     }

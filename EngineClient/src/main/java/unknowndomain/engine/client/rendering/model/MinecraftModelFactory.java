@@ -6,11 +6,11 @@ import de.matthiasmann.twl.utils.PNGDecoder;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 import unknowndomain.engine.Engine;
+import unknowndomain.engine.client.rendering.texture.GLTexture;
+import unknowndomain.engine.client.rendering.texture.GLTextureMap;
 import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourcePath;
-import unknowndomain.engine.client.rendering.texture.GLTexture;
-import unknowndomain.engine.client.rendering.texture.GLTextureMap;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -422,7 +422,7 @@ public final class MinecraftModelFactory {
 
         int dimension = stitch(parts);
         GLTextureMap glTexture = new GLTextureMap(glGenTextures(), dimension);
-        glBindTexture(GL_TEXTURE_2D, glTexture.id);
+        glTexture.bind();
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
