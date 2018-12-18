@@ -53,8 +53,8 @@ public class DefaultGameMode {
         event.registerRenderer((context, manager) ->
                 {
                     RendererWorld debug = new RendererWorld(
-                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/common.vert")).cache(), ShaderType.VERTEX_SHADER),
-                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/common.frag")).cache(), ShaderType.FRAGMENT_SHADER),
+                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/world.vert")).cache(), ShaderType.VERTEX_SHADER),
+                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/world.frag")).cache(), ShaderType.FRAGMENT_SHADER),
                             textureMap,
                             meshRegistry, meshes);
                     context.register(debug);

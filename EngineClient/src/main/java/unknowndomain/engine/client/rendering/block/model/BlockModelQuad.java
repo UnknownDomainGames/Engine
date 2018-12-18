@@ -20,15 +20,15 @@ public class BlockModelQuad {
             case NORTH:
                 return new BlockModelQuad(new float[]{fromX, fromY, z, toX, fromY, z, toX, toY, z, fromX, toY, z}, facing, texture);
             case SOUTH:
-                return new BlockModelQuad(new float[]{fromX, fromY, z, fromX, toY, z, toX, toY, z, toX, fromY, z}, facing, texture);
+                return new BlockModelQuad(new float[]{toX, fromY, z, fromX, fromY, z, fromX, toY, z, toX, toY, z}, facing, texture);
             case EAST:
-                return new BlockModelQuad(new float[]{z, fromX, fromY, z, toX, fromY, z, toX, toY, z, fromX, toY}, facing, texture);
+                return new BlockModelQuad(new float[]{z, fromX, toY, z, fromX, fromY, z, toX, fromY, z, toX, toY}, facing, texture);
             case WEST:
                 return new BlockModelQuad(new float[]{z, fromX, fromY, z, fromX, toY, z, toX, toY, z, toX, fromY}, facing, texture);
             case TOP:
-                return new BlockModelQuad(new float[]{fromX, z, fromY, fromX, z, toY, toX, z, toY, toX, z, fromY}, facing, texture);
+                return new BlockModelQuad(new float[]{fromX, z, toY, toX, z, toY, toX, z, fromY, fromX, z, fromY}, facing, texture);
             case BOTTOM:
-                return new BlockModelQuad(new float[]{fromX, z, fromY, toX, z, fromY, toX, z, toY, fromX, z, toY}, facing, texture);
+                return new BlockModelQuad(new float[]{toX, z, toY, fromX, z, toY, fromX, z, fromY, toX, z, fromY}, facing, texture);
             default:
                 throw new IllegalArgumentException();
         }

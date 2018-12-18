@@ -5,12 +5,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.client.rendering.model.GLMesh;
 import unknowndomain.engine.client.rendering.model.Mesh;
-import unknowndomain.engine.client.resource.ResourceManager;
-import unknowndomain.engine.client.resource.ResourcePath;
-import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.Shader;
+import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
+import unknowndomain.engine.client.resource.ResourceManager;
+import unknowndomain.engine.client.resource.ResourcePath;
 
 import java.io.IOException;
 
@@ -136,10 +136,10 @@ public class RendererSkybox extends ShaderProgram {
 
 
     protected ResourcePath vertexShader() {
-        return new ResourcePath("", "unknowndomain/shader/common.vert");
+        return new ResourcePath("", "unknowndomain/shader/world.vert");
     }
 
     protected ResourcePath fragmentShader() {
-        return new ResourcePath("", "unknowndomain/shader/common.frag");
+        return new ResourcePath("", "unknowndomain/shader/world.frag");
     }
 }

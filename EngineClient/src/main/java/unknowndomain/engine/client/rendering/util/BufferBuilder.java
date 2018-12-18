@@ -203,8 +203,13 @@ public class BufferBuilder {
 
     public BufferBuilder color(int color) {
         if (useColor) {
-           color(((color >> 16) & 255) / 255f, ((color >> 8) & 255) / 255f, (color & 255) / 255f, ((color >> 24) & 255) / 255f);
+            color(((color >> 16) & 255) / 255f, ((color >> 8) & 255) / 255f, (color & 255) / 255f, ((color >> 24) & 255) / 255f);
         }
+        return this;
+    }
+
+    public BufferBuilder color(float r, float g, float b) {
+        color(r, g, b, 1);
         return this;
     }
 
