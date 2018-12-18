@@ -8,7 +8,7 @@ import unknowndomain.engine.mod.ModContainer;
  * @param <T> The real type of this object
  * @see Registry
  */
-public interface RegistryEntry<T> {
+public interface RegistryEntry<T extends RegistryEntry<T>> {
     Class<T> getRegistryType();
 
     /**
@@ -58,5 +58,8 @@ public interface RegistryEntry<T> {
                 .concat(getAssignedRegistry().getRegistryName()).concat(".")
                 .concat(getLocalName());
     }
+    
     int getID();
+    
+    void setup(ModContainer modContainer, Registry<T> registry);
 }

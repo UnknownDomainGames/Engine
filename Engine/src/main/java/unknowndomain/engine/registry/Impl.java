@@ -1,6 +1,7 @@
 package unknowndomain.engine.registry;
 
 import com.google.common.reflect.TypeToken;
+
 import unknowndomain.engine.mod.ModContainer;
 
 public abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<T> {
@@ -19,9 +20,7 @@ public abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<
 
     @Override
     public String toString() {
-        return token + "{" +
-                "path='" + registeredName + '\'' +
-                '}';
+        return token + "{" + "path='" + registeredName + '\'' + '}';
     }
 
     @Override
@@ -32,12 +31,14 @@ public abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<
     @SuppressWarnings("unchecked")
     @Override
     public final T localName(String name) {
-        if (this.registeredName != null) throw new Error("Duplicated register " + name);
+        if (this.registeredName != null)
+            throw new Error("Duplicated register " + name);
         this.registeredName = name;
         return (T) this;
     }
 
-    void setup(ModContainer modContainer, Registry<T> registry) {
+    @Override
+    public void setup(ModContainer modContainer, Registry<T> registry) {
         if (this.modContainer == null)
             this.modContainer = modContainer;
         if (this.registry == null)
@@ -58,10 +59,9 @@ public abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<
         return registry;
     }
 
-	@Override
-	public int getID() {
-		return getAssignedRegistry().getId(this);
-	}
-
+    @Override
+    public int getID() {
+        return getAssignedRegistry().getId((T) this);
+    }
 
 }

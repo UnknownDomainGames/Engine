@@ -10,7 +10,6 @@ import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.registry.RegisterException;
 import unknowndomain.engine.registry.Registry;
-import unknowndomain.engine.registry.RegistryEntry;
 
 public class ActionManagerImpl implements ActionManager {
     private Map<String, ActionRuntime> runningAction = new HashMap<>();
@@ -41,7 +40,7 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public Action register(RegistryEntry<Action> obj) throws RegisterException {
+    public Action register(Action obj) throws RegisterException {
         return delegate.register(obj);
     }
 
@@ -51,7 +50,7 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public String getKey(RegistryEntry<Action> value) {
+    public String getKey(Action value) {
         return delegate.getKey(value);
     }
 
@@ -61,7 +60,7 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public boolean containsValue(RegistryEntry<Action> value) {
+    public boolean containsValue(Action value) {
         return delegate.containsValue(value);
     }
 
@@ -76,7 +75,7 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public int getId(RegistryEntry<Action> obj) {
+    public int getId(Action obj) {
         return delegate.getId(obj);
     }
 

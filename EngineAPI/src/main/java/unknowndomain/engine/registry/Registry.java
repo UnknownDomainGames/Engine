@@ -14,14 +14,14 @@ public interface Registry<T extends RegistryEntry<T>> {
 
     String getRegistryName();
 
-    T register(RegistryEntry<T> obj) throws RegisterException;
+    T register(T obj) throws RegisterException;
 
-    default void registerAll(RegistryEntry<T>... objs) throws RegisterException {
-        for (RegistryEntry<T> obj : objs)
+    default void registerAll(T... objs) throws RegisterException {
+        for (T obj : objs)
             register(obj);
     }
 
-    boolean containsValue(RegistryEntry<T> value);
+    boolean containsValue(T value);
 
     /**
      * Get the registered object by the unique name of the object.
@@ -38,7 +38,7 @@ public interface Registry<T extends RegistryEntry<T>> {
      * @return The unique name of the object
      * @see RegistryEntry#getUniqueName()
      */
-    String getKey(RegistryEntry<T> value);
+    String getKey(T value);
 
     boolean containsKey(String key);
 
@@ -46,7 +46,7 @@ public interface Registry<T extends RegistryEntry<T>> {
 
     Set<String> getKeys();
 
-    int getId(RegistryEntry<T> obj);
+    int getId(T obj);
 
     int getId(String key);
 
