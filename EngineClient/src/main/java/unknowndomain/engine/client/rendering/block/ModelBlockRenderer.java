@@ -4,7 +4,7 @@ import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.block.model.BlockModelQuad;
-import unknowndomain.engine.client.rendering.texture.GLTexturePart;
+import unknowndomain.engine.client.rendering.texture.Texture;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.util.ChunkCache;
 import unknowndomain.engine.math.BlockPos;
@@ -50,7 +50,7 @@ public class ModelBlockRenderer implements BlockRenderer {
     }
 
     public void renderModelQuad(BlockModelQuad modelQuad, BlockPos pos, BufferBuilder buffer) {
-        GLTexturePart texture = modelQuad.texture;
+        Texture texture = modelQuad.texture;
         buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).tex(texture.getMinU(), texture.getMaxV()).endVertex(); // 1
         buffer.pos(modelQuad.vertexs[3], modelQuad.vertexs[4], modelQuad.vertexs[5]).tex(texture.getMaxU(), texture.getMaxV()).endVertex(); // 2
         buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).tex(texture.getMaxU(), texture.getMinV()).endVertex(); // 3
