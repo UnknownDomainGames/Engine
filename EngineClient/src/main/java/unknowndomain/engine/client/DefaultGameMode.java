@@ -1,38 +1,24 @@
 package unknowndomain.engine.client;
 
-import com.google.common.collect.Lists;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.block.BlockBuilder;
 import unknowndomain.engine.block.BlockPrototype;
-import unknowndomain.engine.client.rendering.model.GLMesh;
-import unknowndomain.engine.client.rendering.model.Mesh;
-import unknowndomain.engine.client.rendering.model.MinecraftModelFactory;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
-import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.world.RendererWorld;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.registry.ClientRegistryEvent;
 import unknowndomain.engine.event.registry.RegisterEvent;
-import unknowndomain.engine.event.registry.ResourceSetupEvent;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.item.ItemBuilder;
 import unknowndomain.engine.item.ItemPrototype;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.world.World;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 public class DefaultGameMode {
-    private GLTexture textureMap;
-    private Mesh[] meshes;
-    private GLMesh[] meshRegistry;
 
     @Listener
     public void registerEvent(RegisterEvent event) {
@@ -54,9 +40,7 @@ public class DefaultGameMode {
                 {
                     RendererWorld debug = new RendererWorld(
                             Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/world.vert")).cache(), ShaderType.VERTEX_SHADER),
-                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/world.frag")).cache(), ShaderType.FRAGMENT_SHADER),
-                            textureMap,
-                            meshRegistry, meshes);
+                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/world.frag")).cache(), ShaderType.FRAGMENT_SHADER));
                     context.register(debug);
                     return debug;
                 }
@@ -73,33 +57,33 @@ public class DefaultGameMode {
 //                });
     }
 
-    @Listener
-    public void setupResources(ResourceSetupEvent event) {
-        Registry<Block> registry = event.getContext().getRegistry().getRegistry(Block.class);
-        if (registry == null) {
-            return;
-        }
-        List<ResourcePath> pathList = new ArrayList<>();
-        for (Block value : registry.getValues()) {
-            if (value.getLocalName().equals("air"))
-                continue;
-            String[] split = value.getUniqueName().split("\\.");
-            ArrayList<String> ls = Lists.newArrayList(split);
-            ls.add(1, "models");
-            String path = "/" + String.join("/", ls) + ".json";
-            pathList.add(new ResourcePath(path));
-        }
-
-        MinecraftModelFactory.Result feed = null;
-        try {
-            feed = MinecraftModelFactory.process(event.getResourceManager(), pathList);
-            textureMap = feed.textureMap;
-            meshes = feed.meshes.toArray(new Mesh[0]);
-            meshRegistry = feed.meshes.stream().map(GLMesh::of).toArray(GLMesh[]::new);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    @Listener
+//    public void setupResources(ResourceSetupEvent event) {
+//        Registry<Block> registry = event.getContext().getRegistry().getRegistry(Block.class);
+//        if (registry == null) {
+//            return;
+//        }
+//        List<ResourcePath> pathList = new ArrayList<>();
+//        for (Block value : registry.getValues()) {
+//            if (value.getLocalName().equals("air"))
+//                continue;
+//            String[] split = value.getUniqueName().split("\\.");
+//            ArrayList<String> ls = Lists.newArrayList(split);
+//            ls.add(1, "models");
+//            String path = "/" + String.join("/", ls) + ".json";
+//            pathList.add(new ResourcePath(path));
+//        }
+//
+//        MinecraftModelFactory.Result feed = null;
+//        try {
+//            feed = MinecraftModelFactory.process(event.getResourceManager(), pathList);
+//            textureMap = feed.textureMap;
+//            meshes = feed.meshes.toArray(new Mesh[0]);
+//            meshRegistry = feed.meshes.stream().map(GLMesh::of).toArray(GLMesh[]::new);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 //    @Listener
 //    public void onGameReady(GameReadyEvent event) {

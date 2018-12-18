@@ -1,21 +1,21 @@
 package unknowndomain.engine.client.rendering.block.model;
 
-import unknowndomain.engine.client.rendering.texture.GLTexturePart;
+import unknowndomain.engine.client.rendering.texture.Texture;
 import unknowndomain.engine.util.Facing;
 
 public class BlockModelQuad {
 
     public float[] vertexs;
     public Facing facing;
-    public GLTexturePart texture;
+    public Texture texture;
 
-    public BlockModelQuad(float[] vertexs, Facing facing, GLTexturePart texture) {
+    public BlockModelQuad(float[] vertexs, Facing facing, Texture texture) {
         this.vertexs = vertexs;
         this.facing = facing;
         this.texture = texture;
     }
 
-    public static BlockModelQuad createQuad(float fromX, float fromY, float toX, float toY, float z, Facing facing, GLTexturePart texture) {
+    public static BlockModelQuad createQuad(float fromX, float fromY, float toX, float toY, float z, Facing facing, Texture texture) {
         switch (facing) {
             case NORTH:
                 return new BlockModelQuad(new float[]{fromX, fromY, z, toX, fromY, z, toX, toY, z, fromX, toY, z}, facing, texture);

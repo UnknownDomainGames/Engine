@@ -1,6 +1,6 @@
 package unknowndomain.engine.client.rendering.block.model;
 
-import unknowndomain.engine.client.rendering.texture.GLTexturePart;
+import unknowndomain.engine.client.rendering.texture.Texture;
 import unknowndomain.engine.util.Facing;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class BlockModel {
         facedModelQuads.computeIfAbsent(modelQuad.facing, key -> new ArrayList<>()).add(modelQuad);
     }
 
-    public void addCube(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, GLTexturePart[] textures) {
+    public void addCube(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, Texture[] textures) {
         addQuad(createQuad(fromX, fromY, toX, toY, toZ, Facing.NORTH, textures[Facing.NORTH.ordinal()]));
         addQuad(createQuad(fromX, fromY, toX, toY, fromZ, Facing.SOUTH, textures[Facing.SOUTH.ordinal()]));
         addQuad(createQuad(fromY, fromZ, toY, toZ, toX, Facing.EAST, textures[Facing.EAST.ordinal()]));
@@ -30,7 +30,7 @@ public class BlockModel {
         addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.BOTTOM, textures[Facing.BOTTOM.ordinal()]));
     }
 
-    public void addCube(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, GLTexturePart texture) {
+    public void addCube(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, Texture texture) {
         addQuad(createQuad(fromX, fromY, toX, toY, toZ, Facing.NORTH, texture));
         addQuad(createQuad(fromX, fromY, toX, toY, fromZ, Facing.SOUTH, texture));
         addQuad(createQuad(fromY, fromZ, toY, toZ, toX, Facing.EAST, texture));

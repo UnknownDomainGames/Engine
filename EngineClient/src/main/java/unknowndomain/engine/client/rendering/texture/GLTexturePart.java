@@ -1,40 +1,46 @@
 package unknowndomain.engine.client.rendering.texture;
 
-public class GLTexturePart {
+public class GLTexturePart implements Texture {
 
-    private final GLTexture texture;
-    private final int offsetX, offsetY, width, height;
-
-    public GLTexturePart(GLTexture texture) {
-        this(texture, 0, 0, texture.getWidth(), texture.getHeight());
+    public static GLTexturePart of(GLTexture texture) {
+        return new GLTexturePart(texture, 0,0,1,1);
     }
 
-    public GLTexturePart(GLTexture texture, int offsetX, int offsetY, int width, int height) {
+    public static GLTexturePart of(GLTexture texture, int offsetX, int offsetY, int width, int height) {
+        return new GLTexturePart(texture, (float) offsetX / texture.getWidth(),
+                (float) offsetY / texture.getHeight(),
+                (float) (offsetX + width) / texture.getWidth(),
+                (float) (offsetY + height) / texture.getHeight());
+    }
+
+    private final GLTexture texture;
+    private final float minU, minV, maxU, maxV;
+
+    public GLTexturePart(GLTexture texture, float minU, float minV, float maxU, float maxV) {
         this.texture = texture;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-        this.width = width;
-        this.height = height;
+        this.minU = minU;
+        this.minV = minV;
+        this.maxU = maxU;
+        this.maxV = maxV;
     }
 
     public GLTexture getTexture() {
         return texture;
     }
 
-    public int getOffsetX() {
-        return offsetX;
+    public float getMinU() {
+        return minU;
     }
 
-    public int getOffsetY() {
-        return offsetY;
+    public float getMinV() {
+        return minV;
     }
 
-    public int getWidth() {
-        return width;
+    public float getMaxU() {
+        return maxU;
     }
 
-    public int getHeight() {
-        return height;
+    public float getMaxV() {
+        return maxV;
     }
-
 }

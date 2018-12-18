@@ -8,12 +8,11 @@ import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.display.Camera;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
-import unknowndomain.engine.client.rendering.model.GLMesh;
-import unknowndomain.engine.client.rendering.model.Mesh;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.texture.GLTexturePart;
+import unknowndomain.engine.client.rendering.texture.Texture;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.world.chunk.RenderChunkTask;
 import unknowndomain.engine.event.Listener;
@@ -35,26 +34,15 @@ public class RendererWorld extends ShaderProgram {
     private int u_Projection;
     private int u_View;
     private int u_Model;
-    private GLTexture texture;
-    private Map<ChunkPos, RenderChunkTask> loadChunk = Maps.newHashMap();
-    private GLMesh[] meshRegistry;
-    private Mesh[] meshes;
 
-    private GLMesh textureMap;
+    private Map<ChunkPos, RenderChunkTask> loadChunk = Maps.newHashMap();
 
     private ModelBlockRenderer modelBlockRenderer = new ModelBlockRenderer();
     private BlockModel blockModel;
+    private GLTexture texture;
     private GLTexture texture2;
 
-    {
-        textureMap = GLMesh.of(new Mesh(new float[]{0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0,},
-                new float[]{0, 1, 1, 1, 1, 0, 0, 0,}, new float[]{
-
-        }, new int[]{0, 2, 1, 0, 3, 2}, GL11.GL_TRIANGLES));
-    }
-
-    public RendererWorld(Shader vertex, Shader frag, GLTexture texMap, GLMesh[] meshRegistry, Mesh[] meshes) {
-        this.meshes = meshes;
+    public RendererWorld(Shader vertex, Shader frag) {
         createShader(vertex, frag);
 
         useProgram();
@@ -62,14 +50,14 @@ public class RendererWorld extends ShaderProgram {
         u_View = getUniformLocation("u_ViewMatrix");
         u_Model = getUniformLocation("u_ModelMatrix");
 
-        this.texture = texMap;
-        this.meshRegistry = meshRegistry;
-
         try {
             texture = GLTexture.ofPNG(this.getClass().getResourceAsStream("/assets/unknowndomain/textures/block/grass_block_side.png"));
             texture2 = GLTexture.ofPNG(this.getClass().getResourceAsStream("/assets/unknowndomain/textures/block/grassblock.png"));
+            GLTexturePart top = GLTexturePart.of(texture2, 0, 512, 512, 512);
+            GLTexturePart bottom = GLTexturePart.of(texture2, 512, 0, 512, 512);
+            GLTexturePart side = GLTexturePart.of(texture2, 0, 0, 512, 512);
             blockModel = new BlockModel();
-            blockModel.addCube(0, 0, 0, 1, 1, 1, new GLTexturePart(texture));
+            blockModel.addCube(0, 0, 0, 1, 1, 1, new Texture[]{side, side, side, side, top, bottom});
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -93,53 +81,27 @@ public class RendererWorld extends ShaderProgram {
 
         Shader.setUniform(u_View, camera.view());
 
-        Shader.setUniform(u_Model, new Matrix4f().setTranslation(0,0,0));
-//        texture.bind();
-//        Shader.setUniform(u_Model, new Matrix4f().setTranslation(2, 2, 2));
-//        textureMap.render();
-
-//        BlockPrototype.Hit hit = world.raycast(camera.getPosition(),
-//                camera.getFrontVector(), 5);
-
-//        loadChunk.forEach((pos, chunk) -> chunk.render(context));
-
-//        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-//        Shader.setUniform(u_Texture, 0);
+        Shader.setUniform(u_Model, new Matrix4f().setTranslation(0, 0, 0));
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         setUniform("u_UseColor", true);
         setUniform("u_UseTexture", false);
         buffer.begin(GL11.GL_LINES, true, true, false);
-        buffer.pos(0,0,0).color(1,0,0).endVertex();
-        buffer.pos(100,0,0).color(1,0,0).endVertex();
-        buffer.pos(0,0,0).color(0,1,0).endVertex();
-        buffer.pos(0,100,0).color(0,1,0).endVertex();
-        buffer.pos(0,0,0).color(0,0,1).endVertex();
-        buffer.pos(0,0,100).color(0,0,1).endVertex();
+        buffer.pos(0, 0, 0).color(1, 0, 0).endVertex();
+        buffer.pos(100, 0, 0).color(1, 0, 0).endVertex();
+        buffer.pos(0, 0, 0).color(0, 1, 0).endVertex();
+        buffer.pos(0, 100, 0).color(0, 1, 0).endVertex();
+        buffer.pos(0, 0, 0).color(0, 0, 1).endVertex();
+        buffer.pos(0, 0, 100).color(0, 0, 1).endVertex();
         tessellator.draw();
 
         setUniform("u_UseColor", false);
         setUniform("u_UseTexture", true);
-        texture.bind();
+        texture2.bind();
         buffer.begin(GL11.GL_TRIANGLES, true, false, true);
         modelBlockRenderer.renderModel(blockModel, BlockPos.ZERO, tessellator.getBuffer());
         tessellator.draw();
-//
-//        buffer.begin(GL11.GL_TRIANGLES, true, false, true);
-//        buffer.pos(0, 0, 0).tex(0, 1).endVertex();
-//        buffer.pos(1, 0, 0).tex(1, 1).endVertex();
-//        buffer.pos(1, 1, 0).tex(0, 1).endVertex();
-//        buffer.pos(0, 1, 0).tex(1, 1).endVertex();
-//        tessellator.draw();
-
-//        buffer.begin(GL11.GL_QUADS, true, false, true, false, false);
-//        buffer.pos(0,0,0).tex(0,1).endVertex();
-//        buffer.pos(1,0,0).tex(1,1).endVertex();
-//        buffer.pos(1,1,0).tex(1,0).endVertex();
-//        buffer.pos(0,1,0).tex(0,0).endVertex();
-//        buffer.indices(0, 2, 1, 0, 3, 2);
-//        tessellator.draw();
 
         GL11.glDisable(GL11.GL_CULL_FACE);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
