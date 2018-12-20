@@ -1,38 +1,43 @@
-package unknowndomain.engine.client;
+package unknowndomain.game;
 
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockAir;
-import unknowndomain.engine.block.BlockBuilder;
 import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
+import unknowndomain.engine.client.rendering.texture.TextureManager;
+import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.world.RendererWorld;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.registry.ClientRegistryEvent;
-import unknowndomain.engine.event.registry.RegisterEvent;
+import unknowndomain.engine.event.registry.ResourceSetupEvent;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.item.ItemBuilder;
 import unknowndomain.engine.item.ItemPrototype;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
 
+import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
+
 public class DefaultGameMode {
 
-    @Listener
-    public void registerEvent(RegisterEvent event) {
-        System.out.println("Hello");
-        Block stone = BlockBuilder.create("stone").build(),
-                grass = BlockBuilder.create("grass_normal").build();
+    public static BlockModel blockModel;
 
-        event.getRegistry().register(BlockAir.AIR);
-        event.getRegistry().register(stone);
-        event.getRegistry().register(grass);
-
-        event.getRegistry().register(createPlace(stone, "stone"));
-        event.getRegistry().register(createPlace(grass, "grass"));
-    }
+//    @Listener
+//    public void registerEvent(RegisterEvent event) {
+//        System.out.println("Hello");
+//        Block stone = BlockBuilder.create("stone").build(),
+//                grass = BlockBuilder.create("grass_normal").build();
+//
+//        event.getRegistry().register(BlockAir.AIR);
+//        event.getRegistry().register(stone);
+//        event.getRegistry().register(grass);
+//
+//        event.getRegistry().register(createPlace(stone, "stone"));
+//        event.getRegistry().register(createPlace(grass, "grass"));
+//    }
 
     @Listener
     public void clientRegisterEvent(ClientRegistryEvent event) {
@@ -57,33 +62,15 @@ public class DefaultGameMode {
 //                });
     }
 
-//    @Listener
-//    public void setupResources(ResourceSetupEvent event) {
-//        Registry<Block> registry = event.getContext().getRegistry().getRegistry(Block.class);
-//        if (registry == null) {
-//            return;
-//        }
-//        List<ResourcePath> pathList = new ArrayList<>();
-//        for (Block value : registry.getValues()) {
-//            if (value.getLocalName().equals("air"))
-//                continue;
-//            String[] split = value.getUniqueName().split("\\.");
-//            ArrayList<String> ls = Lists.newArrayList(split);
-//            ls.add(1, "models");
-//            String path = "/" + String.join("/", ls) + ".json";
-//            pathList.add(new ResourcePath(path));
-//        }
-//
-//        MinecraftModelFactory.Result feed = null;
-//        try {
-//            feed = MinecraftModelFactory.process(event.getResourceManager(), pathList);
-//            textureMap = feed.textureMap;
-//            meshes = feed.meshes.toArray(new Mesh[0]);
-//            meshRegistry = feed.meshes.stream().map(GLMesh::of).toArray(GLMesh[]::new);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @Listener
+    public void setupResource(ResourceSetupEvent event) {
+        TextureManager textureManager = event.getTextureManager();
+        TextureUV side = textureManager.register(new ResourcePath("/assets/unknowndomain/textures/block/side.png"), BLOCK);
+        TextureUV top = textureManager.register(new ResourcePath("/assets/unknowndomain/textures/block/top.png"), BLOCK);
+        TextureUV bottom = textureManager.register( new ResourcePath("/assets/unknowndomain/textures/block/bottom.png"), BLOCK);
+        blockModel = new BlockModel();
+        blockModel.addCube(0, 0, 0, 1, 1, 1, new TextureUV[]{side, side, side, side, top, bottom});
+    }
 
 //    @Listener
 //    public void onGameReady(GameReadyEvent event) {

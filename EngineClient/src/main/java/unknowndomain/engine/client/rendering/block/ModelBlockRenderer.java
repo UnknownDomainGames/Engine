@@ -4,7 +4,7 @@ import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.block.model.BlockModelQuad;
-import unknowndomain.engine.client.rendering.texture.Texture;
+import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.util.ChunkCache;
 import unknowndomain.engine.math.BlockPos;
@@ -50,14 +50,14 @@ public class ModelBlockRenderer implements BlockRenderer {
     }
 
     public void renderModelQuad(BlockModelQuad modelQuad, BlockPos pos, BufferBuilder buffer) {
-        Texture texture = modelQuad.texture;
-        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).tex(texture.getMinU(), texture.getMaxV()).endVertex(); // 1
-        buffer.pos(modelQuad.vertexs[3], modelQuad.vertexs[4], modelQuad.vertexs[5]).tex(texture.getMaxU(), texture.getMaxV()).endVertex(); // 2
-        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).tex(texture.getMaxU(), texture.getMinV()).endVertex(); // 3
+        TextureUV textureUV = modelQuad.textureUV;
+        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex(); // 1
+        buffer.pos(modelQuad.vertexs[3], modelQuad.vertexs[4], modelQuad.vertexs[5]).tex(textureUV.getMaxU(), textureUV.getMaxV()).endVertex(); // 2
+        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex(); // 3
 
-        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).tex(texture.getMinU(), texture.getMaxV()).endVertex(); // 1
-        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).tex(texture.getMaxU(), texture.getMinV()).endVertex(); // 3
-        buffer.pos(modelQuad.vertexs[9], modelQuad.vertexs[10], modelQuad.vertexs[11]).tex(texture.getMinU(), texture.getMinV()).endVertex(); // 4
+        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex(); // 1
+        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex(); // 3
+        buffer.pos(modelQuad.vertexs[9], modelQuad.vertexs[10], modelQuad.vertexs[11]).tex(textureUV.getMinU(), textureUV.getMinV()).endVertex(); // 4
     }
 
     @Override

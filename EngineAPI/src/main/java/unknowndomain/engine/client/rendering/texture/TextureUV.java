@@ -1,6 +1,6 @@
 package unknowndomain.engine.client.rendering.texture;
 
-public interface Texture {
+public interface TextureUV {
     float getMinU();
 
     float getMinV();

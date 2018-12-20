@@ -4,15 +4,12 @@ import com.google.common.collect.Maps;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.Engine;
+import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
-import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.display.Camera;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
-import unknowndomain.engine.client.rendering.texture.GLTexture;
-import unknowndomain.engine.client.rendering.texture.GLTexturePart;
-import unknowndomain.engine.client.rendering.texture.Texture;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.world.chunk.RenderChunkTask;
 import unknowndomain.engine.event.Listener;
@@ -20,9 +17,11 @@ import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.world.BlockChangeEvent;
+import unknowndomain.game.DefaultGameMode;
 
-import java.io.IOException;
 import java.util.Map;
+
+import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
 public class RendererWorld extends ShaderProgram {
 
@@ -38,9 +37,6 @@ public class RendererWorld extends ShaderProgram {
     private Map<ChunkPos, RenderChunkTask> loadChunk = Maps.newHashMap();
 
     private ModelBlockRenderer modelBlockRenderer = new ModelBlockRenderer();
-    private BlockModel blockModel;
-    private GLTexture texture;
-    private GLTexture texture2;
 
     public RendererWorld(Shader vertex, Shader frag) {
         createShader(vertex, frag);
@@ -49,22 +45,10 @@ public class RendererWorld extends ShaderProgram {
         u_Projection = getUniformLocation("u_ProjMatrix");
         u_View = getUniformLocation("u_ViewMatrix");
         u_Model = getUniformLocation("u_ModelMatrix");
-
-        try {
-            texture = GLTexture.ofPNG(this.getClass().getResourceAsStream("/assets/unknowndomain/textures/block/grass_block_side.png"));
-            texture2 = GLTexture.ofPNG(this.getClass().getResourceAsStream("/assets/unknowndomain/textures/block/grassblock.png"));
-            GLTexturePart top = GLTexturePart.of(texture2, 0, 512, 512, 512);
-            GLTexturePart bottom = GLTexturePart.of(texture2, 512, 0, 512, 512);
-            GLTexturePart side = GLTexturePart.of(texture2, 0, 0, 512, 512);
-            blockModel = new BlockModel();
-            blockModel.addCube(0, 0, 0, 1, 1, 1, new Texture[]{side, side, side, side, top, bottom});
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
-    public void render(Context context) {
+    public void render(RenderContext context) {
         Camera camera = context.getCamera();
 
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
@@ -98,9 +82,9 @@ public class RendererWorld extends ShaderProgram {
 
         setUniform("u_UseColor", false);
         setUniform("u_UseTexture", true);
-        texture2.bind();
+        context.getTextureManager().getTextureAtlas(BLOCK).bind();
         buffer.begin(GL11.GL_TRIANGLES, true, false, true);
-        modelBlockRenderer.renderModel(blockModel, BlockPos.ZERO, tessellator.getBuffer());
+        modelBlockRenderer.renderModel(DefaultGameMode.blockModel, BlockPos.ZERO, tessellator.getBuffer());
         tessellator.draw();
 
         GL11.glDisable(GL11.GL_CULL_FACE);

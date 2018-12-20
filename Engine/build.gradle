@@ -1,6 +1,7 @@
 dependencies {
     compile(project(':EngineAPI')) {
         exclude group: 'org.lwjgl'
+        exclude group: 'org.l33tlabs.twl'
 //        exclude group: 'org.joml'
     }
 

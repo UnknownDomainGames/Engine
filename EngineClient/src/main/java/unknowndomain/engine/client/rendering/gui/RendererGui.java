@@ -9,6 +9,7 @@ import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.Graphics;
 import unknowndomain.engine.client.gui.Scene;
+import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFFontRenderer;
 import unknowndomain.engine.client.rendering.shader.Shader;
@@ -83,7 +84,7 @@ public class RendererGui extends ShaderProgram {
     }
 
     @Override
-    public void render(Context context) {
+    public void render(RenderContext context) {
         useProgram();
 
         if (context.getWindow().isResized()) {
@@ -134,7 +135,7 @@ public class RendererGui extends ShaderProgram {
         fps++;
     }
 
-    private void debug(Context context) {
+    private void debug(RenderContext context) {
         updateFPS();
         Entity player = UnknownDomain.getGame().getPlayer().getMountingEntity();
         AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());

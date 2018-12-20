@@ -1,6 +1,6 @@
 package unknowndomain.engine.client.rendering.block.model;
 
-import unknowndomain.engine.client.rendering.texture.Texture;
+import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.util.Facing;
 
 import java.util.ArrayList;
@@ -21,21 +21,21 @@ public class BlockModel {
         facedModelQuads.computeIfAbsent(modelQuad.facing, key -> new ArrayList<>()).add(modelQuad);
     }
 
-    public void addCube(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, Texture[] textures) {
-        addQuad(createQuad(fromX, fromY, toX, toY, toZ, Facing.NORTH, textures[Facing.NORTH.ordinal()]));
-        addQuad(createQuad(fromX, fromY, toX, toY, fromZ, Facing.SOUTH, textures[Facing.SOUTH.ordinal()]));
-        addQuad(createQuad(fromY, fromZ, toY, toZ, toX, Facing.EAST, textures[Facing.EAST.ordinal()]));
-        addQuad(createQuad(fromY, fromZ, toY, toZ, fromX, Facing.WEST, textures[Facing.WEST.ordinal()]));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.TOP, textures[Facing.TOP.ordinal()]));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.BOTTOM, textures[Facing.BOTTOM.ordinal()]));
+    public void addCube(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, TextureUV[] textureUVS) {
+        addQuad(createQuad(fromX, fromY, toX, toY, toZ, Facing.NORTH, textureUVS[Facing.NORTH.ordinal()]));
+        addQuad(createQuad(fromX, fromY, toX, toY, fromZ, Facing.SOUTH, textureUVS[Facing.SOUTH.ordinal()]));
+        addQuad(createQuad(fromY, fromZ, toY, toZ, toX, Facing.EAST, textureUVS[Facing.EAST.ordinal()]));
+        addQuad(createQuad(fromY, fromZ, toY, toZ, fromX, Facing.WEST, textureUVS[Facing.WEST.ordinal()]));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.TOP, textureUVS[Facing.TOP.ordinal()]));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.BOTTOM, textureUVS[Facing.BOTTOM.ordinal()]));
     }
 
-    public void addCube(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, Texture texture) {
-        addQuad(createQuad(fromX, fromY, toX, toY, toZ, Facing.NORTH, texture));
-        addQuad(createQuad(fromX, fromY, toX, toY, fromZ, Facing.SOUTH, texture));
-        addQuad(createQuad(fromY, fromZ, toY, toZ, toX, Facing.EAST, texture));
-        addQuad(createQuad(fromY, fromZ, toY, toZ, fromX, Facing.WEST, texture));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.TOP, texture));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.BOTTOM, texture));
+    public void addCube(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, TextureUV textureUV) {
+        addQuad(createQuad(fromX, fromY, toX, toY, toZ, Facing.NORTH, textureUV));
+        addQuad(createQuad(fromX, fromY, toX, toY, fromZ, Facing.SOUTH, textureUV));
+        addQuad(createQuad(fromY, fromZ, toY, toZ, toX, Facing.EAST, textureUV));
+        addQuad(createQuad(fromY, fromZ, toY, toZ, fromX, Facing.WEST, textureUV));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.TOP, textureUV));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.BOTTOM, textureUV));
     }
 }

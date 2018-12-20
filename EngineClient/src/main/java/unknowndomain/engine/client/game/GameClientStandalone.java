@@ -5,20 +5,20 @@ import unknowndomain.engine.action.Action;
 import unknowndomain.engine.action.ActionBuilderImpl;
 import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.client.ActionManagerImpl;
-import unknowndomain.engine.client.DefaultGameMode;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.controller.MotionType;
 import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.input.keybinding.Keybindings;
+import unknowndomain.engine.client.rendering.RenderContext;
+import unknowndomain.engine.client.rendering.RenderContextImpl;
 import unknowndomain.engine.client.rendering.Renderer;
-import unknowndomain.engine.client.rendering.RendererContext;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
-import unknowndomain.engine.client.rendering.display.Camera;
 import unknowndomain.engine.client.rendering.display.DefaultGameWindow;
 import unknowndomain.engine.client.rendering.gui.RendererGui;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
+import unknowndomain.engine.client.rendering.texture.TextureTypes;
 import unknowndomain.engine.client.resource.*;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.registry.ClientRegistryEvent;
@@ -31,36 +31,35 @@ import unknowndomain.engine.mod.ModStore;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.world.WorldCommon;
+import unknowndomain.game.DefaultGameMode;
 
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
 
 public class GameClientStandalone extends GameServerFullAsync {
-    private List<Renderer.Factory> factories;
 
-    private RendererContext gameRenderer;
+    private DefaultGameWindow window;
+    private RenderContextImpl renderContext;
     private ResourceManager resourceManager;
-    private ActionManagerImpl actionManager;
 
+    private ActionManagerImpl actionManager;
     private KeyBindingManager keyBindingManager;
     private EntityController entityController;
 
-    private Camera camera;
-
     private WorldCommon world;
     private Player player;
+
     private FixStepTicker.Dynamic ticker;
 
-    private boolean closed;
-    private DefaultGameWindow window;
+    private boolean stopped;
 
     public GameClientStandalone(Option option, ModRepository repository, ModStore store, EventBus bus, DefaultGameWindow window) {
         super(option, repository, store, bus);
         this.window = window;
         this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, 60);
 
-        // TODO:
+        // TODO: Remove it
         bus.register(new DefaultGameMode());
     }
 
@@ -87,10 +86,10 @@ public class GameClientStandalone extends GameServerFullAsync {
     }
 
     /**
-     * @return the gameRenderer
+     * @return the renderContext
      */
-    public RendererContext getGameRenderer() {
-        return gameRenderer;
+    public RenderContext getRenderContext() {
+        return renderContext;
     }
 
     /**
@@ -120,7 +119,7 @@ public class GameClientStandalone extends GameServerFullAsync {
         keyBindingManager = new KeyBindingManager(actionManager);
         Keybindings.INSTANCE.setup(keyBindingManager); // hardcode setup
 
-        factories = Lists.newArrayList();
+        List<Renderer.Factory> factories = Lists.newArrayList();
         ClientRegistryEvent clientRegistryEvent = new ClientRegistryEvent(factories);
         bus.post(clientRegistryEvent);
 
@@ -135,11 +134,16 @@ public class GameClientStandalone extends GameServerFullAsync {
                     Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(),
                             ShaderType.FRAGMENT_SHADER));
         });
+
+        renderContext = new RenderContextImpl(factories, window);
+
+        renderContext.build(context, resourceManager);
     }
 
     @Override
     protected void resourceStage() {
-        bus.post(new ResourceSetupEvent(context, resourceManager));
+        bus.post(new ResourceSetupEvent(context, resourceManager, renderContext.getTextureManager()));
+        renderContext.getTextureManager().initTextureAtlas(TextureTypes.BLOCK);
     }
 
     @Override
@@ -151,10 +155,7 @@ public class GameClientStandalone extends GameServerFullAsync {
         player.getMountingEntity().getPosition().set(1, 3, 1);
 
         entityController = new EntityCameraController(player);
-        camera = new FirstPersonCamera(player);
-
-        gameRenderer = new RendererContext(factories, camera, window);
-        gameRenderer.build(context, resourceManager);
+        renderContext.setCamera(new FirstPersonCamera(player));
 
         bus.post(new GameReadyEvent(context));
     }
@@ -175,16 +176,15 @@ public class GameClientStandalone extends GameServerFullAsync {
      * @param partialTick
      */
     private void renderTick(double partialTick) {
-//        cameraController.update(player.getMountingEntity().getPosition(), player.getMountingEntity().getRotation());
         window.beginDraw();
-        this.gameRenderer.render(partialTick);
+        this.renderContext.render(partialTick);
         window.endDraw();
     }
 
     // https://github.com/lwjglgamedev/lwjglbook/blob/master/chapter02/src/main/java/org/lwjglb/engine/GameEngine.java
     private void gameLoop() {
         long lastTime;
-        while (!closed) {
+        while (!stopped) {
             lastTime = System.currentTimeMillis();
 
             long diff = System.currentTimeMillis() - lastTime;

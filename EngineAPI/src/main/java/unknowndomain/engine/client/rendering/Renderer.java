@@ -1,10 +1,8 @@
 package unknowndomain.engine.client.rendering;
 
 
-import unknowndomain.engine.game.GameContext;
-import unknowndomain.engine.client.rendering.display.Camera;
-import unknowndomain.engine.client.rendering.display.GameWindow;
 import unknowndomain.engine.client.resource.ResourceManager;
+import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.util.Disposable;
 
 import java.io.IOException;
@@ -14,15 +12,7 @@ import java.io.IOException;
  */
 public interface Renderer extends Disposable {
 
-    void render(Context context);
-
-    interface Context {
-        Camera getCamera();
-
-        GameWindow getWindow();
-
-        double partialTick();
-    }
+    void render(RenderContext context);
 
     /**
      * The factory object the mod will need to register.

@@ -107,7 +107,7 @@ public class RendererSkybox extends ShaderProgram {
     }
 
     @Override
-    public void render(Context context) {
+    public void render(RenderContext context) {
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
