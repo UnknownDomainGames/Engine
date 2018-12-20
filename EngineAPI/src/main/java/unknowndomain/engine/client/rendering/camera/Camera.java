@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.rendering.display;
+package unknowndomain.engine.client.rendering.camera;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -8,6 +8,7 @@ import org.joml.Vector3f;
  * <p>So im considering bind camera to {@link unknowndomain.engine.game.Game}</p>
  */
 public interface Camera {
+
     Vector3f UP_VECTOR = new Vector3f(0, 1, 0);
 
     Vector3f getPosition();

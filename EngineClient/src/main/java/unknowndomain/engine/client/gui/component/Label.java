@@ -3,7 +3,7 @@ package unknowndomain.engine.client.gui.component;
 import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.gui.renderer.ComponentRenderer;
 import unknowndomain.engine.client.gui.renderer.LabelRenderer;
-import unknowndomain.engine.client.util.Color;
+import unknowndomain.engine.util.Color;
 
 public class Label extends Component {
 

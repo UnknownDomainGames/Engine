@@ -1,6 +1,7 @@
 package unknowndomain.engine.entity;
 
 import com.google.common.collect.ImmutableMap;
+import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.item.Item;
 
 public class EntityPlayer extends EntityBase {

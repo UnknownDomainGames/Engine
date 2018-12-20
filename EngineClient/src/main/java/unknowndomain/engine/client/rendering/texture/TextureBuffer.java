@@ -45,8 +45,8 @@ public class TextureBuffer {
     public void setTexture(int x, int y, ByteBuffer buffer, int width, int height) {
         for (int i = 0; i < height; i++) {
             backingBuffer.position((y + i) * this.stride + x * 4);
-            for (int j = 0; j < width * 4; j++) {
-                backingBuffer.put(buffer.get());
+            for (int j = 0; j < width; j++) {
+                backingBuffer.putInt(buffer.getInt());
             }
         }
         backingBuffer.clear();

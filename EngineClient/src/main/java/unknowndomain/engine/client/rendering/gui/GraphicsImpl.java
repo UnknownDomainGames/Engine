@@ -4,7 +4,7 @@ import unknowndomain.engine.client.gui.Graphics;
 import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
-import unknowndomain.engine.client.util.Color;
+import unknowndomain.engine.util.Color;
 
 import static org.lwjgl.opengl.GL11.*;
 

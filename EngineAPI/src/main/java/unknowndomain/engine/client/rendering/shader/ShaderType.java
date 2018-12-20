@@ -3,6 +3,7 @@ package unknowndomain.engine.client.rendering.shader;
 import org.lwjgl.opengl.*;
 
 public enum ShaderType {
+
     VERTEX_SHADER(GL20.GL_VERTEX_SHADER),
     TESSELLATION_CONTROL_SHADER(GL40.GL_TESS_CONTROL_SHADER),
     TESSELLATION_EVALUATION_SHADER(GL40.GL_TESS_EVALUATION_SHADER),
@@ -12,7 +13,6 @@ public enum ShaderType {
     FRAGMENT_SHADER(GL20.GL_FRAGMENT_SHADER),
     COMPUTE_SHADER(GL43.GL_COMPUTE_SHADER),
     COMPUTE_SHADER_ARB(ARBComputeShader.GL_COMPUTE_SHADER),;
-
 
     private int glEnum;
 

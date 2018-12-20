@@ -1,4 +1,3 @@
 rootProject.name = 'UnknownDomain'
 
 include 'EngineAPI','Engine','EngineClient','EngineServer'
-include 'UnknownDomainAPI','UnknownDomainImpl'

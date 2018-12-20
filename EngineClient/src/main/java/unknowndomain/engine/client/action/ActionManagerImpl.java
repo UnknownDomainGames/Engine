@@ -1,8 +1,8 @@
-package unknowndomain.engine.client;
+package unknowndomain.engine.client.action;
 
-import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.action.ActionManager;
+import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.registry.RegisterException;
 import unknowndomain.engine.registry.Registry;
 

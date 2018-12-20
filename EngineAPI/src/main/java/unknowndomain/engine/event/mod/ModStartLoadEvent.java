@@ -1,5 +1,6 @@
-package unknowndomain.engine.event;
+package unknowndomain.engine.event.mod;
 
+import unknowndomain.engine.event.Event;
 import unknowndomain.engine.mod.ModMetadata;
 
 public class ModStartLoadEvent implements Event {

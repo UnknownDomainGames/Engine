@@ -1,4 +1,4 @@
-package unknowndomain.engine.entity;
+package unknowndomain.engine.entity.component;
 
 import unknowndomain.engine.item.Item;
 

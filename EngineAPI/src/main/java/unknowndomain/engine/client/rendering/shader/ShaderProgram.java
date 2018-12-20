@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.client.rendering.Renderer;
 
 public abstract class ShaderProgram implements Renderer {
+
     protected int programId = -1;
 
     protected void attachShader(Shader shader) {

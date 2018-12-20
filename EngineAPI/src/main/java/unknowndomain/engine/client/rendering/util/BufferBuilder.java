@@ -2,7 +2,7 @@ package unknowndomain.engine.client.rendering.util;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.client.util.Color;
+import unknowndomain.engine.util.Color;
 import unknowndomain.engine.util.Math2;
 
 import java.nio.*;

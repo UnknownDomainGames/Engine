@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.action.ActionBuilderImpl;
 import unknowndomain.engine.action.ActionManager;
-import unknowndomain.engine.client.ActionManagerImpl;
+import unknowndomain.engine.client.action.ActionManagerImpl;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.controller.MotionType;

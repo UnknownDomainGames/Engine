@@ -2,7 +2,6 @@ package unknowndomain.engine.client.rendering.camera;
 
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import unknowndomain.engine.client.rendering.display.Camera;
 import unknowndomain.engine.player.Player;
 
 public class FirstPersonCamera implements Camera {

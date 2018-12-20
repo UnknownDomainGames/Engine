@@ -1,8 +1,9 @@
-package unknowndomain.engine.world;
+package unknowndomain.engine.event.world.block;
 
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.world.World;
 
 public abstract class BlockChangeEvent implements Event {
 

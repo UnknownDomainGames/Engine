@@ -1,6 +1,6 @@
 package unknowndomain.engine.client.rendering;
 
-import unknowndomain.engine.client.rendering.display.Camera;
+import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureManagerImpl;
