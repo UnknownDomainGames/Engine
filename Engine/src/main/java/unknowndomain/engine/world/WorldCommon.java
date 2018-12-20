@@ -11,6 +11,7 @@ import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.player.PlayerImpl;
@@ -48,8 +49,7 @@ public class WorldCommon implements World, Runnable {
 
     public void spawnEntity(Entity entity) {
         BlockPos pos = BlockPos.of(entity.getPosition());
-        chunkStorage.loadChunk(pos.toChunkPos());
-        Chunk chunk = chunkStorage.getChunkByBlockPos(pos);
+        Chunk chunk = chunkStorage.getOrLoadChunk(pos.toChunkPos());
         chunk.getEntities().add(entity);
         entityList.add(entity);
     }
@@ -137,7 +137,7 @@ public class WorldCommon implements World, Runnable {
             BlockPos newPosition = BlockPos.of(position);
 
             if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
-                Chunk oldChunk = chunkStorage.getChunkByBlockPos(oldPosition), newChunk = chunkStorage.getChunkByBlockPos(newPosition);
+                Chunk oldChunk = chunkStorage.getChunkByBlockPos(oldPosition), newChunk = chunkStorage.getOrLoadChunk(newPosition.toChunkPos());
                 oldChunk.getEntities().remove(entity);
                 newChunk.getEntities().add(entity);
                 // entity leaving and enter chunk event
@@ -170,14 +170,14 @@ public class WorldCommon implements World, Runnable {
     @Nonnull
     @Override
     public Block setBlock(int x, int y, int z, @Nonnull Block block) {
-        Block oldBlock = chunkStorage.getChunkByBlockPos(x, y, z).setBlock(x, y, z, block);
+        Block oldBlock = chunkStorage.getOrLoadChunk(ChunkPos.fromBlockPos(x, y, z)).setBlock(x, y, z, block);
         getGame().getContext().post(new BlockChangeEvent.Post(this, BlockPos.of(x, y, z), oldBlock, block));
         return oldBlock;
     }
 
     @Override
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
-        return chunkStorage.getChunkByBlockPos(chunkX, chunkY, chunkZ);
+        return chunkStorage.getChunk(chunkX, chunkY, chunkZ);
     }
 
     @Override

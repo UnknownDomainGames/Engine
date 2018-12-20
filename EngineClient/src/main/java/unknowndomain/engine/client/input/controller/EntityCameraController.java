@@ -7,7 +7,7 @@ import unknowndomain.engine.util.Math2;
 public class EntityCameraController extends EntityController {
 
     private static final float SENSIBILITY = 0.05f;
-    private static final float MOTION_FACTOR = 0.05f;
+    private static final float MOTION_FACTOR = 0.2f;
 
     private final Vector3f movingDirection = new Vector3f();
     private final boolean[] motionState = new boolean[6];

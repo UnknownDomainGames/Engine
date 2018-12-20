@@ -2,7 +2,6 @@ package unknowndomain.engine.client.rendering.world;
 
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.Engine;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
@@ -82,7 +81,9 @@ public class RendererWorld extends ShaderProgram {
         setUniform("u_UseTexture", true);
         context.getTextureManager().getTextureAtlas(BLOCK).bind();
         for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
-            chunkMesh.render();
+            if(!chunkMesh.getChunk().isEmpty()) {
+                chunkMesh.render();
+            }
         }
 
         GL11.glDisable(GL11.GL_CULL_FACE);
@@ -93,7 +94,6 @@ public class RendererWorld extends ShaderProgram {
 
     @Listener
     public void handleChunkLoad(ChunkLoadEvent event) {
-        Engine.getLogger().info("CHUNK LOAD " + event.getPos());
         ChunkMesh chunkMesh = new ChunkMesh(event.getWorld(), event.getPos(), event.getChunk());
         renderChunkTask.updateChunkMesh(chunkMesh);
         loadedChunkMeshes.put(event.getPos(), chunkMesh);
@@ -101,7 +101,6 @@ public class RendererWorld extends ShaderProgram {
 
     @Listener
     public void handleBlockChange(BlockChangeEvent event) {
-        Engine.getLogger().info("BLOCK CHANGE");
         BlockPos pos = event.getPos();
         ChunkMesh chunkMesh = loadedChunkMeshes.get(event.getPos().toChunkPos());
         if (chunkMesh == null) {

@@ -45,4 +45,6 @@ public interface Chunk {
     default Block setBlock(BlockPos pos, Block block) {
         return setBlock(pos.getX(), pos.getY(), pos.getZ(), block);
     }
+
+    boolean isEmpty();
 }

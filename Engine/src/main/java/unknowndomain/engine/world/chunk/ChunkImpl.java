@@ -14,6 +14,7 @@ public class ChunkImpl implements Chunk {
     private final World world;
     private final List<Entity> entities = new ArrayList<>();
     private BlockStorage blockStorage;
+    private int nonAirBlockCount = 0;
 
     public ChunkImpl(World world) {
         this.world = world;
@@ -45,6 +46,17 @@ public class ChunkImpl implements Chunk {
             blockStorage = new BlockStorage(this);
         }
 
+        if (block != BlockAir.AIR) {
+            nonAirBlockCount++;
+        } else {
+            nonAirBlockCount--;
+        }
+
         return blockStorage.setBlock(x, y, z, block);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return nonAirBlockCount == 0;
     }
 }

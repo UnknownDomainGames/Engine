@@ -44,14 +44,15 @@ public class ChunkStorage {
         return this.chunks.getOrDefault(chunkPosIndex, empty);
     }
 
-    public void loadChunk(ChunkPos chunkPos) {
+    public Chunk getOrLoadChunk(ChunkPos chunkPos) {
         long chunkPosIndex = getChunkPos(chunkPos.getX(), chunkPos.getY(), chunkPos.getZ());
-        if (chunks.containsKey(chunkPosIndex)) {
-            return;
+        Chunk chunk = chunks.get(chunkPosIndex);
+        if (chunk == null) {
+            chunk = new ChunkImpl(world);
+            chunks.put(chunkPosIndex, chunk);
+            world.getGame().getContext().post(new ChunkLoadEvent(world, chunkPos, chunk));
         }
-        Chunk chunk = new ChunkImpl(world);
-        chunks.put(chunkPosIndex, chunk);
-        world.getGame().getContext().post(new ChunkLoadEvent(world, chunkPos, chunk));
+        return chunk;
     }
 
     public void touchChunk(@Nonnull BlockPos pos) {
@@ -81,7 +82,7 @@ public class ChunkStorage {
 //        return data;
 //    }
 
-    private long getChunkPos(int chunkX, int chunkY, int chunkZ) {
-        return (long) (chunkX << 42) | (chunkY << 21) | chunkZ;
+    private long getChunkPos(int chunkX, int chunkY, int chunkZ) { //FIXME: Unsupported negative int.
+        return ((long) chunkX << 42) & ((1L << 63) - 1) | ((long) chunkY << 21) & ((1L << 42) - 1) | (long) chunkZ & ((1 << 21) - 1);
     }
 }

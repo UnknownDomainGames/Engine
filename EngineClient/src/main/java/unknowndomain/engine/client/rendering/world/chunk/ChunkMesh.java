@@ -10,7 +10,7 @@ import unknowndomain.engine.world.chunk.Chunk;
 
 public class ChunkMesh implements Disposable {
 
-    private final VertexBufferObject vbo = new VertexBufferObject();
+    private VertexBufferObject vbo;
 
     private final World world;
     private final ChunkPos chunkPos;
@@ -23,6 +23,9 @@ public class ChunkMesh implements Disposable {
     }
 
     public VertexBufferObject getVbo() {
+        if(vbo == null) {
+            vbo = new VertexBufferObject();
+        }
         return vbo;
     }
 

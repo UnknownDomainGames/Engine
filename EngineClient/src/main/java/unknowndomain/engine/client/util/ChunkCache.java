@@ -12,7 +12,7 @@ public class ChunkCache implements BlockAccessor {
     public static ChunkCache create(World world, int fromX, int fromY, int fromZ, int toX, int toY, int toZ) {
         int xLength = toX - fromX + 1;
         int yLength = toY - fromY + 1;
-        int zLength = toZ - fromX + 1;
+        int zLength = toZ - fromZ + 1;
         Chunk[][][] chunks = new Chunk[xLength][yLength][zLength];
         for (int x = fromX; x <= toX; x++) {
             for (int y = fromY; y <= toY; y++) {

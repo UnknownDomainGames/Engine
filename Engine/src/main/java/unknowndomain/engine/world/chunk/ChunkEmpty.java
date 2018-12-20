@@ -33,6 +33,11 @@ public class ChunkEmpty implements Chunk {
     }
 
     @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
     public World getWorld() {
         return world;
     }

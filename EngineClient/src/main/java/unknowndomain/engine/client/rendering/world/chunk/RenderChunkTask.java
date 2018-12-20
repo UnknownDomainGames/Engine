@@ -20,6 +20,9 @@ public class RenderChunkTask {
 
     public void updateChunkMesh(ChunkMesh chunkMesh) {
         Chunk chunk = chunkMesh.getChunk();
+        if (chunk.isEmpty()) {
+            return;
+        }
         ChunkCache chunkCache = createChunkCache(chunkMesh.getWorld(), chunkMesh.getChunkPos());
         BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunkPos(chunkMesh.getChunkPos());
         bufferBuilder.begin(GL11.GL_TRIANGLES, true, false, true);
