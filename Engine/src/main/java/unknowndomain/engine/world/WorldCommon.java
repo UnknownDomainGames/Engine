@@ -7,6 +7,7 @@ import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.EntityCamera;
 import unknowndomain.engine.event.Event;
+import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
@@ -47,7 +48,8 @@ public class WorldCommon implements World, Runnable {
 
     public void spawnEntity(Entity entity) {
         BlockPos pos = BlockPos.of(entity.getPosition());
-        Chunk chunk = chunkStorage.getChunk(pos);
+        chunkStorage.loadChunk(pos.toChunkPos());
+        Chunk chunk = chunkStorage.getChunkByBlockPos(pos);
         chunk.getEntities().add(entity);
         entityList.add(entity);
     }
@@ -135,7 +137,7 @@ public class WorldCommon implements World, Runnable {
             BlockPos newPosition = BlockPos.of(position);
 
             if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
-                Chunk oldChunk = chunkStorage.getChunk(oldPosition), newChunk = chunkStorage.getChunk(newPosition);
+                Chunk oldChunk = chunkStorage.getChunkByBlockPos(oldPosition), newChunk = chunkStorage.getChunkByBlockPos(newPosition);
                 oldChunk.getEntities().remove(entity);
                 newChunk.getEntities().add(entity);
                 // entity leaving and enter chunk event
@@ -162,18 +164,20 @@ public class WorldCommon implements World, Runnable {
     @Nonnull
     @Override
     public Block getBlock(int x, int y, int z) {
-        return chunkStorage.getChunk(x, y, z).getBlock(x, y, z);
+        return chunkStorage.getChunkByBlockPos(x, y, z).getBlock(x, y, z);
     }
 
     @Nonnull
     @Override
     public Block setBlock(int x, int y, int z, @Nonnull Block block) {
-        return chunkStorage.getChunk(x, y, z).setBlock(x, y, z, block);
+        Block oldBlock = chunkStorage.getChunkByBlockPos(x, y, z).setBlock(x, y, z, block);
+        getGame().getContext().post(new BlockChangeEvent.Post(this, BlockPos.of(x, y, z), oldBlock, block));
+        return oldBlock;
     }
 
     @Override
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
-        return chunkStorage.getChunk(chunkX, chunkY, chunkZ);
+        return chunkStorage.getChunkByBlockPos(chunkX, chunkY, chunkZ);
     }
 
     @Override

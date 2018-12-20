@@ -1,6 +1,7 @@
 package unknowndomain.engine.util;
 
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.math.ChunkPos;
 
 import java.util.NoSuchElementException;
 
@@ -13,9 +14,13 @@ public class BlockPosIterator {
         return new BlockPosIterator(from.getX(), from.getY(), from.getZ(), to.getX(), to.getY(), to.getZ());
     }
 
-    private final int fromX, fromY, fromZ, toX, toY, toZ;
+    public static BlockPosIterator createFromChunkPos(ChunkPos chunkPos) {
+        return new BlockPosIterator(chunkPos.getX() << 4, chunkPos.getY() << 4, chunkPos.getZ() << 4,
+                (chunkPos.getX() << 4) + 15, (chunkPos.getY() << 4) + 15, (chunkPos.getZ() << 4) + 15);
+    }
 
-    private BlockPos.Mutable pos;
+    private final int fromX, fromY, fromZ, toX, toY, toZ;
+    private final BlockPos.Mutable pos = new BlockPos.Mutable(0, 0, 0);
 
     public BlockPosIterator(int fromX, int fromY, int fromZ, int toX, int toY, int toZ) {
         this.fromX = min(fromX, toX);
@@ -34,7 +39,7 @@ public class BlockPosIterator {
     /**
      * @throws NoSuchElementException
      */
-    public void next() {
+    public BlockPos next() {
         pos.add(1, 0, 0);
         if (pos.getX() > toX) {
             pos.set(fromX, pos.getY() + 1, pos.getZ());
@@ -45,25 +50,11 @@ public class BlockPosIterator {
         if (pos.getZ() > toZ) {
             throw new NoSuchElementException();
         }
+        return pos;
     }
 
     public void reset() {
-        pos.set(fromX, fromY, fromZ);
+        pos.set(fromX - 1, fromY, fromZ);
     }
 
-    public int getX() {
-        return pos.getX();
-    }
-
-    public int getY() {
-        return pos.getY();
-    }
-
-    public int getZ() {
-        return pos.getZ();
-    }
-
-    public BlockPos getPos() {
-        return pos;
-    }
 }

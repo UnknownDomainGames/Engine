@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.util;
 
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.world.BlockAccessor;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.chunk.Chunk;
@@ -10,19 +9,19 @@ import javax.annotation.Nonnull;
 
 public class ChunkCache implements BlockAccessor {
 
-    public static ChunkCache create(World world, ChunkPos from, ChunkPos to) {
-        int xLength = to.getX() - from.getX() + 1;
-        int yLength = to.getY() - from.getY() + 1;
-        int zLength = to.getZ() - from.getZ() + 1;
+    public static ChunkCache create(World world, int fromX, int fromY, int fromZ, int toX, int toY, int toZ) {
+        int xLength = toX - fromX + 1;
+        int yLength = toY - fromY + 1;
+        int zLength = toZ - fromX + 1;
         Chunk[][][] chunks = new Chunk[xLength][yLength][zLength];
-        for (int x = from.getX(); x <= to.getX(); x++) {
-            for (int y = from.getY(); y <= to.getY(); y++) {
-                for (int z = from.getZ(); y <= to.getZ(); z++) {
-                    chunks[x - from.getX()][y - from.getY()][z - from.getZ()] = world.getChunk(x, y, z);
+        for (int x = fromX; x <= toX; x++) {
+            for (int y = fromY; y <= toY; y++) {
+                for (int z = fromZ; z <= toZ; z++) {
+                    chunks[x - fromX][y - fromY][z - fromZ] = world.getChunk(x, y, z);
                 }
             }
         }
-        return new ChunkCache(world, from.getX(), from.getY(), from.getZ(), chunks);
+        return new ChunkCache(world, fromX, fromY, fromZ, chunks);
     }
 
     private final World world;

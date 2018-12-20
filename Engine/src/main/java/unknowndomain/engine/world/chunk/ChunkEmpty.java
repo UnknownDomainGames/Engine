@@ -10,9 +10,10 @@ import java.util.List;
 
 public class ChunkEmpty implements Chunk {
 
-    public static final ChunkEmpty INSTANCE = new ChunkEmpty();
+    private final World world;
 
-    private ChunkEmpty() {
+    public ChunkEmpty(World world) {
+        this.world = world;
     }
 
     @Nonnull
@@ -33,6 +34,6 @@ public class ChunkEmpty implements Chunk {
 
     @Override
     public World getWorld() {
-        return null;
+        return world;
     }
 }

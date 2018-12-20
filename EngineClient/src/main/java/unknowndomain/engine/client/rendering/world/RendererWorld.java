@@ -1,24 +1,23 @@
 package unknowndomain.engine.client.rendering.world;
 
-import com.google.common.collect.Maps;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.client.rendering.RenderContext;
-import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.world.chunk.ChunkMesh;
 import unknowndomain.engine.client.rendering.world.chunk.RenderChunkTask;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
-import unknowndomain.game.DefaultGameMode;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
@@ -34,9 +33,8 @@ public class RendererWorld extends ShaderProgram {
     private int u_View;
     private int u_Model;
 
-    private Map<ChunkPos, RenderChunkTask> loadChunk = Maps.newHashMap();
-
-    private ModelBlockRenderer modelBlockRenderer = new ModelBlockRenderer();
+    private final Map<ChunkPos, ChunkMesh> loadedChunkMeshes = new HashMap<>();
+    private final RenderChunkTask renderChunkTask = new RenderChunkTask();
 
     public RendererWorld(Shader vertex, Shader frag) {
         createShader(vertex, frag);
@@ -83,9 +81,9 @@ public class RendererWorld extends ShaderProgram {
         setUniform("u_UseColor", false);
         setUniform("u_UseTexture", true);
         context.getTextureManager().getTextureAtlas(BLOCK).bind();
-        buffer.begin(GL11.GL_TRIANGLES, true, false, true);
-        modelBlockRenderer.renderModel(DefaultGameMode.blockModel, BlockPos.ZERO, tessellator.getBuffer());
-        tessellator.draw();
+        for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
+            chunkMesh.render();
+        }
 
         GL11.glDisable(GL11.GL_CULL_FACE);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -96,33 +94,20 @@ public class RendererWorld extends ShaderProgram {
     @Listener
     public void handleChunkLoad(ChunkLoadEvent event) {
         Engine.getLogger().info("CHUNK LOAD " + event.getPos());
-        ChunkPos pos = event.getPos();
-//        RenderChunkTask chunk = new RenderChunkTask(event.getWorld(), pos, event.getChunk());
-//        chunk.markDirty();
-//        loadChunk.put(pos, chunk);
+        ChunkMesh chunkMesh = new ChunkMesh(event.getWorld(), event.getPos(), event.getChunk());
+        renderChunkTask.updateChunkMesh(chunkMesh);
+        loadedChunkMeshes.put(event.getPos(), chunkMesh);
     }
 
     @Listener
     public void handleBlockChange(BlockChangeEvent event) {
         Engine.getLogger().info("BLOCK CHANGE");
         BlockPos pos = event.getPos();
-        ChunkPos cp = pos.toChunkPos();
-        // RenderChunkTask chunk = loadChunk.get(cp.compact());
-        RenderChunkTask chunk = loadChunk.get(cp);
-        if (chunk == null) {
-            Engine.getLogger().error("WTF, The chunk load not report?");
+        ChunkMesh chunkMesh = loadedChunkMeshes.get(event.getPos().toChunkPos());
+        if (chunkMesh == null) {
             return;
         }
 
-//        chunk.markDirty();
-
-//        int yIndex = (pos.getY() & 255) >> 4;
-//        int xIndex = pos.pack();
-//        Engine.getLogger().info(pos + " -> " + xIndex);
-//
-//        chunk.blocks[yIndex][xIndex] = event.blockId;
-//        if (event.blockId != 0 && !chunk.valid[yIndex]) {
-//            chunk.valid[yIndex] = true;
-//        }
+        renderChunkTask.updateChunkMesh(chunkMesh);
     }
 }

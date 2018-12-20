@@ -30,11 +30,14 @@ import unknowndomain.engine.mod.ModRepository;
 import unknowndomain.engine.mod.ModStore;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.player.Profile;
+import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
+import unknowndomain.game.Blocks;
 import unknowndomain.game.DefaultGameMode;
 
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class GameClientStandalone extends GameServerFullAsync {
@@ -74,7 +77,7 @@ public class GameClientStandalone extends GameServerFullAsync {
     /**
      * @return the client world
      */
-    public WorldCommon getWorld() {
+    public World getWorld() {
         return world;
     }
 
@@ -121,7 +124,7 @@ public class GameClientStandalone extends GameServerFullAsync {
 
         List<Renderer.Factory> factories = Lists.newArrayList();
         ClientRegistryEvent clientRegistryEvent = new ClientRegistryEvent(factories);
-        bus.post(clientRegistryEvent);
+        eventBus.post(clientRegistryEvent);
 
         // FIXME: Don't initialize renderer at here. It should be initialized in Engine
         factories.add((context, manager) -> {
@@ -142,7 +145,7 @@ public class GameClientStandalone extends GameServerFullAsync {
 
     @Override
     protected void resourceStage() {
-        bus.post(new ResourceSetupEvent(context, resourceManager, renderContext.getTextureManager()));
+        eventBus.post(new ResourceSetupEvent(context, resourceManager, renderContext.getTextureManager()));
         renderContext.getTextureManager().initTextureAtlas(TextureTypes.BLOCK);
     }
 
@@ -154,10 +157,19 @@ public class GameClientStandalone extends GameServerFullAsync {
         player = world.playerJoin(new Profile(UUID.randomUUID(), 12));
         player.getMountingEntity().getPosition().set(1, 3, 1);
 
+        Random random = new Random();
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                for (int top = random.nextInt(3) + 3, y = top; y >= 0; y--) {
+                    world.setBlock(x, y, z, y == top ? Blocks.GRASS : Blocks.DIRT);
+                }
+            }
+        }
+
         entityController = new EntityCameraController(player);
         renderContext.setCamera(new FirstPersonCamera(player));
 
-        bus.post(new GameReadyEvent(context));
+        eventBus.post(new GameReadyEvent(context));
     }
 
     @Override
@@ -214,21 +226,21 @@ public class GameClientStandalone extends GameServerFullAsync {
     // dirty things below...
 
     List<Action> buildActions() {
-            return Lists.newArrayList(
-                    ActionBuilderImpl.create("player.move.forward").setStartHandler((c) -> getEntityController().handleMotion(MotionType.FORWARD, true))
-                            .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.FORWARD, false)).build(),
-                    ActionBuilderImpl.create("player.move.backward").setStartHandler((c) -> getEntityController().handleMotion(MotionType.BACKWARD, true))
-                            .setEndHandler((c, i) ->getEntityController().handleMotion(MotionType.BACKWARD, false)).build(),
-                    ActionBuilderImpl.create("player.move.left").setStartHandler((c) -> getEntityController().handleMotion(MotionType.LEFT, true))
-                            .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.LEFT, false)).build(),
-                    ActionBuilderImpl.create("player.move.right").setStartHandler((c) -> getEntityController().handleMotion(MotionType.RIGHT, true))
-                            .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.RIGHT, false)).build(),
-                    ActionBuilderImpl.create("player.move.jump").setStartHandler((c) -> getEntityController().handleMotion(MotionType.UP, true))
-                            .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.UP, false)).build(),
-                    ActionBuilderImpl.create("player.move.sneak").setStartHandler((c) -> getEntityController().handleMotion(MotionType.DOWN, true))
-                            .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.DOWN, false)).build()
-            );
-        }
+        return Lists.newArrayList(
+                ActionBuilderImpl.create("player.move.forward").setStartHandler((c) -> getEntityController().handleMotion(MotionType.FORWARD, true))
+                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.FORWARD, false)).build(),
+                ActionBuilderImpl.create("player.move.backward").setStartHandler((c) -> getEntityController().handleMotion(MotionType.BACKWARD, true))
+                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.BACKWARD, false)).build(),
+                ActionBuilderImpl.create("player.move.left").setStartHandler((c) -> getEntityController().handleMotion(MotionType.LEFT, true))
+                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.LEFT, false)).build(),
+                ActionBuilderImpl.create("player.move.right").setStartHandler((c) -> getEntityController().handleMotion(MotionType.RIGHT, true))
+                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.RIGHT, false)).build(),
+                ActionBuilderImpl.create("player.move.jump").setStartHandler((c) -> getEntityController().handleMotion(MotionType.UP, true))
+                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.UP, false)).build(),
+                ActionBuilderImpl.create("player.move.sneak").setStartHandler((c) -> getEntityController().handleMotion(MotionType.DOWN, true))
+                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.DOWN, false)).build()
+        );
+    }
 
 //    private List<Action> buildActions() {
 //        List<Action> list = motionController.getActions();

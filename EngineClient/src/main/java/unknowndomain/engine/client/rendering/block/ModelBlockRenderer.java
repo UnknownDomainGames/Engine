@@ -16,7 +16,8 @@ import java.util.Map;
 
 public class ModelBlockRenderer implements BlockRenderer {
 
-    public final Map<Block, BlockModel> blockModelMap = new HashMap<>();
+    // TODO:
+    public static final Map<Block, BlockModel> blockModelMap = new HashMap<>();
 
     @Override
     public void render(Block block, ChunkCache chunkCache, BlockPos pos, BufferBuilder buffer) {
@@ -24,12 +25,13 @@ public class ModelBlockRenderer implements BlockRenderer {
         if (blockModel == null) {
             return;
         }
+        buffer.posOffest(pos.getX(), pos.getY(), pos.getZ());
         BlockPos.Mutable mutablePos = new BlockPos.Mutable(pos);
         for (Facing facing : Facing.values()) {
             mutablePos.set(pos);
-            facing.offset(pos);
-            Block facingBlock = chunkCache.getBlock(pos);
-            if (facingBlock == BlockAir.AIR) {
+            facing.offset(mutablePos);
+            Block facingBlock = chunkCache.getBlock(mutablePos);
+            if (facingBlock != BlockAir.AIR) {
                 continue;
             }
 

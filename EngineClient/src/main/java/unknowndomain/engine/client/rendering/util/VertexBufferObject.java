@@ -3,12 +3,13 @@ package unknowndomain.engine.client.rendering.util;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
+import unknowndomain.engine.util.Disposable;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class VertexBufferObject {
+public class VertexBufferObject implements Disposable {
     private int vaoId = -1;
     private int id = -1;
     private int eleid = -1;
@@ -36,7 +37,6 @@ public class VertexBufferObject {
         GL30.glBindVertexArray(0);
     }
 
-
     public void uploadData(BufferBuilder builder){
         bind();
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, builder.build(), GL15.GL_STATIC_DRAW);
@@ -52,26 +52,29 @@ public class VertexBufferObject {
         unbind();
         this.count = vertex;
     }
+
     public void uploadSubData(BufferBuilder builder){
         bind();
         GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, builder.build());
         unbind();
         count = builder.getVertexCount();
     }
+
     public void uploadData(ByteBuffer builder, int vertex){
         bind();
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, builder, GL15.GL_STATIC_DRAW);
         unbind();
         this.count = vertex;
     }
+
     public void uploadElementData(IntBuffer builder, int vertex){
         bind();
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, builder, GL15.GL_STATIC_DRAW);
         unbind();
         this.count = vertex;
     }
-    private void allocateData(){
 
+    private void allocateData(){
         bind();
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, ByteBuffer.allocateDirect(1048576), GL15.GL_DYNAMIC_DRAW);
         unbind();
@@ -90,7 +93,8 @@ public class VertexBufferObject {
         unbind();
     }
 
-    public void delete(){
+    @Override
+    public void dispose() {
         if (id != -1){
             GL15.glDeleteBuffers(id);
             id = -1;

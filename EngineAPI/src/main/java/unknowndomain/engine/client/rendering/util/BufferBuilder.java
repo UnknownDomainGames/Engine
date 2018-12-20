@@ -24,6 +24,9 @@ public class BufferBuilder {
         indicesBuffer = BufferUtils.createIntBuffer(size / 16);
     }
 
+    private float posOffsetX;
+    private float posOffsetY;
+    private float posOffsetZ;
 
     private boolean isDrawing;
     private int drawMode;
@@ -141,6 +144,7 @@ public class BufferBuilder {
         useNormal = false;
         vertexCount = 0;
         pointsCount = 0;
+        posOffest(0,0,0);
     }
 
     public int getOffset() {
@@ -187,10 +191,17 @@ public class BufferBuilder {
     public BufferBuilder pos(float x, float y, float z) {
         if (usePos) {
             int i = vertexCount * getOffset();
-            byteBuffer.putFloat(i, x);
-            byteBuffer.putFloat(i + 4, y);
-            byteBuffer.putFloat(i + 8, z);
+            byteBuffer.putFloat(i, x + posOffsetX);
+            byteBuffer.putFloat(i + 4, y + posOffsetY);
+            byteBuffer.putFloat(i + 8, z + posOffsetZ);
         }
+        return this;
+    }
+
+    public BufferBuilder posOffest(float x, float y, float z) {
+        posOffsetX = x;
+        posOffsetY = y;
+        posOffsetZ = z;
         return this;
     }
 

@@ -5,14 +5,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.Validate;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import unknowndomain.engine.Engine;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.registry.*;
-import unknowndomain.engine.Platform;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class SimpleModManager implements ModManager {
     private Map<String, ModContainer> idToMods;
@@ -28,6 +28,7 @@ public class SimpleModManager implements ModManager {
      * <p>We have direct method to parse a temp event bus to handle this thing</p>
      * <p>This design is not very pretty. Maybe redo later.</p>
      */
+    @Deprecated
     public static RegistryManager register(Collection<ModContainer> containers, Registry.Type... tps) {
         EventBus eventBus = new AsmEventBus();
         Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
