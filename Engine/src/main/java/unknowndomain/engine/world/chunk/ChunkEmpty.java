@@ -6,7 +6,6 @@ import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class ChunkEmpty implements Chunk {
@@ -35,23 +34,5 @@ public class ChunkEmpty implements Chunk {
     @Override
     public World getWorld() {
         return null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getComponent(@Nonnull String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Nullable
-    @Override
-    public <T> T getComponent(@Nonnull Class<T> type) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Nullable
-    @Override
-    public <T> T getBehavior(Class<T> type) {
-        throw new UnsupportedOperationException();
     }
 }

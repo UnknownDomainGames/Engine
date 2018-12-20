@@ -6,8 +6,6 @@ import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,23 +46,5 @@ public class ChunkImpl implements Chunk {
         }
 
         return blockStorage.setBlock(x, y, z, block);
-    }
-
-    @Nullable
-    @Override
-    public <T> T getComponent(@Nonnull String name) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getComponent(@Nonnull Class<T> type) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getBehavior(Class<T> type) {
-        return null;
     }
 }
