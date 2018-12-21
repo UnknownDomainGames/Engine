@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.gui;
 
 import unknowndomain.engine.client.rendering.texture.GLTexture;
+import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.util.Color;
 
 public interface Graphics {
@@ -59,5 +60,7 @@ public interface Graphics {
 
     void drawText(CharSequence text, float x, float y);
 
-    void drawTexture(GLTexture texture, float x, float y, float width, float height, float u, float v);
+    void drawTexture(GLTexture texture, float x, float y, float width, float height);
+
+    void drawTexture(GLTexture texture, float x, float y, float width, float height, TextureUV textureUV);
 }

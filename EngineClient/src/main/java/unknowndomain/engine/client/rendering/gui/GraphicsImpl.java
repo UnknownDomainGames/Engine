@@ -3,6 +3,7 @@ package unknowndomain.engine.client.rendering.gui;
 import unknowndomain.engine.client.gui.Graphics;
 import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
+import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.util.Color;
 
@@ -59,7 +60,7 @@ public class GraphicsImpl implements Graphics {
         float x2 = x + width, y2 = y + height;
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_LINE_LOOP, true, true, false, false);
-        pointTo(buffer,x2 - arcWidth, y);
+        pointTo(buffer, x2 - arcWidth, y);
         quadTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
         pointTo(buffer, x2, y2 - arcHeight);
         quadTo(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
@@ -75,7 +76,7 @@ public class GraphicsImpl implements Graphics {
         float x2 = x + width, y2 = y + height;
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_POLYGON, true, true, false, false);
-        pointTo(buffer,x2 - arcWidth, y);
+        pointTo(buffer, x2 - arcWidth, y);
         quadTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
         pointTo(buffer, x2, y2 - arcHeight);
         quadTo(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
@@ -119,8 +120,20 @@ public class GraphicsImpl implements Graphics {
     }
 
     @Override
-    public void drawTexture(GLTexture texture, float x, float y, float width, float height, float u, float v) {
+    public void drawTexture(GLTexture texture, float x, float y, float width, float height) {
+        drawTexture(texture, x, y, width, height, TextureUV.DEFAULT_TEXTURE_UV);
+    }
 
+    @Override
+    public void drawTexture(GLTexture texture, float x, float y, float width, float height, TextureUV textureUV) {
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL_QUADS, true, false, true);
+        float x2 = x + width, y2 = y + height;
+        buffer.pos(x, y, 0).tex(textureUV.getMinU(), textureUV.getMinV()).endVertex();
+        buffer.pos(x2, y, 0).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex();
+        buffer.pos(x2, y2, 0).tex(textureUV.getMaxU(), textureUV.getMaxV()).endVertex();
+        buffer.pos(x, y2, 0).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex();
+        tessellator.draw();
     }
 
     public void clipRect(int x, int y, int width, int height) {

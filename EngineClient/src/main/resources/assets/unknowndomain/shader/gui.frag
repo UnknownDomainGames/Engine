@@ -1,27 +1,28 @@
 #version 330 core
 
-in vec4 vertexColor;
-in vec2 textureCoord;
-in vec3 mvPos;
+in vec4 v_Color;
+in vec2 v_TexCoord;
+
 out vec4 fragColor;
 
-uniform sampler2D texImage;
-uniform bool usingAlpha;
+uniform sampler2D u_Texture;
+uniform bool u_UsingAlpha;
+uniform bool u_UsingTexture;
 
-uniform vec2 windowSize;
-uniform vec4 clipRect;
+uniform vec2 u_WindowSize;
+uniform vec4 u_ClipRect;
 
 void main()
 {
-    if(gl_FragCoord.x < clipRect.x || gl_FragCoord.x > clipRect.z || gl_FragCoord.y > (windowSize.y - clipRect.y) || gl_FragCoord.y < (windowSize.y - clipRect.w)) {
+    if(gl_FragCoord.x < u_ClipRect.x || gl_FragCoord.x > u_ClipRect.z || gl_FragCoord.y > (u_WindowSize.y - u_ClipRect.y) || gl_FragCoord.y < (u_WindowSize.y - u_ClipRect.w)) {
         discard;
     }
-    if(usingAlpha){
-        fragColor = vec4(vertexColor.rgb, texture(texImage, textureCoord).r * vertexColor.a);
+    if(u_UsingAlpha){
+        fragColor = vec4(v_Color.rgb, texture(u_Texture, v_TexCoord).r * v_Color.a);
     }
     else{
 //        if(tex){
-            fragColor = vertexColor * texture(texImage, textureCoord);
+            fragColor = v_Color * texture(u_Texture, v_TexCoord);
 //        }
 //        else{
 //            fragColor = vertexColor;

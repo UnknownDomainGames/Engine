@@ -53,8 +53,7 @@ public class RendererGui extends ShaderProgram {
 
         GL20.glValidateProgram(programId);
 
-        //setUniform("projection", new Matrix4f().setOrtho(0, 854f, 480f, 0, 1, -1));
-        setUniform("model", new Matrix4f().identity());
+//        setUniform("u_ModelMatrix", new Matrix4f().identity());
 
         GL20.glUseProgram(0);
 
@@ -89,12 +88,12 @@ public class RendererGui extends ShaderProgram {
 
         if (context.getWindow().isResized()) {
             int width = context.getWindow().getWidth(), height = context.getWindow().getHeight();
-            setUniform("projection", new Matrix4f().setOrtho(0, width, height, 0, 1, -1));
-            setUniform("windowSize", new Vector2f(width, height));
-            setUniform("clipRect", new Vector4f(0, 0, width, height));
+            setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1, -1));
+            setUniform("u_WindowSize", new Vector2f(width, height));
+            setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
         }
         //setUniform("projection", new Matrix4f().setOrtho(0, context.getProjection().getWidth(), context.getProjection().getHeight(), 0, 1, -1));
-        setUniform("usingAlpha", true);
+        setUniform("u_UsingAlpha", true);
 
         // render scene
         if (guiScene != null)
