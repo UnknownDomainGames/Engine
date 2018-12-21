@@ -158,8 +158,8 @@ public class GameClientStandalone extends GameServerFullAsync {
         player.getMountingEntity().getPosition().set(1, 3, 1);
 
         Random random = new Random();
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
+        for (int x = -16; x < 16; x++) {
+            for (int z = -16; z < 16; z++) {
                 for (int top = random.nextInt(3) + 3, y = top; y >= 0; y--) {
                     world.setBlock(x, y, z, y == top ? Blocks.GRASS : Blocks.DIRT);
                 }

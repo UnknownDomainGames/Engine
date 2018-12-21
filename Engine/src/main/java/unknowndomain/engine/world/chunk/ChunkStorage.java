@@ -89,11 +89,7 @@ public class ChunkStorage {
     }
 
     private static int abs(int value, int maxPositiveValue) {
-        if (value >= 0) {
-            return value;
-        } else {
-            return (value & maxPositiveValue) + maxPositiveValue + 1;
-        }
+        return value >= 0 ? value : maxPositiveValue - value;
     }
 
     public static void main(String[] args) {
