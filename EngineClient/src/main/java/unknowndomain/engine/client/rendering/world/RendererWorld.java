@@ -31,6 +31,8 @@ public class RendererWorld extends ShaderProgram {
     private int u_Projection;
     private int u_View;
     private int u_Model;
+    private int u_UsingColor;
+    private int u_UsingTexture;
 
     private final Map<ChunkPos, ChunkMesh> loadedChunkMeshes = new HashMap<>();
     private final RenderChunkTask renderChunkTask = new RenderChunkTask();
@@ -42,6 +44,8 @@ public class RendererWorld extends ShaderProgram {
         u_Projection = getUniformLocation("u_ProjMatrix");
         u_View = getUniformLocation("u_ViewMatrix");
         u_Model = getUniformLocation("u_ModelMatrix");
+        u_UsingColor = getUniformLocation("u_UsingColor");
+        u_UsingTexture = getUniformLocation("u_UsingTexture");
     }
 
     @Override
@@ -66,8 +70,8 @@ public class RendererWorld extends ShaderProgram {
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
-        setUniform("u_UseColor", true);
-        setUniform("u_UseTexture", false);
+        Shader.setUniform(u_UsingColor, true);
+        Shader.setUniform(u_UsingTexture, false);
         buffer.begin(GL11.GL_LINES, true, true, false);
         buffer.pos(0, 0, 0).color(1, 0, 0).endVertex();
         buffer.pos(100, 0, 0).color(1, 0, 0).endVertex();
@@ -77,8 +81,8 @@ public class RendererWorld extends ShaderProgram {
         buffer.pos(0, 0, 100).color(0, 0, 1).endVertex();
         tessellator.draw();
 
-        setUniform("u_UseColor", false);
-        setUniform("u_UseTexture", true);
+        Shader.setUniform(u_UsingColor, true);
+        Shader.setUniform(u_UsingTexture, true);
         context.getTextureManager().getTextureAtlas(BLOCK).bind();
         for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
             if(!chunkMesh.getChunk().isEmpty()) {

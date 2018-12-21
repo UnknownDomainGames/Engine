@@ -25,7 +25,7 @@ public class RenderChunkTask {
         }
         ChunkCache chunkCache = createChunkCache(chunkMesh.getWorld(), chunkMesh.getChunkPos());
         BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunkPos(chunkMesh.getChunkPos());
-        bufferBuilder.begin(GL11.GL_TRIANGLES, true, false, true);
+        bufferBuilder.begin(GL11.GL_TRIANGLES, true, true, true);
         while (blockPosIterator.hasNext()) {
             BlockPos pos = blockPosIterator.next();
             Block block = chunk.getBlock(pos);

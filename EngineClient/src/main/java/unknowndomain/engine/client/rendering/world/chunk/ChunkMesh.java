@@ -35,9 +35,11 @@ public class ChunkMesh implements Disposable {
 
     public void render() {
         vbo.bind();
-        Shader.pointVertexAttribute(0, 3, 20, 0);
+        Shader.pointVertexAttribute(0, 3, 36, 0);
         Shader.enableVertexAttrib(0);
-        Shader.pointVertexAttribute(2, 2, 20, 12);
+        Shader.pointVertexAttribute(1, 4, 36, 12);
+        Shader.enableVertexAttrib(1);
+        Shader.pointVertexAttribute(2, 2, 36, 28);
         Shader.enableVertexAttrib(2);
         vbo.drawArrays(GL11.GL_TRIANGLES);
         vbo.unbind();
