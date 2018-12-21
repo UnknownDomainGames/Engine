@@ -40,23 +40,23 @@ public class ChunkStorage {
 
     @Nonnull
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
-        long chunkPosIndex = getChunkPos(chunkX, chunkY, chunkZ);
-        return this.chunks.getOrDefault(chunkPosIndex, empty);
+        long chunkIndex = getChunkIndex(chunkX, chunkY, chunkZ);
+        return this.chunks.getOrDefault(chunkIndex, empty);
     }
 
     public Chunk getOrLoadChunk(ChunkPos chunkPos) {
-        long chunkPosIndex = getChunkPos(chunkPos.getX(), chunkPos.getY(), chunkPos.getZ());
-        Chunk chunk = chunks.get(chunkPosIndex);
+        long chunkIndex = getChunkIndex(chunkPos.getX(), chunkPos.getY(), chunkPos.getZ());
+        Chunk chunk = chunks.get(chunkIndex);
         if (chunk == null) {
             chunk = new ChunkImpl(world);
-            chunks.put(chunkPosIndex, chunk);
+            chunks.put(chunkIndex, chunk);
             world.getGame().getContext().post(new ChunkLoadEvent(world, chunkPos, chunk));
         }
         return chunk;
     }
 
     public void touchChunk(@Nonnull BlockPos pos) {
-//        long cp = getChunkPos(pos);
+//        long cp = getChunkIndex(pos);
 //        Chunk chunk = this.chunks.get(cp);
 //        if (chunk != null) {
 //            ChunkImpl c = new ChunkImpl(world);
@@ -66,7 +66,7 @@ public class ChunkStorage {
     }
 
     public void discardChunk(@Nonnull BlockPos pos) {
-//        long cp = getChunkPos(pos);
+//        long cp = getChunkIndex(pos);
 //        Chunk remove = this.chunks.remove(cp);
         // save this chunk?
     }
@@ -82,7 +82,26 @@ public class ChunkStorage {
 //        return data;
 //    }
 
-    private long getChunkPos(int chunkX, int chunkY, int chunkZ) { //FIXME: Unsupported negative int.
-        return ((long) chunkX << 42) & ((1L << 63) - 1) | ((long) chunkY << 21) & ((1L << 42) - 1) | (long) chunkZ & ((1 << 21) - 1);
+    private static int maxPositiveChunkPos = (1 << 20) - 1;
+
+    protected long getChunkIndex(int chunkX, int chunkY, int chunkZ) {
+        return abs(chunkX, maxPositiveChunkPos) << 42 | abs(chunkY, maxPositiveChunkPos) << 21 | abs(chunkZ, maxPositiveChunkPos);
+    }
+
+    private static int abs(int value, int maxPositiveValue) {
+        if (value >= 0) {
+            return value;
+        } else {
+            return (value & maxPositiveValue) + maxPositiveValue + 1;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(abs(maxPositiveChunkPos, maxPositiveChunkPos)); // 1048575
+        System.out.println(abs(1, maxPositiveChunkPos)); // 1
+        System.out.println(abs(0, maxPositiveChunkPos)); // 0
+        System.out.println(abs(-1, maxPositiveChunkPos)); // 2097151
+        System.out.println(abs(-maxPositiveChunkPos, maxPositiveChunkPos)); // 1048577
+        System.out.println(abs(-maxPositiveChunkPos - 1, maxPositiveChunkPos)); // 1048576
     }
 }
