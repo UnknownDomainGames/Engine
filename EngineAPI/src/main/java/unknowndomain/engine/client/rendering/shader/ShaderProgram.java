@@ -29,6 +29,7 @@ public class ShaderProgram implements Disposable {
         GL20.glUseProgram(programId);
     }
 
+    @Deprecated
     public void unuse() {
         GL20.glUseProgram(0);
     }

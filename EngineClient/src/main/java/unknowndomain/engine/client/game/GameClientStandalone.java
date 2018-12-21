@@ -15,7 +15,7 @@ import unknowndomain.engine.client.rendering.RenderContextImpl;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
 import unknowndomain.engine.client.rendering.display.DefaultGameWindow;
-import unknowndomain.engine.client.rendering.gui.RendererGui;
+import unknowndomain.engine.client.rendering.gui.GuiRenderer;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.texture.TextureTypes;
@@ -130,7 +130,7 @@ public class GameClientStandalone extends GameServerFullAsync {
         factories.add((context, manager) -> {
             Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
             byte[] cache = resource.cache();
-            return new RendererGui(
+            return new GuiRenderer(
                     (ByteBuffer) ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
                     Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(),
                             ShaderType.VERTEX_SHADER),

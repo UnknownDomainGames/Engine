@@ -28,7 +28,7 @@ import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 /**
  * render for any gui
  */
-public class RendererGui implements Renderer {
+public class GuiRenderer implements Renderer {
 
     private final ShaderProgram shader;
 
@@ -40,7 +40,7 @@ public class RendererGui implements Renderer {
     private FontRenderer fontRenderer;
     private Graphics graphics;
 
-    public RendererGui(ByteBuffer fontRenderer, Shader vertexShader, Shader fragShader) {
+    public GuiRenderer(ByteBuffer fontRenderer, Shader vertexShader, Shader fragShader) {
         this.fontRenderer = new TTFFontRenderer(fontRenderer);
         this.graphics = new GraphicsImpl(this.fontRenderer);
         shader = new ShaderProgram();
