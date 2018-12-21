@@ -6,6 +6,10 @@ import unknowndomain.engine.Tickable;
  * http://gameprogrammingpatterns.com/game-loop.html
  */
 public class FixStepTicker {
+	
+	public static final int logicTick = 20;
+    public static final int renderTick = 60;//暂时用常量
+    
     protected final Tickable fix;
     protected final double interval;
     protected boolean stop = false;
@@ -74,8 +78,38 @@ public class FixStepTicker {
                     fix.tick();
                     lag -= interval;
                 }
-                dynamic.tick(lag / tps);
+                dynamic.tick((current - LogicTick.currentTick) * logicTick);
             }
+        }
+    }
+    public static class LogicTick extends FixStepTicker {
+    	public static double currentTick;
+    	private static LogicTick instance;
+
+        private LogicTick(Tickable task) {
+            super(task, logicTick);
+        }
+
+        public void start() {
+        	double previous = getCurrentTime();
+            while (!stop) {
+                double current = getCurrentTime();
+                double elapsed = current - previous;
+                previous = current;
+                lag += elapsed;
+
+                while (lag >= interval) {
+                    fix.tick();
+                    currentTick = current;
+                    lag -= interval;
+                }
+            }
+        }
+        public synchronized static LogicTick getInstance(Tickable task) {
+        	if(instance == null) {
+        		instance = new LogicTick(task);
+        	}
+			return instance;
         }
     }
 }

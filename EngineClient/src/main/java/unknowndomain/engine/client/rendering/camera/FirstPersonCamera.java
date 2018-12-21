@@ -17,16 +17,17 @@ public class FirstPersonCamera implements Camera {
     }
 
     @Override
-    public Vector3f getPosition() {
+    public Vector3f getPosition(float parTick) {
         Vector3d position = getPlayer().getMountingEntity().getPosition();
-        return new Vector3f((float) position.x, (float) position.y, (float) position.z);
+        Vector3f motion = getPlayer().getMountingEntity().getMotion();
+        return new Vector3f((float) position.x + motion.x * parTick, (float) position.y + motion.y * parTick, (float) position.z + motion.z * parTick);
     }
 
     @Override
-    public Vector3f getLookAt() {
+    public Vector3f getLookAt(float parTick) {
         Vector3f rotation = getPlayer().getMountingEntity().getRotation();
         Vector3f front = new Vector3f((float) (Math.cos(Math.toRadians(rotation.y)) * Math.cos(Math.toRadians(rotation.x))),
                 (float) Math.sin(Math.toRadians(rotation.y)), (float) (Math.cos(Math.toRadians(rotation.y)) * Math.sin(Math.toRadians(rotation.x)))).normalize();
-        return getPosition().add(front, new Vector3f());
+        return getPosition(parTick).add(front, new Vector3f());
     }
 }

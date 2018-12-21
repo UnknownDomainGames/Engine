@@ -60,7 +60,7 @@ public class GameClientStandalone extends GameServerFullAsync {
     public GameClientStandalone(Option option, ModRepository repository, ModStore store, EventBus bus, DefaultGameWindow window) {
         super(option, repository, store, bus);
         this.window = window;
-        this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, 60);
+        this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, FixStepTicker.renderTick);
 
         // TODO: Remove it
         bus.register(new DefaultGameMode());

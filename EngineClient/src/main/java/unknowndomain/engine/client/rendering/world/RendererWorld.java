@@ -64,7 +64,7 @@ public class RendererWorld extends ShaderProgram {
 
         Shader.setUniform(u_Projection, context.getWindow().projection());
 
-        Shader.setUniform(u_View, camera.view());
+        Shader.setUniform(u_View, camera.view((float) context.partialTick()));
 
         Shader.setUniform(u_Model, new Matrix4f().setTranslation(0, 0, 0));
 
