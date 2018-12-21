@@ -8,7 +8,7 @@ import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
-import unknowndomain.engine.client.rendering.world.chunk.RendererChunk;
+import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
@@ -17,7 +17,7 @@ public class WorldRenderer implements Renderer {
 
     private final ShaderProgram worldShader;
 
-    private final RendererChunk chunkRenderer;
+    private final ChunkRenderer chunkRenderer;
 
     private int u_Projection;
     private int u_View;
@@ -25,7 +25,7 @@ public class WorldRenderer implements Renderer {
     private int u_UsingColor;
     private int u_UsingTexture;
 
-    public WorldRenderer(Shader vertex, Shader frag, RendererChunk chunkRenderer) {
+    public WorldRenderer(Shader vertex, Shader frag, ChunkRenderer chunkRenderer) {
         this.chunkRenderer = chunkRenderer;
         worldShader = new ShaderProgram();
         worldShader.init(vertex, frag);

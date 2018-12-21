@@ -19,7 +19,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
-public class RendererChunk implements Renderer {
+public class ChunkRenderer implements Renderer {
 
     private final ShaderProgram chunkSolidShader;
 
@@ -28,7 +28,7 @@ public class RendererChunk implements Renderer {
     private final int u_ProjMatrix;
     private final int u_ViewMatrix;
 
-    public RendererChunk(Shader vertex, Shader frag) {
+    public ChunkRenderer(Shader vertex, Shader frag) {
         chunkSolidShader = new ShaderProgram();
         chunkSolidShader.init(vertex, frag);
         u_ProjMatrix = chunkSolidShader.getUniformLocation("u_ProjMatrix");

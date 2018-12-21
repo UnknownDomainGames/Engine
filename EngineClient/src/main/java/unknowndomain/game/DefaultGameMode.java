@@ -10,7 +10,7 @@ import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.world.WorldRenderer;
-import unknowndomain.engine.client.rendering.world.chunk.RendererChunk;
+import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.event.Listener;
@@ -38,7 +38,7 @@ public final class DefaultGameMode {
     public void clientRegisterEvent(ClientRegistryEvent event) {
         event.registerRenderer((context, manager) ->
                 {
-                    RendererChunk chunkRenderer = new RendererChunk(
+                    ChunkRenderer chunkRenderer = new ChunkRenderer(
                             Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.vert")).cache(), ShaderType.VERTEX_SHADER),
                             Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.frag")).cache(), ShaderType.FRAGMENT_SHADER)
                     );
