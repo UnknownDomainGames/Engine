@@ -4,7 +4,6 @@ import org.joml.Vector2f;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
-import unknowndomain.engine.client.util.UDBitmapFont;
 
 import java.io.File;
 

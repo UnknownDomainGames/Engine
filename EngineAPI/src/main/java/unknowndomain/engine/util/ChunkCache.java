@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.util;
+package unknowndomain.engine.util;
 
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.world.BlockAccessor;

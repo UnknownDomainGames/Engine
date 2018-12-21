@@ -6,10 +6,10 @@ import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.client.rendering.block.BlockRenderer;
 import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
-import unknowndomain.engine.client.util.ChunkCache;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.util.BlockPosIterator;
+import unknowndomain.engine.util.ChunkCache;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.chunk.Chunk;
 

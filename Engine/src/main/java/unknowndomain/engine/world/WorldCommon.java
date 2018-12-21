@@ -1,12 +1,14 @@
 package unknowndomain.engine.world;
 
 import com.google.common.collect.Sets;
-import org.joml.*;
+import org.joml.AABBd;
+import org.joml.Vector2d;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.EntityCamera;
-import unknowndomain.engine.event.Event;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.AABBs;
@@ -23,7 +25,6 @@ import unknowndomain.engine.world.chunk.ChunkStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.Math;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -128,7 +129,21 @@ public class WorldCommon implements World, Runnable {
             }
         }
         physicsSystem.tick(this);
+        tickEntityMotion();
+        tickChunks();
+        tickEntities();
+    }
 
+    protected void tickChunks() {
+        chunkStorage.getChunks().forEach(this::tickChunk);
+    }
+
+    protected void tickEntities() {
+        for (Entity entity : entityList)
+            entity.tick(); // state machine update
+    }
+
+    protected void tickEntityMotion() {
         for (Entity entity : this.getEntities()) {
             Vector3d position = entity.getPosition();
             Vector3f motion = entity.getMotion();
@@ -143,10 +158,6 @@ public class WorldCommon implements World, Runnable {
                 // entity leaving and enter chunk event
             }
         }
-
-        chunkStorage.getChunks().forEach(this::tickChunk);
-        for (Entity entity : entityList)
-            entity.tick(); // state machine update
     }
 
     private void tickChunk(Chunk chunk) {
@@ -185,7 +196,7 @@ public class WorldCommon implements World, Runnable {
         ticker.start();
     }
 
-    public boolean isStop() {
+    public boolean isStopped() {
         return ticker.isStop();
     }
 
@@ -295,13 +306,5 @@ public class WorldCommon implements World, Runnable {
     @Override
     public <T> T getBehavior(Class<T> type) {
         return null;
-    }
-
-    public static class ChunkUnload implements Event {
-        public final Vector3i pos;
-
-        public ChunkUnload(Vector3i pos) {
-            this.pos = pos;
-        }
     }
 }

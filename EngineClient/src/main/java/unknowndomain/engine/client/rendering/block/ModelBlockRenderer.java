@@ -6,8 +6,8 @@ import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.block.model.BlockModelQuad;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
-import unknowndomain.engine.client.util.ChunkCache;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.util.ChunkCache;
 import unknowndomain.engine.util.Facing;
 
 import java.util.Collections;
