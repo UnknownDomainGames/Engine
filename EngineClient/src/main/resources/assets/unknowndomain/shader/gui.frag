@@ -17,15 +17,10 @@ void main()
     if(gl_FragCoord.x < u_ClipRect.x || gl_FragCoord.x > u_ClipRect.z || gl_FragCoord.y > (u_WindowSize.y - u_ClipRect.y) || gl_FragCoord.y < (u_WindowSize.y - u_ClipRect.w)) {
         discard;
     }
-    if(u_UsingAlpha){
+    if(u_UsingAlpha) {
         fragColor = vec4(v_Color.rgb, texture(u_Texture, v_TexCoord).r * v_Color.a);
     }
     else{
-//        if(tex){
-            fragColor = v_Color * texture(u_Texture, v_TexCoord);
-//        }
-//        else{
-//            fragColor = vertexColor;
-//        }
+        fragColor = v_Color;
     }
 }

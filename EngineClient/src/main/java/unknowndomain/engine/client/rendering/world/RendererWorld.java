@@ -7,6 +7,7 @@ import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.world.chunk.ChunkMesh;
 import unknowndomain.engine.client.rendering.world.chunk.RenderChunkTask;
@@ -83,7 +84,8 @@ public class RendererWorld extends ShaderProgram {
 
         Shader.setUniform(u_UsingColor, true);
         Shader.setUniform(u_UsingTexture, true);
-        context.getTextureManager().getTextureAtlas(BLOCK).bind();
+        GLTexture blockTextureAtlas = context.getTextureManager().getTextureAtlas(BLOCK);
+        blockTextureAtlas.bind();
         for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
             if(!chunkMesh.getChunk().isEmpty()) {
                 if(chunkMesh.isDirty()) {
@@ -95,6 +97,7 @@ public class RendererWorld extends ShaderProgram {
 
         GL11.glDisable(GL11.GL_CULL_FACE);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
+        blockTextureAtlas.unbind();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDisable(GL11.GL_BLEND);
     }

@@ -22,6 +22,8 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.*;
+
 /**
  * render for any gui
  */
@@ -92,7 +94,16 @@ public class RendererGui extends ShaderProgram {
             setUniform("u_WindowSize", new Vector2f(width, height));
             setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
         }
-        //setUniform("projection", new Matrix4f().setOrtho(0, context.getProjection().getWidth(), context.getProjection().getHeight(), 0, 1, -1));
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        glEnable(GL_POINT_SMOOTH);
+        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+        glEnable(GL_POLYGON_SMOOTH);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
         setUniform("u_UsingAlpha", true);
 
         // render scene
@@ -104,6 +115,11 @@ public class RendererGui extends ShaderProgram {
         }
 
         debug(context);
+
+        glDisable(GL_BLEND);
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_POINT_SMOOTH);
+        glDisable(GL_POLYGON_SMOOTH);
 
         unuseProgram();
     }
@@ -144,7 +160,9 @@ public class RendererGui extends ShaderProgram {
 //                context.getCamera().getFrontVector(), 5);
         fontRenderer.drawText("FPS: " + displayFPS, 0, 0, 0xffffffff);
         fontRenderer.drawText(String.format("Player location: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 19, 0xffffffff);
-        fontRenderer.drawText(String.format("Player rotation: yaw: %f, pitch: %f, roll: %f", player.getRotation().x, player.getRotation().y, player.getRotation().z), 0, 38, 0xffffffff);
+        fontRenderer.drawText(String.format("Player motion: %f, %f, %f", player.getMotion().x, player.getMotion().y, player.getMotion().z), 0, 38, 0xffffffff);
+        fontRenderer.drawText(String.format("Player yaw: %f, pitch: %f, roll: %f", player.getRotation().x, player.getRotation().y, player.getRotation().z), 0, 19 * 3, 0xffffffff);
+        fontRenderer.drawText(String.format("Chunk: %d, %d, %d", (int) player.getPosition().x >> 4, (int) player.getPosition().y >> 4, (int) player.getPosition().z >> 4), 0, 19 * 4, 0xffffffff);
 //        fontRenderer.drawText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 19 * 3, 0xffffffff);
         //fontRenderer.drawText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);
 

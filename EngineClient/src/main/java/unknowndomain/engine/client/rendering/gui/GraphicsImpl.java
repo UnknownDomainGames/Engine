@@ -33,25 +33,25 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawLine(float x1, float y1, float x2, float y2) {
-        BufferBuilder builder = tessellator.getBuffer();
-        builder.begin(GL_LINE, true, true, false, false);
-        line(builder, x1, y1, x2, y2);
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL_LINES, true, true, false, false);
+        line(buffer, x1, y1, x2, y2);
         tessellator.draw();
     }
 
     @Override
     public void drawRect(float x, float y, float width, float height) {
-        BufferBuilder builder = tessellator.getBuffer();
-        builder.begin(GL_LINE_LOOP, true, true, false, false);
-        rect(builder, x, y, width, height);
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL_LINE_LOOP, true, true, false, false);
+        rect(buffer, x, y, width, height);
         tessellator.draw();
     }
 
     @Override
     public void fillRect(float x, float y, float width, float height) {
-        BufferBuilder builder = tessellator.getBuffer();
-        builder.begin(GL_QUADS, true, true, false, false);
-        rect(builder, x, y, width, height);
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL_QUADS, true, true, false, false);
+        rect(buffer, x, y, width, height);
         tessellator.draw();
     }
 
@@ -133,7 +133,10 @@ public class GraphicsImpl implements Graphics {
         buffer.pos(x2, y, 0).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex();
         buffer.pos(x2, y2, 0).tex(textureUV.getMaxU(), textureUV.getMaxV()).endVertex();
         buffer.pos(x, y2, 0).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex();
+        glEnable(GL_TEXTURE_2D);
+        texture.bind();
         tessellator.draw();
+        glDisable(GL_TEXTURE_2D);
     }
 
     public void clipRect(int x, int y, int width, int height) {
