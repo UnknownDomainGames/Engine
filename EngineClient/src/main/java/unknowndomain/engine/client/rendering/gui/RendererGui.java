@@ -4,12 +4,12 @@ import org.joml.AABBd;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
-import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.Graphics;
 import unknowndomain.engine.client.gui.Scene;
 import unknowndomain.engine.client.rendering.RenderContext;
+import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFFontRenderer;
 import unknowndomain.engine.client.rendering.shader.Shader;
@@ -23,11 +23,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
+import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 
 /**
  * render for any gui
  */
-public class RendererGui extends ShaderProgram {
+public class RendererGui implements Renderer {
+
+    private final ShaderProgram shader;
+
+    private final int u_ProjMatrix, u_WindowSize, u_ClipRect, u_UsingAlpha;
 
     private Scene guiScene;
     private final List<Scene> hudScene = new LinkedList<>();
@@ -38,61 +43,23 @@ public class RendererGui extends ShaderProgram {
     public RendererGui(ByteBuffer fontRenderer, Shader vertexShader, Shader fragShader) {
         this.fontRenderer = new TTFFontRenderer(fontRenderer);
         this.graphics = new GraphicsImpl(this.fontRenderer);
-        createShader(vertexShader, fragShader);
-    }
-
-    protected void createShader(Shader vertexShader, Shader fragShader) {
-        programId = GL20.glCreateProgram();
-
-        attachShader(vertexShader);
-        attachShader(fragShader);
-
-        linkProgram();
-        useProgram();
-
-        vertexShader.deleteShader();
-        fragShader.deleteShader();
-
-        GL20.glValidateProgram(programId);
-
-//        setUniform("u_ModelMatrix", new Matrix4f().identity());
-
-        GL20.glUseProgram(0);
-
-        Tessellator.getInstance().setShaderId(programId);
-    }
-
-    @Override
-    protected void useProgram() {
-        super.useProgram();
-
-//        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-//        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-//        GL11.glEnable(GL11.GL_TEXTURE_2D);
-//        GL11.glEnable(GL11.GL_DEPTH_TEST);
-//        GL11.glEnable(GL11.GL_BLEND);
-//        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    @Override
-    protected void unuseProgram() {
-        super.useProgram();
-
-//        GL11.glDisable(GL11.GL_LINE_SMOOTH);
-//        GL11.glDisable(GL11.GL_TEXTURE_2D);
-//        GL11.glDisable(GL11.GL_DEPTH_TEST);
-//        GL11.glDisable(GL11.GL_BLEND);
+        shader = new ShaderProgram();
+        shader.init(vertexShader, fragShader);
+        u_ProjMatrix = shader.getUniformLocation("u_ProjMatrix");
+        u_WindowSize = shader.getUniformLocation("u_WindowSize");
+        u_ClipRect = shader.getUniformLocation("u_ClipRect");
+        u_UsingAlpha = shader.getUniformLocation("u_UsingAlpha");
     }
 
     @Override
     public void render(RenderContext context) {
-        useProgram();
+        shader.use();
 
         if (context.getWindow().isResized()) {
             int width = context.getWindow().getWidth(), height = context.getWindow().getHeight();
-            setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1, -1));
-            setUniform("u_WindowSize", new Vector2f(width, height));
-            setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
+            setUniform(u_ProjMatrix, new Matrix4f().setOrtho(0, width, height, 0, 1, -1));
+            setUniform(u_WindowSize, new Vector2f(width, height));
+            setUniform(u_ClipRect, new Vector4f(0, 0, width, height));
         }
 
         glEnable(GL_BLEND);
@@ -104,7 +71,7 @@ public class RendererGui extends ShaderProgram {
         glEnable(GL_POLYGON_SMOOTH);
         glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
-        setUniform("u_UsingAlpha", true);
+        setUniform(u_UsingAlpha, true);
 
         // render scene
         if (guiScene != null)
@@ -120,8 +87,6 @@ public class RendererGui extends ShaderProgram {
         glDisable(GL_LINE_SMOOTH);
         glDisable(GL_POINT_SMOOTH);
         glDisable(GL_POLYGON_SMOOTH);
-
-        unuseProgram();
     }
 
     private void renderScene(Scene scene) {
@@ -182,6 +147,6 @@ public class RendererGui extends ShaderProgram {
 
     @Override
     public void dispose() {
-
+        shader.dispose();
     }
 }

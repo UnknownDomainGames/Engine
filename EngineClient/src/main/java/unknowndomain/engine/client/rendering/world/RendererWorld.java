@@ -3,6 +3,7 @@ package unknowndomain.engine.client.rendering.world;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.rendering.RenderContext;
+import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.shader.Shader;
@@ -20,14 +21,18 @@ import unknowndomain.engine.math.ChunkPos;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.lwjgl.opengl.GL11.*;
+import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
-public class RendererWorld extends ShaderProgram {
+public class RendererWorld implements Renderer {
 
     protected final int A_POSITION = 0;
     protected final int A_TEXTCOORD = 1;
     protected final int A_NORMAL = 2;
     protected final int A_COLOR = 3;
+
+    private final ShaderProgram worldShader;
 
     private int u_Projection;
     private int u_View;
@@ -39,40 +44,39 @@ public class RendererWorld extends ShaderProgram {
     private final RenderChunkTask renderChunkTask = new RenderChunkTask();
 
     public RendererWorld(Shader vertex, Shader frag) {
-        createShader(vertex, frag);
-
-        useProgram();
-        u_Projection = getUniformLocation("u_ProjMatrix");
-        u_View = getUniformLocation("u_ViewMatrix");
-        u_Model = getUniformLocation("u_ModelMatrix");
-        u_UsingColor = getUniformLocation("u_UsingColor");
-        u_UsingTexture = getUniformLocation("u_UsingTexture");
+        worldShader = new ShaderProgram();
+        worldShader.init(vertex, frag);
+        u_Projection = worldShader.getUniformLocation("u_ProjMatrix");
+        u_View = worldShader.getUniformLocation("u_ViewMatrix");
+        u_Model = worldShader.getUniformLocation("u_ModelMatrix");
+        u_UsingColor = worldShader.getUniformLocation("u_UsingColor");
+        u_UsingTexture = worldShader.getUniformLocation("u_UsingTexture");
     }
 
     @Override
     public void render(RenderContext context) {
         Camera camera = context.getCamera();
 
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-        useProgram();
+        glClear(GL11.GL_COLOR_BUFFER_BIT);
+        worldShader.use();
 
-        GL11.glEnable(GL11.GL_CULL_FACE);
+        glEnable(GL11.GL_CULL_FACE);
 //        GL11.glCullFace(GL11.GL_BACK);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL11.GL_TEXTURE_2D);
+        glEnable(GL11.GL_DEPTH_TEST);
+        glEnable(GL11.GL_BLEND);
+        glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        Shader.setUniform(u_Projection, context.getWindow().projection());
+        setUniform(u_Projection, context.getWindow().projection());
 
-        Shader.setUniform(u_View, camera.view((float) context.partialTick()));
+        setUniform(u_View, camera.view((float) context.partialTick()));
 
-        Shader.setUniform(u_Model, new Matrix4f().setTranslation(0, 0, 0));
+        setUniform(u_Model, new Matrix4f().setTranslation(0, 0, 0));
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
-        Shader.setUniform(u_UsingColor, true);
-        Shader.setUniform(u_UsingTexture, false);
+        setUniform(u_UsingColor, true);
+        setUniform(u_UsingTexture, false);
         buffer.begin(GL11.GL_LINES, true, true, false);
         buffer.pos(0, 0, 0).color(1, 0, 0).endVertex();
         buffer.pos(100, 0, 0).color(1, 0, 0).endVertex();
@@ -82,24 +86,24 @@ public class RendererWorld extends ShaderProgram {
         buffer.pos(0, 0, 100).color(0, 0, 1).endVertex();
         tessellator.draw();
 
-        Shader.setUniform(u_UsingColor, true);
-        Shader.setUniform(u_UsingTexture, true);
+        setUniform(u_UsingColor, true);
+        setUniform(u_UsingTexture, true);
         GLTexture blockTextureAtlas = context.getTextureManager().getTextureAtlas(BLOCK);
         blockTextureAtlas.bind();
         for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
-            if(!chunkMesh.getChunk().isEmpty()) {
-                if(chunkMesh.isDirty()) {
+            if (!chunkMesh.getChunk().isEmpty()) {
+                if (chunkMesh.isDirty()) {
                     renderChunkTask.updateChunkMesh(chunkMesh);
                 }
                 chunkMesh.render();
             }
         }
 
-        GL11.glDisable(GL11.GL_CULL_FACE);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        glDisable(GL11.GL_CULL_FACE);
+        glDisable(GL11.GL_TEXTURE_2D);
         blockTextureAtlas.unbind();
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_BLEND);
+        glDisable(GL11.GL_DEPTH_TEST);
+        glDisable(GL11.GL_BLEND);
     }
 
     @Listener
@@ -116,5 +120,10 @@ public class RendererWorld extends ShaderProgram {
         }
 
         chunkMesh.markDirty();
+    }
+
+    @Override
+    public void dispose() {
+        worldShader.dispose();
     }
 }

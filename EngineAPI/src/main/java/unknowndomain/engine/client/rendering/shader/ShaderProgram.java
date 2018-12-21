@@ -2,46 +2,42 @@ package unknowndomain.engine.client.rendering.shader;
 
 import org.joml.*;
 import org.lwjgl.opengl.GL20;
-import unknowndomain.engine.client.rendering.Renderer;
+import unknowndomain.engine.util.Disposable;
 
-public abstract class ShaderProgram implements Renderer {
+public class ShaderProgram implements Disposable {
 
     protected int programId = -1;
 
-    protected void attachShader(Shader shader) {
-        GL20.glAttachShader(programId, shader.getShaderId());
-    }
-
-    protected int getUniformLocation(String name) {
-        return GL20.glGetUniformLocation(programId, name);
-    }
-
-    protected void useProgram() {
-        GL20.glUseProgram(programId);
-    }
-
-    protected void unuseProgram() {
-        GL20.glUseProgram(0);
-    }
-
-    protected void createShader(Shader... shaders) {
+    public void init(Shader... shaders) {
         programId = GL20.glCreateProgram();
 
         for (Shader s : shaders)
             attachShader(s);
 
         linkProgram();
-        useProgram();
+        use();
 
         GL20.glValidateProgram(programId);
 
-        for (Shader s : shaders)
-            s.deleteShader();
+        for (Shader shader : shaders)
+            shader.deleteShader();
 
-        unuseProgram();
+        unuse();
     }
 
-    protected void linkProgram() {
+    public void use() {
+        GL20.glUseProgram(programId);
+    }
+
+    public void unuse() {
+        GL20.glUseProgram(0);
+    }
+
+    protected void attachShader(Shader shader) {
+        GL20.glAttachShader(programId, shader.getShaderId());
+    }
+
+    public void linkProgram() {
         GL20.glLinkProgram(programId);
     }
 
@@ -51,10 +47,14 @@ public abstract class ShaderProgram implements Renderer {
 
     @Override
     public void dispose() {
-        unuseProgram();
+        unuse();
 
         GL20.glDeleteProgram(programId);
         programId = -1;
+    }
+
+    public int getUniformLocation(String name) {
+        return GL20.glGetUniformLocation(programId, name);
     }
 
     public void setUniform(String location, int value) {

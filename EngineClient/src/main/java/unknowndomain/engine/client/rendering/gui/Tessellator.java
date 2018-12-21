@@ -5,11 +5,10 @@ import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.util.VertexBufferObject;
 
 public class Tessellator {
+
     private static final Tessellator INSTANCE = new Tessellator(1048576);
     private BufferBuilder buffer;
     private VertexBufferObject vbo;
-    private int shaderId;
-    private int vertexStatusBufId;
 
     private Tessellator(int bufferSize) {
         vbo = new VertexBufferObject();
@@ -23,14 +22,6 @@ public class Tessellator {
 
     public static Tessellator getInstance() {
         return INSTANCE;
-    }
-
-    public void setShaderId(int shaderId) {
-        this.shaderId = shaderId;
-
-//        int status = GL31.glGetUniformBlockIndex(programId, "VertexStatus");
-//        GL31.glUniformBlockBinding(programId, status, 0);
-//        GL30.glBindBufferBase(GL31.GL_UNIFORM_BUFFER, 2, vertexStatusBufId);
     }
 
     public BufferBuilder getBuffer() {
