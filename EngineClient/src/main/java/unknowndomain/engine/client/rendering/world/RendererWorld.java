@@ -82,6 +82,9 @@ public class RendererWorld extends ShaderProgram {
         context.getTextureManager().getTextureAtlas(BLOCK).bind();
         for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
             if(!chunkMesh.getChunk().isEmpty()) {
+                if(chunkMesh.isDirty()) {
+                    renderChunkTask.updateChunkMesh(chunkMesh);
+                }
                 chunkMesh.render();
             }
         }
@@ -94,9 +97,7 @@ public class RendererWorld extends ShaderProgram {
 
     @Listener
     public void handleChunkLoad(ChunkLoadEvent event) {
-        ChunkMesh chunkMesh = new ChunkMesh(event.getWorld(), event.getPos(), event.getChunk());
-        renderChunkTask.updateChunkMesh(chunkMesh);
-        loadedChunkMeshes.put(event.getPos(), chunkMesh);
+        loadedChunkMeshes.put(event.getPos(), new ChunkMesh(event.getWorld(), event.getPos(), event.getChunk()));
     }
 
     @Listener
@@ -107,6 +108,6 @@ public class RendererWorld extends ShaderProgram {
             return;
         }
 
-        renderChunkTask.updateChunkMesh(chunkMesh);
+        chunkMesh.markDirty();
     }
 }

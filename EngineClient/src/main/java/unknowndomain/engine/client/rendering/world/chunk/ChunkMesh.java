@@ -2,6 +2,7 @@ package unknowndomain.engine.client.rendering.world.chunk;
 
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.rendering.shader.Shader;
+import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.util.VertexBufferObject;
 import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.util.Disposable;
@@ -9,6 +10,8 @@ import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.chunk.Chunk;
 
 public class ChunkMesh implements Disposable {
+
+    private boolean dirty = true;
 
     private VertexBufferObject vbo;
 
@@ -22,11 +25,12 @@ public class ChunkMesh implements Disposable {
         this.chunk = chunk;
     }
 
-    public VertexBufferObject getVbo() {
+    public void update(BufferBuilder bufferBuilder) {
         if(vbo == null) {
             vbo = new VertexBufferObject();
         }
-        return vbo;
+        vbo.uploadData(bufferBuilder);
+        dirty = false;
     }
 
     public void render() {
@@ -49,6 +53,14 @@ public class ChunkMesh implements Disposable {
 
     public Chunk getChunk() {
         return chunk;
+    }
+
+    public void markDirty() {
+        dirty = true;
+    }
+
+    public boolean isDirty() {
+        return dirty;
     }
 
     @Override

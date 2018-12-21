@@ -36,7 +36,7 @@ public class RenderChunkTask {
             blockRenderer.render(block, chunkCache, pos, bufferBuilder);
         }
         bufferBuilder.finish();
-        chunkMesh.getVbo().uploadData(bufferBuilder);
+        chunkMesh.update(bufferBuilder);
         bufferBuilder.reset();
     }
 
