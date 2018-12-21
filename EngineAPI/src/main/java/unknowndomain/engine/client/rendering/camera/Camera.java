@@ -11,12 +11,12 @@ public interface Camera {
 
     Vector3f UP_VECTOR = new Vector3f(0, 1, 0);
 
-    Vector3f getPosition();
+    Vector3f getPosition(float parTick);
 
-    Vector3f getLookAt();
+    Vector3f getLookAt(float parTick);
 
-    default Vector3f getFrontVector() {
-        return getLookAt().sub(getPosition(), new Vector3f()).normalize();
+    default Vector3f getFrontVector(float parTick) {
+        return getLookAt(parTick).sub(getPosition(0), new Vector3f()).normalize();
     }
 
     /**
@@ -24,7 +24,7 @@ public interface Camera {
      *
      * @return
      */
-    default Matrix4f view() {
-        return new Matrix4f().lookAt(getPosition(), getLookAt(), UP_VECTOR);
+    default Matrix4f view(float parTick) {
+        return new Matrix4f().lookAt(getPosition(parTick), getLookAt(parTick), UP_VECTOR);
     }
 }

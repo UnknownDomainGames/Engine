@@ -117,7 +117,7 @@ public class RendererSkybox extends ShaderProgram {
         useProgram();
 
         Matrix4f pro = context.getWindow().projection();
-        Matrix4f view = new Matrix4f(context.getCamera().view());
+        Matrix4f view = new Matrix4f(context.getCamera().view((float) context.partialTick()));
         view.m30(0).m31(0).m32(0);
         Shader.setUniform(u_Projection, pro);
         Shader.setUniform(u_View, view);
