@@ -90,7 +90,6 @@ public class FixStepTicker {
                 lag = previous - current + interval;
                 if((lag + interval) < 0 || current <= previous) {
                     previous = current = System.nanoTime();
-                    System.out.println("can`t keep up.");
                 }
                 if(lag > 0) {
                     try {
