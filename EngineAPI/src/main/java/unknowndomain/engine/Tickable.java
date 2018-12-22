@@ -6,4 +6,7 @@ public interface Tickable {
     interface Partial {
         void tick(double partial);
     }
+    interface LogicTicker {
+        void tick(long currentTick);
+    }
 }
