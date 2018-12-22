@@ -4,12 +4,12 @@ import org.joml.AABBd;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
-import org.lwjgl.opengl.GL20;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.Graphics;
 import unknowndomain.engine.client.gui.Scene;
 import unknowndomain.engine.client.rendering.RenderContext;
+import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFFontRenderer;
 import unknowndomain.engine.client.rendering.shader.Shader;
@@ -22,10 +22,17 @@ import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL11.*;
+import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
+
 /**
  * render for any gui
  */
-public class RendererGui extends ShaderProgram {
+public class GuiRenderer implements Renderer {
+
+    private final ShaderProgram shader;
+
+    private final int u_ProjMatrix, u_WindowSize, u_ClipRect, u_UsingAlpha;
 
     private Scene guiScene;
     private final List<Scene> hudScene = new LinkedList<>();
@@ -33,68 +40,38 @@ public class RendererGui extends ShaderProgram {
     private FontRenderer fontRenderer;
     private Graphics graphics;
 
-    public RendererGui(ByteBuffer fontRenderer, Shader vertexShader, Shader fragShader) {
+    public GuiRenderer(ByteBuffer fontRenderer, Shader vertexShader, Shader fragShader) {
         this.fontRenderer = new TTFFontRenderer(fontRenderer);
         this.graphics = new GraphicsImpl(this.fontRenderer);
-        createShader(vertexShader, fragShader);
-    }
-
-    protected void createShader(Shader vertexShader, Shader fragShader) {
-        programId = GL20.glCreateProgram();
-
-        attachShader(vertexShader);
-        attachShader(fragShader);
-
-        linkProgram();
-        useProgram();
-
-        vertexShader.deleteShader();
-        fragShader.deleteShader();
-
-        GL20.glValidateProgram(programId);
-
-        //setUniform("projection", new Matrix4f().setOrtho(0, 854f, 480f, 0, 1, -1));
-        setUniform("model", new Matrix4f().identity());
-
-        GL20.glUseProgram(0);
-
-        Tessellator.getInstance().setShaderId(programId);
-    }
-
-    @Override
-    protected void useProgram() {
-        super.useProgram();
-
-//        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-//        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-//        GL11.glEnable(GL11.GL_TEXTURE_2D);
-//        GL11.glEnable(GL11.GL_DEPTH_TEST);
-//        GL11.glEnable(GL11.GL_BLEND);
-//        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    @Override
-    protected void unuseProgram() {
-        super.useProgram();
-
-//        GL11.glDisable(GL11.GL_LINE_SMOOTH);
-//        GL11.glDisable(GL11.GL_TEXTURE_2D);
-//        GL11.glDisable(GL11.GL_DEPTH_TEST);
-//        GL11.glDisable(GL11.GL_BLEND);
+        shader = new ShaderProgram();
+        shader.init(vertexShader, fragShader);
+        u_ProjMatrix = shader.getUniformLocation("u_ProjMatrix");
+        u_WindowSize = shader.getUniformLocation("u_WindowSize");
+        u_ClipRect = shader.getUniformLocation("u_ClipRect");
+        u_UsingAlpha = shader.getUniformLocation("u_UsingAlpha");
     }
 
     @Override
     public void render(RenderContext context) {
-        useProgram();
+        shader.use();
 
         if (context.getWindow().isResized()) {
             int width = context.getWindow().getWidth(), height = context.getWindow().getHeight();
-            setUniform("projection", new Matrix4f().setOrtho(0, width, height, 0, 1, -1));
-            setUniform("windowSize", new Vector2f(width, height));
-            setUniform("clipRect", new Vector4f(0, 0, width, height));
+            setUniform(u_ProjMatrix, new Matrix4f().setOrtho(0, width, height, 0, 1, -1));
+            setUniform(u_WindowSize, new Vector2f(width, height));
+            setUniform(u_ClipRect, new Vector4f(0, 0, width, height));
         }
-        //setUniform("projection", new Matrix4f().setOrtho(0, context.getProjection().getWidth(), context.getProjection().getHeight(), 0, 1, -1));
-        setUniform("usingAlpha", true);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        glEnable(GL_POINT_SMOOTH);
+        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+        glEnable(GL_POLYGON_SMOOTH);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
+        setUniform(u_UsingAlpha, true);
 
         // render scene
         if (guiScene != null)
@@ -106,7 +83,10 @@ public class RendererGui extends ShaderProgram {
 
         debug(context);
 
-        unuseProgram();
+        glDisable(GL_BLEND);
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_POINT_SMOOTH);
+        glDisable(GL_POLYGON_SMOOTH);
     }
 
     private void renderScene(Scene scene) {
@@ -145,7 +125,9 @@ public class RendererGui extends ShaderProgram {
 //                context.getCamera().getFrontVector(), 5);
         fontRenderer.drawText("FPS: " + displayFPS, 0, 0, 0xffffffff);
         fontRenderer.drawText(String.format("Player location: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 19, 0xffffffff);
-        fontRenderer.drawText(String.format("Player rotation: yaw: %f, pitch: %f, roll: %f", player.getRotation().x, player.getRotation().y, player.getRotation().z), 0, 38, 0xffffffff);
+        fontRenderer.drawText(String.format("Player motion: %f, %f, %f", player.getMotion().x, player.getMotion().y, player.getMotion().z), 0, 38, 0xffffffff);
+        fontRenderer.drawText(String.format("Player yaw: %f, pitch: %f, roll: %f", player.getRotation().x, player.getRotation().y, player.getRotation().z), 0, 19 * 3, 0xffffffff);
+        fontRenderer.drawText(String.format("Chunk: %d, %d, %d", (int) player.getPosition().x >> 4, (int) player.getPosition().y >> 4, (int) player.getPosition().z >> 4), 0, 19 * 4, 0xffffffff);
 //        fontRenderer.drawText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 19 * 3, 0xffffffff);
         //fontRenderer.drawText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);
 
@@ -165,6 +147,6 @@ public class RendererGui extends ShaderProgram {
 
     @Override
     public void dispose() {
-
+        shader.dispose();
     }
 }

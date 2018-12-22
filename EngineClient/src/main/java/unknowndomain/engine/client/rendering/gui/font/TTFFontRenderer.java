@@ -22,7 +22,6 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.memUTF16;
 
 public class TTFFontRenderer implements FontRenderer {
     private ByteBuffer ttfBuf;
@@ -116,8 +115,9 @@ public class TTFFontRenderer implements FontRenderer {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, pair.getLeft());
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//        glEnable(GL_BLEND);
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         STBTTBakedChar.Buffer cdata = pair.getRight();
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer charPointBuffer = stack.mallocInt(1);
@@ -164,7 +164,8 @@ public class TTFFontRenderer implements FontRenderer {
 
             //renderLineBoundingBox(text, x, y + fontHeight, scale, fontHeight);
             glDisable(GL_TEXTURE_2D);
-            glDisable(GL_BLEND);
+            glBindTexture(GL_TEXTURE_2D, 0);
+//            glDisable(GL_BLEND);
         }
     }
 

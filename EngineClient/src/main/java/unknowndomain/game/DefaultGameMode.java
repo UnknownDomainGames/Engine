@@ -9,7 +9,8 @@ import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
-import unknowndomain.engine.client.rendering.world.RendererWorld;
+import unknowndomain.engine.client.rendering.world.WorldRenderer;
+import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.event.Listener;
@@ -37,11 +38,17 @@ public final class DefaultGameMode {
     public void clientRegisterEvent(ClientRegistryEvent event) {
         event.registerRenderer((context, manager) ->
                 {
-                    RendererWorld debug = new RendererWorld(
-                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/world.vert")).cache(), ShaderType.VERTEX_SHADER),
-                            Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/world.frag")).cache(), ShaderType.FRAGMENT_SHADER));
-                    context.register(debug);
-                    return debug;
+                    ChunkRenderer chunkRenderer = new ChunkRenderer(
+                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.vert")).cache(), ShaderType.VERTEX_SHADER),
+                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.frag")).cache(), ShaderType.FRAGMENT_SHADER)
+                    );
+                    context.register(chunkRenderer);
+
+                    WorldRenderer worldRenderer = new WorldRenderer(
+                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/world.vert")).cache(), ShaderType.VERTEX_SHADER),
+                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/world.frag")).cache(), ShaderType.FRAGMENT_SHADER),
+                            chunkRenderer);
+                    return worldRenderer;
                 }
         );
     }

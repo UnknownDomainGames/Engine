@@ -1,11 +1,11 @@
 #version 330 core
 
 uniform sampler2D u_Texture;
-uniform bool u_UseColor;
-uniform bool u_UseTexture;
+uniform bool u_UsingColor;
+uniform bool u_UsingTexture;
 
 in vec4 v_Color;
-in vec2 v_UV;
+in vec2 v_TexCoord;
 
 //in vec3 v_Normal;
 //in vec3 v_LightDirection;
@@ -13,9 +13,14 @@ in vec2 v_UV;
 out vec4 fragColor;
 
 void main() {
-    if(u_UseTexture) {
-        fragColor = texture(u_Texture, v_UV);
-    } else if(u_UseColor) {
+    if(u_UsingTexture && u_UsingColor)
+    {
+        fragColor = v_Color * texture(u_Texture, v_TexCoord);
+    } else if(u_UsingTexture)
+    {
+        fragColor = texture(u_Texture, v_TexCoord);
+    } else if(u_UsingColor)
+    {
         fragColor = v_Color;
     }
 }

@@ -53,13 +53,13 @@ public class ModelBlockRenderer implements BlockRenderer {
 
     public void renderModelQuad(BlockModelQuad modelQuad, BlockPos pos, BufferBuilder buffer) {
         TextureUV textureUV = modelQuad.textureUV;
-        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex(); // 1
-        buffer.pos(modelQuad.vertexs[3], modelQuad.vertexs[4], modelQuad.vertexs[5]).tex(textureUV.getMaxU(), textureUV.getMaxV()).endVertex(); // 2
-        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex(); // 3
+        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).color(1,1,1).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex(); // 1
+        buffer.pos(modelQuad.vertexs[3], modelQuad.vertexs[4], modelQuad.vertexs[5]).color(1,1,1).tex(textureUV.getMaxU(), textureUV.getMaxV()).endVertex(); // 2
+        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).color(1,1,1).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex(); // 3
 
-        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex(); // 1
-        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex(); // 3
-        buffer.pos(modelQuad.vertexs[9], modelQuad.vertexs[10], modelQuad.vertexs[11]).tex(textureUV.getMinU(), textureUV.getMinV()).endVertex(); // 4
+        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).color(1,1,1).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex(); // 1
+        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).color(1,1,1).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex(); // 3
+        buffer.pos(modelQuad.vertexs[9], modelQuad.vertexs[10], modelQuad.vertexs[11]).color(1,1,1).tex(textureUV.getMinU(), textureUV.getMinV()).endVertex(); // 4
     }
 
     @Override
