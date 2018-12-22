@@ -45,15 +45,23 @@ public class FixStepTicker {
         long lag;
         while (!stop) {
             fix.tick();
-            previous += interval;
             current = System.nanoTime();
-            if((lag = previous - current + interval) > 0) {
+            if((lag = previous - current + interval << 1) > 0 && current >= previous) {
+                previous += interval;
+                try {
+                    Thread.sleep(lag / 1000000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } else {
+            	previous = current = System.nanoTime();
             	try {
-					Thread.sleep(lag / 1000000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                    Thread.sleep((interval << 3) / 10);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -77,15 +85,23 @@ public class FixStepTicker {
             double lgk = logicTick / 1000000000d;
             while (!stop) {
             	dynamic.tick((current - LogicTick.currentTick) * lgk);
-                previous += interval;
                 current = System.nanoTime();
-                if((lag = previous - current + interval) > 0) {
-                	try {
-    					Thread.sleep(lag / 1000000);
-    				} catch (InterruptedException e) {
-    					// TODO Auto-generated catch block
-    					e.printStackTrace();
-    				}
+                if((lag = previous - current + interval << 1) > 0 && current >= previous) {
+                    previous += interval;
+                    try {
+                        Thread.sleep(lag / 1000000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                } else {
+                    previous = current = System.nanoTime();
+                    try {
+                        Thread.sleep((interval << 3) / 10);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -104,15 +120,23 @@ public class FixStepTicker {
             long lag;
             while (!stop) {
                 fix.tick();
-                previous += interval;
                 currentTick = current = System.nanoTime();
-                if((lag = previous - current + interval) > 0) {
-                	try {
-						Thread.sleep(lag / 1000000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+                if((lag = previous - current + interval << 1) > 0 && current >= previous) {
+                    previous += interval;
+                    try {
+                        Thread.sleep(lag / 1000000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                } else {
+                    previous = current = System.nanoTime();
+                    try {
+                        Thread.sleep((interval << 3) / 10);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
             }
         }
