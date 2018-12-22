@@ -6,8 +6,8 @@ import unknowndomain.engine.Tickable;
  * http://gameprogrammingpatterns.com/game-loop.html
  */
 public class FixStepTicker {
-	
-	public static final int logicTick = 20;
+    
+    public static final int logicTick = 20;
     public static final int renderTick = 60;//暂时用常量
     
     protected final Tickable fix;
@@ -55,8 +55,8 @@ public class FixStepTicker {
                     e.printStackTrace();
                 }
             } else {
-            	previous = current = System.nanoTime();
-            	try {
+                previous = current = System.nanoTime();
+                try {
                     Thread.sleep((interval << 3) / 10);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
@@ -72,10 +72,13 @@ public class FixStepTicker {
 
     public static class RenderTicker extends FixStepTicker {
         private final Tickable.Partial dynamic;
+        private static RenderTicker instance;
+        public static long currentTick;
 
-        public RenderTicker(Tickable task, Tickable.Partial dyn, int tps) {
-            super(task, tps);
+        private RenderTicker(Tickable.Partial dyn, int tps) {
+            super(null, tps);
             dynamic = dyn;
+            currentTick = System.nanoTime();
         }
 
         public void start() {
@@ -84,7 +87,7 @@ public class FixStepTicker {
             long lag;
             double lgk = logicTick / 1000000000d;
             while (!stop) {
-            	dynamic.tick((current - LogicTick.currentTick) * lgk);
+                dynamic.tick((current - currentTick) * lgk);
                 current = System.nanoTime();
                 if((lag = previous - current + interval << 1) > 0 && current >= previous) {
                     previous += interval;
@@ -105,22 +108,27 @@ public class FixStepTicker {
                 }
             }
         }
+        public synchronized static RenderTicker getInstance(Tickable.Partial dyn, int tps) {
+            if(instance == null) {
+                instance = new RenderTicker(dyn, tps);
+            }
+            return instance;
+        }
     }
     public static class LogicTick extends FixStepTicker {
-    	public static long currentTick;
-    	private static LogicTick instance;
+        private final Tickable.LogicTicker tickertask;
 
-        private LogicTick(Tickable task) {
-            super(task, logicTick);
+        public LogicTick(Tickable.LogicTicker task) {
+            super(null, logicTick);
+            tickertask = task;
         }
 
         public void start() {
             long previous = System.nanoTime();
-            long current = currentTick = previous;
+            long current = previous;
             long lag;
             while (!stop) {
-                fix.tick();
-                currentTick = current = System.nanoTime();
+                tickertask.tick(current = System.nanoTime());
                 if((lag = previous - current + interval << 1) > 0 && current >= previous) {
                     previous += interval;
                     try {
@@ -139,12 +147,6 @@ public class FixStepTicker {
                     }
                 }
             }
-        }
-        public synchronized static LogicTick getInstance(Tickable task) {
-        	if(instance == null) {
-        		instance = new LogicTick(task);
-        	}
-			return instance;
         }
     }
 }

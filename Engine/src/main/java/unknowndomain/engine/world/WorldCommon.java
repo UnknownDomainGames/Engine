@@ -46,7 +46,10 @@ public class WorldCommon implements World, Runnable {
     public WorldCommon(Game game) {
         this.game = game;
         this.chunkStorage = new ChunkStorage(this);
-        this.ticker = LogicTick.getInstance(this::tick); // TODO: make tps configurable 先这样吧，毕竟现在连Server都没有
+        this.ticker = new LogicTick(tick -> {
+            this.tick();
+            FixStepTicker.RenderTicker.currentTick = tick;
+        }); // TODO: make tps configurable 先这样吧，毕竟现在连Server都没有
         //TODO 这个地方必须改回来
     }
 
