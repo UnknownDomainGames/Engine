@@ -46,23 +46,20 @@ public class FixStepTicker {
         while (!stop) {
             fix.tick();
             current = System.nanoTime();
-            if((lag = previous - current + interval << 1) > 0 && current >= previous) {
-                previous += interval;
+            lag = previous - current + interval;
+            if((lag + interval) < 0 || current <= previous) {
+                previous = current = System.nanoTime();
+                System.out.println("can`t keep up.");
+            }
+            if(lag > 0) {
                 try {
                     Thread.sleep(lag / 1000000);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-            } else {
-                previous = current = System.nanoTime();
-                try {
-                    Thread.sleep((interval << 3) / 10);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
             }
+            previous += interval;
         }
     }
 
@@ -81,31 +78,29 @@ public class FixStepTicker {
             currentTick = System.nanoTime();
         }
 
+        @Override
         public void start() {
-            long previous = System.nanoTime();
-            long current = previous;
+            long current = System.nanoTime();
+            long previous = current;
             long lag;
             double lgk = logicTick / 1000000000d;
             while (!stop) {
                 dynamic.tick((current - currentTick) * lgk);
                 current = System.nanoTime();
-                if((lag = previous - current + interval << 1) > 0 && current >= previous) {
-                    previous += interval;
+                lag = previous - current + interval;
+                if((lag + interval) < 0 || current <= previous) {
+                    previous = current = System.nanoTime();
+                    System.out.println("can`t keep up.");
+                }
+                if(lag > 0) {
                     try {
                         Thread.sleep(lag / 1000000);
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                } else {
-                    previous = current = System.nanoTime();
-                    try {
-                        Thread.sleep((interval << 3) / 10);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
                 }
+                previous += interval;
             }
         }
         public synchronized static RenderTicker getInstance(Tickable.Partial dyn, int tps) {
@@ -123,29 +118,27 @@ public class FixStepTicker {
             tickertask = task;
         }
 
+        @Override
         public void start() {
             long previous = System.nanoTime();
             long current = previous;
             long lag;
             while (!stop) {
                 tickertask.tick(current = System.nanoTime());
-                if((lag = previous - current + interval << 1) > 0 && current >= previous) {
-                    previous += interval;
+                lag = previous - current + interval;
+                if((lag + interval) < 0 || current +  interval <= previous) {
+                    previous = current = System.nanoTime();
+                    System.out.println("can`t keep up.");
+                }
+                if(lag > 0) {
                     try {
                         Thread.sleep(lag / 1000000);
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                } else {
-                    previous = current = System.nanoTime();
-                    try {
-                        Thread.sleep((interval << 3) / 10);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
                 }
+                previous += interval;
             }
         }
     }
