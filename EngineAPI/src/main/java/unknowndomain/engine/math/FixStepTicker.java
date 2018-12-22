@@ -8,7 +8,7 @@ import unknowndomain.engine.Tickable;
 public class FixStepTicker {
 	
 	public static final int logicTick = 20;
-    public static final int renderTick = 60;//暂时用常量
+    public static final int clientTick = 20;//暂时用常量
     
     protected final Tickable fix;
     protected final double interval;

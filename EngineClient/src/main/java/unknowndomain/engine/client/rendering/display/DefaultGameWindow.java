@@ -189,7 +189,7 @@ public class DefaultGameWindow implements GameWindow {
                     System.exit(0); //FIXME: we need a way for exit game.
                 }
 
-                engineClient.getCurrentGame().getKeyBindingManager().handleKeyPress(key, scancode, action, mods);
+                engineClient.getCurrentGame().getKeyBindingManager().handleKey(key, scancode, action, mods);
             }
         }.set(handle);
     }
@@ -198,7 +198,7 @@ public class DefaultGameWindow implements GameWindow {
         new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                engineClient.getCurrentGame().getKeyBindingManager().handleMousePress(button, action, mods);
+                engineClient.getCurrentGame().getKeyBindingManager().handleMouse(button, action, mods);
             }
         }.set(handle);
     }

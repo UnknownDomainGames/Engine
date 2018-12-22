@@ -3,7 +3,7 @@ package unknowndomain.engine.client.input.keybinding;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum KeyCode {
+public enum Key {
 
 	/** Printable keys. */
 	KEY_SPACE(32), 
@@ -150,19 +150,19 @@ public enum KeyCode {
 
 	public final int code;
 
-	KeyCode(int code) {
+	Key(int code) {
 		this.code = code;
 	}
 
-	private static Map<Integer,KeyCode> code2Key = new HashMap<>();
+	private static Map<Integer, Key> code2Key = new HashMap<>();
 	static {
-		KeyCode[] values = values();
-		for (KeyCode key : values) {
+		Key[] values = values();
+		for (Key key : values) {
 			code2Key.put(key.code, key);
 		}
 	}
 
-	public static KeyCode valueOf(int code) {
+	public static Key valueOf(int code) {
 		return code2Key.getOrDefault(code , KEY_UNKNOWN);
 	}
 }

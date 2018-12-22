@@ -1,18 +1,20 @@
 package unknowndomain.engine.client.input.keybinding;
 
-import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.lwjgl.glfw.GLFW;
+import unknowndomain.engine.Tickable;
 import unknowndomain.engine.action.ActionManager;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class KeyBindingManager {
-    private final Multimap<Integer, KeyBinding> codeToBinding = LinkedListMultimap.create();
+public class KeyBindingManager implements Tickable {
 
-    private final Set<KeyCode> pressedKey = new HashSet<>();
+    private final Multimap<Integer, KeyBinding> keyBindings = HashMultimap.create();
+    private final Set<Key> pressedKey = new HashSet<>();
+
     private final ActionManager actionManager;
 
     public KeyBindingManager(ActionManager actionManager) {
@@ -22,41 +24,32 @@ public class KeyBindingManager {
     public void add(KeyBinding keybinding) {
         int code = keybinding.getCode().code;
         byte mods = KeyModifier.getCode(keybinding.getModifier());
-        // int store = code | ((mods & 0x07) << 9);
-        int store = code;
-        codeToBinding.put(store, keybinding);
+        keyBindings.put(getIndex(code, mods), keybinding);
     }
 
-    public void remove(KeyBinding keybinding) {
-        int code = keybinding.getCode().code;
-        byte mods = KeyModifier.getCode(keybinding.getModifier());
-        int store = code | ((mods & 0x07) << 9);
-        codeToBinding.remove(store, keybinding);
-    }
-
-    private void handlePress(int code, int mods) {
-        KeyCode keyCode = KeyCode.valueOf(code);
-        pressedKey.add(keyCode);
-        // Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code | ((mods
-        // & 0x07) << 9));
-        Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code);
+    protected void handlePress(int code, int mods) {
+        Key key = Key.valueOf(code);
+        pressedKey.add(key);
+        Collection<KeyBinding> keyBindings = this.keyBindings.get(getIndex(code, mods));
         for (KeyBinding binding : keyBindings) {
-            actionManager.start(binding.getTarget());
+            binding.setPressed(true);
         }
     }
 
-    private void handleRelease(int code, int mods) {
-        KeyCode keyCode = KeyCode.valueOf(code);
-        pressedKey.add(keyCode);
-        // Collection<KeyBinding> keyBindings = codeToBinding.get(((mods & 0x07) << 9 |
-        // keyCode.code));
-        Collection<KeyBinding> keyBindings = codeToBinding.get(keyCode.code);
+    protected void handleRelease(int code, int mods) {
+        Key key = Key.valueOf(code);
+        pressedKey.add(key);
+        Collection<KeyBinding> keyBindings = this.keyBindings.get(getIndex(code, mods));
         for (KeyBinding binding : keyBindings) {
-            actionManager.end(binding.getTarget());
+            binding.setPressed(false);
         }
     }
 
-    public void handleMousePress(int button, int action, int modifiers) {
+    protected int getIndex(int code, int mods) { // FIXME: Unsupported modifier
+        return code;
+    }
+
+    public void handleMouse(int button, int action, int modifiers) {
         switch (action) {
             case GLFW.GLFW_PRESS:
                 handlePress(button + 400, modifiers);
@@ -69,7 +62,7 @@ public class KeyBindingManager {
         }
     }
 
-    public void handleKeyPress(int key, int scancode, int action, int modifiers) {
+    public void handleKey(int key, int scancode, int action, int modifiers) {
         switch (action) {
             case GLFW.GLFW_PRESS:
                 handlePress(key, modifiers);
@@ -80,6 +73,19 @@ public class KeyBindingManager {
             default:
                 break;
         }
+    }
 
+    @Override
+    public void tick() {
+        for (KeyBinding keyBinding : keyBindings.values()) {
+            if (keyBinding.isActive() != keyBinding.isPressed()) {
+                keyBinding.setActive(keyBinding.isPressed());
+                if (keyBinding.isActive()) {
+                    actionManager.start(keyBinding.getTarget());
+                } else {
+                    actionManager.end(keyBinding.getTarget());
+                }
+            }
+        }
     }
 }

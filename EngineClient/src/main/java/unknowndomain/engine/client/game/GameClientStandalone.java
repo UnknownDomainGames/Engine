@@ -60,7 +60,8 @@ public class GameClientStandalone extends GameServerFullAsync {
     public GameClientStandalone(Option option, ModRepository repository, ModStore store, EventBus bus, DefaultGameWindow window) {
         super(option, repository, store, bus);
         this.window = window;
-        this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, FixStepTicker.renderTick);
+
+        this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, FixStepTicker.clientTick);
 
         // TODO: Remove it
         bus.register(new DefaultGameMode());
@@ -179,6 +180,7 @@ public class GameClientStandalone extends GameServerFullAsync {
     }
 
     private void clientTick() {
+        keyBindingManager.tick();
         // TODO update particle physics here
     }
 
