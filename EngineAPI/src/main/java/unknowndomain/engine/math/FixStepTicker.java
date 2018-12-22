@@ -73,7 +73,7 @@ public class FixStepTicker {
     public static class RenderTicker extends FixStepTicker {
         private final Tickable.Partial dynamic;
         private static RenderTicker instance;
-        public static long currentTick;
+        public static volatile long currentTick;
 
         private RenderTicker(Tickable.Partial dyn, int tps) {
             super(null, tps);
