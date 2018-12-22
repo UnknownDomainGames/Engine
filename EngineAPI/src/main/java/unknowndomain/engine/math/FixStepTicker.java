@@ -70,10 +70,10 @@ public class FixStepTicker {
         return lag / tps;
     }
 
-    public static class Dynamic extends FixStepTicker {
+    public static class RenderTicker extends FixStepTicker {
         private final Tickable.Partial dynamic;
 
-        public Dynamic(Tickable task, Tickable.Partial dyn, int tps) {
+        public RenderTicker(Tickable task, Tickable.Partial dyn, int tps) {
             super(task, tps);
             dynamic = dyn;
         }
