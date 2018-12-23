@@ -33,7 +33,7 @@ public class ChunkEmpty implements Chunk {
     }
 
     @Override
-    public boolean isEmpty() {
+    public boolean isAirChunk() {
         return true;
     }
 

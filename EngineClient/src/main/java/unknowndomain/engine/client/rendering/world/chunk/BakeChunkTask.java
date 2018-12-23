@@ -3,8 +3,6 @@ package unknowndomain.engine.client.rendering.world.chunk;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockAir;
-import unknowndomain.engine.client.rendering.block.BlockRenderer;
-import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.ChunkPos;
@@ -13,19 +11,32 @@ import unknowndomain.engine.util.ChunkCache;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.chunk.Chunk;
 
-public class RenderChunkTask {
+public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
 
-    private final BlockRenderer blockRenderer = new ModelBlockRenderer();
-    private final BufferBuilder bufferBuilder = new BufferBuilder(1048576);
+    private final ChunkRenderer chunkRenderer;
+    private final ChunkMesh chunkMesh;
+    private final double sqDistance;
 
-    public void updateChunkMesh(ChunkMesh chunkMesh) {
+    public BakeChunkTask(ChunkRenderer chunkRenderer, ChunkMesh chunkMesh, double sqDistance) {
+        this.chunkRenderer = chunkRenderer;
+        this.chunkMesh = chunkMesh;
+        this.sqDistance = sqDistance;
+    }
+
+    @Override
+    public void run() {
+        chunkMesh.startBake();
+
         Chunk chunk = chunkMesh.getChunk();
-        if (chunk.isEmpty()) {
+        if (chunk.isAirChunk()) {
             return;
         }
-        ChunkCache chunkCache = createChunkCache(chunkMesh.getWorld(), chunkMesh.getChunkPos());
+
+        ChunkCache chunkCache = createChunkCache(chunk.getWorld(), chunkMesh.getChunkPos());
         BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunkPos(chunkMesh.getChunkPos());
-        bufferBuilder.begin(GL11.GL_TRIANGLES, true, true, true);
+
+        BufferBuilder buffer = ((BakeChunkThread) Thread.currentThread()).getBuffer();
+        buffer.begin(GL11.GL_TRIANGLES, true, true, true);
         while (blockPosIterator.hasNext()) {
             BlockPos pos = blockPosIterator.next();
             Block block = chunk.getBlock(pos);
@@ -33,15 +44,20 @@ public class RenderChunkTask {
                 continue;
             }
 
-            blockRenderer.render(block, chunkCache, pos, bufferBuilder);
+            chunkRenderer.getBlockRenderer().render(block, chunkCache, pos, buffer);
         }
-        bufferBuilder.finish();
-        chunkMesh.update(bufferBuilder);
-        bufferBuilder.reset();
+        buffer.finish();
+        chunkRenderer.upload(chunkMesh, buffer);
+        buffer.reset();
     }
 
     private ChunkCache createChunkCache(World world, ChunkPos middle) {
         return ChunkCache.create(world, middle.getX() - 1, middle.getY() - 1, middle.getZ() - 1,
                 middle.getX() + 1, middle.getY() + 1, middle.getZ() + 1);
+    }
+
+    @Override
+    public int compareTo(BakeChunkTask o) {
+        return Double.compare(sqDistance, o.sqDistance);
     }
 }

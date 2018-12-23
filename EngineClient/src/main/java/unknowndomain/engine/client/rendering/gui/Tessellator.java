@@ -55,11 +55,7 @@ public class Tessellator {
             Shader.enableVertexAttrib(3);
         }
 
-        if (buffer.isUsingIndex()) {
-            vbo.drawElements(buffer.getDrawMode());
-        } else {
-            vbo.drawArrays(buffer.getDrawMode());
-        }
+        vbo.drawArrays(buffer.getDrawMode());
         vbo.unbind();
     }
 }

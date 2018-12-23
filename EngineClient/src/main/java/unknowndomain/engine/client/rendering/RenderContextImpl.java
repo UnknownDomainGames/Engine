@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RenderContextImpl implements RenderContext {
+
+    private final Thread renderThread;
     @Deprecated
     private final List<Renderer.Factory> factories;
     private final List<Renderer> renderers = new ArrayList<>();
@@ -21,7 +23,8 @@ public class RenderContextImpl implements RenderContext {
     private Camera camera;
     private double partialTick;
 
-    public RenderContextImpl(List<Renderer.Factory> factories, GameWindow window) {
+    public RenderContextImpl(Thread renderThread, List<Renderer.Factory> factories, GameWindow window) {
+        this.renderThread = renderThread;
         this.factories = factories;
         this.window = window;
     }
@@ -51,6 +54,7 @@ public class RenderContextImpl implements RenderContext {
         for (Renderer.Factory factory : factories) {
             try {
                 Renderer renderer = factory.create(context, resourceManager);
+                renderer.init(this);
                 this.renderers.add(renderer);
             } catch (IOException e) {
                 // TODO: warning
@@ -62,7 +66,7 @@ public class RenderContextImpl implements RenderContext {
     public void render(double partial) {
         this.partialTick = partial;
         for (Renderer renderer : renderers) {
-            renderer.render(this);
+            renderer.render();
         }
     }
 
@@ -75,5 +79,10 @@ public class RenderContextImpl implements RenderContext {
     @Override
     public double partialTick() {
         return partialTick;
+    }
+
+    @Override
+    public Thread getRenderThread() {
+        return renderThread;
     }
 }

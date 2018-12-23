@@ -139,7 +139,7 @@ public class GameClientStandalone extends GameServerFullAsync {
                             ShaderType.FRAGMENT_SHADER));
         });
 
-        renderContext = new RenderContextImpl(factories, window);
+        renderContext = new RenderContextImpl(Thread.currentThread(), factories, window);
 
         renderContext.build(context, resourceManager);
     }
@@ -154,9 +154,13 @@ public class GameClientStandalone extends GameServerFullAsync {
     protected void finishStage() {
         spawnWorld(null);
 
+        // FIXME:
         world = (WorldCommon) getWorld("default");
         player = world.playerJoin(new Profile(UUID.randomUUID(), 12));
         player.getMountingEntity().getPosition().set(1, 3, 1);
+
+        entityController = new EntityCameraController(player);
+        renderContext.setCamera(new FirstPersonCamera(player));
 
         Random random = new Random();
         for (int x = -16; x < 16; x++) {
@@ -166,9 +170,6 @@ public class GameClientStandalone extends GameServerFullAsync {
                 }
             }
         }
-
-        entityController = new EntityCameraController(player);
-        renderContext.setCamera(new FirstPersonCamera(player));
 
         eventBus.post(new GameReadyEvent(context));
     }
@@ -181,7 +182,7 @@ public class GameClientStandalone extends GameServerFullAsync {
 
     private void clientTick() {
         keyBindingManager.tick();
-        // TODO update particle physics here
+        // TODO upload particle physics here
     }
 
     /**

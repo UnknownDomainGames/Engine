@@ -34,11 +34,13 @@ public class GuiRenderer implements Renderer {
 
     private final int u_ProjMatrix, u_WindowSize, u_ClipRect, u_UsingAlpha;
 
+    private final FontRenderer fontRenderer;
+    private final Graphics graphics;
+
     private Scene guiScene;
     private final List<Scene> hudScene = new LinkedList<>();
 
-    private FontRenderer fontRenderer;
-    private Graphics graphics;
+    private RenderContext context;
 
     public GuiRenderer(ByteBuffer fontRenderer, Shader vertexShader, Shader fragShader) {
         this.fontRenderer = new TTFFontRenderer(fontRenderer);
@@ -52,7 +54,12 @@ public class GuiRenderer implements Renderer {
     }
 
     @Override
-    public void render(RenderContext context) {
+    public void init(RenderContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public void render() {
         shader.use();
 
         if (context.getWindow().isResized()) {

@@ -12,7 +12,9 @@ import java.io.IOException;
  */
 public interface Renderer extends Disposable {
 
-    void render(RenderContext context);
+    void init(RenderContext context);
+
+    void render();
 
     /**
      * The factory object the mod will need to register.

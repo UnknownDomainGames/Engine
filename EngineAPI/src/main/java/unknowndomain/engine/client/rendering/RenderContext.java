@@ -15,4 +15,10 @@ public interface RenderContext {
     TextureManager getTextureManager();
 
     double partialTick();
+
+    Thread getRenderThread();
+
+    default boolean isRenderThread() {
+        return Thread.currentThread() == getRenderThread();
+    }
 }

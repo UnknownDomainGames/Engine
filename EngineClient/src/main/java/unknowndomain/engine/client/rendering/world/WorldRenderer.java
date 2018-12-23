@@ -19,6 +19,8 @@ public class WorldRenderer implements Renderer {
 
     private final ChunkRenderer chunkRenderer;
 
+    private RenderContext context;
+
     private int u_Projection;
     private int u_View;
     private int u_Model;
@@ -37,7 +39,13 @@ public class WorldRenderer implements Renderer {
     }
 
     @Override
-    public void render(RenderContext context) {
+    public void init(RenderContext context) {
+        this.context = context;
+        chunkRenderer.init(context);
+    }
+
+    @Override
+    public void render() {
         worldShader.use();
 
         glEnable(GL11.GL_DEPTH_TEST);
@@ -66,7 +74,7 @@ public class WorldRenderer implements Renderer {
         glDisable(GL11.GL_DEPTH_TEST);
         glDisable(GL11.GL_BLEND);
 
-        chunkRenderer.render(context);
+        chunkRenderer.render();
     }
 
     @Override

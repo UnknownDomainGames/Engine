@@ -46,5 +46,5 @@ public interface Chunk {
         return setBlock(pos.getX(), pos.getY(), pos.getZ(), block);
     }
 
-    boolean isEmpty();
+    boolean isAirChunk();
 }

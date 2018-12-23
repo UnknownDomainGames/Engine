@@ -5,23 +5,14 @@ import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.util.Color;
 import unknowndomain.engine.util.Math2;
 
-import java.nio.*;
+import java.nio.ByteBuffer;
 
 public class BufferBuilder {
 
     private ByteBuffer byteBuffer;
-    private IntBuffer intBuffer;
-    private ShortBuffer shortBuffer;
-    private FloatBuffer floatBuffer;
-
-    private IntBuffer indicesBuffer;
 
     public BufferBuilder(int size) {
         byteBuffer = BufferUtils.createByteBuffer(size);
-        intBuffer = byteBuffer.asIntBuffer();
-        shortBuffer = byteBuffer.asShortBuffer();
-        floatBuffer = byteBuffer.asFloatBuffer();
-        indicesBuffer = BufferUtils.createIntBuffer(size / 16);
     }
 
     private float posOffsetX;
@@ -34,7 +25,7 @@ public class BufferBuilder {
     private boolean useColor;
     private boolean useTex;
     private boolean useNormal;
-    private boolean useIndex;
+    private int offset;
 
     public boolean isDrawing() {
         return isDrawing;
@@ -60,19 +51,11 @@ public class BufferBuilder {
         return useNormal;
     }
 
-    public boolean isUsingIndex() {
-        return useIndex;
-    }
-
     public void begin(int mode, boolean pos, boolean color, boolean tex) {
-        begin(mode, pos, color, tex, false, false);
+        begin(mode, pos, color, tex, false);
     }
 
     public void begin(int mode, boolean pos, boolean color, boolean tex, boolean normal) {
-        begin(mode, pos, color, tex, normal, false);
-    }
-
-    public void begin(int mode, boolean pos, boolean color, boolean tex, boolean normal, boolean index) {
         if (isDrawing) {
             throw new IllegalStateException("Already drawing!");
         } else {
@@ -83,8 +66,8 @@ public class BufferBuilder {
             useColor = color;
             useTex = tex;
             useNormal = normal;
-            useIndex = index;
             byteBuffer.limit(byteBuffer.capacity());
+            offset = (usePos ? Float.BYTES * 3 : 0) + (useColor ? Float.BYTES * 4 : 0) + (useTex ? Float.BYTES * 2 : 0) + (useNormal ? Float.BYTES * 3 : 0);
         }
     }
 
@@ -95,44 +78,25 @@ public class BufferBuilder {
             if (drawMode == GL11.GL_QUADS || drawMode == GL11.GL_QUAD_STRIP) {
                 if (vertexCount % 4 != 0)
                     throw new IllegalArgumentException(String.format("Not enough vertexes! Expected: %d, Found: %d", (vertexCount / 4 + 1) * 4, vertexCount));
-                if (useIndex) {
-                    IntBuffer ib = IntBuffer.allocate(indicesBuffer.capacity());
-                    indicesBuffer.rewind();
-                    ib.put(indicesBuffer);
-                    indicesBuffer.rewind();
-                    indicesBuffer.clear();
-                    ib.flip();
-                    for (int i = 0; i < vertexCount / 4; i++) {
-                        int[] ints = new int[4];
-                        ib.get(ints, 0, 4);
-                        indicesBuffer.put(ints, 0, 3);
-                        indicesBuffer.put(ints, 2, 2);
-                        indicesBuffer.put(ints, 0, 1);
-                    }
-                } else {
-                    ByteBuffer bb = ByteBuffer.allocate(byteBuffer.capacity());
-                    byteBuffer.rewind();
-                    bb.put(byteBuffer);
-                    byteBuffer.rewind();
-                    byteBuffer.clear();
-                    bb.flip();
-                    for (int i = 0; i < vertexCount / 4; i++) {
-                        byte[] bs = new byte[getOffset() * 4];
-                        bb.get(bs, 0, getOffset() * 4);
-                        byteBuffer.put(bs, 0, getOffset() * 3);
-                        byteBuffer.put(bs, getOffset() * 2, getOffset() * 2);
-                        byteBuffer.put(bs, 0, getOffset());
-                    }
-                    pointsCount = pointsCount / 4 * 6;
+                ByteBuffer bb = ByteBuffer.allocate(byteBuffer.capacity());
+                byteBuffer.rewind();
+                bb.put(byteBuffer);
+                byteBuffer.rewind();
+                byteBuffer.clear();
+                bb.flip();
+                for (int i = 0; i < vertexCount / 4; i++) {
+                    byte[] bs = new byte[getOffset() * 4];
+                    bb.get(bs, 0, getOffset() * 4);
+                    byteBuffer.put(bs, 0, getOffset() * 3);
+                    byteBuffer.put(bs, getOffset() * 2, getOffset() * 2);
+                    byteBuffer.put(bs, 0, getOffset());
                 }
                 vertexCount = vertexCount / 4 * 6;
                 drawMode = drawMode == GL11.GL_QUAD_STRIP ? GL11.GL_TRIANGLE_STRIP : GL11.GL_TRIANGLES;
             }
             isDrawing = false;
             byteBuffer.position(0);
-            byteBuffer.limit(pointsCount * getOffset());
-            indicesBuffer.position(0);
-            indicesBuffer.limit(vertexCount);
+            byteBuffer.limit(vertexCount * getOffset());
         }
     }
 
@@ -143,34 +107,29 @@ public class BufferBuilder {
         useTex = false;
         useNormal = false;
         vertexCount = 0;
-        pointsCount = 0;
-        posOffest(0,0,0);
+        posOffest(0, 0, 0);
+        offset = 0;
     }
 
     public int getOffset() {
-        return (usePos ? Float.BYTES * 3 : 0) + (useColor ? Float.BYTES * 4 : 0) + (useTex ? Float.BYTES * 2 : 0) + (useNormal ? Float.BYTES * 3 : 0);
+        return offset;
     }
 
     public void grow(int deltaLen) {
-        if (Math2.roundUp(deltaLen, 4) / 4 > intBuffer.remaining() || vertexCount * getOffset() + deltaLen > byteBuffer.capacity()) {
+        if (deltaLen > byteBuffer.remaining()) {
             int i = this.byteBuffer.capacity();
-            int j = i + Math2.roundUp(deltaLen, 2097152);
-            int k = intBuffer.position();
-            ByteBuffer bytebuffer = ByteBuffer.allocateDirect(j).order(ByteOrder.nativeOrder());
+            int newSize = i + Math2.roundUp(deltaLen, 0x200000);
+            int k = byteBuffer.position();
+            ByteBuffer bytebuffer = BufferUtils.createByteBuffer(newSize);
             this.byteBuffer.position(0);
             bytebuffer.put(this.byteBuffer);
             bytebuffer.rewind();
             this.byteBuffer = bytebuffer;
-            floatBuffer = this.byteBuffer.asFloatBuffer().asReadOnlyBuffer();
-            intBuffer = this.byteBuffer.asIntBuffer();
-            intBuffer.position(k);
-            shortBuffer = this.byteBuffer.asShortBuffer();
-            shortBuffer.position(k << 1);
+            bytebuffer.position(k);
         }
     }
 
     private int vertexCount;
-    private int pointsCount;
 
     public int getCount() {
         return byteBuffer.limit();
@@ -182,10 +141,6 @@ public class BufferBuilder {
 
     public ByteBuffer build() {
         return byteBuffer;
-    }
-
-    public IntBuffer buildIndices() {
-        return indicesBuffer;
     }
 
     public BufferBuilder pos(float x, float y, float z) {
@@ -254,18 +209,8 @@ public class BufferBuilder {
         return this;
     }
 
-    public BufferBuilder indices(int... indexes) {
-        if (useIndex) {
-            indicesBuffer.put(indexes);
-            vertexCount += indexes.length;
-        }
-        return this;
-    }
-
     public void endVertex() {
-        if (!useIndex)
-            ++vertexCount;
-        ++pointsCount;
+        ++vertexCount;
         grow(getOffset());
     }
 }

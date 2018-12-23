@@ -56,7 +56,7 @@ public class ChunkImpl implements Chunk {
     }
 
     @Override
-    public boolean isEmpty() {
+    public boolean isAirChunk() {
         return nonAirBlockCount == 0;
     }
 }
