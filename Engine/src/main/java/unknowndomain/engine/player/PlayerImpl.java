@@ -8,19 +8,19 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
 
 public class PlayerImpl implements Player {
-    private Profile profile;
-    private World world;
-    private Entity mounting;
 
-    public PlayerImpl(Profile data, World world, Entity mounting) {
+    private final Profile profile;
+
+    private Entity controlledEntity;
+
+    public PlayerImpl(Profile data) {
         this.profile = data;
-        this.world = world;
-        this.mounting = mounting;
     }
+
 
 //    public void enter(ChunkStorage chunkStore) {
 //        int radius = this.profile.trackingChunkRadius;
-//        Entity entity = this.getMountingEntity();
+//        Entity entity = this.getControlledEntity();
 //        BlockPos pos = BlockPos.of(entity.getPosition());
 //        for (int i = -radius; i <= radius; i++) {
 //            if (i <= 0) {
@@ -37,18 +37,18 @@ public class PlayerImpl implements Player {
 
     @NonNull
     @Override
-    public Entity getMountingEntity() {
-        return mounting;
+    public Entity getControlledEntity() {
+        return controlledEntity;
     }
 
     @NonNull
     @Override
-    public Entity mountEntity(Entity entity) {
-        Entity old = mounting;
+    public Entity controlEntity(Entity entity) {
+        Entity old = controlledEntity;
         if (entity == null) {
             // parse phantom entity if is god, else parse default player
         }
-        mounting = entity;
+        controlledEntity = entity;
         // fire event;
         return old;
     }
@@ -61,7 +61,7 @@ public class PlayerImpl implements Player {
     @NonNull
     @Override
     public World getWorld() {
-        return world;
+        return controlledEntity.getWorld();
     }
 
     public static class PlayerPlaceBlockEvent implements Event, Cancellable {

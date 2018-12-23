@@ -1,6 +1,5 @@
 package unknowndomain.engine.client.rendering.gui;
 
-import org.joml.AABBd;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -15,8 +14,6 @@ import unknowndomain.engine.client.rendering.gui.font.TTFFontRenderer;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.math.AABBs;
-import unknowndomain.engine.world.World;
 
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
@@ -124,9 +121,9 @@ public class GuiRenderer implements Renderer {
 
     private void debug(RenderContext context) {
         updateFPS();
-        Entity player = UnknownDomain.getGame().getPlayer().getMountingEntity();
-        AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
-        World world = UnknownDomain.getGame().getPlayer().getWorld();
+        Entity player = UnknownDomain.getGame().getPlayer().getControlledEntity();
+//        AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
+//        World world = UnknownDomain.getGame().getPlayer().getControlledEntity().getWorld();
 
 //        BlockPrototype.Hit hit = world.raycast(context.getCamera().getPosition(),
 //                context.getCamera().getFrontVector(), 5);

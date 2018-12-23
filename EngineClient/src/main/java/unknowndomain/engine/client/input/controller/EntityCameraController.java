@@ -64,7 +64,7 @@ public class EntityCameraController extends EntityController {
         lastX = x;
         lastY = y;
         if (setupLast) {
-            Vector3f rotation = getPlayer().getMountingEntity().getRotation();
+            Vector3f rotation = getPlayer().getControlledEntity().getRotation();
             rotation.y += pitch;
             rotation.y = Math.min(89.0f, Math.max(-89.0f, rotation.y));
             rotation.x = Math2.roundUp(rotation.x + (float) yaw, 360);
@@ -73,8 +73,8 @@ public class EntityCameraController extends EntityController {
     }
 
     private void updateMotion() {
-        Vector3f rotation = getPlayer().getMountingEntity().getRotation();
-        movingDirection.mul(MOTION_FACTOR, getPlayer().getMountingEntity().getMotion()).rotateAxis((float) -Math.toRadians(rotation.x), 0, 1, 0);
+        Vector3f rotation = getPlayer().getControlledEntity().getRotation();
+        movingDirection.mul(MOTION_FACTOR, getPlayer().getControlledEntity().getMotion()).rotateAxis((float) -Math.toRadians(rotation.x), 0, 1, 0);
 //                .rotateAxis(rotation.x, 0, 1, 0).rotateY(rotation.y);
     }
 }

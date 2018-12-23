@@ -16,8 +16,6 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.math.FixStepTicker.LogicTick;
 import unknowndomain.engine.player.Player;
-import unknowndomain.engine.player.PlayerImpl;
-import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayCast;
 import unknowndomain.engine.world.chunk.Chunk;
@@ -57,15 +55,11 @@ public class WorldCommon implements World, Runnable {
     }
 
     @Deprecated
-    public Player playerJoin(Profile data) {
+    public void playerJoin(Player player) {
         EntityCamera entity = new EntityCamera(entityList.size());
-        entity.getPosition().set(0, 0, 0);
-        entity.getRotation().set(0, 0, 0);
-        entity.setBoundingBox(data.getBoundingBox());
+        player.controlEntity(entity);
         spawnEntity(entity);
-        PlayerImpl player = new PlayerImpl(data, this, entity);
         players.add(player);
-        return player;
     }
 
     @Override

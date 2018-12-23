@@ -28,7 +28,7 @@ public interface Player {
      * @return The mounting entity
      */
     @Nonnull
-    Entity getMountingEntity();
+    Entity getControlledEntity();
 
     /**
      * Mount a entity
@@ -37,5 +37,5 @@ public interface Player {
      * @return The old entity mounted
      */
     @Nonnull
-    Entity mountEntity(@Nullable Entity entity);
+    Entity controlEntity(@Nullable Entity entity);
 }

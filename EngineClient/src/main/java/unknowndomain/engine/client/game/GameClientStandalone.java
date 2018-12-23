@@ -30,6 +30,7 @@ import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.mod.ModRepository;
 import unknowndomain.engine.mod.ModStore;
 import unknowndomain.engine.player.Player;
+import unknowndomain.engine.player.PlayerImpl;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
@@ -67,7 +68,6 @@ public class GameClientStandalone extends GameServerFullAsync {
         // TODO: Remove it
         bus.register(new DefaultGameMode());
     }
-
 
     /**
      * Get player client
@@ -113,6 +113,8 @@ public class GameClientStandalone extends GameServerFullAsync {
         super.constructStage();
         resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
+
+        player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
     }
 
     @Override
@@ -155,14 +157,17 @@ public class GameClientStandalone extends GameServerFullAsync {
     protected void finishStage() {
         spawnWorld(null);
 
-        // FIXME:
+        // TODO:
         world = (WorldCommon) getWorld("default");
-        player = world.playerJoin(new Profile(UUID.randomUUID(), 12));
-        player.getMountingEntity().getPosition().set(1, 3, 1);
+        world.playerJoin(player);
+        player.getControlledEntity().getPosition().set(1, 3, 1);
 
         entityController = new EntityCameraController(player);
         renderContext.setCamera(new FirstPersonCamera(player));
 
+        eventBus.post(new GameReadyEvent(context));
+
+        // TODO:
         Random random = new Random();
         for (int x = -16; x < 16; x++) {
             for (int z = -16; z < 16; z++) {
@@ -171,8 +176,6 @@ public class GameClientStandalone extends GameServerFullAsync {
                 }
             }
         }
-
-        eventBus.post(new GameReadyEvent(context));
     }
 
     @Override
@@ -254,7 +257,7 @@ public class GameClientStandalone extends GameServerFullAsync {
 //                    Camera camera = this.camera;
 //
 //                    if (player == null) return;
-//                    Entity mountingEntity = player.getMountingEntity();
+//                    Entity mountingEntity = player.getControlledEntity();
 //                    World world = player.getWorld();
 //
 //                    if (mountingEntity == null || world == null) return;
@@ -283,7 +286,7 @@ public class GameClientStandalone extends GameServerFullAsync {
 //                    Camera camera = this.camera;
 //
 //                    if (player == null) return;
-//                    Entity mountingEntity = player.getMountingEntity();
+//                    Entity mountingEntity = player.getControlledEntity();
 //                    World world = player.getWorld();
 //
 //                    if (mountingEntity == null || world == null) return;
@@ -375,7 +378,7 @@ public class GameClientStandalone extends GameServerFullAsync {
 //            Vector3f f = camera.getFrontVector();
 //            f.y = 0;
 //            movingDirection.rotate(new Quaternionf().rotateTo(new Vector3f(0, 0, -1), f),
-//                    player.getMountingEntity().getMotion());
+//                    player.getControlledEntity().getMotion());
 //        }
 //    }
 }
