@@ -78,6 +78,7 @@ public class FixStepTicker {
         public void start() {
             long previous = System.nanoTime();
             long lag = 0;
+            double ltr = logicTick / 1000000;
             while (!stop) {
             	long current = System.nanoTime();
 
@@ -89,7 +90,7 @@ public class FixStepTicker {
                     fix.tick();
                     lag -= interval;
                 }
-                dynamic.tick((current - currentTick) * logicTick);
+                dynamic.tick((double)(current - currentTick) * ltr);
             }
         }
     }
