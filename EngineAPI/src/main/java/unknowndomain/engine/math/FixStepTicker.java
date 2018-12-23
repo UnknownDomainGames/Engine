@@ -8,17 +8,17 @@ import unknowndomain.engine.Tickable;
 public class FixStepTicker {
 	
 	public static final int logicTick = 20;
-    public static final int clientTick = 20;//暂时用常量
+    public static final int clientTick = 20;//鏆傛椂鐢ㄥ父閲�
     
     protected final Tickable fix;
-    protected final double interval;
+    protected final long interval;
     protected boolean stop = false;
     protected final int tps;
     protected double lag = 0.0;
 
     public FixStepTicker(Tickable task, int tps) {
         fix = task;
-        interval = 1D / tps;
+        interval = 1000000000 / tps;
         this.tps = tps;
     }
 
@@ -33,22 +33,32 @@ public class FixStepTicker {
     /**
      * @return current time in second
      */
+    @Deprecated //TimeNanos in long is enough
     protected double getCurrentTime() {
         return System.nanoTime() / 1e9;
     }
 
     public void start() {
-        double previous = getCurrentTime();
+        long previous = System.nanoTime();
+        long current = previous;
+        long lag;
         while (!stop) {
-            double current = getCurrentTime();
-            double elapsed = current - previous;
-            previous = current;
-            lag += elapsed;
-
-            while (lag >= interval) {
-                fix.tick();
-                lag -= interval;
+            fix.tick();
+            current = System.nanoTime();
+            lag = previous - current + interval;
+            if((lag + interval) < 0 || current <= previous) {
+                previous = current = System.nanoTime();
+                System.out.println("can`t keep up.");
             }
+            if(lag > 0) {
+                try {
+                    Thread.sleep(lag / 1000000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            previous += interval;
         }
     }
 
@@ -57,6 +67,7 @@ public class FixStepTicker {
     }
 
     public static class Dynamic extends FixStepTicker {
+    	public static volatile long currentTick;
         private final Tickable.Partial dynamic;
 
         public Dynamic(Tickable task, Tickable.Partial dyn, int tps) {
@@ -65,12 +76,12 @@ public class FixStepTicker {
         }
 
         public void start() {
-            double previous = getCurrentTime();
-            double lag = 0.0;
+            long previous = System.nanoTime();
+            long lag = 0;
             while (!stop) {
-                double current = getCurrentTime();
+            	long current = System.nanoTime();
 
-                double elapsed = current - previous;
+            	long elapsed = current - previous;
                 previous = current;
                 lag += elapsed;
 
@@ -78,38 +89,82 @@ public class FixStepTicker {
                     fix.tick();
                     lag -= interval;
                 }
-                dynamic.tick((current - LogicTick.currentTick) * logicTick);
+                dynamic.tick((current - currentTick) * logicTick);
             }
         }
     }
-    public static class LogicTick extends FixStepTicker {
-    	public static double currentTick;
-    	private static LogicTick instance;
+    public static class RenderTicker extends FixStepTicker {
+        private final Tickable.Partial dynamic;
+        private static RenderTicker instance;
+        public static volatile long currentTick;
 
-        private LogicTick(Tickable task) {
-            super(task, logicTick);
+        private RenderTicker(Tickable.Partial dyn, int tps) {
+            super(null, tps);
+            dynamic = dyn;
+            currentTick = System.nanoTime();
         }
 
+        @Override
         public void start() {
-        	double previous = getCurrentTime();
+            long current = System.nanoTime();
+            long previous = current;
+            long lag;
+            double lgk = logicTick / 1000000000d;
             while (!stop) {
-                double current = getCurrentTime();
-                double elapsed = current - previous;
-                previous = current;
-                lag += elapsed;
-
-                while (lag >= interval) {
-                    fix.tick();
-                    currentTick = current;
-                    lag -= interval;
+                dynamic.tick((current - currentTick) * lgk);
+                current = System.nanoTime();
+                lag = previous - current + interval;
+                if((lag + interval) < 0 || current <= previous) {
+                    previous = current = System.nanoTime();
                 }
+                if(lag > 0) {
+                    try {
+                        Thread.sleep(lag / 1000000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+                previous += interval;
             }
         }
-        public synchronized static LogicTick getInstance(Tickable task) {
-        	if(instance == null) {
-        		instance = new LogicTick(task);
-        	}
-			return instance;
+        public synchronized static RenderTicker getInstance(Tickable.Partial dyn, int tps) {
+            if(instance == null) {
+                instance = new RenderTicker(dyn, tps);
+            }
+            return instance;
+        }
+    }
+    public static class LogicTicker extends FixStepTicker {
+        private final Tickable.LogicTicker tickertask;
+
+        public LogicTicker(Tickable.LogicTicker task) {
+            super(null, logicTick);
+            tickertask = task;
+        }
+
+        @Override
+        public void start() {
+            long previous = System.nanoTime();
+            long current = previous;
+            long lag;
+            while (!stop) {
+                tickertask.tick(current = System.nanoTime());
+                lag = previous - current + interval;
+                if((lag + interval) < 0 || current +  interval <= previous) {
+                    previous = current = System.nanoTime();
+                    System.out.println("can`t keep up.");
+                }
+                if(lag > 0) {
+                    try {
+                        Thread.sleep(lag / 1000000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+                previous += interval;
+            }
         }
     }
 }
