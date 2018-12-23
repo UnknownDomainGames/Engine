@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.rendering;
 
+import org.joml.FrustumIntersection;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
@@ -21,4 +22,6 @@ public interface RenderContext {
     default boolean isRenderThread() {
         return Thread.currentThread() == getRenderThread();
     }
+
+    FrustumIntersection getFrustumIntersection();
 }

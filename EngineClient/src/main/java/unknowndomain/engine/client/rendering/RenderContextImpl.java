@@ -1,5 +1,7 @@
 package unknowndomain.engine.client.rendering;
 
+import org.joml.FrustumIntersection;
+import org.joml.Matrix4f;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
@@ -19,6 +21,7 @@ public class RenderContextImpl implements RenderContext {
     private final List<Renderer> renderers = new ArrayList<>();
     private final GameWindow window;
     private final TextureManager textureManager = new TextureManagerImpl();
+    private final FrustumIntersection frustumIntersection = new FrustumIntersection();
 
     private Camera camera;
     private double partialTick;
@@ -65,6 +68,7 @@ public class RenderContextImpl implements RenderContext {
 
     public void render(double partial) {
         this.partialTick = partial;
+        frustumIntersection.set(getWindow().projection().mul(getCamera().view((float) partial), new Matrix4f()));
         for (Renderer renderer : renderers) {
             renderer.render();
         }
@@ -84,5 +88,10 @@ public class RenderContextImpl implements RenderContext {
     @Override
     public Thread getRenderThread() {
         return renderThread;
+    }
+
+    @Override
+    public FrustumIntersection getFrustumIntersection() {
+        return frustumIntersection;
     }
 }

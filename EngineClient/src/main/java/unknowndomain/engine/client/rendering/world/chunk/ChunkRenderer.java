@@ -2,7 +2,6 @@ package unknowndomain.engine.client.rendering.world.chunk;
 
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
-import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -29,9 +28,6 @@ import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
 public class ChunkRenderer implements Renderer {
-
-    private final FrustumIntersection frustum = new FrustumIntersection();
-
     private final BlockRenderer blockRenderer = new ModelBlockRenderer();
     private final ShaderProgram chunkSolidShader;
 
@@ -76,7 +72,7 @@ public class ChunkRenderer implements Renderer {
         handleUploadTask();
 
         for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
-            if (frustum.testAab(chunkMesh.getMin(), chunkMesh.getMax())) {
+            if (context.getFrustumIntersection().testAab(chunkMesh.getMin(), chunkMesh.getMax())) {
                 chunkMesh.render();
             }
         }
@@ -99,8 +95,6 @@ public class ChunkRenderer implements Renderer {
         Matrix4f viewMatrix = context.getCamera().view((float) context.partialTick());
         setUniform(u_ProjMatrix, projMatrix);
         setUniform(u_ViewMatrix, viewMatrix);
-
-        frustum.set(projMatrix.mul(viewMatrix, new Matrix4f()));
 
         context.getTextureManager().getTextureAtlas(BLOCK).bind();
     }
