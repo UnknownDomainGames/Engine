@@ -3,7 +3,6 @@ package unknowndomain.engine.game;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.game.Game;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
@@ -15,13 +14,16 @@ import java.util.function.Supplier;
 
 @Owner(Game.class)
 public class GameContext implements EventBus {
-    private EventBus bus;
-    private RegistryManager manager;
+    private final EventBus bus;
+    private final RegistryManager manager;
     private ExecutorService executorService;
 
-    public GameContext(RegistryManager manager, EventBus bus) {
+    private final Block blockAir;
+
+    public GameContext(RegistryManager manager, EventBus bus, Block blockAir) {
         this.manager = manager;
         this.bus = bus;
+        this.blockAir = blockAir;
         // this.nextTick = nextTick;
     }
 
@@ -50,6 +52,10 @@ public class GameContext implements EventBus {
     @Override
     public void unregister(Object listener) {
         bus.unregister(listener);
+    }
+
+    public Block getBlockAir() {
+        return blockAir;
     }
 
     // public void nextTick(Runnable runnable) {

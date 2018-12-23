@@ -9,6 +9,7 @@ import unknowndomain.engine.action.Action;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.entity.EntityType;
 import unknowndomain.engine.event.EventBus;
+import unknowndomain.engine.event.registry.GamePreInitializationEvent;
 import unknowndomain.engine.event.registry.GameReadyEvent;
 import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.item.Item;
@@ -123,7 +124,10 @@ public abstract class GameBase implements Game {
         ImmutableMap.Builder<Class<?>, Registry<?>> builder = ImmutableMap.builder();
         for (Map.Entry<Class<?>, Registry<?>> entry : manager.getEntries())
             builder.put(entry.getKey(), ImmutableRegistry.freeze(entry.getValue()));
-        this.context = new GameContext(manager, eventBus);
+
+        GamePreInitializationEvent event = new GamePreInitializationEvent();
+        eventBus.post(event);
+        this.context = new GameContext(manager, eventBus, event.getBlockAir());
     }
 
     protected RegistryManager freeze(MutableRegistryManager manager) {

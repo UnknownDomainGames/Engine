@@ -3,7 +3,6 @@ package unknowndomain.engine.client.rendering.world.chunk;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.util.VertexBufferObject;
-import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.util.Disposable;
 import unknowndomain.engine.world.chunk.Chunk;
 
@@ -16,11 +15,9 @@ public class ChunkMesh implements Disposable {
 
     private VertexBufferObject chunkSolidVbo;
 
-    private final ChunkPos chunkPos;
     private final Chunk chunk;
 
-    public ChunkMesh(ChunkPos chunkPos, Chunk chunk) {
-        this.chunkPos = chunkPos;
+    public ChunkMesh(Chunk chunk) {
         this.chunk = chunk;
     }
 
@@ -49,10 +46,6 @@ public class ChunkMesh implements Disposable {
         Shader.enableVertexAttrib(2);
         chunkSolidVbo.drawArrays(GL11.GL_TRIANGLES);
         chunkSolidVbo.unbind();
-    }
-
-    public ChunkPos getChunkPos() {
-        return chunkPos;
     }
 
     public Chunk getChunk() {

@@ -1,5 +1,7 @@
 package unknowndomain.engine.client.rendering.world.chunk;
 
+import io.netty.util.collection.LongObjectHashMap;
+import io.netty.util.collection.LongObjectMap;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -13,11 +15,10 @@ import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
-import unknowndomain.engine.math.ChunkPos;
+import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.world.chunk.Chunk;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,7 +31,7 @@ public class ChunkRenderer implements Renderer {
     private final BlockRenderer blockRenderer = new ModelBlockRenderer();
     private final ShaderProgram chunkSolidShader;
 
-    private final Map<ChunkPos, ChunkMesh> loadedChunkMeshes = new HashMap<>();
+    private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
 
     private final ThreadPoolExecutor updateExecutor;
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
@@ -132,12 +133,14 @@ public class ChunkRenderer implements Renderer {
 
     @Listener
     public void onChunkLoad(ChunkLoadEvent event) {
-        markDirty(loadedChunkMeshes.computeIfAbsent(event.getPos(), pos -> new ChunkMesh(pos, event.getChunk())));
+        markDirty(loadedChunkMeshes.computeIfAbsent(getChunkIndex(event.getChunk()), pos -> new ChunkMesh(event.getChunk())));
     }
 
     @Listener
     public void onBlockChange(BlockChangeEvent event) {
-        ChunkMesh chunkMesh = loadedChunkMeshes.get(event.getPos().toChunkPos());
+        // TODO: Update neighbor chunks.
+        BlockPos pos = event.getPos().toImmutable();
+        ChunkMesh chunkMesh = loadedChunkMeshes.get(getChunkIndex(event.getPos()));
         if (chunkMesh == null)
             return;
 
@@ -154,20 +157,38 @@ public class ChunkRenderer implements Renderer {
     }
 
     private void addBakeChunkTask(ChunkMesh chunkMesh) {
-        updateExecutor.execute(new BakeChunkTask(this, chunkMesh, getDistanceSqChunkToCamera(chunkMesh.getChunkPos())));
+        updateExecutor.execute(new BakeChunkTask(this, chunkMesh, getDistanceSqChunkToCamera(chunkMesh.getChunk())));
     }
 
-    private double getDistanceSqChunkToCamera(ChunkPos chunkPos) {
+    private double getDistanceSqChunkToCamera(Chunk chunk) {
         // FIXME:
         if (context.getCamera() == null) {
             return 0;
         }
 
         Vector3f position = context.getCamera().getPosition(0);
-        double x = (chunkPos.getX() << 4) + 8 - position.x;
-        double y = (chunkPos.getY() << 4) + 8 - position.y;
-        double z = (chunkPos.getZ() << 4) + 8 - position.z;
+        double x = (chunk.getChunkX() << Chunk.CHUNK_BLOCK_POS_BIT) + 8 - position.x;
+        double y = (chunk.getChunkY() << Chunk.CHUNK_BLOCK_POS_BIT) + 8 - position.y;
+        double z = (chunk.getChunkZ() << Chunk.CHUNK_BLOCK_POS_BIT) + 8 - position.z;
         return x * x + y * y + z * z;
+    }
+
+    private static final int maxPositiveChunkPos = (1 << 20) - 1;
+
+    public static long getChunkIndex(BlockPos pos) {
+        return getChunkIndex(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT);
+    }
+
+    public static long getChunkIndex(Chunk chunk) {
+        return getChunkIndex(chunk.getChunkX(), chunk.getChunkY(), chunk.getChunkZ());
+    }
+
+    public static long getChunkIndex(int chunkX, int chunkY, int chunkZ) {
+        return abs(chunkX, maxPositiveChunkPos) << 42 | abs(chunkY, maxPositiveChunkPos) << 21 | abs(chunkZ, maxPositiveChunkPos);
+    }
+
+    private static int abs(int value, int maxPositiveValue) {
+        return value >= 0 ? value : maxPositiveValue - value;
     }
 
     private class UploadTask implements Runnable {

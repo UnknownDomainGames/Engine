@@ -2,10 +2,8 @@ package unknowndomain.engine.client.rendering.world.chunk;
 
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.util.BlockPosIterator;
 import unknowndomain.engine.util.ChunkCache;
 import unknowndomain.engine.world.World;
@@ -32,15 +30,15 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
             return;
         }
 
-        ChunkCache chunkCache = createChunkCache(chunk.getWorld(), chunkMesh.getChunkPos());
-        BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunkPos(chunkMesh.getChunkPos());
+        ChunkCache chunkCache = createChunkCache(chunk.getWorld(), chunk);
+        BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunk(chunk);
 
         BufferBuilder buffer = ((BakeChunkThread) Thread.currentThread()).getBuffer();
         buffer.begin(GL11.GL_TRIANGLES, true, true, true);
         while (blockPosIterator.hasNext()) {
             BlockPos pos = blockPosIterator.next();
             Block block = chunk.getBlock(pos);
-            if (block == BlockAir.AIR) {
+            if (block == chunkCache.getWorld().getGame().getContext().getBlockAir()) {
                 continue;
             }
 
@@ -51,9 +49,9 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
         buffer.reset();
     }
 
-    private ChunkCache createChunkCache(World world, ChunkPos middle) {
-        return ChunkCache.create(world, middle.getX() - 1, middle.getY() - 1, middle.getZ() - 1,
-                middle.getX() + 1, middle.getY() + 1, middle.getZ() + 1);
+    private ChunkCache createChunkCache(World world, Chunk chunk) {
+        return ChunkCache.create(world, chunk.getChunkX() - 1, chunk.getChunkY() - 1, chunk.getChunkZ() - 1,
+                chunk.getChunkX() + 1, chunk.getChunkY() + 1, chunk.getChunkZ() + 1);
     }
 
     @Override

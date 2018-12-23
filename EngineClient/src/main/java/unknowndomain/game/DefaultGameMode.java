@@ -1,7 +1,6 @@
 package unknowndomain.game;
 
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
@@ -15,6 +14,7 @@ import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.registry.ClientRegistryEvent;
+import unknowndomain.engine.event.registry.GamePreInitializationEvent;
 import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.event.registry.ResourceSetupEvent;
 import unknowndomain.engine.item.Item;
@@ -29,9 +29,14 @@ public final class DefaultGameMode {
 
     @Listener
     public void registerEvent(RegisterEvent event) {
-        event.getRegistry().register(BlockAir.AIR);
+        event.getRegistry().register(Blocks.AIR);
         event.getRegistry().register(Blocks.GRASS);
         event.getRegistry().register(Blocks.DIRT);
+    }
+
+    @Listener
+    public void preInit(GamePreInitializationEvent event) {
+        event.setBlockAir(Blocks.AIR);
     }
 
     @Listener

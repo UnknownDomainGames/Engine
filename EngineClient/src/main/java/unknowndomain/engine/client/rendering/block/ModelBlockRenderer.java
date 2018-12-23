@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.rendering.block;
 
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.block.model.BlockModelQuad;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
@@ -31,7 +30,7 @@ public class ModelBlockRenderer implements BlockRenderer {
             mutablePos.set(pos);
             facing.offset(mutablePos);
             Block facingBlock = chunkCache.getBlock(mutablePos);
-            if (facingBlock != BlockAir.AIR) {
+            if (facingBlock != chunkCache.getWorld().getGame().getContext().getBlockAir()) {
                 continue;
             }
 
@@ -53,13 +52,13 @@ public class ModelBlockRenderer implements BlockRenderer {
 
     public void renderModelQuad(BlockModelQuad modelQuad, BlockPos pos, BufferBuilder buffer) {
         TextureUV textureUV = modelQuad.textureUV;
-        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).color(1,1,1).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex(); // 1
-        buffer.pos(modelQuad.vertexs[3], modelQuad.vertexs[4], modelQuad.vertexs[5]).color(1,1,1).tex(textureUV.getMaxU(), textureUV.getMaxV()).endVertex(); // 2
-        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).color(1,1,1).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex(); // 3
+        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).color(1, 1, 1).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex(); // 1
+        buffer.pos(modelQuad.vertexs[3], modelQuad.vertexs[4], modelQuad.vertexs[5]).color(1, 1, 1).tex(textureUV.getMaxU(), textureUV.getMaxV()).endVertex(); // 2
+        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).color(1, 1, 1).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex(); // 3
 
-        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).color(1,1,1).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex(); // 1
-        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).color(1,1,1).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex(); // 3
-        buffer.pos(modelQuad.vertexs[9], modelQuad.vertexs[10], modelQuad.vertexs[11]).color(1,1,1).tex(textureUV.getMinU(), textureUV.getMinV()).endVertex(); // 4
+        buffer.pos(modelQuad.vertexs[0], modelQuad.vertexs[1], modelQuad.vertexs[2]).color(1, 1, 1).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex(); // 1
+        buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).color(1, 1, 1).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex(); // 3
+        buffer.pos(modelQuad.vertexs[9], modelQuad.vertexs[10], modelQuad.vertexs[11]).color(1, 1, 1).tex(textureUV.getMinU(), textureUV.getMinV()).endVertex(); // 4
     }
 
     @Override

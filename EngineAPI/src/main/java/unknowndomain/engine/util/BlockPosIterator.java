@@ -1,7 +1,7 @@
 package unknowndomain.engine.util;
 
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.math.ChunkPos;
+import unknowndomain.engine.world.chunk.Chunk;
 
 import java.util.NoSuchElementException;
 
@@ -14,9 +14,9 @@ public class BlockPosIterator {
         return new BlockPosIterator(from.getX(), from.getY(), from.getZ(), to.getX(), to.getY(), to.getZ());
     }
 
-    public static BlockPosIterator createFromChunkPos(ChunkPos chunkPos) {
-        return new BlockPosIterator(chunkPos.getX() << 4, chunkPos.getY() << 4, chunkPos.getZ() << 4,
-                (chunkPos.getX() << 4) + 15, (chunkPos.getY() << 4) + 15, (chunkPos.getZ() << 4) + 15);
+    public static BlockPosIterator createFromChunk(Chunk chunk) {
+        return new BlockPosIterator(chunk.getChunkX() << 4, chunk.getChunkY() << 4, chunk.getChunkZ() << 4,
+                (chunk.getChunkX() << 4) + 15, (chunk.getChunkY() << 4) + 15, (chunk.getChunkZ() << 4) + 15);
     }
 
     private final int fromX, fromY, fromZ, toX, toY, toZ;

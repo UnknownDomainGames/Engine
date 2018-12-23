@@ -25,6 +25,7 @@ import unknowndomain.engine.event.registry.ClientRegistryEvent;
 import unknowndomain.engine.event.registry.GameReadyEvent;
 import unknowndomain.engine.event.registry.ResourceSetupEvent;
 import unknowndomain.engine.game.GameServerFullAsync;
+import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.mod.ModRepository;
 import unknowndomain.engine.mod.ModStore;
@@ -166,7 +167,7 @@ public class GameClientStandalone extends GameServerFullAsync {
         for (int x = -16; x < 16; x++) {
             for (int z = -16; z < 16; z++) {
                 for (int top = random.nextInt(3) + 3, y = top; y >= 0; y--) {
-                    world.setBlock(x, y, z, y == top ? Blocks.GRASS : Blocks.DIRT);
+                    world.setBlock(BlockPos.of(x, y, z), y == top ? Blocks.GRASS : Blocks.DIRT);
                 }
             }
         }

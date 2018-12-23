@@ -4,7 +4,6 @@ import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
@@ -15,13 +14,10 @@ public class ChunkStorage {
     // should do the io operation to load chunk
     private final World world;
 
-    private final Chunk empty;
-
     private LongObjectMap<Chunk> chunks = new LongObjectHashMap<>();
 
     public ChunkStorage(World world) {
         this.world = world;
-        this.empty = new ChunkEmpty(world);
     }
 
     public Collection<Chunk> getChunks() {
@@ -29,28 +25,34 @@ public class ChunkStorage {
     }
 
     @Nonnull
-    public Chunk getChunkByBlockPos(BlockPos pos) {
-        return getChunk(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
+    public Chunk getChunk(BlockPos pos) {
+        return getChunk(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT);
     }
 
     @Nonnull
     public Chunk getChunkByBlockPos(int x, int y, int z) {
-        return getChunk(x >> 4, y >> 4, z >> 4);
+        return getChunk(x >> Chunk.CHUNK_BLOCK_POS_BIT, y >> Chunk.CHUNK_BLOCK_POS_BIT, z >> Chunk.CHUNK_BLOCK_POS_BIT);
     }
 
     @Nonnull
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
         long chunkIndex = getChunkIndex(chunkX, chunkY, chunkZ);
-        return this.chunks.getOrDefault(chunkIndex, empty);
+        return this.chunks.get(chunkIndex);
     }
 
-    public Chunk getOrLoadChunk(ChunkPos chunkPos) {
-        long chunkIndex = getChunkIndex(chunkPos.getX(), chunkPos.getY(), chunkPos.getZ());
+    @Nonnull
+    public Chunk getOrLoadChunk(BlockPos pos) {
+        return getOrLoadChunk(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT);
+    }
+
+    @Nonnull
+    public Chunk getOrLoadChunk(int chunkX, int chunkY, int chunkZ) {
+        long chunkIndex = getChunkIndex(chunkX, chunkY, chunkZ);
         Chunk chunk = chunks.get(chunkIndex);
         if (chunk == null) {
-            chunk = new ChunkImpl(world);
+            chunk = new ChunkImpl(world, chunkX, chunkY, chunkZ);
             chunks.put(chunkIndex, chunk);
-            world.getGame().getContext().post(new ChunkLoadEvent(world, chunkPos, chunk));
+            world.getGame().getContext().post(new ChunkLoadEvent(chunk));
         }
         return chunk;
     }
@@ -82,7 +84,7 @@ public class ChunkStorage {
 //        return data;
 //    }
 
-    private static int maxPositiveChunkPos = (1 << 20) - 1;
+    private static final int maxPositiveChunkPos = (1 << 20) - 1;
 
     protected long getChunkIndex(int chunkX, int chunkY, int chunkZ) {
         return abs(chunkX, maxPositiveChunkPos) << 42 | abs(chunkY, maxPositiveChunkPos) << 21 | abs(chunkZ, maxPositiveChunkPos);

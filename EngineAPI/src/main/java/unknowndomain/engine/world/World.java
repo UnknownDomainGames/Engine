@@ -7,7 +7,6 @@ import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.util.Owner;
 import unknowndomain.engine.world.chunk.Chunk;
 
@@ -31,10 +30,6 @@ public interface World extends RuntimeObject, BlockAccessor {
 
     default Chunk getChunk(@Nonnull BlockPos pos) {
         return getChunk(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
-    }
-
-    default Chunk getChunk(@Nonnull ChunkPos pos) {
-        return getChunk(pos.getX(), pos.getY(), pos.getZ());
     }
 
     Chunk getChunk(int chunkX, int chunkY, int chunkZ);

@@ -36,10 +36,6 @@ public abstract class BlockPos {
 
     public abstract BlockPos minus(int x, int y, int z);
 
-    public ChunkPos toChunkPos() {
-        return ChunkPos.fromBlockPos(this);
-    }
-
     public int squareDistanceTo(BlockPos another) {
         int x = this.getX() - another.getX();
         int y = this.getY() - another.getY();

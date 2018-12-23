@@ -1,6 +1,7 @@
 package unknowndomain.engine.util;
 
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.BlockAccessor;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.chunk.Chunk;
@@ -47,18 +48,15 @@ public class ChunkCache implements BlockAccessor {
     public Block getBlock(int x, int y, int z) {
         int chunkX = (x >> 4) - this.chunkX, chunkY = (y >> 4) - this.chunkY, chunkZ = (z >> 4) - this.chunkZ;
         if (chunkX >= 0 && chunkX < chunks.length && chunkY >= 0 && chunkY < chunks[chunkX].length && chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {
-            return chunks[chunkX][chunkY][chunkZ].getBlock(x, y, z);
+            Chunk chunk = chunks[chunkX][chunkY][chunkZ];
+            return chunk == null ? getWorld().getGame().getContext().getBlockAir() : chunk.getBlock(x, y, z); // FIXME:
         }
         return world.getBlock(x, y, z);
     }
 
     @Nonnull
     @Override
-    public Block setBlock(int x, int y, int z, @Nonnull Block block) {
-        int chunkX = (x >> 4) - this.chunkX, chunkY = (y >> 4) - this.chunkY, chunkZ = (z >> 4) - this.chunkZ;
-        if (chunkX >= 0 && chunkX < chunks.length && chunkY >= 0 && chunkY < chunks[chunkX].length && chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {
-            return chunks[chunkX][chunkY][chunkZ].setBlock(x, y, z, block);
-        }
-        return world.setBlock(x, y, z, block);
+    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block) {
+        throw new UnsupportedOperationException();
     }
 }

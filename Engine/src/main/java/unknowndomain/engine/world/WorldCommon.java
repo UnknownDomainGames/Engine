@@ -13,7 +13,6 @@ import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.math.ChunkPos;
 import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.math.FixStepTicker.LogicTick;
 import unknowndomain.engine.player.Player;
@@ -52,11 +51,12 @@ public class WorldCommon implements World, Runnable {
 
     public void spawnEntity(Entity entity) {
         BlockPos pos = BlockPos.of(entity.getPosition());
-        Chunk chunk = chunkStorage.getOrLoadChunk(pos.toChunkPos());
+        Chunk chunk = chunkStorage.getOrLoadChunk(pos);
         chunk.getEntities().add(entity);
         entityList.add(entity);
     }
 
+    @Deprecated
     public Player playerJoin(Profile data) {
         EntityCamera entity = new EntityCamera(entityList.size());
         entity.getPosition().set(0, 0, 0);
@@ -154,7 +154,7 @@ public class WorldCommon implements World, Runnable {
             BlockPos newPosition = BlockPos.of(position);
 
             if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
-                Chunk oldChunk = chunkStorage.getChunkByBlockPos(oldPosition), newChunk = chunkStorage.getOrLoadChunk(newPosition.toChunkPos());
+                Chunk oldChunk = chunkStorage.getChunk(oldPosition), newChunk = chunkStorage.getOrLoadChunk(newPosition);
                 oldChunk.getEntities().remove(entity);
                 newChunk.getEntities().add(entity);
                 // entity leaving and enter chunk event
@@ -177,14 +177,16 @@ public class WorldCommon implements World, Runnable {
     @Nonnull
     @Override
     public Block getBlock(int x, int y, int z) {
-        return chunkStorage.getChunkByBlockPos(x, y, z).getBlock(x, y, z);
+        Chunk chunk = chunkStorage.getChunkByBlockPos(x, y, z);
+        return chunk == null ? getGame().getContext().getBlockAir() : chunk.getBlock(x, y, z);
     }
 
     @Nonnull
     @Override
-    public Block setBlock(int x, int y, int z, @Nonnull Block block) {
-        Block oldBlock = chunkStorage.getOrLoadChunk(ChunkPos.fromBlockPos(x, y, z)).setBlock(x, y, z, block);
-        getGame().getContext().post(new BlockChangeEvent.Post(this, BlockPos.of(x, y, z), oldBlock, block));
+    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block) {
+        Block oldBlock = chunkStorage.getOrLoadChunk(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT)
+                .setBlock(pos, block);
+        getGame().getContext().post(new BlockChangeEvent.Post(this, pos, oldBlock, block));
         return oldBlock;
     }
 

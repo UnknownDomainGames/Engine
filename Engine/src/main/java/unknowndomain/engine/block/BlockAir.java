@@ -12,10 +12,7 @@ import javax.annotation.Nullable;
 
 public class BlockAir extends Impl<Block> implements Block {
 
-    @Deprecated
-    public static final Block AIR = new BlockAir();
-
-    private BlockAir() {
+    public BlockAir() {
         localName("air");
     }
 

@@ -14,7 +14,17 @@ public interface Chunk {
     int DEFAULT_Y_SIZE = 16;
     int DEFAULT_Z_SIZE = 16;
 
+    int CHUNK_BLOCK_POS_BIT = 4;
+
+    int MAX_BLOCK_POS = 0xf;
+
     World getWorld();
+
+    int getChunkX();
+
+    int getChunkY();
+
+    int getChunkZ();
 
     @Nonnull
     List<Entity> getEntities();
