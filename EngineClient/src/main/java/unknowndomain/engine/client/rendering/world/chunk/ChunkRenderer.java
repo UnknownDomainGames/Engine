@@ -71,6 +71,7 @@ public class ChunkRenderer implements Renderer {
 
         handleUploadTask();
 
+        //TODO: Don't render cannot see chunk.
         for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
             chunkMesh.render();
         }
@@ -133,21 +134,51 @@ public class ChunkRenderer implements Renderer {
 
     @Listener
     public void onChunkLoad(ChunkLoadEvent event) {
-        markDirty(loadedChunkMeshes.computeIfAbsent(getChunkIndex(event.getChunk()), pos -> new ChunkMesh(event.getChunk())));
+        long chunkIndex = getChunkIndex(event.getChunk());
+        loadedChunkMeshes.put(chunkIndex, new ChunkMesh(event.getChunk()));
+        markDirty(chunkIndex);
     }
 
     @Listener
     public void onBlockChange(BlockChangeEvent event) {
-        // TODO: Update neighbor chunks.
         BlockPos pos = event.getPos().toImmutable();
-        ChunkMesh chunkMesh = loadedChunkMeshes.get(getChunkIndex(event.getPos()));
-        if (chunkMesh == null)
-            return;
+        int chunkX = pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT,
+                chunkY = pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT,
+                chunkZ = pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT;
+        markDirty(getChunkIndex(event.getPos()));
 
-        markDirty(chunkMesh);
+        // Update neighbor chunks.
+        int chunkW = pos.getX() + 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkX) {
+            markDirty(getChunkIndex(chunkW, chunkY, chunkZ));
+        }
+        chunkW = pos.getX() - 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkX) {
+            markDirty(getChunkIndex(chunkW, chunkY, chunkZ));
+        }
+        chunkW = pos.getY() + 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkY) {
+            markDirty(getChunkIndex(chunkX, chunkW, chunkZ));
+        }
+        chunkW = pos.getY() - 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkY) {
+            markDirty(getChunkIndex(chunkX, chunkW, chunkZ));
+        }
+        chunkW = pos.getZ() + 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkZ) {
+            markDirty(getChunkIndex(chunkX, chunkY, chunkW));
+        }
+        chunkW = pos.getZ() - 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkZ) {
+            markDirty(getChunkIndex(chunkX, chunkY, chunkW));
+        }
     }
 
-    private void markDirty(ChunkMesh chunkMesh) {
+    private void markDirty(long index) {
+        ChunkMesh chunkMesh = loadedChunkMeshes.get(index);
+        if (chunkMesh == null) {
+            return;
+        }
         if (!chunkMesh.isDirty()) {
             chunkMesh.markDirty();
             addBakeChunkTask(chunkMesh);
