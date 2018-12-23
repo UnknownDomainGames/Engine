@@ -2,6 +2,8 @@ package unknowndomain.engine.client.rendering.world.chunk;
 
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
+import org.joml.FrustumIntersection;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -27,6 +29,8 @@ import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
 public class ChunkRenderer implements Renderer {
+
+    private final FrustumIntersection frustum = new FrustumIntersection();
 
     private final BlockRenderer blockRenderer = new ModelBlockRenderer();
     private final ShaderProgram chunkSolidShader;
@@ -71,9 +75,10 @@ public class ChunkRenderer implements Renderer {
 
         handleUploadTask();
 
-        //TODO: Don't render cannot see chunk.
         for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
-            chunkMesh.render();
+            if (frustum.testAab(chunkMesh.getMin(), chunkMesh.getMax())) {
+                chunkMesh.render();
+            }
         }
 
         postRenderChunk();
@@ -90,8 +95,12 @@ public class ChunkRenderer implements Renderer {
         glEnable(GL11.GL_TEXTURE_2D);
         glEnable(GL11.GL_DEPTH_TEST);
 
-        setUniform(u_ProjMatrix, context.getWindow().projection());
-        setUniform(u_ViewMatrix, context.getCamera().view((float) context.partialTick()));
+        Matrix4f projMatrix = context.getWindow().projection();
+        Matrix4f viewMatrix = context.getCamera().view((float) context.partialTick());
+        setUniform(u_ProjMatrix, projMatrix);
+        setUniform(u_ViewMatrix, viewMatrix);
+
+        frustum.set(projMatrix.mul(viewMatrix, new Matrix4f()));
 
         context.getTextureManager().getTextureAtlas(BLOCK).bind();
     }
