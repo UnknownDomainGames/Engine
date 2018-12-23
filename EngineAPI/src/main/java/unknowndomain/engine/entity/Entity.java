@@ -5,7 +5,6 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.Tickable;
-import unknowndomain.engine.item.Item;
 import unknowndomain.engine.util.Owner;
 import unknowndomain.engine.world.World;
 
@@ -19,6 +18,7 @@ public interface Entity extends RuntimeObject, Tickable {
 
     Vector3f getRotation();
 
+    @Deprecated
     Vector3f getMotion();
 
     AABBd getBoundingBox();

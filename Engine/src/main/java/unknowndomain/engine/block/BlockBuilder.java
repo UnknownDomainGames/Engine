@@ -16,7 +16,7 @@ public class BlockBuilder {
     private String path;
     private Map<String, Object> map = new HashMap<>();
     private List<BlockPrototype.Property<?>> properties = new ArrayList<>();
-    private boolean noCollision = false;
+    private boolean noCollision = true; //TODO:aaaaaaaaaaaaaaaaaaaaa
 
     private BlockPrototype.PlaceBehavior placeBehavior = BlockPrototype.DEFAULT_PLACE;
     private BlockPrototype.ActiveBehavior activeBehavior = BlockPrototype.DEFAULT_ACTIVE;

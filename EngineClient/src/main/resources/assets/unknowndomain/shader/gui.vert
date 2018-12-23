@@ -1,20 +1,19 @@
 #version 330 core
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec4 color;
-layout (location = 2) in vec2 texCoord;
-layout (location = 3) in vec3 vertexNormal;
+uniform mat4 u_ProjMatrix;
+// uniform mat4 u_ModelMatrix;
+uniform vec4 u_ClipRect;
 
-out vec4 vertexColor;
-out vec2 textureCoord;
+layout (location = 0) in vec3 a_Position;
+layout (location = 1) in vec4 a_Color;
+layout (location = 2) in vec2 a_TexCoord;
 
-uniform mat4 projection;
-uniform mat4 model;
-uniform vec4 clipRect;
+out vec4 v_Color;
+out vec2 v_TexCoord;
 
 void main()
 {
-    gl_Position = projection * model * vec4(position.x + clipRect.x, position.y + clipRect.y, position.z, 1.0); //projection * view * model * vec4(position, 1.0);
-    vertexColor = color;
-    textureCoord = texCoord;
+    gl_Position = u_ProjMatrix * vec4(a_Position.x + u_ClipRect.x, a_Position.y + u_ClipRect.y, a_Position.z, 1.0);
+    v_Color = a_Color;
+    v_TexCoord = a_TexCoord;
 }

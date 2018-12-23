@@ -41,19 +41,19 @@ class BlockPosTest {
             int z = (int) (pos.getZ() + dir.z);
             boolean yMiss = Math.abs(y - last.getY()) > 0,
                     zMiss = Math.abs(z - last.getZ()) > 0;
-            System.out.println(new BlockPos(x, y, z));
+            System.out.println(BlockPos.of(x, y, z));
             if (yMiss && zMiss) {
             } else if (yMiss) {
                 System.out.println("Y");
                 for (int j : intRange(last.getY() + 1, y - 1)) {
-                    posList.add(last = new BlockPos(x, j, z));
+                    posList.add(last = BlockPos.of(x, j, z));
                 }
             } else if (zMiss) {
                 for (int j : intRange(last.getZ() + 1, z - 1)) {
-                    posList.add(last = new BlockPos(x, y, j));
+                    posList.add(last = BlockPos.of(x, y, j));
                 }
             }
-            posList.add(last = new BlockPos(x, y, z));
+            posList.add(last = BlockPos.of(x, y, z));
         }
 
         return posList;
@@ -61,8 +61,8 @@ class BlockPosTest {
 
     @Test
     void step() {
-        BlockPos pos = new BlockPos(1, 0, 0);
-        BlockPos dest = new BlockPos(0, 2, 0);
+        BlockPos pos = BlockPos.of(1, 0, 0);
+        BlockPos dest = BlockPos.of(0, 2, 0);
 //
 
 //        List<BlockPos> all = getAll(pos, dest);
@@ -79,7 +79,7 @@ class BlockPosTest {
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
                 for (int k = 0; k < 16; k++) {
-                    BlockPos from = new BlockPos(i, j, k);
+                    BlockPos from = BlockPos.of(i, j, k);
                     int pack = from.pack();
                     assertEquals(from.getX() & 0xF, pack >> 8);
                     assertEquals(from.getY() & 0xF, (pack >> 4) & 0xF);

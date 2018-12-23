@@ -1,7 +1,7 @@
 package unknowndomain.engine.action;
 
 import org.apache.commons.lang3.Validate;
-import unknowndomain.engine.GameContext;
+import unknowndomain.engine.game.GameContext;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

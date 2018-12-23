@@ -3,18 +3,32 @@ package unknowndomain.engine.world.chunk;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
 import java.util.List;
 
 public interface Chunk {
 
     int DEFAULT_X_SIZE = 16;
-    int DEFAULT_Y_SIZE = 256;
+    int DEFAULT_Y_SIZE = 16;
     int DEFAULT_Z_SIZE = 16;
 
-    // FIXME:
+    int CHUNK_BLOCK_POS_BIT = 4;
+
+    int MAX_BLOCK_POS = 0xf;
+
+    World getWorld();
+
+    int getChunkX();
+
+    int getChunkY();
+
+    int getChunkZ();
+
+    @Nonnull
+    List<Entity> getEntities();
+
     /**
      * Get block in a specific path
      *
@@ -23,16 +37,11 @@ public interface Chunk {
      * @param z z-coordinate of the block related to chunk coordinate system
      * @return the block in the specified path
      */
-    default Block getBlock(int x, int y, int z) {
-        return getBlock(new BlockPos(x, y, z));
+    Block getBlock(int x, int y, int z);
+
+    default Block getBlock(BlockPos pos) {
+        return getBlock(pos.getX(), pos.getY(), pos.getZ());
     }
-
-    Collection<Block> getRuntimeBlock();
-
-    @Nonnull
-    List<Entity> getEntities();
-
-    Block getBlock(BlockPos pos);
 
     /**
      * Set block in a specific path
@@ -41,26 +50,11 @@ public interface Chunk {
      * @param y y-coordinate of the block related to chunk coordinate system
      * @param z z-coordinate of the block related to chunk coordinate system
      */
-    default Block setBlock(int x, int y, int z, Block destBlock) {
-        return setBlock(new BlockPos(x, y, z), destBlock);
+    Block setBlock(int x, int y, int z, Block block);
+
+    default Block setBlock(BlockPos pos, Block block) {
+        return setBlock(pos.getX(), pos.getY(), pos.getZ(), block);
     }
 
-    Block setBlock(BlockPos pos, Block destBlock);
-
-    interface Store {
-        Collection<Chunk> getChunks();
-
-        @Nonnull
-        Chunk getChunk(@Nonnull BlockPos pos);
-
-        /**
-         * Touch the chunk at the the position, ensure it loaded
-         */
-        void touchChunk(@Nonnull BlockPos chunkPos);
-
-        /**
-         * Dispose the chunk at the position
-         */
-        void discardChunk(@Nonnull BlockPos chunkPos);
-    }
+    boolean isAirChunk();
 }

@@ -1,14 +1,17 @@
 package unknowndomain.engine.game;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.tuple.Pair;
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.GameContext;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.entity.EntityType;
 import unknowndomain.engine.event.EventBus;
+import unknowndomain.engine.event.registry.GamePreInitializationEvent;
 import unknowndomain.engine.event.registry.GameReadyEvent;
+import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.mod.*;
 import unknowndomain.engine.mod.java.JavaModLoader;
@@ -16,13 +19,14 @@ import unknowndomain.engine.registry.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class GameBase implements Game {
     protected final Option option;
-    protected final EventBus bus;
+    protected final EventBus eventBus;
     protected final ModRepository modRepository;
     protected final ModStore modStore;
 
@@ -35,11 +39,11 @@ public abstract class GameBase implements Game {
     private ModMetadata meta = ModMetadata.Builder.create().setId("unknowndomain").setVersion("0.0.1").setGroup("none")
             .build();
 
-    public GameBase(Option option, ModRepository repository, ModStore store, EventBus bus) {
+    public GameBase(Option option, ModRepository repository, ModStore store, EventBus eventBus) {
         this.option = option;
         this.modStore = store;
         this.modRepository = repository;
-        this.bus = bus;
+        this.eventBus = eventBus;
         this.option.getMods().add(this.meta);
     }
 
@@ -89,7 +93,7 @@ public abstract class GameBase implements Game {
         }
         modManager = new SimpleModManager(idToMapBuilder.build(), typeToMapBuilder.build());
         for (ModContainer mod : modManager.getLoadedMods())
-            this.bus.register(mod.getInstance());
+            this.eventBus.register(mod.getInstance());
     }
 
     protected void decorateLoader(ModLoaderWrapper wrapper) {
@@ -107,10 +111,23 @@ public abstract class GameBase implements Game {
      * Register stage, collect all registerable things from mod here.
      */
     protected void registerStage() {
-        RegistryManager all = SimpleModManager.register(modManager.getLoadedMods(),
-                Registry.Type.of("action", Action.class), Registry.Type.of("block", Block.class),
-                Registry.Type.of("item", Item.class), Registry.Type.of("entity", EntityType.class));
-        this.context = new GameContext(all, bus);
+        Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
+        List<MutableRegistry<?>> registries = Lists.newArrayList();
+        for (Registry.Type<?> tp : Arrays.asList(Registry.Type.of("action", Action.class), Registry.Type.of("block", Block.class),
+                Registry.Type.of("item", Item.class), Registry.Type.of("entity", EntityType.class))) {
+            MutableRegistry<?> registry = new MutableRegistry<>(tp.type, tp.name);
+            maps.put(tp.type, registry);
+            registries.add(registry);
+        }
+        MutableRegistryManager manager = new MutableRegistryManager(maps);
+        eventBus.post(new RegisterEvent(manager));
+        ImmutableMap.Builder<Class<?>, Registry<?>> builder = ImmutableMap.builder();
+        for (Map.Entry<Class<?>, Registry<?>> entry : manager.getEntries())
+            builder.put(entry.getKey(), ImmutableRegistry.freeze(entry.getValue()));
+
+        GamePreInitializationEvent event = new GamePreInitializationEvent();
+        eventBus.post(event);
+        this.context = new GameContext(manager, eventBus, event.getBlockAir());
     }
 
     protected RegistryManager freeze(MutableRegistryManager manager) {
@@ -133,7 +150,7 @@ public abstract class GameBase implements Game {
     protected void finishStage() {
         spawnWorld(null);
 
-        bus.post(new GameReadyEvent(context));
+        eventBus.post(new GameReadyEvent(context));
     }
 
     @Override

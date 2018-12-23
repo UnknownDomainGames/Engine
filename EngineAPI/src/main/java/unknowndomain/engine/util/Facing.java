@@ -24,7 +24,7 @@ public enum Facing {
         return values()[opposite];
     }
 
-    public BlockPos side(BlockPos pos) {
+    public BlockPos offset(BlockPos pos) {
         return pos.add(offsetX, offsetY, offsetZ);
     }
 }

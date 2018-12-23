@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 /**
  * The resource path. I'm considering remove this thing....
  */
+@Deprecated
 public class ResourcePath {
     private String type;
     private String path;

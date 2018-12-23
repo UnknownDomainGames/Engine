@@ -1,16 +1,20 @@
 package unknowndomain.engine.event.registry;
 
-import unknowndomain.engine.GameContext;
+import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.event.Event;
+import unknowndomain.engine.game.GameContext;
 
 public class ResourceSetupEvent implements Event {
-    private GameContext context;
-    private ResourceManager resourceManager;
 
-    public ResourceSetupEvent(GameContext context, ResourceManager resourceManager) {
+    private final GameContext context;
+    private final ResourceManager resourceManager;
+    private final TextureManager textureManager;
+
+    public ResourceSetupEvent(GameContext context, ResourceManager resourceManager, TextureManager textureManager) {
         this.context = context;
         this.resourceManager = resourceManager;
+        this.textureManager = textureManager;
     }
 
     public GameContext getContext() {
@@ -19,5 +23,9 @@ public class ResourceSetupEvent implements Event {
 
     public ResourceManager getResourceManager() {
         return resourceManager;
+    }
+
+    public TextureManager getTextureManager() {
+        return textureManager;
     }
 }

@@ -6,50 +6,49 @@ import unknowndomain.engine.event.Cancellable;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
-import unknowndomain.engine.world.chunk.Chunk;
 
 public class PlayerImpl implements Player {
-    private Profile profile;
-    private World world;
-    private Entity mounting;
 
-    public PlayerImpl(Profile data, World world, Entity mounting) {
+    private final Profile profile;
+
+    private Entity controlledEntity;
+
+    public PlayerImpl(Profile data) {
         this.profile = data;
-        this.world = world;
-        this.mounting = mounting;
     }
 
-    public void enter(Chunk.Store chunkStore) {
-        int radius = this.profile.trackingChunkRadius;
-        Entity entity = this.getMountingEntity();
-        BlockPos pos = BlockPos.of(entity.getPosition());
-        for (int i = -radius; i <= radius; i++) {
-            if (i <= 0) {
-                int zOff = i + radius;
-                for (int j = -zOff; j <= zOff; j++)
-                    chunkStore.touchChunk(pos.add(i * 16, 0, j * 16));
-            } else {
-                int zOff = radius - i;
-                for (int j = -zOff; j <= zOff; j++)
-                    chunkStore.touchChunk(pos.add(i * 16, 0, j * 16));
-            }
-        }
+
+//    public void enter(ChunkStorage chunkStore) {
+//        int radius = this.profile.trackingChunkRadius;
+//        Entity entity = this.getControlledEntity();
+//        BlockPos pos = BlockPos.of(entity.getPosition());
+//        for (int i = -radius; i <= radius; i++) {
+//            if (i <= 0) {
+//                int zOff = i + radius;
+//                for (int j = -zOff; j <= zOff; j++)
+//                    chunkStore.touchChunk(pos.add(i * 16, 0, j * 16));
+//            } else {
+//                int zOff = radius - i;
+//                for (int j = -zOff; j <= zOff; j++)
+//                    chunkStore.touchChunk(pos.add(i * 16, 0, j * 16));
+//            }
+//        }
+//    }
+
+    @NonNull
+    @Override
+    public Entity getControlledEntity() {
+        return controlledEntity;
     }
 
     @NonNull
     @Override
-    public Entity getMountingEntity() {
-        return mounting;
-    }
-
-    @NonNull
-    @Override
-    public Entity mountEntity(Entity entity) {
-        Entity old = mounting;
+    public Entity controlEntity(Entity entity) {
+        Entity old = controlledEntity;
         if (entity == null) {
             // parse phantom entity if is god, else parse default player
         }
-        mounting = entity;
+        controlledEntity = entity;
         // fire event;
         return old;
     }
@@ -62,7 +61,7 @@ public class PlayerImpl implements Player {
     @NonNull
     @Override
     public World getWorld() {
-        return world;
+        return controlledEntity.getWorld();
     }
 
     public static class PlayerPlaceBlockEvent implements Event, Cancellable {

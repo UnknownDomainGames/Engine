@@ -1,6 +1,5 @@
 package unknowndomain.engine.game;
 
-import unknowndomain.engine.GameContext;
 import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.mod.ModMetadata;
@@ -28,6 +27,7 @@ import java.util.List;
  * Each world should hold a separated thread
  */
 public interface Game extends RuntimeObject, Runnable {
+
     GameContext getContext();
 
     World spawnWorld(World.Config config);

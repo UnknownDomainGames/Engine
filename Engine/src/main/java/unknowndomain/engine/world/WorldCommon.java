@@ -1,40 +1,38 @@
 package unknowndomain.engine.world;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.joml.*;
-import unknowndomain.engine.GameContext;
+import org.joml.AABBd;
+import org.joml.Vector2d;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.entity.PlayerEntity;
-import unknowndomain.engine.entity.TwoHands;
-import unknowndomain.engine.event.Event;
+import unknowndomain.engine.entity.EntityCamera;
+import unknowndomain.engine.event.world.block.BlockChangeEvent;
+import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.FixStepTicker;
+import unknowndomain.engine.math.FixStepTicker.LogicTick;
 import unknowndomain.engine.player.Player;
-import unknowndomain.engine.player.PlayerImpl;
-import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayCast;
 import unknowndomain.engine.world.chunk.Chunk;
+import unknowndomain.engine.world.chunk.ChunkStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.Math;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 public class WorldCommon implements World, Runnable {
-    private final GameContext context;
+    private final Game game;
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
 
-    private final Chunk.Store chunkStore;
+    private final ChunkStorage chunkStorage;
     private final List<Player> players = new ArrayList<>();
     private final List<Entity> entityList = new ArrayList<>();
     private final List<Runnable> nextTick = new ArrayList<>();
@@ -42,29 +40,31 @@ public class WorldCommon implements World, Runnable {
     private final FixStepTicker ticker;
 //    private ExecutorService service;
 
-    public WorldCommon(GameContext context, Chunk.Store chunkStore) {
-        this.context = context;
-        this.chunkStore = chunkStore;
-        this.ticker = new FixStepTicker(this::tick, 20); // TODO: make tps configurable
+    public WorldCommon(Game game) {
+        this.game = game;
+        this.chunkStorage = new ChunkStorage(this);
+        this.ticker = LogicTick.getInstance(this::tick); // TODO: make tps configurable 先这样吧，毕竟现在连Server都没有
+        //TODO 这个地方必须改回来
     }
 
     public void spawnEntity(Entity entity) {
         BlockPos pos = BlockPos.of(entity.getPosition());
-        Chunk chunk = chunkStore.getChunk(pos);
+        Chunk chunk = chunkStorage.getOrLoadChunk(pos);
         chunk.getEntities().add(entity);
         entityList.add(entity);
     }
 
-    public Player playerJoin(Profile data) {
-        PlayerEntity entity = new PlayerEntity(entityList.size(), ImmutableMap.<String, Object>builder()
-                .put(TwoHands.class.getName(), new PlayerEntity.TwoHandImpl()).build());
-        entity.getPosition().set(0, 2, 0);
-        entity.getRotation().set(0, 0, 0);
-        entity.setBoundingBox(data.getBoundingBox());
+    @Deprecated
+    public void playerJoin(Player player) {
+        EntityCamera entity = new EntityCamera(entityList.size());
+        player.controlEntity(entity);
         spawnEntity(entity);
-        PlayerImpl player = new PlayerImpl(data, this, entity);
         players.add(player);
-        return player;
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class WorldCommon implements World, Runnable {
 
     @Override
     public BlockPrototype.Hit raycast(Vector3f from, Vector3f dir, float distance) {
-        return raycast(from, dir, distance, Sets.newHashSet(context.getBlockRegistry().getValue(0)));
+        return raycast(from, dir, distance, Sets.newHashSet(game.getContext().getBlockRegistry().getValue(0)));
     }
 
     @Override
@@ -125,7 +125,21 @@ public class WorldCommon implements World, Runnable {
             }
         }
         physicsSystem.tick(this);
+        tickEntityMotion();
+        tickChunks();
+        tickEntities();
+    }
 
+    protected void tickChunks() {
+        chunkStorage.getChunks().forEach(this::tickChunk);
+    }
+
+    protected void tickEntities() {
+        for (Entity entity : entityList)
+            entity.tick(); // state machine update
+    }
+
+    protected void tickEntityMotion() {
         for (Entity entity : this.getEntities()) {
             Vector3d position = entity.getPosition();
             Vector3f motion = entity.getMotion();
@@ -134,39 +148,45 @@ public class WorldCommon implements World, Runnable {
             BlockPos newPosition = BlockPos.of(position);
 
             if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
-                Chunk oldChunk = chunkStore.getChunk(oldPosition), newChunk = chunkStore.getChunk(newPosition);
+                Chunk oldChunk = chunkStorage.getChunk(oldPosition), newChunk = chunkStorage.getOrLoadChunk(newPosition);
                 oldChunk.getEntities().remove(entity);
                 newChunk.getEntities().add(entity);
                 // entity leaving and enter chunk event
             }
         }
-
-        chunkStore.getChunks().forEach(this::tickChunk);
-        for (Entity entity : entityList)
-            entity.tick(); // state machine update
     }
 
     private void tickChunk(Chunk chunk) {
-        Collection<Block> blocks = chunk.getRuntimeBlock();
-        if (blocks.size() != 0) {
-            for (Block object : blocks) {
-                BlockPrototype.TickBehavior behavior = object.getBehavior(BlockPrototype.TickBehavior.class);
-                if (behavior != null) {
-                    behavior.tick(object);
-                }
-            }
-        }
+//        Collection<Block> blocks = chunk.getRuntimeBlock();
+//        if (blocks.size() != 0) {
+//            for (Block object : blocks) {
+//                BlockPrototype.TickBehavior behavior = object.getBehavior(BlockPrototype.TickBehavior.class);
+//                if (behavior != null) {
+//                    behavior.tick(object);
+//                }
+//            }
+//        }
     }
 
-    @NonNull
-    public Block getBlock(@NonNull BlockPos pos) {
-        return chunkStore.getChunk(pos).getBlock(pos);
-    }
-
-    @NonNull
+    @Nonnull
     @Override
-    public Block setBlock(@NonNull BlockPos pos, Block block) {
-        return chunkStore.getChunk(pos).setBlock(pos, block);
+    public Block getBlock(int x, int y, int z) {
+        Chunk chunk = chunkStorage.getChunkByBlockPos(x, y, z);
+        return chunk == null ? getGame().getContext().getBlockAir() : chunk.getBlock(x, y, z);
+    }
+
+    @Nonnull
+    @Override
+    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block) {
+        Block oldBlock = chunkStorage.getOrLoadChunk(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT)
+                .setBlock(pos, block);
+        getGame().getContext().post(new BlockChangeEvent.Post(this, pos, oldBlock, block));
+        return oldBlock;
+    }
+
+    @Override
+    public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
+        return chunkStorage.getChunk(chunkX, chunkY, chunkZ);
     }
 
     @Override
@@ -174,7 +194,7 @@ public class WorldCommon implements World, Runnable {
         ticker.start();
     }
 
-    public boolean isStop() {
+    public boolean isStopped() {
         return ticker.isStop();
     }
 
@@ -193,7 +213,7 @@ public class WorldCommon implements World, Runnable {
                 Vector3d position = entity.getPosition();
                 AABBd box = entity.getBoundingBox();
 
-                BlockPos localPos = new BlockPos(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
+                BlockPos localPos = BlockPos.of(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
                         ((int) Math.floor(position.z)));
                 //
                 // int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
@@ -284,13 +304,5 @@ public class WorldCommon implements World, Runnable {
     @Override
     public <T> T getBehavior(Class<T> type) {
         return null;
-    }
-
-    public static class ChunkUnload implements Event {
-        public final Vector3i pos;
-
-        public ChunkUnload(Vector3i pos) {
-            this.pos = pos;
-        }
     }
 }
