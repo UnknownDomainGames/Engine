@@ -6,13 +6,13 @@ import java.io.InputStream;
 public class ResourceSourceBuiltin implements ResourceSource {
     @Override
     public boolean has(String path) {
-        String absPath = String.format("/assets/%s", path);
+        String absPath = "/assets/" + path;
         return ResourceSourceBuiltin.class.getResource(absPath) != null;
     }
 
     @Override
     public InputStream open(String path) throws IOException {
-        String absPath = String.format("/assets/%s", path);
+        String absPath = "/assets/" + path;
         return ResourceSourceBuiltin.class.getResourceAsStream(absPath);
     }
 
