@@ -143,7 +143,7 @@ public class ChunkRenderer implements Renderer {
     }
 
     @Listener
-    public void onBlockChange(BlockChangeEvent event) {
+    public void onBlockChange(BlockChangeEvent.Post event) {
         BlockPos pos = event.getPos().toImmutable();
         int chunkX = pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT,
                 chunkY = pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT,
