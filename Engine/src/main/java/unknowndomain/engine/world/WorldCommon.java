@@ -180,7 +180,7 @@ public class WorldCommon implements World, Runnable {
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block) {
         Block oldBlock = chunkStorage.getOrLoadChunk(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT)
                 .setBlock(pos, block);
-        getGame().getContext().post(new BlockChangeEvent.Post(this, pos, oldBlock, block));
+        getGame().getContext().post(new BlockChangeEvent.Post(this, pos, oldBlock, block)); // TODO:
         return oldBlock;
     }
 

@@ -43,18 +43,7 @@ public interface Chunk {
         return getBlock(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    /**
-     * Set block in a specific path
-     *
-     * @param x x-coordinate of the block related to chunk coordinate system
-     * @param y y-coordinate of the block related to chunk coordinate system
-     * @param z z-coordinate of the block related to chunk coordinate system
-     */
-    Block setBlock(int x, int y, int z, Block block);
-
-    default Block setBlock(BlockPos pos, Block block) {
-        return setBlock(pos.getX(), pos.getY(), pos.getZ(), block);
-    }
+    Block setBlock(BlockPos pos, Block block);
 
     boolean isAirChunk();
 }
