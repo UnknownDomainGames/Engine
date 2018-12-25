@@ -73,7 +73,7 @@ public class ReaderStream {
         case DOUBLE:
             return stream.readDouble();
         case STRING:
-            return stream.readBoolean();
+            return getString();
         case BYTEARRAY:
         {
             byte[] a = new byte[stream.readInt()];

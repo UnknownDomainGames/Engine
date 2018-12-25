@@ -39,13 +39,17 @@ public class WriterStream {
         key = null;
         stream.writeInt(DataType.LISTSEPARATOR.ordinal());
         listFlag = true;
+        if(lSetter == null) {
+            stream.writeInt(DataType.END.ordinal());
+            return;
+        }
         for(int i = 0; i < lSetter.length(); i++) {
             lSetter.setData(this, i);
         }
         stream.writeInt(DataType.END.ordinal());
     }
     private void addHead(DataType type) throws IOException {
-        stream.writeByte(type.ordinal());
+        stream.writeInt(type.ordinal());
         if(!listFlag) {
             stream.writeInt(key.length());
             stream.writeChars(key);
