@@ -68,27 +68,27 @@ public class WriterStream {
         addHead(DataType.BYTE);
         stream.writeByte(value);
     }
-    public void putShort(String key, short value) throws IOException {
+    public void putShort(short value) throws IOException {
         addHead(DataType.SHORT);
         stream.writeShort(value);
     }
-    public void putInt(String key, int value) throws IOException {
+    public void putInt(int value) throws IOException {
         addHead(DataType.INT);
         stream.writeInt(value);
     }
-    public void putLong(String key, long value) throws IOException {
+    public void putLong(long value) throws IOException {
         addHead(DataType.LONG);
         stream.writeLong(value);
     }
-    public void putFloat(String key, float value) throws IOException {
+    public void putFloat(float value) throws IOException {
         addHead(DataType.FLOAT);
         stream.writeFloat(value);
     }
-    public void putDouble(String key, double value) throws IOException {
+    public void putDouble(double value) throws IOException {
         addHead(DataType.DOUBLE);
         stream.writeDouble(value);
     }
-    public void putString(String key, String value) throws IOException {
+    public void putString(String value) throws IOException {
         addHead(DataType.STRING);
         stream.writeInt(value.length());
         stream.writeChars(value);
