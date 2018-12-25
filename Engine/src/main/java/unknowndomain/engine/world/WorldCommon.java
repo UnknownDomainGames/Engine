@@ -207,11 +207,13 @@ public class WorldCommon implements World, Runnable {
             List<Entity> entityList = world.getEntities();
             for (Entity entity : entityList) {
                 Vector3f motion = entity.getMotion();
-                Vector3f direction = new Vector3f(motion);
                 if (motion.x == 0 && motion.y == 0 && motion.z == 0)
                     continue;
+                Vector3f direction = new Vector3f(motion);
                 Vector3d position = entity.getPosition();
                 AABBd box = entity.getBoundingBox();
+                if (box == null)
+                    continue;
 
                 BlockPos localPos = BlockPos.of(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
                         ((int) Math.floor(position.z)));
