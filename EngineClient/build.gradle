@@ -3,7 +3,7 @@ apply plugin: "application"
 
 group 'com.github.unknownstudio'
 version '1.0.0'
-mainClassName = "unknowndomain.engine.client.UnknownDomain"
+mainClassName = 'unknowndomain.engine.client.UnknownDomain'
 
 dependencies {
     compile project(':EngineAPI')
@@ -18,3 +18,23 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 }
+
+configurations {
+    embed
+    compile.extendsFrom(embed)
+}
+
+dependencies {
+    embed project(':EngineAPI')
+    embed project(':Engine')
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+//    from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+    from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+
