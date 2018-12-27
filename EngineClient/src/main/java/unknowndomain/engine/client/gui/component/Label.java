@@ -7,7 +7,7 @@ import unknowndomain.engine.util.Color;
 
 public class Label extends Component {
 
-    private Color color = Color.WRITE;
+    private Color color = Color.WHITE;
     private String text;
 
     public Label(String content){

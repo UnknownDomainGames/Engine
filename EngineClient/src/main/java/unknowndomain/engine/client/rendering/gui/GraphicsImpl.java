@@ -18,7 +18,7 @@ public class GraphicsImpl implements Graphics {
 
     public GraphicsImpl(FontRenderer fontRenderer) {
         this.fontRenderer = fontRenderer;
-        setColor(Color.WRITE);
+        setColor(Color.WHITE);
     }
 
     @Override

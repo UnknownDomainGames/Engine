@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Color {
 
-    public static final Color WRITE = Color.fromRGB(0xffffff);
+    public static final Color WHITE = Color.fromRGB(0xffffff);
     public static final Color BLACK = Color.fromRGB(0x000000);
 
     public static final Color TRANSPARENT = Color.fromRGBA(0x00000000);
