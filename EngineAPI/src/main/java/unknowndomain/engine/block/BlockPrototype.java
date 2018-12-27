@@ -70,16 +70,32 @@ public abstract class BlockPrototype {
     }
 
     public static class Hit {
-        public final BlockPos position;
-        public final Block block;
-        public final Vector3f hit;
-        public final Facing face;
+        private final BlockPos pos;
+        private final Block block;
+        private final Vector3f hit;
+        private final Facing face;
 
-        public Hit(BlockPos position, Block block, Vector3f hit, Facing face) {
-            this.position = position;
+        public Hit(BlockPos pos, Block block, Vector3f hit, Facing face) {
+            this.pos = pos;
             this.block = block;
             this.hit = hit;
             this.face = face;
+        }
+
+        public Block getBlock() {
+            return block;
+        }
+
+        public BlockPos getPos() {
+            return pos;
+        }
+
+        public Facing getFace() {
+            return face;
+        }
+
+        public Vector3f getHit() {
+            return hit;
         }
     }
 

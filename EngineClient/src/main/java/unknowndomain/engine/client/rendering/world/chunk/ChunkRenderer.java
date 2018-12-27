@@ -6,7 +6,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.client.rendering.RenderContext;
+import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.block.BlockRenderer;
 import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
@@ -38,7 +38,7 @@ public class ChunkRenderer implements Renderer {
 
     private final int u_ProjMatrix, u_ViewMatrix;
 
-    private RenderContext context;
+    private ClientContext context;
 
     public ChunkRenderer(Shader vertex, Shader frag) {
         chunkSolidShader = new ShaderProgram();
@@ -61,7 +61,7 @@ public class ChunkRenderer implements Renderer {
     }
 
     @Override
-    public void init(RenderContext context) {
+    public void init(ClientContext context) {
         this.context = context;
     }
 

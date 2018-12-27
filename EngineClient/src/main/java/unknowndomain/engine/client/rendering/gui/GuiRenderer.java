@@ -1,21 +1,23 @@
 package unknowndomain.engine.client.rendering.gui;
 
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector4f;
+import org.joml.*;
+import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.Graphics;
 import unknowndomain.engine.client.gui.Scene;
-import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFFontRenderer;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.math.AABBs;
+import unknowndomain.engine.world.World;
 
 import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class GuiRenderer implements Renderer {
     private Scene guiScene;
     private final List<Scene> hudScene = new LinkedList<>();
 
-    private RenderContext context;
+    private ClientContext context;
 
     public GuiRenderer(ByteBuffer fontRenderer, Shader vertexShader, Shader fragShader) {
         this.fontRenderer = new TTFFontRenderer(fontRenderer);
@@ -51,7 +53,7 @@ public class GuiRenderer implements Renderer {
     }
 
     @Override
-    public void init(RenderContext context) {
+    public void init(ClientContext context) {
         this.context = context;
     }
 
@@ -119,14 +121,12 @@ public class GuiRenderer implements Renderer {
         fps++;
     }
 
-    private void debug(RenderContext context) {
+    private void debug(ClientContext context) {
         updateFPS();
         Entity player = UnknownDomain.getGame().getPlayer().getControlledEntity();
 //        AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
-//        World world = UnknownDomain.getGame().getPlayer().getControlledEntity().getWorld();
+        World world = UnknownDomain.getGame().getPlayer().getWorld();
 
-//        BlockPrototype.Hit hit = world.raycast(context.getCamera().getPosition(),
-//                context.getCamera().getFrontVector(), 5);
         fontRenderer.drawText("FPS: " + displayFPS, 0, 0, 0xffffffff);
         fontRenderer.drawText(String.format("Player location: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 19, 0xffffffff);
         fontRenderer.drawText(String.format("Player motion: %f, %f, %f", player.getMotion().x, player.getMotion().y, player.getMotion().z), 0, 38, 0xffffffff);
@@ -135,18 +135,20 @@ public class GuiRenderer implements Renderer {
 //        fontRenderer.drawText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 19 * 3, 0xffffffff);
         //fontRenderer.drawText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);
 
-//        if (hit != null) {
-//
-//            Vector3f hitedPos = new Vector3f(hit.position.getX(), hit.position.getY(), hit.position.getZ());
-//            AABBd blockAABB = AABBs.translate(hit.block.getBoundingBoxes()[0], hitedPos, new AABBd());
-//            fontRenderer.drawText(String.format("Looking at: %f,%f,%f", hitedPos.x, hitedPos.y, hitedPos.z), 0, 85, 0xffffffff);
-//            fontRenderer.drawText(String.format("bounding box: %s", blockAABB.toString(new DecimalFormat("#.##"))), 0, 105, 0xffffffff);
-//            fontRenderer.drawText(String.format("Collided with the looking box: %s", blockAABB.testAABB(box)), 0, 125, 0xffffffff);
-//
-//            //fontRenderer.drawText(String.format("[%f, %f, %f, %f, %f, %f]", box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ), 0, 0, 0xffffffff, 32);
-//            //fontRenderer.drawText(String.format("[%f, %f, %f, %f, %f, %f]", blockAABB.minX, blockAABB.minY, blockAABB.minZ, blockAABB.maxX, blockAABB.maxY, blockAABB.maxZ), 0, 35, 0xffffffff, 32);
-//            //fontRenderer.drawText(String.format("%s", blockAABB.testAABB(box) ? "coll" : "fine"), 0, 69, 0xffffffff, 32);
-//        }
+        BlockPrototype.Hit hit = context.getHit();
+        if (hit != null) {
+            Vector3f hitedPos = new Vector3f(hit.getPos().getX(), hit.getPos().getY(), hit.getPos().getZ());
+            AABBd blockAABB = AABBs.translate(hit.getBlock().getBoundingBoxes()[0], hitedPos, new AABBd());
+            fontRenderer.drawText(String.format("Looking block: %s", hit.getBlock().getUniqueName()), 0, 19 * 10, 0xffffffff);
+            fontRenderer.drawText(String.format("Looking pos: %s(%d, %d, %d)", hit.getFace().name(), hit.getPos().getX(), hit.getPos().getY(), hit.getPos().getZ()), 0, 19 * 11, 0xffffffff);
+            fontRenderer.drawText(String.format("Looking at: (%f, %f, %f)", hit.getHit().x, hit.getHit().y, hit.getHit().z), 0, 19 * 12, 0xffffffff);
+            fontRenderer.drawText(String.format("Bounding box: %s", blockAABB.toString(new DecimalFormat("#.##"))), 0, 19 * 13, 0xffffffff);
+//            fontRenderer.drawText(String.format("Collided with the looking box: %s", blockAABB.testAABB(box)), 0, 19*12, 0xffffffff);
+
+            //fontRenderer.drawText(String.format("[%f, %f, %f, %f, %f, %f]", box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ), 0, 0, 0xffffffff, 32);
+            //fontRenderer.drawText(String.format("[%f, %f, %f, %f, %f, %f]", blockAABB.minX, blockAABB.minY, blockAABB.minZ, blockAABB.maxX, blockAABB.maxY, blockAABB.maxZ), 0, 35, 0xffffffff, 32);
+            //fontRenderer.drawText(String.format("%s", blockAABB.testAABB(box) ? "coll" : "fine"), 0, 69, 0xffffffff, 32);
+        }
     }
 
     @Override

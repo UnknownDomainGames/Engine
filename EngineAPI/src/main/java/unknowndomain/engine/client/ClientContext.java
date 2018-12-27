@@ -1,11 +1,13 @@
-package unknowndomain.engine.client.rendering;
+package unknowndomain.engine.client;
 
 import org.joml.FrustumIntersection;
+import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
+import unknowndomain.engine.player.Player;
 
-public interface RenderContext {
+public interface ClientContext {
 
     Camera getCamera();
 
@@ -24,4 +26,8 @@ public interface RenderContext {
     }
 
     FrustumIntersection getFrustumIntersection();
+
+    Player getPlayer();
+
+    BlockPrototype.Hit getHit();
 }

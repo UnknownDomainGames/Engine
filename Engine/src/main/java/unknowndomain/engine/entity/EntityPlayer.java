@@ -7,7 +7,7 @@ import unknowndomain.engine.item.Item;
 public class EntityPlayer extends EntityBase {
 
     public EntityPlayer(int id, ImmutableMap<String, Object> behaviors) {
-        super(id, behaviors);
+        super(id, null, behaviors);
     }
 
     public static class TwoHandImpl implements TwoHands {

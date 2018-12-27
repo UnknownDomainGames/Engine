@@ -96,8 +96,8 @@ public final class DefaultGameMode {
 
             @Override
             public void onUseBlockStart(World world, Entity entity, Item item, BlockPrototype.Hit hit) {
-                BlockPos side = hit.face.offset(hit.position);
-                System.out.println("HIT: " + hit.position + " " + hit.face + " " + hit.hit + " SIDE: " + side);
+                BlockPos side = hit.getFace().offset(hit.getPos());
+                System.out.println("HIT: " + hit.getPos() + " " + hit.getFace() + " " + hit.getHit() + " SIDE: " + side);
                 world.setBlock(side, object);
             }
         }

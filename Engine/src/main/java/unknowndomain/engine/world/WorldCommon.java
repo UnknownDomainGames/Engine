@@ -56,7 +56,8 @@ public class WorldCommon implements World, Runnable {
 
     @Deprecated
     public void playerJoin(Player player) {
-        EntityCamera entity = new EntityCamera(entityList.size());
+        // FIXME:
+        EntityCamera entity = new EntityCamera(entityList.size(), this);
         player.controlEntity(entity);
         spawnEntity(entity);
         players.add(player);
