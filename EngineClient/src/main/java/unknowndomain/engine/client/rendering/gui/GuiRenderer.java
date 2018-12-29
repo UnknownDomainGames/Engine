@@ -14,7 +14,6 @@ import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
-import unknowndomain.engine.world.World;
 
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
@@ -59,25 +58,7 @@ public class GuiRenderer implements Renderer {
 
     @Override
     public void render() {
-        shader.use();
-
-        if (context.getWindow().isResized()) {
-            int width = context.getWindow().getWidth(), height = context.getWindow().getHeight();
-            setUniform(u_ProjMatrix, new Matrix4f().setOrtho(0, width, height, 0, 1, -1));
-            setUniform(u_WindowSize, new Vector2f(width, height));
-            setUniform(u_ClipRect, new Vector4f(0, 0, width, height));
-        }
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_LINE_SMOOTH);
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-        glEnable(GL_POINT_SMOOTH);
-        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-        glEnable(GL_POLYGON_SMOOTH);
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-
-        setUniform(u_UsingAlpha, true);
+        startRender();
 
         // render scene
         if (guiScene != null)
@@ -89,6 +70,36 @@ public class GuiRenderer implements Renderer {
 
         debug(context);
 
+        endRender();
+    }
+
+
+    private void startRender() {
+        shader.use();
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_LINE_SMOOTH);
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        glEnable(GL_POINT_SMOOTH);
+        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+        glEnable(GL_POLYGON_SMOOTH);
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
+        resize();
+    }
+
+
+    private void resize() {
+        if (context.getWindow().isResized()) {
+            int width = context.getWindow().getWidth(), height = context.getWindow().getHeight();
+            setUniform(u_ProjMatrix, new Matrix4f().setOrtho(0, width, height, 0, 1, -1));
+            setUniform(u_WindowSize, new Vector2f(width, height));
+            setUniform(u_ClipRect, new Vector4f(0, 0, width, height));
+        }
+    }
+
+    private void endRender() {
         glDisable(GL_BLEND);
         glDisable(GL_LINE_SMOOTH);
         glDisable(GL_POINT_SMOOTH);
@@ -123,9 +134,16 @@ public class GuiRenderer implements Renderer {
 
     private void debug(ClientContext context) {
         updateFPS();
+
+        setUniform(u_UsingAlpha, false);
+        int middleX = context.getWindow().getWidth() / 2, middleY = context.getWindow().getHeight() / 2;
+        graphics.drawRect(middleX - 5, middleY - 5, 10, 10);
+        graphics.drawLine(middleX, middleY - 10, middleX, middleY + 10);
+        graphics.drawLine(middleX - 10, middleY, middleX + 10, middleY);
+
+        setUniform(u_UsingAlpha, true);
         Entity player = UnknownDomain.getGame().getPlayer().getControlledEntity();
 //        AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
-        World world = UnknownDomain.getGame().getPlayer().getWorld();
 
         fontRenderer.drawText("FPS: " + displayFPS, 0, 0, 0xffffffff);
         fontRenderer.drawText(String.format("Player location: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 19, 0xffffffff);
