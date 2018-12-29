@@ -18,6 +18,7 @@ import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.chunk.Chunk;
+import unknowndomain.engine.world.chunk.ChunkStorage;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.*;
@@ -207,7 +208,7 @@ public class ChunkRenderer implements Renderer {
         return x * x + y * y + z * z;
     }
 
-    private static final int maxPositiveChunkPos = (1 << 20) - 1;
+    // TODO: Merge with ChunkStorage
 
     public static long getChunkIndex(BlockPos pos) {
         return getChunkIndex(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT);
@@ -218,11 +219,11 @@ public class ChunkRenderer implements Renderer {
     }
 
     public static long getChunkIndex(int chunkX, int chunkY, int chunkZ) {
-        return abs(chunkX, maxPositiveChunkPos) << 42 | abs(chunkY, maxPositiveChunkPos) << 21 | abs(chunkZ, maxPositiveChunkPos);
+        return (abs(chunkX) << 42) | (abs(chunkY) << 21) | abs(chunkZ);
     }
 
-    private static int abs(int value, int maxPositiveValue) {
-        return value >= 0 ? value : maxPositiveValue - value;
+    private static long abs(long value) {
+        return value >= 0 ? value : ChunkStorage.maxPositiveChunkPos - value;
     }
 
     private class UploadTask implements Runnable {

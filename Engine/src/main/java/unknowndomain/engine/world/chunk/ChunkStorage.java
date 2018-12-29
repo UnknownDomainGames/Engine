@@ -85,22 +85,22 @@ public class ChunkStorage {
 //        return data;
 //    }
 
-    private static final int maxPositiveChunkPos = (1 << 20) - 1;
+    public static final long maxPositiveChunkPos = (1 << 20) - 1;
 
     protected long getChunkIndex(int chunkX, int chunkY, int chunkZ) {
-        return abs(chunkX, maxPositiveChunkPos) << 42 | abs(chunkY, maxPositiveChunkPos) << 21 | abs(chunkZ, maxPositiveChunkPos);
+        return (abs(chunkX) << 42) | (abs(chunkY) << 21) | abs(chunkZ);
     }
 
-    private static int abs(int value, int maxPositiveValue) {
-        return value >= 0 ? value : maxPositiveValue - value;
+    private static long abs(long value) {
+        return value >= 0 ? value : ChunkStorage.maxPositiveChunkPos - value;
     }
 
     public static void main(String[] args) {
-        System.out.println(abs(maxPositiveChunkPos, maxPositiveChunkPos)); // 1048575
-        System.out.println(abs(1, maxPositiveChunkPos)); // 1
-        System.out.println(abs(0, maxPositiveChunkPos)); // 0
-        System.out.println(abs(-1, maxPositiveChunkPos)); // 2097151
-        System.out.println(abs(-maxPositiveChunkPos, maxPositiveChunkPos)); // 1048577
-        System.out.println(abs(-maxPositiveChunkPos - 1, maxPositiveChunkPos)); // 1048576
+        System.out.println(abs(maxPositiveChunkPos)); // 1048575
+        System.out.println(abs(1)); // 1
+        System.out.println(abs(0)); // 0
+        System.out.println(abs(-1)); // 2097151
+        System.out.println(abs(-maxPositiveChunkPos)); // 1048577
+        System.out.println(abs(-maxPositiveChunkPos - 1)); // 1048576
     }
 }
