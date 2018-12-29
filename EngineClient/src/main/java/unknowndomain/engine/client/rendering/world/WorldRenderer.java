@@ -76,9 +76,9 @@ public class WorldRenderer implements Renderer {
 
         BlockPrototype.Hit hit = context.getHit();
         if (hit != null) {
-            float minX = hit.getPos().getX() - 0.01f, maxX = hit.getPos().getX() + 1.01f,
-                    minY = hit.getPos().getY() - 0.01f, maxY = hit.getPos().getY() + 1.01f,
-                    minZ = hit.getPos().getZ() - 0.01f, maxZ = hit.getPos().getZ() + 1.01f;
+            float minX = hit.getPos().getX() - 0.001f, maxX = hit.getPos().getX() + 1.001f,
+                    minY = hit.getPos().getY() - 0.001f, maxY = hit.getPos().getY() + 1.001f,
+                    minZ = hit.getPos().getZ() - 0.001f, maxZ = hit.getPos().getZ() + 1.001f;
             buffer.begin(GL11.GL_LINES, true, true, false);
             buffer.pos(minX, minY, minZ).color(Color.WHITE).endVertex();
             buffer.pos(maxX, minY, minZ).color(Color.WHITE).endVertex();

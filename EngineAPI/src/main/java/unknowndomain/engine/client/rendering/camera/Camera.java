@@ -16,7 +16,7 @@ public interface Camera {
     Vector3f getLookAt(float parTick);
 
     default Vector3f getFrontVector(float parTick) {
-        return getLookAt(parTick).sub(getPosition(0), new Vector3f()).normalize();
+        return getLookAt(parTick).sub(getPosition(parTick), new Vector3f()).normalize();
     }
 
     /**

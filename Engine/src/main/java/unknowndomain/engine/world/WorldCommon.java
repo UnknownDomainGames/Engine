@@ -24,10 +24,12 @@ import unknowndomain.engine.world.chunk.ChunkStorage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 public class WorldCommon implements World, Runnable {
+    public static final float CALC_ERROR_FIXING = 1e-6f;
     private final Game game;
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
@@ -85,6 +87,8 @@ public class WorldCommon implements World, Runnable {
 
         var all = FastVoxelRayCast.ray(from, dist);
 
+        all.sort(Comparator.comparingDouble(pos->from.distanceSquared(pos.getX(),pos.getY(),pos.getZ())));
+
         for (BlockPos pos : all) {
             Block object = getBlock(pos);
             if (ignore.contains(object))
@@ -98,17 +102,17 @@ public class WorldCommon implements World, Runnable {
                 if (hit) {
                     Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
                     Facing facing = null;
-                    if (hitPoint.x == 0f) {
+                    if (hitPoint.x <= 0f + CALC_ERROR_FIXING) {
                         facing = Facing.WEST;
-                    } else if (hitPoint.x == 1f) {
+                    } else if (hitPoint.x >= 1f - CALC_ERROR_FIXING) {
                         facing = Facing.EAST;
-                    } else if (hitPoint.y == 0f) {
+                    } else if (hitPoint.y <= 0f + CALC_ERROR_FIXING) {
                         facing = Facing.BOTTOM;
-                    } else if (hitPoint.y == 1f) {
+                    } else if (hitPoint.y >= 1f - CALC_ERROR_FIXING) {
                         facing = Facing.TOP;
-                    } else if (hitPoint.z == 0f) {
+                    } else if (hitPoint.z <= 0f + CALC_ERROR_FIXING) {
                         facing = Facing.SOUTH;
-                    } else if (hitPoint.z == 1f) {
+                    } else if (hitPoint.z >= 1f - CALC_ERROR_FIXING) {
                         facing = Facing.NORTH;
                     }
                     if (facing != null) {
@@ -219,10 +223,10 @@ public class WorldCommon implements World, Runnable {
 
                 BlockPos localPos = BlockPos.of(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
                         ((int) Math.floor(position.z)));
-                //
-                // int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
-                // directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
-                // directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
+
+//                 int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
+//                 directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
+//                 directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
 
                 AABBd entityBox = AABBs.translate(box, position.add(direction, new Vector3d()), new AABBd());
                 List<BlockPos>[] around = AABBs.around(entityBox, motion);
