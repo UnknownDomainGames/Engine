@@ -83,8 +83,7 @@ public class WorldCommon implements World, Runnable {
         Vector3f rayOffset = dir.normalize(new Vector3f()).mul(distance);
         Vector3f dist = rayOffset.add(from, new Vector3f());
 
-        List<BlockPos> all;
-        all = FastVoxelRayCast.ray(from, dist);
+        var all = FastVoxelRayCast.ray(from, dist);
 
         for (BlockPos pos : all) {
             Block object = getBlock(pos);
@@ -98,7 +97,7 @@ public class WorldCommon implements World, Runnable {
                         result);
                 if (hit) {
                     Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
-                    Facing facing = Facing.NORTH;
+                    Facing facing = null;
                     if (hitPoint.x == 0f) {
                         facing = Facing.WEST;
                     } else if (hitPoint.x == 1f) {
@@ -112,7 +111,9 @@ public class WorldCommon implements World, Runnable {
                     } else if (hitPoint.z == 1f) {
                         facing = Facing.NORTH;
                     }
-                    return new BlockPrototype.Hit(pos, object, hitPoint, facing);
+                    if (facing != null) {
+                        return new BlockPrototype.Hit(pos, object, hitPoint, facing);
+                    }
                 }
             }
         }

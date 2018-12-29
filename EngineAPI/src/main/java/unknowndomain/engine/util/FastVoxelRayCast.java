@@ -32,21 +32,21 @@ public class FastVoxelRayCast {
         else tDeltaX = 10000000.0f;
         if (dx > 0) tMaxX = tDeltaX * frac1(x1);
         else tMaxX = tDeltaX * frac0(x1);
-        voxel.x = (int) x1;
+        voxel.x = (int) Math.floor(x1);
 
         int dy = Float.compare(y2 - y1, 0);
         if (dy != 0) tDeltaY = Math.min(dy / (y2 - y1), 10000000.0f);
         else tDeltaY = 10000000.0f;
         if (dy > 0) tMaxY = tDeltaY * frac1(y1);
         else tMaxY = tDeltaY * frac0(y1);
-        voxel.y = (int) y1;
+        voxel.y = (int) Math.floor(y1);
 
         int dz = Float.compare(z2 - z1, 0);
         if (dz != 0) tDeltaZ = Math.min(dz / (z2 - z1), 10000000.0f);
         else tDeltaZ = 10000000.0f;
         if (dz > 0) tMaxZ = tDeltaZ * frac1(z1);
         else tMaxZ = tDeltaZ * frac0(z1);
-        voxel.z = (int) z1;
+        voxel.z = (int) Math.floor(z1);
 
         while (true) {
             if (tMaxX < tMaxY) {

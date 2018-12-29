@@ -7,6 +7,7 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 public class ChunkStorage {
@@ -29,7 +30,7 @@ public class ChunkStorage {
         return getChunk(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT);
     }
 
-    @Nonnull
+    @Nullable // FIXME:
     public Chunk getChunkByBlockPos(int x, int y, int z) {
         return getChunk(x >> Chunk.CHUNK_BLOCK_POS_BIT, y >> Chunk.CHUNK_BLOCK_POS_BIT, z >> Chunk.CHUNK_BLOCK_POS_BIT);
     }
