@@ -23,13 +23,13 @@ public class AssetSourceManagerImpl implements AssetSourceManager {
 
     @Override
     public List<AssetSource> getAssetSources(AssetPath path) {
-        List<AssetSource> assetSources = new LinkedList<>();
+        List<AssetSource> result = new LinkedList<>();
         for (AssetSource assetSource : assetSources) {
             if (assetSource.has(path)) {
-                assetSources.add(assetSource);
+                result.add(assetSource);
             }
         }
-        return List.copyOf(assetSources);
+        return List.copyOf(result);
     }
 
     @Override

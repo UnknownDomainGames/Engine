@@ -6,5 +6,5 @@ public interface AssetFactory<T extends Asset> extends Disposable {
 
     void init(AssetSourceManager sourceManager);
 
-    T getAsset(AssetType type, AssetPath path);
+    T getAsset(AssetType<T> type, AssetPath path);
 }

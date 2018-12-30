@@ -16,7 +16,7 @@ public class AssetPath {
     public AssetPath(@Nullable AssetPath parent, @Nonnull String path) {
         this.parent = parent;
         this.path = path;
-        this.fullPath = parent == null ? parent.getFullPath().concat(path) : path;
+        this.fullPath = parent == null ? path : parent.getFullPath().concat(path);
     }
 
     public AssetPath getParent() {
