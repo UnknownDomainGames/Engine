@@ -4,14 +4,14 @@ import com.google.common.collect.Lists;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.action.ActionBuilderImpl;
 import unknowndomain.engine.action.ActionManager;
+import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.action.ActionManagerImpl;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.controller.MotionType;
 import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.input.keybinding.Keybindings;
-import unknowndomain.engine.client.rendering.RenderContext;
-import unknowndomain.engine.client.rendering.RenderContextImpl;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
 import unknowndomain.engine.client.rendering.display.DefaultGameWindow;
@@ -45,7 +45,7 @@ import java.util.UUID;
 public class GameClientStandalone extends GameServerFullAsync {
 
     private DefaultGameWindow window;
-    private RenderContextImpl renderContext;
+    private ClientContextImpl renderContext;
     private ResourceManager resourceManager;
 
     private ActionManagerImpl actionManager;
@@ -93,7 +93,7 @@ public class GameClientStandalone extends GameServerFullAsync {
     /**
      * @return the renderContext
      */
-    public RenderContext getRenderContext() {
+    public ClientContext getRenderContext() {
         return renderContext;
     }
 
@@ -142,9 +142,11 @@ public class GameClientStandalone extends GameServerFullAsync {
                             ShaderType.FRAGMENT_SHADER));
         });
 
-        renderContext = new RenderContextImpl(Thread.currentThread(), factories, window);
+        renderContext = new ClientContextImpl(Thread.currentThread(), factories, window, player);
 
         renderContext.build(context, resourceManager);
+
+        renderContext.setCamera(new FirstPersonCamera(player));
     }
 
     @Override
@@ -163,7 +165,6 @@ public class GameClientStandalone extends GameServerFullAsync {
         player.getControlledEntity().getPosition().set(1, 3, 1);
 
         entityController = new EntityCameraController(player);
-        renderContext.setCamera(new FirstPersonCamera(player));
 
         eventBus.post(new GameReadyEvent(context));
 
@@ -245,7 +246,21 @@ public class GameClientStandalone extends GameServerFullAsync {
                 ActionBuilderImpl.create("player.move.jump").setStartHandler((c) -> getEntityController().handleMotion(MotionType.UP, true))
                         .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.UP, false)).build(),
                 ActionBuilderImpl.create("player.move.sneak").setStartHandler((c) -> getEntityController().handleMotion(MotionType.DOWN, true))
-                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.DOWN, false)).build()
+                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.DOWN, false)).build(),
+                ActionBuilderImpl.create("player.mouse.left").setStartHandler((c) -> {
+                    BlockPrototype.Hit hit = getRenderContext().getHit();
+                    if (hit != null) {
+                        getWorld().setBlock(hit.getPos(), c.getBlockAir());
+                    }
+                })
+                        .build(),
+                ActionBuilderImpl.create("player.mouse.right").setStartHandler((c) -> {
+                    BlockPrototype.Hit hit = getRenderContext().getHit();
+                    if (hit != null) {
+                        getWorld().setBlock(hit.getFace().offset(hit.getPos()), Blocks.DIRT);
+                    }
+                })
+                        .build()
         );
     }
 

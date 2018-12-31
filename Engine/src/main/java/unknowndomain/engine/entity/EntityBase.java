@@ -19,12 +19,13 @@ public abstract class EntityBase implements Entity {
     private AABBd boundingBox;
     private ImmutableMap<String, Object> behaviors;
 
-    public EntityBase(int id) {
-        this(id, ImmutableMap.of());
+    public EntityBase(int id, World world) {
+        this(id, world, ImmutableMap.of());
     }
 
-    public EntityBase(int id, ImmutableMap<String, Object> behaviors) {
+    public EntityBase(int id, World world, ImmutableMap<String, Object> behaviors) {
         this.id = id;
+        this.world = world;
         this.behaviors = behaviors;
     }
 

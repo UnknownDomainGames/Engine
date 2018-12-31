@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.rendering;
 
 
+import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.util.Disposable;
@@ -12,7 +13,7 @@ import java.io.IOException;
  */
 public interface Renderer extends Disposable {
 
-    void init(RenderContext context);
+    void init(ClientContext context);
 
     void render();
 

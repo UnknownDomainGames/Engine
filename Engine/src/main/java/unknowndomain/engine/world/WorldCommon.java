@@ -24,10 +24,12 @@ import unknowndomain.engine.world.chunk.ChunkStorage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 public class WorldCommon implements World, Runnable {
+    public static final float CALC_ERROR_FIXING = 1e-6f;
     private final Game game;
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
@@ -56,7 +58,8 @@ public class WorldCommon implements World, Runnable {
 
     @Deprecated
     public void playerJoin(Player player) {
-        EntityCamera entity = new EntityCamera(entityList.size());
+        // FIXME:
+        EntityCamera entity = new EntityCamera(entityList.size(), this);
         player.controlEntity(entity);
         spawnEntity(entity);
         players.add(player);
@@ -82,8 +85,9 @@ public class WorldCommon implements World, Runnable {
         Vector3f rayOffset = dir.normalize(new Vector3f()).mul(distance);
         Vector3f dist = rayOffset.add(from, new Vector3f());
 
-        List<BlockPos> all;
-        all = FastVoxelRayCast.ray(from, dist);
+        var all = FastVoxelRayCast.ray(from, dist);
+
+        all.sort(Comparator.comparingDouble(pos->from.distanceSquared(pos.getX(),pos.getY(),pos.getZ())));
 
         for (BlockPos pos : all) {
             Block object = getBlock(pos);
@@ -97,21 +101,23 @@ public class WorldCommon implements World, Runnable {
                         result);
                 if (hit) {
                     Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
-                    Facing facing = Facing.NORTH;
-                    if (hitPoint.x == 0f) {
+                    Facing facing = null;
+                    if (hitPoint.x <= 0f + CALC_ERROR_FIXING) {
                         facing = Facing.WEST;
-                    } else if (hitPoint.x == 1f) {
+                    } else if (hitPoint.x >= 1f - CALC_ERROR_FIXING) {
                         facing = Facing.EAST;
-                    } else if (hitPoint.y == 0f) {
+                    } else if (hitPoint.y <= 0f + CALC_ERROR_FIXING) {
                         facing = Facing.BOTTOM;
-                    } else if (hitPoint.y == 1f) {
+                    } else if (hitPoint.y >= 1f - CALC_ERROR_FIXING) {
                         facing = Facing.TOP;
-                    } else if (hitPoint.z == 0f) {
+                    } else if (hitPoint.z <= 0f + CALC_ERROR_FIXING) {
                         facing = Facing.SOUTH;
-                    } else if (hitPoint.z == 1f) {
+                    } else if (hitPoint.z >= 1f - CALC_ERROR_FIXING) {
                         facing = Facing.NORTH;
                     }
-                    return new BlockPrototype.Hit(pos, object, hitPoint, facing);
+                    if (facing != null) {
+                        return new BlockPrototype.Hit(pos, object, hitPoint, facing);
+                    }
                 }
             }
         }
@@ -180,7 +186,7 @@ public class WorldCommon implements World, Runnable {
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block) {
         Block oldBlock = chunkStorage.getOrLoadChunk(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT)
                 .setBlock(pos, block);
-        getGame().getContext().post(new BlockChangeEvent.Post(this, pos, oldBlock, block));
+        getGame().getContext().post(new BlockChangeEvent.Post(this, pos, oldBlock, block)); // TODO:
         return oldBlock;
     }
 
@@ -207,18 +213,20 @@ public class WorldCommon implements World, Runnable {
             List<Entity> entityList = world.getEntities();
             for (Entity entity : entityList) {
                 Vector3f motion = entity.getMotion();
-                Vector3f direction = new Vector3f(motion);
                 if (motion.x == 0 && motion.y == 0 && motion.z == 0)
                     continue;
+                Vector3f direction = new Vector3f(motion);
                 Vector3d position = entity.getPosition();
                 AABBd box = entity.getBoundingBox();
+                if (box == null)
+                    continue;
 
                 BlockPos localPos = BlockPos.of(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
                         ((int) Math.floor(position.z)));
-                //
-                // int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
-                // directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
-                // directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
+
+//                 int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
+//                 directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
+//                 directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
 
                 AABBd entityBox = AABBs.translate(box, position.add(direction, new Vector3d()), new AABBd());
                 List<BlockPos>[] around = AABBs.around(entityBox, motion);

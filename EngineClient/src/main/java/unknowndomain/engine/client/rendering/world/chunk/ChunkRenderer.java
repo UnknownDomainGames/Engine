@@ -2,10 +2,11 @@ package unknowndomain.engine.client.rendering.world.chunk;
 
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.client.rendering.RenderContext;
+import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.block.BlockRenderer;
 import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
@@ -17,6 +18,7 @@ import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.chunk.Chunk;
+import unknowndomain.engine.world.chunk.ChunkStorage;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.*;
@@ -27,7 +29,6 @@ import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
 public class ChunkRenderer implements Renderer {
-
     private final BlockRenderer blockRenderer = new ModelBlockRenderer();
     private final ShaderProgram chunkSolidShader;
 
@@ -38,7 +39,7 @@ public class ChunkRenderer implements Renderer {
 
     private final int u_ProjMatrix, u_ViewMatrix;
 
-    private RenderContext context;
+    private ClientContext context;
 
     public ChunkRenderer(Shader vertex, Shader frag) {
         chunkSolidShader = new ShaderProgram();
@@ -61,7 +62,7 @@ public class ChunkRenderer implements Renderer {
     }
 
     @Override
-    public void init(RenderContext context) {
+    public void init(ClientContext context) {
         this.context = context;
     }
 
@@ -72,7 +73,9 @@ public class ChunkRenderer implements Renderer {
         handleUploadTask();
 
         for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
-            chunkMesh.render();
+            if (context.getFrustumIntersection().testAab(chunkMesh.getMin(), chunkMesh.getMax())) {
+                chunkMesh.render();
+            }
         }
 
         postRenderChunk();
@@ -89,8 +92,10 @@ public class ChunkRenderer implements Renderer {
         glEnable(GL11.GL_TEXTURE_2D);
         glEnable(GL11.GL_DEPTH_TEST);
 
-        setUniform(u_ProjMatrix, context.getWindow().projection());
-        setUniform(u_ViewMatrix, context.getCamera().view((float) context.partialTick()));
+        Matrix4f projMatrix = context.getWindow().projection();
+        Matrix4f viewMatrix = context.getCamera().view((float) context.partialTick());
+        setUniform(u_ProjMatrix, projMatrix);
+        setUniform(u_ViewMatrix, viewMatrix);
 
         context.getTextureManager().getTextureAtlas(BLOCK).bind();
     }
@@ -133,21 +138,51 @@ public class ChunkRenderer implements Renderer {
 
     @Listener
     public void onChunkLoad(ChunkLoadEvent event) {
-        markDirty(loadedChunkMeshes.computeIfAbsent(getChunkIndex(event.getChunk()), pos -> new ChunkMesh(event.getChunk())));
+        long chunkIndex = getChunkIndex(event.getChunk());
+        loadedChunkMeshes.put(chunkIndex, new ChunkMesh(event.getChunk()));
+        markDirty(chunkIndex);
     }
 
     @Listener
-    public void onBlockChange(BlockChangeEvent event) {
-        // TODO: Update neighbor chunks.
+    public void onBlockChange(BlockChangeEvent.Post event) {
         BlockPos pos = event.getPos().toImmutable();
-        ChunkMesh chunkMesh = loadedChunkMeshes.get(getChunkIndex(event.getPos()));
-        if (chunkMesh == null)
-            return;
+        int chunkX = pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT,
+                chunkY = pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT,
+                chunkZ = pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT;
+        markDirty(getChunkIndex(event.getPos()));
 
-        markDirty(chunkMesh);
+        // Update neighbor chunks.
+        int chunkW = pos.getX() + 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkX) {
+            markDirty(getChunkIndex(chunkW, chunkY, chunkZ));
+        }
+        chunkW = pos.getX() - 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkX) {
+            markDirty(getChunkIndex(chunkW, chunkY, chunkZ));
+        }
+        chunkW = pos.getY() + 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkY) {
+            markDirty(getChunkIndex(chunkX, chunkW, chunkZ));
+        }
+        chunkW = pos.getY() - 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkY) {
+            markDirty(getChunkIndex(chunkX, chunkW, chunkZ));
+        }
+        chunkW = pos.getZ() + 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkZ) {
+            markDirty(getChunkIndex(chunkX, chunkY, chunkW));
+        }
+        chunkW = pos.getZ() - 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        if (chunkW != chunkZ) {
+            markDirty(getChunkIndex(chunkX, chunkY, chunkW));
+        }
     }
 
-    private void markDirty(ChunkMesh chunkMesh) {
+    private void markDirty(long index) {
+        ChunkMesh chunkMesh = loadedChunkMeshes.get(index);
+        if (chunkMesh == null) {
+            return;
+        }
         if (!chunkMesh.isDirty()) {
             chunkMesh.markDirty();
             addBakeChunkTask(chunkMesh);
@@ -173,7 +208,7 @@ public class ChunkRenderer implements Renderer {
         return x * x + y * y + z * z;
     }
 
-    private static final int maxPositiveChunkPos = (1 << 20) - 1;
+    // TODO: Merge with ChunkStorage
 
     public static long getChunkIndex(BlockPos pos) {
         return getChunkIndex(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT);
@@ -184,11 +219,11 @@ public class ChunkRenderer implements Renderer {
     }
 
     public static long getChunkIndex(int chunkX, int chunkY, int chunkZ) {
-        return abs(chunkX, maxPositiveChunkPos) << 42 | abs(chunkY, maxPositiveChunkPos) << 21 | abs(chunkZ, maxPositiveChunkPos);
+        return (abs(chunkX) << 42) | (abs(chunkY) << 21) | abs(chunkZ);
     }
 
-    private static int abs(int value, int maxPositiveValue) {
-        return value >= 0 ? value : maxPositiveValue - value;
+    private static long abs(long value) {
+        return value >= 0 ? value : ChunkStorage.maxPositiveChunkPos - value;
     }
 
     private class UploadTask implements Runnable {

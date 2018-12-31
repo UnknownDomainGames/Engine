@@ -3,7 +3,7 @@ apply plugin: "application"
 
 group 'com.github.unknownstudio'
 version '1.0.0'
-mainClassName = "unknowndomain.engine.client.UnknownDomain"
+mainClassName = 'unknowndomain.engine.client.UnknownDomain'
 
 dependencies {
     compile project(':EngineAPI')
@@ -18,3 +18,26 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 }
+
+configurations {
+    embed
+    compile.extendsFrom(embed)
+}
+
+dependencies {
+    embed project(':EngineAPI')
+    embed project(':Engine')
+    embed 'com.github.Mouse0w0.Lib4j:lib4j-observable:1.0.2'
+    embed 'com.github.Mouse0w0.Lib4j:lib4j-event:1.0.2'
+    embed 'org.slf4j:slf4j-simple:1.7.25'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+//    from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+    from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+

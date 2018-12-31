@@ -3,6 +3,7 @@ package unknowndomain.engine.world.chunk;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
 
 import java.util.ArrayList;
@@ -53,14 +54,18 @@ public class ChunkImpl implements Chunk {
         return blockStorage.getBlock(x, y, z);
     }
 
+    @Override
+    public Block setBlock(BlockPos pos, Block block) {
+        return setBlock(pos.getX(), pos.getY(), pos.getZ(), block);
+    }
+
     @NonNull
     @Override
     public List<Entity> getEntities() {
         return entities;
     }
 
-    @Override
-    public Block setBlock(int x, int y, int z, Block block) {
+    protected Block setBlock(int x, int y, int z, Block block) {
         if (blockStorage == null) {
             blockStorage = new BlockStorage(this);
         }
