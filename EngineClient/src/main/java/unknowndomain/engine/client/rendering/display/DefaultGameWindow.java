@@ -166,8 +166,9 @@ public class DefaultGameWindow implements GameWindow {
     private void showWindow() {
         glfwShowWindow(handle);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        // glViewport(0, 0, width, height);
+        //glViewport(0, 0, width, height);
         disableCursor();
+        glfwSetWindowSize(handle, width - 1, height);//FIXME
     }
 
 

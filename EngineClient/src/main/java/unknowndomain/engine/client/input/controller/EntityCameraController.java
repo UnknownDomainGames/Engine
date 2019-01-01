@@ -1,8 +1,11 @@
 package unknowndomain.engine.client.input.controller;
 
 import org.joml.Vector3f;
+
+import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.util.Math2;
+import unknowndomain.game.Blocks;
 
 public class EntityCameraController extends EntityController {
 

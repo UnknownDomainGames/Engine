@@ -67,7 +67,7 @@ public class GuiRenderer implements Renderer {
         for (Scene scene : hudScene) {
             renderScene(scene);
         }
-
+        
         debug(context);
 
         endRender();
@@ -134,13 +134,11 @@ public class GuiRenderer implements Renderer {
 
     private void debug(ClientContext context) {
         updateFPS();
-
         setUniform(u_UsingAlpha, false);
         int middleX = context.getWindow().getWidth() / 2, middleY = context.getWindow().getHeight() / 2;
         graphics.drawRect(middleX - 5, middleY - 5, 10, 10);
         graphics.drawLine(middleX, middleY - 10, middleX, middleY + 10);
         graphics.drawLine(middleX - 10, middleY, middleX + 10, middleY);
-
         setUniform(u_UsingAlpha, true);
         Entity player = UnknownDomain.getGame().getPlayer().getControlledEntity();
 //        AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
