@@ -6,13 +6,11 @@ import java.util.function.Consumer;
 
 public interface AssetSourceManager {
 
-    Optional<AssetSource> getSource(AssetPath path);
+    Optional<AssetSource> getSource(String path);
 
-    List<AssetSource> getSources(AssetPath path);
+    List<AssetSource> getSources(String path);
 
     List<AssetSource> getSources();
-
-    void notifyChangeEvent();
 
     void addChangeListener(Consumer<AssetSourceManager> changeListener);
 

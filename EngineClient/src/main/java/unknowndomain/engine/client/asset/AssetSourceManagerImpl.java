@@ -1,5 +1,8 @@
 package unknowndomain.engine.client.asset;
 
+import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
+import com.github.mouse0w0.lib4j.observable.collection.ObservableList;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -7,12 +10,16 @@ import java.util.function.Consumer;
 
 public class AssetSourceManagerImpl implements AssetSourceManager {
 
-    private final List<AssetSource> assetSources = new LinkedList<>();
+    private final ObservableList<AssetSource> assetSources = ObservableCollections.observableList(new LinkedList<>());
 
     private final List<Consumer<AssetSourceManager>> onChangeListeners = new LinkedList<>();
 
+    public AssetSourceManagerImpl() {
+        assetSources.addChangeListener(change -> notifyChange());
+    }
+
     @Override
-    public Optional<AssetSource> getSource(AssetPath path) {
+    public Optional<AssetSource> getSource(String path) {
         for (AssetSource assetSource : assetSources) {
             if (assetSource.has(path)) {
                 return Optional.of(assetSource);
@@ -22,7 +29,7 @@ public class AssetSourceManagerImpl implements AssetSourceManager {
     }
 
     @Override
-    public List<AssetSource> getSources(AssetPath path) {
+    public List<AssetSource> getSources(String path) {
         List<AssetSource> result = new LinkedList<>();
         for (AssetSource assetSource : assetSources) {
             if (assetSource.has(path)) {
@@ -37,8 +44,7 @@ public class AssetSourceManagerImpl implements AssetSourceManager {
         return assetSources;
     }
 
-    @Override
-    public void notifyChangeEvent() {
+    protected void notifyChange() {
         for (Consumer<AssetSourceManager> consumer : onChangeListeners) {
             consumer.accept(this);
         }

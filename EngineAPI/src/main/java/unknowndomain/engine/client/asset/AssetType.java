@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.asset;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class AssetType<T extends Asset> {
 
@@ -10,7 +9,7 @@ public class AssetType<T extends Asset> {
     private final String fileNameExtension;
     private final AssetFactory<T> factory;
 
-    AssetType(@Nonnull Class<T> assetClass, @Nonnull String name, @Nullable String fileNameExtension, @Nonnull AssetFactory<T> factory) {
+    AssetType(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull String fileNameExtension, @Nonnull AssetFactory<T> factory) {
         this.assetClass = assetClass;
         this.name = name;
         this.fileNameExtension = fileNameExtension;
@@ -27,7 +26,7 @@ public class AssetType<T extends Asset> {
         return name;
     }
 
-    @Nullable
+    @Nonnull
     public String getFileNameExtension() {
         return fileNameExtension;
     }

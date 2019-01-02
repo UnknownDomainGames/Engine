@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.asset;
 
+import com.google.common.base.Strings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.MapMaker;
@@ -22,6 +23,10 @@ public class AssetManagerImpl implements AssetManager {
 
     private final Map<String, AssetType<?>> registeredTypes = new HashMap<>();
     private final Map<AssetType<?>, Cache<AssetPath, ? extends Asset>> instanceAssets = new MapMaker().concurrencyLevel(1).makeMap();
+
+    public AssetManagerImpl() {
+        sourceManager.addChangeListener(manager -> cleanUnuseCache());
+    }
 
     @Nonnull
     @Override
@@ -46,7 +51,7 @@ public class AssetManagerImpl implements AssetManager {
             throw new IllegalArgumentException(String.format("AssetType %s has been registered.", name));
         }
 
-        AssetType<T> type = new AssetType<>(assetClass, name, fileNameExtension, factory);
+        AssetType<T> type = new AssetType<>(assetClass, name, Strings.nullToEmpty(fileNameExtension), factory);
         registeredTypes.put(name, type);
         createAssetCache(type);
         return type;
@@ -90,12 +95,13 @@ public class AssetManagerImpl implements AssetManager {
     }
 
     protected <T extends Asset> T internalLoad(Cache<AssetPath, T> assetCache, @Nonnull AssetType<T> type, @Nonnull AssetPath path) {
-        Optional<AssetSource> source = getSourceManager().getSource(path);
+        String realPath = getRealPath(type, path);
+        Optional<AssetSource> source = getSourceManager().getSource(realPath);
         if (source.isEmpty()) {
             return null; // TODO: log it.
         }
 
-        try (InputStream input = source.get().openStream(path)) {
+        try (InputStream input = source.get().openStream(realPath)) {
             T asset = type.getFactory().build(type, path, input);
             assetCache.put(path, asset);
             return asset;
@@ -104,6 +110,11 @@ public class AssetManagerImpl implements AssetManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    protected String getRealPath(AssetType<?> type, AssetPath path) {
+        String realPath = path.getFullPath();
+        return realPath.endsWith(type.getFileNameExtension()) ? realPath : realPath.concat(type.getFileNameExtension());
     }
 
     @Nonnull

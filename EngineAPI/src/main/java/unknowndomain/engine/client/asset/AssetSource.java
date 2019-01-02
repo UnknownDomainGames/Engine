@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 public interface AssetSource {
 
-    boolean has(AssetPath path);
+    boolean has(String path);
 
-    InputStream openStream(AssetPath path) throws IOException;
+    InputStream openStream(String path) throws IOException;
 }
