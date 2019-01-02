@@ -12,7 +12,7 @@ public class AssetSourceManagerImpl implements AssetSourceManager {
     private final List<Consumer<AssetSourceManager>> onChangeListeners = new LinkedList<>();
 
     @Override
-    public Optional<AssetSource> getAssetSource(AssetPath path) {
+    public Optional<AssetSource> getSource(AssetPath path) {
         for (AssetSource assetSource : assetSources) {
             if (assetSource.has(path)) {
                 return Optional.of(assetSource);
@@ -22,7 +22,7 @@ public class AssetSourceManagerImpl implements AssetSourceManager {
     }
 
     @Override
-    public List<AssetSource> getAssetSources(AssetPath path) {
+    public List<AssetSource> getSources(AssetPath path) {
         List<AssetSource> result = new LinkedList<>();
         for (AssetSource assetSource : assetSources) {
             if (assetSource.has(path)) {
@@ -33,7 +33,7 @@ public class AssetSourceManagerImpl implements AssetSourceManager {
     }
 
     @Override
-    public List<AssetSource> getAssetSources() {
+    public List<AssetSource> getSources() {
         return assetSources;
     }
 
