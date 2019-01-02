@@ -131,9 +131,14 @@ public class AssetManagerImpl implements AssetManager {
     }
 
     @Override
-    public void dispose() {
+    public void clean() {
         for (Cache<?, ?> cache : instanceAssets.values()) {
             cache.invalidateAll();
         }
+    }
+
+    @Override
+    public void dispose() {
+        clean();
     }
 }

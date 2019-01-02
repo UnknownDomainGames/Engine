@@ -26,4 +26,6 @@ public interface AssetManager extends Disposable {
     AssetSourceManager getSourceManager();
 
     void cleanUnuseCache();
+
+    void clean();
 }
