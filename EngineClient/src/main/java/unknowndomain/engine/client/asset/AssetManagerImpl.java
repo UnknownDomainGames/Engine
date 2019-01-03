@@ -22,7 +22,7 @@ public class AssetManagerImpl implements AssetManager {
     private final AssetSourceManager sourceManager = new AssetSourceManagerImpl();
 
     private final Map<String, AssetType<?>> registeredTypes = new HashMap<>();
-    private final Map<AssetType<?>, Cache<AssetPath, ? extends Asset>> instanceAssets = new MapMaker().concurrencyLevel(1).makeMap();
+    private final Map<AssetType<?>, Cache<AssetPath, ? extends Asset>> cacheAssets = new MapMaker().concurrencyLevel(1).makeMap();
 
     public AssetManagerImpl() {
         sourceManager.addChangeListener(manager -> cleanUnuseCache());
@@ -57,8 +57,13 @@ public class AssetManagerImpl implements AssetManager {
         return type;
     }
 
+    @Override
+    public Optional<AssetType<?>> getType(String name) {
+        return Optional.ofNullable(registeredTypes.get(name));
+    }
+
     protected <T extends Asset> void createAssetCache(AssetType<T> type) {
-        instanceAssets.put(type, CacheBuilder.newBuilder().weakValues().removalListener(notification -> {
+        cacheAssets.put(type, CacheBuilder.newBuilder().weakValues().removalListener(notification -> {
             if (notification.getValue() != null) {
                 ((Disposable) notification.getValue()).dispose();
             }
@@ -74,7 +79,7 @@ public class AssetManagerImpl implements AssetManager {
             throw new IllegalStateException(String.format("AssetType %s has not been registered.", type.getName()));
         }
 
-        Cache<AssetPath, T> assetCache = (Cache<AssetPath, T>) instanceAssets.get(type);
+        Cache<AssetPath, T> assetCache = (Cache<AssetPath, T>) cacheAssets.get(type);
         try {
             return assetCache.get(path, () -> internalLoad(assetCache, type, path));
         } catch (ExecutionException ignored) {
@@ -91,7 +96,17 @@ public class AssetManagerImpl implements AssetManager {
             throw new IllegalStateException(String.format("AssetType %s has not been registered.", type.getName()));
         }
 
-        return internalLoad((Cache<AssetPath, T>) instanceAssets.get(type), type, path);
+        return internalLoad((Cache<AssetPath, T>) cacheAssets.get(type), type, path);
+    }
+
+    @Nonnull
+    @Override
+    public <T extends Asset> Cache<AssetPath, T> getCache(@Nonnull AssetType<T> type) {
+        requireNonNull(type);
+        if (!registeredTypes.containsKey(type)) {
+            throw new IllegalStateException(String.format("AssetType %s has not been registered.", type.getName()));
+        }
+        return (Cache<AssetPath, T>) cacheAssets.get(type);
     }
 
     protected <T extends Asset> T internalLoad(Cache<AssetPath, T> assetCache, @Nonnull AssetType<T> type, @Nonnull AssetPath path) {
@@ -125,14 +140,14 @@ public class AssetManagerImpl implements AssetManager {
 
     @Override
     public void cleanUnuseCache() {
-        for (Cache<?, ?> cache : instanceAssets.values()) {
+        for (Cache<?, ?> cache : cacheAssets.values()) {
             cache.cleanUp();
         }
     }
 
     @Override
     public void clean() {
-        for (Cache<?, ?> cache : instanceAssets.values()) {
+        for (Cache<?, ?> cache : cacheAssets.values()) {
             cache.invalidateAll();
         }
     }
