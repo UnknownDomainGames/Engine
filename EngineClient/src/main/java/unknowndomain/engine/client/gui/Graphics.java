@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.gui;
 
+import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.util.Color;
@@ -9,6 +10,10 @@ public interface Graphics {
     Color getColor();
 
     void setColor(Color color);
+
+    Font getFont();
+
+    void setFont(Font font);
 
     void drawLine(float x1, float y1, float x2, float y2);
 
@@ -22,41 +27,20 @@ public interface Graphics {
 
     /**
      * Draw a quadratic Belzier curve
-     * @param startX
-     * @param startY
-     * @param endX
-     * @param endY
-     * @param px
-     * @param py
      */
     void drawQuad(float startX, float startY, float endX, float endY, float px, float py);
 
     /**
      * Draw a Belazier curve
-     * @param startX
-     * @param startY
-     * @param endX
-     * @param endY
-     * @param px1
-     * @param py1
-     * @param px2
-     * @param py2
      */
     void drawCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2);
 
     /**
      * Draw a elliptical arc
-     * @param startX
-     * @param startY
-     * @param endX
-     * @param endY
-     * @param radiusX
-     * @param radiusY
-     * @param xAxisRotation
-     * @param largeArcFlag
-     * @param sweepFlag
      */
     void drawArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag);
+
+    // TODO: void drawPolygon(Polygon polygon);
 
     void drawText(CharSequence text, float x, float y);
 

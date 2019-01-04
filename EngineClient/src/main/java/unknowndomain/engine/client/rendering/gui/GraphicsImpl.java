@@ -1,7 +1,9 @@
 package unknowndomain.engine.client.rendering.gui;
 
 import unknowndomain.engine.client.gui.Graphics;
-import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
+import unknowndomain.engine.client.gui.text.Font;
+import unknowndomain.engine.client.rendering.gui.font.NativeTTFont;
+import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
@@ -12,12 +14,14 @@ import static org.lwjgl.opengl.GL11.*;
 public class GraphicsImpl implements Graphics {
 
     private final Tessellator tessellator = Tessellator.getInstance();
-    private final FontRenderer fontRenderer;
+    private final TTFontHelper fontHelper;
 
     private Color color;
+    private Font font;
+    private NativeTTFont nativeTTFont;
 
-    public GraphicsImpl(FontRenderer fontRenderer) {
-        this.fontRenderer = fontRenderer;
+    public GraphicsImpl(TTFontHelper fontHelper) {
+        this.fontHelper = fontHelper;
         setColor(Color.WHITE);
     }
 
@@ -29,6 +33,17 @@ public class GraphicsImpl implements Graphics {
     @Override
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    @Override
+    public Font getFont() {
+        return font;
+    }
+
+    @Override
+    public void setFont(Font font) {
+        this.font = font;
+        this.nativeTTFont = fontHelper.getNativeFont(font);
     }
 
     @Override
@@ -116,7 +131,7 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawText(CharSequence text, float x, float y) {
-        fontRenderer.drawText(text, x, y, color.toRGBA());
+        fontHelper.renderText(text, x, y, color.toRGBA(), nativeTTFont);
     }
 
     @Override

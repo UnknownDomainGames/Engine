@@ -8,12 +8,12 @@ import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.Graphics;
 import unknowndomain.engine.client.gui.Scene;
 import unknowndomain.engine.client.rendering.Renderer;
-import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
-import unknowndomain.engine.client.rendering.gui.font.TTFFontRenderer;
+import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
+import unknowndomain.engine.util.Color;
 
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
@@ -30,9 +30,9 @@ public class GuiRenderer implements Renderer {
 
     private final ShaderProgram shader;
 
-    private final int u_ProjMatrix, u_WindowSize, u_ClipRect, u_UsingAlpha;
+    private final int u_ProjMatrix, u_WindowSize, u_ClipRect, u_RenderText;
 
-    private final FontRenderer fontRenderer;
+    private final TTFontHelper fontHelper;
     private final Graphics graphics;
 
     private Scene guiScene;
@@ -40,15 +40,24 @@ public class GuiRenderer implements Renderer {
 
     private ClientContext context;
 
-    public GuiRenderer(ByteBuffer fontRenderer, Shader vertexShader, Shader fragShader) {
-        this.fontRenderer = new TTFFontRenderer(fontRenderer);
-        this.graphics = new GraphicsImpl(this.fontRenderer);
+    public GuiRenderer(ByteBuffer defaultFontData, Shader vertexShader, Shader fragShader) {
         shader = new ShaderProgram();
         shader.init(vertexShader, fragShader);
         u_ProjMatrix = shader.getUniformLocation("u_ProjMatrix");
         u_WindowSize = shader.getUniformLocation("u_WindowSize");
         u_ClipRect = shader.getUniformLocation("u_ClipRect");
-        u_UsingAlpha = shader.getUniformLocation("u_UsingAlpha");
+        u_RenderText = shader.getUniformLocation("u_RenderText");
+
+        this.fontHelper = new TTFontHelper(() -> {
+            glEnable(GL_TEXTURE_2D);
+            setUniform(u_RenderText, true);
+        }, () -> {
+            glDisable(GL_TEXTURE_2D);
+            setUniform(u_RenderText, false);
+        });
+        this.graphics = new GraphicsImpl(this.fontHelper);
+        graphics.setFont(fontHelper.loadNativeFont(defaultFontData, 16).getFont());
+
     }
 
     @Override
@@ -135,37 +144,37 @@ public class GuiRenderer implements Renderer {
     private void debug(ClientContext context) {
         updateFPS();
 
-        setUniform(u_UsingAlpha, false);
+        graphics.setColor(Color.WHITE);
+
         int middleX = context.getWindow().getWidth() / 2, middleY = context.getWindow().getHeight() / 2;
         graphics.drawRect(middleX - 5, middleY - 5, 10, 10);
         graphics.drawLine(middleX, middleY - 10, middleX, middleY + 10);
         graphics.drawLine(middleX - 10, middleY, middleX + 10, middleY);
 
-        setUniform(u_UsingAlpha, true);
         Entity player = UnknownDomain.getGame().getPlayer().getControlledEntity();
 //        AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
 
-        fontRenderer.drawText("FPS: " + displayFPS, 0, 0, 0xffffffff);
-        fontRenderer.drawText(String.format("Player location: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 19, 0xffffffff);
-        fontRenderer.drawText(String.format("Player motion: %f, %f, %f", player.getMotion().x, player.getMotion().y, player.getMotion().z), 0, 38, 0xffffffff);
-        fontRenderer.drawText(String.format("Player yaw: %f, pitch: %f, roll: %f", player.getRotation().x, player.getRotation().y, player.getRotation().z), 0, 19 * 3, 0xffffffff);
-        fontRenderer.drawText(String.format("Chunk: %d, %d, %d", (int) player.getPosition().x >> 4, (int) player.getPosition().y >> 4, (int) player.getPosition().z >> 4), 0, 19 * 4, 0xffffffff);
-//        fontRenderer.drawText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 19 * 3, 0xffffffff);
-        //fontRenderer.drawText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);
+        graphics.drawText("FPS: " + displayFPS, 0, 0);
+        graphics.drawText(String.format("Player location: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 19);
+        graphics.drawText(String.format("Player motion: %f, %f, %f", player.getMotion().x, player.getMotion().y, player.getMotion().z), 0, 38);
+        graphics.drawText(String.format("Player yaw: %f, pitch: %f, roll: %f", player.getRotation().x, player.getRotation().y, player.getRotation().z), 0, 19 * 3);
+        graphics.drawText(String.format("Chunk: %d, %d, %d", (int) player.getPosition().x >> 4, (int) player.getPosition().y >> 4, (int) player.getPosition().z >> 4), 0, 19 * 4);
+//        fontRenderer.renderText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 19 * 3, 0xffffffff);
+        //fontRenderer.renderText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);
 
         BlockPrototype.Hit hit = context.getHit();
         if (hit != null) {
             Vector3f hitedPos = new Vector3f(hit.getPos().getX(), hit.getPos().getY(), hit.getPos().getZ());
             AABBd blockAABB = AABBs.translate(hit.getBlock().getBoundingBoxes()[0], hitedPos, new AABBd());
-            fontRenderer.drawText(String.format("Looking block: %s", hit.getBlock().getUniqueName()), 0, 19 * 10, 0xffffffff);
-            fontRenderer.drawText(String.format("Looking pos: %s(%d, %d, %d)", hit.getFace().name(), hit.getPos().getX(), hit.getPos().getY(), hit.getPos().getZ()), 0, 19 * 11, 0xffffffff);
-            fontRenderer.drawText(String.format("Looking at: (%f, %f, %f)", hit.getHit().x, hit.getHit().y, hit.getHit().z), 0, 19 * 12, 0xffffffff);
-            fontRenderer.drawText(String.format("Bounding box: %s", blockAABB.toString(new DecimalFormat("#.##"))), 0, 19 * 13, 0xffffffff);
-//            fontRenderer.drawText(String.format("Collided with the looking box: %s", blockAABB.testAABB(box)), 0, 19*12, 0xffffffff);
+            graphics.drawText(String.format("Looking block: %s", hit.getBlock().getUniqueName()), 0, 19 * 10);
+            graphics.drawText(String.format("Looking pos: %s(%d, %d, %d)", hit.getFace().name(), hit.getPos().getX(), hit.getPos().getY(), hit.getPos().getZ()), 0, 19 * 11);
+            graphics.drawText(String.format("Looking at: (%f, %f, %f)", hit.getHit().x, hit.getHit().y, hit.getHit().z), 0, 19 * 12);
+            graphics.drawText(String.format("Bounding box: %s", blockAABB.toString(new DecimalFormat("#.##"))), 0, 19 * 13);
+//            fontRenderer.renderText(String.format("Collided with the looking box: %s", blockAABB.testAABB(box)), 0, 19*12, 0xffffffff);
 
-            //fontRenderer.drawText(String.format("[%f, %f, %f, %f, %f, %f]", box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ), 0, 0, 0xffffffff, 32);
-            //fontRenderer.drawText(String.format("[%f, %f, %f, %f, %f, %f]", blockAABB.minX, blockAABB.minY, blockAABB.minZ, blockAABB.maxX, blockAABB.maxY, blockAABB.maxZ), 0, 35, 0xffffffff, 32);
-            //fontRenderer.drawText(String.format("%s", blockAABB.testAABB(box) ? "coll" : "fine"), 0, 69, 0xffffffff, 32);
+            //fontRenderer.renderText(String.format("[%f, %f, %f, %f, %f, %f]", box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ), 0, 0, 0xffffffff, 32);
+            //fontRenderer.renderText(String.format("[%f, %f, %f, %f, %f, %f]", blockAABB.minX, blockAABB.minY, blockAABB.minZ, blockAABB.maxX, blockAABB.maxY, blockAABB.maxZ), 0, 35, 0xffffffff, 32);
+            //fontRenderer.renderText(String.format("%s", blockAABB.testAABB(box) ? "coll" : "fine"), 0, 69, 0xffffffff, 32);
         }
     }
 
