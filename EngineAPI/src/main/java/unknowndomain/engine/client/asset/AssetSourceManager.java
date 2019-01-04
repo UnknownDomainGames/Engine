@@ -12,6 +12,8 @@ public interface AssetSourceManager {
 
     List<AssetSource> getSources();
 
+    void notifyChange();
+
     void addChangeListener(Consumer<AssetSourceManager> changeListener);
 
     void removeChangeListener(Consumer<AssetSourceManager> changeListener);

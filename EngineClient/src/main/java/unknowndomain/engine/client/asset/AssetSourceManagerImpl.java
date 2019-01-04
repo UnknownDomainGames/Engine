@@ -1,8 +1,5 @@
 package unknowndomain.engine.client.asset;
 
-import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
-import com.github.mouse0w0.lib4j.observable.collection.ObservableList;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -10,13 +7,9 @@ import java.util.function.Consumer;
 
 public class AssetSourceManagerImpl implements AssetSourceManager {
 
-    private final ObservableList<AssetSource> assetSources = ObservableCollections.observableList(new LinkedList<>());
+    private final List<AssetSource> assetSources = new LinkedList<>();
 
     private final List<Consumer<AssetSourceManager>> onChangeListeners = new LinkedList<>();
-
-    public AssetSourceManagerImpl() {
-        assetSources.addChangeListener(change -> notifyChange());
-    }
 
     @Override
     public Optional<AssetSource> getSource(String path) {
@@ -44,7 +37,8 @@ public class AssetSourceManagerImpl implements AssetSourceManager {
         return assetSources;
     }
 
-    protected void notifyChange() {
+    @Override
+    public void notifyChange() {
         for (Consumer<AssetSourceManager> consumer : onChangeListeners) {
             consumer.accept(this);
         }
