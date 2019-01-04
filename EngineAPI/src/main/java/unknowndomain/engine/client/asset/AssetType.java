@@ -6,28 +6,34 @@ public class AssetType<T extends Asset> {
 
     private final Class<T> assetClass;
     private final String name;
+    private final String fileNameExtension;
     private final AssetFactory<T> factory;
 
-    AssetType(@Nonnull Class<T> assetClass, @Nonnull String name, AssetFactory<T> factory) {
+    AssetType(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull String fileNameExtension, @Nonnull AssetFactory<T> factory) {
         this.assetClass = assetClass;
         this.name = name;
+        this.fileNameExtension = fileNameExtension;
         this.factory = factory;
     }
 
+    @Nonnull
     public Class<T> getAssetClass() {
         return assetClass;
     }
 
+    @Nonnull
     public String getName() {
         return name;
     }
 
-    public AssetFactory<T> getFactory() {
-        return factory;
+    @Nonnull
+    public String getFileNameExtension() {
+        return fileNameExtension;
     }
 
-    public T getAsset(AssetPath path) {
-        return factory.getAsset(this, path);
+    @Nonnull
+    public AssetFactory<T> getFactory() {
+        return factory;
     }
 
     @Override
@@ -37,17 +43,12 @@ public class AssetType<T extends Asset> {
 
         AssetType<?> assetType = (AssetType<?>) o;
 
-        if (!assetClass.equals(assetType.assetClass)) return false;
-        if (!name.equals(assetType.name)) return false;
-        return factory.equals(assetType.factory);
+        return name.equals(assetType.name);
     }
 
     @Override
     public int hashCode() {
-        int result = assetClass.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + factory.hashCode();
-        return result;
+        return name.hashCode();
     }
 
     @Override
@@ -55,7 +56,6 @@ public class AssetType<T extends Asset> {
         return "AssetType{" +
                 "assetClass=" + assetClass +
                 ", name='" + name + '\'' +
-                ", factory=" + factory +
                 '}';
     }
 }

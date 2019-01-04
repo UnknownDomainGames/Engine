@@ -14,7 +14,7 @@ import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.input.keybinding.Keybindings;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
-import unknowndomain.engine.client.rendering.display.DefaultGameWindow;
+import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
 import unknowndomain.engine.client.rendering.gui.GuiRenderer;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
@@ -44,7 +44,7 @@ import java.util.UUID;
 
 public class GameClientStandalone extends GameServerFullAsync {
 
-    private DefaultGameWindow window;
+    private GLFWGameWindow window;
     private ClientContextImpl renderContext;
     private ResourceManager resourceManager;
 
@@ -59,7 +59,7 @@ public class GameClientStandalone extends GameServerFullAsync {
 
     private boolean stopped;
 
-    public GameClientStandalone(Option option, ModRepository repository, ModStore store, EventBus bus, DefaultGameWindow window) {
+    public GameClientStandalone(Option option, ModRepository repository, ModStore store, EventBus bus, GLFWGameWindow window) {
         super(option, repository, store, bus);
         this.window = window;
 
@@ -124,7 +124,9 @@ public class GameClientStandalone extends GameServerFullAsync {
         actionManager = new ActionManagerImpl(context, this.context.getRegistry().getRegistry(Action.class));
         actionManager.registerAll(buildActions().toArray(new Action[0]));
         keyBindingManager = new KeyBindingManager(actionManager);
-        Keybindings.INSTANCE.setup(keyBindingManager); // hardcode setup
+        Keybindings.INSTANCE.setup(keyBindingManager); // TODO: Remove it hardcode setup
+        window.addKeyCallback(keyBindingManager::handleKey);
+        window.addMouseCallback(keyBindingManager::handleMouse);
 
         List<Renderer.Factory> factories = Lists.newArrayList();
         ClientRegistryEvent clientRegistryEvent = new ClientRegistryEvent(factories);
@@ -143,9 +145,7 @@ public class GameClientStandalone extends GameServerFullAsync {
         });
 
         renderContext = new ClientContextImpl(Thread.currentThread(), factories, window, player);
-
         renderContext.build(context, resourceManager);
-
         renderContext.setCamera(new FirstPersonCamera(player));
     }
 
@@ -165,6 +165,7 @@ public class GameClientStandalone extends GameServerFullAsync {
         player.getControlledEntity().getPosition().set(1, 3, 1);
 
         entityController = new EntityCameraController(player);
+        window.addCursorCallback(entityController::handleCursorMove);
 
         eventBus.post(new GameReadyEvent(context));
 

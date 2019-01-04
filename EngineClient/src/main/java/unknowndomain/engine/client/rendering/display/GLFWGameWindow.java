@@ -4,15 +4,17 @@ import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
-import unknowndomain.engine.client.EngineClient;
 
 import java.io.PrintStream;
+import java.util.LinkedList;
+import java.util.List;
 
+import static java.util.Objects.requireNonNull;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class DefaultGameWindow implements GameWindow {
+public class GLFWGameWindow implements GameWindow {
 
     private long handle;
     private String title;
@@ -22,11 +24,14 @@ public class DefaultGameWindow implements GameWindow {
     private boolean resized = false;
     private Matrix4f projection;
 
-    private EngineClient engineClient;
     private boolean paused;
 
-    public DefaultGameWindow(EngineClient game, int width, int height, String title) {
-        this.engineClient = game;
+    private final List<KeyCallback> keyCallbacks = new LinkedList<>();
+    private final List<MouseCallback> mouseCallbacks = new LinkedList<>();
+    private final List<CursorCallback> cursorCallbacks = new LinkedList<>();
+    private final List<ScrollCallback> scrollCallbacks = new LinkedList<>();
+
+    public GLFWGameWindow(int width, int height, String title) {
         this.title = title;
         this.width = width;
         this.height = height;
@@ -81,6 +86,46 @@ public class DefaultGameWindow implements GameWindow {
     @Override
     public void disableCursor() {
         glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+
+    @Override
+    public void addKeyCallback(KeyCallback callback) {
+        keyCallbacks.add(requireNonNull(callback));
+    }
+
+    @Override
+    public void removeKeyCallback(KeyCallback callback) {
+        keyCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addMouseCallback(MouseCallback callback) {
+        mouseCallbacks.add(requireNonNull(callback));
+    }
+
+    @Override
+    public void removeMouseCallback(MouseCallback callback) {
+        mouseCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addCursorCallback(CursorCallback callback) {
+        cursorCallbacks.add(requireNonNull(callback));
+    }
+
+    @Override
+    public void removeCursorCallback(CursorCallback callback) {
+        cursorCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addScrollCallback(ScrollCallback callback) {
+        scrollCallbacks.add(requireNonNull(callback));
+    }
+
+    @Override
+    public void removeScrollCallback(ScrollCallback callback) {
+        scrollCallbacks.remove(callback);
     }
 
     public boolean shouldClose() {
@@ -170,35 +215,37 @@ public class DefaultGameWindow implements GameWindow {
         disableCursor();
     }
 
-
     private void setupKeyCallback() {
         new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
-                if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
-                    if (paused) {
-                        disableCursor();
-                        paused = false;
-                    } else {
-                        showCursor();
-                        paused = true;
-                    }
-                }
-
-                if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
-                    System.exit(0); //FIXME: we need a way for exit game.
-                }
-
-                engineClient.getCurrentGame().getKeyBindingManager().handleKey(key, scancode, action, mods);
+                keyCallbacks.forEach(keyCallback -> keyCallback.invoke(key, scancode, action, mods));
             }
         }.set(handle);
+
+        // TODO: Remove it.
+        addKeyCallback((key, scancode, action, mods) -> {
+            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
+                if (paused) {
+                    disableCursor();
+                    paused = false;
+                } else {
+                    showCursor();
+                    paused = true;
+                }
+            }
+
+            if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
+                System.exit(0); //FIXME: we need a way for exit game.
+            }
+        });
     }
 
     private void setupMouseCallback() {
         new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int button, int action, int mods) {
-                engineClient.getCurrentGame().getKeyBindingManager().handleMouse(button, action, mods);
+                mouseCallbacks.forEach(mouseCallback -> mouseCallback.invoke(button, action, mods));
             }
         }.set(handle);
     }
@@ -207,7 +254,7 @@ public class DefaultGameWindow implements GameWindow {
         new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xpos, double ypos) {
-                engineClient.getCurrentGame().getEntityController().handleCursorMove(xpos, ypos);
+                cursorCallbacks.forEach(cursorCallback -> cursorCallback.invoke(xpos, ypos));
             }
         }.set(handle);
     }
@@ -217,7 +264,7 @@ public class DefaultGameWindow implements GameWindow {
         new GLFWScrollCallback() {
             @Override
             public void invoke(long window, double xoffset, double yoffset) {
-//                engineClient.getCurrentGame().getEntityController().handleScroll(xoffset, yoffset);
+                scrollCallbacks.forEach(scrollCallback -> scrollCallback.invoke(xoffset, yoffset));
             }
         }.set(handle);
     }
