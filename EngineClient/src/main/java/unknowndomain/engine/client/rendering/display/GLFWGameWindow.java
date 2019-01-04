@@ -14,7 +14,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class DefaultGameWindow implements GameWindow {
+public class GLFWGameWindow implements GameWindow {
 
     private long handle;
     private String title;
@@ -31,7 +31,7 @@ public class DefaultGameWindow implements GameWindow {
     private final List<CursorCallback> cursorCallbacks = new LinkedList<>();
     private final List<ScrollCallback> scrollCallbacks = new LinkedList<>();
 
-    public DefaultGameWindow(int width, int height, String title) {
+    public GLFWGameWindow(int width, int height, String title) {
         this.title = title;
         this.width = width;
         this.height = height;

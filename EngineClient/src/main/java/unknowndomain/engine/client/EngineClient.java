@@ -3,7 +3,7 @@ package unknowndomain.engine.client;
 import com.google.common.collect.Lists;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.client.game.GameClientStandalone;
-import unknowndomain.engine.client.rendering.display.DefaultGameWindow;
+import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.game.Game;
@@ -21,7 +21,7 @@ public class EngineClient implements Engine {
      * Rendering section
      */
 
-    private DefaultGameWindow window;
+    private GLFWGameWindow window;
 
     private EventBus bus;
 
@@ -31,7 +31,7 @@ public class EngineClient implements Engine {
     private GameClientStandalone game;
 
     EngineClient(int width, int height) {
-        window = new DefaultGameWindow(width, height, UnknownDomain.getName());
+        window = new GLFWGameWindow(width, height, UnknownDomain.getName());
     }
 
     void init() {
