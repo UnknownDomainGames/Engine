@@ -10,6 +10,7 @@ import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
+import unknowndomain.engine.client.gui.internal.FontHelper;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
@@ -28,7 +29,7 @@ import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.memUTF16;
 
-public final class TTFontHelper {
+public final class TTFontHelper implements FontHelper {
 
     public static final int SUPPORTING_CHARACTER_COUNT = 0x10000;
 
@@ -38,13 +39,48 @@ public final class TTFontHelper {
     private final Runnable beforeTextRender;
     private final Runnable afterTextRender;
 
+    private Font defualtFont;
+
     public TTFontHelper(Runnable beforeTextRender, Runnable afterTextRender) {
         this.beforeTextRender = beforeTextRender;
         this.afterTextRender = afterTextRender;
     }
 
-    public Font getFont(NativeTTFont nativeTTFont) {
-        return nativeTTFont.getFont();
+    @Override
+    public Font getDefaultFont() {
+        return defualtFont;
+    }
+
+    public void setDefaultFont(Font defaultFont) {
+        this.defualtFont = defaultFont;
+    }
+
+    @Override
+    public Font loadFont(InputStream input, float size) throws IOException {
+        return loadNativeFont(loadNativeFontParent(input), size).getFont();
+    }
+
+    @Override
+    public float computeTextWidth(CharSequence text, Font font) {
+        STBTTFontinfo info = getNativeFont(font).getParent().getFontinfo();
+        int width = 0;
+
+        try (MemoryStack stack = stackPush()) {
+            IntBuffer pCodePoint = stack.mallocInt(1);
+            IntBuffer pAdvancedWidth = stack.mallocInt(1);
+            IntBuffer pLeftSideBearing = stack.mallocInt(1);
+
+            int i = 0;
+            while (i < text.length()) {
+                i += getCodePoint(text, i, pCodePoint);
+                int cp = pCodePoint.get(0);
+
+                stbtt_GetCodepointHMetrics(info, cp, pAdvancedWidth, pLeftSideBearing);
+                width += pAdvancedWidth.get(0);
+            }
+        }
+
+        return width * stbtt_ScaleForPixelHeight(info, font.getSize());
     }
 
     public NativeTTFont getNativeFont(Font font) {

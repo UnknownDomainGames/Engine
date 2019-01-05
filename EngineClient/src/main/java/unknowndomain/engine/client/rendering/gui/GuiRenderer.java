@@ -1,20 +1,31 @@
 package unknowndomain.engine.client.rendering.gui;
 
 import org.joml.*;
+import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.gui.Container;
-import unknowndomain.engine.client.gui.Graphics;
 import unknowndomain.engine.client.gui.Scene;
+import unknowndomain.engine.client.gui.internal.FontHelper;
+import unknowndomain.engine.client.gui.internal.Internal;
+import unknowndomain.engine.client.gui.layout.VBox;
+import unknowndomain.engine.client.gui.rendering.Graphics;
+import unknowndomain.engine.client.gui.text.Font;
+import unknowndomain.engine.client.gui.text.Text;
 import unknowndomain.engine.client.rendering.Renderer;
+import unknowndomain.engine.client.rendering.block.BlockRenderer;
+import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.util.Color;
+import unknowndomain.game.Blocks;
 
+import java.lang.Math;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
@@ -22,6 +33,7 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
+import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
 /**
  * render for any gui
@@ -30,7 +42,7 @@ public class GuiRenderer implements Renderer {
 
     private final ShaderProgram shader;
 
-    private final int u_ProjMatrix, u_WindowSize, u_ClipRect, u_RenderText;
+    private final int u_ProjMatrix, u_ModelMatrix, u_WindowSize, u_ClipRect, u_RenderText, u_UsingTexture;
 
     private final TTFontHelper fontHelper;
     private final Graphics graphics;
@@ -44,9 +56,11 @@ public class GuiRenderer implements Renderer {
         shader = new ShaderProgram();
         shader.init(vertexShader, fragShader);
         u_ProjMatrix = shader.getUniformLocation("u_ProjMatrix");
+        u_ModelMatrix = shader.getUniformLocation("u_ModelMatrix");
         u_WindowSize = shader.getUniformLocation("u_WindowSize");
         u_ClipRect = shader.getUniformLocation("u_ClipRect");
         u_RenderText = shader.getUniformLocation("u_RenderText");
+        u_UsingTexture = shader.getUniformLocation("u_UsingTexture");
 
         this.fontHelper = new TTFontHelper(() -> {
             glEnable(GL_TEXTURE_2D);
@@ -55,14 +69,29 @@ public class GuiRenderer implements Renderer {
             glDisable(GL_TEXTURE_2D);
             setUniform(u_RenderText, false);
         });
-        this.graphics = new GraphicsImpl(this.fontHelper);
-        graphics.setFont(fontHelper.loadNativeFont(defaultFontData, 16).getFont());
+        Font defaultFont = fontHelper.loadNativeFont(defaultFontData, 16).getFont();
+        fontHelper.setDefaultFont(defaultFont);
 
+        this.graphics = new GraphicsImpl(this.fontHelper);
+        graphics.setFont(defaultFont);
     }
 
     @Override
     public void init(ClientContext context) {
         this.context = context;
+        Internal.setContext(new Internal.Context() {
+            @Override
+            public FontHelper getFontHelper() {
+                return fontHelper;
+            }
+        });
+
+        VBox vBox = new VBox();
+        vBox.spacing().set(5);
+        vBox.getChildren().add(new Text("Hello GUI!"));
+        vBox.getChildren().add(new Text("Hello GUI!"));
+        Scene debug = new Scene(vBox);
+        hudScene.add(debug);
     }
 
     @Override
@@ -77,7 +106,7 @@ public class GuiRenderer implements Renderer {
             renderScene(scene);
         }
 
-        debug(context);
+//        debug(context);
 
         endRender();
     }
@@ -102,7 +131,8 @@ public class GuiRenderer implements Renderer {
     private void resize() {
         if (context.getWindow().isResized()) {
             int width = context.getWindow().getWidth(), height = context.getWindow().getHeight();
-            setUniform(u_ProjMatrix, new Matrix4f().setOrtho(0, width, height, 0, 1, -1));
+            setUniform(u_ProjMatrix, new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
+            setUniform(u_ModelMatrix, new Matrix4f());
             setUniform(u_WindowSize, new Vector2f(width, height));
             setUniform(u_ClipRect, new Vector4f(0, 0, width, height));
         }
@@ -116,11 +146,17 @@ public class GuiRenderer implements Renderer {
     }
 
     private void renderScene(Scene scene) {
+        if (context.getWindow().isResized()) {
+            scene.setSize(context.getWindow().getWidth(), context.getWindow().getHeight());
+        }
+
+        scene.update();
+
         Container root = scene.getRoot();
-        if (!root.isVisible())
+        if (!root.visible().get())
             return;
 
-        root.getRenderer().render(graphics);
+        root.getRenderer().render(root, graphics);
     }
 
     private long lastFPS = getTime();
@@ -140,6 +176,8 @@ public class GuiRenderer implements Renderer {
         }
         fps++;
     }
+
+    private final BlockRenderer blockRenderer = new ModelBlockRenderer();
 
     private void debug(ClientContext context) {
         updateFPS();
@@ -176,6 +214,48 @@ public class GuiRenderer implements Renderer {
             //fontRenderer.renderText(String.format("[%f, %f, %f, %f, %f, %f]", blockAABB.minX, blockAABB.minY, blockAABB.minZ, blockAABB.maxX, blockAABB.maxY, blockAABB.maxZ), 0, 35, 0xffffffff, 32);
             //fontRenderer.renderText(String.format("%s", blockAABB.testAABB(box) ? "coll" : "fine"), 0, 69, 0xffffffff, 32);
         }
+
+//        testBlockRenderer();
+    }
+
+
+    private void testBlockRenderer() {
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_POINT_SMOOTH);
+        glDisable(GL_POLYGON_SMOOTH);
+        setUniform(u_ModelMatrix, new Matrix4f()
+//                .rotate(30, 1, 0, 0)
+//                .rotate(-30, 0, 1, 0)
+                .translate(context.getWindow().getWidth() - 75, context.getWindow().getHeight() - 25, 0)
+//                .translate(-0.5f, -0.5f, -0.5f)
+//                .rotate((float) Math.toRadians(180), 0, 0, 1)
+                .rotate((float) Math.toRadians(195), 1, 0, 0)
+                .rotate((float) Math.toRadians(-30), 0, 1, 0)
+                .scale(25));
+//                .translate(50, 50, 0)
+//                .rotate(-30, 0, 1, 0)
+//                .rotate(165, 1, 0, 0));
+
+        glEnable(GL11.GL_DEPTH_TEST);
+        glEnable(GL11.GL_CULL_FACE);
+        glEnable(GL11.GL_TEXTURE_2D);
+        setUniform(u_UsingTexture, true);
+        context.getTextureManager().getTextureAtlas(BLOCK).bind();
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL_TRIANGLES, true, true, true);
+        blockRenderer.render(Blocks.GRASS, buffer);
+
+        tessellator.draw();
+
+        setUniform(u_UsingTexture, false);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL11.GL_CULL_FACE);
+        glDisable(GL11.GL_TEXTURE_2D);
+        glDisable(GL11.GL_DEPTH_TEST);
+
+        setUniform(u_ModelMatrix, new Matrix4f());
     }
 
     @Override

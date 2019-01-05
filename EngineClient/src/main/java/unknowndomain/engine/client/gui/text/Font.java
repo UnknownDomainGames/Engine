@@ -1,8 +1,14 @@
 package unknowndomain.engine.client.gui.text;
 
+import unknowndomain.engine.client.gui.internal.Internal;
+
 import static org.apache.commons.lang3.Validate.notEmpty;
 
 public class Font {
+
+    public static Font getDefaultFont() {
+        return Internal.getContext().getFontHelper().getDefaultFont();
+    }
 
     private final String family;
     private final String style;
@@ -59,7 +65,7 @@ public class Font {
         return "Font{" +
                 "family='" + family + '\'' +
                 ", style='" + style + '\'' +
-                ", size=" + size +
+                ", getSize=" + size +
                 '}';
     }
 }

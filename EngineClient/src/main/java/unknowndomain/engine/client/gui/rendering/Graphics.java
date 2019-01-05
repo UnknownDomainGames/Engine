@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.gui;
+package unknowndomain.engine.client.gui.rendering;
 
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
