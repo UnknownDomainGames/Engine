@@ -30,7 +30,7 @@ import static org.lwjgl.system.MemoryUtil.memUTF16;
 
 public final class TTFontHelper {
 
-    public static final int SUPPORTING_CHARACTER_COUNT = 256;
+    public static final int SUPPORTING_CHARACTER_COUNT = 0x10000;
 
     private final Map<Font, NativeTTFont> loadedFont = new HashMap<>();
     private final Table<String, String, NativeTTFontParent> loadedFontParent = Tables.newCustomTable(new HashMap<>(), HashMap::new);
