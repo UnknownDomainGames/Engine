@@ -10,4 +10,5 @@ public interface BlockRenderer extends Disposable {
 
     void render(Block block, ChunkCache chunkCache, BlockPos pos, BufferBuilder buffer);
 
+    void render(Block block, BufferBuilder buffer);
 }
