@@ -1,4 +1,5 @@
 package unknowndomain.engine.world.chunk;
+
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.util.BitArray;
 
@@ -13,24 +14,18 @@ public class BlockStorage {
     }
 
     public Block getBlock(int x, int y, int z) {
-//        if (y < 0) {
-//            return context.getBlockRegistry().getValue(0);
-//        }
-        return getBlock((short) (((x & 0xF) << 8) | ((y & 0xF) << 4) | z & 0xF));
+        return chunk.getWorld().getGame().getContext().getBlockRegistry().getValue(getRawData(x, y, z));
     }
 
-    private Block getBlock(short posIndex) {
-        return chunk.getWorld().getGame().getContext().getBlockRegistry().getValue(data.get(posIndex));
+    public int getRawData(int x, int y, int z) {
+        return data.get(getPosIndex(x, y, z));
     }
 
     public Block setBlock(int x, int y, int z, Block block) {
-//        if (y < 0) {
-//            return context.getBlockRegistry().getValue(0);
-//        }
-        return setBlock((short) (((x & 0xF) << 8) | ((y & 0xF) << 4) | z & 0xF), block);
+        return chunk.getWorld().getGame().getContext().getBlockRegistry().getValue(data.getAndSet(getPosIndex(x, y, z), chunk.getWorld().getGame().getContext().getBlockRegistry().getId(block)));
     }
 
-    private Block setBlock(short posIndex, Block block) {
-        return chunk.getWorld().getGame().getContext().getBlockRegistry().getValue(data.getAndSet(posIndex, chunk.getWorld().getGame().getContext().getBlockRegistry().getId(block)));
+    private int getPosIndex(int x, int y, int z) {
+        return ((x & 0xF) << 8) | ((y & 0xF) << 4) | z & 0xF;
     }
 }
