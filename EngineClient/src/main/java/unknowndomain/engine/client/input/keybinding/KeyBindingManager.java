@@ -11,6 +11,7 @@ import org.lwjgl.glfw.GLFW;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import unknowndomain.engine.Engine;
 import unknowndomain.engine.Tickable;
 import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.game.GameContext;
@@ -61,8 +62,10 @@ public class KeyBindingManager implements Tickable {
         Key key = Key.valueOf(code);
         pressedKey.add(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
+        Engine.LOGGER.info(key + " Press " + modifiers);
         for (KeyBinding binding : keyBindings) {
             binding.setPressed(true);
+            Engine.LOGGER.info("    binded " + binding.getUniqueName());
         }
         // Trigger single key
         if (modifiers != 0) {
@@ -74,8 +77,10 @@ public class KeyBindingManager implements Tickable {
         Key key = Key.valueOf(code);
         pressedKey.remove(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
+        Engine.LOGGER.info(key + " Release " + modifiers);
         for (KeyBinding binding : keyBindings) {
             binding.setPressed(false);
+            Engine.LOGGER.info("    binded " + binding.getUniqueName());
         }
         // Trigger single key
         if (modifiers != 0) {
@@ -91,7 +96,7 @@ public class KeyBindingManager implements Tickable {
      * @return An index value with last 4-bits presenting the modifiers
      */
     protected int getIndex(int code, int modifiers) {
-        return modifiers + code << 4;
+        return modifiers + (code << 4);
     }
 
     public void handleMouse(int button, int action, int modifiers) {

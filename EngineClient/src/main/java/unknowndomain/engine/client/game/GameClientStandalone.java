@@ -1,6 +1,8 @@
 package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
+
+import unknowndomain.engine.Engine;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.action.ActionBuilderImpl;
 import unknowndomain.engine.action.ActionManager;
@@ -277,7 +279,7 @@ public class GameClientStandalone extends GameServerFullAsync {
                 getWorld().setBlock(hit.getPos(), c.getBlockAir());
             }
         }, ActionMode.PRESS));
-        manager.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (c) -> {
+        manager.register(KeyBinding.create("player.mouse.r", Key.MOUSE_BUTTON_RIGHT, (c) -> {
             BlockPrototype.Hit hit = getRenderContext().getHit();
             if (hit != null) {
                 getWorld().setBlock(hit.getFace().offset(hit.getPos()), Blocks.DIRT);
