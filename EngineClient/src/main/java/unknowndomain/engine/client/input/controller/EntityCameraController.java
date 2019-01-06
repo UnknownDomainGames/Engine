@@ -35,6 +35,7 @@ public class EntityCameraController extends EntityController {
                 } else if (motionState[MotionType.BACKWARD.ordinal()]) {
                     movingDirection.x = -1;
                 }
+                break;
             case LEFT:
             case RIGHT:
                 if (motionState[MotionType.LEFT.ordinal()] == motionState[MotionType.RIGHT.ordinal()]) {
@@ -44,6 +45,7 @@ public class EntityCameraController extends EntityController {
                 } else if (motionState[MotionType.RIGHT.ordinal()]) {
                     movingDirection.z = 1;
                 }
+                break;
             case UP:
             case DOWN:
                 if (motionState[MotionType.UP.ordinal()] == motionState[MotionType.DOWN.ordinal()]) {
@@ -53,6 +55,7 @@ public class EntityCameraController extends EntityController {
                 } else if (motionState[MotionType.DOWN.ordinal()]) {
                     movingDirection.y = -1;
                 }
+                break;
         }
         updateMotion();
     }
@@ -74,7 +77,11 @@ public class EntityCameraController extends EntityController {
 
     private void updateMotion() {
         Vector3f rotation = getPlayer().getControlledEntity().getRotation();
-        movingDirection.mul(MOTION_FACTOR, getPlayer().getControlledEntity().getMotion()).rotateAxis((float) -Math.toRadians(rotation.x), 0, 1, 0);
+        if (movingDirection.lengthSquared() != 0) {
+            movingDirection.normalize(getPlayer().getControlledEntity().getMotion()).mul(MOTION_FACTOR).rotateAxis((float) -Math.toRadians(rotation.x), 0, 1, 0);
+        } else {
+            getPlayer().getControlledEntity().getMotion().set(0);
+        }
 //                .rotateAxis(rotation.x, 0, 1, 0).rotateY(rotation.y);
     }
 }
