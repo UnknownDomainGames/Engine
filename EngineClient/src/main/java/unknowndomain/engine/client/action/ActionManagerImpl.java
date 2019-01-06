@@ -11,6 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 
+ * @Deprecated Replaced with KeyBinding
+ */
+@Deprecated
 public class ActionManagerImpl implements ActionManager {
     private Map<String, ActionRuntime> runningAction = new HashMap<>();
 
@@ -101,7 +106,8 @@ public class ActionManagerImpl implements ActionManager {
 
     @Override
     public void start(String action) {
-        if (runningAction.containsKey(action)) return;
+        if (runningAction.containsKey(action))
+            return;
 
         Action value = getValue(action);
         if (value != null) {

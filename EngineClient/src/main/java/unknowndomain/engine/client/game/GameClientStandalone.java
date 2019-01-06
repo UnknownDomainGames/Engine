@@ -10,7 +10,11 @@ import unknowndomain.engine.client.action.ActionManagerImpl;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.controller.MotionType;
+import unknowndomain.engine.client.input.keybinding.ActionMode;
+import unknowndomain.engine.client.input.keybinding.Key;
+import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
+import unknowndomain.engine.client.input.keybinding.KeyModifier;
 import unknowndomain.engine.client.input.keybinding.Keybindings;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
@@ -38,6 +42,7 @@ import unknowndomain.game.Blocks;
 import unknowndomain.game.DefaultGameMode;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -121,9 +126,13 @@ public class GameClientStandalone extends GameServerFullAsync {
     protected void registerStage() {
         super.registerStage();
 
-        actionManager = new ActionManagerImpl(context, this.context.getRegistry().getRegistry(Action.class));
-        actionManager.registerAll(buildActions().toArray(new Action[0]));
-        keyBindingManager = new KeyBindingManager(actionManager);
+        // actionManager = new ActionManagerImpl(context,
+        // this.context.getRegistry().getRegistry(Action.class));
+        // actionManager.registerAll(buildActions().toArray(new Action[0]));
+        keyBindingManager = new KeyBindingManager(context, context.getRegistry().getRegistry(KeyBinding.class));
+        registerKeyBindings(keyBindingManager);
+        // TODO fire KeyBindingRegistryEvent or something
+
         Keybindings.INSTANCE.setup(keyBindingManager); // TODO: Remove it hardcode setup
         window.addKeyCallback(keyBindingManager::handleKey);
         window.addMouseCallback(keyBindingManager::handleMouse);
@@ -136,12 +145,9 @@ public class GameClientStandalone extends GameServerFullAsync {
         factories.add((context, manager) -> {
             Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
             byte[] cache = resource.cache();
-            return new GuiRenderer(
-                    ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
-                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(),
-                            ShaderType.VERTEX_SHADER),
-                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(),
-                            ShaderType.FRAGMENT_SHADER));
+            return new GuiRenderer(ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
+                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(), ShaderType.VERTEX_SHADER),
+                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(), ShaderType.FRAGMENT_SHADER));
         });
 
         renderContext = new ClientContextImpl(Thread.currentThread(), factories, window, player);
@@ -220,7 +226,6 @@ public class GameClientStandalone extends GameServerFullAsync {
         }
     }
 
-
     // private void sync() {
     // float loopSlot = 1f / 60.0f;
     // double endTime = timer.getLastLoopTime() + loopSlot;
@@ -233,36 +238,51 @@ public class GameClientStandalone extends GameServerFullAsync {
     // }
 
     // dirty things below...
-
+    /**
+     * Replaced by registerKeyBindings
+     * 
+     * @return
+     */
+    @Deprecated
     List<Action> buildActions() {
-        return Lists.newArrayList(
-                ActionBuilderImpl.create("player.move.forward").setStartHandler((c) -> getEntityController().handleMotion(MotionType.FORWARD, true))
-                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.FORWARD, false)).build(),
-                ActionBuilderImpl.create("player.move.backward").setStartHandler((c) -> getEntityController().handleMotion(MotionType.BACKWARD, true))
-                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.BACKWARD, false)).build(),
-                ActionBuilderImpl.create("player.move.left").setStartHandler((c) -> getEntityController().handleMotion(MotionType.LEFT, true))
-                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.LEFT, false)).build(),
-                ActionBuilderImpl.create("player.move.right").setStartHandler((c) -> getEntityController().handleMotion(MotionType.RIGHT, true))
-                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.RIGHT, false)).build(),
-                ActionBuilderImpl.create("player.move.jump").setStartHandler((c) -> getEntityController().handleMotion(MotionType.UP, true))
-                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.UP, false)).build(),
-                ActionBuilderImpl.create("player.move.sneak").setStartHandler((c) -> getEntityController().handleMotion(MotionType.DOWN, true))
-                        .setEndHandler((c, i) -> getEntityController().handleMotion(MotionType.DOWN, false)).build(),
-                ActionBuilderImpl.create("player.mouse.left").setStartHandler((c) -> {
-                    BlockPrototype.Hit hit = getRenderContext().getHit();
-                    if (hit != null) {
-                        getWorld().setBlock(hit.getPos(), c.getBlockAir());
-                    }
-                })
-                        .build(),
-                ActionBuilderImpl.create("player.mouse.right").setStartHandler((c) -> {
-                    BlockPrototype.Hit hit = getRenderContext().getHit();
-                    if (hit != null) {
-                        getWorld().setBlock(hit.getFace().offset(hit.getPos()), Blocks.DIRT);
-                    }
-                })
-                        .build()
-        );
+        return Collections.emptyList();
+//        return Lists.newArrayList(ActionBuilderImpl.create("player.move.forward").setStartHandler().setEndHandler().build(),
+//                ActionBuilderImpl.create("player.move.backward").setStartHandler().setEndHandler().build(), ActionBuilderImpl.create("player.move.left").setStartHandler().setEndHandler().build(),
+//                ActionBuilderImpl.create("player.move.right").setStartHandler().setEndHandler().build(), ActionBuilderImpl.create("player.move.jump").setStartHandler().setEndHandler().build(),
+//                ActionBuilderImpl.create("player.move.sneak").setStartHandler().setEndHandler().build(), ActionBuilderImpl.create("player.mouse.left").setStartHandler().build(),
+//                ActionBuilderImpl.create("player.mouse.right").setStartHandler().build());
+    }
+
+    /**
+     * For now. Registers the key bindings
+     * 
+     * @param manager The KeyBindingManager to register the bindings
+     */
+    void registerKeyBindings(KeyBindingManager manager) {
+        manager.register(KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
+                .endAction((c, i) -> getEntityController().handleMotion(MotionType.FORWARD, false)));
+        manager.register(KeyBinding.create("player.move.backward", Key.KEY_S, (c) -> getEntityController().handleMotion(MotionType.BACKWARD, true), ActionMode.PRESS)
+                .endAction((c, i) -> getEntityController().handleMotion(MotionType.BACKWARD, false)));
+        manager.register(KeyBinding.create("player.move.left", Key.KEY_A, (c) -> getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
+                .endAction((c, i) -> getEntityController().handleMotion(MotionType.LEFT, false)));
+        manager.register(KeyBinding.create("player.move.right", Key.KEY_D, (c) -> getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
+                .endAction((c, i) -> getEntityController().handleMotion(MotionType.RIGHT, false)));
+        manager.register(KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
+                .endAction((c, i) -> getEntityController().handleMotion(MotionType.UP, false)));
+        manager.register(KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
+                .endAction((c, i) -> getEntityController().handleMotion(MotionType.DOWN, false)));
+        manager.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
+            BlockPrototype.Hit hit = getRenderContext().getHit();
+            if (hit != null) {
+                getWorld().setBlock(hit.getPos(), c.getBlockAir());
+            }
+        }, ActionMode.PRESS));
+        manager.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (c) -> {
+            BlockPrototype.Hit hit = getRenderContext().getHit();
+            if (hit != null) {
+                getWorld().setBlock(hit.getFace().offset(hit.getPos()), Blocks.DIRT);
+            }
+        }, ActionMode.PRESS));
     }
 
 //    private List<Action> buildActions() {
