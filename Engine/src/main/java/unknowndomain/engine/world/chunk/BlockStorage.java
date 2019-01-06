@@ -14,10 +14,10 @@ public class BlockStorage {
     }
 
     public Block getBlock(int x, int y, int z) {
-        return chunk.getWorld().getGame().getContext().getBlockRegistry().getValue(getRawData(x, y, z));
+        return chunk.getWorld().getGame().getContext().getBlockRegistry().getValue(getBlockId(x, y, z));
     }
 
-    public int getRawData(int x, int y, int z) {
+    public int getBlockId(int x, int y, int z) {
         return data.get(getPosIndex(x, y, z));
     }
 

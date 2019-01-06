@@ -55,8 +55,8 @@ public class ChunkImpl implements Chunk {
     }
 
     @Override
-    public int getRawData(int x, int y, int z) {
-        return blockStorage.getRawData(x, y, z);
+    public int getBlockId(int x, int y, int z) {
+        return blockStorage.getBlockId(x, y, z);
     }
 
     @Override

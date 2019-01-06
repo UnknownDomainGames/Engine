@@ -43,10 +43,10 @@ public interface Chunk {
         return getBlock(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    int getRawData(int x, int y, int z);
+    int getBlockId(int x, int y, int z);
 
-    default int getRawData(BlockPos pos) {
-        return getRawData(pos.getX(), pos.getY(), pos.getZ());
+    default int getBlockId(BlockPos pos) {
+        return getBlockId(pos.getX(), pos.getY(), pos.getZ());
     }
 
     Block setBlock(BlockPos pos, Block block);
