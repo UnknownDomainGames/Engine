@@ -9,10 +9,8 @@ import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.Scene;
 import unknowndomain.engine.client.gui.internal.FontHelper;
 import unknowndomain.engine.client.gui.internal.Internal;
-import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
-import unknowndomain.engine.client.gui.text.Text;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.block.BlockRenderer;
 import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
@@ -86,12 +84,12 @@ public class GuiRenderer implements Renderer {
             }
         });
 
-        VBox vBox = new VBox();
-        vBox.spacing().set(5);
-        vBox.getChildren().add(new Text("Hello GUI!"));
-        vBox.getChildren().add(new Text("Hello GUI!"));
-        Scene debug = new Scene(vBox);
-        hudScene.add(debug);
+//        VBox vBox = new VBox();
+//        vBox.spacing().set(5);
+//        vBox.getChildren().add(new Text("Hello GUI!"));
+//        vBox.getChildren().add(new Text("Hello GUI!"));
+//        Scene debug = new Scene(vBox);
+//        hudScene.add(debug);
     }
 
     @Override
@@ -106,7 +104,7 @@ public class GuiRenderer implements Renderer {
             renderScene(scene);
         }
 
-//        debug(context);
+        debug(context);
 
         endRender();
     }
