@@ -27,10 +27,10 @@ public class KeyBinding extends Impl<KeyBinding> {
     private final Consumer<GameContext> keyStartHandler;
     /** Handles keeping of the key */
     @Nullable
-    private BiConsumer<GameContext, Integer> keepHandler;
+    private Optional<BiConsumer<GameContext, Integer>> keepHandler;
     /** Handles release of the key */
     @Nullable
-    private BiConsumer<GameContext, Integer> endHandler;
+    private Optional<BiConsumer<GameContext, Integer>> endHandler;
     /** Time Elapsed while holding the key */
     private int timeElapsed;
 
@@ -40,6 +40,7 @@ public class KeyBinding extends Impl<KeyBinding> {
         this.code = code;
         this.actionMode = actionMode;
         this.mods = keyMods;
+        keepHandler = endHandler = Optional.empty();
     }
 
     /**
@@ -63,7 +64,7 @@ public class KeyBinding extends Impl<KeyBinding> {
      * @return This KeyBinding
      */
     public KeyBinding keepAction(BiConsumer<GameContext, Integer> keepHandler) {
-        this.keepHandler = keepHandler;
+        this.keepHandler = Optional.ofNullable(keepHandler);
         return this;
     }
 
@@ -74,7 +75,7 @@ public class KeyBinding extends Impl<KeyBinding> {
      * @return This KeyBinding
      */
     public KeyBinding endAction(BiConsumer<GameContext, Integer> endHandler) {
-        this.endHandler = endHandler;
+        this.endHandler = Optional.ofNullable(endHandler);
         return this;
     }
 
@@ -138,9 +139,8 @@ public class KeyBinding extends Impl<KeyBinding> {
      * @param gameContext
      * @param handler
      */
-    private void onKeepable(GameContext gameContext, BiConsumer<GameContext, Integer> handler) {
-        if (handler != null)
-            handler.accept(gameContext, Integer.valueOf(timeElapsed));
+    private void onKeepable(GameContext context, Optional<BiConsumer<GameContext, Integer>> handler) {
+        handler.ifPresent((handle) -> handle.accept(context, timeElapsed));
     }
 
 }
