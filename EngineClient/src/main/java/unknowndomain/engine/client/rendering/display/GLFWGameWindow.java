@@ -2,7 +2,8 @@ package unknowndomain.engine.client.rendering.display;
 
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.*;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
 import java.io.PrintStream;
@@ -30,6 +31,7 @@ public class GLFWGameWindow implements GameWindow {
     private final List<MouseCallback> mouseCallbacks = new LinkedList<>();
     private final List<CursorCallback> cursorCallbacks = new LinkedList<>();
     private final List<ScrollCallback> scrollCallbacks = new LinkedList<>();
+    private final List<CharCallback> charCallbacks = new LinkedList<>();
 
     public GLFWGameWindow(int width, int height, String title) {
         this.title = title;
@@ -128,6 +130,16 @@ public class GLFWGameWindow implements GameWindow {
         scrollCallbacks.remove(callback);
     }
 
+    @Override
+    public void addCharCallback(CharCallback callback) {
+        charCallbacks.add(requireNonNull(callback));
+    }
+
+    @Override
+    public void removeCharCallback(CharCallback callback) {
+        charCallbacks.remove(callback);
+    }
+
     public boolean shouldClose() {
         return glfwWindowShouldClose(handle);
     } // TODO: Remove it.
@@ -167,10 +179,28 @@ public class GLFWGameWindow implements GameWindow {
     }
 
     private void setupInput() {
-        setupMouseCallback();
-        setupCursorCallback();
-        setupKeyCallback();
-        setupScrollCallback();
+        glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> keyCallbacks.forEach(keyCallback -> keyCallback.invoke(key, scancode, action, mods)));
+        glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> mouseCallbacks.forEach(mouseCallback -> mouseCallback.invoke(button, action, mods)));
+        glfwSetCursorPosCallback(handle, (window, xpos, ypos) -> cursorCallbacks.forEach(cursorCallback -> cursorCallback.invoke(xpos, ypos)));
+        glfwSetScrollCallback(handle, (window, xoffset, yoffset) -> scrollCallbacks.forEach(scrollCallback -> scrollCallback.invoke(xoffset, yoffset)));
+        glfwSetCharCallback(handle, (window, codepoint) -> charCallbacks.forEach(charCallback -> charCallback.invoke((char) codepoint)));
+
+        // TODO: Remove it.
+        addKeyCallback((key, scancode, action, mods) -> {
+            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
+                if (paused) {
+                    disableCursor();
+                    paused = false;
+                } else {
+                    showCursor();
+                    paused = true;
+                }
+            }
+
+            if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
+                System.exit(0); //FIXME: we need a way for exit game.
+            }
+        });
     }
 
     private boolean checkCreated() {
@@ -178,10 +208,7 @@ public class GLFWGameWindow implements GameWindow {
     }
 
     private void initCallbacks() {
-        glfwSetFramebufferSizeCallback(handle, (window, width, height) -> {
-            setSize(width, height);
-        });
-//        glfwSetCharModsCallback(handle, (window, codepoint, mods) -> engineClient.handleTextInput(codepoint, mods));
+        glfwSetFramebufferSizeCallback(handle, (window, width, height) -> setSize(width, height));
     }
 
     private void initWindowHint() {
@@ -213,59 +240,5 @@ public class GLFWGameWindow implements GameWindow {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         // glViewport(0, 0, width, height);
         disableCursor();
-    }
-
-    private void setupKeyCallback() {
-        new GLFWKeyCallback() {
-            @Override
-            public void invoke(long window, int key, int scancode, int action, int mods) {
-                keyCallbacks.forEach(keyCallback -> keyCallback.invoke(key, scancode, action, mods));
-            }
-        }.set(handle);
-
-        // TODO: Remove it.
-        addKeyCallback((key, scancode, action, mods) -> {
-            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
-                if (paused) {
-                    disableCursor();
-                    paused = false;
-                } else {
-                    showCursor();
-                    paused = true;
-                }
-            }
-
-            if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
-                System.exit(0); //FIXME: we need a way for exit game.
-            }
-        });
-    }
-
-    private void setupMouseCallback() {
-        new GLFWMouseButtonCallback() {
-            @Override
-            public void invoke(long window, int button, int action, int mods) {
-                mouseCallbacks.forEach(mouseCallback -> mouseCallback.invoke(button, action, mods));
-            }
-        }.set(handle);
-    }
-
-    private void setupCursorCallback() {
-        new GLFWCursorPosCallback() {
-            @Override
-            public void invoke(long window, double xpos, double ypos) {
-                cursorCallbacks.forEach(cursorCallback -> cursorCallback.invoke(xpos, ypos));
-            }
-        }.set(handle);
-    }
-
-
-    private void setupScrollCallback() {
-        new GLFWScrollCallback() {
-            @Override
-            public void invoke(long window, double xoffset, double yoffset) {
-                scrollCallbacks.forEach(scrollCallback -> scrollCallback.invoke(xoffset, yoffset));
-            }
-        }.set(handle);
     }
 }

@@ -5,9 +5,12 @@ import java.util.Objects;
 public class Color {
 
     public static final Color WHITE = Color.fromRGB(0xffffff);
+    public static final Color RED = Color.fromRGB(0xff0000);
+    public static final Color GREEN = Color.fromRGB(0x00ff00);
+    public static final Color BLUE = Color.fromRGB(0x0000ff);
     public static final Color BLACK = Color.fromRGB(0x000000);
 
-    public static final Color TRANSPARENT = Color.fromRGBA(0x00000000);
+    public static final Color TRANSPARENT = new Color(0f, 0f, 0f, 0f);
 
     public static Color fromRGB(String rgb) {
         return fromRGB(Integer.parseInt(rgb, 16));

@@ -38,6 +38,10 @@ public interface GameWindow {
 
     void removeScrollCallback(ScrollCallback callback);
 
+    void addCharCallback(CharCallback callback);
+
+    void removeCharCallback(CharCallback callback);
+
     @FunctionalInterface
     interface KeyCallback {
         void invoke(int key, int scancode, int action, int mods);
@@ -56,5 +60,10 @@ public interface GameWindow {
     @FunctionalInterface
     interface ScrollCallback {
         void invoke(double xoffset, double yoffset);
+    }
+
+    @FunctionalInterface
+    interface CharCallback {
+        void invoke(char c);
     }
 }

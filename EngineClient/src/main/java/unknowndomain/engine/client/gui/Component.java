@@ -1,79 +1,121 @@
 package unknowndomain.engine.client.gui;
 
-import unknowndomain.engine.client.gui.renderer.ComponentRenderer;
+import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
+import com.github.mouse0w0.lib4j.observable.collection.ObservableMap;
+import com.github.mouse0w0.lib4j.observable.value.*;
+import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
+
+import java.util.HashMap;
 
 public abstract class Component {
 
-    public static final int USE_PREF_VALUE = -1;
+    final MutableValue<Scene> scene = new SimpleMutableObjectValue<>();
+    final MutableValue<Container> parent = new SimpleMutableObjectValue<>();
 
-    private Scene screen;
+    private final MutableFloatValue x = new SimpleMutableFloatValue();
+    private final MutableFloatValue y = new SimpleMutableFloatValue();
+    final MutableFloatValue width = new SimpleMutableFloatValue();
+    final MutableFloatValue height = new SimpleMutableFloatValue();
 
-    Container parent; //FIXME:
+    private final MutableBooleanValue visible = new SimpleMutableBooleanValue(true);
+    private final MutableBooleanValue disabled = new SimpleMutableBooleanValue(false);
 
-    int x, y;
-    int width, height;
+    final MutableBooleanValue focused = new SimpleMutableBooleanValue(false);
+    final MutableBooleanValue hover = new SimpleMutableBooleanValue(false);
+    final MutableBooleanValue pressed = new SimpleMutableBooleanValue(false);
 
-    private boolean visible = true;
+    private ComponentRenderer renderer;
 
-    private ComponentRenderer<?> renderer;
-
-    public final Container getParent() {
-        return parent;
+    public final ObservableValue<Container> parent() {
+        return parent.toImmutable();
     }
 
-    public final int getX() {
+    public final MutableFloatValue x() {
         return x;
     }
 
-    public final int getY() {
+    public final MutableFloatValue y() {
         return y;
     }
 
-    public final int getWidth() {
-        return width;
+    public final ObservableFloatValue width() {
+        return width.toImmutable();
     }
 
-    public final int getHeight() {
-        return height;
+    public final ObservableFloatValue height() {
+        return height.toImmutable();
     }
 
-    public int minWidth() {
-        return 0;
-    }
-
-    public int minHeight() {
-        return 0;
-    }
-
-    abstract public int prefWidth();
-
-    abstract public int prefHeight();
-
-    public int maxWidth() {
-        return Integer.MAX_VALUE;
-    }
-
-    public int maxHeight() {
-        return Integer.MAX_VALUE;
-    }
-
-    public boolean isVisible() {
+    public final MutableBooleanValue visible() {
         return visible;
     }
 
-    public void setVisible(boolean visible) {
-        this.visible = visible;
+    public final MutableBooleanValue disabled() {
+        return disabled;
+    }
+
+    public final ObservableBooleanValue focused() {
+        return focused.toImmutable();
+    }
+
+    public final ObservableBooleanValue hover() {
+        return hover.toImmutable();
+    }
+
+    public final ObservableBooleanValue pressed() {
+        return pressed.toImmutable();
+    }
+
+    public final void requestParentLayout() {
+        Container container = parent().getValue();
+        if (container != null && !container.isNeedsLayout()) {
+            container.needsLayout();
+        }
+    }
+
+    public float minWidth() {
+        return prefWidth();
+    }
+
+    public float minHeight() {
+        return prefHeight();
+    }
+
+    abstract public float prefWidth();
+
+    abstract public float prefHeight();
+
+    public float maxWidth() {
+        return prefWidth();
+    }
+
+    public float maxHeight() {
+        return prefHeight();
     }
 
     public boolean contains(int x, int y) {
-        return x >= getX() && x <= getWidth() && y >= getY() && y <= getHeight();
+        return x >= x().get() && x <= width().get() && y >= y().get() && y <= height().get();
     }
 
-    public ComponentRenderer<?> getRenderer() {
+    public ComponentRenderer getRenderer() {
         if (renderer == null)
             renderer = createDefaultRenderer();
         return renderer;
     }
 
-    protected abstract ComponentRenderer<?> createDefaultRenderer();
+    protected abstract ComponentRenderer createDefaultRenderer();
+
+    private ObservableMap<Object, Object> properties;
+
+    public ObservableMap<Object, Object> getProperties() {
+        if (properties == null) {
+            properties = ObservableCollections.observableMap(new HashMap<>());
+        }
+        return properties;
+    }
+
+    public boolean hasProperties() {
+        return properties != null && !properties.isEmpty();
+    }
+
 }

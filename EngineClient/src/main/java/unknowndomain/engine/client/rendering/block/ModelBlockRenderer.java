@@ -9,7 +9,6 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.ChunkCache;
 import unknowndomain.engine.util.Facing;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,18 +33,21 @@ public class ModelBlockRenderer implements BlockRenderer {
                 continue;
             }
 
-            for (BlockModelQuad modelQuad : blockModel.facedModelQuads.computeIfAbsent(facing, key -> Collections.emptyList())) {
+            for (BlockModelQuad modelQuad : blockModel.facedModelQuads.get(facing)) {
                 renderModelQuad(modelQuad, pos, buffer);
             }
         }
     }
 
-    public void renderModel(BlockModel model, BlockPos pos, BufferBuilder buffer) {
+    @Override
+    public void render(Block block, BufferBuilder buffer) {
+        BlockModel model = blockModelMap.get(block);
+        if (model == null) {
+            return;
+        }
         for (Facing facing : Facing.values()) {
-            facing.offset(pos);
-
-            for (BlockModelQuad modelQuad : model.facedModelQuads.computeIfAbsent(facing, key -> Collections.emptyList())) {
-                renderModelQuad(modelQuad, pos, buffer);
+            for (BlockModelQuad modelQuad : model.facedModelQuads.get(facing)) {
+                renderModelQuad(modelQuad, BlockPos.ZERO, buffer);
             }
         }
     }

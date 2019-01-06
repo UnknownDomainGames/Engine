@@ -3,7 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 group 'com.github.unknownstudio'
 version '1.0.0'
 
-project.ext.lwjglVersion = "3.1.6"
+project.ext.lwjglVersion = "3.2.1"
 
 switch ( OperatingSystem.current() ) {
     case OperatingSystem.WINDOWS:

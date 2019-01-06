@@ -1,23 +1,33 @@
 package unknowndomain.engine.client.rendering.gui;
 
-import unknowndomain.engine.client.gui.Graphics;
-import unknowndomain.engine.client.rendering.gui.font.FontRenderer;
+import org.joml.Vector4f;
+import org.joml.Vector4fc;
+import unknowndomain.engine.client.gui.rendering.Graphics;
+import unknowndomain.engine.client.gui.text.Font;
+import unknowndomain.engine.client.rendering.gui.font.NativeTTFont;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.util.Color;
 
+import java.util.Stack;
+
+import static org.apache.commons.lang3.Validate.inclusiveBetween;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GraphicsImpl implements Graphics {
 
     private final Tessellator tessellator = Tessellator.getInstance();
-    private final FontRenderer fontRenderer;
+    private final GuiRenderer guiRenderer;
 
     private Color color;
+    private Font font;
+    private NativeTTFont nativeTTFont;
 
-    public GraphicsImpl(FontRenderer fontRenderer) {
-        this.fontRenderer = fontRenderer;
+    private final Stack<Vector4fc> clipRect = new Stack<>();
+
+    public GraphicsImpl(GuiRenderer guiRenderer) {
+        this.guiRenderer = guiRenderer;
         setColor(Color.WHITE);
     }
 
@@ -29,6 +39,17 @@ public class GraphicsImpl implements Graphics {
     @Override
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    @Override
+    public Font getFont() {
+        return font;
+    }
+
+    @Override
+    public void setFont(Font font) {
+        this.font = font;
+        this.nativeTTFont = guiRenderer.getFontHelper().getNativeFont(font);
     }
 
     @Override
@@ -116,7 +137,7 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawText(CharSequence text, float x, float y) {
-        fontRenderer.drawText(text, x, y, color.toRGBA());
+        guiRenderer.getFontHelper().renderText(text, x, y, color.toRGBA(), nativeTTFont);
     }
 
     @Override
@@ -139,8 +160,34 @@ public class GraphicsImpl implements Graphics {
         glDisable(GL_TEXTURE_2D);
     }
 
-    public void clipRect(int x, int y, int width, int height) {
+    @Override
+    public void pushClipRect(float x, float y, float width, float height) {
+        if (clipRect.isEmpty()) {
+            clipRect.push(new Vector4f(x, y, x + width, y + height));
+            updateClipRect();
+        } else {
+            Vector4fc parent = clipRect.peek();
+            float newX = parent.x() + x, newY = parent.y() + y;
+            float newZ = newX + width, newW = newY + height;
+            inclusiveBetween(parent.x(), parent.z(), newX);
+            inclusiveBetween(parent.y(), parent.w(), newY);
+            inclusiveBetween(parent.x(), parent.z(), newZ);
+            inclusiveBetween(parent.y(), parent.w(), newW);
+            clipRect.push(new Vector4f(newX, newY, newZ, newW));
+            updateClipRect();
+        }
+    }
 
+    @Override
+    public void popClipRect() {
+        clipRect.pop();
+        updateClipRect();
+    }
+
+    private void updateClipRect() {
+        if (!clipRect.isEmpty()) {
+            guiRenderer.setClipRect(clipRect.peek());
+        }
     }
 
     private void pointTo(BufferBuilder buffer, float x, float y) {

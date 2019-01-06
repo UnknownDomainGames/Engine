@@ -137,7 +137,7 @@ public class GameClientStandalone extends GameServerFullAsync {
             Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
             byte[] cache = resource.cache();
             return new GuiRenderer(
-                    (ByteBuffer) ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
+                    ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
                     Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(),
                             ShaderType.VERTEX_SHADER),
                     Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(),
