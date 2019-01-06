@@ -15,9 +15,12 @@ public class Text extends Component {
     private final MutableValue<Color> color = new SimpleMutableObjectValue<>(Color.WHITE);
 
     public Text() {
+        text.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
+        font.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
     }
 
     public Text(String text) {
+        this();
         text().setValue(text);
     }
 

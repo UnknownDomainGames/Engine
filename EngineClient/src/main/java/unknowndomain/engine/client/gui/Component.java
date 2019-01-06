@@ -1,7 +1,11 @@
 package unknowndomain.engine.client.gui;
 
+import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
+import com.github.mouse0w0.lib4j.observable.collection.ObservableMap;
 import com.github.mouse0w0.lib4j.observable.value.*;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
+
+import java.util.HashMap;
 
 public abstract class Component {
 
@@ -100,4 +104,18 @@ public abstract class Component {
     }
 
     protected abstract ComponentRenderer createDefaultRenderer();
+
+    private ObservableMap<Object, Object> properties;
+
+    public ObservableMap<Object, Object> getProperties() {
+        if (properties == null) {
+            properties = ObservableCollections.observableMap(new HashMap<>());
+        }
+        return properties;
+    }
+
+    public boolean hasProperties() {
+        return properties != null && !properties.isEmpty();
+    }
+
 }

@@ -12,6 +12,6 @@ public class TextRenderer implements ComponentRenderer {
         Text text = (Text) component;
         graphics.setColor(text.color().getValue());
         graphics.setFont(text.font().getValue());
-        graphics.drawText(text.text().getValue(), component.x().get(), component.y().get());
+        graphics.drawText(text.text().getValue(), 0, 0);
     }
 }
