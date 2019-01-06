@@ -14,7 +14,9 @@ public class RegionRenderer implements ComponentRenderer {
             if (!child.visible().get()) {
                 continue;
             }
+            graphics.pushClipRect(child.x().get(), child.y().get(), child.width().get(), child.height().get());
             child.getRenderer().render(child, graphics);
+            graphics.popClipRect();
         }
     }
 }

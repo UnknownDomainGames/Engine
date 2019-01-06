@@ -45,7 +45,7 @@ public class Shader {
         GL20.glUniform1i(location, value ? 1 : 0);
     }
 
-    public static void setUniform(int location, Vector2f value) {
+    public static void setUniform(int location, Vector2fc value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(2);
             value.get(buffer);
@@ -53,7 +53,7 @@ public class Shader {
         }
     }
 
-    public static void setUniform(int location, Vector3f value) {
+    public static void setUniform(int location, Vector3fc value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(3);
             value.get(buffer);
@@ -61,7 +61,7 @@ public class Shader {
         }
     }
 
-    public static void setUniform(int location, Vector4f value) {
+    public static void setUniform(int location, Vector4fc value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(4);
             value.get(buffer);
@@ -69,7 +69,7 @@ public class Shader {
         }
     }
 
-    public static void setUniform(int location, Matrix3f value) {
+    public static void setUniform(int location, Matrix3fc value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(3 * 3);
             value.get(buffer);
@@ -77,7 +77,7 @@ public class Shader {
         }
     }
 
-    public static void setUniform(int location, Matrix4f value) {
+    public static void setUniform(int location, Matrix4fc value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(4 * 4);
             value.get(buffer);

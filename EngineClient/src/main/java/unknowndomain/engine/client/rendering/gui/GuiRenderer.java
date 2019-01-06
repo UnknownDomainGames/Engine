@@ -72,7 +72,7 @@ public class GuiRenderer implements Renderer {
         Font defaultFont = fontHelper.loadNativeFont(defaultFontData, 16).getFont();
         fontHelper.setDefaultFont(defaultFont);
 
-        this.graphics = new GraphicsImpl(this.fontHelper);
+        this.graphics = new GraphicsImpl(this);
         graphics.setFont(defaultFont);
     }
 
@@ -111,6 +111,13 @@ public class GuiRenderer implements Renderer {
         endRender();
     }
 
+    public TTFontHelper getFontHelper() {
+        return fontHelper;
+    }
+
+    public void setClipRect(Vector4fc clipRect) {
+        setUniform(u_ClipRect, clipRect);
+    }
 
     private void startRender() {
         shader.use();
@@ -156,7 +163,9 @@ public class GuiRenderer implements Renderer {
         if (!root.visible().get())
             return;
 
+        graphics.pushClipRect(0, 0, scene.width().get(), scene.height().get());
         root.getRenderer().render(root, graphics);
+        graphics.popClipRect();
     }
 
     private long lastFPS = getTime();

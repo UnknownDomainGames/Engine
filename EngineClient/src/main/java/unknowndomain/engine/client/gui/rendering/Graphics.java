@@ -42,9 +42,15 @@ public interface Graphics {
 
     // TODO: void drawPolygon(Polygon polygon);
 
+    // TODO: void fillPolygon(Polygon polygon);
+
     void drawText(CharSequence text, float x, float y);
 
     void drawTexture(GLTexture texture, float x, float y, float width, float height);
 
     void drawTexture(GLTexture texture, float x, float y, float width, float height, TextureUV textureUV);
+
+    void pushClipRect(float x, float y, float width, float height);
+
+    void popClipRect();
 }
