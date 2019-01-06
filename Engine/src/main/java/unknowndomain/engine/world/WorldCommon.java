@@ -208,6 +208,17 @@ public class WorldCommon implements World, Runnable {
         ticker.stop();
     }
 
+    @Nullable
+    @Override
+    public <T extends Component> T getComponent(@Nonnull Class<T> type) {
+        return null;
+    }
+
+    @Override
+    public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
+        return false;
+    }
+
     static class PhysicsSystem {
         public void tick(World world) {
             List<Entity> entityList = world.getEntities();
@@ -294,23 +305,5 @@ public class WorldCommon implements World, Runnable {
                 // if (Math.abs(motion.y) <= 0.01f) motion.y = 0; // physics update
             }
         }
-    }
-
-    @Nullable
-    @Override
-    public <T> T getComponent(@Nonnull String name) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getComponent(@Nonnull Class<T> type) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getBehavior(Class<T> type) {
-        return null;
     }
 }

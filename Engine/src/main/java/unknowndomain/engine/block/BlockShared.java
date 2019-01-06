@@ -70,16 +70,16 @@ class BlockShared extends Impl<Block> implements Block {
         destroyBehavior.onDestroyed(world, entity, blockPos, block);
     }
 
-    @Nullable
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T> T getBehavior(@Nonnull Class<T> type) {
-        if (type == BlockPrototype.PlaceBehavior.class) return (T) placeBehavior;
-        else if (type == BlockPrototype.ActiveBehavior.class) return (T) activeBehavior;
-        else if (type == BlockPrototype.TouchBehavior.class) return (T) touchBehavior;
-        else if (type == BlockPrototype.DestroyBehavior.class) return (T) destroyBehavior;
-        return null;
-    }
+//    @Nullable
+//    @Override
+//    @SuppressWarnings("unchecked")
+//    public <T> T getBehavior(@Nonnull Class<T> type) {
+//        if (type == BlockPrototype.PlaceBehavior.class) return (T) placeBehavior;
+//        else if (type == BlockPrototype.ActiveBehavior.class) return (T) activeBehavior;
+//        else if (type == BlockPrototype.TouchBehavior.class) return (T) touchBehavior;
+//        else if (type == BlockPrototype.DestroyBehavior.class) return (T) destroyBehavior;
+//        return null;
+//    }
 
     @Override
     public ImmutableMap<BlockPrototype.Property<?>, Comparable<?>> getProperties() {
@@ -121,13 +121,12 @@ class BlockShared extends Impl<Block> implements Block {
 
     @Nullable
     @Override
-    public <T> T getComponent(@Nonnull String name) {
+    public <T extends Component> T getComponent(@Nonnull Class<T> type) {
         return null;
     }
 
-    @Nullable
     @Override
-    public <T> T getComponent(@Nonnull Class<T> type) {
-        return null;
+    public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
+        return false;
     }
 }

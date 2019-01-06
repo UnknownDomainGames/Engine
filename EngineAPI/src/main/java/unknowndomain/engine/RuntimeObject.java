@@ -8,20 +8,13 @@ import javax.annotation.Nullable;
  *
  */
 public interface RuntimeObject {
-    @Nullable
-    <T> T getComponent(@Nonnull String name);
 
     @Nullable
-    <T> T getComponent(@Nonnull Class<T> type);
+    <T extends Component> T getComponent(@Nonnull Class<T> type);
 
-    @Nullable
-    <T> T getBehavior(Class<T> type);
+    <T extends Component> boolean hasComponent(@Nonnull Class<T> type);
 
-    interface Componnet {
-
-    }
-
-    interface Behavior {
+    interface Component {
 
     }
 }
