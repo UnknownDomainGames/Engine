@@ -1,5 +1,9 @@
 package unknowndomain.engine.client.input.keybinding;
 
+/**
+ * Handles the state of a single KeyBinding
+ *
+ */
 public class KeyBinding {
     private final Key code;
     private final KeyModifier[] mods;
@@ -16,8 +20,7 @@ public class KeyBinding {
     }
 
     public static KeyBinding create(String target, Key code, ActionMode actionMode, KeyModifier... keyMods) {
-        return new KeyBinding(target,
-                code == null ? Key.KEY_UNKNOWN : code,
+        return new KeyBinding(target, code == null ? Key.KEY_UNKNOWN : code,
                 actionMode != null ? actionMode : ActionMode.PRESS,
                 keyMods == null || keyMods.length == 0 ? KeyModifier.EMPTY : keyMods);
     }
@@ -54,4 +57,3 @@ public class KeyBinding {
         this.pressed = pressed;
     }
 }
-
