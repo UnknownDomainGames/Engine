@@ -1,6 +1,5 @@
 package unknowndomain.engine.client.input.keybinding;
 
-
 public enum Keybindings {
     INSTANCE;
 
