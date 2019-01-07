@@ -1,11 +1,12 @@
 package unknowndomain.engine.util;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public enum SafeClassDefiner {
-    INSTANCE;
+@ThreadSafe
+public class SafeClassDefiner {
 
     private final Map<ClassLoader, GeneratedClassLoader> loaders = Collections.synchronizedMap(new WeakHashMap<>());
 

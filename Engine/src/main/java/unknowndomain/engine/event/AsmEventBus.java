@@ -18,10 +18,8 @@ import java.util.Map.Entry;
 import static org.objectweb.asm.Opcodes.*;
 
 public class AsmEventBus implements EventBus {
-    static {
-        Internal0.ASM = AsmEventBus::new;
-    }
 
+    private final SafeClassDefiner classDefiner = new SafeClassDefiner();
     private final Map<Class<?>, Map<Order, Collection<RegisteredListener>>> eventListeners = new HashMap<>();
     private final Map<Object, Collection<RegisteredListener>> registeredListeners = new HashMap<>();
 
@@ -256,7 +254,7 @@ public class AsmEventBus implements EventBus {
         }
         cw.visitEnd();
 
-        Class<?> executorType = SafeClassDefiner.INSTANCE.defineClass(ownerType.getClassLoader(), className,
+        Class<?> executorType = classDefiner.defineClass(ownerType.getClassLoader(), className,
                 cw.toByteArray());
         Constructor<?> executorConstructor = executorType.getConstructors()[0];
         return (RegisteredListener) executorConstructor.newInstance(owner, eventType, receiveCancelled, order);
