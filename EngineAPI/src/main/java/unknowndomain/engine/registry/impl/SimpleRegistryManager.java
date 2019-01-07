@@ -36,8 +36,8 @@ public class SimpleRegistryManager implements RegistryManager {
     }
 
     @Override
-    public <T extends RegistryEntry<T>> void register(@NonNull T obj) {
-        getRegistry(obj.getEntryType()).register(obj);
+    public <T extends RegistryEntry<T>> T register(@NonNull T obj) {
+        return getRegistry(obj.getEntryType()).register(obj);
     }
 
     @Override

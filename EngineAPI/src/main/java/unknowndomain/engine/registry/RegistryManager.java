@@ -27,5 +27,16 @@ public interface RegistryManager {
      *
      * @param obj The target we want to register
      */
-    <T extends RegistryEntry<T>> void register(@Nonnull T obj);
+    <T extends RegistryEntry<T>> T register(@Nonnull T obj);
+
+    /**
+     * Register a registerable object to game
+     *
+     * @param objs The target we want to register
+     */
+    default <T extends RegistryEntry<T>> void registerAll(@Nonnull T... objs) {
+        for (T obj : objs) {
+            register(obj);
+        }
+    }
 }
