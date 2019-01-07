@@ -1,10 +1,12 @@
-package unknowndomain.engine.registry;
+package unknowndomain.engine.registry.impl;
 
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
 import org.apache.commons.lang3.Validate;
+import unknowndomain.engine.registry.RegisterException;
+import unknowndomain.engine.registry.Registry;
+import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
@@ -19,7 +21,6 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
     protected final Map<String, T> nameToObject = Maps.newHashMap();
     protected final IntObjectMap<T> idToObject = new IntObjectHashMap<>();
-    protected final Map<String, Integer> nameToId = HashBiMap.create();
 
     private boolean freezed = false;
 
@@ -98,19 +99,18 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     @Override
     public int getId(T obj) {
         Validate.notNull(obj);
-        String regId = obj.getUniqueName();
-        return nameToId.get(regId);
+        return obj.getId();
     }
 
     @Override
     public int getId(String key) {
         Validate.notNull(key);
-        return nameToId.get(key);
+        return getValue(key).getId();
     }
 
     @Override
     public String getKey(int id) {
-        return idToObject.get(id).getLocalName();
+        return idToObject.get(id).getUniqueName();
     }
 
     @Override
@@ -135,10 +135,10 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
         return uniqueName;
     }
 
-    private Field uniqueNameField;
-    private Field idField;
+    private static Field uniqueNameField;
+    private static Field idField;
 
-    protected void setUniqueName(RegistryEntry<T> entry, String uniqueName) {
+    protected static void setUniqueName(RegistryEntry<?> entry, String uniqueName) {
         if (uniqueNameField == null) {
             try {
                 uniqueNameField = RegistryEntry.Impl.class.getField("uniqueName");
@@ -154,7 +154,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
         }
     }
 
-    protected void setId(RegistryEntry<T> entry, int id) {
+    protected static void setId(RegistryEntry<?> entry, int id) {
         if (idField == null) {
             try {
                 idField = RegistryEntry.Impl.class.getField("id");

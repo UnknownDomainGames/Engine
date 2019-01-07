@@ -1,6 +1,9 @@
-package unknowndomain.engine.registry;
+package unknowndomain.engine.registry.impl;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import unknowndomain.engine.registry.Registry;
+import unknowndomain.engine.registry.RegistryEntry;
+import unknowndomain.engine.registry.RegistryManager;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;

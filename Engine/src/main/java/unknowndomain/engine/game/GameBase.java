@@ -16,8 +16,8 @@ import unknowndomain.engine.item.Item;
 import unknowndomain.engine.mod.*;
 import unknowndomain.engine.mod.java.JavaModLoader;
 import unknowndomain.engine.registry.Registry;
-import unknowndomain.engine.registry.SimpleRegistry;
-import unknowndomain.engine.registry.SimpleRegistryManager;
+import unknowndomain.engine.registry.impl.SimpleRegistry;
+import unknowndomain.engine.registry.impl.SimpleRegistryManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
