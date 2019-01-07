@@ -1,7 +1,10 @@
 package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
+
+import unknowndomain.engine.Engine;
 import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.client.EngineClient;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.controller.MotionType;
@@ -41,10 +44,7 @@ import java.util.UUID;
 
 public class GameClientStandalone extends GameServerFullAsync {
 
-    private GLFWGameWindow window;
     private ClientContextImpl clientContext;
-    private ResourceManager resourceManager;
-
     private KeyBindingManager keyBindingManager;
     private EntityController entityController;
 
@@ -55,14 +55,17 @@ public class GameClientStandalone extends GameServerFullAsync {
 
     private boolean stopped;
 
-    public GameClientStandalone(Option option, ModRepository repository, ModStore store, EventBus bus, GLFWGameWindow window) {
-        super(option, repository, store, bus);
-        this.window = window;
+    public GameClientStandalone(EngineClient engine, Option option) {
+        super(engine, option);
 
         this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, FixStepTicker.clientTick);
+//Removed
+//        // Remove it
+//        bus.register(new DefaultGameMode());
+    }
 
-        // TODO: Remove it
-        bus.register(new DefaultGameMode());
+    private EngineClient engine() {
+        return (EngineClient) engine;
     }
 
     /**
@@ -86,8 +89,9 @@ public class GameClientStandalone extends GameServerFullAsync {
     @Override
     protected void constructStage() {
         super.constructStage();
-        resourceManager = new ResourceManagerImpl();
-        resourceManager.addResourceSource(new ResourceSourceBuiltin());
+        // Moved to Engine
+        // resourceManager = new ResourceManagerImpl();
+        // resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
         player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
     }
@@ -103,30 +107,33 @@ public class GameClientStandalone extends GameServerFullAsync {
         registerKeyBindings(keyBindingManager);
         // TODO fire KeyBindingRegistryEvent or something
 
-        window.addKeyCallback(keyBindingManager::handleKey);
-        window.addMouseCallback(keyBindingManager::handleMouse);
+        engine().getWindow().addKeyCallback(keyBindingManager::handleKey);
+        engine().getWindow().addMouseCallback(keyBindingManager::handleMouse);
 
-        List<Renderer.Factory> factories = Lists.newArrayList();
-        ClientRegistryEvent clientRegistryEvent = new ClientRegistryEvent(factories);
-        eventBus.post(clientRegistryEvent);
+        // Moved to EngineDummyContainer
+//        List<Renderer.Factory> factories = Lists.newArrayList();
+//        ClientRegistryEvent clientRegistryEvent = new ClientRegistryEvent(factories);
+//        eventBus.post(clientRegistryEvent);
+//
+//        //  Don't initialize renderer at here. It should be initialized in Engine
+//        factories.add((context, manager) -> {
+//            Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
+//            byte[] cache = resource.cache();
+//            return new GuiRenderer(ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
+//                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(), ShaderType.VERTEX_SHADER),
+//                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(), ShaderType.FRAGMENT_SHADER));
+//        });
 
-        // FIXME: Don't initialize renderer at here. It should be initialized in Engine
-        factories.add((context, manager) -> {
-            Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
-            byte[] cache = resource.cache();
-            return new GuiRenderer(ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
-                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(), ShaderType.VERTEX_SHADER),
-                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(), ShaderType.FRAGMENT_SHADER));
-        });
-
-        clientContext = new ClientContextImpl(this, Thread.currentThread(), factories, window, player);
-        clientContext.build(context, resourceManager);
+        clientContext = new ClientContextImpl(this, Thread.currentThread(), engine().getRendererFactories(), engine().getWindow(), player);
+        clientContext.build(context, engine().getResourceManager());
         clientContext.setCamera(new FirstPersonCamera(player));
     }
 
     @Override
     protected void resourceStage() {
-        eventBus.post(new ResourceSetupEvent(context, resourceManager, clientContext.getTextureManager()));
+        // Moved to Engine
+        // eventBus.post(new ResourceSetupEvent(context, resourceManager,
+        // clientContext.getTextureManager()));
         clientContext.getTextureManager().initTextureAtlas(TextureTypes.BLOCK);
     }
 
@@ -140,9 +147,9 @@ public class GameClientStandalone extends GameServerFullAsync {
         player.getControlledEntity().getPosition().set(1, 3, 1);
 
         entityController = new EntityCameraController(player);
-        window.addCursorCallback(entityController::handleCursorMove);
+        engine().getWindow().addCursorCallback(entityController::handleCursorMove);
 
-        eventBus.post(new GameReadyEvent(context));
+        engine.getEventBus().post(new GameReadyEvent(context));
 
         // TODO:
         Random random = new Random();
@@ -172,10 +179,10 @@ public class GameClientStandalone extends GameServerFullAsync {
      * @param partialTick
      */
     private void renderTick(double partialTick) {
-        window.beginDraw();
+        engine().getWindow().beginDraw();
         clientContext.updateFps();
         this.clientContext.render(partialTick);
-        window.endDraw();
+        engine().getWindow().endDraw();
     }
 
     // https://github.com/lwjglgamedev/lwjglbook/blob/master/chapter02/src/main/java/org/lwjglb/engine/GameEngine.java

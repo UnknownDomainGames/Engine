@@ -3,6 +3,11 @@ package unknowndomain.engine.event.registry;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.registry.RegistryManager;
 
+/**
+ * 
+ * @Deprecated Replaced by EngineEvent.RegistrationStart
+ */
+@Deprecated
 public class RegisterEvent implements Event {
     private RegistryManager registry;
 

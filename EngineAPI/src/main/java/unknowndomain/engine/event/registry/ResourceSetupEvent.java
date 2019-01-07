@@ -5,6 +5,11 @@ import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.game.GameContext;
 
+/**
+ * 
+ * @Deprecated Replaced by EngineEvent.ResourceConstructionStart
+ */
+@Deprecated
 public class ResourceSetupEvent implements Event {
 
     private final GameContext context;

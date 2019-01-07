@@ -26,19 +26,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class GameBase implements Game {
+    protected final Engine engine;
     protected final Option option;
-    protected final EventBus eventBus;
-    protected final ModRepository modRepository;
-    protected final ModStore modStore;
 
     protected GameContext context;
-    protected ModManager modManager;
 
-    public GameBase(Option option, ModRepository repository, ModStore store, EventBus eventBus) {
+    public GameBase(Engine engine, Option option) {
         this.option = option;
-        this.modStore = store;
-        this.modRepository = repository;
-        this.eventBus = eventBus;
+        this.engine = engine;
         // this.option.getMods().add(this.meta);
     }
 
@@ -46,70 +41,27 @@ public abstract class GameBase implements Game {
      * Construct stage, collect mod and resource according to it option
      */
     protected void constructStage() {
-        ImmutableMap.Builder<String, ModContainer> idToMapBuilder = ImmutableMap.builder();
-        ImmutableMap.Builder<Class, ModContainer> typeToMapBuilder = ImmutableMap.builder();
-
-        // Add engine container
-        EngineDummyContainer engine = new EngineDummyContainer();
-        idToMapBuilder.put(engine.getModId(), engine);
-
-        ModLoaderWrapper loader = new ModLoaderWrapper().add(new JavaModLoader(modStore));
-
-        List<ModMetadata> mods = option.getMods();
-        Map<ModMetadata, ModDependencyEntry[]> map = mods.stream().map(m -> Pair.of(m, m.getDependencies().stream().toArray(ModDependencyEntry[]::new)))
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-
-        // TODO: Topological Sort
-        mods.sort((a, b) -> {
-            ModDependencyEntry[] entriesA = map.get(a);
-            ModDependencyEntry[] entriesB = map.get(b);
-            return 0;
-        });
-
-        for (ModMetadata mod : mods) {
-            try {
-                if (!modStore.exists(mod)) {
-                    if (!modRepository.contains(mod)) {
-                        Engine.getLogger().warn("Cannot find mod " + mod + " from local or other sources! Skip to load!");
-                        continue;
-                    }
-                    modStore.store(mod, modRepository.open(mod));
-                }
-                ModContainer load = loader.load(mod);
-                if (load == null) {
-                    Engine.getLogger().warn("Some exceptions happened during loading mod {0} from local! Skip to load!", mod);
-                    continue;
-                }
-                idToMapBuilder.put(mod.getId(), load);
-                typeToMapBuilder.put(load.getInstance().getClass(), load);
-            } catch (Exception e) {
-                Engine.getLogger().warn("Fain to load mod " + mod.getId());
-                e.printStackTrace();
-            }
-        }
-        modManager = new SimpleModManager(idToMapBuilder.build(), typeToMapBuilder.build());
-        for (ModContainer mod : modManager.getLoadedMods())
-            this.eventBus.register(mod.getInstance());
+        // Mod construction moved to Engine
     }
 
     /**
      * Register stage, collect all registerable things from mod here.
      */
     protected void registerStage() {
-        Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
-        List<SimpleRegistry<?>> registries = Lists.newArrayList();
-        for (Registry.Type<?> tp : Arrays.asList(Registry.Type.of("block", Block.class),
-                Registry.Type.of("item", Item.class), Registry.Type.of("entity", EntityType.class))) {
-            SimpleRegistry<?> registry = new SimpleRegistry<>(tp.type, tp.name);
-            maps.put(tp.type, registry);
-            registries.add(registry);
-        }
-        SimpleRegistryManager manager = new SimpleRegistryManager(maps);
-        eventBus.post(new RegisterEvent(manager));
+        // Registry Moved to Engine
+//        Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
+//        List<SimpleRegistry<?>> registries = Lists.newArrayList();
+//        for (Registry.Type<?> tp : Arrays.asList(Registry.Type.of("block", Block.class), Registry.Type.of("item", Item.class), Registry.Type.of("entity", EntityType.class))) {
+//            SimpleRegistry<?> registry = new SimpleRegistry<>(tp.type, tp.name);
+//            maps.put(tp.type, registry);
+//            registries.add(registry);
+//        }
+//        SimpleRegistryManager manager = new SimpleRegistryManager(maps);
+//        eventBus.post(new RegisterEvent(manager));
 
         GamePreInitializationEvent event = new GamePreInitializationEvent();
-        eventBus.post(event);
-        this.context = new GameContext(manager, eventBus, event.getBlockAir());
+        engine.getEventBus().post(event);
+        this.context = new GameContext(engine.getRegistryManager(), engine.getEventBus(), event.getBlockAir());
     }
 
     /**
@@ -124,8 +76,7 @@ public abstract class GameBase implements Game {
      */
     protected void finishStage() {
         spawnWorld(null);
-
-        eventBus.post(new GameReadyEvent(context));
+        engine.getEventBus().post(new GameReadyEvent(context));
     }
 
     @Override
