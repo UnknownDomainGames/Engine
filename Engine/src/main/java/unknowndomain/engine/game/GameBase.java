@@ -34,18 +34,12 @@ public abstract class GameBase implements Game {
     protected GameContext context;
     protected ModManager modManager;
 
-    /**
-     * self metadata
-     */
-    private ModMetadata meta = ModMetadata.Builder.create().setId("unknowndomain").setVersion("0.0.1").setGroup("none")
-            .build();
-
     public GameBase(Option option, ModRepository repository, ModStore store, EventBus eventBus) {
         this.option = option;
         this.modStore = store;
         this.modRepository = repository;
         this.eventBus = eventBus;
-        this.option.getMods().add(this.meta);
+        // this.option.getMods().add(this.meta);
     }
 
     /**
@@ -54,35 +48,40 @@ public abstract class GameBase implements Game {
     protected void constructStage() {
         ImmutableMap.Builder<String, ModContainer> idToMapBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<Class, ModContainer> typeToMapBuilder = ImmutableMap.builder();
+
+        // Add UnknownDomain Mod
+        // FIXME: Don't do it.
+        UnknownDomain ud = new UnknownDomain();
+        this.option.getMods().add(ud.getMetadata());
+
         ModLoaderWrapper loader = new ModLoaderWrapper().add(new JavaModLoader(modStore));
-        decorateLoader(loader);
+        // decorateLoader(loader);
+        // Always load UD first
+        loader.add(ud);
 
         List<ModMetadata> mods = option.getMods();
-        Map<ModMetadata, ModDependencyEntry[]> map = mods.stream()
-                .map(m -> Pair.of(m,
-                        m.getDependencies().stream().toArray(ModDependencyEntry[]::new)))
+        Map<ModMetadata, ModDependencyEntry[]> map = mods.stream().map(m -> Pair.of(m, m.getDependencies().stream().toArray(ModDependencyEntry[]::new)))
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+
+        // TODO: Topological Sort
         mods.sort((a, b) -> {
             ModDependencyEntry[] entriesA = map.get(a);
             ModDependencyEntry[] entriesB = map.get(b);
             return 0;
         });
-        // TODO: sort here
 
         for (ModMetadata mod : mods) {
             try {
                 if (!modStore.exists(mod)) {
                     if (!modRepository.contains(mod)) {
-                        Engine.getLogger()
-                                .warn("Cannot find mod " + mod + " from local or other sources! Skip to load!");
+                        Engine.getLogger().warn("Cannot find mod " + mod + " from local or other sources! Skip to load!");
                         continue;
                     }
                     modStore.store(mod, modRepository.open(mod));
                 }
                 ModContainer load = loader.load(mod);
                 if (load == null) {
-                    Engine.getLogger().warn("Some exceptions happened during loading mod {0} from local! Skip to load!",
-                            mod);
+                    Engine.getLogger().warn("Some exceptions happened during loading mod {0} from local! Skip to load!", mod);
                     continue;
                 }
                 idToMapBuilder.put(mod.getId(), load);
@@ -95,17 +94,6 @@ public abstract class GameBase implements Game {
         modManager = new SimpleModManager(idToMapBuilder.build(), typeToMapBuilder.build());
         for (ModContainer mod : modManager.getLoadedMods())
             this.eventBus.register(mod.getInstance());
-    }
-
-    protected void decorateLoader(ModLoaderWrapper wrapper) {
-        wrapper.add(new ModLoader() {
-            @Override
-            public ModContainer load(ModIdentifier identifier) {
-                if (meta.equals(identifier))
-                    return new InnerModContainer(meta, null, GameBase.this);
-                return null;
-            }
-        });
     }
 
     /**
@@ -171,7 +159,6 @@ public abstract class GameBase implements Game {
     public void terminate() {
         // TODO: unload mod/resource here
     }
-
 
     @Nullable
     @Override
