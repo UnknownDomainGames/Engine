@@ -1,12 +1,12 @@
 package unknowndomain.engine.action;
 
 import unknowndomain.engine.game.GameContext;
-import unknowndomain.engine.registry.Impl;
+import unknowndomain.engine.registry.RegistryEntry;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-class ActionBase extends Impl<Action> implements Action {
+class ActionBase extends RegistryEntry.Impl<Action> implements Action {
     private final Consumer<GameContext> actionHandler;
 
     ActionBase(Consumer<GameContext> actionHandler) {

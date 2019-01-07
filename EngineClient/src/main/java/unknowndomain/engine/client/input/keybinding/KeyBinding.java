@@ -1,23 +1,21 @@
 package unknowndomain.engine.client.input.keybinding;
 
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import org.apache.commons.lang3.Validate;
+import unknowndomain.engine.game.GameContext;
+import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.Validate;
-
-import unknowndomain.engine.game.GameContext;
-import unknowndomain.engine.registry.Impl;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Handles the state of a single KeyBinding
  * 
  * @author Mouse0w0 and iTNTPiston
  */
-public class KeyBinding extends Impl<KeyBinding> {
+public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
     private final Key code;
     private final KeyModifier[] mods;
     private final ActionMode actionMode;

@@ -1,5 +1,6 @@
 package unknowndomain.engine.registry;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -10,13 +11,16 @@ import java.util.Set;
  * @param <T> The managed type
  */
 public interface Registry<T extends RegistryEntry<T>> {
-    Class<T> getRegistryEntryType();
 
+    @Nonnull
+    Class<T> getEntryType();
+
+    @Nonnull
     String getRegistryName();
 
-    T register(T obj) throws RegisterException;
+    T register(@Nonnull T obj) throws RegisterException;
 
-    default void registerAll(T... objs) throws RegisterException {
+    default void registerAll(@Nonnull T... objs) throws RegisterException {
         for (T obj : objs)
             register(obj);
     }
@@ -55,6 +59,8 @@ public interface Registry<T extends RegistryEntry<T>> {
     T getValue(int id);
 
     Collection<Entry<String, T>> getEntries();
+
+    void freeze();
 
     class Type<T extends RegistryEntry<T>> {
         public final String name;

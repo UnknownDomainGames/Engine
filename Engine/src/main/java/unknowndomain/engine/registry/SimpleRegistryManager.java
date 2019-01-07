@@ -1,6 +1,5 @@
 package unknowndomain.engine.registry;
 
-import org.apache.commons.lang3.Validate;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nonnull;
@@ -8,17 +7,24 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class MutableRegistryManager implements RegistryManager.Mutable {
-    private Map<Class<?>, Registry<?>> registries;
+import static java.util.Objects.requireNonNull;
 
-    public MutableRegistryManager(Map<Class<?>, Registry<?>> registries) {
+public class SimpleRegistryManager implements RegistryManager.Mutable {
+
+    private final Map<Class<?>, Registry<?>> registries;
+
+    public SimpleRegistryManager(Map<Class<?>, Registry<?>> registries) {
         this.registries = registries;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T extends RegistryEntry<T>> Registry<T> getRegistry(@Nonnull Class<T> type) {
-        return (Registry<T>) registries.computeIfAbsent(Validate.notNull(type), c -> new MutableRegistry(c));
+        requireNonNull(type);
+        if (!hasRegistry(type)) {
+            throw new UnsupportedOperationException(String.format("Has not registered registry for type %s", type.getSimpleName()));
+        }
+        return (Registry<T>) registries.get(type);
     }
 
     @Override
@@ -28,7 +34,7 @@ public class MutableRegistryManager implements RegistryManager.Mutable {
 
     @Override
     public <T extends RegistryEntry<T>> void register(@NonNull T obj) {
-        getRegistry(obj.getRegistryType()).register(obj);
+        getRegistry(obj.getEntryType()).register(obj);
     }
 
     @Override

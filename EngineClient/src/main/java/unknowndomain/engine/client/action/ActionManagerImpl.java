@@ -35,8 +35,8 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public Class<Action> getRegistryEntryType() {
-        return delegate.getRegistryEntryType();
+    public Class<Action> getEntryType() {
+        return delegate.getEntryType();
     }
 
     @Override

@@ -1,6 +1,5 @@
 package unknowndomain.engine.mod;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.Validate;
@@ -8,7 +7,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.registry.RegisterEvent;
-import unknowndomain.engine.registry.*;
+import unknowndomain.engine.registry.Registry;
+import unknowndomain.engine.registry.RegistryManager;
+import unknowndomain.engine.registry.SimpleRegistry;
+import unknowndomain.engine.registry.SimpleRegistryManager;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,31 +30,32 @@ public class SimpleModManager implements ModManager {
      * <p>We have direct method to parse a temp event bus to handle this thing</p>
      * <p>This design is not very pretty. Maybe redo later.</p>
      */
+    // TODO: Remove it.
     @Deprecated
     public static RegistryManager register(Collection<ModContainer> containers, Registry.Type... tps) {
         EventBus eventBus = new AsmEventBus();
         Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
-        List<MutableRegistry<?>> registries = Lists.newArrayList();
+        List<SimpleRegistry<?>> registries = Lists.newArrayList();
         for (Registry.Type<?> tp : tps) {
-            MutableRegistry<?> registry = new MutableRegistry<>(tp.type, tp.name);
+            SimpleRegistry<?> registry = new SimpleRegistry<>(tp.type, tp.name);
             maps.put(tp.type, registry);
             registries.add(registry);
         }
-        MutableRegistryManager manager = new MutableRegistryManager(maps);
+        SimpleRegistryManager manager = new SimpleRegistryManager(maps);
 
         for (ModContainer mod : containers) {
             eventBus.register(mod.getInstance()); // register the mod
 
-            for (MutableRegistry<?> registry : registries) {
-                registry.setActiveMod(mod);
-            }
+//            for (SimpleRegistry<?> registry : registries) {
+//                registry.setActiveMod(mod);
+//            }
             eventBus.post(new RegisterEvent(manager));
 
             eventBus.unregister(mod.getInstance()); // unregister the mod
         }
-        ImmutableMap.Builder<Class<?>, Registry<?>> builder = ImmutableMap.builder();
-        for (Map.Entry<Class<?>, Registry<?>> entry : manager.getEntries())
-            builder.put(entry.getKey(), ImmutableRegistry.freeze(entry.getValue()));
+//        ImmutableMap.Builder<Class<?>, Registry<?>> builder = ImmutableMap.builder();
+//        for (Map.Entry<Class<?>, Registry<?>> entry : manager.getEntries())
+//            builder.put(entry.getKey(), ImmutableRegistry.freeze(entry.getValue()));
         return manager;
     }
 

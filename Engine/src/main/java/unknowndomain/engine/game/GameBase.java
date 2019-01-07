@@ -15,7 +15,9 @@ import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.mod.*;
 import unknowndomain.engine.mod.java.JavaModLoader;
-import unknowndomain.engine.registry.*;
+import unknowndomain.engine.registry.Registry;
+import unknowndomain.engine.registry.SimpleRegistry;
+import unknowndomain.engine.registry.SimpleRegistryManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -112,29 +114,19 @@ public abstract class GameBase implements Game {
      */
     protected void registerStage() {
         Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
-        List<MutableRegistry<?>> registries = Lists.newArrayList();
+        List<SimpleRegistry<?>> registries = Lists.newArrayList();
         for (Registry.Type<?> tp : Arrays.asList(Registry.Type.of("action", Action.class), Registry.Type.of("block", Block.class),
                 Registry.Type.of("item", Item.class), Registry.Type.of("entity", EntityType.class))) {
-            MutableRegistry<?> registry = new MutableRegistry<>(tp.type, tp.name);
+            SimpleRegistry<?> registry = new SimpleRegistry<>(tp.type, tp.name);
             maps.put(tp.type, registry);
             registries.add(registry);
         }
-        MutableRegistryManager manager = new MutableRegistryManager(maps);
+        SimpleRegistryManager manager = new SimpleRegistryManager(maps);
         eventBus.post(new RegisterEvent(manager));
-        ImmutableMap.Builder<Class<?>, Registry<?>> builder = ImmutableMap.builder();
-        for (Map.Entry<Class<?>, Registry<?>> entry : manager.getEntries())
-            builder.put(entry.getKey(), ImmutableRegistry.freeze(entry.getValue()));
 
         GamePreInitializationEvent event = new GamePreInitializationEvent();
         eventBus.post(event);
         this.context = new GameContext(manager, eventBus, event.getBlockAir());
-    }
-
-    protected RegistryManager freeze(MutableRegistryManager manager) {
-        ImmutableMap.Builder<Class<?>, ImmutableRegistry<?>> builder = ImmutableMap.builder();
-        for (Map.Entry<Class<?>, Registry<?>> entry : manager.getEntries())
-            builder.put(entry.getKey(), ImmutableRegistry.freeze(entry.getValue()));
-        return new FrozenRegistryManager(builder.build());
     }
 
     /**

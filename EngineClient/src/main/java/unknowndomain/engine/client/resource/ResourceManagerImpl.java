@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * The one manager for the game. Not really considering concurrency now.
  * <p>
- * Not considering the data dependency here (like reload resource toggling re-bake model and others...)
+ * Not considering the data dependency here (like reload resource toggling re-freeze model and others...)
  * <p>
  * I suggest that we should handle data dependency in other places (not here)
  */

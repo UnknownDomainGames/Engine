@@ -4,13 +4,13 @@ import com.google.common.collect.ImmutableMap;
 import org.joml.AABBd;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.registry.Impl;
+import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockAir extends Impl<Block> implements Block {
+public class BlockAir extends RegistryEntry.Impl<Block> implements Block {
 
     public BlockAir() {
         localName("air");

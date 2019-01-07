@@ -1,15 +1,17 @@
 package unknowndomain.engine.registry;
 
-import unknowndomain.engine.mod.ModContainer;
+import com.google.common.reflect.TypeToken;
 
 /**
  * The registry entry, which is the registrable object reference.
  *
  * @param <T> The real type of this object
  * @see Registry
+ * @see Impl
  */
 public interface RegistryEntry<T> {
-    Class<T> getRegistryType();
+
+    Class<T> getEntryType();
 
     /**
      * Set the an local name for this object.
@@ -27,39 +29,55 @@ public interface RegistryEntry<T> {
      */
     String getLocalName();
 
-    /**
-     * Return the mod which provides and registers this object.
-     * <p>This getter will only valid after the registry stage of the game which triggered by {@link unknowndomain.engine.event.registry.RegisterEvent}</p>
-     *
-     * @return The mod mod container
-     * @see unknowndomain.engine.mod.ModContainer
-     * @see unknowndomain.engine.mod.ModIdentifier
-     * @see unknowndomain.engine.event.registry.RegisterEvent
-     */
-    ModContainer getOwner();
-
-    /**
-     * Get the registry managing this object.
-     * <p>This getter will only valid after the registry stage of the game which triggered by {@link unknowndomain.engine.event.registry.RegisterEvent}</p>
-     *
-     * @return The registry which managing this object.
-     * @see unknowndomain.engine.event.registry.RegisterEvent
-     */
-    Registry<? extends RegistryEntry<T>> getAssignedRegistry();
+    int getId();
 
     /**
      * Get the long name with its "namespaces" which is mod container and registry.
-     *
-     * @see #getAssignedRegistry()
-     * @see #getOwner()
      */
-    default String getUniqueName() {
-        // TODO: Fix it
-//        return getOwner().getModId().concat(".")
-//                .concat(getAssignedRegistry().getRegistryName()).concat(".")
-//                .concat(getLocalName());
-        return "unknowndomain".concat(".")
-                .concat(getAssignedRegistry().getRegistryName()).concat(".")
-                .concat(getLocalName());
+    String getUniqueName();
+
+    abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<T> {
+        private final TypeToken<T> token = new TypeToken<T>(getClass()) {
+        };
+        private String registeredName;
+
+        private String uniqueName;
+        private int id;
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public final Class<T> getEntryType() {
+            return (Class<T>) token.getRawType();
+        }
+
+        @Override
+        public String toString() {
+            return token + "{" +
+                    "path='" + registeredName + '\'' +
+                    '}';
+        }
+
+        @Override
+        public final String getLocalName() {
+            return registeredName;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public final T localName(String name) {
+            if (this.registeredName != null) throw new Error("Duplicated register " + name);
+            this.registeredName = name;
+            return (T) this;
+        }
+
+        @Override
+        public String getUniqueName() {
+            return uniqueName;
+        }
+
+        @Override
+        public int getId() {
+            return id;
+        }
     }
 }
