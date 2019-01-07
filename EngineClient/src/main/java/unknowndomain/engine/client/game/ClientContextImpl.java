@@ -64,6 +64,25 @@ public class ClientContextImpl implements ClientContext {
         return window;
     }
 
+    private long lastUpdateFps = System.currentTimeMillis();
+    private int frameCount = 0;
+    private int fps = 0;
+
+    @Override
+    public int getFps() {
+        return fps;
+    }
+
+    public void updateFps() {
+        long time = System.currentTimeMillis();
+        if (time - lastUpdateFps > 1000) {
+            fps = frameCount;
+            frameCount = 0; //reset the FPS counter
+            lastUpdateFps += 1000; //add one second
+        }
+        frameCount++;
+    }
+
     @Override
     public TextureManager getTextureManager() {
         return textureManager;

@@ -103,7 +103,6 @@ public class GameClientStandalone extends GameServerFullAsync {
         registerKeyBindings(keyBindingManager);
         // TODO fire KeyBindingRegistryEvent or something
 
-        Keybindings.INSTANCE.setup(keyBindingManager); // TODO: Remove it hardcode setup
         window.addKeyCallback(keyBindingManager::handleKey);
         window.addMouseCallback(keyBindingManager::handleMouse);
 
@@ -174,6 +173,7 @@ public class GameClientStandalone extends GameServerFullAsync {
      */
     private void renderTick(double partialTick) {
         window.beginDraw();
+        clientContext.updateFps();
         this.clientContext.render(partialTick);
         window.endDraw();
     }

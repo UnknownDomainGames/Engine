@@ -161,29 +161,9 @@ public class GuiRenderer implements Renderer {
         graphics.popClipRect();
     }
 
-    private long lastFPS = getTime();
-    private int fps = 0;
-    private int displayFPS = 0;
-
-    public long getTime() {
-        return System.nanoTime() / 1_000_000;
-    }
-
-    public void updateFPS() {
-        long time = getTime();
-        if (time - lastFPS > 1000) {
-            displayFPS = fps;
-            fps = 0; //reset the FPS counter
-            lastFPS += 1000; //add one second
-        }
-        fps++;
-    }
-
     private final BlockRenderer blockRenderer = new ModelBlockRenderer();
 
     private void debug(ClientContext context) {
-        updateFPS();
-
         graphics.setColor(Color.WHITE);
 
         int middleX = context.getWindow().getWidth() / 2, middleY = context.getWindow().getHeight() / 2;
@@ -194,7 +174,7 @@ public class GuiRenderer implements Renderer {
         Entity player = UnknownDomain.getGame().getPlayer().getControlledEntity();
 //        AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
 
-        graphics.drawText("FPS: " + displayFPS, 0, 0);
+        graphics.drawText("FPS: " + context.getFps(), 0, 0);
         graphics.drawText(String.format("Player location: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 19);
         graphics.drawText(String.format("Player motion: %f, %f, %f", player.getMotion().x, player.getMotion().y, player.getMotion().z), 0, 38);
         graphics.drawText(String.format("Player yaw: %f, pitch: %f, roll: %f", player.getRotation().x, player.getRotation().y, player.getRotation().z), 0, 19 * 3);

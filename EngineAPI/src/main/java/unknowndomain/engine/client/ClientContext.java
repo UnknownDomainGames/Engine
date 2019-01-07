@@ -21,6 +21,8 @@ public interface ClientContext {
 
     GameWindow getWindow();
 
+    int getFps();
+
     TextureManager getTextureManager();
 
     double partialTick();
