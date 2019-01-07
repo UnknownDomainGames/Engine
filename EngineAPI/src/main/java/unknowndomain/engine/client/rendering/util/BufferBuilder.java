@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.rendering.util;
 
+import org.joml.Vector3fc;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.util.Color;
@@ -67,7 +68,7 @@ public class BufferBuilder {
             useTex = tex;
             useNormal = normal;
             byteBuffer.limit(byteBuffer.capacity());
-            offset = (usePos ? Float.BYTES * 3 : 0) + (useColor ? Float.BYTES * 4 : 0) + (useTex ? Float.BYTES * 2 : 0) + (useNormal ? Float.BYTES * 3 : 0);
+            offset = 48;
         }
     }
 
@@ -181,7 +182,7 @@ public class BufferBuilder {
 
     public BufferBuilder color(float r, float g, float b, float a) {
         if (useColor) {
-            int i = vertexCount * getOffset() + Float.BYTES * (usePos ? 3 : 0);
+            int i = vertexCount * getOffset() + Float.BYTES * 3;
             byteBuffer.putFloat(i, r);
             byteBuffer.putFloat(i + 4, g);
             byteBuffer.putFloat(i + 8, b);
@@ -192,16 +193,19 @@ public class BufferBuilder {
 
     public BufferBuilder tex(float u, float v) {
         if (useTex) {
-            int i = vertexCount * getOffset() + Float.BYTES * ((useColor ? 4 : 0) + (usePos ? 3 : 0));
+            int i = vertexCount * getOffset() + Float.BYTES * 7;
             byteBuffer.putFloat(i, u);
             byteBuffer.putFloat(i + 4, v);
         }
         return this;
     }
 
+    public BufferBuilder normal(Vector3fc vec) {
+        return normal(vec.x(),vec.y(),vec.z());
+    }
     public BufferBuilder normal(float nx, float ny, float nz) {
         if (useNormal) {
-            int i = vertexCount * getOffset() + Float.BYTES * ((useColor ? 4 : 0) + (useTex ? 2 : 0) + (usePos ? 3 : 0));
+            int i = vertexCount * getOffset() + Float.BYTES * 9;
             byteBuffer.putFloat(i, nx);
             byteBuffer.putFloat(i + 4, ny);
             byteBuffer.putFloat(i + 8, nz);

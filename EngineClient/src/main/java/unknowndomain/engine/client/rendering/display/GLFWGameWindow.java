@@ -5,6 +5,14 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
+import unknowndomain.engine.client.rendering.gui.Tessellator;
+import unknowndomain.engine.client.rendering.shader.Shader;
+import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.rendering.shader.ShaderType;
+import unknowndomain.engine.client.rendering.util.*;
+import unknowndomain.engine.client.resource.ResourcePath;
 
 import java.io.PrintStream;
 import java.util.LinkedList;
@@ -13,6 +21,7 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class GLFWGameWindow implements GameWindow {
@@ -32,6 +41,10 @@ public class GLFWGameWindow implements GameWindow {
     private final List<CursorCallback> cursorCallbacks = new LinkedList<>();
     private final List<ScrollCallback> scrollCallbacks = new LinkedList<>();
     private final List<CharCallback> charCallbacks = new LinkedList<>();
+    private FrameBuffer frameBuffer;
+    private FrameBuffer frameBufferMultisampled;
+    private final DefaultFBOWrapper defaultFBO = new DefaultFBOWrapper();
+    private ShaderProgram frameBufferSP;
 
     public GLFWGameWindow(int width, int height, String title) {
         this.title = title;
@@ -145,14 +158,29 @@ public class GLFWGameWindow implements GameWindow {
     } // TODO: Remove it.
 
     public void beginDraw() {
+        frameBufferMultisampled.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_MULTISAMPLE);
     }
 
     public void endDraw() {
+        frameBuffer.bind();
+        glEnable(GL_DEPTH_TEST);
+        frameBuffer.blitFrom(frameBufferMultisampled);
+        defaultFBO.bind();
+        glClear(GL_COLOR_BUFFER_BIT);
+        frameBufferSP.use();
+        glDisable(GL_DEPTH_TEST);
+        defaultFBO.drawFrameBuffer(frameBuffer);
+
         glfwSwapBuffers(handle);
 
-        if (isResized())
+        if (isResized()) {
+            frameBuffer.resize(width,height);
+            frameBufferMultisampled.resize(width,height);
             resized = false;
+        }
 
         glfwPollEvents();
     }
@@ -175,6 +203,19 @@ public class GLFWGameWindow implements GameWindow {
         GL.createCapabilities();
         enableVSync();
         setupInput();
+        frameBuffer = new FrameBuffer();
+        frameBuffer.createFrameBuffer();
+        frameBuffer.resize(width, height);
+        frameBufferMultisampled = new FrameBufferMultiSampled();
+        frameBufferMultisampled.createFrameBuffer();
+        frameBufferMultisampled.resize(width, height);
+        frameBuffer.check();
+        frameBufferMultisampled.check();
+        frameBufferSP = new ShaderProgram();
+        frameBufferSP.init(
+                Shader.create(GLHelper.readText("/assets/unknowndomain/shader/framebuffer.vert"), ShaderType.VERTEX_SHADER),
+                Shader.create(GLHelper.readText("/assets/unknowndomain/shader/framebuffer.frag"), ShaderType.FRAGMENT_SHADER)
+        ); //TODO init shader in a formal way
         showWindow();
     }
 
@@ -217,6 +258,7 @@ public class GLFWGameWindow implements GameWindow {
         glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     }

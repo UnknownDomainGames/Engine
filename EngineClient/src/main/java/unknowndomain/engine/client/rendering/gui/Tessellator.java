@@ -43,15 +43,15 @@ public class Tessellator {
             Shader.enableVertexAttrib(0);
         }
         if (buffer.isColorEnabled()) {
-            Shader.pointVertexAttribute(1, 4, buffer.getOffset(), (buffer.isPosEnabled() ? 3 : 0) * Float.BYTES);
+            Shader.pointVertexAttribute(1, 4, buffer.getOffset(), 3 * Float.BYTES);
             Shader.enableVertexAttrib(1);
         }
         if (buffer.isTexEnabled()) {
-            Shader.pointVertexAttribute(2, 2, buffer.getOffset(), ((buffer.isPosEnabled() ? 3 : 0) + (buffer.isColorEnabled() ? 4 : 0)) * Float.BYTES);
+            Shader.pointVertexAttribute(2, 2, buffer.getOffset(), 7 * Float.BYTES);
             Shader.enableVertexAttrib(2);
         }
         if (buffer.isNormalEnabled()) {
-            Shader.pointVertexAttribute(3, 3, buffer.getOffset(), ((buffer.isPosEnabled() ? 3 : 0) + (buffer.isTexEnabled() ? 2 : 0) + (buffer.isColorEnabled() ? 4 : 0)) * Float.BYTES);
+            Shader.pointVertexAttribute(3, 3, buffer.getOffset(), 9 * Float.BYTES);
             Shader.enableVertexAttrib(3);
         }
 
