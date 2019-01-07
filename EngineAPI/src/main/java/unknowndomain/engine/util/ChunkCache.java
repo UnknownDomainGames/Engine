@@ -40,6 +40,7 @@ public class ChunkCache implements BlockAccessor {
     }
 
     @Nonnull
+    @Override
     public World getWorld() {
         return world;
     }
@@ -52,6 +53,17 @@ public class ChunkCache implements BlockAccessor {
             return chunk == null ? getWorld().getGame().getContext().getBlockAir() : chunk.getBlock(x, y, z); // FIXME:
         }
         return world.getBlock(x, y, z);
+    }
+
+    @Nonnull
+    @Override
+    public int getBlockId(int x, int y, int z) {
+        int chunkX = (x >> 4) - this.chunkX, chunkY = (y >> 4) - this.chunkY, chunkZ = (z >> 4) - this.chunkZ;
+        if (chunkX >= 0 && chunkX < chunks.length && chunkY >= 0 && chunkY < chunks[chunkX].length && chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {
+            Chunk chunk = chunks[chunkX][chunkY][chunkZ];
+            return chunk == null ? getWorld().getGame().getContext().getBlockAirId() : chunk.getBlockId(x, y, z); // FIXME:
+        }
+        return world.getBlockId(x, y, z);
     }
 
     @Nonnull

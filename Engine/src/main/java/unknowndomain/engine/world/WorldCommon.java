@@ -183,6 +183,13 @@ public class WorldCommon implements World, Runnable {
 
     @Nonnull
     @Override
+    public int getBlockId(int x, int y, int z) {
+        Chunk chunk = chunkStorage.getChunkByBlockPos(x, y, z);
+        return chunk == null ? getGame().getContext().getBlockAirId() : chunk.getBlockId(x, y, z);
+    }
+
+    @Nonnull
+    @Override
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block) {
         Block oldBlock = chunkStorage.getOrLoadChunk(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT)
                 .setBlock(pos, block);

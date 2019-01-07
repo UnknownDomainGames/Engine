@@ -58,6 +58,10 @@ public class GameContext implements EventBus {
         return blockAir;
     }
 
+    public int getBlockAirId() {
+        return getBlockRegistry().getId(getBlockAir());
+    }
+
     // public void nextTick(Runnable runnable) {
     //     nextTick.add(runnable);
     // }

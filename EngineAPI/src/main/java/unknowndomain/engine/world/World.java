@@ -34,6 +34,12 @@ public interface World extends RuntimeObject, BlockAccessor {
 
     Chunk getChunk(int chunkX, int chunkY, int chunkZ);
 
+    @Nonnull
+    @Override
+    default World getWorld() {
+        return this;
+    }
+
     interface Config {
 
     }

@@ -1,23 +1,13 @@
 package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
-
-import unknowndomain.engine.Engine;
 import unknowndomain.engine.action.Action;
-import unknowndomain.engine.action.ActionBuilderImpl;
-import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.block.BlockPrototype;
-import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.action.ActionManagerImpl;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.controller.MotionType;
-import unknowndomain.engine.client.input.keybinding.ActionMode;
-import unknowndomain.engine.client.input.keybinding.Key;
-import unknowndomain.engine.client.input.keybinding.KeyBinding;
-import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
-import unknowndomain.engine.client.input.keybinding.KeyModifier;
-import unknowndomain.engine.client.input.keybinding.Keybindings;
+import unknowndomain.engine.client.input.keybinding.*;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
 import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
@@ -52,7 +42,7 @@ import java.util.UUID;
 public class GameClientStandalone extends GameServerFullAsync {
 
     private GLFWGameWindow window;
-    private ClientContextImpl renderContext;
+    private ClientContextImpl clientContext;
     private ResourceManager resourceManager;
 
     private ActionManagerImpl actionManager;
@@ -88,27 +78,6 @@ public class GameClientStandalone extends GameServerFullAsync {
      */
     public World getWorld() {
         return world;
-    }
-
-    /**
-     * @return the actionManager
-     */
-    public ActionManager getActionManager() {
-        return actionManager;
-    }
-
-    /**
-     * @return the renderContext
-     */
-    public ClientContext getRenderContext() {
-        return renderContext;
-    }
-
-    /**
-     * @return the keyBindingManager
-     */
-    public KeyBindingManager getKeyBindingManager() {
-        return keyBindingManager;
     }
 
     public EntityController getEntityController() {
@@ -152,15 +121,15 @@ public class GameClientStandalone extends GameServerFullAsync {
                     Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(), ShaderType.FRAGMENT_SHADER));
         });
 
-        renderContext = new ClientContextImpl(Thread.currentThread(), factories, window, player);
-        renderContext.build(context, resourceManager);
-        renderContext.setCamera(new FirstPersonCamera(player));
+        clientContext = new ClientContextImpl(this, Thread.currentThread(), factories, window, player);
+        clientContext.build(context, resourceManager);
+        clientContext.setCamera(new FirstPersonCamera(player));
     }
 
     @Override
     protected void resourceStage() {
-        eventBus.post(new ResourceSetupEvent(context, resourceManager, renderContext.getTextureManager()));
-        renderContext.getTextureManager().initTextureAtlas(TextureTypes.BLOCK);
+        eventBus.post(new ResourceSetupEvent(context, resourceManager, clientContext.getTextureManager()));
+        clientContext.getTextureManager().initTextureAtlas(TextureTypes.BLOCK);
     }
 
     @Override
@@ -206,7 +175,7 @@ public class GameClientStandalone extends GameServerFullAsync {
      */
     private void renderTick(double partialTick) {
         window.beginDraw();
-        this.renderContext.render(partialTick);
+        this.clientContext.render(partialTick);
         window.endDraw();
     }
 
@@ -274,13 +243,13 @@ public class GameClientStandalone extends GameServerFullAsync {
         manager.register(KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
                 .endAction((c, i) -> getEntityController().handleMotion(MotionType.DOWN, false)));
         manager.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
-            BlockPrototype.Hit hit = getRenderContext().getHit();
+            BlockPrototype.Hit hit = clientContext.getHit();
             if (hit != null) {
                 getWorld().setBlock(hit.getPos(), c.getBlockAir());
             }
         }, ActionMode.PRESS));
         manager.register(KeyBinding.create("player.mouse.r", Key.MOUSE_BUTTON_RIGHT, (c) -> {
-            BlockPrototype.Hit hit = getRenderContext().getHit();
+            BlockPrototype.Hit hit = clientContext.getHit();
             if (hit != null) {
                 getWorld().setBlock(hit.getFace().offset(hit.getPos()), Blocks.DIRT);
             }

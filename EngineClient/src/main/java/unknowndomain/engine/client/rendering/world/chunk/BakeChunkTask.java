@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.rendering.world.chunk;
 
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.block.Block;
+import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.BlockPosIterator;
@@ -37,8 +37,8 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
         buffer.begin(GL11.GL_TRIANGLES, true, true, true,true);
         while (blockPosIterator.hasNext()) {
             BlockPos pos = blockPosIterator.next();
-            Block block = chunk.getBlock(pos);
-            if (block == chunkCache.getWorld().getGame().getContext().getBlockAir()) {
+            ClientBlock block = chunkRenderer.getContext().getClientBlockRegistry().getValue(chunkCache.getBlockId(pos));
+            if (block.getBlock() == chunkCache.getWorld().getGame().getContext().getBlockAir()) {
                 continue;
             }
 

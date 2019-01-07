@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.rendering.block;
 
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.block.model.BlockModelQuad;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
@@ -19,7 +20,7 @@ public class ModelBlockRenderer implements BlockRenderer {
     public static final Map<Block, BlockModel> blockModelMap = new HashMap<>();
 
     @Override
-    public void render(Block block, ChunkCache chunkCache, BlockPos pos, BufferBuilder buffer) {
+    public void render(ClientBlock block, ChunkCache chunkCache, BlockPos pos, BufferBuilder buffer) {
         BlockModel blockModel = blockModelMap.get(block);
         if (blockModel == null) {
             return;
@@ -28,9 +29,7 @@ public class ModelBlockRenderer implements BlockRenderer {
         BlockPos.Mutable mutablePos = new BlockPos.Mutable(pos);
         for (Facing facing : Facing.values()) {
             mutablePos.set(pos);
-            facing.offset(mutablePos);
-            Block facingBlock = chunkCache.getBlock(mutablePos);
-            if (facingBlock != chunkCache.getWorld().getGame().getContext().getBlockAir()) {
+            if (!block.canRenderFace(chunkCache, mutablePos, facing)) {
                 continue;
             }
 
@@ -41,7 +40,7 @@ public class ModelBlockRenderer implements BlockRenderer {
     }
 
     @Override
-    public void render(Block block, BufferBuilder buffer) {
+    public void render(ClientBlock block, BufferBuilder buffer) {
         BlockModel model = blockModelMap.get(block);
         if (model == null) {
             return;
