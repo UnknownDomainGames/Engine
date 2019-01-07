@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.tuple.Pair;
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.action.Action;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.entity.EntityType;
 import unknowndomain.engine.event.EventBus;
@@ -115,7 +114,7 @@ public abstract class GameBase implements Game {
     protected void registerStage() {
         Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
         List<SimpleRegistry<?>> registries = Lists.newArrayList();
-        for (Registry.Type<?> tp : Arrays.asList(Registry.Type.of("action", Action.class), Registry.Type.of("block", Block.class),
+        for (Registry.Type<?> tp : Arrays.asList(Registry.Type.of("block", Block.class),
                 Registry.Type.of("item", Item.class), Registry.Type.of("entity", EntityType.class))) {
             SimpleRegistry<?> registry = new SimpleRegistry<>(tp.type, tp.name);
             maps.put(tp.type, registry);

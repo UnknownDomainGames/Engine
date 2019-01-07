@@ -1,21 +1,16 @@
 package unknowndomain.engine.client.input.keybinding;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.lwjgl.glfw.GLFW;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
+import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.Tickable;
-import unknowndomain.engine.action.ActionManager;
 import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.registry.Registry;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Handles the registration of KeyBinding and also handles key inputs (and mouse
@@ -35,11 +30,6 @@ public class KeyBindingManager implements Tickable {
      */
     @Deprecated
     private final Set<Key> pressedKey = new HashSet<>();
-    /**
-     * @Deprecated Not used.
-     */
-    @Deprecated
-    private ActionManager actionManager;
 
     public KeyBindingManager(GameContext context, Registry<KeyBinding> keyBindingRegistry) {
         registry = keyBindingRegistry;

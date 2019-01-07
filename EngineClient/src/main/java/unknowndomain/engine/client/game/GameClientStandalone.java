@@ -1,13 +1,14 @@
 package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
-import unknowndomain.engine.action.Action;
 import unknowndomain.engine.block.BlockPrototype;
-import unknowndomain.engine.client.action.ActionManagerImpl;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.controller.MotionType;
-import unknowndomain.engine.client.input.keybinding.*;
+import unknowndomain.engine.client.input.keybinding.ActionMode;
+import unknowndomain.engine.client.input.keybinding.Key;
+import unknowndomain.engine.client.input.keybinding.KeyBinding;
+import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
 import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
@@ -34,7 +35,6 @@ import unknowndomain.game.Blocks;
 import unknowndomain.game.DefaultGameMode;
 
 import java.nio.ByteBuffer;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -45,7 +45,6 @@ public class GameClientStandalone extends GameServerFullAsync {
     private ClientContextImpl clientContext;
     private ResourceManager resourceManager;
 
-    private ActionManagerImpl actionManager;
     private KeyBindingManager keyBindingManager;
     private EntityController entityController;
 
@@ -209,20 +208,6 @@ public class GameClientStandalone extends GameServerFullAsync {
     // }
 
     // dirty things below...
-    /**
-     * Replaced by registerKeyBindings
-     * 
-     * @return
-     */
-    @Deprecated
-    List<Action> buildActions() {
-        return Collections.emptyList();
-//        return Lists.newArrayList(ActionBuilderImpl.create("player.move.forward").setStartHandler().setEndHandler().build(),
-//                ActionBuilderImpl.create("player.move.backward").setStartHandler().setEndHandler().build(), ActionBuilderImpl.create("player.move.left").setStartHandler().setEndHandler().build(),
-//                ActionBuilderImpl.create("player.move.right").setStartHandler().setEndHandler().build(), ActionBuilderImpl.create("player.move.jump").setStartHandler().setEndHandler().build(),
-//                ActionBuilderImpl.create("player.move.sneak").setStartHandler().setEndHandler().build(), ActionBuilderImpl.create("player.mouse.left").setStartHandler().build(),
-//                ActionBuilderImpl.create("player.mouse.right").setStartHandler().build());
-    }
 
     /**
      * For now. Registers the key bindings
