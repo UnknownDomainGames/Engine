@@ -163,24 +163,6 @@ public abstract class GameBase implements Game {
         return false;
     }
 
-    @Nullable
-    @Override
-    public <T> T getComponent(@Nonnull String name) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getComponent(@Nonnull Class<T> type) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getBehavior(Class<T> type) {
-        return null;
-    }
-
     @Override
     public void run() {
         constructStage();
@@ -197,5 +179,17 @@ public abstract class GameBase implements Game {
 
     public void terminate() {
         // TODO: unload mod/resource here
+    }
+
+
+    @Nullable
+    @Override
+    public <T extends Component> T getComponent(@Nonnull Class<T> type) {
+        return null;
+    }
+
+    @Override
+    public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
+        return false;
     }
 }

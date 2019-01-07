@@ -41,24 +41,6 @@ public class BlockAir extends Impl<Block> implements Block {
         return new AABBd[0];
     }
 
-    @Nullable
-    @Override
-    public <T> T getComponent(@Nonnull String name) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getComponent(@Nonnull Class<T> type) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getBehavior(Class<T> type) {
-        return null;
-    }
-
     @Override
     public boolean canPlace(World world, Entity entity, BlockPos blockPos, Block block) {
         return false;
@@ -96,5 +78,16 @@ public class BlockAir extends Impl<Block> implements Block {
     @Override
     public void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block) {
 
+    }
+
+    @Nullable
+    @Override
+    public <T extends Component> T getComponent(@Nonnull Class<T> type) {
+        return null;
+    }
+
+    @Override
+    public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
+        return false;
     }
 }

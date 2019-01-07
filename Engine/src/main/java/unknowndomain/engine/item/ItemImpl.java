@@ -56,23 +56,15 @@ class ItemImpl extends Impl<Item> implements Item {
         useBlockBehavior.onUseBlockStop(player, item, hit, tickElapsed);
     }
 
-    @Nullable
-    @Override
-    public <T> T getComponent(@Nonnull String name) {
-        return null;
-    }
 
     @Nullable
     @Override
-    public <T> T getComponent(@Nonnull Class<T> type) {
+    public <T extends Component> T getComponent(@Nonnull Class<T> type) {
         return null;
     }
 
-    @Nullable
     @Override
-    public <T> T getBehavior(Class<T> type) {
-        return null;
+    public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
+        return false;
     }
-
-
 }

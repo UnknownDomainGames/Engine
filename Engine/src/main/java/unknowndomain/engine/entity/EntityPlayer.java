@@ -1,13 +1,12 @@
 package unknowndomain.engine.entity;
 
-import com.google.common.collect.ImmutableMap;
 import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.item.Item;
 
 public class EntityPlayer extends EntityBase {
 
-    public EntityPlayer(int id, ImmutableMap<String, Object> behaviors) {
-        super(id, null, behaviors);
+    public EntityPlayer(int id) {
+        super(id, null);
     }
 
     public static class TwoHandImpl implements TwoHands {

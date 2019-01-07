@@ -43,6 +43,12 @@ public interface Chunk {
         return getBlock(pos.getX(), pos.getY(), pos.getZ());
     }
 
+    int getBlockId(int x, int y, int z);
+
+    default int getBlockId(BlockPos pos) {
+        return getBlockId(pos.getX(), pos.getY(), pos.getZ());
+    }
+
     Block setBlock(BlockPos pos, Block block);
 
     boolean isAirChunk();

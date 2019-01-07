@@ -1,6 +1,5 @@
 package unknowndomain.engine.entity;
 
-import com.google.common.collect.ImmutableMap;
 import org.joml.AABBd;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -17,16 +16,10 @@ public abstract class EntityBase implements Entity {
     private Vector3f rotation = new Vector3f();
     private Vector3f motion = new Vector3f();
     private AABBd boundingBox;
-    private ImmutableMap<String, Object> behaviors;
 
     public EntityBase(int id, World world) {
-        this(id, world, ImmutableMap.of());
-    }
-
-    public EntityBase(int id, World world, ImmutableMap<String, Object> behaviors) {
         this.id = id;
         this.world = world;
-        this.behaviors = behaviors;
     }
 
     @Override
@@ -73,19 +66,12 @@ public abstract class EntityBase implements Entity {
 
     @Nullable
     @Override
-    public <T> T getComponent(@Nonnull String name) {
+    public <T extends Component> T getComponent(@Nonnull Class<T> type) {
         return null;
     }
 
-    @Nullable
     @Override
-    public <T> T getComponent(@Nonnull Class<T> type) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public <T> T getBehavior(Class<T> type) {
-        return (T) behaviors.get(type.getName());
+    public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
+        return false;
     }
 }
