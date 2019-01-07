@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 
 import static java.util.Objects.requireNonNull;
 
-public class SimpleRegistryManager implements RegistryManager.Mutable {
+public class SimpleRegistryManager implements RegistryManager {
 
     private final Map<Class<?>, Registry<?>> registries;
 

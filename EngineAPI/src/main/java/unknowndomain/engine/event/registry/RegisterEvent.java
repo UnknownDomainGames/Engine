@@ -4,13 +4,13 @@ import unknowndomain.engine.event.Event;
 import unknowndomain.engine.registry.RegistryManager;
 
 public class RegisterEvent implements Event {
-    private RegistryManager.Mutable registry;
+    private RegistryManager registry;
 
-    public RegisterEvent(RegistryManager.Mutable registry) {
+    public RegisterEvent(RegistryManager registry) {
         this.registry = registry;
     }
 
-    public RegistryManager.Mutable getRegistry() {
+    public RegistryManager getRegistry() {
         return registry;
     }
 }
