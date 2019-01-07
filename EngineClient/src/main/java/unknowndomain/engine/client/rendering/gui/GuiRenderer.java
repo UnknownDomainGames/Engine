@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.rendering.gui;
 
 import org.joml.*;
-import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.UnknownDomain;
@@ -17,13 +16,10 @@ import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
-import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.util.Color;
-import unknowndomain.game.Blocks;
 
-import java.lang.Math;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
@@ -31,7 +27,6 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
-import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
 /**
  * render for any gui
@@ -226,44 +221,44 @@ public class GuiRenderer implements Renderer {
     }
 
 
-    private void testBlockRenderer() {
-        glDisable(GL_LINE_SMOOTH);
-        glDisable(GL_POINT_SMOOTH);
-        glDisable(GL_POLYGON_SMOOTH);
-        setUniform(u_ModelMatrix, new Matrix4f()
-//                .rotate(30, 1, 0, 0)
-//                .rotate(-30, 0, 1, 0)
-                .translate(context.getWindow().getWidth() - 75, context.getWindow().getHeight() - 25, 0)
-//                .translate(-0.5f, -0.5f, -0.5f)
-//                .rotate((float) Math.toRadians(180), 0, 0, 1)
-                .rotate((float) Math.toRadians(195), 1, 0, 0)
-                .rotate((float) Math.toRadians(-30), 0, 1, 0)
-                .scale(25));
-//                .translate(50, 50, 0)
-//                .rotate(-30, 0, 1, 0)
-//                .rotate(165, 1, 0, 0));
-
-        glEnable(GL11.GL_DEPTH_TEST);
-        glEnable(GL11.GL_CULL_FACE);
-        glEnable(GL11.GL_TEXTURE_2D);
-        setUniform(u_UsingTexture, true);
-        context.getTextureManager().getTextureAtlas(BLOCK).bind();
-
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_TRIANGLES, true, true, true);
-        blockRenderer.render(Blocks.GRASS, buffer);
-
-        tessellator.draw();
-
-        setUniform(u_UsingTexture, false);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL11.GL_CULL_FACE);
-        glDisable(GL11.GL_TEXTURE_2D);
-        glDisable(GL11.GL_DEPTH_TEST);
-
-        setUniform(u_ModelMatrix, new Matrix4f());
-    }
+//    private void testBlockRenderer() {
+//        glDisable(GL_LINE_SMOOTH);
+//        glDisable(GL_POINT_SMOOTH);
+//        glDisable(GL_POLYGON_SMOOTH);
+//        setUniform(u_ModelMatrix, new Matrix4f()
+////                .rotate(30, 1, 0, 0)
+////                .rotate(-30, 0, 1, 0)
+//                .translate(context.getWindow().getWidth() - 75, context.getWindow().getHeight() - 25, 0)
+////                .translate(-0.5f, -0.5f, -0.5f)
+////                .rotate((float) Math.toRadians(180), 0, 0, 1)
+//                .rotate((float) Math.toRadians(195), 1, 0, 0)
+//                .rotate((float) Math.toRadians(-30), 0, 1, 0)
+//                .scale(25));
+////                .translate(50, 50, 0)
+////                .rotate(-30, 0, 1, 0)
+////                .rotate(165, 1, 0, 0));
+//
+//        glEnable(GL11.GL_DEPTH_TEST);
+//        glEnable(GL11.GL_CULL_FACE);
+//        glEnable(GL11.GL_TEXTURE_2D);
+//        setUniform(u_UsingTexture, true);
+//        context.getTextureManager().getTextureAtlas(BLOCK).bind();
+//
+//        Tessellator tessellator = Tessellator.getInstance();
+//        BufferBuilder buffer = tessellator.getBuffer();
+//        buffer.begin(GL_TRIANGLES, true, true, true);
+//        blockRenderer.render(Blocks.GRASS, buffer);
+//
+//        tessellator.draw();
+//
+//        setUniform(u_UsingTexture, false);
+//        glBindTexture(GL_TEXTURE_2D, 0);
+//        glDisable(GL11.GL_CULL_FACE);
+//        glDisable(GL11.GL_TEXTURE_2D);
+//        glDisable(GL11.GL_DEPTH_TEST);
+//
+//        setUniform(u_ModelMatrix, new Matrix4f());
+//    }
 
     @Override
     public void dispose() {

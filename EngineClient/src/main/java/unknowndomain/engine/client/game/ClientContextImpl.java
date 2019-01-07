@@ -4,14 +4,17 @@ import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.ClientContext;
+import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureManagerImpl;
 import unknowndomain.engine.client.resource.ResourceManager;
+import unknowndomain.engine.game.Game;
 import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.player.Player;
+import unknowndomain.engine.registry.Registry;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,6 +22,7 @@ import java.util.List;
 
 public class ClientContextImpl implements ClientContext {
 
+    private final Game game;
     private final Thread renderThread;
     @Deprecated
     private final List<Renderer.Factory> factories;
@@ -32,11 +36,17 @@ public class ClientContextImpl implements ClientContext {
     private BlockPrototype.Hit hit;
     private double partialTick;
 
-    public ClientContextImpl(Thread renderThread, List<Renderer.Factory> factories, GameWindow window, Player player) {
+    public ClientContextImpl(Game game, Thread renderThread, List<Renderer.Factory> factories, GameWindow window, Player player) {
+        this.game = game;
         this.renderThread = renderThread;
         this.factories = factories;
         this.window = window;
         this.player = player;
+    }
+
+    @Override
+    public Game getGame() {
+        return game;
     }
 
     @Override
@@ -82,6 +92,11 @@ public class ClientContextImpl implements ClientContext {
     @Override
     public BlockPrototype.Hit getHit() {
         return hit;
+    }
+
+    @Override
+    public Registry<ClientBlock> getClientBlockRegistry() {
+        return game.getContext().getRegistry().getRegistry(ClientBlock.class);
     }
 
     public void build(GameContext context, ResourceManager resourceManager) {

@@ -118,6 +118,10 @@ public class ChunkRenderer implements Renderer {
         return blockRenderer;
     }
 
+    public ClientContext getContext() {
+        return context;
+    }
+
     public void upload(ChunkMesh chunkMesh, BufferBuilder buffer) {
         ByteBuffer finalBuffer = BufferUtils.createByteBuffer(buffer.build().limit());
         finalBuffer.put(buffer.build());
