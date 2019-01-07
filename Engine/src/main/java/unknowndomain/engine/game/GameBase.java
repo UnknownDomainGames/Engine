@@ -49,15 +49,11 @@ public abstract class GameBase implements Game {
         ImmutableMap.Builder<String, ModContainer> idToMapBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<Class, ModContainer> typeToMapBuilder = ImmutableMap.builder();
 
-        // Add UnknownDomain Mod
-        // FIXME: Don't do it.
-        UnknownDomain ud = new UnknownDomain();
-        this.option.getMods().add(ud.getMetadata());
+        // Add engine container
+        EngineDummyContainer engine = new EngineDummyContainer();
+        idToMapBuilder.put(engine.getModId(), engine);
 
         ModLoaderWrapper loader = new ModLoaderWrapper().add(new JavaModLoader(modStore));
-        // decorateLoader(loader);
-        // Always load UD first
-        loader.add(ud);
 
         List<ModMetadata> mods = option.getMods();
         Map<ModMetadata, ModDependencyEntry[]> map = mods.stream().map(m -> Pair.of(m, m.getDependencies().stream().toArray(ModDependencyEntry[]::new)))
