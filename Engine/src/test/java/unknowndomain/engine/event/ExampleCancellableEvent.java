@@ -1,6 +1,6 @@
 package unknowndomain.engine.event;
 
-public class ExampleCancellableEvent implements Event, Cancellable {
+public class ExampleCancellableEvent implements Event.Cancellable {
 
     private boolean cancelled;
 

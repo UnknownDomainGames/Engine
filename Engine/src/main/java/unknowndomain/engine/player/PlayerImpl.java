@@ -2,7 +2,6 @@ package unknowndomain.engine.player;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.event.Cancellable;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
@@ -16,7 +15,6 @@ public class PlayerImpl implements Player {
     public PlayerImpl(Profile data) {
         this.profile = data;
     }
-
 
 //    public void enter(ChunkStorage chunkStore) {
 //        int radius = this.profile.trackingChunkRadius;
@@ -64,7 +62,7 @@ public class PlayerImpl implements Player {
         return controlledEntity.getWorld();
     }
 
-    public static class PlayerPlaceBlockEvent implements Event, Cancellable {
+    public static class PlayerPlaceBlockEvent implements Event.Cancellable {
         public final PlayerImpl player;
         public final BlockPos position;
         private boolean cancelled;
