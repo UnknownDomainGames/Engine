@@ -3,7 +3,6 @@ package unknowndomain.engine.client.game;
 import com.google.common.collect.Lists;
 import unknowndomain.engine.action.Action;
 import unknowndomain.engine.block.BlockPrototype;
-import unknowndomain.engine.client.action.ActionManagerImpl;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.controller.MotionType;
@@ -45,7 +44,6 @@ public class GameClientStandalone extends GameServerFullAsync {
     private ClientContextImpl clientContext;
     private ResourceManager resourceManager;
 
-    private ActionManagerImpl actionManager;
     private KeyBindingManager keyBindingManager;
     private EntityController entityController;
 
