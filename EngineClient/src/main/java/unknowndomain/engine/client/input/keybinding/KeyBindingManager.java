@@ -1,28 +1,49 @@
 package unknowndomain.engine.client.input.keybinding;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import org.lwjgl.glfw.GLFW;
-import unknowndomain.engine.Tickable;
-import unknowndomain.engine.action.ActionManager;
-
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
-public class KeyBindingManager implements Tickable {
+import org.lwjgl.glfw.GLFW;
 
-    private final Multimap<Integer, KeyBinding> keyBindings = HashMultimap.create();
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
+import unknowndomain.engine.Engine;
+import unknowndomain.engine.Tickable;
+import unknowndomain.engine.action.ActionManager;
+import unknowndomain.engine.game.GameContext;
+import unknowndomain.engine.registry.Registry;
+
+/**
+ * Handles the registration of KeyBinding and also handles key inputs (and mouse
+ * inputs)
+ * 
+ * @author Mouse0w0 and iTNTPiston
+ *
+ */
+public class KeyBindingManager implements Tickable {
+    /** Mappes the key binding index to the KeyBinding objects. */
+    private final Multimap<Integer, KeyBinding> indexToBinding = HashMultimap.create();
+    /** KeyBinding Registry */
+    private final Registry<KeyBinding> registry;
+    private final GameContext gameContext;
     /**
      * @Deprecated Not used.
      */
     @Deprecated
     private final Set<Key> pressedKey = new HashSet<>();
+    /**
+     * @Deprecated Not used.
+     */
+    @Deprecated
+    private ActionManager actionManager;
 
-    private final ActionManager actionManager;
-
-    public KeyBindingManager(ActionManager actionManager) {
-        this.actionManager = actionManager;
+    public KeyBindingManager(GameContext context, Registry<KeyBinding> keyBindingRegistry) {
+        registry = keyBindingRegistry;
+        gameContext = context;
     }
 
     /**
@@ -30,18 +51,21 @@ public class KeyBindingManager implements Tickable {
      * 
      * @param keybinding key binding to register
      */
-    public void add(KeyBinding keybinding) {
+    public void register(KeyBinding keybinding) {
+        registry.register(keybinding);
         int code = keybinding.getCode().code;
         byte mods = KeyModifier.getCode(keybinding.getModifier());
-        keyBindings.put(getIndex(code, mods), keybinding);
+        indexToBinding.put(getIndex(code, mods), keybinding);
     }
 
     protected void handlePress(int code, int modifiers) {
         Key key = Key.valueOf(code);
         pressedKey.add(key);
-        Collection<KeyBinding> keyBindings = this.keyBindings.get(getIndex(code, modifiers));
+        Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
+        Engine.LOGGER.info(key + " Press " + modifiers);
         for (KeyBinding binding : keyBindings) {
             binding.setPressed(true);
+            Engine.LOGGER.info("    binded " + binding.getUniqueName());
         }
         // Trigger single key
         if (modifiers != 0) {
@@ -52,9 +76,11 @@ public class KeyBindingManager implements Tickable {
     protected void handleRelease(int code, int modifiers) {
         Key key = Key.valueOf(code);
         pressedKey.remove(key);
-        Collection<KeyBinding> keyBindings = this.keyBindings.get(getIndex(code, modifiers));
+        Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
+        Engine.LOGGER.info(key + " Release " + modifiers);
         for (KeyBinding binding : keyBindings) {
             binding.setPressed(false);
+            Engine.LOGGER.info("    binded " + binding.getUniqueName());
         }
         // Trigger single key
         if (modifiers != 0) {
@@ -70,7 +96,7 @@ public class KeyBindingManager implements Tickable {
      * @return An index value with last 4-bits presenting the modifiers
      */
     protected int getIndex(int code, int modifiers) {
-        return modifiers + code << 4;
+        return modifiers + (code << 4);
     }
 
     public void handleMouse(int button, int action, int modifiers) {
@@ -99,17 +125,25 @@ public class KeyBindingManager implements Tickable {
         }
     }
 
+    /**
+     * Handles Mouse and Key inputs
+     */
     @Override
     public void tick() {
-        for (KeyBinding keyBinding : keyBindings.values()) {
+        for (KeyBinding keyBinding : indexToBinding.values()) {
             if (keyBinding.isActive() != keyBinding.isPressed()) {
+                // state change
                 keyBinding.setActive(keyBinding.isPressed());
                 if (keyBinding.isActive()) {
-                    actionManager.start(keyBinding.getTarget());
+                    keyBinding.onKeyStart(gameContext);
                 } else {
-                    actionManager.end(keyBinding.getTarget());
+                    keyBinding.onKeyEnd(gameContext);
                 }
+            } else if (keyBinding.isActive()) {
+                // keep key
+                keyBinding.onKeyKeep(gameContext);
             }
         }
     }
+
 }
