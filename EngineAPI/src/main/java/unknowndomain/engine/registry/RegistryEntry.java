@@ -51,13 +51,6 @@ public interface RegistryEntry<T> {
         }
 
         @Override
-        public String toString() {
-            return token + "{" +
-                    "path='" + registeredName + '\'' +
-                    '}';
-        }
-
-        @Override
         public final String getLocalName() {
             return registeredName;
         }
@@ -71,13 +64,20 @@ public interface RegistryEntry<T> {
         }
 
         @Override
-        public String getUniqueName() {
+        public final String getUniqueName() {
             return uniqueName;
         }
 
         @Override
-        public int getId() {
+        public final int getId() {
             return id;
+        }
+
+        @Override
+        public String toString() {
+            return token + "{" +
+                    "path='" + registeredName + '\'' +
+                    '}';
         }
     }
 }

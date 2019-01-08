@@ -5,16 +5,20 @@ import unknowndomain.engine.Engine;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.resource.ResourceManager;
+import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Events related to the Engine
  */
 public class EngineEvent implements Event {
-    /** The Engine */
+    /**
+     * The Engine
+     */
     private Engine engine;
 
     protected EngineEvent(Engine e) {
@@ -46,6 +50,22 @@ public class EngineEvent implements Event {
     public static class ModConstructionFinish extends EngineEvent {
         public ModConstructionFinish(Engine e) {
             super(e);
+        }
+    }
+
+    public static class RegistryConstructionEvent extends EngineEvent {
+        private final Map<Class<?>, Registry<?>> registries;
+
+        public RegistryConstructionEvent(Engine e, Map<Class<?>, Registry<?>> registries) {
+            super(e);
+            this.registries = registries;
+        }
+
+        public void register(Registry<?> registry) {
+            if (registries.containsKey(registry.getEntryType())) {
+                throw new IllegalStateException(String.format("Registry<%s> has been registered.", registry.getEntryType().getSimpleName()));
+            }
+            registries.put(registry.getEntryType(), registry);
         }
     }
 

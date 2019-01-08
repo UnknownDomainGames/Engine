@@ -156,7 +156,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     protected void setId(T entry, int id) {
         if (idField == null) {
             try {
-                idField = RegistryEntry.Impl.class.getField("id");
+                idField = RegistryEntry.Impl.class.getDeclaredField("id");
                 idField.setAccessible(true);
             } catch (NoSuchFieldException e) {
                 throw new RegisterException("Cannot init id.", e);

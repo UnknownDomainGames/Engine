@@ -56,6 +56,10 @@ public class ChunkImpl implements Chunk {
 
     @Override
     public int getBlockId(int x, int y, int z) {
+        if (blockStorage == null) {
+            return getWorld().getGame().getContext().getBlockAirId();
+        }
+
         return blockStorage.getBlockId(x, y, z);
     }
 

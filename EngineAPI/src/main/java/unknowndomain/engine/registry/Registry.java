@@ -61,18 +61,4 @@ public interface Registry<T extends RegistryEntry<T>> {
     Collection<Entry<String, T>> getEntries();
 
     void freeze();
-
-    class Type<T extends RegistryEntry<T>> {
-        public final String name;
-        public final Class<T> type;
-
-        private Type(String name, Class<T> type) {
-            this.name = name;
-            this.type = type;
-        }
-
-        public static <T extends RegistryEntry<T>> Type<T> of(String name, Class<T> type) {
-            return new Type<>(name, type);
-        }
-    }
 }
