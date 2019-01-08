@@ -1,14 +1,6 @@
 package unknowndomain.engine.mod;
 
-import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
-
-import java.nio.ByteBuffer;
-import java.util.List;
-
 import org.slf4j.Logger;
-
-import com.google.common.collect.Lists;
-
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
@@ -17,7 +9,6 @@ import unknowndomain.engine.client.input.controller.MotionType;
 import unknowndomain.engine.client.input.keybinding.ActionMode;
 import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
-import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.gui.GuiRenderer;
@@ -31,12 +22,15 @@ import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.event.EngineEvent;
 import unknowndomain.engine.event.EngineEvent.ModInitializationEvent;
-import unknowndomain.engine.event.registry.ClientRegistryEvent;
-import unknowndomain.engine.game.Game;
-import unknowndomain.game.Blocks;
 import unknowndomain.engine.event.Listener;
+import unknowndomain.engine.game.Game;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
+import unknowndomain.game.Blocks;
+
+import java.nio.ByteBuffer;
+
+import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
 public class EngineDummyContainer implements ModContainer {
 

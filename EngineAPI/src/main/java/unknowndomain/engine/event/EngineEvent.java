@@ -1,16 +1,14 @@
 package unknowndomain.engine.event;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang3.Validate;
-
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.resource.ResourceManager;
-import unknowndomain.engine.event.registry.ClientRegistryEvent;
 import unknowndomain.engine.registry.RegistryManager;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Events related to the Engine

@@ -6,12 +6,8 @@ import unknowndomain.engine.client.event.game.ClientRegisterEvent;
 import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
-import unknowndomain.engine.client.rendering.shader.Shader;
-import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
-import unknowndomain.engine.client.rendering.world.WorldRenderer;
-import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.event.Listener;
@@ -32,9 +28,9 @@ public final class DefaultGameMode {
     @Deprecated
     public void onRegister(RegisterEvent event) {
         // Moved to EngineDummyContainer
-        event.getRegistry().register(Blocks.AIR);
-        event.getRegistry().register(Blocks.GRASS);
-        event.getRegistry().register(Blocks.DIRT);
+        event.register(Blocks.AIR);
+        event.register(Blocks.GRASS);
+        event.register(Blocks.DIRT);
     }
 
     @Listener
