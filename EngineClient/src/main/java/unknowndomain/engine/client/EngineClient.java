@@ -1,21 +1,10 @@
 package unknowndomain.engine.client;
 
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.client.block.ClientBlock;
@@ -35,22 +24,18 @@ import unknowndomain.engine.event.EngineEvent;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.item.Item;
-import unknowndomain.engine.mod.EngineDummyContainer;
-import unknowndomain.engine.mod.ModContainer;
-import unknowndomain.engine.mod.ModDependencyEntry;
-import unknowndomain.engine.mod.ModLoaderWrapper;
-import unknowndomain.engine.mod.ModManager;
-import unknowndomain.engine.mod.ModMetadata;
-import unknowndomain.engine.mod.ModRepositoryCollection;
-import unknowndomain.engine.mod.ModStore;
-import unknowndomain.engine.mod.ModStoreLocal;
-import unknowndomain.engine.mod.SimpleModManager;
+import unknowndomain.engine.mod.*;
 import unknowndomain.engine.mod.java.JavaModLoader;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.SimpleRegistry;
 import unknowndomain.engine.registry.impl.SimpleRegistryManager;
+import unknowndomain.engine.util.Side;
+
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class EngineClient implements Engine {
 
