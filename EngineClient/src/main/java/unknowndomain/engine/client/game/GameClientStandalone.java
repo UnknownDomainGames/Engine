@@ -45,7 +45,6 @@ import java.util.UUID;
 public class GameClientStandalone extends GameServerFullAsync {
 
     private ClientContextImpl clientContext;
-    private KeyBindingManager keyBindingManager;
     private EntityController entityController;
 
     private WorldCommon world;
@@ -64,7 +63,7 @@ public class GameClientStandalone extends GameServerFullAsync {
 //        bus.register(new DefaultGameMode());
     }
 
-    private EngineClient engine() {
+    public EngineClient engine() {
         return (EngineClient) engine;
     }
 
@@ -103,12 +102,10 @@ public class GameClientStandalone extends GameServerFullAsync {
         // actionManager = new ActionManagerImpl(context,
         // this.context.getRegistry().getRegistry(Action.class));
         // actionManager.registerAll(buildActions().toArray(new Action[0]));
-        keyBindingManager = new KeyBindingManager(context, context.getRegistry().getRegistry(KeyBinding.class));
-        registerKeyBindings(keyBindingManager);
-        // TODO fire KeyBindingRegistryEvent or something
 
-        engine().getWindow().addKeyCallback(keyBindingManager::handleKey);
-        engine().getWindow().addMouseCallback(keyBindingManager::handleMouse);
+        // registerKeyBindings(keyBindingManager);
+
+        // Moved to Engine
 
         // Moved to EngineDummyContainer
 //        List<Renderer.Factory> factories = Lists.newArrayList();
@@ -169,7 +166,7 @@ public class GameClientStandalone extends GameServerFullAsync {
     }
 
     private void clientTick() {
-        keyBindingManager.tick();
+        engine().getKeyBindingManager().tick();
         // TODO upload particle physics here
     }
 
@@ -215,38 +212,6 @@ public class GameClientStandalone extends GameServerFullAsync {
     // }
 
     // dirty things below...
-
-    /**
-     * For now. Registers the key bindings
-     * 
-     * @param manager The KeyBindingManager to register the bindings
-     */
-    void registerKeyBindings(KeyBindingManager manager) {
-        manager.register(KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.FORWARD, false)));
-        manager.register(KeyBinding.create("player.move.backward", Key.KEY_S, (c) -> getEntityController().handleMotion(MotionType.BACKWARD, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.BACKWARD, false)));
-        manager.register(KeyBinding.create("player.move.left", Key.KEY_A, (c) -> getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.LEFT, false)));
-        manager.register(KeyBinding.create("player.move.right", Key.KEY_D, (c) -> getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.RIGHT, false)));
-        manager.register(KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.UP, false)));
-        manager.register(KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.DOWN, false)));
-        manager.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
-            BlockPrototype.Hit hit = clientContext.getHit();
-            if (hit != null) {
-                getWorld().setBlock(hit.getPos(), c.getBlockAir());
-            }
-        }, ActionMode.PRESS));
-        manager.register(KeyBinding.create("player.mouse.r", Key.MOUSE_BUTTON_RIGHT, (c) -> {
-            BlockPrototype.Hit hit = clientContext.getHit();
-            if (hit != null) {
-                getWorld().setBlock(hit.getFace().offset(hit.getPos()), Blocks.DIRT);
-            }
-        }, ActionMode.PRESS));
-    }
 
 //    private List<Action> buildActions() {
 //        List<Action> list = motionController.getActions();

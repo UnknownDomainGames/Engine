@@ -28,45 +28,53 @@ import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 public final class DefaultGameMode {
 
     @Listener
+    @Deprecated
     public void registerEvent(RegisterEvent event) {
+        // Moved to EngineDummyContainer
         event.getRegistry().register(Blocks.AIR);
         event.getRegistry().register(Blocks.GRASS);
         event.getRegistry().register(Blocks.DIRT);
     }
 
     @Listener
+    @Deprecated
     public void preInit(GamePreInitializationEvent event) {
+        // For now, this is set directly until we figure out how to initialize the game
         event.setBlockAir(Blocks.AIR);
     }
 
     @Listener
+    @Deprecated
     public void clientRegisterEvent(ClientRegistryEvent event) {
-        event.registerRenderer((context, manager) ->
-                {
-                    ChunkRenderer chunkRenderer = new ChunkRenderer(
-                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.vert")).cache(), ShaderType.VERTEX_SHADER),
-                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.frag")).cache(), ShaderType.FRAGMENT_SHADER)
-                    );
-                    context.register(chunkRenderer);
-
-                    WorldRenderer worldRenderer = new WorldRenderer(
-                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/world.vert")).cache(), ShaderType.VERTEX_SHADER),
-                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/world.frag")).cache(), ShaderType.FRAGMENT_SHADER),
-                            chunkRenderer);
-                    return worldRenderer;
-                }
-        );
+        // Moved to EngineDummyContainer
+//        event.registerRenderer((context, manager) ->
+//                {
+//                    ChunkRenderer chunkRenderer = new ChunkRenderer(
+//                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.vert")).cache(), ShaderType.VERTEX_SHADER),
+//                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.frag")).cache(), ShaderType.FRAGMENT_SHADER)
+//                    );
+//                    context.register(chunkRenderer);
+//
+//                    WorldRenderer worldRenderer = new WorldRenderer(
+//                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/world.vert")).cache(), ShaderType.VERTEX_SHADER),
+//                            Shader.create(manager.load(new ResourcePath("unknowndomain/shader/world.frag")).cache(), ShaderType.FRAGMENT_SHADER),
+//                            chunkRenderer);
+//                    return worldRenderer;
+//                }
+//        );
     }
 
     @Listener
+    @Deprecated
     public void setupResource(ResourceSetupEvent event) {
+        // Moved to Engine
         TextureManager textureManager = event.getTextureManager();
         TextureUV side = textureManager.register(new ResourcePath("/assets/unknowndomain/textures/block/side.png"), BLOCK);
         TextureUV top = textureManager.register(new ResourcePath("/assets/unknowndomain/textures/block/top.png"), BLOCK);
         TextureUV bottom = textureManager.register(new ResourcePath("/assets/unknowndomain/textures/block/bottom.png"), BLOCK);
 
         BlockModel blockModel = new BlockModel();
-        blockModel.addCube(0, 0, 0, 1, 1, 1, new TextureUV[]{side, side, side, side, top, bottom});
+        blockModel.addCube(0, 0, 0, 1, 1, 1, new TextureUV[] { side, side, side, side, top, bottom });
         ModelBlockRenderer.blockModelMap.put(Blocks.GRASS, blockModel);
 
         blockModel = new BlockModel();
@@ -85,7 +93,6 @@ public final class DefaultGameMode {
 //        UnknownDomain.getGame().getWorld().setBlock(BlockPos.of(1, 0, 0), blockRegistry.getValue(1));
 //    }
 
-
     private Item createPlace(Block object, String name) {
         class PlaceBlock implements ItemPrototype.UseBlockBehavior {
             private Block object;
@@ -101,7 +108,6 @@ public final class DefaultGameMode {
                 world.setBlock(side, object);
             }
         }
-        return ItemBuilder.create(name + "_placer").setUseBlockBehavior(new PlaceBlock(object))
-                .build();
+        return ItemBuilder.create(name + "_placer").setUseBlockBehavior(new PlaceBlock(object)).build();
     }
 }

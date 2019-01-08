@@ -169,4 +169,14 @@ public enum Key {
     public static Key valueOf(int code) {
         return code2Key.getOrDefault(code, KEY_UNKNOWN);
     }
+
+    /**
+     * Ensures that the key is non null
+     * 
+     * @param key
+     * @return
+     */
+    public static Key getKeySafe(Key key) {
+        return key == null ? KEY_UNKNOWN : key;
+    }
 }

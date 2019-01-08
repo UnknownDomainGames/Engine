@@ -17,6 +17,7 @@ import unknowndomain.engine.mod.java.JavaModLoader;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.impl.SimpleRegistry;
 import unknowndomain.engine.registry.impl.SimpleRegistryManager;
+import unknowndomain.game.Blocks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,9 +60,11 @@ public abstract class GameBase implements Game {
 //        SimpleRegistryManager manager = new SimpleRegistryManager(maps);
 //        eventBus.post(new RegisterEvent(manager));
 
-        GamePreInitializationEvent event = new GamePreInitializationEvent();
-        engine.getEventBus().post(event);
-        this.context = new GameContext(engine.getRegistryManager(), engine.getEventBus(), event.getBlockAir());
+        // GamePreInitializationEvent event = new GamePreInitializationEvent();
+        // engine.getEventBus().post(event);
+
+        // Hardcode set air for now
+        this.context = new GameContext(engine.getRegistryManager(), engine.getEventBus(), Blocks.AIR);
     }
 
     /**

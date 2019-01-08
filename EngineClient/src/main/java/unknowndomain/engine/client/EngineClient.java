@@ -2,6 +2,7 @@ package unknowndomain.engine.client;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -16,8 +18,10 @@ import com.google.common.collect.Maps;
 
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
+import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
@@ -64,6 +68,7 @@ public class EngineClient implements Engine {
     private RegistryManager registryManager;
     private ResourceManager resourceManager;
     private TextureManager textureManager;
+    private KeyBindingManager keybindingManager;
     private List<Renderer.Factory> rendererFactories;
 
     private Profile playerProfile;
@@ -75,6 +80,8 @@ public class EngineClient implements Engine {
 
     @Override
     public void initEngine() {
+        Logger log = Engine.getLogger();
+        log.info("Initializing Window!");
         window.init();
 
         eventBus = new AsmEventBus();
@@ -83,26 +90,38 @@ public class EngineClient implements Engine {
         playerProfile = new Profile(UUID.randomUUID(), 12);
 
         // Construction Stage
+        log.info("Constructing Mods!");
         eventBus.post(new EngineEvent.ModConstructionStart(this));
         constructMods();
+        log.info("Initializing Mods!");
         eventBus.post(new EngineEvent.ModInitializationEvent(this));
+        log.info("Finishing Construction!");
         eventBus.post(new EngineEvent.ModConstructionFinish(this));
 
         // Registration Stage
+        log.info("Creating Registry Manager!");
         Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
         List<SimpleRegistry<?>> registries = Lists.newArrayList();
         for (Registry.Type<?> tp : Arrays.asList(Registry.Type.of("block", Block.class), Registry.Type.of("item", Item.class), Registry.Type.of("entity", EntityType.class),
-                Registry.Type.of("keybinding", KeyBinding.class))) {
+                Registry.Type.of("keybinding", KeyBinding.class), Registry.Type.of("clientblock", ClientBlock.class))) {
             SimpleRegistry<?> registry = new SimpleRegistry<>(tp.type, tp.name);
             maps.put(tp.type, registry);
             registries.add(registry);
         }
         registryManager = new SimpleRegistryManager(maps);
+        log.info("Registering!");
         eventBus.post(new EngineEvent.RegistrationStart(this, registryManager));
+        log.info("Finishing Registration!");
         eventBus.post(new EngineEvent.RegistrationFinish(this, registryManager));
 
         // Resource Stage
         // Later when separating common and client, common will not have this part
+        log.info("Loading Client-only stuff");
+        keybindingManager = new KeyBindingManager(registryManager.getRegistry(KeyBinding.class));
+        keybindingManager.reload();
+        window.addKeyCallback(keybindingManager::handleKey);
+        window.addMouseCallback(keybindingManager::handleMouse);
+
         resourceManager = new ResourceManagerImpl();
         resourceManager.addResourceSource(new ResourceSourceBuiltin());
         textureManager = new TextureManagerImpl();
@@ -112,6 +131,7 @@ public class EngineClient implements Engine {
         eventBus.post(new EngineEvent.ResourceConstructionFinish(this, resourceManager, textureManager, rendererFactories));
 
         // Finish Stage
+        log.info("Finishing Initialization!");
         eventBus.post(new EngineEvent.InitializationComplete(this));
     }
 
@@ -122,6 +142,7 @@ public class EngineClient implements Engine {
         // Add engine container
         EngineDummyContainer engine = new EngineDummyContainer();
         idToMapBuilder.put(engine.getModId(), engine);
+        typeToMapBuilder.put(engine.getInstance().getClass(), engine);
 
         ModLoaderWrapper loader = new ModLoaderWrapper().add(new JavaModLoader(modStore));
 
@@ -157,9 +178,15 @@ public class EngineClient implements Engine {
                 e.printStackTrace();
             }
         }
+        // ImmutableMap<String, ModContainer> loadedMods = ;
         modManager = new SimpleModManager(idToMapBuilder.build(), typeToMapBuilder.build());
-        for (ModContainer mod : modManager.getLoadedMods())
+        Collection<ModContainer> loadedMods = modManager.getLoadedMods();
+        Engine.LOGGER.info("Engine has successfully loaded " + loadedMods.size() + " mods:");
+        for (ModContainer mod : modManager.getLoadedMods()) {
             this.eventBus.register(mod.getInstance());
+            Engine.LOGGER.debug("  Loaded: " + mod.getModId());
+        }
+
     }
 
     @Override
@@ -202,5 +229,13 @@ public class EngineClient implements Engine {
     @Override
     public RegistryManager getRegistryManager() {
         return registryManager;
+    }
+
+    public KeyBindingManager getKeyBindingManager() {
+        return keybindingManager;
+    }
+
+    public TextureManager getTextureManager() {
+        return textureManager;
     }
 }

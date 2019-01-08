@@ -141,7 +141,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     protected static void setUniqueName(RegistryEntry<?> entry, String uniqueName) {
         if (uniqueNameField == null) {
             try {
-                uniqueNameField = RegistryEntry.Impl.class.getField("uniqueName");
+                uniqueNameField = RegistryEntry.Impl.class.getDeclaredField("uniqueName");
                 uniqueNameField.setAccessible(true);
             } catch (NoSuchFieldException e) {
                 throw new RegisterException("Cannot init unique name.", e);
@@ -150,7 +150,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
         try {
             uniqueNameField.set(entry, uniqueName);
         } catch (IllegalAccessException e) {
-            throw new RegisterException("Cannot init unique name.", e);
+            throw new RegisterException("Cannot set unique name.", e);
         }
     }
 
