@@ -1,10 +1,6 @@
 package unknowndomain.engine.mod;
 
-import unknowndomain.engine.Engine;
-import unknowndomain.engine.util.Owner;
-
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.nio.file.Path;
 
@@ -21,7 +17,6 @@ import java.nio.file.Path;
  * won't have contains method
  * </p>
  */
-@Owner(Engine.class)
 public interface ModStore {
     /**
      * Is this mod exist on disk?

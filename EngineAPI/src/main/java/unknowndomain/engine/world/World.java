@@ -7,7 +7,6 @@ import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.util.Owner;
 import unknowndomain.engine.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
@@ -17,7 +16,6 @@ import java.util.Set;
 /**
  * World instance, should spawn by {@link unknowndomain.engine.game.Game}
  */
-@Owner(Game.class)
 public interface World extends RuntimeObject, BlockAccessor {
 
     Game getGame();

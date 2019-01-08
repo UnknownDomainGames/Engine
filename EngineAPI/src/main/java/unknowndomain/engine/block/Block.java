@@ -3,13 +3,8 @@ package unknowndomain.engine.block;
 import com.google.common.collect.ImmutableMap;
 import org.joml.AABBd;
 import unknowndomain.engine.RuntimeObject;
-import unknowndomain.engine.game.Game;
 import unknowndomain.engine.registry.RegistryEntry;
-import unknowndomain.engine.util.Owner;
-import unknowndomain.engine.world.World;
 
-
-@Owner({World.class, Game.class})
 public interface Block extends RegistryEntry<Block>, RuntimeObject, BlockPrototype.PlaceBehavior, BlockPrototype.ActiveBehavior, BlockPrototype.DestroyBehavior, BlockPrototype.TouchBehavior {
     // think about blockstate and tileentity...
 

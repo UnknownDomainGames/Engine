@@ -1,8 +1,5 @@
 package unknowndomain.engine.mod;
 
-import unknowndomain.engine.game.Game;
-import unknowndomain.engine.util.Owner;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -10,7 +7,6 @@ import java.util.Collection;
 /**
  * The in-game mod manager. Not the one who manage the mod sources.
  */
-@Owner(Game.class)
 public interface ModManager {
     /**
      * Find the mod by modid.

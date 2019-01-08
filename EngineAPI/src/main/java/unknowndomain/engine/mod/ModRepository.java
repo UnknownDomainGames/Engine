@@ -1,7 +1,5 @@
 package unknowndomain.engine.mod;
 
-import unknowndomain.engine.Engine;
-import unknowndomain.engine.util.Owner;
 import unknowndomain.engine.util.versioning.ComparableVersion;
 
 import java.io.InputStream;
@@ -12,7 +10,6 @@ import java.util.Map;
 /**
  * The repo of the mod, can be maven, ftp or any other form
  */
-@Owner(Engine.class)
 public interface ModRepository {
     Collection<RemoteModMetadata> fetchIndex();
 

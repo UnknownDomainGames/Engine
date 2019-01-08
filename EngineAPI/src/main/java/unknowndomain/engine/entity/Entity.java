@@ -5,10 +5,8 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.Tickable;
-import unknowndomain.engine.util.Owner;
 import unknowndomain.engine.world.World;
 
-@Owner(World.class)
 public interface Entity extends RuntimeObject, Tickable {
     int getId();
 
