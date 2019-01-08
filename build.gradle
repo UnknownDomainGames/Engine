@@ -5,7 +5,7 @@ version '1.0.0'
 
 project.ext.lwjglVersion = "3.2.1"
 
-switch ( OperatingSystem.current() ) {
+switch (OperatingSystem.current()) {
     case OperatingSystem.WINDOWS:
         project.ext.lwjglNatives = "natives-windows"
         break
@@ -17,14 +17,27 @@ switch ( OperatingSystem.current() ) {
         break
 }
 
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2"
+    }
+}
+
+apply plugin: "org.sonarqube"
+
 subprojects {
-	apply plugin: 'java'
-	apply plugin: 'eclipse'
-	apply plugin: 'idea'
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
 
-	sourceCompatibility = targetCompatibility = 11
+    sourceCompatibility = targetCompatibility = 11
 
-	repositories {
+    repositories {
         maven {
             url 'https://jitpack.io'
         }
@@ -36,7 +49,7 @@ subprojects {
         maven {
             url "https://oss.sonatype.org/content/repositories/releases/"
         }
-	}
+    }
 
     test {
         useJUnitPlatform()
@@ -45,8 +58,8 @@ subprojects {
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.1'
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.1'
     }
-    
-    tasks.withType(JavaCompile) {  
-        options.encoding = "UTF-8"  
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
     }
 }
