@@ -45,7 +45,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
             throw new RegisterException(String.format("%s must be a subclass of RegistryEntry.Impl", obj.getEntryType().getSimpleName()));
         }
 
-        nameToObject.put(getUniqueName(obj), obj);
+        setUniqueName(obj, getUniqueName(obj));
         return obj;
     }
 
@@ -128,17 +128,15 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
         freezed = true;
     }
 
-    protected String getUniqueName(RegistryEntry<T> entry) {
+    protected String getUniqueName(T entry) {
         // FIXME: Support mod
-        String uniqueName = "unknowndomain." + name + "." + entry.getLocalName();
-        setUniqueName(entry, uniqueName);
-        return uniqueName;
+        return "unknowndomain." + name + "." + entry.getLocalName();
     }
 
     private static Field uniqueNameField;
     private static Field idField;
 
-    protected static void setUniqueName(RegistryEntry<?> entry, String uniqueName) {
+    protected void setUniqueName(T entry, String uniqueName) {
         if (uniqueNameField == null) {
             try {
                 uniqueNameField = RegistryEntry.Impl.class.getDeclaredField("uniqueName");
@@ -149,12 +147,13 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
         }
         try {
             uniqueNameField.set(entry, uniqueName);
+            nameToObject.put(uniqueName, entry);
         } catch (IllegalAccessException e) {
             throw new RegisterException("Cannot set unique name.", e);
         }
     }
 
-    protected static void setId(RegistryEntry<?> entry, int id) {
+    protected void setId(T entry, int id) {
         if (idField == null) {
             try {
                 idField = RegistryEntry.Impl.class.getField("id");
@@ -165,6 +164,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
         }
         try {
             idField.setInt(entry, id);
+            idToObject.put(id, entry);
         } catch (IllegalAccessException e) {
             throw new RegisterException("Cannot init id.", e);
         }

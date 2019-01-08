@@ -20,9 +20,7 @@ public class IdAutoIncreaseRegistry<T extends RegistryEntry<T>> extends SimpleRe
     public T register(T obj) {
         super.register(obj);
 
-        int id = nextId.getAndIncrement();
-        idToObject.put(id, obj);
-        setId(obj, id);
+        setId(obj, nextId.getAndIncrement());
 
         return obj;
     }
