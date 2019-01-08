@@ -6,8 +6,6 @@ import com.google.common.collect.Maps;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.block.Block;
-import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
@@ -18,20 +16,19 @@ import unknowndomain.engine.client.rendering.texture.TextureManagerImpl;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.client.resource.ResourceManagerImpl;
 import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
-import unknowndomain.engine.entity.EntityType;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EngineEvent;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.game.Game;
-import unknowndomain.engine.item.Item;
 import unknowndomain.engine.mod.*;
 import unknowndomain.engine.mod.java.JavaModLoader;
+import unknowndomain.engine.mod.misc.EngineDummyContainer;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
-import unknowndomain.engine.registry.impl.SimpleRegistry;
 import unknowndomain.engine.registry.impl.SimpleRegistryManager;
 import unknowndomain.engine.util.Side;
+import unknowndomain.game.DefaultGameMode;
 
 import java.nio.file.Paths;
 import java.util.*;
@@ -70,6 +67,8 @@ public class EngineClient implements Engine {
         window.init();
 
         eventBus = new AsmEventBus();
+        // TODO: Move it
+        eventBus.register(new DefaultGameMode());
         modStore = new ModStoreLocal(Paths.get("mods"));
         modRepository = new ModRepositoryCollection();
         playerProfile = new Profile(UUID.randomUUID(), 12);
@@ -85,15 +84,9 @@ public class EngineClient implements Engine {
 
         // Registration Stage
         log.info("Creating Registry Manager!");
-        Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
-        List<SimpleRegistry<?>> registries = Lists.newArrayList();
-        for (Registry.Type<?> tp : Arrays.asList(Registry.Type.of("block", Block.class), Registry.Type.of("item", Item.class), Registry.Type.of("entity", EntityType.class),
-                Registry.Type.of("keybinding", KeyBinding.class), Registry.Type.of("clientblock", ClientBlock.class))) {
-            SimpleRegistry<?> registry = new SimpleRegistry<>(tp.type, tp.name);
-            maps.put(tp.type, registry);
-            registries.add(registry);
-        }
-        registryManager = new SimpleRegistryManager(maps);
+        Map<Class<?>, Registry<?>> registries = Maps.newHashMap();
+        eventBus.post(new EngineEvent.RegistryConstructionEvent(this, registries));
+        registryManager = new SimpleRegistryManager(Map.copyOf(registries));
         log.info("Registering!");
         eventBus.post(new EngineEvent.RegistrationStart(this, registryManager));
         log.info("Finishing Registration!");

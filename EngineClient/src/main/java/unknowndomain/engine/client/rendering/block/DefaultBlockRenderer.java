@@ -1,6 +1,5 @@
 package unknowndomain.engine.client.rendering.block;
 
-import unknowndomain.engine.block.Block;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.block.model.BlockModelQuad;
@@ -11,20 +10,15 @@ import unknowndomain.engine.util.ChunkCache;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.Math2;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class ModelBlockRenderer implements BlockRenderer {
-
-    // TODO:
-    public static final Map<Block, BlockModel> blockModelMap = new HashMap<>();
+public class DefaultBlockRenderer implements BlockRenderer {
 
     @Override
     public void render(ClientBlock block, ChunkCache chunkCache, BlockPos pos, BufferBuilder buffer) {
-        BlockModel blockModel = blockModelMap.get(block);
-        if (blockModel == null) {
+        if (!block.isRenderable()) {
             return;
         }
+
+        BlockModel model = block.getModel();
         buffer.posOffest(pos.getX(), pos.getY(), pos.getZ());
         BlockPos.Mutable mutablePos = new BlockPos.Mutable(pos);
         for (Facing facing : Facing.values()) {
@@ -33,7 +27,7 @@ public class ModelBlockRenderer implements BlockRenderer {
                 continue;
             }
 
-            for (BlockModelQuad modelQuad : blockModel.facedModelQuads.get(facing)) {
+            for (BlockModelQuad modelQuad : model.facedModelQuads.get(facing)) {
                 renderModelQuad(modelQuad, pos, buffer);
             }
         }
@@ -41,10 +35,10 @@ public class ModelBlockRenderer implements BlockRenderer {
 
     @Override
     public void render(ClientBlock block, BufferBuilder buffer) {
-        BlockModel model = blockModelMap.get(block);
-        if (model == null) {
+        if (!block.isRenderable()) {
             return;
         }
+        BlockModel model = block.getModel();
         for (Facing facing : Facing.values()) {
             for (BlockModelQuad modelQuad : model.facedModelQuads.get(facing)) {
                 renderModelQuad(modelQuad, BlockPos.ZERO, buffer);

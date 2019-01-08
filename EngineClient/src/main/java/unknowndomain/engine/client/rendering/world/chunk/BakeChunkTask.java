@@ -8,7 +8,6 @@ import unknowndomain.engine.util.BlockPosIterator;
 import unknowndomain.engine.util.ChunkCache;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.chunk.Chunk;
-import unknowndomain.game.Blocks;
 
 public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
 
@@ -40,11 +39,6 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
             BlockPos pos = blockPosIterator.next();
             // FIXME: block is null. I don't know where to register client blocks..
             ClientBlock block = chunkRenderer.getContext().getClientBlockRegistry().getValue(chunkCache.getBlockId(pos));
-
-            if (block.getBlock() == chunkCache.getWorld().getGame().getContext().getBlockAir()) {
-                continue;
-            }
-
             chunkRenderer.getBlockRenderer().render(block, chunkCache, pos, buffer);
         }
         buffer.finish();

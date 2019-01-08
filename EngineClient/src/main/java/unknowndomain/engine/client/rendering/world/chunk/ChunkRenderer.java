@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.block.BlockRenderer;
-import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
+import unknowndomain.engine.client.rendering.block.DefaultBlockRenderer;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
@@ -29,7 +29,7 @@ import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
 public class ChunkRenderer implements Renderer {
-    private final BlockRenderer blockRenderer = new ModelBlockRenderer();
+    private final BlockRenderer blockRenderer = new DefaultBlockRenderer();
     private final ShaderProgram chunkSolidShader;
 
     private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
@@ -47,16 +47,16 @@ public class ChunkRenderer implements Renderer {
         u_ProjMatrix = chunkSolidShader.getUniformLocation("u_ProjMatrix");
         u_ViewMatrix = chunkSolidShader.getUniformLocation("u_ViewMatrix");
 
-        ThreadGroup threadGroup = new ThreadGroup("Chunk Baker");
+        // TODO: Configurable
         int threadCount = Runtime.getRuntime().availableProcessors() / 2;
         this.updateExecutor = new ThreadPoolExecutor(threadCount, threadCount,
                 0L, TimeUnit.MILLISECONDS,
                 new PriorityBlockingQueue<>(), new ThreadFactory() {
-            private final AtomicInteger poolNumber = new AtomicInteger(1);
+            private final AtomicInteger poolNumber = new AtomicInteger(0);
 
             @Override
             public Thread newThread(Runnable r) {
-                return new BakeChunkThread(threadGroup, r, "Chunk Baker " + poolNumber.getAndIncrement());
+                return new BakeChunkThread(r, "Chunk Baker " + poolNumber.getAndIncrement());
             }
         });
     }

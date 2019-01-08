@@ -6,8 +6,8 @@ public class BakeChunkThread extends Thread {
 
     private final BufferBuilder buffer = new BufferBuilder(0x200000);
 
-    public BakeChunkThread(ThreadGroup group, Runnable target, String name) {
-        super(group, target, name);
+    public BakeChunkThread(Runnable target, String name) {
+        super(target, name);
     }
 
     public BufferBuilder getBuffer() {

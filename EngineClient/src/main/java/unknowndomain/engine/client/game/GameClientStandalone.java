@@ -1,44 +1,21 @@
 package unknowndomain.engine.client.game;
 
-import com.google.common.collect.Lists;
-
-import unknowndomain.engine.Engine;
-import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.client.EngineClient;
-import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
-import unknowndomain.engine.client.input.controller.MotionType;
-import unknowndomain.engine.client.input.keybinding.ActionMode;
-import unknowndomain.engine.client.input.keybinding.Key;
-import unknowndomain.engine.client.input.keybinding.KeyBinding;
-import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
-import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
-import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
-import unknowndomain.engine.client.rendering.gui.GuiRenderer;
-import unknowndomain.engine.client.rendering.shader.Shader;
-import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.texture.TextureTypes;
-import unknowndomain.engine.client.resource.*;
-import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.game.GameReadyEvent;
-import unknowndomain.engine.event.game.ResourceSetupEvent;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.FixStepTicker;
-import unknowndomain.engine.mod.ModRepository;
-import unknowndomain.engine.mod.ModStore;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.player.PlayerImpl;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
 import unknowndomain.game.Blocks;
-import unknowndomain.game.DefaultGameMode;
 
-import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -83,6 +60,10 @@ public class GameClientStandalone extends GameServerFullAsync {
 
     public EntityController getEntityController() {
         return entityController;
+    }
+
+    public ClientContextImpl getClientContext() {
+        return clientContext;
     }
 
     @Override
