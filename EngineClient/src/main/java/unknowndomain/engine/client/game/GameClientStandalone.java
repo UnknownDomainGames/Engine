@@ -2,6 +2,7 @@ package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
 import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.controller.MotionType;
@@ -18,9 +19,8 @@ import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.texture.TextureTypes;
 import unknowndomain.engine.client.resource.*;
 import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.event.registry.ClientRegistryEvent;
-import unknowndomain.engine.event.registry.GameReadyEvent;
-import unknowndomain.engine.event.registry.ResourceSetupEvent;
+import unknowndomain.engine.event.game.GameReadyEvent;
+import unknowndomain.engine.event.game.ResourceSetupEvent;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.FixStepTicker;
@@ -97,7 +97,7 @@ public class GameClientStandalone extends GameServerFullAsync {
         super.registerStage();
 
         // actionManager = new ActionManagerImpl(context,
-        // this.context.getRegistry().getRegistry(Action.class));
+        // this.context.getRegistryManager().getRegistryManager(Action.class));
         // actionManager.registerAll(buildActions().toArray(new Action[0]));
         keyBindingManager = new KeyBindingManager(context, context.getRegistry().getRegistry(KeyBinding.class));
         registerKeyBindings(keyBindingManager);
@@ -107,8 +107,8 @@ public class GameClientStandalone extends GameServerFullAsync {
         window.addMouseCallback(keyBindingManager::handleMouse);
 
         List<Renderer.Factory> factories = Lists.newArrayList();
-        ClientRegistryEvent clientRegistryEvent = new ClientRegistryEvent(factories);
-        eventBus.post(clientRegistryEvent);
+        RendererRegisterEvent rendererRegisterEvent = new RendererRegisterEvent(factories);
+        eventBus.post(rendererRegisterEvent);
 
         // FIXME: Don't initialize renderer at here. It should be initialized in Engine
         factories.add((context, manager) -> {

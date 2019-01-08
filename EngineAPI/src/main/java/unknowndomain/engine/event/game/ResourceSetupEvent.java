@@ -1,4 +1,4 @@
-package unknowndomain.engine.event.registry;
+package unknowndomain.engine.event.game;
 
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.resource.ResourceManager;

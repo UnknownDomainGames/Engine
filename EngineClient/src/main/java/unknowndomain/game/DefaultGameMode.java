@@ -2,6 +2,8 @@ package unknowndomain.game;
 
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.client.event.game.ClientRegisterEvent;
+import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.rendering.block.ModelBlockRenderer;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.shader.Shader;
@@ -13,10 +15,9 @@ import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.event.Listener;
-import unknowndomain.engine.event.registry.ClientRegistryEvent;
-import unknowndomain.engine.event.registry.GamePreInitializationEvent;
-import unknowndomain.engine.event.registry.RegisterEvent;
-import unknowndomain.engine.event.registry.ResourceSetupEvent;
+import unknowndomain.engine.event.game.GamePreInitializationEvent;
+import unknowndomain.engine.event.game.RegisterEvent;
+import unknowndomain.engine.event.game.ResourceSetupEvent;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.item.ItemBuilder;
 import unknowndomain.engine.item.ItemPrototype;
@@ -28,19 +29,17 @@ import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 public final class DefaultGameMode {
 
     @Listener
-    public void registerEvent(RegisterEvent event) {
-        event.getRegistry().register(Blocks.AIR);
-        event.getRegistry().register(Blocks.GRASS);
-        event.getRegistry().register(Blocks.DIRT);
+    public void onRegister(RegisterEvent event) {
+        event.registerAll(Blocks.AIR, Blocks.GRASS, Blocks.DIRT);
     }
 
     @Listener
-    public void preInit(GamePreInitializationEvent event) {
+    public void onPreInit(GamePreInitializationEvent event) {
         event.setBlockAir(Blocks.AIR);
     }
 
     @Listener
-    public void clientRegisterEvent(ClientRegistryEvent event) {
+    public void onRendererRegister(RendererRegisterEvent event) {
         event.registerRenderer((context, manager) ->
                 {
                     ChunkRenderer chunkRenderer = new ChunkRenderer(
@@ -59,7 +58,7 @@ public final class DefaultGameMode {
     }
 
     @Listener
-    public void setupResource(ResourceSetupEvent event) {
+    public void onSetupResource(ResourceSetupEvent event) {
         TextureManager textureManager = event.getTextureManager();
         TextureUV side = textureManager.register(new ResourcePath("/assets/unknowndomain/textures/block/side.png"), BLOCK);
         TextureUV top = textureManager.register(new ResourcePath("/assets/unknowndomain/textures/block/top.png"), BLOCK);
@@ -74,17 +73,10 @@ public final class DefaultGameMode {
         ModelBlockRenderer.blockModelMap.put(Blocks.DIRT, blockModel);
     }
 
-//    @Listener
-//    public void onGameReady(GameReadyEvent event) {
-//        GameContext context = event.getContext();
-//        Registry<Item> itemRegistry = context.getItemRegistry();
-//        Registry<Block> blockRegistry = context.getBlockRegistry();
-//        Item stone = itemRegistry.getValue("minecraft.item.stone_placer");
-//        UnknownDomain.getGame().getPlayer().getControlledEntity().getBehavior(TwoHands.class).setMainHand(stone);
-////        UnknownDomain.getGame().getPlayer().getControlledEntity().getPosition().set(0, 2, 0);
-//        UnknownDomain.getGame().getWorld().setBlock(BlockPos.of(1, 0, 0), blockRegistry.getValue(1));
-//    }
+    @Listener
+    public void onClientRegister(ClientRegisterEvent event) {
 
+    }
 
     private Item createPlace(Block object, String name) {
         class PlaceBlock implements ItemPrototype.UseBlockBehavior {

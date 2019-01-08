@@ -7,12 +7,10 @@ import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class GLAnimatableTexture extends GLTexture {
@@ -22,7 +20,7 @@ public class GLAnimatableTexture extends GLTexture {
     private int layers;
 
     public GLAnimatableTexture(int id) {
-        super(id);
+        super(id, 0, 0);
     }
 
 
@@ -50,7 +48,7 @@ public class GLAnimatableTexture extends GLTexture {
                 buf = direct;
             }
             GLAnimatableTexture glTexture = new GLAnimatableTexture(glGenTextures());
-            glBindTexture(GL_TEXTURE_2D, glTexture.id);
+            glBindTexture(GL_TEXTURE_2D, glTexture.getId());
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

@@ -6,7 +6,7 @@ import org.apache.commons.lang3.Validate;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.event.registry.RegisterEvent;
+import unknowndomain.engine.event.game.RegisterEvent;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.SimpleRegistry;
