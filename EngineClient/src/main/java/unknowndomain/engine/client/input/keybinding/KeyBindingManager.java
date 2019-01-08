@@ -1,38 +1,48 @@
 package unknowndomain.engine.client.input.keybinding;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.Tickable;
+import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.registry.Registry;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Handles the registration of KeyBinding and also handles key inputs (and mouse
  * inputs)
- * 
- * @author Mouse0w0 and iTNTPiston
  *
  */
-public class KeyBindingManager implements Tickable {
+public class KeyBindingManager implements Tickable, KeyBindingConfig {
+
     /** Mappes the key binding index to the KeyBinding objects. */
     private final Multimap<Integer, KeyBinding> indexToBinding = HashMultimap.create();
     /** KeyBinding Registry */
     private final Registry<KeyBinding> registry;
-    private final GameContext gameContext;
+    private ClientContext gameContext;
     /**
      * @Deprecated Not used.
      */
     @Deprecated
     private final Set<Key> pressedKey = new HashSet<>();
 
-    public KeyBindingManager(GameContext context, Registry<KeyBinding> keyBindingRegistry) {
+    public KeyBindingManager(Registry<KeyBinding> keyBindingRegistry) {
         registry = keyBindingRegistry;
+    }
+
+    /**
+     * Set the GameContext when a game starts
+     * 
+     * @param context
+     */
+    public void setGameContext(ClientContext context) {
         gameContext = context;
     }
 
@@ -40,12 +50,24 @@ public class KeyBindingManager implements Tickable {
      * Register a KeyBinding
      * 
      * @param keybinding key binding to register
+     * @Deprecated This should happen when listening to
+     *             EngineEvent.RegistrationStart
      */
+    @Deprecated
     public void register(KeyBinding keybinding) {
         registry.register(keybinding);
-        int code = keybinding.getCode().code;
-        byte mods = KeyModifier.getCode(keybinding.getModifier());
-        indexToBinding.put(getIndex(code, mods), keybinding);
+    }
+
+    /**
+     * Reload the bindings. Use this after keybinding settings have changed
+     */
+    public void reload() {
+        indexToBinding.clear();
+        for (KeyBinding keybinding : registry.getValues()) {
+            int code = keybinding.getKey().code;
+            byte mods = KeyModifier.getCode(keybinding.getModifier());
+            indexToBinding.put(getIndex(code, mods), keybinding);
+        }
     }
 
     protected void handlePress(int code, int modifiers) {
@@ -134,6 +156,37 @@ public class KeyBindingManager implements Tickable {
                 keyBinding.onKeyKeep(gameContext);
             }
         }
+    }
+
+    @Override
+    public List<String> getRegisteredKeyBindings() {
+        return ImmutableList.copyOf(registry.getKeys());
+    }
+
+    @Override
+    public Key getBindedKeyFor(String target) {
+        return registry.getValue(target).getKey();
+    }
+
+    @Override
+    public void setBindedKeyFor(String target, Key key) {
+        registry.getValue(target).rebind(key);
+    }
+
+    @Override
+    public void setBindedKeyToDefault(String target) {
+        KeyBinding binding = registry.getValue(target);
+        binding.rebind(binding.getDefaultKey());
+    }
+
+    @Override
+    public void saveConfig() {
+        reload();
+        // TODO: save config file to disk
+    }
+
+    public void loadConfig() {
+        // TODO: load config file from disk
     }
 
 }

@@ -1,7 +1,10 @@
 package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
+
+import unknowndomain.engine.Engine;
 import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.client.EngineClient;
 import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
@@ -41,11 +44,7 @@ import java.util.UUID;
 
 public class GameClientStandalone extends GameServerFullAsync {
 
-    private GLFWGameWindow window;
     private ClientContextImpl clientContext;
-    private ResourceManager resourceManager;
-
-    private KeyBindingManager keyBindingManager;
     private EntityController entityController;
 
     private WorldCommon world;
@@ -55,14 +54,17 @@ public class GameClientStandalone extends GameServerFullAsync {
 
     private boolean stopped;
 
-    public GameClientStandalone(Option option, ModRepository repository, ModStore store, EventBus bus, GLFWGameWindow window) {
-        super(option, repository, store, bus);
-        this.window = window;
+    public GameClientStandalone(EngineClient engine, Option option) {
+        super(engine, option);
 
         this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, FixStepTicker.clientTick);
+//Removed
+//        // Remove it
+//        bus.register(new DefaultGameMode());
+    }
 
-        // TODO: Remove it
-        bus.register(new DefaultGameMode());
+    public EngineClient engine() {
+        return (EngineClient) engine;
     }
 
     /**
@@ -86,8 +88,9 @@ public class GameClientStandalone extends GameServerFullAsync {
     @Override
     protected void constructStage() {
         super.constructStage();
-        resourceManager = new ResourceManagerImpl();
-        resourceManager.addResourceSource(new ResourceSourceBuiltin());
+        // Moved to Engine
+        // resourceManager = new ResourceManagerImpl();
+        // resourceManager.addResourceSource(new ResourceSourceBuiltin());
 
         player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
     }
@@ -99,34 +102,35 @@ public class GameClientStandalone extends GameServerFullAsync {
         // actionManager = new ActionManagerImpl(context,
         // this.context.getRegistryManager().getRegistryManager(Action.class));
         // actionManager.registerAll(buildActions().toArray(new Action[0]));
-        keyBindingManager = new KeyBindingManager(context, context.getRegistry().getRegistry(KeyBinding.class));
-        registerKeyBindings(keyBindingManager);
-        // TODO fire KeyBindingRegistryEvent or something
 
-        window.addKeyCallback(keyBindingManager::handleKey);
-        window.addMouseCallback(keyBindingManager::handleMouse);
+        // registerKeyBindings(keyBindingManager);
 
-        List<Renderer.Factory> factories = Lists.newArrayList();
-        RendererRegisterEvent rendererRegisterEvent = new RendererRegisterEvent(factories);
-        eventBus.post(rendererRegisterEvent);
+        // Moved to Engine
 
-        // FIXME: Don't initialize renderer at here. It should be initialized in Engine
-        factories.add((context, manager) -> {
-            Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
-            byte[] cache = resource.cache();
-            return new GuiRenderer(ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
-                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(), ShaderType.VERTEX_SHADER),
-                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(), ShaderType.FRAGMENT_SHADER));
-        });
+        // Moved to EngineDummyContainer
+//        List<Renderer.Factory> factories = Lists.newArrayList();
+//        ClientRegistryEvent clientRegistryEvent = new ClientRegistryEvent(factories);
+//        eventBus.post(clientRegistryEvent);
+//
+//        //  Don't initialize renderer at here. It should be initialized in Engine
+//        factories.add((context, manager) -> {
+//            Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
+//            byte[] cache = resource.cache();
+//            return new GuiRenderer(ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
+//                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(), ShaderType.VERTEX_SHADER),
+//                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(), ShaderType.FRAGMENT_SHADER));
+//        });
 
-        clientContext = new ClientContextImpl(this, Thread.currentThread(), factories, window, player);
-        clientContext.build(context, resourceManager);
+        clientContext = new ClientContextImpl(this, Thread.currentThread(), engine().getRendererFactories(), engine().getWindow(), player);
+        clientContext.build(context, engine().getResourceManager());
         clientContext.setCamera(new FirstPersonCamera(player));
     }
 
     @Override
     protected void resourceStage() {
-        eventBus.post(new ResourceSetupEvent(context, resourceManager, clientContext.getTextureManager()));
+        // Moved to Engine
+        // eventBus.post(new ResourceSetupEvent(context, resourceManager,
+        // clientContext.getTextureManager()));
         clientContext.getTextureManager().initTextureAtlas(TextureTypes.BLOCK);
     }
 
@@ -140,9 +144,11 @@ public class GameClientStandalone extends GameServerFullAsync {
         player.getControlledEntity().getPosition().set(1, 3, 1);
 
         entityController = new EntityCameraController(player);
-        window.addCursorCallback(entityController::handleCursorMove);
+        engine().getWindow().addCursorCallback(entityController::handleCursorMove);
+        // For now until we figure out how to setup games
+        engine().getKeyBindingManager().setGameContext(clientContext);
 
-        eventBus.post(new GameReadyEvent(context));
+        engine.getEventBus().post(new GameReadyEvent(context));
 
         // TODO:
         Random random = new Random();
@@ -162,7 +168,7 @@ public class GameClientStandalone extends GameServerFullAsync {
     }
 
     private void clientTick() {
-        keyBindingManager.tick();
+        engine().getKeyBindingManager().tick();
         // TODO upload particle physics here
     }
 
@@ -172,10 +178,10 @@ public class GameClientStandalone extends GameServerFullAsync {
      * @param partialTick
      */
     private void renderTick(double partialTick) {
-        window.beginDraw();
+        engine().getWindow().beginDraw();
         clientContext.updateFps();
         this.clientContext.render(partialTick);
-        window.endDraw();
+        engine().getWindow().endDraw();
     }
 
     // https://github.com/lwjglgamedev/lwjglbook/blob/master/chapter02/src/main/java/org/lwjglb/engine/GameEngine.java
@@ -208,38 +214,6 @@ public class GameClientStandalone extends GameServerFullAsync {
     // }
 
     // dirty things below...
-
-    /**
-     * For now. Registers the key bindings
-     * 
-     * @param manager The KeyBindingManager to register the bindings
-     */
-    void registerKeyBindings(KeyBindingManager manager) {
-        manager.register(KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.FORWARD, false)));
-        manager.register(KeyBinding.create("player.move.backward", Key.KEY_S, (c) -> getEntityController().handleMotion(MotionType.BACKWARD, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.BACKWARD, false)));
-        manager.register(KeyBinding.create("player.move.left", Key.KEY_A, (c) -> getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.LEFT, false)));
-        manager.register(KeyBinding.create("player.move.right", Key.KEY_D, (c) -> getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.RIGHT, false)));
-        manager.register(KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.UP, false)));
-        manager.register(KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
-                .endAction((c, i) -> getEntityController().handleMotion(MotionType.DOWN, false)));
-        manager.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
-            BlockPrototype.Hit hit = clientContext.getHit();
-            if (hit != null) {
-                getWorld().setBlock(hit.getPos(), c.getBlockAir());
-            }
-        }, ActionMode.PRESS));
-        manager.register(KeyBinding.create("player.mouse.r", Key.MOUSE_BUTTON_RIGHT, (c) -> {
-            BlockPrototype.Hit hit = clientContext.getHit();
-            if (hit != null) {
-                getWorld().setBlock(hit.getFace().offset(hit.getPos()), Blocks.DIRT);
-            }
-        }, ActionMode.PRESS));
-    }
 
 //    private List<Action> buildActions() {
 //        List<Action> list = motionController.getActions();

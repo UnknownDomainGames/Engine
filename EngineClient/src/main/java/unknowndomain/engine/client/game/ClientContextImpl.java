@@ -15,6 +15,7 @@ import unknowndomain.engine.game.Game;
 import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Registry;
+import unknowndomain.engine.world.World;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,13 +23,13 @@ import java.util.List;
 
 public class ClientContextImpl implements ClientContext {
 
-    private final Game game;
+    private final GameClientStandalone game;
     private final Thread renderThread;
     @Deprecated
     private final List<Renderer.Factory> factories;
     private final List<Renderer> renderers = new ArrayList<>();
     private final GameWindow window;
-    private final TextureManager textureManager = new TextureManagerImpl();
+
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
     private final Player player;
 
@@ -36,7 +37,7 @@ public class ClientContextImpl implements ClientContext {
     private BlockPrototype.Hit hit;
     private double partialTick;
 
-    public ClientContextImpl(Game game, Thread renderThread, List<Renderer.Factory> factories, GameWindow window, Player player) {
+    public ClientContextImpl(GameClientStandalone game, Thread renderThread, List<Renderer.Factory> factories, GameWindow window, Player player) {
         this.game = game;
         this.renderThread = renderThread;
         this.factories = factories;
@@ -77,15 +78,15 @@ public class ClientContextImpl implements ClientContext {
         long time = System.currentTimeMillis();
         if (time - lastUpdateFps > 1000) {
             fps = frameCount;
-            frameCount = 0; //reset the FPS counter
-            lastUpdateFps += 1000; //add one second
+            frameCount = 0; // reset the FPS counter
+            lastUpdateFps += 1000; // add one second
         }
         frameCount++;
     }
 
     @Override
     public TextureManager getTextureManager() {
-        return textureManager;
+        return game.engine().getTextureManager();
     }
 
     @Override
@@ -135,8 +136,7 @@ public class ClientContextImpl implements ClientContext {
     public void render(double partial) {
         this.partialTick = partial;
         getFrustumIntersection().set(getWindow().projection().mul(getCamera().view((float) partial), new Matrix4f()));
-        hit = getPlayer().getWorld().raycast(getCamera().getPosition((float) partialTick()),
-                getCamera().getFrontVector((float) partialTick()), 10);
+        hit = getPlayer().getWorld().raycast(getCamera().getPosition((float) partialTick()), getCamera().getFrontVector((float) partialTick()), 10);
         for (Renderer renderer : renderers) {
             renderer.render();
         }
@@ -146,5 +146,10 @@ public class ClientContextImpl implements ClientContext {
         for (Renderer renderer : renderers) {
             renderer.dispose();
         }
+    }
+
+    @Override
+    public World getClientWorld() {
+        return game.getWorld();
     }
 }

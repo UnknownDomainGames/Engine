@@ -7,6 +7,7 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import unknowndomain.engine.Engine;
+import unknowndomain.engine.event.Event.Cancellable;
 import unknowndomain.engine.util.SafeClassDefiner;
 
 import java.lang.reflect.Constructor;
@@ -111,29 +112,27 @@ public class AsmEventBus implements EventBus {
             int modifiers = method.getModifiers();
 
             if (!Modifier.isPublic(modifiers) || Modifier.isStatic(modifiers) || Modifier.isAbstract(modifiers)) {
-                Engine.getLogger().warn("Require event bus listened method is public and not static/abstract! " + clazz); // TODO: support static
+                Engine.getLogger().warn("Fail to register " + clazz + ": Listener Method Must Be Public, non-static and non-abstract"); // TODO: support static
                 continue;
             }
 
             if (method.getParameterCount() != 1) {
-                Engine.getLogger().warn("Require event bus listened method has only one event parameter! " + clazz);
+                Engine.getLogger().warn("Fail to register " + clazz + ": Listener Method Must only have 1 event parameter!");
                 continue;
             }
 
             Class<?> eventType = method.getParameterTypes()[0];
             if (!Event.class.isAssignableFrom(eventType)) {
-                Engine.getLogger().warn("Require event bus listened method has only one event parameter! " + clazz);
+                Engine.getLogger().warn("Fail to register " + clazz + ": Listener Method Must accept Event parameter!");
                 continue;
             }
 
             try {
-                RegisteredListener executor = createEventExecutor(method, listener, anno.order(),
-                        anno.receiveCancelled(), eventType);
+                RegisteredListener executor = createEventExecutor(method, listener, anno.order(), anno.receiveCancelled(), eventType);
                 listenerExecutors.add(executor);
                 addEventListener(eventType, executor);
             } catch (ReflectiveOperationException e) {
-                Engine.getLogger().warn(String.format("Failed to register listener %s.%s .",
-                        listener.getClass().getSimpleName(), method.getName()), new EventException(e));
+                Engine.getLogger().warn(String.format("Failed to register listener %s.%s .", listener.getClass().getSimpleName(), method.getName()), new EventException(e));
             }
 
         }
@@ -157,8 +156,7 @@ public class AsmEventBus implements EventBus {
         }
     }
 
-    private void addEventListener(Map<Order, Collection<RegisteredListener>> orderedListeners,
-                                  RegisteredListener listener) {
+    private void addEventListener(Map<Order, Collection<RegisteredListener>> orderedListeners, RegisteredListener listener) {
         Collection<RegisteredListener> listeners = orderedListeners.get(listener.getOrder());
         if (listeners == null) {
             listeners = new LinkedHashSet<>();
@@ -187,8 +185,7 @@ public class AsmEventBus implements EventBus {
         }
     }
 
-    private RegisteredListener createEventExecutor(Method method, Object owner, Order order, boolean receiveCancelled,
-                                                   Class<?> eventType) throws ReflectiveOperationException {
+    private RegisteredListener createEventExecutor(Method method, Object owner, Order order, boolean receiveCancelled, Class<?> eventType) throws ReflectiveOperationException {
         Class<?> ownerType = owner.getClass();
         String ownerName = ownerType.getTypeName().replace('.', '/');
         String ownerDesc = Type.getDescriptor(ownerType);
@@ -201,29 +198,25 @@ public class AsmEventBus implements EventBus {
         FieldVisitor fv;
         MethodVisitor mv;
 
-        cw.visit(V1_8, ACC_PUBLIC + ACC_SUPER, className, null,
-                "unknowndomain/engine/event/AsmEventBus$RegisteredListener", null);
+        cw.visit(V1_8, ACC_PUBLIC + ACC_SUPER, className, null, "unknowndomain/engine/event/AsmEventBus$RegisteredListener", null);
 
         cw.visitSource(".dynamic", null);
 
-        cw.visitInnerClass("unknowndomain/engine/event/AsmEventBus$RegisteredListener",
-                "unknowndomain/engine/event/AsmEventBus", "EventExecutor", ACC_PUBLIC + ACC_STATIC + ACC_ABSTRACT);
+        cw.visitInnerClass("unknowndomain/engine/event/AsmEventBus$RegisteredListener", "unknowndomain/engine/event/AsmEventBus", "EventExecutor", ACC_PUBLIC + ACC_STATIC + ACC_ABSTRACT);
 
         {
             fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "owner", ownerDesc, null, null);
             fv.visitEnd();
         }
         {
-            mv = cw.visitMethod(ACC_PUBLIC, "<init>",
-                    "(" + ownerDesc + "Ljava/lang/Class;ZLunknowndomain/engine/event/Order;)V",
+            mv = cw.visitMethod(ACC_PUBLIC, "<init>", "(" + ownerDesc + "Ljava/lang/Class;ZLunknowndomain/engine/event/Order;)V",
                     "(" + ownerDesc + "Ljava/lang/Class<*>;ZLunknowndomain/engine/event/Order;)V", null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 2);
             mv.visitVarInsn(ILOAD, 3);
             mv.visitVarInsn(ALOAD, 4);
-            mv.visitMethodInsn(INVOKESPECIAL, "unknowndomain/engine/event/AsmEventBus$RegisteredListener", "<init>",
-                    "(Ljava/lang/Class;ZLunknowndomain/engine/event/Order;)V", false);
+            mv.visitMethodInsn(INVOKESPECIAL, "unknowndomain/engine/event/AsmEventBus$RegisteredListener", "<init>", "(Ljava/lang/Class;ZLunknowndomain/engine/event/Order;)V", false);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
             mv.visitFieldInsn(PUTFIELD, className, "owner", ownerDesc);
@@ -254,8 +247,7 @@ public class AsmEventBus implements EventBus {
         }
         cw.visitEnd();
 
-        Class<?> executorType = classDefiner.defineClass(ownerType.getClassLoader(), className,
-                cw.toByteArray());
+        Class<?> executorType = classDefiner.defineClass(ownerType.getClassLoader(), className, cw.toByteArray());
         Constructor<?> executorConstructor = executorType.getConstructors()[0];
         return (RegisteredListener) executorConstructor.newInstance(owner, eventType, receiveCancelled, order);
     }

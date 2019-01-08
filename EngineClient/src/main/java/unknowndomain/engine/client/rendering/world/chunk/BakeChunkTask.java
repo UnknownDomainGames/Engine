@@ -8,6 +8,7 @@ import unknowndomain.engine.util.BlockPosIterator;
 import unknowndomain.engine.util.ChunkCache;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.chunk.Chunk;
+import unknowndomain.game.Blocks;
 
 public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
 
@@ -34,10 +35,12 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
         BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunk(chunk);
 
         BufferBuilder buffer = ((BakeChunkThread) Thread.currentThread()).getBuffer();
-        buffer.begin(GL11.GL_TRIANGLES, true, true, true,true);
+        buffer.begin(GL11.GL_TRIANGLES, true, true, true, true);
         while (blockPosIterator.hasNext()) {
             BlockPos pos = blockPosIterator.next();
+            // FIXME: block is null. I don't know where to register client blocks..
             ClientBlock block = chunkRenderer.getContext().getClientBlockRegistry().getValue(chunkCache.getBlockId(pos));
+
             if (block.getBlock() == chunkCache.getWorld().getGame().getContext().getBlockAir()) {
                 continue;
             }
@@ -50,8 +53,7 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
     }
 
     private ChunkCache createChunkCache(World world, Chunk chunk) {
-        return ChunkCache.create(world, chunk.getChunkX() - 1, chunk.getChunkY() - 1, chunk.getChunkZ() - 1,
-                chunk.getChunkX() + 1, chunk.getChunkY() + 1, chunk.getChunkZ() + 1);
+        return ChunkCache.create(world, chunk.getChunkX() - 1, chunk.getChunkY() - 1, chunk.getChunkZ() - 1, chunk.getChunkX() + 1, chunk.getChunkY() + 1, chunk.getChunkZ() + 1);
     }
 
     @Override

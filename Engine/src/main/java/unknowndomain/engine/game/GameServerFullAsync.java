@@ -2,6 +2,8 @@ package unknowndomain.engine.game;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import unknowndomain.engine.Engine;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.mod.ModRepository;
 import unknowndomain.engine.mod.ModStore;
@@ -21,8 +23,8 @@ public class GameServerFullAsync extends GameBase {
     protected List<WorldCommon> internalWorlds;
     protected List<Thread> worldThreads;
 
-    public GameServerFullAsync(Option option, ModRepository repository, ModStore store, EventBus bus) {
-        super(option, repository, store, bus);
+    public GameServerFullAsync(Engine engine, Option option) {
+        super(engine, option);
     }
 
     @Override

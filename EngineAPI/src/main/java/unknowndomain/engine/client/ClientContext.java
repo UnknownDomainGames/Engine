@@ -9,6 +9,7 @@ import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Registry;
+import unknowndomain.engine.world.World;
 
 @Deprecated
 public interface ClientContext {
@@ -40,4 +41,6 @@ public interface ClientContext {
     BlockPrototype.Hit getHit();
 
     Registry<ClientBlock> getClientBlockRegistry();
+
+    World getClientWorld();
 }
