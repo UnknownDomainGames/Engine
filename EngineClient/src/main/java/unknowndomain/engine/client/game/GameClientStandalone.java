@@ -145,6 +145,8 @@ public class GameClientStandalone extends GameServerFullAsync {
 
         entityController = new EntityCameraController(player);
         engine().getWindow().addCursorCallback(entityController::handleCursorMove);
+        // For now until we figure out how to setup games
+        engine().getKeyBindingManager().setGameContext(clientContext);
 
         engine.getEventBus().post(new GameReadyEvent(context));
 

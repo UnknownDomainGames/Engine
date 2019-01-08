@@ -32,6 +32,7 @@ import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.event.EngineEvent;
 import unknowndomain.engine.event.EngineEvent.ModInitializationEvent;
 import unknowndomain.engine.event.registry.ClientRegistryEvent;
+import unknowndomain.engine.game.Game;
 import unknowndomain.game.Blocks;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.registry.Registry;
@@ -88,23 +89,20 @@ public class EngineDummyContainer implements ModContainer {
         // TODO: almost everything is hardcoded... Fix when GameContext and
         // ClientContext is fixed
         registry.register(
-                KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
-                        .endAction((c, i) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.FORWARD, false)));
+                KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
+                        .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.FORWARD, false)));
         registry.register(
-                KeyBinding.create("player.move.backward", Key.KEY_S, (c) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.BACKWARD, true), ActionMode.PRESS)
-                        .endAction((c, i) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.BACKWARD, false)));
+                KeyBinding.create("player.move.backward", Key.KEY_S, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.BACKWARD, true), ActionMode.PRESS)
+                        .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.BACKWARD, false)));
+        registry.register(KeyBinding.create("player.move.left", Key.KEY_A, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
+                .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.LEFT, false)));
+        registry.register(KeyBinding.create("player.move.right", Key.KEY_D, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
+                .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.RIGHT, false)));
+        registry.register(KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
+                .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.UP, false)));
         registry.register(
-                KeyBinding.create("player.move.left", Key.KEY_A, (c) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
-                        .endAction((c, i) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.LEFT, false)));
-        registry.register(
-                KeyBinding.create("player.move.right", Key.KEY_D, (c) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
-                        .endAction((c, i) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.RIGHT, false)));
-        registry.register(
-                KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
-                        .endAction((c, i) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.UP, false)));
-        registry.register(KeyBinding
-                .create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
-                .endAction((c, i) -> ((GameClientStandalone) c.getClientWorld()).getEntityController().handleMotion(MotionType.DOWN, false)));
+                KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
+                        .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.DOWN, false)));
         registry.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
             BlockPrototype.Hit hit = c.getHit();
             if (hit != null) {
@@ -156,6 +154,7 @@ public class EngineDummyContainer implements ModContainer {
 
     @Listener
     public void onEngineInitialized(EngineEvent.InitializationComplete e) {
-        e.getEngine().startGame(null);
+        Game game = e.getEngine().startGame(null);
+        game.run();
     }
 }
