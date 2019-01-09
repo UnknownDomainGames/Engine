@@ -1,26 +1,47 @@
 package unknowndomain.engine.util.versioning;
 
-import javax.annotation.Nullable;
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
 /**
  * Describes a restriction in versioning.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @version $Id$
  */
 public class Restriction
 {
-    private final ArtifactVersion lowerBound;
+    private final ComparableVersion lowerBound;
 
     private final boolean lowerBoundInclusive;
 
-    private final ArtifactVersion upperBound;
+    private final ComparableVersion upperBound;
 
     private final boolean upperBoundInclusive;
 
     public static final Restriction EVERYTHING = new Restriction( null, false, null, false );
 
-    public Restriction( @Nullable ArtifactVersion lowerBound, boolean lowerBoundInclusive, @Nullable ArtifactVersion upperBound,
-                       boolean upperBoundInclusive )
+    public Restriction(ComparableVersion lowerBound,
+                       boolean lowerBoundInclusive,
+                       ComparableVersion upperBound,
+                       boolean upperBoundInclusive)
     {
         this.lowerBound = lowerBound;
         this.lowerBoundInclusive = lowerBoundInclusive;
@@ -28,8 +49,7 @@ public class Restriction
         this.upperBoundInclusive = upperBoundInclusive;
     }
 
-    @Nullable
-    public ArtifactVersion getLowerBound()
+    public ComparableVersion getLowerBound()
     {
         return lowerBound;
     }
@@ -39,8 +59,7 @@ public class Restriction
         return lowerBoundInclusive;
     }
 
-    @Nullable
-    public ArtifactVersion getUpperBound()
+    public ComparableVersion getUpperBound()
     {
         return upperBound;
     }
@@ -50,12 +69,11 @@ public class Restriction
         return upperBoundInclusive;
     }
 
-    public boolean containsVersion( ArtifactVersion version )
+    public boolean containsVersion(ComparableVersion version)
     {
         if ( lowerBound != null )
         {
             int comparison = lowerBound.compareTo( version );
-
             if ( ( comparison == 0 ) && !lowerBoundInclusive )
             {
                 return false;
@@ -68,7 +86,6 @@ public class Restriction
         if ( upperBound != null )
         {
             int comparison = upperBound.compareTo( version );
-
             if ( ( comparison == 0 ) && !upperBoundInclusive )
             {
                 return false;
@@ -78,7 +95,6 @@ public class Restriction
                 return false;
             }
         }
-
         return true;
     }
 
@@ -120,7 +136,7 @@ public class Restriction
             return true;
         }
 
-        if ( !( other instanceof Restriction ) )
+        if (!(other instanceof Restriction))
         {
             return false;
         }
@@ -163,10 +179,9 @@ public class Restriction
         return true;
     }
 
-    @Override
     public String toString()
     {
-        StringBuilder buf = new StringBuilder();
+        StringBuffer buf = new StringBuffer();
 
         buf.append( isLowerBoundInclusive() ? "[" : "(" );
         if ( getLowerBound() != null )
@@ -182,5 +197,4 @@ public class Restriction
 
         return buf.toString();
     }
-
 }

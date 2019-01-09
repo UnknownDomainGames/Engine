@@ -1,11 +1,24 @@
 package unknowndomain.engine.util.versioning;
+
 /*
- * Modifications by cpw under LGPL 2.1 or later
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
-import com.google.common.base.Joiner;
-
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -15,26 +28,27 @@ import java.util.List;
  * Construct a version range from a specification.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @version $Id$
  */
 public class VersionRange
 {
-    private final ArtifactVersion recommendedVersion;
+    private final ComparableVersion recommendedVersion;
 
     private final List<Restriction> restrictions;
 
-    private VersionRange( ArtifactVersion recommendedVersion,
-                          List<Restriction> restrictions )
+    private VersionRange(ComparableVersion recommendedVersion,
+                         List<Restriction> restrictions )
     {
         this.recommendedVersion = recommendedVersion;
         this.restrictions = restrictions;
     }
 
-    public ArtifactVersion getRecommendedVersion()
+    public ComparableVersion getRecommendedVersion()
     {
         return recommendedVersion;
     }
 
-    public List<Restriction> getRestrictions()
+    public List getRestrictions()
     {
         return restrictions;
     }
@@ -45,7 +59,7 @@ public class VersionRange
 
         if ( restrictions != null )
         {
-            copiedRestrictions = new ArrayList<>();
+            copiedRestrictions = new ArrayList<Restriction>();
 
             if ( !restrictions.isEmpty() )
             {
@@ -56,16 +70,6 @@ public class VersionRange
         return new VersionRange( recommendedVersion, copiedRestrictions );
     }
 
-    /**
-     * Factory method, for custom versioning schemes
-     * @param version version
-     * @param restrictions restriction list
-     * @return a new version range
-     */
-    public static VersionRange newRange(ArtifactVersion version, List<Restriction> restrictions)
-    {
-        return new VersionRange(version, restrictions);
-    }
     /**
      * Create a version range from a string representation
      * <p/>
@@ -83,7 +87,7 @@ public class VersionRange
      * @throws InvalidVersionSpecificationException
      *
      */
-    public static VersionRange createFromVersionSpec( @Nullable String spec )
+    public static VersionRange createFromVersionSpec(String spec)
         throws InvalidVersionSpecificationException
     {
         if ( spec == null )
@@ -91,11 +95,11 @@ public class VersionRange
             return null;
         }
 
-        List<Restriction> restrictions = new ArrayList<>();
+        List<Restriction> restrictions = new ArrayList<Restriction>();
         String process = spec;
-        ArtifactVersion version = null;
-        ArtifactVersion upperBound = null;
-        ArtifactVersion lowerBound = null;
+        ComparableVersion version = null;
+        ComparableVersion upperBound = null;
+        ComparableVersion lowerBound = null;
 
         while ( process.startsWith( "[" ) || process.startsWith( "(" ) )
         {
@@ -148,7 +152,7 @@ public class VersionRange
             }
             else
             {
-                version = new DefaultArtifactVersion( process );
+                version = new ComparableVersion(process);
                 restrictions.add( Restriction.EVERYTHING );
             }
         }
@@ -175,7 +179,7 @@ public class VersionRange
                 throw new InvalidVersionSpecificationException( "Single version must be surrounded by []: " + spec );
             }
 
-            ArtifactVersion version = new DefaultArtifactVersion( process );
+            ComparableVersion version = new ComparableVersion(process);
 
             restriction = new Restriction( version, lowerBoundInclusive, version, upperBoundInclusive );
         }
@@ -188,15 +192,15 @@ public class VersionRange
                 throw new InvalidVersionSpecificationException( "Range cannot have identical boundaries: " + spec );
             }
 
-            ArtifactVersion lowerVersion = null;
+            ComparableVersion lowerVersion = null;
             if ( lowerBound.length() > 0 )
             {
-                lowerVersion = new DefaultArtifactVersion( lowerBound );
+                lowerVersion = new ComparableVersion(lowerBound);
             }
-            ArtifactVersion upperVersion = null;
+            ComparableVersion upperVersion = null;
             if ( upperBound.length() > 0 )
             {
-                upperVersion = new DefaultArtifactVersion( upperBound );
+                upperVersion = new ComparableVersion(upperBound);
             }
 
             if ( upperVersion != null && lowerVersion != null && upperVersion.compareTo( lowerVersion ) < 0 )
@@ -210,14 +214,10 @@ public class VersionRange
         return restriction;
     }
 
-    public static VersionRange createFromVersion( String version , ArtifactVersion existing)
+    public static VersionRange createFromVersion(String version)
     {
         List<Restriction> restrictions = Collections.emptyList();
-        if (existing == null)
-        {
-            existing = new DefaultArtifactVersion( version );
-        }
-        return new VersionRange(existing , restrictions );
+        return new VersionRange(new ComparableVersion(version), restrictions);
     }
 
     /**
@@ -263,26 +263,28 @@ public class VersionRange
             restrictions = intersection( r1, r2 );
         }
 
-        ArtifactVersion version = null;
+        ComparableVersion version = null;
         if ( restrictions.size() > 0 )
         {
-            for ( Restriction r : restrictions )
+            boolean found = false;
+            for (Iterator i = restrictions.iterator(); i.hasNext() && !found; )
             {
+                Restriction r = (Restriction) i.next();
+
                 if ( recommendedVersion != null && r.containsVersion( recommendedVersion ) )
                 {
                     // if we find the original, use that
                     version = recommendedVersion;
-                    break;
-                }
-                else if ( version == null && restriction.getRecommendedVersion() != null
-                    && r.containsVersion( restriction.getRecommendedVersion() ) )
+                    found = true;
+                } else if (version == null && restriction.getRecommendedVersion() != null &&
+                        r.containsVersion(restriction.getRecommendedVersion()))
                 {
                     // use this if we can, but prefer the original if possible
                     version = restriction.getRecommendedVersion();
                 }
             }
         }
-        // Either the original or the specified version ranges have no restrictions
+        // Either the original or the specified version ranges have no restructions
         else if ( recommendedVersion != null )
         {
             // Use the original recommended version since it exists
@@ -304,25 +306,25 @@ public class VersionRange
         return new VersionRange( version, restrictions );
     }
 
-    private List<Restriction> intersection( List<Restriction> r1, List<Restriction> r2 )
+    private List<Restriction> intersection(List<Restriction> r1, List<Restriction> r2)
     {
-        List<Restriction> restrictions = new ArrayList<>(r1.size() + r2.size());
-        Iterator<Restriction> i1 = r1.iterator();
-        Iterator<Restriction> i2 = r2.iterator();
-        Restriction res1 = i1.next();
-        Restriction res2 = i2.next();
+        List<Restriction> restrictions = new ArrayList<Restriction>(r1.size() + r2.size());
+        Iterator i1 = r1.iterator();
+        Iterator i2 = r2.iterator();
+        Restriction res1 = (Restriction) i1.next();
+        Restriction res2 = (Restriction) i2.next();
 
         boolean done = false;
         while ( !done )
         {
-            if ( res1.getLowerBound() == null || res2.getUpperBound() == null
-                || res1.getLowerBound().compareTo( res2.getUpperBound() ) <= 0 )
+            if (res1.getLowerBound() == null || res2.getUpperBound() == null ||
+                    res1.getLowerBound().compareTo(res2.getUpperBound()) <= 0)
             {
-                if ( res1.getUpperBound() == null || res2.getLowerBound() == null
-                    || res1.getUpperBound().compareTo( res2.getLowerBound() ) >= 0 )
+                if (res1.getUpperBound() == null || res2.getLowerBound() == null ||
+                        res1.getUpperBound().compareTo(res2.getLowerBound()) >= 0)
                 {
-                    ArtifactVersion lower;
-                    ArtifactVersion upper;
+                    ComparableVersion lower;
+                    ComparableVersion upper;
                     boolean lowerInclusive;
                     boolean upperInclusive;
 
@@ -403,7 +405,7 @@ public class VersionRange
                         // advance res2
                         if ( i2.hasNext() )
                         {
-                            res2 = i2.next();
+                            res2 = (Restriction) i2.next();
                         }
                         else
                         {
@@ -415,7 +417,7 @@ public class VersionRange
                         // advance res1
                         if ( i1.hasNext() )
                         {
-                            res1 = i1.next();
+                            res1 = (Restriction) i1.next();
                         }
                         else
                         {
@@ -428,7 +430,7 @@ public class VersionRange
                     // move on to next in r1
                     if ( i1.hasNext() )
                     {
-                        res1 = i1.next();
+                        res1 = (Restriction) i1.next();
                     }
                     else
                     {
@@ -441,7 +443,7 @@ public class VersionRange
                 // move on to next in r2
                 if ( i2.hasNext() )
                 {
-                    res2 = i2.next();
+                    res2 = (Restriction) i2.next();
                 }
                 else
                 {
@@ -453,7 +455,6 @@ public class VersionRange
         return restrictions;
     }
 
-    @Override
     public String toString()
     {
         if ( recommendedVersion != null )
@@ -462,39 +463,29 @@ public class VersionRange
         }
         else
         {
-            return Joiner.on(',').join(restrictions);
-        }
-    }
+            StringBuffer buf = new StringBuffer();
+            for (Iterator i = restrictions.iterator(); i.hasNext(); ) {
+                Restriction r = (Restriction) i.next();
 
-    public String toStringFriendly()
-    {
-        if ( recommendedVersion != null )
-        {
-            return recommendedVersion.getVersionString();
-        }
-        else
-        {
-            List<String> friendlyRestrictions = new ArrayList<>(restrictions.size());
-            for (Restriction restriction : restrictions)
-            {
-                friendlyRestrictions.add(restriction.toString());
+                buf.append(r.toString());
+
+                if (i.hasNext()) {
+                    buf.append(",");
+                }
             }
-            return Joiner.on(", ").join(friendlyRestrictions);
+            return buf.toString();
         }
     }
 
-    public ArtifactVersion matchVersion( List<ArtifactVersion> versions )
+    public ComparableVersion matchVersion(List<ComparableVersion> versions)
     {
         // TODO: could be more efficient by sorting the list and then moving along the restrictions in order?
 
-        ArtifactVersion matched = null;
-        for ( ArtifactVersion version : versions )
-        {
-            if ( containsVersion( version ) )
-            {
+        ComparableVersion matched = null;
+        for (ComparableVersion version : versions) {
+            if (containsVersion(version)) {
                 // valid - check if it is greater than the currently matched version
-                if ( matched == null || version.compareTo( matched ) > 0 )
-                {
+                if (matched == null || version.compareTo(matched) > 0) {
                     matched = version;
                 }
             }
@@ -502,12 +493,9 @@ public class VersionRange
         return matched;
     }
 
-    public boolean containsVersion( ArtifactVersion version )
-    {
-        for ( Restriction restriction : restrictions )
-        {
-            if ( restriction.containsVersion( version ) )
-            {
+    public boolean containsVersion(ComparableVersion version) {
+        for (Restriction restriction : restrictions) {
+            if (restriction.containsVersion(version)) {
                 return true;
             }
         }
@@ -519,29 +507,26 @@ public class VersionRange
         return !restrictions.isEmpty() && recommendedVersion == null;
     }
 
-    @Override
     public boolean equals( Object obj )
     {
-        if ( this == obj )
-        {
+        if (this == obj) {
             return true;
         }
-        if ( !( obj instanceof VersionRange ) )
+        if (!(obj instanceof VersionRange))
         {
             return false;
         }
         VersionRange other = (VersionRange) obj;
 
         boolean equals =
-            recommendedVersion == other.recommendedVersion
-                || ( ( recommendedVersion != null ) && recommendedVersion.equals( other.recommendedVersion ) );
+                recommendedVersion == other.recommendedVersion ||
+                        ((recommendedVersion != null) && recommendedVersion.equals(other.recommendedVersion));
         equals &=
-            restrictions == other.restrictions
-                || ( ( restrictions != null ) && restrictions.equals( other.restrictions ) );
+                restrictions == other.restrictions ||
+                        ((restrictions != null) && restrictions.equals(other.restrictions));
         return equals;
     }
 
-    @Override
     public int hashCode()
     {
         int hash = 7;
@@ -549,15 +534,4 @@ public class VersionRange
         hash = 31 * hash + ( restrictions == null ? 0 : restrictions.hashCode() );
         return hash;
     }
-
-    public boolean isUnboundedAbove()
-    {
-        return restrictions.size() == 1 && restrictions.get(0).getUpperBound() == null && !restrictions.get(0).isUpperBoundInclusive();
-    }
-
-    public String getLowerBoundString()
-    {
-        return restrictions.size() == 1 ? restrictions.get(0).getLowerBound().getVersionString() : "";
-    }
-
 }
