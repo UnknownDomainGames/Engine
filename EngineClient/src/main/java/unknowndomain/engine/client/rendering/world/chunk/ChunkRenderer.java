@@ -8,8 +8,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.rendering.Renderer;
-import unknowndomain.engine.client.rendering.block.BlockRenderer;
-import unknowndomain.engine.client.rendering.block.DefaultBlockRenderer;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
@@ -29,7 +27,7 @@ import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
 public class ChunkRenderer implements Renderer {
-    private final BlockRenderer blockRenderer = new DefaultBlockRenderer();
+
     private final ShaderProgram chunkSolidShader;
 
     private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
@@ -112,10 +110,6 @@ public class ChunkRenderer implements Renderer {
     public void dispose() {
         updateExecutor.shutdown();
         chunkSolidShader.dispose();
-    }
-
-    public BlockRenderer getBlockRenderer() {
-        return blockRenderer;
     }
 
     public ClientContext getContext() {

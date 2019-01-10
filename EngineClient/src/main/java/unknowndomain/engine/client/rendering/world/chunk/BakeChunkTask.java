@@ -37,9 +37,10 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
         buffer.begin(GL11.GL_TRIANGLES, true, true, true, true);
         while (blockPosIterator.hasNext()) {
             BlockPos pos = blockPosIterator.next();
-            // FIXME: block is null. I don't know where to register client blocks..
             ClientBlock block = chunkRenderer.getContext().getClientBlockRegistry().getValue(chunkCache.getBlockId(pos));
-            chunkRenderer.getBlockRenderer().render(block, chunkCache, pos, buffer);
+            if (block.isRenderable()) {
+                block.getRenderer().render(block, chunkCache, pos, buffer);
+            }
         }
         buffer.finish();
         chunkRenderer.upload(chunkMesh, buffer);

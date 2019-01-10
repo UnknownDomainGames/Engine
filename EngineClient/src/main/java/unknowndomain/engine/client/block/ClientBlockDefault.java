@@ -2,6 +2,7 @@ package unknowndomain.engine.client.block;
 
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.client.UnknownDomain;
+import unknowndomain.engine.client.rendering.block.BlockRenderer;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.RegistryEntry;
@@ -13,20 +14,13 @@ import java.util.Map;
 
 public class ClientBlockDefault extends RegistryEntry.Impl<ClientBlock> implements ClientBlock {
 
+    // TODO: Better renderer init.
     @Deprecated
-    public static final Map<Block, BlockModel> blockModelMap = new HashMap<>();
+    public static final Map<Block, BlockModel> blockRendererMap = new HashMap<>();
 
     private final Block block;
 
-    @Deprecated
-    private BlockModel model;
-//    private final BlockModel model;
-
-//    public ClientBlockDefault(Block block, BlockModel model) {
-//        this.block = block;
-//        this.model = model;
-//        localName(block.getLocalName());
-//    }
+    private BlockRenderer renderer;
 
     @Deprecated
     public ClientBlockDefault(Block block) {
@@ -57,10 +51,10 @@ public class ClientBlockDefault extends RegistryEntry.Impl<ClientBlock> implemen
     }
 
     @Override
-    public BlockModel getModel() {
-        if (model == null) {
-            model = blockModelMap.get(block);
+    public BlockRenderer getRenderer() {
+        if (renderer == null) {
+            renderer = blockRendererMap.get(block);
         }
-        return model;
+        return renderer;
     }
 }

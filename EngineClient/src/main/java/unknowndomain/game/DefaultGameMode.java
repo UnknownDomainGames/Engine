@@ -133,11 +133,11 @@ public final class DefaultGameMode {
 
         BlockModel blockModel = new BlockModel();
         blockModel.addCube(0, 0, 0, 1, 1, 1, new TextureUV[] { side, side, side, side, top, bottom });
-        ClientBlockDefault.blockModelMap.put(Blocks.GRASS, blockModel);
+        ClientBlockDefault.blockRendererMap.put(Blocks.GRASS, blockModel);
 
         blockModel = new BlockModel();
         blockModel.addCube(0, 0, 0, 1, 1, 1, bottom);
-        ClientBlockDefault.blockModelMap.put(Blocks.DIRT, blockModel);
+        ClientBlockDefault.blockRendererMap.put(Blocks.DIRT, blockModel);
     }
 
     @Listener

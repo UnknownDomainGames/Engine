@@ -11,8 +11,6 @@ import unknowndomain.engine.client.gui.internal.Internal;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.Renderer;
-import unknowndomain.engine.client.rendering.block.BlockRenderer;
-import unknowndomain.engine.client.rendering.block.DefaultBlockRenderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
@@ -160,8 +158,6 @@ public class GuiRenderer implements Renderer {
         root.getRenderer().render(root, graphics);
         graphics.popClipRect();
     }
-
-    private final BlockRenderer blockRenderer = new DefaultBlockRenderer();
 
     private void debug(ClientContext context) {
         graphics.setColor(Color.WHITE);
