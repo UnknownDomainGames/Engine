@@ -59,6 +59,4 @@ public interface Registry<T extends RegistryEntry<T>> {
     T getValue(int id);
 
     Collection<Entry<String, T>> getEntries();
-
-    void freeze();
 }

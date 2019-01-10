@@ -1,28 +1,30 @@
 package unknowndomain.engine.registry.impl;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
-import org.apache.commons.lang3.Validate;
 import unknowndomain.engine.registry.RegisterException;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
+@NotThreadSafe
 public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
     private final Class<T> entryType;
     private final String name;
 
-    protected final Map<String, T> nameToObject = Maps.newHashMap();
+    protected final BiMap<String, T> nameToObject = HashBiMap.create();
     protected final IntObjectMap<T> idToObject = new IntObjectHashMap<>();
-
-    private boolean freezed = false;
 
     public SimpleRegistry(Class<T> entryType) {
         this(entryType, entryType.getSimpleName().toLowerCase());
@@ -34,12 +36,8 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     }
 
     @Override
-    public T register(T obj) {
-        Validate.notNull(obj);
-
-        if (freezed) {
-            throw new RegisterException("Registry has been freezed.");
-        }
+    public T register(@Nonnull T obj) {
+        requireNonNull(obj);
 
         if (!(obj instanceof RegistryEntry.Impl)) {
             throw new RegisterException(String.format("%s must be a subclass of RegistryEntry.Impl", obj.getEntryType().getSimpleName()));
@@ -63,27 +61,22 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
     @Override
     public T getValue(String registryName) {
-        Validate.notNull(registryName);
         return nameToObject.get(registryName);
     }
 
     @Override
     public String getKey(T value) {
-        Validate.notNull(value);
-        return value.getUniqueName();
+        return nameToObject.inverse().get(value);
     }
 
     @Override
     public boolean containsKey(String key) {
-        Validate.notNull(key);
         return nameToObject.containsKey(key);
     }
 
     @Override
     public boolean containsValue(T value) {
-        Validate.notNull(value);
-        String regId = value.getUniqueName();
-        return nameToObject.containsKey(regId);
+        return nameToObject.containsValue(value);
     }
 
     @Override
@@ -98,14 +91,12 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
     @Override
     public int getId(T obj) {
-        Validate.notNull(obj);
-        return obj.getId();
+        return obj == null ? -1 : obj.getId();
     }
 
     @Override
     public int getId(String key) {
-        Validate.notNull(key);
-        return getValue(key).getId();
+        return getId(getValue(key));
     }
 
     @Override
@@ -123,11 +114,6 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
         return nameToObject.entrySet();
     }
 
-    @Override
-    public void freeze() {
-        freezed = true;
-    }
-
     protected String getUniqueName(T entry) {
         // FIXME: Support mod
         return "unknowndomain." + name + "." + entry.getLocalName();
@@ -139,8 +125,12 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     protected void setUniqueName(T entry, String uniqueName) {
         if (uniqueNameField == null) {
             try {
-                uniqueNameField = RegistryEntry.Impl.class.getDeclaredField("uniqueName");
-                uniqueNameField.setAccessible(true);
+                synchronized (uniqueNameField) {
+                    if (uniqueNameField == null) {
+                        uniqueNameField = RegistryEntry.Impl.class.getDeclaredField("uniqueName");
+                        uniqueNameField.setAccessible(true);
+                    }
+                }
             } catch (NoSuchFieldException e) {
                 throw new RegisterException("Cannot init unique name.", e);
             }
@@ -156,8 +146,12 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     protected void setId(T entry, int id) {
         if (idField == null) {
             try {
-                idField = RegistryEntry.Impl.class.getDeclaredField("id");
-                idField.setAccessible(true);
+                synchronized (idField) {
+                    if (idField == null) {
+                        idField = RegistryEntry.Impl.class.getDeclaredField("id");
+                        idField.setAccessible(true);
+                    }
+                }
             } catch (NoSuchFieldException e) {
                 throw new RegisterException("Cannot init id.", e);
             }
