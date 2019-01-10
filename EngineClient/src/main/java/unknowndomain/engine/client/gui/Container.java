@@ -4,7 +4,7 @@ import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
 import com.github.mouse0w0.lib4j.observable.collection.ObservableList;
 import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import com.github.mouse0w0.lib4j.observable.value.ValueChangeListener;
-import unknowndomain.engine.client.util.Utils;
+import unknowndomain.engine.client.gui.util.Utils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -47,7 +47,7 @@ public abstract class Container extends Component {
         float minX = 0, maxX = 0;
         for (Component child : getChildren()) {
             float childMinX = child.x().get();
-            float childMaxX = childMinX + Utils.middleValue(child.prefWidth(), child.minWidth(), child.maxWidth());
+            float childMaxX = childMinX + Utils.prefWidth(child);
             if (minX > childMinX) {
                 minX = childMinX;
             }
@@ -63,7 +63,7 @@ public abstract class Container extends Component {
         float minY = 0, maxY = 0;
         for (Component child : getChildren()) {
             float childMinY = child.y().get();
-            float childMaxY = childMinY + Utils.middleValue(child.prefHeight(), child.minHeight(), child.maxHeight());
+            float childMaxY = childMinY + Utils.prefHeight(child);
             if (minY > childMinY) {
                 minY = childMinY;
             }
