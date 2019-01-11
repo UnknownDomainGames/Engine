@@ -21,6 +21,7 @@ public class Shader {
         this.type = type;
     }
 
+    @Deprecated
     public static void enableVertexAttrib(int location) {
         GL20.glEnableVertexAttribArray(location);
     }
@@ -29,6 +30,7 @@ public class Shader {
         GL20.glDisableVertexAttribArray(location);
     }
 
+    @Deprecated
     public static void pointVertexAttribute(int location, int size, int stride, int offset) {
         GL20.glVertexAttribPointer(location, size, GL11.GL_FLOAT, false, stride, offset);
     }

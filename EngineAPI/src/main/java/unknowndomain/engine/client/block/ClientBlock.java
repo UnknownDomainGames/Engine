@@ -7,7 +7,6 @@ import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.BlockAccessor;
 
-// TODO: Add block renderer
 public interface ClientBlock extends RegistryEntry<ClientBlock> {
 
     Block getBlock();

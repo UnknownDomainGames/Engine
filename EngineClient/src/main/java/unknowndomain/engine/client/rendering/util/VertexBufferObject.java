@@ -9,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+// TODO: Don't use GL_STATIC_DRAW
 public class VertexBufferObject implements Disposable {
     private int vaoId = -1;
     private int id = -1;
