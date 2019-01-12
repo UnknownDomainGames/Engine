@@ -1,4 +1,4 @@
-package unknowndomain.engine;
+package unknowndomain.engine.component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,7 +14,4 @@ public interface RuntimeObject {
 
     <T extends Component> boolean hasComponent(@Nonnull Class<T> type);
 
-    interface Component {
-
-    }
 }

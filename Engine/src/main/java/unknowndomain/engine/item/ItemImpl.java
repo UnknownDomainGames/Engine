@@ -1,6 +1,7 @@
 package unknowndomain.engine.item;
 
 import unknowndomain.engine.block.RayTraceBlockHit;
+import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.RegistryEntry;

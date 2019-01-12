@@ -1,9 +1,7 @@
 package unknowndomain.engine.block;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableTable;
 import org.joml.AABBd;
+import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.RegistryEntry;
@@ -13,21 +11,18 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 class BlockShared extends RegistryEntry.Impl<Block> implements Block {
-    ImmutableTable<BlockPrototype.Property<?>, Comparable<?>, BlockShared> propertiesTable;
     private AABBd[] boundingBox;
     private BlockPrototype.PlaceBehavior placeBehavior;
     private BlockPrototype.ActiveBehavior activeBehavior;
     private BlockPrototype.TouchBehavior touchBehavior;
     private BlockPrototype.DestroyBehavior destroyBehavior;
-    private ImmutableMap<BlockPrototype.Property<?>, Comparable<?>> properties;
 
-    BlockShared(AABBd[] boundingBox, BlockPrototype.PlaceBehavior placeBehavior, BlockPrototype.ActiveBehavior activeBehavior, BlockPrototype.TouchBehavior touchBehavior, BlockPrototype.DestroyBehavior destroyBehavior, ImmutableMap<BlockPrototype.Property<?>, Comparable<?>> properties) {
+    BlockShared(AABBd[] boundingBox, BlockPrototype.PlaceBehavior placeBehavior, BlockPrototype.ActiveBehavior activeBehavior, BlockPrototype.TouchBehavior touchBehavior, BlockPrototype.DestroyBehavior destroyBehavior) {
         this.boundingBox = boundingBox;
         this.placeBehavior = placeBehavior;
         this.activeBehavior = activeBehavior;
         this.touchBehavior = touchBehavior;
         this.destroyBehavior = destroyBehavior;
-        this.properties = properties;
     }
 
     @Override
@@ -80,39 +75,6 @@ class BlockShared extends RegistryEntry.Impl<Block> implements Block {
 //        else if (type == BlockPrototype.DestroyBehavior.class) return (T) destroyBehavior;
 //        return null;
 //    }
-
-    @Override
-    public ImmutableMap<BlockPrototype.Property<?>, Comparable<?>> getProperties() {
-        return properties;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T extends Comparable<T>> T getProperty(BlockPrototype.Property<T> property) {
-        return (T) properties.get(property);
-    }
-
-    @Override
-    public <T extends Comparable<T>, V extends T> Block withProperty(BlockPrototype.Property<T> property, V value) {
-        return propertiesTable.get(property, value);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <T extends Comparable<T>> Block cycleProperty(BlockPrototype.Property<T> property) {
-        ImmutableList<T> values = property.getValues();
-        T current = (T) properties.get(property);
-        for (int i = 0; i < values.size(); i++) {
-            T next = values.get(i);
-            if (next.compareTo(current) == 0) {
-                if (i + 1 == values.size()) {
-                    return withProperty(property, values.get(0));
-                }
-                return withProperty(property, values.get(i + 1));
-            }
-        }
-        throw new Error("Hummmm");
-    }
 
     @Override
     public AABBd[] getBoundingBoxes() {

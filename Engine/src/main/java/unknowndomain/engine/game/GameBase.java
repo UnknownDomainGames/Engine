@@ -1,30 +1,12 @@
 package unknowndomain.engine.game;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.apache.commons.lang3.tuple.Pair;
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.block.Block;
-import unknowndomain.engine.entity.EntityType;
-import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.event.game.GamePreInitializationEvent;
+import unknowndomain.engine.component.Component;
 import unknowndomain.engine.event.game.GameReadyEvent;
-import unknowndomain.engine.event.game.RegisterEvent;
-import unknowndomain.engine.item.Item;
-import unknowndomain.engine.mod.*;
-import unknowndomain.engine.mod.java.JavaModLoader;
-import unknowndomain.engine.registry.Registry;
-import unknowndomain.engine.registry.impl.SimpleRegistry;
-import unknowndomain.engine.registry.impl.SimpleRegistryManager;
 import unknowndomain.game.Blocks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public abstract class GameBase implements Game {
     protected final Engine engine;

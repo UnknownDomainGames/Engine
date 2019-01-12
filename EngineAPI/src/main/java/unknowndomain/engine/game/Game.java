@@ -1,7 +1,7 @@
 package unknowndomain.engine.game;
 
-import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.client.resource.ResourcePath;
+import unknowndomain.engine.component.RuntimeObject;
 import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.world.World;
 

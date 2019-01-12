@@ -1,5 +1,6 @@
 package unknowndomain.engine.block;
 
+import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
@@ -34,7 +35,7 @@ public abstract class BlockPrototype {
         void tick(Block object);
     }
 
-    public interface PlaceBehavior {
+    public interface PlaceBehavior extends Component {
         default boolean canPlace(World world, Entity entity, BlockPos blockPos, Block block) {
             return true;
         }
@@ -42,7 +43,7 @@ public abstract class BlockPrototype {
         void onPlaced(World world, Entity entity, BlockPos blockPos, Block block);
     }
 
-    public interface ActiveBehavior { // right click entity
+    public interface ActiveBehavior extends Component { // right click entity
         default boolean shouldActivated(World world, Entity entity, BlockPos blockPos, Block block) {
             return true;
         }
@@ -51,13 +52,15 @@ public abstract class BlockPrototype {
     }
 
     // TODO:
-    public interface TouchBehavior { // left click entity
-        default boolean onTouch(Block block) { return false; }
+    public interface TouchBehavior extends Component { // left click entity
+        default boolean onTouch(Block block) {
+            return false;
+        }
 
         void onTouched(Block block);
     }
 
-    public interface DestroyBehavior {
+    public interface DestroyBehavior extends Component {
         default boolean canDestroy(World world, Entity entity, BlockPos blockPos, Block block) {
             return true;
         }

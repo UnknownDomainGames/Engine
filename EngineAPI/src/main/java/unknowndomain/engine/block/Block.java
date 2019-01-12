@@ -1,7 +1,7 @@
 package unknowndomain.engine.block;
 
 import org.joml.AABBd;
-import unknowndomain.engine.RuntimeObject;
+import unknowndomain.engine.component.RuntimeObject;
 import unknowndomain.engine.registry.RegistryEntry;
 
 public interface Block extends RegistryEntry<Block>, RuntimeObject, BlockPrototype.PlaceBehavior, BlockPrototype.ActiveBehavior, BlockPrototype.DestroyBehavior, BlockPrototype.TouchBehavior {

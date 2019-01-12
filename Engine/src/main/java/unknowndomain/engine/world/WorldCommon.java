@@ -7,6 +7,7 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
+import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.EntityCamera;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;

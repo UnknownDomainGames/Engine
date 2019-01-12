@@ -1,9 +1,9 @@
 package unknowndomain.engine.world;
 
 import org.joml.Vector3f;
-import unknowndomain.engine.RuntimeObject;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
+import unknowndomain.engine.component.RuntimeObject;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
