@@ -3,7 +3,7 @@ package unknowndomain.game;
 import org.slf4j.Logger;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.block.ClientBlockAir;
 import unknowndomain.engine.client.block.ClientBlockDefault;
@@ -92,13 +92,13 @@ public final class DefaultGameMode {
                 KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
                         .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.DOWN, false)));
         registry.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
-            BlockPrototype.Hit hit = c.getHit();
+            RayTraceBlockHit hit = c.getHit();
             if (hit != null) {
                 c.getClientWorld().setBlock(hit.getPos(), Blocks.AIR);
             }
         }, ActionMode.PRESS));
         registry.register(KeyBinding.create("player.mouse.r", Key.MOUSE_BUTTON_RIGHT, (c) -> {
-            BlockPrototype.Hit hit = c.getHit();
+            RayTraceBlockHit hit = c.getHit();
             if (hit != null) {
                 c.getClientWorld().setBlock(hit.getFace().offset(hit.getPos()), Blocks.DIRT);
             }

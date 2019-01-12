@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * https://stackoverflow.com/questions/12367071/how-do-i-initialize-the-t-variables-in-a-fast-voxel-traversal-algorithm-for-ray
  */
-public class FastVoxelRayCast {
+public class FastVoxelRayTrace {
     private static float frac0(float x) {
         return x - (float) Math.floor(x);
     }
@@ -19,7 +19,7 @@ public class FastVoxelRayCast {
         return 1 - x + (float) Math.floor(x);
     }
 
-    public static List<BlockPos> ray(Vector3f start, Vector3f end) {
+    public static List<BlockPos> rayTrace(Vector3f start, Vector3f end) {
         List<BlockPos> container = new ArrayList<>();
         float tMaxX, tMaxY, tMaxZ, tDeltaX, tDeltaY, tDeltaZ;
         Vector3i voxel = new Vector3i();

@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.rendering.gui;
 
 import org.joml.*;
-import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.gui.Container;
@@ -178,13 +178,13 @@ public class GuiRenderer implements Renderer {
 //        fontRenderer.renderText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 19 * 3, 0xffffffff);
         //fontRenderer.renderText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);
 
-        BlockPrototype.Hit hit = context.getHit();
+        RayTraceBlockHit hit = context.getHit();
         if (hit != null) {
             Vector3f hitedPos = new Vector3f(hit.getPos().getX(), hit.getPos().getY(), hit.getPos().getZ());
             AABBd blockAABB = AABBs.translate(hit.getBlock().getBoundingBoxes()[0], hitedPos, new AABBd());
             graphics.drawText(String.format("Looking block: %s", hit.getBlock().getUniqueName()), 0, 19 * 10);
             graphics.drawText(String.format("Looking pos: %s(%d, %d, %d)", hit.getFace().name(), hit.getPos().getX(), hit.getPos().getY(), hit.getPos().getZ()), 0, 19 * 11);
-            graphics.drawText(String.format("Looking at: (%f, %f, %f)", hit.getHit().x, hit.getHit().y, hit.getHit().z), 0, 19 * 12);
+            graphics.drawText(String.format("Looking at: (%f, %f, %f)", hit.getHitPoint().x, hit.getHitPoint().y, hit.getHitPoint().z), 0, 19 * 12);
             graphics.drawText(String.format("Bounding box: %s", blockAABB.toString(new DecimalFormat("#.##"))), 0, 19 * 13);
 //            fontRenderer.renderText(String.format("Collided with the looking box: %s", blockAABB.testAABB(box)), 0, 19*12, 0xffffffff);
 

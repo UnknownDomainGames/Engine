@@ -2,14 +2,13 @@ package unknowndomain.engine.client.game;
 
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
-import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
-import unknowndomain.engine.client.rendering.texture.TextureManagerImpl;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.game.GameContext;
@@ -34,7 +33,7 @@ public class ClientContextImpl implements ClientContext {
     private final Player player;
 
     private Camera camera;
-    private BlockPrototype.Hit hit;
+    private RayTraceBlockHit hit;
     private double partialTick;
 
     public ClientContextImpl(GameClientStandalone game, Thread renderThread, List<Renderer.Factory> factories, GameWindow window, Player player) {
@@ -110,7 +109,7 @@ public class ClientContextImpl implements ClientContext {
     }
 
     @Override
-    public BlockPrototype.Hit getHit() {
+    public RayTraceBlockHit getHit() {
         return hit;
     }
 

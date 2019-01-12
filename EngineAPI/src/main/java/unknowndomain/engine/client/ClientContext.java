@@ -1,7 +1,7 @@
 package unknowndomain.engine.client;
 
 import org.joml.FrustumIntersection;
-import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
@@ -38,7 +38,7 @@ public interface ClientContext {
 
     Player getPlayer();
 
-    BlockPrototype.Hit getHit();
+    RayTraceBlockHit getHit();
 
     Registry<ClientBlock> getClientBlockRegistry();
 

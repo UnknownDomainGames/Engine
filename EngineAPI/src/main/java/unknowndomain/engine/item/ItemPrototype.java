@@ -1,6 +1,6 @@
 package unknowndomain.engine.item;
 
-import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.world.World;
@@ -25,18 +25,18 @@ public interface ItemPrototype {
     }
 
     interface UseBlockBehavior {
-        void onUseBlockStart(World world, Entity entity, Item item, BlockPrototype.Hit hit);
+        void onUseBlockStart(World world, Entity entity, Item item, RayTraceBlockHit hit);
 
-        default boolean onUsingBlock(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed) {
+        default boolean onUsingBlock(Player player, Item item, RayTraceBlockHit hit, int tickElapsed) {
             return false;
         }
 
-        default void onUseBlockStop(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed) {
+        default void onUseBlockStop(Player player, Item item, RayTraceBlockHit hit, int tickElapsed) {
         }
     }
 
     interface HitBlockBehavior {
-        void onHit(World world, Player player, Item item, BlockPrototype.Hit hit);
+        void onHit(World world, Player player, Item item, RayTraceBlockHit hit);
 
 //        boolean onKeep(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed);
 

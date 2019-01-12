@@ -6,7 +6,7 @@ import org.joml.Vector2d;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.EntityCamera;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
@@ -17,7 +17,7 @@ import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.math.FixStepTicker.LogicTick;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.util.Facing;
-import unknowndomain.engine.util.FastVoxelRayCast;
+import unknowndomain.engine.util.FastVoxelRayTrace;
 import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkStorage;
 
@@ -76,25 +76,25 @@ public class WorldCommon implements World, Runnable {
     }
 
     @Override
-    public BlockPrototype.Hit raycast(Vector3f from, Vector3f dir, float distance) {
+    public RayTraceBlockHit raycast(Vector3f from, Vector3f dir, float distance) {
         return raycast(from, dir, distance, Sets.newHashSet(game.getContext().getBlockRegistry().getValue(0)));
     }
 
     @Override
-    public BlockPrototype.Hit raycast(Vector3f from, Vector3f dir, float distance, Set<Block> ignore) {
+    public RayTraceBlockHit raycast(Vector3f from, Vector3f dir, float distance, Set<Block> ignore) {
         Vector3f rayOffset = dir.normalize(new Vector3f()).mul(distance);
         Vector3f dist = rayOffset.add(from, new Vector3f());
 
-        var all = FastVoxelRayCast.ray(from, dist);
+        var all = FastVoxelRayTrace.rayTrace(from, dist);
 
         all.sort(Comparator.comparingDouble(pos->from.distanceSquared(pos.getX(),pos.getY(),pos.getZ())));
 
         for (BlockPos pos : all) {
-            Block object = getBlock(pos);
-            if (ignore.contains(object))
+            Block block = getBlock(pos);
+            if (ignore.contains(block))
                 continue;
             Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
-            AABBd[] boxes = object.getBoundingBoxes();
+            AABBd[] boxes = block.getBoundingBoxes();
             Vector2d result = new Vector2d();
             for (AABBd box : boxes) {
                 boolean hit = box.intersectRay(local.x, local.y, local.z, rayOffset.x, rayOffset.y, rayOffset.z,
@@ -116,7 +116,7 @@ public class WorldCommon implements World, Runnable {
                         facing = Facing.NORTH;
                     }
                     if (facing != null) {
-                        return new BlockPrototype.Hit(pos, object, hitPoint, facing);
+                        return new RayTraceBlockHit(this, pos, block, hitPoint, facing);
                     }
                 }
             }

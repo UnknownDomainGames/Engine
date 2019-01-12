@@ -1,6 +1,6 @@
 package unknowndomain.engine.item;
 
-import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.RegistryEntry;
@@ -36,23 +36,23 @@ class ItemImpl extends RegistryEntry.Impl<Item> implements Item {
     }
 
     @Override
-    public void onHit(World world, Player player, Item item, BlockPrototype.Hit hit) {
+    public void onHit(World world, Player player, Item item, RayTraceBlockHit hit) {
         hitBlockBehavior.onHit(world, player, item, hit);
     }
 
 
     @Override
-    public void onUseBlockStart(World world, Entity entity, Item item, BlockPrototype.Hit hit) {
+    public void onUseBlockStart(World world, Entity entity, Item item, RayTraceBlockHit hit) {
         useBlockBehavior.onUseBlockStart(world, entity, item, hit);
     }
 
     @Override
-    public boolean onUsingBlock(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed) {
+    public boolean onUsingBlock(Player player, Item item, RayTraceBlockHit hit, int tickElapsed) {
         return useBlockBehavior.onUsingBlock(player, item, hit, tickElapsed);
     }
 
     @Override
-    public void onUseBlockStop(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed) {
+    public void onUseBlockStop(Player player, Item item, RayTraceBlockHit hit, int tickElapsed) {
         useBlockBehavior.onUseBlockStop(player, item, hit, tickElapsed);
     }
 

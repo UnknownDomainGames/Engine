@@ -1,14 +1,10 @@
 package unknowndomain.engine.block;
 
-import com.google.common.collect.ImmutableList;
-import org.joml.Vector3f;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.World;
 
 import java.util.List;
-import java.util.Optional;
 
 public abstract class BlockPrototype {
     // all these behaviors are missing arguments
@@ -67,54 +63,6 @@ public abstract class BlockPrototype {
         }
 
         void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block);
-    }
-
-    public static class Hit {
-        private final BlockPos pos;
-        private final Block block;
-        private final Vector3f hit;
-        private final Facing face;
-
-        public Hit(BlockPos pos, Block block, Vector3f hit, Facing face) {
-            this.pos = pos;
-            this.block = block;
-            this.hit = hit;
-            this.face = face;
-        }
-
-        public Block getBlock() {
-            return block;
-        }
-
-        public BlockPos getPos() {
-            return pos;
-        }
-
-        public Facing getFace() {
-            return face;
-        }
-
-        public Vector3f getHit() {
-            return hit;
-        }
-    }
-
-    public interface Property<T extends Comparable<T>> {
-        String getName();
-
-        ImmutableList<T> getValues();
-
-        /**
-         * The class of the values of this property
-         */
-        Class<T> getValueClass();
-
-        Optional<T> parseValue(String value);
-
-        /**
-         * Get the name for the given value.
-         */
-        String getName(T value);
     }
 
 }

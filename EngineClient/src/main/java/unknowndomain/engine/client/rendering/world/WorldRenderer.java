@@ -2,7 +2,7 @@ package unknowndomain.engine.client.rendering.world;
 
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.block.BlockPrototype;
+import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
@@ -74,7 +74,7 @@ public class WorldRenderer implements Renderer {
         buffer.pos(0, 0, 100).color(0, 0, 1).endVertex();
         tessellator.draw();
 
-        BlockPrototype.Hit hit = context.getHit();
+        RayTraceBlockHit hit = context.getHit();
         if (hit != null) {
             float minX = hit.getPos().getX() - 0.001f, maxX = hit.getPos().getX() + 1.001f,
                     minY = hit.getPos().getY() - 0.001f, maxY = hit.getPos().getY() + 1.001f,
