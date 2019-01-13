@@ -72,4 +72,8 @@ public class AssimpMesh {
     public int getElementCount() {
         return elementCount;
     }
+
+    public AIMesh getRawMesh() {
+        return mesh;
+    }
 }
