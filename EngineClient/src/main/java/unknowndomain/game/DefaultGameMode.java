@@ -94,13 +94,13 @@ public final class DefaultGameMode {
         registry.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
             RayTraceBlockHit hit = c.getHit();
             if (hit != null) {
-                c.getClientWorld().setBlock(hit.getPos(), Blocks.AIR);
+                c.getClientWorld().setBlock(hit.getPos(), Blocks.AIR, null);
             }
         }, ActionMode.PRESS));
         registry.register(KeyBinding.create("player.mouse.r", Key.MOUSE_BUTTON_RIGHT, (c) -> {
             RayTraceBlockHit hit = c.getHit();
             if (hit != null) {
-                c.getClientWorld().setBlock(hit.getFace().offset(hit.getPos()), Blocks.DIRT);
+                c.getClientWorld().setBlock(hit.getFace().offset(hit.getPos()), Blocks.DIRT, null);
             }
         }, ActionMode.PRESS));
     }

@@ -1,7 +1,9 @@
 package unknowndomain.engine.world.chunk;
 
+import org.joml.Vector3fc;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
 
@@ -10,14 +12,7 @@ import java.util.List;
 
 public interface Chunk {
 
-    int DEFAULT_X_SIZE = 16;
-    int DEFAULT_Y_SIZE = 16;
-    int DEFAULT_Z_SIZE = 16;
-
-    int CHUNK_BLOCK_POS_BIT = 4;
-
-    int MAX_BLOCK_POS = 0xf;
-
+    @Nonnull
     World getWorld();
 
     int getChunkX();
@@ -25,6 +20,12 @@ public interface Chunk {
     int getChunkY();
 
     int getChunkZ();
+
+    @Nonnull
+    Vector3fc getMin();
+
+    @Nonnull
+    Vector3fc getMax();
 
     @Nonnull
     List<Entity> getEntities();
@@ -39,17 +40,17 @@ public interface Chunk {
      */
     Block getBlock(int x, int y, int z);
 
-    default Block getBlock(BlockPos pos) {
+    default Block getBlock(@Nonnull BlockPos pos) {
         return getBlock(pos.getX(), pos.getY(), pos.getZ());
     }
 
     int getBlockId(int x, int y, int z);
 
-    default int getBlockId(BlockPos pos) {
+    default int getBlockId(@Nonnull BlockPos pos) {
         return getBlockId(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    Block setBlock(BlockPos pos, Block block);
+    Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause);
 
     boolean isAirChunk();
 }

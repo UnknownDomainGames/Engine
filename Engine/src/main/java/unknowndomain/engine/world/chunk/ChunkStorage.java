@@ -10,6 +10,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
+import static unknowndomain.engine.world.chunk.ChunkConstants.*;
+
 public class ChunkStorage {
 
     // should do the io operation to load chunk
@@ -27,12 +29,12 @@ public class ChunkStorage {
 
     @Nonnull
     public Chunk getChunk(BlockPos pos) {
-        return getChunk(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT);
+        return getChunk(pos.getX() >> BITS_X, pos.getY() >> BITS_Y, pos.getZ() >> BITS_Z);
     }
 
     @Nullable // FIXME:
     public Chunk getChunkByBlockPos(int x, int y, int z) {
-        return getChunk(x >> Chunk.CHUNK_BLOCK_POS_BIT, y >> Chunk.CHUNK_BLOCK_POS_BIT, z >> Chunk.CHUNK_BLOCK_POS_BIT);
+        return getChunk(x >> BITS_X, y >> BITS_Y, z >> BITS_Z);
     }
 
     @Nonnull
@@ -43,7 +45,7 @@ public class ChunkStorage {
 
     @Nonnull
     public Chunk getOrLoadChunk(BlockPos pos) {
-        return getOrLoadChunk(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT);
+        return getOrLoadChunk(pos.getX() >> BITS_X, pos.getY() >> BITS_Y, pos.getZ() >> BITS_Z);
     }
 
     @Nonnull

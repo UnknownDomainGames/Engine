@@ -11,6 +11,7 @@ import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.EntityCamera;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
+import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
@@ -20,6 +21,7 @@ import unknowndomain.engine.player.Player;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayTrace;
 import unknowndomain.engine.world.chunk.Chunk;
+import unknowndomain.engine.world.chunk.ChunkConstants;
 import unknowndomain.engine.world.chunk.ChunkStorage;
 
 import javax.annotation.Nonnull;
@@ -88,7 +90,7 @@ public class WorldCommon implements World, Runnable {
 
         var all = FastVoxelRayTrace.rayTrace(from, dist);
 
-        all.sort(Comparator.comparingDouble(pos->from.distanceSquared(pos.getX(),pos.getY(),pos.getZ())));
+        all.sort(Comparator.comparingDouble(pos -> from.distanceSquared(pos.getX(), pos.getY(), pos.getZ())));
 
         for (BlockPos pos : all) {
             Block block = getBlock(pos);
@@ -191,10 +193,10 @@ public class WorldCommon implements World, Runnable {
 
     @Nonnull
     @Override
-    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block) {
-        Block oldBlock = chunkStorage.getOrLoadChunk(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT)
-                .setBlock(pos, block);
-        getGame().getContext().post(new BlockChangeEvent.Post(this, pos, oldBlock, block)); // TODO:
+    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
+        Block oldBlock = chunkStorage.getOrLoadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
+                .setBlock(pos, block, cause);
+        getGame().getContext().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause)); // TODO:
         return oldBlock;
     }
 

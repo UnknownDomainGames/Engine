@@ -1,6 +1,7 @@
 package unknowndomain.engine.util;
 
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.BlockAccessor;
 import unknowndomain.engine.world.World;
@@ -68,7 +69,7 @@ public class ChunkCache implements BlockAccessor {
 
     @Nonnull
     @Override
-    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block) {
+    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
         throw new UnsupportedOperationException();
     }
 }

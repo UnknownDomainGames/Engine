@@ -1,6 +1,7 @@
 package unknowndomain.engine.world;
 
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.math.BlockPos;
 
 import javax.annotation.Nonnull;
@@ -11,7 +12,7 @@ public interface BlockAccessor {
     World getWorld();
 
     @Nonnull
-    Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block);
+    Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause);
 
     @Nonnull
     default Block getBlock(@Nonnull BlockPos pos) {

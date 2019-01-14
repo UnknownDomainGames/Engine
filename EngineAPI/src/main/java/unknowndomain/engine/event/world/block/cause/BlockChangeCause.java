@@ -1,0 +1,7 @@
+package unknowndomain.engine.event.world.block.cause;
+
+import unknowndomain.engine.event.Cause;
+
+public interface BlockChangeCause extends Cause {
+
+}

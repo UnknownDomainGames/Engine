@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.lwjgl.opengl.GL11.*;
 import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
+import static unknowndomain.engine.world.chunk.ChunkConstants.*;
 
 public class ChunkRenderer implements Renderer {
 
@@ -71,7 +72,7 @@ public class ChunkRenderer implements Renderer {
         handleUploadTask();
 
         for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
-            if (context.getFrustumIntersection().testAab(chunkMesh.getMin(), chunkMesh.getMax())) {
+            if (context.getFrustumIntersection().testAab(chunkMesh.getChunk().getMin(), chunkMesh.getChunk().getMax())) {
                 chunkMesh.render();
             }
         }
@@ -144,33 +145,33 @@ public class ChunkRenderer implements Renderer {
     @Listener
     public void onBlockChange(BlockChangeEvent.Post event) {
         BlockPos pos = event.getPos().toImmutable();
-        int chunkX = pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT,
-                chunkY = pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT,
-                chunkZ = pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT;
+        int chunkX = pos.getX() >> BITS_X,
+                chunkY = pos.getY() >> BITS_Y,
+                chunkZ = pos.getZ() >> BITS_Z;
         markDirty(getChunkIndex(event.getPos()));
 
         // Update neighbor chunks.
-        int chunkW = pos.getX() + 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        int chunkW = pos.getX() + 1 >> BITS_X;
         if (chunkW != chunkX) {
             markDirty(getChunkIndex(chunkW, chunkY, chunkZ));
         }
-        chunkW = pos.getX() - 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        chunkW = pos.getX() - 1 >> BITS_X;
         if (chunkW != chunkX) {
             markDirty(getChunkIndex(chunkW, chunkY, chunkZ));
         }
-        chunkW = pos.getY() + 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        chunkW = pos.getY() + 1 >> BITS_Y;
         if (chunkW != chunkY) {
             markDirty(getChunkIndex(chunkX, chunkW, chunkZ));
         }
-        chunkW = pos.getY() - 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        chunkW = pos.getY() - 1 >> BITS_Y;
         if (chunkW != chunkY) {
             markDirty(getChunkIndex(chunkX, chunkW, chunkZ));
         }
-        chunkW = pos.getZ() + 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        chunkW = pos.getZ() + 1 >> BITS_Z;
         if (chunkW != chunkZ) {
             markDirty(getChunkIndex(chunkX, chunkY, chunkW));
         }
-        chunkW = pos.getZ() - 1 >> Chunk.CHUNK_BLOCK_POS_BIT;
+        chunkW = pos.getZ() - 1 >> BITS_Z;
         if (chunkW != chunkZ) {
             markDirty(getChunkIndex(chunkX, chunkY, chunkW));
         }
@@ -200,16 +201,16 @@ public class ChunkRenderer implements Renderer {
         }
 
         Vector3f position = context.getCamera().getPosition(0);
-        double x = (chunk.getChunkX() << Chunk.CHUNK_BLOCK_POS_BIT) + 8 - position.x;
-        double y = (chunk.getChunkY() << Chunk.CHUNK_BLOCK_POS_BIT) + 8 - position.y;
-        double z = (chunk.getChunkZ() << Chunk.CHUNK_BLOCK_POS_BIT) + 8 - position.z;
+        double x = chunk.getMin().x() + 8 - position.x;
+        double y = chunk.getMin().y() + 8 - position.y;
+        double z = chunk.getMin().z() + 8 - position.z;
         return x * x + y * y + z * z;
     }
 
     // TODO: Merge with ChunkStorage
 
     public static long getChunkIndex(BlockPos pos) {
-        return getChunkIndex(pos.getX() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getY() >> Chunk.CHUNK_BLOCK_POS_BIT, pos.getZ() >> Chunk.CHUNK_BLOCK_POS_BIT);
+        return getChunkIndex(pos.getX() >> BITS_X, pos.getY() >> BITS_Y, pos.getZ() >> BITS_Z);
     }
 
     public static long getChunkIndex(Chunk chunk) {
