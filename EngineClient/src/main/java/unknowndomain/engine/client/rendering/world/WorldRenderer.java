@@ -33,10 +33,6 @@ public class WorldRenderer implements Renderer {
     private int u_UsingColor;
     private int u_UsingTexture;
 
-    private AssimpModel tmp;
-
-    private ShaderProgram stmp;
-
     public WorldRenderer(Shader vertex, Shader frag, ChunkRenderer chunkRenderer) {
         this.chunkRenderer = chunkRenderer;
         worldShader = new ShaderProgram();
@@ -52,9 +48,6 @@ public class WorldRenderer implements Renderer {
     public void init(ClientContext context) {
         this.context = context;
         chunkRenderer.init(context);
-        tmp = AssimpHelper.loadModel("assets/tmp/untitled.obj");
-        stmp = new ShaderProgram();
-        stmp.init(Shader.create(GLHelper.readText("/assets/unknowndomain/shader/default.vert"), ShaderType.VERTEX_SHADER),Shader.create(GLHelper.readText("/assets/unknowndomain/shader/default.frag"), ShaderType.FRAGMENT_SHADER));
     }
 
     @Override
@@ -66,17 +59,10 @@ public class WorldRenderer implements Renderer {
         glEnable(GL11.GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        stmp.use();
-        setUniform(stmp.getUniformLocation("u_ProjMatrix"), context.getWindow().projection());
-
-        setUniform(stmp.getUniformLocation("u_ViewMatrix"), context.getCamera().view((float) context.partialTick()));
-        setUniform(stmp.getUniformLocation("u_ModelMatrix"), new Matrix4f().setTranslation(0, 5, 0));
-        tmp.render();
-        worldShader.use();
         setUniform(u_Projection, context.getWindow().projection());
-
         setUniform(u_View, context.getCamera().view((float) context.partialTick()));
         setUniform(u_Model, new Matrix4f().setTranslation(0, 0, 0));
+
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         setUniform(u_UsingColor, true);

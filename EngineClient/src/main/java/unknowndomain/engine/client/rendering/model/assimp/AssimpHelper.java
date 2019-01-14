@@ -77,7 +77,7 @@ public class AssimpHelper {
      */
     public static AssimpModel loadModel(String path){
         AIScene scene = aiImportFileEx(path,
-                aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_CalcTangentSpace, ASSIMP_JARFILEIO);
+                /*aiProcess_JoinIdenticalVertices | */aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_FlipUVs, ASSIMP_JARFILEIO);
         if (scene == null) {
             throw new IllegalStateException(aiGetErrorString());
         }
