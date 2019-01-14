@@ -1,33 +1,29 @@
 #version 330 core
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec4 color;
-layout (location = 2) in vec2 texcoord;
-layout (location = 3) in vec3 normal;
+uniform mat4 u_ViewMatrix;
+uniform mat4 u_ProjMatrix;
+uniform mat4 u_ModelMatrix;
 
-out vec4 vertexColor;
-out vec3 vertexNormal;
-out vec3 vertexMv;
-out vec2 textureCoord;
+layout (location = 0) in vec3 a_Position;
+layout (location = 1) in vec4 a_Color;
+layout (location = 2) in vec2 a_TexCoord;
+layout (location = 3) in vec3 a_Normal;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+out vec4 v_Color;
+out vec2 v_TexCoord;
 
-
-layout(std140) uniform VertexStatus{
-    bool usepos;
-    bool usecolor;
-    bool usetex;
-    bool usenormal;
-};
+out vec3 v_Normal;
+out vec3 v_FragPos;
+//out vec3 v_LightDirection;
 
 void main() {
-    vertexColor = color;
-    textureCoord = texcoord;
-    mat4 modelView = view * model;
-    mat4 mvp = projection * modelView;
-    vertexNormal = normalize(modelView * vec4(normal, 0.0)).xyz;
-    vertexMv = (modelView * vec4(position, 1.0)).xyz;
-    gl_Position = mvp * vec4(position, 1.0);
+    gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_Position,1.0);
+    v_TexCoord = a_TexCoord;
+    v_Color = a_Color;
+
+    v_Normal = a_Normal;
+    v_FragPos = vec3(u_ModelMatrix * vec4(a_Position, 1.0));
+//    vec4 normal = u_ModelMatrix * vec4(a_Normal, 0);
+//    v_Normal = normalize(normal).xyz;
+//    v_LightDirection = normalize(u_LightPosition - worldPos.xyz);
 }

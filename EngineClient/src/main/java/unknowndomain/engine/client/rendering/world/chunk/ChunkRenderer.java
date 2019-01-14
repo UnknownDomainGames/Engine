@@ -8,6 +8,12 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.rendering.Renderer;
+import unknowndomain.engine.client.rendering.light.DirectionalLight;
+import unknowndomain.engine.client.rendering.light.Light;
+import unknowndomain.engine.client.rendering.light.Material;
+import unknowndomain.engine.client.rendering.light.PointLight;
+import unknowndomain.engine.client.rendering.model.assimp.AssimpHelper;
+import unknowndomain.engine.client.rendering.model.assimp.AssimpModel;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
@@ -36,7 +42,7 @@ public class ChunkRenderer implements Renderer {
     private final ThreadPoolExecutor updateExecutor;
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
 
-    private final int u_ProjMatrix, u_ViewMatrix;
+    private final int u_ProjMatrix, u_ViewMatrix, u_ModelMatrix;
 
     private ClientContext context;
 
@@ -45,6 +51,7 @@ public class ChunkRenderer implements Renderer {
         chunkSolidShader.init(vertex, frag);
         u_ProjMatrix = chunkSolidShader.getUniformLocation("u_ProjMatrix");
         u_ViewMatrix = chunkSolidShader.getUniformLocation("u_ViewMatrix");
+        u_ModelMatrix = chunkSolidShader.getUniformLocation("u_ModelMatrix");
 
         // TODO: Configurable
         int threadCount = Runtime.getRuntime().availableProcessors() / 2;
@@ -60,9 +67,22 @@ public class ChunkRenderer implements Renderer {
         });
     }
 
+    Light dirLight, ptLight;
+    Material mat;
+
     @Override
     public void init(ClientContext context) {
         this.context = context;
+
+        //tmp = AssimpHelper.loadModel("assets/tmp/untitled.obj");
+        dirLight = new DirectionalLight().setDirection(new Vector3f(-0.15f,-1f,-0.35f))
+                .setAmbient(new Vector3f(0.2f))
+                .setDiffuse(new Vector3f(1.0f,0.8f,0.2f))
+                .setSpecular(new Vector3f(0.5f));
+        ptLight = new PointLight().setPosition(new Vector3f(3.5f,7.5f,-3.5f)).setKlinear(0.7f).setKquadratic(1.8f).setAmbient(new Vector3f(0.1f)).setDiffuse(new Vector3f(0.0f*.5f,0.0f*.5f,0.9f)).setSpecular(new Vector3f(0.6f));
+        mat = new Material().setAmbientColor(new Vector3f(0.5f))
+                .setDiffuseColor(new Vector3f(1.0f))
+                .setSpecularColor(new Vector3f(0.6f)).setShininess(32f);
     }
 
     @Override
@@ -76,6 +96,8 @@ public class ChunkRenderer implements Renderer {
                 chunkMesh.render();
             }
         }
+        setUniform(u_ModelMatrix, new Matrix4f().setTranslation(0,5,0));
+        tmp.render(chunkSolidShader);
 
         postRenderChunk();
     }
@@ -93,10 +115,17 @@ public class ChunkRenderer implements Renderer {
 
         Matrix4f projMatrix = context.getWindow().projection();
         Matrix4f viewMatrix = context.getCamera().view((float) context.partialTick());
+        Matrix4f modelMatrix = new Matrix4f().setTranslation(0,0,0);
         setUniform(u_ProjMatrix, projMatrix);
         setUniform(u_ViewMatrix, viewMatrix);
+        setUniform(u_ModelMatrix, modelMatrix);
+        chunkSolidShader.setUniform("u_viewPos", context.getCamera().getPosition(0));
 
         context.getTextureManager().getTextureAtlas(BLOCK).bind();
+        chunkSolidShader.setUniform("useDirectUV", true);
+        dirLight.bind(chunkSolidShader, "dirLights[0]");
+        //ptLight.bind(chunkSolidShader,"pointLights[0]");
+        mat.bind(chunkSolidShader, "material");
     }
 
     protected void postRenderChunk() {

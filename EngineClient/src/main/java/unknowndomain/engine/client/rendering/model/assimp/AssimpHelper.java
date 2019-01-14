@@ -1,11 +1,16 @@
 package unknowndomain.engine.client.rendering.model.assimp;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.lwjgl.assimp.*;
 import unknowndomain.engine.client.rendering.util.GLHelper;
 import unknowndomain.engine.client.resource.ResourcePath;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.lwjgl.assimp.Assimp.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -72,10 +77,10 @@ public class AssimpHelper {
      */
     public static AssimpModel loadModel(String path){
         AIScene scene = aiImportFileEx(path,
-                aiProcess_JoinIdenticalVertices | aiProcess_Triangulate, ASSIMP_JARFILEIO);
+                /*aiProcess_JoinIdenticalVertices | */aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_FlipUVs, ASSIMP_JARFILEIO);
         if (scene == null) {
             throw new IllegalStateException(aiGetErrorString());
         }
-        return new AssimpModel(scene);
+        return new AssimpModel(scene, FilenameUtils.getFullPath(path));
     }
 }

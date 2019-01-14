@@ -6,9 +6,13 @@ import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
+import unknowndomain.engine.client.rendering.model.assimp.AssimpHelper;
+import unknowndomain.engine.client.rendering.model.assimp.AssimpModel;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.util.GLHelper;
 import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
 import unknowndomain.engine.util.Color;
 
@@ -56,9 +60,7 @@ public class WorldRenderer implements Renderer {
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         setUniform(u_Projection, context.getWindow().projection());
-
         setUniform(u_View, context.getCamera().view((float) context.partialTick()));
-
         setUniform(u_Model, new Matrix4f().setTranslation(0, 0, 0));
 
         Tessellator tessellator = Tessellator.getInstance();
