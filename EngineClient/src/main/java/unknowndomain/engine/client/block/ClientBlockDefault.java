@@ -2,6 +2,7 @@ package unknowndomain.engine.client.block;
 
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.client.UnknownDomain;
+import unknowndomain.engine.client.rendering.block.BlockRenderType;
 import unknowndomain.engine.client.rendering.block.BlockRenderer;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.math.BlockPos;
@@ -21,6 +22,7 @@ public class ClientBlockDefault extends RegistryEntry.Impl<ClientBlock> implemen
     private final Block block;
 
     private BlockRenderer renderer;
+    private BlockRenderType renderType;
 
     @Deprecated
     public ClientBlockDefault(Block block) {
@@ -31,11 +33,6 @@ public class ClientBlockDefault extends RegistryEntry.Impl<ClientBlock> implemen
     @Override
     public final Block getBlock() {
         return block;
-    }
-
-    @Override
-    public boolean isRenderable() {
-        return true;
     }
 
     @Override
@@ -56,5 +53,10 @@ public class ClientBlockDefault extends RegistryEntry.Impl<ClientBlock> implemen
             renderer = blockRendererMap.get(block);
         }
         return renderer;
+    }
+
+    @Override
+    public BlockRenderType getRenderType() {
+        return renderType;
     }
 }

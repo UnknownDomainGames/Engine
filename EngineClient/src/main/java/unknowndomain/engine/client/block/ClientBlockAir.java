@@ -12,7 +12,7 @@ public class ClientBlockAir extends ClientBlockDefault {
     }
 
     @Override
-    public boolean isRenderable() {
+    public boolean isVisible() {
         return false;
     }
 

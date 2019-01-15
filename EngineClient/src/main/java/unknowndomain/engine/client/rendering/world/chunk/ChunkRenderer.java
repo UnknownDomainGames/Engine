@@ -12,8 +12,6 @@ import unknowndomain.engine.client.rendering.light.DirectionalLight;
 import unknowndomain.engine.client.rendering.light.Light;
 import unknowndomain.engine.client.rendering.light.Material;
 import unknowndomain.engine.client.rendering.light.PointLight;
-import unknowndomain.engine.client.rendering.model.assimp.AssimpHelper;
-import unknowndomain.engine.client.rendering.model.assimp.AssimpModel;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
@@ -97,7 +95,7 @@ public class ChunkRenderer implements Renderer {
             }
         }
         setUniform(u_ModelMatrix, new Matrix4f().setTranslation(0,5,0));
-        tmp.render(chunkSolidShader);
+//        tmp.render(chunkSolidShader);
 
         postRenderChunk();
     }
