@@ -13,46 +13,46 @@ import javax.annotation.Nullable;
 class BlockShared extends RegistryEntry.Impl<Block> implements Block {
     private AABBd[] boundingBox;
     private BlockPrototype.PlaceBehavior placeBehavior;
-    private BlockPrototype.ActiveBehavior activeBehavior;
-    private BlockPrototype.TouchBehavior touchBehavior;
+    private BlockPrototype.ActivateBehavior activateBehavior;
+    private BlockPrototype.ClickBehavior clickBehavior;
     private BlockPrototype.DestroyBehavior destroyBehavior;
 
-    BlockShared(AABBd[] boundingBox, BlockPrototype.PlaceBehavior placeBehavior, BlockPrototype.ActiveBehavior activeBehavior, BlockPrototype.TouchBehavior touchBehavior, BlockPrototype.DestroyBehavior destroyBehavior) {
+    BlockShared(AABBd[] boundingBox, BlockPrototype.PlaceBehavior placeBehavior, BlockPrototype.ActivateBehavior activateBehavior, BlockPrototype.ClickBehavior clickBehavior, BlockPrototype.DestroyBehavior destroyBehavior) {
         this.boundingBox = boundingBox;
         this.placeBehavior = placeBehavior;
-        this.activeBehavior = activeBehavior;
-        this.touchBehavior = touchBehavior;
+        this.activateBehavior = activateBehavior;
+        this.clickBehavior = clickBehavior;
         this.destroyBehavior = destroyBehavior;
     }
 
     @Override
     public boolean canPlace(World world, Entity entity, BlockPos blockPos, Block block) {
-        return placeBehavior.canPlace(world,entity,blockPos,block);
+        return placeBehavior.canPlace(world, entity, blockPos, block);
     }
 
     @Override
     public void onPlaced(World world, Entity entity, BlockPos blockPos, Block block) {
-        placeBehavior.onPlaced(world,entity,blockPos,block);
+        placeBehavior.onPlaced(world, entity, blockPos, block);
     }
 
     @Override
-    public boolean shouldActivated(World world, Entity entity, BlockPos blockPos, Block block) {
-        return activeBehavior.shouldActivated(world, entity, blockPos, block);
+    public boolean canActivate(World world, Entity entity, BlockPos blockPos, Block block) {
+        return activateBehavior.canActivate(world, entity, blockPos, block);
+    }
+
+    @Override
+    public boolean canClick(World world, BlockPos pos, Block block) {
+        return clickBehavior.canClick(world, pos, block);
+    }
+
+    @Override
+    public void onClicked(World world, BlockPos pos, Block block) {
+        clickBehavior.onClicked(world, pos, block);
     }
 
     @Override
     public void onActivated(World world, Entity entity, BlockPos pos, Block block) {
-        activeBehavior.onActivated(world, entity, pos, block);
-    }
-
-    @Override
-    public boolean onTouch(Block block) {
-        return touchBehavior.onTouch(block);
-    }
-
-    @Override
-    public void onTouched(Block block) {
-        touchBehavior.onTouched(block);
+        activateBehavior.onActivated(world, entity, pos, block);
     }
 
     @Override

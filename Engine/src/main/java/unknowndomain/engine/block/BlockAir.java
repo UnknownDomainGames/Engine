@@ -43,12 +43,12 @@ public class BlockAir extends RegistryEntry.Impl<Block> implements Block {
     }
 
     @Override
-    public void onTouched(Block block) {
+    public void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block) {
 
     }
 
     @Override
-    public void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block) {
+    public void onClicked(World world, BlockPos pos, Block block) {
 
     }
 }

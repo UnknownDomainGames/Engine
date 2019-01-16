@@ -13,8 +13,8 @@ public class BlockBuilder {
     private boolean noCollision = false;
 
     private BlockPrototype.PlaceBehavior placeBehavior = BlockPrototype.DEFAULT_PLACE;
-    private BlockPrototype.ActiveBehavior activeBehavior = BlockPrototype.DEFAULT_ACTIVE;
-    private BlockPrototype.TouchBehavior touchBehavior = BlockPrototype.DEFAULT_TOUCH;
+    private BlockPrototype.ActivateBehavior activateBehavior = BlockPrototype.DEFAULT_ACTIVATE;
+    private BlockPrototype.ClickBehavior clickBehavior = BlockPrototype.DEFAULT_CLICK;
     private BlockPrototype.DestroyBehavior destroyBehavior = BlockPrototype.DEFAULT_DESTROY;
 
     private BlockBuilder(String path) {
@@ -41,13 +41,13 @@ public class BlockBuilder {
         return this;
     }
 
-    public BlockBuilder setActiveBehavior(BlockPrototype.ActiveBehavior activeBehavior) {
-        this.activeBehavior = activeBehavior;
+    public BlockBuilder setActivateBehavior(BlockPrototype.ActivateBehavior activateBehavior) {
+        this.activateBehavior = activateBehavior;
         return this;
     }
 
-    public BlockBuilder setTouchBehavior(BlockPrototype.TouchBehavior touchBehavior) {
-        this.touchBehavior = touchBehavior;
+    public BlockBuilder setClickBehavior(BlockPrototype.ClickBehavior clickBehavior) {
+        this.clickBehavior = clickBehavior;
         return this;
     }
 
@@ -58,7 +58,7 @@ public class BlockBuilder {
 
     public Block build() {
         AABBd[] boxes = noCollision ? new AABBd[0] : aabBds.size() == 0 ? new AABBd[]{Block.DEFAULT_BOUNDING_BOX} : aabBds.toArray(new AABBd[aabBds.size()]);
-        return new BlockShared(boxes, placeBehavior, activeBehavior, touchBehavior, destroyBehavior)
+        return new BlockShared(boxes, placeBehavior, activateBehavior, clickBehavior, destroyBehavior)
                 .localName(path);
     }
 }
