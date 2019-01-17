@@ -4,6 +4,7 @@ import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.World;
 
 import java.util.List;
@@ -12,13 +13,13 @@ public abstract class BlockPrototype {
     // all these behaviors are missing arguments
     // fill those arguments later
 
-    public static ActivateBehavior DEFAULT_ACTIVATE = (world, entity, pos, block) -> {
+    public static ActivateBehavior DEFAULT_ACTIVATE = new ActivateBehavior() {
     };
-    public static ClickBehavior DEFAULT_CLICK = (world, pos, block) -> {
+    public static ClickBehavior DEFAULT_CLICK = new ClickBehavior() {
     };
-    public static PlaceBehavior DEFAULT_PLACE = (world, entity, blockPos, block) -> {
+    public static PlaceBehavior DEFAULT_PLACE = (world, entity, blockPos, block, cause) -> {
     };
-    public static DestroyBehavior DEFAULT_DESTROY = (world, entity, blockPos, block) -> {
+    public static DestroyBehavior DEFAULT_DESTROY = (world, entity, blockPos, block, cause) -> {
     };
 
     public abstract List<Block> getAllStates();
@@ -31,42 +32,42 @@ public abstract class BlockPrototype {
      * Call when the block is left clicked.
      */
     public interface ClickBehavior extends Component {
-        default boolean canClick(World world, BlockPos pos, Block block) {
+        default boolean onClicked(World world, BlockPos pos, Block block) {
             return false;
         }
-
-        void onClicked(World world, BlockPos pos, Block block);
     }
 
     /**
      * Call when the block is right clicked.
      */
     public interface ActivateBehavior extends Component {
-        default boolean canActivate(World world, Entity entity, BlockPos blockPos, Block block) {
-            return true;
+        default boolean onActivated(World world, Entity entity, BlockPos pos, Block block) {
+            return false;
         }
-
-        void onActivated(World world, Entity entity, BlockPos pos, Block block);
     }
 
     public interface ChangeListener extends Component {
         void onChange(World world, BlockPos pos, Block block, BlockChangeCause cause);
     }
 
+    public interface NeighborChangeListener extends Component {
+        void onNeighborChange(World world, BlockPos pos, Block block, Facing face, BlockPos neighborPos, Block neighbor, BlockChangeCause cause);
+    }
+
     public interface PlaceBehavior extends Component {
-        default boolean canPlace(World world, Entity entity, BlockPos blockPos, Block block) {
+        default boolean canPlace(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
             return true;
         }
 
-        void onPlaced(World world, Entity entity, BlockPos blockPos, Block block);
+        void onPlaced(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause);
     }
 
     public interface DestroyBehavior extends Component {
-        default boolean canDestroy(World world, Entity entity, BlockPos blockPos, Block block) {
+        default boolean canDestroy(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
             return true;
         }
 
-        void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block);
+        void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause);
     }
 
 }

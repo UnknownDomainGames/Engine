@@ -3,6 +3,7 @@ package unknowndomain.engine.block;
 import org.joml.AABBd;
 import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.world.World;
@@ -26,43 +27,33 @@ class BlockShared extends RegistryEntry.Impl<Block> implements Block {
     }
 
     @Override
-    public boolean canPlace(World world, Entity entity, BlockPos blockPos, Block block) {
-        return placeBehavior.canPlace(world, entity, blockPos, block);
+    public boolean canPlace(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
+        return placeBehavior.canPlace(world, entity, blockPos, block, cause);
     }
 
     @Override
-    public void onPlaced(World world, Entity entity, BlockPos blockPos, Block block) {
-        placeBehavior.onPlaced(world, entity, blockPos, block);
+    public void onPlaced(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
+        placeBehavior.onPlaced(world, entity, blockPos, block, cause);
     }
 
     @Override
-    public boolean canActivate(World world, Entity entity, BlockPos blockPos, Block block) {
-        return activateBehavior.canActivate(world, entity, blockPos, block);
+    public boolean onClicked(World world, BlockPos pos, Block block) {
+        return clickBehavior.onClicked(world, pos, block);
     }
 
     @Override
-    public boolean canClick(World world, BlockPos pos, Block block) {
-        return clickBehavior.canClick(world, pos, block);
+    public boolean onActivated(World world, Entity entity, BlockPos pos, Block block) {
+        return activateBehavior.onActivated(world, entity, pos, block);
     }
 
     @Override
-    public void onClicked(World world, BlockPos pos, Block block) {
-        clickBehavior.onClicked(world, pos, block);
+    public boolean canDestroy(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
+        return destroyBehavior.canDestroy(world, entity, blockPos, block, cause);
     }
 
     @Override
-    public void onActivated(World world, Entity entity, BlockPos pos, Block block) {
-        activateBehavior.onActivated(world, entity, pos, block);
-    }
-
-    @Override
-    public boolean canDestroy(World world, Entity entity, BlockPos blockPos, Block block) {
-        return destroyBehavior.canDestroy(world, entity, blockPos, block);
-    }
-
-    @Override
-    public void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block) {
-        destroyBehavior.onDestroyed(world, entity, blockPos, block);
+    public void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
+        destroyBehavior.onDestroyed(world, entity, blockPos, block, cause);
     }
 
 //    @Nullable
@@ -90,5 +81,15 @@ class BlockShared extends RegistryEntry.Impl<Block> implements Block {
     @Override
     public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
         return false;
+    }
+
+    @Override
+    public void onRandomTick(World world, BlockPos pos, Block block) {
+
+    }
+
+    @Override
+    public void onChange(World world, BlockPos pos, Block block, BlockChangeCause cause) {
+
     }
 }
