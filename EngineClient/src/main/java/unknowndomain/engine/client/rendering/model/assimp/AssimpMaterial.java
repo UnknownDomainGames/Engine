@@ -4,8 +4,11 @@ import org.joml.Vector3f;
 import org.lwjgl.assimp.AIColor4D;
 import org.lwjgl.assimp.AIMaterial;
 import org.lwjgl.assimp.AIString;
+import unknowndomain.engine.client.EngineClient;
+import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.rendering.light.Material;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
+import unknowndomain.engine.client.resource.ResourcePath;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +25,7 @@ public class AssimpMaterial {
     private GLTexture diffuseTexture;
     private GLTexture specularTexture;
     private GLTexture normalTexture;
+    private GLTexture alphaTexture;
 
     private Material referenceMat;
 
@@ -29,41 +33,10 @@ public class AssimpMaterial {
 
         mMaterial = material;
 
-        AIString path = AIString.calloc();
-
-        aiGetMaterialTexture(material, aiTextureType_DIFFUSE, 0, path,null,null,null,null,null, (IntBuffer) null);
-        String s = path.dataString();
-        if (s.length() > 0) {
-            try {
-                InputStream stream = AssimpMaterial.class.getResourceAsStream("/"+parentDir + s);
-                if(stream != null)
-                    diffuseTexture = GLTexture.ofPNG(stream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        aiGetMaterialTexture(material, aiTextureType_SPECULAR, 0, path,null,null,null,null,null, (IntBuffer) null);
-        s = path.dataString();
-        if (s.length() > 0) {
-            try {
-                InputStream stream = AssimpMaterial.class.getResourceAsStream("/"+parentDir + s);
-                if(stream != null)
-                    specularTexture = GLTexture.ofPNG(stream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        aiGetMaterialTexture(material, aiTextureType_NORMALS, 0, path,null,null,null,null,null, (IntBuffer) null);
-        s = path.dataString();
-        if (s.length() > 0) {
-            try {
-                InputStream stream = AssimpMaterial.class.getResourceAsStream("/"+parentDir + s);
-                if(stream != null)
-                    normalTexture = GLTexture.ofPNG(stream);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        diffuseTexture = loadTexture(aiTextureType_DIFFUSE, parentDir);
+        specularTexture = loadTexture(aiTextureType_SPECULAR, parentDir);
+        normalTexture = loadTexture(aiTextureType_NORMALS, parentDir);
+        alphaTexture = loadTexture(aiTextureType_OPACITY, parentDir);
 
         mAmbientColor = AIColor4D.create();
         if (aiGetMaterialColor(mMaterial, AI_MATKEY_COLOR_AMBIENT,
@@ -90,6 +63,23 @@ public class AssimpMaterial {
         if(specularTexture != null){
             referenceMat.setSpecularUV(specularTexture);
         }
+        if(normalTexture != null){
+            referenceMat.setNormalUV(normalTexture);
+        }
+        if(alphaTexture != null){
+            referenceMat.setAlphaUV(alphaTexture);
+        }
+    }
+
+    public GLTexture loadTexture(int textureType, String parentDir) {
+        AIString path = AIString.calloc();
+
+        aiGetMaterialTexture(mMaterial, textureType, 0, path,null,null,null,null,null, (IntBuffer) null);
+        String s = path.dataString();
+        if (s.length() > 0) {
+                return UnknownDomain.getEngine().getTextureManager().getTexture(new ResourcePath("texture", "/"+parentDir + s));
+        }
+        return null;
     }
 
     public GLTexture getDiffuseTexture() {

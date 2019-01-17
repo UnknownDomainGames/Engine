@@ -14,13 +14,16 @@ public class TextureAtlasBuilder {
     public GLTexture buildFromResources(List<Pair<ResourcePath, TextureUVImpl>> textures) throws IOException {
         List<Pair<TextureBuffer, TextureUVImpl>> loadedTextures = new LinkedList<>();
         for (Pair<ResourcePath, TextureUVImpl> pair : textures) {
-            try (InputStream inputStream = getClass().getResourceAsStream(pair.getLeft().getPath())) {
-                PNGDecoder decoder = new PNGDecoder(inputStream);
-                TextureBuffer buffer = TextureBuffer.create(decoder);
-                loadedTextures.add(Pair.of(buffer, pair.getRight()));
-            }
+            loadedTextures.add(Pair.of(getBufferFromResource(pair.getLeft()), pair.getRight()));
         }
         return build(loadedTextures);
+    }
+
+    public TextureBuffer getBufferFromResource(ResourcePath path) throws IOException {
+        try (InputStream inputStream = getClass().getResourceAsStream(path.getPath())) {
+            PNGDecoder decoder = new PNGDecoder(inputStream);
+            return TextureBuffer.create(decoder);
+        }
     }
 
     public GLTexture build(List<Pair<TextureBuffer, TextureUVImpl>> textures) {

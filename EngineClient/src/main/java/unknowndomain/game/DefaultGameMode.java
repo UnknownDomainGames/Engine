@@ -127,9 +127,9 @@ public final class DefaultGameMode {
         });
 
         TextureManager textureManager = e.getTextureManager();
-        TextureUV side = textureManager.register(new ResourcePath("/assets/unknowndomain/textures/block/side.png"), BLOCK);
-        TextureUV top = textureManager.register(new ResourcePath("/assets/unknowndomain/textures/block/top.png"), BLOCK);
-        TextureUV bottom = textureManager.register(new ResourcePath("/assets/unknowndomain/textures/block/bottom.png"), BLOCK);
+        TextureUV side = textureManager.registerToAtlas(new ResourcePath("/assets/unknowndomain/textures/block/side.png"), BLOCK);
+        TextureUV top = textureManager.registerToAtlas(new ResourcePath("/assets/unknowndomain/textures/block/top.png"), BLOCK);
+        TextureUV bottom = textureManager.registerToAtlas(new ResourcePath("/assets/unknowndomain/textures/block/bottom.png"), BLOCK);
 
         BlockModel blockModel = new BlockModel();
         blockModel.addCube(0, 0, 0, 1, 1, 1, new TextureUV[] { side, side, side, side, top, bottom });

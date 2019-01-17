@@ -13,6 +13,7 @@ import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
 import unknowndomain.engine.client.rendering.shader.Shader;
+import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
@@ -44,8 +45,7 @@ public class GuiRenderer implements Renderer {
     private ClientContext context;
 
     public GuiRenderer(ByteBuffer defaultFontData, Shader vertexShader, Shader fragShader) {
-        shader = new ShaderProgram();
-        shader.init(vertexShader, fragShader);
+        shader = ShaderManager.INSTANCE.createShader("gui_shader", vertexShader,fragShader);
         u_ProjMatrix = shader.getUniformLocation("u_ProjMatrix");
         u_ModelMatrix = shader.getUniformLocation("u_ModelMatrix");
         u_WindowSize = shader.getUniformLocation("u_WindowSize");
@@ -111,7 +111,7 @@ public class GuiRenderer implements Renderer {
     }
 
     private void startRender() {
-        shader.use();
+        ShaderManager.INSTANCE.bindShader(shader);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

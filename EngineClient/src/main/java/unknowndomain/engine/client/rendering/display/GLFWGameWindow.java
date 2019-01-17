@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.shader.Shader;
+import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.util.*;
@@ -41,10 +42,6 @@ public class GLFWGameWindow implements GameWindow {
     private final List<CursorCallback> cursorCallbacks = new LinkedList<>();
     private final List<ScrollCallback> scrollCallbacks = new LinkedList<>();
     private final List<CharCallback> charCallbacks = new LinkedList<>();
-    private FrameBuffer frameBuffer;
-    private FrameBuffer frameBufferMultisampled;
-    private final DefaultFBOWrapper defaultFBO = new DefaultFBOWrapper();
-    private ShaderProgram frameBufferSP;
 
     public GLFWGameWindow(int width, int height, String title) {
         this.title = title;
@@ -158,27 +155,14 @@ public class GLFWGameWindow implements GameWindow {
     } // TODO: Remove it.
 
     public void beginDraw() {
-        frameBufferMultisampled.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_MULTISAMPLE);
     }
 
     public void endDraw() {
-        frameBuffer.bind();
-        glEnable(GL_DEPTH_TEST);
-        frameBuffer.blitFrom(frameBufferMultisampled);
-        defaultFBO.bind();
-        glClear(GL_COLOR_BUFFER_BIT);
-        frameBufferSP.use();
-        glDisable(GL_DEPTH_TEST);
-        defaultFBO.drawFrameBuffer(frameBuffer);
-
         glfwSwapBuffers(handle);
 
         if (isResized()) {
-            frameBuffer.resize(width,height);
-            frameBufferMultisampled.resize(width,height);
             resized = false;
         }
 
@@ -203,19 +187,6 @@ public class GLFWGameWindow implements GameWindow {
         GL.createCapabilities();
         enableVSync();
         setupInput();
-        frameBuffer = new FrameBuffer();
-        frameBuffer.createFrameBuffer();
-        frameBuffer.resize(width, height);
-        frameBufferMultisampled = new FrameBufferMultiSampled();
-        frameBufferMultisampled.createFrameBuffer();
-        frameBufferMultisampled.resize(width, height);
-        frameBuffer.check();
-        frameBufferMultisampled.check();
-        frameBufferSP = new ShaderProgram();
-        frameBufferSP.init(
-                Shader.create(GLHelper.readText("/assets/unknowndomain/shader/framebuffer.vert"), ShaderType.VERTEX_SHADER),
-                Shader.create(GLHelper.readText("/assets/unknowndomain/shader/framebuffer.frag"), ShaderType.FRAGMENT_SHADER)
-        ); //TODO init shader in a formal way
         showWindow();
     }
 

@@ -22,10 +22,6 @@ public class FrameBuffer {
     public void createFrameBuffer(){
         if(fboId == -1){
             fboId = GL30.glGenFramebuffers();
-            bind();
-
-
-            unbind();
         }
     }
 
@@ -86,6 +82,10 @@ public class FrameBuffer {
 
     public int getTexId() {
         return texId;
+    }
+
+    public int getDstexid() {
+        return dstexid;
     }
 
     public int getFboId() {

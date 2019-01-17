@@ -62,9 +62,16 @@ public class AssimpModel {
             GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getTexCoordBufferId());
             GL30.glVertexAttribPointer(2,2, GLDataType.FLOAT.glId, false,0,0);
             GL30.glEnableVertexAttribArray(2);
-            GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getNormalBufferId());
-            GL30.glVertexAttribPointer(3,3, GLDataType.FLOAT.glId, false,0,0);
-            GL30.glEnableVertexAttribArray(3);
+            if(mesh.getNormalBufferId() != 0){
+                GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getNormalBufferId());
+                GL30.glVertexAttribPointer(3,3, GLDataType.FLOAT.glId, false,0,0);
+                GL30.glEnableVertexAttribArray(3);
+            }
+            if(mesh.getTangentBufferId() != 0){
+                GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getTangentBufferId());
+                GL30.glVertexAttribPointer(4,3, GLDataType.FLOAT.glId, false,0,0);
+                GL30.glEnableVertexAttribArray(4);
+            }
 
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             var mat = materials.get(mesh.getRawMesh().mMaterialIndex());
@@ -76,9 +83,6 @@ public class AssimpModel {
             GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, mesh.getElementArrayBufferId());
             GL30.glDrawElements(GL11.GL_TRIANGLES,mesh.getElementCount(),GLDataType.UNSIGNED_INT.glId,0);
 
-//            GL30.glDisableVertexAttribArray(0);
-//            GL30.glDisableVertexAttribArray(2);
-//            GL30.glDisableVertexAttribArray(3);
         }
 
         GL30.glBindVertexArray(0);

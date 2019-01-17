@@ -2,9 +2,16 @@ package unknowndomain.engine.client.rendering.texture;
 
 import unknowndomain.engine.client.resource.ResourcePath;
 
+import javax.annotation.Nullable;
+
 public interface TextureManager {
 
-    TextureUV register(ResourcePath path, TextureType type);
+    @Nullable
+    GLTexture register(ResourcePath path);
+
+    GLTexture getTexture(ResourcePath path);
+
+    TextureUV registerToAtlas(ResourcePath path, TextureType type);
 
     GLTexture getTextureAtlas(TextureType type);
 

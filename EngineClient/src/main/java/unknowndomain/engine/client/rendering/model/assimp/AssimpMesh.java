@@ -15,6 +15,7 @@ public class AssimpMesh {
     private final int vertexBuf;
     private final int texBuf;
     private final int normalBuf;
+    private final int tangentBuf;
     private final int elementCount;
     private final int elementArrayBuffer;
 
@@ -44,10 +45,24 @@ public class AssimpMesh {
         }else{
             texBuf = 0;
         }
-        normalBuf = GL30.glGenBuffers();
-        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, normalBuf);
         var ainormal = mesh.mNormals();
-        GL30.nglBufferData(GL30.GL_ARRAY_BUFFER, AIVector3D.SIZEOF * ainormal.remaining(), ainormal.address(), GL30.GL_STATIC_DRAW);
+        if(ainormal != null) {
+            normalBuf = GL30.glGenBuffers();
+            GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, normalBuf);
+            GL30.nglBufferData(GL30.GL_ARRAY_BUFFER, AIVector3D.SIZEOF * ainormal.remaining(), ainormal.address(), GL30.GL_STATIC_DRAW);
+        }else{
+            normalBuf = 0;
+        }
+        var aitangent = mesh.mTangents();
+        if(aitangent != null){
+            tangentBuf = GL30.glGenBuffers();
+            GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, tangentBuf);
+            GL30.nglBufferData(GL30.GL_ARRAY_BUFFER, AIVector3D.SIZEOF * aitangent.remaining(), aitangent.address(), GL30.GL_STATIC_DRAW);
+        }
+        else{
+            tangentBuf = 0;
+        }
+
 
         int faceCount = mesh.mNumFaces();
         elementCount = faceCount * 3;
@@ -77,6 +92,10 @@ public class AssimpMesh {
 
     public int getNormalBufferId() {
         return normalBuf;
+    }
+
+    public int getTangentBufferId() {
+        return tangentBuf;
     }
 
     public int getElementArrayBufferId() {

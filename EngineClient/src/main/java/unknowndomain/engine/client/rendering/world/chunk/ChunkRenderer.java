@@ -13,8 +13,11 @@ import unknowndomain.engine.client.rendering.light.Light;
 import unknowndomain.engine.client.rendering.light.Material;
 import unknowndomain.engine.client.rendering.light.PointLight;
 import unknowndomain.engine.client.rendering.shader.Shader;
+import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.util.GLHelper;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
@@ -45,8 +48,7 @@ public class ChunkRenderer implements Renderer {
     private ClientContext context;
 
     public ChunkRenderer(Shader vertex, Shader frag) {
-        chunkSolidShader = new ShaderProgram();
-        chunkSolidShader.init(vertex, frag);
+        chunkSolidShader = ShaderManager.INSTANCE.createShader("chunk_solid", vertex,frag);
         u_ProjMatrix = chunkSolidShader.getUniformLocation("u_ProjMatrix");
         u_ViewMatrix = chunkSolidShader.getUniformLocation("u_ViewMatrix");
         u_ModelMatrix = chunkSolidShader.getUniformLocation("u_ModelMatrix");
@@ -101,7 +103,7 @@ public class ChunkRenderer implements Renderer {
     }
 
     protected void preRenderChunk() {
-        chunkSolidShader.use();
+        ShaderManager.INSTANCE.bindShader(chunkSolidShader);
 
         glEnable(GL11.GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

@@ -14,12 +14,16 @@ public class Material {
     float shininess;
     GLTexture diffuseUV;
     GLTexture specularUV;
+    GLTexture normalUV;
+    GLTexture alphaUV;
     public void bind(ShaderProgram program, String fieldName){
         program.setUniform(fieldName + ".ambient", ambient);
         program.setUniform(fieldName + ".diffuseColor", diffuse);
         program.setUniform(fieldName + ".specularColor", specular);
         program.setUniform(fieldName + ".diffuse", 1);
         program.setUniform(fieldName + ".specular", 2);
+        program.setUniform(fieldName + ".normalUV", 3);
+        program.setUniform(fieldName + ".alphaUV", 4);
         program.setUniform(fieldName + ".shininess", shininess);
         if(diffuseUV != null){
             program.setUniform(fieldName + ".diffuseUseUV", true);
@@ -36,6 +40,22 @@ public class Material {
             GL15.glActiveTexture(GL13.GL_TEXTURE0);
         }else{
             program.setUniform(fieldName + ".specularUseUV", false);
+        }
+        if(normalUV != null){
+            program.setUniform(fieldName + ".normalUseUV", true);
+            GL15.glActiveTexture(GL15.GL_TEXTURE3);
+            normalUV.bind();
+            GL15.glActiveTexture(GL13.GL_TEXTURE0);
+        }else{
+            program.setUniform(fieldName + ".normalUseUV", false);
+        }
+        if(alphaUV != null){
+            program.setUniform(fieldName + ".alphaUseUV", true);
+            GL15.glActiveTexture(GL15.GL_TEXTURE4);
+            alphaUV.bind();
+            GL15.glActiveTexture(GL13.GL_TEXTURE0);
+        }else{
+            program.setUniform(fieldName + ".alphaUseUV", false);
         }
     }
 
@@ -56,6 +76,16 @@ public class Material {
 
     public Material setSpecularUV(GLTexture specularUV) {
         this.specularUV = specularUV;
+        return this;
+    }
+
+    public Material setNormalUV(GLTexture normalUV) {
+        this.normalUV = normalUV;
+        return this;
+    }
+
+    public Material setAlphaUV(GLTexture alphaUV) {
+        this.alphaUV = alphaUV;
         return this;
     }
 

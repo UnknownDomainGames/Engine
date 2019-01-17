@@ -8,7 +8,7 @@ public class ShaderProgram implements Disposable {
 
     protected int programId = -1;
 
-    public void init(Shader... shaders) {
+    void init(Shader... shaders) {
         programId = GL20.glCreateProgram();
 
         for (Shader s : shaders)
@@ -25,7 +25,7 @@ public class ShaderProgram implements Disposable {
         unuse();
     }
 
-    public void use() {
+    void use() {
         GL20.glUseProgram(programId);
     }
 
