@@ -5,10 +5,12 @@ import org.joml.Vector4fc;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.gui.font.NativeTTFont;
+import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.util.Color;
+import unknowndomain.engine.util.Math2;
 
 import java.util.Stack;
 
@@ -147,6 +149,7 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawTexture(GLTexture texture, float x, float y, float width, float height, TextureUV textureUV) {
+        ShaderManager.INSTANCE.setUniform("u_UsingTexture", true);
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL_QUADS, true, false, true);
         float x2 = x + width, y2 = y + height;
@@ -158,6 +161,7 @@ public class GraphicsImpl implements Graphics {
         texture.bind();
         tessellator.draw();
         glDisable(GL_TEXTURE_2D);
+        ShaderManager.INSTANCE.setUniform("u_UsingTexture", false);
     }
 
     @Override
@@ -169,10 +173,15 @@ public class GraphicsImpl implements Graphics {
             Vector4fc parent = clipRect.peek();
             float newX = parent.x() + x, newY = parent.y() + y;
             float newZ = newX + width, newW = newY + height;
-            inclusiveBetween(parent.x(), parent.z(), newX);
-            inclusiveBetween(parent.y(), parent.w(), newY);
-            inclusiveBetween(parent.x(), parent.z(), newZ);
-            inclusiveBetween(parent.y(), parent.w(), newW);
+//            unstricted range
+            Math2.clamp(newX, parent.x(),parent.z());
+            Math2.clamp(newY, parent.y(),parent.w());
+            Math2.clamp(newZ, parent.x(),parent.z());
+            Math2.clamp(newW, parent.y(),parent.w());
+//            inclusiveBetween(parent.x(), parent.z(), newX);
+//            inclusiveBetween(parent.y(), parent.w(), newY);
+//            inclusiveBetween(parent.x(), parent.z(), newZ);
+//            inclusiveBetween(parent.y(), parent.w(), newW);
             clipRect.push(new Vector4f(newX, newY, newZ, newW));
             updateClipRect();
         }

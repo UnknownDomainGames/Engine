@@ -25,7 +25,7 @@ public class TextureManagerImpl implements TextureManager {
             textures.put(path, texture);
             return texture;
         } catch (IOException e) {
-            Engine.getLogger().warn(String.format("cannot load texture! Path: %s", path));
+            Engine.getLogger().warn(String.format("cannot load texture %s!", path), e);
         }
         return null;
     }
@@ -33,7 +33,6 @@ public class TextureManagerImpl implements TextureManager {
     @Override
     public GLTexture getTexture(ResourcePath path){
         if(!textures.containsKey(path)){
-            //Engine.getLogger().warn(String.format("Attempt to get an unregistered texture %s ! Try registering...", path));
             register(path);
         }
         return textures.get(path);

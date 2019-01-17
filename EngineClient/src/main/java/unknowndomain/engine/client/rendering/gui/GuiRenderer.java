@@ -70,17 +70,16 @@ public class GuiRenderer implements Renderer {
     @Override
     public void init(ClientContext context) {
         this.context = context;
-        Internal.setContext(new Internal.Context() {
-            @Override
-            public FontHelper getFontHelper() {
-                return fontHelper;
-            }
-        });
+        Internal.setContext(() -> fontHelper);
 
 //        VBox vBox = new VBox();
 //        vBox.spacing().set(5);
 //        vBox.getChildren().add(new Text("Hello GUI!"));
-//        vBox.getChildren().add(new Text("Hello GUI!"));
+//        vBox.getChildren().add(new Text("Bye GUI!"));
+//        Image image = new Image(new ResourcePath("texture", "/assets/unknowndomain/textures/block/side.png"));
+//        image.imageWidth().set(200);
+//        image.imageHeight().set(200);
+//        vBox.getChildren().add(image);
 //        Scene debug = new Scene(vBox);
 //        hudScene.add(debug);
     }

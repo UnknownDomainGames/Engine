@@ -29,6 +29,19 @@ public final class Math2 {
         return mod == 0 ? value : value - mod * interval;
     }
 
+    public static float clamp(float val, float min, float max){
+        return Math.min(max,Math.max(val,min));
+    }
+    public static int clamp(int val, int min, int max){
+        return Math.min(max,Math.max(val,min));
+    }
+    public static long clamp(long val, long min, long max){
+        return Math.min(max,Math.max(val,min));
+    }
+    public static double clamp(double val, double min, double max){
+        return Math.min(max,Math.max(val,min));
+    }
+
     /**
      * Calculate normal of a triangle by vertices.
      * @param vertices
