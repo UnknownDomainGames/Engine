@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class BlockPosTest {
 
     BlockPos fix(BlockPos last, int y) {
@@ -72,20 +70,5 @@ class BlockPosTest {
 //        for (int x = pos.getX(); x < dest; x++) {
 //
 //        }
-    }
-
-    @Test
-    void pack() {
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 16; j++) {
-                for (int k = 0; k < 16; k++) {
-                    BlockPos from = BlockPos.of(i, j, k);
-                    int pack = from.pack();
-                    assertEquals(from.getX() & 0xF, pack >> 8);
-                    assertEquals(from.getY() & 0xF, (pack >> 4) & 0xF);
-                    assertEquals(from.getZ() & 0xF, pack & 0xF);
-                }
-            }
-        }
     }
 }

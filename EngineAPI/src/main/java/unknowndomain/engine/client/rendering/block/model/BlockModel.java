@@ -32,8 +32,8 @@ public class BlockModel implements BlockRenderer {
         addQuad(createQuad(fromX, fromY, toX, toY, fromZ, Facing.SOUTH, textureUVS[Facing.SOUTH.ordinal()]));
         addQuad(createQuad(fromY, fromZ, toY, toZ, toX, Facing.EAST, textureUVS[Facing.EAST.ordinal()]));
         addQuad(createQuad(fromY, fromZ, toY, toZ, fromX, Facing.WEST, textureUVS[Facing.WEST.ordinal()]));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.TOP, textureUVS[Facing.TOP.ordinal()]));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.BOTTOM, textureUVS[Facing.BOTTOM.ordinal()]));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.UP, textureUVS[Facing.UP.ordinal()]));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.DOWN, textureUVS[Facing.DOWN.ordinal()]));
     }
 
     public void addCube(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, TextureUV textureUV) {
@@ -41,8 +41,8 @@ public class BlockModel implements BlockRenderer {
         addQuad(createQuad(fromX, fromY, toX, toY, fromZ, Facing.SOUTH, textureUV));
         addQuad(createQuad(fromY, fromZ, toY, toZ, toX, Facing.EAST, textureUV));
         addQuad(createQuad(fromY, fromZ, toY, toZ, fromX, Facing.WEST, textureUV));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.TOP, textureUV));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.BOTTOM, textureUV));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.UP, textureUV));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.DOWN, textureUV));
     }
 
     @Override
