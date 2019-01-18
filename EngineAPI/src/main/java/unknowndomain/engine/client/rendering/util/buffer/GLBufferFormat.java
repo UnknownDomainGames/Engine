@@ -13,13 +13,40 @@ public class GLBufferFormat {
     private final GLBufferElement[] elements;
     private final int stride;
 
+    private final boolean usingPosition;
+    private final boolean usingColor;
+    private final boolean usingTextureUV;
+    private final boolean usingNormal;
+
     public GLBufferFormat(GLBufferElement[] elements) {
         this.elements = elements;
         int stride = 0;
+        boolean usingPosition = false;
+        boolean usingColor = false;
+        boolean usingTextureUV = false;
+        boolean usingNormal = false;
         for (GLBufferElement element : elements) {
             stride += element.getBytes();
+            switch (element.getUsage()) {
+                case POSITION:
+                    usingPosition = true;
+                    break;
+                case COLOR:
+                    usingColor = true;
+                    break;
+                case TEXTURE_UV:
+                    usingTextureUV = true;
+                    break;
+                case NORMAL:
+                    usingNormal = true;
+                    break;
+            }
         }
         this.stride = stride;
+        this.usingPosition = usingPosition;
+        this.usingColor = usingColor;
+        this.usingTextureUV = usingTextureUV;
+        this.usingNormal = usingNormal;
     }
 
     public GLBufferElement[] getElements() {
@@ -28,6 +55,22 @@ public class GLBufferFormat {
 
     public int getStride() {
         return stride;
+    }
+
+    public boolean isUsingPosition() {
+        return usingPosition;
+    }
+
+    public boolean isUsingColor() {
+        return usingColor;
+    }
+
+    public boolean isUsingTextureUV() {
+        return usingTextureUV;
+    }
+
+    public boolean isUsingNormal() {
+        return usingNormal;
     }
 
     public void bind() {
