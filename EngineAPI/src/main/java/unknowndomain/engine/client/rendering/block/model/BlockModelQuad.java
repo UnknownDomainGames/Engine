@@ -25,9 +25,9 @@ public class BlockModelQuad {
                 return new BlockModelQuad(new float[]{z, fromX, toY, z, fromX, fromY, z, toX, fromY, z, toX, toY}, facing, textureUV);
             case WEST:
                 return new BlockModelQuad(new float[]{z, fromX, fromY, z, fromX, toY, z, toX, toY, z, toX, fromY}, facing, textureUV);
-            case TOP:
+            case UP:
                 return new BlockModelQuad(new float[]{fromX, z, toY, toX, z, toY, toX, z, fromY, fromX, z, fromY}, facing, textureUV);
-            case BOTTOM:
+            case DOWN:
                 return new BlockModelQuad(new float[]{toX, z, toY, fromX, z, toY, fromX, z, fromY, toX, z, fromY}, facing, textureUV);
             default:
                 throw new IllegalArgumentException();

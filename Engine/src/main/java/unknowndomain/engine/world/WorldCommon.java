@@ -110,9 +110,9 @@ public class WorldCommon implements World, Runnable {
                     } else if (hitPoint.x >= 1f - CALC_ERROR_FIXING) {
                         facing = Facing.EAST;
                     } else if (hitPoint.y <= 0f + CALC_ERROR_FIXING) {
-                        facing = Facing.BOTTOM;
+                        facing = Facing.DOWN;
                     } else if (hitPoint.y >= 1f - CALC_ERROR_FIXING) {
-                        facing = Facing.TOP;
+                        facing = Facing.UP;
                     } else if (hitPoint.z <= 0f + CALC_ERROR_FIXING) {
                         facing = Facing.SOUTH;
                     } else if (hitPoint.z >= 1f - CALC_ERROR_FIXING) {

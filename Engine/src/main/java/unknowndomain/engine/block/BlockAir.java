@@ -3,6 +3,7 @@ package unknowndomain.engine.block;
 import org.joml.AABBd;
 import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.world.World;
@@ -33,22 +34,22 @@ public class BlockAir extends RegistryEntry.Impl<Block> implements Block {
     }
 
     @Override
-    public void onPlaced(World world, Entity entity, BlockPos blockPos, Block block) {
+    public void onPlaced(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
 
     }
 
     @Override
-    public void onActivated(World world, Entity entity, BlockPos pos, Block block) {
+    public void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
 
     }
 
     @Override
-    public void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block) {
+    public void onRandomTick(World world, BlockPos pos, Block block) {
 
     }
 
     @Override
-    public void onClicked(World world, BlockPos pos, Block block) {
+    public void onChange(World world, BlockPos pos, Block block, BlockChangeCause cause) {
 
     }
 }

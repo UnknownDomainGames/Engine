@@ -3,6 +3,9 @@ package unknowndomain.engine.math;
 import com.google.common.base.MoreObjects;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
+import unknowndomain.engine.util.Facing;
+
+import static unknowndomain.engine.world.chunk.ChunkConstants.*;
 
 public abstract class BlockPos {
 
@@ -21,7 +24,7 @@ public abstract class BlockPos {
     }
 
     public static boolean inSameChunk(BlockPos a, BlockPos b) {
-        return ((a.getX() >> 4) == (b.getX() >> 4)) && ((a.getY() >> 4) == (b.getY() >> 4)) && ((a.getZ() >> 4) == (b.getZ() >> 4));
+        return ((a.getX() >> BITS_X) == (b.getX() >> BITS_X)) && ((a.getY() >> BITS_Y) == (b.getY() >> BITS_Y)) && ((a.getZ() >> BITS_Z) == (b.getZ() >> BITS_Z));
     }
 
     public abstract int getX();
@@ -43,12 +46,52 @@ public abstract class BlockPos {
         return x * x + y * y + z * z;
     }
 
-//    public BlockPos pack() {
-//        return new BlockPos(x & 16, y & 16, z & 16);
-//    }
+    public BlockPos offset(Facing facing) {
+        return add(facing.offsetX, facing.offsetY, facing.offsetZ);
+    }
 
-    public int pack() {
-        return ((getX() & 0xF) << 8) | ((getY() & 0xF) << 4) | (getZ() & 0xF);
+    public BlockPos offset(Facing facing, int offset) {
+        return add(facing.offsetX * offset, facing.offsetY * offset, facing.offsetZ * offset);
+    }
+
+    public BlockPos north() {
+        return offset(Facing.NORTH);
+    }
+
+    public BlockPos north(int offset) {
+        return offset(Facing.NORTH, offset);
+    }
+
+    public BlockPos south() {
+        return offset(Facing.SOUTH);
+    }
+
+    public BlockPos south(int offset) {
+        return offset(Facing.SOUTH, offset);
+    }
+
+    public BlockPos east() {
+        return offset(Facing.EAST);
+    }
+
+    public BlockPos east(int offset) {
+        return offset(Facing.EAST, offset);
+    }
+
+    public BlockPos up() {
+        return offset(Facing.UP);
+    }
+
+    public BlockPos up(int offset) {
+        return offset(Facing.UP, offset);
+    }
+
+    public BlockPos down() {
+        return offset(Facing.DOWN);
+    }
+
+    public BlockPos down(int offset) {
+        return offset(Facing.DOWN, offset);
     }
 
     @Override

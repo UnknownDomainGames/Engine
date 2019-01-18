@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.rendering.block.model;
 
 import unknowndomain.engine.client.block.ClientBlock;
-import unknowndomain.engine.client.rendering.block.BlockRenderer;
+import unknowndomain.engine.client.rendering.block.BlockMeshGenerator;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.math.BlockPos;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static unknowndomain.engine.client.rendering.block.model.BlockModelQuad.createQuad;
 
-public class BlockModel implements BlockRenderer {
+public class BlockModel implements BlockMeshGenerator {
 
     public Map<Facing, List<BlockModelQuad>> facedModelQuads = new EnumMap<>(Facing.class);
 
@@ -32,8 +32,8 @@ public class BlockModel implements BlockRenderer {
         addQuad(createQuad(fromX, fromY, toX, toY, fromZ, Facing.SOUTH, textureUVS[Facing.SOUTH.ordinal()]));
         addQuad(createQuad(fromY, fromZ, toY, toZ, toX, Facing.EAST, textureUVS[Facing.EAST.ordinal()]));
         addQuad(createQuad(fromY, fromZ, toY, toZ, fromX, Facing.WEST, textureUVS[Facing.WEST.ordinal()]));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.TOP, textureUVS[Facing.TOP.ordinal()]));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.BOTTOM, textureUVS[Facing.BOTTOM.ordinal()]));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.UP, textureUVS[Facing.UP.ordinal()]));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.DOWN, textureUVS[Facing.DOWN.ordinal()]));
     }
 
     public void addCube(float fromX, float fromY, float fromZ, float toX, float toY, float toZ, TextureUV textureUV) {
@@ -41,13 +41,13 @@ public class BlockModel implements BlockRenderer {
         addQuad(createQuad(fromX, fromY, toX, toY, fromZ, Facing.SOUTH, textureUV));
         addQuad(createQuad(fromY, fromZ, toY, toZ, toX, Facing.EAST, textureUV));
         addQuad(createQuad(fromY, fromZ, toY, toZ, fromX, Facing.WEST, textureUV));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.TOP, textureUV));
-        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.BOTTOM, textureUV));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, toY, Facing.UP, textureUV));
+        addQuad(createQuad(fromX, fromZ, toX, toZ, fromY, Facing.DOWN, textureUV));
     }
 
     @Override
-    public void render(ClientBlock block, BlockAccessor world, BlockPos pos, BufferBuilder buffer) {
-        buffer.posOffest(pos.getX(), pos.getY(), pos.getZ());
+    public void generate(ClientBlock block, BlockAccessor world, BlockPos pos, BufferBuilder buffer) {
+        buffer.posOffset(pos.getX(), pos.getY(), pos.getZ());
         BlockPos.Mutable mutablePos = new BlockPos.Mutable(pos);
         for (Facing facing : Facing.values()) {
             mutablePos.set(pos);
@@ -62,7 +62,7 @@ public class BlockModel implements BlockRenderer {
     }
 
     @Override
-    public void render(ClientBlock block, BufferBuilder buffer) {
+    public void generate(ClientBlock block, BufferBuilder buffer) {
         for (Facing facing : Facing.values()) {
             for (BlockModelQuad modelQuad : facedModelQuads.get(facing)) {
                 renderModelQuad(modelQuad, BlockPos.ZERO, buffer);
