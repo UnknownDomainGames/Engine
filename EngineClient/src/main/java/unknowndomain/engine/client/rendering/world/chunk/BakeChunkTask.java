@@ -39,7 +39,7 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
             BlockPos pos = blockPosIterator.next();
             ClientBlock block = chunkRenderer.getContext().getClientBlockRegistry().getValue(chunkCache.getBlockId(pos));
             if (block.isVisible()) {
-                block.getRenderer().render(block, chunkCache, pos, buffer);
+                block.getRenderer().generate(block, chunkCache, pos, buffer);
             }
         }
         buffer.finish();

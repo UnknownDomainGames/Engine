@@ -8,6 +8,7 @@ import unknowndomain.engine.util.Math2;
 
 import java.nio.ByteBuffer;
 
+@Deprecated
 public class BufferBuilder {
 
     private ByteBuffer backingBuffer;
@@ -108,7 +109,7 @@ public class BufferBuilder {
         useTex = false;
         useNormal = false;
         vertexCount = 0;
-        posOffest(0, 0, 0);
+        posOffset(0, 0, 0);
         offset = 0;
     }
 
@@ -150,7 +151,7 @@ public class BufferBuilder {
         return this;
     }
 
-    public BufferBuilder posOffest(float x, float y, float z) {
+    public BufferBuilder posOffset(float x, float y, float z) {
         posOffsetX = x;
         posOffsetY = y;
         posOffsetZ = z;
@@ -207,6 +208,28 @@ public class BufferBuilder {
             backingBuffer.putFloat(i + 4, ny);
             backingBuffer.putFloat(i + 8, nz);
         }
+        return this;
+    }
+
+    public BufferBuilder put(int[] ints) {
+        if (ints.length % 12 != 0) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < ints.length; i++) {
+            backingBuffer.putFloat(ints[i]);
+        }
+        vertexCount += ints.length / 12;
+        return this;
+    }
+
+    public BufferBuilder put(float[] floats) {
+        if (floats.length % 12 != 0) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < floats.length; i++) {
+            backingBuffer.putFloat(floats[i]);
+        }
+        vertexCount += floats.length / 12;
         return this;
     }
 

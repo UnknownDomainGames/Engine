@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.rendering.block.model;
 
 import unknowndomain.engine.client.block.ClientBlock;
-import unknowndomain.engine.client.rendering.block.BlockRenderer;
+import unknowndomain.engine.client.rendering.block.BlockMeshGenerator;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.math.BlockPos;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static unknowndomain.engine.client.rendering.block.model.BlockModelQuad.createQuad;
 
-public class BlockModel implements BlockRenderer {
+public class BlockModel implements BlockMeshGenerator {
 
     public Map<Facing, List<BlockModelQuad>> facedModelQuads = new EnumMap<>(Facing.class);
 
@@ -46,8 +46,8 @@ public class BlockModel implements BlockRenderer {
     }
 
     @Override
-    public void render(ClientBlock block, BlockAccessor world, BlockPos pos, BufferBuilder buffer) {
-        buffer.posOffest(pos.getX(), pos.getY(), pos.getZ());
+    public void generate(ClientBlock block, BlockAccessor world, BlockPos pos, BufferBuilder buffer) {
+        buffer.posOffset(pos.getX(), pos.getY(), pos.getZ());
         BlockPos.Mutable mutablePos = new BlockPos.Mutable(pos);
         for (Facing facing : Facing.values()) {
             mutablePos.set(pos);
@@ -62,7 +62,7 @@ public class BlockModel implements BlockRenderer {
     }
 
     @Override
-    public void render(ClientBlock block, BufferBuilder buffer) {
+    public void generate(ClientBlock block, BufferBuilder buffer) {
         for (Facing facing : Facing.values()) {
             for (BlockModelQuad modelQuad : facedModelQuads.get(facing)) {
                 renderModelQuad(modelQuad, BlockPos.ZERO, buffer);

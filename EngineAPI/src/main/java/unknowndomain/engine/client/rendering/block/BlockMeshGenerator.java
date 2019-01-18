@@ -6,9 +6,9 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.Disposable;
 import unknowndomain.engine.world.BlockAccessor;
 
-public interface BlockRenderer extends Disposable {
+public interface BlockMeshGenerator extends Disposable {
 
-    void render(ClientBlock block, BlockAccessor world, BlockPos pos, BufferBuilder buffer);
+    void generate(ClientBlock block, BlockAccessor world, BlockPos pos, BufferBuilder buffer);
 
-    void render(ClientBlock block, BufferBuilder buffer);
+    void generate(ClientBlock block, BufferBuilder buffer);
 }
