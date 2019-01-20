@@ -15,7 +15,7 @@ public class BitArray {
         this.bitsPreEntry = bitsPreEntry;
         this.maxEntryValue = (1L << bitsPreEntry) - 1;
         this.length = length;
-        this.array = new long[Math2.roundUp(bitsPreEntry * length, 64) >> 6];
+        this.array = new long[Math2.ceil(bitsPreEntry * length, 64) >> 6];
     }
 
     public int getBitsPreEntry() {
