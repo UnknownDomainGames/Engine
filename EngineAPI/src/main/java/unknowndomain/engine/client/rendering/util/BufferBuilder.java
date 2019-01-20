@@ -120,7 +120,7 @@ public class BufferBuilder {
     public void grow(int needLength) {
         if (needLength > backingBuffer.remaining()) {
             int oldSize = this.backingBuffer.capacity();
-            int newSize = oldSize + Math2.roundUp(needLength, 0x200000);
+            int newSize = oldSize + Math2.ceil(needLength, 0x200000);
             int oldPosition = backingBuffer.position();
             ByteBuffer newBuffer = BufferUtils.createByteBuffer(newSize);
             this.backingBuffer.position(0);
@@ -216,7 +216,7 @@ public class BufferBuilder {
             throw new IllegalArgumentException();
         }
         for (int i = 0; i < ints.length; i++) {
-            backingBuffer.putFloat(ints[i]);
+            backingBuffer.putInt(ints[i]);
         }
         vertexCount += ints.length / 12;
         return this;
