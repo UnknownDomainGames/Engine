@@ -71,13 +71,13 @@ public class ChunkRenderer implements Renderer {
 
         //tmp = AssimpHelper.loadModel("assets/tmp/untitled.obj");
         dirLight = new DirectionalLight().setDirection(new Vector3f(-0.15f,-1f,-0.35f))
-                .setAmbient(new Vector3f(0.2f))
-                .setDiffuse(new Vector3f(1.0f,0.8f,0.2f))
-                .setSpecular(new Vector3f(0.5f));
+                .setAmbient(new Vector3f(0.4f))
+                .setDiffuse(new Vector3f(1.0f,1f,1f))
+                .setSpecular(new Vector3f(1.0f));
         ptLight = new PointLight().setPosition(new Vector3f(3.5f,7.5f,-3.5f)).setKlinear(0.7f).setKquadratic(1.8f).setAmbient(new Vector3f(0.1f)).setDiffuse(new Vector3f(0.0f*.5f,0.0f*.5f,0.9f)).setSpecular(new Vector3f(0.6f));
         mat = new Material().setAmbientColor(new Vector3f(0.5f))
                 .setDiffuseColor(new Vector3f(1.0f))
-                .setSpecularColor(new Vector3f(0.6f)).setShininess(32f);
+                .setSpecularColor(new Vector3f(1.0f)).setShininess(32f);
     }
 
     @Override

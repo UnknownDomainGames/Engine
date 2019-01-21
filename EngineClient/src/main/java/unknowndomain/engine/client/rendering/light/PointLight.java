@@ -12,6 +12,7 @@ public class PointLight extends Light {
 
     @Override
     public void bind(ShaderProgram program, String fieldName) {
+        program.setUniform(fieldName + ".filled", true);
         program.setUniform(fieldName + ".position", position);
         program.setUniform(fieldName + ".constant", kconstant);
         program.setUniform(fieldName + ".linear", klinear);

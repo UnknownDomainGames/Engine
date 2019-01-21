@@ -23,12 +23,14 @@ struct Light {
 };
 
 struct DirLight {
+    bool filled;
     vec3 direction;
 
     Light light;
 };
 
 struct PointLight{
+    bool filled;
     vec3 position;
 
     float constant;
@@ -39,6 +41,7 @@ struct PointLight{
 };
 
 struct SpotLight{
+    bool filled;
     vec3 position;
     vec3 direction;
     float cutoffCosine;
@@ -83,12 +86,18 @@ vec3 blendMultiply(vec3 base, vec3 blend){
     return blend * base;
 }
 vec3 blendMultiply(vec3 base, vec3 blend, float opacity){
-    return opacity * (blendMultiply(base,blend) + (1.0f-opacity) * base);
+    return opacity * blendMultiply(base,blend) + (1.0f-opacity) * base;
 }
 
 
 void calcDirLight(DirLight light, vec3 normal, vec3 viewDir, inout vec3 ads[3])
 {
+    if(!light.filled){
+    ads[0] = vec3(0);
+    ads[1] = vec3(0);
+    ads[2] = vec3(0);
+    }
+    else{
     vec3 lightDir = normalize(-light.direction);
     if(material.normalUseUV){
         lightDir = v_TBN * lightDir;
@@ -96,7 +105,7 @@ void calcDirLight(DirLight light, vec3 normal, vec3 viewDir, inout vec3 ads[3])
     // 漫反射着色
     float diff = max(dot(normal, lightDir), 0.0);
     // 镜面光着色
-    //vec3 reflectDir = reflect(-lightDir, normal);
+//    vec3 reflectDir = reflect(-lightDir, normal);
     vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(viewDir, halfwayDir), 0.0), material.shininess);
     // 合并结果
@@ -107,7 +116,7 @@ void calcDirLight(DirLight light, vec3 normal, vec3 viewDir, inout vec3 ads[3])
         ambient  = light.light.ambient  * blendMultiply(vec3(texture(material.diffuse, v_TexCoord)), material.ambient,1.0);
         diffuse  = light.light.diffuse  * diff * blendMultiply(vec3(texture(material.diffuse, v_TexCoord)), material.diffuseColor,1.0);
 //        ambient  = light.light.ambient  * vec3(texture(material.diffuse, v_TexCoord));
-//        diffuse  = light.light.diffuse  * diff * vec3(texture(material.diffuse, v_TexCoord));
+//        diffuse  = /*light.light.diffuse  * diff **/ vec3(texture(material.diffuse, v_TexCoord));
     }
     else{
         ambient  = light.light.ambient  * material.ambient;
@@ -123,11 +132,17 @@ void calcDirLight(DirLight light, vec3 normal, vec3 viewDir, inout vec3 ads[3])
     ads[0] = max(ambient, vec3(0));
     ads[1] = max(diffuse,vec3(0));
     ads[2] = max(specular,vec3(0));
-    //return (ambient + diffuse + specular,vec3(0));
+    }
 }
 
 void calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, inout vec3 ads[3])
 {
+    if(!light.filled){
+    ads[0] = vec3(0);
+    ads[1] = vec3(0);
+    ads[2] = vec3(0);
+    return;
+    }
     vec3 lightDir = normalize(light.position - fragPos);
     if(material.normalUseUV){
         lightDir = v_TBN * lightDir;
@@ -170,6 +185,12 @@ void calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, i
 }
 
 void calcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, inout vec3 ads[3]){
+    if(!light.filled){
+    ads[0] = vec3(0);
+    ads[1] = vec3(0);
+    ads[2] = vec3(0);
+    return;
+    }
     vec3 lightDir = normalize(light.position - fragPos);
     if(material.normalUseUV){
         lightDir = v_TBN * lightDir;
@@ -286,9 +307,8 @@ void main() {
     if(material.alphaUseUV){
         alpha = texture(material.alphaUV,v_TexCoord).a;
     }
-    float shadow = CalcShadow(v_FragPosLightSpace);
+    float shadow = /*CalcShadow(v_FragPosLightSpace)*/0f;
     if(useDirectUV){
-    //fragColor = vec4(1.0);
         fragColor = vec4(result[0] + (1f-shadow) * (result[1] + result[2]),1.0) /* * v_Color */ * texture(u_Texture, v_TexCoord);
     }
     else {

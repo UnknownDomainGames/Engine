@@ -121,9 +121,32 @@ public class EngineEvent implements Event {
     }
 
     /* Fired when the Engine finishes constructing resources */
-    public static class ResourceConstructionFinish extends ResourceConstructionStart {
+    public static class ResourceConstructionFinish extends EngineEvent {
+        private final ResourceManager resourceManager;
+        private final TextureManager textureManager;
+        private final List<Renderer.Factory> renderers;
+
+        public List<Renderer.Factory> getRenderers() {
+            return Collections.unmodifiableList(renderers);
+        }
+
         public ResourceConstructionFinish(Engine e, ResourceManager resourceManager, TextureManager textureManager, List<Renderer.Factory> renderers) {
-            super(e, resourceManager, textureManager, renderers);
+            super(e);
+            this.resourceManager = resourceManager;
+            this.textureManager = textureManager;
+            this.renderers = renderers;
+        }
+
+        public ResourceManager getResourceManager() {
+            return resourceManager;
+        }
+
+        public TextureManager getTextureManager() {
+            return textureManager;
+        }
+
+        public void registerRenderer(Renderer.Factory renderer) {
+            renderers.add(Validate.notNull(renderer));
         }
     }
 

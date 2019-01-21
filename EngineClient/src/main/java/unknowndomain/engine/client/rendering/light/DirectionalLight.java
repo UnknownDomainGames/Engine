@@ -8,6 +8,7 @@ public class DirectionalLight extends Light {
 
     @Override
     public void bind(ShaderProgram program, String fieldName) {
+        program.setUniform(fieldName + ".filled", true);
         program.setUniform(fieldName + ".direction", direction);
         program.setUniform(fieldName + ".light.ambient", ambient);
         program.setUniform(fieldName + ".light.diffuse", diffuse);

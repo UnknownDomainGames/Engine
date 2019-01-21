@@ -23,12 +23,13 @@ out mat3 v_TBN;
 //out vec3 v_LightDirection;
 
 void main() {
-    gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * a_Position;
+    v_FragPos = (u_ModelMatrix * vec4(a_Position.xyz, 1.0)).xyz;
+
+    gl_Position = u_ProjMatrix * u_ViewMatrix * vec4(v_FragPos, 1.0);
     v_TexCoord = a_TexCoord;
     v_Color = a_Color;
 
-    v_Normal = (u_ModelMatrix * u_ViewMatrix * vec4(a_Normal,0.0)).xyz;
-    v_FragPos = (u_ModelMatrix * a_Position).xyz;
+    v_Normal = (u_ViewMatrix * u_ModelMatrix * vec4(a_Normal,0.0)).xyz;
     v_viewPos = /*-u_ViewMatrix[3].xyz*/ u_viewPos;
 
     vec3 T = normalize(vec3(u_ModelMatrix * vec4(a_Tangent,0.0)));
