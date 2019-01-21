@@ -1,5 +1,7 @@
 package unknowndomain.engine;
 
+import org.slf4j.Logger;
+
 import java.util.Locale;
 
 /**
@@ -17,15 +19,19 @@ public class Platform {
         return Locale.getDefault(); // TODO Game locale
     }
 
-    public boolean isDevelopmentMode() {
+    public static boolean isDevelopmentMode() {
         return true;
     }
 
-    public boolean isClient() {
-        return true; // TODO
+    public static boolean isClient() {
+        return getEngine().isClient(); // TODO
     }
 
-    public boolean isServer() {
-        return true; // TODO
+    public static boolean isServer() {
+        return getEngine().isServer();
+    }
+
+    public static Logger getLogger() {
+        return Engine.getLogger();
     }
 }

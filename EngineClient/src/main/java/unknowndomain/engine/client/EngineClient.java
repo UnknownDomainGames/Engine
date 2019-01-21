@@ -3,9 +3,11 @@ package unknowndomain.engine.client;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import unknowndomain.engine.Engine;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
@@ -30,9 +32,14 @@ import unknowndomain.engine.registry.impl.SimpleRegistryManager;
 import unknowndomain.engine.util.Side;
 import unknowndomain.game.DefaultGameMode;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.lang.System.getProperty;
+import static org.apache.commons.lang3.SystemUtils.*;
 
 public class EngineClient implements Engine {
 
@@ -62,6 +69,8 @@ public class EngineClient implements Engine {
 
     @Override
     public void initEngine() {
+        paintSystemInfo();
+
         Logger log = Engine.getLogger();
         log.info("Initializing Window!");
         window.init();
@@ -159,10 +168,10 @@ public class EngineClient implements Engine {
         // ImmutableMap<String, ModContainer> loadedMods = ;
         modManager = new SimpleModManager(idToMapBuilder.build(), typeToMapBuilder.build());
         Collection<ModContainer> loadedMods = modManager.getLoadedMods();
-        Engine.LOGGER.info("Engine has successfully loaded " + loadedMods.size() + " mods:");
-        for (ModContainer mod : modManager.getLoadedMods()) {
+        Engine.LOGGER.info("Engine has successfully loaded " + loadedMods.size() + " mods: ");
+        for (ModContainer mod : loadedMods) {
             this.eventBus.register(mod.getInstance());
-            Engine.LOGGER.debug("  Loaded: " + mod.getModId());
+            Engine.LOGGER.info("  Loaded: " + mod.getModId());
         }
 
     }
@@ -215,5 +224,29 @@ public class EngineClient implements Engine {
 
     public TextureManager getTextureManager() {
         return textureManager;
+    }
+
+    private void paintSystemInfo() {
+        Logger logger = Platform.getLogger();
+        logger.info("----- System Information -----");
+        logger.info("Operating system: " + OS_NAME + " (" + OS_ARCH + ") version " + OS_VERSION);
+        logger.info("Java version: " + JAVA_VERSION + ", " + JAVA_VENDOR);
+        logger.info("JVM info: " + JAVA_VM_NAME + " (" + JAVA_VM_INFO + "), " + JAVA_VM_VENDOR);
+        Runtime runtime = Runtime.getRuntime();
+        long totalMemory = runtime.totalMemory();
+        long maxMemory = runtime.maxMemory();
+        logger.info("Max memory: " + maxMemory + " bytes (" + maxMemory / 1024L / 1024L + " MB)");
+        logger.info("Total memory: " + totalMemory + " bytes (" + totalMemory / 1024L / 1024L + " MB)");
+        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        List<String> jvmFlags = runtimeMXBean.getInputArguments();
+        StringBuilder formattedFlags = new StringBuilder();
+        for (String flag : jvmFlags) {
+            if (formattedFlags.length() > 0) {
+                formattedFlags.append(' ');
+            }
+            formattedFlags.append(flag);
+        }
+        logger.info("JVM flags (" + jvmFlags.size() + " totals): " + formattedFlags.toString());
+        logger.info("------------------------------");
     }
 }
