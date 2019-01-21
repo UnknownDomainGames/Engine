@@ -115,6 +115,7 @@ public class GLHelper {
     public static String getFriendlyErrorEnum(int flag){
         var error = "";
         switch (flag){
+            case GL_NO_ERROR:                      error = "NO_ERROR"; break;
             case GL_INVALID_ENUM:                  error = "INVALID_ENUM"; break;
             case GL_INVALID_VALUE:                 error = "INVALID_VALUE"; break;
             case GL_INVALID_OPERATION:             error = "INVALID_OPERATION"; break;

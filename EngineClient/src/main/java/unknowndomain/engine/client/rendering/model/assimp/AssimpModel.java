@@ -6,14 +6,8 @@ import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIScene;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
-import unknowndomain.engine.Engine;
-import unknowndomain.engine.client.EngineClient;
-import unknowndomain.engine.client.UnknownDomain;
-import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.util.GLDataType;
-import unknowndomain.engine.client.rendering.util.GLHelper;
-import unknowndomain.engine.client.rendering.util.buffer.GLBufferElements;
-import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +45,10 @@ public class AssimpModel {
         materials = null;
     }
 
-    public void render(ShaderProgram program){
+    public void render(){
         //GLBufferFormats.POSITION_TEXTURE_NORMAL.bind();
         GL30.glBindVertexArray(vaoid);
-        program.setUniform("useDirectUV",false);
+        ShaderManager.INSTANCE.setUniform("useDirectUV",false);
         for (AssimpMesh mesh : meshes) {
             GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getVertexBufferId());
             GL30.glVertexAttribPointer(0,3, GLDataType.FLOAT.glId, false,0,0);
@@ -75,7 +69,7 @@ public class AssimpModel {
 
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             var mat = materials.get(mesh.getRawMesh().mMaterialIndex());
-            mat.getEngineMaterial().bind(program, "material");
+            mat.getEngineMaterial().bind(ShaderManager.INSTANCE.getUsingShader(), "material");
 //            if(mat.getDiffuseTexture() != null){
 //                mat.getDiffuseTexture().bind();
 //            }

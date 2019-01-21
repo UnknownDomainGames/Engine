@@ -34,8 +34,6 @@ public class GuiRenderer implements Renderer {
 
     private final ShaderProgram shader;
 
-    private final int u_ProjMatrix, u_ModelMatrix, u_WindowSize, u_ClipRect, u_RenderText, u_UsingTexture;
-
     private final TTFontHelper fontHelper;
     private final Graphics graphics;
 
@@ -46,19 +44,13 @@ public class GuiRenderer implements Renderer {
 
     public GuiRenderer(ByteBuffer defaultFontData, Shader vertexShader, Shader fragShader) {
         shader = ShaderManager.INSTANCE.createShader("gui_shader", vertexShader,fragShader);
-        u_ProjMatrix = shader.getUniformLocation("u_ProjMatrix");
-        u_ModelMatrix = shader.getUniformLocation("u_ModelMatrix");
-        u_WindowSize = shader.getUniformLocation("u_WindowSize");
-        u_ClipRect = shader.getUniformLocation("u_ClipRect");
-        u_RenderText = shader.getUniformLocation("u_RenderText");
-        u_UsingTexture = shader.getUniformLocation("u_UsingTexture");
 
         this.fontHelper = new TTFontHelper(() -> {
             glEnable(GL_TEXTURE_2D);
-            setUniform(u_RenderText, true);
+            ShaderManager.INSTANCE.setUniform("u_RenderText", true);
         }, () -> {
             glDisable(GL_TEXTURE_2D);
-            setUniform(u_RenderText, false);
+            ShaderManager.INSTANCE.setUniform("u_RenderText", false);
         });
         Font defaultFont = fontHelper.loadNativeFont(defaultFontData, 16).getFont();
         fontHelper.setDefaultFont(defaultFont);
@@ -106,7 +98,7 @@ public class GuiRenderer implements Renderer {
     }
 
     public void setClipRect(Vector4fc clipRect) {
-        setUniform(u_ClipRect, clipRect);
+        ShaderManager.INSTANCE.setUniform("u_ClipRect", clipRect);
     }
 
     private void startRender() {
@@ -128,10 +120,10 @@ public class GuiRenderer implements Renderer {
     private void resize() {
         if (context.getWindow().isResized()) {
             int width = context.getWindow().getWidth(), height = context.getWindow().getHeight();
-            setUniform(u_ProjMatrix, new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
-            setUniform(u_ModelMatrix, new Matrix4f());
-            setUniform(u_WindowSize, new Vector2f(width, height));
-            setUniform(u_ClipRect, new Vector4f(0, 0, width, height));
+            ShaderManager.INSTANCE.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
+            ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
+            ShaderManager.INSTANCE.setUniform("u_WindowSize", new Vector2f(width, height));
+            ShaderManager.INSTANCE.setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
         }
     }
 

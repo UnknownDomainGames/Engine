@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.rendering.world.chunk;
 
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.client.rendering.shader.Shader;
+import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.util.VertexBufferObject;
 import unknowndomain.engine.util.Disposable;
 import unknowndomain.engine.world.chunk.Chunk;
@@ -38,14 +38,14 @@ public class ChunkMesh implements Disposable {
         }
 
         chunkSolidVbo.bind();
-        Shader.pointVertexAttribute(0, 3, 36 + 12, 0);
-        Shader.enableVertexAttrib(0);
-        Shader.pointVertexAttribute(1, 4, 36 + 12, 12);
-        Shader.enableVertexAttrib(1);
-        Shader.pointVertexAttribute(2, 2, 36 + 12, 28);
-        Shader.enableVertexAttrib(2);
-        Shader.pointVertexAttribute(3, 3, 36 + 12, 28 + 8);
-        Shader.enableVertexAttrib(3);
+        ShaderProgram.pointVertexAttribute(0, 3, 36 + 12, 0);
+        ShaderProgram.enableVertexAttrib(0);
+        ShaderProgram.pointVertexAttribute(1, 4, 36 + 12, 12);
+        ShaderProgram.enableVertexAttrib(1);
+        ShaderProgram.pointVertexAttribute(2, 2, 36 + 12, 28);
+        ShaderProgram.enableVertexAttrib(2);
+        ShaderProgram.pointVertexAttribute(3, 3, 36 + 12, 28 + 8);
+        ShaderProgram.enableVertexAttrib(3);
         chunkSolidVbo.drawArrays(GL11.GL_TRIANGLES);
         chunkSolidVbo.unbind();
     }

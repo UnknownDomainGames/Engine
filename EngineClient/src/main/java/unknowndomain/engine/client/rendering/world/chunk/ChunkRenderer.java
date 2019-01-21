@@ -43,15 +43,10 @@ public class ChunkRenderer implements Renderer {
     private final ThreadPoolExecutor updateExecutor;
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
 
-    private final int u_ProjMatrix, u_ViewMatrix, u_ModelMatrix;
-
     private ClientContext context;
 
     public ChunkRenderer(Shader vertex, Shader frag) {
         chunkSolidShader = ShaderManager.INSTANCE.createShader("chunk_solid", vertex,frag);
-        u_ProjMatrix = chunkSolidShader.getUniformLocation("u_ProjMatrix");
-        u_ViewMatrix = chunkSolidShader.getUniformLocation("u_ViewMatrix");
-        u_ModelMatrix = chunkSolidShader.getUniformLocation("u_ModelMatrix");
 
         // TODO: Configurable
         int threadCount = Runtime.getRuntime().availableProcessors() / 2;
@@ -96,8 +91,8 @@ public class ChunkRenderer implements Renderer {
                 chunkMesh.render();
             }
         }
-        setUniform(u_ModelMatrix, new Matrix4f().setTranslation(0,5,0));
-//        tmp.render(chunkSolidShader);
+        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0,5,0));
+//        tmp.render();
 
         postRenderChunk();
     }
@@ -116,9 +111,9 @@ public class ChunkRenderer implements Renderer {
         Matrix4f projMatrix = context.getWindow().projection();
         Matrix4f viewMatrix = context.getCamera().view((float) context.partialTick());
         Matrix4f modelMatrix = new Matrix4f().setTranslation(0,0,0);
-        setUniform(u_ProjMatrix, projMatrix);
-        setUniform(u_ViewMatrix, viewMatrix);
-        setUniform(u_ModelMatrix, modelMatrix);
+        ShaderManager.INSTANCE.setUniform("u_ProjMatrix", projMatrix);
+        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", viewMatrix);
+        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", modelMatrix);
         chunkSolidShader.setUniform("u_viewPos", context.getCamera().getPosition(0));
 
         context.getTextureManager().getTextureAtlas(BLOCK).bind();

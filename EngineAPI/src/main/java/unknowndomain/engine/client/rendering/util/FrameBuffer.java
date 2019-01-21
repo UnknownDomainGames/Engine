@@ -61,7 +61,7 @@ public class FrameBuffer {
     public void bindDrawOnly(){
         bind(GL30.GL_DRAW_FRAMEBUFFER);
     }
-    private void bind(int target){
+    protected void bind(int target){
         GL30.glBindFramebuffer(target, getFboId());
     }
     public void unbind(){

@@ -7,11 +7,8 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.ClientContext;
-import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
-import unknowndomain.engine.client.rendering.model.assimp.AssimpHelper;
-import unknowndomain.engine.client.rendering.model.assimp.AssimpModel;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
@@ -21,7 +18,6 @@ import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
 import unknowndomain.engine.util.Color;
 
 import static org.lwjgl.opengl.GL11.*;
-import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 
 public class WorldRenderer implements Renderer {
 
@@ -38,20 +34,9 @@ public class WorldRenderer implements Renderer {
 
     private ClientContext context;
 
-    private int u_Projection;
-    private int u_View;
-    private int u_Model;
-    private int u_UsingColor;
-    private int u_UsingTexture;
-
     public WorldRenderer(Shader vertex, Shader frag, ChunkRenderer chunkRenderer) {
         this.chunkRenderer = chunkRenderer;
         worldShader = ShaderManager.INSTANCE.createShader("world_shader", vertex,frag);
-        u_Projection = worldShader.getUniformLocation("u_ProjMatrix");
-        u_View = worldShader.getUniformLocation("u_ViewMatrix");
-        u_Model = worldShader.getUniformLocation("u_ModelMatrix");
-        u_UsingColor = worldShader.getUniformLocation("u_UsingColor");
-        u_UsingTexture = worldShader.getUniformLocation("u_UsingTexture");
     }
 
     @Override
@@ -119,14 +104,14 @@ public class WorldRenderer implements Renderer {
         glEnable(GL11.GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        setUniform(u_Projection, context.getWindow().projection());
-        setUniform(u_View, context.getCamera().view((float) context.partialTick()));
-        setUniform(u_Model, new Matrix4f().setTranslation(0, 0, 0));
+        ShaderManager.INSTANCE.setUniform("u_ProjMatrix", context.getWindow().projection());
+        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().view((float) context.partialTick()));
+        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
-        setUniform(u_UsingColor, true);
-        setUniform(u_UsingTexture, false);
+        ShaderManager.INSTANCE.setUniform("u_UsingColor", true);
+        ShaderManager.INSTANCE.setUniform("u_UsingTexture", false);
         buffer.begin(GL11.GL_LINES, true, true, false);
         buffer.pos(0, 0, 0).color(1, 0, 0).endVertex();
         buffer.pos(100, 0, 0).color(1, 0, 0).endVertex();

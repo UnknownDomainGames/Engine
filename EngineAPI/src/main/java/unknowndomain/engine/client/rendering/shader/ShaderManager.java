@@ -90,24 +90,27 @@ public class ShaderManager {
         usingShader.setUniform(location, value);
     }
 
-    public void setUniform(String location, Vector2f value) {
+    public void setUniform(String location, Vector2fc value) {
         usingShader.setUniform(location, value);
     }
 
-    public void setUniform(String location, Vector3f value) {
+    public void setUniform(String location, Vector3fc value) {
         usingShader.setUniform(location, value);
     }
 
-    public void setUniform(String location, Vector4f value) {
+    public void setUniform(String location, Vector4fc value) {
         usingShader.setUniform(location, value);
     }
 
-    public void setUniform(String location, Matrix3f value) {
+    public void setUniform(String location, Matrix3fc value) {
         usingShader.setUniform(location, value);
     }
 
-    public void setUniform(String location, Matrix4f value) {
+    public void setUniform(String location, Matrix4fc value) {
         usingShader.setUniform(location, value);
     }
 
+    public ShaderProgram getUsingShader() {
+        return usingShader;
+    }
 }

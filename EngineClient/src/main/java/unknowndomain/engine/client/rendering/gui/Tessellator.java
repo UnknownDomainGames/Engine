@@ -39,20 +39,20 @@ public class Tessellator {
         vbo.bind();
 
         if (buffer.isPosEnabled()) {
-            Shader.pointVertexAttribute(0, 3, buffer.getOffset(), 0);
-            Shader.enableVertexAttrib(0);
+            ShaderProgram.pointVertexAttribute(0, 3, buffer.getOffset(), 0);
+            ShaderProgram.enableVertexAttrib(0);
         }
         if (buffer.isColorEnabled()) {
-            Shader.pointVertexAttribute(1, 4, buffer.getOffset(), 3 * Float.BYTES);
-            Shader.enableVertexAttrib(1);
+            ShaderProgram.pointVertexAttribute(1, 4, buffer.getOffset(), 3 * Float.BYTES);
+            ShaderProgram.enableVertexAttrib(1);
         }
         if (buffer.isTexEnabled()) {
-            Shader.pointVertexAttribute(2, 2, buffer.getOffset(), 7 * Float.BYTES);
-            Shader.enableVertexAttrib(2);
+            ShaderProgram.pointVertexAttribute(2, 2, buffer.getOffset(), 7 * Float.BYTES);
+            ShaderProgram.enableVertexAttrib(2);
         }
         if (buffer.isNormalEnabled()) {
-            Shader.pointVertexAttribute(3, 3, buffer.getOffset(), 9 * Float.BYTES);
-            Shader.enableVertexAttrib(3);
+            ShaderProgram.pointVertexAttribute(3, 3, buffer.getOffset(), 9 * Float.BYTES);
+            ShaderProgram.enableVertexAttrib(3);
         }
 
         vbo.drawArrays(buffer.getDrawMode());

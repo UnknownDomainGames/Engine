@@ -1,12 +1,82 @@
 package unknowndomain.engine.client.rendering.shader;
 
 import org.joml.*;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryStack;
 import unknowndomain.engine.util.Disposable;
+
+import java.nio.FloatBuffer;
 
 public class ShaderProgram implements Disposable {
 
     protected int programId = -1;
+
+    private static void setUniform(int location, int value) {
+        GL20.glUniform1i(location, value);
+    }
+
+    private static void setUniform(int location, float value) {
+        GL20.glUniform1f(location, value);
+    }
+
+    private static void setUniform(int location, boolean value) {
+        GL20.glUniform1i(location, value ? 1 : 0);
+    }
+
+    private static void setUniform(int location, Vector2fc value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(2);
+            value.get(buffer);
+            GL20.glUniform2fv(location, buffer);
+        }
+    }
+
+    private static void setUniform(int location, Vector3fc value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(3);
+            value.get(buffer);
+            GL20.glUniform3fv(location, buffer);
+        }
+    }
+
+    private static void setUniform(int location, Vector4fc value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(4);
+            value.get(buffer);
+            GL20.glUniform4fv(location, buffer);
+        }
+    }
+
+    private static void setUniform(int location, Matrix3fc value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(3 * 3);
+            value.get(buffer);
+            GL20.glUniformMatrix3fv(location, false, buffer);
+        }
+    }
+
+    private static void setUniform(int location, Matrix4fc value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(4 * 4);
+            value.get(buffer);
+            GL20.glUniformMatrix4fv(location, false, buffer);
+        }
+    }
+
+    @Deprecated
+    public static void enableVertexAttrib(int location) {
+        GL20.glEnableVertexAttribArray(location);
+    }
+
+    public static void disableVertexAttrib(int location) {
+        GL20.glDisableVertexAttribArray(location);
+    }
+
+    @Deprecated
+    public static void pointVertexAttribute(int location, int size, int stride, int offset) {
+        GL20.glVertexAttribPointer(location, size, GL11.GL_FLOAT, false, stride, offset);
+    }
 
     void init(Shader... shaders) {
         programId = GL20.glCreateProgram();
@@ -59,34 +129,34 @@ public class ShaderProgram implements Disposable {
     }
 
     public void setUniform(String location, int value) {
-        Shader.setUniform(getUniformLocation(location), value);
+        setUniform(getUniformLocation(location), value);
     }
 
     public void setUniform(String location, float value) {
-        Shader.setUniform(getUniformLocation(location), value);
+        setUniform(getUniformLocation(location), value);
     }
 
     public void setUniform(String location, boolean value) {
-        Shader.setUniform(getUniformLocation(location), value);
+        setUniform(getUniformLocation(location), value);
     }
 
-    public void setUniform(String location, Vector2f value) {
-        Shader.setUniform(getUniformLocation(location), value);
+    public void setUniform(String location, Vector2fc value) {
+        setUniform(getUniformLocation(location), value);
     }
 
-    public void setUniform(String location, Vector3f value) {
-        Shader.setUniform(getUniformLocation(location), value);
+    public void setUniform(String location, Vector3fc value) {
+        setUniform(getUniformLocation(location), value);
     }
 
-    public void setUniform(String location, Vector4f value) {
-        Shader.setUniform(getUniformLocation(location), value);
+    public void setUniform(String location, Vector4fc value) {
+        setUniform(getUniformLocation(location), value);
     }
 
-    public void setUniform(String location, Matrix3f value) {
-        Shader.setUniform(getUniformLocation(location), value);
+    public void setUniform(String location, Matrix3fc value) {
+        setUniform(getUniformLocation(location), value);
     }
 
-    public void setUniform(String location, Matrix4f value) {
-        Shader.setUniform(getUniformLocation(location), value);
+    public void setUniform(String location, Matrix4fc value) {
+        setUniform(getUniformLocation(location), value);
     }
 }
