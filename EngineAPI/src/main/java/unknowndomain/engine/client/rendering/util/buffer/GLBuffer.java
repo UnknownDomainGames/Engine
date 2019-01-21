@@ -2,6 +2,8 @@ package unknowndomain.engine.client.rendering.util.buffer;
 
 import org.joml.Vector3fc;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import unknowndomain.engine.util.BufferPool;
 import unknowndomain.engine.util.Color;
 import unknowndomain.engine.util.Math2;
 
@@ -51,6 +53,24 @@ public class GLBuffer {
         if (!isDrawing) {
             throw new IllegalStateException("Not yet drawn!");
         } else {
+            if (drawMode == GL11.GL_QUADS || drawMode == GL11.GL_QUAD_STRIP) {
+                if (vertexCount % 4 != 0)
+                    throw new IllegalArgumentException(String.format("Not enough vertexes! Expected: %d, Found: %d", (vertexCount / 4 + 1) * 4, vertexCount));
+                byte[] bytes = new byte[format.getStride() * 4];
+                ByteBuffer tempBuffer = BufferPool.getDefaultHeapBufferPool().get(backingBuffer.capacity());
+                backingBuffer.rewind();
+                tempBuffer.put(backingBuffer);
+                backingBuffer.clear();
+                tempBuffer.flip();
+                for (int i = 0; i < vertexCount / 4; i++) {
+                    tempBuffer.get(bytes, 0, format.getStride() * 4);
+                    backingBuffer.put(bytes, 0, format.getStride() * 3);
+                    backingBuffer.put(bytes, format.getStride() * 2, format.getStride() * 2);
+                    backingBuffer.put(bytes, 0, format.getStride());
+                }
+                vertexCount = vertexCount / 4 * 6;
+                drawMode = drawMode == GL11.GL_QUAD_STRIP ? GL11.GL_TRIANGLE_STRIP : GL11.GL_TRIANGLES;
+            }
             isDrawing = false;
             backingBuffer.position(0);
             backingBuffer.limit(vertexCount * format.getStride());
@@ -67,7 +87,7 @@ public class GLBuffer {
     public void grow(int needLength) {
         if (needLength > backingBuffer.remaining()) {
             int oldSize = this.backingBuffer.capacity();
-            int newSize = oldSize + Math2.roundUp(needLength, 0x200000);
+            int newSize = oldSize + Math2.ceil(needLength, 0x200000);
             int oldPosition = backingBuffer.position();
             ByteBuffer newBuffer = BufferUtils.createByteBuffer(newSize);
             this.backingBuffer.position(0);
@@ -88,13 +108,25 @@ public class GLBuffer {
         return backingBuffer;
     }
 
+    public GLBuffer put(byte[] bytes) {
+        int bits = bytes.length * Byte.BYTES;
+        if (bits % format.getStride() != 0) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < bytes.length; i++) {
+            backingBuffer.putInt(bytes[i]);
+        }
+        vertexCount += bits / format.getStride();
+        return this;
+    }
+
     public GLBuffer put(int[] ints) {
         int bits = ints.length * Integer.BYTES;
         if (bits % format.getStride() != 0) {
             throw new IllegalArgumentException();
         }
         for (int i = 0; i < ints.length; i++) {
-            backingBuffer.putFloat(ints[i]);
+            backingBuffer.putInt(ints[i]);
         }
         vertexCount += bits / format.getStride();
         return this;

@@ -70,7 +70,7 @@ public class EntityCameraController extends EntityController {
             Vector3f rotation = getPlayer().getControlledEntity().getRotation();
             rotation.y += pitch;
             rotation.y = Math.min(89.0f, Math.max(-89.0f, rotation.y));
-            rotation.x = Math2.roundUp(rotation.x + (float) yaw, 360);
+            rotation.x = Math2.loop(rotation.x + (float) yaw, 360);
             updateMotion();
         } else setupLast = true;
     }
