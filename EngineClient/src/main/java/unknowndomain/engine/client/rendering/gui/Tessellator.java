@@ -1,6 +1,6 @@
 package unknowndomain.engine.client.rendering.gui;
 
-import unknowndomain.engine.client.rendering.shader.Shader;
+import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.util.VertexBufferObject;
 

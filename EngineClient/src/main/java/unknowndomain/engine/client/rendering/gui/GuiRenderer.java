@@ -4,28 +4,35 @@ import org.joml.*;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.UnknownDomain;
+import unknowndomain.engine.client.game.ClientContextImpl;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.Scene;
-import unknowndomain.engine.client.gui.internal.FontHelper;
+import unknowndomain.engine.client.gui.component.Button;
+import unknowndomain.engine.client.gui.component.Image;
 import unknowndomain.engine.client.gui.internal.Internal;
+import unknowndomain.engine.client.gui.layout.HBox;
+import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
+import unknowndomain.engine.client.gui.text.Text;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.util.Color;
 
+import java.lang.Math;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import static org.lwjgl.opengl.GL11.*;
-import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 
 /**
  * render for any gui
@@ -73,7 +80,8 @@ public class GuiRenderer implements Renderer {
 //        image.imageHeight().set(200);
 //        vBox.getChildren().add(image);
 //        Scene debug = new Scene(vBox);
-//        hudScene.add(debug);
+//        ((ClientContextImpl)context).getGuiManager().showHud("test", debug);
+        //hudScene.add(debug);
     }
 
     @Override
@@ -81,12 +89,21 @@ public class GuiRenderer implements Renderer {
         startRender();
 
         // render scene
-        if (guiScene != null)
-            renderScene(guiScene);
-
-        for (Scene scene : hudScene) {
-            renderScene(scene);
+        if(context instanceof ClientContextImpl){ //TODO: stupid check
+            var ci = (ClientContextImpl) context;
+            for(Scene scene : ci.getGuiManager().getHuds().values()){
+                renderScene(scene);
+            }
+            if(ci.getGuiManager().getDisplayingScreen() != null){
+                renderScene(ci.getGuiManager().getDisplayingScreen());
+            }
         }
+//        if (guiScene != null)
+//            renderScene(guiScene);
+//
+//        for (Scene scene : hudScene) {
+//            renderScene(scene);
+//        }
 
         debug(context);
 

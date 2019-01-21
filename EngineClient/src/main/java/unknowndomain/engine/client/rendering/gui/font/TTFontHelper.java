@@ -83,6 +83,38 @@ public final class TTFontHelper implements FontHelper {
         return width * stbtt_ScaleForPixelHeight(info, font.getSize());
     }
 
+    public float computeTextHeight(CharSequence text, Font font){
+        var nativeTTFont = getNativeFont(font);
+        STBTTBakedChar.Buffer cdata = nativeTTFont.getCharBuffer();
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer charPointBuffer = stack.mallocInt(1);
+            FloatBuffer posX = stack.floats(0);
+            FloatBuffer posY = stack.floats(0 + font.getSize());
+
+            float factorX = 1.0f / nativeTTFont.getParent().getContentScaleX();
+            float factorY = 1.0f / nativeTTFont.getParent().getContentScaleY();
+
+            float centerY = 0 + font.getSize();
+
+            int bitmapSize = nativeTTFont.getBitmapSize();
+            STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
+            float maxY = (float)(nativeTTFont.getParent().getAscent() - nativeTTFont.getParent().getDescent()) * stbtt_ScaleForPixelHeight(nativeTTFont.getParent().getFontinfo(), font.getSize());
+            for (int i = 0; i < text.length(); ) {
+                i += getCodePoint(text, i, charPointBuffer);
+
+                int charPoint = charPointBuffer.get(0);
+
+                float centerX = posX.get(0);
+                stbtt_GetBakedQuad(cdata, bitmapSize, bitmapSize, charPoint, posX, posY, stbQuad, true);
+                float diff = /*Math.abs(stbQuad.y0() - stbQuad.y1())*/ stbQuad.y1();
+                if(maxY < diff){
+                    maxY = diff;
+                }
+            }
+            return maxY;
+        }
+    }
+
     public NativeTTFont getNativeFont(Font font) {
         return loadedFont.get(font);
     }

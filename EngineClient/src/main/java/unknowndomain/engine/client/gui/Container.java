@@ -6,6 +6,7 @@ import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import com.github.mouse0w0.lib4j.observable.value.ValueChangeListener;
 import unknowndomain.engine.client.gui.util.Utils;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -129,5 +130,20 @@ public abstract class Container extends Component {
         component.y().set(y);
         component.width.set(width);
         component.height.set(height);
+    }
+
+    public List<Component> getPointingComponents(float posX, float posY){
+        var list = new ArrayList<Component>();
+        for (Component component : getChildren()) {
+            if(component instanceof Container){
+                var container = (Container)component;
+                list.addAll(container.getPointingComponents(posX - container.x().get(),posY - container.y().get()));
+            }
+            else{
+                if(component.isPosInArea(posX,posY))
+                    list.add(component);
+            }
+        }
+        return list;
     }
 }

@@ -3,7 +3,9 @@ package unknowndomain.engine.client.gui;
 import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
 import com.github.mouse0w0.lib4j.observable.collection.ObservableMap;
 import com.github.mouse0w0.lib4j.observable.value.*;
+import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
+import unknowndomain.engine.event.Event;
 
 import java.util.HashMap;
 
@@ -17,12 +19,12 @@ public abstract class Component {
     final MutableFloatValue width = new SimpleMutableFloatValue();
     final MutableFloatValue height = new SimpleMutableFloatValue();
 
-    private final MutableBooleanValue visible = new SimpleMutableBooleanValue(true);
-    private final MutableBooleanValue disabled = new SimpleMutableBooleanValue(false);
+    protected final MutableBooleanValue visible = new SimpleMutableBooleanValue(true);
+    protected final MutableBooleanValue disabled = new SimpleMutableBooleanValue(false);
 
-    final MutableBooleanValue focused = new SimpleMutableBooleanValue(false);
-    final MutableBooleanValue hover = new SimpleMutableBooleanValue(false);
-    final MutableBooleanValue pressed = new SimpleMutableBooleanValue(false);
+    protected final MutableBooleanValue focused = new SimpleMutableBooleanValue(false);
+    protected final MutableBooleanValue hover = new SimpleMutableBooleanValue(false);
+    protected final MutableBooleanValue pressed = new SimpleMutableBooleanValue(false);
 
     private ComponentRenderer renderer;
 
@@ -116,6 +118,40 @@ public abstract class Component {
 
     public boolean hasProperties() {
         return properties != null && !properties.isEmpty();
+    }
+
+    public boolean isPosInArea(float posX, float posY){
+        return (x().get() <= posX) &&
+                (posX <= x().get() + width().get()) &&
+                (y().get() <= posY) &&
+                (posY <= y().get() + height().get());
+    }
+
+    public void handleEvent(Event event){
+        if(!disabled.get()) {
+            if (event instanceof MouseEvent.MouseEnterEvent) {
+                hover.set(true);
+            }
+            if (event instanceof MouseEvent.MouseLeaveEvent) {
+                hover.set(false);
+                pressed.set(false);
+            }
+            if (event instanceof MouseEvent.MouseClickEvent) {
+                pressed.set(true);
+                onClick((MouseEvent.MouseClickEvent)event);
+            }
+            if (event instanceof MouseEvent.MouseReleasedEvent) {
+                pressed.set(false);
+                onRelease((MouseEvent.MouseReleasedEvent)event);
+            }
+        }
+    }
+
+    private void onRelease(MouseEvent.MouseReleasedEvent event) {
+
+    }
+
+    public void onClick(MouseEvent.MouseClickEvent event) {
     }
 
 }

@@ -17,6 +17,15 @@ public class VBox extends Pane {
     }
 
     @Override
+    public float prefWidth() {
+        float width = 0;
+        for (Component component : getChildren()) {
+            width = Math.max(width, component.prefWidth());
+        }
+        return width;
+    }
+
+    @Override
     public float prefHeight() {
         float y = 0, spacing = spacing().get();
         for (Component component : getChildren()) {

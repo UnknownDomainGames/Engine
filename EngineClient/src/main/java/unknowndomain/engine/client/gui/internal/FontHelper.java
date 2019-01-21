@@ -12,4 +12,6 @@ public interface FontHelper {
     Font loadFont(InputStream in, float size) throws IOException;
 
     float computeTextWidth(CharSequence text, Font font);
+
+    float computeTextHeight(CharSequence text, Font font);
 }

@@ -22,6 +22,15 @@ public class HBox extends Pane {
     }
 
     @Override
+    public float prefHeight() {
+        float height = 0;
+        for (Component component : getChildren()) {
+            height = Math.max(height, component.prefHeight());
+        }
+        return height;
+    }
+
+    @Override
     protected void layoutChildren() {
         float x = 0, spacing = spacing().get();
         for (Component component : getChildren()) {

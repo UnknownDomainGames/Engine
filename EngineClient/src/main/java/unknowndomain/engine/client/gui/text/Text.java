@@ -43,7 +43,8 @@ public class Text extends Component {
 
     @Override
     public float prefHeight() {
-        return font().getValue().getSize();
+//        return font().getValue().getSize();
+        return Internal.getContext().getFontHelper().computeTextHeight(text().getValue(), font().getValue());
     }
 
     @Override

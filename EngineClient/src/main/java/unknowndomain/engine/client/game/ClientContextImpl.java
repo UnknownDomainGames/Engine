@@ -5,6 +5,7 @@ import org.joml.Matrix4f;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.block.ClientBlock;
+import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
@@ -28,6 +29,7 @@ public class ClientContextImpl implements ClientContext {
     private final List<Renderer.Factory> factories;
     private final List<Renderer> renderers = new ArrayList<>();
     private final GameWindow window;
+    private final GuiManager guiManager;
 
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
     private final Player player;
@@ -42,6 +44,7 @@ public class ClientContextImpl implements ClientContext {
         this.factories = factories;
         this.window = window;
         this.player = player;
+        this.guiManager = new GuiManager(this);
     }
 
     @Override
@@ -150,5 +153,9 @@ public class ClientContextImpl implements ClientContext {
     @Override
     public World getClientWorld() {
         return game.getWorld();
+    }
+
+    public GuiManager getGuiManager() {
+        return guiManager;
     }
 }
