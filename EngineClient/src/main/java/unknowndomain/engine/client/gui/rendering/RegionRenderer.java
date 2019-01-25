@@ -10,6 +10,7 @@ public class RegionRenderer implements ComponentRenderer {
     @Override
     public void render(Component component, Graphics graphics) {
         Region region = (Region) component;
+        region.background().getValue().render(component,graphics);
         for (Component child : region.getUnmodifiableChildren()) {
             if (!child.visible().get()) {
                 continue;
