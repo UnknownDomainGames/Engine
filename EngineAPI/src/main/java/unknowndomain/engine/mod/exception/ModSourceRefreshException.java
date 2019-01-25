@@ -1,4 +1,4 @@
-package unknowndomain.engine.mod;
+package unknowndomain.engine.mod.exception;
 
 public class ModSourceRefreshException extends RuntimeException {
     public ModSourceRefreshException() {

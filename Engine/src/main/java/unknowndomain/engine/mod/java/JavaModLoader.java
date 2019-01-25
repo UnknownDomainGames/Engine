@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.mod.*;
-import unknowndomain.engine.mod.java.JavaModContainer;
+import unknowndomain.engine.mod.exception.ModLoadException;
 import unknowndomain.engine.mod.java.harvester.HarvestedAnnotation;
 import unknowndomain.engine.mod.java.harvester.HarvestedInfo;
 
@@ -42,7 +42,7 @@ public class JavaModLoader implements ModLoader {
                 return null;
             }
 
-            ModMetadata metadata = ModMetadata.fromJsonStream(jarFile.getInputStream(entry));
+            ModMetadata metadata = JsonModMetadataSerializer.fromJsonStream(jarFile.getInputStream(entry));
 
             Logger log = LoggerFactory.getLogger(metadata.getId());
             ModClassLoader classLoader = new ModClassLoader(log, source,

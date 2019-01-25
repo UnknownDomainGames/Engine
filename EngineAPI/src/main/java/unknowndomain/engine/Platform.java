@@ -34,4 +34,8 @@ public class Platform {
     public static Logger getLogger() {
         return Engine.getLogger();
     }
+
+    public static String getVersion() {
+        return "0.0.1";
+    }
 }

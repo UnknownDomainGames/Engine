@@ -1,5 +1,6 @@
 package unknowndomain.engine.mod;
 
+import unknowndomain.engine.mod.exception.ModDependencyException;
 import unknowndomain.engine.util.versioning.InvalidVersionSpecificationException;
 import unknowndomain.engine.util.versioning.VersionRange;
 

@@ -21,8 +21,8 @@ public interface ModRepository {
         private String sha256;
         private long size;
 
-        protected RemoteModMetadata(String group, String id, ComparableVersion version, String name, String description, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, Object> properties, String sha256, long size) {
-            super(group, id, version, name, description, url, authors, logoFile, dependencies, properties);
+        protected RemoteModMetadata(String id, ComparableVersion version, String mainClass, String name, String description, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, String> properties, String sha256, long size) {
+            super(id, version, mainClass, name, description, url, authors, logoFile, dependencies, properties);
             this.sha256 = sha256;
             this.size = size;
         }
@@ -52,7 +52,7 @@ public interface ModRepository {
 
             @Override
             public RemoteModMetadata build() {
-                return new RemoteModMetadata(group, id, version, name, description, url, authors, logo, dependency, properties, sha256, size);
+                return new RemoteModMetadata(id, version, mainClass, name, description, url, authors, logo, dependency, properties, sha256, size);
             }
         }
     }
