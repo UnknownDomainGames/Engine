@@ -211,6 +211,15 @@ public class BufferBuilder {
         return this;
     }
 
+    public BufferBuilder put(byte[] bytes) {
+        if (bytes.length % 48 != 0) {
+            throw new IllegalArgumentException();
+        }
+        backingBuffer.put(bytes);
+        vertexCount += bytes.length / 48;
+        return this;
+    }
+
     public BufferBuilder put(int[] ints) {
         if (ints.length % 12 != 0) {
             throw new IllegalArgumentException();

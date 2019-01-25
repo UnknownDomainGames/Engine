@@ -11,9 +11,9 @@ import java.util.List;
 
 public class BakedBlockModel implements BlockMeshGenerator {
 
-    private final List<int[]> meshes;
+    private final List<float[]> meshes;
 
-    public BakedBlockModel(List<int[]> meshes) {
+    public BakedBlockModel(List<float[]> meshes) {
         if (meshes.size() != 7) {
             throw new IllegalArgumentException();
         }
@@ -38,7 +38,7 @@ public class BakedBlockModel implements BlockMeshGenerator {
 
     @Override
     public void generate(ClientBlock block, BufferBuilder buffer) {
-        for (int[] mesh : meshes) {
+        for (float[] mesh : meshes) {
             buffer.put(mesh);
         }
     }

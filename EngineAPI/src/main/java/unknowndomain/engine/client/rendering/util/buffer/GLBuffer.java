@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.rendering.util.buffer;
 
 import org.joml.Vector3fc;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.util.BufferPool;
 import unknowndomain.engine.util.Color;
@@ -9,24 +8,41 @@ import unknowndomain.engine.util.Math2;
 
 import java.nio.ByteBuffer;
 
-public class GLBuffer {
+public abstract class GLBuffer {
 
     private ByteBuffer backingBuffer;
-
-    public GLBuffer(int size) {
-        backingBuffer = BufferUtils.createByteBuffer(size);
-    }
 
     private float posOffsetX;
     private float posOffsetY;
     private float posOffsetZ;
 
-    private boolean isDrawing;
+    private boolean drawing;
     private int drawMode;
     private GLBufferFormat format;
 
+    private int elementIndex = -1;
+    private int nextByteOffset = -1;
+
+    private int vertexCount;
+
+    public GLBuffer() {
+        this(256);
+    }
+
+    public GLBuffer(int size) {
+        backingBuffer = createBuffer(size);
+    }
+
+    protected abstract ByteBuffer createBuffer(int capacity);
+
+    protected abstract void freeBuffer(ByteBuffer buffer);
+
+    public ByteBuffer getBackingBuffer() {
+        return backingBuffer;
+    }
+
     public boolean isDrawing() {
-        return isDrawing;
+        return drawing;
     }
 
     public int getDrawMode() {
@@ -37,11 +53,15 @@ public class GLBuffer {
         return format;
     }
 
+    public int getVertexCount() {
+        return vertexCount;
+    }
+
     public void begin(int mode, GLBufferFormat format) {
-        if (isDrawing) {
+        if (drawing) {
             throw new IllegalStateException("Already drawing!");
         } else {
-            isDrawing = true;
+            drawing = true;
             reset();
             drawMode = mode;
             this.format = format;
@@ -50,7 +70,7 @@ public class GLBuffer {
     }
 
     public void finish() {
-        if (!isDrawing) {
+        if (!drawing) {
             throw new IllegalStateException("Not yet drawn!");
         } else {
             if (drawMode == GL11.GL_QUADS || drawMode == GL11.GL_QUAD_STRIP) {
@@ -71,7 +91,7 @@ public class GLBuffer {
                 vertexCount = vertexCount / 4 * 6;
                 drawMode = drawMode == GL11.GL_QUAD_STRIP ? GL11.GL_TRIANGLE_STRIP : GL11.GL_TRIANGLES;
             }
-            isDrawing = false;
+            drawing = false;
             backingBuffer.position(0);
             backingBuffer.limit(vertexCount * format.getStride());
         }
@@ -82,6 +102,7 @@ public class GLBuffer {
         format = null;
         vertexCount = 0;
         posOffset(0, 0, 0);
+        backingBuffer.clear();
     }
 
     public void grow(int needLength) {
@@ -89,38 +110,52 @@ public class GLBuffer {
             int oldSize = this.backingBuffer.capacity();
             int newSize = oldSize + Math2.ceil(needLength, 0x200000);
             int oldPosition = backingBuffer.position();
-            ByteBuffer newBuffer = BufferUtils.createByteBuffer(newSize);
+            ByteBuffer newBuffer = createBuffer(newSize);
             this.backingBuffer.position(0);
             newBuffer.put(this.backingBuffer);
             newBuffer.rewind();
+            freeBuffer(backingBuffer);
             this.backingBuffer = newBuffer;
             newBuffer.position(oldPosition);
         }
     }
 
-    private int vertexCount;
-
-    public int getVertexCount() {
-        return vertexCount;
+    public void endVertex() {
+        vertexCount++;
+        grow(format.getStride());
     }
 
-    public ByteBuffer getBackingBuffer() {
-        return backingBuffer;
+    public GLBuffer put(byte value) {
+        backingBuffer.put(value);
+        return this;
     }
 
-    public GLBuffer put(byte[] bytes) {
+    public GLBuffer put(int value) {
+        backingBuffer.putInt(value);
+        return this;
+    }
+
+    public GLBuffer put(float value) {
+        backingBuffer.putFloat(value);
+        return this;
+    }
+
+    public GLBuffer put(double value) {
+        backingBuffer.putDouble(value);
+        return this;
+    }
+
+    public GLBuffer put(byte... bytes) {
         int bits = bytes.length * Byte.BYTES;
         if (bits % format.getStride() != 0) {
             throw new IllegalArgumentException();
         }
-        for (int i = 0; i < bytes.length; i++) {
-            backingBuffer.putInt(bytes[i]);
-        }
+        backingBuffer.put(bytes);
         vertexCount += bits / format.getStride();
         return this;
     }
 
-    public GLBuffer put(int[] ints) {
+    public GLBuffer put(int... ints) {
         int bits = ints.length * Integer.BYTES;
         if (bits % format.getStride() != 0) {
             throw new IllegalArgumentException();
@@ -132,7 +167,7 @@ public class GLBuffer {
         return this;
     }
 
-    public GLBuffer put(float[] floats) {
+    public GLBuffer put(float... floats) {
         int bits = floats.length * Float.BYTES;
         if (bits % format.getStride() != 0) {
             throw new IllegalArgumentException();
@@ -144,19 +179,19 @@ public class GLBuffer {
         return this;
     }
 
+    public GLBuffer posOffset(float x, float y, float z) {
+        posOffsetX = x;
+        posOffsetY = y;
+        posOffsetZ = z;
+        return this;
+    }
+
     public GLBuffer pos(float x, float y, float z) {
         if (format.isUsingPosition()) {
             backingBuffer.putFloat(x + posOffsetX);
             backingBuffer.putFloat(y + posOffsetY);
             backingBuffer.putFloat(z + posOffsetZ);
         }
-        return this;
-    }
-
-    public GLBuffer posOffset(float x, float y, float z) {
-        posOffsetX = x;
-        posOffsetY = y;
-        posOffsetZ = z;
         return this;
     }
 
@@ -207,10 +242,5 @@ public class GLBuffer {
             backingBuffer.putFloat(nz);
         }
         return this;
-    }
-
-    public void endVertex() {
-        ++vertexCount;
-        grow(format.getStride());
     }
 }

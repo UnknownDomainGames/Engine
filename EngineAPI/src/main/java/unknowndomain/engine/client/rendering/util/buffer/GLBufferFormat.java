@@ -13,40 +13,41 @@ public class GLBufferFormat {
     private final GLBufferElement[] elements;
     private final int stride;
 
-    private final boolean usingPosition;
-    private final boolean usingColor;
-    private final boolean usingTextureUV;
-    private final boolean usingNormal;
+    private final int positionElement;
+    private final int colorElement;
+    private final int uvElement;
+    private final int normalElement;
 
     public GLBufferFormat(GLBufferElement[] elements) {
         this.elements = elements;
         int stride = 0;
-        boolean usingPosition = false;
-        boolean usingColor = false;
-        boolean usingTextureUV = false;
-        boolean usingNormal = false;
-        for (GLBufferElement element : elements) {
+        int positionElement = -1;
+        int colorElement = -1;
+        int uvElement = -1;
+        int normalElement = -1;
+        for (int i = 0; i < elements.length; i++) {
+            GLBufferElement element = elements[i];
             stride += element.getBytes();
             switch (element.getUsage()) {
                 case POSITION:
-                    usingPosition = true;
+                    positionElement = i;
                     break;
                 case COLOR:
-                    usingColor = true;
+                    colorElement = i;
                     break;
                 case TEXTURE_UV:
-                    usingTextureUV = true;
+                    uvElement = i;
                     break;
                 case NORMAL:
-                    usingNormal = true;
+                    normalElement = i;
                     break;
             }
         }
         this.stride = stride;
-        this.usingPosition = usingPosition;
-        this.usingColor = usingColor;
-        this.usingTextureUV = usingTextureUV;
-        this.usingNormal = usingNormal;
+        this.positionElement = positionElement;
+        this.colorElement = colorElement;
+        this.uvElement = uvElement;
+        this.normalElement = normalElement;
     }
 
     public GLBufferElement[] getElements() {
@@ -58,19 +59,19 @@ public class GLBufferFormat {
     }
 
     public boolean isUsingPosition() {
-        return usingPosition;
+        return positionElement != -1;
     }
 
     public boolean isUsingColor() {
-        return usingColor;
+        return colorElement != -1;
     }
 
     public boolean isUsingTextureUV() {
-        return usingTextureUV;
+        return uvElement != -1;
     }
 
     public boolean isUsingNormal() {
-        return usingNormal;
+        return normalElement != -1;
     }
 
     public void bind() {
