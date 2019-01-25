@@ -135,7 +135,7 @@ public class GameClientStandalone extends GameServerFullAsync {
         Random random = new Random();
         for (int x = -16; x < 16; x++) {
             for (int z = -16; z < 16; z++) {
-                for (int top = random.nextInt(3) + 3, y = top; y >= 0; y--) {
+                for (int top = 3, y = top; y >= 0; y--) {
                     world.setBlock(BlockPos.of(x, y, z), y == top ? Blocks.GRASS : Blocks.DIRT, null);
                 }
             }

@@ -50,8 +50,8 @@ public class EngineClient implements Engine {
     private GLFWGameWindow window;
 
     private EventBus eventBus;
-    private ModStore modStore;
-    private ModRepositoryCollection modRepository;
+//    private ModStore modStore;
+//    private ModRepositoryCollection modRepository;
 
     private ModManager modManager;
     private RegistryManager registryManager;
@@ -78,9 +78,13 @@ public class EngineClient implements Engine {
         eventBus = new AsmEventBus();
         // TODO: Move it
         eventBus.register(new DefaultGameMode());
-        modStore = new ModStoreLocal(Paths.get("mods"));
-        modRepository = new ModRepositoryCollection();
+
         playerProfile = new Profile(UUID.randomUUID(), 12);
+
+        // Load mod
+//        modStore = new ModStoreLocal(Paths.get("mods"));
+//        modRepository = new ModRepositoryCollection();
+
 
         // Construction Stage
         log.info("Constructing Mods!");
@@ -131,7 +135,7 @@ public class EngineClient implements Engine {
         idToMapBuilder.put(engine.getModId(), engine);
         typeToMapBuilder.put(engine.getInstance().getClass(), engine);
 
-        ModLoaderWrapper loader = new ModLoaderWrapper().add(new JavaModLoader(modStore));
+//        ModLoaderWrapper loader = new ModLoaderWrapper().add(new JavaModLoader(modStore));
 
         List<ModMetadata> mods = Collections.emptyList();// TODO: Scan mods
         Map<ModMetadata, ModDependencyEntry[]> map = mods.stream().map(m -> Pair.of(m, m.getDependencies().stream().toArray(ModDependencyEntry[]::new)))
@@ -144,27 +148,27 @@ public class EngineClient implements Engine {
             return 0;
         });
 
-        for (ModMetadata mod : mods) {
-            try {
-                if (!modStore.exists(mod)) {
-                    if (!modRepository.contains(mod)) {
-                        Engine.getLogger().warn("Cannot find mod " + mod + " from local or other sources! Skip to load!");
-                        continue;
-                    }
-                    modStore.store(mod, modRepository.open(mod));
-                }
-                ModContainer load = loader.load(mod);
-                if (load == null) {
-                    Engine.getLogger().warn("Some exceptions happened during loading mod {0} from local! Skip to load!", mod);
-                    continue;
-                }
-                idToMapBuilder.put(mod.getId(), load);
-                typeToMapBuilder.put(load.getInstance().getClass(), load);
-            } catch (Exception e) {
-                Engine.getLogger().warn("Fain to load mod " + mod.getId());
-                e.printStackTrace();
-            }
-        }
+//        for (ModMetadata mod : mods) {
+//            try {
+//                if (!modStore.exists(mod)) {
+//                    if (!modRepository.contains(mod)) {
+//                        Engine.getLogger().warn("Cannot find mod " + mod + " from local or other sources! Skip to load!");
+//                        continue;
+//                    }
+//                    modStore.store(mod, modRepository.open(mod));
+//                }
+//                ModContainer load = loader.load(mod);
+//                if (load == null) {
+//                    Engine.getLogger().warn("Some exceptions happened during loading mod {0} from local! Skip to load!", mod);
+//                    continue;
+//                }
+//                idToMapBuilder.put(mod.getId(), load);
+//                typeToMapBuilder.put(load.getInstance().getClass(), load);
+//            } catch (Exception e) {
+//                Engine.getLogger().warn("Fain to load mod " + mod.getId());
+//                e.printStackTrace();
+//            }
+//        }
         // ImmutableMap<String, ModContainer> loadedMods = ;
         modManager = new SimpleModManager(idToMapBuilder.build(), typeToMapBuilder.build());
         Collection<ModContainer> loadedMods = modManager.getLoadedMods();

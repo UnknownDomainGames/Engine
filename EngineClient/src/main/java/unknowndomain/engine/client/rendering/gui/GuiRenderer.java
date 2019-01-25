@@ -75,7 +75,7 @@ public class GuiRenderer implements Renderer {
 //        vBox.spacing().set(5);
 //        vBox.getChildren().add(new Text("Hello GUI!"));
 //        vBox.getChildren().add(new Text("Bye GUI!"));
-//        Image image = new Image(new ResourcePath("texture", "/assets/unknowndomain/textures/block/side.png"));
+//        Image image = new Image(new ResourcePath("texture", "/assets/unknowndomain/textures/block/grass_side.png"));
 //        image.imageWidth().set(200);
 //        image.imageHeight().set(200);
 //        vBox.getChildren().add(image);

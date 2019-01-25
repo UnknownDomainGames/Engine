@@ -15,9 +15,7 @@ import unknowndomain.engine.client.rendering.light.PointLight;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
-import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
-import unknowndomain.engine.client.rendering.util.GLHelper;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
@@ -30,7 +28,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.lwjgl.opengl.GL11.*;
-import static unknowndomain.engine.client.rendering.shader.Shader.setUniform;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 import static unknowndomain.engine.world.chunk.ChunkConstants.*;
 
