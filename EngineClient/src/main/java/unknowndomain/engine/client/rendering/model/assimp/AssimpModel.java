@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.rendering.model.assimp;
 
+import org.joml.Matrix4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.AIMaterial;
 import org.lwjgl.assimp.AIMesh;
@@ -35,6 +36,13 @@ public class AssimpModel {
         for (int i = 0; i < materialCount; i++) {
             materials.add(new AssimpMaterial(AIMaterial.create(materialBuf.get(i)), parentDir));
         }
+        var root = scene.mRootNode();
+        var transforMatrix = new Matrix4f();
+        root.mTransformation(aiMatrix4x4 -> transforMatrix.m00(aiMatrix4x4.a1()).m01(aiMatrix4x4.a2()).m02(aiMatrix4x4.a3()).m03(aiMatrix4x4.a4())
+                .m10(aiMatrix4x4.b1()).m11(aiMatrix4x4.b2()).m12(aiMatrix4x4.b3()).m13(aiMatrix4x4.b4())
+                .m20(aiMatrix4x4.c1()).m21(aiMatrix4x4.c2()).m22(aiMatrix4x4.c3()).m23(aiMatrix4x4.c4())
+                .m30(aiMatrix4x4.d1()).m31(aiMatrix4x4.d2()).m32(aiMatrix4x4.d3()).m33(aiMatrix4x4.d4()));
+
         vaoid = GL30.glGenVertexArrays();
     }
 

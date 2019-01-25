@@ -1,7 +1,10 @@
 package unknowndomain.engine.client.gui;
 
+import com.github.mouse0w0.lib4j.observable.value.MutableValue;
+import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.rendering.RegionRenderer;
+import unknowndomain.engine.client.gui.util.Background;
 import unknowndomain.engine.client.gui.util.Size;
 
 public class Region extends Container {
@@ -11,6 +14,8 @@ public class Region extends Container {
     public final Size getSize() {
         return size;
     }
+
+    private final MutableValue<Background> background = new SimpleMutableObjectValue<>(Background.NOTHING);
 
     @Override
     public float minWidth() {
@@ -40,6 +45,10 @@ public class Region extends Container {
     @Override
     public float maxHeight() {
         return getSize().maxHeight().get();
+    }
+
+    public MutableValue<Background> background() {
+        return background;
     }
 
     @Override

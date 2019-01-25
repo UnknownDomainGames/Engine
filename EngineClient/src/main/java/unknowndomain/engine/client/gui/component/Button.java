@@ -9,6 +9,8 @@ import unknowndomain.engine.client.gui.rendering.ButtonRenderer;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.gui.text.Text;
+import unknowndomain.engine.client.gui.text.TextAlignment;
+import unknowndomain.engine.client.gui.util.Background;
 import unknowndomain.engine.util.Color;
 
 import java.util.function.Consumer;
@@ -18,6 +20,7 @@ public class Button extends Component {
     private final MutableValue<String> text = new SimpleMutableObjectValue<>();
     private final MutableValue<Font> font = new SimpleMutableObjectValue<>(Font.getDefaultFont());
     private final MutableValue<Color> textColor = new SimpleMutableObjectValue<>(Color.WHITE);
+    private final MutableValue<TextAlignment> textAlignment = new SimpleMutableObjectValue<>(TextAlignment.CENTER);
 
     private final MutableFloatValue buttonWidth = new SimpleMutableFloatValue();
     private final MutableFloatValue buttonHeight = new SimpleMutableFloatValue();
@@ -25,10 +28,10 @@ public class Button extends Component {
     private final MutableValue<Vector4fc> padding = new SimpleMutableObjectValue<>(new Vector4f(5,5,5,5));
 
     //TODO: support image
-    private final MutableValue<Color> background = new SimpleMutableObjectValue<>(Color.BLACK);
-    private final MutableValue<Color> hoveredBg = new SimpleMutableObjectValue<>(Color.BLUE);
-    private final MutableValue<Color> pressedBg = new SimpleMutableObjectValue<>(Color.fromRGB(0x507fff));
-    private final MutableValue<Color> disableBg = new SimpleMutableObjectValue<>(Color.fromRGB(0x7f7f7f));
+    private final MutableValue<Background> background = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLACK));
+    private final MutableValue<Background> hoveredBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLUE));
+    private final MutableValue<Background> pressedBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.fromRGB(0x507fff)));
+    private final MutableValue<Background> disableBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.fromRGB(0x7f7f7f)));
 
     private Text cachedText;
 
@@ -45,11 +48,21 @@ public class Button extends Component {
             rebuildText();
             requestParentLayout();
         });
-        buttonWidth.addChangeListener((ob,o,n)->requestParentLayout());
-        buttonHeight.addChangeListener((ob,o,n)->requestParentLayout());
-        pressed.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
-        disabled.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
-        hover.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
+        textAlignment.addChangeListener((observable, oldValue, newValue) -> {
+            rebuildText();
+            requestParentLayout();
+        });
+        buttonWidth.addChangeListener((ob,o,n)-> {
+            rebuildText();
+            requestParentLayout();
+        });
+        buttonHeight.addChangeListener((ob,o,n)-> {
+            rebuildText();
+            requestParentLayout();
+        });
+//        pressed.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
+//        disabled.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
+//        hover.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
     }
 
     public Button(String text){
@@ -64,6 +77,23 @@ public class Button extends Component {
         cachedText.text().setValue(text.getValue());
         cachedText.font().setValue(font.getValue());
         cachedText.color().setValue(textColor.getValue());
+        cachedText.textAlignment().setValue(textAlignment.getValue());
+        cachedText.x().set(padding().getValue().x());
+        cachedText.y().set(padding().getValue().y());
+        try {
+            var widthf = Component.class.getDeclaredField("width");
+            widthf.setAccessible(true);
+            var w = (SimpleMutableFloatValue)widthf.get(cachedText);
+            w.set(this.prefWidth() - padding().getValue().x() - padding().getValue().z());
+            widthf.set(cachedText, w);
+            var heightf = Component.class.getDeclaredField("height");
+            heightf.setAccessible(true);
+            var h = (SimpleMutableFloatValue)heightf.get(cachedText);
+            h.set(this.prefHeight() - padding().getValue().y() - padding().getValue().w());
+            heightf.set(cachedText, h);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -93,19 +123,23 @@ public class Button extends Component {
         return font;
     }
 
-    public MutableValue<Color> background() {
+    public MutableValue<TextAlignment> textAlignment() {
+        return textAlignment;
+    }
+
+    public MutableValue<Background> background() {
         return background;
     }
 
-    public MutableValue<Color> hoverbackground() {
+    public MutableValue<Background> hoverbackground() {
         return hoveredBg;
     }
 
-    public MutableValue<Color> pressbackground() {
+    public MutableValue<Background> pressbackground() {
         return pressedBg;
     }
 
-    public MutableValue<Color> disabledbackground() {
+    public MutableValue<Background> disabledbackground() {
         return disableBg;
     }
 

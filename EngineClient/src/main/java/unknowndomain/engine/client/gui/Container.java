@@ -140,7 +140,7 @@ public abstract class Container extends Component {
                 list.addAll(container.getPointingComponents(posX - container.x().get(),posY - container.y().get()));
             }
             else{
-                if(component.isPosInArea(posX,posY))
+                if(component.contains(posX,posY))
                     list.add(component);
             }
         }

@@ -12,17 +12,19 @@ public class ButtonRenderer implements ComponentRenderer {
         if(component instanceof Button){
             Button button = (Button)component;
             if(button.disabled().get()){
-                graphics.setColor(button.disabledbackground().getValue());
+                button.disabledbackground().getValue().render(component, graphics);
             }
             else if(button.pressed().get()){
-                graphics.setColor(button.pressbackground().getValue());
+                button.pressbackground().getValue().render(component, graphics);
             }else if(button.hover().get()){
-                graphics.setColor(button.hoverbackground().getValue());
+                button.hoverbackground().getValue().render(component, graphics);
             }else{
-                graphics.setColor(button.background().getValue());
+                button.background().getValue().render(component, graphics);
             }
             graphics.fillRect(0,0,button.prefWidth(),button.prefHeight());
+            graphics.pushClipRect(button.getCachedText().x().get(), button.getCachedText().y().get(), button.getCachedText().width().get(), button.getCachedText().height().get());
             button.getCachedText().getRenderer().render(button.getCachedText(),graphics);
+            graphics.popClipRect();
         }
     }
 }

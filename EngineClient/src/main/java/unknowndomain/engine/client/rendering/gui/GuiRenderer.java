@@ -10,6 +10,7 @@ import unknowndomain.engine.client.gui.Scene;
 import unknowndomain.engine.client.gui.component.Button;
 import unknowndomain.engine.client.gui.component.Image;
 import unknowndomain.engine.client.gui.internal.Internal;
+import unknowndomain.engine.client.gui.layout.AnchorPane;
 import unknowndomain.engine.client.gui.layout.HBox;
 import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.rendering.Graphics;
@@ -81,6 +82,16 @@ public class GuiRenderer implements Renderer {
 //        vBox.getChildren().add(image);
 //        Scene debug = new Scene(vBox);
 //        ((ClientContextImpl)context).getGuiManager().showHud("test", debug);
+//        AnchorPane pane = new AnchorPane();
+//        for (int i = 0; i < 10; i++) {
+//            var button = new Button(String.format("YVES %02d", i));
+//            button.buttonwidth().set(100);
+//            AnchorPane.setLeftAnchor(button, 50f*i + 10);
+//            AnchorPane.setTopAnchor(button, 40f*i);
+//            pane.getChildren().add(button);
+//        }
+//        Scene screen = new Scene(pane);
+//        ((ClientContextImpl)context).getGuiManager().showIncognitoScreen(screen);
         //hudScene.add(debug);
     }
 

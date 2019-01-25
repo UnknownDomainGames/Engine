@@ -5,6 +5,7 @@ import com.github.mouse0w0.lib4j.observable.collection.ObservableMap;
 import com.github.mouse0w0.lib4j.observable.value.*;
 import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
+import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.event.Event;
 
 import java.util.HashMap;
@@ -95,8 +96,11 @@ public abstract class Component {
         return prefHeight();
     }
 
-    public boolean contains(int x, int y) {
-        return x >= x().get() && x <= width().get() && y >= y().get() && y <= height().get();
+    public boolean contains(float posX, float posY){
+        return (x().get() <= posX) &&
+                (posX <= x().get() + width().get()) &&
+                (y().get() <= posY) &&
+                (posY <= y().get() + height().get());
     }
 
     public ComponentRenderer getRenderer() {
@@ -120,13 +124,6 @@ public abstract class Component {
         return properties != null && !properties.isEmpty();
     }
 
-    public boolean isPosInArea(float posX, float posY){
-        return (x().get() <= posX) &&
-                (posX <= x().get() + width().get()) &&
-                (y().get() <= posY) &&
-                (posY <= y().get() + height().get());
-    }
-
     public void handleEvent(Event event){
         if(!disabled.get()) {
             if (event instanceof MouseEvent.MouseEnterEvent) {
@@ -137,12 +134,18 @@ public abstract class Component {
                 pressed.set(false);
             }
             if (event instanceof MouseEvent.MouseClickEvent) {
-                pressed.set(true);
-                onClick((MouseEvent.MouseClickEvent)event);
+                var click = (MouseEvent.MouseClickEvent)event;
+                if(click.getKey() == Key.MOUSE_BUTTON_LEFT){
+                    pressed.set(true);
+                    onClick(click);
+                }
             }
             if (event instanceof MouseEvent.MouseReleasedEvent) {
-                pressed.set(false);
-                onRelease((MouseEvent.MouseReleasedEvent)event);
+                var release = (MouseEvent.MouseReleasedEvent)event;
+                if(release.getKey() == Key.MOUSE_BUTTON_LEFT){
+                    pressed.set(false);
+                    onRelease(release);
+                }
             }
         }
     }

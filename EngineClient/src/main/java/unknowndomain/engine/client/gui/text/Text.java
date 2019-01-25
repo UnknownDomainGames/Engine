@@ -13,10 +13,12 @@ public class Text extends Component {
     private final MutableValue<String> text = new SimpleMutableObjectValue<>();
     private final MutableValue<Font> font = new SimpleMutableObjectValue<>(Font.getDefaultFont());
     private final MutableValue<Color> color = new SimpleMutableObjectValue<>(Color.WHITE);
+    private final MutableValue<TextAlignment> textAlignment = new SimpleMutableObjectValue<>(TextAlignment.LEFT);
 
     public Text() {
         text.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         font.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
+        textAlignment.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
     }
 
     public Text(String text) {
@@ -34,6 +36,10 @@ public class Text extends Component {
 
     public MutableValue<Color> color() {
         return color;
+    }
+
+    public MutableValue<TextAlignment> textAlignment() {
+        return textAlignment;
     }
 
     @Override

@@ -59,6 +59,14 @@ public class MouseEvent implements Event {
             this.posX = posX;
             this.posY = posY;
         }
+
+        public Key getKey() {
+            return key;
+        }
+
+        public ActionMode getMode() {
+            return mode;
+        }
     }
 
     public static class MouseClickEvent extends MouseButtonEvent{
