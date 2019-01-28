@@ -32,9 +32,9 @@ public class DebugHUD extends VBox {
         Entity player = context.getPlayer().getControlledEntity();
 
         fps.text().setValue("FPS: " + context.getFps());
-        playerPosition.text().setValue(String.format("Player Position: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z));
-        playerMotion.text().setValue(String.format("Player Motion: %f, %f, %f", player.getMotion().x, player.getMotion().y, player.getMotion().z));
-        playerDirection.text().setValue(String.format("Player Direction (yaw, pitch, roll): %f, %f, %f", player.getRotation().x, player.getRotation().y, player.getRotation().z));
+        playerPosition.text().setValue(String.format("Player Position: %.2f, %.2f, %.2f", player.getPosition().x, player.getPosition().y, player.getPosition().z));
+        playerMotion.text().setValue(String.format("Player Motion: %.2f, %.2f, %.2f", player.getMotion().x, player.getMotion().y, player.getMotion().z));
+        playerDirection.text().setValue(String.format("Player Direction (yaw, pitch, roll): %.2f, %.2f, %.2f", player.getRotation().x, player.getRotation().y, player.getRotation().z));
         playerChunkPos.text().setValue(String.format("Player At Chunk: %d, %d, %d", (int) player.getPosition().x >> 4, (int) player.getPosition().y >> 4, (int) player.getPosition().z >> 4));
     }
 }
