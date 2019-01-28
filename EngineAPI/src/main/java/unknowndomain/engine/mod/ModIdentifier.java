@@ -2,7 +2,6 @@ package unknowndomain.engine.mod;
 
 import unknowndomain.engine.util.versioning.ComparableVersion;
 
-import java.net.URL;
 import java.util.Objects;
 
 public class ModIdentifier {

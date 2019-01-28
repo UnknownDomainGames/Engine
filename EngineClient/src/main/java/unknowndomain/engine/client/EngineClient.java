@@ -1,10 +1,7 @@
 package unknowndomain.engine.client;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.SystemUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.Platform;
@@ -21,10 +18,10 @@ import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EngineEvent;
 import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.game.Game;
-import unknowndomain.engine.mod.*;
-import unknowndomain.engine.mod.java.JavaModLoader;
-import unknowndomain.engine.mod.misc.EngineDummyContainer;
+import unknowndomain.engine.mod.ModContainer;
+import unknowndomain.engine.mod.ModManager;
+import unknowndomain.engine.mod.impl.DefaultModManager;
+import unknowndomain.engine.mod.util.ModCollector;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
@@ -32,13 +29,14 @@ import unknowndomain.engine.registry.impl.SimpleRegistryManager;
 import unknowndomain.engine.util.Side;
 import unknowndomain.game.DefaultGameMode;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static java.lang.System.getProperty;
 import static org.apache.commons.lang3.SystemUtils.*;
 
 public class EngineClient implements Engine {
@@ -63,7 +61,7 @@ public class EngineClient implements Engine {
     private Profile playerProfile;
     private GameClientStandalone game;
 
-    EngineClient(int width, int height) {
+    EngineClient(int width, int height) { // TODO: Remove it
         window = new GLFWGameWindow(width, height, UnknownDomain.getName());
     }
 
@@ -87,8 +85,8 @@ public class EngineClient implements Engine {
 
 
         // Construction Stage
-        log.info("Constructing Mods!");
-        eventBus.post(new EngineEvent.ModConstructionStart(this));
+//        log.info("Constructing Mods!");
+//        eventBus.post(new EngineEvent.ModConstructionStart(this));
         constructMods();
         log.info("Initializing Mods!");
         eventBus.post(new EngineEvent.ModInitializationEvent(this));
@@ -127,57 +125,24 @@ public class EngineClient implements Engine {
     }
 
     private void constructMods() {
-        ImmutableMap.Builder<String, ModContainer> idToMapBuilder = ImmutableMap.builder();
-        ImmutableMap.Builder<Class, ModContainer> typeToMapBuilder = ImmutableMap.builder();
+        modManager = new DefaultModManager();
 
-        // Add engine container
-        EngineDummyContainer engine = new EngineDummyContainer();
-        idToMapBuilder.put(engine.getModId(), engine);
-        typeToMapBuilder.put(engine.getInstance().getClass(), engine);
-
-//        ModLoaderWrapper loader = new ModLoaderWrapper().add(new JavaModLoader(modStore));
-
-        List<ModMetadata> mods = Collections.emptyList();// TODO: Scan mods
-        Map<ModMetadata, ModDependencyEntry[]> map = mods.stream().map(m -> Pair.of(m, m.getDependencies().stream().toArray(ModDependencyEntry[]::new)))
-                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-
-        // TODO: Topological Sort
-        mods.sort((a, b) -> {
-            ModDependencyEntry[] entriesA = map.get(a);
-            ModDependencyEntry[] entriesB = map.get(b);
-            return 0;
-        });
-
-//        for (ModMetadata mod : mods) {
-//            try {
-//                if (!modStore.exists(mod)) {
-//                    if (!modRepository.contains(mod)) {
-//                        Engine.getLogger().warn("Cannot find mod " + mod + " from local or other sources! Skip to load!");
-//                        continue;
-//                    }
-//                    modStore.store(mod, modRepository.open(mod));
-//                }
-//                ModContainer load = loader.load(mod);
-//                if (load == null) {
-//                    Engine.getLogger().warn("Some exceptions happened during loading mod {0} from local! Skip to load!", mod);
-//                    continue;
-//                }
-//                idToMapBuilder.put(mod.getId(), load);
-//                typeToMapBuilder.put(load.getInstance().getClass(), load);
-//            } catch (Exception e) {
-//                Engine.getLogger().warn("Fain to load mod " + mod.getId());
-//                e.printStackTrace();
-//            }
-//        }
-        // ImmutableMap<String, ModContainer> loadedMods = ;
-        modManager = new SimpleModManager(idToMapBuilder.build(), typeToMapBuilder.build());
-        Collection<ModContainer> loadedMods = modManager.getLoadedMods();
-        Engine.LOGGER.info("Engine has successfully loaded " + loadedMods.size() + " mods: ");
-        for (ModContainer mod : loadedMods) {
-            this.eventBus.register(mod.getInstance());
-            Engine.LOGGER.info("  Loaded: " + mod.getModId());
+        Path modFolder = Paths.get("mods");
+        if(!Files.exists(modFolder)) {
+            try {
+                Files.createDirectory(modFolder);
+            } catch (IOException e) {
+                Platform.getLogger().warn(e.getMessage(), e);
+            }
         }
 
+        try {
+            Collection<ModContainer> modContainers = modManager.loadMod(ModCollector.createFolderModCollector(modFolder));
+            modContainers.forEach(modContainer -> getEventBus().register(modContainer.getInstance()));
+            modContainers.forEach(modContainer -> Platform.getLogger().info("Loaded mod: {}", modContainer.getModId()));
+        } catch (IOException e) {
+            Platform.getLogger().warn(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -186,13 +151,10 @@ public class EngineClient implements Engine {
     }
 
     @Override
-    public Game startGame(Game.Option option) {
+    public void startGame() {
         // prepare
-        game = new GameClientStandalone(this, new Game.Option(Lists.newArrayList(), Lists.newArrayList()));
+        game = new GameClientStandalone(this);
         game.run();
-
-        // stop last game
-        return game;
     }
 
     @Override
@@ -233,14 +195,14 @@ public class EngineClient implements Engine {
     private void paintSystemInfo() {
         Logger logger = Platform.getLogger();
         logger.info("----- System Information -----");
-        logger.info("Operating system: " + OS_NAME + " (" + OS_ARCH + ") version " + OS_VERSION);
-        logger.info("Java version: " + JAVA_VERSION + ", " + JAVA_VENDOR);
-        logger.info("JVM info: " + JAVA_VM_NAME + " (" + JAVA_VM_INFO + "), " + JAVA_VM_VENDOR);
+        logger.info("\tOperating system: " + OS_NAME + " (" + OS_ARCH + ") version " + OS_VERSION);
+        logger.info("\tJava version: " + JAVA_VERSION + ", " + JAVA_VENDOR);
+        logger.info("\tJVM info: " + JAVA_VM_NAME + " (" + JAVA_VM_INFO + "), " + JAVA_VM_VENDOR);
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
         long maxMemory = runtime.maxMemory();
-        logger.info("Max memory: " + maxMemory + " bytes (" + maxMemory / 1024L / 1024L + " MB)");
-        logger.info("Total memory: " + totalMemory + " bytes (" + totalMemory / 1024L / 1024L + " MB)");
+        logger.info("\tMax memory: " + maxMemory + " bytes (" + maxMemory / 1024L / 1024L + " MB)");
+        logger.info("\tTotal memory: " + totalMemory + " bytes (" + totalMemory / 1024L / 1024L + " MB)");
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         List<String> jvmFlags = runtimeMXBean.getInputArguments();
         StringBuilder formattedFlags = new StringBuilder();
@@ -250,7 +212,7 @@ public class EngineClient implements Engine {
             }
             formattedFlags.append(flag);
         }
-        logger.info("JVM flags (" + jvmFlags.size() + " totals): " + formattedFlags.toString());
+        logger.info("\tJVM flags (" + jvmFlags.size() + " totals): " + formattedFlags.toString());
         logger.info("------------------------------");
     }
 }

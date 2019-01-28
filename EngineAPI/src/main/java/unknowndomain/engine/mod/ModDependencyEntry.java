@@ -1,6 +1,6 @@
 package unknowndomain.engine.mod;
 
-import unknowndomain.engine.mod.exception.ModDependencyException;
+import unknowndomain.engine.mod.exception.InvalidDependencyException;
 import unknowndomain.engine.util.versioning.InvalidVersionSpecificationException;
 import unknowndomain.engine.util.versioning.VersionRange;
 
@@ -22,9 +22,10 @@ public class ModDependencyEntry {
     }
 
     public static ModDependencyEntry parse(String spec) {
-        String[] args = spec.split(":", 3);
-        if (args.length < 3)
-            throw new ModDependencyException("Failed to parse dependency entry. Source: " + spec);
+        String[] args = spec.split(":");
+        if (args.length != 3) {
+            throw new InvalidDependencyException("Failed to parse dependency entry. Source: " + spec);
+        }
 
         try {
             LoadOrder loadOrder = LoadOrder.valueOf(args[0].toUpperCase());
@@ -32,9 +33,9 @@ public class ModDependencyEntry {
             VersionRange range = VersionRange.createFromVersionSpec(args[2]);
             return new ModDependencyEntry(loadOrder, modId, range);
         } catch (InvalidVersionSpecificationException e) {
-            throw new ModDependencyException("Failed to parse dependency entry, invalid version range. Range: " + args[2], e);
+            throw new InvalidDependencyException("Failed to parse dependency entry, invalid version range. Range: " + args[2], e);
         } catch (IllegalArgumentException e) {
-            throw new ModDependencyException("Failed to parse dependency entry, illegal load order. Load order: " + args[0], e);
+            throw new InvalidDependencyException("Failed to parse dependency entry, illegal load order. Load order: " + args[0], e);
         }
     }
 

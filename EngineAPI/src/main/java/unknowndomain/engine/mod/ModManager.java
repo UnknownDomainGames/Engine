@@ -1,30 +1,28 @@
 package unknowndomain.engine.mod;
 
+import unknowndomain.engine.mod.exception.ModAlreadyLoadedExeception;
+import unknowndomain.engine.mod.exception.ModLoadException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Iterator;
 
-/**
- * The in-game mod manager. Not the one who manage the mod sources.
- */
 public interface ModManager {
-    /**
-     * Find the mod by modid.
-     *
-     * @return The mod container, might be null
-     */
-    @Nullable
-    ModContainer findMod(String modId);
 
-    /**
-     * Find the mod by its type.
-     */
-    @Nullable
-    ModContainer findMod(Class<?> clazz);
+    ModContainer loadMod(Path path) throws ModLoadException, ModAlreadyLoadedExeception;
 
-    /**
-     * Is the mod loaded.
-     */
+    ModContainer loadMod(ModDescriptor modDescriptor) throws ModLoadException, ModAlreadyLoadedExeception;
+
+    Collection<ModContainer> loadMod(Iterator<Path> pathIterator) throws ModLoadException, ModAlreadyLoadedExeception;
+
+    @Nullable
+    ModContainer getMod(String modId);
+
+    @Nullable
+    ModContainer getMod(Class<?> clazz);
+
     boolean isModLoaded(String modId);
 
     @Nonnull

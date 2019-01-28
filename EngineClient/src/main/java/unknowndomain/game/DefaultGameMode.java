@@ -142,7 +142,6 @@ public final class DefaultGameMode {
 
     @Listener
     public void onEngineInitialized(EngineEvent.InitializationComplete e) {
-        Game game = e.getEngine().startGame(null);
-        game.run();
+        e.getEngine().startGame();
     }
 }

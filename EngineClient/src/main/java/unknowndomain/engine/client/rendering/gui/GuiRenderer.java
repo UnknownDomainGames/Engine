@@ -72,27 +72,26 @@ public class GuiRenderer implements Renderer {
         this.context = context;
         Internal.setContext(() -> fontHelper);
 
-//        VBox vBox = new VBox();
-//        vBox.spacing().set(5);
-//        vBox.getChildren().add(new Text("Hello GUI!"));
-//        vBox.getChildren().add(new Text("Bye GUI!"));
-//        Image image = new Image(new ResourcePath("texture", "/assets/unknowndomain/textures/block/grass_side.png"));
-//        image.imageWidth().set(200);
-//        image.imageHeight().set(200);
-//        vBox.getChildren().add(image);
-//        Scene debug = new Scene(vBox);
-//        ((ClientContextImpl)context).getGuiManager().showHud("test", debug);
-//        AnchorPane pane = new AnchorPane();
-//        for (int i = 0; i < 10; i++) {
-//            var button = new Button(String.format("YVES %02d", i));
-//            button.buttonwidth().set(100);
-//            AnchorPane.setLeftAnchor(button, 50f*i + 10);
-//            AnchorPane.setTopAnchor(button, 40f*i);
-//            pane.getChildren().add(button);
-//        }
-//        Scene screen = new Scene(pane);
-//        ((ClientContextImpl)context).getGuiManager().showIncognitoScreen(screen);
-        //hudScene.add(debug);
+        VBox vBox = new VBox();
+        vBox.spacing().set(5);
+        vBox.getChildren().add(new Text("Hello GUI!"));
+        vBox.getChildren().add(new Text("Bye GUI!"));
+        Image image = new Image(new ResourcePath("texture", "/assets/unknowndomain/textures/block/grass_side.png"));
+        image.imageWidth().set(200);
+        image.imageHeight().set(200);
+        vBox.getChildren().add(image);
+        Scene debug = new Scene(vBox);
+        ((ClientContextImpl)context).getGuiManager().showHud("test", debug);
+        AnchorPane pane = new AnchorPane();
+        for (int i = 0; i < 10; i++) {
+            var button = new Button(String.format("YVES %02d", i));
+            button.buttonwidth().set(100);
+            AnchorPane.setLeftAnchor(button, 50f*i + 10);
+            AnchorPane.setTopAnchor(button, 40f*i);
+            pane.getChildren().add(button);
+        }
+        Scene screen = new Scene(pane);
+        ((ClientContextImpl)context).getGuiManager().showIncognitoScreen(screen);
     }
 
     @Override

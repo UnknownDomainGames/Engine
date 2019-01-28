@@ -31,8 +31,8 @@ public class GameClientStandalone extends GameServerFullAsync {
 
     private boolean stopped;
 
-    public GameClientStandalone(EngineClient engine, Option option) {
-        super(engine, option);
+    public GameClientStandalone(EngineClient engine) {
+        super(engine);
 
         this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, FixStepTicker.clientTick);
 //Removed

@@ -1,7 +1,11 @@
 package unknowndomain.engine.client;
 
 import org.apache.commons.lang3.SystemUtils;
+import unknowndomain.engine.Engine;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.game.GameClientStandalone;
+
+import java.lang.reflect.Field;
 
 public class UnknownDomain {
 
@@ -16,7 +20,9 @@ public class UnknownDomain {
             // put this OS checking
             System.setProperty("java.awt.headless", "true");
         }
+        
         engine = new EngineClient(WIDTH, HEIGHT);
+        injectEngine(engine);
         engine.initEngine();
     }
 
@@ -34,5 +40,15 @@ public class UnknownDomain {
 
     public static String getVersion() {
         return VERSION;
+    }
+
+    private static void injectEngine(Engine engine) {
+        try {
+            Field engineField = Platform.class.getDeclaredField("engine");
+            engineField.setAccessible(true);
+            engineField.set(null, engine);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }

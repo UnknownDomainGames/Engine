@@ -4,9 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.mod.ModRepository;
-import unknowndomain.engine.mod.ModStore;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
 
@@ -23,8 +20,8 @@ public class GameServerFullAsync extends GameBase {
     protected List<WorldCommon> internalWorlds;
     protected List<Thread> worldThreads;
 
-    public GameServerFullAsync(Engine engine, Option option) {
-        super(engine, option);
+    public GameServerFullAsync(Engine engine) {
+        super(engine);
     }
 
     @Override

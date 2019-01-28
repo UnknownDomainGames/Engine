@@ -2,10 +2,13 @@ package unknowndomain.engine.mod;
 
 import org.slf4j.Logger;
 
+import java.nio.file.Path;
+
 /**
  * The runtime mod container of the mod.
  */
 public interface ModContainer {
+
     String getModId();
 
     /**
@@ -16,7 +19,11 @@ public interface ModContainer {
      */
     Object getInstance();
 
+    ClassLoader getClassLoader();
+
+    Path getSource();
+
     Logger getLogger();
 
-    ModMetadata getMetadata();
+    ModDescriptor getDescriptor();
 }

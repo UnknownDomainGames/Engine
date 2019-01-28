@@ -38,10 +38,8 @@ public interface Engine {
 
     /**
      * Start a new game, each engine only support one game at the time?
-     *
-     * @param option The game option
      */
-    Game startGame(Game.Option option);
+    void startGame();
 
     // TODO: add getter for mod repository
 

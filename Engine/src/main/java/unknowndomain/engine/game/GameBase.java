@@ -10,12 +10,10 @@ import javax.annotation.Nullable;
 
 public abstract class GameBase implements Game {
     protected final Engine engine;
-    protected final Option option;
 
     protected GameContext context;
 
-    public GameBase(Engine engine, Option option) {
-        this.option = option;
+    public GameBase(Engine engine) {
         this.engine = engine;
         // this.option.getMods().add(this.meta);
     }

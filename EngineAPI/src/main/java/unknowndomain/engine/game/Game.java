@@ -2,7 +2,6 @@ package unknowndomain.engine.game;
 
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.component.RuntimeObject;
-import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nullable;
@@ -33,31 +32,4 @@ public interface Game extends RuntimeObject, Runnable {
     World spawnWorld(World.Config config);
 
     boolean isTerminated();
-
-    interface Server extends Game {
-        Collection<World> getWorlds();
-
-        @Nullable
-        World getWorld(String name);
-    }
-
-    class Option {
-        private List<ModMetadata> mods;
-        private List<ResourcePath> resources;
-
-        public Option(List<ModMetadata> mods, List<ResourcePath> resources) {
-            this.mods = mods;
-            this.resources = resources;
-        }
-
-        public List<ResourcePath> getResources() {
-            return resources;
-        }
-
-        public List<ModMetadata> getMods() {
-            return mods;
-        }
-    }
-
-
 }
