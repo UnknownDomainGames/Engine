@@ -62,6 +62,10 @@ public final class TTFontHelper implements FontHelper {
 
     @Override
     public float computeTextWidth(CharSequence text, Font font) {
+        if (text == null || text.length() == 0) {
+            return 0;
+        }
+
         STBTTFontinfo info = getNativeFont(font).getParent().getFontinfo();
         int width = 0;
 
@@ -83,7 +87,11 @@ public final class TTFontHelper implements FontHelper {
         return width * stbtt_ScaleForPixelHeight(info, font.getSize());
     }
 
-    public float computeTextHeight(CharSequence text, Font font){
+    public float computeTextHeight(CharSequence text, Font font) {
+        if (text == null || text.length() == 0) {
+            return 0;
+        }
+
         var nativeTTFont = getNativeFont(font);
         STBTTBakedChar.Buffer cdata = nativeTTFont.getCharBuffer();
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -98,7 +106,7 @@ public final class TTFontHelper implements FontHelper {
 
             int bitmapSize = nativeTTFont.getBitmapSize();
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
-            float maxY = (float)(nativeTTFont.getParent().getAscent() - nativeTTFont.getParent().getDescent()) * stbtt_ScaleForPixelHeight(nativeTTFont.getParent().getFontinfo(), font.getSize());
+            float maxY = (float) (nativeTTFont.getParent().getAscent() - nativeTTFont.getParent().getDescent()) * stbtt_ScaleForPixelHeight(nativeTTFont.getParent().getFontinfo(), font.getSize());
             for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, charPointBuffer);
 
@@ -107,7 +115,7 @@ public final class TTFontHelper implements FontHelper {
                 float centerX = posX.get(0);
                 stbtt_GetBakedQuad(cdata, bitmapSize, bitmapSize, charPoint, posX, posY, stbQuad, true);
                 float diff = /*Math.abs(stbQuad.y0() - stbQuad.y1())*/ stbQuad.y1();
-                if(maxY < diff){
+                if (maxY < diff) {
                     maxY = diff;
                 }
             }
@@ -188,6 +196,10 @@ public final class TTFontHelper implements FontHelper {
     }
 
     public void renderText(CharSequence text, float x, float y, int color, NativeTTFont nativeTTFont) {
+        if (text == null || text.length() == 0) {
+            return;
+        }
+
         beforeTextRender.run();
 
         STBTTFontinfo fontinfo = nativeTTFont.getParent().getFontinfo();

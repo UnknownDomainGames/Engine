@@ -1,16 +1,19 @@
 package unknowndomain.engine.client.gui.component;
 
-import com.github.mouse0w0.lib4j.observable.value.*;
+import com.github.mouse0w0.lib4j.observable.value.MutableFloatValue;
+import com.github.mouse0w0.lib4j.observable.value.MutableValue;
+import com.github.mouse0w0.lib4j.observable.value.SimpleMutableFloatValue;
+import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
 import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.gui.event.MouseEvent;
+import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.client.gui.rendering.ButtonRenderer;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.gui.text.Text;
 import unknowndomain.engine.client.gui.text.TextAlignment;
-import unknowndomain.engine.client.gui.util.Background;
 import unknowndomain.engine.util.Color;
 
 import java.util.function.Consumer;

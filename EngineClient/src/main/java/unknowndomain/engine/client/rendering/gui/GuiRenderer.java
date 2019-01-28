@@ -3,35 +3,23 @@ package unknowndomain.engine.client.rendering.gui;
 import org.joml.*;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.ClientContext;
-import unknowndomain.engine.client.UnknownDomain;
+import unknowndomain.engine.client._gui.DebugHUD;
 import unknowndomain.engine.client.game.ClientContextImpl;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.Scene;
-import unknowndomain.engine.client.gui.component.Button;
-import unknowndomain.engine.client.gui.component.Image;
 import unknowndomain.engine.client.gui.internal.Internal;
-import unknowndomain.engine.client.gui.layout.AnchorPane;
-import unknowndomain.engine.client.gui.layout.HBox;
-import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
-import unknowndomain.engine.client.gui.text.Text;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
-import unknowndomain.engine.client.resource.ResourcePath;
-import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.util.Color;
 
-import java.lang.Math;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -45,13 +33,12 @@ public class GuiRenderer implements Renderer {
     private final TTFontHelper fontHelper;
     private final Graphics graphics;
 
-    private Scene guiScene;
-    private final List<Scene> hudScene = new LinkedList<>();
+    private DebugHUD debugHUD;
 
     private ClientContext context;
 
     public GuiRenderer(ByteBuffer defaultFontData, Shader vertexShader, Shader fragShader) {
-        shader = ShaderManager.INSTANCE.createShader("gui_shader", vertexShader,fragShader);
+        shader = ShaderManager.INSTANCE.createShader("gui_shader", vertexShader, fragShader);
 
         this.fontHelper = new TTFontHelper(() -> {
             glEnable(GL_TEXTURE_2D);
@@ -71,27 +58,28 @@ public class GuiRenderer implements Renderer {
     public void init(ClientContext context) {
         this.context = context;
         Internal.setContext(() -> fontHelper);
-
-        VBox vBox = new VBox();
-        vBox.spacing().set(5);
-        vBox.getChildren().add(new Text("Hello GUI!"));
-        vBox.getChildren().add(new Text("Bye GUI!"));
-        Image image = new Image(new ResourcePath("texture", "/assets/unknowndomain/textures/block/grass_side.png"));
-        image.imageWidth().set(200);
-        image.imageHeight().set(200);
-        vBox.getChildren().add(image);
-        Scene debug = new Scene(vBox);
-        ((ClientContextImpl)context).getGuiManager().showHud("test", debug);
-        AnchorPane pane = new AnchorPane();
-        for (int i = 0; i < 10; i++) {
-            var button = new Button(String.format("YVES %02d", i));
-            button.buttonwidth().set(100);
-            AnchorPane.setLeftAnchor(button, 50f*i + 10);
-            AnchorPane.setTopAnchor(button, 40f*i);
-            pane.getChildren().add(button);
-        }
-        Scene screen = new Scene(pane);
-        ((ClientContextImpl)context).getGuiManager().showIncognitoScreen(screen);
+//        VBox vBox = new VBox();
+//        vBox.spacing().set(5);
+//        vBox.getChildren().add(new Text("Hello GUI!"));
+//        vBox.getChildren().add(new Text("Bye GUI!"));
+//        Image image = new Image(new ResourcePath("texture", "/assets/unknowndomain/textures/block/grass_side.png"));
+//        image.imageWidth().set(200);
+//        image.imageHeight().set(200);
+//        vBox.getChildren().add(image);
+//        Scene debug = new Scene(vBox);
+//        ((ClientContextImpl) context).getGuiManager().showHud("test", debug);
+//        AnchorPane pane = new AnchorPane();
+//        for (int i = 0; i < 10; i++) {
+//            var button = new Button(String.format("YVES %02d", i));
+//            button.buttonwidth().set(100);
+//            AnchorPane.setLeftAnchor(button, 50f * i + 10);
+//            AnchorPane.setTopAnchor(button, 40f * i);
+//            pane.getChildren().add(button);
+//        }
+//        Scene screen = new Scene(pane);
+//        ((ClientContextImpl) context).getGuiManager().showIncognitoScreen(screen);
+        debugHUD = new DebugHUD();
+        ((ClientContextImpl) context).getGuiManager().showHud("debug", new Scene(debugHUD));
     }
 
     @Override
@@ -99,21 +87,15 @@ public class GuiRenderer implements Renderer {
         startRender();
 
         // render scene
-        if(context instanceof ClientContextImpl){ //TODO: stupid check
+        if (context instanceof ClientContextImpl) { //TODO: stupid check
             var ci = (ClientContextImpl) context;
-            for(Scene scene : ci.getGuiManager().getHuds().values()){
+            for (Scene scene : ci.getGuiManager().getHuds().values()) {
                 renderScene(scene);
             }
-            if(ci.getGuiManager().getDisplayingScreen() != null){
+            if (ci.getGuiManager().getDisplayingScreen() != null) {
                 renderScene(ci.getGuiManager().getDisplayingScreen());
             }
         }
-//        if (guiScene != null)
-//            renderScene(guiScene);
-//
-//        for (Scene scene : hudScene) {
-//            renderScene(scene);
-//        }
 
         debug(context);
 
@@ -180,21 +162,12 @@ public class GuiRenderer implements Renderer {
     private void debug(ClientContext context) {
         graphics.setColor(Color.WHITE);
 
+        // TODO: CrossHair, move it.
         int middleX = context.getWindow().getWidth() / 2, middleY = context.getWindow().getHeight() / 2;
-        graphics.drawRect(middleX - 5, middleY - 5, 10, 10);
         graphics.drawLine(middleX, middleY - 10, middleX, middleY + 10);
         graphics.drawLine(middleX - 10, middleY, middleX + 10, middleY);
 
-        Entity player = UnknownDomain.getGame().getPlayer().getControlledEntity();
-//        AABBd box = AABBs.translate(player.getBoundingBox(), player.getPosition(), new AABBd());
-
-        graphics.drawText("FPS: " + context.getFps(), 0, 0);
-        graphics.drawText(String.format("Player location: %f, %f, %f", player.getPosition().x, player.getPosition().y, player.getPosition().z), 0, 19);
-        graphics.drawText(String.format("Player motion: %f, %f, %f", player.getMotion().x, player.getMotion().y, player.getMotion().z), 0, 38);
-        graphics.drawText(String.format("Player yaw: %f, pitch: %f, roll: %f", player.getRotation().x, player.getRotation().y, player.getRotation().z), 0, 19 * 3);
-        graphics.drawText(String.format("Chunk: %d, %d, %d", (int) player.getPosition().x >> 4, (int) player.getPosition().y >> 4, (int) player.getPosition().z >> 4), 0, 19 * 4);
-//        fontRenderer.renderText(String.format("Player bounding box: %s", box.toString(new DecimalFormat("#.##"))), 0, 19 * 3, 0xffffffff);
-        //fontRenderer.renderText(player.getBehavior(Entity.TwoHands.class).getMainHand().getLocalName(), 0, 64, 0xffffffff, 16);
+        debugHUD.update(context);
 
         RayTraceBlockHit hit = context.getHit();
         if (hit != null) {

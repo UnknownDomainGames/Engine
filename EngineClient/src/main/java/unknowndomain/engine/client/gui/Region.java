@@ -2,10 +2,11 @@ package unknowndomain.engine.client.gui;
 
 import com.github.mouse0w0.lib4j.observable.value.MutableValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
+import unknowndomain.engine.client.gui.misc.Background;
+import unknowndomain.engine.client.gui.misc.Insets;
+import unknowndomain.engine.client.gui.misc.Size;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.rendering.RegionRenderer;
-import unknowndomain.engine.client.gui.util.Background;
-import unknowndomain.engine.client.gui.util.Size;
 
 public class Region extends Container {
 
@@ -16,6 +17,16 @@ public class Region extends Container {
     }
 
     private final MutableValue<Background> background = new SimpleMutableObjectValue<>(Background.NOTHING);
+
+    public final MutableValue<Background> background() {
+        return background;
+    }
+
+    private final MutableValue<Insets> padding = new SimpleMutableObjectValue<>(Insets.EMPTY);
+
+    public final MutableValue<Insets> padding() {
+        return padding;
+    }
 
     @Override
     public float minWidth() {
@@ -45,10 +56,6 @@ public class Region extends Container {
     @Override
     public float maxHeight() {
         return getSize().maxHeight().get();
-    }
-
-    public MutableValue<Background> background() {
-        return background;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.gui.util;
+package unknowndomain.engine.client.gui.misc;
 
 import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.gui.rendering.Graphics;
@@ -8,7 +8,6 @@ import unknowndomain.engine.util.Color;
 import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_REPEAT;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 
 public class Background {

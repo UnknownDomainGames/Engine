@@ -3,6 +3,7 @@ package unknowndomain.engine.client.gui.layout;
 import com.github.mouse0w0.lib4j.observable.value.MutableFloatValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableFloatValue;
 import unknowndomain.engine.client.gui.Component;
+import unknowndomain.engine.client.gui.misc.Insets;
 
 public class VBox extends Pane {
 
@@ -22,7 +23,8 @@ public class VBox extends Pane {
         for (Component component : getChildren()) {
             width = Math.max(width, component.prefWidth());
         }
-        return width;
+        Insets padding = padding().getValue();
+        return padding.getLeft() + width + padding.getRight();
     }
 
     @Override
@@ -31,16 +33,18 @@ public class VBox extends Pane {
         for (Component component : getChildren()) {
             y += component.prefHeight();
         }
-        return y + getChildren().size() == 0 ? 0 : spacing * (getChildren().size() - 1);
+        Insets padding = padding().getValue();
+        return padding.getTop() + y + getChildren().size() == 0 ? 0 : spacing * (getChildren().size() - 1) + padding.getBottom();
     }
 
     @Override
     protected void layoutChildren() {
-        float y = 0, spacing = spacing().get();
+        Insets padding = padding().getValue();
+        float x = padding.getLeft(), y = padding.getTop(), spacing = spacing().get();
         for (Component component : getChildren()) {
             float prefWidth = component.prefWidth();
             float prefHeight = component.prefHeight();
-            layoutInArea(component, 0, y, prefWidth, prefHeight);
+            layoutInArea(component, x, y, prefWidth, prefHeight);
             y += prefHeight + spacing;
         }
     }

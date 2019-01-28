@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.gui.util;
+package unknowndomain.engine.client.gui.misc;
 
 import com.github.mouse0w0.lib4j.observable.value.MutableFloatValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableFloatValue;
