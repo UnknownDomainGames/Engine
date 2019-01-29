@@ -3,10 +3,10 @@ package unknowndomain.engine.client.gui.layout;
 import unknowndomain.engine.client.gui.Component;
 
 public class AnchorPane extends Pane {
-    public static final String TOP_ANCHOR = "anchor_top";
-    public static final String BOTTOM_ANCHOR = "anchor_bottom";
-    public static final String LEFT_ANCHOR = "anchor_left";
-    public static final String RIGHT_ANCHOR = "anchor_right";
+    public static final String TOP_ANCHOR = "anchor-top";
+    public static final String BOTTOM_ANCHOR = "anchor-bottom";
+    public static final String LEFT_ANCHOR = "anchor-left";
+    public static final String RIGHT_ANCHOR = "anchor-right";
 
     public static void setTopAnchor(Component child, Float value){
         setProperty(child, TOP_ANCHOR, value);

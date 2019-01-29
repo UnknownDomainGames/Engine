@@ -120,6 +120,16 @@ public abstract class Component {
         return properties;
     }
 
+    public void resize(float width, float height){
+        this.width.set(width);
+        this.height.set(height);
+    }
+
+    public void relocate(float x, float y){
+        this.x.set(x);
+        this.y.set(y);
+    }
+
     public boolean hasProperties() {
         return properties != null && !properties.isEmpty();
     }
