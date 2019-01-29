@@ -4,6 +4,7 @@ import org.joml.*;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
+import unknowndomain.engine.Engine;
 import unknowndomain.engine.util.Disposable;
 
 import java.nio.FloatBuffer;
@@ -85,9 +86,17 @@ public class ShaderProgram implements Disposable {
             attachShader(s);
 
         linkProgram();
+        if(GL20.glGetProgrami(programId, GL_LINK_STATUS) != GL_TRUE){
+            Engine.getLogger().warn(String.format("Error initializing shader program (id:%d), log: %s", programId,
+                    GL20.glGetProgramInfoLog(programId, 2048)));
+        }
         use();
 
         GL20.glValidateProgram(programId);
+        if(GL20.glGetProgrami(programId, GL_VALIDATE_STATUS) != GL_TRUE){
+            Engine.getLogger().warn(String.format("Error initializing shader program (id:%d), log: %s", programId,
+                    GL20.glGetProgramInfoLog(programId, 2048)));
+        }
 
         for (Shader shader : shaders)
             shader.deleteShader();

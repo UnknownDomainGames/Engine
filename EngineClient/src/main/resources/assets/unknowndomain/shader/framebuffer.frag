@@ -14,5 +14,6 @@ void main()
     //vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
     // Gamma校正
     //mapped = pow(mapped, vec3(1.0 / gamma));
+    hdrColor = pow(hdrColor, vec3(1.0 / gamma));
     fragColor = vec4(hdrColor,1.0);
 }
