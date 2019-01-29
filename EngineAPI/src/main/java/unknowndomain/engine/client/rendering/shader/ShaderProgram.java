@@ -9,6 +9,10 @@ import unknowndomain.engine.util.Disposable;
 
 import java.nio.FloatBuffer;
 
+import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
+import static org.lwjgl.opengl.GL20.GL_VALIDATE_STATUS;
+
 public class ShaderProgram implements Disposable {
 
     protected int programId = -1;
