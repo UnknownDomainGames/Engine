@@ -4,10 +4,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import org.lwjgl.glfw.GLFW;
-import unknowndomain.engine.Engine;
 import unknowndomain.engine.Tickable;
 import unknowndomain.engine.client.ClientContext;
-import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.registry.Registry;
 
 import java.util.Collection;
@@ -74,10 +72,8 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         Key key = Key.valueOf(code);
         pressedKey.add(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
-        Engine.LOGGER.info(key + " Press " + modifiers);
         for (KeyBinding binding : keyBindings) {
             binding.setPressed(true);
-            Engine.LOGGER.info("    binded " + binding.getUniqueName());
         }
         // Trigger single key
         if (modifiers != 0) {
@@ -89,10 +85,8 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         Key key = Key.valueOf(code);
         pressedKey.remove(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
-        Engine.LOGGER.info(key + " Release " + modifiers);
         for (KeyBinding binding : keyBindings) {
             binding.setPressed(false);
-            Engine.LOGGER.info("    binded " + binding.getUniqueName());
         }
         // Trigger single key
         if (modifiers != 0) {
