@@ -6,14 +6,12 @@ public class AssetType<T extends Asset> {
 
     private final Class<T> assetClass;
     private final String name;
-    private final String fileNameExtension;
-    private final AssetFactory<T> factory;
+    private final AssetLoader<T> loader;
 
-    AssetType(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull String fileNameExtension, @Nonnull AssetFactory<T> factory) {
+    public AssetType(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull AssetLoader<T> loader) {
         this.assetClass = assetClass;
         this.name = name;
-        this.fileNameExtension = fileNameExtension;
-        this.factory = factory;
+        this.loader = loader;
     }
 
     @Nonnull
@@ -27,13 +25,8 @@ public class AssetType<T extends Asset> {
     }
 
     @Nonnull
-    public String getFileNameExtension() {
-        return fileNameExtension;
-    }
-
-    @Nonnull
-    public AssetFactory<T> getFactory() {
-        return factory;
+    public AssetLoader<T> getLoader() {
+        return loader;
     }
 
     @Override

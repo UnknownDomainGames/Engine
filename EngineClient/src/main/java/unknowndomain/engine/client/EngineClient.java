@@ -35,7 +35,10 @@ import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.apache.commons.lang3.SystemUtils.*;
 
@@ -53,6 +56,7 @@ public class EngineClient implements Engine {
 
     private ModManager modManager;
     private RegistryManager registryManager;
+    @Deprecated
     private ResourceManager resourceManager;
     private TextureManager textureManager;
     private KeyBindingManager keybindingManager;

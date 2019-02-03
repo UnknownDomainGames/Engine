@@ -2,6 +2,7 @@ package unknowndomain.engine.client;
 
 import org.joml.FrustumIntersection;
 import unknowndomain.engine.block.RayTraceBlockHit;
+import unknowndomain.engine.client.asset.AssetManager;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
@@ -43,4 +44,6 @@ public interface ClientContext {
     Registry<ClientBlock> getClientBlockRegistry();
 
     World getClientWorld();
+
+    AssetManager getAssetManager();
 }

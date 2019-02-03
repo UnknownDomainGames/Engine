@@ -1,0 +1,37 @@
+package unknowndomain.engine.client.asset.source;
+
+import com.google.common.base.Strings;
+import unknowndomain.engine.client.asset.AssetPath;
+
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+
+import static java.util.Objects.requireNonNull;
+
+public class FileSystemAssetSource implements AssetSource {
+
+    private final FileSystem fileSystem;
+    private final String root;
+
+    public FileSystemAssetSource(@Nonnull FileSystem fileSystem, String root) {
+        this.fileSystem = requireNonNull(fileSystem);
+        this.root = Strings.nullToEmpty(root);
+    }
+
+    @Override
+    public boolean has(AssetPath path) {
+        return Files.exists(fileSystem.getPath(root, path.getPath()));
+    }
+
+    @Override
+    public InputStream openStream(AssetPath path) throws IOException {
+        return Files.newInputStream(fileSystem.getPath(root, path.getPath()));
+    }
+
+    public FileSystem getFileSystem() {
+        return fileSystem;
+    }
+}

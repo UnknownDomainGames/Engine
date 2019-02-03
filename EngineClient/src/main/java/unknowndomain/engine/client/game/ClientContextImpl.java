@@ -4,6 +4,10 @@ import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.ClientContext;
+import unknowndomain.engine.client.asset.AssetManager;
+import unknowndomain.engine.client.asset.DefaultAssetManager;
+import unknowndomain.engine.client.asset.DefaultAssetSourceManager;
+import unknowndomain.engine.client.asset.EngineAssetSource;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.Renderer;
@@ -34,6 +38,9 @@ public class ClientContextImpl implements ClientContext {
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
     private final Player player;
 
+    private final DefaultAssetSourceManager assetSourceManager;
+    private final AssetManager assetManager;
+
     private Camera camera;
     private RayTraceBlockHit hit;
     private double partialTick;
@@ -45,6 +52,9 @@ public class ClientContextImpl implements ClientContext {
         this.window = window;
         this.player = player;
         this.guiManager = new GuiManager(this);
+        this.assetSourceManager = new DefaultAssetSourceManager();
+        this.assetSourceManager.getSources().add(EngineAssetSource.create());
+        this.assetManager = new DefaultAssetManager(assetSourceManager);
     }
 
     @Override
@@ -153,6 +163,11 @@ public class ClientContextImpl implements ClientContext {
     @Override
     public World getClientWorld() {
         return game.getWorld();
+    }
+
+    @Override
+    public AssetManager getAssetManager() {
+        return assetManager;
     }
 
     public GuiManager getGuiManager() {

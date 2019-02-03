@@ -3,31 +3,34 @@ package unknowndomain.engine.client.asset;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class AssetPath {
+public final class AssetPath {
 
-    private final AssetPath parent;
+    public static final char SEPARATOR = '/';
+
+    public static AssetPath of(@Nonnull String first, String... others) {
+        StringBuilder builder = new StringBuilder(first);
+        for (String other : others) {
+            builder.append(SEPARATOR).append(other);
+        }
+        return of(null, builder.toString());
+    }
+
+    public static AssetPath of(@Nullable AssetPath parent, @Nonnull String path) {
+        return new AssetPath(parent == null ? path : parent.getPath() + SEPARATOR + path);
+    }
+
     private final String path;
-    private final String fullPath;
 
-    public AssetPath(@Nonnull String path) {
-        this(null, path);
-    }
-
-    public AssetPath(@Nullable AssetPath parent, @Nonnull String path) {
-        this.parent = parent;
+    private AssetPath(@Nonnull String path) {
         this.path = path;
-        this.fullPath = parent == null ? path : parent.getFullPath().concat(path);
-    }
-
-    public AssetPath getParent() {
-        return parent;
     }
 
     public String getPath() {
         return path;
     }
 
-    public String getFullPath() {
-        return fullPath;
+    @Override
+    public String toString() {
+        return path;
     }
 }
