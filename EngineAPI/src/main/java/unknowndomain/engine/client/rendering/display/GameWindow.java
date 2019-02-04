@@ -22,6 +22,8 @@ public interface GameWindow {
 
     void disableCursor();
 
+    boolean isCursorHidden();
+
     void addKeyCallback(KeyCallback callback);
 
     void removeKeyCallback(KeyCallback callback);

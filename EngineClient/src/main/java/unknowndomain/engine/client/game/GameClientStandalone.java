@@ -126,76 +126,80 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         player.getControlledEntity().getPosition().set(1, 3, 1);
 
         entityController = new EntityCameraController(player);
-        engine().getWindow().addCursorCallback(entityController::handleCursorMove);
-        // For now until we figure out how to setup games
-        engine().getKeyBindingManager().setGameContext(clientContext);
+        engine().getWindow().addCursorCallback((xpos, ypos) -> {
+            if (engine().getWindow().isCursorHidden()) {
+                entityController.handleCursorMove(xpos, ypos);
+            }
+        });
+            // For now until we figure out how to setup games
+            engine().getKeyBindingManager().setGameContext(clientContext);
 
-        engine.getEventBus().post(new GameReadyEvent(context));
+            engine.getEventBus().post(new GameReadyEvent(context));
 
-        // TODO:
-        Random random = new Random();
-        for (int x = -16; x < 16; x++) {
-            for (int z = -16; z < 16; z++) {
-                for (int top = 3, y = top; y >= 0; y--) {
-                    world.setBlock(BlockPos.of(x, y, z), y == top ? Blocks.GRASS : Blocks.DIRT, null);
+            // TODO:
+            Random random = new Random();
+            for (int x = -16; x < 16; x++) {
+                for (int z = -16; z < 16; z++) {
+                    for (int top = 3, y = top; y >= 0; y--) {
+                        world.setBlock(BlockPos.of(x, y, z), y == top ? Blocks.GRASS : Blocks.DIRT, null);
+                    }
                 }
             }
         }
-    }
 
-    @Override
-    public void run() {
-        super.run();
-        ticker.start(); // start to tick
-    }
-
-    private void clientTick() {
-        engine().getKeyBindingManager().tick();
-        // TODO upload particle physics here
-    }
-
-    /**
-     * Actual render call
-     *
-     * @param partialTick
-     */
-    private void renderTick(double partialTick) {
-        engine().getWindow().beginDraw();
-        clientContext.updateFps();
-        this.clientContext.render(partialTick);
-        engine().getWindow().endDraw();
-    }
-
-    // https://github.com/lwjglgamedev/lwjglbook/blob/master/chapter02/src/main/java/org/lwjglb/engine/GameEngine.java
-    private void gameLoop() {
-        long lastTime;
-        while (!stopped) {
-            lastTime = System.currentTimeMillis();
-
-            long diff = System.currentTimeMillis() - lastTime;
-            while (diff < (1000 / 60)) {
-                try {
-                    Thread.sleep(diff / 2);
-                } catch (InterruptedException ie) {
-                }
-                diff = System.currentTimeMillis() - lastTime;
-            }
-            // sync();
+        @Override
+        public void run () {
+            super.run();
+            ticker.start(); // start to tick
         }
-    }
 
-    // private void sync() {
-    // float loopSlot = 1f / 60.0f;
-    // double endTime = timer.getLastLoopTime() + loopSlot;
-    // while (timer.getTime() < endTime) {
-    // try {
-    // Thread.sleep(1);
-    // } catch (InterruptedException ie) {
-    // }
-    // }
-    // }
+        private void clientTick () {
+            engine().getKeyBindingManager().tick();
+            // TODO upload particle physics here
+        }
 
-    // dirty things below...
+        /**
+         * Actual render call
+         *
+         * @param partialTick
+         */
+        private void renderTick ( double partialTick){
+            engine().getWindow().beginDraw();
+            clientContext.updateFps();
+            this.clientContext.render(partialTick);
+            engine().getWindow().endDraw();
+        }
+
+        // https://github.com/lwjglgamedev/lwjglbook/blob/master/chapter02/src/main/java/org/lwjglb/engine/GameEngine.java
+        private void gameLoop () {
+            long lastTime;
+            while (!stopped) {
+                lastTime = System.currentTimeMillis();
+
+                long diff = System.currentTimeMillis() - lastTime;
+                while (diff < (1000 / 60)) {
+                    try {
+                        Thread.sleep(diff / 2);
+                    } catch (InterruptedException ie) {
+                    }
+                    diff = System.currentTimeMillis() - lastTime;
+                }
+                // sync();
+            }
+        }
+
+        // private void sync() {
+        // float loopSlot = 1f / 60.0f;
+        // double endTime = timer.getLastLoopTime() + loopSlot;
+        // while (timer.getTime() < endTime) {
+        // try {
+        // Thread.sleep(1);
+        // } catch (InterruptedException ie) {
+        // }
+        // }
+        // }
+
+        // dirty things below...
 
 //    private List<Action> buildActions() {
 //        List<Action> list = motionController.getActions();
@@ -329,4 +333,4 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 //                    player.getControlledEntity().getMotion());
 //        }
 //    }
-}
+    }
