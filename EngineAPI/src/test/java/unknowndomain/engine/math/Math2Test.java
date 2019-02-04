@@ -1,7 +1,6 @@
-package unknowndomain.engine.util;
+package unknowndomain.engine.math;
 
 import org.junit.jupiter.api.Test;
-import unknowndomain.engine.util.Math2;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

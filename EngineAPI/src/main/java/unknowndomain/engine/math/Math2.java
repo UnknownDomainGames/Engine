@@ -1,4 +1,4 @@
-package unknowndomain.engine.util;
+package unknowndomain.engine.math;
 
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
