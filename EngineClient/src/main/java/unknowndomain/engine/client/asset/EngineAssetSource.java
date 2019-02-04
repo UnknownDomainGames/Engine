@@ -12,7 +12,7 @@ public final class EngineAssetSource extends FileSystemAssetSource {
     public static EngineAssetSource create() {
         try {
             Path path = Paths.get(EngineAssetSource.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            if (Files.isDirectory(path)) { // TODO: Development environment
+            if (Files.isDirectory(path)) {
                 return new EngineAssetSource(FileSystems.getDefault(), path.getParent().resolve("resources").resolve("assets").toString());
             } else {
                 FileSystem fileSystem = FileSystems.newFileSystem(EngineAssetSource.class.getProtectionDomain().getCodeSource().getLocation().toURI(), Collections.emptyMap(), EngineAssetSource.class.getClassLoader());
@@ -25,9 +25,5 @@ public final class EngineAssetSource extends FileSystemAssetSource {
 
     private EngineAssetSource(FileSystem fileSystem, String root) {
         super(fileSystem, root);
-    }
-
-    public static void main(String[] args) throws Exception {
-        System.out.println(create().has(AssetPath.of("unknowndomain", "shader", "gui.frag")));
     }
 }

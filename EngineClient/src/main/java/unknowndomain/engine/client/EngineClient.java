@@ -70,6 +70,7 @@ public class EngineClient implements Engine {
 
     private void initEnvironment() {
         try {
+            // TODO:
             developmentEnv = Files.isDirectory(Path.of(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()));
         } catch (URISyntaxException e) {
             developmentEnv = false;
