@@ -2,8 +2,8 @@ package unknowndomain.engine.client.gui.component;
 
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
-import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.gui.Component;
+import unknowndomain.engine.client.gui.internal.Internal;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.rendering.ImageRenderer;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
@@ -18,26 +18,26 @@ public class Image extends Component {
     private ResourcePath cachedPath;
     private GLTexture cachedTexture;
 
-    public Image(){
-        image.addChangeListener((ob,o,n)->{
+    public Image() {
+        image.addChangeListener((ob, o, n) -> {
             buildCache();
             requestParentLayout();
         });
-        imgX.addChangeListener((ob,o,n)->requestParentLayout());
-        imgY.addChangeListener((ob,o,n)->requestParentLayout());
-        imgWidth.addChangeListener((ob,o,n)->requestParentLayout());
-        imgHeight.addChangeListener((ob,o,n)->requestParentLayout());
+        imgX.addChangeListener((ob, o, n) -> requestParentLayout());
+        imgY.addChangeListener((ob, o, n) -> requestParentLayout());
+        imgWidth.addChangeListener((ob, o, n) -> requestParentLayout());
+        imgHeight.addChangeListener((ob, o, n) -> requestParentLayout());
     }
 
-    public Image(ResourcePath path){
+    public Image(ResourcePath path) {
         this();
         image.setValue(path);
     }
 
-    public void buildCache(){
+    public void buildCache() {
         cachedPath = image.getValue();
-        cachedTexture = UnknownDomain.getGame().getTextureManager().getTexture(cachedPath);
-        if(cachedTexture != null) {
+        cachedTexture = Internal.getContext().getImageHelper().getTexture(cachedPath);
+        if (cachedTexture != null) {
             imgWidth.set(cachedTexture.getWidth());
             imgHeight.set(cachedTexture.getHeight());
         }

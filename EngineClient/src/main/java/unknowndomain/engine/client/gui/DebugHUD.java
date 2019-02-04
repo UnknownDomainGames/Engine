@@ -1,4 +1,4 @@
-package unknowndomain.engine.client._gui;
+package unknowndomain.engine.client.gui;
 
 import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.gui.layout.VBox;

@@ -3,10 +3,12 @@ package unknowndomain.engine.client.rendering.gui;
 import org.joml.*;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.ClientContext;
-import unknowndomain.engine.client._gui.DebugHUD;
 import unknowndomain.engine.client.game.ClientContextImpl;
 import unknowndomain.engine.client.gui.Container;
+import unknowndomain.engine.client.gui.DebugHUD;
 import unknowndomain.engine.client.gui.Scene;
+import unknowndomain.engine.client.gui.internal.FontHelper;
+import unknowndomain.engine.client.gui.internal.ImageHelper;
 import unknowndomain.engine.client.gui.internal.Internal;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
@@ -15,6 +17,8 @@ import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
 import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.rendering.texture.GLTexture;
+import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.util.Color;
 
@@ -57,7 +61,22 @@ public class GuiRenderer implements Renderer {
     @Override
     public void init(ClientContext context) {
         this.context = context;
-        Internal.setContext(() -> fontHelper);
+        Internal.setContext(new Internal.Context() {
+            @Override
+            public FontHelper getFontHelper() {
+                return fontHelper;
+            }
+
+            @Override
+            public ImageHelper getImageHelper() {
+                return new ImageHelper() {
+                    @Override
+                    public GLTexture getTexture(ResourcePath path) {
+                        return context.getTextureManager().getTexture(path);
+                    }
+                };
+            }
+        });
 //        VBox vBox = new VBox();
 //        vBox.spacing().set(5);
 //        vBox.getChildren().add(new Text("Hello GUI!"));

@@ -18,5 +18,7 @@ public final class Internal {
     public static interface Context {
 
         FontHelper getFontHelper();
+
+        ImageHelper getImageHelper();
     }
 }
