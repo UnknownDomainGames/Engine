@@ -3,6 +3,7 @@ package unknowndomain.engine.client.rendering.model.assimp;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.joml.Matrix4f;
 import org.lwjgl.assimp.*;
 import unknowndomain.engine.client.rendering.util.GLHelper;
 import unknowndomain.engine.client.resource.ResourcePath;
@@ -82,5 +83,15 @@ public class AssimpHelper {
             throw new IllegalStateException(aiGetErrorString());
         }
         return new AssimpModel(scene, FilenameUtils.getFullPath(path));
+    }
+
+    public static Matrix4f generalizeNativeMatrix(AIMatrix4x4 aiMatrix4x4) {
+        Matrix4f mat = new Matrix4f().identity();
+        if(aiMatrix4x4 != null)
+        mat     .m00(aiMatrix4x4.a1()).m10(aiMatrix4x4.a2()).m20(aiMatrix4x4.a3()).m30(aiMatrix4x4.a4())
+                .m01(aiMatrix4x4.b1()).m11(aiMatrix4x4.b2()).m21(aiMatrix4x4.b3()).m31(aiMatrix4x4.b4())
+                .m02(aiMatrix4x4.c1()).m12(aiMatrix4x4.c2()).m22(aiMatrix4x4.c3()).m32(aiMatrix4x4.c4())
+                .m03(aiMatrix4x4.d1()).m13(aiMatrix4x4.d2()).m23(aiMatrix4x4.d3()).m33(aiMatrix4x4.d4());
+        return mat;
     }
 }
