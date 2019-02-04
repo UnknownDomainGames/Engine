@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static java.util.Objects.requireNonNull;
 
@@ -31,7 +32,24 @@ public class FileSystemAssetSource implements AssetSource {
         return Files.newInputStream(fileSystem.getPath(root, path.getPath()));
     }
 
+    @Override
+    public Path toPath(AssetPath path) {
+        return fileSystem.getPath(root, path.getPath());
+    }
+
     public FileSystem getFileSystem() {
         return fileSystem;
+    }
+
+    public String getRoot() {
+        return root;
+    }
+
+    @Override
+    public void dispose() {
+        try {
+            fileSystem.close();
+        } catch (IOException ignored) {
+        }
     }
 }

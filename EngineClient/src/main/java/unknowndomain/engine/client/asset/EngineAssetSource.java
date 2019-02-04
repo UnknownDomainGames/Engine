@@ -28,6 +28,6 @@ public final class EngineAssetSource extends FileSystemAssetSource {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println(create().has(AssetPath.of("unknowndomain")));
+        System.out.println(create().has(AssetPath.of("unknowndomain", "shader", "gui.frag")));
     }
 }
