@@ -9,12 +9,11 @@ import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.math.Math2;
 import unknowndomain.engine.util.Color;
-import unknowndomain.engine.util.Math2;
 
 import java.util.Stack;
 
-import static org.apache.commons.lang3.Validate.inclusiveBetween;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GraphicsImpl implements Graphics {

@@ -5,8 +5,8 @@ import unknowndomain.engine.client.rendering.block.BlockMeshGenerator;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.math.Math2;
 import unknowndomain.engine.util.Facing;
-import unknowndomain.engine.util.Math2;
 import unknowndomain.engine.world.BlockAccessor;
 
 import java.util.ArrayList;

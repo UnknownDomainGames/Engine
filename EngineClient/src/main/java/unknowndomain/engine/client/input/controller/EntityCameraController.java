@@ -1,8 +1,8 @@
 package unknowndomain.engine.client.input.controller;
 
 import org.joml.Vector3f;
+import unknowndomain.engine.math.Math2;
 import unknowndomain.engine.player.Player;
-import unknowndomain.engine.util.Math2;
 
 public class EntityCameraController extends EntityController {
 

@@ -1,6 +1,7 @@
 package unknowndomain.engine.util;
 
 import org.apache.commons.lang3.Validate;
+import unknowndomain.engine.math.Math2;
 
 public class BitArray {
 

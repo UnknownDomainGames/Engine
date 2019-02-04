@@ -1,6 +1,7 @@
 package unknowndomain.engine.util;
 
 import com.google.common.collect.Sets;
+import unknowndomain.engine.math.Math2;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.nio.ByteBuffer;

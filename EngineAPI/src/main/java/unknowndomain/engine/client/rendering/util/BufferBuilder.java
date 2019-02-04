@@ -3,8 +3,8 @@ package unknowndomain.engine.client.rendering.util;
 import org.joml.Vector3fc;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import unknowndomain.engine.math.Math2;
 import unknowndomain.engine.util.Color;
-import unknowndomain.engine.util.Math2;
 
 import java.nio.ByteBuffer;
 
