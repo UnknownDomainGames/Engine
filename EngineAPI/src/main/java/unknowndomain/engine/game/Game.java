@@ -1,12 +1,7 @@
 package unknowndomain.engine.game;
 
-import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.component.RuntimeObject;
 import unknowndomain.engine.world.World;
-
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * The game shares the same set of mod and resources pack manifest.
@@ -30,6 +25,8 @@ public interface Game extends RuntimeObject, Runnable {
     GameContext getContext();
 
     World spawnWorld(World.Config config);
+
+    void terminate();
 
     boolean isTerminated();
 }

@@ -1,4 +1,4 @@
-package unknowndomain.engine.event;
+package unknowndomain.engine.event.cause;
 
 public interface Cause {
 

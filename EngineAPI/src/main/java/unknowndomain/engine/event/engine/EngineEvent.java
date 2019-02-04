@@ -1,10 +1,11 @@
-package unknowndomain.engine.event;
+package unknowndomain.engine.event.engine;
 
 import org.apache.commons.lang3.Validate;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.resource.ResourceManager;
+import unknowndomain.engine.event.Event;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 
@@ -91,6 +92,8 @@ public class EngineEvent implements Event {
     }
 
     /* Fired when the Engine starts constructing resources */
+    // TODO: Remove it.
+    @Deprecated
     public static class ResourceConstructionStart extends EngineEvent {
         private final ResourceManager resourceManager;
         private final TextureManager textureManager;
@@ -121,6 +124,7 @@ public class EngineEvent implements Event {
     }
 
     /* Fired when the Engine finishes constructing resources */
+    @Deprecated
     public static class ResourceConstructionFinish extends EngineEvent {
         private final ResourceManager resourceManager;
         private final TextureManager textureManager;

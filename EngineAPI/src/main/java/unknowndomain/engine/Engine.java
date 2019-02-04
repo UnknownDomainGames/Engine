@@ -13,6 +13,7 @@ import unknowndomain.engine.util.Side;
 public interface Engine {
     Logger LOGGER = LoggerFactory.getLogger("Engine");
 
+    @Deprecated
     static Logger getLogger() {
         return LOGGER;
     }

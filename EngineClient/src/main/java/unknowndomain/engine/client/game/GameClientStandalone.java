@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.game;
 
 import unknowndomain.engine.client.EngineClient;
+import unknowndomain.engine.client.GameClient;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
@@ -19,7 +20,7 @@ import unknowndomain.game.Blocks;
 import java.util.Random;
 import java.util.UUID;
 
-public class GameClientStandalone extends GameServerFullAsync {
+public class GameClientStandalone extends GameServerFullAsync implements GameClient {
 
     private ClientContextImpl clientContext;
     private EntityController entityController;
@@ -35,9 +36,6 @@ public class GameClientStandalone extends GameServerFullAsync {
         super(engine);
 
         this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, FixStepTicker.clientTick);
-//Removed
-//        // Remove it
-//        bus.register(new DefaultGameMode());
     }
 
     public EngineClient engine() {
@@ -47,6 +45,7 @@ public class GameClientStandalone extends GameServerFullAsync {
     /**
      * Get player client
      */
+    @Override
     public Player getPlayer() {
         return player;
     }
@@ -54,6 +53,7 @@ public class GameClientStandalone extends GameServerFullAsync {
     /**
      * @return the client world
      */
+    @Override
     public World getWorld() {
         return world;
     }
@@ -62,6 +62,7 @@ public class GameClientStandalone extends GameServerFullAsync {
         return entityController;
     }
 
+    @Override
     public ClientContextImpl getClientContext() {
         return clientContext;
     }
