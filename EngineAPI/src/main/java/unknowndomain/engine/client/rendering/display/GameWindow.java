@@ -22,6 +22,8 @@ public interface GameWindow {
 
     void disableCursor();
 
+    boolean isCursorHidden();
+
     void close();
 
     boolean isClosed();

@@ -142,7 +142,11 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         player.getControlledEntity().getPosition().set(1, 3, 1);
 
         entityController = new EntityCameraController(player);
-        getEngine().getWindow().addCursorCallback(entityController::handleCursorMove);
+        clientContext.getWindow().addCursorCallback((xpos, ypos) -> {
+            if (clientContext.getWindow().isCursorHidden()) {
+                entityController.handleCursorMove(xpos, ypos);
+            }
+        });
         // For now until we figure out how to setup games
         getKeyBindingManager().setGameContext(clientContext);
 

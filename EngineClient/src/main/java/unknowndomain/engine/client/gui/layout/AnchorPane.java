@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.gui.layout;
 
 import unknowndomain.engine.client.gui.Component;
+import unknowndomain.engine.client.gui.misc.Insets;
 
 public class AnchorPane extends Pane {
     public static final String TOP_ANCHOR = "anchor-top";
@@ -33,6 +34,45 @@ public class AnchorPane extends Pane {
     public static Float getRightAnchor(Component child){
         return (Float)getProperty(child, RIGHT_ANCHOR);
     }
+
+    @Override
+    public float prefWidth() {
+        return computeWidth(false);
+    }
+
+    @Override
+    public float prefHeight() {
+        return computeHeight(false);
+    }
+
+    private float computeWidth(final boolean minimum) {
+        float max = 0;
+        for (Component child : getChildren()) {
+            var leftA = getLeftAnchor(child);
+            var rightA = getRightAnchor(child);
+            float left = leftA != null ? leftA : (0);
+            float right = rightA != null ? rightA : 0;
+            float childH = -1;
+            max = Math.max(max, left + (minimum && leftA != null && rightA != null ? child.minWidth() : computeChildPrefAreaWidth(child, -1, null, childH, false)) + right);
+        }
+        final Insets padding = padding().getValue();
+        return padding.getLeft() + max + padding.getRight();
+    }
+
+    private float computeHeight(final boolean minimum) {
+        float max = 0;
+        for (Component child : getChildren()) {
+            var topA = getTopAnchor(child);
+            var bottomA = getBottomAnchor(child);
+            float top = topA != null ? topA : (0);
+            float bottom = bottomA != null ? bottomA : 0;
+            float childW = -1;
+            max = Math.max(max, top + (minimum && topA != null && bottomA != null ? child.minHeight() : computeChildPrefAreaHeight(child, -1, null, childW)) + bottom);
+        }
+        final Insets padding = padding().getValue();
+        return padding.getTop() + max + padding.getBottom();
+    }
+
 
     private float computeChildWidth(Component component, Float left, Float right, float areaWidth){
         if(left != null && right != null){

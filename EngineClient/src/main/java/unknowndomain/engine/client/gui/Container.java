@@ -135,13 +135,13 @@ public abstract class Container extends Component {
     public List<Component> getPointingComponents(float posX, float posY){
         var list = new ArrayList<Component>();
         for (Component component : getChildren()) {
-            if(component instanceof Container){
-                var container = (Container)component;
-                list.addAll(container.getPointingComponents(posX - container.x().get(),posY - container.y().get()));
-            }
-            else{
-                if(component.contains(posX,posY))
+            if (component.contains(posX, posY)) {
+                if (component instanceof Container) {
+                    var container = (Container) component;
+                    list.addAll(container.getPointingComponents(posX - container.x().get(), posY - container.y().get()));
+                } else {
                     list.add(component);
+                }
             }
         }
         return list;

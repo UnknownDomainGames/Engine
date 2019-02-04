@@ -8,6 +8,7 @@ import unknowndomain.engine.client.gui.misc.Pos;
 import unknowndomain.engine.client.gui.misc.Size;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.rendering.RegionRenderer;
+import unknowndomain.engine.math.Math2;
 
 public class Region extends Container {
 
@@ -159,5 +160,30 @@ public class Region extends Container {
 //        }
         position(c, areaX, areaY, areaWidth, areaHeight, areaBaselineOffset,
                 top, right, bottom, left, hAlign, vAlign, false);
+    }
+
+    protected float computeChildPrefAreaWidth(Component child, float baselineComplement, Insets margin, float height, boolean fillHeight) {
+        float left = margin != null ? margin.getLeft() : 0;
+        float right = margin != null ? margin.getRight() : 0;
+        float alt = -1;
+        if (height != -1) {
+            //TODO width depends on height
+        }
+        return left + Math2.clamp(child.minWidth(), child.prefWidth(), child.maxWidth()) + right;
+    }
+
+    protected float computeChildPrefAreaHeight(Component child, float baselineComplement, Insets margin, float width) {
+        float top = margin != null ? margin.getTop() : 0;
+        float bottom = margin != null ? margin.getBottom() : 0;
+        float alt = -1;
+        if (false) {
+            //TODO height depends on width
+        }
+
+        if (baselineComplement != -1) {
+            return 0; //TODO
+        } else {
+            return top + Math2.clamp(child.minHeight(), child.prefHeight(), child.maxHeight()) + bottom;
+        }
     }
 }

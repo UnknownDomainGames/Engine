@@ -109,6 +109,10 @@ public class ShaderManager {
         usingShader.setUniform(location, value);
     }
 
+    public void setUniform(String location, Matrix4fc[] value) {
+        usingShader.setUniform(location, value);
+    }
+
     public ShaderProgram getUsingShader() {
         return usingShader;
     }

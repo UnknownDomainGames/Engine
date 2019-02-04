@@ -1,23 +1,32 @@
 package unknowndomain.engine.client.rendering.model.assimp;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
-import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.system.MemoryUtil;
 
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AssimpMesh {
+
+    public static final int MAX_WEIGHTS = 4;
+
     private final AIMesh mesh;
     private final int vertexBuf;
     private final int texBuf;
     private final int normalBuf;
     private final int tangentBuf;
+    private final int boneBuf;
+    private final int weightBuf;
     private final int elementCount;
     private final int elementArrayBuffer;
+
+    private final List<AssimpBone> bones;
 
     public AssimpMesh(AIMesh mesh){
         this.mesh = mesh;
@@ -75,11 +84,29 @@ public class AssimpMesh {
             }
             elementArrayBufferData.put(face.mIndices());
         }
+
         elementArrayBufferData.flip();
         elementArrayBuffer = GL30.glGenBuffers();
         GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
         GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferData,
                 GL30.GL_STATIC_DRAW);
+
+        bones = new ArrayList<>();
+        List<Integer> boneid = new ArrayList<>();
+        List<Float> weights = new ArrayList<>();
+        AssimpBone.processBones(mesh, bones, boneid, weights);
+        boneBuf = GL30.glGenBuffers();
+        var bonesBuffer = MemoryUtil.memAllocInt(weights.size());
+        bonesBuffer.put(ArrayUtils.toPrimitive(boneid.<Integer>toArray(new Integer[0]))).flip();
+        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, boneBuf);
+        GL30.glBufferData(GL30.GL_ARRAY_BUFFER, bonesBuffer, GL30.GL_STATIC_DRAW);
+
+        weightBuf = GL30.glGenBuffers();
+        var weightsBuffer = MemoryUtil.memAllocFloat(weights.size());
+        weightsBuffer.put(ArrayUtils.toPrimitive(weights.<Float>toArray(new Float[0]))).flip();
+        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, weightBuf);
+        GL30.glBufferData(GL30.GL_ARRAY_BUFFER, weightsBuffer, GL30.GL_STATIC_DRAW);
+
     }
 
     public int getVertexBufferId() {
@@ -98,6 +125,14 @@ public class AssimpMesh {
         return tangentBuf;
     }
 
+    public int getBoneIdBufferId() {
+        return boneBuf;
+    }
+
+    public int getVertexWeightBufferId() {
+        return weightBuf;
+    }
+
     public int getElementArrayBufferId() {
         return elementArrayBuffer;
     }
@@ -108,5 +143,9 @@ public class AssimpMesh {
 
     public AIMesh getRawMesh() {
         return mesh;
+    }
+
+    public List<AssimpBone> getBones() {
+        return bones;
     }
 }

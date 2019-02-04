@@ -94,6 +94,11 @@ public class GLFWGameWindow implements GameWindow {
     }
 
     @Override
+    public boolean isCursorHidden() {
+        return glfwGetInputMode(handle, GLFW_CURSOR) != GLFW_CURSOR_NORMAL;
+    }
+
+    @Override
     public void addKeyCallback(KeyCallback callback) {
         keyCallbacks.add(requireNonNull(callback));
     }

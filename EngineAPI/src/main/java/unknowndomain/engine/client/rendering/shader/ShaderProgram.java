@@ -69,6 +69,17 @@ public class ShaderProgram implements Disposable {
         }
     }
 
+    private static void setUniform(int location, Matrix4fc[] values) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            int length = values != null ? values.length : 0;
+            FloatBuffer buffer = stack.mallocFloat(16 * length);
+            for (int i = 0; i < length; i++) {
+                values[i].get(16 * i, buffer);
+            }
+            GL20.glUniformMatrix4fv(location, false, buffer);
+        }
+    }
+
     @Deprecated
     public static void enableVertexAttrib(int location) {
         GL20.glEnableVertexAttribArray(location);
@@ -171,5 +182,9 @@ public class ShaderProgram implements Disposable {
 
     public void setUniform(String location, Matrix4fc value) {
         setUniform(getUniformLocation(location), value);
+    }
+
+    public void setUniform(String location, Matrix4fc[] values) {
+        setUniform(getUniformLocation(location), values);
     }
 }

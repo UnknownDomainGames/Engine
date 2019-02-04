@@ -63,6 +63,39 @@ public class BorderPane extends Pane {
         return right;
     }
 
+    public BorderPane() {
+        center.addChangeListener((observable, oldValue, newValue) -> {
+            if (oldValue != null) {
+                getChildren().remove(oldValue);
+            }
+            getChildren().add(newValue);
+        });
+        left.addChangeListener((observable, oldValue, newValue) -> {
+            if (oldValue != null) {
+                getChildren().remove(oldValue);
+            }
+            getChildren().add(newValue);
+        });
+        right.addChangeListener((observable, oldValue, newValue) -> {
+            if (oldValue != null) {
+                getChildren().remove(oldValue);
+            }
+            getChildren().add(newValue);
+        });
+        top.addChangeListener((observable, oldValue, newValue) -> {
+            if (oldValue != null) {
+                getChildren().remove(oldValue);
+            }
+            getChildren().add(newValue);
+        });
+        bottom.addChangeListener((observable, oldValue, newValue) -> {
+            if (oldValue != null) {
+                getChildren().remove(oldValue);
+            }
+            getChildren().add(newValue);
+        });
+    }
+
     @Override
     protected void layoutChildren() {
         final Insets padding = padding().getValue();
