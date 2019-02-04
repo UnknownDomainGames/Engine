@@ -9,7 +9,10 @@ import java.util.Locale;
  */
 public class Platform {
 
-    private static Engine engine; // TODO inject
+    /**
+     * Auto inject
+     */
+    private static Engine engine;
 
     public static Engine getEngine() {
         return engine;
@@ -19,20 +22,20 @@ public class Platform {
         return Locale.getDefault(); // TODO Game locale
     }
 
-    public static boolean isDevelopmentMode() {
-        return true;
+    public static boolean isDevelopmentEnv() {
+        return engine.isDevelopmentEnv();
     }
 
     public static boolean isClient() {
-        return getEngine().isClient(); // TODO
+        return engine.isClient(); // TODO
     }
 
     public static boolean isServer() {
-        return getEngine().isServer();
+        return engine.isServer();
     }
 
     public static Logger getLogger() {
-        return Engine.getLogger();
+        return engine.getLogger();
     }
 
     public static String getVersion() {

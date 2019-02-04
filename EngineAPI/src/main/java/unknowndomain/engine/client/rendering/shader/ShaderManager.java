@@ -1,9 +1,8 @@
 package unknowndomain.engine.client.rendering.shader;
 
 import org.joml.*;
-import unknowndomain.engine.Engine;
+import unknowndomain.engine.Platform;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ public class ShaderManager {
 
     public ShaderProgram createShader(String name, Shader... shaders){
         if(createdShaderMap.containsKey(name)) {
-            Engine.getLogger().warn(String.format("repeating creating shader program with the same name! name: %s", name));
+            Platform.getLogger().warn(String.format("repeating creating shader program with the same name! name: %s", name));
             return createdShaderMap.get(name);
         }
         ShaderProgram sp = new ShaderProgram();
@@ -45,7 +44,7 @@ public class ShaderManager {
         if(createdShaderMap.containsKey(name)){
             bindShader(createdShaderMap.get(name));
         }else{
-            Engine.getLogger().warn("Shader Program %s cannot be found at Shader Manager!", name);
+            Platform.getLogger().warn("Shader Program %s cannot be found at Shader Manager!", name);
         }
     }
 

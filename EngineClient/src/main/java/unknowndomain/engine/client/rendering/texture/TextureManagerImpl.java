@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.rendering.texture;
 
 import org.apache.commons.lang3.tuple.Pair;
-import unknowndomain.engine.Engine;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.resource.ResourcePath;
 
 import javax.annotation.Nullable;
@@ -25,7 +25,7 @@ public class TextureManagerImpl implements TextureManager {
             textures.put(path, texture);
             return texture;
         } catch (IOException e) {
-            Engine.getLogger().warn(String.format("cannot load texture %s!", path), e);
+            Platform.getLogger().warn(String.format("cannot load texture %s!", path), e);
         }
         return null;
     }

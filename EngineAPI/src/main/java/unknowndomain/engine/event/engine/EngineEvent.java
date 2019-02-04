@@ -6,12 +6,9 @@ import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.resource.ResourceManager;
 import unknowndomain.engine.event.Event;
-import unknowndomain.engine.registry.Registry;
-import unknowndomain.engine.registry.RegistryManager;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Events related to the Engine
@@ -28,67 +25,6 @@ public class EngineEvent implements Event {
 
     public Engine getEngine() {
         return engine;
-    }
-
-    /* Fired when the Engine starts constructing mods */
-    public static class ModConstructionStart extends EngineEvent {
-        public ModConstructionStart(Engine e) {
-            super(e);
-        }
-    }
-
-    /*
-     * Fired when the Engine finishes constructing mods for the mods to initialize
-     * for later stages
-     */
-    public static class ModInitializationEvent extends EngineEvent {
-        public ModInitializationEvent(Engine e) {
-            super(e);
-        }
-    }
-
-    /* Fired when the Engine finishes constructing mods */
-    public static class ModConstructionFinish extends EngineEvent {
-        public ModConstructionFinish(Engine e) {
-            super(e);
-        }
-    }
-
-    public static class RegistryConstructionEvent extends EngineEvent {
-        private final Map<Class<?>, Registry<?>> registries;
-
-        public RegistryConstructionEvent(Engine e, Map<Class<?>, Registry<?>> registries) {
-            super(e);
-            this.registries = registries;
-        }
-
-        public void register(Registry<?> registry) {
-            if (registries.containsKey(registry.getEntryType())) {
-                throw new IllegalStateException(String.format("Registry<%s> has been registered.", registry.getEntryType().getSimpleName()));
-            }
-            registries.put(registry.getEntryType(), registry);
-        }
-    }
-
-    /* Fired when the Engine starts the registration stage */
-    public static class RegistrationStart extends EngineEvent {
-        private final RegistryManager manager;
-
-        public RegistrationStart(Engine e, RegistryManager registryManager) {
-            super(e);
-            manager = registryManager;
-        }
-
-        public RegistryManager getRegistryManager() {
-            return manager;
-        }
-    }
-
-    /* Fired when the Engine finishes the registration stage */
-    public static class RegistrationFinish extends RegistrationStart {
-        public RegistrationFinish(Engine e, RegistryManager registryManager) {
-            super(e, registryManager);
-        }
     }
 
     /* Fired when the Engine starts constructing resources */

@@ -1,6 +1,7 @@
 package unknowndomain.engine.game;
 
-import unknowndomain.engine.component.RuntimeObject;
+import org.slf4j.Logger;
+import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.world.World;
 
 /**
@@ -20,7 +21,7 @@ import unknowndomain.engine.world.World;
  * <p>
  * Each world should hold a separated thread
  */
-public interface Game extends RuntimeObject, Runnable {
+public interface Game extends Runnable {
 
     GameContext getContext();
 
@@ -29,4 +30,8 @@ public interface Game extends RuntimeObject, Runnable {
     void terminate();
 
     boolean isTerminated();
+
+    EventBus getEventBus();
+
+    Logger getLogger();
 }

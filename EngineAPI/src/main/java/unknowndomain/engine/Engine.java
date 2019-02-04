@@ -1,22 +1,16 @@
 package unknowndomain.engine;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.game.Game;
-import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.util.Side;
 
 /**
  * really, just the {@link Game} starter, nothing else
  */
 public interface Engine {
-    Logger LOGGER = LoggerFactory.getLogger("Engine");
 
-    @Deprecated
-    static Logger getLogger() {
-        return LOGGER;
-    }
+    Logger getLogger();
 
     Side getSide();
 
@@ -28,14 +22,14 @@ public interface Engine {
         return getSide() == Side.SERVER;
     }
 
+    boolean isDevelopmentEnv();
+
     /**
      * Initialize the Engine. Load all mods and complete registration
      */
     void initEngine();
 
     EventBus getEventBus();
-
-    RegistryManager getRegistryManager();
 
     /**
      * Start a new game, each engine only support one game at the time?

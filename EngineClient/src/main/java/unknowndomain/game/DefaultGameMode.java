@@ -1,7 +1,5 @@
 package unknowndomain.game;
 
-import org.slf4j.Logger;
-import unknowndomain.engine.Engine;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.block.ClientBlock;
@@ -24,6 +22,8 @@ import unknowndomain.engine.client.resource.Resource;
 import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.engine.EngineEvent;
+import unknowndomain.engine.event.mod.RegistrationStartEvent;
+import unknowndomain.engine.event.mod.RegistryConstructionEvent;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.IdAutoIncreaseRegistry;
@@ -35,13 +35,7 @@ import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 public final class DefaultGameMode {
 
     @Listener
-    public void initializeMod(EngineEvent.ModInitializationEvent e) {
-        Logger l = Engine.getLogger();
-        l.info("Initializing EngineDummyContainer");
-    }
-
-    @Listener
-    public void constructionRegistry(EngineEvent.RegistryConstructionEvent e) {
+    public void constructionRegistry(RegistryConstructionEvent e) {
         // TODO: move to common.
         e.register(new IdAutoIncreaseRegistry<>(Block.class));
 
@@ -50,7 +44,7 @@ public final class DefaultGameMode {
     }
 
     @Listener
-    public void registerStage(EngineEvent.RegistrationStart e) {
+    public void registerStage(RegistrationStartEvent e) {
         // register blocks
         RegistryManager registryManager = e.getRegistryManager();
         registerBlocks(registryManager.getRegistry(Block.class));

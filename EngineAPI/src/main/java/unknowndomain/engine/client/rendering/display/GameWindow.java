@@ -22,6 +22,10 @@ public interface GameWindow {
 
     void disableCursor();
 
+    void close();
+
+    boolean isClosed();
+
     void addKeyCallback(KeyCallback callback);
 
     void removeKeyCallback(KeyCallback callback);

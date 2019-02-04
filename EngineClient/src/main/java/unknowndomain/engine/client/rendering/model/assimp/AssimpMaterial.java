@@ -5,14 +5,11 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.assimp.AIColor4D;
 import org.lwjgl.assimp.AIMaterial;
 import org.lwjgl.assimp.AIString;
-import unknowndomain.engine.client.EngineClient;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.rendering.light.Material;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.resource.ResourcePath;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -85,7 +82,7 @@ public class AssimpMaterial {
         aiGetMaterialTexture(mMaterial, textureType, 0, path,null,null,null,null,null, (IntBuffer) null);
         String s = path.dataString();
         if (s.length() > 0) {
-                return UnknownDomain.getEngine().getTextureManager().getTexture(new ResourcePath("texture", "/"+parentDir + s));
+            return UnknownDomain.getGame().getTextureManager().getTexture(new ResourcePath("texture", "/" + parentDir + s));
         }
         return null;
     }

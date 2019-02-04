@@ -1,12 +1,13 @@
 package unknowndomain.engine.event.game;
 
-import unknowndomain.engine.event.Event;
+import unknowndomain.engine.game.Game;
 import unknowndomain.engine.game.GameContext;
 
-public class GameReadyEvent implements Event {
+public class GameReadyEvent extends GameEvent {
     private GameContext context;
 
-    public GameReadyEvent(GameContext context) {
+    public GameReadyEvent(Game game, GameContext context) {
+        super(game);
         this.context = context;
     }
 

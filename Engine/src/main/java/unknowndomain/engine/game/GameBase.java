@@ -1,50 +1,73 @@
 package unknowndomain.engine.game;
 
+import com.google.common.collect.Maps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.component.Component;
+import unknowndomain.engine.event.AsmEventBus;
+import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.game.GameReadyEvent;
+import unknowndomain.engine.event.mod.RegistrationFinishEvent;
+import unknowndomain.engine.event.mod.RegistrationStartEvent;
+import unknowndomain.engine.event.mod.RegistryConstructionEvent;
+import unknowndomain.engine.mod.ModContainer;
+import unknowndomain.engine.mod.ModManager;
+import unknowndomain.engine.mod.impl.DefaultModManager;
+import unknowndomain.engine.mod.util.ModCollector;
+import unknowndomain.engine.registry.Registry;
+import unknowndomain.engine.registry.RegistryManager;
+import unknowndomain.engine.registry.impl.SimpleRegistryManager;
 import unknowndomain.game.Blocks;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.Map;
 
 public abstract class GameBase implements Game {
+
     protected final Engine engine;
+
+    protected final Logger logger = LoggerFactory.getLogger("Game");
+
+    private ModManager modManager;
+    private RegistryManager registryManager;
+
+    private EventBus eventBus;
+
+    private boolean terminated = false;
 
     protected GameContext context;
 
     public GameBase(Engine engine) {
         this.engine = engine;
-        // this.option.getMods().add(this.meta);
+        this.eventBus = new AsmEventBus();
     }
 
     /**
      * Construct stage, collect mod and resource according to it option
      */
     protected void constructStage() {
-        // Mod construction moved to Engine
+        constructMods();
     }
 
     /**
      * Register stage, collect all registerable things from mod here.
      */
     protected void registerStage() {
-        // Registry Moved to Engine
-//        Map<Class<?>, Registry<?>> maps = Maps.newHashMap();
-//        List<SimpleRegistry<?>> registries = Lists.newArrayList();
-//        for (Registry.Type<?> tp : Arrays.asList(Registry.Type.of("block", Block.class), Registry.Type.of("item", Item.class), Registry.Type.of("entity", EntityType.class))) {
-//            SimpleRegistry<?> registry = new SimpleRegistry<>(tp.type, tp.name);
-//            maps.put(tp.type, registry);
-//            registries.add(registry);
-//        }
-//        SimpleRegistryManager manager = new SimpleRegistryManager(maps);
-//        eventBus.post(new RegisterEvent(manager));
+        // Registration Stage
+        logger.info("Creating Registry Manager!");
+        Map<Class<?>, Registry<?>> registries = Maps.newHashMap();
+        eventBus.post(new RegistryConstructionEvent(registries));
+        registryManager = new SimpleRegistryManager(Map.copyOf(registries));
+        logger.info("Registering!");
+        eventBus.post(new RegistrationStartEvent(registryManager));
+        logger.info("Finishing Registration!");
+        eventBus.post(new RegistrationFinishEvent(registryManager));
 
-        // GamePreInitializationEvent event = new GamePreInitializationEvent();
-        // engine.getEventBus().post(event);
-
-        // Hardcode set air for now
-        this.context = new GameContext(engine.getRegistryManager(), engine.getEventBus(), Blocks.AIR);
+        this.context = new GameContext(registryManager, eventBus, Blocks.AIR);
     }
 
     /**
@@ -58,8 +81,34 @@ public abstract class GameBase implements Game {
      * final stage of the
      */
     protected void finishStage() {
-        spawnWorld(null);
-        engine.getEventBus().post(new GameReadyEvent(context));
+        eventBus.post(new GameReadyEvent(this, context));
+    }
+
+    private void constructMods() {
+        logger.info("Loading Mods!");
+        modManager = new DefaultModManager();
+
+        Path modFolder = Paths.get("mods");
+        if (!Files.exists(modFolder)) {
+            try {
+                Files.createDirectory(modFolder);
+            } catch (IOException e) {
+                logger.warn(e.getMessage(), e);
+            }
+        }
+
+        try {
+            Collection<ModContainer> modContainers = modManager.loadMod(ModCollector.createFolderModCollector(modFolder));
+            modContainers.forEach(modContainer -> eventBus.register(modContainer.getInstance()));
+            modContainers.forEach(modContainer -> logger.info("Loaded mod: {}", modContainer.getModId()));
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+
+//        Platform.getLogger().info("Initializing Mods!");
+//        getContext().post(new EngineEvent.ModInitializationEvent(this));
+//        Platform.getLogger().info("Finishing Construction!");
+//        getContext().post(new EngineEvent.ModConstructionFinish(this));
     }
 
     @Override
@@ -68,8 +117,18 @@ public abstract class GameBase implements Game {
     }
 
     @Override
+    public EventBus getEventBus() {
+        return eventBus;
+    }
+
+    @Override
+    public Logger getLogger() {
+        return logger;
+    }
+
+    @Override
     public boolean isTerminated() {
-        return false;
+        return terminated;
     }
 
     @Override
@@ -86,18 +145,9 @@ public abstract class GameBase implements Game {
         // }
     }
 
+    @Override
     public void terminate() {
+        terminated = true;
         // TODO: unload mod/resource here
-    }
-
-    @Nullable
-    @Override
-    public <T extends Component> T getComponent(@Nonnull Class<T> type) {
-        return null;
-    }
-
-    @Override
-    public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
-        return false;
     }
 }

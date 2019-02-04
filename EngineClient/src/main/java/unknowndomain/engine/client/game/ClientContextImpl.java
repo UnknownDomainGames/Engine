@@ -7,7 +7,6 @@ import unknowndomain.engine.client.ClientContext;
 import unknowndomain.engine.client.asset.AssetManager;
 import unknowndomain.engine.client.asset.DefaultAssetManager;
 import unknowndomain.engine.client.asset.DefaultAssetSourceManager;
-import unknowndomain.engine.client.asset.EngineAssetSource;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.Renderer;
@@ -53,7 +52,7 @@ public class ClientContextImpl implements ClientContext {
         this.player = player;
         this.guiManager = new GuiManager(this);
         this.assetSourceManager = new DefaultAssetSourceManager();
-        this.assetSourceManager.getSources().add(EngineAssetSource.create());
+        this.assetSourceManager.getSources().add(game.getEngine().getEngineAssetSource());
         this.assetManager = new DefaultAssetManager(assetSourceManager);
     }
 
@@ -98,7 +97,7 @@ public class ClientContextImpl implements ClientContext {
 
     @Override
     public TextureManager getTextureManager() {
-        return game.engine().getTextureManager();
+        return game.getTextureManager();
     }
 
     @Override
@@ -128,9 +127,10 @@ public class ClientContextImpl implements ClientContext {
 
     @Override
     public Registry<ClientBlock> getClientBlockRegistry() {
-        return game.getContext().getRegistry().getRegistry(ClientBlock.class);
+        return game.getContext().getRegistryManager().getRegistry(ClientBlock.class);
     }
 
+    @Deprecated
     public void build(GameContext context, ResourceManager resourceManager) {
         this.renderers.clear();
         for (Renderer.Factory factory : factories) {
@@ -147,11 +147,15 @@ public class ClientContextImpl implements ClientContext {
 
     public void render(double partial) {
         this.partialTick = partial;
-        getFrustumIntersection().set(getWindow().projection().mul(getCamera().view((float) partial), new Matrix4f()));
-        hit = getPlayer().getWorld().raycast(getCamera().getPosition((float) partialTick()), getCamera().getFrontVector((float) partialTick()), 10);
+        updateBlockHit();
         for (Renderer renderer : renderers) {
             renderer.render();
         }
+    }
+
+    public void updateBlockHit() {
+        getFrustumIntersection().set(getWindow().projection().mul(getCamera().view((float) partialTick), new Matrix4f()));
+        hit = getPlayer().getWorld().raycast(getCamera().getPosition((float) partialTick()), getCamera().getFrontVector((float) partialTick()), 10);
     }
 
     public void dispose() {

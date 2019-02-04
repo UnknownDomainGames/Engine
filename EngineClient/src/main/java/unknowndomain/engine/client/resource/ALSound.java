@@ -1,6 +1,6 @@
 package unknowndomain.engine.client.resource;
 
-import unknowndomain.engine.Engine;
+import unknowndomain.engine.Platform;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -55,11 +55,11 @@ public class ALSound {
             case AL_NO_ERROR:
                 break;
             case AL_INVALID_ENUM:
-                Engine.getLogger().warn("Cannot load sound! (Invalid enum) bit depth: {} channel: {}", bitDepth, channel);
+                Platform.getLogger().warn("Cannot load sound! (Invalid enum) bit depth: {} channel: {}", bitDepth, channel);
                 alDeleteBuffers(soundId);
                 return null;
             case AL_OUT_OF_MEMORY:
-                Engine.getLogger().warn("Cannot load sound! (Out of memory)!");
+                Platform.getLogger().warn("Cannot load sound! (Out of memory)!");
                 alDeleteBuffers(soundId);
                 return null;
         }

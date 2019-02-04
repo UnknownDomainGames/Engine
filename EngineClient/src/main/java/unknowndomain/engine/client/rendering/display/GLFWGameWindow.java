@@ -5,15 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
-import unknowndomain.engine.client.rendering.gui.Tessellator;
-import unknowndomain.engine.client.rendering.shader.Shader;
-import unknowndomain.engine.client.rendering.shader.ShaderManager;
-import unknowndomain.engine.client.rendering.shader.ShaderProgram;
-import unknowndomain.engine.client.rendering.shader.ShaderType;
-import unknowndomain.engine.client.rendering.util.*;
-import unknowndomain.engine.client.resource.ResourcePath;
+import unknowndomain.engine.Platform;
 
 import java.io.PrintStream;
 import java.util.LinkedList;
@@ -22,7 +14,6 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class GLFWGameWindow implements GameWindow {
@@ -36,6 +27,8 @@ public class GLFWGameWindow implements GameWindow {
     private Matrix4f projection;
 
     private boolean paused;
+
+    private boolean closed = false;
 
     private final List<KeyCallback> keyCallbacks = new LinkedList<>();
     private final List<MouseCallback> mouseCallbacks = new LinkedList<>();
@@ -150,9 +143,16 @@ public class GLFWGameWindow implements GameWindow {
         charCallbacks.remove(callback);
     }
 
-    public boolean shouldClose() {
-        return glfwWindowShouldClose(handle);
-    } // TODO: Remove it.
+    @Override
+    public void close() {
+        closed = true;
+        glfwDestroyWindow(handle);
+    }
+
+    @Override
+    public boolean isClosed() {
+        return closed;
+    }
 
     public void beginDraw() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -210,7 +210,8 @@ public class GLFWGameWindow implements GameWindow {
             }
 
             if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
-                System.exit(0); //FIXME: we need a way for exit game.
+                Platform.getEngine().getCurrentGame().terminate();
+                System.exit(0); // TODO: Remove it
             }
         });
     }

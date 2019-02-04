@@ -1,6 +1,6 @@
 package unknowndomain.engine.client.gui;
 
-import unknowndomain.engine.Engine;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.ClientContext;
 
 import java.util.ArrayDeque;
@@ -69,7 +69,7 @@ public class GuiManager {
 
     public void showHud(String id, Scene hud){
         if(huds.containsKey(id)){
-            Engine.getLogger().warn(String.format("Conflicting HUD id!: %s",id));
+            Platform.getLogger().warn(String.format("Conflicting HUD id!: %s", id));
         }else {
             huds.put(id, hud);
         }

@@ -1,14 +1,9 @@
 package unknowndomain.engine.client.rendering.shader;
 
 import org.apache.commons.io.IOUtils;
-import org.joml.*;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.system.MemoryStack;
-import unknowndomain.engine.Engine;
+import unknowndomain.engine.Platform;
 
 import java.io.IOException;
-import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -51,7 +46,7 @@ public class Shader {
 
         glCompileShader(shaderId);
         if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
-            Engine.getLogger().warn(String.format("Error compiling shader code for %s, log: %s", content,
+            Platform.getLogger().warn(String.format("Error compiling shader code for %s, log: %s", content,
                     glGetShaderInfoLog(shaderId, 2048)));
         }
         return new Shader(shaderId, type);

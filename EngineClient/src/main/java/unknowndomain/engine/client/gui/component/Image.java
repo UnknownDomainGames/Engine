@@ -2,14 +2,11 @@ package unknowndomain.engine.client.gui.component;
 
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
-import unknowndomain.engine.client.EngineClient;
 import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.rendering.ImageRenderer;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
-import unknowndomain.engine.client.rendering.texture.TextureManagerImpl;
-import unknowndomain.engine.client.rendering.texture.TextureType;
 import unknowndomain.engine.client.resource.ResourcePath;
 
 public class Image extends Component {
@@ -39,7 +36,7 @@ public class Image extends Component {
 
     public void buildCache(){
         cachedPath = image.getValue();
-        cachedTexture = UnknownDomain.getEngine().getTextureManager().getTexture(cachedPath);
+        cachedTexture = UnknownDomain.getGame().getTextureManager().getTexture(cachedPath);
         if(cachedTexture != null) {
             imgWidth.set(cachedTexture.getWidth());
             imgHeight.set(cachedTexture.getHeight());

@@ -6,7 +6,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-import unknowndomain.engine.Engine;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.event.Event.Cancellable;
 import unknowndomain.engine.util.SafeClassDefiner;
 
@@ -90,7 +90,7 @@ public class AsmEventBus implements EventBus {
         try {
             executor.invoke(event);
         } catch (Exception e) {
-            Engine.getLogger().warn("Failed to handle event.", new EventException(e));
+            Platform.getLogger().warn("Failed to handle event.", new EventException(e));
         }
     }
 
@@ -112,18 +112,18 @@ public class AsmEventBus implements EventBus {
             int modifiers = method.getModifiers();
 
             if (!Modifier.isPublic(modifiers) || Modifier.isStatic(modifiers) || Modifier.isAbstract(modifiers)) {
-                Engine.getLogger().warn("Fail to register " + clazz + ": Listener Method Must Be Public, non-static and non-abstract"); // TODO: support static
+                Platform.getLogger().warn("Fail to register " + clazz + ": Listener Method Must Be Public, non-static and non-abstract"); // TODO: support static
                 continue;
             }
 
             if (method.getParameterCount() != 1) {
-                Engine.getLogger().warn("Fail to register " + clazz + ": Listener Method Must only have 1 event parameter!");
+                Platform.getLogger().warn("Fail to register " + clazz + ": Listener Method Must only have 1 event parameter!");
                 continue;
             }
 
             Class<?> eventType = method.getParameterTypes()[0];
             if (!Event.class.isAssignableFrom(eventType)) {
-                Engine.getLogger().warn("Fail to register " + clazz + ": Listener Method Must accept Event parameter!");
+                Platform.getLogger().warn("Fail to register " + clazz + ": Listener Method Must accept Event parameter!");
                 continue;
             }
 
@@ -132,7 +132,7 @@ public class AsmEventBus implements EventBus {
                 listenerExecutors.add(executor);
                 addEventListener(eventType, executor);
             } catch (ReflectiveOperationException e) {
-                Engine.getLogger().warn(String.format("Failed to register listener %s.%s .", listener.getClass().getSimpleName(), method.getName()), new EventException(e));
+                Platform.getLogger().warn(String.format("Failed to register listener %s.%s .", listener.getClass().getSimpleName(), method.getName()), new EventException(e));
             }
 
         }

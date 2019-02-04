@@ -12,7 +12,6 @@ public class UnknownDomain {
     private static final String NAME = "UnknownDomain";
     private static final String VERSION = "0.0.1";
 
-    public static final int WIDTH = 854, HEIGHT = 480;
     private static EngineClient engine;
 
     public static void main(String[] args) {
@@ -20,8 +19,8 @@ public class UnknownDomain {
             // put this OS checking
             System.setProperty("java.awt.headless", "true");
         }
-        
-        engine = new EngineClient(WIDTH, HEIGHT);
+
+        engine = new EngineClient();
         injectEngine(engine);
         engine.initEngine();
     }

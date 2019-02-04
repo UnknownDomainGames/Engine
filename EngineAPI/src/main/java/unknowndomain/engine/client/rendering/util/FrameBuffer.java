@@ -4,12 +4,12 @@ import org.joml.Vector4i;
 import org.joml.Vector4ic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL32;
-import unknowndomain.engine.Engine;
+import unknowndomain.engine.Platform;
 
 import java.nio.ByteBuffer;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL30.*;
 
 public class FrameBuffer {
@@ -106,7 +106,7 @@ public class FrameBuffer {
     public void check(){
         bind();
         if(GL30.glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-            Engine.getLogger().warn("frame buffer #%d incomplete!", getFboId());
+            Platform.getLogger().warn("frame buffer #%d incomplete!", getFboId());
         }
         unbind();
     }

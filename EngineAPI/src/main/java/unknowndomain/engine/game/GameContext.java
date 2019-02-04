@@ -25,7 +25,7 @@ public class GameContext implements EventBus {
         // this.nextTick = nextTick;
     }
 
-    public RegistryManager getRegistry() {
+    public RegistryManager getRegistryManager() {
         return manager;
     }
 

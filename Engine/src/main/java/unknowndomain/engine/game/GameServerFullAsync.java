@@ -2,7 +2,6 @@ package unknowndomain.engine.game;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
@@ -16,6 +15,7 @@ import java.util.Map;
  * Each world host in an independent thread.
  */
 public class GameServerFullAsync extends GameBase {
+
     protected Map<String, World> worlds;
     protected List<WorldCommon> internalWorlds;
     protected List<Thread> worldThreads;
@@ -66,6 +66,7 @@ public class GameServerFullAsync extends GameBase {
     }
 
     public void terminate() {
+        super.terminate();
         for (WorldCommon worldCommon : internalWorlds) {
             worldCommon.stop();
         }
