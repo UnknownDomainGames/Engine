@@ -1,6 +1,8 @@
 package unknowndomain.engine.client.asset;
 
-public abstract class Asset {
+import unknowndomain.engine.util.Disposable;
+
+public abstract class Asset implements Disposable {
 
     private final AssetPath path;
     private final AssetType<?> type;

@@ -9,7 +9,7 @@ import java.nio.file.Path;
 
 public interface AssetSource extends Disposable {
 
-    boolean has(AssetPath path);
+    boolean exists(AssetPath path);
 
     InputStream openStream(AssetPath path) throws IOException;
 

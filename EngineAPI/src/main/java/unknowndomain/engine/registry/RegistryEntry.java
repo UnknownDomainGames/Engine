@@ -75,8 +75,8 @@ public interface RegistryEntry<T> {
 
         @Override
         public String toString() {
-            return token + "{" +
-                    "path='" + registeredName + '\'' +
+            return token.getRawType().getSimpleName() + "{" +
+                    "uniqueName='" + uniqueName + '\'' +
                     '}';
         }
     }

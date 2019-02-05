@@ -14,7 +14,7 @@ public class DefaultAssetSourceManager implements AssetSourceManager {
     @Override
     public Optional<AssetSource> getSource(AssetPath path) {
         for (AssetSource assetSource : assetSources) {
-            if (assetSource.has(path)) {
+            if (assetSource.exists(path)) {
                 return Optional.of(assetSource);
             }
         }
@@ -25,7 +25,7 @@ public class DefaultAssetSourceManager implements AssetSourceManager {
     public List<AssetSource> getSources(AssetPath path) {
         List<AssetSource> result = new LinkedList<>();
         for (AssetSource assetSource : assetSources) {
-            if (assetSource.has(path)) {
+            if (assetSource.exists(path)) {
                 result.add(assetSource);
             }
         }

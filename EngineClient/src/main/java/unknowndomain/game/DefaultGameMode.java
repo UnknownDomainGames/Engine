@@ -2,6 +2,7 @@ package unknowndomain.game;
 
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
+import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.block.ClientBlockAir;
 import unknowndomain.engine.client.block.ClientBlockDefault;
@@ -100,7 +101,7 @@ public final class DefaultGameMode {
 
     @Listener
     public void constructResource(EngineEvent.ResourceConstructionStart e) {
-
+        AssetPath unknowndomainPath = AssetPath.of("unknowndomain");
         e.registerRenderer((context, manager) -> {
             ChunkRenderer chunkRenderer = new ChunkRenderer(Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.vert")).cache(), ShaderType.VERTEX_SHADER),
                     Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.frag")).cache(), ShaderType.FRAGMENT_SHADER));
@@ -119,13 +120,14 @@ public final class DefaultGameMode {
                     Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(), ShaderType.FRAGMENT_SHADER));
         });
 
+        AssetPath blockTexturePath = AssetPath.of(unknowndomainPath, "texture", "block");
         TextureManager textureManager = e.getTextureManager();
-        TextureUV side = textureManager.registerToAtlas(new ResourcePath("/assets/unknowndomain/textures/block/grass_side.png"), BLOCK);
-        TextureUV top = textureManager.registerToAtlas(new ResourcePath("/assets/unknowndomain/textures/block/grass_top.png"), BLOCK);
-        TextureUV bottom = textureManager.registerToAtlas(new ResourcePath("/assets/unknowndomain/textures/block/dirt.png"), BLOCK);
+        TextureUV side = textureManager.registerToAtlas(AssetPath.of(blockTexturePath, "grass_side.png"), BLOCK);
+        TextureUV top = textureManager.registerToAtlas(AssetPath.of(blockTexturePath, "grass_top.png"), BLOCK);
+        TextureUV bottom = textureManager.registerToAtlas(AssetPath.of(blockTexturePath, "dirt.png"), BLOCK);
 
         BlockModel blockModel = new BlockModel();
-        blockModel.addCube(0, 0, 0, 1, 1, 1, new TextureUV[] { side, side, side, side, top, bottom });
+        blockModel.addCube(0, 0, 0, 1, 1, 1, new TextureUV[]{side, side, side, side, top, bottom});
         ClientBlockDefault.blockRendererMap.put(Blocks.GRASS, blockModel);
 
         blockModel = new BlockModel();

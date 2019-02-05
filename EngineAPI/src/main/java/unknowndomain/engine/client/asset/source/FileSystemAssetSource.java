@@ -23,7 +23,7 @@ public class FileSystemAssetSource implements AssetSource {
     }
 
     @Override
-    public boolean has(AssetPath path) {
+    public boolean exists(AssetPath path) {
         return Files.exists(fileSystem.getPath(root, path.getPath()));
     }
 

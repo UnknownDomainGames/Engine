@@ -1,47 +1,51 @@
 package unknowndomain.engine.client.rendering.texture;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import de.matthiasmann.twl.utils.PNGDecoder;
 import org.apache.commons.lang3.tuple.Pair;
-import unknowndomain.engine.Platform;
+import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.resource.ResourcePath;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 public class TextureManagerImpl implements TextureManager {
 
-    private final Map<ResourcePath, GLTexture> textures = new HashMap<>();
+    private final Cache<AssetPath, GLTexture> cachedTextures = CacheBuilder.newBuilder().weakValues().removalListener(notification -> ((GLTexture) notification.getValue()).dispose()).build();
+
     private final Map<TextureType, List<Pair<ResourcePath, TextureUVImpl>>> texturesAltas = new HashMap<>();
     private final Map<TextureType, GLTexture> bakedTextureAtlases = new HashMap<>();
     private final TextureAtlasBuilder textureAtlasBuilder = new TextureAtlasBuilder();
-
-    @Override
-    @Nullable
-    public GLTexture register(ResourcePath path){
-        TextureBuffer buf;
-        try {
-            buf = textureAtlasBuilder.getBufferFromResource(path);
-            GLTexture texture = GLTexture.of(buf.getWidth(), buf.getHeight(), buf.getBuffer());
-            textures.put(path, texture);
-            return texture;
-        } catch (IOException e) {
-            Platform.getLogger().warn(String.format("cannot load texture %s!", path), e);
-        }
-        return null;
-    }
-
-    @Override
-    public GLTexture getTexture(ResourcePath path){
-        if(!textures.containsKey(path)){
-            register(path);
-        }
-        return textures.get(path);
-    }
 
     public TextureUV registerToAtlas(ResourcePath path, TextureType type) {
         TextureUVImpl texture = new TextureUVImpl();
         texturesAltas.computeIfAbsent(type, key -> new ArrayList<>()).add(Pair.of(path, texture));
         return texture;
+    }
+
+    @Override
+    public GLTexture getTexture(AssetPath path, boolean reload) {
+        if (!reload) {
+            GLTexture texture = cachedTextures.getIfPresent(path);
+            if (texture != null) {
+                return texture;
+            }
+        }
+
+        return cachedTextures.get(path, key -> {
+            try (InputStream inputStream =) {
+                PNGDecoder decoder = new PNGDecoder(inputStream);
+                TextureBuffer buf = TextureBuffer.create(decoder);
+                return GLTexture.of(buf.getWidth(), buf.getHeight(), buf.getBuffer());
+            }
+        });
+    }
+
+    @Override
+    public TextureUV registerToAtlas(AssetPath path, TextureType type) {
+        return null;
     }
 
     public GLTexture getTextureAtlas(TextureType type) {

@@ -1,17 +1,16 @@
 package unknowndomain.engine.client.rendering.texture;
 
-import unknowndomain.engine.client.resource.ResourcePath;
-
-import javax.annotation.Nullable;
+import unknowndomain.engine.client.asset.AssetPath;
 
 public interface TextureManager {
 
-    @Nullable
-    GLTexture register(ResourcePath path);
+    default GLTexture getTexture(AssetPath path) {
+        return getTexture(path, false);
+    }
 
-    GLTexture getTexture(ResourcePath path);
+    GLTexture getTexture(AssetPath path, boolean reload);
 
-    TextureUV registerToAtlas(ResourcePath path, TextureType type);
+    TextureUV registerToAtlas(AssetPath path, TextureType type);
 
     GLTexture getTextureAtlas(TextureType type);
 
