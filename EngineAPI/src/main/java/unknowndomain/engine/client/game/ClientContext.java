@@ -25,12 +25,6 @@ public interface ClientContext {
 
     double partialTick();
 
-    Thread getRenderThread();
-
-    default boolean isRenderThread() {
-        return Thread.currentThread() == getRenderThread();
-    }
-
     FrustumIntersection getFrustumIntersection();
 
     Player getPlayer();

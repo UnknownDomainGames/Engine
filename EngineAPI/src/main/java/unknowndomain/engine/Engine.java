@@ -35,6 +35,7 @@ public interface Engine {
     /**
      * Start a new game, each engine only support one game at the time?
      */
+    @Deprecated
     void startGame();
 
     // TODO: add getter for mod repository

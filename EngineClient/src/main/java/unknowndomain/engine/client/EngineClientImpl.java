@@ -41,6 +41,7 @@ public class EngineClientImpl implements EngineClient {
 
     private RuntimeEnvironment runtimeEnvironment;
 
+    private Thread renderThread;
     private GLFWGameWindow window;
     private Profile playerProfile;
 
@@ -113,6 +114,8 @@ public class EngineClientImpl implements EngineClient {
 
     @Override
     public void startGame() {
+        renderThread = Thread.currentThread();
+
         // prepare
         game = new GameClientStandalone(this);
         game.run();
@@ -126,6 +129,11 @@ public class EngineClientImpl implements EngineClient {
     @Override
     public EventBus getEventBus() {
         return eventBus;
+    }
+
+    @Override
+    public Thread getRenderThread() {
+        return renderThread;
     }
 
     @Override

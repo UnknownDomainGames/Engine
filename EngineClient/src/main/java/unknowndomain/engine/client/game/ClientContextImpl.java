@@ -19,7 +19,6 @@ import java.util.List;
 public class ClientContextImpl implements ClientContext {
 
     private final GameClientStandalone game;
-    private final Thread renderThread;
     private final List<Renderer> renderers;
     private final GameWindow window;
     private final GuiManager guiManager;
@@ -31,9 +30,8 @@ public class ClientContextImpl implements ClientContext {
     private RayTraceBlockHit hit;
     private double partialTick;
 
-    public ClientContextImpl(GameClientStandalone game, Thread renderThread, List<Renderer> renderers, GameWindow window, Player player) {
+    public ClientContextImpl(GameClientStandalone game, List<Renderer> renderers, GameWindow window, Player player) {
         this.game = game;
-        this.renderThread = renderThread;
         this.renderers = renderers;
         this.window = window;
         this.player = player;
@@ -82,11 +80,6 @@ public class ClientContextImpl implements ClientContext {
     @Override
     public double partialTick() {
         return partialTick;
-    }
-
-    @Override
-    public Thread getRenderThread() {
-        return renderThread;
     }
 
     @Override

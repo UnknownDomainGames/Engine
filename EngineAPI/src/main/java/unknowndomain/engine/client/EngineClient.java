@@ -11,6 +11,12 @@ import unknowndomain.engine.client.sound.ALSoundManager;
 
 public interface EngineClient extends Engine {
 
+    Thread getRenderThread();
+
+    default boolean isRenderThread() {
+        return Thread.currentThread() == getRenderThread();
+    }
+    
     GameWindow getWindow();
 
     AssetLoadManager getAssetLoadManager();
