@@ -13,6 +13,8 @@ import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureManagerImpl;
+import unknowndomain.engine.client.sound.ALSoundManager;
+import unknowndomain.engine.client.sound.ALSoundManagerImpl;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.engine.EngineEvent;
@@ -48,6 +50,7 @@ public class EngineClientImpl implements EngineClient {
     private AssetManager assetManager;
     private DefaultAssetSourceManager assetSourceManager;
     private TextureManager textureManager;
+    private ALSoundManager soundManager;
 
     private GameClientStandalone game;
 
@@ -80,6 +83,8 @@ public class EngineClientImpl implements EngineClient {
         assetManager = new DefaultAssetManager(assetSourceManager);
 
         textureManager = new TextureManagerImpl();
+        soundManager = new ALSoundManagerImpl();
+        ((ALSoundManagerImpl) soundManager).init();
     }
 
     private void initEnvironment() {
@@ -146,6 +151,11 @@ public class EngineClientImpl implements EngineClient {
     @Override
     public TextureManager getTextureManager() {
         return textureManager;
+    }
+
+    @Override
+    public ALSoundManager getSoundManager() {
+        return soundManager;
     }
 
     private void paintSystemInfo() {

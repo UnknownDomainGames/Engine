@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.sound;
 
 import unknowndomain.engine.Platform;
+import unknowndomain.engine.util.Disposable;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -10,7 +11,7 @@ import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_memory;
 import static org.lwjgl.system.MemoryStack.*;
 
-public class ALSound {
+public class ALSound implements Disposable {
     private int soundId;
     private int channel;
     private int rate;
