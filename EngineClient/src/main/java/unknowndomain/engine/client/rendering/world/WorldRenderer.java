@@ -182,6 +182,9 @@ public class WorldRenderer implements Renderer {
     @Override
     public void dispose() {
         chunkRenderer.dispose();
-        // TODO: dispose
+
+        ShaderManager.INSTANCE.unregisterShader("world_shader");
+        ShaderManager.INSTANCE.unregisterShader("frame_buffer_shader");
+        ShaderManager.INSTANCE.unregisterShader("shadow_shader");
     }
 }

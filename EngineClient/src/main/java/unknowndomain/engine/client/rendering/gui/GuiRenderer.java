@@ -229,6 +229,6 @@ public class GuiRenderer implements Renderer {
 
     @Override
     public void dispose() {
-        // TODO: Dispose
+        ShaderManager.INSTANCE.unregisterShader("gui_shader");
     }
 }

@@ -21,12 +21,12 @@ import static org.apache.commons.lang3.Validate.notEmpty;
 
 public class DefaultAssetLoadManager implements AssetLoadManager {
 
-    private final AssetManager sourceManager;
+    private final AssetManager assetManager;
 
     private final Map<String, AssetType<?>> registeredTypes = new HashMap<>();
 
-    public DefaultAssetLoadManager(AssetManager sourceManager) {
-        this.sourceManager = sourceManager;
+    public DefaultAssetLoadManager(AssetManager assetManager) {
+        this.assetManager = assetManager;
     }
 
     @Nonnull
@@ -79,7 +79,7 @@ public class DefaultAssetLoadManager implements AssetLoadManager {
     }
 
     protected <T> T internalLoad(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
-        Optional<AssetSource> source = getSourceManager().getSource(path);
+        Optional<AssetSource> source = getAssetManager().getSource(path);
         if (source.isEmpty()) {
             throw new AssetNotFoundException(path);
         }
@@ -92,8 +92,8 @@ public class DefaultAssetLoadManager implements AssetLoadManager {
     }
 
     @Nonnull
-    public AssetManager getSourceManager() {
-        return sourceManager;
+    public AssetManager getAssetManager() {
+        return assetManager;
     }
 
     @Override

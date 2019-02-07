@@ -136,8 +136,8 @@ public class ChunkRenderer implements Renderer {
     @Override
     public void dispose() {
         updateExecutor.shutdown();
-        // TODO: Dispose
-//        chunkSolidShader.dispose();
+
+        ShaderManager.INSTANCE.unregisterShader("chunk_solid");
     }
 
     public ClientContext getContext() {

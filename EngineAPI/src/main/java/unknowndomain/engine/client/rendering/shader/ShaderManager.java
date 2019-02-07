@@ -38,6 +38,17 @@ public class ShaderManager {
         return value.toImmutable();
     }
 
+    public void unregisterShader(String name) {
+        if (registeredShaders.containsKey(name)) {
+            registeredShaders.remove(name);
+            MutableValue<ShaderProgram> shader = loadedShaders.get(name);
+            if (shader.isPresent()) {
+                shader.getValue().dispose();
+                shader.setValue(null);
+            }
+        }
+    }
+
     public void reload() {
         for (MutableValue<ShaderProgram> value : loadedShaders.values()) {
             ShaderProgram shaderProgram = value.getValue();
