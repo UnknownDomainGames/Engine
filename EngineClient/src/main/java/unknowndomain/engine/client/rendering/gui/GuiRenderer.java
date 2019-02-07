@@ -64,7 +64,7 @@ public class GuiRenderer implements Renderer {
         this.graphics = new GraphicsImpl(this);
 
         try {
-            byte[] fontDataBytes = Files.readAllBytes(Platform.getEngineClient().getAssetSourceManager().getPath(AssetPath.of("engine", "font", "font.ttf")).get());
+            byte[] fontDataBytes = Files.readAllBytes(Platform.getEngineClient().getAssetManager().getPath(AssetPath.of("engine", "font", "font.ttf")).get());
             ByteBuffer fontData = ByteBuffer.allocateDirect(fontDataBytes.length);
             fontData.put(fontDataBytes);
             fontData.flip();

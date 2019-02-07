@@ -97,7 +97,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         Platform.getEngineClient().getWindow().addKeyCallback(keyBindingManager::handleKey);
         Platform.getEngineClient().getWindow().addMouseCallback(keyBindingManager::handleMouse);
 
-        context.post(new AssetLoadEvent(Platform.getEngineClient().getAssetManager(), Platform.getEngineClient().getAssetSourceManager()));
+        context.post(new AssetLoadEvent(Platform.getEngineClient().getAssetLoadManager(), Platform.getEngineClient().getAssetManager()));
 
         List<Renderer> registeredRenderers = Lists.newArrayList();
         context.post(new RendererRegisterEvent(registeredRenderers));

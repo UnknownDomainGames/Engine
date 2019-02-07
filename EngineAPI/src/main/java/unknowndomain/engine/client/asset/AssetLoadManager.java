@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public interface AssetManager extends Disposable {
+public interface AssetLoadManager extends Disposable {
 
     @Nonnull
     <T> AssetType<T> createType(@Nonnull Class<T> assetClass, @Nonnull AssetLoader<T> loader);

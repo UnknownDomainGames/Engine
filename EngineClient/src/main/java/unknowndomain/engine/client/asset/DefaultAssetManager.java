@@ -1,106 +1,65 @@
 package unknowndomain.engine.client.asset;
 
-import unknowndomain.engine.client.asset.exception.AssetLoadException;
-import unknowndomain.engine.client.asset.exception.AssetNotFoundException;
+import unknowndomain.engine.client.asset.source.AssetManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
-import unknowndomain.engine.client.asset.source.AssetSourceManager;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.Validate.notEmpty;
 
 public class DefaultAssetManager implements AssetManager {
 
-    private final AssetSourceManager sourceManager;
+    private final List<AssetSource> assetSources = new LinkedList<>();
 
-    private final Map<String, AssetType<?>> registeredTypes = new HashMap<>();
+    @Override
+    public Optional<AssetSource> getSource(AssetPath path) {
+        for (AssetSource assetSource : assetSources) {
+            if (assetSource.exists(path)) {
+                return Optional.of(assetSource);
+            }
+        }
+        return Optional.empty();
+    }
 
-    public DefaultAssetManager(AssetSourceManager sourceManager) {
-        this.sourceManager = sourceManager;
+    @Override
+    public List<AssetSource> getAllSources(AssetPath path) {
+        List<AssetSource> result = new LinkedList<>();
+        for (AssetSource assetSource : assetSources) {
+            if (assetSource.exists(path)) {
+                result.add(assetSource);
+            }
+        }
+        return List.copyOf(result);
+    }
+
+    @Override
+    public Optional<Path> getPath(@Nonnull AssetPath path) {
+        for (AssetSource assetSource : assetSources) {
+            Path _path = assetSource.toPath(path);
+            if (Files.exists(_path)) {
+                return Optional.of(_path);
+            }
+        }
+        return Optional.empty();
     }
 
     @Nonnull
     @Override
-    public <T> AssetType<T> createType(@Nonnull Class<T> assetClass, @Nonnull AssetLoader<T> loader) {
-        return createType(assetClass, assetClass.getSimpleName(), loader);
-    }
-
-    @Nonnull
-    @Override
-    public <T> AssetType<T> createType(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull AssetLoader<T> loader) {
-        requireNonNull(assetClass);
-        notEmpty(name);
-        requireNonNull(loader);
-
-        if (registeredTypes.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("AssetType %s has been registered.", name));
+    public List<Path> getAllPaths(@Nonnull AssetPath path) {
+        List<Path> result = new LinkedList<>();
+        for (AssetSource assetSource : assetSources) {
+            Path _path = assetSource.toPath(path);
+            if (Files.exists(_path)) {
+                result.add(_path);
+            }
         }
-
-        AssetType<T> type = new AssetType<>(assetClass, name, loader);
-        registeredTypes.put(name, type);
-        return type;
+        return List.copyOf(result);
     }
 
-    @Override
-    public Optional<AssetType<?>> getType(String name) {
-        return Optional.ofNullable(registeredTypes.get(name));
-    }
-
-    @Override
-    public Collection<AssetType<?>> getSupportedTypes() {
-        return registeredTypes.values();
-    }
-
-    @Nullable
-    @Override
-    public <T> T load(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
-        requireNonNull(type);
-        requireNonNull(path);
-        if (!registeredTypes.containsKey(type)) {
-            throw new IllegalStateException(String.format("AssetType %s has not been registered.", type.getName()));
-        }
-
-        return internalLoad(type, path);
-    }
-
-    @Override
-    public <T> CompletableFuture<T> loadAsync(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
-        return null;
-    }
-
-    protected <T> T internalLoad(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
-        Optional<AssetSource> source = getSourceManager().getSource(path);
-        if (source.isEmpty()) {
-            throw new AssetNotFoundException(path);
-        }
-
-        try (InputStream input = source.get().openStream(path)) {
-            return type.getLoader().load(type, path, input);
-        } catch (Exception e) {
-            throw new AssetLoadException(String.format("Cannot load asset because of catch a exception. Path: %s, Type: %s", path.getRealPath(), type.getName()), e);
-        }
-    }
-
-    @Nonnull
-    public AssetSourceManager getSourceManager() {
-        return sourceManager;
-    }
-
-    @Override
-    public void reload() {
-        // TODO: fire event.
-    }
-
-    @Override
-    public void dispose() {
-
+    public List<AssetSource> getSources() {
+        return assetSources;
     }
 }

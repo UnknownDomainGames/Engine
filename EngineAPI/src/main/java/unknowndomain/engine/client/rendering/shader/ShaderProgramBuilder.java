@@ -27,7 +27,7 @@ public class ShaderProgramBuilder {
         Shader[] loadedShaders = new Shader[shaders.size()];
         int i = 0;
         for (Map.Entry<ShaderType, AssetPath> entry : shaders.entrySet()) {
-            Optional<Path> shaderPath = Platform.getEngineClient().getAssetSourceManager().getPath(entry.getValue());
+            Optional<Path> shaderPath = Platform.getEngineClient().getAssetManager().getPath(entry.getValue());
             if (shaderPath.isPresent()) {
                 try {
                     loadedShaders[i] = Shader.create(Files.readAllBytes(shaderPath.get()), entry.getKey());

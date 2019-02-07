@@ -25,7 +25,7 @@ public class TextureAtlasBuilder {
     }
 
     public TextureBuffer getBufferFromResource(AssetPath path) throws IOException {
-        Optional<Path> nativePath = Platform.getEngineClient().getAssetSourceManager().getPath(path);
+        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getPath(path);
         if (nativePath.isPresent()) {
             try (InputStream inputStream = Files.newInputStream(nativePath.get())) {
                 PNGDecoder decoder = new PNGDecoder(inputStream);

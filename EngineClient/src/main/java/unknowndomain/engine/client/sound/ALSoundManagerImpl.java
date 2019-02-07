@@ -18,7 +18,10 @@ import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static org.lwjgl.openal.ALC10.*;
@@ -97,7 +100,7 @@ public class ALSoundManagerImpl implements ALSoundManager {
         }
         try {
             return soundMap.get(path, ()->{
-                Optional<Path> nativePath = Platform.getEngineClient().getAssetSourceManager().getPath(path);
+                Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getPath(path);
                 if (nativePath.isPresent()) {
                     try (var channel = Files.newByteChannel(nativePath.get(), StandardOpenOption.READ)) {
                         ByteBuffer buf = BufferUtils.createByteBuffer((int) channel.size());

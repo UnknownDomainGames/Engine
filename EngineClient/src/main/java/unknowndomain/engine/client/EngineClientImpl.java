@@ -3,12 +3,12 @@ package unknowndomain.engine.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unknowndomain.engine.Platform;
-import unknowndomain.engine.client.asset.AssetManager;
+import unknowndomain.engine.client.asset.AssetLoadManager;
+import unknowndomain.engine.client.asset.DefaultAssetLoadManager;
 import unknowndomain.engine.client.asset.DefaultAssetManager;
-import unknowndomain.engine.client.asset.DefaultAssetSourceManager;
 import unknowndomain.engine.client.asset.EngineAssetSource;
+import unknowndomain.engine.client.asset.source.AssetManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
-import unknowndomain.engine.client.asset.source.AssetSourceManager;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
@@ -47,8 +47,8 @@ public class EngineClientImpl implements EngineClient {
     private EventBus eventBus;
 
     private AssetSource engineAssetSource;
-    private AssetManager assetManager;
-    private DefaultAssetSourceManager assetSourceManager;
+    private AssetLoadManager assetLoadManager;
+    private DefaultAssetManager assetSourceManager;
     private TextureManager textureManager;
     private ALSoundManager soundManager;
 
@@ -78,9 +78,9 @@ public class EngineClientImpl implements EngineClient {
         window.init();
 
         engineAssetSource = EngineAssetSource.create();
-        assetSourceManager = new DefaultAssetSourceManager();
+        assetSourceManager = new DefaultAssetManager();
         assetSourceManager.getSources().add(engineAssetSource);
-        assetManager = new DefaultAssetManager(assetSourceManager);
+        assetLoadManager = new DefaultAssetLoadManager(assetSourceManager);
 
         textureManager = new TextureManagerImpl();
         soundManager = new ALSoundManagerImpl();
@@ -139,12 +139,12 @@ public class EngineClientImpl implements EngineClient {
     }
 
     @Override
-    public AssetManager getAssetManager() {
-        return assetManager;
+    public AssetLoadManager getAssetLoadManager() {
+        return assetLoadManager;
     }
 
     @Override
-    public AssetSourceManager getAssetSourceManager() {
+    public AssetManager getAssetManager() {
         return assetSourceManager;
     }
 
