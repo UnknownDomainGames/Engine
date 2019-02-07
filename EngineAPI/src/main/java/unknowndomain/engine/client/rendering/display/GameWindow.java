@@ -18,10 +18,13 @@ public interface GameWindow {
 
     void setTitle(String title);
 
+    @Deprecated
     void showCursor();
 
+    @Deprecated
     void disableCursor();
 
+    @Deprecated
     boolean isCursorHidden();
 
     void close();
@@ -47,6 +50,10 @@ public interface GameWindow {
     void addCharCallback(CharCallback callback);
 
     void removeCharCallback(CharCallback callback);
+
+    void beginRender();
+
+    void endRender();
 
     @FunctionalInterface
     interface KeyCallback {

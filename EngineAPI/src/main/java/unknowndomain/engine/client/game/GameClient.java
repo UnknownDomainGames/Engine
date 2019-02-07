@@ -1,4 +1,4 @@
-package unknowndomain.engine.client;
+package unknowndomain.engine.client.game;
 
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.player.Player;

@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.block;
 
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.rendering.block.BlockMeshGenerator;
 import unknowndomain.engine.client.rendering.block.BlockRenderType;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
@@ -38,7 +38,7 @@ public class ClientBlockDefault extends RegistryEntry.Impl<ClientBlock> implemen
     @Override
     public boolean canRenderFace(BlockAccessor world, BlockPos pos, Facing facing) {
         BlockPos neighborPos = pos.offset(facing);
-        ClientBlock neighborBlock = UnknownDomain.getGame().getClientContext().getClientBlockRegistry().getValue(world.getBlockId(neighborPos));
+        ClientBlock neighborBlock = Platform.getEngineClient().getCurrentGame().getClientContext().getClientBlockRegistry().getValue(world.getBlockId(neighborPos));
         return neighborBlock.canRenderNeighborBlockFace(world, neighborPos, facing.opposite());
     }
 

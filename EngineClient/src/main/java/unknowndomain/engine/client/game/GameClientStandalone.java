@@ -1,21 +1,17 @@
 package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.EngineClient;
-import unknowndomain.engine.client.GameClient;
+import unknowndomain.engine.client.event.asset.AssetLoadEvent;
+import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
-import unknowndomain.engine.client.rendering.texture.TextureManager;
-import unknowndomain.engine.client.rendering.texture.TextureManagerImpl;
 import unknowndomain.engine.client.rendering.texture.TextureTypes;
-import unknowndomain.engine.client.resource.ResourceManager;
-import unknowndomain.engine.client.resource.ResourceManagerImpl;
-import unknowndomain.engine.client.resource.ResourceSourceBuiltin;
-import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.game.GameTerminationEvent;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.math.BlockPos;
@@ -34,9 +30,6 @@ import java.util.UUID;
 
 public class GameClientStandalone extends GameServerFullAsync implements GameClient {
 
-    @Deprecated
-    private ResourceManager resourceManager;
-    private TextureManager textureManager;
     private KeyBindingManager keyBindingManager;
 
     private ClientContextImpl clientContext;
@@ -53,10 +46,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         super(engine);
 
         this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, FixStepTicker.clientTick);
-    }
-
-    public EngineClient getEngine() {
-        return (EngineClient) engine;
     }
 
     /**
@@ -77,10 +66,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
     public EntityController getEntityController() {
         return entityController;
-    }
-
-    public TextureManager getTextureManager() {
-        return textureManager;
     }
 
     public KeyBindingManager getKeyBindingManager() {
@@ -109,26 +94,22 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         logger.info("Loading Client-only stuff!");
         keyBindingManager = new KeyBindingManager(getContext().getRegistryManager().getRegistry(KeyBinding.class));
         keyBindingManager.reload();
-        getEngine().getWindow().addKeyCallback(keyBindingManager::handleKey);
-        getEngine().getWindow().addMouseCallback(keyBindingManager::handleMouse);
+        Platform.getEngineClient().getWindow().addKeyCallback(keyBindingManager::handleKey);
+        Platform.getEngineClient().getWindow().addMouseCallback(keyBindingManager::handleMouse);
 
-        resourceManager = new ResourceManagerImpl();
-        resourceManager.addResourceSource(new ResourceSourceBuiltin());
+        context.post(new AssetLoadEvent(Platform.getEngineClient().getAssetManager(), Platform.getEngineClient().getAssetSourceManager()));
 
-        textureManager = new TextureManagerImpl();
-        List<Renderer.Factory> rendererFactories = Lists.newArrayList();
+        List<Renderer> registeredRenderers = Lists.newArrayList();
+        context.post(new RendererRegisterEvent(registeredRenderers));
 
-        getContext().post(new EngineEvent.ResourceConstructionStart(engine, resourceManager, textureManager, rendererFactories));
-        getContext().post(new EngineEvent.ResourceConstructionFinish(engine, resourceManager, textureManager, rendererFactories));
-
-        clientContext = new ClientContextImpl(this, Thread.currentThread(), rendererFactories, getEngine().getWindow(), player);
-        clientContext.build(context, resourceManager);
+        clientContext = new ClientContextImpl(this, Thread.currentThread(), registeredRenderers, Platform.getEngineClient().getWindow(), player);
+        clientContext.init();
         clientContext.setCamera(new FirstPersonCamera(player));
     }
 
     @Override
     protected void resourceStage() {
-        clientContext.getTextureManager().initTextureAtlas(TextureTypes.BLOCK);
+        Platform.getEngineClient().getTextureManager().initTextureAtlas(TextureTypes.BLOCK);
     }
 
     @Override
@@ -196,9 +177,9 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
      * @param partialTick
      */
     private void renderTick(double partialTick) {
-        getEngine().getWindow().beginDraw();
+        Platform.getEngineClient().getWindow().beginRender();
         clientContext.updateFps();
         this.clientContext.render(partialTick);
-        getEngine().getWindow().endDraw();
+        Platform.getEngineClient().getWindow().endRender();
     }
 }

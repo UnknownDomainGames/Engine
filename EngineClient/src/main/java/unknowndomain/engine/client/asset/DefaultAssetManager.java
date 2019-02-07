@@ -8,6 +8,7 @@ import unknowndomain.engine.client.asset.source.AssetSourceManager;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,13 +29,13 @@ public class DefaultAssetManager implements AssetManager {
 
     @Nonnull
     @Override
-    public <T extends Asset> AssetType<T> createType(@Nonnull Class<T> assetClass, @Nonnull AssetLoader<T> loader) {
+    public <T> AssetType<T> createType(@Nonnull Class<T> assetClass, @Nonnull AssetLoader<T> loader) {
         return createType(assetClass, assetClass.getSimpleName(), loader);
     }
 
     @Nonnull
     @Override
-    public <T extends Asset> AssetType<T> createType(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull AssetLoader<T> loader) {
+    public <T> AssetType<T> createType(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull AssetLoader<T> loader) {
         requireNonNull(assetClass);
         notEmpty(name);
         requireNonNull(loader);
@@ -53,9 +54,14 @@ public class DefaultAssetManager implements AssetManager {
         return Optional.ofNullable(registeredTypes.get(name));
     }
 
+    @Override
+    public Collection<AssetType<?>> getSupportedTypes() {
+        return registeredTypes.values();
+    }
+
     @Nullable
     @Override
-    public <T extends Asset> T load(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
+    public <T> T load(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
         requireNonNull(type);
         requireNonNull(path);
         if (!registeredTypes.containsKey(type)) {
@@ -66,11 +72,11 @@ public class DefaultAssetManager implements AssetManager {
     }
 
     @Override
-    public <T extends Asset> CompletableFuture<T> loadAsync(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
+    public <T> CompletableFuture<T> loadAsync(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
         return null;
     }
 
-    protected <T extends Asset> T internalLoad(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
+    protected <T> T internalLoad(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
         Optional<AssetSource> source = getSourceManager().getSource(path);
         if (source.isEmpty()) {
             throw new AssetNotFoundException(path);
@@ -79,7 +85,7 @@ public class DefaultAssetManager implements AssetManager {
         try (InputStream input = source.get().openStream(path)) {
             return type.getLoader().load(type, path, input);
         } catch (Exception e) {
-            throw new AssetLoadException(String.format("Cannot load asset because of catch a exception. Path: %s, Type: %s", path.getPath(), type.getName()), e);
+            throw new AssetLoadException(String.format("Cannot load asset because of catch a exception. Path: %s, Type: %s", path.getRealPath(), type.getName()), e);
         }
     }
 

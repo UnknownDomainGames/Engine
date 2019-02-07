@@ -1,12 +1,10 @@
-package unknowndomain.engine.client;
+package unknowndomain.engine.client.game;
 
 import org.joml.FrustumIntersection;
 import unknowndomain.engine.block.RayTraceBlockHit;
-import unknowndomain.engine.client.asset.AssetManager;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
-import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Registry;
@@ -25,8 +23,6 @@ public interface ClientContext {
 
     int getFps();
 
-    TextureManager getTextureManager();
-
     double partialTick();
 
     Thread getRenderThread();
@@ -44,6 +40,4 @@ public interface ClientContext {
     Registry<ClientBlock> getClientBlockRegistry();
 
     World getClientWorld();
-
-    AssetManager getAssetManager();
 }

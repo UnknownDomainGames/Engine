@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.gui;
 
 import unknowndomain.engine.Platform;
-import unknowndomain.engine.client.ClientContext;
+import unknowndomain.engine.client.game.ClientContext;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;

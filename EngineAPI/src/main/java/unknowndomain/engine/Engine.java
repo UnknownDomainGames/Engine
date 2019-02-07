@@ -3,6 +3,7 @@ package unknowndomain.engine;
 import org.slf4j.Logger;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.game.Game;
+import unknowndomain.engine.util.RuntimeEnvironment;
 import unknowndomain.engine.util.Side;
 
 /**
@@ -22,7 +23,7 @@ public interface Engine {
         return getSide() == Side.SERVER;
     }
 
-    boolean isDevelopmentEnv();
+    RuntimeEnvironment getRuntimeEnvironment();
 
     /**
      * Initialize the Engine. Load all mods and complete registration

@@ -2,7 +2,7 @@ package unknowndomain.engine.client.asset;
 
 import javax.annotation.Nonnull;
 
-public class AssetType<T extends Asset> {
+public class AssetType<T> {
 
     private final Class<T> assetClass;
     private final String name;

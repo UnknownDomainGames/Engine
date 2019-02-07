@@ -1,11 +1,14 @@
 package unknowndomain.game;
 
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.block.ClientBlockAir;
 import unknowndomain.engine.client.block.ClientBlockDefault;
+import unknowndomain.engine.client.event.asset.AssetLoadEvent;
+import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.input.controller.MotionType;
 import unknowndomain.engine.client.input.keybinding.ActionMode;
@@ -13,14 +16,9 @@ import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.gui.GuiRenderer;
-import unknowndomain.engine.client.rendering.shader.Shader;
-import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.world.WorldRenderer;
-import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
-import unknowndomain.engine.client.resource.Resource;
-import unknowndomain.engine.client.resource.ResourcePath;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.mod.RegistrationStartEvent;
@@ -28,8 +26,6 @@ import unknowndomain.engine.event.mod.RegistryConstructionEvent;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.IdAutoIncreaseRegistry;
-
-import java.nio.ByteBuffer;
 
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
@@ -100,28 +96,11 @@ public final class DefaultGameMode {
     }
 
     @Listener
-    public void constructResource(EngineEvent.ResourceConstructionStart e) {
-        AssetPath unknowndomainPath = AssetPath.of("unknowndomain");
-        e.registerRenderer((context, manager) -> {
-            ChunkRenderer chunkRenderer = new ChunkRenderer(Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.vert")).cache(), ShaderType.VERTEX_SHADER),
-                    Shader.create(manager.load(new ResourcePath("unknowndomain/shader/chunk_solid.frag")).cache(), ShaderType.FRAGMENT_SHADER));
-            context.register(chunkRenderer);
-
-            WorldRenderer worldRenderer = new WorldRenderer(Shader.create(manager.load(new ResourcePath("unknowndomain/shader/world.vert")).cache(), ShaderType.VERTEX_SHADER),
-                    Shader.create(manager.load(new ResourcePath("unknowndomain/shader/world.frag")).cache(), ShaderType.FRAGMENT_SHADER), chunkRenderer);
-            return worldRenderer;
-        });
-
-        e.registerRenderer((context, manager) -> {
-            Resource resource = manager.load(new ResourcePath("", "unknowndomain/fonts/arial.ttf"));
-            byte[] cache = resource.cache();
-            return new GuiRenderer(ByteBuffer.allocateDirect(cache.length).put(cache).flip(),
-                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.vert")).cache(), ShaderType.VERTEX_SHADER),
-                    Shader.create(manager.load(new ResourcePath("", "unknowndomain/shader/gui.frag")).cache(), ShaderType.FRAGMENT_SHADER));
-        });
-
-        AssetPath blockTexturePath = AssetPath.of(unknowndomainPath, "texture", "block");
-        TextureManager textureManager = e.getTextureManager();
+    @Deprecated
+    public void assetLoad(AssetLoadEvent event) {
+        AssetPath enginePath = AssetPath.of("engine");
+        AssetPath blockTexturePath = AssetPath.of(enginePath, "texture", "block");
+        TextureManager textureManager = Platform.getEngineClient().getTextureManager();
         TextureUV side = textureManager.registerToAtlas(AssetPath.of(blockTexturePath, "grass_side.png"), BLOCK);
         TextureUV top = textureManager.registerToAtlas(AssetPath.of(blockTexturePath, "grass_top.png"), BLOCK);
         TextureUV bottom = textureManager.registerToAtlas(AssetPath.of(blockTexturePath, "dirt.png"), BLOCK);
@@ -133,6 +112,12 @@ public final class DefaultGameMode {
         blockModel = new BlockModel();
         blockModel.addCube(0, 0, 0, 1, 1, 1, bottom);
         ClientBlockDefault.blockRendererMap.put(Blocks.DIRT, blockModel);
+    }
+
+    @Listener
+    public void rendererRegister(RendererRegisterEvent event) {
+        event.register(new WorldRenderer());
+        event.register(new GuiRenderer());
     }
 
     @Listener

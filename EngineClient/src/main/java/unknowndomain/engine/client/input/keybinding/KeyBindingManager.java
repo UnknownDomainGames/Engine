@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.Tickable;
-import unknowndomain.engine.client.ClientContext;
+import unknowndomain.engine.client.game.ClientContext;
 import unknowndomain.engine.registry.Registry;
 
 import java.util.Collection;

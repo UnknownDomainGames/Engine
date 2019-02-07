@@ -1,13 +1,11 @@
 package unknowndomain.engine.client.input.keybinding;
 
 import org.apache.commons.lang3.Validate;
-
-import unknowndomain.engine.client.ClientContext;
+import unknowndomain.engine.client.game.ClientContext;
 import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

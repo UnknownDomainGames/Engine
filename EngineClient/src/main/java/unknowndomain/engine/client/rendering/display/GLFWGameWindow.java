@@ -149,6 +149,22 @@ public class GLFWGameWindow implements GameWindow {
     }
 
     @Override
+    public void beginRender() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    @Override
+    public void endRender() {
+        glfwSwapBuffers(handle);
+
+        if (isResized()) {
+            resized = false;
+        }
+
+        glfwPollEvents();
+    }
+
+    @Override
     public void close() {
         closed = true;
         glfwDestroyWindow(handle);
@@ -157,21 +173,6 @@ public class GLFWGameWindow implements GameWindow {
     @Override
     public boolean isClosed() {
         return closed;
-    }
-
-    public void beginDraw() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
-    }
-
-    public void endDraw() {
-        glfwSwapBuffers(handle);
-
-        if (isResized()) {
-            resized = false;
-        }
-
-        glfwPollEvents();
     }
 
     public long getHandle() {

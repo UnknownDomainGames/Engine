@@ -24,17 +24,17 @@ public class FileSystemAssetSource implements AssetSource {
 
     @Override
     public boolean exists(AssetPath path) {
-        return Files.exists(fileSystem.getPath(root, path.getPath()));
+        return Files.exists(toPath(path));
     }
 
     @Override
     public InputStream openStream(AssetPath path) throws IOException {
-        return Files.newInputStream(fileSystem.getPath(root, path.getPath()));
+        return Files.newInputStream(toPath(path));
     }
 
     @Override
     public Path toPath(AssetPath path) {
-        return fileSystem.getPath(root, path.getPath());
+        return fileSystem.getPath(root, path.getRealPath());
     }
 
     public FileSystem getFileSystem() {

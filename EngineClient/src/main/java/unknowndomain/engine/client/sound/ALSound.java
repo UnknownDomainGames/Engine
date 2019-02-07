@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.resource;
+package unknowndomain.engine.client.sound;
 
 import unknowndomain.engine.Platform;
 

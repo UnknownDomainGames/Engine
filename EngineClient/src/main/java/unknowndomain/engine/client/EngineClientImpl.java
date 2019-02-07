@@ -2,16 +2,22 @@ package unknowndomain.engine.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import unknowndomain.engine.Engine;
 import unknowndomain.engine.Platform;
+import unknowndomain.engine.client.asset.AssetManager;
+import unknowndomain.engine.client.asset.DefaultAssetManager;
+import unknowndomain.engine.client.asset.DefaultAssetSourceManager;
 import unknowndomain.engine.client.asset.EngineAssetSource;
 import unknowndomain.engine.client.asset.source.AssetSource;
+import unknowndomain.engine.client.asset.source.AssetSourceManager;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
+import unknowndomain.engine.client.rendering.texture.TextureManager;
+import unknowndomain.engine.client.rendering.texture.TextureManagerImpl;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.player.Profile;
+import unknowndomain.engine.util.RuntimeEnvironment;
 import unknowndomain.engine.util.Side;
 import unknowndomain.game.DefaultGameMode;
 
@@ -25,55 +31,63 @@ import java.util.UUID;
 
 import static org.apache.commons.lang3.SystemUtils.*;
 
-public class EngineClient implements Engine {
+public class EngineClientImpl implements EngineClient {
 
-    public static final int WIDTH = 854, HEIGHT = 480;
+    public static final int WINDOW_WIDTH = 854, WINDOW_HEIGHT = 480;
 
-    private Logger logger = LoggerFactory.getLogger("Engine");
+    private final Logger logger = LoggerFactory.getLogger("Engine");
+
+    private RuntimeEnvironment runtimeEnvironment;
 
     private GLFWGameWindow window;
+    private Profile playerProfile;
 
     private EventBus eventBus;
 
     private AssetSource engineAssetSource;
+    private AssetManager assetManager;
+    private DefaultAssetSourceManager assetSourceManager;
+    private TextureManager textureManager;
 
-    private Profile playerProfile;
     private GameClientStandalone game;
-
-    private boolean developmentEnv;
 
     @Override
     public void initEngine() {
         initEnvironment();
         paintSystemInfo();
 
-        Logger log = Platform.getLogger();
         eventBus = new AsmEventBus();
         playerProfile = new Profile(UUID.randomUUID(), 12);
 
         // TODO: Remove it
         getEventBus().register(new DefaultGameMode());
 
-        // =====Client=====
-        log.info("Initializing Window!");
-        window = new GLFWGameWindow(WIDTH, HEIGHT, UnknownDomain.getName());
-        window.init();
-
-        // Resource Stage
-        // Later when separating common and client, common will not have this part
-        engineAssetSource = EngineAssetSource.create();
+        initEngineClient();
 
         // Finish Stage
-        log.info("Finishing Initialization!");
+        logger.info("Finishing Initialization!");
         eventBus.post(new EngineEvent.InitializationComplete(this));
+    }
+
+    private void initEngineClient() {
+        logger.info("Initializing Window!");
+        window = new GLFWGameWindow(WINDOW_WIDTH, WINDOW_HEIGHT, UnknownDomain.getName());
+        window.init();
+
+        engineAssetSource = EngineAssetSource.create();
+        assetSourceManager = new DefaultAssetSourceManager();
+        assetSourceManager.getSources().add(engineAssetSource);
+        assetManager = new DefaultAssetManager(assetSourceManager);
+
+        textureManager = new TextureManagerImpl();
     }
 
     private void initEnvironment() {
         try {
             // TODO:
-            developmentEnv = Files.isDirectory(Path.of(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()));
+            runtimeEnvironment = Files.isDirectory(Path.of(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI())) ? RuntimeEnvironment.ENGINE_DEVELOPMENT : RuntimeEnvironment.DEPLOYMENT;
         } catch (URISyntaxException e) {
-            developmentEnv = false;
+            runtimeEnvironment = RuntimeEnvironment.DEPLOYMENT;
         }
     }
 
@@ -88,8 +102,8 @@ public class EngineClient implements Engine {
     }
 
     @Override
-    public boolean isDevelopmentEnv() {
-        return developmentEnv;
+    public RuntimeEnvironment getRuntimeEnvironment() {
+        return runtimeEnvironment;
     }
 
     @Override
@@ -109,12 +123,29 @@ public class EngineClient implements Engine {
         return eventBus;
     }
 
+    @Override
     public GLFWGameWindow getWindow() {
         return window;
     }
 
+    @Override
     public AssetSource getEngineAssetSource() {
         return engineAssetSource;
+    }
+
+    @Override
+    public AssetManager getAssetManager() {
+        return assetManager;
+    }
+
+    @Override
+    public AssetSourceManager getAssetSourceManager() {
+        return assetSourceManager;
+    }
+
+    @Override
+    public TextureManager getTextureManager() {
+        return textureManager;
     }
 
     private void paintSystemInfo() {
@@ -122,7 +153,7 @@ public class EngineClient implements Engine {
         logger.info("----- System Information -----");
         logger.info("\tOperating System: " + OS_NAME + " (" + OS_ARCH + ") version " + OS_VERSION);
         logger.info("\tJava Version: " + JAVA_VERSION + ", " + JAVA_VENDOR);
-        logger.info("\tJVM Info: " + JAVA_VM_NAME + " (" + JAVA_VM_INFO + "), " + JAVA_VM_VENDOR);
+        logger.info("\tJVM Information: " + JAVA_VM_NAME + " (" + JAVA_VM_INFO + "), " + JAVA_VM_VENDOR);
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
         long maxMemory = runtime.maxMemory();
@@ -139,7 +170,7 @@ public class EngineClient implements Engine {
         }
         logger.info("\tJVM Flags (" + jvmFlags.size() + " totals): " + formattedFlags.toString());
         logger.info("\tEngine Version: " + Platform.getVersion());
-        logger.info("\tRuntime Environment: " + (developmentEnv ? "Development" : "Deployment"));
+        logger.info("\tRuntime Environment: " + runtimeEnvironment.name());
         logger.info("------------------------------");
     }
 }

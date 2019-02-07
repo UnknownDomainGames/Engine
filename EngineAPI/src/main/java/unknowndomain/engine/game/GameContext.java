@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
+@Deprecated
 public class GameContext implements EventBus {
     private final EventBus bus;
     private final RegistryManager manager;

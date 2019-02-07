@@ -8,7 +8,7 @@ public final class AssetPath {
     public static final char SEPARATOR = '/';
 
     public static AssetPath of(@Nullable AssetPath parent, @Nonnull String first, @Nonnull String... others) {
-        return of(parent == null ? first : parent.getPath() + SEPARATOR + first, others);
+        return of(parent == null ? first : parent.getRealPath() + SEPARATOR + first, others);
     }
 
     public static AssetPath of(@Nonnull String first, @Nonnull String... others) {
@@ -21,11 +21,11 @@ public final class AssetPath {
 
     private final String path;
 
-    private AssetPath(@Nonnull String path) {
+    protected AssetPath(@Nonnull String path) {
         this.path = path;
     }
 
-    public String getPath() {
+    public String getRealPath() {
         return path;
     }
 
