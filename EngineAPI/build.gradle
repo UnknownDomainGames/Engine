@@ -13,8 +13,8 @@ dependencies {
 
     compile 'org.slf4j:slf4j-api:1.7.25'
 
-    compile 'com.github.Mouse0w0.Lib4j:lib4j-observable:1.0.5'
-    compile 'com.github.Mouse0w0.Lib4j:lib4j-event:1.0.5'
+    compile 'com.github.Mouse0w0.Lib4j:lib4j-observable:1.0.6'
+    compile 'com.github.Mouse0w0.Lib4j:lib4j-event:1.0.6'
 
     // ============CLIENT============
     compile "org.lwjgl:lwjgl:$lwjglVersion"
