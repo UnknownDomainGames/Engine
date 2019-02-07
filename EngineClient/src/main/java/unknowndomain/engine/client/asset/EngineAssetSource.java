@@ -5,7 +5,6 @@ import unknowndomain.engine.client.asset.source.FileSystemAssetSource;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.*;
-import java.util.Collections;
 
 public final class EngineAssetSource extends FileSystemAssetSource {
 
@@ -15,7 +14,7 @@ public final class EngineAssetSource extends FileSystemAssetSource {
             if (Files.isDirectory(path)) {
                 return new EngineAssetSource(FileSystems.getDefault(), path.getParent().resolve("resources").resolve("assets").toString());
             } else {
-                FileSystem fileSystem = FileSystems.newFileSystem(EngineAssetSource.class.getProtectionDomain().getCodeSource().getLocation().toURI(), Collections.emptyMap(), EngineAssetSource.class.getClassLoader());
+                FileSystem fileSystem = FileSystems.newFileSystem(path, EngineAssetSource.class.getClassLoader());
                 return new EngineAssetSource(fileSystem, "assets");
             }
         } catch (IOException | URISyntaxException e) {
