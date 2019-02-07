@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.rendering.gui;
 
+import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -18,12 +19,11 @@ import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
-import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
-import unknowndomain.engine.client.rendering.util.GLHelper;
 import unknowndomain.engine.util.Color;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class GuiRenderer implements Renderer {
 
-    private ShaderProgram shader;
+    private ObservableValue<ShaderProgram> shader;
 
     private TTFontHelper fontHelper;
     private Graphics graphics;
@@ -50,8 +50,9 @@ public class GuiRenderer implements Renderer {
     public void init(ClientContext context) {
         this.context = context;
 
-        shader = ShaderManager.INSTANCE.createShader("gui_shader", Shader.create(GLHelper.readText("/assets/engine/shader/gui.vert"), ShaderType.VERTEX_SHADER),
-                Shader.create(GLHelper.readText("/assets/engine/shader/gui.frag"), ShaderType.FRAGMENT_SHADER));
+        shader = ShaderManager.INSTANCE.registerShader("gui_shader",
+                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "gui.vert"))
+                        .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "gui.frag")));
 
         this.fontHelper = new TTFontHelper(() -> {
             glEnable(GL_TEXTURE_2D);
@@ -125,7 +126,7 @@ public class GuiRenderer implements Renderer {
     }
 
     private void startRender() {
-        ShaderManager.INSTANCE.bindShader(shader);
+        ShaderManager.INSTANCE.bindShader(shader.getValue());
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -228,6 +229,6 @@ public class GuiRenderer implements Renderer {
 
     @Override
     public void dispose() {
-        shader.dispose();
+        // TODO: Dispose
     }
 }

@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.rendering.world.chunk;
 
+import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import org.joml.Matrix4f;
@@ -7,18 +8,18 @@ import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.Platform;
+import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.game.ClientContext;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.light.DirectionalLight;
 import unknowndomain.engine.client.rendering.light.Light;
 import unknowndomain.engine.client.rendering.light.Material;
 import unknowndomain.engine.client.rendering.light.PointLight;
-import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
-import unknowndomain.engine.client.rendering.util.GLHelper;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
@@ -39,7 +40,7 @@ public class ChunkRenderer implements Renderer {
     private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
 
-    private ShaderProgram chunkSolidShader;
+    private ObservableValue<ShaderProgram> chunkSolidShader;
 
     private ClientContext context;
 
@@ -52,9 +53,9 @@ public class ChunkRenderer implements Renderer {
     public void init(ClientContext context) {
         this.context = context;
 
-        chunkSolidShader = ShaderManager.INSTANCE.createShader("chunk_solid",
-                Shader.create(GLHelper.readText("/assets/engine/shader/chunk_solid.vert"), ShaderType.VERTEX_SHADER),
-                Shader.create(GLHelper.readText("/assets/engine/shader/chunk_solid.frag"), ShaderType.FRAGMENT_SHADER));
+        chunkSolidShader = ShaderManager.INSTANCE.registerShader("chunk_solid",
+                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "chunk_solid.vert"))
+                        .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "chunk_solid.frag")));
 
         //tmp = AssimpHelper.loadModel("assets/tmp/untitled.obj");
         dirLight = new DirectionalLight().setDirection(new Vector3f(-0.15f, -1f, -0.35f))
@@ -98,6 +99,7 @@ public class ChunkRenderer implements Renderer {
     }
 
     protected void preRenderChunk() {
+        ShaderProgram chunkSolidShader = this.chunkSolidShader.getValue();
         ShaderManager.INSTANCE.bindShader(chunkSolidShader);
 
         glEnable(GL11.GL_BLEND);
@@ -134,7 +136,8 @@ public class ChunkRenderer implements Renderer {
     @Override
     public void dispose() {
         updateExecutor.shutdown();
-        chunkSolidShader.dispose();
+        // TODO: Dispose
+//        chunkSolidShader.dispose();
     }
 
     public ClientContext getContext() {

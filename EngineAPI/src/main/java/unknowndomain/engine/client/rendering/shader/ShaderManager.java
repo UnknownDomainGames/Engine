@@ -1,17 +1,19 @@
 package unknowndomain.engine.client.rendering.shader;
 
+import com.github.mouse0w0.lib4j.observable.value.MutableValue;
+import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
+import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import org.joml.*;
 import unknowndomain.engine.Platform;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class ShaderManager {
 
     public static final ShaderManager INSTANCE = new ShaderManager();
 
-    private final Map<String, ShaderProgram> loadedShaders;
+    private final Map<String, MutableValue<ShaderProgram>> loadedShaders;
     private final Map<String, ShaderProgramBuilder> registeredShaders;
 
     private ShaderProgram lastShader;
@@ -26,33 +28,26 @@ public class ShaderManager {
         overriding = false;
     }
 
-    @Deprecated
-    public ShaderProgram createShader(String name, Shader... shaders) {
-        if (loadedShaders.containsKey(name)) {
-            Platform.getLogger().warn(String.format("repeating creating shader program with the same name! name: %s", name));
-            return loadedShaders.get(name);
-        }
-        ShaderProgram sp = new ShaderProgram();
-        sp.init(shaders);
-        loadedShaders.put(name, sp);
-        return sp;
-    }
-
-    public void registerShader(String name, ShaderProgramBuilder builder) {
+    public ObservableValue<ShaderProgram> registerShader(String name, ShaderProgramBuilder builder) {
         if (registeredShaders.containsKey(name)) {
             throw new IllegalStateException();
         }
         registeredShaders.put(name, builder);
+        MutableValue<ShaderProgram> value = new SimpleMutableObjectValue<>();
+        loadedShaders.put(name, value);
+        return value.toImmutable();
     }
 
     public void reload() {
-        for (ShaderProgram shaderProgram : loadedShaders.values()) {
-            shaderProgram.dispose();
+        for (MutableValue<ShaderProgram> value : loadedShaders.values()) {
+            ShaderProgram shaderProgram = value.getValue();
+            if (shaderProgram != null) {
+                shaderProgram.dispose();
+            }
         }
-        loadedShaders.clear();
 
         for (Map.Entry<String, ShaderProgramBuilder> entry : registeredShaders.entrySet()) {
-            loadedShaders.put(entry.getKey(), entry.getValue().build());
+            loadedShaders.get(entry.getKey()).setValue(entry.getValue().build());
         }
     }
 
@@ -64,14 +59,14 @@ public class ShaderManager {
 
     public void bindShader(String name) {
         if (loadedShaders.containsKey(name)) {
-            bindShader(loadedShaders.get(name));
+            bindShader(loadedShaders.get(name).getValue());
         } else {
             Platform.getLogger().warn("Shader Program %s cannot be found at Shader Manager!", name);
         }
     }
 
-    public Optional<ShaderProgram> getShader(String name) {
-        return Optional.ofNullable(loadedShaders.get(name));
+    public ObservableValue<ShaderProgram> getShader(String name) {
+        return loadedShaders.get(name).toImmutable();
     }
 
     private void bindShaderInternal(ShaderProgram sp) {

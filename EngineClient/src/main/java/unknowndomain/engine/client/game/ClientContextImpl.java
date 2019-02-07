@@ -8,6 +8,7 @@ import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
+import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Registry;
@@ -108,10 +109,11 @@ public class ClientContextImpl implements ClientContext {
         return game.getContext().getRegistryManager().getRegistry(ClientBlock.class);
     }
 
-    public void init() {
+    public void initClient() {
         for (Renderer renderer : renderers) {
             renderer.init(this);
         }
+        ShaderManager.INSTANCE.reload();
     }
 
     public void render(double partial) {

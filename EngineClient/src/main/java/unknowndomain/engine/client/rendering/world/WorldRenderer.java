@@ -1,17 +1,19 @@
 package unknowndomain.engine.client.rendering.world;
 
+import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import unknowndomain.engine.block.RayTraceBlockHit;
+import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.game.ClientContext;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
-import unknowndomain.engine.client.rendering.shader.Shader;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.util.*;
 import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
@@ -23,13 +25,13 @@ public class WorldRenderer implements Renderer {
 
     private final ChunkRenderer chunkRenderer = new ChunkRenderer();
 
-    private ShaderProgram worldShader;
+    private ObservableValue<ShaderProgram> worldShader;
     private FrameBuffer frameBuffer;
     private FrameBuffer frameBufferMultisampled;
     private final DefaultFBOWrapper defaultFBO = new DefaultFBOWrapper();
-    private ShaderProgram frameBufferSP;
+    private ObservableValue<ShaderProgram> frameBufferSP;
     private FrameBufferShadow frameBufferShadow; //TODO: move to 3D Renderer!!!
-    private ShaderProgram shadowShader;
+    private ObservableValue<ShaderProgram> shadowShader;
 
     private ClientContext context;
 
@@ -38,8 +40,10 @@ public class WorldRenderer implements Renderer {
         this.context = context;
         chunkRenderer.init(context);
         context.getGame().getContext().register(chunkRenderer);
-        worldShader = ShaderManager.INSTANCE.createShader("world_shader", Shader.create(GLHelper.readText("/assets/engine/shader/world.vert"), ShaderType.VERTEX_SHADER),
-                Shader.create(GLHelper.readText("/assets/engine/shader/world.frag"), ShaderType.FRAGMENT_SHADER));
+        worldShader =
+                ShaderManager.INSTANCE.registerShader("world_shader",
+                        new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "world.vert"))
+                                .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "world.frag")));
         frameBuffer = new FrameBuffer();
         frameBuffer.createFrameBuffer();
         frameBuffer.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
@@ -48,15 +52,15 @@ public class WorldRenderer implements Renderer {
         frameBufferMultisampled.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
         frameBuffer.check();
         frameBufferMultisampled.check();
-        frameBufferSP = ShaderManager.INSTANCE.createShader("frame_buffer_shader",
-                Shader.create(GLHelper.readText("/assets/engine/shader/framebuffer.vert"), ShaderType.VERTEX_SHADER),
-                Shader.create(GLHelper.readText("/assets/engine/shader/framebuffer.frag"), ShaderType.FRAGMENT_SHADER)
-        ); //TODO init shader in a formal way
+        frameBufferSP = ShaderManager.INSTANCE.registerShader("frame_buffer_shader",
+                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "framebuffer.vert"))
+                        .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "framebuffer.frag")));
+        //TODO init Client shader in a formal way
         frameBufferShadow = new FrameBufferShadow();
         frameBufferShadow.createFrameBuffer();
-        shadowShader = ShaderManager.INSTANCE.createShader("shadow_shader", Shader.create(GLHelper.readText("/assets/engine/shader/shadow.vert"), ShaderType.VERTEX_SHADER),
-                Shader.create(GLHelper.readText("/assets/engine/shader/shadow.frag"), ShaderType.FRAGMENT_SHADER));
-
+        shadowShader = ShaderManager.INSTANCE.registerShader("shadow_shader",
+                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "shadow.vert"))
+                        .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "shadow.frag")));
     }
 
     @Override
@@ -64,6 +68,7 @@ public class WorldRenderer implements Renderer {
         frameBufferShadow.bind();
         GL11.glViewport(0, 0, FrameBufferShadow.SHADOW_WIDTH, FrameBufferShadow.SHADOW_HEIGHT);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+        ShaderProgram shadowShader = this.shadowShader.getValue();
         ShaderManager.INSTANCE.bindShaderOverriding(shadowShader);
         var lightProj = new Matrix4f().ortho(-10f * 2, 10f * 2, -10f * 2, 10f * 2, 1.0f / 2, 7.5f * 2);
 
@@ -87,15 +92,19 @@ public class WorldRenderer implements Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
 
+        // TODO: Remove it
         ShaderManager.INSTANCE.bindShader("chunk_solid");
-        ShaderManager.INSTANCE.getShader("chunk_solid").ifPresent(program -> program.setUniform("u_LightSpace", lightSpaceMat));
-        ShaderManager.INSTANCE.getShader("chunk_solid").ifPresent(program -> program.setUniform("u_ShadowMap", 8));
+        ShaderProgram chunkSolidShader = ShaderManager.INSTANCE.getShader("chunk_solid").getValue();
+        if (chunkSolidShader != null) {
+            chunkSolidShader.setUniform("u_LightSpace", lightSpaceMat);
+            chunkSolidShader.setUniform("u_ShadowMap", 8);
+        }
         GL15.glActiveTexture(GL13.GL_TEXTURE8);
         GL11.glBindTexture(GL_TEXTURE_2D, frameBufferShadow.getDstexid());
         GL15.glActiveTexture(GL13.GL_TEXTURE0);
         chunkRenderer.render();
 
-        ShaderManager.INSTANCE.bindShader(worldShader);
+        ShaderManager.INSTANCE.bindShader(worldShader.getValue());
         glEnable(GL11.GL_DEPTH_TEST);
         glEnable(GL11.GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -157,7 +166,7 @@ public class WorldRenderer implements Renderer {
         frameBuffer.blitFrom(frameBufferMultisampled);
         defaultFBO.bind();
         glClear(GL_COLOR_BUFFER_BIT);
-        ShaderManager.INSTANCE.bindShader(frameBufferSP);
+        ShaderManager.INSTANCE.bindShader(frameBufferSP.getValue());
         glDisable(GL_DEPTH_TEST);
         defaultFBO.drawFrameBuffer(frameBuffer);
 
@@ -172,6 +181,7 @@ public class WorldRenderer implements Renderer {
 
     @Override
     public void dispose() {
-        worldShader.dispose();
+        chunkRenderer.dispose();
+        // TODO: dispose
     }
 }
