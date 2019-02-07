@@ -1,8 +1,8 @@
 package unknowndomain.engine.client;
 
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.client.asset.AssetLoadManager;
-import unknowndomain.engine.client.asset.source.AssetManager;
+import unknowndomain.engine.client.asset.AssetManager;
+import unknowndomain.engine.client.asset.loader.AssetLoadManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.display.GameWindow;

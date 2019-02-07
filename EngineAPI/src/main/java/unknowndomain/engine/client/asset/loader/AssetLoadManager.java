@@ -1,5 +1,6 @@
-package unknowndomain.engine.client.asset;
+package unknowndomain.engine.client.asset.loader;
 
+import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.asset.exception.AssetLoadException;
 import unknowndomain.engine.util.Disposable;
 
@@ -25,6 +26,4 @@ public interface AssetLoadManager extends Disposable {
 
     @Nonnull
     <T> CompletableFuture<T> loadAsync(@Nonnull AssetType<T> type, @Nonnull AssetPath path) throws AssetLoadException;
-
-    void reload();
 }

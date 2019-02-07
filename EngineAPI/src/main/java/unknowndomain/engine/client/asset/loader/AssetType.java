@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.asset;
+package unknowndomain.engine.client.asset.loader;
 
 import javax.annotation.Nonnull;
 

@@ -1,6 +1,6 @@
-package unknowndomain.engine.client.asset.source;
+package unknowndomain.engine.client.asset;
 
-import unknowndomain.engine.client.asset.AssetPath;
+import unknowndomain.engine.client.asset.source.AssetSource;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -18,4 +18,6 @@ public interface AssetManager {
 
     @Nonnull
     List<Path> getAllPaths(@Nonnull AssetPath path);
+
+    void reload();
 }

@@ -2,7 +2,9 @@ package unknowndomain.engine.client.asset;
 
 import unknowndomain.engine.client.asset.exception.AssetLoadException;
 import unknowndomain.engine.client.asset.exception.AssetNotFoundException;
-import unknowndomain.engine.client.asset.source.AssetManager;
+import unknowndomain.engine.client.asset.loader.AssetLoadManager;
+import unknowndomain.engine.client.asset.loader.AssetLoader;
+import unknowndomain.engine.client.asset.loader.AssetType;
 import unknowndomain.engine.client.asset.source.AssetSource;
 
 import javax.annotation.Nonnull;
@@ -92,11 +94,6 @@ public class DefaultAssetLoadManager implements AssetLoadManager {
     @Nonnull
     public AssetManager getSourceManager() {
         return sourceManager;
-    }
-
-    @Override
-    public void reload() {
-        // TODO: fire event.
     }
 
     @Override

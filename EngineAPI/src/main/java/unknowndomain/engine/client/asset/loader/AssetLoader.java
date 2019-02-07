@@ -1,5 +1,6 @@
-package unknowndomain.engine.client.asset;
+package unknowndomain.engine.client.asset.loader;
 
+import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.util.Disposable;
 
 import javax.annotation.Nonnull;

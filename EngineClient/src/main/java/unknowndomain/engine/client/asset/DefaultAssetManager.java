@@ -1,6 +1,5 @@
 package unknowndomain.engine.client.asset;
 
-import unknowndomain.engine.client.asset.source.AssetManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
 
 import javax.annotation.Nonnull;
@@ -61,5 +60,10 @@ public class DefaultAssetManager implements AssetManager {
 
     public List<AssetSource> getSources() {
         return assetSources;
+    }
+
+    @Override
+    public void reload() {
+        // TODO: fire event.
     }
 }
