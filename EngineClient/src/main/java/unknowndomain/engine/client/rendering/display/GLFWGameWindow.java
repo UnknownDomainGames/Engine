@@ -217,7 +217,6 @@ public class GLFWGameWindow implements GameWindow {
 
             if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
                 Platform.getEngine().getCurrentGame().terminate();
-                System.exit(0); // TODO: Remove it
             }
         });
     }

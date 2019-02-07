@@ -103,7 +103,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         context.post(new RendererRegisterEvent(registeredRenderers));
 
         clientContext = new ClientContextImpl(this, Thread.currentThread(), registeredRenderers, Platform.getEngineClient().getWindow(), player);
-        clientContext.init();
+        clientContext.initClient();
         clientContext.setCamera(new FirstPersonCamera(player));
     }
 
@@ -159,6 +159,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
         super.terminate();
         ticker.stop();
+        clientContext.dispose();
         clientContext.getWindow().close();
 
         getEventBus().post(new GameTerminationEvent.Post(this));
