@@ -1,14 +1,13 @@
 package unknowndomain.engine.client.rendering.light;
 
 import org.joml.Vector3f;
-import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 
 public abstract class Light {
     Vector3f ambient = new Vector3f(0.1f);
     Vector3f diffuse = new Vector3f(1f);
     Vector3f specular = new Vector3f(1f);
 
-    public abstract void bind(ShaderProgram program, String fieldName);
+    public abstract void bind(String fieldName);
 
     public Light setAmbient(Vector3f ambient) {
         this.ambient = ambient;

@@ -77,8 +77,8 @@ public class WorldRenderer implements Renderer {
         var lightSpaceMat = new Matrix4f();
         lightProj.mul(lightView, lightSpaceMat);
 
-        shadowShader.setUniform("u_lightSpace", lightSpaceMat);
-        shadowShader.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
+        ShaderManager.INSTANCE.setUniform("u_lightSpace", lightSpaceMat);
+        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
         GL11.glCullFace(GL_FRONT);
         chunkRenderer.render();
         GL11.glCullFace(GL_BACK);
@@ -96,8 +96,8 @@ public class WorldRenderer implements Renderer {
         ShaderManager.INSTANCE.bindShader("chunk_solid");
         ShaderProgram chunkSolidShader = ShaderManager.INSTANCE.getShader("chunk_solid").getValue();
         if (chunkSolidShader != null) {
-            chunkSolidShader.setUniform("u_LightSpace", lightSpaceMat);
-            chunkSolidShader.setUniform("u_ShadowMap", 8);
+            ShaderManager.INSTANCE.setUniform("u_LightSpace", lightSpaceMat);
+            ShaderManager.INSTANCE.setUniform("u_ShadowMap", 8);
         }
         GL15.glActiveTexture(GL13.GL_TEXTURE8);
         GL11.glBindTexture(GL_TEXTURE_2D, frameBufferShadow.getDstexid());

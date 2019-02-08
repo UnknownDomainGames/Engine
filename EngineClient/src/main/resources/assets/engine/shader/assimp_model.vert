@@ -11,10 +11,10 @@ uniform mat4 u_Bones[MAX_BONES];
 
 layout (location = 0) in vec4 a_Position;
 layout (location = 1) in vec2 a_TexCoord;
-layout (location = 2) in vec3 a_Normal;
-layout (location = 3) in vec3 a_Tangent;
-layout (location = 4) in ivec4 a_BoneId;
-layout (location = 5) in vec4 a_Weight;
+layout (location = 3) in vec3 a_Normal;
+layout (location = 4) in vec3 a_Tangent;
+layout (location = 5) in ivec4 a_BoneId;
+layout (location = 6) in vec4 a_Weight;
 
 out vec4 v_Color;
 out vec2 v_TexCoord;

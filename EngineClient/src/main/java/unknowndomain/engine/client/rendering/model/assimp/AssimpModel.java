@@ -80,29 +80,29 @@ public class AssimpModel {
             GL30.glEnableVertexAttribArray(1);
             if(mesh.getNormalBufferId() != 0){
                 GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getNormalBufferId());
-                GL30.glVertexAttribPointer(2, 3, GLDataType.FLOAT.glId, false, 0, 0);
-                GL30.glEnableVertexAttribArray(2);
-            }
-            if(mesh.getTangentBufferId() != 0){
-                GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getTangentBufferId());
                 GL30.glVertexAttribPointer(3, 3, GLDataType.FLOAT.glId, false, 0, 0);
                 GL30.glEnableVertexAttribArray(3);
             }
+            if(mesh.getTangentBufferId() != 0){
+                GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getTangentBufferId());
+                GL30.glVertexAttribPointer(4, 3, GLDataType.FLOAT.glId, false, 0, 0);
+                GL30.glEnableVertexAttribArray(4);
+            }
             if (mesh.getBoneIdBufferId() != 0) {
                 GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getBoneIdBufferId());
-                GL30.glVertexAttribPointer(4, 4, GLDataType.INT.glId, false, 0, 0);
-                GL30.glEnableVertexAttribArray(4);
+                GL30.glVertexAttribPointer(5, 4, GLDataType.INT.glId, false, 0, 0);
+                GL30.glEnableVertexAttribArray(5);
             }
             if (mesh.getVertexWeightBufferId() != 0) {
                 GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getVertexWeightBufferId());
-                GL30.glVertexAttribPointer(5, 4, GLDataType.FLOAT.glId, false, 0, 0);
-                GL30.glEnableVertexAttribArray(5);
+                GL30.glVertexAttribPointer(6, 4, GLDataType.FLOAT.glId, false, 0, 0);
+                GL30.glEnableVertexAttribArray(6);
             }
 
 
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             var mat = materials.get(mesh.getRawMesh().mMaterialIndex());
-            mat.getEngineMaterial().bind(ShaderManager.INSTANCE.getUsingShader(), "material");
+            mat.getEngineMaterial().bind("material");
 
             ShaderManager.INSTANCE.setUniform("u_Bones", currentAnimation.getCurrentFrame().getJointMatrices());
 

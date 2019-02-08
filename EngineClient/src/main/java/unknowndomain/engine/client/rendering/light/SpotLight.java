@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.rendering.light;
 
 import org.joml.Vector3f;
-import unknowndomain.engine.client.rendering.shader.ShaderProgram;
+import unknowndomain.engine.client.rendering.shader.ShaderManager;
 
 public class SpotLight extends PointLight {
     Vector3f direction;
@@ -9,10 +9,10 @@ public class SpotLight extends PointLight {
     float outerCutoffAngle; // in Radian
 
     @Override
-    public void bind(ShaderProgram program, String fieldName) {
-        super.bind(program, fieldName);
-        program.setUniform(fieldName + ".direction", direction);
-        program.setUniform(fieldName + ".cutoffCosine", (float)Math.cos(cutoffAngle));
-        program.setUniform(fieldName + ".direction", (float)Math.cos(outerCutoffAngle));
+    public void bind(String fieldName) {
+        super.bind(fieldName);
+        ShaderManager.INSTANCE.setUniform(fieldName + ".direction", direction);
+        ShaderManager.INSTANCE.setUniform(fieldName + ".cutoffCosine", (float)Math.cos(cutoffAngle));
+        ShaderManager.INSTANCE.setUniform(fieldName + ".direction", (float)Math.cos(outerCutoffAngle));
     }
 }

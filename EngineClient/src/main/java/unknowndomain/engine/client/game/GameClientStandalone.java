@@ -1,8 +1,10 @@
 package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
+import org.joml.Vector3f;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.EngineClient;
+import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.event.asset.AssetLoadEvent;
 import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
@@ -12,6 +14,7 @@ import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
 import unknowndomain.engine.client.rendering.texture.TextureTypes;
+import unknowndomain.engine.client.sound.ALSoundSource;
 import unknowndomain.engine.event.game.GameTerminationEvent;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.math.BlockPos;
@@ -164,7 +167,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
         getEventBus().post(new GameTerminationEvent.Post(this));
 
-        logger.info("Terminated Game!");
+        logger.info("Game terminated.");
     }
 
     private void clientTick() {

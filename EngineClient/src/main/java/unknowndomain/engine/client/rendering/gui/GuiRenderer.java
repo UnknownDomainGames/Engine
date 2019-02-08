@@ -142,13 +142,12 @@ public class GuiRenderer implements Renderer {
 
 
     private void resize() {
-        if (context.getWindow().isResized()) {
-            int width = context.getWindow().getWidth(), height = context.getWindow().getHeight();
-            ShaderManager.INSTANCE.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
-            ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
-            ShaderManager.INSTANCE.setUniform("u_WindowSize", new Vector2f(width, height));
-            ShaderManager.INSTANCE.setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
-        }
+        //context.getWindow().isResized();
+        int width = context.getWindow().getWidth(), height = context.getWindow().getHeight();
+        ShaderManager.INSTANCE.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
+        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
+        ShaderManager.INSTANCE.setUniform("u_WindowSize", new Vector2f(width, height));
+        ShaderManager.INSTANCE.setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
     }
 
     private void endRender() {
