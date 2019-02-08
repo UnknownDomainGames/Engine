@@ -6,8 +6,13 @@ import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import org.joml.*;
 import unknowndomain.engine.Platform;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class ShaderManager {
 
@@ -22,11 +27,29 @@ public class ShaderManager {
 
     private boolean overriding;
 
+    private static final List<Class<?>> SUPPORTED_UNIFORM_TYPE;
+
+    static {
+        SUPPORTED_UNIFORM_TYPE = new ArrayList<>();
+        Stream.of(ShaderManager.class.getDeclaredMethods()).filter(method -> method.getName().equals("setUniform")).forEach(method -> {
+            int parCount = method.getParameterCount();
+            if(parCount == 2){
+                var partypes = method.getParameterTypes();
+                if(partypes.length == parCount && partypes[1] != Object.class){
+                    SUPPORTED_UNIFORM_TYPE.add(partypes[1]);
+                }
+            }
+        });
+    }
+
     private ShaderManager() {
         loadedShaders = new HashMap<>();
         registeredShaders = new HashMap<>();
+        uniforms = new HashMap<>();
         overriding = false;
     }
+
+    private Map<String, Object> uniforms;
 
     public ObservableValue<ShaderProgram> registerShader(String name, ShaderProgramBuilder builder) {
         if (registeredShaders.containsKey(name)) {
@@ -86,6 +109,7 @@ public class ShaderManager {
         }
         usingShader = sp;
         usingShader.use();
+        uniforms.forEach(this::setUniform);
     }
 
     public void restoreShader() {
@@ -105,40 +129,114 @@ public class ShaderManager {
         restoreShader();
     }
 
-    public void setUniform(String location, int value) {
-        usingShader.setUniform(location, value);
+    public void setUniform(String location, Integer value) {
+        if(value == null){
+            usingShader.setUniform(location, 0);
+            uniforms.remove(location);
+        }else{
+            usingShader.setUniform(location, value);
+            uniforms.put(location, value);
+        }
     }
 
-    public void setUniform(String location, float value) {
-        usingShader.setUniform(location, value);
+    public void setUniform(String location, Float value) {
+        if(value == null){
+            usingShader.setUniform(location, 0f);
+            uniforms.remove(location);
+        }else{
+            usingShader.setUniform(location, value);
+            uniforms.put(location, value);
+        }
     }
 
-    public void setUniform(String location, boolean value) {
-        usingShader.setUniform(location, value);
+    public void setUniform(String location, Boolean value) {
+        if(value == null){
+            usingShader.setUniform(location, false);
+            uniforms.remove(location);
+        }else{
+            usingShader.setUniform(location, value);
+            uniforms.put(location, value);
+        }
     }
 
     public void setUniform(String location, Vector2fc value) {
-        usingShader.setUniform(location, value);
+        if(value == null){
+            usingShader.setUniform(location, new Vector2f());
+            uniforms.remove(location);
+        }else{
+            usingShader.setUniform(location, value);
+            uniforms.put(location, value);
+        }
     }
 
     public void setUniform(String location, Vector3fc value) {
-        usingShader.setUniform(location, value);
+        if(value == null){
+            usingShader.setUniform(location, new Vector3f());
+            uniforms.remove(location);
+        }else{
+            usingShader.setUniform(location, value);
+            uniforms.put(location, value);
+        }
     }
 
     public void setUniform(String location, Vector4fc value) {
-        usingShader.setUniform(location, value);
+        if(value == null){
+            usingShader.setUniform(location, new Vector4f());
+            uniforms.remove(location);
+        }else{
+            usingShader.setUniform(location, value);
+            uniforms.put(location, value);
+        }
     }
 
     public void setUniform(String location, Matrix3fc value) {
-        usingShader.setUniform(location, value);
+        if(value == null){
+            usingShader.setUniform(location, new Matrix3f());
+            uniforms.remove(location);
+        }else{
+            usingShader.setUniform(location, value);
+            uniforms.put(location, value);
+        }
     }
 
     public void setUniform(String location, Matrix4fc value) {
-        usingShader.setUniform(location, value);
+        if(value == null){
+            usingShader.setUniform(location, new Matrix4f());
+            uniforms.remove(location);
+        }else{
+            usingShader.setUniform(location, value);
+            uniforms.put(location, value);
+        }
     }
 
     public void setUniform(String location, Matrix4fc[] value) {
-        usingShader.setUniform(location, value);
+        if(value == null){
+            usingShader.setUniform(location, new Matrix4f[0]);
+            uniforms.remove(location);
+        }else{
+            usingShader.setUniform(location, value);
+            uniforms.put(location, value);
+        }
+    }
+
+    private void setUniform(String location, Object value){
+        boolean insertable = false;
+        Class<?> chosen = null;
+        for (Class<?> aClass : SUPPORTED_UNIFORM_TYPE) {
+            if(aClass.isInstance(value)){
+                insertable = true;
+                chosen = aClass;
+            }
+            if(insertable) break;
+        }
+        if(insertable){
+            try {
+                var setUniform = this.getClass().getDeclaredMethod("setUniform", String.class, chosen);
+                setUniform.invoke(this, location, (value));
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                Platform.getLogger().warn("Exception thrown when setting uniform", e);
+            }
+        }
     }
 
     public ShaderProgram getUsingShader() {

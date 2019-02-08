@@ -41,6 +41,7 @@ public class ChunkRenderer implements Renderer {
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
 
     private ObservableValue<ShaderProgram> chunkSolidShader;
+    private ObservableValue<ShaderProgram> assimpShader;
 
     private ClientContext context;
 
@@ -55,6 +56,9 @@ public class ChunkRenderer implements Renderer {
 
         chunkSolidShader = ShaderManager.INSTANCE.registerShader("chunk_solid",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "chunk_solid.vert"))
+                        .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "chunk_solid.frag")));
+        assimpShader = ShaderManager.INSTANCE.registerShader("assimp_model",
+                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "assimp_model.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "chunk_solid.frag")));
 
         //tmp = AssimpHelper.loadModel("assets/tmp/untitled.obj");
@@ -92,7 +96,9 @@ public class ChunkRenderer implements Renderer {
                 chunkMesh.render();
             }
         }
-        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 5, 0));
+//        ShaderProgram assimpShader = this.assimpShader.getValue();
+//        ShaderManager.INSTANCE.bindShader(assimpShader);
+//        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().rotate((float)-Math.PI / 2, 1,0,0).setTranslation(0,5,0));
 //        tmp.render();
 
         postRenderChunk();
@@ -116,13 +122,13 @@ public class ChunkRenderer implements Renderer {
         ShaderManager.INSTANCE.setUniform("u_ProjMatrix", projMatrix);
         ShaderManager.INSTANCE.setUniform("u_ViewMatrix", viewMatrix);
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", modelMatrix);
-        chunkSolidShader.setUniform("u_viewPos", context.getCamera().getPosition(0));
+        ShaderManager.INSTANCE.setUniform("u_viewPos", context.getCamera().getPosition(0));
 
         Platform.getEngineClient().getTextureManager().getTextureAtlas(BLOCK).bind();
         chunkSolidShader.setUniform("useDirectUV", true);
-        dirLight.bind(chunkSolidShader, "dirLights[0]");
+        dirLight.bind("dirLights[0]");
         //ptLight.bind(chunkSolidShader,"pointLights[0]");
-        mat.bind(chunkSolidShader, "material");
+        mat.bind("material");
     }
 
     protected void postRenderChunk() {

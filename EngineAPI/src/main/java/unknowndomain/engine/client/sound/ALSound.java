@@ -31,8 +31,8 @@ public class ALSound implements Disposable {
         IntBuffer rateb = stackMallocInt(1);
 
         ShortBuffer raw = stb_vorbis_decode_memory(buffer, channelb, rateb);
-        int channel = channelb.get();
-        int rate = rateb.get();
+        int channel = channelb.get(0);
+        int rate = rateb.get(0);
         stackPop();
         stackPop();
 

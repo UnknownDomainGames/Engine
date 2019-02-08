@@ -1,8 +1,10 @@
 package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
+import org.joml.Vector3f;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.EngineClient;
+import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.event.asset.AssetLoadEvent;
 import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
@@ -12,6 +14,7 @@ import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
 import unknowndomain.engine.client.rendering.texture.TextureTypes;
+import unknowndomain.engine.client.sound.ALSoundSource;
 import unknowndomain.engine.event.game.GameTerminationEvent;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.math.BlockPos;
@@ -120,7 +123,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         spawnWorld(null);
         world = (WorldCommon) getWorld("default");
         world.playerJoin(player);
-        player.getControlledEntity().getPosition().set(1, 3, 1);
+        player.getControlledEntity().getPosition().set(0, 5, 0);
 
         entityController = new EntityCameraController(player);
         clientContext.getWindow().addCursorCallback((xpos, ypos) -> {
@@ -143,6 +146,10 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
                 }
             }
         }
+//        a = Platform.getEngineClient().getSoundManager().createSoundSource("test sound").position(25,5,0).gain(1.0f).speed(dir);
+//        a.setLoop(true);
+//        a.assignSound(sound);
+//        a.play();
     }
 
     @Override
@@ -164,11 +171,19 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
         getEventBus().post(new GameTerminationEvent.Post(this));
 
-        logger.info("Terminated Game!");
+        logger.info("Game terminated.");
     }
 
     private void clientTick() {
         getKeyBindingManager().tick();
+        Platform.getEngineClient().getSoundManager().updateListener(clientContext.getCamera());
+//        Vector3f d = new Vector3f();
+//        a.position(a.getPosition().add(dir.mul(0.05f, d)));
+//        var p = a.getPosition();
+//        if(Math.abs(p.x) > 20 && Math.signum(p.x) == Math.signum(d.x)) {
+//            dir.negate();
+//            a.speed(dir);
+//        }
         // TODO upload particle physics here
     }
 

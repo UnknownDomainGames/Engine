@@ -15,5 +15,9 @@ public interface ALSoundManager extends Disposable {
 
     ALSound getSound(AssetPath path, boolean reload);
 
+    default ALSound getSound(AssetPath path){
+        return getSound(path, false);
+    }
+
     ALSoundListener getListener();
 }
