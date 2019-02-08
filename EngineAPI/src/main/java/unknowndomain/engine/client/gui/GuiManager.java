@@ -38,7 +38,7 @@ public class GuiManager {
         context.getWindow().addKeyCallback(displayingScreen.keyCallback);
         context.getWindow().addMouseCallback(displayingScreen.mouseCallback);
         context.getWindow().addScrollCallback(displayingScreen.scrollCallback);
-        context.getWindow().showCursor();
+        context.getWindow().getCursor().showCursor();
     }
 
     private void pushToHistory() {
@@ -78,7 +78,7 @@ public class GuiManager {
     public void closeScreen(){
         pushToHistory();
         displayingScreen = null;
-        context.getWindow().disableCursor();
+        context.getWindow().getCursor().disableCursor();
     }
 
     public void hideHud(String id){

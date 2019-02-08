@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.rendering.display;
 
 import org.joml.Matrix4f;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -18,17 +17,18 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class GLFWGameWindow implements GameWindow {
 
-    private long handle;
-    private String title;
+    private long windowId;
 
     private int width;
     private int height;
     private boolean resized = false;
     private Matrix4f projection;
 
-    private boolean paused;
+    private String title;
 
     private boolean closed = false;
+
+    private Cursor cursor;
 
     private final List<KeyCallback> keyCallbacks = new LinkedList<>();
     private final List<MouseCallback> mouseCallbacks = new LinkedList<>();
@@ -80,22 +80,12 @@ public class GLFWGameWindow implements GameWindow {
 
     @Override
     public void setTitle(String title) {
-        glfwSetWindowTitle(handle, title);
+        glfwSetWindowTitle(windowId, title);
     }
 
     @Override
-    public void showCursor() {
-        glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    }
-
-    @Override
-    public void disableCursor() {
-        glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    }
-
-    @Override
-    public boolean isCursorHidden() {
-        return glfwGetInputMode(handle, GLFW_CURSOR) != GLFW_CURSOR_NORMAL;
+    public Cursor getCursor() {
+        return cursor;
     }
 
     @Override
@@ -155,7 +145,7 @@ public class GLFWGameWindow implements GameWindow {
 
     @Override
     public void endRender() {
-        glfwSwapBuffers(handle);
+        glfwSwapBuffers(windowId);
 
         if (isResized()) {
             resized = false;
@@ -167,7 +157,7 @@ public class GLFWGameWindow implements GameWindow {
     @Override
     public void close() {
         closed = true;
-        glfwDestroyWindow(handle);
+        glfwDestroyWindow(windowId);
     }
 
     @Override
@@ -175,8 +165,8 @@ public class GLFWGameWindow implements GameWindow {
         return closed;
     }
 
-    public long getHandle() {
-        return handle;
+    public long getWindowId() {
+        return windowId;
     }
 
     public void init() {
@@ -184,37 +174,28 @@ public class GLFWGameWindow implements GameWindow {
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
         initWindowHint();
-        handle = glfwCreateWindow(width, height, title, NULL, NULL);
+        windowId = glfwCreateWindow(width, height, title, NULL, NULL);
         if (!checkCreated())
             throw new RuntimeException("Failed to parse the GLFW window");
         initCallbacks();
         setWindowPosCenter();
-        glfwMakeContextCurrent(handle);
+        glfwMakeContextCurrent(windowId);
         GL.createCapabilities();
         enableVSync();
+        cursor = new GLFWCursor(windowId);
         setupInput();
         showWindow();
     }
 
     private void setupInput() {
-        glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> keyCallbacks.forEach(keyCallback -> keyCallback.invoke(key, scancode, action, mods)));
-        glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> mouseCallbacks.forEach(mouseCallback -> mouseCallback.invoke(button, action, mods)));
-        glfwSetCursorPosCallback(handle, (window, xpos, ypos) -> cursorCallbacks.forEach(cursorCallback -> cursorCallback.invoke(xpos, ypos)));
-        glfwSetScrollCallback(handle, (window, xoffset, yoffset) -> scrollCallbacks.forEach(scrollCallback -> scrollCallback.invoke(xoffset, yoffset)));
-        glfwSetCharCallback(handle, (window, codepoint) -> charCallbacks.forEach(charCallback -> charCallback.invoke((char) codepoint)));
+        glfwSetKeyCallback(windowId, (window, key, scancode, action, mods) -> keyCallbacks.forEach(keyCallback -> keyCallback.invoke(key, scancode, action, mods)));
+        glfwSetMouseButtonCallback(windowId, (window, button, action, mods) -> mouseCallbacks.forEach(mouseCallback -> mouseCallback.invoke(button, action, mods)));
+        glfwSetCursorPosCallback(windowId, (window, xpos, ypos) -> cursorCallbacks.forEach(cursorCallback -> cursorCallback.invoke(xpos, ypos)));
+        glfwSetScrollCallback(windowId, (window, xoffset, yoffset) -> scrollCallbacks.forEach(scrollCallback -> scrollCallback.invoke(xoffset, yoffset)));
+        glfwSetCharCallback(windowId, (window, codepoint) -> charCallbacks.forEach(charCallback -> charCallback.invoke((char) codepoint)));
 
         // TODO: Remove it.
         addKeyCallback((key, scancode, action, mods) -> {
-            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) {
-                if (paused) {
-                    disableCursor();
-                    paused = false;
-                } else {
-                    showCursor();
-                    paused = true;
-                }
-            }
-
             if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
                 Platform.getEngine().getCurrentGame().terminate();
             }
@@ -222,11 +203,11 @@ public class GLFWGameWindow implements GameWindow {
     }
 
     private boolean checkCreated() {
-        return handle != NULL;
+        return windowId != NULL;
     }
 
     private void initCallbacks() {
-        glfwSetFramebufferSizeCallback(handle, (window, width, height) -> setSize(width, height));
+        glfwSetFramebufferSizeCallback(windowId, (window, width, height) -> setSize(width, height));
     }
 
     private void initWindowHint() {
@@ -247,7 +228,7 @@ public class GLFWGameWindow implements GameWindow {
     private void setWindowPosCenter() {
         GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         // Center our window
-        glfwSetWindowPos(handle, (vidmode.width() - width) / 2, (vidmode.height() - height) / 2);
+        glfwSetWindowPos(windowId, (vidmode.width() - width) / 2, (vidmode.height() - height) / 2);
     }
 
     private void enableVSync() {
@@ -255,9 +236,9 @@ public class GLFWGameWindow implements GameWindow {
     }
 
     private void showWindow() {
-        glfwShowWindow(handle);
+        glfwShowWindow(windowId);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         // glViewport(0, 0, width, height);
-        disableCursor();
+        getCursor().setCursorState(CursorState.DISABLED);
     }
 }

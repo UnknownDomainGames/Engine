@@ -18,14 +18,7 @@ public interface GameWindow {
 
     void setTitle(String title);
 
-    @Deprecated
-    void showCursor();
-
-    @Deprecated
-    void disableCursor();
-
-    @Deprecated
-    boolean isCursorHidden();
+    Cursor getCursor();
 
     void close();
 

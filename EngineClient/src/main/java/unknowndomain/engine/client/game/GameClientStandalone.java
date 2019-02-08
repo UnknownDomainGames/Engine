@@ -124,7 +124,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
         entityController = new EntityCameraController(player);
         clientContext.getWindow().addCursorCallback((xpos, ypos) -> {
-            if (clientContext.getWindow().isCursorHidden()) {
+            if (clientContext.getWindow().getCursor().isHiddenCursor()) {
                 entityController.handleCursorMove(xpos, ypos);
             }
         });
