@@ -72,12 +72,13 @@ public class ALSoundManagerImpl implements ALSoundManager {
         cameraMatrix.positiveZ(at).negate();
         Vector3f up = new Vector3f();
         cameraMatrix.positiveY(up);
-        listener.orient(at,up);
+        listener.position(camera.getPosition(0)).orient(at,up);
     }
 
     @Override
     public ALSoundSource createSoundSource(String name){
         ALSoundSource source = new ALSoundSource(false, false);
+        source.createSource();
         return source;
     }
 
@@ -105,6 +106,7 @@ public class ALSoundManagerImpl implements ALSoundManager {
                     try (var channel = Files.newByteChannel(nativePath.get(), StandardOpenOption.READ)) {
                         ByteBuffer buf = BufferUtils.createByteBuffer((int) channel.size());
                         channel.read(buf);
+                        buf.flip();
                         return ALSound.ofOGG(buf);
                     }
                 }

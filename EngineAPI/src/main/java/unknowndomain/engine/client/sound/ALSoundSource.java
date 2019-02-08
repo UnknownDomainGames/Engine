@@ -4,7 +4,10 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import unknowndomain.engine.util.Disposable;
 
+import java.nio.FloatBuffer;
+
 import static org.lwjgl.openal.AL10.*;
+import static org.lwjgl.system.MemoryStack.*;
 
 public class ALSoundSource implements Disposable {
 
@@ -65,6 +68,17 @@ public class ALSoundSource implements Disposable {
         return this;
     }
 
+    public Vector3f getPosition(){
+        stackPush();
+        FloatBuffer a = stackMallocFloat(1);
+        FloatBuffer a1 = stackMallocFloat(1);
+        FloatBuffer a2 = stackMallocFloat(1);
+        alGetSource3f(sourceId, AL_POSITION,a,a1,a2);
+        Vector3f v = new Vector3f(a.get(),a1.get(),a2.get());
+        stackPop();
+        return v;
+    }
+
     public ALSoundSource position(Vector3fc pos){
         return position(pos.x(), pos.y(),pos.z());
     }
@@ -78,8 +92,31 @@ public class ALSoundSource implements Disposable {
         return speed(speed.x(), speed.y(),speed.z());
     }
 
+    public Vector3f getSpeed(){
+        stackPush();
+        FloatBuffer a = stackMallocFloat(1);
+        FloatBuffer a1 = stackMallocFloat(1);
+        FloatBuffer a2 = stackMallocFloat(1);
+        alGetSource3f(sourceId, AL_VELOCITY,a,a1,a2);
+        Vector3f v = new Vector3f(a.get(),a1.get(),a2.get());
+        stackPop();
+        return v;
+    }
+
     public ALSoundSource gain(float gain){
         alSourcef(sourceId, AL_GAIN, gain);
+        return this;
+    }
+
+    public ALSoundSource setLoop(boolean flag){
+        loop = flag;
+        alSourcei(sourceId, AL_LOOPING, loop ? AL_TRUE : AL_FALSE);
+        return this;
+    }
+
+    public ALSoundSource setRelative(boolean relative) {
+        this.relative = relative;
+        alSourcei(sourceId, AL_SOURCE_RELATIVE, relative ? AL_TRUE : AL_FALSE);
         return this;
     }
 

@@ -123,7 +123,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         spawnWorld(null);
         world = (WorldCommon) getWorld("default");
         world.playerJoin(player);
-        player.getControlledEntity().getPosition().set(1, 3, 1);
+        player.getControlledEntity().getPosition().set(0, 5, 0);
 
         entityController = new EntityCameraController(player);
         clientContext.getWindow().addCursorCallback((xpos, ypos) -> {
@@ -146,6 +146,10 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
                 }
             }
         }
+//        a = Platform.getEngineClient().getSoundManager().createSoundSource("test sound").position(25,5,0).gain(1.0f).speed(dir);
+//        a.setLoop(true);
+//        a.assignSound(sound);
+//        a.play();
     }
 
     @Override
@@ -172,6 +176,14 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
     private void clientTick() {
         getKeyBindingManager().tick();
+        Platform.getEngineClient().getSoundManager().updateListener(clientContext.getCamera());
+//        Vector3f d = new Vector3f();
+//        a.position(a.getPosition().add(dir.mul(0.05f, d)));
+//        var p = a.getPosition();
+//        if(Math.abs(p.x) > 20 && Math.signum(p.x) == Math.signum(d.x)) {
+//            dir.negate();
+//            a.speed(dir);
+//        }
         // TODO upload particle physics here
     }
 
