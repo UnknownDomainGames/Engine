@@ -102,7 +102,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         List<Renderer> registeredRenderers = Lists.newArrayList();
         context.post(new RendererRegisterEvent(registeredRenderers));
 
-        clientContext = new ClientContextImpl(this, Thread.currentThread(), registeredRenderers, Platform.getEngineClient().getWindow(), player);
+        clientContext = new ClientContextImpl(this, registeredRenderers, Platform.getEngineClient().getWindow(), player);
         clientContext.initClient();
         clientContext.setCamera(new FirstPersonCamera(player));
     }
