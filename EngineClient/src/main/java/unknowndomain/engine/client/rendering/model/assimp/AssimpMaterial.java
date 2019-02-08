@@ -13,7 +13,6 @@ import unknowndomain.engine.client.rendering.texture.GLTexture;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Arrays;
 
 import static org.lwjgl.assimp.Assimp.*;
 
@@ -87,7 +86,7 @@ public class AssimpMaterial {
             //TODO better texture managing. Now attempt to use model-relative path
             var strings = parentDir.split("/");
             var ss = s.split("/");
-            return Platform.getEngineClient().getTextureManager().getTexture(AssetPath.of(strings[1], ArrayUtils.addAll(ArrayUtils.subarray(strings,2,strings.length), ss)));
+            return Platform.getEngineClient().getTextureManager().getTextureDirect(AssetPath.of(strings[1], ArrayUtils.addAll(ArrayUtils.subarray(strings, 2, strings.length), ss)));
         }
         return null;
     }

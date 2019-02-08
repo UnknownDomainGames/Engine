@@ -113,6 +113,16 @@ public class EngineClientImpl implements EngineClient {
     }
 
     @Override
+    public void terminate() {
+
+    }
+
+    @Override
+    public boolean isTerminated() {
+        return false;
+    }
+
+    @Override
     public void startGame() {
         renderThread = Thread.currentThread();
 

@@ -1,18 +1,17 @@
 package unknowndomain.engine.client.rendering.texture;
 
+import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import unknowndomain.engine.client.asset.AssetPath;
 
 public interface TextureManager {
 
-    default GLTexture getTexture(AssetPath path) {
-        return getTexture(path, false);
-    }
+    ObservableValue<GLTexture> getTexture(AssetPath path);
 
-    GLTexture getTexture(AssetPath path, boolean reload);
+    GLTexture getTextureDirect(AssetPath path);
 
-    TextureUV registerToAtlas(AssetPath path, TextureType type);
+    TextureUV addTextureToAtlas(AssetPath path, TextureType type);
 
-    GLTexture getTextureAtlas(TextureType type);
+    ObservableValue<GLTexture> getTextureAtlas(TextureType type);
 
-    GLTexture initTextureAtlas(TextureType type);
+    void reloadTextureAtlas(TextureType type);
 }

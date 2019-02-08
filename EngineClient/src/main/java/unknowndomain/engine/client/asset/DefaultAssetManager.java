@@ -1,6 +1,8 @@
 package unknowndomain.engine.client.asset;
 
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.source.AssetSource;
+import unknowndomain.engine.client.event.asset.AssetReloadEvent;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Files;
@@ -12,6 +14,8 @@ import java.util.Optional;
 public class DefaultAssetManager implements AssetManager {
 
     private final List<AssetSource> assetSources = new LinkedList<>();
+
+    private final List<Runnable> reloadListener = new LinkedList<>();
 
     @Override
     public Optional<AssetSource> getSource(AssetPath path) {
@@ -64,6 +68,13 @@ public class DefaultAssetManager implements AssetManager {
 
     @Override
     public void reload() {
-        // TODO: fire event.
+        reloadListener.forEach(Runnable::run);
+        if (Platform.getEngine().isPlaying()) {
+            Platform.getEngine().getCurrentGame().getEventBus().post(new AssetReloadEvent());
+        }
+    }
+
+    public List<Runnable> getReloadListener() {
+        return reloadListener;
     }
 }

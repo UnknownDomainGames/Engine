@@ -7,7 +7,7 @@ import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.block.ClientBlockAir;
 import unknowndomain.engine.client.block.ClientBlockDefault;
-import unknowndomain.engine.client.event.asset.AssetLoadEvent;
+import unknowndomain.engine.client.event.asset.AssetReloadEvent;
 import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.input.controller.MotionType;
@@ -97,13 +97,13 @@ public final class DefaultGameMode {
 
     @Listener
     @Deprecated
-    public void assetLoad(AssetLoadEvent event) {
+    public void assetLoad(AssetReloadEvent event) {
         AssetPath enginePath = AssetPath.of("engine");
         AssetPath blockTexturePath = AssetPath.of(enginePath, "texture", "block");
         TextureManager textureManager = Platform.getEngineClient().getTextureManager();
-        TextureUV side = textureManager.registerToAtlas(AssetPath.of(blockTexturePath, "grass_side.png"), BLOCK);
-        TextureUV top = textureManager.registerToAtlas(AssetPath.of(blockTexturePath, "grass_top.png"), BLOCK);
-        TextureUV bottom = textureManager.registerToAtlas(AssetPath.of(blockTexturePath, "dirt.png"), BLOCK);
+        TextureUV side = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_side.png"), BLOCK);
+        TextureUV top = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_top.png"), BLOCK);
+        TextureUV bottom = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "dirt.png"), BLOCK);
 
         BlockModel blockModel = new BlockModel();
         blockModel.addCube(0, 0, 0, 1, 1, 1, new TextureUV[]{side, side, side, side, top, bottom});

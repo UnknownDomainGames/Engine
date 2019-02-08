@@ -1,11 +1,9 @@
 package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
-import org.joml.Vector3f;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.EngineClient;
-import unknowndomain.engine.client.asset.AssetPath;
-import unknowndomain.engine.client.event.asset.AssetLoadEvent;
+import unknowndomain.engine.client.event.asset.AssetReloadEvent;
 import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
@@ -14,7 +12,6 @@ import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
 import unknowndomain.engine.client.rendering.texture.TextureTypes;
-import unknowndomain.engine.client.sound.ALSoundSource;
 import unknowndomain.engine.event.game.GameTerminationEvent;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.math.BlockPos;
@@ -100,19 +97,19 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         Platform.getEngineClient().getWindow().addKeyCallback(keyBindingManager::handleKey);
         Platform.getEngineClient().getWindow().addMouseCallback(keyBindingManager::handleMouse);
 
-        context.post(new AssetLoadEvent(Platform.getEngineClient().getAssetLoadManager(), Platform.getEngineClient().getAssetManager()));
+        context.post(new AssetReloadEvent());
 
-        List<Renderer> registeredRenderers = Lists.newArrayList();
-        context.post(new RendererRegisterEvent(registeredRenderers));
+        List<Renderer> registeredRenderer = Lists.newArrayList();
+        context.post(new RendererRegisterEvent(registeredRenderer));
 
-        clientContext = new ClientContextImpl(this, registeredRenderers, Platform.getEngineClient().getWindow(), player);
+        clientContext = new ClientContextImpl(this, registeredRenderer, Platform.getEngineClient().getWindow(), player);
         clientContext.initClient();
         clientContext.setCamera(new FirstPersonCamera(player));
     }
 
     @Override
     protected void resourceStage() {
-        Platform.getEngineClient().getTextureManager().initTextureAtlas(TextureTypes.BLOCK);
+        Platform.getEngineClient().getTextureManager().reloadTextureAtlas(TextureTypes.BLOCK);
     }
 
     @Override

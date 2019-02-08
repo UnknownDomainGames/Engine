@@ -1,9 +1,9 @@
 package unknowndomain.engine.client.rendering.texture;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.mouse0w0.lib4j.observable.value.MutableValue;
+import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
+import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import de.matthiasmann.twl.utils.PNGDecoder;
-import org.apache.commons.lang3.tuple.Pair;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.asset.exception.AssetLoadException;
@@ -12,62 +12,68 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class TextureManagerImpl implements TextureManager {
 
-    private final Cache<AssetPath, GLTexture> cachedTextures = CacheBuilder.newBuilder().weakValues().removalListener(notification -> ((GLTexture) notification.getValue()).dispose()).build();
+    private final Map<AssetPath, MutableValue<GLTexture>> textures = new HashMap<>();
 
-    private final Map<TextureType, List<Pair<AssetPath, TextureUVImpl>>> texturesAltas = new HashMap<>();
-    private final Map<TextureType, GLTexture> bakedTextureAtlases = new HashMap<>();
-    private final TextureAtlasBuilder textureAtlasBuilder = new TextureAtlasBuilder();
+    private final Map<TextureType, TextureAtlas> texturesAtlases = new HashMap<>();
 
     @Override
-    public GLTexture getTexture(AssetPath path, boolean reload) {
-        if (!reload) {
-            GLTexture texture = cachedTextures.getIfPresent(path);
-            if (texture != null) {
-                return texture;
-            }
+    public ObservableValue<GLTexture> getTexture(AssetPath path) {
+        return textures.computeIfAbsent(path, key -> new SimpleMutableObjectValue<>(getTextureDirect(path)));
+    }
+
+    @Override
+    public GLTexture getTextureDirect(AssetPath path) {
+        Optional<Path> localPath = Platform.getEngineClient().getAssetManager().getPath(path);
+        if (localPath.isEmpty()) {
+            throw new AssetLoadException("Cannot load texture because missing asset. Path: " + path);
         }
 
+        try (InputStream inputStream = Files.newInputStream(localPath.get())) {
+            PNGDecoder decoder = new PNGDecoder(inputStream);
+            TextureBuffer buf = TextureBuffer.create(decoder);
+            return GLTexture.of(buf.getWidth(), buf.getHeight(), buf.getBuffer());
+        } catch (IOException e) {
+            throw new AssetLoadException("Cannot load texture because catch exception. Path: " + path, e);
+        }
+    }
+
+    @Override
+    public TextureUV addTextureToAtlas(AssetPath path, TextureType type) {
+        return texturesAtlases.computeIfAbsent(type, key -> new TextureAtlas()).addTexture(path);
+    }
+
+    @Override
+    public ObservableValue<GLTexture> getTextureAtlas(TextureType type) {
+        return texturesAtlases.computeIfAbsent(type, key -> new TextureAtlas()).getTexture();
+    }
+
+    @Override
+    public void reloadTextureAtlas(TextureType type) {
         try {
-            return cachedTextures.get(path, () -> {
-                Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getPath(path);
-                if (nativePath.isPresent()) {
-                    try (InputStream inputStream = Files.newInputStream(nativePath.get())) {
-                        PNGDecoder decoder = new PNGDecoder(inputStream);
-                        TextureBuffer buf = TextureBuffer.create(decoder);
-                        return GLTexture.of(buf.getWidth(), buf.getHeight(), buf.getBuffer());
-                    }
-                }
-                throw new AssetLoadException("Cannot load texture. Path: " + path);
-            });
-        } catch (ExecutionException e) {
-            return null;
+            texturesAtlases.get(type).reload();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    @Override
-    public TextureUV registerToAtlas(AssetPath path, TextureType type) {
-        TextureUVImpl texture = new TextureUVImpl();
-        texturesAltas.computeIfAbsent(type, key -> new ArrayList<>()).add(Pair.of(path, texture));
-        return texture;
-    }
+    public void reload() {
+        for (Map.Entry<AssetPath, MutableValue<GLTexture>> entry : textures.entrySet()) {
+            entry.getValue().ifPresent(GLTexture::dispose);
+            entry.getValue().setValue(getTextureDirect(entry.getKey()));
+        }
 
-    public GLTexture getTextureAtlas(TextureType type) {
-        return bakedTextureAtlases.get(type);
-    }
-
-    @Override
-    public GLTexture initTextureAtlas(TextureType type) {
-        return bakedTextureAtlases.computeIfAbsent(type, key -> {
+        for (TextureAtlas textureAtlas : texturesAtlases.values()) {
             try {
-                return textureAtlasBuilder.buildFromResources(texturesAltas.getOrDefault(type, Collections.emptyList()));
+                textureAtlas.reload();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
-        });
+        }
     }
 }

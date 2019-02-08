@@ -87,7 +87,7 @@ public class GuiRenderer implements Renderer {
                 return new ImageHelper() {
                     @Override
                     public GLTexture getTexture(AssetPath path) {
-                        return Platform.getEngineClient().getTextureManager().getTexture(path);
+                        return Platform.getEngineClient().getTextureManager().getTextureDirect(path);
                     }
                 };
             }

@@ -25,6 +25,10 @@ public interface Engine {
 
     RuntimeEnvironment getRuntimeEnvironment();
 
+    void terminate();
+
+    boolean isTerminated();
+
     /**
      * Initialize the Engine. Load all mods and complete registration
      */
@@ -38,11 +42,11 @@ public interface Engine {
     @Deprecated
     void startGame();
 
-    // TODO: add getter for mod repository
-
-    // TODO: add getter for resource repository
-
     Game getCurrentGame();
+
+    default boolean isPlaying() {
+        return getCurrentGame() != null;
+    }
 
     // TODO: client should add player profile manager here, to perform login,
     // logout, fetch skin and other operation
