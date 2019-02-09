@@ -4,15 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetManager;
-import unknowndomain.engine.client.asset.DefaultAssetLoadManager;
-import unknowndomain.engine.client.asset.DefaultAssetManager;
+import unknowndomain.engine.client.asset.EngineAssetLoadManager;
+import unknowndomain.engine.client.asset.EngineAssetManager;
 import unknowndomain.engine.client.asset.EngineAssetSource;
 import unknowndomain.engine.client.asset.loader.AssetLoadManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
+import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
-import unknowndomain.engine.client.rendering.texture.TextureManagerImpl;
 import unknowndomain.engine.client.sound.ALSoundManager;
 import unknowndomain.engine.client.sound.ALSoundManagerImpl;
 import unknowndomain.engine.event.AsmEventBus;
@@ -48,9 +48,9 @@ public class EngineClientImpl implements EngineClient {
     private EventBus eventBus;
 
     private AssetSource engineAssetSource;
-    private AssetLoadManager assetLoadManager;
-    private DefaultAssetManager assetSourceManager;
-    private TextureManager textureManager;
+    private EngineAssetLoadManager assetLoadManager;
+    private EngineAssetManager assetManager;
+    private EngineTextureManager textureManager;
     private ALSoundManager soundManager;
 
     private GameClientStandalone game;
@@ -79,11 +79,12 @@ public class EngineClientImpl implements EngineClient {
         window.init();
 
         engineAssetSource = EngineAssetSource.create();
-        assetSourceManager = new DefaultAssetManager();
-        assetSourceManager.getSources().add(engineAssetSource);
-        assetLoadManager = new DefaultAssetLoadManager(assetSourceManager);
+        assetManager = new EngineAssetManager();
+        assetManager.getSources().add(engineAssetSource);
+        assetLoadManager = new EngineAssetLoadManager(assetManager);
 
-        textureManager = new TextureManagerImpl();
+        textureManager = new EngineTextureManager();
+        assetManager.getReloadListeners().add(() -> textureManager.reload());
         soundManager = new ALSoundManagerImpl();
         ((ALSoundManagerImpl) soundManager).init();
     }
@@ -114,7 +115,15 @@ public class EngineClientImpl implements EngineClient {
 
     @Override
     public void terminate() {
+        logger.info("Terminating Engine!");
 
+        if (game != null) {
+            game.terminate();
+        }
+
+        soundManager.dispose();
+
+        logger.info("Engine terminated!");
     }
 
     @Override
@@ -163,7 +172,7 @@ public class EngineClientImpl implements EngineClient {
 
     @Override
     public AssetManager getAssetManager() {
-        return assetSourceManager;
+        return assetManager;
     }
 
     @Override

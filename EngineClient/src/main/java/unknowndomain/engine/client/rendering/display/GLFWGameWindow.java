@@ -197,7 +197,7 @@ public class GLFWGameWindow implements GameWindow {
         // TODO: Remove it.
         addKeyCallback((key, scancode, action, mods) -> {
             if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
-                Platform.getEngine().getCurrentGame().terminate();
+                Platform.getEngine().terminate();
             }
         });
     }

@@ -11,11 +11,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-public class DefaultAssetManager implements AssetManager {
+public class EngineAssetManager implements AssetManager {
 
     private final List<AssetSource> assetSources = new LinkedList<>();
 
-    private final List<Runnable> reloadListener = new LinkedList<>();
+    private final List<Runnable> reloadListeners = new LinkedList<>();
 
     @Override
     public Optional<AssetSource> getSource(AssetPath path) {
@@ -68,13 +68,13 @@ public class DefaultAssetManager implements AssetManager {
 
     @Override
     public void reload() {
-        reloadListener.forEach(Runnable::run);
+        reloadListeners.forEach(Runnable::run);
         if (Platform.getEngine().isPlaying()) {
             Platform.getEngine().getCurrentGame().getEventBus().post(new AssetReloadEvent());
         }
     }
 
-    public List<Runnable> getReloadListener() {
-        return reloadListener;
+    public List<Runnable> getReloadListeners() {
+        return reloadListeners;
     }
 }

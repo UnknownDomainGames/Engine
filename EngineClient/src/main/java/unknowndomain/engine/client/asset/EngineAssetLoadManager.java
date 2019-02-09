@@ -19,13 +19,13 @@ import java.util.concurrent.CompletableFuture;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.Validate.notEmpty;
 
-public class DefaultAssetLoadManager implements AssetLoadManager {
+public class EngineAssetLoadManager implements AssetLoadManager {
 
     private final AssetManager assetManager;
 
     private final Map<String, AssetType<?>> registeredTypes = new HashMap<>();
 
-    public DefaultAssetLoadManager(AssetManager assetManager) {
+    public EngineAssetLoadManager(AssetManager assetManager) {
         this.assetManager = assetManager;
     }
 

@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class TextureManagerImpl implements TextureManager {
+public class EngineTextureManager implements TextureManager {
 
     private final Map<AssetPath, MutableValue<GLTexture>> textures = new HashMap<>();
 
