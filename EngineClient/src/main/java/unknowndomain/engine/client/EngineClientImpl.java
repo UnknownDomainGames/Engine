@@ -19,6 +19,8 @@ import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.player.Profile;
+import unknowndomain.engine.util.Disposer;
+import unknowndomain.engine.util.DisposerImpl;
 import unknowndomain.engine.util.RuntimeEnvironment;
 import unknowndomain.engine.util.Side;
 import unknowndomain.game.DefaultGameMode;
@@ -53,6 +55,8 @@ public class EngineClientImpl implements EngineClient {
     private EngineTextureManager textureManager;
     private ALSoundManager soundManager;
 
+    private Disposer disposer;
+
     private GameClientStandalone game;
 
     @Override
@@ -74,10 +78,14 @@ public class EngineClientImpl implements EngineClient {
     }
 
     private void initEngineClient() {
-        logger.info("Initializing Window!");
+        logger.info("Initializing client engine!");
+        disposer = new DisposerImpl();
+
+        logger.info("Initializing window!");
         window = new GLFWGameWindow(WINDOW_WIDTH, WINDOW_HEIGHT, UnknownDomain.getName());
         window.init();
 
+        logger.info("Initializing asset!");
         engineAssetSource = EngineAssetSource.create();
         assetManager = new EngineAssetManager();
         assetManager.getSources().add(engineAssetSource);
@@ -163,6 +171,11 @@ public class EngineClientImpl implements EngineClient {
     @Override
     public AssetSource getEngineAssetSource() {
         return engineAssetSource;
+    }
+
+    @Override
+    public Disposer getDisposer() {
+        return disposer;
     }
 
     @Override

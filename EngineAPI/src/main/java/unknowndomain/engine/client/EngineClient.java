@@ -8,6 +8,7 @@ import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.display.GameWindow;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.sound.ALSoundManager;
+import unknowndomain.engine.util.Disposer;
 
 public interface EngineClient extends Engine {
 
@@ -28,6 +29,8 @@ public interface EngineClient extends Engine {
     ALSoundManager getSoundManager();
 
     AssetSource getEngineAssetSource();
+
+    Disposer getDisposer();
 
     @Override
     GameClient getCurrentGame();
