@@ -1,14 +1,21 @@
 package unknowndomain.engine.client.rendering.util.buffer;
 
+import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 import unknowndomain.engine.math.Math2;
 import unknowndomain.engine.util.BufferPool;
 import unknowndomain.engine.util.Color;
+import unknowndomain.engine.util.Disposable;
 
 import java.nio.ByteBuffer;
 
-public abstract class GLBuffer {
+public abstract class GLBuffer implements Disposable {
+
+    public static GLBuffer createDirectBuffer(int size) {
+        return new GLDirectBuffer(size);
+    }
 
     private ByteBuffer backingBuffer;
 
@@ -20,16 +27,15 @@ public abstract class GLBuffer {
     private int drawMode;
     private GLBufferFormat format;
 
-    private int elementIndex = -1;
-    private int nextByteOffset = -1;
-
     private int vertexCount;
 
-    public GLBuffer() {
+    private int puttedByteCount;
+
+    protected GLBuffer() {
         this(256);
     }
 
-    public GLBuffer(int size) {
+    protected GLBuffer(int size) {
         backingBuffer = createBuffer(size);
     }
 
@@ -120,27 +126,40 @@ public abstract class GLBuffer {
         }
     }
 
+    @Override
+    public void dispose() {
+        freeBuffer(backingBuffer);
+    }
+
     public void endVertex() {
+        if (puttedByteCount != format.getStride()) {
+            throw new IllegalStateException("Not enough vertex data.");
+        }
+        puttedByteCount = 0;
         vertexCount++;
         grow(format.getStride());
     }
 
     public GLBuffer put(byte value) {
+        checkAndAddVertexBytes(Byte.BYTES);
         backingBuffer.put(value);
         return this;
     }
 
     public GLBuffer put(int value) {
+        checkAndAddVertexBytes(Integer.BYTES);
         backingBuffer.putInt(value);
         return this;
     }
 
     public GLBuffer put(float value) {
+        checkAndAddVertexBytes(Float.BYTES);
         backingBuffer.putFloat(value);
         return this;
     }
 
     public GLBuffer put(double value) {
+        checkAndAddVertexBytes(Double.BYTES);
         backingBuffer.putDouble(value);
         return this;
     }
@@ -188,6 +207,7 @@ public abstract class GLBuffer {
 
     public GLBuffer pos(float x, float y, float z) {
         if (format.isUsingPosition()) {
+            checkAndAddVertexBytes(Float.BYTES * 3);
             backingBuffer.putFloat(x + posOffsetX);
             backingBuffer.putFloat(y + posOffsetY);
             backingBuffer.putFloat(z + posOffsetZ);
@@ -196,10 +216,7 @@ public abstract class GLBuffer {
     }
 
     public GLBuffer color(Color color) {
-        if (format.isUsingColor()) {
-            color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-        }
-        return this;
+        return color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 
     public GLBuffer color(int color) {
@@ -215,6 +232,7 @@ public abstract class GLBuffer {
 
     public GLBuffer color(float r, float g, float b, float a) {
         if (format.isUsingColor()) {
+            checkAndAddVertexBytes(Float.BYTES * 4);
             backingBuffer.putFloat(r);
             backingBuffer.putFloat(g);
             backingBuffer.putFloat(b);
@@ -223,8 +241,13 @@ public abstract class GLBuffer {
         return this;
     }
 
+    public GLBuffer uv(Vector2fc uv) {
+        return uv(uv.x(), uv.y());
+    }
+
     public GLBuffer uv(float u, float v) {
         if (format.isUsingTextureUV()) {
+            checkAndAddVertexBytes(Float.BYTES * 2);
             backingBuffer.putFloat(u);
             backingBuffer.putFloat(v);
         }
@@ -237,10 +260,35 @@ public abstract class GLBuffer {
 
     public GLBuffer normal(float nx, float ny, float nz) {
         if (format.isUsingNormal()) {
+            checkAndAddVertexBytes(Float.BYTES * 4);
             backingBuffer.putFloat(nx);
             backingBuffer.putFloat(ny);
             backingBuffer.putFloat(nz);
         }
         return this;
+    }
+
+    private void checkAndAddVertexBytes(int count) {
+        if (puttedByteCount + count > format.getStride()) {
+            throw new IllegalStateException("Beyond the number of vertex data. Please call endVertex().");
+        }
+        puttedByteCount += count;
+    }
+
+    private static class GLDirectBuffer extends GLBuffer {
+
+        public GLDirectBuffer(int size) {
+            super(size);
+        }
+
+        @Override
+        protected ByteBuffer createBuffer(int capacity) {
+            return MemoryUtil.memAlloc(capacity);
+        }
+
+        @Override
+        protected void freeBuffer(ByteBuffer buffer) {
+            MemoryUtil.memFree(buffer);
+        }
     }
 }
