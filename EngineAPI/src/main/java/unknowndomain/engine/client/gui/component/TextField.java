@@ -3,21 +3,29 @@ package unknowndomain.engine.client.gui.component;
 import com.github.mouse0w0.lib4j.observable.value.*;
 import unknowndomain.engine.client.gui.event.CharEvent;
 import unknowndomain.engine.client.gui.event.KeyEvent;
+import unknowndomain.engine.client.gui.misc.Background;
+import unknowndomain.engine.client.gui.misc.Border;
 import unknowndomain.engine.client.gui.misc.IndexRange;
+import unknowndomain.engine.client.gui.misc.Insets;
+import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
+import unknowndomain.engine.client.gui.rendering.TextFieldRenderer;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.gui.util.Utils;
 import unknowndomain.engine.client.input.Clipboard;
 import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.Math2;
+import unknowndomain.engine.util.BitArray;
+import unknowndomain.engine.util.Color;
 
 import java.text.BreakIterator;
 
 public class TextField extends Control {
-    private MutableValue<Font> font = new SimpleMutableObjectValue<>();
+    private MutableValue<Color> fontcolor = new SimpleMutableObjectValue<>(Color.WHITE);
+    private MutableValue<Font> font = new SimpleMutableObjectValue<>(Font.getDefaultFont());
 
-    private MutableValue<String> text = new SimpleMutableObjectValue<>();
-    private MutableValue<String> promptText = new SimpleMutableObjectValue<>();
+    private MutableValue<String> text = new SimpleMutableObjectValue<>("");
+    private MutableValue<String> promptText = new SimpleMutableObjectValue<>("");
 
     private MutableValue<IndexRange> selection = new SimpleMutableObjectValue<>();
 
@@ -25,7 +33,8 @@ public class TextField extends Control {
     private MutableBooleanValue undoable = new SimpleMutableBooleanValue(false);
     private MutableBooleanValue redoable = new SimpleMutableBooleanValue(false);
 
-
+    private MutableFloatValue fieldWidth = new SimpleMutableFloatValue();
+    private MutableFloatValue fieldHeight = new SimpleMutableFloatValue();
 
     //Selection
     private MutableIntValue anchor = new SimpleMutableIntValue(0);
@@ -34,8 +43,18 @@ public class TextField extends Control {
     private BreakIterator charIterator;
     private BreakIterator wordIterator;
 
+    public TextField(){
+        background().setValue(Background.fromColor(Color.fromRGBA(0x000000c8)));
+        border().setValue(new Border(Color.WHITE, 2));
+        padding().setValue(new Insets(5));
+    }
+
     public MutableValue<Font> font() {
         return font;
+    }
+
+    public MutableValue<Color> fontcolor() {
+        return fontcolor;
     }
 
     public MutableValue<String> text() {
@@ -48,6 +67,24 @@ public class TextField extends Control {
 
     public MutableBooleanValue editable() {
         return editable;
+    }
+
+    public MutableFloatValue fieldwidth() {
+        return fieldWidth;
+    }
+
+    public MutableFloatValue fieldheight() {
+        return fieldHeight;
+    }
+
+    @Override
+    public float prefWidth() {
+        return fieldWidth.get() != 0 ? fieldWidth.get() : super.prefWidth();
+    }
+
+    @Override
+    public float prefHeight() {
+        return fieldHeight.get() != 0 ? fieldHeight.get() : super.prefHeight();
     }
 
     @Override
@@ -67,7 +104,8 @@ public class TextField extends Control {
             if(caret.get() != anchor.get()){
                 replaceSelection("");
             }
-            insertText(caret.get(), String.valueOf(c));
+            insertText(Math.max(caret.get(), 0), String.valueOf(c));
+            positionCaret(caret.get() + 1);
         }
     }
 
@@ -90,6 +128,11 @@ public class TextField extends Control {
     public void onKeyUp(KeyEvent.KeyUpEvent event){}
     public void onKeyHold(KeyEvent.KeyHoldEvent event){
 
+    }
+
+    @Override
+    protected ComponentRenderer createDefaultRenderer() {
+        return TextFieldRenderer.INSTANCE;
     }
 
     public String selectedText(){
@@ -159,11 +202,15 @@ public class TextField extends Control {
             len -= (end - start);
         }
         if(text != null){
-            content = content.substring(0, start) + text + content.substring(start + 1);
+            String s = content.substring(0, start + 1) + text;
+            if(start < content.length())
+                s = s + content.substring(start + 1);
+            content = s;
             adjusted = text.length() - (length() - len);
             anchor -= adjusted;
             caret -= adjusted;
         }
+        text().setValue(content);
         selectRange(anchor, caret);
         return adjusted;
     }
@@ -377,4 +424,11 @@ public class TextField extends Control {
         selectRange(anchor.get(), Math2.clamp(0, pos, length()));
     }
 
+    public MutableIntValue caret() {
+        return caret;
+    }
+
+    public MutableIntValue anchor() {
+        return anchor;
+    }
 }

@@ -5,6 +5,7 @@ import com.github.mouse0w0.lib4j.observable.value.ObservableIntValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableIntValue;
 import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.client.gui.event.CharEvent;
+import unknowndomain.engine.client.gui.event.FocusEvent;
 import unknowndomain.engine.client.gui.event.KeyEvent;
 import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.client.input.keybinding.ActionMode;
@@ -78,9 +79,9 @@ public class Scene {
             List<Component> moveevent = old.stream().filter(n::contains).collect(Collectors.toList());
             List<Component> leaveevent = old.stream().filter(o -> !moveevent.contains(o)).collect(Collectors.toList());
             List<Component> enterevent = n.stream().filter(o -> !moveevent.contains(o)).collect(Collectors.toList());
-            moveevent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(lastPosX,lastPosY,xpos,ypos)));
-            enterevent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(lastPosX,lastPosY,xpos,ypos)));
-            leaveevent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(lastPosX,lastPosY,xpos,ypos)));
+            moveevent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component,lastPosX,lastPosY,xpos,ypos)));
+            enterevent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component,lastPosX,lastPosY,xpos,ypos)));
+            leaveevent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(component,lastPosX,lastPosY,xpos,ypos)));
         }
         lastPosX = xpos;
         lastPosY = ypos;
@@ -89,10 +90,15 @@ public class Scene {
     public final GameWindow.MouseCallback mouseCallback = (button, action, modifiers) -> {
         if(!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)){
             var list = root.getPointingComponents((float)lastPosX,(float)lastPosY);
-            if(action == GLFW.GLFW_PRESS)
-                list.forEach(component -> component.handleEvent(new MouseEvent.MouseClickEvent((float)lastPosX,(float)lastPosY, Key.valueOf(400 + button))));
+            if(action == GLFW.GLFW_PRESS) {
+                root.getUnmodifiableChildren().stream().filter(c->c.focused.get()).forEach(component -> component.handleEvent(new FocusEvent.FocusLostEvent(component)));
+                list.forEach(component -> {
+                    component.handleEvent(new FocusEvent.FocusGainEvent(component));
+                    component.handleEvent(new MouseEvent.MouseClickEvent(component,(float) lastPosX, (float) lastPosY, Key.valueOf(400 + button)));
+                });
+            }
             if(action == GLFW.GLFW_RELEASE)
-                list.forEach(component -> component.handleEvent(new MouseEvent.MouseReleasedEvent((float)lastPosX,(float)lastPosY, Key.valueOf(400 + button))));
+                list.forEach(component -> component.handleEvent(new MouseEvent.MouseReleasedEvent(component,(float)lastPosX,(float)lastPosY, Key.valueOf(400 + button))));
         }
     };
 
@@ -103,18 +109,18 @@ public class Scene {
     public final GameWindow.KeyCallback keyCallback = (key, scancode, action, mods) -> {
         root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).forEach(component -> {
             if(action == GLFW.GLFW_PRESS){
-                component.handleEvent(new KeyEvent.KeyDownEvent(Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+                component.handleEvent(new KeyEvent.KeyDownEvent(component,Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
             }
             else if(action == GLFW.GLFW_REPEAT){
-                component.handleEvent(new KeyEvent.KeyHoldEvent(Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+                component.handleEvent(new KeyEvent.KeyHoldEvent(component,Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
             }
             else if(action == GLFW.GLFW_RELEASE){
-                component.handleEvent(new KeyEvent.KeyUpEvent(Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+                component.handleEvent(new KeyEvent.KeyUpEvent(component,Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
             }
         });
     };
 
     public final GameWindow.CharCallback charCallback = c -> {
-        root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(c)));
+        root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(component,c)));
     };
 }

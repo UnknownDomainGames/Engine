@@ -1,16 +1,18 @@
 package unknowndomain.engine.client.gui.event;
 
+import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.input.keybinding.ActionMode;
 import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.client.input.keybinding.KeyModifier;
 import unknowndomain.engine.event.Event;
 
-public class KeyEvent implements Event {
+public class KeyEvent extends ComponentEvent {
     private Key key;
     private ActionMode mode;
     private KeyModifier[] modifiers;
 
-    public KeyEvent(Key key, ActionMode mode, KeyModifier[] modifier) {
+    public KeyEvent(Component component, Key key, ActionMode mode, KeyModifier[] modifier) {
+        super(component);
         this.key = key;
         this.mode = mode;
         this.modifiers = modifier;
@@ -26,22 +28,22 @@ public class KeyEvent implements Event {
 
     public static class KeyDownEvent extends KeyEvent{
 
-        public KeyDownEvent(Key key, ActionMode mode, KeyModifier[] modifier) {
-            super(key, mode, modifier);
+        public KeyDownEvent(Component component, Key key, ActionMode mode, KeyModifier[] modifier) {
+            super(component, key, mode, modifier);
         }
     }
 
     public static class KeyHoldEvent extends KeyEvent{
 
-        public KeyHoldEvent(Key key, ActionMode mode, KeyModifier[] modifier) {
-            super(key, mode, modifier);
+        public KeyHoldEvent(Component component, Key key, ActionMode mode, KeyModifier[] modifier) {
+            super(component, key, mode, modifier);
         }
     }
 
     public static class KeyUpEvent extends KeyEvent{
 
-        public KeyUpEvent(Key key, ActionMode mode, KeyModifier[] modifier) {
-            super(key, mode, modifier);
+        public KeyUpEvent(Component component, Key key, ActionMode mode, KeyModifier[] modifier) {
+            super(component, key, mode, modifier);
         }
     }
 }

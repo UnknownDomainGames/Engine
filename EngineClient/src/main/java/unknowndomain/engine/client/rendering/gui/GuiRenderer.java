@@ -12,9 +12,12 @@ import unknowndomain.engine.client.game.ClientContextImpl;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.DebugHUD;
 import unknowndomain.engine.client.gui.Scene;
+import unknowndomain.engine.client.gui.component.Button;
+import unknowndomain.engine.client.gui.component.TextField;
 import unknowndomain.engine.client.gui.internal.FontHelper;
 import unknowndomain.engine.client.gui.internal.ImageHelper;
 import unknowndomain.engine.client.gui.internal.Internal;
+import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.Renderer;
@@ -95,6 +98,17 @@ public class GuiRenderer implements Renderer {
 
         debugHUD = new DebugHUD();
         ((ClientContextImpl) context).getGuiManager().showHud("debug", new Scene(debugHUD));
+
+        VBox box = new VBox();
+        TextField textField = new TextField();
+        textField.promptText().setValue("Hey you suckers!!");
+        textField.fieldwidth().set(200);
+        textField.fieldheight().set(23);
+        Button button = new Button("YVES 17");
+        button.buttonwidth().set(100);
+        box.getChildren().addAll(textField, button);
+        Scene s = new Scene(box);
+        ((ClientContextImpl) context).getGuiManager().showScreen(s);
     }
 
     @Override

@@ -1,11 +1,12 @@
 package unknowndomain.engine.client.gui.event;
 
-import unknowndomain.engine.event.Event;
+import unknowndomain.engine.client.gui.Component;
 
-public class CharEvent implements Event {
+public class CharEvent extends ComponentEvent {
     private char c;
 
-    public CharEvent(char c){
+    public CharEvent(Component component, char c){
+        super(component);
         this.c = c;
     }
 
