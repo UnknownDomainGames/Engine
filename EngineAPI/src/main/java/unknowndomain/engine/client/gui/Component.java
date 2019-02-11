@@ -3,6 +3,7 @@ package unknowndomain.engine.client.gui;
 import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
 import com.github.mouse0w0.lib4j.observable.collection.ObservableMap;
 import com.github.mouse0w0.lib4j.observable.value.*;
+import unknowndomain.engine.client.gui.event.FocusEvent;
 import unknowndomain.engine.client.gui.event.KeyEvent;
 import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
@@ -156,6 +157,14 @@ public abstract class Component {
                 if(release.getKey() == Key.MOUSE_BUTTON_LEFT){
                     pressed.set(false);
                     onRelease(release);
+                }
+            }
+            if(event instanceof FocusEvent){
+                if(event instanceof FocusEvent.FocusGainEvent){
+                    focused.set(true);
+                }
+                else if(event instanceof FocusEvent.FocusLostEvent){
+                    focused.set(false);
                 }
             }
         }

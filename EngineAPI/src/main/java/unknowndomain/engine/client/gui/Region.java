@@ -2,10 +2,7 @@ package unknowndomain.engine.client.gui;
 
 import com.github.mouse0w0.lib4j.observable.value.MutableValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
-import unknowndomain.engine.client.gui.misc.Background;
-import unknowndomain.engine.client.gui.misc.Insets;
-import unknowndomain.engine.client.gui.misc.Pos;
-import unknowndomain.engine.client.gui.misc.Size;
+import unknowndomain.engine.client.gui.misc.*;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.rendering.RegionRenderer;
 import unknowndomain.engine.math.Math2;
@@ -19,9 +16,14 @@ public class Region extends Container {
     }
 
     private final MutableValue<Background> background = new SimpleMutableObjectValue<>(Background.NOTHING);
+    private final MutableValue<Border> border = new SimpleMutableObjectValue<>();
 
     public final MutableValue<Background> background() {
         return background;
+    }
+
+    public MutableValue<Border> border() {
+        return border;
     }
 
     private final MutableValue<Insets> padding = new SimpleMutableObjectValue<>(Insets.EMPTY);

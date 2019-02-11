@@ -13,10 +13,10 @@ public class Material {
     Vector3f diffuse = new Vector3f(1f);
     Vector3f specular = new Vector3f(1f);
     float shininess;
-    GLTexture diffuseUV;
-    GLTexture specularUV;
-    GLTexture normalUV;
-    GLTexture alphaUV;
+    GLTexture diffuseUV = GLTexture.EMPTY;
+    GLTexture specularUV = GLTexture.EMPTY;
+    GLTexture normalUV = GLTexture.EMPTY;
+    GLTexture alphaUV = GLTexture.EMPTY;
     public void bind(String fieldName){
         ShaderManager.INSTANCE.setUniform(fieldName + ".ambient", ambient);
         ShaderManager.INSTANCE.setUniform(fieldName + ".diffuseColor", diffuse);
