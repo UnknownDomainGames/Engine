@@ -10,6 +10,8 @@ import unknowndomain.engine.client.asset.EngineAssetSource;
 import unknowndomain.engine.client.asset.loader.AssetLoadManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
 import unknowndomain.engine.client.game.GameClientStandalone;
+import unknowndomain.engine.client.gui.EngineGuiManager;
+import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
 import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
@@ -54,6 +56,7 @@ public class EngineClientImpl implements EngineClient {
     private EngineAssetManager assetManager;
     private EngineTextureManager textureManager;
     private EngineSoundManager soundManager;
+    private EngineGuiManager guiManager;
 
     private Disposer disposer;
 
@@ -98,6 +101,7 @@ public class EngineClientImpl implements EngineClient {
         });
         soundManager = new EngineSoundManager();
         soundManager.init();
+        guiManager = new EngineGuiManager(this);
     }
 
     private void initEnvironment() {
@@ -174,6 +178,11 @@ public class EngineClientImpl implements EngineClient {
     @Override
     public AssetSource getEngineAssetSource() {
         return engineAssetSource;
+    }
+
+    @Override
+    public GuiManager getGuiManager() {
+        return guiManager;
     }
 
     @Override

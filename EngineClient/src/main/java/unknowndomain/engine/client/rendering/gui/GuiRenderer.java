@@ -94,7 +94,7 @@ public class GuiRenderer implements Renderer {
         });
 
         debugHUD = new DebugHUD();
-        ((ClientContextImpl) context).getGuiManager().showHud("debug", new Scene(debugHUD));
+        ((ClientContextImpl) context).getEngineGuiManager().showHud("debug", new Scene(debugHUD));
     }
 
     @Override
@@ -104,11 +104,11 @@ public class GuiRenderer implements Renderer {
         // render scene
         if (context instanceof ClientContextImpl) { //TODO: stupid check
             var ci = (ClientContextImpl) context;
-            for (Scene scene : ci.getGuiManager().getHuds().values()) {
+            for (Scene scene : ci.getEngineGuiManager().getHuds().values()) {
                 renderScene(scene);
             }
-            if (ci.getGuiManager().getDisplayingScreen() != null) {
-                renderScene(ci.getGuiManager().getDisplayingScreen());
+            if (ci.getEngineGuiManager().getDisplayingScreen() != null) {
+                renderScene(ci.getEngineGuiManager().getDisplayingScreen());
             }
         }
 

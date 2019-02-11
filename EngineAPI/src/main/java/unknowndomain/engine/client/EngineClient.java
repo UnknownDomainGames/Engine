@@ -5,6 +5,7 @@ import unknowndomain.engine.client.asset.AssetManager;
 import unknowndomain.engine.client.asset.loader.AssetLoadManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
 import unknowndomain.engine.client.game.GameClient;
+import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.display.GameWindow;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.sound.ALSoundManager;
@@ -20,15 +21,17 @@ public interface EngineClient extends Engine {
     
     GameWindow getWindow();
 
-    AssetLoadManager getAssetLoadManager();
-
     AssetManager getAssetManager();
+
+    AssetLoadManager getAssetLoadManager();
 
     TextureManager getTextureManager();
 
     ALSoundManager getSoundManager();
 
     AssetSource getEngineAssetSource();
+
+    GuiManager getGuiManager();
 
     Disposer getDisposer();
 

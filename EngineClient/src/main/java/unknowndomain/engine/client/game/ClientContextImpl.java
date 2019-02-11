@@ -2,9 +2,10 @@ package unknowndomain.engine.client.game;
 
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.block.ClientBlock;
-import unknowndomain.engine.client.gui.GuiManager;
+import unknowndomain.engine.client.gui.EngineGuiManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
@@ -21,7 +22,7 @@ public class ClientContextImpl implements ClientContext {
     private final GameClientStandalone game;
     private final List<Renderer> renderers;
     private final GameWindow window;
-    private final GuiManager guiManager;
+    private final EngineGuiManager engineGuiManager;
 
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
     private final Player player;
@@ -35,7 +36,7 @@ public class ClientContextImpl implements ClientContext {
         this.renderers = renderers;
         this.window = window;
         this.player = player;
-        this.guiManager = new GuiManager(this);
+        this.engineGuiManager = new EngineGuiManager(Platform.getEngineClient());
     }
 
     @Override
@@ -133,7 +134,7 @@ public class ClientContextImpl implements ClientContext {
         return game.getWorld();
     }
 
-    public GuiManager getGuiManager() {
-        return guiManager;
+    public EngineGuiManager getEngineGuiManager() {
+        return engineGuiManager;
     }
 }
