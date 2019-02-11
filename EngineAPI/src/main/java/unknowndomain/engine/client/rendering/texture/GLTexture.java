@@ -12,10 +12,12 @@ import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class GLTexture {
 
+    public static final GLTexture EMPTY = new GLTexture(0,0,0);
+
     private final int id;
     private final int width, height;
 
-    public GLTexture(int id, int width, int height) {
+    protected GLTexture(int id, int width, int height) {
         this.id = id;
         this.width = width;
         this.height = height;

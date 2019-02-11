@@ -26,7 +26,7 @@ public class Material {
         ShaderManager.INSTANCE.setUniform(fieldName + ".normalUV", 3);
         ShaderManager.INSTANCE.setUniform(fieldName + ".alphaUV", 4);
         ShaderManager.INSTANCE.setUniform(fieldName + ".shininess", shininess);
-        if(diffuseUV != null){
+        if(diffuseUV != GLTexture.EMPTY){
             ShaderManager.INSTANCE.setUniform(fieldName + ".diffuseUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE1);
             diffuseUV.bind();
@@ -34,7 +34,7 @@ public class Material {
         }else{
             ShaderManager.INSTANCE.setUniform(fieldName + ".diffuseUseUV", false);
         }
-        if(specularUV != null){
+        if(specularUV != GLTexture.EMPTY){
             ShaderManager.INSTANCE.setUniform(fieldName + ".specularUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE2);
             specularUV.bind();
@@ -42,7 +42,7 @@ public class Material {
         }else{
             ShaderManager.INSTANCE.setUniform(fieldName + ".specularUseUV", false);
         }
-        if(normalUV != null){
+        if(normalUV != GLTexture.EMPTY){
             ShaderManager.INSTANCE.setUniform(fieldName + ".normalUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE3);
             normalUV.bind();
@@ -50,7 +50,7 @@ public class Material {
         }else{
             ShaderManager.INSTANCE.setUniform(fieldName + ".normalUseUV", false);
         }
-        if(alphaUV != null){
+        if(alphaUV != GLTexture.EMPTY){
             ShaderManager.INSTANCE.setUniform(fieldName + ".alphaUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE4);
             alphaUV.bind();

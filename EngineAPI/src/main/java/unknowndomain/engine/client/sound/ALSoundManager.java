@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.sound;
 
+import com.github.mouse0w0.lib4j.observable.value.MutableValue;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.util.Disposable;
@@ -11,13 +12,11 @@ public interface ALSoundManager extends Disposable {
 
     ALSoundSource createSoundSource(String name);
 
-    ALSoundSource getSoundSource(String name);
+    MutableValue<ALSoundSource> getSoundSource(String name);
 
-    ALSound getSound(AssetPath path, boolean reload);
+    MutableValue<ALSound> getSound(AssetPath path);
 
-    default ALSound getSound(AssetPath path){
-        return getSound(path, false);
-    }
+    ALSound getSoundDirect(AssetPath path);
 
     ALSoundListener getListener();
 }

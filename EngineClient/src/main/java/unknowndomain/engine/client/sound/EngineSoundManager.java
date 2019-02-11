@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.sound;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.mouse0w0.lib4j.observable.value.MutableValue;
+import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -13,20 +13,18 @@ import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.asset.exception.AssetLoadException;
 import unknowndomain.engine.client.rendering.camera.Camera;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static org.lwjgl.openal.ALC10.*;
 
-public class ALSoundManagerImpl implements ALSoundManager {
+public class EngineSoundManager implements ALSoundManager {
 
     private long device;
 
@@ -34,13 +32,13 @@ public class ALSoundManagerImpl implements ALSoundManager {
 
     private ALSoundListener listener;
 
-    private final Cache<AssetPath, ALSound> soundMap = CacheBuilder.newBuilder().weakValues().removalListener(notification -> ((ALSound) notification.getValue()).dispose()).build();
+    private final Map<AssetPath, MutableValue<ALSound>> soundMap = new HashMap<>();
 
-    private final Cache<String, ALSoundSource> soundSourceMap = CacheBuilder.newBuilder().weakValues().removalListener(notification -> ((ALSoundSource) notification.getValue()).dispose()).build();
+    private final Map<String, MutableValue<ALSoundSource>> soundSourceMap = new HashMap<>();
 
     private Matrix4f cameraMatrix;
 
-    public ALSoundManagerImpl(){
+    public EngineSoundManager(){
         cameraMatrix = new Matrix4f();
     }
 
@@ -79,41 +77,35 @@ public class ALSoundManagerImpl implements ALSoundManager {
     public ALSoundSource createSoundSource(String name){
         ALSoundSource source = new ALSoundSource(false, false);
         source.createSource();
+        soundSourceMap.put(name, new SimpleMutableObjectValue<>(source));
         return source;
     }
 
     @Override
-    public ALSoundSource getSoundSource(String name) {
-        try {
-            return soundSourceMap.get(name, ()->createSoundSource(name));
-        } catch (ExecutionException e) {
-            return null;
-        }
+    public MutableValue<ALSoundSource> getSoundSource(String name) {
+        return soundSourceMap.get(name);
     }
 
     @Override
-    public ALSound getSound(AssetPath path, boolean reload){
-        if(!reload){
-            var sound = soundMap.getIfPresent(path);
-            if(sound != null) {
-                return sound;
+    public MutableValue<ALSound> getSound(AssetPath path){
+        return soundMap.computeIfAbsent(path, key-> new SimpleMutableObjectValue<>(getSoundDirect(key)));
+
+    }
+
+    @Override
+    public ALSound getSoundDirect(AssetPath path){
+        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getPath(path);
+        if (nativePath.isPresent()) {
+            try (var channel = Files.newByteChannel(nativePath.get(), StandardOpenOption.READ)) {
+                ByteBuffer buf = BufferUtils.createByteBuffer((int) channel.size());
+                channel.read(buf);
+                buf.flip();
+                return ALSound.ofOGG(buf);
+            } catch (IOException e) {
+                throw new AssetLoadException("Cannot load sound. Path: " + path, e);
             }
-        }
-        try {
-            return soundMap.get(path, ()->{
-                Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getPath(path);
-                if (nativePath.isPresent()) {
-                    try (var channel = Files.newByteChannel(nativePath.get(), StandardOpenOption.READ)) {
-                        ByteBuffer buf = BufferUtils.createByteBuffer((int) channel.size());
-                        channel.read(buf);
-                        buf.flip();
-                        return ALSound.ofOGG(buf);
-                    }
-                }
-                throw new AssetLoadException("Cannot load sound. Path: " + path);
-            });
-        } catch (ExecutionException e) {
-            return null;
+        }else{
+            throw new AssetLoadException("Cannot load sound (Missing file). Path: " + path);
         }
     }
 
@@ -138,10 +130,28 @@ public class ALSoundManagerImpl implements ALSoundManager {
         return alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
     }
 
+    public void reload(){
+        for (Map.Entry<AssetPath, MutableValue<ALSound>> value : soundMap.entrySet()) {
+            Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getPath(value.getKey());
+            if (nativePath.isPresent()) {
+                try (var channel = Files.newByteChannel(nativePath.get(), StandardOpenOption.READ)) {
+                    ByteBuffer buf = BufferUtils.createByteBuffer((int) channel.size());
+                    channel.read(buf);
+                    buf.flip();
+                    value.getValue().getValue().reloadOgg(buf);
+                } catch (IOException e) {
+                    throw new AssetLoadException("Cannot reload sound. Path: " + value.getKey(), e);
+                }
+            }else{
+                Platform.getLogger().warn(String.format("Cannot find source of sound %s when reloading! Attempt to keep it", value.getKey()));
+            }
+        }
+    }
+
     @Override
     public void dispose() {
-        soundSourceMap.cleanUp();
-        soundMap.cleanUp();
+        soundSourceMap.forEach((k,v)->v.ifPresent(ALSoundSource::dispose));
+        soundMap.forEach((k,v)->v.ifPresent(ALSound::dispose));
         listener = null;
         if(context != 0){
             alcDestroyContext(context);

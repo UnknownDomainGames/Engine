@@ -4,6 +4,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
+import org.lwjgl.assimp.AIString;
 import org.lwjgl.assimp.AIVector3D;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
@@ -17,6 +18,8 @@ public class AssimpMesh {
     public static final int MAX_WEIGHTS = 4;
 
     private final AIMesh mesh;
+    private final String name;
+
     private final int vertexBuf;
     private final int texBuf;
     private final int normalBuf;
@@ -30,7 +33,7 @@ public class AssimpMesh {
 
     public AssimpMesh(AIMesh mesh){
         this.mesh = mesh;
-
+        name = mesh.mName().dataString();
         vertexBuf = GL30.glGenBuffers();
         GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vertexBuf);
         var aivertex = mesh.mVertices();
@@ -143,6 +146,10 @@ public class AssimpMesh {
 
     public AIMesh getRawMesh() {
         return mesh;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public List<AssimpBone> getBones() {

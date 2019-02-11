@@ -14,7 +14,7 @@ import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
 import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.sound.ALSoundManager;
-import unknowndomain.engine.client.sound.ALSoundManagerImpl;
+import unknowndomain.engine.client.sound.EngineSoundManager;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.engine.EngineEvent;
@@ -53,7 +53,7 @@ public class EngineClientImpl implements EngineClient {
     private EngineAssetLoadManager assetLoadManager;
     private EngineAssetManager assetManager;
     private EngineTextureManager textureManager;
-    private ALSoundManager soundManager;
+    private EngineSoundManager soundManager;
 
     private Disposer disposer;
 
@@ -92,9 +92,12 @@ public class EngineClientImpl implements EngineClient {
         assetLoadManager = new EngineAssetLoadManager(assetManager);
 
         textureManager = new EngineTextureManager();
-        assetManager.getReloadListeners().add(() -> textureManager.reload());
-        soundManager = new ALSoundManagerImpl();
-        ((ALSoundManagerImpl) soundManager).init();
+        assetManager.getReloadListeners().add(() -> {
+            textureManager.reload();
+            soundManager.reload();
+        });
+        soundManager = new EngineSoundManager();
+        soundManager.init();
     }
 
     private void initEnvironment() {

@@ -77,7 +77,7 @@ public class AssimpHelper {
         if (scene == null) {
             throw new IllegalStateException(aiGetErrorString());
         }
-        return new AssimpModel(scene, FilenameUtils.getFullPath(path));
+        return new AssimpModel(scene, FilenameUtils.getBaseName(path));
     }
 
     public static Matrix4f generalizeNativeMatrix(AIMatrix4x4 aiMatrix4x4) {
