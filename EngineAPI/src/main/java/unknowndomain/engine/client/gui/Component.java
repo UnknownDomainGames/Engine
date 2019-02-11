@@ -3,6 +3,7 @@ package unknowndomain.engine.client.gui;
 import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
 import com.github.mouse0w0.lib4j.observable.collection.ObservableMap;
 import com.github.mouse0w0.lib4j.observable.value.*;
+import unknowndomain.engine.client.gui.event.KeyEvent;
 import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.input.keybinding.Key;
@@ -160,7 +161,7 @@ public abstract class Component {
         }
     }
 
-    private void onRelease(MouseEvent.MouseReleasedEvent event) {
+    public void onRelease(MouseEvent.MouseReleasedEvent event) {
 
     }
 

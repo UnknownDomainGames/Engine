@@ -2,6 +2,7 @@ package unknowndomain.engine.client.gui;
 
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.game.ClientContext;
+import unknowndomain.engine.util.UndoHistory;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -15,12 +16,12 @@ public class GuiManager {
 
     private Map<String, Scene> huds;
     private Scene displayingScreen;
-    private ArrayDeque<Scene> sceneHistory;
+    private UndoHistory<Scene> sceneHistory;
 
     public GuiManager(ClientContext context){
         this.context = context;
         huds = new HashMap<>();
-        sceneHistory = new ArrayDeque<>(MAX_SCENE_HISTORY);
+        sceneHistory = new UndoHistory<>(MAX_SCENE_HISTORY);
     }
 
     private boolean incognito = false;
@@ -44,10 +45,7 @@ public class GuiManager {
     private void pushToHistory() {
         if(displayingScreen != null){
             if(!incognito) {
-                if (sceneHistory.size() >= MAX_SCENE_HISTORY) {
-                    sceneHistory.removeLast();
-                }
-                sceneHistory.push(displayingScreen);
+                sceneHistory.pushHistory(displayingScreen);
             }
             context.getWindow().removeCharCallback(displayingScreen.charCallback);
             context.getWindow().removeCursorCallback(displayingScreen.cursorCallback);
@@ -63,7 +61,7 @@ public class GuiManager {
     }
 
     public void showLastScreen(){
-        var lastscreen = sceneHistory.pop();
+        var lastscreen = sceneHistory.undo();
         showIncognitoScreen(lastscreen);
     }
 

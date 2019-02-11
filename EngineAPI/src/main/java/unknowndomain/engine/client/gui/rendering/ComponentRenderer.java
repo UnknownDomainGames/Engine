@@ -2,7 +2,7 @@ package unknowndomain.engine.client.gui.rendering;
 
 import unknowndomain.engine.client.gui.Component;
 
-public interface ComponentRenderer {
+public interface ComponentRenderer<E extends Component> {
 
-    void render(Component component, Graphics graphics);
+    void render(E component, Graphics graphics);
 }

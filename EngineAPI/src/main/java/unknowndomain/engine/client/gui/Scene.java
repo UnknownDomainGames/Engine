@@ -4,8 +4,12 @@ import com.github.mouse0w0.lib4j.observable.value.MutableIntValue;
 import com.github.mouse0w0.lib4j.observable.value.ObservableIntValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableIntValue;
 import org.lwjgl.glfw.GLFW;
+import unknowndomain.engine.client.gui.event.CharEvent;
+import unknowndomain.engine.client.gui.event.KeyEvent;
 import unknowndomain.engine.client.gui.event.MouseEvent;
+import unknowndomain.engine.client.input.keybinding.ActionMode;
 import unknowndomain.engine.client.input.keybinding.Key;
+import unknowndomain.engine.client.input.keybinding.KeyModifier;
 import unknowndomain.engine.client.rendering.display.GameWindow;
 
 import java.util.List;
@@ -97,10 +101,20 @@ public class Scene {
     };
 
     public final GameWindow.KeyCallback keyCallback = (key, scancode, action, mods) -> {
-
+        root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).forEach(component -> {
+            if(action == GLFW.GLFW_PRESS){
+                component.handleEvent(new KeyEvent.KeyDownEvent(Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+            }
+            else if(action == GLFW.GLFW_REPEAT){
+                component.handleEvent(new KeyEvent.KeyHoldEvent(Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+            }
+            else if(action == GLFW.GLFW_RELEASE){
+                component.handleEvent(new KeyEvent.KeyUpEvent(Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+            }
+        });
     };
 
     public final GameWindow.CharCallback charCallback = c -> {
-
+        root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(c)));
     };
 }

@@ -18,7 +18,7 @@ import unknowndomain.engine.util.Color;
 
 import java.util.function.Consumer;
 
-public class Button extends Component {
+public class Button extends Control {
 
     private final MutableValue<String> text = new SimpleMutableObjectValue<>();
     private final MutableValue<Font> font = new SimpleMutableObjectValue<>(Font.getDefaultFont());
@@ -81,22 +81,9 @@ public class Button extends Component {
         cachedText.font().setValue(font.getValue());
         cachedText.color().setValue(textColor.getValue());
         cachedText.textAlignment().setValue(textAlignment.getValue());
-        cachedText.x().set(padding().getValue().x());
-        cachedText.y().set(padding().getValue().y());
-        try {
-            var widthf = Component.class.getDeclaredField("width");
-            widthf.setAccessible(true);
-            var w = (SimpleMutableFloatValue)widthf.get(cachedText);
-            w.set(this.prefWidth() - padding().getValue().x() - padding().getValue().z());
-            widthf.set(cachedText, w);
-            var heightf = Component.class.getDeclaredField("height");
-            heightf.setAccessible(true);
-            var h = (SimpleMutableFloatValue)heightf.get(cachedText);
-            h.set(this.prefHeight() - padding().getValue().y() - padding().getValue().w());
-            heightf.set(cachedText, h);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        cachedText.relocate(padding().getValue().getLeft(),padding().getValue().getTop());
+        cachedText.resize(this.prefWidth() - padding().getValue().getLeft() - padding().getValue().getRight(),
+                this.prefHeight() - padding().getValue().getTop() - padding().getValue().getBottom());
     }
 
     @Override
@@ -128,10 +115,6 @@ public class Button extends Component {
 
     public MutableValue<TextAlignment> textAlignment() {
         return textAlignment;
-    }
-
-    public MutableValue<Background> background() {
-        return background;
     }
 
     public MutableValue<Background> hoverbackground() {
@@ -170,7 +153,4 @@ public class Button extends Component {
         return buttonHeight;
     }
 
-    public MutableValue<Vector4fc> padding() {
-        return padding;
-    }
 }
