@@ -15,9 +15,7 @@ public interface EngineClient extends Engine {
 
     Thread getRenderThread();
 
-    default boolean isRenderThread() {
-        return Thread.currentThread() == getRenderThread();
-    }
+    boolean isRenderThread();
     
     GameWindow getWindow();
 

@@ -1,10 +1,15 @@
 package unknowndomain.engine.client.gui.internal;
 
+import unknowndomain.engine.exception.UninitializedException;
+
 public final class Internal {
 
     private static Context context;
 
     public static Context getContext() {
+        if (context == null) {
+            throw new UninitializedException();
+        }
         return context;
     }
 

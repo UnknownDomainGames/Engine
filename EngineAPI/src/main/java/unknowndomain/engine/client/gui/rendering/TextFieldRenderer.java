@@ -1,6 +1,5 @@
 package unknowndomain.engine.client.gui.rendering;
 
-import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.gui.component.TextField;
 import unknowndomain.engine.client.gui.internal.Internal;
 
@@ -32,7 +31,7 @@ public class TextFieldRenderer extends RegionRenderer<TextField> {
         }else{
             graphics.drawText(textField.text().getValue(),Math.min(pw-px-caretWidth, 0),0);
         }
-        if(textField.focused().get()) {
+        if (textField.focused().get() && System.currentTimeMillis() % 1000 < 500) {
             graphics.fillRect(caretWidth - Math.min(pw-px-caretWidth, 0), 0, 1, ph-py);
         }
         graphics.popClipRect();

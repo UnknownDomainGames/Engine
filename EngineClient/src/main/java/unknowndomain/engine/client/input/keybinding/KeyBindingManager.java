@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import org.lwjgl.glfw.GLFW;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.Tickable;
 import unknowndomain.engine.client.game.ClientContext;
 import unknowndomain.engine.registry.Registry;
@@ -16,13 +17,16 @@ import java.util.Set;
 /**
  * Handles the registration of KeyBinding and also handles key inputs (and mouse
  * inputs)
- *
  */
 public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
-    /** Mappes the key binding index to the KeyBinding objects. */
+    /**
+     * Mappes the key binding index to the KeyBinding objects.
+     */
     private final Multimap<Integer, KeyBinding> indexToBinding = HashMultimap.create();
-    /** KeyBinding Registry */
+    /**
+     * KeyBinding Registry
+     */
     private final Registry<KeyBinding> registry;
     private ClientContext gameContext;
     /**
@@ -37,7 +41,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
     /**
      * Set the GameContext when a game starts
-     * 
+     *
      * @param context
      */
     public void setGameContext(ClientContext context) {
@@ -46,10 +50,10 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
     /**
      * Register a KeyBinding
-     * 
+     *
      * @param keybinding key binding to register
      * @Deprecated This should happen when listening to
-     *             EngineEvent.RegistrationStart
+     * EngineEvent.RegistrationStart
      */
     @Deprecated
     public void register(KeyBinding keybinding) {
@@ -69,6 +73,11 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     }
 
     protected void handlePress(int code, int modifiers) {
+        // TODO: Remove it, hard code.
+        if (Platform.getEngineClient().getGuiManager().isDisplayingScreen()) {
+            return;
+        }
+
         Key key = Key.valueOf(code);
         pressedKey.add(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
@@ -82,6 +91,11 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     }
 
     protected void handleRelease(int code, int modifiers) {
+        // TODO: Remove it, hard code.
+        if (Platform.getEngineClient().getGuiManager().isDisplayingScreen()) {
+            return;
+        }
+
         Key key = Key.valueOf(code);
         pressedKey.remove(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
@@ -96,7 +110,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
     /**
      * Get the index of the modified key
-     * 
+     *
      * @param code      Key code
      * @param modifiers Modifiers
      * @return An index value with last 4-bits presenting the modifiers
@@ -107,27 +121,27 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
     public void handleMouse(int button, int action, int modifiers) {
         switch (action) {
-        case GLFW.GLFW_PRESS:
-            handlePress(button + 400, modifiers);
-            break;
-        case GLFW.GLFW_RELEASE:
-            handleRelease(button + 400, modifiers);
-            break;
-        default:
-            break;
+            case GLFW.GLFW_PRESS:
+                handlePress(button + 400, modifiers);
+                break;
+            case GLFW.GLFW_RELEASE:
+                handleRelease(button + 400, modifiers);
+                break;
+            default:
+                break;
         }
     }
 
     public void handleKey(int key, int scancode, int action, int modifiers) {
         switch (action) {
-        case GLFW.GLFW_PRESS:
-            handlePress(key, modifiers);
-            break;
-        case GLFW.GLFW_RELEASE:
-            handleRelease(key, modifiers);
-            break;
-        default:
-            break;
+            case GLFW.GLFW_PRESS:
+                handlePress(key, modifiers);
+                break;
+            case GLFW.GLFW_RELEASE:
+                handleRelease(key, modifiers);
+                break;
+            default:
+                break;
         }
     }
 

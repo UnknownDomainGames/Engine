@@ -97,7 +97,7 @@ public class GuiRenderer implements Renderer {
         });
 
         debugHUD = new DebugHUD();
-        ((ClientContextImpl) context).getEngineGuiManager().showHud("debug", new Scene(debugHUD));
+        Platform.getEngineClient().getGuiManager().showHud("debug", new Scene(debugHUD));
 
         VBox box = new VBox();
         TextField textField = new TextField();
@@ -106,9 +106,10 @@ public class GuiRenderer implements Renderer {
         textField.fieldheight().set(23);
         Button button = new Button("Button");
         button.buttonwidth().set(100);
+        button.setOnClick(mouseClickEvent -> Platform.getEngineClient().getGuiManager().closeScreen());
         box.getChildren().addAll(textField, button);
         Scene s = new Scene(box);
-        ((ClientContextImpl) context).getEngineGuiManager().showScreen(s);
+        Platform.getEngineClient().getGuiManager().showScreen(s);
     }
 
     @Override
@@ -118,11 +119,11 @@ public class GuiRenderer implements Renderer {
         // render scene
         if (context instanceof ClientContextImpl) { //TODO: stupid check
             var ci = (ClientContextImpl) context;
-            for (Scene scene : ci.getEngineGuiManager().getHuds().values()) {
+            for (Scene scene : ci.getGuiManager().getHuds().values()) {
                 renderScene(scene);
             }
-            if (ci.getEngineGuiManager().getDisplayingScreen() != null) {
-                renderScene(ci.getEngineGuiManager().getDisplayingScreen());
+            if (ci.getGuiManager().getDisplayingScreen() != null) {
+                renderScene(ci.getGuiManager().getDisplayingScreen());
             }
         }
 

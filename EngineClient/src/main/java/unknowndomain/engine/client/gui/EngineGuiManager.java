@@ -96,4 +96,9 @@ public class EngineGuiManager implements GuiManager {
     public Scene getDisplayingScreen() {
         return displayingScreen;
     }
+
+    @Override
+    public boolean isDisplayingScreen() {
+        return displayingScreen != null;
+    }
 }

@@ -16,4 +16,6 @@ public interface GuiManager {
     Map<String, Scene> getHuds();
 
     Scene getDisplayingScreen();
+
+    boolean isDisplayingScreen();
 }

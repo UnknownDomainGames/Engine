@@ -171,6 +171,11 @@ public class EngineClientImpl implements EngineClient {
     }
 
     @Override
+    public boolean isRenderThread() {
+        return Thread.currentThread() == getRenderThread();
+    }
+
+    @Override
     public GLFWGameWindow getWindow() {
         return window;
     }
