@@ -104,7 +104,7 @@ public class GuiRenderer implements Renderer {
         textField.promptText().setValue("Hey you suckers!!");
         textField.fieldwidth().set(200);
         textField.fieldheight().set(23);
-        Button button = new Button("YVES 17");
+        Button button = new Button("Button");
         button.buttonwidth().set(100);
         box.getChildren().addAll(textField, button);
         Scene s = new Scene(box);

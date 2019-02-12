@@ -26,13 +26,14 @@ public class TextFieldRenderer extends RegionRenderer<TextField> {
         graphics.pushClipRect(px,py,pw,ph);
         graphics.setColor(textField.fontcolor().getValue());
         graphics.setFont(textField.font().getValue());
+        float caretWidth = Internal.getContext().getFontHelper().computeTextWidth(textField.getTextInRange(0, textField.caret().get()), textField.font().getValue());
         if(textField.length() == 0){
             graphics.drawText(textField.promptText().getValue(), 0,0);
         }else{
-            graphics.drawText(textField.text().getValue(),0,0);
+            graphics.drawText(textField.text().getValue(),Math.min(pw-px-caretWidth, 0),0);
         }
         if(textField.focused().get()) {
-            graphics.fillRect(Internal.getContext().getFontHelper().computeTextWidth(textField.getTextInRange(0, textField.caret().get()), textField.font().getValue()), 0, 1, ph-py);
+            graphics.fillRect(caretWidth - Math.min(pw-px-caretWidth, 0), 0, 1, ph-py);
         }
         graphics.popClipRect();
     }

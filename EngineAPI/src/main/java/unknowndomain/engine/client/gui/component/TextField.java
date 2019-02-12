@@ -46,7 +46,7 @@ public class TextField extends Control {
     public TextField(){
         background().setValue(Background.fromColor(Color.fromRGBA(0x000000c8)));
         border().setValue(new Border(Color.WHITE, 2));
-        padding().setValue(new Insets(5));
+        padding().setValue(new Insets(3.5f));
     }
 
     public MutableValue<Font> font() {
@@ -105,7 +105,7 @@ public class TextField extends Control {
                 replaceSelection("");
             }
             insertText(Math.max(caret.get(), 0), String.valueOf(c));
-            positionCaret(caret.get() + 1);
+            //positionCaret(caret.get() + 1);
         }
     }
 
@@ -127,7 +127,20 @@ public class TextField extends Control {
     }
     public void onKeyUp(KeyEvent.KeyUpEvent event){}
     public void onKeyHold(KeyEvent.KeyHoldEvent event){
-
+        switch (event.getKey()) {
+            case KEY_LEFT:
+                backward();
+                break;
+            case KEY_RIGHT:
+                forward();
+                break;
+            case KEY_BACKSPACE:
+                backspace();
+                break;
+            case KEY_DELETE:
+                delete();
+                break;
+        }
     }
 
     @Override
@@ -202,13 +215,13 @@ public class TextField extends Control {
             len -= (end - start);
         }
         if(text != null){
-            String s = content.substring(0, start + 1) + text;
+            String s = (start <= content.length() ? content.substring(0, start) : "") + text;
             if(start < content.length())
-                s = s + content.substring(start + 1);
+                s = s + content.substring(start);
             content = s;
             adjusted = text.length() - (length() - len);
-            anchor -= adjusted;
-            caret -= adjusted;
+            anchor += adjusted;
+            caret += adjusted;
         }
         text().setValue(content);
         selectRange(anchor, caret);
