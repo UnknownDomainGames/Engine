@@ -64,7 +64,7 @@ public class WorldRenderer implements Renderer {
     }
 
     @Override
-    public void render() {
+    public void render(double partial) {
         frameBufferShadow.bind();
         GL11.glViewport(0, 0, FrameBufferShadow.SHADOW_WIDTH, FrameBufferShadow.SHADOW_HEIGHT);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);

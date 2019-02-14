@@ -34,6 +34,8 @@ public interface Engine {
      */
     void initEngine();
 
+    void runEngine();
+
     EventBus getEventBus();
 
     /**
@@ -41,6 +43,8 @@ public interface Engine {
      */
     @Deprecated
     void startGame();
+
+    void startGame(Game game);
 
     Game getCurrentGame();
 

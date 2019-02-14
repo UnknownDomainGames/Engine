@@ -48,6 +48,8 @@ public interface GameWindow {
 
     void endRender();
 
+    int getFps();
+
     @FunctionalInterface
     interface KeyCallback {
         void invoke(int key, int scancode, int action, int mods);

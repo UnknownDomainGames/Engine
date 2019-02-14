@@ -6,9 +6,9 @@ import unknowndomain.engine.Tickable;
  * http://gameprogrammingpatterns.com/game-loop.html
  */
 public class FixStepTicker {
-	
-	public static final int logicTick = 20;
-    public static final int clientTick = 20;//暂时用常量
+
+    public static final int LOGIC_TICK = 20;
+    public static final int CLIENT_TICK = 60;//暂时用常量
     
     protected final Tickable fix;
     protected final double interval;
@@ -34,7 +34,7 @@ public class FixStepTicker {
      * @return current time in second
      */
     protected double getCurrentTime() {
-        return System.nanoTime() / 1e9;
+        return System.nanoTime() / 1e9D;
     }
 
     public void start() {
@@ -78,38 +78,8 @@ public class FixStepTicker {
                     fix.tick();
                     lag -= interval;
                 }
-                dynamic.tick((current - LogicTick.currentTick) * logicTick);
+                dynamic.tick((float) (lag / tps));
             }
-        }
-    }
-    public static class LogicTick extends FixStepTicker {
-    	public static double currentTick;
-    	private static LogicTick instance;
-
-        private LogicTick(Tickable task) {
-            super(task, logicTick);
-        }
-
-        public void start() {
-        	double previous = getCurrentTime();
-            while (!stop) {
-                double current = getCurrentTime();
-                double elapsed = current - previous;
-                previous = current;
-                lag += elapsed;
-
-                while (lag >= interval) {
-                    fix.tick();
-                    currentTick = current;
-                    lag -= interval;
-                }
-            }
-        }
-        public synchronized static LogicTick getInstance(Tickable task) {
-        	if(instance == null) {
-        		instance = new LogicTick(task);
-        	}
-			return instance;
         }
     }
 }

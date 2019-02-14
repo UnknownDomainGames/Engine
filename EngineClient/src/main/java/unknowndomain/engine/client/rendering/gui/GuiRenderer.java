@@ -8,9 +8,9 @@ import org.joml.Vector4fc;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.game.ClientContext;
-import unknowndomain.engine.client.game.ClientContextImpl;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.DebugHUD;
+import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.gui.Scene;
 import unknowndomain.engine.client.gui.component.Button;
 import unknowndomain.engine.client.gui.component.TextField;
@@ -18,9 +18,11 @@ import unknowndomain.engine.client.gui.internal.FontHelper;
 import unknowndomain.engine.client.gui.internal.ImageHelper;
 import unknowndomain.engine.client.gui.internal.Internal;
 import unknowndomain.engine.client.gui.layout.VBox;
+import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.Renderer;
+import unknowndomain.engine.client.rendering.display.GameWindow;
 import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
@@ -47,11 +49,13 @@ public class GuiRenderer implements Renderer {
 
     private DebugHUD debugHUD;
 
-    private ClientContext context;
+    private GameWindow gameWindow;
+    private GuiManager guiManager;
 
     @Override
     public void init(ClientContext context) {
-        this.context = context;
+        this.guiManager = Platform.getEngineClient().getGuiManager();
+        this.gameWindow = Platform.getEngineClient().getWindow();
 
         shader = ShaderManager.INSTANCE.registerShader("gui_shader",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "gui.vert"))
@@ -97,9 +101,10 @@ public class GuiRenderer implements Renderer {
         });
 
         debugHUD = new DebugHUD();
-        Platform.getEngineClient().getGuiManager().showHud("debug", new Scene(debugHUD));
+        guiManager.showHud("debug", new Scene(debugHUD));
 
         VBox box = new VBox();
+        box.background().setValue(new Background(new Color(0.1f, 0.1f, 0.1f, 0.9f)));
         TextField textField = new TextField();
         textField.promptText().setValue("Hey you suckers!!");
         textField.fieldwidth().set(200);
@@ -109,25 +114,22 @@ public class GuiRenderer implements Renderer {
         button.setOnClick(mouseClickEvent -> Platform.getEngineClient().getGuiManager().closeScreen());
         box.getChildren().addAll(textField, button);
         Scene s = new Scene(box);
-        Platform.getEngineClient().getGuiManager().showScreen(s);
+        guiManager.showScreen(s);
     }
 
     @Override
-    public void render() {
+    public void render(double partial) {
         startRender();
 
         // render scene
-        if (context instanceof ClientContextImpl) { //TODO: stupid check
-            var ci = (ClientContextImpl) context;
-            for (Scene scene : ci.getGuiManager().getHuds().values()) {
-                renderScene(scene);
-            }
-            if (ci.getGuiManager().getDisplayingScreen() != null) {
-                renderScene(ci.getGuiManager().getDisplayingScreen());
-            }
+        for (Scene scene : guiManager.getHuds().values()) {
+            renderScene(scene);
+        }
+        if (guiManager.isDisplayingScreen()) {
+            renderScene(guiManager.getDisplayingScreen());
         }
 
-        debug(context);
+//        debug(context);
 
         endRender();
     }
@@ -152,13 +154,7 @@ public class GuiRenderer implements Renderer {
         glEnable(GL_POLYGON_SMOOTH);
         glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
-        resize();
-    }
-
-
-    private void resize() {
-        //context.getWindow().isResized();
-        int width = context.getWindow().getWidth(), height = context.getWindow().getHeight();
+        int width = gameWindow.getWidth(), height = gameWindow.getHeight();
         ShaderManager.INSTANCE.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
         ShaderManager.INSTANCE.setUniform("u_WindowSize", new Vector2f(width, height));
@@ -173,8 +169,8 @@ public class GuiRenderer implements Renderer {
     }
 
     private void renderScene(Scene scene) {
-        if (context.getWindow().isResized()) {
-            scene.setSize(context.getWindow().getWidth(), context.getWindow().getHeight());
+        if (gameWindow.isResized()) {
+            scene.setSize(gameWindow.getWidth(), gameWindow.getHeight());
         }
 
         scene.update();

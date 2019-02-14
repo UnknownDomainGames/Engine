@@ -15,12 +15,10 @@ import unknowndomain.engine.client.input.keybinding.ActionMode;
 import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
-import unknowndomain.engine.client.rendering.gui.GuiRenderer;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.world.WorldRenderer;
 import unknowndomain.engine.event.Listener;
-import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.mod.RegistrationStartEvent;
 import unknowndomain.engine.event.mod.RegistryConstructionEvent;
 import unknowndomain.engine.registry.Registry;
@@ -117,11 +115,11 @@ public final class DefaultGameMode {
     @Listener
     public void rendererRegister(RendererRegisterEvent event) {
         event.register(new WorldRenderer());
-        event.register(new GuiRenderer());
+//        event.register(new GuiRenderer());
     }
 
-    @Listener
-    public void onEngineInitialized(EngineEvent.InitializationComplete e) {
-        e.getEngine().startGame();
-    }
+//    @Listener
+//    public void onEngineInitialized(EngineEvent.InitializationComplete e) {
+//        e.getEngine().startGame();
+//    }
 }

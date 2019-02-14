@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.game.ClientContext;
-import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.light.DirectionalLight;
 import unknowndomain.engine.client.rendering.light.Light;
 import unknowndomain.engine.client.rendering.light.Material;
@@ -35,7 +34,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 import static unknowndomain.engine.world.chunk.ChunkConstants.*;
 
-public class ChunkRenderer implements Renderer {
+public class ChunkRenderer {
 
     private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
@@ -50,7 +49,6 @@ public class ChunkRenderer implements Renderer {
     Light dirLight, ptLight;
     Material mat;
 
-    @Override
     public void init(ClientContext context) {
         this.context = context;
 
@@ -85,7 +83,6 @@ public class ChunkRenderer implements Renderer {
         });
     }
 
-    @Override
     public void render() {
         preRenderChunk();
 
@@ -139,7 +136,6 @@ public class ChunkRenderer implements Renderer {
         glDisable(GL11.GL_BLEND);
     }
 
-    @Override
     public void dispose() {
         updateExecutor.shutdown();
 

@@ -9,30 +9,30 @@ public class TextFieldRenderer extends RegionRenderer<TextField> {
 
     @Override
     public void render(TextField textField, Graphics graphics) {
-        super.render(textField,graphics);
-        float px,py,pw,ph;
-        if(textField.padding().isPresent()){
+        super.render(textField, graphics);
+        float px, py, pw, ph;
+        if (textField.padding().isPresent()) {
             px = textField.padding().getValue().getLeft();
             py = textField.padding().getValue().getTop();
-            pw = textField.width().get()-textField.padding().getValue().getRight();
-            ph = textField.height().get()-textField.padding().getValue().getBottom();
-        }else{
+            pw = textField.width().get() - textField.padding().getValue().getRight();
+            ph = textField.height().get() - textField.padding().getValue().getBottom();
+        } else {
             px = 0;
             py = 0;
             pw = textField.width().get();
             ph = textField.height().get();
         }
-        graphics.pushClipRect(px,py,pw,ph);
+        graphics.pushClipRect(px, py, pw, ph);
         graphics.setColor(textField.fontcolor().getValue());
         graphics.setFont(textField.font().getValue());
         float caretWidth = Internal.getContext().getFontHelper().computeTextWidth(textField.getTextInRange(0, textField.caret().get()), textField.font().getValue());
-        if(textField.length() == 0){
-            graphics.drawText(textField.promptText().getValue(), 0,0);
-        }else{
-            graphics.drawText(textField.text().getValue(),Math.min(pw-px-caretWidth, 0),0);
+        if (textField.length() == 0) {
+            graphics.drawText(textField.promptText().getValue(), 0, 0);
+        } else {
+            graphics.drawText(textField.text().getValue(), Math.min(pw - px - caretWidth, 0), 0);
         }
         if (textField.focused().get() && System.currentTimeMillis() % 1000 < 500) {
-            graphics.fillRect(caretWidth - Math.min(pw-px-caretWidth, 0), 0, 1, ph-py);
+            graphics.fillRect(caretWidth - Math.min(pw - px - caretWidth, 0), 0, 1, ph - py);
         }
         graphics.popClipRect();
     }

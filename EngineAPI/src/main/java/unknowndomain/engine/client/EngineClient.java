@@ -16,7 +16,7 @@ public interface EngineClient extends Engine {
     Thread getRenderThread();
 
     boolean isRenderThread();
-    
+
     GameWindow getWindow();
 
     AssetManager getAssetManager();

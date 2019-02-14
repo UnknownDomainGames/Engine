@@ -21,6 +21,7 @@ public interface ClientContext {
 
     GameWindow getWindow();
 
+    @Deprecated
     int getFps();
 
     double partialTick();

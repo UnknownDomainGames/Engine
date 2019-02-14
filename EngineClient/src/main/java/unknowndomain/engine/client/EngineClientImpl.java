@@ -9,10 +9,15 @@ import unknowndomain.engine.client.asset.EngineAssetManager;
 import unknowndomain.engine.client.asset.EngineAssetSource;
 import unknowndomain.engine.client.asset.loader.AssetLoadManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
+import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.gui.EngineGuiManager;
 import unknowndomain.engine.client.gui.GuiManager;
+import unknowndomain.engine.client.rendering.EngineRenderContext;
 import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
+import unknowndomain.engine.client.rendering.display.GameWindow;
+import unknowndomain.engine.client.rendering.gui.GuiRenderer;
+import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.sound.ALSoundManager;
@@ -20,6 +25,9 @@ import unknowndomain.engine.client.sound.EngineSoundManager;
 import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.engine.EngineEvent;
+import unknowndomain.engine.game.Game;
+import unknowndomain.engine.math.FixStepTicker;
+import unknowndomain.engine.math.Ticker;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Disposer;
 import unknowndomain.engine.util.DisposerImpl;
@@ -58,12 +66,24 @@ public class EngineClientImpl implements EngineClient {
     private EngineSoundManager soundManager;
     private EngineGuiManager guiManager;
 
+    private EngineRenderContext renderContext;
+    private Ticker ticker;
+
     private Disposer disposer;
 
     private GameClientStandalone game;
 
+    private boolean initialized = false;
+    private boolean running = false;
+    private boolean terminated = false;
+
     @Override
     public void initEngine() {
+        if (initialized) {
+            throw new IllegalStateException("Engine has been initialized.");
+        }
+        initialized = true;
+
         initEnvironment();
         paintSystemInfo();
 
@@ -95,13 +115,19 @@ public class EngineClientImpl implements EngineClient {
         assetLoadManager = new EngineAssetLoadManager(assetManager);
 
         textureManager = new EngineTextureManager();
-        assetManager.getReloadListeners().add(() -> {
-            textureManager.reload();
-            soundManager.reload();
-        });
         soundManager = new EngineSoundManager();
         soundManager.init();
         guiManager = new EngineGuiManager(this);
+        assetManager.getReloadListeners().add(() -> {
+            ShaderManager.INSTANCE.reload();
+            textureManager.reload();
+            soundManager.reload();
+        });
+
+        renderContext = new EngineRenderContext();
+        renderContext.getRenderers().add(new GuiRenderer());
+
+        ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), FixStepTicker.CLIENT_TICK);
     }
 
     private void initEnvironment() {
@@ -111,6 +137,25 @@ public class EngineClientImpl implements EngineClient {
         } catch (URISyntaxException e) {
             runtimeEnvironment = RuntimeEnvironment.DEPLOYMENT;
         }
+    }
+
+    @Override
+    public void runEngine() {
+        if (running) {
+            throw new IllegalStateException("Engine is running.");
+        }
+        running = true;
+
+        renderThread = Thread.currentThread();
+        renderContext.init();
+
+        assetManager.reload();
+
+        ticker.run();
+    }
+
+    private void clientTick() {
+
     }
 
     @Override
@@ -129,12 +174,19 @@ public class EngineClientImpl implements EngineClient {
     }
 
     @Override
-    public void terminate() {
+    public synchronized void terminate() {
+        if (terminated) {
+            return;
+        }
+
         logger.info("Terminating Engine!");
+        terminated = true;
 
         if (game != null) {
             game.terminate();
         }
+
+        ticker.stop();
 
         soundManager.dispose();
 
@@ -143,20 +195,23 @@ public class EngineClientImpl implements EngineClient {
 
     @Override
     public boolean isTerminated() {
-        return false;
+        return terminated;
     }
 
     @Override
     public void startGame() {
-        renderThread = Thread.currentThread();
-
         // prepare
         game = new GameClientStandalone(this);
         game.run();
     }
 
     @Override
-    public GameClientStandalone getCurrentGame() {
+    public void startGame(Game game) {
+
+    }
+
+    @Override
+    public GameClient getCurrentGame() {
         return game;
     }
 
@@ -176,7 +231,7 @@ public class EngineClientImpl implements EngineClient {
     }
 
     @Override
-    public GLFWGameWindow getWindow() {
+    public GameWindow getWindow() {
         return window;
     }
 

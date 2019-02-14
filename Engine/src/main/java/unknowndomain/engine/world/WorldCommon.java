@@ -16,7 +16,6 @@ import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.FixStepTicker;
-import unknowndomain.engine.math.FixStepTicker.LogicTick;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayTrace;
@@ -48,8 +47,7 @@ public class WorldCommon implements World, Runnable {
     public WorldCommon(Game game) {
         this.game = game;
         this.chunkStorage = new ChunkStorage(this);
-        this.ticker = LogicTick.getInstance(this::tick); // TODO: make tps configurable 先这样吧，毕竟现在连Server都没有
-        //TODO 这个地方必须改回来
+        this.ticker = new FixStepTicker(this::tick, FixStepTicker.LOGIC_TICK); // TODO: make tps configurable
     }
 
     public void spawnEntity(Entity entity) {

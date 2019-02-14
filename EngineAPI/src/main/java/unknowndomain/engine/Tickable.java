@@ -5,6 +5,6 @@ public interface Tickable {
     void tick();
 
     interface Partial {
-        void tick(double partial);
+        void tick(float partial);
     }
 }

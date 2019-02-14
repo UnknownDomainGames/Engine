@@ -2,10 +2,8 @@ package unknowndomain.engine.client.game;
 
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
-import unknowndomain.engine.Platform;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.block.ClientBlock;
-import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.GameWindow;
@@ -57,23 +55,9 @@ public class ClientContextImpl implements ClientContext {
         return window;
     }
 
-    private long lastUpdateFps = System.currentTimeMillis();
-    private int frameCount = 0;
-    private int fps = 0;
-
     @Override
     public int getFps() {
-        return fps;
-    }
-
-    public void updateFps() {
-        long time = System.currentTimeMillis();
-        if (time - lastUpdateFps > 1000) {
-            fps = frameCount;
-            frameCount = 0; // reset the FPS counter
-            lastUpdateFps += 1000; // add one second
-        }
-        frameCount++;
+        return getWindow().getFps();
     }
 
     @Override
@@ -112,7 +96,7 @@ public class ClientContextImpl implements ClientContext {
         this.partialTick = partial;
         updateBlockHit();
         for (Renderer renderer : renderers) {
-            renderer.render();
+            renderer.render(partial);
         }
     }
 
@@ -130,10 +114,5 @@ public class ClientContextImpl implements ClientContext {
     @Override
     public World getClientWorld() {
         return game.getWorld();
-    }
-
-    @Deprecated
-    public GuiManager getGuiManager() {
-        return Platform.getEngineClient().getGuiManager();
     }
 }

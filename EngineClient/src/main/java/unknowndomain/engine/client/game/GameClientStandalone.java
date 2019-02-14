@@ -45,7 +45,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     public GameClientStandalone(EngineClient engine) {
         super(engine);
 
-        this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, FixStepTicker.clientTick);
+        this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, FixStepTicker.CLIENT_TICK);
     }
 
     /**
@@ -152,7 +152,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     @Override
     public void run() {
         super.run();
-        ticker.start(); // start to tick
+        ticker.start(); // run to tick
     }
 
     @Override
@@ -191,7 +191,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
      */
     private void renderTick(double partialTick) {
         Platform.getEngineClient().getWindow().beginRender();
-        clientContext.updateFps();
         this.clientContext.render(partialTick);
         Platform.getEngineClient().getWindow().endRender();
     }

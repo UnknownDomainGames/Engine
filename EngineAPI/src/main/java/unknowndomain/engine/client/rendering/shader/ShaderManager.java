@@ -7,7 +7,6 @@ import org.joml.*;
 import unknowndomain.engine.Platform;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +15,7 @@ import java.util.stream.Stream;
 
 public class ShaderManager {
 
+    @Deprecated
     public static final ShaderManager INSTANCE = new ShaderManager();
 
     private final Map<String, MutableValue<ShaderProgram>> loadedShaders;

@@ -20,6 +20,7 @@ public class UnknownDomain {
         Engine engine = new EngineClientImpl();
         injectEngine(engine);
         engine.initEngine();
+        engine.runEngine();
     }
 
     @Deprecated
