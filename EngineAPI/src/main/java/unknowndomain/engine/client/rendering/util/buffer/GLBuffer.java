@@ -24,7 +24,7 @@ public abstract class GLBuffer implements Disposable {
     private float posOffsetZ;
 
     private boolean drawing;
-    private int drawMode;
+    private GLBufferMode drawMode;
     private GLBufferFormat format;
 
     private int vertexCount;
@@ -51,7 +51,7 @@ public abstract class GLBuffer implements Disposable {
         return drawing;
     }
 
-    public int getDrawMode() {
+    public GLBufferMode getDrawMode() {
         return drawMode;
     }
 
@@ -63,7 +63,7 @@ public abstract class GLBuffer implements Disposable {
         return vertexCount;
     }
 
-    public void begin(int mode, GLBufferFormat format) {
+    public void begin(GLBufferMode mode, GLBufferFormat format) {
         if (drawing) {
             throw new IllegalStateException("Already drawing!");
         } else {
@@ -79,7 +79,7 @@ public abstract class GLBuffer implements Disposable {
         if (!drawing) {
             throw new IllegalStateException("Not yet drawn!");
         } else {
-            if (drawMode == GL11.GL_QUADS || drawMode == GL11.GL_QUAD_STRIP) {
+            if (drawMode == GLBufferMode.QUADS || drawMode == GLBufferMode.CONTINUOUS_QUADS) {
                 if (vertexCount % 4 != 0)
                     throw new IllegalArgumentException(String.format("Not enough vertexes! Expected: %d, Found: %d", (vertexCount / 4 + 1) * 4, vertexCount));
                 byte[] bytes = new byte[format.getStride() * 4];
@@ -95,7 +95,7 @@ public abstract class GLBuffer implements Disposable {
                     backingBuffer.put(bytes, 0, format.getStride());
                 }
                 vertexCount = vertexCount / 4 * 6;
-                drawMode = drawMode == GL11.GL_QUAD_STRIP ? GL11.GL_TRIANGLE_STRIP : GL11.GL_TRIANGLES;
+                drawMode = drawMode == GLBufferMode.CONTINUOUS_QUADS ? GLBufferMode.CONTINUOUS_TRIANGLES : GLBufferMode.TRIANGLES;
             }
             drawing = false;
             backingBuffer.position(0);
@@ -104,7 +104,7 @@ public abstract class GLBuffer implements Disposable {
     }
 
     public void reset() {
-        drawMode = 0;
+        drawMode = GLBufferMode.POINTS;
         format = null;
         vertexCount = 0;
         posOffset(0, 0, 0);

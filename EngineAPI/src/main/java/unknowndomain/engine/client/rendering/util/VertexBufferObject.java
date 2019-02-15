@@ -3,6 +3,7 @@ package unknowndomain.engine.client.rendering.util;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
+import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.util.Disposable;
 
 import java.nio.ByteBuffer;
@@ -45,6 +46,13 @@ public class VertexBufferObject implements Disposable {
         this.count = builder.getVertexCount();
     }
 
+    public void uploadData(GLBuffer builder) {
+        bind();
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, builder.getBackingBuffer(), GL15.GL_STATIC_DRAW);
+        unbind();
+        this.count = builder.getVertexCount();
+    }
+
     public void uploadData(FloatBuffer builder, int vertex) {
         bind();
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, builder, GL15.GL_STATIC_DRAW);
@@ -55,6 +63,13 @@ public class VertexBufferObject implements Disposable {
     public void uploadSubData(BufferBuilder builder) {
         bind();
         GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, builder.build());
+        unbind();
+        count = builder.getVertexCount();
+    }
+
+    public void uploadSubData(GLBuffer builder) {
+        bind();
+        GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, builder.getBackingBuffer());
         unbind();
         count = builder.getVertexCount();
     }
