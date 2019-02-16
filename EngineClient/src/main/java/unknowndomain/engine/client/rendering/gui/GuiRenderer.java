@@ -21,6 +21,7 @@ import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
+import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.display.GameWindow;
 import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
@@ -53,7 +54,7 @@ public class GuiRenderer implements Renderer {
     private GuiManager guiManager;
 
     @Override
-    public void init(ClientContext context) {
+    public void init(RenderContext context) {
         this.guiManager = Platform.getEngineClient().getGuiManager();
         this.gameWindow = Platform.getEngineClient().getWindow();
 

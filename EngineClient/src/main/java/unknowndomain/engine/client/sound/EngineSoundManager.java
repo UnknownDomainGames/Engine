@@ -3,6 +3,7 @@ package unknowndomain.engine.client.sound;
 import com.github.mouse0w0.lib4j.observable.value.MutableValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL;
@@ -20,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 import static org.lwjgl.openal.ALC10.*;
 
@@ -36,7 +36,7 @@ public class EngineSoundManager implements ALSoundManager {
 
     private final Map<String, MutableValue<ALSoundSource>> soundSourceMap = new HashMap<>();
 
-    private Matrix4f cameraMatrix;
+    private Matrix4fc cameraMatrix;
 
     public EngineSoundManager(){
         cameraMatrix = new Matrix4f();
@@ -64,13 +64,13 @@ public class EngineSoundManager implements ALSoundManager {
 
     @Override
     public void updateListener(Camera camera){
-        cameraMatrix = camera.view(0);
+        cameraMatrix = camera.getViewMatrix();
         // Optimized version to get lookAt vector and Up vector from View Matrix, provided by author of JOML at a LWJGL forum
         Vector3f at = new Vector3f();
         cameraMatrix.positiveZ(at).negate();
         Vector3f up = new Vector3f();
         cameraMatrix.positiveY(up);
-        listener.position(camera.getPosition(0)).orient(at,up);
+        listener.position((Vector3f) camera.getPosition()).orient(at, up);
     }
 
     @Override

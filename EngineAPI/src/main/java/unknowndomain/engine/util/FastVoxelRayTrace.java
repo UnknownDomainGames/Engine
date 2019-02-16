@@ -1,6 +1,6 @@
 package unknowndomain.engine.util;
 
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.joml.Vector3i;
 import unknowndomain.engine.math.BlockPos;
 
@@ -19,13 +19,13 @@ public class FastVoxelRayTrace {
         return 1 - x + (float) Math.floor(x);
     }
 
-    public static List<BlockPos> rayTrace(Vector3f start, Vector3f end) {
+    public static List<BlockPos> rayTrace(Vector3fc start, Vector3fc end) {
         List<BlockPos> container = new ArrayList<>();
         float tMaxX, tMaxY, tMaxZ, tDeltaX, tDeltaY, tDeltaZ;
         Vector3i voxel = new Vector3i();
 
-        float x1 = start.x, y1 = start.y, z1 = start.z; // start point
-        float x2 = end.x, y2 = end.y, z2 = end.z; // end point
+        float x1 = start.x(), y1 = start.y(), z1 = start.z(); // start point
+        float x2 = end.x(), y2 = end.y(), z2 = end.z(); // end point
 
         int dx = Float.compare((x2 - x1), 0);
         if (dx != 0) tDeltaX = Math.min(dx / (x2 - x1), 10000000.0f);

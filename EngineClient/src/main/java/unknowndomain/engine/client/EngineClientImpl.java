@@ -26,7 +26,6 @@ import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.game.Game;
-import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.math.Ticker;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Disposer;
@@ -53,7 +52,7 @@ public class EngineClientImpl implements EngineClient {
 
     private RuntimeEnvironment runtimeEnvironment;
 
-    private Thread renderThread;
+    private Thread clientThread;
     private GLFWGameWindow window;
     private Profile playerProfile;
 
@@ -85,7 +84,7 @@ public class EngineClientImpl implements EngineClient {
         initialized = true;
 
         initEnvironment();
-        paintSystemInfo();
+        printSystemInfo();
 
         eventBus = new AsmEventBus();
         playerProfile = new Profile(UUID.randomUUID(), 12);
@@ -124,10 +123,10 @@ public class EngineClientImpl implements EngineClient {
             soundManager.reload();
         });
 
-        renderContext = new EngineRenderContext();
+        renderContext = new EngineRenderContext(this);
         renderContext.getRenderers().add(new GuiRenderer());
 
-        ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), FixStepTicker.CLIENT_TICK);
+        ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), Ticker.CLIENT_TICK);
     }
 
     private void initEnvironment() {
@@ -146,8 +145,8 @@ public class EngineClientImpl implements EngineClient {
         }
         running = true;
 
-        renderThread = Thread.currentThread();
-        renderContext.init();
+        clientThread = Thread.currentThread();
+        renderContext.init(clientThread);
 
         assetManager.reload();
 
@@ -221,13 +220,13 @@ public class EngineClientImpl implements EngineClient {
     }
 
     @Override
-    public Thread getRenderThread() {
-        return renderThread;
+    public Thread getClientThread() {
+        return clientThread;
     }
 
     @Override
-    public boolean isRenderThread() {
-        return Thread.currentThread() == getRenderThread();
+    public boolean isClientThread() {
+        return Thread.currentThread() == clientThread;
     }
 
     @Override
@@ -270,7 +269,7 @@ public class EngineClientImpl implements EngineClient {
         return soundManager;
     }
 
-    private void paintSystemInfo() {
+    private void printSystemInfo() {
         Logger logger = Platform.getLogger();
         logger.info("----- System Information -----");
         logger.info("\tOperating System: " + OS_NAME + " (" + OS_ARCH + ") version " + OS_VERSION);

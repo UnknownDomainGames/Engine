@@ -13,9 +13,9 @@ import unknowndomain.engine.util.Disposer;
 
 public interface EngineClient extends Engine {
 
-    Thread getRenderThread();
+    Thread getClientThread();
 
-    boolean isRenderThread();
+    boolean isClientThread();
 
     GameWindow getWindow();
 

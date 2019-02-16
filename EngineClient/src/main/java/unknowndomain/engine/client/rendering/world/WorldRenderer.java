@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.asset.AssetPath;
-import unknowndomain.engine.client.game.ClientContext;
+import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
@@ -33,10 +33,10 @@ public class WorldRenderer implements Renderer {
     private FrameBufferShadow frameBufferShadow; //TODO: move to 3D Renderer!!!
     private ObservableValue<ShaderProgram> shadowShader;
 
-    private ClientContext context;
+    private RenderContext context;
 
     @Override
-    public void init(ClientContext context) {
+    public void init(RenderContext context) {
         this.context = context;
         chunkRenderer.init(context);
         context.getGame().getContext().register(chunkRenderer);
@@ -110,7 +110,7 @@ public class WorldRenderer implements Renderer {
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         ShaderManager.INSTANCE.setUniform("u_ProjMatrix", context.getWindow().projection());
-        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().view((float) context.partialTick()));
+        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix((float) context.partialTick()));
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
 
         Tessellator tessellator = Tessellator.getInstance();

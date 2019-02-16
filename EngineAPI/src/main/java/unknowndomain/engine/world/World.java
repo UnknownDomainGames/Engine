@@ -1,6 +1,6 @@
 package unknowndomain.engine.world;
 
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.component.RuntimeObject;
@@ -22,9 +22,9 @@ public interface World extends RuntimeObject, BlockAccessor {
 
     List<Entity> getEntities();
 
-    RayTraceBlockHit raycast(Vector3f from, Vector3f dir, float distance);
+    RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance);
 
-    RayTraceBlockHit raycast(Vector3f from, Vector3f dir, float distance, Set<Block> ignore);
+    RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore);
 
     default Chunk getChunk(@Nonnull BlockPos pos) {
         return getChunk(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);

@@ -26,6 +26,7 @@ public interface ClientContext {
 
     double partialTick();
 
+    @Deprecated
     FrustumIntersection getFrustumIntersection();
 
     Player getPlayer();

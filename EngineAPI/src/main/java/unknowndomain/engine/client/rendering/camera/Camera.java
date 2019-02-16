@@ -1,7 +1,8 @@
 package unknowndomain.engine.client.rendering.camera;
 
-import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 /**
  * The lifecycle of camera is interesting... A camera can be killed after a game die.
@@ -9,22 +10,22 @@ import org.joml.Vector3f;
  */
 public interface Camera {
 
-    Vector3f UP_VECTOR = new Vector3f(0, 1, 0);
+    Vector3fc UP_VECTOR = new Vector3f(0, 1, 0);
 
-    Vector3f getPosition(float parTick);
+    void update(float partial);
 
-    Vector3f getLookAt(float parTick);
+    Vector3fc getPosition();
 
-    default Vector3f getFrontVector(float parTick) {
-        return getLookAt(parTick).sub(getPosition(parTick), new Vector3f()).normalize();
-    }
+    Vector3fc getLookAt();
+
+    Vector3fc getFrontVector();
+//        return getLookAt(parTick).sub(getPosition(parTick), new Vector3f()).normalize();
 
     /**
      * parse view matrix for shader to use
      *
      * @return
      */
-    default Matrix4f view(float parTick) {
-        return new Matrix4f().lookAt(getPosition(parTick), getLookAt(parTick), UP_VECTOR);
-    }
+    Matrix4fc getViewMatrix();
+//        return new Matrix4f().lookAt(getPosition(parTick), getLookAt(parTick), UP_VECTOR);
 }

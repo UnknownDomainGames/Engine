@@ -87,7 +87,7 @@ public class ClientContextImpl implements ClientContext {
 
     public void initClient() {
         for (Renderer renderer : renderers) {
-            renderer.init(this);
+            renderer.init(null);
         }
         ShaderManager.INSTANCE.reload();
     }
@@ -101,8 +101,8 @@ public class ClientContextImpl implements ClientContext {
     }
 
     public void updateBlockHit() {
-        getFrustumIntersection().set(getWindow().projection().mul(getCamera().view((float) partialTick), new Matrix4f()));
-        hit = getPlayer().getWorld().raycast(getCamera().getPosition((float) partialTick()), getCamera().getFrontVector((float) partialTick()), 10);
+        getFrustumIntersection().set(getWindow().projection().mul(getCamera().getViewMatrix(), new Matrix4f()));
+        hit = getPlayer().getWorld().raycast(getCamera().getPosition(), getCamera().getFrontVector(), 10);
     }
 
     public void dispose() {

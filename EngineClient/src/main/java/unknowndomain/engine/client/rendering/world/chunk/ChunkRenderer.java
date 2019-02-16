@@ -5,6 +5,7 @@ import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.Platform;
@@ -114,12 +115,11 @@ public class ChunkRenderer {
         glEnable(GL11.GL_DEPTH_TEST);
 
         Matrix4f projMatrix = context.getWindow().projection();
-        Matrix4f viewMatrix = context.getCamera().view((float) context.partialTick());
         Matrix4f modelMatrix = new Matrix4f().setTranslation(0, 0, 0);
         ShaderManager.INSTANCE.setUniform("u_ProjMatrix", projMatrix);
-        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", viewMatrix);
+        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", modelMatrix);
-        ShaderManager.INSTANCE.setUniform("u_viewPos", context.getCamera().getPosition(0));
+        ShaderManager.INSTANCE.setUniform("u_viewPos", context.getCamera().getPosition());
 
         Platform.getEngineClient().getTextureManager().getTextureAtlas(BLOCK).getValue().bind();
         chunkSolidShader.setUniform("useDirectUV", true);
@@ -229,10 +229,10 @@ public class ChunkRenderer {
             return 0;
         }
 
-        Vector3f position = context.getCamera().getPosition(0);
-        double x = chunk.getMin().x() + 8 - position.x;
-        double y = chunk.getMin().y() + 8 - position.y;
-        double z = chunk.getMin().z() + 8 - position.z;
+        Vector3fc position = context.getCamera().getPosition();
+        double x = chunk.getMin().x() + 8 - position.x();
+        double y = chunk.getMin().y() + 8 - position.y();
+        double z = chunk.getMin().z() + 8 - position.z();
         return x * x + y * y + z * z;
     }
 

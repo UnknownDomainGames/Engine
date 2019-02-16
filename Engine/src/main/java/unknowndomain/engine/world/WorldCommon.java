@@ -1,10 +1,7 @@
 package unknowndomain.engine.world;
 
 import com.google.common.collect.Sets;
-import org.joml.AABBd;
-import org.joml.Vector2d;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
+import org.joml.*;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.component.Component;
@@ -25,6 +22,7 @@ import unknowndomain.engine.world.chunk.ChunkStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -77,12 +75,12 @@ public class WorldCommon implements World, Runnable {
     }
 
     @Override
-    public RayTraceBlockHit raycast(Vector3f from, Vector3f dir, float distance) {
+    public RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance) {
         return raycast(from, dir, distance, Sets.newHashSet(game.getContext().getBlockRegistry().getValue(0)));
     }
 
     @Override
-    public RayTraceBlockHit raycast(Vector3f from, Vector3f dir, float distance, Set<Block> ignore) {
+    public RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore) {
         Vector3f rayOffset = dir.normalize(new Vector3f()).mul(distance);
         Vector3f dist = rayOffset.add(from, new Vector3f());
 

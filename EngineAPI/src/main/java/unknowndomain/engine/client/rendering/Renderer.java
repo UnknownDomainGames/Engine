@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.rendering;
 
 
-import unknowndomain.engine.client.game.ClientContext;
 import unknowndomain.engine.util.Disposable;
 
 /**
@@ -9,7 +8,7 @@ import unknowndomain.engine.util.Disposable;
  */
 public interface Renderer extends Disposable {
 
-    void init(ClientContext context);
+    void init(RenderContext context);
 
     void render(double partial);
 }
