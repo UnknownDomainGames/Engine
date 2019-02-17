@@ -74,6 +74,11 @@ public class Region extends Container {
         child.relocate(x,y);
     }
 
+    @Override
+    public boolean isResizable() {
+        return true;
+    }
+
     static float computeXOffset(float width, float contentWidth, Pos.HPos hpos) {
         switch(hpos) {
             case LEFT:

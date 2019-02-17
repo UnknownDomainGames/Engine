@@ -6,7 +6,13 @@ import unknowndomain.engine.client.gui.Region;
 
 import java.util.List;
 
-public class Control extends Region {
+public abstract class Control extends Region {
+
+    @Override
+    public boolean isResizable() {
+        return true;
+    }
+
     @Override
     public List<Component> getPointingComponents(float posX, float posY) {
         return Lists.newArrayList(this);

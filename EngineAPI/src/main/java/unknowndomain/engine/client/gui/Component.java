@@ -122,6 +122,10 @@ public abstract class Component {
         return properties;
     }
 
+    public boolean isResizable(){
+        return false;
+    }
+
     public void resize(float width, float height){
         this.width.set(width);
         this.height.set(height);
