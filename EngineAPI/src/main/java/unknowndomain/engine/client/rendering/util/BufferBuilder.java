@@ -86,6 +86,7 @@ public class BufferBuilder {
                 backingBuffer.rewind();
                 backingBuffer.clear();
                 bb.flip();
+                grow(vertexCount / 4 * 6 * getOffset());
                 for (int i = 0; i < vertexCount / 4; i++) {
                     byte[] bs = new byte[getOffset() * 4];
                     bb.get(bs, 0, getOffset() * 4);

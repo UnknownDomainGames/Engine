@@ -80,6 +80,11 @@ public final class TTFontHelper implements FontHelper {
                 int cp = pCodePoint.get(0);
 
                 stbtt_GetCodepointHMetrics(info, cp, pAdvancedWidth, pLeftSideBearing);
+                if(i < text.length()) {
+                    getCodePoint(text, i, pCodePoint);
+                pAdvancedWidth.put(0, pAdvancedWidth.get(0)
+                        + stbtt_GetCodepointKernAdvance(info, cp, pCodePoint.get(0)));
+                }
                 width += pAdvancedWidth.get(0);
             }
         }
@@ -216,6 +221,8 @@ public final class TTFontHelper implements FontHelper {
 
             float factorX = 1.0f / nativeTTFont.getParent().getContentScaleX();
             float factorY = 1.0f / nativeTTFont.getParent().getContentScaleY();
+            factorX = 1.0f;
+            factorY = 1.0f;
 
             float r = ((color >> 16) & 255) / 255f;
             float g = ((color >> 8) & 255) / 255f;

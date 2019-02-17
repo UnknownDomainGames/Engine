@@ -26,6 +26,10 @@ public class KeyEvent extends ComponentEvent {
         return mode;
     }
 
+    public KeyModifier[] getModifiers() {
+        return modifiers;
+    }
+
     public static class KeyDownEvent extends KeyEvent{
 
         public KeyDownEvent(Component component, Key key, ActionMode mode, KeyModifier[] modifier) {

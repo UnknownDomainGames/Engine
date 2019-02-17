@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.gui.component;
 
 import com.github.mouse0w0.lib4j.observable.value.*;
+import org.apache.commons.lang3.ArrayUtils;
 import unknowndomain.engine.client.gui.event.CharEvent;
 import unknowndomain.engine.client.gui.event.KeyEvent;
 import unknowndomain.engine.client.gui.misc.Background;
@@ -13,6 +14,7 @@ import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.gui.util.Utils;
 import unknowndomain.engine.client.input.Clipboard;
 import unknowndomain.engine.client.input.keybinding.Key;
+import unknowndomain.engine.client.input.keybinding.KeyModifier;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.Math2;
 import unknowndomain.engine.util.BitArray;
@@ -40,13 +42,15 @@ public class TextField extends Control {
     private MutableIntValue anchor = new SimpleMutableIntValue(0);
     private MutableIntValue caret = new SimpleMutableIntValue(0);
 
+    private int lineScrollOffset;
+
     private BreakIterator charIterator;
     private BreakIterator wordIterator;
 
     public TextField(){
         background().setValue(Background.fromColor(Color.fromRGBA(0x000000c8)));
         border().setValue(new Border(Color.WHITE, 2));
-        padding().setValue(new Insets(3.5f));
+        padding().setValue(new Insets(3f));
     }
 
     public MutableValue<Font> font() {
@@ -103,6 +107,7 @@ public class TextField extends Control {
             char c = ((CharEvent) event).getCharacter();
             if(caret.get() != anchor.get()){
                 replaceSelection("");
+                deselect();
             }
             insertText(Math.max(caret.get(), 0), String.valueOf(c));
             //positionCaret(caret.get() + 1);
@@ -112,34 +117,67 @@ public class TextField extends Control {
     public void onKeyDown(KeyEvent.KeyDownEvent event){
         switch (event.getKey()) {
             case KEY_LEFT:
-                backward();
+                if(ArrayUtils.contains(event.getModifiers(), KeyModifier.SHIFT)){
+                    selectBackward();
+                }else{
+                    backward();
+                }
                 break;
             case KEY_RIGHT:
-                forward();
+                if(ArrayUtils.contains(event.getModifiers(), KeyModifier.SHIFT)){
+                    selectForward();
+                }else{
+                    forward();
+                }
                 break;
             case KEY_BACKSPACE:
-                backspace();
+                if (caret.get() != anchor.get()) {
+                    replaceSelection("");
+                    deselect();
+                } else {
+                    backspace();
+                }
                 break;
             case KEY_DELETE:
-                delete();
+                if (caret.get() != anchor.get()) {
+                    replaceSelection("");
+                    deselect();
+                } else {
+                    delete();
+                }
+                break;
+            case KEY_X:
+                if(event.getModifiers().length == 1 && event.getModifiers()[0] == KeyModifier.CONTROL){
+                    cut();
+                }
+                break;
+            case KEY_C:
+                if(event.getModifiers().length == 1 && event.getModifiers()[0] == KeyModifier.CONTROL){
+                    copy();
+                }
+                break;
+            case KEY_V:
+                if(event.getModifiers().length == 1 && event.getModifiers()[0] == KeyModifier.CONTROL){
+                    paste();
+                }
+                break;
+            case KEY_A:
+                if(event.getModifiers().length == 1 && event.getModifiers()[0] == KeyModifier.CONTROL){
+                    selectAll();
+                }
                 break;
         }
     }
     public void onKeyUp(KeyEvent.KeyUpEvent event){}
     public void onKeyHold(KeyEvent.KeyHoldEvent event){
         switch (event.getKey()) {
-            case KEY_LEFT:
-                backward();
+            case KEY_X:
+            case KEY_C:
+            case KEY_A:
+                //No need to repeat
                 break;
-            case KEY_RIGHT:
-                forward();
-                break;
-            case KEY_BACKSPACE:
-                backspace();
-                break;
-            case KEY_DELETE:
-                delete();
-                break;
+            default:
+                onKeyDown(new KeyEvent.KeyDownEvent(event.getComponent(),event.getKey(),event.getMode(),event.getModifiers()));
         }
     }
 
@@ -214,7 +252,7 @@ public class TextField extends Control {
             content = content.substring(0, start) + content.substring(end);
             len -= (end - start);
         }
-        if(text != null){
+        if(text != null && !text.isEmpty()){
             String s = (start <= content.length() ? content.substring(0, start) : "") + text;
             if(start < content.length())
                 s = s + content.substring(start);
@@ -275,6 +313,7 @@ public class TextField extends Control {
                 //createNewUndoRecord = true;
                 try {
                     replaceSelection(text);
+                    deselect();
                 } finally {
                     //createNewUndoRecord = false;
                 }

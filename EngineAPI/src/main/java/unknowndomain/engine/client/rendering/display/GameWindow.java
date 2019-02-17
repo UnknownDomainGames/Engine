@@ -8,6 +8,10 @@ public interface GameWindow {
 
     int getHeight();
 
+    float getContentScaleX();
+
+    float getContentScaleY();
+
     void setSize(int width, int height);
 
     Matrix4f projection();

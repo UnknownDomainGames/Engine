@@ -1,7 +1,10 @@
 package unknowndomain.engine.client.gui.rendering;
 
 import unknowndomain.engine.client.gui.component.TextField;
+import unknowndomain.engine.client.gui.internal.FontHelper;
 import unknowndomain.engine.client.gui.internal.Internal;
+import unknowndomain.engine.client.gui.text.Font;
+import unknowndomain.engine.util.Color;
 
 public class TextFieldRenderer extends RegionRenderer<TextField> {
 
@@ -24,15 +27,37 @@ public class TextFieldRenderer extends RegionRenderer<TextField> {
         }
         graphics.pushClipRect(px, py, pw, ph);
         graphics.setColor(textField.fontcolor().getValue());
-        graphics.setFont(textField.font().getValue());
-        float caretWidth = Internal.getContext().getFontHelper().computeTextWidth(textField.getTextInRange(0, textField.caret().get()), textField.font().getValue());
+        Font font = textField.font().getValue();
+        graphics.setFont(font);
+        FontHelper helper = Internal.getContext().getFontHelper();
+        float caretWidth = helper.computeTextWidth(textField.getTextInRange(0, textField.caret().get()), font);
+        float offset = Math.min(-(caretWidth - pw + px), 0);
+        Color selectionColor = Color.BLUE;
         if (textField.length() == 0) {
             graphics.drawText(textField.promptText().getValue(), 0, 0);
         } else {
-            graphics.drawText(textField.text().getValue(), Math.min(pw - px - caretWidth, 0), 0);
+            if(textField.selectedText().isEmpty()) {
+                graphics.drawText(textField.text().getValue(), offset, 0);
+            }else{
+                String b = textField.text().getValue().substring(0, textField.selection().getValue().getStart());
+                String s = textField.selectedText();
+                String a = textField.text().getValue().substring(textField.selection().getValue().getEnd());
+
+                graphics.setColor(selectionColor);
+                graphics.fillRect(helper.computeTextWidth(b, font) + offset, 0, helper.computeTextWidth(s, font), ph-py);
+                graphics.setColor(textField.fontcolor().getValue());
+                graphics.drawText(b, offset, 0);
+                graphics.setColor(textField.fontcolor().getValue().difference(selectionColor));
+                graphics.drawText(s, helper.computeTextWidth(b, font) + offset, 0);
+                graphics.setColor(textField.fontcolor().getValue());
+                graphics.drawText(a, helper.computeTextWidth(b+s, font) + offset, 0);
+            }
         }
         if (textField.focused().get() && System.currentTimeMillis() % 1000 < 500) {
-            graphics.fillRect(caretWidth - Math.min(pw - px - caretWidth, 0), 0, 1, ph - py);
+            if(textField.selection().isPresent() && textField.selection().getValue().isInRange(textField.caret().get())){
+                graphics.setColor(textField.fontcolor().getValue().difference(selectionColor));
+            }
+            graphics.fillRect(caretWidth + offset, 0, 1, ph - py);
         }
         graphics.popClipRect();
     }

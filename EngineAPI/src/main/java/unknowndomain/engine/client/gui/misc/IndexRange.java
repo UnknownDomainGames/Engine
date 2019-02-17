@@ -34,6 +34,10 @@ public class IndexRange {
         return end - start;
     }
 
+    public boolean isInRange(int index){
+        return start <= index && index < end;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if(obj == this)return true;

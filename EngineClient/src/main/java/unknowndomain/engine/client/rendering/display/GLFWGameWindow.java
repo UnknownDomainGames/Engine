@@ -4,11 +4,15 @@ import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryStack;
 import unknowndomain.engine.Platform;
+import unknowndomain.engine.util.RuntimeEnvironment;
 
 import java.io.PrintStream;
+import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 import static org.lwjgl.glfw.GLFW.*;
@@ -19,8 +23,14 @@ public class GLFWGameWindow implements GameWindow {
 
     private long windowId;
 
-    private int width;
-    private int height;
+    private int windowWidth;
+    private int windowHeight;
+    private int fboWidth;
+    private int fboHeight;
+
+    private float contentScaleX;
+    private float contentScaleY;
+
     private boolean resized = false;
     private Matrix4f projection;
 
@@ -38,24 +48,47 @@ public class GLFWGameWindow implements GameWindow {
 
     public GLFWGameWindow(int width, int height, String title) {
         this.title = title;
-        this.width = width;
-        this.height = height;
+        this.windowWidth = width;
+        this.windowHeight = height;
     }
 
     @Override
     public int getWidth() {
-        return width;
+        return fboWidth;
     }
 
     @Override
     public int getHeight() {
-        return height;
+        return fboHeight;
+    }
+
+    @Override
+    public float getContentScaleX() {
+        return contentScaleX;
+    }
+
+    @Override
+    public float getContentScaleY() {
+        return contentScaleY;
     }
 
     @Override
     public void setSize(int width, int height) {
-        this.width = width;
-        this.height = height;
+        this.fboWidth = width;
+        this.fboHeight = height;
+        try (MemoryStack memoryStack = MemoryStack.stackPush()) {
+            FloatBuffer f1 = memoryStack.mallocFloat(1);
+            FloatBuffer f2 = memoryStack.mallocFloat(1);
+
+            glfwGetWindowContentScale(windowId, f1,f2);
+
+            if(contentScaleX != f1.get(0) || contentScaleY != f2.get(0)){
+                contentScaleX = f1.get(0);
+                contentScaleY = f2.get(0);
+            }
+        }
+        this.windowWidth = Math.round(width / contentScaleX);
+        this.windowHeight = Math.round(height / contentScaleX);
         this.resized = true;
         glViewport(0, 0, width, height);
     }
@@ -63,7 +96,7 @@ public class GLFWGameWindow implements GameWindow {
     @Override
     public Matrix4f projection() {
         if (resized || projection == null) {
-            projection = new Matrix4f().perspective((float) (Math.toRadians(Math.max(1.0, Math.min(90.0, 60.0f)))), width / (float) height, 0.01f, 1000f);
+            projection = new Matrix4f().perspective((float) (Math.toRadians(Math.max(1.0, Math.min(90.0, 60.0f)))), windowWidth / (float) windowHeight, 0.01f, 1000f);
         }
         return projection;
     }
@@ -195,9 +228,17 @@ public class GLFWGameWindow implements GameWindow {
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
         initWindowHint();
-        windowId = glfwCreateWindow(width, height, title, NULL, NULL);
+        windowId = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
         if (!checkCreated())
             throw new RuntimeException("Failed to parse the GLFW window");
+        long moniter = glfwGetPrimaryMonitor();
+        try (MemoryStack memoryStack = MemoryStack.stackPush()) {
+            FloatBuffer f1 = memoryStack.mallocFloat(1);
+            FloatBuffer f2 = memoryStack.mallocFloat(1);
+            glfwGetMonitorContentScale(moniter,f1,f2);
+            contentScaleX = f1.get(0);
+            contentScaleY = f2.get(0);
+        }
         initCallbacks();
         setWindowPosCenter();
         glfwMakeContextCurrent(windowId);
@@ -240,6 +281,13 @@ public class GLFWGameWindow implements GameWindow {
         glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+        glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL_TRUE);
+        if(Platform.getEngineClient().getRuntimeEnvironment() != RuntimeEnvironment.DEPLOYMENT){
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+        }
+        if(Platform.getRunningOsPlatform() == org.lwjgl.system.Platform.MACOSX){
+            glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
+        }
     }
 
     private void initErrorCallback(PrintStream stream) {
@@ -247,9 +295,9 @@ public class GLFWGameWindow implements GameWindow {
     }
 
     private void setWindowPosCenter() {
-        GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        GLFWVidMode vidmode = Objects.requireNonNull(glfwGetVideoMode(glfwGetPrimaryMonitor()));
         // Center our window
-        glfwSetWindowPos(windowId, (vidmode.width() - width) / 2, (vidmode.height() - height) / 2);
+        glfwSetWindowPos(windowId, (vidmode.width() - windowWidth) / 2, (vidmode.height() - windowHeight) / 2);
     }
 
     private void enableVSync() {
@@ -260,6 +308,6 @@ public class GLFWGameWindow implements GameWindow {
         glfwShowWindow(windowId);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         // glViewport(0, 0, width, height);
-        getCursor().setCursorState(CursorState.DISABLED);
+        //getCursor().setCursorState(CursorState.DISABLED);
     }
 }

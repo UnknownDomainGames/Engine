@@ -89,6 +89,14 @@ public class Color {
         return (getAlphaAsInt() << 24) | toRGB();
     }
 
+    public Color invert(){
+        return difference(Color.WHITE);
+    }
+
+    public Color difference(Color color){
+        return new Color(Math.abs(color.red - this.red) * color.alpha + red * (1-color.alpha),Math.abs(color.green - this.green) * color.alpha + color.green * (1 - color.alpha),Math.abs(color.blue - this.blue) * color.alpha + blue * (1-color.alpha), alpha);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

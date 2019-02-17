@@ -49,4 +49,8 @@ public class Platform {
         }
         return (EngineClient) engine;
     }
+
+    public static org.lwjgl.system.Platform getRunningOsPlatform(){
+        return org.lwjgl.system.Platform.get();
+    }
 }

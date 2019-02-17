@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.rendering.gui.font;
 
 import org.lwjgl.stb.STBTTFontinfo;
+import unknowndomain.engine.Platform;
 
 import java.nio.ByteBuffer;
 
@@ -59,10 +60,10 @@ public class NativeTTFontParent {
     }
 
     public float getContentScaleX() {
-        return contentScaleX;
+        return Platform.isClient() ? Platform.getEngineClient().getWindow().getContentScaleX() : contentScaleX;
     }
 
     public float getContentScaleY() {
-        return contentScaleY;
+        return Platform.isClient() ? Platform.getEngineClient().getWindow().getContentScaleY() : contentScaleY;
     }
 }

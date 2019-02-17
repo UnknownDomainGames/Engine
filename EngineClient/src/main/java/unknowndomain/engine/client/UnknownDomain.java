@@ -1,6 +1,8 @@
 package unknowndomain.engine.client;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.system.windows.User32;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.Platform;
 
@@ -12,9 +14,18 @@ public class UnknownDomain {
     private static final String NAME = "UnknownDomain";
 
     public static void main(String[] args) {
-        if (SystemUtils.IS_OS_MAC) { // TODO: require review: where should we
-            // put this OS checking
-            System.setProperty("java.awt.headless", "true");
+        switch (Platform.getRunningOsPlatform()) {// TODO: require review: where should we put this OS checking
+            case MACOSX:
+                System.setProperty("java.awt.headless", "true");
+                break;
+            case WINDOWS:
+                if(User32.Functions.SetThreadDpiAwarenessContext != MemoryUtil.NULL){
+                    User32.SetThreadDpiAwarenessContext(User32.IsValidDpiAwarenessContext(User32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2) ? User32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 : User32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+                }
+                break;
+            case LINUX:
+
+                break;
         }
 
         Engine engine = new EngineClientImpl();
