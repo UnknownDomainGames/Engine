@@ -60,10 +60,10 @@ public class NativeTTFontParent {
     }
 
     public float getContentScaleX() {
-        return Platform.isClient() ? Platform.getEngineClient().getWindow().getContentScaleX() : contentScaleX;
+        return Platform.isClient() ? Platform.getEngineClient().getRenderContext().getWindow().getContentScaleX() : contentScaleX;
     }
 
     public float getContentScaleY() {
-        return Platform.isClient() ? Platform.getEngineClient().getWindow().getContentScaleY() : contentScaleY;
+        return Platform.isClient() ? Platform.getEngineClient().getRenderContext().getWindow().getContentScaleY() : contentScaleY;
     }
 }

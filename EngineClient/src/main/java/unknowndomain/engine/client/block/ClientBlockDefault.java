@@ -38,7 +38,8 @@ public class ClientBlockDefault extends RegistryEntry.Impl<ClientBlock> implemen
     @Override
     public boolean canRenderFace(BlockAccessor world, BlockPos pos, Facing facing) {
         BlockPos neighborPos = pos.offset(facing);
-        ClientBlock neighborBlock = Platform.getEngineClient().getCurrentGame().getClientContext().getClientBlockRegistry().getValue(world.getBlockId(neighborPos));
+        // FIXME:
+        ClientBlock neighborBlock = Platform.getEngineClient().getCurrentGame().getContext().getRegistryManager().getRegistry(ClientBlock.class).getValue(world.getBlockId(neighborPos));
         return neighborBlock.canRenderNeighborBlockFace(world, neighborPos, facing.opposite());
     }
 

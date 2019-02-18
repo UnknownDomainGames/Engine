@@ -8,9 +8,10 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetPath;
-import unknowndomain.engine.client.game.ClientContext;
+import unknowndomain.engine.client.block.ClientBlock;
+import unknowndomain.engine.client.game.GameClient;
+import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.light.DirectionalLight;
 import unknowndomain.engine.client.rendering.light.Light;
 import unknowndomain.engine.client.rendering.light.Material;
@@ -24,6 +25,7 @@ import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkStorage;
 
@@ -43,15 +45,18 @@ public class ChunkRenderer {
     private ObservableValue<ShaderProgram> chunkSolidShader;
     private ObservableValue<ShaderProgram> assimpShader;
 
-    private ClientContext context;
+    private RenderContext context;
 
     private ThreadPoolExecutor updateExecutor;
+
+    private Registry<ClientBlock> clientBlockRegistry;
 
     Light dirLight, ptLight;
     Material mat;
 
-    public void init(ClientContext context) {
+    public void init(GameClient gameClient, RenderContext context) {
         this.context = context;
+        this.clientBlockRegistry = gameClient.getContext().getRegistryManager().getRegistry(ClientBlock.class);
 
         chunkSolidShader = ShaderManager.INSTANCE.registerShader("chunk_solid",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "chunk_solid.vert"))
@@ -121,7 +126,7 @@ public class ChunkRenderer {
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", modelMatrix);
         ShaderManager.INSTANCE.setUniform("u_viewPos", context.getCamera().getPosition());
 
-        Platform.getEngineClient().getTextureManager().getTextureAtlas(BLOCK).getValue().bind();
+        context.getTextureManager().getTextureAtlas(BLOCK).getValue().bind();
         chunkSolidShader.setUniform("useDirectUV", true);
         dirLight.bind("dirLights[0]");
         //ptLight.bind(chunkSolidShader,"pointLights[0]");
@@ -136,14 +141,14 @@ public class ChunkRenderer {
         glDisable(GL11.GL_BLEND);
     }
 
+    public Registry<ClientBlock> getClientBlockRegistry() {
+        return clientBlockRegistry;
+    }
+
     public void dispose() {
         updateExecutor.shutdown();
 
         ShaderManager.INSTANCE.unregisterShader("chunk_solid");
-    }
-
-    public ClientContext getContext() {
-        return context;
     }
 
     public void upload(ChunkMesh chunkMesh, BufferBuilder buffer) {

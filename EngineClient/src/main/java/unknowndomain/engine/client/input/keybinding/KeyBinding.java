@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.input.keybinding;
 
 import org.apache.commons.lang3.Validate;
-import unknowndomain.engine.client.game.ClientContext;
+import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.registry.RegistryEntry;
 
@@ -23,15 +23,15 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
     private boolean active = false;
     private boolean pressed = false;
     /** Handles Single press of the key */
-    private final Consumer<ClientContext> keyStartHandler;
+    private final Consumer<GameClient> keyStartHandler;
     /** Handles keeping of the key */
-    private Optional<BiConsumer<ClientContext, Integer>> keepHandler;
+    private Optional<BiConsumer<GameClient, Integer>> keepHandler;
     /** Handles release of the key */
-    private Optional<BiConsumer<ClientContext, Integer>> endHandler;
+    private Optional<BiConsumer<GameClient, Integer>> endHandler;
     /** Time Elapsed while holding the key */
     private int timeElapsed;
 
-    private KeyBinding(Key defaultKey, @Nonnull Consumer<ClientContext> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
+    private KeyBinding(Key defaultKey, @Nonnull Consumer<GameClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
         Validate.notNull(keyStartHandler);
         this.keyStartHandler = keyStartHandler;
         this.key = defaultKey;
@@ -50,7 +50,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      * @param keyMods
      * @return
      */
-    public static KeyBinding create(String target, Key defaultKey, @Nonnull Consumer<ClientContext> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
+    public static KeyBinding create(String target, Key defaultKey, @Nonnull Consumer<GameClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
         return new KeyBinding(Key.getKeySafe(defaultKey), keyStartHandler, actionMode != null ? actionMode : ActionMode.PRESS, keyMods == null || keyMods.length == 0 ? KeyModifier.EMPTY : keyMods)
                 .localName(target);
     }
@@ -61,7 +61,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      * @param keepHandler Keep Action
      * @return This KeyBinding
      */
-    public KeyBinding keepAction(BiConsumer<ClientContext, Integer> keepHandler) {
+    public KeyBinding keepAction(BiConsumer<GameClient, Integer> keepHandler) {
         this.keepHandler = Optional.ofNullable(keepHandler);
         return this;
     }
@@ -72,7 +72,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      * @param keepHandler End Action
      * @return This KeyBinding
      */
-    public KeyBinding endAction(BiConsumer<ClientContext, Integer> endHandler) {
+    public KeyBinding endAction(BiConsumer<GameClient, Integer> endHandler) {
         this.endHandler = Optional.ofNullable(endHandler);
         return this;
     }
@@ -115,17 +115,17 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
         this.pressed = pressed;
     }
 
-    public void onKeyStart(ClientContext context) {
+    public void onKeyStart(GameClient context) {
         Validate.notNull(keyStartHandler);
         keyStartHandler.accept(context);
     }
 
-    public void onKeyKeep(ClientContext context) {
+    public void onKeyKeep(GameClient context) {
         onKeepable(context, keepHandler);
         timeElapsed++;
     }
 
-    public void onKeyEnd(ClientContext context) {
+    public void onKeyEnd(GameClient context) {
         onKeepable(context, endHandler);
         timeElapsed = 0;
     }
@@ -137,7 +137,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      * @param gameContext
      * @param handler
      */
-    private void onKeepable(ClientContext context, Optional<BiConsumer<ClientContext, Integer>> handler) {
+    private void onKeepable(GameClient context, Optional<BiConsumer<GameClient, Integer>> handler) {
         handler.ifPresent((handle) -> handle.accept(context, timeElapsed));
     }
 

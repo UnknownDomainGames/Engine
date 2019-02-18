@@ -6,7 +6,7 @@ import com.google.common.collect.Multimap;
 import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.Tickable;
-import unknowndomain.engine.client.game.ClientContext;
+import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.registry.Registry;
 
 import java.util.Collection;
@@ -28,24 +28,16 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
      * KeyBinding Registry
      */
     private final Registry<KeyBinding> registry;
-    private ClientContext gameContext;
+    private GameClient gameClient;
     /**
      * @Deprecated Not used.
      */
     @Deprecated
     private final Set<Key> pressedKey = new HashSet<>();
 
-    public KeyBindingManager(Registry<KeyBinding> keyBindingRegistry) {
-        registry = keyBindingRegistry;
-    }
-
-    /**
-     * Set the GameContext when a game starts
-     *
-     * @param context
-     */
-    public void setGameContext(ClientContext context) {
-        gameContext = context;
+    public KeyBindingManager(GameClient gameClient, Registry<KeyBinding> keyBindingRegistry) {
+        this.gameClient = gameClient;
+        this.registry = keyBindingRegistry;
     }
 
     /**
@@ -74,7 +66,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
     protected void handlePress(int code, int modifiers) {
         // TODO: Remove it, hard code.
-        if (Platform.getEngineClient().getGuiManager().isDisplayingScreen()) {
+        if (Platform.getEngineClient().getRenderContext().getGuiManager().isDisplayingScreen()) {
             return;
         }
 
@@ -92,7 +84,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
     protected void handleRelease(int code, int modifiers) {
         // TODO: Remove it, hard code.
-        if (Platform.getEngineClient().getGuiManager().isDisplayingScreen()) {
+        if (Platform.getEngineClient().getRenderContext().getGuiManager().isDisplayingScreen()) {
             return;
         }
 
@@ -155,13 +147,13 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
                 // state change
                 keyBinding.setActive(keyBinding.isPressed());
                 if (keyBinding.isActive()) {
-                    keyBinding.onKeyStart(gameContext);
+                    keyBinding.onKeyStart(gameClient);
                 } else {
-                    keyBinding.onKeyEnd(gameContext);
+                    keyBinding.onKeyEnd(gameClient);
                 }
             } else if (keyBinding.isActive()) {
                 // keep key
-                keyBinding.onKeyKeep(gameContext);
+                keyBinding.onKeyKeep(gameClient);
             }
         }
     }

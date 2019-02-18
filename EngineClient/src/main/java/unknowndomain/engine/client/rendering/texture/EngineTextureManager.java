@@ -62,6 +62,7 @@ public class EngineTextureManager implements TextureManager {
         }
     }
 
+    @Override
     public void reload() {
         for (Map.Entry<AssetPath, MutableValue<GLTexture>> entry : textures.entrySet()) {
             entry.getValue().ifPresent(GLTexture::dispose);

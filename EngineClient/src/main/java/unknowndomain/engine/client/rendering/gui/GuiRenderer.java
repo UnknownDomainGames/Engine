@@ -29,7 +29,6 @@ import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
-import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.util.Color;
 
 import java.io.IOException;
@@ -43,6 +42,9 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class GuiRenderer implements Renderer {
 
+    private GameWindow gameWindow;
+    private GuiManager guiManager;
+
     private ObservableValue<ShaderProgram> shader;
 
     private TTFontHelper fontHelper;
@@ -50,13 +52,11 @@ public class GuiRenderer implements Renderer {
 
     private DebugHUD debugHUD;
 
-    private GameWindow gameWindow;
-    private GuiManager guiManager;
-
     @Override
     public void init(RenderContext context) {
-        this.guiManager = Platform.getEngineClient().getGuiManager();
-        this.gameWindow = Platform.getEngineClient().getWindow();
+        this.guiManager = context.getGuiManager();
+        this.gameWindow = context.getWindow();
+        var textureManager = context.getTextureManager();
 
         shader = ShaderManager.INSTANCE.registerShader("gui_shader",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "gui.vert"))
@@ -92,12 +92,7 @@ public class GuiRenderer implements Renderer {
 
             @Override
             public ImageHelper getImageHelper() {
-                return new ImageHelper() {
-                    @Override
-                    public GLTexture getTexture(AssetPath path) {
-                        return Platform.getEngineClient().getTextureManager().getTextureDirect(path);
-                    }
-                };
+                return path -> textureManager.getTextureDirect(path);
             }
         });
 
@@ -112,7 +107,7 @@ public class GuiRenderer implements Renderer {
         textField.fieldheight().set(23);
         Button button = new Button("Button");
         button.buttonwidth().set(100);
-        button.setOnClick(mouseClickEvent -> Platform.getEngineClient().getGuiManager().closeScreen());
+        button.setOnClick(mouseClickEvent -> guiManager.closeScreen());
         box.getChildren().addAll(textField, button);
         Scene s = new Scene(box);
         guiManager.showScreen(s);

@@ -14,4 +14,6 @@ public interface TextureManager {
     ObservableValue<GLTexture> getTextureAtlas(TextureType type);
 
     void reloadTextureAtlas(TextureType type);
+
+    void reload();
 }

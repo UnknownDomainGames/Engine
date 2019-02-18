@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.gui;
 
 import unknowndomain.engine.Platform;
-import unknowndomain.engine.client.EngineClient;
+import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.util.UndoHistory;
 
 import java.util.HashMap;
@@ -11,14 +11,14 @@ public class EngineGuiManager implements GuiManager {
 
     //TODO: review on availability of customizing limit of history
     public static final int MAX_SCENE_HISTORY = 20;
-    private final EngineClient engine;
+    private final RenderContext context;
 
     private Map<String, Scene> huds;
     private Scene displayingScreen;
     private UndoHistory<Scene> sceneHistory;
 
-    public EngineGuiManager(EngineClient engine) {
-        this.engine = engine;
+    public EngineGuiManager(RenderContext context) {
+        this.context = context;
         huds = new HashMap<>();
         sceneHistory = new UndoHistory<>(MAX_SCENE_HISTORY);
     }
@@ -34,12 +34,12 @@ public class EngineGuiManager implements GuiManager {
     private void showScreenInternal(Scene scene) {
         pushToHistory();
         displayingScreen = scene;
-        engine.getWindow().addCharCallback(displayingScreen.charCallback);
-        engine.getWindow().addCursorCallback(displayingScreen.cursorCallback);
-        engine.getWindow().addKeyCallback(displayingScreen.keyCallback);
-        engine.getWindow().addMouseCallback(displayingScreen.mouseCallback);
-        engine.getWindow().addScrollCallback(displayingScreen.scrollCallback);
-        engine.getWindow().getCursor().showCursor();
+        context.getWindow().addCharCallback(displayingScreen.charCallback);
+        context.getWindow().addCursorCallback(displayingScreen.cursorCallback);
+        context.getWindow().addKeyCallback(displayingScreen.keyCallback);
+        context.getWindow().addMouseCallback(displayingScreen.mouseCallback);
+        context.getWindow().addScrollCallback(displayingScreen.scrollCallback);
+        context.getWindow().getCursor().showCursor();
     }
 
     private void pushToHistory() {
@@ -47,11 +47,11 @@ public class EngineGuiManager implements GuiManager {
             if (!incognito) {
                 sceneHistory.pushHistory(displayingScreen);
             }
-            engine.getWindow().removeCharCallback(displayingScreen.charCallback);
-            engine.getWindow().removeCursorCallback(displayingScreen.cursorCallback);
-            engine.getWindow().removeKeyCallback(displayingScreen.keyCallback);
-            engine.getWindow().removeMouseCallback(displayingScreen.mouseCallback);
-            engine.getWindow().removeScrollCallback(displayingScreen.scrollCallback);
+            context.getWindow().removeCharCallback(displayingScreen.charCallback);
+            context.getWindow().removeCursorCallback(displayingScreen.cursorCallback);
+            context.getWindow().removeKeyCallback(displayingScreen.keyCallback);
+            context.getWindow().removeMouseCallback(displayingScreen.mouseCallback);
+            context.getWindow().removeScrollCallback(displayingScreen.scrollCallback);
         }
     }
 
@@ -79,7 +79,7 @@ public class EngineGuiManager implements GuiManager {
     public void closeScreen() {
         pushToHistory();
         displayingScreen = null;
-        engine.getWindow().getCursor().disableCursor();
+        context.getWindow().getCursor().disableCursor();
     }
 
     @Override

@@ -37,7 +37,7 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
         buffer.begin(GL11.GL_TRIANGLES, true, true, true, true);
         while (blockPosIterator.hasNext()) {
             BlockPos pos = blockPosIterator.next();
-            ClientBlock block = chunkRenderer.getContext().getClientBlockRegistry().getValue(chunkCache.getBlockId(pos));
+            ClientBlock block = chunkRenderer.getClientBlockRegistry().getValue(chunkCache.getBlockId(pos));
             if (block.isVisible()) {
                 block.getRenderer().generate(block, chunkCache, pos, buffer);
             }

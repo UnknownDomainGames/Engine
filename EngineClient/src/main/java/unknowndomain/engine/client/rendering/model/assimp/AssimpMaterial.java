@@ -1,8 +1,6 @@
 package unknowndomain.engine.client.rendering.model.assimp;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.RegExUtils;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
@@ -12,7 +10,6 @@ import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.rendering.light.Material;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.regex.Pattern;
@@ -94,7 +91,7 @@ public class AssimpMaterial {
                 }
             } else {
                 //Promise: Loader now only search in texture/model/[FILENAME] folder
-                return Platform.getEngineClient().getTextureManager().getTextureDirect(AssetPath.of("texture", "model", FilenameUtils.getBaseName(filename), s));
+                return Platform.getEngineClient().getRenderContext().getTextureManager().getTextureDirect(AssetPath.of("texture", "model", FilenameUtils.getBaseName(filename), s));
             }
         }
         return GLTexture.EMPTY;

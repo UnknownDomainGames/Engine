@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.game;
 
 import com.google.common.collect.Lists;
-import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.EngineClient;
 import unknowndomain.engine.client.event.asset.AssetReloadEvent;
 import unknowndomain.engine.client.event.game.RendererRegisterEvent;
@@ -11,11 +10,9 @@ import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
-import unknowndomain.engine.client.rendering.texture.TextureTypes;
 import unknowndomain.engine.event.game.GameTerminationEvent;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.player.PlayerImpl;
 import unknowndomain.engine.player.Profile;
@@ -30,22 +27,19 @@ import java.util.UUID;
 
 public class GameClientStandalone extends GameServerFullAsync implements GameClient {
 
-    private KeyBindingManager keyBindingManager;
+    private final EngineClient engineClient;
 
-    private ClientContextImpl clientContext;
+    private KeyBindingManager keyBindingManager;
     private EntityController entityController;
 
     private WorldCommon world;
     private Player player;
 
-    private FixStepTicker.Dynamic ticker;
-
     private boolean stopped;
 
     public GameClientStandalone(EngineClient engine) {
         super(engine);
-
-        this.ticker = new FixStepTicker.Dynamic(this::clientTick, this::renderTick, FixStepTicker.CLIENT_TICK);
+        this.engineClient = engine;
     }
 
     /**
@@ -64,17 +58,18 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         return world;
     }
 
+    @Override
     public EntityController getEntityController() {
         return entityController;
     }
 
-    public KeyBindingManager getKeyBindingManager() {
-        return keyBindingManager;
+    @Override
+    public void setEntityController(EntityController controller) {
+        this.entityController = controller;
     }
 
-    @Override
-    public ClientContextImpl getClientContext() {
-        return clientContext;
+    public KeyBindingManager getKeyBindingManager() {
+        return keyBindingManager;
     }
 
     @Override
@@ -91,25 +86,28 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     protected void registerStage() {
         super.registerStage();
 
-        logger.info("Loading Client-only stuff!");
-        keyBindingManager = new KeyBindingManager(getContext().getRegistryManager().getRegistry(KeyBinding.class));
-        keyBindingManager.reload();
-        Platform.getEngineClient().getWindow().addKeyCallback(keyBindingManager::handleKey);
-        Platform.getEngineClient().getWindow().addMouseCallback(keyBindingManager::handleMouse);
+        var renderContext = engineClient.getRenderContext();
+        var window = renderContext.getWindow();
 
-        context.post(new AssetReloadEvent());
+        logger.info("Loading Client-only stuff!");
+
+        logger.info("Initializing key binding!");
+        keyBindingManager = new KeyBindingManager(this, context.getRegistryManager().getRegistry(KeyBinding.class));
+        keyBindingManager.reload();
+        window.addKeyCallback(keyBindingManager::handleKey);
+        window.addMouseCallback(keyBindingManager::handleMouse);
 
         List<Renderer> registeredRenderer = Lists.newArrayList();
         context.post(new RendererRegisterEvent(registeredRenderer));
 
-        clientContext = new ClientContextImpl(this, registeredRenderer, Platform.getEngineClient().getWindow(), player);
-        clientContext.initClient();
-        clientContext.setCamera(new FirstPersonCamera(player));
+        renderContext.setCamera(new FirstPersonCamera(player));
+
+        context.post(new AssetReloadEvent());
     }
 
     @Override
     protected void resourceStage() {
-        Platform.getEngineClient().getTextureManager().reloadTextureAtlas(TextureTypes.BLOCK);
+
     }
 
     @Override
@@ -123,13 +121,12 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         player.getControlledEntity().getPosition().set(0, 5, 0);
 
         entityController = new EntityCameraController(player);
-        clientContext.getWindow().addCursorCallback((xpos, ypos) -> {
-            if (clientContext.getWindow().getCursor().isHiddenCursor()) {
+        var window = engineClient.getRenderContext().getWindow();
+        window.addCursorCallback((xpos, ypos) -> {
+            if (window.getCursor().isHiddenCursor()) {
                 entityController.handleCursorMove(xpos, ypos);
             }
         });
-        // For now until we figure out how to setup games
-        getKeyBindingManager().setGameContext(clientContext);
 
         super.finishStage();
         logger.info("Game Ready!");
@@ -152,7 +149,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     @Override
     public void run() {
         super.run();
-        ticker.start(); // run to tick
     }
 
     @Override
@@ -162,9 +158,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         getEventBus().post(new GameTerminationEvent.Pre(this));
 
         super.terminate();
-        ticker.stop();
-        clientContext.dispose();
-        clientContext.getWindow().close();
 
         getEventBus().post(new GameTerminationEvent.Post(this));
 
@@ -172,8 +165,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     }
 
     private void clientTick() {
-        getKeyBindingManager().tick();
-        Platform.getEngineClient().getSoundManager().updateListener(clientContext.getCamera());
+        keyBindingManager.tick();
 //        Vector3f d = new Vector3f();
 //        a.position(a.getPosition().add(dir.mul(0.05f, d)));
 //        var p = a.getPosition();
@@ -182,16 +174,5 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 //            a.speed(dir);
 //        }
         // TODO upload particle physics here
-    }
-
-    /**
-     * Actual render call
-     *
-     * @param partialTick
-     */
-    private void renderTick(double partialTick) {
-        Platform.getEngineClient().getWindow().beginRender();
-        this.clientContext.render(partialTick);
-        Platform.getEngineClient().getWindow().endRender();
     }
 }

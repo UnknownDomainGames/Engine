@@ -38,8 +38,8 @@ public class WorldRenderer implements Renderer {
     @Override
     public void init(RenderContext context) {
         this.context = context;
-        chunkRenderer.init(context);
-        context.getGame().getContext().register(chunkRenderer);
+        chunkRenderer.init(null, context);
+//        context.getGame().getContext().register(chunkRenderer);
         worldShader =
                 ShaderManager.INSTANCE.registerShader("world_shader",
                         new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "world.vert"))
@@ -110,7 +110,7 @@ public class WorldRenderer implements Renderer {
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         ShaderManager.INSTANCE.setUniform("u_ProjMatrix", context.getWindow().projection());
-        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix((float) context.partialTick()));
+        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -126,7 +126,9 @@ public class WorldRenderer implements Renderer {
         buffer.pos(0, 0, 100).color(0, 0, 1).endVertex();
         tessellator.draw();
 
-        RayTraceBlockHit hit = context.getHit();
+        // TODO: Move it.
+//        RayTraceBlockHit hit = context.getBlockHit();
+        RayTraceBlockHit hit = null;
         if (hit != null) {
             float minX = hit.getPos().getX() - 0.001f, maxX = hit.getPos().getX() + 1.001f,
                     minY = hit.getPos().getY() - 0.001f, maxY = hit.getPos().getY() + 1.001f,

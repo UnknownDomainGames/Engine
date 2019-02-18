@@ -2,14 +2,12 @@ package unknowndomain.game;
 
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.block.ClientBlockAir;
 import unknowndomain.engine.client.block.ClientBlockDefault;
 import unknowndomain.engine.client.event.asset.AssetReloadEvent;
 import unknowndomain.engine.client.event.game.RendererRegisterEvent;
-import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.input.controller.MotionType;
 import unknowndomain.engine.client.input.keybinding.ActionMode;
 import unknowndomain.engine.client.input.keybinding.Key;
@@ -65,31 +63,31 @@ public final class DefaultGameMode {
         // TODO: almost everything is hardcoded... Fix when GameContext and
         // ClientContext is fixed
         registry.register(
-                KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
-                        .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.FORWARD, false)));
+                KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> c.getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
+                        .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.FORWARD, false)));
         registry.register(
-                KeyBinding.create("player.move.backward", Key.KEY_S, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.BACKWARD, true), ActionMode.PRESS)
-                        .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.BACKWARD, false)));
-        registry.register(KeyBinding.create("player.move.left", Key.KEY_A, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
-                .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.LEFT, false)));
-        registry.register(KeyBinding.create("player.move.right", Key.KEY_D, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
-                .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.RIGHT, false)));
-        registry.register(KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
-                .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.UP, false)));
+                KeyBinding.create("player.move.backward", Key.KEY_S, (c) -> c.getEntityController().handleMotion(MotionType.BACKWARD, true), ActionMode.PRESS)
+                        .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.BACKWARD, false)));
+        registry.register(KeyBinding.create("player.move.left", Key.KEY_A, (c) -> c.getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
+                .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.LEFT, false)));
+        registry.register(KeyBinding.create("player.move.right", Key.KEY_D, (c) -> c.getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
+                .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.RIGHT, false)));
+        registry.register(KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> c.getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
+                .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.UP, false)));
         registry.register(
-                KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
-                        .endAction((c, i) -> ((GameClientStandalone) c.getGame()).getEntityController().handleMotion(MotionType.DOWN, false)));
+                KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> c.getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
+                        .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.DOWN, false)));
         registry.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
-            RayTraceBlockHit hit = c.getHit();
-            if (hit != null) {
-                c.getClientWorld().setBlock(hit.getPos(), Blocks.AIR, null);
-            }
+//            RayTraceBlockHit hit = c.getHit();
+//            if (hit != null) {
+//                c.getWorld().setBlock(hit.getPos(), Blocks.AIR, null);
+//            }
         }, ActionMode.PRESS));
         registry.register(KeyBinding.create("player.mouse.r", Key.MOUSE_BUTTON_RIGHT, (c) -> {
-            RayTraceBlockHit hit = c.getHit();
-            if (hit != null) {
-                c.getClientWorld().setBlock(hit.getPos().offset(hit.getFace()), Blocks.DIRT, null);
-            }
+//            RayTraceBlockHit hit = c.getHit();
+//            if (hit != null) {
+//                c.getWorld().setBlock(hit.getPos().offset(hit.getFace()), Blocks.DIRT, null);
+//            }
         }, ActionMode.PRESS));
     }
 
@@ -98,7 +96,7 @@ public final class DefaultGameMode {
     public void assetLoad(AssetReloadEvent event) {
         AssetPath enginePath = AssetPath.of("engine");
         AssetPath blockTexturePath = AssetPath.of(enginePath, "texture", "block");
-        TextureManager textureManager = Platform.getEngineClient().getTextureManager();
+        TextureManager textureManager = Platform.getEngineClient().getRenderContext().getTextureManager();
         TextureUV side = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_side.png"), BLOCK);
         TextureUV top = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_top.png"), BLOCK);
         TextureUV bottom = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "dirt.png"), BLOCK);

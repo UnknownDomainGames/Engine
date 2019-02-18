@@ -12,14 +12,11 @@ import unknowndomain.engine.client.asset.source.AssetSource;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.gui.EngineGuiManager;
-import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.EngineRenderContext;
-import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
-import unknowndomain.engine.client.rendering.display.GameWindow;
+import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.gui.GuiRenderer;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
-import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.sound.ALSoundManager;
 import unknowndomain.engine.client.sound.EngineSoundManager;
 import unknowndomain.engine.event.AsmEventBus;
@@ -46,14 +43,11 @@ import static org.apache.commons.lang3.SystemUtils.*;
 
 public class EngineClientImpl implements EngineClient {
 
-    public static final int WINDOW_WIDTH = 854, WINDOW_HEIGHT = 480;
-
     private final Logger logger = LoggerFactory.getLogger("Engine");
 
     private RuntimeEnvironment runtimeEnvironment;
 
     private Thread clientThread;
-    private GLFWGameWindow window;
     private Profile playerProfile;
 
     private EventBus eventBus;
@@ -66,11 +60,12 @@ public class EngineClientImpl implements EngineClient {
     private EngineGuiManager guiManager;
 
     private EngineRenderContext renderContext;
+
     private Ticker ticker;
 
     private Disposer disposer;
 
-    private GameClientStandalone game;
+    private GameClient game;
 
     private boolean initialized = false;
     private boolean running = false;
@@ -95,7 +90,7 @@ public class EngineClientImpl implements EngineClient {
         initEngineClient();
 
         // Finish Stage
-        logger.info("Finishing Initialization!");
+        logger.info("Finishing initialization!");
         eventBus.post(new EngineEvent.InitializationComplete(this));
     }
 
@@ -103,28 +98,26 @@ public class EngineClientImpl implements EngineClient {
         logger.info("Initializing client engine!");
         disposer = new DisposerImpl();
 
-        logger.info("Initializing window!");
-        window = new GLFWGameWindow(WINDOW_WIDTH, WINDOW_HEIGHT, UnknownDomain.getName());
-        window.init();
-
         logger.info("Initializing asset!");
         engineAssetSource = EngineAssetSource.create();
         assetManager = new EngineAssetManager();
         assetManager.getSources().add(engineAssetSource);
         assetLoadManager = new EngineAssetLoadManager(assetManager);
 
-        textureManager = new EngineTextureManager();
+        logger.info("Initializing render context!");
+        renderContext = new EngineRenderContext(this);
+        renderContext.getRenderers().add(new GuiRenderer());
+
+        logger.info("Initializing audio context!");
         soundManager = new EngineSoundManager();
         soundManager.init();
-        guiManager = new EngineGuiManager(this);
+
         assetManager.getReloadListeners().add(() -> {
             ShaderManager.INSTANCE.reload();
-            textureManager.reload();
+            renderContext.getTextureManager().reload();
             soundManager.reload();
         });
 
-        renderContext = new EngineRenderContext(this);
-        renderContext.getRenderers().add(new GuiRenderer());
 
         ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), Ticker.CLIENT_TICK);
     }
@@ -154,7 +147,7 @@ public class EngineClientImpl implements EngineClient {
     }
 
     private void clientTick() {
-
+        soundManager.updateListener(renderContext.getCamera());
     }
 
     @Override
@@ -230,18 +223,13 @@ public class EngineClientImpl implements EngineClient {
     }
 
     @Override
-    public GameWindow getWindow() {
-        return window;
-    }
-
-    @Override
     public AssetSource getEngineAssetSource() {
         return engineAssetSource;
     }
 
     @Override
-    public GuiManager getGuiManager() {
-        return guiManager;
+    public RenderContext getRenderContext() {
+        return renderContext;
     }
 
     @Override
@@ -257,11 +245,6 @@ public class EngineClientImpl implements EngineClient {
     @Override
     public AssetManager getAssetManager() {
         return assetManager;
-    }
-
-    @Override
-    public TextureManager getTextureManager() {
-        return textureManager;
     }
 
     @Override
