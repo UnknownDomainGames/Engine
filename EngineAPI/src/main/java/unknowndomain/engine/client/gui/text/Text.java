@@ -4,6 +4,7 @@ import com.github.mouse0w0.lib4j.observable.value.MutableValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.gui.internal.Internal;
+import unknowndomain.engine.client.gui.misc.Alignment;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.rendering.TextRenderer;
 import unknowndomain.engine.util.Color;
@@ -13,7 +14,7 @@ public class Text extends Component {
     private final MutableValue<String> text = new SimpleMutableObjectValue<>();
     private final MutableValue<Font> font = new SimpleMutableObjectValue<>(Font.getDefaultFont());
     private final MutableValue<Color> color = new SimpleMutableObjectValue<>(Color.WHITE);
-    private final MutableValue<TextAlignment> textAlignment = new SimpleMutableObjectValue<>(TextAlignment.LEFT);
+    private final MutableValue<Alignment> textAlignment = new SimpleMutableObjectValue<>(new Alignment());
 
     public Text() {
         text.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
@@ -38,7 +39,7 @@ public class Text extends Component {
         return color;
     }
 
-    public MutableValue<TextAlignment> textAlignment() {
+    public MutableValue<Alignment> textAlignment() {
         return textAlignment;
     }
 

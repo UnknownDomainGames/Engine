@@ -14,6 +14,7 @@ import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.gui.Scene;
 import unknowndomain.engine.client.gui.component.Button;
 import unknowndomain.engine.client.gui.component.TextField;
+import unknowndomain.engine.client.gui.component.ToggleButton;
 import unknowndomain.engine.client.gui.internal.FontHelper;
 import unknowndomain.engine.client.gui.internal.ImageHelper;
 import unknowndomain.engine.client.gui.internal.Internal;
@@ -109,9 +110,11 @@ public class GuiRenderer implements Renderer {
         Button button = new Button("Button");
         button.buttonwidth().set(100);
         button.setOnClick(mouseClickEvent -> guiManager.closeScreen());
+        ToggleButton toggleButton = new ToggleButton("Toggle");
+        toggleButton.buttonwidth().set(100);
+        box.getChildren().addAll(textField, button, toggleButton);
         button.border().setValue(new Border(Color.GREEN,5f));
         button.buttonbackground().setValue(Background.fromColor(Color.RED));
-        box.getChildren().addAll(textField, button);
         Scene s = new Scene(box);
         guiManager.showScreen(s);
     }
