@@ -1,15 +1,19 @@
 package unknowndomain.engine.event;
 
+/**
+ * Every event class should implement this interface.
+ */
 public interface Event {
 
-    default boolean isCancellable() {
-        return this instanceof Cancellable;
-    }
+	default boolean isCancellable() {
+		return false;
+	}
 
-    public interface Cancellable extends Event {
+	default boolean isCancelled() {
+		return false;
+	}
 
-        boolean isCancelled();
-
-        void setCancelled(boolean cancelled);
-    }
+	default void setCancelled(boolean cancelled) {
+		throw new UnsupportedOperationException("Cannot cancel this event.");
+	}
 }

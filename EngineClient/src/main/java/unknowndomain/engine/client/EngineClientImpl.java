@@ -19,8 +19,9 @@ import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
 import unknowndomain.engine.client.sound.ALSoundManager;
 import unknowndomain.engine.client.sound.EngineSoundManager;
-import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
+import unknowndomain.engine.event.SimpleEventBus;
+import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.Ticker;
@@ -81,7 +82,7 @@ public class EngineClientImpl implements EngineClient {
         initEnvironment();
         printSystemInfo();
 
-        eventBus = new AsmEventBus();
+        eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
         playerProfile = new Profile(UUID.randomUUID(), 12);
 
         // TODO: Remove it

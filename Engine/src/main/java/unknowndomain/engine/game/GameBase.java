@@ -4,8 +4,9 @@ import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unknowndomain.engine.Engine;
-import unknowndomain.engine.event.AsmEventBus;
 import unknowndomain.engine.event.EventBus;
+import unknowndomain.engine.event.SimpleEventBus;
+import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.game.GameReadyEvent;
 import unknowndomain.engine.event.mod.RegistrationFinishEvent;
 import unknowndomain.engine.event.mod.RegistrationStartEvent;
@@ -43,7 +44,7 @@ public abstract class GameBase implements Game {
 
     public GameBase(Engine engine) {
         this.engine = engine;
-        this.eventBus = new AsmEventBus();
+        this.eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
     }
 
     /**

@@ -1,14 +1,39 @@
 package unknowndomain.engine.event;
 
+import java.util.function.Consumer;
+
 public interface EventBus {
 
     /**
-     * @param event
+     * Handle a event.
+     *
      * @return True if cancelled, false if not.
      */
     boolean post(Event event);
 
-    void register(Object listener);
+    /**
+     * Register listeners.
+     */
+    void register(Object target);
 
-    void unregister(Object listener);
+    /**
+     * Unregister listeners.
+     */
+    void unregister(Object target);
+
+    <T extends Event> void addListener(Consumer<T> consumer);
+
+    <T extends Event> void addListener(Order order, Consumer<T> consumer);
+
+    <T extends Event> void addListener(Order order, boolean receiveCancelled, Consumer<T> consumer);
+
+    <T extends Event> void addListener(Order order, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer);
+
+    <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Consumer<T> consumer);
+
+    <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Order order, Consumer<T> consumer);
+
+    <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Order order, boolean receiveCancelled, Consumer<T> consumer);
+
+    <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Order order, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer);
 }

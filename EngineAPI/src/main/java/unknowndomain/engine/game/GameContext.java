@@ -3,12 +3,15 @@ package unknowndomain.engine.game;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.event.EventBus;
+import unknowndomain.engine.event.GenericEvent;
+import unknowndomain.engine.event.Order;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @Deprecated
@@ -51,6 +54,46 @@ public class GameContext implements EventBus {
     @Override
     public void unregister(Object listener) {
         bus.unregister(listener);
+    }
+
+    @Override
+    public <T extends Event> void addListener(Consumer<T> consumer) {
+
+    }
+
+    @Override
+    public <T extends Event> void addListener(Order order, Consumer<T> consumer) {
+
+    }
+
+    @Override
+    public <T extends Event> void addListener(Order order, boolean receiveCancelled, Consumer<T> consumer) {
+
+    }
+
+    @Override
+    public <T extends Event> void addListener(Order order, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer) {
+
+    }
+
+    @Override
+    public <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Consumer<T> consumer) {
+
+    }
+
+    @Override
+    public <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Order order, Consumer<T> consumer) {
+
+    }
+
+    @Override
+    public <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Order order, boolean receiveCancelled, Consumer<T> consumer) {
+
+    }
+
+    @Override
+    public <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Order order, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer) {
+
     }
 
     public Block getBlockAir() {

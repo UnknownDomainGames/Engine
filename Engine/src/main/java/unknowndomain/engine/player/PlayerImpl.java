@@ -2,8 +2,6 @@ package unknowndomain.engine.player;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.event.Event;
-import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.World;
 
 public class PlayerImpl implements Player {
@@ -60,26 +58,5 @@ public class PlayerImpl implements Player {
     @Override
     public World getWorld() {
         return controlledEntity.getWorld();
-    }
-
-    public static class PlayerPlaceBlockEvent implements Event.Cancellable {
-        public final PlayerImpl player;
-        public final BlockPos position;
-        private boolean cancelled;
-
-        public PlayerPlaceBlockEvent(PlayerImpl player, BlockPos position) {
-            this.player = player;
-            this.position = position;
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return cancelled;
-        }
-
-        @Override
-        public void setCancelled(boolean cancelled) {
-            this.cancelled = cancelled;
-        }
     }
 }
