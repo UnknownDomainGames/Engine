@@ -7,8 +7,8 @@ import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
 import unknowndomain.engine.client.gui.event.MouseEvent;
-import unknowndomain.engine.client.gui.misc.Alignment;
 import unknowndomain.engine.client.gui.misc.Background;
+import unknowndomain.engine.client.gui.misc.Pos;
 import unknowndomain.engine.client.gui.rendering.ButtonRenderer;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.text.Font;
@@ -22,7 +22,7 @@ public class Button extends Control {
     private final MutableValue<String> text = new SimpleMutableObjectValue<>();
     private final MutableValue<Font> font = new SimpleMutableObjectValue<>(Font.getDefaultFont());
     private final MutableValue<Color> textColor = new SimpleMutableObjectValue<>(Color.WHITE);
-    private final MutableValue<Alignment> textAlignment = new SimpleMutableObjectValue<>(new Alignment());
+    private final MutableValue<Pos> textAlignment = new SimpleMutableObjectValue<>(Pos.CENTER);
 
     private final MutableFloatValue buttonWidth = new SimpleMutableFloatValue();
     private final MutableFloatValue buttonHeight = new SimpleMutableFloatValue();
@@ -115,7 +115,7 @@ public class Button extends Control {
         return font;
     }
 
-    public MutableValue<Alignment> textAlignment() {
+    public MutableValue<Pos> textAlignment() {
         return textAlignment;
     }
 

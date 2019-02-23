@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.gui.rendering;
 
 import unknowndomain.engine.client.gui.Component;
-import unknowndomain.engine.client.gui.misc.Alignment;
+import unknowndomain.engine.client.gui.misc.Pos;
 import unknowndomain.engine.client.gui.text.Text;
 
 public class TextRenderer implements ComponentRenderer {
@@ -14,11 +14,11 @@ public class TextRenderer implements ComponentRenderer {
         graphics.setColor(text.color().getValue());
         graphics.setFont(text.font().getValue());
 
-        Alignment alignment = text.textAlignment().getValue();
+        Pos alignment = text.textAlignment().getValue();
 
         float x = 0, y = 0;
 
-        switch (alignment.horizontal().getValue()) {
+        switch (alignment.getHpos()) {
             case RIGHT:
                 x = text.width().get() - text.prefWidth();
                 break;
@@ -29,7 +29,7 @@ public class TextRenderer implements ComponentRenderer {
                 break;
         }
 
-        switch (alignment.vertical().getValue()) {
+        switch (alignment.getVpos()) {
             case BOTTOM:
                 y = text.height().get() - text.prefHeight();
                 break;
