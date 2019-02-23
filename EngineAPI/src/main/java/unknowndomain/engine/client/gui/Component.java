@@ -3,6 +3,7 @@ package unknowndomain.engine.client.gui;
 import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
 import com.github.mouse0w0.lib4j.observable.collection.ObservableMap;
 import com.github.mouse0w0.lib4j.observable.value.*;
+import org.apache.commons.lang3.tuple.Pair;
 import unknowndomain.engine.client.gui.event.FocusEvent;
 import unknowndomain.engine.client.gui.event.KeyEvent;
 import unknowndomain.engine.client.gui.event.MouseEvent;
@@ -179,6 +180,15 @@ public abstract class Component {
     }
 
     public void onClick(MouseEvent.MouseClickEvent event) {
+    }
+
+    public Pair<Float,Float> relativePos(float x, float y){
+        if(parent().isEmpty()){
+            return Pair.of(x,y);
+        }
+        else{
+            return parent().getValue().relativePos(x - x().get(), y - y().get());
+        }
     }
 
 }

@@ -31,7 +31,7 @@ public class TextFieldRenderer extends RegionRenderer<TextField> {
         graphics.setFont(font);
         FontHelper helper = Internal.getContext().getFontHelper();
         float caretWidth = helper.computeTextWidth(textField.getTextInRange(0, textField.caret().get()), font);
-        float offset = Math.min(-(caretWidth - pw + px), 0);
+        float offset = textField.getLineScrollOffset();
         Color selectionColor = Color.BLUE;
         if (textField.length() == 0) {
             graphics.drawText(textField.promptText().getValue(), 0, 0);

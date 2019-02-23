@@ -4,6 +4,8 @@ import com.github.mouse0w0.lib4j.observable.value.*;
 import org.apache.commons.lang3.ArrayUtils;
 import unknowndomain.engine.client.gui.event.CharEvent;
 import unknowndomain.engine.client.gui.event.KeyEvent;
+import unknowndomain.engine.client.gui.event.MouseEvent;
+import unknowndomain.engine.client.gui.internal.Internal;
 import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.client.gui.misc.Border;
 import unknowndomain.engine.client.gui.misc.IndexRange;
@@ -42,7 +44,11 @@ public class TextField extends Control {
     private MutableIntValue anchor = new SimpleMutableIntValue(0);
     private MutableIntValue caret = new SimpleMutableIntValue(0);
 
-    private int lineScrollOffset;
+    private float lineScrollOffset = 0;
+
+    public float getLineScrollOffset() {
+        return lineScrollOffset;
+    }
 
     private BreakIterator charIterator;
     private BreakIterator wordIterator;
@@ -51,6 +57,7 @@ public class TextField extends Control {
         background().setValue(Background.fromColor(Color.fromRGBA(0x000000c8)));
         border().setValue(new Border(Color.WHITE, 2));
         padding().setValue(new Insets(3f));
+        caret().addChangeListener((observable, oldValue, newValue) -> updatePointer());
     }
 
     public MutableValue<Font> font() {
@@ -111,6 +118,9 @@ public class TextField extends Control {
             }
             insertText(Math.max(caret.get(), 0), String.valueOf(c));
             //positionCaret(caret.get() + 1);
+        }
+        if(event instanceof MouseEvent.MouseMoveEvent){
+            onMouseMove((MouseEvent.MouseMoveEvent) event);
         }
     }
 
@@ -178,6 +188,31 @@ public class TextField extends Control {
                 break;
             default:
                 onKeyDown(new KeyEvent.KeyDownEvent(event.getComponent(),event.getKey(),event.getMode(),event.getModifiers()));
+        }
+    }
+
+    @Override
+    public void onClick(MouseEvent.MouseClickEvent event) {
+        super.onClick(event);
+        positionCaret(getNearestMousePos(event.getPosX()));
+    }
+
+    private int getNearestMousePos(float posX) {
+        float adjustedX = posX - lineScrollOffset;
+        int posExclusive = 1;
+        float x = 0;
+        while(posExclusive <= length()){
+            x += Internal.getContext().getFontHelper().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().getValue());
+            if(x > adjustedX)
+                break;
+            posExclusive++;
+        }
+        return posExclusive - 1;
+    }
+
+    public void onMouseMove(MouseEvent.MouseMoveEvent event){
+        if(pressed.get()){
+            selectPositionCaret(getNearestMousePos(relativePos(((float) event.getNewPosX()), ((float) event.getNewPosY())).getLeft()));
         }
     }
 
@@ -464,6 +499,19 @@ public class TextField extends Control {
     public void positionCaret(int pos) {
         final int p = Math2.clamp(0, pos, length());
         selectRange(p, p);
+    }
+
+    private void updatePointer(){
+        var viewableWidth = width().get() - padding().getValue().getLeft() - padding().getValue().getRight();
+        var caretOffset = Internal.getContext().getFontHelper().computeTextWidth(getTextInRange(0, caret().get()), font().getValue());
+        var adjusted = caretOffset + lineScrollOffset;
+        if(viewableWidth < adjusted){
+            lineScrollOffset = viewableWidth - caretOffset;
+        }
+        else if(adjusted < 0){
+            lineScrollOffset = lineScrollOffset - adjusted;
+        }
+        lineScrollOffset = Math.min(lineScrollOffset,0);
     }
 
     /**

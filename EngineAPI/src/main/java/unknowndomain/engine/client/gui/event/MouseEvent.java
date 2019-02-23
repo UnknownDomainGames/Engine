@@ -26,6 +26,22 @@ public class MouseEvent extends ComponentEvent {
             this.newPosX = newPosX;
             this.newPosY = newPosY;
         }
+
+        public double getOldPosX() {
+            return oldPosX;
+        }
+
+        public double getOldPosY() {
+            return oldPosY;
+        }
+
+        public double getNewPosX() {
+            return newPosX;
+        }
+
+        public double getNewPosY() {
+            return newPosY;
+        }
     }
 
     public static class MouseMoveEvent extends MousePositionEvent{
@@ -70,6 +86,14 @@ public class MouseEvent extends ComponentEvent {
 
         public ActionMode getMode() {
             return mode;
+        }
+
+        public float getPosX() {
+            return posX;
+        }
+
+        public float getPosY() {
+            return posY;
         }
     }
 

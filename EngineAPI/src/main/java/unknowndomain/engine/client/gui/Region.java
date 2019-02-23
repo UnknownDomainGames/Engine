@@ -18,7 +18,7 @@ public class Region extends Container {
     private final MutableValue<Background> background = new SimpleMutableObjectValue<>(Background.NOTHING);
     private final MutableValue<Border> border = new SimpleMutableObjectValue<>();
 
-    public final MutableValue<Background> background() {
+    public MutableValue<Background> background() {
         return background;
     }
 

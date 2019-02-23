@@ -6,7 +6,6 @@ import com.github.mouse0w0.lib4j.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
-import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.client.gui.rendering.ButtonRenderer;
@@ -30,7 +29,6 @@ public class Button extends Control {
 
     private final MutableValue<Vector4fc> padding = new SimpleMutableObjectValue<>(new Vector4f(5,5,5,5));
 
-    //TODO: support image
     private final MutableValue<Background> background = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLACK));
     private final MutableValue<Background> hoveredBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLUE));
     private final MutableValue<Background> pressedBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.fromRGB(0x507fff)));
@@ -63,9 +61,13 @@ public class Button extends Control {
             rebuildText();
             requestParentLayout();
         });
-//        pressed.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
-//        disabled.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
-//        hover.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
+        pressed.addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        disabled.addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        hover.addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        background.addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        pressedBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        hoveredBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        disableBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
     }
 
     public Button(String text){
@@ -153,4 +155,20 @@ public class Button extends Control {
         return buttonHeight;
     }
 
+    public MutableValue<Background> buttonbackground() {
+        return background;
+    }
+
+    private void handleBackground(){
+        if(disabled().get()){
+                super.background().setValue(disabledbackground().getValue());
+            }
+            else if(pressed().get()){
+                super.background().setValue(pressbackground().getValue());
+            }else if(hover().get()){
+                super.background().setValue(hoverbackground().getValue());
+            }else{
+                super.background().setValue(buttonbackground().getValue());
+            }
+    }
 }

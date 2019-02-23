@@ -19,6 +19,7 @@ import unknowndomain.engine.client.gui.internal.ImageHelper;
 import unknowndomain.engine.client.gui.internal.Internal;
 import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.misc.Background;
+import unknowndomain.engine.client.gui.misc.Border;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.RenderContext;
@@ -108,6 +109,8 @@ public class GuiRenderer implements Renderer {
         Button button = new Button("Button");
         button.buttonwidth().set(100);
         button.setOnClick(mouseClickEvent -> guiManager.closeScreen());
+        button.border().setValue(new Border(Color.GREEN,5f));
+        button.buttonbackground().setValue(Background.fromColor(Color.RED));
         box.getChildren().addAll(textField, button);
         Scene s = new Scene(box);
         guiManager.showScreen(s);
