@@ -1,5 +1,6 @@
 package unknowndomain.engine.event.misc;
 
+import unknowndomain.engine.event.Cancellable;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.event.GenericEvent;
 import unknowndomain.engine.event.Order;
@@ -64,7 +65,7 @@ public class RegisteredListener {
     }
 
     private boolean checkCancel(Event event) {
-        return !event.isCancellable() || !event.isCancelled();
+        return !event.isCancellable() || !((Cancellable) event).isCancelled();
     }
 
     private boolean checkGeneric(Event event) {

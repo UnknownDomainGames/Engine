@@ -47,7 +47,7 @@ public class SimpleEventBus implements EventBus {
                 }
             }
         }
-        return event.isCancellable() && event.isCancelled();
+        return event.isCancellable() && ((Cancellable) event).isCancelled();
     }
 
     private ListenerList getListenerList(Class<?> eventType) {
