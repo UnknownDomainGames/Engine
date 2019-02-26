@@ -2,7 +2,6 @@ package unknowndomain.engine.client.rendering.util.buffer;
 
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 import unknowndomain.engine.math.Math2;
 import unknowndomain.engine.util.BufferPool;
@@ -15,6 +14,10 @@ public abstract class GLBuffer implements Disposable {
 
     public static GLBuffer createDirectBuffer(int size) {
         return new GLDirectBuffer(size);
+    }
+
+    public static GLBuffer createHeapBuffer(int size) {
+        return new GLHeapBuffer(size);
     }
 
     private ByteBuffer backingBuffer;
@@ -114,7 +117,7 @@ public abstract class GLBuffer implements Disposable {
     public void grow(int needLength) {
         if (needLength > backingBuffer.remaining()) {
             int oldSize = this.backingBuffer.capacity();
-            int newSize = oldSize + Math2.ceil(needLength, 0x200000);
+            int newSize = computeNewSize(oldSize, needLength);
             int oldPosition = backingBuffer.position();
             ByteBuffer newBuffer = createBuffer(newSize);
             this.backingBuffer.position(0);
@@ -124,6 +127,10 @@ public abstract class GLBuffer implements Disposable {
             this.backingBuffer = newBuffer;
             newBuffer.position(oldPosition);
         }
+    }
+
+    protected int computeNewSize(int oldSize, int needLength) {
+        return oldSize + Math2.ceil(needLength, 0x200000);
     }
 
     @Override
@@ -166,35 +173,54 @@ public abstract class GLBuffer implements Disposable {
 
     public GLBuffer put(byte... bytes) {
         int bits = bytes.length * Byte.BYTES;
-        if (bits % format.getStride() != 0) {
-            throw new IllegalArgumentException();
+        if (puttedByteCount == 0) {
+            if (bits % format.getStride() != 0) {
+                throw new IllegalArgumentException();
+            }
+            backingBuffer.put(bytes);
+            vertexCount += bits / format.getStride();
+        } else {
+            checkAndAddVertexBytes(bits);
+            backingBuffer.put(bytes);
         }
-        backingBuffer.put(bytes);
-        vertexCount += bits / format.getStride();
         return this;
     }
 
     public GLBuffer put(int... ints) {
         int bits = ints.length * Integer.BYTES;
-        if (bits % format.getStride() != 0) {
-            throw new IllegalArgumentException();
+        if (puttedByteCount == 0) {
+            if (bits % format.getStride() != 0) {
+                throw new IllegalArgumentException();
+            }
+            for (int i = 0; i < ints.length; i++) {
+                backingBuffer.putInt(ints[i]);
+            }
+            vertexCount += bits / format.getStride();
+        } else {
+            checkAndAddVertexBytes(bits);
+            for (int i = 0; i < ints.length; i++) {
+                backingBuffer.putInt(ints[i]);
+            }
         }
-        for (int i = 0; i < ints.length; i++) {
-            backingBuffer.putInt(ints[i]);
-        }
-        vertexCount += bits / format.getStride();
         return this;
     }
 
     public GLBuffer put(float... floats) {
         int bits = floats.length * Float.BYTES;
-        if (bits % format.getStride() != 0) {
-            throw new IllegalArgumentException();
+        if (puttedByteCount == 0) {
+            if (bits % format.getStride() != 0) {
+                throw new IllegalArgumentException();
+            }
+            for (int i = 0; i < floats.length; i++) {
+                backingBuffer.putFloat(floats[i]);
+            }
+            vertexCount += bits / format.getStride();
+        } else {
+            checkAndAddVertexBytes(bits);
+            for (int i = 0; i < floats.length; i++) {
+                backingBuffer.putFloat(floats[i]);
+            }
         }
-        for (int i = 0; i < floats.length; i++) {
-            backingBuffer.putFloat(floats[i]);
-        }
-        vertexCount += bits / format.getStride();
         return this;
     }
 
@@ -275,7 +301,7 @@ public abstract class GLBuffer implements Disposable {
         puttedByteCount += count;
     }
 
-    private static class GLDirectBuffer extends GLBuffer {
+    public static class GLDirectBuffer extends GLBuffer {
 
         public GLDirectBuffer(int size) {
             super(size);
@@ -289,6 +315,23 @@ public abstract class GLBuffer implements Disposable {
         @Override
         protected void freeBuffer(ByteBuffer buffer) {
             MemoryUtil.memFree(buffer);
+        }
+    }
+
+    public static class GLHeapBuffer extends GLBuffer {
+
+        public GLHeapBuffer(int size) {
+            super(size);
+        }
+
+        @Override
+        protected ByteBuffer createBuffer(int capacity) {
+            return ByteBuffer.allocate(capacity);
+        }
+
+        @Override
+        protected void freeBuffer(ByteBuffer buffer) {
+            // Don't need free buffer.
         }
     }
 }
