@@ -9,7 +9,7 @@ import unknowndomain.engine.entity.Entity;
 
 import java.util.Collections;
 
-public class DebugHUD extends VBox {
+public class GameDebugHUD extends VBox {
 
     private final Text fps;
     private final Text playerPosition;
@@ -22,7 +22,7 @@ public class DebugHUD extends VBox {
     private final Text lookingBlockPos;
     private final Text hitPos;
 
-    public DebugHUD() {
+    public GameDebugHUD() {
         fps = new Text();
         playerPosition = new Text();
         playerMotion = new Text();

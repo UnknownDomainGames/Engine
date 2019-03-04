@@ -9,7 +9,7 @@ import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.game.ClientContext;
 import unknowndomain.engine.client.gui.Container;
-import unknowndomain.engine.client.gui.DebugHUD;
+import unknowndomain.engine.client.gui.GameDebugHUD;
 import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.gui.Scene;
 import unknowndomain.engine.client.gui.component.Button;
@@ -52,7 +52,7 @@ public class GuiRenderer implements Renderer {
     private TTFontHelper fontHelper;
     private Graphics graphics;
 
-    private DebugHUD debugHUD;
+    private GameDebugHUD gameDebugHUD;
 
     @Override
     public void init(RenderContext context) {
@@ -98,8 +98,8 @@ public class GuiRenderer implements Renderer {
             }
         });
 
-        debugHUD = new DebugHUD();
-        guiManager.showHud("debug", new Scene(debugHUD));
+        gameDebugHUD = new GameDebugHUD();
+        guiManager.showHud("debug", new Scene(gameDebugHUD));
 
         VBox box = new VBox();
         box.background().setValue(new Background(new Color(0.1f, 0.1f, 0.1f, 0.9f)));
@@ -194,7 +194,7 @@ public class GuiRenderer implements Renderer {
         graphics.drawLine(middleX, middleY - 10, middleX, middleY + 10);
         graphics.drawLine(middleX - 10, middleY, middleX + 10, middleY);
 
-        debugHUD.update(context);
+        gameDebugHUD.update(context);
 
 //        testBlockRenderer();
     }
