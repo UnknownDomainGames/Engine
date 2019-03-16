@@ -15,7 +15,6 @@ import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
-import unknowndomain.engine.client.rendering.world.WorldRenderer;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.mod.RegistrationStartEvent;
 import unknowndomain.engine.event.mod.RegistryConstructionEvent;
@@ -112,7 +111,7 @@ public final class DefaultGameMode {
 
     @Listener
     public void rendererRegister(RendererRegisterEvent event) {
-        event.register(new WorldRenderer());
+//        event.register(new WorldRenderer());
 //        event.register(new GuiRenderer());
     }
 

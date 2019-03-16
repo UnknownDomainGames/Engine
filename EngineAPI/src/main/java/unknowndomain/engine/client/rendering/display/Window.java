@@ -1,8 +1,8 @@
 package unknowndomain.engine.client.rendering.display;
 
-import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 
-public interface GameWindow {
+public interface Window {
 
     int getWidth();
 
@@ -14,7 +14,7 @@ public interface GameWindow {
 
     void setSize(int width, int height);
 
-    Matrix4f projection();
+    Matrix4fc projection();
 
     boolean isResized();
 
@@ -27,6 +27,14 @@ public interface GameWindow {
     void close();
 
     boolean isClosed();
+
+    void show();
+
+    void hide();
+
+    void setVisible(boolean visable);
+
+    boolean isVisible();
 
     void addKeyCallback(KeyCallback callback);
 

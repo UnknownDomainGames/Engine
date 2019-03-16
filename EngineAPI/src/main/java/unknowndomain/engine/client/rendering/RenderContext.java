@@ -4,7 +4,7 @@ import org.joml.FrustumIntersection;
 import unknowndomain.engine.client.EngineClient;
 import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.camera.Camera;
-import unknowndomain.engine.client.rendering.display.GameWindow;
+import unknowndomain.engine.client.rendering.display.Window;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 
 import javax.annotation.Nonnull;
@@ -17,7 +17,7 @@ public interface RenderContext {
 
     boolean isRenderThread();
 
-    GameWindow getWindow();
+    Window getWindow();
 
     @Nonnull
     Camera getCamera();

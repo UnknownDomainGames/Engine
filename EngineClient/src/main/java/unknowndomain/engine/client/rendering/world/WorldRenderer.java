@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL15;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.rendering.RenderContext;
-import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
@@ -21,7 +20,7 @@ import unknowndomain.engine.util.Color;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class WorldRenderer implements Renderer {
+public class WorldRenderer {
 
     private final ChunkRenderer chunkRenderer = new ChunkRenderer();
 
@@ -35,7 +34,6 @@ public class WorldRenderer implements Renderer {
 
     private RenderContext context;
 
-    @Override
     public void init(RenderContext context) {
         this.context = context;
         chunkRenderer.init(null, context);
@@ -63,8 +61,7 @@ public class WorldRenderer implements Renderer {
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "shadow.frag")));
     }
 
-    @Override
-    public void render(double partial) {
+    public void render(float partial) {
         frameBufferShadow.bind();
         GL11.glViewport(0, 0, FrameBufferShadow.SHADOW_WIDTH, FrameBufferShadow.SHADOW_HEIGHT);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
@@ -181,7 +178,6 @@ public class WorldRenderer implements Renderer {
         }
     }
 
-    @Override
     public void dispose() {
         chunkRenderer.dispose();
 

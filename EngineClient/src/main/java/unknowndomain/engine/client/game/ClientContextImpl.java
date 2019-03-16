@@ -6,7 +6,7 @@ import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.Camera;
-import unknowndomain.engine.client.rendering.display.GameWindow;
+import unknowndomain.engine.client.rendering.display.Window;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.player.Player;
@@ -19,7 +19,7 @@ public class ClientContextImpl implements ClientContext {
 
     private final GameClientStandalone game;
     private final List<Renderer> renderers;
-    private final GameWindow window;
+    private final Window window;
 
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
     private final Player player;
@@ -28,7 +28,7 @@ public class ClientContextImpl implements ClientContext {
     private RayTraceBlockHit hit;
     private double partialTick;
 
-    public ClientContextImpl(GameClientStandalone game, List<Renderer> renderers, GameWindow window, Player player) {
+    public ClientContextImpl(GameClientStandalone game, List<Renderer> renderers, Window window, Player player) {
         this.game = game;
         this.renderers = renderers;
         this.window = window;
@@ -51,7 +51,7 @@ public class ClientContextImpl implements ClientContext {
     }
 
     @Override
-    public GameWindow getWindow() {
+    public Window getWindow() {
         return window;
     }
 
@@ -92,7 +92,7 @@ public class ClientContextImpl implements ClientContext {
         ShaderManager.INSTANCE.reload();
     }
 
-    public void render(double partial) {
+    public void render(float partial) {
         this.partialTick = partial;
         updateBlockHit();
         for (Renderer renderer : renderers) {

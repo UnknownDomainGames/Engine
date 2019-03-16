@@ -25,7 +25,7 @@ import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Renderer;
-import unknowndomain.engine.client.rendering.display.GameWindow;
+import unknowndomain.engine.client.rendering.display.Window;
 import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
@@ -44,7 +44,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class GuiRenderer implements Renderer {
 
-    private GameWindow gameWindow;
+    private Window window;
     private GuiManager guiManager;
 
     private ObservableValue<ShaderProgram> shader;
@@ -57,7 +57,7 @@ public class GuiRenderer implements Renderer {
     @Override
     public void init(RenderContext context) {
         this.guiManager = context.getGuiManager();
-        this.gameWindow = context.getWindow();
+        this.window = context.getWindow();
         var textureManager = context.getTextureManager();
 
         shader = ShaderManager.INSTANCE.registerShader("gui_shader",
@@ -120,7 +120,7 @@ public class GuiRenderer implements Renderer {
     }
 
     @Override
-    public void render(double partial) {
+    public void render(float partial) {
         startRender();
 
         // render scene
@@ -156,7 +156,7 @@ public class GuiRenderer implements Renderer {
         glEnable(GL_POLYGON_SMOOTH);
         glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
-        int width = gameWindow.getWidth(), height = gameWindow.getHeight();
+        int width = window.getWidth(), height = window.getHeight();
         ShaderManager.INSTANCE.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
         ShaderManager.INSTANCE.setUniform("u_WindowSize", new Vector2f(width, height));
@@ -171,8 +171,8 @@ public class GuiRenderer implements Renderer {
     }
 
     private void renderScene(Scene scene) {
-        if (gameWindow.isResized()) {
-            scene.setSize(gameWindow.getWidth(), gameWindow.getHeight());
+        if (window.isResized()) {
+            scene.setSize(window.getWidth(), window.getHeight());
         }
 
         scene.update();

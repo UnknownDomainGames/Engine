@@ -10,5 +10,5 @@ public interface Renderer extends Disposable {
 
     void init(RenderContext context);
 
-    void render(double partial);
+    void render(float partial);
 }

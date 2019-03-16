@@ -3,6 +3,9 @@ package unknowndomain.engine.client.rendering;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 import org.slf4j.Logger;
 import unknowndomain.engine.client.EngineClient;
 import unknowndomain.engine.client.UnknownDomain;
@@ -10,8 +13,8 @@ import unknowndomain.engine.client.gui.EngineGuiManager;
 import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.camera.SimpleCamera;
-import unknowndomain.engine.client.rendering.display.GLFWGameWindow;
-import unknowndomain.engine.client.rendering.display.GameWindow;
+import unknowndomain.engine.client.rendering.display.GLFWWindow;
+import unknowndomain.engine.client.rendering.display.Window;
 import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.util.Disposable;
@@ -31,7 +34,7 @@ public class EngineRenderContext implements RenderContext, Disposable {
     private final List<Renderer> renderers = new LinkedList<>();
 
     private Thread renderThread;
-    private GLFWGameWindow window;
+    private GLFWWindow window;
     private TextureManager textureManager;
     private GuiManager guiManager;
 
@@ -59,7 +62,7 @@ public class EngineRenderContext implements RenderContext, Disposable {
     }
 
     @Override
-    public GameWindow getWindow() {
+    public Window getWindow() {
         return window;
     }
 
@@ -105,8 +108,12 @@ public class EngineRenderContext implements RenderContext, Disposable {
         this.renderThread = renderThread;
 
         logger.info("Initializing window!");
-        window = new GLFWGameWindow(WINDOW_WIDTH, WINDOW_HEIGHT, UnknownDomain.getName());
+        window = new GLFWWindow(WINDOW_WIDTH, WINDOW_HEIGHT, UnknownDomain.getName());
         window.init();
+
+        initGL();
+
+        window.show();
 
         textureManager = new EngineTextureManager();
         guiManager = new EngineGuiManager(this);
@@ -114,6 +121,22 @@ public class EngineRenderContext implements RenderContext, Disposable {
         camera = new SimpleCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
 
         initRenderer();
+    }
+
+    private void initGL() {
+        logger.info("Initializing OpenGL context!");
+
+        GL.createCapabilities();
+
+        logger.info("----- OpenGL Information -----");
+        logger.info("\tGL_VENDOR: {}", GL11.glGetString(GL11.GL_VENDOR));
+        logger.info("\tGL_RENDERER: {}", GL11.glGetString(GL11.GL_RENDERER));
+        logger.info("\tGL_VERSION: {}", GL11.glGetString(GL11.GL_VERSION));
+        logger.info("\tGL_EXTENSIONS: {}", GL11.glGetString(GL11.GL_EXTENSIONS));
+        logger.info("\tGL_SHADING_LANGUAGE_VERSION: {}", GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
+        logger.info("------------------------------");
+
+        GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     public void initRenderer() {

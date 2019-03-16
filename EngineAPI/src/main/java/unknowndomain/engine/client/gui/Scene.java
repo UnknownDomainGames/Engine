@@ -11,7 +11,7 @@ import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.client.input.keybinding.ActionMode;
 import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.client.input.keybinding.KeyModifier;
-import unknowndomain.engine.client.rendering.display.GameWindow;
+import unknowndomain.engine.client.rendering.display.Window;
 
 import java.util.List;
 import java.util.Objects;
@@ -72,7 +72,7 @@ public class Scene {
     private double lastPosX = Double.NaN;
     private double lastPosY = Double.NaN;
 
-    public final GameWindow.CursorCallback cursorCallback = (xpos, ypos) -> {
+    public final Window.CursorCallback cursorCallback = (xpos, ypos) -> {
         if(!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)){
             var old = root.getPointingComponents((float)lastPosX,(float)lastPosY);
             var n = root.getPointingComponents((float)xpos,(float)ypos);
@@ -87,7 +87,7 @@ public class Scene {
         lastPosY = ypos;
     };
 
-    public final GameWindow.MouseCallback mouseCallback = (button, action, modifiers) -> {
+    public final Window.MouseCallback mouseCallback = (button, action, modifiers) -> {
         if(!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)){
             var list = root.getPointingComponents((float)lastPosX,(float)lastPosY);
             if(action == GLFW.GLFW_PRESS) {
@@ -103,11 +103,11 @@ public class Scene {
         }
     };
 
-    public final GameWindow.ScrollCallback scrollCallback = (xoffset, yoffset) -> {
+    public final Window.ScrollCallback scrollCallback = (xoffset, yoffset) -> {
 
     };
 
-    public final GameWindow.KeyCallback keyCallback = (key, scancode, action, mods) -> {
+    public final Window.KeyCallback keyCallback = (key, scancode, action, mods) -> {
         root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).forEach(component -> {
             if(action == GLFW.GLFW_PRESS){
                 component.handleEvent(new KeyEvent.KeyDownEvent(component,Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
@@ -121,7 +121,7 @@ public class Scene {
         });
     };
 
-    public final GameWindow.CharCallback charCallback = c -> {
+    public final Window.CharCallback charCallback = c -> {
         root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(component,c)));
     };
 }

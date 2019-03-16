@@ -14,6 +14,7 @@ import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.gui.EngineGuiManager;
 import unknowndomain.engine.client.rendering.EngineRenderContext;
 import unknowndomain.engine.client.rendering.RenderContext;
+import unknowndomain.engine.client.rendering.game3d.Game3DRenderer;
 import unknowndomain.engine.client.rendering.gui.GuiRenderer;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
@@ -107,6 +108,7 @@ public class EngineClientImpl implements EngineClient {
 
         logger.info("Initializing render context!");
         renderContext = new EngineRenderContext(this);
+        renderContext.getRenderers().add(new Game3DRenderer());
         renderContext.getRenderers().add(new GuiRenderer());
 
         logger.info("Initializing audio context!");
@@ -118,7 +120,6 @@ public class EngineClientImpl implements EngineClient {
             renderContext.getTextureManager().reload();
             soundManager.reload();
         });
-
 
         ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), Ticker.CLIENT_TICK);
     }

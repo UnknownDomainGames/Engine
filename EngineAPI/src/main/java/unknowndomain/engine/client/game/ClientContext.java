@@ -4,7 +4,7 @@ import org.joml.FrustumIntersection;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.camera.Camera;
-import unknowndomain.engine.client.rendering.display.GameWindow;
+import unknowndomain.engine.client.rendering.display.Window;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Registry;
@@ -19,7 +19,7 @@ public interface ClientContext {
 
     void setCamera(Camera camera);
 
-    GameWindow getWindow();
+    Window getWindow();
 
     @Deprecated
     int getFps();
