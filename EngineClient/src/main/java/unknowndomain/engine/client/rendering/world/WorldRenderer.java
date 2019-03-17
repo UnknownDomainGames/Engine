@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
-import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
@@ -16,11 +15,14 @@ import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.util.*;
 import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
-import unknowndomain.engine.util.Color;
+import unknowndomain.engine.event.Listener;
+import unknowndomain.engine.event.game.GameStartEvent;
+import unknowndomain.engine.event.game.GameTerminationEvent;
+import unknowndomain.engine.util.Disposable;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class WorldRenderer {
+public class WorldRenderer implements Disposable {
 
     private final ChunkRenderer chunkRenderer = new ChunkRenderer();
 
@@ -36,7 +38,7 @@ public class WorldRenderer {
 
     public void init(RenderContext context) {
         this.context = context;
-        chunkRenderer.init(null, context);
+        chunkRenderer.init(context);
 //        context.getGame().getContext().register(chunkRenderer);
         worldShader =
                 ShaderManager.INSTANCE.registerShader("world_shader",
@@ -74,7 +76,7 @@ public class WorldRenderer {
         var lightSpaceMat = new Matrix4f();
         lightProj.mul(lightView, lightSpaceMat);
 
-        ShaderManager.INSTANCE.setUniform("u_lightSpace", lightSpaceMat);
+        ShaderManager.INSTANCE.setUniform("u_LightSpace", lightSpaceMat);
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
         GL11.glCullFace(GL_FRONT);
         chunkRenderer.render();
@@ -110,6 +112,7 @@ public class WorldRenderer {
         ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
 
+        // TODO: Move it to CrossHair HUD
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         ShaderManager.INSTANCE.setUniform("u_UsingColor", true);
@@ -123,43 +126,6 @@ public class WorldRenderer {
         buffer.pos(0, 0, 100).color(0, 0, 1).endVertex();
         tessellator.draw();
 
-        // TODO: Move it.
-//        RayTraceBlockHit hit = context.getBlockHit();
-        RayTraceBlockHit hit = null;
-        if (hit != null) {
-            float minX = hit.getPos().getX() - 0.001f, maxX = hit.getPos().getX() + 1.001f,
-                    minY = hit.getPos().getY() - 0.001f, maxY = hit.getPos().getY() + 1.001f,
-                    minZ = hit.getPos().getZ() - 0.001f, maxZ = hit.getPos().getZ() + 1.001f;
-            buffer.begin(GL11.GL_LINES, true, true, false);
-            buffer.pos(minX, minY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, minY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, minY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, minY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, minY, maxZ).color(Color.WHITE).endVertex();
-
-            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, minY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).endVertex();
-
-            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, minY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).endVertex();
-
-            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, minY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, minY, minZ).color(Color.WHITE).endVertex();
-            tessellator.draw();
-        }
         frameBuffer.bind();
         glEnable(GL_DEPTH_TEST);
         frameBuffer.blitFrom(frameBufferMultisampled);
@@ -184,5 +150,15 @@ public class WorldRenderer {
         ShaderManager.INSTANCE.unregisterShader("world_shader");
         ShaderManager.INSTANCE.unregisterShader("frame_buffer_shader");
         ShaderManager.INSTANCE.unregisterShader("shadow_shader");
+    }
+
+    @Listener
+    public void onGameStart(GameStartEvent.Post event) {
+
+    }
+
+    @Listener
+    public void onGameTermination(GameTerminationEvent.Pre event) {
+
     }
 }

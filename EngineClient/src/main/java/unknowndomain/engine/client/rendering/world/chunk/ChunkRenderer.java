@@ -4,13 +4,13 @@ import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
-import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.light.DirectionalLight;
 import unknowndomain.engine.client.rendering.light.Light;
@@ -26,6 +26,7 @@ import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.Registry;
+import unknowndomain.engine.util.Disposable;
 import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkStorage;
 
@@ -37,7 +38,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 import static unknowndomain.engine.world.chunk.ChunkConstants.*;
 
-public class ChunkRenderer {
+public class ChunkRenderer implements Disposable {
 
     private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
@@ -54,9 +55,9 @@ public class ChunkRenderer {
     Light dirLight, ptLight;
     Material mat;
 
-    public void init(GameClient gameClient, RenderContext context) {
+    public void init(RenderContext context) {
         this.context = context;
-        this.clientBlockRegistry = gameClient.getContext().getRegistryManager().getRegistry(ClientBlock.class);
+//        this.clientBlockRegistry = gameClient.getContext().getRegistryManager().getRegistry(ClientBlock.class);
 
         chunkSolidShader = ShaderManager.INSTANCE.registerShader("chunk_solid",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "chunk_solid.vert"))
@@ -119,7 +120,7 @@ public class ChunkRenderer {
         glEnable(GL11.GL_TEXTURE_2D);
         glEnable(GL11.GL_DEPTH_TEST);
 
-        Matrix4f projMatrix = context.getWindow().projection();
+        Matrix4fc projMatrix = context.getWindow().projection();
         Matrix4f modelMatrix = new Matrix4f().setTranslation(0, 0, 0);
         ShaderManager.INSTANCE.setUniform("u_ProjMatrix", projMatrix);
         ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());

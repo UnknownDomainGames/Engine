@@ -14,4 +14,6 @@ public interface GameClient extends Game {
     EntityController getEntityController();
 
     void setEntityController(EntityController controller);
+
+    void clientTick();
 }

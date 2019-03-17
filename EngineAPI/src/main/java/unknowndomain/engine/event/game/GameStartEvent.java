@@ -2,20 +2,19 @@ package unknowndomain.engine.event.game;
 
 import unknowndomain.engine.game.Game;
 
-public class GameTerminationEvent extends GameEvent {
-
-    private GameTerminationEvent(Game game) {
+public class GameStartEvent extends GameEvent {
+    private GameStartEvent(Game game) {
         super(game);
     }
 
-    public static class Pre extends GameTerminationEvent {
+    public static class Pre extends GameStartEvent {
 
         public Pre(Game game) {
             super(game);
         }
     }
 
-    public static class Post extends GameTerminationEvent {
+    public static class Post extends GameStartEvent {
 
         public Post(Game game) {
             super(game);

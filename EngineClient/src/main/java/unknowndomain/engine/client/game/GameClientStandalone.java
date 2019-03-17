@@ -164,7 +164,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         logger.info("Game terminated.");
     }
 
-    private void clientTick() {
+    public void clientTick() {
         keyBindingManager.tick();
 //        Vector3f d = new Vector3f();
 //        a.position(a.getPosition().add(dir.mul(0.05f, d)));

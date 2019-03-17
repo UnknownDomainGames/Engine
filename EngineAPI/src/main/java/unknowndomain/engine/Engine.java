@@ -29,6 +29,8 @@ public interface Engine {
 
     boolean isTerminated();
 
+    void addShutdownListener(Runnable runnable);
+
     /**
      * Initialize the Engine. Load all mods and complete registration
      */
@@ -38,19 +40,11 @@ public interface Engine {
 
     EventBus getEventBus();
 
-    /**
-     * Start a new game, each engine only support one game at the time?
-     */
-    @Deprecated
-    void startGame();
-
     void startGame(Game game);
 
     Game getCurrentGame();
 
-    default boolean isPlaying() {
-        return getCurrentGame() != null;
-    }
+    boolean isPlaying();
 
     // TODO: client should add player profile manager here, to perform login,
     // logout, fetch skin and other operation

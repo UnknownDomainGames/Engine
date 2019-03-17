@@ -10,7 +10,6 @@ import unknowndomain.engine.client.asset.EngineAssetSource;
 import unknowndomain.engine.client.asset.loader.AssetLoadManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
 import unknowndomain.engine.client.game.GameClient;
-import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.gui.EngineGuiManager;
 import unknowndomain.engine.client.rendering.EngineRenderContext;
 import unknowndomain.engine.client.rendering.RenderContext;
@@ -24,6 +23,7 @@ import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.SimpleEventBus;
 import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.engine.EngineEvent;
+import unknowndomain.engine.event.game.GameStartEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.Ticker;
 import unknowndomain.engine.player.Profile;
@@ -38,7 +38,9 @@ import java.lang.management.RuntimeMXBean;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.SystemUtils.*;
@@ -72,6 +74,8 @@ public class EngineClientImpl implements EngineClient {
     private boolean initialized = false;
     private boolean running = false;
     private boolean terminated = false;
+
+    private final List<Runnable> shutdownListeners = new LinkedList<>();
 
     @Override
     public void initEngine() {
@@ -114,6 +118,7 @@ public class EngineClientImpl implements EngineClient {
         logger.info("Initializing audio context!");
         soundManager = new EngineSoundManager();
         soundManager.init();
+        addShutdownListener(soundManager::dispose);
 
         assetManager.getReloadListeners().add(() -> {
             ShaderManager.INSTANCE.reload();
@@ -142,14 +147,20 @@ public class EngineClientImpl implements EngineClient {
 
         clientThread = Thread.currentThread();
         renderContext.init(clientThread);
+        addShutdownListener(renderContext::dispose);
 
         assetManager.reload();
 
+        addShutdownListener(ticker::stop);
         ticker.run();
     }
 
     private void clientTick() {
-        soundManager.updateListener(renderContext.getCamera());
+        if (isPlaying()) { // TODO: Remove it.
+            game.clientTick();
+        }
+
+        soundManager.updateListener(renderContext.getCamera()); // TODO: Fix it.
     }
 
     @Override
@@ -176,14 +187,11 @@ public class EngineClientImpl implements EngineClient {
         logger.info("Terminating Engine!");
         terminated = true;
 
-        if (game != null) {
+        if (isPlaying()) {
             game.terminate();
         }
 
-        ticker.stop();
-
-        soundManager.dispose();
-
+        shutdownListeners.forEach(Runnable::run);
         logger.info("Engine terminated!");
     }
 
@@ -193,20 +201,34 @@ public class EngineClientImpl implements EngineClient {
     }
 
     @Override
-    public void startGame() {
-        // prepare
-        game = new GameClientStandalone(this);
-        game.run();
+    public void addShutdownListener(Runnable runnable) {
+        shutdownListeners.add(runnable);
     }
 
     @Override
     public void startGame(Game game) {
+        if (isPlaying()) {
+            throw new IllegalStateException("Game is running");
+        }
 
+        if (!(game instanceof GameClient)) {
+            throw new IllegalArgumentException("Game must be GameClient");
+        }
+
+        eventBus.post(new GameStartEvent.Pre(game));
+        this.game = (GameClient) Objects.requireNonNull(game);
+        game.run();
+        eventBus.post(new GameStartEvent.Post(game));
     }
 
     @Override
     public GameClient getCurrentGame() {
         return game;
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return game != null && !game.isTerminated();
     }
 
     @Override
@@ -257,14 +279,14 @@ public class EngineClientImpl implements EngineClient {
     private void printSystemInfo() {
         Logger logger = Platform.getLogger();
         logger.info("----- System Information -----");
-        logger.info("\tOperating System: " + OS_NAME + " (" + OS_ARCH + ") version " + OS_VERSION);
-        logger.info("\tJava Version: " + JAVA_VERSION + ", " + JAVA_VENDOR);
-        logger.info("\tJVM Information: " + JAVA_VM_NAME + " (" + JAVA_VM_INFO + "), " + JAVA_VM_VENDOR);
+        logger.info("\tOperating System: {} ({}) version {}", OS_NAME, OS_ARCH, OS_VERSION);
+        logger.info("\tJava Version: {}, {}", JAVA_VERSION, JAVA_VENDOR);
+        logger.info("\tJVM Information: {} ({}), {}", JAVA_VM_NAME, JAVA_VM_INFO, JAVA_VM_VENDOR);
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
         long maxMemory = runtime.maxMemory();
-        logger.info("\tMax Memory: " + maxMemory + " bytes (" + maxMemory / 1024L / 1024L + " MB)");
-        logger.info("\tTotal Memory: " + totalMemory + " bytes (" + totalMemory / 1024L / 1024L + " MB)");
+        logger.info("\tMax Memory: {} bytes ({} MB)", maxMemory, maxMemory / 1024L / 1024L);
+        logger.info("\tTotal Memory: {} bytes ({} MB)", totalMemory, totalMemory / 1024L / 1024L);
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         List<String> jvmFlags = runtimeMXBean.getInputArguments();
         StringBuilder formattedFlags = new StringBuilder();
@@ -274,9 +296,9 @@ public class EngineClientImpl implements EngineClient {
             }
             formattedFlags.append(flag);
         }
-        logger.info("\tJVM Flags (" + jvmFlags.size() + " totals): " + formattedFlags.toString());
-        logger.info("\tEngine Version: " + Platform.getVersion());
-        logger.info("\tRuntime Environment: " + runtimeEnvironment.name());
+        logger.info("\tJVM Flags ({} totals): {}", jvmFlags.size(), formattedFlags.toString());
+        logger.info("\tEngine Version: {}", Platform.getVersion());
+        logger.info("\tRuntime Environment: {}", runtimeEnvironment.name());
         logger.info("------------------------------");
     }
 }

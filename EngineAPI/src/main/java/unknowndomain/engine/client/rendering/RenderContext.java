@@ -29,4 +29,6 @@ public interface RenderContext {
     TextureManager getTextureManager();
 
     GuiManager getGuiManager();
+
+    void runTaskNextFrame(Runnable runnable);
 }
