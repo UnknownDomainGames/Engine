@@ -55,7 +55,7 @@ public class ChunkStorage {
         if (chunk == null) {
             chunk = new ChunkImpl(world, chunkX, chunkY, chunkZ);
             chunks.put(chunkIndex, chunk);
-            world.getGame().getContext().post(new ChunkLoadEvent(chunk));
+            world.getGame().getEventBus().post(new ChunkLoadEvent(chunk));
         }
         return chunk;
     }

@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.rendering.game3d;
 
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Renderer;
@@ -42,6 +43,8 @@ public class Game3DRenderer implements Renderer {
 
         worldRenderer = new WorldRenderer();
         worldRenderer.init(context, currentGame);
+
+        Platform.getEngineClient().getAssetManager().reload();
     }
 
     @Listener

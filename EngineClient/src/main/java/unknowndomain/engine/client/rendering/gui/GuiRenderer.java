@@ -8,18 +8,13 @@ import org.joml.Vector4fc;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.gui.Container;
-import unknowndomain.engine.client.gui.GameDebugHUD;
 import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.gui.Scene;
-import unknowndomain.engine.client.gui.component.Button;
-import unknowndomain.engine.client.gui.component.TextField;
-import unknowndomain.engine.client.gui.component.ToggleButton;
+import unknowndomain.engine.client.gui.game.GUIGameCreation;
+import unknowndomain.engine.client.gui.hud.HUDGameDebug;
 import unknowndomain.engine.client.gui.internal.FontHelper;
 import unknowndomain.engine.client.gui.internal.ImageHelper;
 import unknowndomain.engine.client.gui.internal.Internal;
-import unknowndomain.engine.client.gui.layout.VBox;
-import unknowndomain.engine.client.gui.misc.Background;
-import unknowndomain.engine.client.gui.misc.Border;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.RenderContext;
@@ -51,7 +46,7 @@ public class GuiRenderer implements Renderer {
     private TTFontHelper fontHelper;
     private Graphics graphics;
 
-    private GameDebugHUD gameDebugHUD;
+    private HUDGameDebug HUDGameDebug;
 
     @Override
     public void init(RenderContext context) {
@@ -97,25 +92,28 @@ public class GuiRenderer implements Renderer {
             }
         });
 
-        gameDebugHUD = new GameDebugHUD();
-        guiManager.showHud("debug", new Scene(gameDebugHUD));
+        HUDGameDebug = new HUDGameDebug();
+        guiManager.showHud("debug", new Scene(HUDGameDebug));
 
-        VBox box = new VBox();
-        box.background().setValue(new Background(new Color(0.1f, 0.1f, 0.1f, 0.9f)));
-        TextField textField = new TextField();
-        textField.promptText().setValue("Hey you suckers!!");
-        textField.fieldwidth().set(200);
-        textField.fieldheight().set(23);
-        Button button = new Button("Button");
-        button.buttonwidth().set(100);
-        button.setOnClick(mouseClickEvent -> guiManager.closeScreen());
-        ToggleButton toggleButton = new ToggleButton("Toggle");
-        toggleButton.buttonwidth().set(100);
-        box.getChildren().addAll(textField, button, toggleButton);
-        button.border().setValue(new Border(Color.GREEN,5f));
-        button.buttonbackground().setValue(Background.fromColor(Color.RED));
-        Scene s = new Scene(box);
-        guiManager.showScreen(s);
+//        VBox box = new VBox();
+//        box.background().setValue(new Background(new Color(0.1f, 0.1f, 0.1f, 0.9f)));
+//        TextField textField = new TextField();
+//        textField.promptText().setValue("Hey you suckers!!");
+//        textField.fieldwidth().set(200);
+//        textField.fieldheight().set(23);
+//        Button button = new Button("Button");
+//        button.buttonwidth().set(100);
+//        button.setOnClick(mouseClickEvent -> guiManager.closeScreen());
+//        ToggleButton toggleButton = new ToggleButton("Toggle");
+//        toggleButton.buttonwidth().set(100);
+//        box.getChildren().addAll(textField, button, toggleButton);
+//        button.border().setValue(new Border(Color.GREEN,5f));
+//        button.buttonbackground().setValue(Background.fromColor(Color.RED));
+//        Scene s = new Scene(box);
+//        guiManager.showScreen(s);
+
+        var scene = new Scene(new GUIGameCreation());
+        guiManager.showScreen(scene);
     }
 
     @Override
@@ -193,7 +191,7 @@ public class GuiRenderer implements Renderer {
         graphics.drawLine(middleX, middleY - 10, middleX, middleY + 10);
         graphics.drawLine(middleX - 10, middleY, middleX + 10, middleY);
 
-        gameDebugHUD.update(context);
+        HUDGameDebug.update(context);
 
 //        testBlockRenderer();
     }

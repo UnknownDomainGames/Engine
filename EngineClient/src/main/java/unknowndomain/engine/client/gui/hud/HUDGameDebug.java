@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.gui;
+package unknowndomain.engine.client.gui.hud;
 
 import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.misc.Insets;
@@ -7,7 +7,7 @@ import unknowndomain.engine.client.rendering.RenderContext;
 
 import java.util.Collections;
 
-public class GameDebugHUD extends VBox {
+public class HUDGameDebug extends VBox {
 
     private final Text fps;
     private final Text playerPosition;
@@ -20,7 +20,7 @@ public class GameDebugHUD extends VBox {
     private final Text lookingBlockPos;
     private final Text hitPos;
 
-    public GameDebugHUD() {
+    public HUDGameDebug() {
         fps = new Text();
         playerPosition = new Text();
         playerMotion = new Text();
