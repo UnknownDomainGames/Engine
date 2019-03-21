@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import unknowndomain.engine.client.asset.AssetPath;
+import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
@@ -15,9 +16,6 @@ import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.util.*;
 import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
-import unknowndomain.engine.event.Listener;
-import unknowndomain.engine.event.game.GameStartEvent;
-import unknowndomain.engine.event.game.GameTerminationEvent;
 import unknowndomain.engine.util.Disposable;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -35,10 +33,12 @@ public class WorldRenderer implements Disposable {
     private ObservableValue<ShaderProgram> shadowShader;
 
     private RenderContext context;
+    private GameClient game;
 
-    public void init(RenderContext context) {
+    public void init(RenderContext context, GameClient game) {
         this.context = context;
-        chunkRenderer.init(context);
+        this.game = game;
+        chunkRenderer.init(context, game);
 //        context.getGame().getContext().register(chunkRenderer);
         worldShader =
                 ShaderManager.INSTANCE.registerShader("world_shader",
@@ -150,15 +150,5 @@ public class WorldRenderer implements Disposable {
         ShaderManager.INSTANCE.unregisterShader("world_shader");
         ShaderManager.INSTANCE.unregisterShader("frame_buffer_shader");
         ShaderManager.INSTANCE.unregisterShader("shadow_shader");
-    }
-
-    @Listener
-    public void onGameStart(GameStartEvent.Post event) {
-
-    }
-
-    @Listener
-    public void onGameTermination(GameTerminationEvent.Pre event) {
-
     }
 }

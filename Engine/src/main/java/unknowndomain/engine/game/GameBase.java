@@ -18,8 +18,8 @@ import unknowndomain.engine.mod.util.ModCollector;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.SimpleRegistryManager;
-import unknowndomain.game.Blocks;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,20 +30,20 @@ import java.util.Map;
 public abstract class GameBase implements Game {
 
     protected final Engine engine;
+    protected final GameDefinition definition;
 
     protected final Logger logger = LoggerFactory.getLogger("Game");
 
-    private ModManager modManager;
-    private RegistryManager registryManager;
+    protected ModManager modManager;
+    protected RegistryManager registryManager;
 
-    private EventBus eventBus;
+    protected EventBus eventBus;
 
-    private boolean terminated = false;
+    protected boolean terminated = false;
 
-    protected GameContext context;
-
-    public GameBase(Engine engine) {
+    public GameBase(Engine engine, GameDefinition definition) {
         this.engine = engine;
+        this.definition = definition;
         this.eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
     }
 
@@ -67,8 +67,6 @@ public abstract class GameBase implements Game {
         eventBus.post(new RegistrationStartEvent(registryManager));
         logger.info("Finishing Registration!");
         eventBus.post(new RegistrationFinishEvent(registryManager));
-
-        this.context = new GameContext(registryManager, eventBus, Blocks.AIR);
     }
 
     /**
@@ -82,7 +80,7 @@ public abstract class GameBase implements Game {
      * final stage of the
      */
     protected void finishStage() {
-        eventBus.post(new GameReadyEvent(this, context));
+        eventBus.post(new GameReadyEvent(this));
     }
 
     private void constructMods() {
@@ -112,16 +110,25 @@ public abstract class GameBase implements Game {
 //        getContext().post(new EngineEvent.ModConstructionFinish(this));
     }
 
-    @Override
-    public GameContext getContext() {
-        return context;
-    }
-
+    @Nonnull
     @Override
     public EventBus getEventBus() {
         return eventBus;
     }
 
+    @Nonnull
+    @Override
+    public RegistryManager getRegistryManager() {
+        return registryManager;
+    }
+
+    @Nonnull
+    @Override
+    public GameDefinition getDefinition() {
+        return definition;
+    }
+
+    @Nonnull
     @Override
     public Logger getLogger() {
         return logger;

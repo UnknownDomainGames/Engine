@@ -50,6 +50,11 @@ public class PlayerImpl implements Player {
     }
 
     @Override
+    public boolean isControllingEntity() {
+        return controlledEntity != null;
+    }
+
+    @Override
     public Profile getProfile() {
         return profile;
     }

@@ -23,7 +23,7 @@ import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.SimpleEventBus;
 import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.engine.EngineEvent;
-import unknowndomain.engine.event.game.GameStartEvent;
+import unknowndomain.engine.event.engine.GameStartEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.Ticker;
 import unknowndomain.engine.player.Profile;

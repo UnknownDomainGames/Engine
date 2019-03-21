@@ -11,6 +11,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
+import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.light.DirectionalLight;
 import unknowndomain.engine.client.rendering.light.Light;
@@ -55,9 +56,9 @@ public class ChunkRenderer implements Disposable {
     Light dirLight, ptLight;
     Material mat;
 
-    public void init(RenderContext context) {
+    public void init(RenderContext context, GameClient game) {
         this.context = context;
-//        this.clientBlockRegistry = gameClient.getContext().getRegistryManager().getRegistry(ClientBlock.class);
+        this.clientBlockRegistry = game.getRegistryManager().getRegistry(ClientBlock.class);
 
         chunkSolidShader = ShaderManager.INSTANCE.registerShader("chunk_solid",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "chunk_solid.vert"))

@@ -7,7 +7,6 @@ import org.joml.Vector4f;
 import org.joml.Vector4fc;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetPath;
-import unknowndomain.engine.client.game.ClientContext;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.GameDebugHUD;
 import unknowndomain.engine.client.gui.GuiManager;
@@ -186,7 +185,7 @@ public class GuiRenderer implements Renderer {
         graphics.popClipRect();
     }
 
-    private void debug(ClientContext context) {
+    private void debug(RenderContext context) {
         graphics.setColor(Color.WHITE);
 
         // TODO: CrossHair, move it.

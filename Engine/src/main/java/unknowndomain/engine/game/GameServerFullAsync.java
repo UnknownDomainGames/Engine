@@ -20,8 +20,8 @@ public class GameServerFullAsync extends GameBase {
     protected List<WorldCommon> internalWorlds;
     protected List<Thread> worldThreads;
 
-    public GameServerFullAsync(Engine engine) {
-        super(engine);
+    public GameServerFullAsync(Engine engine, GameDefinition definition) {
+        super(engine, definition);
     }
 
     @Override

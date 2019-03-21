@@ -4,7 +4,6 @@ import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * The player in world instance, the lifecycle is binding to world
@@ -37,5 +36,7 @@ public interface Player {
      * @return The old entity mounted
      */
     @Nonnull
-    Entity controlEntity(@Nullable Entity entity);
+    Entity controlEntity(@Nonnull Entity entity);
+
+    boolean isControllingEntity();
 }

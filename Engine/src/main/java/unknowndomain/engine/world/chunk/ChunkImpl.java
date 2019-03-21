@@ -74,7 +74,7 @@ public class ChunkImpl implements Chunk {
     @Override
     public Block getBlock(int x, int y, int z) {
         if (blockStorage == null) {
-            return getWorld().getGame().getContext().getBlockAir();
+            return getWorld().getGame().getDefinition().blockAir();
         }
 
         return blockStorage.getBlock(x, y, z);
@@ -83,7 +83,7 @@ public class ChunkImpl implements Chunk {
     @Override
     public int getBlockId(int x, int y, int z) {
         if (blockStorage == null) {
-            return getWorld().getGame().getContext().getBlockAirId();
+            return getWorld().getGame().getDefinition().blockAir().getId();
         }
 
         return blockStorage.getBlockId(x, y, z);
@@ -105,7 +105,7 @@ public class ChunkImpl implements Chunk {
             blockStorage = new BlockStorage(this);
         }
 
-        if (block != getWorld().getGame().getContext().getBlockAir()) {
+        if (block != getWorld().getGame().getDefinition().blockAir()) {
             nonAirBlockCount++;
         } else {
             nonAirBlockCount--;

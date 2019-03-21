@@ -10,41 +10,40 @@ import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
-import unknowndomain.engine.event.game.GameTerminationEvent;
+import unknowndomain.engine.event.engine.GameTerminationEvent;
+import unknowndomain.engine.game.GameDefinition;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.player.Player;
-import unknowndomain.engine.player.PlayerImpl;
-import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
 import unknowndomain.game.Blocks;
 import unknowndomain.game.DefaultGameMode;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 public class GameClientStandalone extends GameServerFullAsync implements GameClient {
 
     private final EngineClient engineClient;
+    private final Player player;
 
     private KeyBindingManager keyBindingManager;
     private EntityController entityController;
 
-    private WorldCommon world;
-    private Player player;
+    private boolean stopped = false;
 
-    private boolean stopped;
-
-    public GameClientStandalone(EngineClient engine) {
-        super(engine);
+    public GameClientStandalone(EngineClient engine, GameDefinition definition, Player player) {
+        super(engine, definition);
         this.engineClient = engine;
+        this.player = player;
     }
 
     /**
      * Get player client
      */
+    @Nonnull
     @Override
     public Player getPlayer() {
         return player;
@@ -53,9 +52,10 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     /**
      * @return the client world
      */
+    @Nonnull
     @Override
     public World getWorld() {
-        return world;
+        return player.getControlledEntity().getWorld();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         // TODO: Move it
         getEventBus().register(new DefaultGameMode());
 
-        player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
+//        player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
     }
 
     @Override
@@ -92,17 +92,17 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         logger.info("Loading Client-only stuff!");
 
         logger.info("Initializing key binding!");
-        keyBindingManager = new KeyBindingManager(this, context.getRegistryManager().getRegistry(KeyBinding.class));
+        keyBindingManager = new KeyBindingManager(this, registryManager.getRegistry(KeyBinding.class));
         keyBindingManager.reload();
         window.addKeyCallback(keyBindingManager::handleKey);
         window.addMouseCallback(keyBindingManager::handleMouse);
 
         List<Renderer> registeredRenderer = Lists.newArrayList();
-        context.post(new RendererRegisterEvent(registeredRenderer));
+        eventBus.post(new RendererRegisterEvent(registeredRenderer));
 
         renderContext.setCamera(new FirstPersonCamera(player));
 
-        context.post(new AssetReloadEvent());
+        eventBus.post(new AssetReloadEvent());
     }
 
     @Override
@@ -116,7 +116,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
         // TODO: Remove it
         spawnWorld(null);
-        world = (WorldCommon) getWorld("default");
+        var world = (WorldCommon) getWorld("default");
         world.playerJoin(player);
         player.getControlledEntity().getPosition().set(0, 5, 0);
 

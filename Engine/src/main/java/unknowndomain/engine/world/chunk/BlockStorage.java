@@ -14,7 +14,7 @@ public class BlockStorage {
     }
 
     public Block getBlock(int x, int y, int z) {
-        return chunk.getWorld().getGame().getContext().getBlockRegistry().getValue(getBlockId(x, y, z));
+        return chunk.getWorld().getGame().getRegistryManager().getRegistry(Block.class).getValue(getBlockId(x, y, z));
     }
 
     public int getBlockId(int x, int y, int z) {
@@ -22,7 +22,7 @@ public class BlockStorage {
     }
 
     public Block setBlock(int x, int y, int z, Block block) {
-        return chunk.getWorld().getGame().getContext().getBlockRegistry().getValue(data.getAndSet(getPosIndex(x, y, z), chunk.getWorld().getGame().getContext().getBlockRegistry().getId(block)));
+        return chunk.getWorld().getGame().getRegistryManager().getRegistry(Block.class).getValue(data.getAndSet(getPosIndex(x, y, z), block.getId()));
     }
 
     private int getPosIndex(int x, int y, int z) {

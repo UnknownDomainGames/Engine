@@ -2,7 +2,10 @@ package unknowndomain.engine.game;
 
 import org.slf4j.Logger;
 import unknowndomain.engine.event.EventBus;
+import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.world.World;
+
+import javax.annotation.Nonnull;
 
 /**
  * The game shares the same set of mod and resources pack manifest.
@@ -23,15 +26,21 @@ import unknowndomain.engine.world.World;
  */
 public interface Game extends Runnable {
 
-    GameContext getContext();
-
     World spawnWorld(World.Config config);
 
     void terminate();
 
     boolean isTerminated();
 
+    @Nonnull
     EventBus getEventBus();
 
+    @Nonnull
+    RegistryManager getRegistryManager();
+
+    @Nonnull
     Logger getLogger();
+
+    @Nonnull
+    GameDefinition getDefinition();
 }

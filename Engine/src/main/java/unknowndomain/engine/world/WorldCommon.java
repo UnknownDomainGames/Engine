@@ -76,7 +76,7 @@ public class WorldCommon implements World, Runnable {
 
     @Override
     public RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance) {
-        return raycast(from, dir, distance, Sets.newHashSet(game.getContext().getBlockRegistry().getValue(0)));
+        return raycast(from, dir, distance, Sets.newHashSet(getGame().getDefinition().blockAir()));
     }
 
     @Override
@@ -177,14 +177,14 @@ public class WorldCommon implements World, Runnable {
     @Override
     public Block getBlock(int x, int y, int z) {
         Chunk chunk = chunkStorage.getChunkByBlockPos(x, y, z);
-        return chunk == null ? getGame().getContext().getBlockAir() : chunk.getBlock(x, y, z);
+        return chunk == null ? getGame().getDefinition().blockAir() : chunk.getBlock(x, y, z);
     }
 
     @Nonnull
     @Override
     public int getBlockId(int x, int y, int z) {
         Chunk chunk = chunkStorage.getChunkByBlockPos(x, y, z);
-        return chunk == null ? getGame().getContext().getBlockAirId() : chunk.getBlockId(x, y, z);
+        return chunk == null ? getGame().getDefinition().blockAir().getId() : chunk.getBlockId(x, y, z);
     }
 
     @Nonnull
@@ -192,7 +192,7 @@ public class WorldCommon implements World, Runnable {
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
         Block oldBlock = chunkStorage.getOrLoadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
                 .setBlock(pos, block, cause);
-        getGame().getContext().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause)); // TODO:
+        getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause)); // TODO:
         return oldBlock;
     }
 

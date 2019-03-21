@@ -2,7 +2,6 @@ package unknowndomain.engine.client.input.keybinding;
 
 import org.apache.commons.lang3.Validate;
 import unknowndomain.engine.client.game.GameClient;
-import unknowndomain.engine.game.GameContext;
 import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
@@ -68,8 +67,8 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
 
     /**
      * Bind an end action to this KeyBinding. This method is chainable.
-     * 
-     * @param keepHandler End Action
+     *
+     * @param endHandler End Action
      * @return This KeyBinding
      */
     public KeyBinding endAction(BiConsumer<GameClient, Integer> endHandler) {
@@ -132,9 +131,9 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
 
     /**
      * Handles keepable key action (keep or end)
-     * 
-     * @see #onKeyKeep(GameContext)
-     * @param gameContext
+     *
+     * @see #onKeyKeep(GameClient)
+     * @param context
      * @param handler
      */
     private void onKeepable(GameClient context, Optional<BiConsumer<GameClient, Integer>> handler) {
