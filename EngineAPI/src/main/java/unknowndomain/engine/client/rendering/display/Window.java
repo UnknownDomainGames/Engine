@@ -36,6 +36,8 @@ public interface Window {
 
     boolean isVisible();
 
+    void dispose();
+
     void addKeyCallback(KeyCallback callback);
 
     void removeKeyCallback(KeyCallback callback);

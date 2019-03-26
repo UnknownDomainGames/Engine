@@ -33,7 +33,7 @@ public class FirstPersonCamera implements Camera {
         this.frontVector.set((float) (Math.cos(Math.toRadians(rotation.y)) * Math.cos(Math.toRadians(rotation.x))),
                 (float) Math.sin(Math.toRadians(rotation.y)), (float) (Math.cos(Math.toRadians(rotation.y)) * Math.sin(Math.toRadians(rotation.x)))).normalize();
         this.lookAt.set(this.position).add(this.frontVector);
-        viewMatrix.lookAt(this.position, this.lookAt, UP_VECTOR);
+        this.viewMatrix.identity().lookAt(this.position, this.lookAt, UP_VECTOR);
     }
 
     @Override

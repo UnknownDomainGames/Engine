@@ -10,6 +10,7 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +32,8 @@ public interface World extends RuntimeObject, BlockAccessor {
     }
 
     Chunk getChunk(int chunkX, int chunkY, int chunkZ);
+
+    Collection<Chunk> getLoadedChunks();
 
     @Nonnull
     @Override

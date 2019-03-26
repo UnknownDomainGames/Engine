@@ -1,14 +1,11 @@
 package unknowndomain.engine.client.game;
 
-import com.google.common.collect.Lists;
 import unknowndomain.engine.client.EngineClient;
 import unknowndomain.engine.client.event.asset.AssetReloadEvent;
-import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
-import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
 import unknowndomain.engine.event.engine.GameTerminationEvent;
 import unknowndomain.engine.game.GameDefinition;
@@ -21,7 +18,6 @@ import unknowndomain.game.Blocks;
 import unknowndomain.game.DefaultGameMode;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Random;
 
 public class GameClientStandalone extends GameServerFullAsync implements GameClient {
@@ -77,7 +73,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         super.constructStage();
 
         // TODO: Move it
-        getEventBus().register(new DefaultGameMode());
+        eventBus.register(new DefaultGameMode());
 
 //        player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
     }
@@ -96,9 +92,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         keyBindingManager.reload();
         window.addKeyCallback(keyBindingManager::handleKey);
         window.addMouseCallback(keyBindingManager::handleMouse);
-
-        List<Renderer> registeredRenderer = Lists.newArrayList();
-        eventBus.post(new RendererRegisterEvent(registeredRenderer));
 
         renderContext.setCamera(new FirstPersonCamera(player));
 

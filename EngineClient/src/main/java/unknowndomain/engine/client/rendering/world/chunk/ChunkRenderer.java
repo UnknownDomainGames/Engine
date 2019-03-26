@@ -13,6 +13,7 @@ import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
+import unknowndomain.engine.client.rendering.game3d.Game3DRenderer;
 import unknowndomain.engine.client.rendering.light.DirectionalLight;
 import unknowndomain.engine.client.rendering.light.Light;
 import unknowndomain.engine.client.rendering.light.Material;
@@ -28,6 +29,7 @@ import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.util.Disposable;
+import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkStorage;
 
@@ -47,7 +49,9 @@ public class ChunkRenderer implements Disposable {
     private ObservableValue<ShaderProgram> chunkSolidShader;
     private ObservableValue<ShaderProgram> assimpShader;
 
+    private Game3DRenderer.GameRenderEnv env;
     private RenderContext context;
+    private GameClient game;
 
     private ThreadPoolExecutor updateExecutor;
 
@@ -56,8 +60,11 @@ public class ChunkRenderer implements Disposable {
     Light dirLight, ptLight;
     Material mat;
 
-    public void init(RenderContext context, GameClient game) {
-        this.context = context;
+    public void init(Game3DRenderer.GameRenderEnv env) {
+        this.env = env;
+        this.context = env.getContext();
+        this.game = env.getGame();
+        game.getEventBus().register(this);
         this.clientBlockRegistry = game.getRegistryManager().getRegistry(ClientBlock.class);
 
         chunkSolidShader = ShaderManager.INSTANCE.registerShader("chunk_solid",
@@ -89,6 +96,8 @@ public class ChunkRenderer implements Disposable {
                 return new BakeChunkThread(r, "Chunk Baker " + poolNumber.getAndIncrement());
             }
         });
+
+        initWorld(game.getWorld());
     }
 
     public void render() {
@@ -109,7 +118,7 @@ public class ChunkRenderer implements Disposable {
         postRenderChunk();
     }
 
-    protected void preRenderChunk() {
+    private void preRenderChunk() {
         ShaderProgram chunkSolidShader = this.chunkSolidShader.getValue();
         ShaderManager.INSTANCE.bindShader(chunkSolidShader);
 
@@ -135,7 +144,7 @@ public class ChunkRenderer implements Disposable {
         mat.bind("material");
     }
 
-    protected void postRenderChunk() {
+    private void postRenderChunk() {
         glBindTexture(GL_TEXTURE_2D, 0);
         glDisable(GL11.GL_CULL_FACE);
         glDisable(GL11.GL_TEXTURE_2D);
@@ -147,10 +156,13 @@ public class ChunkRenderer implements Disposable {
         return clientBlockRegistry;
     }
 
+    @Override
     public void dispose() {
-        updateExecutor.shutdown();
+        updateExecutor.shutdownNow();
 
         ShaderManager.INSTANCE.unregisterShader("chunk_solid");
+
+        game.getEventBus().unregister(this);
     }
 
     public void upload(ChunkMesh chunkMesh, BufferBuilder buffer) {
@@ -173,9 +185,23 @@ public class ChunkRenderer implements Disposable {
 
     @Listener
     public void onChunkLoad(ChunkLoadEvent event) {
-        long chunkIndex = getChunkIndex(event.getChunk());
-        loadedChunkMeshes.put(chunkIndex, new ChunkMesh(event.getChunk()));
-        markDirty(chunkIndex);
+        // TODO: Fix it.
+        initChunkMesh(event.getChunk());
+    }
+
+    private void initChunkMesh(Chunk chunk) {
+        long chunkIndex = getChunkIndex(chunk);
+        loadedChunkMeshes.put(chunkIndex, new ChunkMesh(chunk));
+        markChunkMeshDirty(chunkIndex);
+    }
+
+    private void initWorld(World world) {
+        loadedChunkMeshes.values().forEach(ChunkMesh::dispose);
+        loadedChunkMeshes.clear();
+
+        uploadTasks.clear();
+
+        world.getLoadedChunks().forEach(this::initChunkMesh);
     }
 
     @Listener
@@ -184,36 +210,36 @@ public class ChunkRenderer implements Disposable {
         int chunkX = pos.getX() >> BITS_X,
                 chunkY = pos.getY() >> BITS_Y,
                 chunkZ = pos.getZ() >> BITS_Z;
-        markDirty(getChunkIndex(event.getPos()));
+        markChunkMeshDirty(getChunkIndex(event.getPos()));
 
         // Update neighbor chunks.
         int chunkW = pos.getX() + 1 >> BITS_X;
         if (chunkW != chunkX) {
-            markDirty(getChunkIndex(chunkW, chunkY, chunkZ));
+            markChunkMeshDirty(getChunkIndex(chunkW, chunkY, chunkZ));
         }
         chunkW = pos.getX() - 1 >> BITS_X;
         if (chunkW != chunkX) {
-            markDirty(getChunkIndex(chunkW, chunkY, chunkZ));
+            markChunkMeshDirty(getChunkIndex(chunkW, chunkY, chunkZ));
         }
         chunkW = pos.getY() + 1 >> BITS_Y;
         if (chunkW != chunkY) {
-            markDirty(getChunkIndex(chunkX, chunkW, chunkZ));
+            markChunkMeshDirty(getChunkIndex(chunkX, chunkW, chunkZ));
         }
         chunkW = pos.getY() - 1 >> BITS_Y;
         if (chunkW != chunkY) {
-            markDirty(getChunkIndex(chunkX, chunkW, chunkZ));
+            markChunkMeshDirty(getChunkIndex(chunkX, chunkW, chunkZ));
         }
         chunkW = pos.getZ() + 1 >> BITS_Z;
         if (chunkW != chunkZ) {
-            markDirty(getChunkIndex(chunkX, chunkY, chunkW));
+            markChunkMeshDirty(getChunkIndex(chunkX, chunkY, chunkW));
         }
         chunkW = pos.getZ() - 1 >> BITS_Z;
         if (chunkW != chunkZ) {
-            markDirty(getChunkIndex(chunkX, chunkY, chunkW));
+            markChunkMeshDirty(getChunkIndex(chunkX, chunkY, chunkW));
         }
     }
 
-    private void markDirty(long index) {
+    private void markChunkMeshDirty(long index) {
         ChunkMesh chunkMesh = loadedChunkMeshes.get(index);
         if (chunkMesh == null) {
             return;

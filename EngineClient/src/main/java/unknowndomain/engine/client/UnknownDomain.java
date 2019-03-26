@@ -1,11 +1,11 @@
 package unknowndomain.engine.client;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.system.windows.User32;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.Platform;
 
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 
 public class UnknownDomain {
@@ -27,6 +27,8 @@ public class UnknownDomain {
 
                 break;
         }
+
+        System.out.println(ManagementFactory.getRuntimeMXBean().getName());
 
         Engine engine = new EngineClientImpl();
         injectEngine(engine);

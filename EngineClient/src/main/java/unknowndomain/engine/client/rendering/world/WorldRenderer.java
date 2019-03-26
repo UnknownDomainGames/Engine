@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL15;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
+import unknowndomain.engine.client.rendering.game3d.Game3DRenderer;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
@@ -32,13 +33,15 @@ public class WorldRenderer implements Disposable {
     private FrameBufferShadow frameBufferShadow; //TODO: move to 3D Renderer!!!
     private ObservableValue<ShaderProgram> shadowShader;
 
+    private Game3DRenderer.GameRenderEnv env;
     private RenderContext context;
     private GameClient game;
 
-    public void init(RenderContext context, GameClient game) {
-        this.context = context;
-        this.game = game;
-        chunkRenderer.init(context, game);
+    public void init(Game3DRenderer.GameRenderEnv env) {
+        this.env = env;
+        this.context = env.getContext();
+        this.game = env.getGame();
+        chunkRenderer.init(env);
 //        context.getGame().getContext().register(chunkRenderer);
         worldShader =
                 ShaderManager.INSTANCE.registerShader("world_shader",
@@ -112,7 +115,7 @@ public class WorldRenderer implements Disposable {
         ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
 
-        // TODO: Move it to CrossHair HUD
+        // TODO: Remove it
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         ShaderManager.INSTANCE.setUniform("u_UsingColor", true);

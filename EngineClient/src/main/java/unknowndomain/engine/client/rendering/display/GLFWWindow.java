@@ -246,6 +246,13 @@ public class GLFWWindow implements Window {
         return false;
     }
 
+    @Override
+    public void dispose() {
+        hide();
+
+        glfwDestroyWindow(pointer);
+    }
+
     public long getPointer() {
         return pointer;
     }

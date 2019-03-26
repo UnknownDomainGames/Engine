@@ -18,7 +18,6 @@ public class GUIGameCreation extends BorderPane {
     public GUIGameCreation() {
         VBox vBox = new VBox();
         center().setValue(vBox);
-//        setAlignment(vBox, Pos.CENTER);
 
         Text textGameCreation = new Text("Game Creation");
         vBox.getChildren().add(textGameCreation);

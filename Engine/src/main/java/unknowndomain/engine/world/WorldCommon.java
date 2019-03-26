@@ -23,10 +23,7 @@ import unknowndomain.engine.world.chunk.ChunkStorage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.Math;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class WorldCommon implements World, Runnable {
     public static final float CALC_ERROR_FIXING = 1e-6f;
@@ -199,6 +196,11 @@ public class WorldCommon implements World, Runnable {
     @Override
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
         return chunkStorage.getChunk(chunkX, chunkY, chunkZ);
+    }
+
+    @Override
+    public Collection<Chunk> getLoadedChunks() {
+        return chunkStorage.getLoadedChunks();
     }
 
     @Override

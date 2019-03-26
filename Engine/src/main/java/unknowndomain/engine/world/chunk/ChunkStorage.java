@@ -60,6 +60,10 @@ public class ChunkStorage {
         return chunk;
     }
 
+    public Collection<Chunk> getLoadedChunks() {
+        return chunks.values();
+    }
+
     public void touchChunk(@Nonnull BlockPos pos) {
 //        long cp = getChunkIndex(pos);
 //        Chunk chunk = this.chunks.get(cp);

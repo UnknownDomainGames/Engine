@@ -8,24 +8,24 @@ import unknowndomain.engine.client.rendering.world.WorldRenderer;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.engine.GameStartEvent;
 import unknowndomain.engine.event.engine.GameTerminationEvent;
+import unknowndomain.engine.world.World;
 
 public class Game3DRenderer implements Renderer {
 
     private WorldRenderer worldRenderer;
 
-    private RenderContext context;
-    private GameClient currentGame;
+    private GameRenderEnv context = new GameRenderEnv();
 
     @Override
     public void init(RenderContext context) {
-        this.context = context;
+        this.context.context = context;
 
         context.getEngine().getEventBus().register(this);
     }
 
     @Override
     public void render(float partial) {
-        if (currentGame == null) {
+        if (context.game == null) {
             return;
         }
 
@@ -39,10 +39,10 @@ public class Game3DRenderer implements Renderer {
 
     @Listener
     public void onGameStart(GameStartEvent.Post event) {
-        currentGame = (GameClient) event.getGame();
+        context.game = (GameClient) event.getGame();
 
         worldRenderer = new WorldRenderer();
-        worldRenderer.init(context, currentGame);
+        worldRenderer.init(context);
 
         Platform.getEngineClient().getAssetManager().reload();
     }
@@ -52,6 +52,25 @@ public class Game3DRenderer implements Renderer {
         worldRenderer.dispose();
         worldRenderer = null;
 
-        currentGame = null;
+        context.game = null;
+    }
+
+    public static class GameRenderEnv {
+        private RenderContext context;
+        private GameClient game;
+
+        private World world;
+
+        public RenderContext getContext() {
+            return context;
+        }
+
+        public GameClient getGame() {
+            return game;
+        }
+
+        public World getWorld() {
+            return world;
+        }
     }
 }

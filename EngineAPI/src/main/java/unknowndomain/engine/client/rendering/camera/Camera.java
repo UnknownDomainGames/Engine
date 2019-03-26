@@ -19,13 +19,10 @@ public interface Camera {
     Vector3fc getLookAt();
 
     Vector3fc getFrontVector();
-//        return getLookAt(parTick).sub(getPosition(parTick), new Vector3f()).normalize();
 
     /**
      * parse view matrix for shader to use
-     *
      * @return
      */
     Matrix4fc getViewMatrix();
-//        return new Matrix4f().lookAt(getPosition(parTick), getLookAt(parTick), UP_VECTOR);
 }

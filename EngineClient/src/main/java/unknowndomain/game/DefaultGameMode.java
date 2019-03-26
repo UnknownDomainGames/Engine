@@ -7,7 +7,6 @@ import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.block.ClientBlockAir;
 import unknowndomain.engine.client.block.ClientBlockDefault;
 import unknowndomain.engine.client.event.asset.AssetReloadEvent;
-import unknowndomain.engine.client.event.game.RendererRegisterEvent;
 import unknowndomain.engine.client.input.controller.MotionType;
 import unknowndomain.engine.client.input.keybinding.ActionMode;
 import unknowndomain.engine.client.input.keybinding.Key;
@@ -108,15 +107,4 @@ public final class DefaultGameMode {
         blockModel.addCube(0, 0, 0, 1, 1, 1, bottom);
         ClientBlockDefault.blockRendererMap.put(Blocks.DIRT, blockModel);
     }
-
-    @Listener
-    public void rendererRegister(RendererRegisterEvent event) {
-//        event.register(new WorldRenderer());
-//        event.register(new GuiRenderer());
-    }
-
-//    @Listener
-//    public void onEngineInitialized(EngineEvent.InitializationComplete e) {
-//        e.getEngine().startGame();
-//    }
 }

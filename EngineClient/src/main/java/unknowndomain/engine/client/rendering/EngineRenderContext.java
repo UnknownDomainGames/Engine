@@ -106,7 +106,7 @@ public class EngineRenderContext implements RenderContext, Disposable {
         tasks.forEach(Runnable::run);
 
         camera.update(partial);
-        frustumIntersection.set(window.projection().mul(getCamera().getViewMatrix(), new Matrix4f()));
+        frustumIntersection.set(window.projection().mul(camera.getViewMatrix(), new Matrix4f()));
 
         window.beginRender();
         for (Renderer renderer : renderers) {
@@ -121,6 +121,7 @@ public class EngineRenderContext implements RenderContext, Disposable {
         logger.info("Initializing window!");
         window = new GLFWWindow(WINDOW_WIDTH, WINDOW_HEIGHT, UnknownDomain.getName());
         window.init();
+        engine.addShutdownListener(window::dispose);
 
         initGL();
 
