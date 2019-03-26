@@ -96,6 +96,7 @@ public class ChunkRenderer {
             }
         });
 
+        context.getTextureManager().reloadTextureAtlas(BLOCK);
         initWorld(game.getWorld());
     }
 
