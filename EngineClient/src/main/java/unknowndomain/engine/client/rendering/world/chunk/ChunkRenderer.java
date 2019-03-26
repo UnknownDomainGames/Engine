@@ -28,7 +28,6 @@ import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.Registry;
-import unknowndomain.engine.util.Disposable;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkStorage;
@@ -41,7 +40,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 import static unknowndomain.engine.world.chunk.ChunkConstants.*;
 
-public class ChunkRenderer implements Disposable {
+public class ChunkRenderer {
 
     private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
@@ -156,7 +155,6 @@ public class ChunkRenderer implements Disposable {
         return clientBlockRegistry;
     }
 
-    @Override
     public void dispose() {
         updateExecutor.shutdownNow();
 

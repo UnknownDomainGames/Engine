@@ -17,11 +17,10 @@ import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.util.*;
 import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
-import unknowndomain.engine.util.Disposable;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class WorldRenderer implements Disposable {
+public class WorldRenderer {
 
     private final ChunkRenderer chunkRenderer = new ChunkRenderer();
 

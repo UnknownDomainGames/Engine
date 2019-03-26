@@ -34,7 +34,16 @@ public class Game3DRenderer implements Renderer {
 
     @Override
     public void dispose() {
+        disposeGameRender();
+    }
 
+    public void disposeGameRender() {
+        if (context.game != null) {
+            worldRenderer.dispose();
+            worldRenderer = null;
+
+            context.game = null;
+        }
     }
 
     @Listener
@@ -49,10 +58,7 @@ public class Game3DRenderer implements Renderer {
 
     @Listener
     public void onGameTermination(GameTerminationEvent.Pre event) {
-        worldRenderer.dispose();
-        worldRenderer = null;
-
-        context.game = null;
+        disposeGameRender();
     }
 
     public static class GameRenderEnv {

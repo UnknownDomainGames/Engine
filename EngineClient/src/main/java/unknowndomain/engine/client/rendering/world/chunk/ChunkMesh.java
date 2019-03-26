@@ -17,6 +17,8 @@ public class ChunkMesh implements Disposable {
 
     private final Chunk chunk;
 
+    private boolean disposed = false;
+
     public ChunkMesh(Chunk chunk) {
         this.chunk = chunk;
     }
@@ -68,6 +70,16 @@ public class ChunkMesh implements Disposable {
 
     @Override
     public void dispose() {
+        if (disposed) {
+            return;
+        }
+
+        disposed = true;
+
         chunkSolidVbo.dispose();
+    }
+
+    public boolean isDisposed() {
+        return disposed;
     }
 }

@@ -148,11 +148,11 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     public void terminate() {
         logger.info("Terminating Game!");
 
-        getEventBus().post(new GameTerminationEvent.Pre(this));
+        engine.getEventBus().post(new GameTerminationEvent.Pre(this));
 
         super.terminate();
 
-        getEventBus().post(new GameTerminationEvent.Post(this));
+        engine.getEventBus().post(new GameTerminationEvent.Post(this));
 
         logger.info("Game terminated.");
     }
