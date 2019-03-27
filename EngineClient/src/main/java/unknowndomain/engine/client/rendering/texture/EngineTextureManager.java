@@ -56,9 +56,11 @@ public class EngineTextureManager implements TextureManager {
     @Override
     public void reloadTextureAtlas(TextureType type) {
         try {
-            texturesAtlases.get(type).reload();
+            if (texturesAtlases.containsKey(type)) {
+                texturesAtlases.get(type).reload();
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            Platform.getLogger().warn(String.format("Cannot reload texture atlas %s.", type), e);
         }
     }
 
@@ -69,12 +71,6 @@ public class EngineTextureManager implements TextureManager {
             entry.getValue().setValue(getTextureDirect(entry.getKey()));
         }
 
-        for (TextureAtlas textureAtlas : texturesAtlases.values()) {
-            try {
-                textureAtlas.reload();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        texturesAtlases.keySet().forEach(this::reloadTextureAtlas);
     }
 }
