@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.game;
 
 import unknowndomain.engine.client.EngineClient;
-import unknowndomain.engine.client.event.asset.AssetReloadEvent;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
@@ -94,13 +93,13 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         window.addMouseCallback(keyBindingManager::handleMouse);
 
         renderContext.setCamera(new FirstPersonCamera(player));
-
-        eventBus.post(new AssetReloadEvent());
     }
 
     @Override
     protected void resourceStage() {
+        super.resourceStage();
 
+        engineClient.getAssetManager().reload();
     }
 
     @Override
