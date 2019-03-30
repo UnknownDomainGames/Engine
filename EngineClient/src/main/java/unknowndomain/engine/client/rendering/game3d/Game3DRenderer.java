@@ -14,18 +14,18 @@ public class Game3DRenderer implements Renderer {
 
     private WorldRenderer worldRenderer;
 
-    private GameRenderEnv context = new GameRenderEnv();
+    private GameRenderEnv env = new GameRenderEnv();
 
     @Override
     public void init(RenderContext context) {
-        this.context.context = context;
+        this.env.context = context;
 
         context.getEngine().getEventBus().register(this);
     }
 
     @Override
     public void render(float partial) {
-        if (context.game == null) {
+        if (env.game == null) {
             return;
         }
 
@@ -38,20 +38,20 @@ public class Game3DRenderer implements Renderer {
     }
 
     public void disposeGameRender() {
-        if (context.game != null) {
+        if (env.game != null) {
             worldRenderer.dispose();
             worldRenderer = null;
 
-            context.game = null;
+            env.game = null;
         }
     }
 
     @Listener
     public void onGameStart(GameStartEvent.Post event) {
-        context.game = (GameClient) event.getGame();
+        env.game = (GameClient) event.getGame();
 
         worldRenderer = new WorldRenderer();
-        worldRenderer.init(context);
+        worldRenderer.init(env);
 
         Platform.getEngineClient().getAssetManager().reload();
     }

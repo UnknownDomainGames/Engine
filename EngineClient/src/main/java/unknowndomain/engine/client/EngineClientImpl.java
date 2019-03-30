@@ -10,13 +10,11 @@ import unknowndomain.engine.client.asset.EngineAssetSource;
 import unknowndomain.engine.client.asset.loader.AssetLoadManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
 import unknowndomain.engine.client.game.GameClient;
-import unknowndomain.engine.client.gui.EngineGuiManager;
 import unknowndomain.engine.client.rendering.EngineRenderContext;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.game3d.Game3DRenderer;
 import unknowndomain.engine.client.rendering.gui.GuiRenderer;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
-import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
 import unknowndomain.engine.client.sound.ALSoundManager;
 import unknowndomain.engine.client.sound.EngineSoundManager;
 import unknowndomain.engine.event.EventBus;
@@ -26,7 +24,6 @@ import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.engine.GameStartEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.Ticker;
-import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Disposer;
 import unknowndomain.engine.util.DisposerImpl;
 import unknowndomain.engine.util.RuntimeEnvironment;
@@ -41,7 +38,6 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import static org.apache.commons.lang3.SystemUtils.*;
 
@@ -52,21 +48,16 @@ public class EngineClientImpl implements EngineClient {
     private RuntimeEnvironment runtimeEnvironment;
 
     private Thread clientThread;
-    private Profile playerProfile;
 
     private EventBus eventBus;
 
     private AssetSource engineAssetSource;
     private EngineAssetLoadManager assetLoadManager;
     private EngineAssetManager assetManager;
-    private EngineTextureManager textureManager;
     private EngineSoundManager soundManager;
-    private EngineGuiManager guiManager;
-
     private EngineRenderContext renderContext;
 
     private Ticker ticker;
-
     private Disposer disposer;
 
     private GameClient game;
@@ -88,7 +79,6 @@ public class EngineClientImpl implements EngineClient {
         printSystemInfo();
 
         eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
-        playerProfile = new Profile(UUID.randomUUID(), 12);
 
         // TODO: Remove it
         getEventBus().register(new DefaultGameMode());
