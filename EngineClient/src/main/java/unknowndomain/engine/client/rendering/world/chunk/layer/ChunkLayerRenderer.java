@@ -1,8 +1,8 @@
-package unknowndomain.engine.client.rendering.world.chunk;
+package unknowndomain.engine.client.rendering.world.chunk.layer;
 
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 
-public interface ChunkRenderLayerRenderer {
+public interface ChunkLayerRenderer {
 
     void preRender();
 
