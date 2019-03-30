@@ -2,18 +2,26 @@ package unknowndomain.engine.client.rendering.world;
 
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.block.RayTraceBlockHit;
+import unknowndomain.engine.client.rendering.game3d.Game3DRenderer.GameRenderEnv;
 import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.util.Color;
-import unknowndomain.engine.util.Disposable;
 
-public class BlockSelectionRenderer implements Disposable {
+public class BlockSelectionRenderer {
+
+    private GameRenderEnv env;
+
+    public void init(GameRenderEnv env) {
+        this.env = env;
+    }
 
     public void render(float partial) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
 
-        RayTraceBlockHit hit = null;
+        var player = env.getGame().getPlayer();
+        var camera = env.getContext().getCamera();
+        RayTraceBlockHit hit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
         if (hit != null) {
             float minX = hit.getPos().getX() - 0.001f, maxX = hit.getPos().getX() + 1.001f,
                     minY = hit.getPos().getY() - 0.001f, maxY = hit.getPos().getY() + 1.001f,
@@ -50,7 +58,6 @@ public class BlockSelectionRenderer implements Disposable {
         }
     }
 
-    @Override
     public void dispose() {
 
     }

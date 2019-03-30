@@ -23,6 +23,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class WorldRenderer {
 
     private final ChunkRenderer chunkRenderer = new ChunkRenderer();
+    private final BlockSelectionRenderer blockSelectionRenderer = new BlockSelectionRenderer();
 
     private ObservableValue<ShaderProgram> worldShader;
     private FrameBuffer frameBuffer;
@@ -41,6 +42,7 @@ public class WorldRenderer {
         this.context = env.getContext();
         this.game = env.getGame();
         chunkRenderer.init(env);
+        blockSelectionRenderer.init(env);
 //        context.getGame().getContext().register(chunkRenderer);
         worldShader =
                 ShaderManager.INSTANCE.registerShader("world_shader",
@@ -128,6 +130,8 @@ public class WorldRenderer {
         buffer.pos(0, 0, 100).color(0, 0, 1).endVertex();
         tessellator.draw();
 
+        blockSelectionRenderer.render(partial);
+
         frameBuffer.bind();
         glEnable(GL_DEPTH_TEST);
         frameBuffer.blitFrom(frameBufferMultisampled);
@@ -148,6 +152,7 @@ public class WorldRenderer {
 
     public void dispose() {
         chunkRenderer.dispose();
+        blockSelectionRenderer.dispose();
 
         ShaderManager.INSTANCE.unregisterShader("world_shader");
         ShaderManager.INSTANCE.unregisterShader("frame_buffer_shader");
