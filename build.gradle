@@ -1,8 +1,5 @@
 import org.gradle.internal.os.OperatingSystem
 
-group 'com.github.unknownstudio'
-version '1.0.0'
-
 project.ext.lwjglVersion = "3.2.1"
 
 switch (OperatingSystem.current()) {
@@ -34,15 +31,20 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse'
     apply plugin: 'idea'
+    apply plugin: 'maven'
+
+    group 'com.github.unknownstudio'
+    version '1.0.0'
 
     sourceCompatibility = targetCompatibility = 11
 
     repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
         maven {
             url 'https://jitpack.io'
         }
-        mavenCentral()
-        jcenter()
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots/"
         }
@@ -54,9 +56,10 @@ subprojects {
     test {
         useJUnitPlatform()
     }
+
     dependencies {
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.1.1'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.1.1'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.1'
     }
 
     tasks.withType(JavaCompile) {
