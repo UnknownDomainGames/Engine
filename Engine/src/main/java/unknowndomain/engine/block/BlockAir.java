@@ -34,6 +34,11 @@ public class BlockAir extends RegistryEntry.Impl<Block> implements Block {
     }
 
     @Override
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, T value) {
+
+    }
+
+    @Override
     public void onPlaced(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
 
     }

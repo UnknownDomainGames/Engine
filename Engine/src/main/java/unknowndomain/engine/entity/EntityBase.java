@@ -8,6 +8,8 @@ import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class EntityBase implements Entity {
     private int id;
@@ -18,9 +20,12 @@ public abstract class EntityBase implements Entity {
     private Vector3f motion = new Vector3f();
     private AABBd boundingBox;
 
+    private final Map<Class<?>, Object> components;
+
     public EntityBase(int id, World world) {
         this.id = id;
         this.world = world;
+        this.components = new HashMap<>();
     }
 
     @Override
@@ -68,11 +73,16 @@ public abstract class EntityBase implements Entity {
     @Nullable
     @Override
     public <T extends Component> T getComponent(@Nonnull Class<T> type) {
-        return null;
+        return type.cast(components.get(type));
     }
 
     @Override
     public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
-        return false;
+        return components.containsKey(type);
+    }
+
+    @Override
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, T value) {
+        components.put(type, value);
     }
 }

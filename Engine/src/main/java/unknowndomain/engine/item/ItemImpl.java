@@ -68,4 +68,9 @@ class ItemImpl extends RegistryEntry.Impl<Item> implements Item {
     public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
         return false;
     }
+
+    @Override
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, T value) {
+
+    }
 }

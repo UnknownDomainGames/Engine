@@ -84,6 +84,11 @@ class BlockShared extends RegistryEntry.Impl<Block> implements Block {
     }
 
     @Override
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, T value) {
+
+    }
+
+    @Override
     public void onRandomTick(World world, BlockPos pos, Block block) {
 
     }

@@ -3,7 +3,6 @@ package unknowndomain.engine.world;
 import org.joml.Vector3fc;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
-import unknowndomain.engine.component.RuntimeObject;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
@@ -17,7 +16,7 @@ import java.util.Set;
 /**
  * World instance, should spawn by {@link unknowndomain.engine.game.Game}
  */
-public interface World extends RuntimeObject, BlockAccessor {
+public interface World extends BlockAccessor {
 
     Game getGame();
 

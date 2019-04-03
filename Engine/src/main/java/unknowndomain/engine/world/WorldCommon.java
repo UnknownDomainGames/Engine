@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import org.joml.*;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
-import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.EntityCamera;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
@@ -21,7 +20,6 @@ import unknowndomain.engine.world.chunk.ChunkConstants;
 import unknowndomain.engine.world.chunk.ChunkStorage;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.Math;
 import java.util.*;
 
@@ -214,17 +212,6 @@ public class WorldCommon implements World, Runnable {
 
     public void stop() {
         ticker.stop();
-    }
-
-    @Nullable
-    @Override
-    public <T extends Component> T getComponent(@Nonnull Class<T> type) {
-        return null;
-    }
-
-    @Override
-    public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
-        return false;
     }
 
     static class PhysicsSystem {
