@@ -110,6 +110,11 @@ public abstract class GameBase implements Game {
 //        getContext().post(new EngineEvent.ModConstructionFinish(this));
     }
 
+    @Override
+    public Engine getEngine() {
+        return engine;
+    }
+
     @Nonnull
     @Override
     public EventBus getEventBus() {

@@ -1,6 +1,7 @@
 package unknowndomain.engine.game;
 
 import org.slf4j.Logger;
+import unknowndomain.engine.Engine;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.world.World;
@@ -25,6 +26,8 @@ import javax.annotation.Nonnull;
  * Each world should hold a separated thread
  */
 public interface Game extends Runnable {
+
+    Engine getEngine();
 
     World spawnWorld(World.Config config);
 
