@@ -1,6 +1,6 @@
 package unknowndomain.engine.math;
 
-import unknowndomain.engine.Tickable;
+import unknowndomain.engine.logic.Tickable;
 
 public class Ticker implements Runnable {
 
