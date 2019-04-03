@@ -12,7 +12,7 @@ import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.gui.EngineGuiManager;
 import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.camera.Camera;
-import unknowndomain.engine.client.rendering.camera.SimpleCamera;
+import unknowndomain.engine.client.rendering.camera.FixedCamera;
 import unknowndomain.engine.client.rendering.display.GLFWWindow;
 import unknowndomain.engine.client.rendering.display.Window;
 import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
@@ -130,7 +130,7 @@ public class EngineRenderContext implements RenderContext, Disposable {
         textureManager = new EngineTextureManager();
         guiManager = new EngineGuiManager(this);
 
-        camera = new SimpleCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
+        camera = new FixedCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
 
         initRenderer();
     }

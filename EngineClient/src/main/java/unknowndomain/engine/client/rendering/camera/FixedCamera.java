@@ -5,14 +5,14 @@ import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
-public class SimpleCamera implements Camera {
+public class FixedCamera implements Camera {
 
     private final Vector3fc position;
     private final Vector3fc lookAt;
     private final Vector3fc frontVector;
     private final Matrix4fc viewMatrix;
 
-    public SimpleCamera(Vector3fc position, Vector3fc frontVector) {
+    public FixedCamera(Vector3fc position, Vector3fc frontVector) {
         this.position = position;
         this.frontVector = frontVector;
         this.lookAt = position.add(frontVector, new Vector3f());
