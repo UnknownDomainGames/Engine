@@ -1,6 +1,7 @@
 package unknowndomain.engine.item;
 
 import unknowndomain.engine.block.RayTraceBlockHit;
+import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.world.World;
@@ -8,7 +9,7 @@ import unknowndomain.engine.world.World;
 public interface ItemPrototype {
     UseBehavior DEFAULT_USE = (world, entity, item) -> {
     };
-    UseBlockBehavior DEFAULT_USE_BLOCK = (world, entity, item, hit) -> {
+    UseBlockBehavior DEFAULT_USE_BLOCK = (player, item, hit) -> {
     };
     HitBlockBehavior DEFAULT_HIT_BLOCK = (world, player, item, hit) -> {
     };
@@ -24,8 +25,8 @@ public interface ItemPrototype {
         }
     }
 
-    interface UseBlockBehavior {
-        void onUseBlockStart(World world, Entity entity, Item item, RayTraceBlockHit hit);
+    interface UseBlockBehavior extends Component {
+        void onUseBlockStart(Player player, Item item, RayTraceBlockHit hit);
 
         default boolean onUsingBlock(Player player, Item item, RayTraceBlockHit hit, int tickElapsed) {
             return false;

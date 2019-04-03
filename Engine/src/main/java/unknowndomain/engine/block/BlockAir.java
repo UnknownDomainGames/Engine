@@ -9,7 +9,7 @@ import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class BlockAir extends RegistryEntry.Impl<Block> implements Block {
 
@@ -22,9 +22,9 @@ public class BlockAir extends RegistryEntry.Impl<Block> implements Block {
         return new AABBd[0];
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public <T extends Component> T getComponent(@Nonnull Class<T> type) {
+    public <T extends Component> Optional<T> getComponent(@Nonnull Class<T> type) {
         return null;
     }
 
@@ -35,6 +35,11 @@ public class BlockAir extends RegistryEntry.Impl<Block> implements Block {
 
     @Override
     public <T extends Component> void setComponent(@Nonnull Class<T> type, T value) {
+
+    }
+
+    @Override
+    public <T extends Component> void removeComponent(@Nonnull Class<T> type) {
 
     }
 

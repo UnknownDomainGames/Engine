@@ -1,8 +1,9 @@
 package unknowndomain.engine.entity.component;
 
+import unknowndomain.engine.component.Component;
 import unknowndomain.engine.item.Item;
 
-public interface TwoHands {
+public interface TwoHands extends Component {
 
     Item getMainHand();
 

@@ -2,6 +2,7 @@ package unknowndomain.game;
 
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.block.ClientBlockAir;
@@ -12,11 +13,16 @@ import unknowndomain.engine.client.input.keybinding.ActionMode;
 import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
+import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
+import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.mod.RegistrationStartEvent;
 import unknowndomain.engine.event.mod.RegistryConstructionEvent;
+import unknowndomain.engine.item.ItemPrototype;
+import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.IdAutoIncreaseRegistry;
@@ -81,11 +87,15 @@ public final class DefaultGameMode {
 //                c.getWorld().setBlock(hit.getPos(), Blocks.AIR, null);
 //            }
         }, ActionMode.PRESS));
-        registry.register(KeyBinding.create("player.mouse.r", Key.MOUSE_BUTTON_RIGHT, (c) -> {
-//            RayTraceBlockHit hit = c.getHit();
-//            if (hit != null) {
-//                c.getWorld().setBlock(hit.getPos().offset(hit.getFace()), Blocks.DIRT, null);
-//            }
+        registry.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (c) -> {
+            Player player = c.getPlayer();
+            Camera camera = c.getEngine().getRenderContext().getCamera();
+            Entity entity = player.getControlledEntity();
+            RayTraceBlockHit hit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
+            entity.getComponent(TwoHands.class)
+                    .ifPresent(twoHands -> twoHands.getMainHand()
+                            .getComponent(ItemPrototype.UseBlockBehavior.class)
+                            .ifPresent(useBlockBehavior -> useBlockBehavior.onUseBlockStart(player, twoHands.getMainHand(), hit)));
         }, ActionMode.PRESS));
     }
 

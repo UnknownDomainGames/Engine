@@ -7,9 +7,9 @@ import unknowndomain.engine.component.Component;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public abstract class EntityBase implements Entity {
     private int id;
@@ -70,19 +70,24 @@ public abstract class EntityBase implements Entity {
         return motion;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public <T extends Component> T getComponent(@Nonnull Class<T> type) {
-        return type.cast(components.get(type));
+    public <T extends Component> Optional<T> getComponent(@Nonnull Class<T> type) {
+        return Optional.empty();
     }
 
     @Override
     public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
-        return components.containsKey(type);
+        return false;
     }
 
     @Override
-    public <T extends Component> void setComponent(@Nonnull Class<T> type, T value) {
-        components.put(type, value);
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nonnull T value) {
+
+    }
+
+    @Override
+    public <T extends Component> void removeComponent(@Nonnull Class<T> type) {
+
     }
 }
