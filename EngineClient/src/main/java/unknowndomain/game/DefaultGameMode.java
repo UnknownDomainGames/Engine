@@ -87,15 +87,16 @@ public final class DefaultGameMode {
 //                c.getWorld().setBlock(hit.getPos(), Blocks.AIR, null);
 //            }
         }, ActionMode.PRESS));
-        registry.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (c) -> {
-            Player player = c.getPlayer();
-            Camera camera = c.getEngine().getRenderContext().getCamera();
+        registry.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (game) -> {
+            Player player = game.getPlayer();
+            Camera camera = game.getEngine().getRenderContext().getCamera();
             Entity entity = player.getControlledEntity();
             RayTraceBlockHit hit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
             entity.getComponent(TwoHands.class)
                     .ifPresent(twoHands -> twoHands.getMainHand()
-                            .getComponent(ItemPrototype.UseBlockBehavior.class)
-                            .ifPresent(useBlockBehavior -> useBlockBehavior.onUseBlockStart(player, twoHands.getMainHand(), hit)));
+                            .ifNonEmpty(itemStack -> itemStack.getItem()
+                                    .getComponent(ItemPrototype.UseBlockBehavior.class)
+                                    .ifPresent(useBlockBehavior -> useBlockBehavior.onUseBlockStart(player, itemStack, hit))));
         }, ActionMode.PRESS));
     }
 

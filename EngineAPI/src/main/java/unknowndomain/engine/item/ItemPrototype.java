@@ -4,47 +4,46 @@ import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.player.Player;
-import unknowndomain.engine.world.World;
 
 public interface ItemPrototype {
-    UseBehavior DEFAULT_USE = (world, entity, item) -> {
+    UseBehavior DEFAULT_USE = (player, itemStack) -> {
     };
     UseBlockBehavior DEFAULT_USE_BLOCK = (player, item, hit) -> {
     };
-    HitBlockBehavior DEFAULT_HIT_BLOCK = (world, player, item, hit) -> {
+    HitBlockBehavior DEFAULT_HIT_BLOCK = (player, itemStack, hit) -> {
     };
 
-    interface UseBehavior {
-        void onUseStart(World world, Entity entity, Item item);
+    interface UseBehavior extends Component {
+        void onUseStart(Player player, ItemStack itemStack);
 
-        default boolean onUsing(World world, Player player, Item item, int tickElapsed) {
+        default boolean onUsing(Player player, ItemStack itemStack, int tickElapsed) {
             return false;
         }
 
-        default void onUseStop(World world, Player player, Item item, int tickElapsed) {
+        default void onUseStop(Player player, ItemStack itemStack, int tickElapsed) {
         }
     }
 
     interface UseBlockBehavior extends Component {
-        void onUseBlockStart(Player player, Item item, RayTraceBlockHit hit);
+        void onUseBlockStart(Player player, ItemStack itemStack, RayTraceBlockHit hit);
 
-        default boolean onUsingBlock(Player player, Item item, RayTraceBlockHit hit, int tickElapsed) {
+        default boolean onUsingBlock(Player player, ItemStack itemStack, RayTraceBlockHit hit, int tickElapsed) {
             return false;
         }
 
-        default void onUseBlockStop(Player player, Item item, RayTraceBlockHit hit, int tickElapsed) {
+        default void onUseBlockStop(Player player, ItemStack itemStack, RayTraceBlockHit hit, int tickElapsed) {
         }
     }
 
     interface HitBlockBehavior {
-        void onHit(World world, Player player, Item item, RayTraceBlockHit hit);
+        void onHit(Player player, ItemStack itemStack, RayTraceBlockHit hit);
 
 //        boolean onKeep(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed);
 
 //        void onUseStop(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed);
     }
 
-    interface HitEntityBehavior {
+    interface HitEntityBehavior extends Component {
         void onStart(Player player, Item item, Entity entity);
 
         boolean onKeep(Player player, Item item, Entity entity, int tickElapsed);

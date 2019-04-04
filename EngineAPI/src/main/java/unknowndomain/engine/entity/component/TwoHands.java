@@ -1,38 +1,48 @@
 package unknowndomain.engine.entity.component;
 
 import unknowndomain.engine.component.Component;
-import unknowndomain.engine.item.Item;
+import unknowndomain.engine.item.ItemStack;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public interface TwoHands extends Component {
 
-    Item getMainHand();
+    @Nonnull
+    ItemStack getMainHand();
 
-    void setMainHand(Item mainHand);
+    void setMainHand(@Nonnull ItemStack mainHand);
 
-    Item getOffHand();
+    @Nonnull
+    ItemStack getOffHand();
 
-    void setOffHand(Item offHand);
+    void setOffHand(@Nonnull ItemStack offHand);
 
     class Impl implements TwoHands {
-        private Item mainHand, offHand;
 
-        public Item getMainHand() {
+        private ItemStack mainHand;
+        private ItemStack offHand;
+
+        @Nonnull
+        @Override
+        public ItemStack getMainHand() {
             return mainHand;
         }
 
         @Override
-        public void setMainHand(Item mainHand) {
-            this.mainHand = mainHand;
+        public void setMainHand(@Nonnull ItemStack mainHand) {
+            this.mainHand = Objects.requireNonNull(mainHand);
         }
 
+        @Nonnull
         @Override
-        public Item getOffHand() {
+        public ItemStack getOffHand() {
             return offHand;
         }
 
         @Override
-        public void setOffHand(Item offHand) {
-            this.offHand = offHand;
+        public void setOffHand(@Nonnull ItemStack offHand) {
+            this.offHand = Objects.requireNonNull(offHand);
         }
     }
 }
