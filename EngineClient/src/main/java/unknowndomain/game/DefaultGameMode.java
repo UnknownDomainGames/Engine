@@ -74,7 +74,6 @@ public final class DefaultGameMode {
 
         // TODO: When separating common and client, only register on client side
         // TODO: almost everything is hardcoded... Fix when GameContext and
-        // ClientContext is fixed
         registry.register(
                 KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> c.getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
                         .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.FORWARD, false)));
