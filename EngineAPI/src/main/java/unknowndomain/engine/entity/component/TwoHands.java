@@ -20,8 +20,8 @@ public interface TwoHands extends Component {
 
     class Impl implements TwoHands {
 
-        private ItemStack mainHand;
-        private ItemStack offHand;
+        private ItemStack mainHand = ItemStack.EMPTY;
+        private ItemStack offHand = ItemStack.EMPTY;
 
         @Nonnull
         @Override

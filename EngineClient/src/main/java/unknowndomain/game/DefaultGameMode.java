@@ -21,6 +21,8 @@ import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.mod.RegistrationStartEvent;
 import unknowndomain.engine.event.mod.RegistryConstructionEvent;
+import unknowndomain.engine.item.Item;
+import unknowndomain.engine.item.ItemBlock;
 import unknowndomain.engine.item.ItemPrototype;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Registry;
@@ -35,6 +37,7 @@ public final class DefaultGameMode {
     public void constructionRegistry(RegistryConstructionEvent e) {
         // TODO: move to common.
         e.register(new IdAutoIncreaseRegistry<>(Block.class));
+        e.register(new IdAutoIncreaseRegistry<>(Item.class));
 
         e.register(new IdAutoIncreaseRegistry<>(KeyBinding.class));
         e.register(new IdAutoIncreaseRegistry<>(ClientBlock.class));
@@ -42,9 +45,9 @@ public final class DefaultGameMode {
 
     @Listener
     public void registerStage(RegistrationStartEvent e) {
-        // register blocks
         RegistryManager registryManager = e.getRegistryManager();
         registerBlocks(registryManager.getRegistry(Block.class));
+        registerItems(registryManager.getRegistry(Item.class));
         registerKeyBindings(registryManager.getRegistry(KeyBinding.class));
         registerClientBlock(registryManager.getRegistry(ClientBlock.class));
     }
@@ -53,6 +56,12 @@ public final class DefaultGameMode {
         registry.register(Blocks.AIR);
         registry.register(Blocks.GRASS);
         registry.register(Blocks.DIRT);
+    }
+
+    private void registerItems(Registry<Item> registry) {
+        registry.register(new ItemBlock(Blocks.AIR));
+        registry.register(new ItemBlock(Blocks.GRASS));
+        registry.register(new ItemBlock(Blocks.DIRT));
     }
 
     private void registerClientBlock(Registry<ClientBlock> registry) {
