@@ -101,14 +101,14 @@ public class ShaderProgram implements Disposable {
             attachShader(s);
 
         linkProgram();
-        if(GL20.glGetProgrami(programId, GL_LINK_STATUS) != GL_TRUE){
+        if (GL20.glGetProgrami(programId, GL_LINK_STATUS) != GL_TRUE) {
             Platform.getLogger().warn(String.format("Error initializing shader program (id:%d), log: %s", programId,
                     GL20.glGetProgramInfoLog(programId, 2048)));
         }
         use();
 
         GL20.glValidateProgram(programId);
-        if(GL20.glGetProgrami(programId, GL_VALIDATE_STATUS) != GL_TRUE){
+        if (GL20.glGetProgrami(programId, GL_VALIDATE_STATUS) != GL_TRUE) {
             Platform.getLogger().warn(String.format("Error initializing shader program (id:%d), log: %s", programId,
                     GL20.glGetProgramInfoLog(programId, 2048)));
         }
@@ -146,6 +146,11 @@ public class ShaderProgram implements Disposable {
 
         GL20.glDeleteProgram(programId);
         programId = -1;
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return programId == -1;
     }
 
     public int getUniformLocation(String name) {

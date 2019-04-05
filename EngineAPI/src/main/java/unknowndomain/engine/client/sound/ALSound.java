@@ -12,6 +12,7 @@ import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_memory;
 import static org.lwjgl.system.MemoryStack.*;
 
 public class ALSound implements Disposable {
+
     private int soundId = 0;
     private int channel;
     private int rate;
@@ -42,12 +43,12 @@ public class ALSound implements Disposable {
     public static ALSound of(ShortBuffer buffer, byte bitDepth, int rate, int channel) {
         alGetError();
         int soundId = alGenBuffers();
-        ALSound sound = new ALSound(soundId,channel,rate,bitDepth);
+        ALSound sound = new ALSound(soundId, channel, rate, bitDepth);
         sound.reload(buffer, bitDepth, rate, channel);
         return sound;
     }
 
-    public void reloadOgg(ByteBuffer buffer){
+    public void reloadOgg(ByteBuffer buffer) {
         stackPush();
         IntBuffer channelb = stackMallocInt(1);
         stackPush();
@@ -61,7 +62,7 @@ public class ALSound implements Disposable {
         reload(raw, (byte) 16, rate, channel);
     }
 
-    public void reload(ShortBuffer buffer, byte bitDepth, int rate, int channel){
+    public void reload(ShortBuffer buffer, byte bitDepth, int rate, int channel) {
         int format = 0;
         if (bitDepth == 8) {
             if (channel == 1) format = AL_FORMAT_MONO8;
@@ -105,5 +106,10 @@ public class ALSound implements Disposable {
             alDeleteBuffers(soundId);
             soundId = 0;
         }
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return soundId == 0;
     }
 }

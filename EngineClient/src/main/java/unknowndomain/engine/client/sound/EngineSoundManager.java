@@ -162,4 +162,9 @@ public class EngineSoundManager implements ALSoundManager {
             device = 0;
         }
     }
+
+    @Override
+    public boolean isDisposed() {
+        return context == 0;
+    }
 }

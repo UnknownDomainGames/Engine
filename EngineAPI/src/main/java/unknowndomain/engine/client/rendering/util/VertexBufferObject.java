@@ -118,4 +118,9 @@ public class VertexBufferObject implements Disposable {
             vaoId = -1;
         }
     }
+
+    @Override
+    public boolean isDisposed() {
+        return id == -1;
+    }
 }

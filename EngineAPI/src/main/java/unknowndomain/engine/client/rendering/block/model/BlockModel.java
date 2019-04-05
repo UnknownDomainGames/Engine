@@ -137,9 +137,4 @@ public class BlockModel implements BlockMeshGenerator {
         buffer.pos(modelQuad.vertexs[6], modelQuad.vertexs[7], modelQuad.vertexs[8]).color(1, 1, 1).uv(textureUV.getMaxU(), textureUV.getMinV()).normal(normal1).endVertex(); // 3
         buffer.pos(modelQuad.vertexs[9], modelQuad.vertexs[10], modelQuad.vertexs[11]).color(1, 1, 1).uv(textureUV.getMinU(), textureUV.getMinV()).normal(normal1).endVertex(); // 4
     }
-
-    @Override
-    public void dispose() {
-
-    }
 }

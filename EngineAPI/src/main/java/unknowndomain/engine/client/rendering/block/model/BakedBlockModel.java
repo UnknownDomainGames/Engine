@@ -66,9 +66,4 @@ public class BakedBlockModel implements BlockMeshGenerator {
             buffer.put(mesh);
         }
     }
-
-    @Override
-    public void dispose() {
-
-    }
 }

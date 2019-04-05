@@ -1,13 +1,12 @@
 package unknowndomain.engine.client.asset.source;
 
 import unknowndomain.engine.client.asset.AssetPath;
-import unknowndomain.engine.util.Disposable;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-public interface AssetSource extends Disposable {
+public interface AssetSource {
 
     boolean exists(AssetPath path);
 

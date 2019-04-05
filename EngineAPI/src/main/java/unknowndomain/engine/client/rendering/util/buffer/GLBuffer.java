@@ -136,6 +136,12 @@ public abstract class GLBuffer implements Disposable {
     @Override
     public void dispose() {
         freeBuffer(backingBuffer);
+        backingBuffer = null;
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return backingBuffer == null;
     }
 
     public void endVertex() {

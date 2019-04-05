@@ -95,9 +95,4 @@ public class EngineAssetLoadManager implements AssetLoadManager {
     public AssetManager getAssetManager() {
         return assetManager;
     }
-
-    @Override
-    public void dispose() {
-
-    }
 }

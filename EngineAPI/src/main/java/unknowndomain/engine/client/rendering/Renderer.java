@@ -1,14 +1,14 @@
 package unknowndomain.engine.client.rendering;
 
 
-import unknowndomain.engine.util.Disposable;
-
 /**
  * The base renderer for the game. A Mod need to have this if it want to render new things...
  */
-public interface Renderer extends Disposable {
+public interface Renderer {
 
     void init(RenderContext context);
 
     void render(float partial);
+
+    void dispose();
 }

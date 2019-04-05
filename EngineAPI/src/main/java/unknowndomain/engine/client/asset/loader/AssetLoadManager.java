@@ -2,14 +2,13 @@ package unknowndomain.engine.client.asset.loader;
 
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.asset.exception.AssetLoadException;
-import unknowndomain.engine.util.Disposable;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public interface AssetLoadManager extends Disposable {
+public interface AssetLoadManager {
 
     @Nonnull
     <T> AssetType<T> createType(@Nonnull Class<T> assetClass, @Nonnull AssetLoader<T> loader);

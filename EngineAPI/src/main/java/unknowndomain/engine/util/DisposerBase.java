@@ -19,6 +19,8 @@ public abstract class DisposerBase implements Disposer, Runnable {
 
         private final Runnable action;
 
+        private volatile boolean disposed = false;
+
         public DisposablePhantomReference(Object referent, ReferenceQueue q, Runnable action) {
             super(referent, q);
             this.action = action;
@@ -26,7 +28,13 @@ public abstract class DisposerBase implements Disposer, Runnable {
 
         @Override
         public void dispose() {
+            disposed = true;
             action.run();
+        }
+
+        @Override
+        public boolean isDisposed() {
+            return disposed;
         }
     }
 }

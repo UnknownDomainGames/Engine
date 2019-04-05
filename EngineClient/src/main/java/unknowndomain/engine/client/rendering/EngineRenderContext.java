@@ -17,7 +17,6 @@ import unknowndomain.engine.client.rendering.display.GLFWWindow;
 import unknowndomain.engine.client.rendering.display.Window;
 import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
-import unknowndomain.engine.util.Disposable;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedList;
@@ -26,7 +25,7 @@ import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class EngineRenderContext implements RenderContext, Disposable {
+public class EngineRenderContext implements RenderContext {
 
     public static final int WINDOW_WIDTH = 854, WINDOW_HEIGHT = 480;
 
@@ -161,8 +160,7 @@ public class EngineRenderContext implements RenderContext, Disposable {
         return renderers;
     }
 
-    @Override
     public void dispose() {
-        renderers.forEach(Disposable::dispose);
+        renderers.forEach(Renderer::dispose);
     }
 }
