@@ -40,6 +40,7 @@ public abstract class GameBase implements Game {
     protected EventBus eventBus;
 
     protected boolean terminated = false;
+    protected boolean stopped = false;
 
     public GameBase(Engine engine, GameDefinition definition) {
         this.engine = engine;
@@ -145,7 +146,7 @@ public abstract class GameBase implements Game {
     }
 
     @Override
-    public void run() {
+    public void init() {
         constructStage();
         registerStage();
         resourceStage();
@@ -159,8 +160,24 @@ public abstract class GameBase implements Game {
     }
 
     @Override
-    public void terminate() {
+    public synchronized void terminate() {
         terminated = true;
-        // TODO: unload mod/resource here
+        logger.info("Marked game terminated!");
     }
+
+    @Override
+    public void terminateNow() {
+        tryTerminate();
+    }
+
+    protected void tryTerminate() {
+        stopped = true;
+    }
+
+    @Override
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    // TODO: unload mod/resource
 }

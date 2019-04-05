@@ -25,15 +25,21 @@ import javax.annotation.Nonnull;
  * <p>
  * Each world should hold a separated thread
  */
-public interface Game extends Runnable {
+public interface Game {
 
     Engine getEngine();
 
     World spawnWorld(World.Config config);
 
+    void init();
+
     void terminate();
 
+    void terminateNow();
+
     boolean isTerminated();
+
+    boolean isStopped();
 
     @Nonnull
     EventBus getEventBus();

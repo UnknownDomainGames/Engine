@@ -49,7 +49,10 @@ public class Ticker implements Runnable {
                 fix.tick();
                 lag -= interval;
             }
-            dynamic.tick((float) (lag / tickPerSecond));
+
+            if (!stopped) {
+                dynamic.tick((float) (lag / tickPerSecond));
+            }
         }
     }
 }

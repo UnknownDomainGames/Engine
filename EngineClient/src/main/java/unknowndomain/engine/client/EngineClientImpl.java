@@ -146,6 +146,11 @@ public class EngineClientImpl implements EngineClient {
     }
 
     private void clientTick() {
+        if (isTerminated()) {
+            tryTerminate();
+            return;
+        }
+
         if (isPlaying()) { // TODO: Remove it.
             game.clientTick();
         }
@@ -174,11 +179,15 @@ public class EngineClientImpl implements EngineClient {
             return;
         }
 
-        logger.info("Terminating Engine!");
         terminated = true;
+        logger.info("Marked engine terminated!");
+    }
+
+    private void tryTerminate() {
+        logger.info("Engine terminating!");
 
         if (isPlaying()) {
-            game.terminate();
+            game.terminateNow();
         }
 
         shutdownListeners.forEach(Runnable::run);
@@ -207,7 +216,7 @@ public class EngineClientImpl implements EngineClient {
 
         eventBus.post(new GameStartEvent.Pre(game));
         this.game = (GameClient) Objects.requireNonNull(game);
-        game.run();
+        game.init();
         eventBus.post(new GameStartEvent.Post(game));
     }
 
@@ -218,7 +227,7 @@ public class EngineClientImpl implements EngineClient {
 
     @Override
     public boolean isPlaying() {
-        return game != null && !game.isTerminated();
+        return game != null && !game.isStopped();
     }
 
     @Override

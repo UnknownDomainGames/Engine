@@ -58,18 +58,24 @@ public class GameServerFullAsync extends GameBase {
     }
 
     @Override
-    public void run() {
-        super.run();
+    public void init() {
+        super.init();
         for (Thread thread : this.worldThreads) {
             thread.start();
         }
     }
 
+    @Override
     public void terminate() {
         super.terminate();
+    }
+
+    @Override
+    protected void tryTerminate() {
         for (WorldCommon worldCommon : internalWorlds) {
             worldCommon.stop();
         }
         // TODO: unload mod/resource here
+        super.tryTerminate();
     }
 }

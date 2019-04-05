@@ -143,33 +143,21 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 //        a.play();
     }
 
-    @Override
-    public void run() {
-        super.run();
-    }
-
-    @Override
-    public void terminate() {
-        logger.info("Terminating Game!");
-
-        engine.getEventBus().post(new GameTerminationEvent.Pre(this));
-
-        super.terminate();
-
-        engine.getEventBus().post(new GameTerminationEvent.Post(this));
-
-        logger.info("Game terminated.");
-    }
-
     public void clientTick() {
+        if (isTerminated()) {
+            tryTerminate();
+            return;
+        }
         keyBindingManager.tick();
-//        Vector3f d = new Vector3f();
-//        a.position(a.getPosition().add(dir.mul(0.05f, d)));
-//        var p = a.getPosition();
-//        if(Math.abs(p.x) > 20 && Math.signum(p.x) == Math.signum(d.x)) {
-//            dir.negate();
-//            a.speed(dir);
-//        }
         // TODO upload particle physics here
+    }
+
+    @Override
+    protected void tryTerminate() {
+        logger.info("Game terminating!");
+        engine.getEventBus().post(new GameTerminationEvent.Pre(this));
+        super.tryTerminate();
+        engine.getEventBus().post(new GameTerminationEvent.Post(this));
+        logger.info("Game terminated.");
     }
 }
