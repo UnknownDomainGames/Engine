@@ -4,6 +4,7 @@ import com.github.mouse0w0.lib4j.observable.value.MutableValue;
 import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import org.joml.*;
+import org.lwjgl.opengl.GL30;
 import unknowndomain.engine.Platform;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,6 +41,8 @@ public class ShaderManager {
                 }
             }
         });
+        int id = GL30.glGenVertexArrays();
+        GL30.glBindVertexArray(id);
     }
 
     private ShaderManager() {
@@ -47,6 +50,8 @@ public class ShaderManager {
         registeredShaders = new HashMap<>();
         uniforms = new HashMap<>();
         overriding = false;
+
+
     }
 
     private Map<String, Object> uniforms;
@@ -73,6 +78,7 @@ public class ShaderManager {
     }
 
     public void reload() {
+
         for (MutableValue<ShaderProgram> value : loadedShaders.values()) {
             ShaderProgram shaderProgram = value.getValue();
             if (shaderProgram != null) {
