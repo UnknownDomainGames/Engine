@@ -1,8 +1,8 @@
 package unknowndomain.engine.mod.exception;
 
-public class ModAlreadyLoadedExeception extends RuntimeException {
+public class ModAlreadyLoadedException extends RuntimeException {
 
-    public ModAlreadyLoadedExeception(String modid) {
+    public ModAlreadyLoadedException(String modid) {
         super(String.format("Mod \"%s\" already loaded.", modid));
     }
 }

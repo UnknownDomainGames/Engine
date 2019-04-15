@@ -39,7 +39,7 @@ public final class TTFontHelper implements FontHelper {
     private final Runnable beforeTextRender;
     private final Runnable afterTextRender;
 
-    private Font defualtFont;
+    private Font defaultFont;
 
     public TTFontHelper(Runnable beforeTextRender, Runnable afterTextRender) {
         this.beforeTextRender = beforeTextRender;
@@ -48,11 +48,11 @@ public final class TTFontHelper implements FontHelper {
 
     @Override
     public Font getDefaultFont() {
-        return defualtFont;
+        return defaultFont;
     }
 
     public void setDefaultFont(Font defaultFont) {
-        this.defualtFont = defaultFont;
+        this.defaultFont = defaultFont;
     }
 
     @Override

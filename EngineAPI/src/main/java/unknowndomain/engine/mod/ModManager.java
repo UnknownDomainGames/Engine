@@ -1,6 +1,6 @@
 package unknowndomain.engine.mod;
 
-import unknowndomain.engine.mod.exception.ModAlreadyLoadedExeception;
+import unknowndomain.engine.mod.exception.ModAlreadyLoadedException;
 import unknowndomain.engine.mod.exception.ModLoadException;
 
 import javax.annotation.Nonnull;
@@ -11,11 +11,11 @@ import java.util.Iterator;
 
 public interface ModManager {
 
-    ModContainer loadMod(Path path) throws ModLoadException, ModAlreadyLoadedExeception;
+    ModContainer loadMod(Path path) throws ModLoadException, ModAlreadyLoadedException;
 
-    ModContainer loadMod(ModDescriptor modDescriptor) throws ModLoadException, ModAlreadyLoadedExeception;
+    ModContainer loadMod(ModDescriptor modDescriptor) throws ModLoadException, ModAlreadyLoadedException;
 
-    Collection<ModContainer> loadMod(Iterator<Path> pathIterator) throws ModLoadException, ModAlreadyLoadedExeception;
+    Collection<ModContainer> loadMod(Iterator<Path> pathIterator) throws ModLoadException, ModAlreadyLoadedException;
 
     @Nullable
     ModContainer getMod(String modId);

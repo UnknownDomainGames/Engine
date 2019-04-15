@@ -14,7 +14,7 @@ public class ModClassLoader extends URLClassLoader {
 
     private Logger logger;
     private final List<ClassLoader> dependencyClassLoaders = new ArrayList<>();
-    private final List<ClassLoader> isDenpendedBy = new ArrayList<>();
+    private final List<ClassLoader> isDependedBy = new ArrayList<>();
 
     public ModClassLoader(Logger logger, Path src, ClassLoader parent) {
         super(new URL[0], parent);
@@ -24,7 +24,7 @@ public class ModClassLoader extends URLClassLoader {
 
     public static void addDependency(ModClassLoader loader, ModClassLoader dependency) {
         loader.dependencyClassLoaders.add(dependency);
-        dependency.isDenpendedBy.add(loader);
+        dependency.isDependedBy.add(loader);
     }
 
     @Override

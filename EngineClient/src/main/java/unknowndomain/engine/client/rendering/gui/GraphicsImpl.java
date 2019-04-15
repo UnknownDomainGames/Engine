@@ -172,7 +172,7 @@ public class GraphicsImpl implements Graphics {
             Vector4fc parent = clipRect.peek();
             float newX = parent.x() + x, newY = parent.y() + y;
             float newZ = newX + width, newW = newY + height;
-//            unstricted range
+//            unrestricted range
             Math2.clamp(newX, parent.x(),parent.z());
             Math2.clamp(newY, parent.y(),parent.w());
             Math2.clamp(newZ, parent.x(),parent.z());

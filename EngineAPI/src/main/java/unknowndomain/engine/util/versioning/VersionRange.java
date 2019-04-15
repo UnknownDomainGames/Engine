@@ -284,7 +284,7 @@ public class VersionRange
                 }
             }
         }
-        // Either the original or the specified version ranges have no restructions
+        // Either the original or the specified version ranges have no restrictions
         else if ( recommendedVersion != null )
         {
             // Use the original recommended version since it exists

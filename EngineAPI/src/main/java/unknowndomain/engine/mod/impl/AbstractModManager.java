@@ -1,7 +1,7 @@
 package unknowndomain.engine.mod.impl;
 
 import unknowndomain.engine.mod.*;
-import unknowndomain.engine.mod.exception.ModAlreadyLoadedExeception;
+import unknowndomain.engine.mod.exception.ModAlreadyLoadedException;
 import unknowndomain.engine.mod.exception.ModLoadException;
 
 import javax.annotation.Nonnull;
@@ -31,7 +31,7 @@ public abstract class AbstractModManager implements ModManager {
     @Override
     public ModContainer loadMod(ModDescriptor modDescriptor) {
         if (isModLoaded(modDescriptor.getModId())) {
-            throw new ModAlreadyLoadedExeception(modDescriptor.getModId());
+            throw new ModAlreadyLoadedException(modDescriptor.getModId());
         }
 
         ModContainer modContainer;
@@ -50,7 +50,7 @@ public abstract class AbstractModManager implements ModManager {
     }
 
     @Override
-    public Collection<ModContainer> loadMod(Iterator<Path> pathIterator) throws ModLoadException, ModAlreadyLoadedExeception {
+    public Collection<ModContainer> loadMod(Iterator<Path> pathIterator) throws ModLoadException, ModAlreadyLoadedException {
         List<ModContainer> modContainers = new ArrayList<>();
         while (pathIterator.hasNext()) {
             modContainers.add(loadMod(pathIterator.next()));

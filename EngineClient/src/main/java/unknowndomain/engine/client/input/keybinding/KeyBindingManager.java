@@ -164,17 +164,17 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     }
 
     @Override
-    public Key getBindedKeyFor(String target) {
+    public Key getBoundKeyFor(String target) {
         return registry.getValue(target).getKey();
     }
 
     @Override
-    public void setBindedKeyFor(String target, Key key) {
+    public void setBoundKeyFor(String target, Key key) {
         registry.getValue(target).rebind(key);
     }
 
     @Override
-    public void setBindedKeyToDefault(String target) {
+    public void setBoundKeyToDefault(String target) {
         KeyBinding binding = registry.getValue(target);
         binding.rebind(binding.getDefaultKey());
     }

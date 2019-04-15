@@ -5,6 +5,7 @@ import unknowndomain.engine.client.asset.source.FileSystemAssetSource;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.*;
+import java.util.Objects;
 
 public final class EngineAssetSource extends FileSystemAssetSource {
 

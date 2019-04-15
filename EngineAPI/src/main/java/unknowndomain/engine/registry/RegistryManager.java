@@ -23,14 +23,14 @@ public interface RegistryManager {
     Collection<Entry<Class<?>, Registry<?>>> getEntries();
 
     /**
-     * Register a registerable object to game
+     * Register a registrable object to game
      *
      * @param obj The target we want to register
      */
     <T extends RegistryEntry<T>> T register(@Nonnull T obj);
 
     /**
-     * Register a registerable object to game
+     * Register a registrable object to game
      *
      * @param objs The target we want to register
      */
