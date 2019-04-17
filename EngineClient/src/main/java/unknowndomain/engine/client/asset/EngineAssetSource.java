@@ -28,7 +28,7 @@ public final class EngineAssetSource extends FileSystemAssetSource {
         Path gradleSrc = Path.of("");
         while(tmp.getParent() != null){
             tmp = tmp.getParent();
-            if(Objects.equals(tmp.getFileName().toString(), "java")){
+            if (tmp.getFileName() != null && Objects.equals(tmp.getFileName().toString(), "java")) {
                 gradleSrc = tmp.relativize(path);
             }
             if(Files.exists(tmp.resolveSibling("resources"))){
