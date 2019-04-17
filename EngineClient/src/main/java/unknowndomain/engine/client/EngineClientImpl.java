@@ -185,6 +185,7 @@ public class EngineClientImpl implements EngineClient {
 
     private void tryTerminate() {
         logger.info("Engine terminating!");
+        ticker.stop();
 
         if (isPlaying()) {
             game.terminateNow();

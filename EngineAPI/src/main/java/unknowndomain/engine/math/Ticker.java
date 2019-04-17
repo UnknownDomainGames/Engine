@@ -45,7 +45,7 @@ public class Ticker implements Runnable {
             previous = current;
             lag += elapsed;
 
-            while (lag >= interval) {
+            while (lag >= interval && !stopped) {
                 fix.tick();
                 lag -= interval;
             }
