@@ -16,7 +16,7 @@ public class ItemBlock extends ItemBase {
 
     protected void initComponent() {
         setComponent(ItemPrototype.UseBlockBehavior.class,
-                (player, itemStack, hit) -> hit.getWorld().setBlock(hit.getPos().offset(hit.getFace()), block, null));
+                (player, itemStack, hit) -> hit.ifSuccess($ -> $.getWorld().setBlock($.getPos().offset($.getFace()), block, null)));
     }
 
     @Nonnull
