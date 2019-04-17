@@ -4,6 +4,7 @@ import org.joml.Vector3fc;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.entity.Entity;
+import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.chunk.Chunk;
@@ -31,6 +32,8 @@ public interface World extends BlockAccessor {
     }
 
     Chunk getChunk(int chunkX, int chunkY, int chunkZ);
+
+    Block removeBlock(@Nonnull BlockPos pos, BlockChangeCause cause);
 
     Collection<Chunk> getLoadedChunks();
 

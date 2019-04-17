@@ -40,4 +40,8 @@ public class RayTraceBlockHit {
     public Facing getFace() {
         return face;
     }
+
+    public boolean isSuccess(){
+        return block != null;
+    }
 }

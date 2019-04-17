@@ -3,11 +3,14 @@ package unknowndomain.engine.block;
 import unknowndomain.engine.component.Component;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
+import unknowndomain.engine.item.ItemStack;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.World;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class BlockPrototype {
     // all these behaviors are missing arguments
@@ -68,6 +71,17 @@ public abstract class BlockPrototype {
         }
 
         void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause);
+
+        default DestroyableProperty getProperty(World world, Entity entity, BlockPos blockPos, Block block){
+            return DEFAULT_PROPERTY;
+        }
+        DestroyableProperty DEFAULT_PROPERTY = new DestroyableProperty();
+        class DestroyableProperty{
+            public float hardness;
+            public float explosionResistance;
+            public Map<String, Integer> toolRequired = new HashMap<>();
+
+        }
     }
 
 }

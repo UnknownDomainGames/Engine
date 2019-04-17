@@ -6,6 +6,7 @@ import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.EntityCamera;
+import unknowndomain.engine.entity.EntityPlayer;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.game.Game;
@@ -18,6 +19,7 @@ import unknowndomain.engine.util.FastVoxelRayTrace;
 import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkConstants;
 import unknowndomain.engine.world.chunk.ChunkStorage;
+import unknowndomain.game.Blocks;
 
 import javax.annotation.Nonnull;
 import java.lang.Math;
@@ -53,7 +55,7 @@ public class WorldCommon implements World, Runnable {
     @Deprecated
     public void playerJoin(Player player) {
         // FIXME:
-        EntityCamera entity = new EntityCamera(entityList.size(), this);
+        var entity = new EntityPlayer(entityList.size(), this);
         player.controlEntity(entity);
         spawnEntity(entity);
         players.add(player);
@@ -189,6 +191,11 @@ public class WorldCommon implements World, Runnable {
                 .setBlock(pos, block, cause);
         getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause)); // TODO:
         return oldBlock;
+    }
+
+    @Override
+    public Block removeBlock(@Nonnull BlockPos pos, BlockChangeCause cause) {
+        return setBlock(pos, Blocks.AIR, cause);
     }
 
     @Override

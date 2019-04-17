@@ -20,7 +20,7 @@ public abstract class EntityBase implements Entity {
     private Vector3f motion = new Vector3f();
     private AABBd boundingBox;
 
-    private final Map<Class<?>, Object> components;
+    private final Map<Class<? extends Component>, Component> components;
 
     public EntityBase(int id, World world) {
         this.id = id;
@@ -73,21 +73,21 @@ public abstract class EntityBase implements Entity {
     @Nonnull
     @Override
     public <T extends Component> Optional<T> getComponent(@Nonnull Class<T> type) {
-        return Optional.empty();
+        return (Optional<T>) Optional.ofNullable(components.get(type));
     }
 
     @Override
     public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
-        return false;
+        return components.containsKey(type);
     }
 
     @Override
     public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nonnull T value) {
-
+        components.put(type, value);
     }
 
     @Override
     public <T extends Component> void removeComponent(@Nonnull Class<T> type) {
-
+        components.remove(type);
     }
 }

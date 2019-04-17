@@ -35,12 +35,14 @@ public interface ItemPrototype {
         }
     }
 
-    interface HitBlockBehavior {
+    interface HitBlockBehavior extends Component{
         void onHit(Player player, ItemStack itemStack, RayTraceBlockHit hit);
 
-//        boolean onKeep(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed);
+        default boolean onKeep(Player player, ItemStack itemStack, RayTraceBlockHit hit, int tickElapsed){
+            return false;
+        }
 
-//        void onUseStop(Player player, Item item, BlockPrototype.Hit hit, int tickElapsed);
+        default void onHitStop(Player player, ItemStack itemStack, RayTraceBlockHit hit){}
     }
 
     interface HitEntityBehavior extends Component {

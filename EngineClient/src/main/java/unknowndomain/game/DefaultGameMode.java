@@ -89,11 +89,17 @@ public final class DefaultGameMode {
         registry.register(
                 KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> c.getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
                         .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.DOWN, false)));
-        registry.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
-//            RayTraceBlockHit hit = c.getHit();
-//            if (hit != null) {
-//                c.getWorld().setBlock(hit.getPos(), Blocks.AIR, null);
-//            }
+        registry.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (game) -> {
+            Player player = game.getPlayer();
+            Camera camera = game.getEngine().getRenderContext().getCamera();
+            Entity controlingEntity = player.getControlledEntity();
+            RayTraceBlockHit blockHit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
+            controlingEntity.getComponent(TwoHands.class)
+                    .ifPresent(twoHands -> twoHands.getMainHand()
+                            .ifNonEmpty(itemStack -> itemStack.getItem()
+                                    .getComponent(ItemPrototype.HitBlockBehavior.class)
+                                    .ifPresent(hitBlockBehavior -> hitBlockBehavior.onHit(player,itemStack,blockHit))));
+
         }, ActionMode.PRESS));
         registry.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (game) -> {
             Player player = game.getPlayer();
