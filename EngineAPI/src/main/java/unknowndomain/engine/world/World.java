@@ -23,8 +23,10 @@ public interface World extends BlockAccessor {
 
     List<Entity> getEntities();
 
+    @Nonnull
     RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance);
 
+    @Nonnull
     RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore);
 
     default Chunk getChunk(@Nonnull BlockPos pos) {

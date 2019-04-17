@@ -5,7 +5,6 @@ import org.joml.*;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.entity.EntityCamera;
 import unknowndomain.engine.entity.EntityPlayer;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
@@ -71,11 +70,13 @@ public class WorldCommon implements World, Runnable {
         return entityList;
     }
 
+    @Nonnull
     @Override
     public RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance) {
         return raycast(from, dir, distance, Sets.newHashSet(getGame().getDefinition().blockAir()));
     }
 
+    @Nonnull
     @Override
     public RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore) {
         Vector3f rayOffset = dir.normalize(new Vector3f()).mul(distance);
@@ -117,7 +118,7 @@ public class WorldCommon implements World, Runnable {
                 }
             }
         }
-        return null;
+        return RayTraceBlockHit.failure();
     }
 
     protected void tick() {

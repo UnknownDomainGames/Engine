@@ -5,7 +5,15 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.World;
 
+import java.util.function.Consumer;
+
 public class RayTraceBlockHit {
+
+    private static final RayTraceBlockHit FAILURE = new RayTraceBlockHit(null, null, null, null, null);
+
+    public static RayTraceBlockHit failure() {
+        return FAILURE;
+    }
 
     private final World world;
     private final BlockPos pos;
@@ -41,7 +49,12 @@ public class RayTraceBlockHit {
         return face;
     }
 
-    public boolean isSuccess(){
+    public boolean isSuccess() {
         return block != null;
+    }
+
+    public void ifSuccess(Consumer<RayTraceBlockHit> consumer) {
+        if (isSuccess())
+            consumer.accept(this);
     }
 }
