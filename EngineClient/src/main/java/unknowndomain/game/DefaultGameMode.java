@@ -24,6 +24,7 @@ import unknowndomain.engine.event.mod.RegistryConstructionEvent;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.item.ItemBlock;
 import unknowndomain.engine.item.ItemPrototype;
+import unknowndomain.engine.item.ItemStack;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
@@ -98,7 +99,7 @@ public final class DefaultGameMode {
                     .ifPresent(twoHands -> twoHands.getMainHand()
                             .ifNonEmpty(itemStack -> itemStack.getItem()
                                     .getComponent(ItemPrototype.HitBlockBehavior.class)
-                                    .ifPresent(hitBlockBehavior -> hitBlockBehavior.onHit(player,itemStack,blockHit))));
+                                    .ifPresent(hitBlockBehavior -> hitBlockBehavior.onHit(player, itemStack, blockHit))));
 
         }, ActionMode.PRESS));
         registry.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (game) -> {
@@ -111,6 +112,16 @@ public final class DefaultGameMode {
                             .ifNonEmpty(itemStack -> itemStack.getItem()
                                     .getComponent(ItemPrototype.UseBlockBehavior.class)
                                     .ifPresent(useBlockBehavior -> useBlockBehavior.onUseBlockStart(player, itemStack, hit))));
+        }, ActionMode.PRESS));
+        registry.register(KeyBinding.create("player.mouse.middle", Key.MOUSE_BUTTON_3, (game) -> {
+            Player player = game.getPlayer();
+            Camera camera = game.getEngine().getRenderContext().getCamera();
+            Entity entity = player.getControlledEntity();
+            player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
+                    // TODO: Dont create ItemBlock
+                    entity.getComponent(TwoHands.class)
+                            .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new ItemBlock(hit.getBlock()))))
+            );
         }, ActionMode.PRESS));
     }
 
