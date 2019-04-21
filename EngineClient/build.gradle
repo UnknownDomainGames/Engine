@@ -16,12 +16,6 @@ configurations {
     compile.extendsFrom(embed)
 }
 
-dependencies {
-    embed project(':EngineAPI')
-    embed project(':Engine')
-    embed 'org.slf4j:slf4j-simple:1.7.25'
-}
-
 jar {
     manifest {
         attributes 'Main-Class': mainClassName
