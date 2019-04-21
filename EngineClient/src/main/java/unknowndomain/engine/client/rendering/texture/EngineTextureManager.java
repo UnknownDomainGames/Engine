@@ -10,6 +10,7 @@ import unknowndomain.engine.client.asset.exception.AssetLoadException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -34,9 +35,11 @@ public class EngineTextureManager implements TextureManager {
             throw new AssetLoadException("Cannot load texture because missing asset. Path: " + path);
         }
 
-        try (InputStream inputStream = Files.newInputStream(localPath.get())) {
-            PNGDecoder decoder = new PNGDecoder(inputStream);
-            TextureBuffer buf = TextureBuffer.create(decoder);
+        try (var channel = Files.newByteChannel(localPath.get())) {
+            var filebuf = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
+            channel.read(filebuf);
+            filebuf.flip();
+            TextureBuffer buf = TextureBuffer.create(filebuf);
             return GLTexture.of(buf.getWidth(), buf.getHeight(), buf.getBuffer());
         } catch (IOException e) {
             throw new AssetLoadException("Cannot load texture because catch exception. Path: " + path, e);

@@ -11,6 +11,7 @@ import unknowndomain.engine.client.asset.exception.AssetLoadException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -56,9 +57,11 @@ public class TextureAtlas {
     private TextureBuffer loadTextureBuffer(AssetPath path) throws IOException {
         Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getPath(path);
         if (nativePath.isPresent()) {
-            try (InputStream inputStream = Files.newInputStream(nativePath.get())) {
-                PNGDecoder decoder = new PNGDecoder(inputStream);
-                return TextureBuffer.create(decoder);
+            try (var channel = Files.newByteChannel(nativePath.get())) {
+                var filebuf = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
+                channel.read(filebuf);
+                filebuf.flip();
+                return TextureBuffer.create(filebuf);
             }
         }
         throw new AssetLoadException("Cannot load texture because missing asset. Path: " + path);
