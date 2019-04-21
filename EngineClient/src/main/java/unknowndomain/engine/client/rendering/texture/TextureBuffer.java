@@ -1,6 +1,5 @@
 package unknowndomain.engine.client.rendering.texture;
 
-import de.matthiasmann.twl.utils.PNGDecoder;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -10,16 +9,6 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 public class TextureBuffer {
-
-    @Deprecated
-    public static TextureBuffer create(PNGDecoder decoder) throws IOException {
-        TextureBuffer textureBuffer = new TextureBuffer(decoder.getWidth(), decoder.getHeight());
-        ByteBuffer buf = textureBuffer.getBuffer();
-        decoder.decode(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
-        buf.flip();
-        return textureBuffer;
-    }
-
 
     public static TextureBuffer create(ByteBuffer filebuf) throws IOException {
         if (!filebuf.isDirect()) {

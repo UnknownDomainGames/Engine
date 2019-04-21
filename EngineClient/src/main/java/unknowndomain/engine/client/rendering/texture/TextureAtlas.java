@@ -3,7 +3,6 @@ package unknowndomain.engine.client.rendering.texture;
 import com.github.mouse0w0.lib4j.observable.value.MutableValue;
 import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
-import de.matthiasmann.twl.utils.PNGDecoder;
 import org.apache.commons.lang3.tuple.Pair;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetPath;
