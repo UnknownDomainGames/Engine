@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.rendering.gui;
+package unknowndomain.engine.client.rendering;
 
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;

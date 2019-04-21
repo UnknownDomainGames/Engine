@@ -2,8 +2,8 @@ package unknowndomain.engine.client.rendering.world;
 
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.block.RayTraceBlockHit;
+import unknowndomain.engine.client.rendering.Tessellator;
 import unknowndomain.engine.client.rendering.game3d.Game3DRenderer.GameRenderEnv;
-import unknowndomain.engine.client.rendering.gui.Tessellator;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.util.Color;
 

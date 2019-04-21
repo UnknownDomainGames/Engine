@@ -4,6 +4,7 @@ import org.joml.Vector4f;
 import org.joml.Vector4fc;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
+import unknowndomain.engine.client.rendering.Tessellator;
 import unknowndomain.engine.client.rendering.gui.font.NativeTTFont;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.texture.GLTexture;

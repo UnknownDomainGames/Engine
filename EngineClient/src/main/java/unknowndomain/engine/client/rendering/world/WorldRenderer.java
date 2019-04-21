@@ -9,8 +9,9 @@ import org.lwjgl.opengl.GL15;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
+import unknowndomain.engine.client.rendering.Tessellator;
 import unknowndomain.engine.client.rendering.game3d.Game3DRenderer;
-import unknowndomain.engine.client.rendering.gui.Tessellator;
+import unknowndomain.engine.client.rendering.item.ItemRenderer;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
@@ -23,6 +24,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class WorldRenderer {
 
     private final ChunkRenderer chunkRenderer = new ChunkRenderer();
+    private final ItemRenderer itemRenderer = new ItemRenderer();
     private final BlockSelectionRenderer blockSelectionRenderer = new BlockSelectionRenderer();
 
     private ObservableValue<ShaderProgram> worldShader;
@@ -42,6 +44,7 @@ public class WorldRenderer {
         this.context = env.getContext();
         this.game = env.getGame();
         chunkRenderer.init(env);
+        itemRenderer.init(env);
         blockSelectionRenderer.init(env);
 //        context.getGame().getContext().register(chunkRenderer);
         worldShader =
@@ -108,13 +111,18 @@ public class WorldRenderer {
         chunkRenderer.render();
 
         ShaderManager.INSTANCE.bindShader(worldShader.getValue());
+
+        ShaderManager.INSTANCE.setUniform("u_UsingColor", true);
+        ShaderManager.INSTANCE.setUniform("u_UsingTexture", true);
+        itemRenderer.render(partial);
+
         glEnable(GL11.GL_DEPTH_TEST);
         glEnable(GL11.GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         ShaderManager.INSTANCE.setUniform("u_ProjMatrix", context.getWindow().projection());
         ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
-        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
+        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
 
         // TODO: Remove it
         Tessellator tessellator = Tessellator.getInstance();
@@ -152,6 +160,7 @@ public class WorldRenderer {
 
     public void dispose() {
         chunkRenderer.dispose();
+        itemRenderer.dispose();
         blockSelectionRenderer.dispose();
 
         ShaderManager.INSTANCE.unregisterShader("world_shader");

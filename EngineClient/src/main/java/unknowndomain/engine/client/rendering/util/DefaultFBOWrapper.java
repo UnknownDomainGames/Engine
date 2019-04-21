@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.rendering.util;
 
 import org.joml.Vector4ic;
-import unknowndomain.engine.client.rendering.gui.Tessellator;
+import unknowndomain.engine.client.rendering.Tessellator;
 
 import static org.lwjgl.opengl.GL11.*;
 
