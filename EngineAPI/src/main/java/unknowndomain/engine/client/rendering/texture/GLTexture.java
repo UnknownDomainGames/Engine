@@ -1,6 +1,5 @@
 package unknowndomain.engine.client.rendering.texture;
 
-import de.matthiasmann.twl.utils.PNGDecoder;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -82,16 +81,6 @@ public class GLTexture {
     @Override
     public String toString() {
         return "GLTexture { id: " + id + " }";
-    }
-
-    @Deprecated
-    public static GLTexture ofPNG(InputStream stream) throws IOException {
-        PNGDecoder decoder = new PNGDecoder(stream);
-        ByteBuffer buf = ByteBuffer.allocateDirect(4 * decoder.getWidth() * decoder.getHeight());
-        decoder.decode(buf, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
-        buf.flip();
-
-        return of(decoder.getWidth(), decoder.getHeight(), buf);
     }
 
     public void unbind() {
