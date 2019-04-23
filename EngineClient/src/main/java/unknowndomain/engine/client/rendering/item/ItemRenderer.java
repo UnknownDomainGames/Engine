@@ -4,8 +4,9 @@ import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.block.ClientBlock;
+import unknowndomain.engine.client.game.GameClient;
+import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
-import unknowndomain.engine.client.rendering.game3d.Game3DRenderer.GameRenderEnv;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.entity.component.TwoHands;
@@ -20,14 +21,16 @@ import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
 public class ItemRenderer {
 
-    private GameRenderEnv env;
+    private RenderContext context;
+    private GameClient game;
     //    private ObservableValue<ShaderProgram> itemShader;
 
     private Registry<ClientBlock> clientBlockRegistry;
 
-    public void init(GameRenderEnv env) {
-        this.env = env;
-        clientBlockRegistry = env.getGame().getRegistryManager().getRegistry(ClientBlock.class);
+    public void init(RenderContext context) {
+        this.context = context;
+        this.game = context.getEngine().getCurrentGame();
+        clientBlockRegistry = game.getRegistryManager().getRegistry(ClientBlock.class);
 //        itemShader = ShaderManager.INSTANCE.registerShader("item", new ShaderProgramBuilder()
 //                .addShader(VERTEX_SHADER, AssetPath.of("engine", "shader", "item.vert"))
 //                .addShader(FRAGMENT_SHADER, AssetPath.of("engine", "shader", "item.frag")));
@@ -42,7 +45,7 @@ public class ItemRenderer {
         glEnable(GL11.GL_TEXTURE_2D);
         glEnable(GL11.GL_DEPTH_TEST);
 
-        env.getContext().getTextureManager().getTextureAtlas(BLOCK).getValue().bind();
+        context.getTextureManager().getTextureAtlas(BLOCK).getValue().bind();
     }
 
     private void postRender() {
@@ -78,7 +81,7 @@ public class ItemRenderer {
 
     @Deprecated
     public void render(float partial) {
-        Optional<TwoHands> twoHands = env.getGame().getPlayer().getControlledEntity().getComponent(TwoHands.class);
+        Optional<TwoHands> twoHands = game.getPlayer().getControlledEntity().getComponent(TwoHands.class);
         if (twoHands.isEmpty())
             return;
 

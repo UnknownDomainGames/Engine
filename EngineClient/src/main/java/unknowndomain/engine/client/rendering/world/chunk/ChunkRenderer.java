@@ -13,7 +13,6 @@ import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
-import unknowndomain.engine.client.rendering.game3d.Game3DRenderer;
 import unknowndomain.engine.client.rendering.light.DirectionalLight;
 import unknowndomain.engine.client.rendering.light.Light;
 import unknowndomain.engine.client.rendering.light.Material;
@@ -48,7 +47,6 @@ public class ChunkRenderer {
     private ObservableValue<ShaderProgram> chunkSolidShader;
     private ObservableValue<ShaderProgram> assimpShader;
 
-    private Game3DRenderer.GameRenderEnv env;
     private RenderContext context;
     private GameClient game;
 
@@ -59,10 +57,9 @@ public class ChunkRenderer {
     Light dirLight, ptLight;
     Material mat;
 
-    public void init(Game3DRenderer.GameRenderEnv env) {
-        this.env = env;
-        this.context = env.getContext();
-        this.game = env.getGame();
+    public void init(RenderContext context) {
+        this.context = context;
+        this.game = context.getEngine().getCurrentGame();
         game.getEventBus().register(this);
         this.clientBlockRegistry = game.getRegistryManager().getRegistry(ClientBlock.class);
 

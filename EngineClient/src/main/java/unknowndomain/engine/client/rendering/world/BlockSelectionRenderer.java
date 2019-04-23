@@ -2,25 +2,25 @@ package unknowndomain.engine.client.rendering.world;
 
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.block.RayTraceBlockHit;
+import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
-import unknowndomain.engine.client.rendering.game3d.Game3DRenderer.GameRenderEnv;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.util.Color;
 
 public class BlockSelectionRenderer {
 
-    private GameRenderEnv env;
+    private RenderContext context;
 
-    public void init(GameRenderEnv env) {
-        this.env = env;
+    public void init(RenderContext context) {
+        this.context = context;
     }
 
     public void render(float partial) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
 
-        var player = env.getGame().getPlayer();
-        var camera = env.getContext().getCamera();
+        var player = context.getEngine().getCurrentGame().getPlayer();
+        var camera = context.getCamera();
         RayTraceBlockHit hit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
         if (hit.isSuccess()) {
             float minX = hit.getPos().getX() - 0.001f, maxX = hit.getPos().getX() + 1.001f,

@@ -7,10 +7,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import unknowndomain.engine.client.asset.AssetPath;
-import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
-import unknowndomain.engine.client.rendering.game3d.Game3DRenderer;
 import unknowndomain.engine.client.rendering.item.ItemRenderer;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
@@ -35,17 +33,13 @@ public class WorldRenderer {
     private FrameBufferShadow frameBufferShadow; //TODO: move to 3D Renderer!!!
     private ObservableValue<ShaderProgram> shadowShader;
 
-    private Game3DRenderer.GameRenderEnv env;
     private RenderContext context;
-    private GameClient game;
 
-    public void init(Game3DRenderer.GameRenderEnv env) {
-        this.env = env;
-        this.context = env.getContext();
-        this.game = env.getGame();
-        chunkRenderer.init(env);
-        itemRenderer.init(env);
-        blockSelectionRenderer.init(env);
+    public void init(RenderContext context) {
+        this.context = context;
+        chunkRenderer.init(context);
+        itemRenderer.init(context);
+        blockSelectionRenderer.init(context);
 //        context.getGame().getContext().register(chunkRenderer);
         worldShader =
                 ShaderManager.INSTANCE.registerShader("world_shader",
