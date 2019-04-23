@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class ComponentContainer implements GameObject {
 
@@ -17,7 +18,6 @@ public class ComponentContainer implements GameObject {
         this.components = components;
     }
 
-    @Nonnull
     @Override
     public <T extends Component> Optional<T> getComponent(@Nonnull Class<T> type) {
         return (Optional<T>) components.getOrDefault(type, Optional.empty());
@@ -29,12 +29,18 @@ public class ComponentContainer implements GameObject {
     }
 
     @Override
-    public <T extends Component> void setComponent(@Nonnull Class<T> type, T value) {
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nonnull T value) {
         components.put(type, Optional.of(value));
     }
 
     @Override
     public <T extends Component> void removeComponent(@Nonnull Class<T> type) {
         components.remove(type);
+    }
+
+    @Override
+    @Nonnull
+    public Set<Class<?>> getComponents() {
+        return components.keySet();
     }
 }

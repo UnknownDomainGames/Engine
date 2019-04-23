@@ -2,14 +2,16 @@ package unknowndomain.engine.item;
 
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.component.Component;
+import unknowndomain.engine.component.ComponentContainer;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
 
 public class ItemBase extends RegistryEntry.Impl<Item> implements Item {
-    private Map<Class<? extends Component>,Component> components = new HashMap<>();
+    private final ComponentContainer components = new ComponentContainer();
 
     protected ItemBase(){
         setComponent(ItemPrototype.HitBlockBehavior.class, new ItemPrototype.HitBlockBehavior() {
@@ -36,22 +38,28 @@ public class ItemBase extends RegistryEntry.Impl<Item> implements Item {
     @Nonnull
     @Override
     public <T extends Component> Optional<T> getComponent(@Nonnull Class<T> type) {
-        return (Optional<T>) Optional.ofNullable(components.get(type));
+        return components.getComponent(type);
     }
 
     @Override
     public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
-        return components.containsKey(type);
+        return components.hasComponent(type);
     }
 
     @Override
     public <T extends Component> void setComponent(@Nonnull Class<T> type, T value) {
-        components.put(type, value);
+        components.setComponent(type, value);
     }
 
     @Override
     public <T extends Component> void removeComponent(@Nonnull Class<T> type) {
-        components.remove(type);
+        components.removeComponent(type);
+    }
+
+    @Nonnull
+    @Override
+    public Set<Class<?>> getComponents() {
+        return components.getComponents();
     }
 
 }

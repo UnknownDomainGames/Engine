@@ -6,6 +6,7 @@ import org.joml.AABBd;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class BlockBuilder {
 
     private List<AABBd> aabBds = new ArrayList<>();

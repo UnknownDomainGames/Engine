@@ -5,12 +5,12 @@ import org.joml.Vector3d;
 import org.joml.Vector3dc;
 import org.joml.Vector3f;
 import unknowndomain.engine.component.Component;
+import unknowndomain.engine.component.ComponentContainer;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class EntityBase implements Entity {
     private int id;
@@ -21,12 +21,12 @@ public abstract class EntityBase implements Entity {
     private Vector3f motion = new Vector3f();
     private AABBd boundingBox;
 
-    private final Map<Class<? extends Component>, Component> components;
+    private final ComponentContainer components;
 
     public EntityBase(int id, World world) {
         this.id = id;
         this.world = world;
-        this.components = new HashMap<>();
+        this.components = new ComponentContainer();
     }
 
     public EntityBase(int id, World world, Vector3dc position) {
@@ -79,21 +79,27 @@ public abstract class EntityBase implements Entity {
     @Nonnull
     @Override
     public <T extends Component> Optional<T> getComponent(@Nonnull Class<T> type) {
-        return (Optional<T>) Optional.ofNullable(components.get(type));
+        return components.getComponent(type);
     }
 
     @Override
     public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
-        return components.containsKey(type);
+        return components.hasComponent(type);
     }
 
     @Override
     public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nonnull T value) {
-        components.put(type, value);
+        components.setComponent(type, value);
     }
 
     @Override
     public <T extends Component> void removeComponent(@Nonnull Class<T> type) {
-        components.remove(type);
+        components.removeComponent(type);
+    }
+
+    @Nonnull
+    @Override
+    public Set<Class<?>> getComponents() {
+        return components.getComponents();
     }
 }

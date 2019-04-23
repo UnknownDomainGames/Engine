@@ -10,7 +10,9 @@ import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
+import java.util.Set;
 
+@Deprecated
 class BlockShared extends RegistryEntry.Impl<Block> implements Block {
     private AABBd[] boundingBox;
     private BlockPrototype.PlaceBehavior placeBehavior;
@@ -84,13 +86,19 @@ class BlockShared extends RegistryEntry.Impl<Block> implements Block {
     }
 
     @Override
-    public <T extends Component> void setComponent(@Nonnull Class<T> type, T value) {
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nonnull T value) {
 
     }
 
     @Override
     public <T extends Component> void removeComponent(@Nonnull Class<T> type) {
 
+    }
+
+    @Nonnull
+    @Override
+    public Set<Class<?>> getComponents() {
+        return null;
     }
 
     @Override
