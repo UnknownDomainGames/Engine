@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.gui.game;
+package unknowndomain.game.client.gui.game;
 
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.game.GameClientStandalone;

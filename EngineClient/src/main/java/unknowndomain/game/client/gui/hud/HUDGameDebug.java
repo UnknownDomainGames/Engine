@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.gui.hud;
+package unknowndomain.game.client.gui.hud;
 
 import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.misc.Insets;

@@ -84,10 +84,6 @@ public class EngineClientImpl implements EngineClient {
         getEventBus().register(new DefaultGameMode());
 
         initEngineClient();
-
-        // Finish Stage
-        logger.info("Finishing initialization!");
-        eventBus.post(new EngineEvent.InitializationComplete(this));
     }
 
     private void initEngineClient() {
@@ -142,6 +138,10 @@ public class EngineClientImpl implements EngineClient {
         assetManager.reload();
 
         addShutdownListener(ticker::stop);
+
+        logger.info("Finishing initialization!");
+        eventBus.post(new EngineEvent.InitializationComplete(this));
+
         ticker.run();
     }
 

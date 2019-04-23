@@ -10,8 +10,6 @@ import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.gui.Scene;
-import unknowndomain.engine.client.gui.game.GUIGameCreation;
-import unknowndomain.engine.client.gui.hud.HUDGameDebug;
 import unknowndomain.engine.client.gui.internal.FontHelper;
 import unknowndomain.engine.client.gui.internal.ImageHelper;
 import unknowndomain.engine.client.gui.internal.Internal;
@@ -26,6 +24,7 @@ import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.util.Color;
+import unknowndomain.game.client.gui.hud.HUDGameDebug;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -92,8 +91,6 @@ public class GuiRenderer implements Renderer {
             }
         });
 
-        HUDGameDebug = new HUDGameDebug();
-        guiManager.showHud("debug", new Scene(HUDGameDebug));
 
 //        VBox box = new VBox();
 //        box.background().setValue(new Background(new Color(0.1f, 0.1f, 0.1f, 0.9f)));
@@ -111,9 +108,6 @@ public class GuiRenderer implements Renderer {
 //        button.buttonbackground().setValue(Background.fromColor(Color.RED));
 //        Scene s = new Scene(box);
 //        guiManager.showScreen(s);
-
-        var scene = new Scene(new GUIGameCreation());
-        guiManager.showScreen(scene);
     }
 
     @Override

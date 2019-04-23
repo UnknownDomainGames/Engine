@@ -8,6 +8,7 @@ import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.block.ClientBlockAir;
 import unknowndomain.engine.client.block.ClientBlockDefault;
 import unknowndomain.engine.client.event.asset.AssetReloadEvent;
+import unknowndomain.engine.client.gui.Scene;
 import unknowndomain.engine.client.input.controller.MotionType;
 import unknowndomain.engine.client.input.keybinding.ActionMode;
 import unknowndomain.engine.client.input.keybinding.Key;
@@ -19,6 +20,7 @@ import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.event.Listener;
+import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.mod.RegistrationStartEvent;
 import unknowndomain.engine.event.mod.RegistryConstructionEvent;
 import unknowndomain.engine.item.Item;
@@ -29,6 +31,8 @@ import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.IdAutoIncreaseRegistry;
+import unknowndomain.game.client.gui.game.GUIGameCreation;
+import unknowndomain.game.client.gui.hud.HUDGameDebug;
 
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
@@ -143,5 +147,16 @@ public final class DefaultGameMode {
         blockModel = new BlockModel();
         blockModel.addCube(0, 0, 0, 1, 1, 1, bottom);
         ClientBlockDefault.blockRendererMap.put(Blocks.DIRT, blockModel);
+    }
+
+    @Listener
+    public void engineInit(EngineEvent.InitializationComplete event) {
+        var guiManager = Platform.getEngineClient().getRenderContext().getGuiManager();
+
+        var hudGameDebug = new HUDGameDebug();
+        guiManager.showHud("debug", new Scene(hudGameDebug));
+
+        var scene = new Scene(new GUIGameCreation());
+        guiManager.showScreen(scene);
     }
 }
