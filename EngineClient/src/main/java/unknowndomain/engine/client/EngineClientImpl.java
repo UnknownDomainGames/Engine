@@ -280,7 +280,7 @@ public class EngineClientImpl implements EngineClient {
         Logger logger = Platform.getLogger();
         logger.info("----- System Information -----");
         logger.info("\tOperating System: {} ({}) version {}", OS_NAME, OS_ARCH, OS_VERSION);
-        logger.info("\tJava Version: {}, {}", JAVA_VERSION, JAVA_VENDOR);
+        logger.info("\tJava Version: {} ({}), {}", JAVA_VERSION, JAVA_VM_VERSION, JAVA_VENDOR);
         logger.info("\tJVM Information: {} ({}), {}", JAVA_VM_NAME, JAVA_VM_INFO, JAVA_VM_VENDOR);
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
