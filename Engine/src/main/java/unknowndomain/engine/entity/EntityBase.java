@@ -2,6 +2,7 @@ package unknowndomain.engine.entity;
 
 import org.joml.AABBd;
 import org.joml.Vector3d;
+import org.joml.Vector3dc;
 import org.joml.Vector3f;
 import unknowndomain.engine.component.Component;
 import unknowndomain.engine.world.World;
@@ -26,6 +27,11 @@ public abstract class EntityBase implements Entity {
         this.id = id;
         this.world = world;
         this.components = new HashMap<>();
+    }
+
+    public EntityBase(int id, World world, Vector3dc position) {
+        this(id, world);
+        this.position.set(position);
     }
 
     @Override
