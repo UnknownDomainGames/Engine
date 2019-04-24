@@ -70,27 +70,27 @@ public interface Window {
 
     @FunctionalInterface
     interface KeyCallback {
-        void invoke(int key, int scancode, int action, int mods);
+        void invoke(Window window, int key, int scancode, int action, int mods);
     }
 
     @FunctionalInterface
     interface MouseCallback {
-        void invoke(int button, int action, int mods);
+        void invoke(Window window, int button, int action, int mods);
     }
 
     @FunctionalInterface
     interface CursorCallback {
-        void invoke(double xpos, double ypos);
+        void invoke(Window window, double xpos, double ypos);
     }
 
     @FunctionalInterface
     interface ScrollCallback {
-        void invoke(double xoffset, double yoffset);
+        void invoke(Window window, double xoffset, double yoffset);
     }
 
     @FunctionalInterface
     interface CharCallback {
-        void invoke(char c);
+        void invoke(Window window, char c);
     }
 
     @FunctionalInterface

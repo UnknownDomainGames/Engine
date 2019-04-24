@@ -6,6 +6,7 @@ import com.google.common.collect.Multimap;
 import org.lwjgl.glfw.GLFW;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.game.GameClient;
+import unknowndomain.engine.client.rendering.display.Window;
 import unknowndomain.engine.logic.Tickable;
 import unknowndomain.engine.registry.Registry;
 
@@ -111,7 +112,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         return modifiers + (code << 4);
     }
 
-    public void handleMouse(int button, int action, int modifiers) {
+    public void handleMouse(Window window, int button, int action, int modifiers) {
         switch (action) {
             case GLFW.GLFW_PRESS:
                 handlePress(button + 400, modifiers);
@@ -124,7 +125,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         }
     }
 
-    public void handleKey(int key, int scancode, int action, int modifiers) {
+    public void handleKey(Window window, int key, int scancode, int action, int modifiers) {
         switch (action) {
             case GLFW.GLFW_PRESS:
                 handlePress(key, modifiers);

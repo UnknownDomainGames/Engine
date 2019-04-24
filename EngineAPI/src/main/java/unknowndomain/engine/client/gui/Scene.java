@@ -72,56 +72,54 @@ public class Scene {
     private double lastPosX = Double.NaN;
     private double lastPosY = Double.NaN;
 
-    public final Window.CursorCallback cursorCallback = (xpos, ypos) -> {
-        if(!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)){
-            var old = root.getPointingComponents((float)lastPosX,(float)lastPosY);
-            var n = root.getPointingComponents((float)xpos,(float)ypos);
+    public final Window.CursorCallback cursorCallback = (window, xpos, ypos) -> {
+        if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
+            var old = root.getPointingComponents((float) lastPosX, (float) lastPosY);
+            var n = root.getPointingComponents((float) xpos, (float) ypos);
             List<Component> moveevent = old.stream().filter(n::contains).collect(Collectors.toList());
             List<Component> leaveevent = old.stream().filter(o -> !moveevent.contains(o)).collect(Collectors.toList());
             List<Component> enterevent = n.stream().filter(o -> !moveevent.contains(o)).collect(Collectors.toList());
-            moveevent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component,lastPosX,lastPosY,xpos,ypos)));
-            enterevent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component,lastPosX,lastPosY,xpos,ypos)));
-            leaveevent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(component,lastPosX,lastPosY,xpos,ypos)));
+            moveevent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component, lastPosX, lastPosY, xpos, ypos)));
+            enterevent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component, lastPosX, lastPosY, xpos, ypos)));
+            leaveevent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(component, lastPosX, lastPosY, xpos, ypos)));
         }
         lastPosX = xpos;
         lastPosY = ypos;
     };
 
-    public final Window.MouseCallback mouseCallback = (button, action, modifiers) -> {
-        if(!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)){
-            var list = root.getPointingComponents((float)lastPosX,(float)lastPosY);
-            if(action == GLFW.GLFW_PRESS) {
-                root.getUnmodifiableChildren().stream().filter(c->c.focused.get()).forEach(component -> component.handleEvent(new FocusEvent.FocusLostEvent(component)));
+    public final Window.MouseCallback mouseCallback = (window, button, action, modifiers) -> {
+        if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
+            var list = root.getPointingComponents((float) lastPosX, (float) lastPosY);
+            if (action == GLFW.GLFW_PRESS) {
+                root.getUnmodifiableChildren().stream().filter(c -> c.focused.get()).forEach(component -> component.handleEvent(new FocusEvent.FocusLostEvent(component)));
                 list.forEach(component -> {
                     component.handleEvent(new FocusEvent.FocusGainEvent(component));
                     var pair = component.relativePos(((float) lastPosX), ((float) lastPosY));
-                    component.handleEvent(new MouseEvent.MouseClickEvent(component,pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)));
+                    component.handleEvent(new MouseEvent.MouseClickEvent(component, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)));
                 });
             }
-            if(action == GLFW.GLFW_RELEASE)
-                list.forEach(component -> component.handleEvent(new MouseEvent.MouseReleasedEvent(component,(float)lastPosX,(float)lastPosY, Key.valueOf(400 + button))));
+            if (action == GLFW.GLFW_RELEASE)
+                list.forEach(component -> component.handleEvent(new MouseEvent.MouseReleasedEvent(component, (float) lastPosX, (float) lastPosY, Key.valueOf(400 + button))));
         }
     };
 
-    public final Window.ScrollCallback scrollCallback = (xoffset, yoffset) -> {
+    public final Window.ScrollCallback scrollCallback = (window, xoffset, yoffset) -> {
 
     };
 
-    public final Window.KeyCallback keyCallback = (key, scancode, action, mods) -> {
+    public final Window.KeyCallback keyCallback = (window, key, scancode, action, mods) -> {
         root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).forEach(component -> {
-            if(action == GLFW.GLFW_PRESS){
-                component.handleEvent(new KeyEvent.KeyDownEvent(component,Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
-            }
-            else if(action == GLFW.GLFW_REPEAT){
-                component.handleEvent(new KeyEvent.KeyHoldEvent(component,Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
-            }
-            else if(action == GLFW.GLFW_RELEASE){
-                component.handleEvent(new KeyEvent.KeyUpEvent(component,Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+            if (action == GLFW.GLFW_PRESS) {
+                component.handleEvent(new KeyEvent.KeyDownEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+            } else if (action == GLFW.GLFW_REPEAT) {
+                component.handleEvent(new KeyEvent.KeyHoldEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+            } else if (action == GLFW.GLFW_RELEASE) {
+                component.handleEvent(new KeyEvent.KeyUpEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
             }
         });
     };
 
-    public final Window.CharCallback charCallback = c -> {
-        root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(component,c)));
+    public final Window.CharCallback charCallback = (window, c) -> {
+        root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(component, c)));
     };
 }
