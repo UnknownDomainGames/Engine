@@ -151,7 +151,8 @@ public final class DefaultGameMode {
 
     @Listener
     public void engineInit(EngineEvent.InitializationComplete event) {
-        var guiManager = Platform.getEngineClient().getRenderContext().getGuiManager();
+        var renderContext = Platform.getEngineClient().getRenderContext();
+        var guiManager = renderContext.getGuiManager();
 
         var hudGameDebug = new HUDGameDebug();
         guiManager.showHud("debug", new Scene(hudGameDebug));

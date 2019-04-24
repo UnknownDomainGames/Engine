@@ -58,6 +58,10 @@ public interface Window {
 
     void removeCharCallback(CharCallback callback);
 
+    void addWindowCloseCallback(WindowCloseCallback callback);
+
+    void removeWindowCloseCallback(WindowCloseCallback callback);
+
     void beginRender();
 
     void endRender();
@@ -87,5 +91,10 @@ public interface Window {
     @FunctionalInterface
     interface CharCallback {
         void invoke(char c);
+    }
+
+    @FunctionalInterface
+    interface WindowCloseCallback {
+        void invoke(Window window);
     }
 }

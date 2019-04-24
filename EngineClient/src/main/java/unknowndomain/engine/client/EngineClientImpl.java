@@ -133,6 +133,7 @@ public class EngineClientImpl implements EngineClient {
 
         clientThread = Thread.currentThread();
         renderContext.init(clientThread);
+        renderContext.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         addShutdownListener(renderContext::dispose);
 
         assetManager.reload();
