@@ -41,8 +41,8 @@ public final class DefaultGameMode {
     @Listener
     public void constructionRegistry(RegistryConstructionEvent e) {
         // TODO: move to common.
-        e.register(new SimpleBlockRegistry());
-        e.register(new SimpleItemRegistry());
+        e.register(new IdAutoIncreaseRegistry<>(Block.class));
+        e.register(new IdAutoIncreaseRegistry<>(Item.class));
 
         e.register(new IdAutoIncreaseRegistry<>(KeyBinding.class));
         e.register(new IdAutoIncreaseRegistry<>(ClientBlock.class));
