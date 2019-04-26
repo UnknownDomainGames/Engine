@@ -1,4 +1,4 @@
-package unknowndomain.engine.scheduler;
+package unknowndomain.engine.schedule;
 
 public abstract class Task {
 

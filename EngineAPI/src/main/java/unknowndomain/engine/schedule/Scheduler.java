@@ -1,4 +1,4 @@
-package unknowndomain.engine.scheduler;
+package unknowndomain.engine.schedule;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
