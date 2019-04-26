@@ -36,6 +36,7 @@ public class WorldCommon implements World, Runnable {
     private final List<Runnable> nextTick = new ArrayList<>();
 
     private final FixStepTicker ticker;
+    private long gameTick;
 //    private ExecutorService service;
 
     public WorldCommon(Game game) {
@@ -131,6 +132,12 @@ public class WorldCommon implements World, Runnable {
         tickEntityMotion();
         tickChunks();
         tickEntities();
+        gameTick++;
+    }
+
+    @Override
+    public long getGameTick() {
+        return gameTick;
     }
 
     protected void tickChunks() {
