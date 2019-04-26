@@ -41,27 +41,27 @@ public final class DefaultGameMode {
     @Listener
     public void constructionRegistry(RegistryConstructionEvent e) {
         // TODO: move to common.
-        e.register(new IdAutoIncreaseRegistry<>(Block.class));
-        e.register(new IdAutoIncreaseRegistry<>(Item.class));
+        e.register(new SimpleBlockRegistry());
+        e.register(new SimpleItemRegistry());
 
         e.register(new IdAutoIncreaseRegistry<>(KeyBinding.class));
         e.register(new IdAutoIncreaseRegistry<>(ClientBlock.class));
-        e.registerPostTask(Block.class, Item.class, (block, registry)->registry.register(new ItemBlock(block)));
+//        e.registerPostTask(Block.class, Item.class, (block, registry)->registry.register(new ItemBlock(block)));
     }
 
     @Listener
     public void registerStage(RegistrationStartEvent e) {
         RegistryManager registryManager = e.getRegistryManager();
-        registerBlocks(registryManager);
-//        registerItems(registryManager.getRegistry(Item.class));
+        registerBlocks(registryManager.getRegistry(Block.class));
+        registerItems(registryManager.getRegistry(Item.class));
         registerKeyBindings(registryManager.getRegistry(KeyBinding.class));
         registerClientBlock(registryManager.getRegistry(ClientBlock.class));
     }
 
-    private void registerBlocks(RegistryManager manager) {
-        manager.register(Blocks.AIR);
-        manager.register(Blocks.GRASS);
-        manager.register(Blocks.DIRT);
+    private void registerBlocks(Registry<Block> registry) {
+        registry.register(Blocks.AIR);
+        registry.register(Blocks.GRASS);
+        registry.register(Blocks.DIRT);
     }
 
     private void registerItems(Registry<Item> registry) {

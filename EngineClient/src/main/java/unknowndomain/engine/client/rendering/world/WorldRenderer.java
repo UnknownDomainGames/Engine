@@ -81,6 +81,7 @@ public class WorldRenderer {
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
         GL11.glCullFace(GL_FRONT);
         chunkRenderer.render();
+        itemRenderer.render(partial);
         GL11.glCullFace(GL_BACK);
 
         ShaderManager.INSTANCE.unbindOverriding();

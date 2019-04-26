@@ -106,7 +106,7 @@ public class FrameBuffer {
     public void check(){
         bind();
         if(GL30.glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-            Platform.getLogger().warn("frame buffer #%d incomplete!", getFboId());
+            Platform.getLogger().warn(String.format("frame buffer #%d incomplete!", getFboId()));
         }
         unbind();
     }

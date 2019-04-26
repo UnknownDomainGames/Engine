@@ -21,6 +21,8 @@ public interface World extends BlockAccessor {
 
     Game getGame();
 
+    long getGameTick();
+
     List<Entity> getEntities();
 
     @Nonnull
