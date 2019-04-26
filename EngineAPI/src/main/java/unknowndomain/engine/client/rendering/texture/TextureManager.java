@@ -9,6 +9,8 @@ public interface TextureManager {
 
     GLTexture getTextureDirect(AssetPath path);
 
+    GLTexture getTextureDirect(TextureBuffer buffer);
+
     TextureUV addTextureToAtlas(AssetPath path, TextureType type);
 
     ObservableValue<GLTexture> getTextureAtlas(TextureType type);
@@ -16,4 +18,6 @@ public interface TextureManager {
     void reloadTextureAtlas(TextureType type);
 
     void reload();
+
+    GLTexture getWhiteTexture();
 }

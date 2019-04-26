@@ -8,7 +8,6 @@ import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.asset.exception.AssetLoadException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,9 +17,16 @@ import java.util.Optional;
 
 public class EngineTextureManager implements TextureManager {
 
+
     private final Map<AssetPath, MutableValue<GLTexture>> textures = new HashMap<>();
 
     private final Map<TextureType, TextureAtlas> texturesAtlases = new HashMap<>();
+
+    private final GLTexture whiteTexture;
+
+    public EngineTextureManager() {
+        this.whiteTexture = getTextureDirect(new TextureBuffer(2, 2, 0xffffffff));
+    }
 
     @Override
     public ObservableValue<GLTexture> getTexture(AssetPath path) {
@@ -35,14 +41,18 @@ public class EngineTextureManager implements TextureManager {
         }
 
         try (var channel = Files.newByteChannel(localPath.get())) {
-            var filebuf = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
-            channel.read(filebuf);
-            filebuf.flip();
-            TextureBuffer buf = TextureBuffer.create(filebuf);
-            return GLTexture.of(buf.getWidth(), buf.getHeight(), buf.getBuffer());
+            var buffer = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
+            channel.read(buffer);
+            buffer.flip();
+            return getTextureDirect(TextureBuffer.create(buffer));
         } catch (IOException e) {
             throw new AssetLoadException("Cannot load texture because catch exception. Path: " + path, e);
         }
+    }
+
+    @Override
+    public GLTexture getTextureDirect(TextureBuffer buffer) {
+        return GLTexture.of(buffer.getWidth(), buffer.getHeight(), buffer.getBuffer());
     }
 
     @Override
@@ -74,5 +84,10 @@ public class EngineTextureManager implements TextureManager {
         }
 
         texturesAtlases.keySet().forEach(this::reloadTextureAtlas);
+    }
+
+    @Override
+    public GLTexture getWhiteTexture() {
+        return whiteTexture;
     }
 }
