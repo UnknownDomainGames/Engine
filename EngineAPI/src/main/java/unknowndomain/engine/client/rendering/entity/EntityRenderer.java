@@ -7,7 +7,7 @@ public interface EntityRenderer<T extends Entity> {
 
     void init(RenderContext renderContext);
 
-    boolean shouldRender();
+    boolean shouldRender(T entity, float partial);
 
     void render(T entity, float partial);
 }
