@@ -16,11 +16,6 @@ public abstract class SimpleClassToObjectRegistry<T extends RegistryEntry<T>> im
     protected final BiMap<Class<? extends T>, T> clazzToObject = HashBiMap.create();
 
     @Override
-    public T get(Class<T> clazz) {
-        return clazzToObject.get(clazz);
-    }
-
-    @Override
     public T register(@Nonnull T obj) throws RegisterException {
         if(clazzToObject.containsKey(obj.getClass())){
             throw new RegisterException(String.format("Class %s has already registered!", obj.getClass().getName()));
