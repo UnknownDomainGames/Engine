@@ -1,27 +1,31 @@
-package unknowndomain.game;
+package unknowndomain.game.registry;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.registry.RegisterException;
-import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.registry.game.BlockRegistry;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
-
-import static java.util.Objects.requireNonNull;
 
 public class SimpleBlockRegistry implements BlockRegistry {
 
     protected final BiMap<String, Block> nameToObject = HashBiMap.create();
 
+    protected Block air;
+
     @Override
     public Block air() {
-        return Blocks.AIR;
+        return air;
+    }
+
+    @Override
+    public void setAirBlock(@Nonnull Block air) {
+        this.air = Objects.requireNonNull(air);
     }
 
     @Nonnull

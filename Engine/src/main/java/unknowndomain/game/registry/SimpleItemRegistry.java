@@ -1,4 +1,4 @@
-package unknowndomain.game;
+package unknowndomain.game.registry;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -20,6 +20,11 @@ public class SimpleItemRegistry implements ItemRegistry {
     @Override
     public ItemBlock getItemBlock(Block block) {
         return blockToCorrItem.get(block);
+    }
+
+    @Override
+    public boolean hasItemBlock(Block block) {
+        return blockToCorrItem.containsKey(block);
     }
 
     @Nonnull
