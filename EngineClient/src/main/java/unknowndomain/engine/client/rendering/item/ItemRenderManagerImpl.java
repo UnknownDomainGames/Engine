@@ -7,12 +7,13 @@ import unknowndomain.engine.item.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ItemRenderManager {
+public class ItemRenderManagerImpl implements ItemRenderManager {
 
     private final Map<Item, ItemRenderer> itemRendererMap = new HashMap<>();
 
     private final ItemRendererTest defaultItemRenderer = new ItemRendererTest();
 
+    @Override
     public void register(Item item, ItemRenderer renderer) {
         if (itemRendererMap.containsKey(item))
             throw new IllegalArgumentException();
@@ -24,6 +25,7 @@ public class ItemRenderManager {
         defaultItemRenderer.init(context);
     }
 
+    @Override
     public void render(ItemStack itemStack, float partial) {
         if (itemStack.isEmpty())
             return;
