@@ -4,5 +4,5 @@ import unknowndomain.engine.item.ItemStack;
 
 public interface ItemRenderer {
 
-    void render(ItemStack itemStack);
+    void render(ItemStack itemStack, float partial);
 }

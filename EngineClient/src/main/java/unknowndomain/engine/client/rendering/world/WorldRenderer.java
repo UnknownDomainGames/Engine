@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL15;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
-import unknowndomain.engine.client.rendering.item.ItemRenderer;
+import unknowndomain.engine.client.rendering.item.ItemRendererTest;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
@@ -22,7 +22,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class WorldRenderer {
 
     private final ChunkRenderer chunkRenderer = new ChunkRenderer();
-    private final ItemRenderer itemRenderer = new ItemRenderer();
+    private final ItemRendererTest itemRenderer = new ItemRendererTest();
     private final BlockSelectionRenderer blockSelectionRenderer = new BlockSelectionRenderer();
 
     private ObservableValue<ShaderProgram> worldShader;

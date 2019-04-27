@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.rendering.item;
 
 import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.game.GameClient;
@@ -19,7 +18,7 @@ import java.util.Optional;
 import static org.lwjgl.opengl.GL11.*;
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
-public class ItemRenderer {
+public class ItemRendererTest implements ItemRenderer {
 
     private RenderContext context;
     private GameClient game;
@@ -56,10 +55,9 @@ public class ItemRenderer {
         glDisable(GL11.GL_BLEND);
     }
 
-    public void render(ItemStack itemStack, Matrix4fc model) {
+    @Override
+    public void render(ItemStack itemStack, float partial) {
         preRender();
-
-        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", model);
 
         ClientBlock clientBlock = clientBlockRegistry.getValue(((ItemBlock) itemStack.getItem()).getBlock().getId());
 
@@ -73,10 +71,12 @@ public class ItemRenderer {
     }
 
     public void renderEntity(ItemStack itemStack, float partialTick) {
-        render(itemStack, new Matrix4f().translate(0, 4.5f, 0)
+        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().translate(0, 4.5f, 0)
                 .scale(1f / 3, 1f / 3, 1f / 3)
                 .rotateY(((int) System.currentTimeMillis() % 360000) / 1000f)
                 .translate(-.5f, -.5f * (float)Math.sin(Math.toRadians((game.getWorld().getGameTick() + partialTick) * 10)), -.5f));
+
+        render(itemStack, partialTick);
     }
 
     @Deprecated
