@@ -154,25 +154,25 @@ public abstract class GLBuffer implements Disposable {
     }
 
     public GLBuffer put(byte value) {
-        checkAndAddVertexBytes(Byte.BYTES);
+        putByteCount(Byte.BYTES);
         backingBuffer.put(value);
         return this;
     }
 
     public GLBuffer put(int value) {
-        checkAndAddVertexBytes(Integer.BYTES);
+        putByteCount(Integer.BYTES);
         backingBuffer.putInt(value);
         return this;
     }
 
     public GLBuffer put(float value) {
-        checkAndAddVertexBytes(Float.BYTES);
+        putByteCount(Float.BYTES);
         backingBuffer.putFloat(value);
         return this;
     }
 
     public GLBuffer put(double value) {
-        checkAndAddVertexBytes(Double.BYTES);
+        putByteCount(Double.BYTES);
         backingBuffer.putDouble(value);
         return this;
     }
@@ -186,7 +186,7 @@ public abstract class GLBuffer implements Disposable {
             backingBuffer.put(bytes);
             vertexCount += bits / format.getStride();
         } else {
-            checkAndAddVertexBytes(bits);
+            putByteCount(bits);
             backingBuffer.put(bytes);
         }
         return this;
@@ -203,7 +203,7 @@ public abstract class GLBuffer implements Disposable {
             }
             vertexCount += bits / format.getStride();
         } else {
-            checkAndAddVertexBytes(bits);
+            putByteCount(bits);
             for (int i = 0; i < ints.length; i++) {
                 backingBuffer.putInt(ints[i]);
             }
@@ -222,7 +222,7 @@ public abstract class GLBuffer implements Disposable {
             }
             vertexCount += bits / format.getStride();
         } else {
-            checkAndAddVertexBytes(bits);
+            putByteCount(bits);
             for (int i = 0; i < floats.length; i++) {
                 backingBuffer.putFloat(floats[i]);
             }
@@ -239,7 +239,7 @@ public abstract class GLBuffer implements Disposable {
 
     public GLBuffer pos(float x, float y, float z) {
         if (format.isUsingPosition()) {
-            checkAndAddVertexBytes(Float.BYTES * 3);
+            putByteCount(Float.BYTES * 3);
             backingBuffer.putFloat(x + posOffsetX);
             backingBuffer.putFloat(y + posOffsetY);
             backingBuffer.putFloat(z + posOffsetZ);
@@ -264,7 +264,7 @@ public abstract class GLBuffer implements Disposable {
 
     public GLBuffer color(float r, float g, float b, float a) {
         if (format.isUsingColor()) {
-            checkAndAddVertexBytes(Float.BYTES * 4);
+            putByteCount(Float.BYTES * 4);
             backingBuffer.putFloat(r);
             backingBuffer.putFloat(g);
             backingBuffer.putFloat(b);
@@ -279,7 +279,7 @@ public abstract class GLBuffer implements Disposable {
 
     public GLBuffer uv(float u, float v) {
         if (format.isUsingTextureUV()) {
-            checkAndAddVertexBytes(Float.BYTES * 2);
+            putByteCount(Float.BYTES * 2);
             backingBuffer.putFloat(u);
             backingBuffer.putFloat(v);
         }
@@ -292,7 +292,7 @@ public abstract class GLBuffer implements Disposable {
 
     public GLBuffer normal(float nx, float ny, float nz) {
         if (format.isUsingNormal()) {
-            checkAndAddVertexBytes(Float.BYTES * 4);
+            putByteCount(Float.BYTES * 3);
             backingBuffer.putFloat(nx);
             backingBuffer.putFloat(ny);
             backingBuffer.putFloat(nz);
@@ -300,10 +300,7 @@ public abstract class GLBuffer implements Disposable {
         return this;
     }
 
-    private void checkAndAddVertexBytes(int count) {
-        if (puttedByteCount + count > format.getStride()) {
-            throw new IllegalStateException("Beyond the number of vertex data. Please call endVertex().");
-        }
+    private void putByteCount(int count) {
         puttedByteCount += count;
     }
 
