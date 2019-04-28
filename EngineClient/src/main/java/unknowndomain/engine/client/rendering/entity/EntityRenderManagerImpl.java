@@ -36,10 +36,13 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
         var y = position.y() + motion.y() * partial;
         var z = position.z() + motion.z() * partial;
 
+        if (!renderer.shouldRender(entity, x, y, z, partial))
+            return;
+
         renderer.render(entity, x, y, z, partial);
     }
 
     public void dispose() {
-
+        renderers.entrySet().forEach(entry -> entry.getValue().dispose());
     }
 }
