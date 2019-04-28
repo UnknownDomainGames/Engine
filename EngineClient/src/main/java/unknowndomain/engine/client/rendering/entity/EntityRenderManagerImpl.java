@@ -25,6 +25,8 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
         this.context = context;
 
         context.getEngine().getCurrentGame().getEventBus().post(new EntityRendererRegistrationEvent(this));
+
+        renderers.values().forEach(entityRenderer -> entityRenderer.init(context));
     }
 
     public void render(Entity entity, float partial) {

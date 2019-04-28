@@ -5,7 +5,7 @@ import unknowndomain.engine.entity.Entity;
 
 public interface EntityRenderer<T extends Entity> {
 
-    void init(RenderContext renderContext);
+    void init(RenderContext context);
 
     boolean shouldRender(T entity, double x, double y, double z, float partial);
 

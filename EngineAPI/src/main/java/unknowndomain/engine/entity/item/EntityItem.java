@@ -24,4 +24,9 @@ public class EntityItem extends EntityBase {
     public void setItemStack(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
+
+    @Override
+    public void tick() {
+        super.tick();
+    }
 }
