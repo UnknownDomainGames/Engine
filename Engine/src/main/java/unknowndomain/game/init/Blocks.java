@@ -1,8 +1,8 @@
 package unknowndomain.game.init;
 
 import unknowndomain.engine.block.Block;
-import unknowndomain.engine.block.BlockAir;
 import unknowndomain.engine.block.BlockBuilder;
+import unknowndomain.engine.block.impl.BlockAir;
 
 public class Blocks {
 
