@@ -65,7 +65,7 @@ public class GuiRenderer implements Renderer {
             ShaderManager.INSTANCE.setUniform("u_RenderText", false);
         });
 
-        this.graphics = new GraphicsImpl(this);
+        this.graphics = new GraphicsImpl(context, this);
 
         try {
             byte[] fontDataBytes = Files.readAllBytes(Platform.getEngineClient().getAssetManager().getPath(AssetPath.of("engine", "font", "font.ttf")).get());

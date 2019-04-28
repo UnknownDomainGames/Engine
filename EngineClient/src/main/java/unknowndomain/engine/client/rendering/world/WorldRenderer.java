@@ -14,7 +14,10 @@ import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
-import unknowndomain.engine.client.rendering.util.*;
+import unknowndomain.engine.client.rendering.util.DefaultFBOWrapper;
+import unknowndomain.engine.client.rendering.util.FrameBuffer;
+import unknowndomain.engine.client.rendering.util.FrameBufferMultiSampled;
+import unknowndomain.engine.client.rendering.util.FrameBufferShadow;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
@@ -119,17 +122,16 @@ public class WorldRenderer {
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
 
         // TODO: Remove it
+        context.getTextureManager().getWhiteTexture().bind();
         Tessellator tessellator = Tessellator.getInstance();
         GLBuffer buffer = tessellator.getBuffer();
-        ShaderManager.INSTANCE.setUniform("u_UsingColor", true);
-        ShaderManager.INSTANCE.setUniform("u_UsingTexture", false);
-        buffer.begin(GLBufferMode.LINES, GLBufferFormats.POSITION_COLOR);
-        buffer.pos(0, 0, 0).color(1, 0, 0).endVertex();
-        buffer.pos(100, 0, 0).color(1, 0, 0).endVertex();
-        buffer.pos(0, 0, 0).color(0, 1, 0).endVertex();
-        buffer.pos(0, 100, 0).color(0, 1, 0).endVertex();
-        buffer.pos(0, 0, 0).color(0, 0, 1).endVertex();
-        buffer.pos(0, 0, 100).color(0, 0, 1).endVertex();
+        buffer.begin(GLBufferMode.LINES, GLBufferFormats.POSITION_COLOR_TEXTURE);
+        buffer.pos(0, 0, 0).color(1, 0, 0).uv(0, 0).endVertex();
+        buffer.pos(100, 0, 0).color(1, 0, 0).uv(0, 0).endVertex();
+        buffer.pos(0, 0, 0).color(0, 1, 0).uv(0, 0).endVertex();
+        buffer.pos(0, 100, 0).color(0, 1, 0).uv(0, 0).endVertex();
+        buffer.pos(0, 0, 0).color(0, 0, 1).uv(0, 0).endVertex();
+        buffer.pos(0, 0, 100).color(0, 0, 1).uv(0, 0).endVertex();
         tessellator.draw();
 
         blockSelectionRenderer.render(partial);

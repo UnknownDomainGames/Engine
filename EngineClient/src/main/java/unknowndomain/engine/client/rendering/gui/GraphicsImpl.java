@@ -4,9 +4,9 @@ import org.joml.Vector4f;
 import org.joml.Vector4fc;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
+import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
 import unknowndomain.engine.client.rendering.gui.font.NativeTTFont;
-import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
@@ -21,6 +21,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class GraphicsImpl implements Graphics {
 
+    private final RenderContext context;
     private final Tessellator tessellator = Tessellator.getInstance();
     private final GuiRenderer guiRenderer;
 
@@ -30,7 +31,8 @@ public class GraphicsImpl implements Graphics {
 
     private final Stack<Vector4fc> clipRect = new Stack<>();
 
-    public GraphicsImpl(GuiRenderer guiRenderer) {
+    public GraphicsImpl(RenderContext context, GuiRenderer guiRenderer) {
+        this.context = context;
         this.guiRenderer = guiRenderer;
         setColor(Color.WHITE);
     }
@@ -152,7 +154,7 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawTexture(GLTexture texture, float x, float y, float width, float height, TextureUV textureUV) {
-        ShaderManager.INSTANCE.setUniform("u_UsingTexture", true);
+        context.getTextureManager().getWhiteTexture().bind();
         GLBuffer buffer = tessellator.getBuffer();
         buffer.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_TEXTURE);
         float x2 = x + width, y2 = y + height;
@@ -164,7 +166,6 @@ public class GraphicsImpl implements Graphics {
         texture.bind();
         tessellator.draw();
         glDisable(GL_TEXTURE_2D);
-        ShaderManager.INSTANCE.setUniform("u_UsingTexture", false);
     }
 
     @Override

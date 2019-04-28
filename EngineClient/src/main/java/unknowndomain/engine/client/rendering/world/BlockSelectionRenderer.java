@@ -28,33 +28,33 @@ public class BlockSelectionRenderer {
                     minY = hit.getPos().getY() - 0.001f, maxY = hit.getPos().getY() + 1.001f,
                     minZ = hit.getPos().getZ() - 0.001f, maxZ = hit.getPos().getZ() + 1.001f;
             buffer.begin(GLBufferMode.LINES, GLBufferFormats.POSITION_COLOR);
-            buffer.pos(minX, minY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, minY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, minY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, minY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, minY, maxZ).color(Color.WHITE).endVertex();
+            buffer.pos(minX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(minX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(minX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(minX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(minX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
 
-            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, minY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).endVertex();
+            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(minX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(minX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
 
-            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, minY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).endVertex();
+            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(minX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
 
-            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(minX, minY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).endVertex();
-            buffer.pos(maxX, minY, minZ).color(Color.WHITE).endVertex();
+            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(minX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
             tessellator.draw();
         }
     }
