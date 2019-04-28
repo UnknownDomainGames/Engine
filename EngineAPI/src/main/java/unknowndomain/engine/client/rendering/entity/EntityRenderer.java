@@ -9,5 +9,5 @@ public interface EntityRenderer<T extends Entity> {
 
     boolean shouldRender(T entity, float partial);
 
-    void render(T entity, float partial);
+    void render(T entity, double x, double y, double z, float partial);
 }
