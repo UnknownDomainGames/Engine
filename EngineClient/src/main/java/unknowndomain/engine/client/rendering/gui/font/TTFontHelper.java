@@ -13,7 +13,6 @@ import org.lwjgl.system.MemoryStack;
 import unknowndomain.engine.client.gui.internal.FontHelper;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.Tessellator;
-import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;

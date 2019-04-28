@@ -1,7 +1,5 @@
 package unknowndomain.engine.client.rendering;
 
-import unknowndomain.engine.client.rendering.shader.ShaderProgram;
-import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.util.VertexBufferObject;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 

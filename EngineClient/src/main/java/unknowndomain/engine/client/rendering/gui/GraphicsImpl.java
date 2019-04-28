@@ -9,7 +9,6 @@ import unknowndomain.engine.client.rendering.gui.font.NativeTTFont;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
-import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;

@@ -7,7 +7,6 @@ import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
-import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;

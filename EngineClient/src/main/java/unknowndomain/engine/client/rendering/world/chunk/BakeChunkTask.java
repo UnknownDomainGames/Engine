@@ -1,8 +1,6 @@
 package unknowndomain.engine.client.rendering.world.chunk;
 
-import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.block.ClientBlock;
-import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;

@@ -3,7 +3,6 @@ package unknowndomain.engine.client.rendering.block.model;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.block.BlockMeshGenerator;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
-import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.Math2;

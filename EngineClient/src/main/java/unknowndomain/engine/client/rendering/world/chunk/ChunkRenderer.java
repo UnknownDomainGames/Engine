@@ -21,7 +21,6 @@ import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
-import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;

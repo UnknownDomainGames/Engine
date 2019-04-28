@@ -1,10 +1,8 @@
 package unknowndomain.engine.client.rendering.world;
 
-import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
-import unknowndomain.engine.client.rendering.util.BufferBuilder;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
