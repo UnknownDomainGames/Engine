@@ -9,7 +9,7 @@ import unknowndomain.engine.client.gui.text.Text;
 import unknowndomain.engine.game.GameDefinitionImpl;
 import unknowndomain.engine.player.PlayerImpl;
 import unknowndomain.engine.player.Profile;
-import unknowndomain.game.Blocks;
+import unknowndomain.game.init.Blocks;
 
 import java.util.UUID;
 

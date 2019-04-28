@@ -4,7 +4,7 @@ import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.item.ItemBlock;
 import unknowndomain.engine.item.ItemStack;
 import unknowndomain.engine.world.World;
-import unknowndomain.game.Blocks;
+import unknowndomain.game.init.Blocks;
 
 public class EntityPlayer extends EntityBase {
 

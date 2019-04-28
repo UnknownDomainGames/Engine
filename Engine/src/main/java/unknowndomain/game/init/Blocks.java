@@ -1,4 +1,4 @@
-package unknowndomain.game;
+package unknowndomain.game.init;
 
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockAir;

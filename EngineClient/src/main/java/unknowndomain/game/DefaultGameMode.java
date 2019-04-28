@@ -8,6 +8,8 @@ import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.block.ClientBlockAir;
 import unknowndomain.engine.client.block.ClientBlockDefault;
 import unknowndomain.engine.client.event.asset.AssetReloadEvent;
+import unknowndomain.engine.client.event.rendering.EntityRendererRegistrationEvent;
+import unknowndomain.engine.client.event.rendering.ItemRendererRegistrationEvent;
 import unknowndomain.engine.client.gui.Scene;
 import unknowndomain.engine.client.input.controller.MotionType;
 import unknowndomain.engine.client.input.keybinding.ActionMode;
@@ -15,10 +17,13 @@ import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.camera.Camera;
+import unknowndomain.engine.client.rendering.entity.EntityItemRenderer;
+import unknowndomain.engine.client.rendering.item.ItemBlockRenderer;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.component.TwoHands;
+import unknowndomain.engine.entity.item.EntityItem;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.mod.RegistrationStartEvent;
@@ -33,6 +38,8 @@ import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.IdAutoIncreaseRegistry;
 import unknowndomain.game.client.gui.game.GUIGameCreation;
 import unknowndomain.game.client.gui.hud.HUDGameDebug;
+import unknowndomain.game.init.Blocks;
+import unknowndomain.game.init.Items;
 
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
@@ -66,8 +73,8 @@ public final class DefaultGameMode {
 
     private void registerItems(Registry<Item> registry) {
         registry.register(new ItemBlock(Blocks.AIR));
-        registry.register(new ItemBlock(Blocks.GRASS));
-        registry.register(new ItemBlock(Blocks.DIRT));
+        registry.register(Items.GRASS);
+        registry.register(Items.DIRT);
     }
 
     private void registerClientBlock(Registry<ClientBlock> registry) {
@@ -159,5 +166,16 @@ public final class DefaultGameMode {
 
         var scene = new Scene(new GUIGameCreation());
         guiManager.showScreen(scene);
+    }
+
+    @Listener
+    public void registerItemRenderer(ItemRendererRegistrationEvent event) {
+        event.register(Items.GRASS, new ItemBlockRenderer());
+        event.register(Items.DIRT, new ItemBlockRenderer());
+    }
+
+    @Listener
+    public void registerEntityRenderer(EntityRendererRegistrationEvent event) {
+        event.register(EntityItem.class, new EntityItemRenderer());
     }
 }

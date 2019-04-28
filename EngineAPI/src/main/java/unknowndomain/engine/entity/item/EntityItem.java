@@ -9,12 +9,14 @@ public class EntityItem extends EntityBase {
 
     private ItemStack itemStack;
 
-    public EntityItem(int id, World world) {
+    public EntityItem(int id, World world, ItemStack itemStack) {
         super(id, world);
+        this.itemStack = itemStack;
     }
 
-    public EntityItem(int id, World world, Vector3dc position) {
+    public EntityItem(int id, World world, Vector3dc position, ItemStack itemStack) {
         super(id, world, position);
+        this.itemStack = itemStack;
     }
 
     public ItemStack getItemStack() {

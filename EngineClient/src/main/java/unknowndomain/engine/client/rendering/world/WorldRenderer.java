@@ -1,6 +1,8 @@
 package unknowndomain.engine.client.rendering.world;
 
+import com.github.mouse0w0.lib4j.observable.value.MutableValue;
 import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
+import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -22,6 +24,7 @@ import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
+import unknowndomain.engine.world.World;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -31,6 +34,8 @@ public class WorldRenderer {
     private final BlockSelectionRenderer blockSelectionRenderer = new BlockSelectionRenderer();
 
     private final EntityRenderManagerImpl entityRenderManager = new EntityRenderManagerImpl();
+
+    private final MutableValue<World> world = new SimpleMutableObjectValue<>();
 
     private ObservableValue<ShaderProgram> worldShader;
     private FrameBuffer frameBuffer;
@@ -47,6 +52,9 @@ public class WorldRenderer {
         chunkRenderer.init(context);
         blockSelectionRenderer.init(context);
         entityRenderManager.init(context);
+
+        world.setValue(context.getEngine().getCurrentGame().getWorld());
+
 //        context.getGame().getContext().register(chunkRenderer);
         worldShader =
                 ShaderManager.INSTANCE.registerShader("world_shader",
@@ -113,14 +121,19 @@ public class WorldRenderer {
 
         ShaderManager.INSTANCE.bindShader(worldShader.getValue());
 
+        ShaderManager.INSTANCE.setUniform("u_ProjMatrix", context.getWindow().projection());
+        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
+
+        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
+
+        // TODO: Support shadow and light. Move it.
+        world.getValue().getEntities().forEach(entity -> entityRenderManager.render(entity, partial));
+
         glEnable(GL11.GL_DEPTH_TEST);
         glEnable(GL11.GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        ShaderManager.INSTANCE.setUniform("u_ProjMatrix", context.getWindow().projection());
-        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
-
         // TODO: Remove it
         context.getTextureManager().getWhiteTexture().bind();
         Tessellator tessellator = Tessellator.getInstance();

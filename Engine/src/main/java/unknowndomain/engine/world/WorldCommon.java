@@ -18,7 +18,7 @@ import unknowndomain.engine.util.FastVoxelRayTrace;
 import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkConstants;
 import unknowndomain.engine.world.chunk.ChunkStorage;
-import unknowndomain.game.Blocks;
+import unknowndomain.game.init.Blocks;
 
 import javax.annotation.Nonnull;
 import java.lang.Math;
