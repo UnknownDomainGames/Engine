@@ -1,6 +1,7 @@
 package unknowndomain.engine.component;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ public interface GameObject {
 
     <T extends Component> boolean hasComponent(@Nonnull Class<T> type);
 
-    <T extends Component> void setComponent(@Nonnull Class<T> type, @Nonnull T value);
+    <T extends Component> void setComponent(@Nonnull Class<T> type, @Nullable T value);
 
     <T extends Component> void removeComponent(@Nonnull Class<T> type);
 

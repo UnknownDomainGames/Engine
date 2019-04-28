@@ -21,6 +21,7 @@ import unknowndomain.engine.component.Component;
 import unknowndomain.engine.component.ComponentContainer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -177,7 +178,7 @@ public class EngineRenderContext implements RenderContext {
     }
 
     @Override
-    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nonnull T value) {
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nullable T value) {
         components.setComponent(type, value);
     }
 

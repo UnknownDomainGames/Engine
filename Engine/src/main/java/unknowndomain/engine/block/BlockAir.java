@@ -2,13 +2,10 @@ package unknowndomain.engine.block;
 
 import org.joml.AABBd;
 import unknowndomain.engine.component.Component;
-import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
-import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.RegistryEntry;
-import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Set;
 
@@ -36,7 +33,7 @@ public class BlockAir extends RegistryEntry.Impl<Block> implements Block {
     }
 
     @Override
-    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nonnull T value) {
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nullable T value) {
 
     }
 
@@ -49,25 +46,5 @@ public class BlockAir extends RegistryEntry.Impl<Block> implements Block {
     @Override
     public Set<Class<?>> getComponents() {
         return Set.of();
-    }
-
-    @Override
-    public void onPlaced(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
-
-    }
-
-    @Override
-    public void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
-
-    }
-
-    @Override
-    public void onRandomTick(World world, BlockPos pos, Block block) {
-
-    }
-
-    @Override
-    public void onChange(World world, BlockPos pos, Block block, BlockChangeCause cause) {
-
     }
 }

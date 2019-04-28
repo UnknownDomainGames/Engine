@@ -9,6 +9,7 @@ import unknowndomain.engine.component.ComponentContainer;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Set;
 
@@ -88,7 +89,7 @@ public abstract class EntityBase implements Entity {
     }
 
     @Override
-    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nonnull T value) {
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nullable T value) {
         components.setComponent(type, value);
     }
 

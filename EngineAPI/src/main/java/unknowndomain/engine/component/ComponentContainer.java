@@ -1,6 +1,7 @@
 package unknowndomain.engine.component;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -29,8 +30,12 @@ public class ComponentContainer implements GameObject {
     }
 
     @Override
-    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nonnull T value) {
-        components.put(type, Optional.of(value));
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nullable T value) {
+        if (value == null) {
+            removeComponent(type);
+        } else {
+            components.put(type, Optional.of(value));
+        }
     }
 
     @Override

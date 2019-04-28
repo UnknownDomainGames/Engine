@@ -7,6 +7,7 @@ import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Set;
 
@@ -47,7 +48,7 @@ public class ItemBase extends RegistryEntry.Impl<Item> implements Item {
     }
 
     @Override
-    public <T extends Component> void setComponent(@Nonnull Class<T> type, T value) {
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nullable T value) {
         components.setComponent(type, value);
     }
 
