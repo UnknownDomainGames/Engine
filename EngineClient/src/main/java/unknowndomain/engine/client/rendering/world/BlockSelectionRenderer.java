@@ -5,6 +5,9 @@ import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 import unknowndomain.engine.util.Color;
 
 public class BlockSelectionRenderer {
@@ -17,7 +20,7 @@ public class BlockSelectionRenderer {
 
     public void render(float partial) {
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
+        GLBuffer buffer = tessellator.getBuffer();
 
         var player = context.getEngine().getCurrentGame().getPlayer();
         var camera = context.getCamera();
@@ -26,7 +29,7 @@ public class BlockSelectionRenderer {
             float minX = hit.getPos().getX() - 0.001f, maxX = hit.getPos().getX() + 1.001f,
                     minY = hit.getPos().getY() - 0.001f, maxY = hit.getPos().getY() + 1.001f,
                     minZ = hit.getPos().getZ() - 0.001f, maxZ = hit.getPos().getZ() + 1.001f;
-            buffer.begin(GL11.GL_LINES, true, true, false);
+            buffer.begin(GLBufferMode.LINES, GLBufferFormats.POSITION_COLOR);
             buffer.pos(minX, minY, minZ).color(Color.WHITE).endVertex();
             buffer.pos(maxX, minY, minZ).color(Color.WHITE).endVertex();
             buffer.pos(minX, minY, minZ).color(Color.WHITE).endVertex();

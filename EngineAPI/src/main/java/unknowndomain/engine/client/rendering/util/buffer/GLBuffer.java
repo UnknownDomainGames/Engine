@@ -82,7 +82,7 @@ public abstract class GLBuffer implements Disposable {
         if (!drawing) {
             throw new IllegalStateException("Not yet drawn!");
         } else {
-            if (drawMode == GLBufferMode.QUADS || drawMode == GLBufferMode.CONTINUOUS_QUADS) {
+/*            if (drawMode == GLBufferMode.QUADS || drawMode == GLBufferMode.CONTINUOUS_QUADS) {
                 if (vertexCount % 4 != 0)
                     throw new IllegalArgumentException(String.format("Not enough vertexes! Expected: %d, Found: %d", (vertexCount / 4 + 1) * 4, vertexCount));
                 byte[] bytes = new byte[format.getStride() * 4];
@@ -99,7 +99,7 @@ public abstract class GLBuffer implements Disposable {
                 }
                 vertexCount = vertexCount / 4 * 6;
                 drawMode = drawMode == GLBufferMode.CONTINUOUS_QUADS ? GLBufferMode.CONTINUOUS_TRIANGLES : GLBufferMode.TRIANGLES;
-            }
+            }*/
             drawing = false;
             backingBuffer.position(0);
             backingBuffer.limit(vertexCount * format.getStride());
@@ -146,7 +146,7 @@ public abstract class GLBuffer implements Disposable {
 
     public void endVertex() {
         if (puttedByteCount != format.getStride()) {
-            throw new IllegalStateException("Not enough vertex data.");
+            throw new IllegalStateException("Mismatch vertex data.");
         }
         puttedByteCount = 0;
         vertexCount++;
@@ -253,17 +253,42 @@ public abstract class GLBuffer implements Disposable {
 
     public GLBuffer color(int color) {
         if (format.isUsingColor()) {
-            color(((color >> 16) & 255) / 255f, ((color >> 8) & 255) / 255f, (color & 255) / 255f, ((color >> 24) & 255) / 255f);
+            float a = ((color >> 24) & 255) / 255f;
+            float r = ((color >> 16) & 255) / 255f;
+            float g = ((color >> 8) & 255) / 255f;
+            float b = (color & 255) / 255f;
+            if(format.getElementsQueriable().filter(e->e.getUsage() == GLBufferElement.Usage.COLOR).findFirst().get().getSize() == 3){
+                return color(r, g, b);
+            }
+            if(format.getElementsQueriable().filter(e->e.getUsage() == GLBufferElement.Usage.COLOR).findFirst().get().getSize() == 4){
+                if(a == 0F) {
+                    return color(r, g, b,1);
+                }else{
+                    return color(r,g,b,a);
+                }
+            }
         }
         return this;
     }
 
     public GLBuffer color(float r, float g, float b) {
-        return color(r, g, b, 1);
+        if (format.isUsingColor()) {
+            if(format.getElementsQueriable().filter(e->e.getUsage() == GLBufferElement.Usage.COLOR).findFirst().get().getSize() == 4){
+                return color(r, g, b,1);
+            }
+            putByteCount(Float.BYTES * 3);
+            backingBuffer.putFloat(r);
+            backingBuffer.putFloat(g);
+            backingBuffer.putFloat(b);
+        }
+        return this;
     }
 
     public GLBuffer color(float r, float g, float b, float a) {
         if (format.isUsingColor()) {
+            if(format.getElementsQueriable().filter(e->e.getUsage() == GLBufferElement.Usage.COLOR).findFirst().get().getSize() == 3){
+                return color(r, g, b);
+            }
             putByteCount(Float.BYTES * 4);
             backingBuffer.putFloat(r);
             backingBuffer.putFloat(g);

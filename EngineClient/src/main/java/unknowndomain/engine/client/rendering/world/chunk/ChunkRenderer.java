@@ -22,6 +22,7 @@ import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
 import unknowndomain.engine.event.world.chunk.ChunkLoadEvent;
@@ -161,9 +162,9 @@ public class ChunkRenderer {
         game.getEventBus().unregister(this);
     }
 
-    public void upload(ChunkMesh chunkMesh, BufferBuilder buffer) {
-        ByteBuffer finalBuffer = BufferUtils.createByteBuffer(buffer.build().limit());
-        finalBuffer.put(buffer.build());
+    public void upload(ChunkMesh chunkMesh, GLBuffer buffer) {
+        ByteBuffer finalBuffer = BufferUtils.createByteBuffer(buffer.getBackingBuffer().limit());
+        finalBuffer.put(buffer.getBackingBuffer());
         finalBuffer.flip();
         uploadTasks.add(new UploadTask(chunkMesh, finalBuffer, buffer.getVertexCount()));
 

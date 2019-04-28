@@ -3,6 +3,7 @@ package unknowndomain.engine.client.rendering.util.buffer;
 import org.lwjgl.opengl.GL20;
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class GLBufferFormat {
 
@@ -52,6 +53,10 @@ public class GLBufferFormat {
 
     public GLBufferElement[] getElements() {
         return elements;
+    }
+
+    public Stream<GLBufferElement> getElementsQueriable(){
+        return Stream.of(elements);
     }
 
     public int getStride() {

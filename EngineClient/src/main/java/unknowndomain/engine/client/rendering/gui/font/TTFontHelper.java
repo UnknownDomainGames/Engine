@@ -14,6 +14,9 @@ import unknowndomain.engine.client.gui.internal.FontHelper;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.Tessellator;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -234,8 +237,8 @@ public final class TTFontHelper implements FontHelper {
             int bitmapSize = nativeTTFont.getBitmapSize();
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
             Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder builder = tessellator.getBuffer();
-            builder.begin(GL_QUADS, true, true, true, false);
+            GLBuffer builder = tessellator.getBuffer();
+            builder.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE);
             for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, charPointBuffer);
 
@@ -251,10 +254,10 @@ public final class TTFontHelper implements FontHelper {
                 }
                 float x0 = scale(centerX, stbQuad.x0(), factorX), x1 = scale(centerX, stbQuad.x1(), factorX),
                         y0 = scale(centerY, stbQuad.y0(), factorY), y1 = scale(centerY, stbQuad.y1(), factorY); // FIXME: Incorrect y0
-                builder.pos(x0, y0, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t0()).endVertex();
-                builder.pos(x0, y1, 0).color(r, g, b, a).tex(stbQuad.s0(), stbQuad.t1()).endVertex();
-                builder.pos(x1, y1, 0).color(r, g, b, a).tex(stbQuad.s1(), stbQuad.t1()).endVertex();
-                builder.pos(x1, y0, 0).color(r, g, b, a).tex(stbQuad.s1(), stbQuad.t0()).endVertex();
+                builder.pos(x0, y0, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t0()).endVertex();
+                builder.pos(x0, y1, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t1()).endVertex();
+                builder.pos(x1, y0, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t0()).endVertex();
+                builder.pos(x1, y1, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t1()).endVertex();
 
             }
             tessellator.draw();

@@ -8,6 +8,9 @@ import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.item.ItemBlock;
 import unknowndomain.engine.item.ItemStack;
@@ -62,8 +65,8 @@ public class ItemRendererTest implements ItemRenderer {
         ClientBlock clientBlock = clientBlockRegistry.getValue(((ItemBlock) itemStack.getItem()).getBlock().getId());
 
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_TRIANGLES, true, true, true, true);
+        GLBuffer buffer = tessellator.getBuffer();
+        buffer.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
         clientBlock.getRenderer().generate(clientBlock, buffer);
         tessellator.draw();
 

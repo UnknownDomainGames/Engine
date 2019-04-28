@@ -10,6 +10,9 @@ import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 import unknowndomain.engine.math.Math2;
 import unknowndomain.engine.util.Color;
 
@@ -56,33 +59,33 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawLine(float x1, float y1, float x2, float y2) {
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_LINES, true, true, false, false);
+        GLBuffer buffer = tessellator.getBuffer();
+        buffer.begin(GLBufferMode.LINES, GLBufferFormats.POSITION_COLOR_ALPHA);
         line(buffer, x1, y1, x2, y2);
         tessellator.draw();
     }
 
     @Override
     public void drawRect(float x, float y, float width, float height) {
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_LINE_LOOP, true, true, false, false);
+        GLBuffer buffer = tessellator.getBuffer();
+        buffer.begin(GLBufferMode.LINES_CLOSED, GLBufferFormats.POSITION_COLOR_ALPHA);
         rect(buffer, x, y, width, height);
         tessellator.draw();
     }
 
     @Override
     public void fillRect(float x, float y, float width, float height) {
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_QUADS, true, true, false, false);
-        rect(buffer, x, y, width, height);
+        GLBuffer buffer = tessellator.getBuffer();
+        buffer.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA);
+        rect2(buffer, x, y, width, height);
         tessellator.draw();
     }
 
     @Override
     public void drawRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight) {
         float x2 = x + width, y2 = y + height;
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_LINE_LOOP, true, true, false, false);
+        GLBuffer buffer = tessellator.getBuffer();
+        buffer.begin(GLBufferMode.LINES_CLOSED, GLBufferFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, x2 - arcWidth, y);
         quadTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
         pointTo(buffer, x2, y2 - arcHeight);
@@ -96,24 +99,25 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void fillRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight) {
-        float x2 = x + width, y2 = y + height;
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_POLYGON, true, true, false, false);
-        pointTo(buffer, x2 - arcWidth, y);
-        quadTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
-        pointTo(buffer, x2, y2 - arcHeight);
-        quadTo(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
-        pointTo(buffer, x + arcWidth, y2);
-        quadTo(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
-        pointTo(buffer, x, y + arcHeight);
-        quadTo(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
-        tessellator.draw();
+//        TODO: refine this method to a version that doesn't use GL_POLYGON which is not supported in GL3 onwards
+//        float x2 = x + width, y2 = y + height;
+//        GLBuffer buffer = tessellator.getBuffer();
+//        buffer.begin(GL_POLYGON, true, true, false, false);
+//        pointTo(buffer, x2 - arcWidth, y);
+//        quadTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
+//        pointTo(buffer, x2, y2 - arcHeight);
+//        quadTo(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
+//        pointTo(buffer, x + arcWidth, y2);
+//        quadTo(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
+//        pointTo(buffer, x, y + arcHeight);
+//        quadTo(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
+//        tessellator.draw();
     }
 
     @Override
     public void drawQuad(float startX, float startY, float endX, float endY, float px, float py) {
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_LINE_STRIP, true, true, false, false);
+        GLBuffer buffer = tessellator.getBuffer();
+        buffer.begin(GLBufferMode.CONTINUOUS_LINES, GLBufferFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, startX, startY);
         quadTo(buffer, startX, startY, endX, endY, px, py);
         tessellator.draw();
@@ -121,8 +125,8 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_LINE_STRIP, true, true, false, false);
+        GLBuffer buffer = tessellator.getBuffer();
+        buffer.begin(GLBufferMode.CONTINUOUS_LINES, GLBufferFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, startX, startY);
         curveTo(buffer, startX, startY, endX, endY, px1, py1, px2, py2);
         tessellator.draw();
@@ -130,8 +134,8 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_LINE_STRIP, true, true, false, false);
+        GLBuffer buffer = tessellator.getBuffer();
+        buffer.begin(GLBufferMode.CONTINUOUS_LINES, GLBufferFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, startX, startY);
         arcTo(buffer, startX, startY, endX, endY, radiusX, radiusY, xAxisRotation, largeArcFlag, sweepFlag);
         tessellator.draw();
@@ -150,13 +154,13 @@ public class GraphicsImpl implements Graphics {
     @Override
     public void drawTexture(GLTexture texture, float x, float y, float width, float height, TextureUV textureUV) {
         ShaderManager.INSTANCE.setUniform("u_UsingTexture", true);
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL_QUADS, true, false, true);
+        GLBuffer buffer = tessellator.getBuffer();
+        buffer.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_TEXTURE);
         float x2 = x + width, y2 = y + height;
-        buffer.pos(x, y, 0).tex(textureUV.getMinU(), textureUV.getMinV()).endVertex();
-        buffer.pos(x2, y, 0).tex(textureUV.getMaxU(), textureUV.getMinV()).endVertex();
-        buffer.pos(x2, y2, 0).tex(textureUV.getMaxU(), textureUV.getMaxV()).endVertex();
-        buffer.pos(x, y2, 0).tex(textureUV.getMinU(), textureUV.getMaxV()).endVertex();
+        buffer.pos(x, y, 0).uv(textureUV.getMinU(), textureUV.getMinV()).endVertex();
+        buffer.pos(x, y2, 0).uv(textureUV.getMinU(), textureUV.getMaxV()).endVertex();
+        buffer.pos(x2, y, 0).uv(textureUV.getMaxU(), textureUV.getMinV()).endVertex();
+        buffer.pos(x2, y2, 0).uv(textureUV.getMaxU(), textureUV.getMaxV()).endVertex();
         glEnable(GL_TEXTURE_2D);
         texture.bind();
         tessellator.draw();
@@ -199,24 +203,31 @@ public class GraphicsImpl implements Graphics {
         }
     }
 
-    private void pointTo(BufferBuilder buffer, float x, float y) {
+    private void pointTo(GLBuffer buffer, float x, float y) {
         buffer.pos(x, y, 0).color(color).endVertex();
     }
 
-    private void line(BufferBuilder buffer, float x1, float y1, float x2, float y2) {
+    private void line(GLBuffer buffer, float x1, float y1, float x2, float y2) {
         pointTo(buffer, x1, y1);
         pointTo(buffer, x2, y2);
     }
 
-    private void rect(BufferBuilder buffer, float x, float y, float width, float height) {
+    private void rect(GLBuffer buffer, float x, float y, float width, float height) {
         float x2 = x + width, y2 = y + height;
         pointTo(buffer, x, y);
         pointTo(buffer, x2, y);
         pointTo(buffer, x2, y2);
         pointTo(buffer, x, y2);
     }
+    private void rect2(GLBuffer buffer, float x, float y, float width, float height) {
+        float x2 = x + width, y2 = y + height;
+        pointTo(buffer, x, y);
+        pointTo(buffer, x, y2);
+        pointTo(buffer, x2, y);
+        pointTo(buffer, x2, y2);
+    }
 
-    private void quadTo(BufferBuilder buffer, float startX, float startY, float endX, float endY, float px, float py) {
+    private void quadTo(GLBuffer buffer, float startX, float startY, float endX, float endY, float px, float py) {
         float step = 12f / (Math.abs(startX - px) + Math.abs(px - endX) + Math.abs(startY - py) + Math.abs(py - endY)); //TODO: optimization
         for (float f = step; f < 1f; f += step) {
             float f2 = 1 - f;
@@ -225,7 +236,7 @@ public class GraphicsImpl implements Graphics {
         pointTo(buffer, endX, endY);
     }
 
-    private void curveTo(BufferBuilder buffer, float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
+    private void curveTo(GLBuffer buffer, float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
         float step = 36f / (Math.abs(startX - px1) + Math.abs(px1 - px2) + Math.abs(px2 - endX) + Math.abs(startY - py1) + Math.abs(py1 - py2) + Math.abs(py2 - endY)); //TODO: optimization
         for (float f = step; f < 1f; f += step) {
             float f2 = 1 - f;
@@ -236,7 +247,7 @@ public class GraphicsImpl implements Graphics {
     }
 
     // https://stackoverflow.com/questions/43946153/approximating-svg-elliptical-arc-in-canvas-with-javascript
-    private void arcTo(BufferBuilder buffer, float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
+    private void arcTo(GLBuffer buffer, float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
         float phi = (float) Math.toRadians(xAxisRotation);
         float rX = Math.abs(radiusX);
         float rY = Math.abs(radiusY);

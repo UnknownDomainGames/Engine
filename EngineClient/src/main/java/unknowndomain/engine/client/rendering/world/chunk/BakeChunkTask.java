@@ -3,6 +3,9 @@ package unknowndomain.engine.client.rendering.world.chunk;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.BlockPosIterator;
 import unknowndomain.engine.util.ChunkCache;
@@ -33,8 +36,8 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
         ChunkCache chunkCache = createChunkCache(chunk.getWorld(), chunk);
         BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunk(chunk);
 
-        BufferBuilder buffer = ((BakeChunkThread) Thread.currentThread()).getBuffer();
-        buffer.begin(GL11.GL_TRIANGLES, true, true, true, true);
+        GLBuffer buffer = ((BakeChunkThread) Thread.currentThread()).getBuffer();
+        buffer.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
         while (blockPosIterator.hasNext()) {
             BlockPos pos = blockPosIterator.next();
             ClientBlock block = chunkRenderer.getClientBlockRegistry().getValue(chunkCache.getBlockId(pos));

@@ -8,10 +8,6 @@ import unknowndomain.engine.world.BlockAccessor;
 
 public interface BlockMeshGenerator {
 
-    void generate(ClientBlock block, BlockAccessor world, BlockPos pos, BufferBuilder buffer);
-
-    void generate(ClientBlock block, BufferBuilder buffer);
-
     void generate(ClientBlock block, BlockAccessor world, BlockPos pos, GLBuffer buffer);
 
     void generate(ClientBlock block, GLBuffer buffer);

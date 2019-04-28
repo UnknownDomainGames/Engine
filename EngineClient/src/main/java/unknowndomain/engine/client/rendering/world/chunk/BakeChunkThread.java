@@ -1,16 +1,16 @@
 package unknowndomain.engine.client.rendering.world.chunk;
 
-import unknowndomain.engine.client.rendering.util.BufferBuilder;
+import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 
 public class BakeChunkThread extends Thread {
 
-    private final BufferBuilder buffer = new BufferBuilder(0x200000);
+    private final GLBuffer buffer = GLBuffer.createDirectBuffer(0x200000);
 
     public BakeChunkThread(Runnable target, String name) {
         super(target, name);
     }
 
-    public BufferBuilder getBuffer() {
+    public GLBuffer getBuffer() {
         return buffer;
     }
 }

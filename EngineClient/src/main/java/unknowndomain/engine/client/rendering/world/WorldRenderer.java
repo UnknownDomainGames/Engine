@@ -15,6 +15,9 @@ import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
 import unknowndomain.engine.client.rendering.util.*;
+import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 import unknowndomain.engine.client.rendering.world.chunk.ChunkRenderer;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -117,10 +120,10 @@ public class WorldRenderer {
 
         // TODO: Remove it
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
+        GLBuffer buffer = tessellator.getBuffer();
         ShaderManager.INSTANCE.setUniform("u_UsingColor", true);
         ShaderManager.INSTANCE.setUniform("u_UsingTexture", false);
-        buffer.begin(GL11.GL_LINES, true, true, false);
+        buffer.begin(GLBufferMode.LINES, GLBufferFormats.POSITION_COLOR);
         buffer.pos(0, 0, 0).color(1, 0, 0).endVertex();
         buffer.pos(100, 0, 0).color(1, 0, 0).endVertex();
         buffer.pos(0, 0, 0).color(0, 1, 0).endVertex();

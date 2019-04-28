@@ -62,14 +62,14 @@ public abstract class BufferPool {
     private static class HeapBufferPool extends BufferPool {
         @Override
         protected ByteBuffer createBuffer(int capacity) {
-            return ByteBuffer.allocate(Math.min(256, Math2.ceilPowerOfTwo(capacity)));
+            return ByteBuffer.allocate(Math.max(256, Math2.ceilPowerOfTwo(capacity)));
         }
     }
 
     private static class DirectBufferPool extends BufferPool {
         @Override
         protected ByteBuffer createBuffer(int capacity) {
-            return ByteBuffer.allocateDirect(Math.min(256, Math2.ceilPowerOfTwo(capacity)));
+            return ByteBuffer.allocateDirect(Math.max(256, Math2.ceilPowerOfTwo(capacity)));
         }
     }
 }

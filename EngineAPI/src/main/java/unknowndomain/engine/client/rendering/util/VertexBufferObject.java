@@ -39,6 +39,7 @@ public class VertexBufferObject implements Disposable {
         GL30.glBindVertexArray(0);
     }
 
+    @Deprecated
     public void uploadData(BufferBuilder builder) {
         bind();
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, builder.build(), GL15.GL_STATIC_DRAW);

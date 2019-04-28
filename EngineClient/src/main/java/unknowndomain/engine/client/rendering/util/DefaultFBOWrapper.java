@@ -2,6 +2,9 @@ package unknowndomain.engine.client.rendering.util;
 
 import org.joml.Vector4ic;
 import unknowndomain.engine.client.rendering.Tessellator;
+import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
+import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -41,15 +44,12 @@ public final class DefaultFBOWrapper extends FrameBuffer {
         glDisable(GL_DEPTH_TEST);
         glBindTexture(GL_TEXTURE_2D, frameBuffer.getTexId());
         Tessellator t = Tessellator.getInstance();
-        BufferBuilder bb = t.getBuffer();
-        bb.begin(GL_TRIANGLES, true,false,true);
-        bb.pos(-1.0f,1.0f,0).tex(0,1.0f).endVertex();
-        bb.pos(-1.0f,-1.0f,0).tex(0,0).endVertex();
-        bb.pos(1.0f,-1.0f,0).tex(1.0f,0).endVertex();
-
-        bb.pos(-1.0f,1.0f,0).tex(0,1.0f).endVertex();
-        bb.pos(1.0f,-1.0f,0).tex(1.0f,0).endVertex();
-        bb.pos(1.0f,1.0f,0).tex(1.0f,1.0f).endVertex();
+        GLBuffer bb = t.getBuffer();
+        bb.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_TEXTURE);
+        bb.pos(-1.0f,1.0f,0).uv(0,1.0f).endVertex();
+        bb.pos(-1.0f,-1.0f,0).uv(0,0).endVertex();
+        bb.pos(1.0f,1.0f,0).uv(1.0f,1.0f).endVertex();
+        bb.pos(1.0f,-1.0f,0).uv(1.0f,0).endVertex();
         t.draw();
     }
 
