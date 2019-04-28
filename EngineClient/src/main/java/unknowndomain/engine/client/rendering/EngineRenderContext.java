@@ -17,11 +17,11 @@ import unknowndomain.engine.client.rendering.display.GLFWWindow;
 import unknowndomain.engine.client.rendering.display.Window;
 import unknowndomain.engine.client.rendering.texture.EngineTextureManager;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
+import unknowndomain.engine.component.Component;
+import unknowndomain.engine.component.ComponentContainer;
 
 import javax.annotation.Nonnull;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -34,6 +34,8 @@ public class EngineRenderContext implements RenderContext {
 
     private final List<Renderer> renderers = new LinkedList<>();
     private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
+
+    private final ComponentContainer components = new ComponentContainer();
 
     private Thread renderThread;
     private GLFWWindow window;
@@ -162,5 +164,31 @@ public class EngineRenderContext implements RenderContext {
 
     public void dispose() {
         renderers.forEach(Renderer::dispose);
+    }
+
+    @Override
+    public <T extends Component> Optional<T> getComponent(@Nonnull Class<T> type) {
+        return components.getComponent(type);
+    }
+
+    @Override
+    public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
+        return components.hasComponent(type);
+    }
+
+    @Override
+    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nonnull T value) {
+        components.setComponent(type, value);
+    }
+
+    @Override
+    public <T extends Component> void removeComponent(@Nonnull Class<T> type) {
+        components.removeComponent(type);
+    }
+
+    @Override
+    @Nonnull
+    public Set<Class<?>> getComponents() {
+        return components.getComponents();
     }
 }

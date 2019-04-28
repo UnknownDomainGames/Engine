@@ -6,10 +6,11 @@ import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.display.Window;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
+import unknowndomain.engine.component.GameObject;
 
 import javax.annotation.Nonnull;
 
-public interface RenderContext {
+public interface RenderContext extends GameObject {
 
     EngineClient getEngine();
 

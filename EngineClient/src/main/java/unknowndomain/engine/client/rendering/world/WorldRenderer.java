@@ -9,7 +9,7 @@ import org.lwjgl.opengl.GL15;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
-import unknowndomain.engine.client.rendering.item.ItemRendererTest;
+import unknowndomain.engine.client.rendering.entity.EntityRenderManagerImpl;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
@@ -22,8 +22,9 @@ import static org.lwjgl.opengl.GL11.*;
 public class WorldRenderer {
 
     private final ChunkRenderer chunkRenderer = new ChunkRenderer();
-    private final ItemRendererTest itemRenderer = new ItemRendererTest();
     private final BlockSelectionRenderer blockSelectionRenderer = new BlockSelectionRenderer();
+
+    private final EntityRenderManagerImpl entityRenderManager = new EntityRenderManagerImpl();
 
     private ObservableValue<ShaderProgram> worldShader;
     private FrameBuffer frameBuffer;
@@ -38,8 +39,8 @@ public class WorldRenderer {
     public void init(RenderContext context) {
         this.context = context;
         chunkRenderer.init(context);
-        itemRenderer.init(context);
         blockSelectionRenderer.init(context);
+        entityRenderManager.init(context);
 //        context.getGame().getContext().register(chunkRenderer);
         worldShader =
                 ShaderManager.INSTANCE.registerShader("world_shader",
@@ -81,7 +82,6 @@ public class WorldRenderer {
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
         GL11.glCullFace(GL_FRONT);
         chunkRenderer.render();
-        itemRenderer.render(partial);
         GL11.glCullFace(GL_BACK);
 
         ShaderManager.INSTANCE.unbindOverriding();
@@ -106,10 +106,6 @@ public class WorldRenderer {
         chunkRenderer.render();
 
         ShaderManager.INSTANCE.bindShader(worldShader.getValue());
-
-        ShaderManager.INSTANCE.setUniform("u_UsingColor", true);
-        ShaderManager.INSTANCE.setUniform("u_UsingTexture", true);
-        itemRenderer.render(partial);
 
         glEnable(GL11.GL_DEPTH_TEST);
         glEnable(GL11.GL_BLEND);
@@ -155,8 +151,8 @@ public class WorldRenderer {
 
     public void dispose() {
         chunkRenderer.dispose();
-        itemRenderer.dispose();
         blockSelectionRenderer.dispose();
+        entityRenderManager.dispose();
 
         ShaderManager.INSTANCE.unregisterShader("world_shader");
         ShaderManager.INSTANCE.unregisterShader("frame_buffer_shader");
