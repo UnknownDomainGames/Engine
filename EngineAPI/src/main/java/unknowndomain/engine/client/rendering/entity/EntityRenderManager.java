@@ -8,6 +8,4 @@ import unknowndomain.engine.entity.Entity;
 @Owner(RenderContext.class)
 public interface EntityRenderManager extends Component {
     <T extends Entity> void register(Class<T> entityType, EntityRenderer<T> renderer);
-
-    void render(Entity entity, float partial);
 }

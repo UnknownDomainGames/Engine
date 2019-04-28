@@ -24,7 +24,6 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
         this.context = context;
     }
 
-    @Override
     public void render(Entity entity, float partial) {
         EntityRenderer renderer = renderers.get(entity.getClass());
         if (renderer == null)
