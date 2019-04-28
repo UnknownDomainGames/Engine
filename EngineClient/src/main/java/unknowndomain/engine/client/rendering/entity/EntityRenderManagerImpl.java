@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.rendering.entity;
 
+import unknowndomain.engine.client.event.rendering.EntityRendererRegistrationEvent;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.entity.Entity;
 
@@ -22,6 +23,8 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
 
     public void init(RenderContext context) {
         this.context = context;
+
+        context.getEngine().getCurrentGame().getEventBus().post(new EntityRendererRegistrationEvent(this));
     }
 
     public void render(Entity entity, float partial) {
