@@ -71,10 +71,10 @@ public class ItemRendererTest implements ItemRenderer {
     }
 
     public void renderEntity(ItemStack itemStack, float partialTick) {
-        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().translate(0, 4.5f, 0)
+        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().translate(0, 4.5f - .5f * (float) Math.sin(Math.toRadians((game.getWorld().getGameTick() + partialTick) * 10)), 0)
                 .scale(1f / 3, 1f / 3, 1f / 3)
                 .rotateY(((int) System.currentTimeMillis() % 360000) / 1000f)
-                .translate(-.5f, -.5f * (float)Math.sin(Math.toRadians((game.getWorld().getGameTick() + partialTick) * 10)), -.5f));
+                .translate(-.5f, 0, -.5f));
 
         render(itemStack, partialTick);
     }
