@@ -14,7 +14,7 @@ public interface EntityRegistry extends Registry<EntityEntry> {
 
     <T extends Entity> boolean containsKey(Class<T> key);
 
-    <T extends Entity> Set<Class<T>> getEntityClasses();
+    Set<Class<? extends Entity>> getEntityClasses();
 
-    <T extends Entity> Collection<Map.Entry<Class<T>, EntityEntry>> getEntity2EntryEntries();
+    Collection<Map.Entry<Class<? extends Entity>, EntityEntry>> getEntity2EntryEntries();
 }
