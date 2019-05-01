@@ -15,9 +15,9 @@ public class JavaModLoader implements ModLoader {
         ClassLoader classLoader = new ModClassLoader(modLogger, descriptor.getSource(), Thread.currentThread().getContextClassLoader());
         
         try {
-            Object instance = Class.forName(descriptor.getMainClass(), true, classLoader);
+            Object instance = Class.forName(descriptor.getMainClass(), true, classLoader).newInstance();
             return new JavaModContainer(descriptor, classLoader, modLogger, instance);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace(); // TODO: throw it.
         }
         return null;
