@@ -237,7 +237,7 @@ public final class TTFontHelper implements FontHelper {
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
             Tessellator tessellator = Tessellator.getInstance();
             GLBuffer builder = tessellator.getBuffer();
-            builder.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE);
+            builder.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE);
             for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, charPointBuffer);
 
@@ -256,6 +256,9 @@ public final class TTFontHelper implements FontHelper {
                 builder.pos(x0, y0, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t0()).endVertex();
                 builder.pos(x0, y1, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t1()).endVertex();
                 builder.pos(x1, y0, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t0()).endVertex();
+
+                builder.pos(x1, y0, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t0()).endVertex();
+                builder.pos(x0, y1, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t1()).endVertex();
                 builder.pos(x1, y1, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t1()).endVertex();
 
             }
