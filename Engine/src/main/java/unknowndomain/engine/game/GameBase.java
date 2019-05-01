@@ -9,9 +9,10 @@ import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.SimpleEventBus;
 import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.game.GameReadyEvent;
-import unknowndomain.engine.event.mod.RegistrationFinishEvent;
-import unknowndomain.engine.event.mod.RegistrationStartEvent;
-import unknowndomain.engine.event.mod.RegistryConstructionEvent;
+import unknowndomain.engine.event.registry.RegisterEvent;
+import unknowndomain.engine.event.registry.RegistrationFinishEvent;
+import unknowndomain.engine.event.registry.RegistrationStartEvent;
+import unknowndomain.engine.event.registry.RegistryConstructionEvent;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.mod.impl.DefaultModManager;
@@ -66,11 +67,15 @@ public abstract class GameBase implements Game {
         // Registration Stage
         logger.info("Creating Registry Manager!");
         Map<Class<?>, Registry<?>> registries = Maps.newHashMap();
-        Map<Class<?>, List<Pair<Class<? extends RegistryEntry>,BiConsumer<RegistryEntry,Registry>>>> afterRegistries = Maps.newHashMap();
+        Map<Class<?>, List<Pair<Class<? extends RegistryEntry>, BiConsumer<RegistryEntry, Registry>>>> afterRegistries = Maps.newHashMap();
         eventBus.post(new RegistryConstructionEvent(registries, afterRegistries));
         registryManager = new SimpleRegistryManager(Map.copyOf(registries), Map.copyOf(afterRegistries));
         logger.info("Registering!");
         eventBus.post(new RegistrationStartEvent(registryManager));
+
+        for (Registry<?> registry : registries.values())
+            eventBus.post(new RegisterEvent<>(registry));
+
         logger.info("Finishing Registration!");
         eventBus.post(new RegistrationFinishEvent(registryManager));
     }

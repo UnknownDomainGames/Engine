@@ -1,4 +1,4 @@
-package unknowndomain.engine.event.mod;
+package unknowndomain.engine.event.registry;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -13,6 +13,7 @@ import java.util.function.BiConsumer;
 
 public class RegistryConstructionEvent implements Event {
     private final Map<Class<?>, Registry<?>> registries;
+    @Deprecated
     private final Map<Class<?>, List<Pair<Class<? extends RegistryEntry>, BiConsumer<RegistryEntry, Registry>>>> afterRegistries;
 
     public RegistryConstructionEvent(Map<Class<?>, Registry<?>> registries, Map<Class<?>, List<Pair<Class<? extends RegistryEntry>, BiConsumer<RegistryEntry, Registry>>>> afterRegistries) {
