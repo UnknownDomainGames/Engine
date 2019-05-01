@@ -33,7 +33,7 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'maven'
 
-    group 'com.github.unknownstudio'
+    group 'com.github.unknowndomaingame'
     version '1.0.0'
 
     sourceCompatibility = targetCompatibility = 11
