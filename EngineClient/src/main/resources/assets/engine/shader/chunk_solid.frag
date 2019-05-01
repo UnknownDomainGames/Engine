@@ -307,7 +307,7 @@ void main() {
     if(material.alphaUseUV){
         alpha = texture(material.alphaUV,v_TexCoord).a;
     }
-    float shadow = /*CalcShadow(v_FragPosLightSpace)*/0f;
+    float shadow = 0.0f; /*float shadow = CalcShadow(v_FragPosLightSpace);*/
     if(useDirectUV){
         fragColor = vec4(result[0] + (1f-shadow) * (result[1] + result[2]),1.0) /* * v_Color */ * texture(u_Texture, v_TexCoord);
     }
