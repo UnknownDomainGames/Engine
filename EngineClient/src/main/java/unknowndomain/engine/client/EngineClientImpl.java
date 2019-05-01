@@ -35,6 +35,8 @@ import java.lang.management.RuntimeMXBean;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -117,11 +119,19 @@ public class EngineClientImpl implements EngineClient {
 
     private void initEnvironment() {
         try {
-            // TODO:
-            runtimeEnvironment = Files.isDirectory(Path.of(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI())) ? RuntimeEnvironment.ENGINE_DEVELOPMENT : RuntimeEnvironment.DEPLOYMENT;
-        } catch (URISyntaxException e) {
-            runtimeEnvironment = RuntimeEnvironment.DEPLOYMENT;
+            if (Files.isDirectory(Path.of(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()))) {
+                runtimeEnvironment = RuntimeEnvironment.ENGINE_DEVELOPMENT;
+                return;
+            }
+        } catch (URISyntaxException ignored) {
         }
+
+        if (Arrays.stream(JAVA_CLASS_PATH.split(";")).anyMatch(path -> Files.isDirectory(Paths.get(path)))) {
+            runtimeEnvironment = RuntimeEnvironment.MOD_DEVELOPMENT;
+            return;
+        }
+
+        runtimeEnvironment = RuntimeEnvironment.DEPLOYMENT;
     }
 
     @Override
