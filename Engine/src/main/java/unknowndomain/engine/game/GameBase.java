@@ -1,6 +1,7 @@
 package unknowndomain.engine.game;
 
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.SimpleRegistryManager;
+import unknowndomain.engine.util.RuntimeEnvironment;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -111,6 +113,8 @@ public abstract class GameBase implements Game {
             Collection<ModContainer> modContainers = modManager.loadMod(ModCollector.createFolderModCollector(modFolder));
             modContainers.forEach(modContainer -> eventBus.register(modContainer.getInstance()));
             modContainers.forEach(modContainer -> logger.info("Loaded mod: {}", modContainer.getModId()));
+
+            loadDevEnvMod();
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
@@ -119,6 +123,28 @@ public abstract class GameBase implements Game {
 //        getContext().post(new EngineEvent.ModInitializationEvent(this));
 //        Platform.getLogger().info("Finishing Construction!");
 //        getContext().post(new EngineEvent.ModConstructionFinish(this));
+    }
+
+    private void loadDevEnvMod() {
+        if (engine.getRuntimeEnvironment() != RuntimeEnvironment.MOD_DEVELOPMENT)
+            return;
+
+        Path modPath = findModInClassPath();
+        if (modPath == null)
+            return;
+
+        ModContainer modContainer = modManager.loadMod(modPath);
+        eventBus.register(modContainer.getInstance());
+        logger.info("Loaded mod: {}", modContainer.getModId());
+    }
+
+    private Path findModInClassPath() {
+        for (String path : SystemUtils.JAVA_CLASS_PATH.split(";")) {
+            if (Files.exists(Path.of(path, "metadata.json"))) {
+                return Path.of(path);
+            }
+        }
+        return null;
     }
 
     @Override
