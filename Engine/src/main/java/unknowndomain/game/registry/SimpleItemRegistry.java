@@ -12,10 +12,13 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimpleItemRegistry implements ItemRegistry {
 
     protected final BiMap<String, Item> nameToObject = HashBiMap.create();
+    protected final BiMap<Integer, Item> idToObject = HashBiMap.create();
+    private final AtomicInteger nextId = new AtomicInteger(0);
     protected final BiMap<Block, ItemBlock> blockToCorrItem = HashBiMap.create();
     @Override
     public ItemBlock getItemBlock(Block block) {
@@ -45,6 +48,7 @@ public class SimpleItemRegistry implements ItemRegistry {
             throw new RegisterException(String.format("Item id:%s has already registered!", obj.getLocalName()));
         }
         nameToObject.put(obj.getLocalName(), obj);
+        setId(obj, nextId.getAndIncrement());
         if(obj instanceof ItemBlock){
             ItemBlock itemBlock = (ItemBlock) obj;
             blockToCorrItem.put((itemBlock).getBlock(), itemBlock);
@@ -84,26 +88,26 @@ public class SimpleItemRegistry implements ItemRegistry {
 
     @Override
     public int getId(Item obj) {
-//        return 0; TODO: id?
-        throw new UnsupportedOperationException("SimpleItemRegistry is not responsible for id matching");
+        return idToObject.inverse().get(obj);
     }
 
     @Override
     public int getId(String key) {
-//        return 0; TODO: id?
-        throw new UnsupportedOperationException("SimpleItemRegistry is not responsible for id matching");
+        return idToObject.inverse().get(nameToObject.get(key));
     }
 
     @Override
     public String getKey(int id) {
-//        return ""; TODO: id?
-        throw new UnsupportedOperationException("SimpleItemRegistry is not responsible for id matching");
+        return nameToObject.inverse().get(idToObject.get(id));
     }
 
     @Override
     public Item getValue(int id) {
-//        return null; TODO: id?
-        throw new UnsupportedOperationException("SimpleItemRegistry is not responsible for id matching");
+        return idToObject.get(id);
+    }
+
+    protected void setId(Item entry, int id) {
+        idToObject.put(id, entry);
     }
 
     @Override

@@ -11,11 +11,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SimpleBlockRegistry implements BlockRegistry {
 
     protected final BiMap<String, Block> nameToObject = HashBiMap.create();
-
+    protected final BiMap<Integer, Block> idToObject = HashBiMap.create();
+    private final AtomicInteger nextId = new AtomicInteger(0);
     protected Block air;
 
     @Override
@@ -46,6 +48,7 @@ public class SimpleBlockRegistry implements BlockRegistry {
             throw new RegisterException(String.format("Block id:%s has already registered!", obj.getLocalName()));
         }
         nameToObject.put(obj.getLocalName(), obj);
+        setId(obj, nextId.getAndIncrement());
         return obj;
     }
 
@@ -81,26 +84,26 @@ public class SimpleBlockRegistry implements BlockRegistry {
 
     @Override
     public int getId(Block obj) {
-//        return 0; TODO: id?
-        throw new UnsupportedOperationException("SimpleBlockRegistry is not responsible for id matching");
+        return idToObject.inverse().get(obj);
     }
 
     @Override
     public int getId(String key) {
-//        return 0; TODO: id?
-        throw new UnsupportedOperationException("SimpleBlockRegistry is not responsible for id matching");
+        return idToObject.inverse().get(nameToObject.get(key));
     }
 
     @Override
     public String getKey(int id) {
-//        return ""; TODO: id?
-        throw new UnsupportedOperationException("SimpleBlockRegistry is not responsible for id matching");
+        return nameToObject.inverse().get(idToObject.get(id));
     }
 
     @Override
     public Block getValue(int id) {
-//        return null; TODO: id?
-        throw new UnsupportedOperationException("SimpleBlockRegistry is not responsible for id matching");
+        return idToObject.get(id);
+    }
+
+    protected void setId(Block entry, int id) {
+        idToObject.put(id, entry);
     }
 
     @Override
