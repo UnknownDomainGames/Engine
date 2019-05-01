@@ -6,9 +6,9 @@ dependencies {
     compile project(':EngineAPI')
     compile project(':EngineServer')
 
-    runtimeOnly 'org.slf4j:slf4j-simple:1.7.25'
-    runtimeOnly 'com.github.Mouse0w0.Configuration:configuration-toml4j:1.1.0'
-    runtimeOnly 'com.github.Mouse0w0.Configuration:configuration-gson:1.1.0'
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
+    implementation 'com.github.Mouse0w0.Configuration:configuration-toml4j:1.1.0'
+    implementation 'com.github.Mouse0w0.Configuration:configuration-gson:1.1.0'
 }
 
 configurations {
