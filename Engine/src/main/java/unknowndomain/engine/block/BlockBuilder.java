@@ -60,6 +60,6 @@ public class BlockBuilder {
     public Block build() {
         AABBd[] boxes = noCollision ? new AABBd[0] : aabBds.size() == 0 ? new AABBd[]{Block.DEFAULT_BOUNDING_BOX} : aabBds.toArray(new AABBd[aabBds.size()]);
         return new BlockShared(boxes, placeBehavior, activateBehavior, clickBehavior, destroyBehavior)
-                .localName(path);
+                .registerName(path);
     }
 }

@@ -77,7 +77,7 @@ public class EntityEntry extends RegistryEntry.Impl<EntityEntry> {
         }
 
         public EntityEntry build() {
-            return new EntityEntry(entityType, factory, serializer).localName(registeredName);
+            return new EntityEntry(entityType, factory, serializer).registerName(registeredName);
         }
     }
 }

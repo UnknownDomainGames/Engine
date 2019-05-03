@@ -116,7 +116,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
     protected String getUniqueName(T entry) {
         // FIXME: Support mod
-        return "unknowndomain." + name + "." + entry.getLocalName();
+        return "unknowndomain." + name + "." + entry.getRegisterName();
     }
 
     private static Field uniqueNameField;

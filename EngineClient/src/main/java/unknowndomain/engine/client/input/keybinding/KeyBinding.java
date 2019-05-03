@@ -51,7 +51,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      */
     public static KeyBinding create(String target, Key defaultKey, @Nonnull Consumer<GameClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
         return new KeyBinding(Key.getKeySafe(defaultKey), keyStartHandler, actionMode != null ? actionMode : ActionMode.PRESS, keyMods == null || keyMods.length == 0 ? KeyModifier.EMPTY : keyMods)
-                .localName(target);
+                .registerName(target);
     }
 
     /**

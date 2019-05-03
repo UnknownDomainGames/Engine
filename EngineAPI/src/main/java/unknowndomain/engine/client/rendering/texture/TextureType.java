@@ -8,6 +8,6 @@ import unknowndomain.engine.registry.RegistryEntry;
 public final class TextureType extends RegistryEntry.Impl<TextureType> {
 
     public static TextureType of(String name) {
-        return new TextureType().localName(name);
+        return new TextureType().registerName(name);
     }
 }

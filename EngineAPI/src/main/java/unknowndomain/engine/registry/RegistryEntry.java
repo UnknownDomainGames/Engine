@@ -19,15 +19,15 @@ public interface RegistryEntry<T> {
      * @param name The local name, which is unique under YOUR mod and THIS registry type!
      * @return this
      */
-    T localName(String name);
+    T registerName(String name);
 
     /**
      * The user set local name for this object.
      *
      * @return The user set local name for this object.
-     * @see #localName(String)
+     * @see #registerName(String)
      */
-    String getLocalName();
+    String getRegisterName();
 
     int getId();
 
@@ -51,13 +51,13 @@ public interface RegistryEntry<T> {
         }
 
         @Override
-        public final String getLocalName() {
+        public final String getRegisterName() {
             return registeredName;
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public final T localName(String name) {
+        public final T registerName(String name) {
             if (this.registeredName != null) throw new Error("Duplicated register " + name);
             this.registeredName = name;
             return (T) this;

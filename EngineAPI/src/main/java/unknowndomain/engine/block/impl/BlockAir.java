@@ -7,6 +7,6 @@ public class BlockAir extends BlockBase {
 
     public BlockAir() {
         setBoundingBoxes(new AABBd[0]);
-        localName("air");
+        registerName("air");
     }
 }

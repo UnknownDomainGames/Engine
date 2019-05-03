@@ -11,7 +11,7 @@ public class ItemBlock extends ItemBase {
 
     public ItemBlock(@Nonnull Block block) {
         this.block = Objects.requireNonNull(block);
-        localName(block.getLocalName());
+        registerName(block.getRegisterName());
         initComponent();
     }
 

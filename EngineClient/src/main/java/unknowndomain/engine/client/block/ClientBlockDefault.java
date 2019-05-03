@@ -27,7 +27,7 @@ public class ClientBlockDefault extends RegistryEntry.Impl<ClientBlock> implemen
     @Deprecated
     public ClientBlockDefault(Block block) {
         this.block = block;
-        localName(block.getLocalName());
+        registerName(block.getRegisterName());
     }
 
     @Override
