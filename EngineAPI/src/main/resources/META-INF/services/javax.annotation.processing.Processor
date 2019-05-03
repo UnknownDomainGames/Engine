@@ -2,3 +2,4 @@ unknowndomain.engine.mod.annotation.processing.ModProcessor
 unknowndomain.engine.mod.annotation.processing.AutoListenProcessor
 unknowndomain.engine.mod.annotation.processing.AutoRegisterProcessor
 unknowndomain.engine.mod.annotation.processing.InjectProcessor
+unknowndomain.engine.mod.annotation.processing.ListenerProcessor
