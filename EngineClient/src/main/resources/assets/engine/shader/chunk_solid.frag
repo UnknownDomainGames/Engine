@@ -309,10 +309,10 @@ void main() {
     }
     float shadow = 0.0f; /*float shadow = CalcShadow(v_FragPosLightSpace);*/
     if(useDirectUV){
-        fragColor = vec4(result[0] + (1f-shadow) * (result[1] + result[2]),1.0) /* * v_Color */ * texture(u_Texture, v_TexCoord);
+        fragColor = vec4(result[0] + (1.0f-shadow) * (result[1] + result[2]),1.0) /* * v_Color */ * texture(u_Texture, v_TexCoord);
     }
     else {
-        fragColor = vec4(result[0] + (1f-shadow) * (result[1] + result[2]),1.0);
+        fragColor = vec4(result[0] + (1.0f-shadow) * (result[1] + result[2]),1.0);
     }
     fragColor.a = alpha;
 }
