@@ -102,17 +102,17 @@ public class SimpleEventBus implements EventBus {
             throw new EventException(String.format("The count of listener method parameter must be 1. Listener: %s.%s(?)", method.getDeclaringClass().getName(), method.getName()));
         }
 
-        if (method.getReturnType() != void.class) {
-            throw new EventException(String.format("The return type of listener method must be void. Listener: %s.%s(?)", method.getDeclaringClass().getName(), method.getName()));
-        }
-
         Class<?> eventType = method.getParameterTypes()[0];
         if (!Event.class.isAssignableFrom(eventType)) {
-            throw new EventException(String.format("The parameter of listener method must be Event or it's child class. Listener: %s.%s(?)", method.getDeclaringClass().getName(), method.getName()));
+            throw new EventException(String.format("The parameter of listener method must be Event or it's child class. Listener: %s.%s(%s)", method.getDeclaringClass().getName(), method.getName(), eventType.getName()));
+        }
+
+        if (method.getReturnType() != void.class) {
+            throw new EventException(String.format("The return type of listener method must be void. Listener: %s.%s(%s)", method.getDeclaringClass().getName(), method.getName(), eventType.getName()));
         }
 
         if (!Modifier.isPublic(method.getModifiers())) {
-            throw new EventException(String.format("Listener method must be public. Listener: %s.%s(%s)", method.getDeclaringClass().getName(), method.getName(), method.getParameterTypes()[0].getName()));
+            throw new EventException(String.format("Listener method must be public. Listener: %s.%s(%s)", method.getDeclaringClass().getName(), method.getName(), eventType.getName()));
         }
 
         Listener anno = method.getAnnotation(Listener.class);
