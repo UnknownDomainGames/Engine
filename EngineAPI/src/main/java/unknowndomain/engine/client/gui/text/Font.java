@@ -24,6 +24,13 @@ public class Font {
         this.size = size;
     }
 
+    public Font(Font font, float size) {
+        this.family = font.family;
+        this.style = font.style;
+        this.fullName = font.fullName;
+        this.size = size;
+    }
+
     public String getFamily() {
         return family;
     }

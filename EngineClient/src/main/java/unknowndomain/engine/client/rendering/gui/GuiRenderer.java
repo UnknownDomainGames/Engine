@@ -15,6 +15,7 @@ import unknowndomain.engine.client.gui.internal.Internal;
 import unknowndomain.engine.client.gui.rendering.Graphics;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.RenderContext;
+import unknowndomain.engine.client.rendering.RenderException;
 import unknowndomain.engine.client.rendering.Renderer;
 import unknowndomain.engine.client.rendering.display.Window;
 import unknowndomain.engine.client.rendering.gui.font.TTFontHelper;
@@ -34,6 +35,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class GuiRenderer implements Renderer {
 
+    private RenderContext context;
     private Window window;
     private GuiManager guiManager;
 
@@ -44,6 +46,7 @@ public class GuiRenderer implements Renderer {
 
     @Override
     public void init(RenderContext context) {
+        this.context = context;
         this.guiManager = context.getGuiManager();
         this.window = context.getWindow();
         var textureManager = context.getTextureManager();
@@ -53,11 +56,10 @@ public class GuiRenderer implements Renderer {
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "gui.frag")));
 
         this.fontHelper = new TTFontHelper(() -> {
-            glEnable(GL_TEXTURE_2D);
             ShaderManager.INSTANCE.setUniform("u_RenderText", true);
         }, () -> {
-            glDisable(GL_TEXTURE_2D);
             ShaderManager.INSTANCE.setUniform("u_RenderText", false);
+            context.getTextureManager().getWhiteTexture().bind();
         });
 
         this.graphics = new GraphicsImpl(context, this);
@@ -71,7 +73,7 @@ public class GuiRenderer implements Renderer {
             fontHelper.setDefaultFont(defaultFont);
             graphics.setFont(defaultFont);
         } catch (IOException e) {
-
+            throw new RenderException("Cannot initialize gui renderer", e);
         }
 
         Internal.setContext(new Internal.Context() {
@@ -85,24 +87,6 @@ public class GuiRenderer implements Renderer {
                 return textureManager::getTextureDirect;
             }
         });
-
-
-//        VBox box = new VBox();
-//        box.background().setValue(new Background(new Color(0.1f, 0.1f, 0.1f, 0.9f)));
-//        TextField textField = new TextField();
-//        textField.promptText().setValue("Hey you suckers!!");
-//        textField.fieldwidth().set(200);
-//        textField.fieldheight().set(23);
-//        Button button = new Button("Button");
-//        button.buttonwidth().set(100);
-//        button.setOnClick(mouseClickEvent -> guiManager.closeScreen());
-//        ToggleButton toggleButton = new ToggleButton("Toggle");
-//        toggleButton.buttonwidth().set(100);
-//        box.getChildren().addAll(textField, button, toggleButton);
-//        button.border().setValue(new Border(Color.GREEN,5f));
-//        button.buttonbackground().setValue(Background.fromColor(Color.RED));
-//        Scene s = new Scene(box);
-//        guiManager.showScreen(s);
     }
 
     @Override
@@ -131,6 +115,7 @@ public class GuiRenderer implements Renderer {
     private void startRender() {
         ShaderManager.INSTANCE.bindShader(shader.getValue());
 
+        glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_LINE_SMOOTH);
@@ -145,9 +130,12 @@ public class GuiRenderer implements Renderer {
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
         ShaderManager.INSTANCE.setUniform("u_WindowSize", new Vector2f(width, height));
         ShaderManager.INSTANCE.setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
+
+        context.getTextureManager().getWhiteTexture().bind();
     }
 
     private void endRender() {
+        glDisable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);
         glDisable(GL_LINE_SMOOTH);
         glDisable(GL_POINT_SMOOTH);
@@ -164,7 +152,7 @@ public class GuiRenderer implements Renderer {
         Container root = scene.getRoot();
         if (!root.visible().get())
             return;
-        if(root.closeRequired()){
+        if (root.closeRequired()) {
             guiManager.closeScreen();
             return;
         }

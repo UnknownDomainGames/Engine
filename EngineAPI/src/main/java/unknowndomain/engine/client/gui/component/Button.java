@@ -4,10 +4,9 @@ import com.github.mouse0w0.lib4j.observable.value.MutableFloatValue;
 import com.github.mouse0w0.lib4j.observable.value.MutableValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
-import org.joml.Vector4f;
-import org.joml.Vector4fc;
 import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.client.gui.misc.Background;
+import unknowndomain.engine.client.gui.misc.Insets;
 import unknowndomain.engine.client.gui.misc.Pos;
 import unknowndomain.engine.client.gui.rendering.ButtonRenderer;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
@@ -27,8 +26,6 @@ public class Button extends Control {
     private final MutableFloatValue buttonWidth = new SimpleMutableFloatValue();
     private final MutableFloatValue buttonHeight = new SimpleMutableFloatValue();
 
-    private final MutableValue<Vector4fc> padding = new SimpleMutableObjectValue<>(new Vector4f(5,5,5,5));
-
     private final MutableValue<Background> background = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLACK));
     private final MutableValue<Background> hoveredBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLUE));
     private final MutableValue<Background> pressedBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.fromRGB(0x507fff)));
@@ -36,16 +33,16 @@ public class Button extends Control {
 
     private Text cachedText;
 
-    public Button(){
-        text.addChangeListener((ob,o,n)-> {
+    public Button() {
+        text.addChangeListener((ob, o, n) -> {
             rebuildText();
             requestParentLayout();
         });
-        font.addChangeListener((ob,o,n)-> {
+        font.addChangeListener((ob, o, n) -> {
             rebuildText();
             requestParentLayout();
         });
-        textColor.addChangeListener((ob, o, n)-> {
+        textColor.addChangeListener((ob, o, n) -> {
             rebuildText();
             requestParentLayout();
         });
@@ -53,11 +50,11 @@ public class Button extends Control {
             rebuildText();
             requestParentLayout();
         });
-        buttonWidth.addChangeListener((ob,o,n)-> {
+        buttonWidth.addChangeListener((ob, o, n) -> {
             rebuildText();
             requestParentLayout();
         });
-        buttonHeight.addChangeListener((ob,o,n)-> {
+        buttonHeight.addChangeListener((ob, o, n) -> {
             rebuildText();
             requestParentLayout();
         });
@@ -68,34 +65,35 @@ public class Button extends Control {
         pressedBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         hoveredBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         disableBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        padding().setValue(new Insets(0, 5, 5, 5));
     }
 
-    public Button(String text){
+    public Button(String text) {
         this();
         this.text.setValue(text);
     }
 
-    private void rebuildText(){
-        if(cachedText == null) {
+    private void rebuildText() {
+        if (cachedText == null) {
             cachedText = new Text();
         }
         cachedText.text().setValue(text.getValue());
         cachedText.font().setValue(font.getValue());
         cachedText.color().setValue(textColor.getValue());
         cachedText.textAlignment().setValue(textAlignment.getValue());
-        cachedText.relocate(padding().getValue().getLeft(),padding().getValue().getTop());
+        cachedText.relocate(padding().getValue().getLeft(), padding().getValue().getTop());
         cachedText.resize(this.prefWidth() - padding().getValue().getLeft() - padding().getValue().getRight(),
                 this.prefHeight() - padding().getValue().getTop() - padding().getValue().getBottom());
     }
 
     @Override
     public float prefWidth() {
-        return buttonwidth().get() != 0 ? buttonwidth().get() : cachedText.prefWidth() + padding.getValue().x() + padding.getValue().z();
+        return buttonwidth().get() != 0 ? buttonwidth().get() : cachedText.prefWidth() + padding().getValue().getLeft() + padding().getValue().getRight();
     }
 
     @Override
     public float prefHeight() {
-        return buttonheight().get() != 0 ? buttonheight().get() : cachedText.prefHeight() + padding.getValue().y() + padding.getValue().w();
+        return buttonheight().get() != 0 ? buttonheight().get() : cachedText.prefHeight() + padding().getValue().getTop() + padding().getValue().getBottom();
     }
 
     @Override
@@ -135,8 +133,8 @@ public class Button extends Control {
 
     @Override
     public void onClick(MouseEvent.MouseClickEvent event) {
-        if(onClick != null)
-        onClick.accept(event);
+        if (onClick != null)
+            onClick.accept(event);
     }
 
     public void setOnClick(Consumer<MouseEvent.MouseClickEvent> onClick) {
@@ -159,16 +157,15 @@ public class Button extends Control {
         return background;
     }
 
-    private void handleBackground(){
-        if(disabled().get()){
-                super.background().setValue(disabledbackground().getValue());
-            }
-            else if(pressed().get()){
-                super.background().setValue(pressbackground().getValue());
-            }else if(hover().get()){
-                super.background().setValue(hoverbackground().getValue());
-            }else{
-                super.background().setValue(buttonbackground().getValue());
-            }
+    private void handleBackground() {
+        if (disabled().get()) {
+            super.background().setValue(disabledbackground().getValue());
+        } else if (pressed().get()) {
+            super.background().setValue(pressbackground().getValue());
+        } else if (hover().get()) {
+            super.background().setValue(hoverbackground().getValue());
+        } else {
+            super.background().setValue(buttonbackground().getValue());
+        }
     }
 }

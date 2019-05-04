@@ -6,6 +6,7 @@ import unknowndomain.engine.client.gui.component.Button;
 import unknowndomain.engine.client.gui.layout.BorderPane;
 import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.misc.Border;
+import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.gui.text.Text;
 import unknowndomain.engine.game.GameDefinitionImpl;
 import unknowndomain.engine.player.PlayerImpl;
@@ -19,9 +20,11 @@ public class GUIGameCreation extends BorderPane {
 
     public GUIGameCreation() {
         VBox vBox = new VBox();
+        vBox.spacing().set(5);
         center().setValue(vBox);
 
         Text textGameCreation = new Text("Game Creation");
+        textGameCreation.font().setValue(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(textGameCreation);
 
         Button buttonCreate = new Button("Create");

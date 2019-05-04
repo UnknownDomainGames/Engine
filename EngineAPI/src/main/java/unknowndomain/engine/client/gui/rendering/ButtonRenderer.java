@@ -1,6 +1,5 @@
 package unknowndomain.engine.client.gui.rendering;
 
-import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.gui.component.Button;
 
 public class ButtonRenderer extends RegionRenderer<Button> {

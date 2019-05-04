@@ -131,11 +131,15 @@ public final class TTFontHelper implements FontHelper {
     }
 
     public NativeTTFont getNativeFont(Font font) {
-        return loadedFont.get(font);
+        return loadedFont.computeIfAbsent(font, this::loadNativeFont);
     }
 
     public NativeTTFont loadNativeFont(ByteBuffer buffer, float size) {
         return loadNativeFont(loadNativeFontParent(buffer), size);
+    }
+
+    public NativeTTFont loadNativeFont(Font font) {
+        return loadNativeFont(font.getFamily(), font.getStyle(), font.getSize());
     }
 
     public NativeTTFont loadNativeFont(String family, String style, float size) {
@@ -159,9 +163,7 @@ public final class TTFontHelper implements FontHelper {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, bitmapSize, bitmapSize, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        NativeTTFont nativeTtFont = new NativeTTFont(parent, size, textureId, charBuffer, bitmapSize);
-        loadedFont.put(nativeTtFont.getFont(), nativeTtFont);
-        return nativeTtFont;
+        return new NativeTTFont(parent, size, textureId, charBuffer, bitmapSize);
     }
 
     public NativeTTFontParent loadNativeFontParent(InputStream input) throws IOException {
