@@ -3,6 +3,7 @@ package unknowndomain.engine.util;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.registry.Registries;
 import unknowndomain.engine.world.BlockAccessor;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.chunk.Chunk;
@@ -51,7 +52,7 @@ public class ChunkCache implements BlockAccessor {
         int chunkX = (x >> 4) - this.chunkX, chunkY = (y >> 4) - this.chunkY, chunkZ = (z >> 4) - this.chunkZ;
         if (chunkX >= 0 && chunkX < chunks.length && chunkY >= 0 && chunkY < chunks[chunkX].length && chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {
             Chunk chunk = chunks[chunkX][chunkY][chunkZ];
-            return chunk == null ? getWorld().getGame().getDefinition().blockAir() : chunk.getBlock(x, y, z); // FIXME:
+            return chunk == null ? Registries.getBlockRegistry().air() : chunk.getBlock(x, y, z); // FIXME:
         }
         return world.getBlock(x, y, z);
     }
@@ -62,7 +63,7 @@ public class ChunkCache implements BlockAccessor {
         int chunkX = (x >> 4) - this.chunkX, chunkY = (y >> 4) - this.chunkY, chunkZ = (z >> 4) - this.chunkZ;
         if (chunkX >= 0 && chunkX < chunks.length && chunkY >= 0 && chunkY < chunks[chunkX].length && chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {
             Chunk chunk = chunks[chunkX][chunkY][chunkZ];
-            return chunk == null ? getWorld().getGame().getDefinition().blockAir().getId() : chunk.getBlockId(x, y, z); // FIXME:
+            return chunk == null ? Registries.getBlockRegistry().air().getId() : chunk.getBlockId(x, y, z); // FIXME:
         }
         return world.getBlockId(x, y, z);
     }

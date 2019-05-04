@@ -18,6 +18,7 @@ import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.mod.impl.DefaultModManager;
 import unknowndomain.engine.mod.util.ModCollector;
+import unknowndomain.engine.registry.Registries;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.registry.RegistryManager;
@@ -37,7 +38,6 @@ import java.util.function.BiConsumer;
 public abstract class GameBase implements Game {
 
     protected final Engine engine;
-    protected final GameDefinition definition;
 
     protected final Logger logger = LoggerFactory.getLogger("Game");
 
@@ -49,9 +49,8 @@ public abstract class GameBase implements Game {
     protected boolean terminated = false;
     protected boolean stopped = false;
 
-    public GameBase(Engine engine, GameDefinition definition) {
+    public GameBase(Engine engine) {
         this.engine = engine;
-        this.definition = definition;
         this.eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
     }
 
@@ -80,6 +79,8 @@ public abstract class GameBase implements Game {
 
         logger.info("Finishing Registration!");
         eventBus.post(new RegistrationFinishEvent(registryManager));
+
+        Registries.init(registryManager);
     }
 
     /**
@@ -162,12 +163,6 @@ public abstract class GameBase implements Game {
     @Override
     public RegistryManager getRegistryManager() {
         return registryManager;
-    }
-
-    @Nonnull
-    @Override
-    public GameDefinition getDefinition() {
-        return definition;
     }
 
     @Nonnull

@@ -7,6 +7,7 @@ import unknowndomain.engine.block.Block;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.math.BlockPos;
+import unknowndomain.engine.registry.Registries;
 import unknowndomain.engine.world.World;
 
 import javax.annotation.Nonnull;
@@ -74,7 +75,7 @@ public class ChunkImpl implements Chunk {
     @Override
     public Block getBlock(int x, int y, int z) {
         if (blockStorage == null) {
-            return getWorld().getGame().getDefinition().blockAir();
+            return Registries.getBlockRegistry().air();
         }
 
         return blockStorage.getBlock(x, y, z);
@@ -83,7 +84,7 @@ public class ChunkImpl implements Chunk {
     @Override
     public int getBlockId(int x, int y, int z) {
         if (blockStorage == null) {
-            return getWorld().getGame().getDefinition().blockAir().getId();
+            return Registries.getBlockRegistry().air().getId();
         }
 
         return blockStorage.getBlockId(x, y, z);
@@ -105,7 +106,7 @@ public class ChunkImpl implements Chunk {
             blockStorage = new BlockStorage(this);
         }
 
-        if (block != getWorld().getGame().getDefinition().blockAir()) {
+        if (block != Registries.getBlockRegistry().air()) {
             nonAirBlockCount++;
         } else {
             nonAirBlockCount--;

@@ -9,7 +9,6 @@ import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
 import unknowndomain.engine.entity.item.EntityItem;
 import unknowndomain.engine.event.engine.GameTerminationEvent;
-import unknowndomain.engine.game.GameDefinition;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.item.ItemStack;
 import unknowndomain.engine.math.BlockPos;
@@ -33,8 +32,8 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
     private boolean stopped = false;
 
-    public GameClientStandalone(EngineClient engine, GameDefinition definition, Player player) {
-        super(engine, definition);
+    public GameClientStandalone(EngineClient engine, Player player) {
+        super(engine);
         this.engineClient = engine;
         this.player = player;
     }

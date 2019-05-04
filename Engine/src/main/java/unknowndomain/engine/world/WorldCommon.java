@@ -13,6 +13,7 @@ import unknowndomain.engine.math.AABBs;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.player.Player;
+import unknowndomain.engine.registry.Registries;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.FastVoxelRayTrace;
 import unknowndomain.engine.world.chunk.Chunk;
@@ -74,7 +75,7 @@ public class WorldCommon implements World, Runnable {
     @Nonnull
     @Override
     public RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance) {
-        return raycast(from, dir, distance, Sets.newHashSet(getGame().getDefinition().blockAir()));
+        return raycast(from, dir, distance, Sets.newHashSet(Registries.getBlockRegistry().air()));
     }
 
     @Nonnull
@@ -182,14 +183,14 @@ public class WorldCommon implements World, Runnable {
     @Override
     public Block getBlock(int x, int y, int z) {
         Chunk chunk = chunkStorage.getChunkByBlockPos(x, y, z);
-        return chunk == null ? getGame().getDefinition().blockAir() : chunk.getBlock(x, y, z);
+        return chunk == null ? Registries.getBlockRegistry().air() : chunk.getBlock(x, y, z);
     }
 
     @Nonnull
     @Override
     public int getBlockId(int x, int y, int z) {
         Chunk chunk = chunkStorage.getChunkByBlockPos(x, y, z);
-        return chunk == null ? getGame().getDefinition().blockAir().getId() : chunk.getBlockId(x, y, z);
+        return chunk == null ? Registries.getBlockRegistry().air().getId() : chunk.getBlockId(x, y, z);
     }
 
     @Nonnull

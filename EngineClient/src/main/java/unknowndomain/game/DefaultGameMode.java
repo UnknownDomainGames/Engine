@@ -36,12 +36,14 @@ import unknowndomain.engine.item.ItemStack;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
+import unknowndomain.engine.registry.game.BlockRegistry;
 import unknowndomain.engine.registry.impl.IdAutoIncreaseRegistry;
 import unknowndomain.game.client.gui.game.GUIGameCreation;
 import unknowndomain.game.client.gui.game.GuiChat;
 import unknowndomain.game.client.gui.hud.HUDGameDebug;
 import unknowndomain.game.init.Blocks;
 import unknowndomain.game.init.Items;
+import unknowndomain.game.registry.SimpleBlockRegistry;
 
 import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 
@@ -50,7 +52,7 @@ public final class DefaultGameMode {
     @Listener
     public void constructionRegistry(RegistryConstructionEvent e) {
         // TODO: move to common.
-        e.register(new IdAutoIncreaseRegistry<>(Block.class));
+        e.register(new SimpleBlockRegistry());
         e.register(new IdAutoIncreaseRegistry<>(Item.class));
 
         e.register(new IdAutoIncreaseRegistry<>(KeyBinding.class));
@@ -61,16 +63,17 @@ public final class DefaultGameMode {
     @Listener
     public void registerStage(RegistrationStartEvent e) {
         RegistryManager registryManager = e.getRegistryManager();
-        registerBlocks(registryManager.getRegistry(Block.class));
+        registerBlocks((BlockRegistry) registryManager.getRegistry(Block.class));
         registerItems(registryManager.getRegistry(Item.class));
         registerKeyBindings(registryManager.getRegistry(KeyBinding.class));
         registerClientBlock(registryManager.getRegistry(ClientBlock.class));
     }
 
-    private void registerBlocks(Registry<Block> registry) {
+    private void registerBlocks(BlockRegistry registry) {
         registry.register(Blocks.AIR);
         registry.register(Blocks.GRASS);
         registry.register(Blocks.DIRT);
+        registry.setAirBlock(Blocks.AIR);
     }
 
     private void registerItems(Registry<Item> registry) {

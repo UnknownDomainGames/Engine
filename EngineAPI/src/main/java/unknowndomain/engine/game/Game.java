@@ -49,7 +49,4 @@ public interface Game {
 
     @Nonnull
     Logger getLogger();
-
-    @Nonnull
-    GameDefinition getDefinition();
 }
