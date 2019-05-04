@@ -5,7 +5,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
-import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.gui.Container;
 import unknowndomain.engine.client.gui.GuiManager;
@@ -23,8 +22,6 @@ import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.shader.ShaderProgramBuilder;
 import unknowndomain.engine.client.rendering.shader.ShaderType;
-import unknowndomain.engine.util.Color;
-import unknowndomain.game.client.gui.hud.HUDGameDebug;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -44,8 +41,6 @@ public class GuiRenderer implements Renderer {
 
     private TTFontHelper fontHelper;
     private Graphics graphics;
-
-    private HUDGameDebug HUDGameDebug;
 
     @Override
     public void init(RenderContext context) {
@@ -68,7 +63,7 @@ public class GuiRenderer implements Renderer {
         this.graphics = new GraphicsImpl(context, this);
 
         try {
-            byte[] fontDataBytes = Files.readAllBytes(Platform.getEngineClient().getAssetManager().getPath(AssetPath.of("engine", "font", "font.ttf")).get());
+            byte[] fontDataBytes = Files.readAllBytes(context.getEngine().getAssetManager().getPath(AssetPath.of("engine", "font", "font.ttf")).get());
             ByteBuffer fontData = ByteBuffer.allocateDirect(fontDataBytes.length);
             fontData.put(fontDataBytes);
             fontData.flip();
@@ -87,7 +82,7 @@ public class GuiRenderer implements Renderer {
 
             @Override
             public ImageHelper getImageHelper() {
-                return path -> textureManager.getTextureDirect(path);
+                return textureManager::getTextureDirect;
             }
         });
 
@@ -121,8 +116,6 @@ public class GuiRenderer implements Renderer {
         if (guiManager.isDisplayingScreen()) {
             renderScene(guiManager.getDisplayingScreen());
         }
-
-//        debug(context);
 
         endRender();
     }
@@ -181,57 +174,13 @@ public class GuiRenderer implements Renderer {
         graphics.popClipRect();
     }
 
-    private void debug(RenderContext context) {
-        graphics.setColor(Color.WHITE);
-
-        // TODO: CrossHair, move it.
-        int middleX = context.getWindow().getWidth() / 2, middleY = context.getWindow().getHeight() / 2;
-        graphics.drawLine(middleX, middleY - 10, middleX, middleY + 10);
-        graphics.drawLine(middleX - 10, middleY, middleX + 10, middleY);
-
-        HUDGameDebug.update(context);
-
-//        testBlockRenderer();
-    }
-
-
-//    private void testBlockRenderer() {
-//        glDisable(GL_LINE_SMOOTH);
-//        glDisable(GL_POINT_SMOOTH);
-//        glDisable(GL_POLYGON_SMOOTH);
-//        setUniform(u_ModelMatrix, new Matrix4f()
-////                .rotate(30, 1, 0, 0)
-////                .rotate(-30, 0, 1, 0)
-//                .translate(context.getWindow().getWidth() - 75, context.getWindow().getHeight() - 25, 0)
-////                .translate(-0.5f, -0.5f, -0.5f)
-////                .rotate((float) Math.toRadians(180), 0, 0, 1)
-//                .rotate((float) Math.toRadians(195), 1, 0, 0)
-//                .rotate((float) Math.toRadians(-30), 0, 1, 0)
-//                .scale(25));
-////                .translate(50, 50, 0)
-////                .rotate(-30, 0, 1, 0)
-////                .rotate(165, 1, 0, 0));
+//    private void debug(RenderContext context) {
+//        graphics.setColor(Color.WHITE);
 //
-//        glEnable(GL11.GL_DEPTH_TEST);
-//        glEnable(GL11.GL_CULL_FACE);
-//        glEnable(GL11.GL_TEXTURE_2D);
-//        setUniform(u_UsingTexture, true);
-//        context.getTextureManager().getTextureAtlas(BLOCK).bind();
-//
-//        Tessellator tessellator = Tessellator.getInstance();
-//        BufferBuilder buffer = tessellator.getBuffer();
-//        buffer.begin(GL_TRIANGLES, true, true, true);
-//        blockRenderer.render(Blocks.GRASS, buffer);
-//
-//        tessellator.draw();
-//
-//        setUniform(u_UsingTexture, false);
-//        glBindTexture(GL_TEXTURE_2D, 0);
-//        glDisable(GL11.GL_CULL_FACE);
-//        glDisable(GL11.GL_TEXTURE_2D);
-//        glDisable(GL11.GL_DEPTH_TEST);
-//
-//        setUniform(u_ModelMatrix, new Matrix4f());
+//        // TODO: CrossHair, move it.
+//        int middleX = context.getWindow().getWidth() / 2, middleY = context.getWindow().getHeight() / 2;
+//        graphics.drawLine(middleX, middleY - 10, middleX, middleY + 10);
+//        graphics.drawLine(middleX - 10, middleY, middleX + 10, middleY);
 //    }
 
     @Override
