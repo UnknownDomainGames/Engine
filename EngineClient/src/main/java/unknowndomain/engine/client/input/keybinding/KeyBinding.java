@@ -21,6 +21,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
     private final ActionMode actionMode;
     private boolean active = false;
     private boolean pressed = false;
+    private boolean dirty = false;
     /** Handles Single press of the key */
     private final Consumer<GameClient> keyStartHandler;
     /** Handles keeping of the key */
@@ -104,6 +105,14 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
     }
 
     public boolean isPressed() {
