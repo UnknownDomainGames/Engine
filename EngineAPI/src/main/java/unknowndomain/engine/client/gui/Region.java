@@ -113,12 +113,14 @@ public class Region extends Container {
 
     @Override
     public float prefWidth() {
-        return getSize().prefWidth().get();
+        float width = getSize().prefWidth().get();
+        return width != 0 ? width : super.prefWidth();
     }
 
     @Override
     public float prefHeight() {
-        return getSize().prefHeight().get();
+        float height = getSize().prefHeight().get();
+        return height != 0 ? height : super.prefHeight();
     }
 
     @Override

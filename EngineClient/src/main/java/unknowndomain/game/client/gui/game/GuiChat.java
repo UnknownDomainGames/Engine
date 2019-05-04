@@ -6,9 +6,7 @@ import unknowndomain.engine.client.gui.layout.AnchorPane;
 import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.client.gui.misc.Border;
 import unknowndomain.engine.client.input.keybinding.Key;
-import unknowndomain.engine.event.Event;
 import unknowndomain.engine.game.Game;
-import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.util.Color;
 
 public class GuiChat extends AnchorPane {
@@ -23,7 +21,7 @@ public class GuiChat extends AnchorPane {
         AnchorPane.setLeftAnchor(textField,3f);
         AnchorPane.setRightAnchor(textField,3f);
         AnchorPane.setBottomAnchor(textField,3f);
-        textField.fieldheight().set(23.0f);
+        textField.getSize().prefHeight().set(23.0f);
         this.getChildren().add(textField);
         this.background().setValue(Background.NOTHING);
         this.addEventHandler(KeyEvent.KeyDownEvent.class, event->{

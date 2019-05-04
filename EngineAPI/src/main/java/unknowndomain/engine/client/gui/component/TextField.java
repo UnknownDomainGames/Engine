@@ -34,9 +34,6 @@ public class TextField extends Control {
     private MutableBooleanValue undoable = new SimpleMutableBooleanValue(false);
     private MutableBooleanValue redoable = new SimpleMutableBooleanValue(false);
 
-    private MutableFloatValue fieldWidth = new SimpleMutableFloatValue();
-    private MutableFloatValue fieldHeight = new SimpleMutableFloatValue();
-
     //Selection
     private MutableIntValue anchor = new SimpleMutableIntValue(0);
     private MutableIntValue caret = new SimpleMutableIntValue(0);
@@ -75,24 +72,6 @@ public class TextField extends Control {
 
     public MutableBooleanValue editable() {
         return editable;
-    }
-
-    public MutableFloatValue fieldwidth() {
-        return fieldWidth;
-    }
-
-    public MutableFloatValue fieldheight() {
-        return fieldHeight;
-    }
-
-    @Override
-    public float prefWidth() {
-        return fieldWidth.get() != 0 ? fieldWidth.get() : super.prefWidth();
-    }
-
-    @Override
-    public float prefHeight() {
-        return fieldHeight.get() != 0 ? fieldHeight.get() : super.prefHeight();
     }
 
     @Override

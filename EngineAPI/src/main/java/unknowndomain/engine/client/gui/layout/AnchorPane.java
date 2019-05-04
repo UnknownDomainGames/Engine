@@ -2,6 +2,7 @@ package unknowndomain.engine.client.gui.layout;
 
 import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.gui.misc.Insets;
+import unknowndomain.engine.client.gui.util.Utils;
 
 public class AnchorPane extends Pane {
     public static final String TOP_ANCHOR = "anchor-top";
@@ -73,18 +74,18 @@ public class AnchorPane extends Pane {
         return padding.getTop() + max + padding.getBottom();
     }
 
-
     private float computeChildWidth(Component component, Float left, Float right, float areaWidth){
         if(left != null && right != null){
             return areaWidth - left - right;
         }
-        return component.prefWidth();
+        return Utils.prefWidth(component);
     }
+
     private float computeChildHeight(Component component, Float top, Float bottom, float areaHeight){
         if(top != null && bottom != null){
             return areaHeight - top - bottom;
         }
-        return component.prefHeight();
+        return Utils.prefHeight(component);
     }
 
     @Override
@@ -103,12 +104,12 @@ public class AnchorPane extends Pane {
             if(left != null){
                 x = left;
             }else if(right != null){
-                x = width().get() - right - child.width().get();
+                x = width().get() - right - w;
             }
             if(top != null){
                 y = top;
             }else if(bottom != null){
-                y = height().get() - bottom - child.height().get();
+                y = height().get() - bottom - h;
             }
 
             layoutInArea(child, x,y,w,h);
