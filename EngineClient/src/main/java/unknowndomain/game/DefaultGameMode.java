@@ -26,7 +26,6 @@ import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.entity.item.EntityItem;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.engine.EngineEvent;
-import unknowndomain.engine.event.game.GameEvent;
 import unknowndomain.engine.event.registry.RegistrationStartEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
 import unknowndomain.engine.item.Item;
@@ -179,11 +178,6 @@ public final class DefaultGameMode {
 
         var scene = new Scene(new GUIGameCreation());
         guiManager.showScreen(scene);
-    }
-
-    @Listener
-    public void gameReady(GameEvent.Ready event) {
-
     }
 
     @Listener
