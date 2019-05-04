@@ -23,8 +23,6 @@ import unknowndomain.engine.component.ComponentContainer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class EngineRenderContext implements RenderContext {
 
@@ -34,9 +32,10 @@ public class EngineRenderContext implements RenderContext {
     private final Logger logger;
 
     private final List<Renderer> renderers = new LinkedList<>();
-    private final BlockingQueue<Runnable> tasks = new LinkedBlockingQueue<>();
 
     private final ComponentContainer components = new ComponentContainer();
+
+    private final EngineRenderScheduler scheduler = new EngineRenderScheduler();
 
     private Thread renderThread;
     private GLFWWindow window;
@@ -82,8 +81,8 @@ public class EngineRenderContext implements RenderContext {
     }
 
     @Override
-    public void runTaskNextFrame(Runnable runnable) {
-        tasks.add(runnable);
+    public RenderScheduler getScheduler() {
+        return scheduler;
     }
 
     @Override
@@ -103,9 +102,7 @@ public class EngineRenderContext implements RenderContext {
     }
 
     public void render(float partial) {
-        List<Runnable> tasks = new LinkedList<>();
-        this.tasks.drainTo(tasks);
-        tasks.forEach(Runnable::run);
+        scheduler.run();
 
         camera.update(partial);
         frustumIntersection.set(window.projection().mul(camera.getViewMatrix(), new Matrix4f()));

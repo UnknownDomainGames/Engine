@@ -145,13 +145,7 @@ public final class DefaultGameMode {
         var renderContext = Platform.getEngineClient().getRenderContext();
         var guiManager = renderContext.getGuiManager();
         var hudGameDebug = new HUDGameDebug();
-        renderContext.runTaskNextFrame(new Runnable() {
-            @Override
-            public void run() {
-                hudGameDebug.update(renderContext);
-                renderContext.runTaskNextFrame(this);
-            }
-        });
+        renderContext.getScheduler().runTaskEveryFrame(() -> hudGameDebug.update(renderContext));
         registry.register(KeyBinding.create("debug.switch", Key.KEY_F3, gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug))
                 , ActionMode.SWITCH).endAction((gameClient, integer) -> guiManager.hideHud("debugGame")));
     }

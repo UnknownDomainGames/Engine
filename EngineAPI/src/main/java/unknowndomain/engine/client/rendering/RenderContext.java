@@ -31,5 +31,5 @@ public interface RenderContext extends GameObject {
 
     GuiManager getGuiManager();
 
-    void runTaskNextFrame(Runnable runnable);
+    RenderScheduler getScheduler();
 }
