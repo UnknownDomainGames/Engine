@@ -9,7 +9,7 @@ import unknowndomain.engine.Engine;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.SimpleEventBus;
 import unknowndomain.engine.event.asm.AsmEventListenerFactory;
-import unknowndomain.engine.event.game.GameReadyEvent;
+import unknowndomain.engine.event.game.GameEvent;
 import unknowndomain.engine.event.registry.RegisterEvent;
 import unknowndomain.engine.event.registry.RegistrationFinishEvent;
 import unknowndomain.engine.event.registry.RegistrationStartEvent;
@@ -93,7 +93,7 @@ public abstract class GameBase implements Game {
      * final stage of the
      */
     protected void finishStage() {
-        eventBus.post(new GameReadyEvent(this));
+        eventBus.post(new GameEvent.Ready(this));
     }
 
     private void constructMods() {

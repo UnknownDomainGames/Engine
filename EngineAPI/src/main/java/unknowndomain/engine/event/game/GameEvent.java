@@ -14,4 +14,10 @@ public class GameEvent implements Event {
     public Game getGame() {
         return game;
     }
+
+    public static final class Ready extends GameEvent {
+        public Ready(Game game) {
+            super(game);
+        }
+    }
 }
