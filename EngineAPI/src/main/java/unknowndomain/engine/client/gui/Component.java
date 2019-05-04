@@ -11,7 +11,11 @@ import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.event.Event;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public abstract class Component {
 
@@ -146,30 +150,35 @@ public abstract class Component {
             if (event instanceof MouseEvent.MouseEnterEvent) {
                 hover.set(true);
             }
-            if (event instanceof MouseEvent.MouseLeaveEvent) {
+            else if (event instanceof MouseEvent.MouseLeaveEvent) {
                 hover.set(false);
                 pressed.set(false);
             }
-            if (event instanceof MouseEvent.MouseClickEvent) {
+            else if (event instanceof MouseEvent.MouseClickEvent) {
                 var click = (MouseEvent.MouseClickEvent)event;
                 if(click.getKey() == Key.MOUSE_BUTTON_LEFT){
                     pressed.set(true);
                     onClick(click);
                 }
             }
-            if (event instanceof MouseEvent.MouseReleasedEvent) {
+            else if (event instanceof MouseEvent.MouseReleasedEvent) {
                 var release = (MouseEvent.MouseReleasedEvent)event;
                 if(release.getKey() == Key.MOUSE_BUTTON_LEFT){
                     pressed.set(false);
                     onRelease(release);
                 }
             }
-            if(event instanceof FocusEvent){
+            else if(event instanceof FocusEvent){
                 if(event instanceof FocusEvent.FocusGainEvent){
                     focused.set(true);
                 }
                 else if(event instanceof FocusEvent.FocusLostEvent){
                     focused.set(false);
+                }
+            }
+            if(handlers.containsKey(event.getClass())) {
+                for (Consumer consumer : handlers.get(event.getClass())) {
+                    consumer.accept(event);
                 }
             }
         }
@@ -182,12 +191,31 @@ public abstract class Component {
     public void onClick(MouseEvent.MouseClickEvent event) {
     }
 
+    public void forceFocus(){
+        focused.set(true);
+    }
+
     public Pair<Float,Float> relativePos(float x, float y){
         if(parent().isEmpty()){
             return Pair.of(x,y);
         }
         else{
             return parent().getValue().relativePos(x - x().get(), y - y().get());
+        }
+    }
+
+    private Map<Class<? extends Event>, List<Consumer>> handlers = new HashMap<>();
+
+    public <T extends Event> void addEventHandler(Class<T> clazz, Consumer<T> handler){
+        if(!handlers.containsKey(clazz)){
+            handlers.put(clazz, new ArrayList<>());
+        }
+        handlers.get(clazz).add(handler);
+    }
+
+    public <T extends Event> void removeEventHandler(Class<T> clazz, Consumer<T> handler){
+        if(handlers.containsKey(clazz)){
+            handlers.get(clazz).remove(handler);
         }
     }
 

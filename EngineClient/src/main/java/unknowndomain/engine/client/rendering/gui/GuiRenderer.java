@@ -171,6 +171,10 @@ public class GuiRenderer implements Renderer {
         Container root = scene.getRoot();
         if (!root.visible().get())
             return;
+        if(root.closeRequired()){
+            guiManager.closeScreen();
+            return;
+        }
 
         graphics.pushClipRect(0, 0, scene.width().get(), scene.height().get());
         root.getRenderer().render(root, graphics);

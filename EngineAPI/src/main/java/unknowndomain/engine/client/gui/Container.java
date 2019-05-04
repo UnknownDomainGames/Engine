@@ -146,4 +146,14 @@ public abstract class Container extends Component {
         }
         return list;
     }
+
+    private boolean closeRequired = false;
+
+    public boolean closeRequired(){
+        return closeRequired;
+    }
+
+    public void requireCLose(){
+        closeRequired = true;
+    }
 }

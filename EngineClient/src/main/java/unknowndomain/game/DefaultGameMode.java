@@ -38,6 +38,7 @@ import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.IdAutoIncreaseRegistry;
 import unknowndomain.game.client.gui.game.GUIGameCreation;
+import unknowndomain.game.client.gui.game.GuiChat;
 import unknowndomain.game.client.gui.hud.HUDGameDebug;
 import unknowndomain.game.init.Blocks;
 import unknowndomain.game.init.Items;
@@ -135,6 +136,10 @@ public final class DefaultGameMode {
                     entity.getComponent(TwoHands.class)
                             .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new ItemBlock(hit.getBlock()))))
             );
+        }, ActionMode.PRESS));
+        registry.register(KeyBinding.create("game.chat", Key.KEY_T, (game)->{
+            Scene scene = new Scene(new GuiChat(game));
+            game.getEngine().getRenderContext().getGuiManager().showScreen(scene);
         }, ActionMode.PRESS));
 
         var renderContext = Platform.getEngineClient().getRenderContext();

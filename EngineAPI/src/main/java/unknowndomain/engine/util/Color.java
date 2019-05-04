@@ -20,12 +20,12 @@ public class Color {
         return new Color((rgb >> 16) & 255, (rgb >> 8) & 255, rgb & 255);
     }
 
-    public static Color fromRGBA(String rgba) {
-        return fromRGBA(Integer.parseInt(rgba, 16));
+    public static Color fromARGB(String argb) {
+        return fromARGB(Integer.parseInt(argb, 16));
     }
 
-    public static Color fromRGBA(int rgba) {
-        return new Color((rgba >> 16) & 255, (rgba >> 8) & 255, rgba & 255, (rgba >> 24) & 255);
+    public static Color fromARGB(int argb) {
+        return new Color((argb >> 16) & 255, (argb >> 8) & 255, argb & 255, (argb >> 24) & 255);
     }
 
     private final float red, green, blue, alpha;

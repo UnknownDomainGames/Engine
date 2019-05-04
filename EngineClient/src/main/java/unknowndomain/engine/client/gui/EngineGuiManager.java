@@ -34,6 +34,8 @@ public class EngineGuiManager implements GuiManager {
     private void showScreenInternal(Scene scene) {
         pushToHistory();
         displayingScreen = scene;
+        displayingScreen.setSize(context.getWindow().getWidth(),context.getWindow().getHeight());
+        displayingScreen.update();
         context.getWindow().addCharCallback(displayingScreen.charCallback);
         context.getWindow().addCursorCallback(displayingScreen.cursorCallback);
         context.getWindow().addKeyCallback(displayingScreen.keyCallback);

@@ -13,13 +13,10 @@ import unknowndomain.engine.client.gui.misc.Insets;
 import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.rendering.TextFieldRenderer;
 import unknowndomain.engine.client.gui.text.Font;
-import unknowndomain.engine.client.gui.util.Utils;
 import unknowndomain.engine.client.input.Clipboard;
-import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.client.input.keybinding.KeyModifier;
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.math.Math2;
-import unknowndomain.engine.util.BitArray;
 import unknowndomain.engine.util.Color;
 
 import java.text.BreakIterator;
@@ -54,7 +51,7 @@ public class TextField extends Control {
     private BreakIterator wordIterator;
 
     public TextField(){
-        background().setValue(Background.fromColor(Color.fromRGBA(0x000000c8)));
+        background().setValue(Background.fromColor(Color.fromARGB(0x000000c8)));
         border().setValue(new Border(Color.WHITE, 2));
         padding().setValue(new Insets(3f));
         caret().addChangeListener((observable, oldValue, newValue) -> updatePointer());
