@@ -8,7 +8,6 @@ import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class ProcessingUtils {
@@ -51,13 +50,5 @@ public class ProcessingUtils {
 
     public static Name getQualifiedName(TypeMirror typeMirror) {
         return ((TypeElement) ((DeclaredType) typeMirror).asElement()).getQualifiedName();
-    }
-
-    public static List<? extends TypeMirror> getInterfaces(TypeMirror typeMirror) {
-        return ((TypeElement) ((DeclaredType) typeMirror).asElement()).getInterfaces();
-    }
-
-    public static TypeMirror getSuperclass(TypeMirror typeMirror) {
-        return ((TypeElement) ((DeclaredType) typeMirror).asElement()).getSuperclass();
     }
 }
