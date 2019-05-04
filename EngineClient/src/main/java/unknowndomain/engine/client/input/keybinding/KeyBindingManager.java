@@ -76,6 +76,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
         for (KeyBinding binding : keyBindings) {
             binding.setPressed(true);
+            binding.setDirty(true);
         }
         // Trigger single key
         if (modifiers != 0) {
@@ -94,6 +95,9 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
         for (KeyBinding binding : keyBindings) {
             binding.setPressed(false);
+            if(binding.getActionMode() == ActionMode.PRESS){
+                binding.setDirty(true);
+            }
         }
         // Trigger single key
         if (modifiers != 0) {
@@ -144,9 +148,16 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     @Override
     public void tick() {
         for (KeyBinding keyBinding : indexToBinding.values()) {
-            if (keyBinding.isActive() != keyBinding.isPressed()) {
+            if (keyBinding.isDirty()) {
                 // state change
-                keyBinding.setActive(keyBinding.isPressed());
+                keyBinding.setDirty(false);
+                if (keyBinding.getActionMode() == ActionMode.PRESS){
+                    keyBinding.setActive(keyBinding.isPressed());
+                } else {
+                    if (keyBinding.isPressed()){
+                        keyBinding.setActive(!keyBinding.isActive());
+                    }
+                }
                 if (keyBinding.isActive()) {
                     keyBinding.onKeyStart(gameClient);
                 } else {
