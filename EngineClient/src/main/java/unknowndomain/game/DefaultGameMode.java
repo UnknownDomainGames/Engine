@@ -26,6 +26,7 @@ import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.entity.item.EntityItem;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.engine.EngineEvent;
+import unknowndomain.engine.event.game.GameEvent;
 import unknowndomain.engine.event.registry.RegistrationStartEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
 import unknowndomain.engine.item.Item;
@@ -135,6 +136,19 @@ public final class DefaultGameMode {
                             .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new ItemBlock(hit.getBlock()))))
             );
         }, ActionMode.PRESS));
+
+        var renderContext = Platform.getEngineClient().getRenderContext();
+        var guiManager = renderContext.getGuiManager();
+        var hudGameDebug = new HUDGameDebug();
+        renderContext.runTaskNextFrame(new Runnable() {
+            @Override
+            public void run() {
+                hudGameDebug.update(renderContext);
+                renderContext.runTaskNextFrame(this);
+            }
+        });
+        registry.register(KeyBinding.create("debug.switch", Key.KEY_F3, gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug))
+                , ActionMode.SWITCH).endAction((gameClient, integer) -> guiManager.hideHud("debugGame")));
     }
 
     @Listener
@@ -161,11 +175,13 @@ public final class DefaultGameMode {
         var renderContext = Platform.getEngineClient().getRenderContext();
         var guiManager = renderContext.getGuiManager();
 
-        var hudGameDebug = new HUDGameDebug();
-        guiManager.showHud("debug", new Scene(hudGameDebug));
-
         var scene = new Scene(new GUIGameCreation());
         guiManager.showScreen(scene);
+    }
+
+    @Listener
+    public void gameReady(GameEvent.Ready event) {
+
     }
 
     @Listener
