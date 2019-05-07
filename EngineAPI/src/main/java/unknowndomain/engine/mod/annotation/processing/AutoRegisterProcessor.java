@@ -3,8 +3,10 @@ package unknowndomain.engine.mod.annotation.processing;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import unknowndomain.engine.mod.annotation.AutoRegister;
+import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
@@ -12,6 +14,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
@@ -29,9 +32,17 @@ public class AutoRegisterProcessor extends AbstractProcessor {
 
     private final JsonArray autoRegisterItems = new JsonArray();
 
+    private TypeMirror registryEntryTypeMirror;
+
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         return Set.of(CLASS_NAME);
+    }
+
+    @Override
+    public synchronized void init(ProcessingEnvironment processingEnv) {
+        super.init(processingEnv);
+        registryEntryTypeMirror = processingEnv.getElementUtils().getTypeElement(RegistryEntry.class.getName()).asType();
     }
 
     @Override
@@ -44,8 +55,13 @@ public class AutoRegisterProcessor extends AbstractProcessor {
                     item.addProperty("name", ((TypeElement) element).getQualifiedName().toString());
                     autoRegisterItems.add(item);
                 } else if (element instanceof VariableElement) {
+                    if (!processingEnv.getTypeUtils().isAssignable(element.asType(), registryEntryTypeMirror)) {
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Cannot auto register field which type isn't RegistryEntry or its sub class.", element);
+                        continue;
+                    }
+
                     if (!hasModifier(element, Modifier.STATIC)) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, String.format("Cannot auto register non static field %s.%s", ((TypeElement) element.getEnclosingElement()).getQualifiedName(), element.getSimpleName()));
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Cannot auto register non static field.", element);
                         continue;
                     }
 

@@ -104,7 +104,7 @@ public class SimpleEventBus implements EventBus {
 
         Class<?> eventType = method.getParameterTypes()[0];
         if (!Event.class.isAssignableFrom(eventType)) {
-            throw new EventException(String.format("The parameter of listener method must be Event or it's child class. Listener: %s.%s(%s)", method.getDeclaringClass().getName(), method.getName(), eventType.getName()));
+            throw new EventException(String.format("The type of parameter of listener method must be Event or its sub class. Listener: %s.%s(%s)", method.getDeclaringClass().getName(), method.getName(), eventType.getName()));
         }
 
         if (method.getReturnType() != void.class) {

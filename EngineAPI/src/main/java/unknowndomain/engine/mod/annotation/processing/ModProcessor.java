@@ -41,7 +41,7 @@ public class ModProcessor extends AbstractProcessor {
                     continue;
 
                 if (hasMod) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Too many mods.");
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Too many mods.", element);
                 }
 
                 saveMetadata((TypeElement) element);

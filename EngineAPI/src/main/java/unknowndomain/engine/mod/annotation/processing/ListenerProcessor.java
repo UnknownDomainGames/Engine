@@ -15,7 +15,6 @@ import javax.tools.Diagnostic;
 import java.util.List;
 import java.util.Set;
 
-import static unknowndomain.engine.mod.annotation.processing.ProcessingUtils.getQualifiedName;
 import static unknowndomain.engine.mod.annotation.processing.ProcessingUtils.hasModifier;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
@@ -42,25 +41,24 @@ public class ListenerProcessor extends AbstractProcessor {
             for (Element element : roundEnv.getElementsAnnotatedWith(Listener.class)) {
                 ExecutableElement method = (ExecutableElement) element;
 
-                TypeElement owner = (TypeElement) method.getEnclosingElement();
                 List<? extends VariableElement> parameters = method.getParameters();
 
                 if (parameters.size() != 1) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, String.format("The count of listener method parameter must be 1. Listener: %s.%s(?)", owner.getQualifiedName(), method.getSimpleName()));
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "The count of listener method parameter must be 1.", method);
                 }
 
                 VariableElement event = parameters.get(0);
 
                 if (!processingEnv.getTypeUtils().isAssignable(event.asType(), eventTypeMirror)) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, String.format("The parameter of listener method must be Event or it's child class. Listener: %s.%s(%s)", owner.getQualifiedName(), method.getSimpleName(), getQualifiedName(event.asType())));
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "The type of parameter of listener method must be Event or its sub class.", method);
                 }
 
                 if (!hasModifier(method, Modifier.PUBLIC)) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, String.format("Listener method must be public. Listener: %s.%s(%s)", owner.getQualifiedName(), method.getSimpleName(), getQualifiedName(event.asType())));
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Listener method must be public", method);
                 }
 
                 if (method.getReturnType().getKind() != TypeKind.VOID) {
-                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, String.format("The return type of listener method must be void. Listener: %s.%s(%s)", owner.getQualifiedName(), method.getSimpleName(), getQualifiedName(event.asType())));
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "The return type of listener method must be void.", method);
                 }
             }
         }

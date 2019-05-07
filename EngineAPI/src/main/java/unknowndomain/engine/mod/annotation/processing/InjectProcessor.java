@@ -40,12 +40,12 @@ public class InjectProcessor extends AbstractProcessor {
             for (Element element : roundEnv.getElementsAnnotatedWith(Inject.class)) {
                 if (element instanceof VariableElement) {
                     if (!hasModifier(element, Modifier.STATIC)) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, String.format("Cannot inject non static field %s.%s", ((TypeElement) element.getEnclosingElement()).getQualifiedName(), element.getSimpleName()));
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Cannot inject non static field.", element);
                         continue;
                     }
 
                     if (hasModifier(element, Modifier.FINAL)) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, String.format("Cannot inject final field %s.%s", ((TypeElement) element.getEnclosingElement()).getQualifiedName(), element.getSimpleName()));
+                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Cannot inject final field.", element);
                         continue;
                     }
 
