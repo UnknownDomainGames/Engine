@@ -1,9 +1,9 @@
 package unknowndomain.engine.client.gui.component;
 
 import com.github.mouse0w0.lib4j.observable.value.MutableBooleanValue;
+import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableBooleanValue;
 import unknowndomain.engine.client.gui.event.MouseEvent;
-import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.client.gui.misc.Border;
 import unknowndomain.engine.util.Color;
 
@@ -28,9 +28,25 @@ public class ToggleButton extends Button {
     public ToggleButton(String text, boolean selected) {
         super();
         border().setValue(selected ? onColor : offColor);
-        this.selected.addChangeListener((ob,o,n)-> border().setValue(n ? onColor : offColor));
+        this.selected.addChangeListener((ob, o, n) -> border().setValue(n ? onColor : offColor));
         this.selected.set(selected);
         this.text().setValue(text);
+    }
+
+    public Border getOnColor() {
+        return onColor;
+    }
+
+    public void setOnColor(Border onColor) {
+        this.onColor = onColor;
+    }
+
+    public Border getOffColor() {
+        return offColor;
+    }
+
+    public void setOffColor(Border offColor) {
+        this.offColor = offColor;
     }
 
     @Override
@@ -42,4 +58,5 @@ public class ToggleButton extends Button {
     public MutableBooleanValue selected() {
         return selected;
     }
+
 }

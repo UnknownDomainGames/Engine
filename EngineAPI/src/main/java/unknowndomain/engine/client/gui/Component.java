@@ -116,6 +116,10 @@ public abstract class Component {
         return renderer;
     }
 
+    public void overrideRenderer(ComponentRenderer r){
+        renderer = r;
+    }
+
     protected abstract ComponentRenderer createDefaultRenderer();
 
     private ObservableMap<Object, Object> properties;

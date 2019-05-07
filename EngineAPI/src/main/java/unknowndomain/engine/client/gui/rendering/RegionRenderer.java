@@ -13,19 +13,7 @@ public class RegionRenderer<E extends Region> implements ComponentRenderer<E> {
         region.background().getValue().render(region,graphics);
         if(region.border().isPresent()){
             Border border = region.border().getValue();
-            graphics.setColor(border.getColor());
-            if(border.getInsets().getTop() != 0) {
-                graphics.fillRect(0,0,region.width().get(), border.getInsets().getTop());
-            }
-            if(border.getInsets().getBottom() != 0) {
-                graphics.fillRect(0, region.height().get() - border.getInsets().getBottom(),region.width().get(), border.getInsets().getBottom());
-            }
-            if(border.getInsets().getLeft() != 0) {
-                graphics.fillRect(0,0,border.getInsets().getLeft(), region.height().get());
-            }
-            if(border.getInsets().getRight() != 0) {
-                graphics.fillRect(region.width().get() - border.getInsets().getRight(),0,border.getInsets().getRight(), region.height().get());
-            }
+            border.render(region,graphics);
         }
         for (Component child : region.getUnmodifiableChildren()) {
             if (!child.visible().get()) {

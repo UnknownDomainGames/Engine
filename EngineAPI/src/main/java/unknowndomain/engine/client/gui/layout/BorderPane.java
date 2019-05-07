@@ -68,32 +68,85 @@ public class BorderPane extends Pane {
             if (oldValue != null) {
                 getChildren().remove(oldValue);
             }
-            getChildren().add(newValue);
+            if(newValue != null){
+                setAlignment(newValue, Pos.CENTER);
+                getChildren().add(newValue);
+            }
         });
         left.addChangeListener((observable, oldValue, newValue) -> {
             if (oldValue != null) {
                 getChildren().remove(oldValue);
             }
-            getChildren().add(newValue);
+            if(newValue != null) {
+                setAlignment(newValue, Pos.CENTER_LEFT);
+                getChildren().add(newValue);
+            }
         });
         right.addChangeListener((observable, oldValue, newValue) -> {
             if (oldValue != null) {
                 getChildren().remove(oldValue);
             }
-            getChildren().add(newValue);
+            if(newValue != null) {
+                setAlignment(newValue, Pos.CENTER_RIGHT);
+                getChildren().add(newValue);
+            }
         });
         top.addChangeListener((observable, oldValue, newValue) -> {
             if (oldValue != null) {
                 getChildren().remove(oldValue);
             }
-            getChildren().add(newValue);
+            if(newValue != null) {
+                setAlignment(newValue, Pos.TOP_CENTER);
+                getChildren().add(newValue);
+            }
         });
         bottom.addChangeListener((observable, oldValue, newValue) -> {
             if (oldValue != null) {
                 getChildren().remove(oldValue);
             }
-            getChildren().add(newValue);
+            if(newValue != null) {
+                setAlignment(newValue, Pos.BOTTOM_CENTER);
+                getChildren().add(newValue);
+            }
         });
+    }
+
+    @Override
+    public float prefWidth() {
+        var padding = padding().getValue();
+        float width = 0f;
+        if(padding != null){
+            width += padding.getLeft() + padding.getRight();
+        }
+        if(left.getValue() != null){
+            width += left.getValue().prefWidth();
+        }
+        if(center.getValue() != null){
+            width += center.getValue().prefWidth();
+        }
+        if(right.getValue() != null){
+            width += right.getValue().prefWidth();
+        }
+        return width;
+    }
+
+    @Override
+    public float prefHeight() {
+        var padding = padding().getValue();
+        float height = 0f;
+        if(padding != null){
+            height += padding.getTop() + padding.getBottom();
+        }
+        if(top.getValue() != null){
+            height += top.getValue().prefHeight();
+        }
+        if(center.getValue() != null){
+            height += center.getValue().prefHeight();
+        }
+        if(bottom.getValue() != null){
+            height += bottom.getValue().prefHeight();
+        }
+        return height;
     }
 
     @Override

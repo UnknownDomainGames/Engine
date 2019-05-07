@@ -65,6 +65,7 @@ public class Button extends Control {
         pressedBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         hoveredBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         disableBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        handleBackground();
         padding().setValue(new Insets(0, 5, 5, 5));
     }
 
@@ -157,7 +158,7 @@ public class Button extends Control {
         return background;
     }
 
-    private void handleBackground() {
+    protected void handleBackground() {
         if (disabled().get()) {
             super.background().setValue(disabledbackground().getValue());
         } else if (pressed().get()) {
