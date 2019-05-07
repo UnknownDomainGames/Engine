@@ -7,6 +7,8 @@ import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.EntityPlayer;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
+import unknowndomain.engine.event.world.block.BlockPlaceEvent;
+import unknowndomain.engine.event.world.block.BlockReplaceEvent;
 import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.AABBs;
@@ -196,9 +198,14 @@ public class WorldCommon implements World, Runnable {
     @Nonnull
     @Override
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
-        Block oldBlock = chunkStorage.getOrLoadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
-                .setBlock(pos, block, cause);
-        getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause)); // TODO:
+        Block oldBlock = getBlock(pos);
+        if(!getGame().getEventBus().post(new BlockChangeEvent.Pre(this, pos, oldBlock, block,cause))) {
+            chunkStorage.getOrLoadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
+                    .setBlock(pos, block, cause);
+            getGame().getEventBus().post(new BlockPlaceEvent(this, pos, block, cause));
+            getGame().getEventBus().post(new BlockReplaceEvent(this, pos, oldBlock, block, cause));
+            getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause)); // TODO:
+        }
         return oldBlock;
     }
 

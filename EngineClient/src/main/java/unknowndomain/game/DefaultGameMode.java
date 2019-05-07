@@ -109,9 +109,9 @@ public final class DefaultGameMode {
         registry.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (game) -> {
             Player player = game.getPlayer();
             Camera camera = game.getEngine().getRenderContext().getCamera();
-            Entity controlingEntity = player.getControlledEntity();
+            Entity controllingEntity = player.getControlledEntity();
             RayTraceBlockHit blockHit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
-            controlingEntity.getComponent(TwoHands.class)
+            controllingEntity.getComponent(TwoHands.class)
                     .ifPresent(twoHands -> twoHands.getMainHand()
                             .ifNonEmpty(itemStack -> itemStack.getItem()
                                     .getComponent(ItemPrototype.HitBlockBehavior.class)
@@ -123,6 +123,7 @@ public final class DefaultGameMode {
             Camera camera = game.getEngine().getRenderContext().getCamera();
             Entity entity = player.getControlledEntity();
             RayTraceBlockHit hit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
+            
             entity.getComponent(TwoHands.class)
                     .ifPresent(twoHands -> twoHands.getMainHand()
                             .ifNonEmpty(itemStack -> itemStack.getItem()
