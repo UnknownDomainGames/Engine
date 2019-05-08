@@ -47,6 +47,7 @@ public class GLFWWindow implements Window {
     private final List<ScrollCallback> scrollCallbacks = new LinkedList<>();
     private final List<CharCallback> charCallbacks = new LinkedList<>();
     private final List<WindowCloseCallback> windowCloseCallbacks = new LinkedList<>();
+    private final List<CursorEnterCallback> cursorEnterCallbacks = new LinkedList<>();
 
     public GLFWWindow(int width, int height, String title) {
         this.title = title;
@@ -180,7 +181,17 @@ public class GLFWWindow implements Window {
 
     @Override
     public void removeWindowCloseCallback(WindowCloseCallback callback) {
-        windowCloseCallbacks.add(callback);
+        windowCloseCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addCursorEnterCallback(CursorEnterCallback callback) {
+        cursorEnterCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeCursorEnterCallback(CursorEnterCallback callback) {
+        cursorEnterCallbacks.remove(callback);
     }
 
     @Override
@@ -197,27 +208,6 @@ public class GLFWWindow implements Window {
         }
 
         glfwPollEvents();
-
-        updateFps();
-    }
-
-    private long lastUpdateFps = System.currentTimeMillis();
-    private int frameCount = 0;
-    private int fps = 0;
-
-    @Override
-    public int getFps() {
-        return fps;
-    }
-
-    public void updateFps() {
-        long time = System.currentTimeMillis();
-        if (time - lastUpdateFps > 1000) {
-            fps = frameCount;
-            frameCount = 0; // reset the FPS counter
-            lastUpdateFps += 1000; // add one second
-        }
-        frameCount++;
     }
 
     @Override
@@ -293,19 +283,13 @@ public class GLFWWindow implements Window {
     }
 
     private void setupInput() {
-        glfwSetKeyCallback(pointer, (window, key, scancode, action, mods) -> keyCallbacks.forEach(keyCallback -> keyCallback.invoke(this, key, scancode, action, mods)));
-        glfwSetMouseButtonCallback(pointer, (window, button, action, mods) -> mouseCallbacks.forEach(mouseCallback -> mouseCallback.invoke(this, button, action, mods)));
-        glfwSetCursorPosCallback(pointer, (window, xpos, ypos) -> cursorCallbacks.forEach(cursorCallback -> cursorCallback.invoke(this, xpos, ypos)));
-        glfwSetScrollCallback(pointer, (window, xoffset, yoffset) -> scrollCallbacks.forEach(scrollCallback -> scrollCallback.invoke(this, xoffset, yoffset)));
-        glfwSetCharCallback(pointer, (window, codepoint) -> charCallbacks.forEach(charCallback -> charCallback.invoke(this, (char) codepoint)));
-        glfwSetWindowCloseCallback(pointer, window -> windowCloseCallbacks.forEach(windowCloseCallback -> windowCloseCallback.invoke(this)));
-
-        // TODO: Remove it.
-        addKeyCallback((window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
-                Platform.getEngine().terminate();
-            }
-        });
+        glfwSetKeyCallback(pointer, (window, key, scancode, action, mods) -> keyCallbacks.forEach(callback -> callback.invoke(this, key, scancode, action, mods)));
+        glfwSetMouseButtonCallback(pointer, (window, button, action, mods) -> mouseCallbacks.forEach(callback -> callback.invoke(this, button, action, mods)));
+        glfwSetCursorPosCallback(pointer, (window, xpos, ypos) -> cursorCallbacks.forEach(callback -> callback.invoke(this, xpos, ypos)));
+        glfwSetScrollCallback(pointer, (window, xoffset, yoffset) -> scrollCallbacks.forEach(callback -> callback.invoke(this, xoffset, yoffset)));
+        glfwSetCharCallback(pointer, (window, codepoint) -> charCallbacks.forEach(callback -> callback.invoke(this, (char) codepoint)));
+        glfwSetWindowCloseCallback(pointer, window -> windowCloseCallbacks.forEach(callback -> callback.invoke(this)));
+        glfwSetCursorEnterCallback(pointer, (window, entered) -> cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
     }
 
     private boolean checkCreated() {

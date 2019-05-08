@@ -85,6 +85,25 @@ public class EngineRenderContext implements RenderContext {
         return scheduler;
     }
 
+    private long lastUpdateFps = System.currentTimeMillis();
+    private int frameCount = 0;
+    private int fps = 0;
+
+    @Override
+    public int getFPS() {
+        return fps;
+    }
+
+    private void updateFPS() {
+        long time = System.currentTimeMillis();
+        if (time - lastUpdateFps > 1000) {
+            fps = frameCount;
+            frameCount = 0; // reset the FPS counter
+            lastUpdateFps += 1000; // add one second
+        }
+        frameCount++;
+    }
+
     @Override
     @Nonnull
     public Camera getCamera() {
@@ -112,6 +131,7 @@ public class EngineRenderContext implements RenderContext {
             renderer.render(partial);
         }
         window.endRender();
+        updateFPS();
     }
 
     public void init(Thread renderThread) {

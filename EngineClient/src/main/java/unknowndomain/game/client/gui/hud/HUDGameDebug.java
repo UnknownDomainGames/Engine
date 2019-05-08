@@ -45,7 +45,7 @@ public class HUDGameDebug extends VBox {
     public void update(RenderContext context) {
         Entity player = context.getEngine().getCurrentGame().getPlayer().getControlledEntity();
 
-        fps.text().setValue("FPS: " + context.getWindow().getFps());
+        fps.text().setValue("FPS: " + context.getFPS());
         playerPosition.text().setValue(String.format("Player Position: %.2f, %.2f, %.2f", player.getPosition().x, player.getPosition().y, player.getPosition().z));
         playerMotion.text().setValue(String.format("Player Motion: %.2f, %.2f, %.2f", player.getMotion().x, player.getMotion().y, player.getMotion().z));
         playerDirection.text().setValue(String.format("Player Direction (yaw, pitch, roll): %.2f, %.2f, %.2f", player.getRotation().x, player.getRotation().y, player.getRotation().z));

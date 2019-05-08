@@ -62,11 +62,13 @@ public interface Window {
 
     void removeWindowCloseCallback(WindowCloseCallback callback);
 
+    void addCursorEnterCallback(CursorEnterCallback callback);
+
+    void removeCursorEnterCallback(CursorEnterCallback callback);
+
     void beginRender();
 
     void endRender();
-
-    int getFps();
 
     @FunctionalInterface
     interface KeyCallback {
@@ -96,5 +98,10 @@ public interface Window {
     @FunctionalInterface
     interface WindowCloseCallback {
         void invoke(Window window);
+    }
+
+    @FunctionalInterface
+    interface CursorEnterCallback {
+        void invoke(Window window, boolean entered);
     }
 }

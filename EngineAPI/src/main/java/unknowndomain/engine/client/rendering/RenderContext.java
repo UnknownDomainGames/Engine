@@ -32,4 +32,6 @@ public interface RenderContext extends GameObject {
     GuiManager getGuiManager();
 
     RenderScheduler getScheduler();
+
+    int getFPS();
 }
