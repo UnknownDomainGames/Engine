@@ -89,12 +89,12 @@ public class Button extends Control {
 
     @Override
     public float prefWidth() {
-        return buttonwidth().get() != 0 ? buttonwidth().get() : cachedText.prefWidth() + padding().getValue().getLeft() + padding().getValue().getRight();
+        return buttonWidth().get() != 0 ? buttonWidth().get() : cachedText.prefWidth() + padding().getValue().getLeft() + padding().getValue().getRight();
     }
 
     @Override
     public float prefHeight() {
-        return buttonheight().get() != 0 ? buttonheight().get() : cachedText.prefHeight() + padding().getValue().getTop() + padding().getValue().getBottom();
+        return buttonHeight().get() != 0 ? buttonHeight().get() : cachedText.prefHeight() + padding().getValue().getTop() + padding().getValue().getBottom();
     }
 
     @Override
@@ -102,7 +102,7 @@ public class Button extends Control {
         return ButtonRenderer.INSTANCE;
     }
 
-    public MutableValue<Color> textcolor() {
+    public MutableValue<Color> textColor() {
         return textColor;
     }
 
@@ -118,15 +118,15 @@ public class Button extends Control {
         return textAlignment;
     }
 
-    public MutableValue<Background> hoverbackground() {
+    public MutableValue<Background> hoverBackground() {
         return hoveredBg;
     }
 
-    public MutableValue<Background> pressbackground() {
+    public MutableValue<Background> pressBackground() {
         return pressedBg;
     }
 
-    public MutableValue<Background> disabledbackground() {
+    public MutableValue<Background> disabledBackground() {
         return disableBg;
     }
 
@@ -146,27 +146,27 @@ public class Button extends Control {
         return cachedText;
     }
 
-    public MutableFloatValue buttonwidth() {
+    public MutableFloatValue buttonWidth() {
         return buttonWidth;
     }
 
-    public MutableFloatValue buttonheight() {
+    public MutableFloatValue buttonHeight() {
         return buttonHeight;
     }
 
-    public MutableValue<Background> buttonbackground() {
+    public MutableValue<Background> buttonBackground() {
         return background;
     }
 
     protected void handleBackground() {
         if (disabled().get()) {
-            super.background().setValue(disabledbackground().getValue());
+            super.background().setValue(disabledBackground().getValue());
         } else if (pressed().get()) {
-            super.background().setValue(pressbackground().getValue());
+            super.background().setValue(pressBackground().getValue());
         } else if (hover().get()) {
-            super.background().setValue(hoverbackground().getValue());
+            super.background().setValue(hoverBackground().getValue());
         } else {
-            super.background().setValue(buttonbackground().getValue());
+            super.background().setValue(buttonBackground().getValue());
         }
     }
 }
