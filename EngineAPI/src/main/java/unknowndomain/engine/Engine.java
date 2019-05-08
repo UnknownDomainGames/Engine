@@ -13,6 +13,8 @@ public interface Engine {
 
     Logger getLogger();
 
+    RuntimeEnvironment getRuntimeEnvironment();
+
     Side getSide();
 
     default boolean isClient() {
@@ -23,13 +25,7 @@ public interface Engine {
         return getSide() == Side.SERVER;
     }
 
-    RuntimeEnvironment getRuntimeEnvironment();
-
-    void terminate();
-
-    boolean isTerminated();
-
-    void addShutdownListener(Runnable runnable);
+    EventBus getEventBus();
 
     /**
      * Initialize the Engine. Load all mods and complete registration
@@ -38,13 +34,17 @@ public interface Engine {
 
     void runEngine();
 
-    EventBus getEventBus();
+    Game getCurrentGame();
 
     void startGame(Game game);
 
-    Game getCurrentGame();
-
     boolean isPlaying();
+
+    void terminate();
+
+    boolean isTerminated();
+
+    void addShutdownListener(Runnable runnable);
 
     // TODO: client should add player profile manager here, to perform login,
     // logout, fetch skin and other operation

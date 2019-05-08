@@ -1,7 +1,6 @@
 package unknowndomain.engine.client;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import unknowndomain.engine.EngineBase;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetManager;
 import unknowndomain.engine.client.asset.EngineAssetLoadManager;
@@ -17,43 +16,23 @@ import unknowndomain.engine.client.rendering.gui.GuiRenderer;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.sound.ALSoundManager;
 import unknowndomain.engine.client.sound.EngineSoundManager;
-import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.event.SimpleEventBus;
-import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.engine.GameStartEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.Ticker;
-import unknowndomain.engine.util.RuntimeEnvironment;
 import unknowndomain.engine.util.Side;
 import unknowndomain.engine.util.disposer.Disposer;
 import unknowndomain.engine.util.disposer.DisposerImpl;
 import unknowndomain.game.DefaultGameMode;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 
-import static org.apache.commons.lang3.SystemUtils.*;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 
-public class EngineClientImpl implements EngineClient {
-
-    private final Logger logger = LoggerFactory.getLogger("Engine");
-
-    private RuntimeEnvironment runtimeEnvironment;
+public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private Thread clientThread;
-
-    private EventBus eventBus;
 
     private AssetSource engineAssetSource;
     private EngineAssetLoadManager assetLoadManager;
@@ -66,25 +45,14 @@ public class EngineClientImpl implements EngineClient {
 
     private GameClient game;
 
-    private boolean initialized = false;
-    private boolean running = false;
-    private boolean terminated = false;
-
-    private final List<Runnable> shutdownListeners = new LinkedList<>();
+    @Override
+    public Side getSide() {
+        return Side.CLIENT;
+    }
 
     @Override
     public void initEngine() {
-        if (initialized) {
-            throw new IllegalStateException("Engine has been initialized.");
-        }
-        initialized = true;
-
-        logger.info("Initializing engine!");
-
-        initEnvironment();
-        printSystemInfo();
-
-        eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+        super.initEngine();
 
         // TODO: Remove it
         getEventBus().register(new DefaultGameMode());
@@ -121,29 +89,9 @@ public class EngineClientImpl implements EngineClient {
         ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), Ticker.CLIENT_TICK);
     }
 
-    private void initEnvironment() {
-        try {
-            if (Files.isDirectory(Path.of(this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI()))) {
-                runtimeEnvironment = RuntimeEnvironment.ENGINE_DEVELOPMENT;
-                return;
-            }
-        } catch (URISyntaxException ignored) {
-        }
-
-        if (Arrays.stream(JAVA_CLASS_PATH.split(";")).anyMatch(path -> Files.isDirectory(Paths.get(path)))) {
-            runtimeEnvironment = RuntimeEnvironment.MOD_DEVELOPMENT;
-            return;
-        }
-
-        runtimeEnvironment = RuntimeEnvironment.DEPLOYMENT;
-    }
-
     @Override
     public void runEngine() {
-        if (running) {
-            throw new IllegalStateException("Engine is running.");
-        }
-        running = true;
+        super.runEngine();
 
         clientThread = Thread.currentThread();
         renderContext.init(clientThread);
@@ -176,32 +124,7 @@ public class EngineClientImpl implements EngineClient {
             game.clientTick();
         }
 
-        soundManager.updateListener(renderContext.getCamera()); // TODO: Fix it.
-    }
-
-    @Override
-    public Logger getLogger() {
-        return logger;
-    }
-
-    @Override
-    public Side getSide() {
-        return Side.CLIENT;
-    }
-
-    @Override
-    public RuntimeEnvironment getRuntimeEnvironment() {
-        return runtimeEnvironment;
-    }
-
-    @Override
-    public synchronized void terminate() {
-        if (terminated) {
-            return;
-        }
-
-        terminated = true;
-        logger.info("Marked engine terminated!");
+        soundManager.updateListener(renderContext.getCamera()); // TODO: Remove it.
     }
 
     private void tryTerminate() {
@@ -214,16 +137,6 @@ public class EngineClientImpl implements EngineClient {
 
         shutdownListeners.forEach(Runnable::run);
         logger.info("Engine terminated!");
-    }
-
-    @Override
-    public boolean isTerminated() {
-        return terminated;
-    }
-
-    @Override
-    public void addShutdownListener(Runnable runnable) {
-        shutdownListeners.add(runnable);
     }
 
     @Override
@@ -250,11 +163,6 @@ public class EngineClientImpl implements EngineClient {
     @Override
     public boolean isPlaying() {
         return game != null && !game.isStopped();
-    }
-
-    @Override
-    public EventBus getEventBus() {
-        return eventBus;
     }
 
     @Override
@@ -295,31 +203,5 @@ public class EngineClientImpl implements EngineClient {
     @Override
     public ALSoundManager getSoundManager() {
         return soundManager;
-    }
-
-    private void printSystemInfo() {
-        Logger logger = Platform.getLogger();
-        logger.info("----- System Information -----");
-        logger.info("\tOperating System: {} ({}) version {}", OS_NAME, OS_ARCH, OS_VERSION);
-        logger.info("\tJava Version: {} ({}), {}", JAVA_VERSION, JAVA_VM_VERSION, JAVA_VENDOR);
-        logger.info("\tJVM Information: {} ({}), {}", JAVA_VM_NAME, JAVA_VM_INFO, JAVA_VM_VENDOR);
-        Runtime runtime = Runtime.getRuntime();
-        long totalMemory = runtime.totalMemory();
-        long maxMemory = runtime.maxMemory();
-        logger.info("\tMax Memory: {} bytes ({} MB)", maxMemory, maxMemory / 1024L / 1024L);
-        logger.info("\tTotal Memory: {} bytes ({} MB)", totalMemory, totalMemory / 1024L / 1024L);
-        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-        List<String> jvmFlags = runtimeMXBean.getInputArguments();
-        StringBuilder formattedFlags = new StringBuilder();
-        for (String flag : jvmFlags) {
-            if (formattedFlags.length() > 0) {
-                formattedFlags.append(' ');
-            }
-            formattedFlags.append(flag);
-        }
-        logger.info("\tJVM Flags ({} totals): {}", jvmFlags.size(), formattedFlags.toString());
-        logger.info("\tEngine Version: {}", Platform.getVersion());
-        logger.info("\tRuntime Environment: {}", runtimeEnvironment.name());
-        logger.info("------------------------------");
     }
 }
