@@ -1,6 +1,6 @@
 apply plugin: "application"
 
-mainClassName = 'unknowndomain.engine.client.UnknownDomain'
+mainClassName = 'unknowndomain.engine.client.launch.Bootstrap'
 
 dependencies {
     compile project(':EngineAPI')

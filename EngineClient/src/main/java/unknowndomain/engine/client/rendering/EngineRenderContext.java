@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.slf4j.Logger;
 import unknowndomain.engine.client.EngineClient;
-import unknowndomain.engine.client.UnknownDomain;
 import unknowndomain.engine.client.gui.EngineGuiManager;
 import unknowndomain.engine.client.gui.GuiManager;
 import unknowndomain.engine.client.rendering.camera.Camera;
@@ -138,7 +137,7 @@ public class EngineRenderContext implements RenderContext {
         this.renderThread = renderThread;
 
         logger.info("Initializing window!");
-        window = new GLFWWindow(WINDOW_WIDTH, WINDOW_HEIGHT, UnknownDomain.getName());
+        window = new GLFWWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "");
         window.init();
         engine.addShutdownListener(window::dispose);
 

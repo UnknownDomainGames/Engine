@@ -1,17 +1,16 @@
-package unknowndomain.engine.client;
+package unknowndomain.engine.client.launch;
 
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.system.windows.User32;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.Platform;
+import unknowndomain.engine.client.EngineClientImpl;
+import unknowndomain.engine.exception.UninitializedException;
 
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 
-public class UnknownDomain {
-
-    @Deprecated
-    private static final String NAME = "UnknownDomain";
+public class Bootstrap {
 
     public static void main(String[] args) {
         switch (Platform.getRunningOsPlatform()) {// TODO: require review: where should we put this OS checking
@@ -36,18 +35,13 @@ public class UnknownDomain {
         engine.runEngine();
     }
 
-    @Deprecated
-    public static String getName() {
-        return NAME;
-    }
-
     private static void injectEngine(Engine engine) {
         try {
             Field engineField = Platform.class.getDeclaredField("engine");
             engineField.setAccessible(true);
             engineField.set(null, engine);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            throw new UninitializedException("Cannot initialize engine");
         }
     }
 }
