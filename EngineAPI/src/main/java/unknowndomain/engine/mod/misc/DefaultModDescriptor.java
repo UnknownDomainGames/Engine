@@ -1,4 +1,4 @@
-package unknowndomain.engine.mod.impl;
+package unknowndomain.engine.mod.misc;
 
 import unknowndomain.engine.mod.ModDependencyEntry;
 import unknowndomain.engine.mod.ModDescriptor;

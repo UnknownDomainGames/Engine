@@ -72,12 +72,6 @@ public class ModClassLoader extends URLClassLoader {
             }
 
             try {
-                return super.loadClass(name);
-            } catch (ClassNotFoundException e) {
-
-            }
-
-            try {
                 return findClass(name);
             } catch (ClassNotFoundException e) {
 
@@ -86,6 +80,12 @@ public class ModClassLoader extends URLClassLoader {
             loadedClass = loadClassFromDependencies(name);
             if (loadedClass != null) {
                 return loadedClass;
+            }
+
+            try {
+                return super.loadClass(name);
+            } catch (ClassNotFoundException e) {
+
             }
 
             throw new ClassNotFoundException(name);

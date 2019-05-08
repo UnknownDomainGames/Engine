@@ -2,7 +2,7 @@ package unknowndomain.engine.mod.annotation.processing;
 
 import unknowndomain.engine.mod.Mod;
 import unknowndomain.engine.mod.ModIdentifier;
-import unknowndomain.engine.mod.impl.DefaultModDescriptor;
+import unknowndomain.engine.mod.misc.DefaultModDescriptor;
 import unknowndomain.engine.mod.util.JsonModDescriptorSerializer;
 
 import javax.annotation.processing.AbstractProcessor;

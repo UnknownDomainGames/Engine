@@ -7,6 +7,7 @@ import unknowndomain.engine.mod.ModDescriptor;
 import unknowndomain.engine.mod.ModDescriptorFinder;
 import unknowndomain.engine.mod.exception.InvalidModDescriptorException;
 import unknowndomain.engine.mod.exception.InvalidModException;
+import unknowndomain.engine.mod.misc.DefaultModDescriptor;
 import unknowndomain.engine.util.JsonUtils;
 
 import java.io.IOException;
