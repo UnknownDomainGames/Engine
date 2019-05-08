@@ -17,6 +17,7 @@ import unknowndomain.engine.event.registry.RegistryConstructionEvent;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.mod.impl.DefaultModManager;
+import unknowndomain.engine.mod.java.ModClassLoader;
 import unknowndomain.engine.mod.util.ModCollector;
 import unknowndomain.engine.registry.Registries;
 import unknowndomain.engine.registry.Registry;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -130,19 +132,37 @@ public abstract class GameBase implements Game {
         if (engine.getRuntimeEnvironment() != RuntimeEnvironment.MOD_DEVELOPMENT)
             return;
 
-        Path modPath = findModInClassPath();
+        List<Path> directories = findDirectoriesInClassPath();
+
+        Path modPath = findModInDirectories(directories);
         if (modPath == null)
             return;
 
         ModContainer modContainer = modManager.loadMod(modPath);
+        ModClassLoader classLoader = (ModClassLoader) modContainer.getClassLoader();
+        for (Path directory : directories) {
+            classLoader.addPath(directory);
+        }
+
         eventBus.register(modContainer.getInstance());
         logger.info("Loaded mod: {}", modContainer.getModId());
     }
 
-    private Path findModInClassPath() {
+    private List<Path> findDirectoriesInClassPath() {
+        List<Path> paths = new ArrayList<>();
         for (String path : SystemUtils.JAVA_CLASS_PATH.split(";")) {
-            if (Files.exists(Path.of(path, "metadata.json"))) {
-                return Path.of(path);
+            Path _path = Path.of(path);
+            if (Files.isDirectory(_path)) {
+                paths.add(_path);
+            }
+        }
+        return paths;
+    }
+
+    private Path findModInDirectories(List<Path> paths) {
+        for (Path path : paths) {
+            if (Files.exists(path.resolve("metadata.json"))) {
+                return path;
             }
         }
         return null;
