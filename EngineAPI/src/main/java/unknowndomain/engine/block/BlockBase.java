@@ -21,6 +21,12 @@ public class BlockBase extends RegistryEntry.Impl<Block> implements Block {
         return boundingBoxes;
     }
 
+    @Override
+    public <T extends Component> Block addComponent(@Nonnull Class<T> type, @Nullable T value) {
+        setComponent(type, value);
+        return this;
+    }
+
     public BlockBase setBoundingBoxes(AABBd[] boundingBoxes) {
         this.boundingBoxes = boundingBoxes;
         return this;

@@ -79,6 +79,8 @@ public class EngineClientImpl implements EngineClient {
         }
         initialized = true;
 
+        logger.info("Initializing engine!");
+
         initEnvironment();
         printSystemInfo();
 

@@ -1,7 +1,6 @@
-package unknowndomain.engine.block.impl;
+package unknowndomain.engine.block;
 
 import org.joml.AABBd;
-import unknowndomain.engine.block.BlockBase;
 
 public class BlockAir extends BlockBase {
 
