@@ -24,10 +24,10 @@ import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.engine.GameStartEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.Ticker;
-import unknowndomain.engine.util.Disposer;
-import unknowndomain.engine.util.DisposerImpl;
 import unknowndomain.engine.util.RuntimeEnvironment;
 import unknowndomain.engine.util.Side;
+import unknowndomain.engine.util.disposer.Disposer;
+import unknowndomain.engine.util.disposer.DisposerImpl;
 import unknowndomain.game.DefaultGameMode;
 
 import java.lang.management.ManagementFactory;

@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
-import unknowndomain.engine.util.Disposable;
+import unknowndomain.engine.util.disposer.Disposable;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;

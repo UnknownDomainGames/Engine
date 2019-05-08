@@ -1,4 +1,4 @@
-package unknowndomain.engine.util;
+package unknowndomain.engine.util.disposer;
 
 public interface Disposer {
 

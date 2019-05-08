@@ -17,10 +17,10 @@ import unknowndomain.engine.math.FixStepTicker;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.Registries;
 import unknowndomain.engine.util.Facing;
-import unknowndomain.engine.util.FastVoxelRayTrace;
 import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkConstants;
 import unknowndomain.engine.world.chunk.ChunkStorage;
+import unknowndomain.engine.world.util.FastVoxelRayTrace;
 import unknowndomain.game.init.Blocks;
 
 import javax.annotation.Nonnull;

@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.sound;
 
 import unknowndomain.engine.Platform;
-import unknowndomain.engine.util.Disposable;
+import unknowndomain.engine.util.disposer.Disposable;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;

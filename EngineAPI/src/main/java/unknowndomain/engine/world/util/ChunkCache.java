@@ -1,4 +1,4 @@
-package unknowndomain.engine.util;
+package unknowndomain.engine.world.util;
 
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.event.world.block.cause.BlockChangeCause;

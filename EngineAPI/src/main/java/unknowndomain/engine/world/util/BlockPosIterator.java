@@ -1,4 +1,4 @@
-package unknowndomain.engine.util;
+package unknowndomain.engine.world.util;
 
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.world.chunk.Chunk;

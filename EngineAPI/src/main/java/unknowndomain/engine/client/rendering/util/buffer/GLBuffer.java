@@ -4,9 +4,8 @@ import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.lwjgl.system.MemoryUtil;
 import unknowndomain.engine.math.Math2;
-import unknowndomain.engine.util.BufferPool;
 import unknowndomain.engine.util.Color;
-import unknowndomain.engine.util.Disposable;
+import unknowndomain.engine.util.disposer.Disposable;
 
 import java.nio.ByteBuffer;
 

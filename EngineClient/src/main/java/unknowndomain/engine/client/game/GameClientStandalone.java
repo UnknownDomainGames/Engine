@@ -30,8 +30,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     private KeyBindingManager keyBindingManager;
     private EntityController entityController;
 
-    private boolean stopped = false;
-
     public GameClientStandalone(EngineClient engine, Player player) {
         super(engine);
         this.engineClient = engine;

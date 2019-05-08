@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 import unknowndomain.engine.Platform;
-import unknowndomain.engine.util.Disposable;
+import unknowndomain.engine.util.disposer.Disposable;
 
 import java.nio.FloatBuffer;
 

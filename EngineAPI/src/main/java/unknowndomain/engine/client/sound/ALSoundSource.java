@@ -2,7 +2,7 @@ package unknowndomain.engine.client.sound;
 
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import unknowndomain.engine.util.Disposable;
+import unknowndomain.engine.util.disposer.Disposable;
 
 import java.nio.FloatBuffer;
 

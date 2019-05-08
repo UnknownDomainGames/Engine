@@ -3,7 +3,7 @@ package unknowndomain.engine.client.sound;
 import com.github.mouse0w0.lib4j.observable.value.MutableValue;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.rendering.camera.Camera;
-import unknowndomain.engine.util.Disposable;
+import unknowndomain.engine.util.disposer.Disposable;
 
 public interface ALSoundManager extends Disposable {
     void init(String device) throws IllegalStateException;

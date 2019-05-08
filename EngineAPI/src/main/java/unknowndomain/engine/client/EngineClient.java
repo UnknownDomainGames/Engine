@@ -7,7 +7,7 @@ import unknowndomain.engine.client.asset.source.AssetSource;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.sound.ALSoundManager;
-import unknowndomain.engine.util.Disposer;
+import unknowndomain.engine.util.disposer.Disposer;
 
 public interface EngineClient extends Engine {
 

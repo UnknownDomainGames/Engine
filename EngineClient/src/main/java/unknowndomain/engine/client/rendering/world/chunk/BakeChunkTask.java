@@ -5,10 +5,10 @@ import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 import unknowndomain.engine.math.BlockPos;
-import unknowndomain.engine.util.BlockPosIterator;
-import unknowndomain.engine.util.ChunkCache;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.chunk.Chunk;
+import unknowndomain.engine.world.util.BlockPosIterator;
+import unknowndomain.engine.world.util.ChunkCache;
 
 public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
 

@@ -3,7 +3,7 @@ package unknowndomain.engine.client.rendering.world.chunk;
 import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.rendering.shader.ShaderProgram;
 import unknowndomain.engine.client.rendering.util.VertexBufferObject;
-import unknowndomain.engine.util.Disposable;
+import unknowndomain.engine.util.disposer.Disposable;
 import unknowndomain.engine.world.chunk.Chunk;
 
 import java.nio.ByteBuffer;
