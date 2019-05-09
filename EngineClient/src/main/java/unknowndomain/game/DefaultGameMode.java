@@ -26,7 +26,7 @@ import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.entity.item.EntityItem;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.engine.EngineEvent;
-import unknowndomain.engine.event.registry.RegistrationStartEvent;
+import unknowndomain.engine.event.registry.RegistrationEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.item.ItemBlock;
@@ -60,7 +60,7 @@ public final class DefaultGameMode {
     }
 
     @Listener
-    public void registerStage(RegistrationStartEvent e) {
+    public void registerStage(RegistrationEvent.Start e) {
         RegistryManager registryManager = e.getRegistryManager();
         registerBlocks((BlockRegistry) registryManager.getRegistry(Block.class));
         registerItems(registryManager.getRegistry(Item.class));

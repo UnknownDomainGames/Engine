@@ -10,9 +10,7 @@ import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.SimpleEventBus;
 import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.game.GameEvent;
-import unknowndomain.engine.event.registry.RegisterEvent;
-import unknowndomain.engine.event.registry.RegistrationFinishEvent;
-import unknowndomain.engine.event.registry.RegistrationStartEvent;
+import unknowndomain.engine.event.registry.RegistrationEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModManager;
@@ -74,13 +72,13 @@ public abstract class GameBase implements Game {
         eventBus.post(new RegistryConstructionEvent(registries, afterRegistries));
         registryManager = new SimpleRegistryManager(Map.copyOf(registries), Map.copyOf(afterRegistries));
         logger.info("Registering!");
-        eventBus.post(new RegistrationStartEvent(registryManager));
+        eventBus.post(new RegistrationEvent.Start(registryManager));
 
         for (Registry<?> registry : registries.values())
-            eventBus.post(new RegisterEvent<>(registry));
+            eventBus.post(new RegistrationEvent.Register<>(registry));
 
         logger.info("Finishing Registration!");
-        eventBus.post(new RegistrationFinishEvent(registryManager));
+        eventBus.post(new RegistrationEvent.Finish(registryManager));
 
         Registries.init(registryManager);
     }
