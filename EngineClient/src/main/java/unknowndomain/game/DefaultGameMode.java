@@ -2,6 +2,7 @@ package unknowndomain.game;
 
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
@@ -28,6 +29,8 @@ import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.registry.RegistrationEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
+import unknowndomain.engine.event.world.block.BlockActivateEvent;
+import unknowndomain.engine.event.world.block.BlockClickEvent;
 import unknowndomain.engine.item.Item;
 import unknowndomain.engine.item.ItemBlock;
 import unknowndomain.engine.item.ItemPrototype;
@@ -111,11 +114,17 @@ public final class DefaultGameMode {
             Camera camera = game.getEngine().getRenderContext().getCamera();
             Entity controllingEntity = player.getControlledEntity();
             RayTraceBlockHit blockHit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
-            controllingEntity.getComponent(TwoHands.class)
-                    .ifPresent(twoHands -> twoHands.getMainHand()
-                            .ifNonEmpty(itemStack -> itemStack.getItem()
-                                    .getComponent(ItemPrototype.HitBlockBehavior.class)
-                                    .ifPresent(hitBlockBehavior -> hitBlockBehavior.onHit(player, itemStack, blockHit))));
+            if(blockHit.isSuccess()) {
+                controllingEntity.getComponent(TwoHands.class)
+                        .ifPresent(twoHands -> twoHands.getMainHand()
+                                .ifNonEmpty(itemStack -> {
+                                    blockHit.getBlock().getComponent(BlockPrototype.ClickBehavior.class).ifPresent(clickBehavior -> clickBehavior.onClicked(player.getWorld(),blockHit.getPos(),blockHit.getBlock()));
+                                    game.getEngine().getEventBus().post(new BlockClickEvent(player.getWorld(), controllingEntity, blockHit.getPos(), blockHit.getBlock()));
+                                    itemStack.getItem()
+                                            .getComponent(ItemPrototype.HitBlockBehavior.class)
+                                            .ifPresent(hitBlockBehavior -> hitBlockBehavior.onHit(player, itemStack, blockHit));
+                                }));
+            }
 
         }, ActionMode.PRESS));
         registry.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (game) -> {
@@ -123,12 +132,17 @@ public final class DefaultGameMode {
             Camera camera = game.getEngine().getRenderContext().getCamera();
             Entity entity = player.getControlledEntity();
             RayTraceBlockHit hit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
-            
-            entity.getComponent(TwoHands.class)
-                    .ifPresent(twoHands -> twoHands.getMainHand()
-                            .ifNonEmpty(itemStack -> itemStack.getItem()
-                                    .getComponent(ItemPrototype.UseBlockBehavior.class)
-                                    .ifPresent(useBlockBehavior -> useBlockBehavior.onUseBlockStart(player, itemStack, hit))));
+            if(hit.isSuccess()) {
+                entity.getComponent(TwoHands.class)
+                        .ifPresent(twoHands -> twoHands.getMainHand()
+                                .ifNonEmpty(itemStack -> {
+                                    hit.getBlock().getComponent(BlockPrototype.ActivateBehavior.class).ifPresent(activateBehavior -> activateBehavior.onActivated(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
+                                    game.getEngine().getEventBus().post(new BlockActivateEvent(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
+                                    itemStack.getItem()
+                                            .getComponent(ItemPrototype.UseBlockBehavior.class)
+                                            .ifPresent(useBlockBehavior -> useBlockBehavior.onUseBlockStart(player, itemStack, hit));
+                                }));
+            }
         }, ActionMode.PRESS));
         registry.register(KeyBinding.create("player.mouse.middle", Key.MOUSE_BUTTON_3, (game) -> {
             Player player = game.getPlayer();
