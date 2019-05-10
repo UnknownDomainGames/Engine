@@ -22,8 +22,8 @@ public class CheckBox extends Button {
         background().setValue(Background.fromColor(Color.WHITE));
         border().setValue(new Border(Color.BLACK, 3));
         padding().setValue(new Insets(2));
-        buttonWidth().set(24f);
-        buttonHeight().set(24f);
+        labelWidth().set(24f);
+        labelHeight().set(24f);
         text().setValue("");
     }
     public CheckBox(Boolean state){

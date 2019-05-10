@@ -32,8 +32,8 @@ public class RadioButton extends ToggleButton {
         });
         border().setValue(new Border(Color.BLACK, 3));
         padding().setValue(new Insets(5));
-        buttonWidth().set(24f);
-        buttonHeight().set(24f);
+        labelWidth().set(24f);
+        labelHeight().set(24f);
     }
 
     public MutableValue<Color> contentColor() {

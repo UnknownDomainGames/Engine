@@ -3,9 +3,12 @@ package unknowndomain.game.client.gui.game;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.gui.component.Button;
+import unknowndomain.engine.client.gui.component.Label;
 import unknowndomain.engine.client.gui.layout.BorderPane;
 import unknowndomain.engine.client.gui.layout.VBox;
+import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.client.gui.misc.Border;
+import unknowndomain.engine.client.gui.misc.Insets;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.gui.text.Text;
 import unknowndomain.engine.player.PlayerImpl;
@@ -20,13 +23,17 @@ public class GUIGameCreation extends BorderPane {
         VBox vBox = new VBox();
         vBox.spacing().set(5);
         center().setValue(vBox);
+        this.background().setValue(new Background(Color.fromRGB(0xAAAAAA)));
+        vBox.padding().setValue(new Insets(100,350,0,350));
 
-        Text textGameCreation = new Text("Game Creation");
-        textGameCreation.font().setValue(new Font(Font.getDefaultFont(), 20));
-        vBox.getChildren().add(textGameCreation);
+        Label text = new Label();
+        text.text().setValue("Game Creation");
+        text.font().setValue(new Font(Font.getDefaultFont(), 20));
+        vBox.getChildren().add(text);
 
         Button buttonCreate = new Button("Create");
         buttonCreate.border().setValue(new Border(Color.WHITE));
+
         buttonCreate.setOnClick(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
             var player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
@@ -34,5 +41,10 @@ public class GUIGameCreation extends BorderPane {
             engine.getRenderContext().getGuiManager().closeScreen();
         });
         vBox.getChildren().add(buttonCreate);
+
+        Button buttonExit = new Button("exit");
+        buttonExit.disabled().set(true);
+        vBox.getChildren().add(buttonExit);
+
     }
 }
