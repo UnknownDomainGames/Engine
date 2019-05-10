@@ -3,6 +3,7 @@ package unknowndomain.engine.world;
 import com.google.common.collect.Sets;
 import org.joml.*;
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.EntityPlayer;
@@ -202,9 +203,18 @@ public class WorldCommon implements World, Runnable {
         if(!getGame().getEventBus().post(new BlockChangeEvent.Pre(this, pos, oldBlock, block,cause))) {
             chunkStorage.getOrLoadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
                     .setBlock(pos, block, cause);
-            getGame().getEventBus().post(new BlockPlaceEvent(this, pos, block, cause));
-            getGame().getEventBus().post(new BlockReplaceEvent(this, pos, oldBlock, block, cause));
+            if(block == Blocks.AIR){
+                oldBlock.getComponent(BlockPrototype.DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this,null,pos,oldBlock, cause));
+            }else {
+                block.getComponent(BlockPrototype.PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
+//                oldBlock.getComponent(BlockPrototype.PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
+            }
             getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause)); // TODO:
+            for (Facing facing : Facing.values()) {
+                BlockPos pos1 = pos.offset(facing);
+                Block block1 = getBlock(pos1);
+                block1.getComponent(BlockPrototype.NeighborChangeListener.class).ifPresent(neighborChangeListener -> neighborChangeListener.onNeighborChange(this, pos1, block1, facing.opposite(), pos, block, cause));
+            }
         }
         return oldBlock;
     }
