@@ -8,8 +8,8 @@ public enum Facing {
     UP(4, 5, 0, 1, 0),
     DOWN(5, 4, 0, -1, 0);
 
-    private final int index;
-    private final int opposite;
+    public final int index;
+    public final int opposite;
     public final int offsetX, offsetY, offsetZ;
 
     Facing(int index, int opposite, int offsetX, int offsetY, int offsetZ) {
@@ -20,11 +20,26 @@ public enum Facing {
         this.offsetZ = offsetZ;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
     public Facing opposite() {
         return values()[opposite];
+    }
+
+    public static Facing valueOf(int index) {
+        switch (index) {
+            case 0:
+                return NORTH;
+            case 1:
+                return SOUTH;
+            case 2:
+                return EAST;
+            case 3:
+                return WEST;
+            case 4:
+                return UP;
+            case 5:
+                return DOWN;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }

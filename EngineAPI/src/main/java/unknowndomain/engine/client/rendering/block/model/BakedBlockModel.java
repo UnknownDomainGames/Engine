@@ -30,7 +30,7 @@ public class BakedBlockModel implements BlockMeshGenerator {
                 continue;
             }
 
-            buffer.put(meshes.get(facing.getIndex()));
+            buffer.put(meshes.get(facing.index));
         }
 
         buffer.put(meshes.get(6));
