@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.rendering.model.umodel;
+package unknowndomain.engine.client.rendering.model.voxel;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

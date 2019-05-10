@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.rendering.model.umodel;
+package unknowndomain.engine.client.rendering.model.voxel;
 
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
