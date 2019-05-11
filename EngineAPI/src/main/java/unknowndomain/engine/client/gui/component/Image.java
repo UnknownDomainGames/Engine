@@ -77,4 +77,9 @@ public class Image extends Component {
     public SimpleMutableFloatValue imageHeight() {
         return imgHeight;
     }
+
+    public SimpleMutableObjectValue<AssetPath> image() {
+        return image;
+    }
+
 }

@@ -19,7 +19,7 @@ public class Label extends Control  {
 
     private final MutableFloatValue labelWidth = new SimpleMutableFloatValue();
     private final MutableFloatValue labelHeight = new SimpleMutableFloatValue();
-    private Text cachedText;
+    private Text cachedText = new Text();
 
     public Label(){
         text().addChangeListener((ob, o, n) -> {
@@ -76,19 +76,21 @@ public class Label extends Control  {
     public MutableFloatValue labelHeight() {
         return labelHeight;
     }
+
     @Override
     public float prefWidth() {
         return labelWidth().get() != 0 ? labelWidth().get() : cachedText.prefWidth() + padding().getValue().getLeft() + padding().getValue().getRight();
     }
+
     @Override
     public float prefHeight() {
         return labelHeight().get() != 0 ? labelHeight().get() : cachedText.prefHeight() + padding().getValue().getTop() + padding().getValue().getBottom();
     }
 
-
     public Text getCachedText() {
         return cachedText;
     }
+
     protected void rebuildText() {
         if (cachedText == null) {
             cachedText = new Text();
