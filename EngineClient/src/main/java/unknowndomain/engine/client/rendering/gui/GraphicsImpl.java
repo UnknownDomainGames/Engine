@@ -154,14 +154,13 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawTexture(GLTexture texture, float x, float y, float width, float height, TextureUV textureUV) {
-        context.getTextureManager().getWhiteTexture().bind();
         GLBuffer buffer = tessellator.getBuffer();
-        buffer.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_TEXTURE);
+        buffer.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_COLOR_TEXTURE);
         float x2 = x + width, y2 = y + height;
-        buffer.pos(x, y, 0).uv(textureUV.getMinU(), textureUV.getMinV()).endVertex();
-        buffer.pos(x, y2, 0).uv(textureUV.getMinU(), textureUV.getMaxV()).endVertex();
-        buffer.pos(x2, y, 0).uv(textureUV.getMaxU(), textureUV.getMinV()).endVertex();
-        buffer.pos(x2, y2, 0).uv(textureUV.getMaxU(), textureUV.getMaxV()).endVertex();
+        buffer.pos(x, y, 0).color(1, 1, 1, 1).uv(textureUV.getMinU(), textureUV.getMinV()).endVertex();
+        buffer.pos(x, y2, 0).color(1, 1, 1, 1).uv(textureUV.getMinU(), textureUV.getMaxV()).endVertex();
+        buffer.pos(x2, y, 0).color(1, 1, 1, 1).uv(textureUV.getMaxU(), textureUV.getMinV()).endVertex();
+        buffer.pos(x2, y2, 0).color(1, 1, 1, 1).uv(textureUV.getMaxU(), textureUV.getMaxV()).endVertex();
         glEnable(GL_TEXTURE_2D);
         texture.bind();
         tessellator.draw();
