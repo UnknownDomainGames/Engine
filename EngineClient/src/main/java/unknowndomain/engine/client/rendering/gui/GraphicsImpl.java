@@ -9,7 +9,6 @@ import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
 import unknowndomain.engine.client.rendering.gui.font.NativeTTFont;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
-import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
@@ -17,8 +16,6 @@ import unknowndomain.engine.math.Math2;
 import unknowndomain.engine.util.Color;
 
 import java.util.Stack;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class GraphicsImpl implements Graphics {
 
@@ -84,18 +81,18 @@ public class GraphicsImpl implements Graphics {
     }
 
     @Override
-    public void drawQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4){
+    public void drawQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4) {
         GLBuffer buffer = tessellator.getBuffer();
         buffer.begin(GLBufferMode.LINES_CLOSED, GLBufferFormats.POSITION_COLOR_ALPHA);
-        quads(buffer, new float[]{p1.x(),p2.x(),p3.x(),p4.x()}, new float[]{p1.y(),p2.y(),p3.y(),p4.y()});
+        quads(buffer, new float[]{p1.x(), p2.x(), p3.x(), p4.x()}, new float[]{p1.y(), p2.y(), p3.y(), p4.y()});
         tessellator.draw();
     }
 
     @Override
-    public void fillQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4){
+    public void fillQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4) {
         GLBuffer buffer = tessellator.getBuffer();
         buffer.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA);
-        quads(buffer, new float[]{p1.x(),p4.x(),p2.x(),p3.x()}, new float[]{p1.y(),p4.y(),p2.y(),p3.y()});
+        quads(buffer, new float[]{p1.x(), p4.x(), p2.x(), p3.x()}, new float[]{p1.y(), p4.y(), p2.y(), p3.y()});
         tessellator.draw();
     }
 
@@ -123,7 +120,7 @@ public class GraphicsImpl implements Graphics {
         buffer.begin(GLBufferMode.TRIANGLE_FANS, GLBufferFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, x + arcWidth, y + arcHeight);
         pointTo(buffer, x + arcWidth, y);
-        quadCurveTo(buffer, x + arcWidth, y, x, y + arcHeight, x,y);
+        quadCurveTo(buffer, x + arcWidth, y, x, y + arcHeight, x, y);
         tessellator.draw();
 
         fillRect(x, y + arcHeight, arcWidth, height - arcHeight * 2);
@@ -131,7 +128,7 @@ public class GraphicsImpl implements Graphics {
         buffer.begin(GLBufferMode.TRIANGLE_FANS, GLBufferFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, x + arcWidth, y2 - arcHeight);
         pointTo(buffer, x, y2 - arcHeight);
-        quadCurveTo(buffer, x, y2 - arcHeight, x + arcWidth, y2, x,y2);
+        quadCurveTo(buffer, x, y2 - arcHeight, x + arcWidth, y2, x, y2);
         tessellator.draw();
 
         fillRect(x + arcWidth, y2 - arcHeight, width - arcWidth * 2, arcHeight);
@@ -139,7 +136,7 @@ public class GraphicsImpl implements Graphics {
         buffer.begin(GLBufferMode.TRIANGLE_FANS, GLBufferFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, x2 - arcWidth, y2 - arcHeight);
         pointTo(buffer, x2 - arcWidth, y2);
-        quadCurveTo(buffer, x2 - arcWidth, y2, x2, y2 - arcHeight, x2,y2);
+        quadCurveTo(buffer, x2 - arcWidth, y2, x2, y2 - arcHeight, x2, y2);
         tessellator.draw();
 
         fillRect(x2 - arcWidth, y + arcHeight, arcWidth, height - arcHeight * 2);
@@ -147,7 +144,7 @@ public class GraphicsImpl implements Graphics {
         buffer.begin(GLBufferMode.TRIANGLE_FANS, GLBufferFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, x2 - arcWidth, y + arcHeight);
         pointTo(buffer, x2, y + arcHeight);
-        quadCurveTo(buffer, x2, y + arcHeight, x2 - arcWidth, y, x2,y);
+        quadCurveTo(buffer, x2, y + arcHeight, x2 - arcWidth, y, x2, y);
         tessellator.draw();
 
         fillRect(x + arcWidth, y, width - arcWidth * 2, height - arcHeight);
@@ -188,22 +185,20 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawTexture(GLTexture texture, float x, float y, float width, float height) {
-        drawTexture(texture, x, y, width, height, TextureUV.DEFAULT_TEXTURE_UV);
+        drawTexture(texture, x, y, width, height, 0, 0, 1, 1);
     }
 
     @Override
-    public void drawTexture(GLTexture texture, float x, float y, float width, float height, TextureUV textureUV) {
+    public void drawTexture(GLTexture texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
         GLBuffer buffer = tessellator.getBuffer();
         buffer.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_COLOR_TEXTURE);
         float x2 = x + width, y2 = y + height;
-        buffer.pos(x, y, 0).color(1, 1, 1, 1).uv(textureUV.getMinU(), textureUV.getMinV()).endVertex();
-        buffer.pos(x, y2, 0).color(1, 1, 1, 1).uv(textureUV.getMinU(), textureUV.getMaxV()).endVertex();
-        buffer.pos(x2, y, 0).color(1, 1, 1, 1).uv(textureUV.getMaxU(), textureUV.getMinV()).endVertex();
-        buffer.pos(x2, y2, 0).color(1, 1, 1, 1).uv(textureUV.getMaxU(), textureUV.getMaxV()).endVertex();
-        glEnable(GL_TEXTURE_2D);
+        buffer.pos(x, y, 0).color(1, 1, 1, 1).uv(minU, minV).endVertex();
+        buffer.pos(x, y2, 0).color(1, 1, 1, 1).uv(minU, maxV).endVertex();
+        buffer.pos(x2, y, 0).color(1, 1, 1, 1).uv(maxU, minV).endVertex();
+        buffer.pos(x2, y2, 0).color(1, 1, 1, 1).uv(maxU, maxV).endVertex();
         texture.bind();
         tessellator.draw();
-        glDisable(GL_TEXTURE_2D);
     }
 
     @Override
@@ -216,10 +211,10 @@ public class GraphicsImpl implements Graphics {
             float newX = parent.x() + x, newY = parent.y() + y;
             float newZ = newX + width, newW = newY + height;
 //            unrestricted range
-            Math2.clamp(newX, parent.x(),parent.z());
-            Math2.clamp(newY, parent.y(),parent.w());
-            Math2.clamp(newZ, parent.x(),parent.z());
-            Math2.clamp(newW, parent.y(),parent.w());
+            Math2.clamp(newX, parent.x(), parent.z());
+            Math2.clamp(newY, parent.y(), parent.w());
+            Math2.clamp(newZ, parent.x(), parent.z());
+            Math2.clamp(newW, parent.y(), parent.w());
 //            inclusiveBetween(parent.x(), parent.z(), newX);
 //            inclusiveBetween(parent.y(), parent.w(), newY);
 //            inclusiveBetween(parent.x(), parent.z(), newZ);
@@ -252,19 +247,19 @@ public class GraphicsImpl implements Graphics {
 
     private void rect(GLBuffer buffer, float x, float y, float width, float height) {
         float x2 = x + width, y2 = y + height;
-        quads(buffer,   new float[]{x,x2,x2,x},
-                        new float[]{y,y,y2,y2});
+        quads(buffer, new float[]{x, x2, x2, x},
+                new float[]{y, y, y2, y2});
     }
 
     private void rect2(GLBuffer buffer, float x, float y, float width, float height) {
         float x2 = x + width, y2 = y + height;
-        quads(buffer,   new float[]{x,x,x2,x2},
-                        new float[]{y,y2,y,y2});
+        quads(buffer, new float[]{x, x, x2, x2},
+                new float[]{y, y2, y, y2});
     }
 
-    private void quads(GLBuffer buffer, float[] x, float[] y){
-        if(x.length == 4 && y.length == 4){
-            for(int i = 0;i < 4;i++) {
+    private void quads(GLBuffer buffer, float[] x, float[] y) {
+        if (x.length == 4 && y.length == 4) {
+            for (int i = 0; i < 4; i++) {
                 pointTo(buffer, x[i], y[i]);
             }
         }

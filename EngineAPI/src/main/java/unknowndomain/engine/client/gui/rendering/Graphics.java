@@ -3,7 +3,6 @@ package unknowndomain.engine.client.gui.rendering;
 import org.joml.Vector2fc;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
-import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.util.Color;
 
 public interface Graphics {
@@ -53,7 +52,7 @@ public interface Graphics {
 
     void drawTexture(GLTexture texture, float x, float y, float width, float height);
 
-    void drawTexture(GLTexture texture, float x, float y, float width, float height, TextureUV textureUV);
+    void drawTexture(GLTexture texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV);
 
     void pushClipRect(float x, float y, float width, float height);
 

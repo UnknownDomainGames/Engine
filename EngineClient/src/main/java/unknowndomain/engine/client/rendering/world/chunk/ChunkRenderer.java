@@ -134,7 +134,7 @@ public class ChunkRenderer {
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", modelMatrix);
         ShaderManager.INSTANCE.setUniform("u_viewPos", context.getCamera().getPosition());
 
-        context.getTextureManager().getTextureAtlas(BLOCK).getValue().bind();
+        context.getTextureManager().getTextureAtlas(BLOCK).getTexture().getValue().bind();
         chunkSolidShader.setUniform("useDirectUV", true);
         dirLight.bind("dirLights[0]");
         //ptLight.bind(chunkSolidShader,"pointLights[0]");

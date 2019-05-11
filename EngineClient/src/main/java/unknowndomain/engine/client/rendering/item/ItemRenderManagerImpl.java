@@ -56,7 +56,7 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
         glEnable(GL11.GL_TEXTURE_2D);
         glEnable(GL11.GL_DEPTH_TEST);
 
-        context.getTextureManager().getTextureAtlas(BLOCK).getValue().bind();
+        context.getTextureManager().getTextureAtlas(BLOCK).getTexture().getValue().bind();
     }
 
     private void postRender() {

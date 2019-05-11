@@ -9,33 +9,34 @@ import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.asset.exception.AssetLoadException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-public class TextureAtlas {
+public class TextureAtlasImpl implements TextureAtlas {
 
-    private final Map<AssetPath, TextureUVImpl> textures = new HashMap<>();
+    private final Map<AssetPath, TextureAtlasPartImpl> textures = new HashMap<>();
     private final MutableValue<GLTexture> bakedTextureAtlas = new SimpleMutableObjectValue<>();
 
-    public TextureUV addTexture(AssetPath path) {
-        return textures.computeIfAbsent(path, key -> new TextureUVImpl());
+    @Override
+    public TextureAtlasPart addTexture(AssetPath path) {
+        return textures.computeIfAbsent(path, key -> new TextureAtlasPartImpl());
     }
 
+    @Override
     public ObservableValue<GLTexture> getTexture() {
         return bakedTextureAtlas.toImmutable();
     }
 
     public void reload() throws IOException {
-        List<Pair<TextureBuffer, TextureUVImpl>> loadedTextures = new LinkedList<>();
-        for (Map.Entry<AssetPath, TextureUVImpl> entry : textures.entrySet()) {
+        List<Pair<TextureBuffer, TextureAtlasPartImpl>> loadedTextures = new LinkedList<>();
+        for (Map.Entry<AssetPath, TextureAtlasPartImpl> entry : textures.entrySet()) {
             loadedTextures.add(Pair.of(loadTextureBuffer(entry.getKey()), entry.getValue()));
         }
         int sumWidth = 0;
         int maxHeight = 0;
-        for (Pair<TextureBuffer, TextureUVImpl> pair : loadedTextures) {
+        for (Pair<TextureBuffer, TextureAtlasPartImpl> pair : loadedTextures) {
             TextureBuffer source = pair.getLeft();
             sumWidth += source.getWidth();
             if (source.getHeight() > maxHeight)
@@ -43,7 +44,7 @@ public class TextureAtlas {
         }
         TextureBuffer textureBuffer = new TextureBuffer(sumWidth, maxHeight);
         int offsetX = 0;
-        for (Pair<TextureBuffer, TextureUVImpl> pair : loadedTextures) {
+        for (Pair<TextureBuffer, TextureAtlasPartImpl> pair : loadedTextures) {
             TextureBuffer source = pair.getLeft();
             textureBuffer.setTexture(offsetX, 0, source);
             pair.getRight().init(sumWidth, maxHeight, offsetX, 0, source.getWidth(), source.getHeight());

@@ -20,8 +20,8 @@ import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.entity.EntityItemRenderer;
 import unknowndomain.engine.client.rendering.item.ItemBlockRenderer;
+import unknowndomain.engine.client.rendering.texture.TextureAtlasPart;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
-import unknowndomain.engine.client.rendering.texture.TextureUV;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.entity.item.EntityItem;
@@ -173,12 +173,12 @@ public final class DefaultGameMode {
         AssetPath enginePath = AssetPath.of("engine");
         AssetPath blockTexturePath = AssetPath.of(enginePath, "texture", "block");
         TextureManager textureManager = Platform.getEngineClient().getRenderContext().getTextureManager();
-        TextureUV side = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_side.png"), BLOCK);
-        TextureUV top = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_top.png"), BLOCK);
-        TextureUV bottom = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "dirt.png"), BLOCK);
+        TextureAtlasPart side = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_side.png"), BLOCK);
+        TextureAtlasPart top = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_top.png"), BLOCK);
+        TextureAtlasPart bottom = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "dirt.png"), BLOCK);
 
         BlockModel blockModel = new BlockModel();
-        blockModel.addCube(0, 0, 0, 1, 1, 1, new TextureUV[]{side, side, side, side, top, bottom});
+        blockModel.addCube(0, 0, 0, 1, 1, 1, new TextureAtlasPart[]{side, side, side, side, top, bottom});
         ClientBlockDefault.blockRendererMap.put(Blocks.GRASS, blockModel);
 
         blockModel = new BlockModel();

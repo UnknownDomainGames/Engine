@@ -1,7 +1,6 @@
 package unknowndomain.engine.client.rendering.item;
 
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL11;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.RenderContext;
@@ -17,14 +16,10 @@ import unknowndomain.engine.registry.Registry;
 
 import java.util.Optional;
 
-import static org.lwjgl.opengl.GL11.*;
-import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
-
 public class ItemRendererTest implements ItemRenderer {
 
     private RenderContext context;
     private GameClient game;
-    //    private ObservableValue<ShaderProgram> itemShader;
 
     private Registry<ClientBlock> clientBlockRegistry;
 
@@ -32,35 +27,10 @@ public class ItemRendererTest implements ItemRenderer {
         this.context = context;
         this.game = context.getEngine().getCurrentGame();
         clientBlockRegistry = game.getRegistryManager().getRegistry(ClientBlock.class);
-//        itemShader = ShaderManager.INSTANCE.registerShader("item", new ShaderProgramBuilder()
-//                .addShader(VERTEX_SHADER, AssetPath.of("engine", "shader", "item.vert"))
-//                .addShader(FRAGMENT_SHADER, AssetPath.of("engine", "shader", "item.frag")));
-    }
-
-    private void preRender() {
-        glEnable(GL11.GL_BLEND);
-        glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL11.GL_CULL_FACE);
-//        GL11.glCullFace(GL11.GL_BACK);
-//        glFrontFace(GL_CCW);
-        glEnable(GL11.GL_TEXTURE_2D);
-        glEnable(GL11.GL_DEPTH_TEST);
-
-        context.getTextureManager().getTextureAtlas(BLOCK).getValue().bind();
-    }
-
-    private void postRender() {
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL11.GL_CULL_FACE);
-        glDisable(GL11.GL_TEXTURE_2D);
-        glDisable(GL11.GL_DEPTH_TEST);
-        glDisable(GL11.GL_BLEND);
     }
 
     @Override
     public void render(ItemStack itemStack, float partial) {
-        preRender();
-
         ClientBlock clientBlock = clientBlockRegistry.getValue(((ItemBlock) itemStack.getItem()).getBlock().getId());
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -68,8 +38,6 @@ public class ItemRendererTest implements ItemRenderer {
         buffer.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
         clientBlock.getRenderer().generate(clientBlock, buffer);
         tessellator.draw();
-
-        postRender();
     }
 
     public void renderEntity(ItemStack itemStack, float partialTick) {

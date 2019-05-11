@@ -11,9 +11,9 @@ public interface TextureManager {
 
     GLTexture getTextureDirect(TextureBuffer buffer);
 
-    TextureUV addTextureToAtlas(AssetPath path, TextureType type);
+    TextureAtlasPart addTextureToAtlas(AssetPath path, TextureType type);
 
-    ObservableValue<GLTexture> getTextureAtlas(TextureType type);
+    TextureAtlas getTextureAtlas(TextureType type);
 
     void reloadTextureAtlas(TextureType type);
 

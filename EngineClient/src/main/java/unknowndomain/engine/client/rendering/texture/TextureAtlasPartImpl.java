@@ -1,10 +1,10 @@
 package unknowndomain.engine.client.rendering.texture;
 
-public class TextureUVImpl implements TextureUV {
+public class TextureAtlasPartImpl implements TextureAtlasPart {
 
     private float minU, minV, maxU, maxV;
 
-    public TextureUVImpl() {
+    public TextureAtlasPartImpl() {
     }
 
     public void init(float minU, float minV, float maxU, float maxV) {
