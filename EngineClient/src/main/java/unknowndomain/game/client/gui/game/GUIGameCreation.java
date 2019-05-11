@@ -1,16 +1,17 @@
 package unknowndomain.game.client.gui.game;
 
 import unknowndomain.engine.Platform;
+import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.gui.component.Button;
 import unknowndomain.engine.client.gui.component.Label;
+import unknowndomain.engine.client.gui.component.HSlider;
 import unknowndomain.engine.client.gui.layout.BorderPane;
 import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.client.gui.misc.Border;
 import unknowndomain.engine.client.gui.misc.Insets;
 import unknowndomain.engine.client.gui.text.Font;
-import unknowndomain.engine.client.gui.text.Text;
 import unknowndomain.engine.player.PlayerImpl;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Color;
@@ -46,5 +47,13 @@ public class GUIGameCreation extends BorderPane {
         buttonExit.disabled().set(true);
         vBox.getChildren().add(buttonExit);
 
+        HSlider v = new HSlider();
+        v.backBg().setValue(AssetPath.of("engine","texture","gui","range.png"));
+        v.leftBtnBg().setValue(AssetPath.of("engine","texture","gui","left_arrow.png"));
+        v.rightBtnBg().setValue(AssetPath.of("engine","texture","gui","right_arrow.png"));
+        v.rebuild();
+//        vBox.getChildren().addAll(v);
+
     }
+
 }
