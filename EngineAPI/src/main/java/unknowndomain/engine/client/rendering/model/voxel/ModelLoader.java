@@ -50,7 +50,7 @@ public class ModelLoader {
         Model.Element.Cube cube = new Model.Element.Cube();
         cube.from = loadVector3f(json.getAsJsonArray("from"));
         cube.to = loadVector3f(json.getAsJsonArray("to"));
-
+        cube.faces = loadFaces(json);
         return cube;
     }
 

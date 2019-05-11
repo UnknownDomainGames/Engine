@@ -15,10 +15,10 @@ public class BakedModel {
     }
 
     public static class Mesh {
-        public final float[] data;
+        public final byte[] data;
         public final boolean[] cullFaces;
 
-        public Mesh(float[] data, boolean[] cullFaces) {
+        public Mesh(byte[] data, boolean[] cullFaces) {
             this.data = data;
             this.cullFaces = cullFaces;
         }

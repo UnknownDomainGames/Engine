@@ -27,6 +27,10 @@ public abstract class GLBufferPool {
     private final Set<GLBuffer> buffers = Sets.newConcurrentHashSet();
     private final Queue<GLBuffer> availableBuffers = new PriorityQueue<>(11, Comparator.comparingInt(o -> -o.getBackingBuffer().capacity()));
 
+    public GLBuffer get() {
+        return get(256);
+    }
+
     public GLBuffer get(int capacity) {
         if (!availableBuffers.isEmpty()) {
             for (GLBuffer byteBuffer : availableBuffers) {
