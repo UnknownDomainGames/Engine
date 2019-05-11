@@ -2,13 +2,15 @@ package unknowndomain.engine.client.rendering.model.voxel;
 
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
+import unknowndomain.engine.client.asset.AssetPath;
+import unknowndomain.engine.client.rendering.texture.TextureAtlasPart;
 
 import java.util.List;
 import java.util.Map;
 
 public class Model {
 
-    String parent;
+    AssetPath parent;
     Map<String, String> textures;
     List<Element> elements;
 
@@ -26,7 +28,7 @@ public class Model {
     }
 
     static class Texture {
-        String name;
+        TextureAtlasPart textureAtlasPart;
         Vector4fc uv;
     }
 }
