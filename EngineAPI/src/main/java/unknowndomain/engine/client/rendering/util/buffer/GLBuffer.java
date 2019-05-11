@@ -7,7 +7,9 @@ import unknowndomain.engine.math.Math2;
 import unknowndomain.engine.util.Color;
 import unknowndomain.engine.util.disposer.Disposable;
 
+import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
+import java.util.Objects;
 
 public abstract class GLBuffer implements Disposable {
 
@@ -65,14 +67,14 @@ public abstract class GLBuffer implements Disposable {
         return vertexCount;
     }
 
-    public void begin(GLBufferMode mode, GLBufferFormat format) {
+    public void begin(@Nonnull GLBufferMode mode, @Nonnull GLBufferFormat format) {
         if (drawing) {
             throw new IllegalStateException("Already drawing!");
         } else {
             drawing = true;
             reset();
-            drawMode = mode;
-            this.format = format;
+            drawMode = Objects.requireNonNull(mode);
+            this.format = Objects.requireNonNull(format);
             backingBuffer.limit(backingBuffer.capacity());
         }
     }
@@ -106,7 +108,7 @@ public abstract class GLBuffer implements Disposable {
     }
 
     public void reset() {
-        drawMode = GLBufferMode.POINTS;
+        drawMode = null;
         format = null;
         vertexCount = 0;
         posOffset(0, 0, 0);
