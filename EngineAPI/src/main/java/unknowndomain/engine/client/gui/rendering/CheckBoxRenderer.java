@@ -1,11 +1,8 @@
 package unknowndomain.engine.client.gui.rendering;
 
+import org.joml.Vector2f;
 import unknowndomain.engine.client.gui.component.CheckBox;
 import unknowndomain.engine.client.gui.misc.Insets;
-import unknowndomain.engine.client.rendering.Tessellator;
-import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
-import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
-import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 
 public class CheckBoxRenderer implements ComponentRenderer<CheckBox> {
     @Override
@@ -28,20 +25,8 @@ public class CheckBoxRenderer implements ComponentRenderer<CheckBox> {
                 width = component.width().get();
                 height = component.width().get();
                 float vc = (float)Math.sqrt(Math.pow(component.border().getValue().getInsets().getLeft(),2) / 2);
-                Tessellator tessellator = Tessellator.getInstance();
-                GLBuffer buffer = tessellator.getBuffer();
-                buffer.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA);
-                buffer.pos(vc,0,0).color(component.contentColor().getValue()).endVertex();
-                buffer.pos(0,vc,0).color(component.contentColor().getValue()).endVertex();
-                buffer.pos(width,height - vc,0).color(component.contentColor().getValue()).endVertex();
-                buffer.pos(width - vc,height,0).color(component.contentColor().getValue()).endVertex();
-                tessellator.draw();
-                buffer.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA);
-                buffer.pos(0,height - vc,0).color(component.contentColor().getValue()).endVertex();
-                buffer.pos(vc,height,0).color(component.contentColor().getValue()).endVertex();
-                buffer.pos(width - vc,0,0).color(component.contentColor().getValue()).endVertex();
-                buffer.pos(width,vc,0).color(component.contentColor().getValue()).endVertex();
-                tessellator.draw();
+                graphics.fillQuad(new Vector2f(vc,0),new Vector2f(width,height - vc),new Vector2f(width - vc,height),new Vector2f(0,vc));
+                graphics.fillQuad(new Vector2f(0,height - vc),new Vector2f(width - vc,0),new Vector2f(width,vc),new Vector2f(vc,height));
             }
         }
     }

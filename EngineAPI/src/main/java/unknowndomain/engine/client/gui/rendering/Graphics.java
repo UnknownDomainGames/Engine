@@ -1,5 +1,6 @@
 package unknowndomain.engine.client.gui.rendering;
 
+import org.joml.Vector2fc;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 import unknowndomain.engine.client.rendering.texture.TextureUV;
@@ -21,6 +22,10 @@ public interface Graphics {
 
     void fillRect(float x, float y, float width, float height);
 
+    void drawQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4);
+
+    void fillQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4);
+
     void drawRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight);
 
     void fillRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight);
@@ -28,7 +33,7 @@ public interface Graphics {
     /**
      * Draw a quadratic Belzier curve
      */
-    void drawQuad(float startX, float startY, float endX, float endY, float px, float py);
+    void drawQuadCurve(float startX, float startY, float endX, float endY, float px, float py);
 
     /**
      * Draw a Belazier curve
