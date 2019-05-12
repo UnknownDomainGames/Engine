@@ -55,7 +55,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         super.initEngine();
 
         // TODO: Remove it
-        getEventBus().register(new DefaultGameMode());
+        getEventBus().register(DefaultGameMode.class);
 
         initEngineClient();
     }
@@ -109,7 +109,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         addShutdownListener(ticker::stop);
 
         logger.info("Finishing initialization!");
-        eventBus.post(new EngineEvent.InitializationComplete(this));
+        eventBus.post(new EngineEvent.Ready(this));
 
         ticker.run();
     }
@@ -129,12 +129,13 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private void tryTerminate() {
         logger.info("Engine terminating!");
-        ticker.stop();
-
         if (isPlaying()) {
             game.terminateNow();
         }
 
+        eventBus.post(new EngineEvent.PreTermination(this));
+
+        ticker.stop();
         shutdownListeners.forEach(Runnable::run);
         logger.info("Engine terminated!");
     }

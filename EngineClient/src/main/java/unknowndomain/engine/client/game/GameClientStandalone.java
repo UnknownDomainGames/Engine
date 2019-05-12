@@ -7,7 +7,7 @@ import unknowndomain.engine.client.input.controller.EntityController;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
-import unknowndomain.engine.entity.item.EntityItem;
+import unknowndomain.engine.entity.item.ItemEntity;
 import unknowndomain.engine.event.engine.GameTerminationEvent;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.item.ItemStack;
@@ -15,7 +15,6 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
-import unknowndomain.game.DefaultGameMode;
 import unknowndomain.game.init.Blocks;
 import unknowndomain.game.init.Items;
 
@@ -36,6 +35,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         this.player = player;
     }
 
+    @Nonnull
     @Override
     public EngineClient getEngine() {
         return engineClient;
@@ -76,11 +76,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     @Override
     protected void constructStage() {
         super.constructStage();
-
-        // TODO: Move it
-        eventBus.register(new DefaultGameMode());
-
-//        player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
     }
 
     @Override
@@ -138,7 +133,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
             }
         }
 
-        world.spawnEntity(new EntityItem(world.getEntities().size(), world, new Vector3d(0, 5, 0), new ItemStack(Items.DIRT)));
+        world.spawnEntity(new ItemEntity(world.getEntities().size(), world, new Vector3d(0, 5, 0), new ItemStack(Items.DIRT)));
 //        a = Platform.getEngineClient().getSoundManager().createSoundSource("test sound").position(25,5,0).gain(1.0f).speed(dir);
 //        a.setLoop(true);
 //        a.assignSound(sound);

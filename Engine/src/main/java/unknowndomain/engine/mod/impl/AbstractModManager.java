@@ -23,11 +23,13 @@ public abstract class AbstractModManager implements ModManager {
 
     public abstract DependencyManager createDependencyManager();
 
+    @Nonnull
     @Override
     public ModContainer loadMod(Path path) {
         return loadMod(modDescriptorFinder.find(path));
     }
 
+    @Nonnull
     @Override
     public ModContainer loadMod(ModDescriptor modDescriptor) {
         if (isModLoaded(modDescriptor.getModId())) {
@@ -49,6 +51,7 @@ public abstract class AbstractModManager implements ModManager {
         return modContainer;
     }
 
+    @Nonnull
     @Override
     public Collection<ModContainer> loadMod(Iterator<Path> pathIterator) throws ModLoadException, ModAlreadyLoadedException {
         List<ModContainer> modContainers = new ArrayList<>();

@@ -11,10 +11,13 @@ import java.util.Iterator;
 
 public interface ModManager {
 
+    @Nonnull
     ModContainer loadMod(Path path) throws ModLoadException, ModAlreadyLoadedException;
 
+    @Nonnull
     ModContainer loadMod(ModDescriptor modDescriptor) throws ModLoadException, ModAlreadyLoadedException;
 
+    @Nonnull
     Collection<ModContainer> loadMod(Iterator<Path> pathIterator) throws ModLoadException, ModAlreadyLoadedException;
 
     @Nullable

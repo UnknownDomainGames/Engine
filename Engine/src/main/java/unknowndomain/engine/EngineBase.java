@@ -1,21 +1,27 @@
 package unknowndomain.engine;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.SimpleEventBus;
 import unknowndomain.engine.event.asm.AsmEventListenerFactory;
+import unknowndomain.engine.event.engine.EngineEvent;
+import unknowndomain.engine.mod.ModContainer;
+import unknowndomain.engine.mod.ModManager;
+import unknowndomain.engine.mod.impl.DefaultModManager;
+import unknowndomain.engine.mod.java.ModClassLoader;
 import unknowndomain.engine.util.RuntimeEnvironment;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.apache.commons.lang3.SystemUtils.*;
 
@@ -28,6 +34,7 @@ public abstract class EngineBase implements Engine {
     private RuntimeEnvironment runtimeEnvironment;
 
     protected EventBus eventBus;
+    protected ModManager modManager;
 
     private boolean initialized = false;
     private boolean running = false;
@@ -49,6 +56,11 @@ public abstract class EngineBase implements Engine {
     }
 
     @Override
+    public ModManager getModManager() {
+        return modManager;
+    }
+
+    @Override
     public void initEngine() {
         if (initialized) {
             throw new IllegalStateException("Engine has been initialized.");
@@ -61,6 +73,8 @@ public abstract class EngineBase implements Engine {
         printSystemInfo();
 
         eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+
+        loadMods();
     }
 
     private void initEnvironment() {
@@ -106,6 +120,87 @@ public abstract class EngineBase implements Engine {
         logger.info("------------------------------");
     }
 
+    private void loadMods() {
+        logger.info("Loading Mods.");
+        modManager = new DefaultModManager();
+
+        Path modFolder = Paths.get("mods");
+        if (!Files.exists(modFolder)) {
+            try {
+                Files.createDirectory(modFolder);
+            } catch (IOException e) {
+                logger.warn(e.getMessage(), e);
+            }
+        }
+
+        try {
+            modManager.loadMod(createFolderModCollector(modFolder));
+            loadDevEnvMod();
+
+            Collection<ModContainer> loadedMods = modManager.getLoadedMods();
+
+            logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(ModContainer::getModId).iterator(), ",") + "]");
+
+            loadedMods.forEach(modContainer -> eventBus.register(modContainer.getInstance()));
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+
+//        Platform.getLogger().info("Initializing Mods!");
+//        getContext().post(new EngineEvent.ModInitializationEvent(this));
+//        Platform.getLogger().info("Finishing Construction!");
+//        getContext().post(new EngineEvent.ModConstructionFinish(this));
+    }
+
+    private Iterator<Path> createFolderModCollector(Path folder) throws IOException {
+        if (!Files.exists(folder)) {
+            throw new IllegalStateException("Path is not exists.");
+        }
+
+        if (!Files.isDirectory(folder)) {
+            throw new IllegalArgumentException("Path must be directory.");
+        }
+
+        return Files.find(folder, 1, (path, basicFileAttributes) -> path.getFileName().toString().endsWith(".jar")).iterator();
+    }
+
+    private void loadDevEnvMod() {
+        if (runtimeEnvironment != RuntimeEnvironment.MOD_DEVELOPMENT)
+            return;
+
+        List<Path> directories = findDirectoriesInClassPath();
+
+        Path modPath = findModInDirectories(directories);
+        if (modPath == null)
+            return;
+
+        ModContainer modContainer = modManager.loadMod(modPath);
+        ModClassLoader classLoader = (ModClassLoader) modContainer.getClassLoader();
+        for (Path directory : directories) {
+            classLoader.addPath(directory);
+        }
+    }
+
+    private List<Path> findDirectoriesInClassPath() {
+        List<Path> paths = new ArrayList<>();
+        for (String path : SystemUtils.JAVA_CLASS_PATH.split(";")) {
+            Path _path = Path.of(path);
+            if (Files.isDirectory(_path)) {
+                paths.add(_path);
+            }
+        }
+        return paths;
+    }
+
+    private Path findModInDirectories(List<Path> paths) {
+        for (Path path : paths) {
+            if (Files.exists(path.resolve("metadata.json"))) {
+                return path;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void runEngine() {
         if (running) {
@@ -121,6 +216,7 @@ public abstract class EngineBase implements Engine {
         }
 
         terminated = true;
+        eventBus.post(new EngineEvent.MarkedTermination(this));
         logger.info("Marked engine terminated!");
     }
 

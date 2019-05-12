@@ -1,6 +1,5 @@
 package unknowndomain.engine.game;
 
-import org.slf4j.Logger;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.registry.RegistryManager;
@@ -27,6 +26,7 @@ import javax.annotation.Nonnull;
  */
 public interface Game {
 
+    @Nonnull
     Engine getEngine();
 
     World spawnWorld(World.Config config);
@@ -46,7 +46,4 @@ public interface Game {
 
     @Nonnull
     RegistryManager getRegistryManager();
-
-    @Nonnull
-    Logger getLogger();
 }

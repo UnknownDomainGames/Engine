@@ -3,6 +3,7 @@ package unknowndomain.engine;
 import org.slf4j.Logger;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.game.Game;
+import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.util.RuntimeEnvironment;
 import unknowndomain.engine.util.Side;
 
@@ -26,6 +27,8 @@ public interface Engine {
     }
 
     EventBus getEventBus();
+
+    ModManager getModManager();
 
     /**
      * Initialize the Engine. Load all mods and complete registration

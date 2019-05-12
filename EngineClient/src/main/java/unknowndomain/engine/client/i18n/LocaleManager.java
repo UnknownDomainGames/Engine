@@ -1,72 +1,48 @@
 package unknowndomain.engine.client.i18n;
 
-import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Locale;
-import java.util.Set;
+import java.util.Map;
 
-/**
- * keeps all locales
- *
- */
 public class LocaleManager {
 
-    private static LocaleManager instance;
+	private final Locale defaultLocale = Locales.en_us;
 
-    private Hashtable<Locale, Hashtable<String, String>> localeToMap = new Hashtable<>();
+	private Locale currentLocale = defaultLocale;
 
-    private Locale currentLocale = null;
+	private Map<Locale, Map<String, String>> localeMap = new HashMap<Locale, Map<String, String>>();
 
-    public String localize(String key, Object... args) {
-        if (currentLocale == null) {
-            setLocale(Locale.getDefault());
-        }
-        String unformat = null;
-        // search for locale
-        loadLocale(currentLocale);
-        Hashtable<String, String> table = localeToMap.get(currentLocale);
-        if (table != null) {
-            unformat = table.get(key);
-        }
+	public static LocaleManager localeManager = new LocaleManager();
 
-        if (unformat == null) {
-            return key;
-        }
+	protected static String translation(String key) {
+		if (!localeManager.localeMap.containsKey(localeManager.currentLocale)) {
+			if (!localeManager.localeMap.get(localeManager.defaultLocale).containsKey(key)) {
+				return key;
+			}
+			return localeManager.localeMap.get(localeManager.defaultLocale).get(key);
+		}
+		return localeManager.localeMap.get(localeManager.currentLocale).get(key);
+	}
 
-        return String.format(unformat, args);
-    }
+	public void setLocale(Locale l) {
+		currentLocale = l;
+	}
 
-    public void setLocale(Locale l) {
-        currentLocale = l;
-    }
+	public void addlocaleMap(Locale locale, String key, String value) {
+		String modid = "";
+		this.addlocaleMap(modid, locale, key, value);
+	}
 
-    public void addMappingFor(Locale l, String key, String value) {
-        loadLocale(l);
-        Hashtable<String, String> table = localeToMap.get(l);
-        table.put(key, value);
-    }
+	private void addlocaleMap(String modid, Locale locale, String key, String value) {
+		Map<String, String> keyMap;
+		if (localeMap.containsKey(locale)) {
+			keyMap = localeMap.get(locale);
+			keyMap.put(modid + ":" + key, value);
+		} else {
+			keyMap = new HashMap<String, String>();
+			keyMap.put(modid + ":" + key, value);
+			localeMap.put(locale, keyMap);
+		}
+	}
 
-    public void loadLocale(Locale l) {
-        if (localeToMap.containsKey(l))
-            return;
-        Hashtable<String, String> table = new Hashtable<>();
-        // TODO load with AssetsManager
-        if (l.getLanguage().equals("en")) {
-            table.put("test.key", "Test Key");
-        } else {
-            table.put("test.key", "\u6d4b\u8bd5");
-        }
-        localeToMap.put(l, table);
-
-    }
-
-    public static LocaleManager getInstance() {
-        if (instance == null)
-            instance = new LocaleManager();
-        return instance;
-    }
-
-    public static void setInstance(LocaleManager l) {
-        instance = l;
-    }
 }

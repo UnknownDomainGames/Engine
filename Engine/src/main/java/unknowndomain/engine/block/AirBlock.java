@@ -2,9 +2,9 @@ package unknowndomain.engine.block;
 
 import org.joml.AABBd;
 
-public class BlockAir extends BlockBase {
+public class AirBlock extends BaseBlock {
 
-    public BlockAir() {
+    public AirBlock() {
         setBoundingBoxes(new AABBd[0]);
         registerName("air");
     }

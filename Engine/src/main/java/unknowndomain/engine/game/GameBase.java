@@ -1,36 +1,22 @@
 package unknowndomain.engine.game;
 
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.event.SimpleEventBus;
-import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.game.GameEvent;
 import unknowndomain.engine.event.registry.RegistrationEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
-import unknowndomain.engine.mod.ModContainer;
-import unknowndomain.engine.mod.ModManager;
-import unknowndomain.engine.mod.impl.DefaultModManager;
-import unknowndomain.engine.mod.java.ModClassLoader;
-import unknowndomain.engine.mod.util.ModCollector;
 import unknowndomain.engine.registry.Registries;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.SimpleRegistryManager;
-import unknowndomain.engine.util.RuntimeEnvironment;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -39,9 +25,9 @@ public abstract class GameBase implements Game {
 
     protected final Engine engine;
 
-    protected final Logger logger = LoggerFactory.getLogger("Game");
+    protected final Logger logger;
+    protected final Marker marker = MarkerFactory.getMarker("Game");
 
-    protected ModManager modManager;
     protected RegistryManager registryManager;
 
     protected EventBus eventBus;
@@ -51,14 +37,14 @@ public abstract class GameBase implements Game {
 
     public GameBase(Engine engine) {
         this.engine = engine;
-        this.eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+        this.logger = engine.getLogger();
+        this.eventBus = engine.getEventBus();
     }
 
     /**
      * Construct stage, collect mod and resource according to it option
      */
     protected void constructStage() {
-        constructMods();
     }
 
     /**
@@ -66,18 +52,18 @@ public abstract class GameBase implements Game {
      */
     protected void registerStage() {
         // Registration Stage
-        logger.info("Creating Registry Manager!");
+        logger.info(marker, "Creating Registry Manager!");
         Map<Class<?>, Registry<?>> registries = Maps.newHashMap();
         Map<Class<?>, List<Pair<Class<? extends RegistryEntry>, BiConsumer<RegistryEntry, Registry>>>> afterRegistries = Maps.newHashMap();
         eventBus.post(new RegistryConstructionEvent(registries, afterRegistries));
         registryManager = new SimpleRegistryManager(Map.copyOf(registries), Map.copyOf(afterRegistries));
-        logger.info("Registering!");
+        logger.info(marker, "Registering!");
         eventBus.post(new RegistrationEvent.Start(registryManager));
 
         for (Registry<?> registry : registries.values())
             eventBus.post(new RegistrationEvent.Register<>(registry));
 
-        logger.info("Finishing Registration!");
+        logger.info(marker, "Finishing Registration!");
         eventBus.post(new RegistrationEvent.Finish(registryManager));
 
         Registries.init(registryManager);
@@ -97,75 +83,7 @@ public abstract class GameBase implements Game {
         eventBus.post(new GameEvent.Ready(this));
     }
 
-    private void constructMods() {
-        logger.info("Loading Mods!");
-        modManager = new DefaultModManager();
-
-        Path modFolder = Paths.get("mods");
-        if (!Files.exists(modFolder)) {
-            try {
-                Files.createDirectory(modFolder);
-            } catch (IOException e) {
-                logger.warn(e.getMessage(), e);
-            }
-        }
-
-        try {
-            Collection<ModContainer> modContainers = modManager.loadMod(ModCollector.createFolderModCollector(modFolder));
-            modContainers.forEach(modContainer -> eventBus.register(modContainer.getInstance()));
-            modContainers.forEach(modContainer -> logger.info("Loaded mod: {}", modContainer.getModId()));
-
-            loadDevEnvMod();
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-
-//        Platform.getLogger().info("Initializing Mods!");
-//        getContext().post(new EngineEvent.ModInitializationEvent(this));
-//        Platform.getLogger().info("Finishing Construction!");
-//        getContext().post(new EngineEvent.ModConstructionFinish(this));
-    }
-
-    private void loadDevEnvMod() {
-        if (engine.getRuntimeEnvironment() != RuntimeEnvironment.MOD_DEVELOPMENT)
-            return;
-
-        List<Path> directories = findDirectoriesInClassPath();
-
-        Path modPath = findModInDirectories(directories);
-        if (modPath == null)
-            return;
-
-        ModContainer modContainer = modManager.loadMod(modPath);
-        ModClassLoader classLoader = (ModClassLoader) modContainer.getClassLoader();
-        for (Path directory : directories) {
-            classLoader.addPath(directory);
-        }
-
-        eventBus.register(modContainer.getInstance());
-        logger.info("Loaded mod: {}", modContainer.getModId());
-    }
-
-    private List<Path> findDirectoriesInClassPath() {
-        List<Path> paths = new ArrayList<>();
-        for (String path : SystemUtils.JAVA_CLASS_PATH.split(";")) {
-            Path _path = Path.of(path);
-            if (Files.isDirectory(_path)) {
-                paths.add(_path);
-            }
-        }
-        return paths;
-    }
-
-    private Path findModInDirectories(List<Path> paths) {
-        for (Path path : paths) {
-            if (Files.exists(path.resolve("metadata.json"))) {
-                return path;
-            }
-        }
-        return null;
-    }
-
+    @Nonnull
     @Override
     public Engine getEngine() {
         return engine;
@@ -183,12 +101,6 @@ public abstract class GameBase implements Game {
         return registryManager;
     }
 
-    @Nonnull
-    @Override
-    public Logger getLogger() {
-        return logger;
-    }
-
     @Override
     public boolean isTerminated() {
         return terminated;
@@ -196,6 +108,7 @@ public abstract class GameBase implements Game {
 
     @Override
     public void init() {
+        logger.info(marker, "Initializing Game.");
         constructStage();
         registerStage();
         resourceStage();
@@ -211,7 +124,7 @@ public abstract class GameBase implements Game {
     @Override
     public synchronized void terminate() {
         terminated = true;
-        logger.info("Marked game terminated!");
+        logger.info(marker, "Marked game terminated!");
     }
 
     @Override

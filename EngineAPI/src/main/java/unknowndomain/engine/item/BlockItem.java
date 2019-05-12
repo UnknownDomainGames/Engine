@@ -5,11 +5,11 @@ import unknowndomain.engine.block.Block;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class ItemBlock extends ItemBase {
+public class BlockItem extends BaseItem {
 
     private final Block block;
 
-    public ItemBlock(@Nonnull Block block) {
+    public BlockItem(@Nonnull Block block) {
         this.block = Objects.requireNonNull(block);
         registerName(block.getRegisterName());
         initComponent();

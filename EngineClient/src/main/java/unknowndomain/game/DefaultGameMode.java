@@ -24,15 +24,15 @@ import unknowndomain.engine.client.rendering.texture.TextureAtlasPart;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.component.TwoHands;
-import unknowndomain.engine.entity.item.EntityItem;
+import unknowndomain.engine.entity.item.ItemEntity;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.registry.RegistrationEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
 import unknowndomain.engine.event.world.block.BlockActivateEvent;
 import unknowndomain.engine.event.world.block.BlockClickEvent;
+import unknowndomain.engine.item.BlockItem;
 import unknowndomain.engine.item.Item;
-import unknowndomain.engine.item.ItemBlock;
 import unknowndomain.engine.item.ItemPrototype;
 import unknowndomain.engine.item.ItemStack;
 import unknowndomain.engine.player.Player;
@@ -52,18 +52,18 @@ import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 public final class DefaultGameMode {
 
     @Listener
-    public void constructionRegistry(RegistryConstructionEvent e) {
+    public static void constructionRegistry(RegistryConstructionEvent e) {
         // TODO: move to common.
         e.register(new SimpleBlockRegistry());
         e.register(new IdAutoIncreaseRegistry<>(Item.class));
 
         e.register(new IdAutoIncreaseRegistry<>(KeyBinding.class));
         e.register(new IdAutoIncreaseRegistry<>(ClientBlock.class));
-//        e.registerPostTask(Block.class, Item.class, (block, registry)->registry.register(new ItemBlock(block)));
+//        e.registerPostTask(Block.class, Item.class, (block, registry)->registry.register(new BlockItem(block)));
     }
 
     @Listener
-    public void registerStage(RegistrationEvent.Start e) {
+    public static void registerStage(RegistrationEvent.Start e) {
         RegistryManager registryManager = e.getRegistryManager();
         registerBlocks((BlockRegistry) registryManager.getRegistry(Block.class));
         registerItems(registryManager.getRegistry(Item.class));
@@ -71,26 +71,26 @@ public final class DefaultGameMode {
         registerClientBlock(registryManager.getRegistry(ClientBlock.class));
     }
 
-    private void registerBlocks(BlockRegistry registry) {
+    private static void registerBlocks(BlockRegistry registry) {
         registry.register(Blocks.AIR);
         registry.register(Blocks.GRASS);
         registry.register(Blocks.DIRT);
         registry.setAirBlock(Blocks.AIR);
     }
 
-    private void registerItems(Registry<Item> registry) {
-        registry.register(new ItemBlock(Blocks.AIR));
+    private static void registerItems(Registry<Item> registry) {
+        registry.register(new BlockItem(Blocks.AIR));
         registry.register(Items.GRASS);
         registry.register(Items.DIRT);
     }
 
-    private void registerClientBlock(Registry<ClientBlock> registry) {
+    private static void registerClientBlock(Registry<ClientBlock> registry) {
         registry.register(new ClientBlockAir(Blocks.AIR));
         registry.register(new ClientBlockDefault(Blocks.GRASS));
         registry.register(new ClientBlockDefault(Blocks.DIRT));
     }
 
-    private void registerKeyBindings(Registry<KeyBinding> registry) {
+    private static void registerKeyBindings(Registry<KeyBinding> registry) {
 
         // TODO: When separating common and client, only register on client side
         // TODO: almost everything is hardcoded... Fix when GameContext and
@@ -149,9 +149,9 @@ public final class DefaultGameMode {
             Camera camera = game.getEngine().getRenderContext().getCamera();
             Entity entity = player.getControlledEntity();
             player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
-                    // TODO: Dont create ItemBlock
+                    // TODO: Dont create BlockItem
                     entity.getComponent(TwoHands.class)
-                            .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new ItemBlock(hit.getBlock()))))
+                            .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new BlockItem(hit.getBlock()))))
             );
         }, ActionMode.PRESS));
         registry.register(KeyBinding.create("game.chat", Key.KEY_T, (game)->{
@@ -169,7 +169,7 @@ public final class DefaultGameMode {
 
     @Listener
     @Deprecated
-    public void assetLoad(AssetReloadEvent event) {
+    public static void assetLoad(AssetReloadEvent event) {
         AssetPath enginePath = AssetPath.of("engine");
         AssetPath blockTexturePath = AssetPath.of(enginePath, "texture", "block");
         TextureManager textureManager = Platform.getEngineClient().getRenderContext().getTextureManager();
@@ -187,7 +187,7 @@ public final class DefaultGameMode {
     }
 
     @Listener
-    public void engineInit(EngineEvent.InitializationComplete event) {
+    public static void engineInit(EngineEvent.Ready event) {
         var renderContext = Platform.getEngineClient().getRenderContext();
         var guiManager = renderContext.getGuiManager();
 
@@ -196,13 +196,13 @@ public final class DefaultGameMode {
     }
 
     @Listener
-    public void registerItemRenderer(ItemRendererRegistrationEvent event) {
+    public static void registerItemRenderer(ItemRendererRegistrationEvent event) {
         event.register(Items.GRASS, new ItemBlockRenderer());
         event.register(Items.DIRT, new ItemBlockRenderer());
     }
 
     @Listener
-    public void registerEntityRenderer(EntityRendererRegistrationEvent event) {
-        event.register(EntityItem.class, new EntityItemRenderer());
+    public static void registerEntityRenderer(EntityRendererRegistrationEvent event) {
+        event.register(ItemEntity.class, new EntityItemRenderer());
     }
 }

@@ -10,7 +10,7 @@ import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 import unknowndomain.engine.entity.component.TwoHands;
-import unknowndomain.engine.item.ItemBlock;
+import unknowndomain.engine.item.BlockItem;
 import unknowndomain.engine.item.ItemStack;
 import unknowndomain.engine.registry.Registry;
 
@@ -31,7 +31,7 @@ public class ItemRendererTest implements ItemRenderer {
 
     @Override
     public void render(ItemStack itemStack, float partial) {
-        ClientBlock clientBlock = clientBlockRegistry.getValue(((ItemBlock) itemStack.getItem()).getBlock().getId());
+        ClientBlock clientBlock = clientBlockRegistry.getValue(((BlockItem) itemStack.getItem()).getBlock().getId());
 
         Tessellator tessellator = Tessellator.getInstance();
         GLBuffer buffer = tessellator.getBuffer();
