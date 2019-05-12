@@ -1,7 +1,6 @@
 package unknowndomain.engine.game;
 
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,25 +11,13 @@ import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.game.GameEvent;
 import unknowndomain.engine.event.registry.RegistrationEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
-import unknowndomain.engine.mod.ModContainer;
-import unknowndomain.engine.mod.ModManager;
-import unknowndomain.engine.mod.impl.DefaultModManager;
-import unknowndomain.engine.mod.java.ModClassLoader;
-import unknowndomain.engine.mod.util.ModCollector;
 import unknowndomain.engine.registry.Registries;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.SimpleRegistryManager;
-import unknowndomain.engine.util.RuntimeEnvironment;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -41,7 +28,6 @@ public abstract class GameBase implements Game {
 
     protected final Logger logger = LoggerFactory.getLogger("Game");
 
-    protected ModManager modManager;
     protected RegistryManager registryManager;
 
     protected EventBus eventBus;
@@ -58,7 +44,6 @@ public abstract class GameBase implements Game {
      * Construct stage, collect mod and resource according to it option
      */
     protected void constructStage() {
-        constructMods();
     }
 
     /**
@@ -95,75 +80,6 @@ public abstract class GameBase implements Game {
      */
     protected void finishStage() {
         eventBus.post(new GameEvent.Ready(this));
-    }
-
-    private void constructMods() {
-        logger.info("Loading Mods!");
-        modManager = new DefaultModManager();
-
-        Path modFolder = Paths.get("mods");
-        if (!Files.exists(modFolder)) {
-            try {
-                Files.createDirectory(modFolder);
-            } catch (IOException e) {
-                logger.warn(e.getMessage(), e);
-            }
-        }
-
-        try {
-            Collection<ModContainer> modContainers = modManager.loadMod(ModCollector.createFolderModCollector(modFolder));
-            modContainers.forEach(modContainer -> eventBus.register(modContainer.getInstance()));
-            modContainers.forEach(modContainer -> logger.info("Loaded mod: {}", modContainer.getModId()));
-
-            loadDevEnvMod();
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-
-//        Platform.getLogger().info("Initializing Mods!");
-//        getContext().post(new EngineEvent.ModInitializationEvent(this));
-//        Platform.getLogger().info("Finishing Construction!");
-//        getContext().post(new EngineEvent.ModConstructionFinish(this));
-    }
-
-    private void loadDevEnvMod() {
-        if (engine.getRuntimeEnvironment() != RuntimeEnvironment.MOD_DEVELOPMENT)
-            return;
-
-        List<Path> directories = findDirectoriesInClassPath();
-
-        Path modPath = findModInDirectories(directories);
-        if (modPath == null)
-            return;
-
-        ModContainer modContainer = modManager.loadMod(modPath);
-        ModClassLoader classLoader = (ModClassLoader) modContainer.getClassLoader();
-        for (Path directory : directories) {
-            classLoader.addPath(directory);
-        }
-
-        eventBus.register(modContainer.getInstance());
-        logger.info("Loaded mod: {}", modContainer.getModId());
-    }
-
-    private List<Path> findDirectoriesInClassPath() {
-        List<Path> paths = new ArrayList<>();
-        for (String path : SystemUtils.JAVA_CLASS_PATH.split(";")) {
-            Path _path = Path.of(path);
-            if (Files.isDirectory(_path)) {
-                paths.add(_path);
-            }
-        }
-        return paths;
-    }
-
-    private Path findModInDirectories(List<Path> paths) {
-        for (Path path : paths) {
-            if (Files.exists(path.resolve("metadata.json"))) {
-                return path;
-            }
-        }
-        return null;
     }
 
     @Override
