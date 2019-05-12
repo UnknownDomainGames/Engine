@@ -3,7 +3,8 @@ package unknowndomain.engine.game;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.SimpleEventBus;
@@ -26,7 +27,8 @@ public abstract class GameBase implements Game {
 
     protected final Engine engine;
 
-    protected final Logger logger = LoggerFactory.getLogger("Game");
+    protected final Logger logger;
+    protected final Marker marker = MarkerFactory.getMarker("Game");
 
     protected RegistryManager registryManager;
 
@@ -37,6 +39,7 @@ public abstract class GameBase implements Game {
 
     public GameBase(Engine engine) {
         this.engine = engine;
+        this.logger = engine.getLogger();
         this.eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
     }
 
@@ -51,18 +54,18 @@ public abstract class GameBase implements Game {
      */
     protected void registerStage() {
         // Registration Stage
-        logger.info("Creating Registry Manager!");
+        logger.info(marker, "Creating Registry Manager!");
         Map<Class<?>, Registry<?>> registries = Maps.newHashMap();
         Map<Class<?>, List<Pair<Class<? extends RegistryEntry>, BiConsumer<RegistryEntry, Registry>>>> afterRegistries = Maps.newHashMap();
         eventBus.post(new RegistryConstructionEvent(registries, afterRegistries));
         registryManager = new SimpleRegistryManager(Map.copyOf(registries), Map.copyOf(afterRegistries));
-        logger.info("Registering!");
+        logger.info(marker, "Registering!");
         eventBus.post(new RegistrationEvent.Start(registryManager));
 
         for (Registry<?> registry : registries.values())
             eventBus.post(new RegistrationEvent.Register<>(registry));
 
-        logger.info("Finishing Registration!");
+        logger.info(marker, "Finishing Registration!");
         eventBus.post(new RegistrationEvent.Finish(registryManager));
 
         Registries.init(registryManager);
@@ -82,6 +85,7 @@ public abstract class GameBase implements Game {
         eventBus.post(new GameEvent.Ready(this));
     }
 
+    @Nonnull
     @Override
     public Engine getEngine() {
         return engine;
@@ -99,12 +103,6 @@ public abstract class GameBase implements Game {
         return registryManager;
     }
 
-    @Nonnull
-    @Override
-    public Logger getLogger() {
-        return logger;
-    }
-
     @Override
     public boolean isTerminated() {
         return terminated;
@@ -112,6 +110,7 @@ public abstract class GameBase implements Game {
 
     @Override
     public void init() {
+        logger.info(marker, "Initializing Game.");
         constructStage();
         registerStage();
         resourceStage();
@@ -127,7 +126,7 @@ public abstract class GameBase implements Game {
     @Override
     public synchronized void terminate() {
         terminated = true;
-        logger.info("Marked game terminated!");
+        logger.info(marker, "Marked game terminated!");
     }
 
     @Override

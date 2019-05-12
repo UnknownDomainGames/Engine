@@ -36,6 +36,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         this.player = player;
     }
 
+    @Nonnull
     @Override
     public EngineClient getEngine() {
         return engineClient;

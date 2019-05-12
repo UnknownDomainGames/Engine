@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 
 public interface GameClient extends Game {
 
+    @Nonnull
     @Override
     EngineClient getEngine();
 

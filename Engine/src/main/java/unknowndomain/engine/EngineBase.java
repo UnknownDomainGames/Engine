@@ -121,7 +121,7 @@ public abstract class EngineBase implements Engine {
     }
 
     private void loadMods() {
-        logger.info("Loading Mods......");
+        logger.info("Loading Mods.");
         modManager = new DefaultModManager();
 
         Path modFolder = Paths.get("mods");
