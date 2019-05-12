@@ -72,19 +72,19 @@ public class Scene {
     private double lastPosX = Double.NaN;
     private double lastPosY = Double.NaN;
 
-    public final Window.CursorCallback cursorCallback = (window, xpos, ypos) -> {
+    public final Window.CursorCallback cursorCallback = (window, xPos, yPos) -> {
         if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
             var old = root.getPointingComponents((float) lastPosX, (float) lastPosY);
-            var n = root.getPointingComponents((float) xpos, (float) ypos);
+            var n = root.getPointingComponents((float) xPos, (float) yPos);
             List<Component> moveEvent = old.stream().filter(n::contains).collect(Collectors.toList());
-            List<Component> leavEevent = old.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
+            List<Component> leaveEvent = old.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
             List<Component> enterEvent = n.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
-            moveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component, lastPosX, lastPosY, xpos, ypos)));
-            enterEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component, lastPosX, lastPosY, xpos, ypos)));
-            leavEevent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(component, lastPosX, lastPosY, xpos, ypos)));
+            moveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component, lastPosX, lastPosY, xPos, yPos)));
+            enterEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component, lastPosX, lastPosY, xPos, yPos)));
+            leaveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(component, lastPosX, lastPosY, xPos, yPos)));
         }
-        lastPosX = xpos;
-        lastPosY = ypos;
+        lastPosX = xPos;
+        lastPosY = yPos;
     };
 
     public final Window.MouseCallback mouseCallback = (window, button, action, modifiers) -> {
@@ -103,11 +103,11 @@ public class Scene {
         }
     };
 
-    public final Window.ScrollCallback scrollCallback = (window, xoffset, yoffset) -> {
+    public final Window.ScrollCallback scrollCallback = (window, xOffset, yOffset) -> {
 
     };
 
-    public final Window.KeyCallback keyCallback = (window, key, scancode, action, mods) -> {
+    public final Window.KeyCallback keyCallback = (window, key, scanCode, action, mods) -> {
         var a = root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
         a.add(root);
         for (Component component : a) {
