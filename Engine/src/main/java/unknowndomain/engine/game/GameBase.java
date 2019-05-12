@@ -7,8 +7,6 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.event.SimpleEventBus;
-import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.game.GameEvent;
 import unknowndomain.engine.event.registry.RegistrationEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
@@ -40,7 +38,7 @@ public abstract class GameBase implements Game {
     public GameBase(Engine engine) {
         this.engine = engine;
         this.logger = engine.getLogger();
-        this.eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+        this.eventBus = engine.getEventBus();
     }
 
     /**

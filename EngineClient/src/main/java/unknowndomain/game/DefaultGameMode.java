@@ -52,7 +52,7 @@ import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
 public final class DefaultGameMode {
 
     @Listener
-    public void constructionRegistry(RegistryConstructionEvent e) {
+    public static void constructionRegistry(RegistryConstructionEvent e) {
         // TODO: move to common.
         e.register(new SimpleBlockRegistry());
         e.register(new IdAutoIncreaseRegistry<>(Item.class));
@@ -63,7 +63,7 @@ public final class DefaultGameMode {
     }
 
     @Listener
-    public void registerStage(RegistrationEvent.Start e) {
+    public static void registerStage(RegistrationEvent.Start e) {
         RegistryManager registryManager = e.getRegistryManager();
         registerBlocks((BlockRegistry) registryManager.getRegistry(Block.class));
         registerItems(registryManager.getRegistry(Item.class));
@@ -71,26 +71,26 @@ public final class DefaultGameMode {
         registerClientBlock(registryManager.getRegistry(ClientBlock.class));
     }
 
-    private void registerBlocks(BlockRegistry registry) {
+    private static void registerBlocks(BlockRegistry registry) {
         registry.register(Blocks.AIR);
         registry.register(Blocks.GRASS);
         registry.register(Blocks.DIRT);
         registry.setAirBlock(Blocks.AIR);
     }
 
-    private void registerItems(Registry<Item> registry) {
+    private static void registerItems(Registry<Item> registry) {
         registry.register(new BlockItem(Blocks.AIR));
         registry.register(Items.GRASS);
         registry.register(Items.DIRT);
     }
 
-    private void registerClientBlock(Registry<ClientBlock> registry) {
+    private static void registerClientBlock(Registry<ClientBlock> registry) {
         registry.register(new ClientBlockAir(Blocks.AIR));
         registry.register(new ClientBlockDefault(Blocks.GRASS));
         registry.register(new ClientBlockDefault(Blocks.DIRT));
     }
 
-    private void registerKeyBindings(Registry<KeyBinding> registry) {
+    private static void registerKeyBindings(Registry<KeyBinding> registry) {
 
         // TODO: When separating common and client, only register on client side
         // TODO: almost everything is hardcoded... Fix when GameContext and
@@ -169,7 +169,7 @@ public final class DefaultGameMode {
 
     @Listener
     @Deprecated
-    public void assetLoad(AssetReloadEvent event) {
+    public static void assetLoad(AssetReloadEvent event) {
         AssetPath enginePath = AssetPath.of("engine");
         AssetPath blockTexturePath = AssetPath.of(enginePath, "texture", "block");
         TextureManager textureManager = Platform.getEngineClient().getRenderContext().getTextureManager();
@@ -187,7 +187,7 @@ public final class DefaultGameMode {
     }
 
     @Listener
-    public void engineInit(EngineEvent.InitializationComplete event) {
+    public static void engineInit(EngineEvent.InitializationComplete event) {
         var renderContext = Platform.getEngineClient().getRenderContext();
         var guiManager = renderContext.getGuiManager();
 
@@ -196,13 +196,13 @@ public final class DefaultGameMode {
     }
 
     @Listener
-    public void registerItemRenderer(ItemRendererRegistrationEvent event) {
+    public static void registerItemRenderer(ItemRendererRegistrationEvent event) {
         event.register(Items.GRASS, new ItemBlockRenderer());
         event.register(Items.DIRT, new ItemBlockRenderer());
     }
 
     @Listener
-    public void registerEntityRenderer(EntityRendererRegistrationEvent event) {
+    public static void registerEntityRenderer(EntityRendererRegistrationEvent event) {
         event.register(ItemEntity.class, new EntityItemRenderer());
     }
 }

@@ -11,7 +11,6 @@ import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.mod.impl.DefaultModManager;
 import unknowndomain.engine.mod.java.ModClassLoader;
-import unknowndomain.engine.mod.util.ModCollector;
 import unknowndomain.engine.util.RuntimeEnvironment;
 
 import java.io.IOException;
@@ -134,7 +133,7 @@ public abstract class EngineBase implements Engine {
         }
 
         try {
-            modManager.loadMod(ModCollector.createFolderModCollector(modFolder));
+            modManager.loadMod(createFolderModCollector(modFolder));
             loadDevEnvMod();
 
             Collection<ModContainer> loadedMods = modManager.getLoadedMods();
@@ -150,6 +149,18 @@ public abstract class EngineBase implements Engine {
 //        getContext().post(new EngineEvent.ModInitializationEvent(this));
 //        Platform.getLogger().info("Finishing Construction!");
 //        getContext().post(new EngineEvent.ModConstructionFinish(this));
+    }
+
+    private Iterator<Path> createFolderModCollector(Path folder) throws IOException {
+        if (!Files.exists(folder)) {
+            throw new IllegalStateException("Path is not exists.");
+        }
+
+        if (!Files.isDirectory(folder)) {
+            throw new IllegalArgumentException("Path must be directory.");
+        }
+
+        return Files.find(folder, 1, (path, basicFileAttributes) -> path.getFileName().toString().endsWith(".jar")).iterator();
     }
 
     private void loadDevEnvMod() {

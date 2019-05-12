@@ -15,7 +15,6 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
-import unknowndomain.game.DefaultGameMode;
 import unknowndomain.game.init.Blocks;
 import unknowndomain.game.init.Items;
 
@@ -77,11 +76,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     @Override
     protected void constructStage() {
         super.constructStage();
-
-        // TODO: Move it
-        eventBus.register(new DefaultGameMode());
-
-//        player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
     }
 
     @Override

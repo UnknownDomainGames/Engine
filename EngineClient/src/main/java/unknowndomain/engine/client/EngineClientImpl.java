@@ -55,7 +55,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         super.initEngine();
 
         // TODO: Remove it
-        getEventBus().register(new DefaultGameMode());
+        getEventBus().register(DefaultGameMode.class);
 
         initEngineClient();
     }
