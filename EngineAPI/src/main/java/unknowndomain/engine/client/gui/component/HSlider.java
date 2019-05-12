@@ -27,10 +27,6 @@ public class HSlider extends Region {
         return value;
     }
 
-    public double getPreMove() {
-        return preMove;
-    }
-
     public void setPreMove(float preMove) {
         this.preMove = preMove;
     }
@@ -53,7 +49,7 @@ public class HSlider extends Region {
     @Override
     public void onClick(MouseEvent.MouseClickEvent e) {
         super.onClick(e);
-        if (e.getPosX() > range.x().get()) {
+        if (e.getPosX() > range.x().get() + range.prefWidth()) {
             value.set(value.getValue() + preMove);
         } else if (e.getPosX() < range.x().get()) {
             value.set(value.getValue() - preMove);

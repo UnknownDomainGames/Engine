@@ -186,9 +186,9 @@ public abstract class Component {
                 }
             }
         }
-
-        if(parent().getValue() instanceof Container)
-            this.parent().getValue().handleEvent(event);
+//
+//        if(parent().getValue() instanceof Container)
+//            this.parent().getValue().handleEvent(event);
     }
 
     public void onRelease(MouseEvent.MouseReleasedEvent event) {
