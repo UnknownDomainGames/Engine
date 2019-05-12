@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.event.SimpleEventBus;
 import unknowndomain.engine.event.asm.AsmEventListenerFactory;
+import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.mod.impl.DefaultModManager;
@@ -215,6 +216,7 @@ public abstract class EngineBase implements Engine {
         }
 
         terminated = true;
+        eventBus.post(new EngineEvent.MarkedTermination(this));
         logger.info("Marked engine terminated!");
     }
 

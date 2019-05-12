@@ -187,7 +187,7 @@ public final class DefaultGameMode {
     }
 
     @Listener
-    public static void engineInit(EngineEvent.InitializationComplete event) {
+    public static void engineInit(EngineEvent.Ready event) {
         var renderContext = Platform.getEngineClient().getRenderContext();
         var guiManager = renderContext.getGuiManager();
 
