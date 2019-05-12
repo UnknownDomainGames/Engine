@@ -8,12 +8,12 @@ import unknowndomain.engine.client.gui.event.MouseEvent;
 
 import java.util.function.Consumer;
 
-public class ImageButton extends Image {
+public class ImageButton extends Control {
     private final MutableValue<AssetPath> background = new SimpleMutableObjectValue<>();
     private final MutableValue<AssetPath> hoveredBg = new SimpleMutableObjectValue<>();
     private final MutableValue<AssetPath> pressedBg = new SimpleMutableObjectValue<>();
     private final MutableValue<AssetPath> disableBg = new SimpleMutableObjectValue<>();
-
+    private Image image = new Image();
     public ImageButton(AssetPath path) {
         this();
         background.setValue(path);
@@ -28,6 +28,7 @@ public class ImageButton extends Image {
         hoveredBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         disableBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         handleBackground();
+        this.getChildren().addAll(image);
     }
 
     public MutableValue<AssetPath> hoverBackground() {
@@ -59,27 +60,24 @@ public class ImageButton extends Image {
     }
 
     public MutableFloatValue buttonWidth() {
-        return imageHeight();
+        return image.imageHeight();
     }
 
     public MutableFloatValue buttonHeight() {
-        return imageHeight();
+        return image.imageHeight();
     }
 
 
     protected void handleBackground() {
         if (disabled().get()) {
-            super.image().setValue(disabledBackground().getValue());
+            image.path().setValue(disabledBackground().getValue());
         } else if (pressed().get()) {
-            super.image().setValue(pressBackground().getValue());
+            image.path().setValue(pressBackground().getValue());
         } else if (hover().get()) {
-            super.image().setValue(hoverBackground().getValue());
+            image.path().setValue(hoverBackground().getValue());
         } else {
-            super.image().setValue(buttonBackground().getValue());
+            image.path().setValue(buttonBackground().getValue());
         }
     }
 
-    private void rebuild(){
-
-    }
 }

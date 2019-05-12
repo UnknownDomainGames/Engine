@@ -3,9 +3,7 @@ package unknowndomain.engine.client.gui.component;
 import com.github.mouse0w0.lib4j.observable.value.MutableFloatValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableFloatValue;
 import unknowndomain.engine.client.asset.AssetPath;
-import unknowndomain.engine.client.gui.misc.Background;
-import unknowndomain.engine.client.gui.text.Text;
-import unknowndomain.engine.util.Color;
+import unknowndomain.engine.client.gui.event.MouseEvent;
 
 /*
  * Range:a component which is limited in a range;
@@ -26,7 +24,7 @@ public class Range extends Shadow {
         x().addChangeListener((ob,o,n)->reBuild());
         y().addChangeListener((ob,o,n)->reBuild());
         this.getChildren().addAll(image);
-        image.image().setValue(AssetPath.of("engine","texture","gui","slider.png"));
+        image.path().setValue(AssetPath.of("engine","texture","gui","slider.png"));
     }
 
     public Range(float minX, float maxX, float minY, float maxY) {
@@ -41,6 +39,7 @@ public class Range extends Shadow {
     }
 
     public void reBuild() {
+        System.out.println(x().get()+"x");
         if (x().get() > maxX().get()) {
             x().set(maxX().get());
         }
@@ -55,7 +54,7 @@ public class Range extends Shadow {
         }
         image.x().set(x().get());
         image.y().set(y().get());
-        System.out.println(image.x().get());
+        System.out.println(image.x().get()+"img");
     }
 
     public MutableFloatValue minX() {

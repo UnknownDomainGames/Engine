@@ -5,6 +5,7 @@ import com.github.mouse0w0.lib4j.observable.value.MutableValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import unknowndomain.engine.client.asset.AssetPath;
+import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.util.Color;
 
@@ -25,15 +26,9 @@ public class HSlider extends Control {
     private float preMove = 0;
 
     public HSlider() {
-        back.setOnClick(e -> {
-            if (e.getPosX() > range.x().get()) {
-                value.set(value.getValue() + preMove);
-            } else if (e.getPosX() < range.x().get()) {
-                value.set(value.getValue() - preMove);
-            }
-        });
         value.addChangeListener((ob, o, n) -> rebuild());
-        this.getChildren().addAll(back, leftBtn, rightBtn, range);
+        backBg().addChangeListener((ob, o, n) -> reSize());
+        this.getChildren().addAll(back, range, leftBtn, rightBtn);
     }
 
 
@@ -71,16 +66,40 @@ public class HSlider extends Control {
         } else if (value.get() < min) {
             value.set(min);
         }
+        System.out.println(value.get() + "v");
+        System.out.println(preMove);
+        range.x().set((back.prefWidth()) / (range.maxX().get() - range.minX().get()) * value.get());
+        range.y().set(back.y().get() + back.prefHeight() / 2 - range.prefHeight() / 2);
+    }
 
+    public void reSize() {
         leftBtn.x().set(back.x().getValue() - leftBtn.prefWidth() / 2);
         leftBtn.y().set(back.y().getValue() + back.prefHeight() / 2 - leftBtn.prefHeight() / 2);
 
         rightBtn.x().set(back.x().get() + back.prefWidth() - rightBtn.prefWidth() / 2);
         rightBtn.y().set(back.y().get() + back.prefHeight() / 2 - rightBtn.prefHeight() / 2);
+        range.minX().set(back.x().getValue());
+        range.maxX().set(back.x().getValue() + back.prefWidth() - range.prefWidth() / 2);
+        range.minY().set(back.y().get() + back.prefHeight() / 2 - range.prefHeight() / 2);
+        range.maxY().set(back.y().get() + back.prefHeight() / 2 - range.prefHeight() / 2);
 
-        range.x().set(back.x().get() + back.prefWidth()/2 - range.prefWidth() / 2);
+        range.x().set(back.x().get() + back.prefWidth() / 2 - range.prefWidth() / 2);
         range.y().set(back.y().get() + back.prefHeight() / 2 - range.prefHeight() / 2);
-        System.out.println(back.x().get());
+
+    }
+
+    @Override
+    public void onClick(MouseEvent.MouseClickEvent e) {
+        super.onClick(e);
+        System.out.println(range.x().get());
+        System.out.println(e.getPosX());
+        if (e.getPosX() > range.x().get()) {
+            System.out.println("r");
+            value.set(value.getValue() + preMove);
+        } else if (e.getPosX() < range.x().get()) {
+            System.out.println("l");
+            value.set(value.getValue() - preMove);
+        }
     }
 
     public MutableValue<AssetPath> leftBtnBg() {
@@ -101,5 +120,12 @@ public class HSlider extends Control {
 
     public MutableValue<AssetPath> backBg() {
         return back.buttonBackground();
+    }
+
+    public void setRange(float minX, float maxX, float minY, float maxY) {
+        this.range.maxX().set(maxX);
+        this.range.minX().set(minX);
+        this.range.minY().set(minY);
+        this.range.maxY().set(maxY);
     }
 }
