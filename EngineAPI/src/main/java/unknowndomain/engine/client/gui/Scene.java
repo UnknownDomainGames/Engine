@@ -76,12 +76,12 @@ public class Scene {
         if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
             var old = root.getPointingComponents((float) lastPosX, (float) lastPosY);
             var n = root.getPointingComponents((float) xpos, (float) ypos);
-            List<Component> moveevent = old.stream().filter(n::contains).collect(Collectors.toList());
-            List<Component> leaveevent = old.stream().filter(o -> !moveevent.contains(o)).collect(Collectors.toList());
-            List<Component> enterevent = n.stream().filter(o -> !moveevent.contains(o)).collect(Collectors.toList());
-            moveevent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component, lastPosX, lastPosY, xpos, ypos)));
-            enterevent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component, lastPosX, lastPosY, xpos, ypos)));
-            leaveevent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(component, lastPosX, lastPosY, xpos, ypos)));
+            List<Component> moveEvent = old.stream().filter(n::contains).collect(Collectors.toList());
+            List<Component> leavEevent = old.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
+            List<Component> enterEvent = n.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
+            moveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component, lastPosX, lastPosY, xpos, ypos)));
+            enterEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component, lastPosX, lastPosY, xpos, ypos)));
+            leavEevent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(component, lastPosX, lastPosY, xpos, ypos)));
         }
         lastPosX = xpos;
         lastPosY = ypos;
