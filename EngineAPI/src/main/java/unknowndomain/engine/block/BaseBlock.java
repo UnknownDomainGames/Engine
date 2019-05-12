@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Set;
 
-public class BlockBase extends RegistryEntry.Impl<Block> implements Block {
+public class BaseBlock extends RegistryEntry.Impl<Block> implements Block {
 
     private final ComponentContainer components = new ComponentContainer();
 
@@ -27,7 +27,7 @@ public class BlockBase extends RegistryEntry.Impl<Block> implements Block {
         return this;
     }
 
-    public BlockBase setBoundingBoxes(AABBd[] boundingBoxes) {
+    public BaseBlock setBoundingBoxes(AABBd[] boundingBoxes) {
         this.boundingBoxes = boundingBoxes;
         return this;
     }

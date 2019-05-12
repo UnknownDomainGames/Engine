@@ -2,9 +2,9 @@ package unknowndomain.engine.entity;
 
 import unknowndomain.engine.world.World;
 
-public class EntityCamera extends EntityBase {
+public class CameraEntity extends BaseEntity {
 
-    public EntityCamera(int id, World world) {
+    public CameraEntity(int id, World world) {
         super(id, world);
     }
 }

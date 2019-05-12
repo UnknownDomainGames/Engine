@@ -6,10 +6,8 @@ import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.entity.Entity;
-import unknowndomain.engine.entity.EntityPlayer;
+import unknowndomain.engine.entity.PlayerEntity;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
-import unknowndomain.engine.event.world.block.BlockPlaceEvent;
-import unknowndomain.engine.event.world.block.BlockReplaceEvent;
 import unknowndomain.engine.event.world.block.cause.BlockChangeCause;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.math.AABBs;
@@ -59,7 +57,7 @@ public class WorldCommon implements World, Runnable {
     @Deprecated
     public void playerJoin(Player player) {
         // FIXME:
-        var entity = new EntityPlayer(entityList.size(), this);
+        var entity = new PlayerEntity(entityList.size(), this);
         player.controlEntity(entity);
         spawnEntity(entity);
         players.add(player);

@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Set;
 
-public abstract class EntityBase implements Entity {
+public abstract class BaseEntity implements Entity {
     private int id;
 
     private World world;
@@ -24,13 +24,13 @@ public abstract class EntityBase implements Entity {
 
     private final ComponentContainer components;
 
-    public EntityBase(int id, World world) {
+    public BaseEntity(int id, World world) {
         this.id = id;
         this.world = world;
         this.components = new ComponentContainer();
     }
 
-    public EntityBase(int id, World world, Vector3dc position) {
+    public BaseEntity(int id, World world, Vector3dc position) {
         this(id, world);
         this.position.set(position);
     }

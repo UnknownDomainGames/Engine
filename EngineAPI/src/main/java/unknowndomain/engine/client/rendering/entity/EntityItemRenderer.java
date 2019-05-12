@@ -4,9 +4,9 @@ import org.joml.Matrix4f;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.item.ItemRenderManager;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
-import unknowndomain.engine.entity.item.EntityItem;
+import unknowndomain.engine.entity.item.ItemEntity;
 
-public class EntityItemRenderer implements EntityRenderer<EntityItem> {
+public class EntityItemRenderer implements EntityRenderer<ItemEntity> {
 
     private RenderContext context;
 
@@ -16,12 +16,12 @@ public class EntityItemRenderer implements EntityRenderer<EntityItem> {
     }
 
     @Override
-    public boolean shouldRender(EntityItem entity, double x, double y, double z, float partial) {
+    public boolean shouldRender(ItemEntity entity, double x, double y, double z, float partial) {
         return true;
     }
 
     @Override
-    public void render(EntityItem entity, double x, double y, double z, float partial) {
+    public void render(ItemEntity entity, double x, double y, double z, float partial) {
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f()
                 .translate((float) x, (float) y + .5f - .5f * (float) Math.sin(Math.toRadians((entity.getWorld().getGameTick() + partial) * 10)), (float) z)
                 .scale(1f / 3, 1f / 3, 1f / 3)

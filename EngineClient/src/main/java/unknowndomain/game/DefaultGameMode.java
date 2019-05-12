@@ -24,15 +24,15 @@ import unknowndomain.engine.client.rendering.texture.TextureAtlasPart;
 import unknowndomain.engine.client.rendering.texture.TextureManager;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.component.TwoHands;
-import unknowndomain.engine.entity.item.EntityItem;
+import unknowndomain.engine.entity.item.ItemEntity;
 import unknowndomain.engine.event.Listener;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.registry.RegistrationEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
 import unknowndomain.engine.event.world.block.BlockActivateEvent;
 import unknowndomain.engine.event.world.block.BlockClickEvent;
+import unknowndomain.engine.item.BlockItem;
 import unknowndomain.engine.item.Item;
-import unknowndomain.engine.item.ItemBlock;
 import unknowndomain.engine.item.ItemPrototype;
 import unknowndomain.engine.item.ItemStack;
 import unknowndomain.engine.player.Player;
@@ -59,7 +59,7 @@ public final class DefaultGameMode {
 
         e.register(new IdAutoIncreaseRegistry<>(KeyBinding.class));
         e.register(new IdAutoIncreaseRegistry<>(ClientBlock.class));
-//        e.registerPostTask(Block.class, Item.class, (block, registry)->registry.register(new ItemBlock(block)));
+//        e.registerPostTask(Block.class, Item.class, (block, registry)->registry.register(new BlockItem(block)));
     }
 
     @Listener
@@ -79,7 +79,7 @@ public final class DefaultGameMode {
     }
 
     private void registerItems(Registry<Item> registry) {
-        registry.register(new ItemBlock(Blocks.AIR));
+        registry.register(new BlockItem(Blocks.AIR));
         registry.register(Items.GRASS);
         registry.register(Items.DIRT);
     }
@@ -149,9 +149,9 @@ public final class DefaultGameMode {
             Camera camera = game.getEngine().getRenderContext().getCamera();
             Entity entity = player.getControlledEntity();
             player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
-                    // TODO: Dont create ItemBlock
+                    // TODO: Dont create BlockItem
                     entity.getComponent(TwoHands.class)
-                            .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new ItemBlock(hit.getBlock()))))
+                            .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new BlockItem(hit.getBlock()))))
             );
         }, ActionMode.PRESS));
         registry.register(KeyBinding.create("game.chat", Key.KEY_T, (game)->{
@@ -203,6 +203,6 @@ public final class DefaultGameMode {
 
     @Listener
     public void registerEntityRenderer(EntityRendererRegistrationEvent event) {
-        event.register(EntityItem.class, new EntityItemRenderer());
+        event.register(ItemEntity.class, new EntityItemRenderer());
     }
 }

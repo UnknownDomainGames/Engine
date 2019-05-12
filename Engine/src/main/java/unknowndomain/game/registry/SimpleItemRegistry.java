@@ -3,8 +3,8 @@ package unknowndomain.game.registry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import unknowndomain.engine.block.Block;
+import unknowndomain.engine.item.BlockItem;
 import unknowndomain.engine.item.Item;
-import unknowndomain.engine.item.ItemBlock;
 import unknowndomain.engine.registry.RegisterException;
 import unknowndomain.engine.registry.game.ItemRegistry;
 
@@ -19,9 +19,9 @@ public class SimpleItemRegistry implements ItemRegistry {
     protected final BiMap<String, Item> nameToObject = HashBiMap.create();
     protected final BiMap<Integer, Item> idToObject = HashBiMap.create();
     private final AtomicInteger nextId = new AtomicInteger(0);
-    protected final BiMap<Block, ItemBlock> blockToCorrItem = HashBiMap.create();
+    protected final BiMap<Block, BlockItem> blockToCorrItem = HashBiMap.create();
     @Override
-    public ItemBlock getItemBlock(Block block) {
+    public BlockItem getItemBlock(Block block) {
         return blockToCorrItem.get(block);
     }
 
@@ -49,8 +49,8 @@ public class SimpleItemRegistry implements ItemRegistry {
         }
         nameToObject.put(obj.getRegisterName(), obj);
         setId(obj, nextId.getAndIncrement());
-        if(obj instanceof ItemBlock){
-            ItemBlock itemBlock = (ItemBlock) obj;
+        if (obj instanceof BlockItem) {
+            BlockItem itemBlock = (BlockItem) obj;
             blockToCorrItem.put((itemBlock).getBlock(), itemBlock);
         }
         return obj;

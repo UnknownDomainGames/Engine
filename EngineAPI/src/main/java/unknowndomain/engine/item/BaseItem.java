@@ -11,10 +11,10 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Set;
 
-public class ItemBase extends RegistryEntry.Impl<Item> implements Item {
+public class BaseItem extends RegistryEntry.Impl<Item> implements Item {
     private final ComponentContainer components = new ComponentContainer();
 
-    protected ItemBase(){
+    protected BaseItem() {
         setComponent(ItemPrototype.HitBlockBehavior.class, new ItemPrototype.HitBlockBehavior() {
             @Override
             public void onHit(Player player, ItemStack itemStack, RayTraceBlockHit hit) {
