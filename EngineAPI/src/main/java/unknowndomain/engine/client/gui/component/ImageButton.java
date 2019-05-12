@@ -69,11 +69,11 @@ public class ImageButton extends Control {
 
 
     protected void handleBackground() {
-        if (disabled().get()) {
+        if (disabled().get() && disabledBackground().getValue() != null) {
             image.path().setValue(disabledBackground().getValue());
-        } else if (pressed().get()) {
+        } else if (pressed().get() && pressBackground().getValue() != null) {
             image.path().setValue(pressBackground().getValue());
-        } else if (hover().get()) {
+        } else if (hover().get() && hoverBackground().getValue() != null) {
             image.path().setValue(hoverBackground().getValue());
         } else {
             image.path().setValue(buttonBackground().getValue());
