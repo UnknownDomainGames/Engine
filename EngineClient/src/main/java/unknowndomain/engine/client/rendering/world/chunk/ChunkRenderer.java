@@ -36,7 +36,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.lwjgl.opengl.GL11.*;
-import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
+import static unknowndomain.engine.client.rendering.texture.StandardTextureAtlas.BLOCK;
 import static unknowndomain.engine.world.chunk.ChunkConstants.*;
 
 public class ChunkRenderer {

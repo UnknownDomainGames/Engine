@@ -47,7 +47,7 @@ import unknowndomain.game.init.Blocks;
 import unknowndomain.game.init.Items;
 import unknowndomain.game.registry.SimpleBlockRegistry;
 
-import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
+import static unknowndomain.engine.client.rendering.texture.StandardTextureAtlas.BLOCK;
 
 public final class DefaultGameMode {
 

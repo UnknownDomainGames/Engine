@@ -19,7 +19,7 @@ public class EngineTextureManager implements TextureManager {
 
     private final Map<AssetPath, MutableValue<GLTexture>> textures = new HashMap<>();
 
-    private final Map<TextureType, TextureAtlasImpl> texturesAtlases = new HashMap<>();
+    private final Map<TextureAtlasName, TextureAtlasImpl> texturesAtlases = new HashMap<>();
 
     private final GLTexture whiteTexture;
 
@@ -55,17 +55,17 @@ public class EngineTextureManager implements TextureManager {
     }
 
     @Override
-    public TextureAtlasPart addTextureToAtlas(AssetPath path, TextureType type) {
+    public TextureAtlasPart addTextureToAtlas(AssetPath path, TextureAtlasName type) {
         return texturesAtlases.computeIfAbsent(type, key -> new TextureAtlasImpl()).addTexture(path);
     }
 
     @Override
-    public TextureAtlas getTextureAtlas(TextureType type) {
+    public TextureAtlas getTextureAtlas(TextureAtlasName type) {
         return texturesAtlases.computeIfAbsent(type, key -> new TextureAtlasImpl());
     }
 
     @Override
-    public void reloadTextureAtlas(TextureType type) {
+    public void reloadTextureAtlas(TextureAtlasName type) {
         try {
             if (texturesAtlases.containsKey(type)) {
                 texturesAtlases.get(type).reload();

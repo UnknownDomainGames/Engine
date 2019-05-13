@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
-import static unknowndomain.engine.client.rendering.texture.TextureTypes.BLOCK;
+import static unknowndomain.engine.client.rendering.texture.StandardTextureAtlas.BLOCK;
 
 public class ItemRenderManagerImpl implements ItemRenderManager {
 

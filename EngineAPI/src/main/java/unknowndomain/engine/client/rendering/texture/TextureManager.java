@@ -11,11 +11,11 @@ public interface TextureManager {
 
     GLTexture getTextureDirect(TextureBuffer buffer);
 
-    TextureAtlasPart addTextureToAtlas(AssetPath path, TextureType type);
+    TextureAtlasPart addTextureToAtlas(AssetPath path, TextureAtlasName type);
 
-    TextureAtlas getTextureAtlas(TextureType type);
+    TextureAtlas getTextureAtlas(TextureAtlasName type);
 
-    void reloadTextureAtlas(TextureType type);
+    void reloadTextureAtlas(TextureAtlasName type);
 
     void reload();
 
