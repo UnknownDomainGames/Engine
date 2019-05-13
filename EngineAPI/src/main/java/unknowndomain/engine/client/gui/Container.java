@@ -138,7 +138,7 @@ public abstract class Container extends Component {
             if (component.contains(posX, posY)) {
                 if (component instanceof Container) {
                     var container = (Container) component;
-                    list.add(container);
+//                    list.add(container);
                     list.addAll(container.getPointingComponents(posX - container.x().get(), posY - container.y().get()));
                 } else {
                     list.add(component);

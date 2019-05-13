@@ -48,8 +48,8 @@ public class GUIGameCreation extends BorderPane {
         buttonExit.disabled().set(true);
         vBox.getChildren().add(buttonExit);
 
-        VSlider v = new VSlider();
-        v.backBg().setValue(AssetPath.of("engine","texture","gui","v_slider.png"));
+        HSlider v = new HSlider();
+        v.backBg().setValue(AssetPath.of("engine","texture","gui","range.png"));
         v.sliderBg().setValue(AssetPath.of("engine", "texture", "gui", "slider.png"));
         v.setPreMove(0.01f);
         vBox.getChildren().addAll(v);
