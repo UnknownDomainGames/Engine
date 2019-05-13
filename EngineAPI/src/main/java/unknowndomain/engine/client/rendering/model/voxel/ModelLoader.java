@@ -69,7 +69,7 @@ public class ModelLoader {
         ModelData.Element.Cube cube = new ModelData.Element.Cube();
         cube.from = loadVector3f(json.getAsJsonArray("from"));
         cube.to = loadVector3f(json.getAsJsonArray("to"));
-        cube.faces = loadFaces(json);
+        cube.faces = loadFaces(json.getAsJsonObject("faces"));
         return cube;
     }
 
