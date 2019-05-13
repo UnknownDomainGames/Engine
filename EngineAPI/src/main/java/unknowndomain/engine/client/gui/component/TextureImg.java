@@ -9,7 +9,7 @@ import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
 import unknowndomain.engine.client.gui.rendering.ImageRenderer;
 import unknowndomain.engine.client.rendering.texture.GLTexture;
 
-public class Texture extends Component {
+public class TextureImg extends Component {
     private final SimpleMutableObjectValue<AssetPath> image = new SimpleMutableObjectValue<>();
     private final SimpleMutableFloatValue imgX = new SimpleMutableFloatValue();
     private final SimpleMutableFloatValue imgY = new SimpleMutableFloatValue();
@@ -18,7 +18,7 @@ public class Texture extends Component {
     private AssetPath cachedPath;
     private GLTexture cachedTexture;
 
-    public Texture() {
+    public TextureImg() {
         image.addChangeListener((ob, o, n) -> {
             buildCache();
             requestParentLayout();
@@ -29,7 +29,7 @@ public class Texture extends Component {
         imgHeight.addChangeListener((ob, o, n) -> requestParentLayout());
     }
 
-    public Texture(AssetPath path) {
+    public TextureImg(AssetPath path) {
         this();
         image.setValue(path);
     }

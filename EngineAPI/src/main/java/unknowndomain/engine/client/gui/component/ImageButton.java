@@ -8,12 +8,11 @@ import unknowndomain.engine.client.gui.event.MouseEvent;
 
 import java.util.function.Consumer;
 
-public class ImageButton extends Control {
+public class ImageButton extends Image {
     private final MutableValue<AssetPath> background = new SimpleMutableObjectValue<>();
     private final MutableValue<AssetPath> hoveredBg = new SimpleMutableObjectValue<>();
     private final MutableValue<AssetPath> pressedBg = new SimpleMutableObjectValue<>();
     private final MutableValue<AssetPath> disableBg = new SimpleMutableObjectValue<>();
-    private Texture texture = new Texture();
     public ImageButton(AssetPath path) {
         this();
         background.setValue(path);
@@ -28,7 +27,6 @@ public class ImageButton extends Control {
         hoveredBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         disableBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         handleBackground();
-        this.getChildren().addAll(texture);
     }
 
     public MutableValue<AssetPath> hoverBackground() {
@@ -60,23 +58,23 @@ public class ImageButton extends Control {
     }
 
     public MutableFloatValue buttonWidth() {
-        return texture.imageHeight();
+        return super.imageHeight();
     }
 
     public MutableFloatValue buttonHeight() {
-        return texture.imageHeight();
+        return super.imageHeight();
     }
 
 
     protected void handleBackground() {
         if (disabled().get() && disabledBackground().getValue() != null) {
-            texture.path().setValue(disabledBackground().getValue());
+            super.path().setValue(disabledBackground().getValue());
         } else if (pressed().get() && pressBackground().getValue() != null) {
-            texture.path().setValue(pressBackground().getValue());
+            super.path().setValue(pressBackground().getValue());
         } else if (hover().get() && hoverBackground().getValue() != null) {
-            texture.path().setValue(hoverBackground().getValue());
+            super.path().setValue(hoverBackground().getValue());
         } else {
-            texture.path().setValue(buttonBackground().getValue());
+            super.path().setValue(buttonBackground().getValue());
         }
     }
 

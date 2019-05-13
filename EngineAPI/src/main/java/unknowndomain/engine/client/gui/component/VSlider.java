@@ -10,7 +10,7 @@ import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.event.Event;
 
 public class VSlider extends Region {
-    private Texture slider = new Texture();
+    private Image slider = new Image();
 
     private ImageButton back = new ImageButton();
 
