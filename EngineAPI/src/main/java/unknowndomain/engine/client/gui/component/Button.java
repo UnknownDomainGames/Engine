@@ -6,8 +6,6 @@ import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.client.gui.misc.Insets;
-import unknowndomain.engine.client.gui.rendering.ComponentRenderer;
-import unknowndomain.engine.client.gui.text.Text;
 import unknowndomain.engine.util.Color;
 
 import java.util.function.Consumer;
