@@ -1,6 +1,9 @@
 package unknowndomain.engine.client.rendering.model.voxel;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
+import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import unknowndomain.engine.client.rendering.texture.TextureAtlasPart;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
@@ -50,62 +53,62 @@ public class ModelBaker {
         float maxV = textureAtlasPart.getMinV() + v * face.texture.uv.w();
         Vector3fc from = cube.from;
         Vector3fc to = cube.to;
-        float fromX;
-        float fromY;
-        float toX;
-        float toY;
-        float z;
+
+        Vector3f v1,v2,v3,v4;
 
         switch (facing) {
             case NORTH:
-                fromX = from.x();
-                fromY = from.y();
-                toX = to.x();
-                toY = to.y();
-                z = to.z();
-                bakeQuad(buffer, fromX, fromY, z, toX, fromY, z, toX, toY, z, fromX, toY, z, minU, minV, maxU, maxV);
+                v1 = new Vector3f(from.x(), from.y(), to.z());
+                v2 = new Vector3f(to.x(), from.y(), to.z());
+                v3 = new Vector3f(to.x(), to.y(), to.z());
+                v4 = new Vector3f(from.x(), to.y(), to.z());
                 break;
             case SOUTH:
-                fromX = from.x();
-                fromY = from.y();
-                toX = to.x();
-                toY = to.y();
-                z = from.z();
-                bakeQuad(buffer, toX, fromY, z, fromX, fromY, z, fromX, toY, z, toX, toY, z, minU, minV, maxU, maxV);
+                v1 = new Vector3f(to.x(), from.y(), from.z());
+                v2 = new Vector3f(from.x(), from.y(), from.z());
+                v3 = new Vector3f(from.x(), to.y(), from.z());
+                v4 = new Vector3f(to.x(), to.y(), from.z());
                 break;
             case EAST:
-                fromX = from.y();
-                fromY = from.z();
-                toX = to.y();
-                toY = to.z();
-                z = to.x();
-                bakeQuad(buffer, z, fromX, toY, z, fromX, fromY, z, toX, fromY, z, toX, toY, minU, minV, maxU, maxV);
+                v1 = new Vector3f(to.x(), from.y(), to.z());
+                v2 = new Vector3f(to.x(), from.y(), from.z());
+                v3 = new Vector3f(to.x(), to.y(), from.z());
+                v4 = new Vector3f(to.x(), to.y(), to.z());
                 break;
             case WEST:
-                fromX = from.y();
-                fromY = from.z();
-                toX = to.y();
-                toY = to.z();
-                z = from.x();
-                bakeQuad(buffer, z, fromX, fromY, z, fromX, toY, z, toX, toY, z, toX, fromY, minU, minV, maxU, maxV);
+                v1 = new Vector3f(from.x(), from.y(), from.z());
+                v2 = new Vector3f(from.x(), from.y(), to.z());
+                v3 = new Vector3f(from.x(), to.y(), to.z());
+                v4 = new Vector3f(from.x(), to.y(), from.z());
                 break;
             case UP:
-                fromX = from.x();
-                fromY = from.z();
-                toX = to.x();
-                toY = to.z();
-                z = to.y();
-                bakeQuad(buffer, fromX, z, toY, toX, z, toY, toX, z, fromY, fromX, z, fromY, minU, minV, maxU, maxV);
+                v1 = new Vector3f(from.x(), to.y(), to.z());
+                v2 = new Vector3f(to.x(), to.y(), to.z());
+                v3 = new Vector3f(to.x(), to.y(), from.z());
+                v4 = new Vector3f(from.x(), to.y(), from.z());
                 break;
             case DOWN:
-                fromX = from.x();
-                fromY = from.z();
-                toX = to.x();
-                toY = to.z();
-                z = from.y();
-                bakeQuad(buffer, toX, z, toY, fromX, z, toY, fromX, z, fromY, toX, z, fromY, minU, minV, maxU, maxV);
+                v1 = new Vector3f(to.x(), from.y(), to.z());
+                v2 = new Vector3f(from.x(), from.y(), to.z());
+                v3 = new Vector3f(from.x(), from.y(), from.z());
+                v4 = new Vector3f(to.x(), from.y(), from.z());
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + facing);
         }
+        bakeQuad(buffer,v1,v2,v3,v4, new Vector2f(minU,minV), new Vector2f(maxU,maxV));
+    }
+
+    private void bakeQuad(GLBuffer buffer, Vector3fc v1, Vector3fc v2, Vector3fc v3, Vector3fc v4, Vector2fc minUv,Vector2fc maxUv){
+        var normal = Math2.calcNormalByVertices(v1,v2,v3);
+        var normal1 = Math2.calcNormalByVertices(v1,v3,v4);
+        buffer.pos(v1).color(1, 1, 1).uv(minUv.x(), maxUv.y()).normal(normal).endVertex(); // 1
+        buffer.pos(v2).color(1, 1, 1).uv(maxUv.x(), maxUv.y()).normal(normal).endVertex(); // 2
+        buffer.pos(v3).color(1, 1, 1).uv(maxUv.x(), minUv.y()).normal(normal).endVertex(); // 3
+
+        buffer.pos(v1).color(1, 1, 1).uv(minUv.x(), maxUv.y()).normal(normal1).endVertex(); // 1
+        buffer.pos(v3).color(1, 1, 1).uv(maxUv.x(), minUv.y()).normal(normal1).endVertex(); // 3
+        buffer.pos(v4).color(1, 1, 1).uv(minUv.x(), minUv.y()).normal(normal1).endVertex(); // 4
     }
 
     private void bakeQuad(GLBuffer buffer,
@@ -115,23 +118,11 @@ public class ModelBaker {
                           float x4, float y4, float z4,
                           float u1, float v1,
                           float u2, float v2) {
-        var normal = Math2.calcNormalByVertices(new float[]{
-                x1, y1, z1,
-                x2, y2, z2,
-                x3, y3, z3,
-        });
-        var normal1 = Math2.calcNormalByVertices(new float[]{
-                x1, y1, z1,
-                x3, y3, z3,
-                x4, y4, z4,
-        });
-        buffer.pos(x1, y1, z1).color(1, 1, 1).uv(u1, v2).normal(normal).endVertex(); // 1
-        buffer.pos(x2, y2, z2).color(1, 1, 1).uv(u2, v2).normal(normal).endVertex(); // 2
-        buffer.pos(x3, y3, z3).color(1, 1, 1).uv(u2, v1).normal(normal).endVertex(); // 3
-
-        buffer.pos(x1, y1, z1).color(1, 1, 1).uv(u1, v2).normal(normal1).endVertex(); // 1
-        buffer.pos(x3, y3, z3).color(1, 1, 1).uv(u2, v1).normal(normal1).endVertex(); // 3
-        buffer.pos(x4, y4, z4).color(1, 1, 1).uv(u1, v1).normal(normal1).endVertex(); // 4
+        bakeQuad(buffer, new Vector3f(x1,y1,z1),
+                new Vector3f(x2,y2,z2),
+                new Vector3f(x3,y3,z3),
+                new Vector3f(x4,y4,z4),
+                new Vector2f(u1,v1),new Vector2f(u2,v2));
     }
 
     private class BakedModelPrimer {

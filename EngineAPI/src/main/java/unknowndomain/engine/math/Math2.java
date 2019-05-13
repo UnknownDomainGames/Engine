@@ -77,4 +77,19 @@ public final class Math2 {
         nz = u.x * v.y - u.y * v.x;
         return new Vector3f(nx, ny, nz).normalize();
     }
+    /**
+     * Calculate normal of a triangle by vertices.
+     *
+     * @return
+     */
+    public static Vector3fc calcNormalByVertices(Vector3fc v1,Vector3fc v2,Vector3fc v3) {
+        var u = new Vector3f();
+        var v = new Vector3f();
+        v2.sub(v1,u);
+        v3.sub(v1,v);
+        float nx = u.y * v.z - u.z * v.y;
+        float ny = u.z * v.x - u.x * v.z;
+        float nz = u.x * v.y - u.y * v.x;
+        return new Vector3f(nx, ny, nz).normalize();
+    }
 }

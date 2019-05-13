@@ -17,7 +17,7 @@ public class ClientBlockDefault extends RegistryEntry.Impl<ClientBlock> implemen
 
     // TODO: Better renderer init.
     @Deprecated
-    public static final Map<Block, BlockModel> blockRendererMap = new HashMap<>();
+    public static final Map<Block, BlockMeshGenerator> blockRendererMap = new HashMap<>();
 
     private final Block block;
 
