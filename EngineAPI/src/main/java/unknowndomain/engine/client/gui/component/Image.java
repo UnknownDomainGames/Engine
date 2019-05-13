@@ -78,7 +78,7 @@ public class Image extends Component {
         return imgHeight;
     }
 
-    public SimpleMutableObjectValue<AssetPath> image() {
+    public SimpleMutableObjectValue<AssetPath> path() {
         return image;
     }
 

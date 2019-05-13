@@ -1,13 +1,15 @@
 package unknowndomain.engine.client.gui.component;
 
-import com.github.mouse0w0.lib4j.observable.value.*;
+import com.github.mouse0w0.lib4j.observable.value.MutableDoubleValue;
+import com.github.mouse0w0.lib4j.observable.value.MutableValue;
+import com.github.mouse0w0.lib4j.observable.value.SimpleMutableDoubleValue;
+import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.gui.Region;
 import unknowndomain.engine.client.gui.event.MouseEvent;
 import unknowndomain.engine.event.Event;
 
-
-public class HSlider extends Region {
+public class VSlider extends Region {
     private Image slider = new Image();
 
     private ImageButton back = new ImageButton();
@@ -18,7 +20,7 @@ public class HSlider extends Region {
 
     private boolean select = false;
 
-    public HSlider() {
+    public VSlider() {
         value.addChangeListener((ob, o, n) -> rebuild());
         backBg().addChangeListener((ob, o, n) -> reSize());
         sliderBg().addChangeListener((ob, o, n) -> reSize());
@@ -39,8 +41,8 @@ public class HSlider extends Region {
         } else if (value.get() < 0) {
             value.set(0);
         }
-        slider.x().set((float) ((back.prefWidth()) * value.get() - slider.prefWidth() / 2));
-        slider.y().set(back.y().get() + back.prefHeight() / 2 - slider.prefHeight() / 2);
+        slider.x().set(back.x().get() + back.prefWidth() / 2 - slider.prefWidth() / 2);
+        slider.y().set((float) ((back.prefHeight() * value.get()) - slider.prefHeight() / 2));
     }
 
     public void reSize() {
@@ -51,9 +53,9 @@ public class HSlider extends Region {
     @Override
     public void onClick(MouseEvent.MouseClickEvent e) {
         super.onClick(e);
-        if (e.getPosX() > slider.x().get() + slider.prefWidth()) {
+        if (e.getPosY() > slider.y().get() + slider.prefWidth()) {
             value.set(value.getValue() + preMove);
-        } else if (e.getPosX() < slider.x().get()) {
+        } else if (e.getPosY() < slider.y().get()) {
             value.set(value.getValue() - preMove);
         }
         if (slider.contains(e.getPosX(), e.getPosY()))
@@ -64,7 +66,7 @@ public class HSlider extends Region {
     public void handleEvent(Event event) {
         super.handleEvent(event);
         if (event instanceof MouseEvent.MouseMoveEvent && select) {
-            value.set((((MouseEvent.MouseMoveEvent) event).getNewPosX() - x().get())/prefWidth());
+            value.set((((MouseEvent.MouseMoveEvent) event).getNewPosY() - y().get()) / prefHeight());
         } else if (event instanceof MouseEvent.MouseReleasedEvent) {
             select = false;
         } else if (event instanceof MouseEvent.MouseLeaveEvent) {
@@ -76,7 +78,7 @@ public class HSlider extends Region {
         return back.buttonBackground();
     }
 
-    public SimpleMutableObjectValue<AssetPath> sliderBg(){
+    public SimpleMutableObjectValue<AssetPath> sliderBg() {
         return slider.path();
     }
 }

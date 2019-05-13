@@ -6,6 +6,7 @@ import unknowndomain.engine.client.game.GameClientStandalone;
 import unknowndomain.engine.client.gui.component.Button;
 import unknowndomain.engine.client.gui.component.Label;
 import unknowndomain.engine.client.gui.component.HSlider;
+import unknowndomain.engine.client.gui.component.VSlider;
 import unknowndomain.engine.client.gui.layout.BorderPane;
 import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.misc.Background;
@@ -38,8 +39,9 @@ public class GUIGameCreation extends BorderPane {
         buttonCreate.setOnClick(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
             var player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
-            engine.startGame(new GameClientStandalone(engine, player));
             engine.getRenderContext().getGuiManager().closeScreen();
+            engine.startGame(new GameClientStandalone(engine, player));
+
         });
         vBox.getChildren().add(buttonCreate);
 
@@ -49,10 +51,9 @@ public class GUIGameCreation extends BorderPane {
 
         HSlider v = new HSlider();
         v.backBg().setValue(AssetPath.of("engine","texture","gui","range.png"));
-        v.leftBtnBg().setValue(AssetPath.of("engine","texture","gui","left_arrow.png"));
-        v.rightBtnBg().setValue(AssetPath.of("engine","texture","gui","right_arrow.png"));
-        v.rebuild();
-//        vBox.getChildren().addAll(v);
+        v.sliderBg().setValue(AssetPath.of("engine", "texture", "gui", "slider.png"));
+        v.setPreMove(0.01f);
+        vBox.getChildren().addAll(v);
 
     }
 

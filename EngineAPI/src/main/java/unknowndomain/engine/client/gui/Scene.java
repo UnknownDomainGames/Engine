@@ -97,7 +97,7 @@ public class Scene {
                     var pair = component.relativePos(((float) lastPosX), ((float) lastPosY));
                     component.handleEvent(new MouseEvent.MouseClickEvent(component, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)));
                 });
-            }
+        }
             if (action == GLFW.GLFW_RELEASE)
                 list.forEach(component -> component.handleEvent(new MouseEvent.MouseReleasedEvent(component, (float) lastPosX, (float) lastPosY, Key.valueOf(400 + button))));
         }
