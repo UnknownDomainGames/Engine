@@ -10,7 +10,12 @@ import org.joml.Vector4fc;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.rendering.texture.TextureAtlas;
 import unknowndomain.engine.util.Facing;
+import unknowndomain.engine.util.JsonUtils;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,18 +29,24 @@ public class ModelLoader {
         this.textureAtlas = textureAtlas;
     }
 
-    public Model load(JsonObject json) {
-        Model model = new Model();
+    public ModelData load(Path path) throws IOException {
+        try (Reader reader = Files.newBufferedReader(path)) {
+            return load(JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonObject());
+        }
+    }
+
+    public ModelData load(JsonObject json) {
+        ModelData modelData = new ModelData();
         if (json.has("parent")) {
-            model.parent = AssetPath.of(json.get("parent").getAsString());
+            modelData.parent = AssetPath.of(json.get("parent").getAsString());
         }
         if (json.has("textures")) {
-            model.textures = loadTextures(json.getAsJsonObject("textures"));
+            modelData.textures = loadTextures(json.getAsJsonObject("textures"));
         }
         if (json.has("elements")) {
-            model.elements = loadElements(json.getAsJsonArray("elements"));
+            modelData.elements = loadElements(json.getAsJsonArray("elements"));
         }
-        return model;
+        return modelData;
     }
 
     private Map<String, String> loadTextures(JsonObject json) {
@@ -46,32 +57,32 @@ public class ModelLoader {
         return Map.copyOf(map);
     }
 
-    private List<Model.Element> loadElements(JsonArray json) {
-        List<Model.Element> elements = new ArrayList<>();
+    private List<ModelData.Element> loadElements(JsonArray json) {
+        List<ModelData.Element> elements = new ArrayList<>();
         for (JsonElement jsonElement : json) {
             elements.add(loadCube(jsonElement.getAsJsonObject()));
         }
         return elements;
     }
 
-    private Model.Element.Cube loadCube(JsonObject json) {
-        Model.Element.Cube cube = new Model.Element.Cube();
+    private ModelData.Element.Cube loadCube(JsonObject json) {
+        ModelData.Element.Cube cube = new ModelData.Element.Cube();
         cube.from = loadVector3f(json.getAsJsonArray("from"));
         cube.to = loadVector3f(json.getAsJsonArray("to"));
         cube.faces = loadFaces(json);
         return cube;
     }
 
-    private Model.Element.Cube.Face[] loadFaces(JsonObject json) {
-        Model.Element.Cube.Face[] faces = new Model.Element.Cube.Face[6];
+    private ModelData.Element.Cube.Face[] loadFaces(JsonObject json) {
+        ModelData.Element.Cube.Face[] faces = new ModelData.Element.Cube.Face[6];
         for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
             faces[Facing.valueOf(entry.getKey().toUpperCase()).index] = loadFace(entry.getValue().getAsJsonObject());
         }
         return faces;
     }
 
-    private Model.Element.Cube.Face loadFace(JsonObject json) {
-        Model.Element.Cube.Face face = new Model.Element.Cube.Face();
+    private ModelData.Element.Cube.Face loadFace(JsonObject json) {
+        ModelData.Element.Cube.Face face = new ModelData.Element.Cube.Face();
         face.texture = loadTexture(json.getAsJsonObject("texture"));
         face.cullFace = loadCullFace(json.get("cullFace"));
         return face;
@@ -81,8 +92,8 @@ public class ModelLoader {
         return new Vector3f(json.get(0).getAsFloat(), json.get(1).getAsFloat(), json.get(2).getAsFloat());
     }
 
-    private Model.Texture loadTexture(JsonObject json) {
-        Model.Texture texture = new Model.Texture();
+    private ModelData.Texture loadTexture(JsonObject json) {
+        ModelData.Texture texture = new ModelData.Texture();
         texture.textureAtlasPart = textureAtlas.addTexture(AssetPath.of(json.get("name").getAsString()));
         texture.uv = loadVector4f(json.getAsJsonArray("uv"));
         return texture;

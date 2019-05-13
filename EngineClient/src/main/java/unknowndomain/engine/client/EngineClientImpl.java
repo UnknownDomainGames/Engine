@@ -13,6 +13,7 @@ import unknowndomain.engine.client.rendering.EngineRenderContext;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.game3d.Game3DRenderer;
 import unknowndomain.engine.client.rendering.gui.GuiRenderer;
+import unknowndomain.engine.client.rendering.model.voxel.VoxelModelManager;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.sound.ALSoundManager;
 import unknowndomain.engine.client.sound.EngineSoundManager;
@@ -37,6 +38,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     private AssetSource engineAssetSource;
     private EngineAssetLoadManager assetLoadManager;
     private EngineAssetManager assetManager;
+    private VoxelModelManager voxelModelManager;
     private EngineSoundManager soundManager;
     private EngineRenderContext renderContext;
 
@@ -62,6 +64,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private void initEngineClient() {
         logger.info("Initializing client engine!");
+        clientThread = Thread.currentThread();
         disposer = new DisposerImpl();
 
         logger.info("Initializing asset!");
@@ -74,26 +77,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         renderContext = new EngineRenderContext(this);
         renderContext.getRenderers().add(new Game3DRenderer());
         renderContext.getRenderers().add(new GuiRenderer());
-
-        logger.info("Initializing audio context!");
-        soundManager = new EngineSoundManager();
-        soundManager.init();
-        addShutdownListener(soundManager::dispose);
-
-        assetManager.getReloadListeners().add(() -> {
-            ShaderManager.INSTANCE.reload();
-            renderContext.getTextureManager().reload();
-            soundManager.reload();
-        });
-
-        ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), Ticker.CLIENT_TICK);
-    }
-
-    @Override
-    public void runEngine() {
-        super.runEngine();
-
-        clientThread = Thread.currentThread();
         renderContext.init(clientThread);
         renderContext.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         // TODO: Remove it.
@@ -103,6 +86,27 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             }
         });
         addShutdownListener(renderContext::dispose);
+
+        voxelModelManager = new VoxelModelManager(this);
+
+        logger.info("Initializing audio context!");
+        soundManager = new EngineSoundManager();
+        soundManager.init();
+        addShutdownListener(soundManager::dispose);
+
+        assetManager.getReloadListeners().add(() -> {
+            ShaderManager.INSTANCE.reload();
+            renderContext.getTextureManager().reload();
+            voxelModelManager.reload();
+            soundManager.reload();
+        });
+
+        ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), Ticker.CLIENT_TICK);
+    }
+
+    @Override
+    public void runEngine() {
+        super.runEngine();
 
         assetManager.reload();
 
@@ -179,6 +183,11 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     @Override
     public AssetSource getEngineAssetSource() {
         return engineAssetSource;
+    }
+
+    @Override
+    public VoxelModelManager getVoxelModelManager() {
+        return voxelModelManager;
     }
 
     @Override

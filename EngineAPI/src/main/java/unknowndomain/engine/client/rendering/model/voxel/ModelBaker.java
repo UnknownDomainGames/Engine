@@ -20,16 +20,16 @@ public class ModelBaker {
         this.modelManager = modelManager;
     }
 
-    public BakedModel bake(Model model) {
+    public Model bake(ModelData modelData) {
         BakedModelPrimer primer = new BakedModelPrimer();
 
-        List<Model.Element> elements = model.parent == null ? model.elements : modelManager.getModel(model.parent).elements;
-        for (Model.Element element : elements) {
-            Model.Element.Cube cube = (Model.Element.Cube) element;
+        List<ModelData.Element> elements = modelData.parent == null ? modelData.elements : modelManager.getModel(modelData.parent).elements;
+        for (ModelData.Element element : elements) {
+            ModelData.Element.Cube cube = (ModelData.Element.Cube) element;
 
-            Model.Element.Cube.Face[] faces = cube.faces;
+            ModelData.Element.Cube.Face[] faces = cube.faces;
             for (Facing facing : Facing.values()) {
-                Model.Element.Cube.Face face = faces[facing.index];
+                ModelData.Element.Cube.Face face = faces[facing.index];
                 if (face == null)
                     continue;
 
@@ -40,7 +40,7 @@ public class ModelBaker {
         return primer.build();
     }
 
-    private void bakeFace(Model.Element.Cube cube, Model.Element.Cube.Face face, Facing facing, GLBuffer buffer) {
+    private void bakeFace(ModelData.Element.Cube cube, ModelData.Element.Cube.Face face, Facing facing, GLBuffer buffer) {
         TextureAtlasPart textureAtlasPart = face.texture.textureAtlasPart;
         float u = textureAtlasPart.getMaxU() - textureAtlasPart.getMinU();
         float v = textureAtlasPart.getMaxV() - textureAtlasPart.getMinV();
@@ -148,12 +148,12 @@ public class ModelBaker {
             return buffer;
         }
 
-        public BakedModel build() {
-            List<BakedModel.Mesh> bakedMeshes = new ArrayList<>();
+        public Model build() {
+            List<Model.Mesh> bakedMeshes = new ArrayList<>();
             for (Pair<boolean[], GLBuffer> mesh : meshes) {
-                bakedMeshes.add(new BakedModel.Mesh(mesh.getRight().getBackingBuffer().array(), mesh.getLeft()));
+                bakedMeshes.add(new Model.Mesh(mesh.getRight().getBackingBuffer().array(), mesh.getLeft()));
             }
-            return new BakedModel(List.copyOf(bakedMeshes));
+            return new Model(List.copyOf(bakedMeshes));
         }
     }
 }

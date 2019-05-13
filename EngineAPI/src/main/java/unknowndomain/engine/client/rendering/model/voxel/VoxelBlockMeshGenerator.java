@@ -9,9 +9,9 @@ import unknowndomain.engine.world.BlockAccessor;
 
 public class VoxelBlockMeshGenerator implements BlockMeshGenerator {
 
-    private final BakedModel model;
+    private final Model model;
 
-    public VoxelBlockMeshGenerator(BakedModel model) {
+    public VoxelBlockMeshGenerator(Model model) {
         this.model = model;
     }
 
@@ -27,7 +27,7 @@ public class VoxelBlockMeshGenerator implements BlockMeshGenerator {
             }
         }
 
-        for (BakedModel.Mesh mesh : model.getMeshes()) {
+        for (Model.Mesh mesh : model.getMeshes()) {
             if (!checkCullFaces(cullFaces, mesh.cullFaces)) {
                 buffer.put(mesh.data);
             }
@@ -45,7 +45,7 @@ public class VoxelBlockMeshGenerator implements BlockMeshGenerator {
     @Override
     public void generate(ClientBlock block, GLBuffer buffer) {
         buffer.posOffset(0, 0, 0);
-        for (BakedModel.Mesh mesh : model.getMeshes()) {
+        for (Model.Mesh mesh : model.getMeshes()) {
             buffer.put(mesh.data);
         }
     }
