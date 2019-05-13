@@ -171,7 +171,8 @@ public final class DefaultGameMode {
     @Deprecated
     public static void assetLoad(AssetReloadEvent event) {
         AssetPath enginePath = AssetPath.of("engine");
-        AssetPath blockTexturePath = AssetPath.of(enginePath, "texture", "block");
+        AssetPath udPath = AssetPath.of("unknowndoamin");
+        AssetPath blockTexturePath = AssetPath.of(udPath, "textures", "block");
         TextureManager textureManager = Platform.getEngineClient().getRenderContext().getTextureManager();
         TextureAtlasPart side = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_side.png"), BLOCK);
         TextureAtlasPart top = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_top.png"), BLOCK);

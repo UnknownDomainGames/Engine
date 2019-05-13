@@ -248,6 +248,10 @@ public abstract class GLBuffer implements Disposable {
         return this;
     }
 
+    public GLBuffer pos(Vector3fc vec){
+        return pos(vec.x(),vec.y(),vec.z());
+    }
+
     public GLBuffer color(Color color) {
         return color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
