@@ -4,6 +4,7 @@ import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
 import com.github.mouse0w0.lib4j.observable.collection.ObservableList;
 import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import com.github.mouse0w0.lib4j.observable.value.ValueChangeListener;
+import unknowndomain.engine.client.gui.component.Control;
 import unknowndomain.engine.client.gui.util.Utils;
 
 import java.util.ArrayList;
@@ -138,8 +139,11 @@ public abstract class Container extends Component {
             if (component.contains(posX, posY)) {
                 if (component instanceof Container) {
                     var container = (Container) component;
-//                    list.add(container);
+                    if(!(component instanceof Control)){
+                        list.add(container);
+                    }
                     list.addAll(container.getPointingComponents(posX - container.x().get(), posY - container.y().get()));
+
                 } else {
                     list.add(component);
                 }
