@@ -13,22 +13,22 @@
       ],
       "faces": {
         "up": {
-          "texture": "#top"
+          "texture": "$top"
         },
         "down": {
-          "texture": "#bottom"
+          "texture": "$bottom"
         },
         "north": {
-          "texture": "#north"
+          "texture": "$north"
         },
         "south": {
-          "texture": "#south"
+          "texture": "$south"
         },
         "east": {
-          "texture": "#east"
+          "texture": "$east"
         },
         "west": {
-          "texture": "#west"
+          "texture": "$west"
         }
       }
     }

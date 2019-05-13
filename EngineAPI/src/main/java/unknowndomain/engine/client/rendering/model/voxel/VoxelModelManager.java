@@ -78,7 +78,7 @@ public class VoxelModelManager {
     }
 
     private String resolveTexture(String texture, Map<String, String> textures) {
-        while (texture.charAt(0) == '#') {
+        while (texture.charAt(0) == '$') {
             texture = textures.get(texture.substring(1));
         }
         return texture;
