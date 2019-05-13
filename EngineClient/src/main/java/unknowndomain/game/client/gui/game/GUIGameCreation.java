@@ -47,15 +47,15 @@ public class GUIGameCreation extends BorderPane {
         vBox.getChildren().add(buttonExit);
 
         HSlider v = new HSlider();
-        v.backBg().setValue(AssetPath.of("engine","texture","gui","range.png"));
-        v.sliderBg().setValue(AssetPath.of("engine", "texture", "gui", "slider.png"));
-        v.setPreMove(0.01f);
+        v.backHeight().set(20);
+        v.backWidth().set(300);
+        v.backBg().setValue(new Background(Color.BLUE));
+        v.sliderBg().setValue(new Background(Color.WHITE));
+        v.sliderHeight().set(20);
+        v.sliderWidth().set(8);
+        v.setPreMove(0.02);
         vBox.getChildren().addAll(v);
 
-        NLabel l = new NLabel();
-        l.text().setValue("111");
-        l.background().setValue(new Background(Color.BLUE));
-//        vBox.getChildren().addAll(l);
 
     }
 

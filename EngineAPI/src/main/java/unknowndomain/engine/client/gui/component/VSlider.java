@@ -1,20 +1,20 @@
 package unknowndomain.engine.client.gui.component;
 
-import com.github.mouse0w0.lib4j.observable.value.MutableDoubleValue;
-import com.github.mouse0w0.lib4j.observable.value.MutableValue;
-import com.github.mouse0w0.lib4j.observable.value.SimpleMutableDoubleValue;
-import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
+import com.github.mouse0w0.lib4j.observable.value.*;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.gui.Region;
 import unknowndomain.engine.client.gui.event.MouseEvent;
+import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.event.Event;
+import unknowndomain.engine.util.Color;
 
 public class VSlider extends Region {
-    private Image slider = new Image();
 
-    private ImageButton back = new ImageButton();
+    private Label slider = new Label();
 
-    private MutableDoubleValue value = new SimpleMutableDoubleValue(0.5);
+    private Label back = new Label();
+
+    private MutableDoubleValue value = new SimpleMutableDoubleValue(0);
 
     private double preMove = 0;
 
@@ -22,16 +22,20 @@ public class VSlider extends Region {
 
     public VSlider() {
         value.addChangeListener((ob, o, n) -> rebuild());
-        backBg().addChangeListener((ob, o, n) -> reSize());
-        sliderBg().addChangeListener((ob, o, n) -> reSize());
+        backHeight().addChangeListener((ob, o, n) -> rebuild());
+        sliderHeight().addChangeListener((ob, o, n) -> rebuild());
+        sliderWidth().addChangeListener((ob, o, n) -> rebuild());
+        backWidth().addChangeListener((ob, o, n) -> rebuild());
         this.getChildren().addAll(back, slider);
+        backBg().setValue(new Background(Color.BLUE));
+        sliderBg().setValue(new Background(Color.WHITE));
     }
 
     public MutableDoubleValue value() {
         return value;
     }
 
-    public void setPreMove(float preMove) {
+    public void setPreMove(double preMove) {
         this.preMove = preMove;
     }
 
@@ -43,11 +47,6 @@ public class VSlider extends Region {
         }
         slider.x().set(back.x().get() + back.prefWidth() / 2 - slider.prefWidth() / 2);
         slider.y().set((float) ((back.prefHeight() * value.get()) - slider.prefHeight() / 2));
-    }
-
-    public void reSize() {
-        slider.x().set(back.x().get() + back.prefWidth() / 2 - slider.prefWidth() / 2);
-        slider.y().set(back.y().get() + back.prefHeight() / 2 - slider.prefHeight() / 2);
     }
 
     @Override
@@ -66,7 +65,11 @@ public class VSlider extends Region {
     public void handleEvent(Event event) {
         super.handleEvent(event);
         if (event instanceof MouseEvent.MouseMoveEvent && select) {
-            value.set((((MouseEvent.MouseMoveEvent) event).getNewPosY() - y().get()) / prefHeight());
+            if ((((MouseEvent.MouseMoveEvent) event).getNewPosY() - y().get() - slider.y().get()) / prefWidth() > preMove * 0.8) {
+                value.set(value.getValue() + preMove);
+            } else if ((slider.y().get() - ((MouseEvent.MouseMoveEvent) event).getNewPosY() + y().get()) / prefWidth() > preMove * 0.8) {
+                value.set(value.getValue() - preMove);
+            }
         } else if (event instanceof MouseEvent.MouseReleasedEvent) {
             select = false;
         } else if (event instanceof MouseEvent.MouseLeaveEvent) {
@@ -74,11 +77,27 @@ public class VSlider extends Region {
         }
     }
 
-    public MutableValue<AssetPath> backBg() {
-        return back.buttonBackground();
+    public MutableFloatValue backWidth() {
+        return back.labelWidth();
     }
 
-    public SimpleMutableObjectValue<AssetPath> sliderBg() {
-        return slider.path();
+    public MutableFloatValue backHeight() {
+        return back.labelHeight();
+    }
+
+    public MutableValue<Background> backBg() {
+        return back.background();
+    }
+
+    public MutableValue<Background> sliderBg() {
+        return slider.background();
+    }
+
+    public MutableFloatValue sliderWidth() {
+        return slider.labelWidth();
+    }
+
+    public MutableFloatValue sliderHeight() {
+        return slider.labelHeight();
     }
 }
