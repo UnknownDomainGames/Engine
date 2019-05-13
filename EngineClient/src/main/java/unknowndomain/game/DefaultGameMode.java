@@ -8,7 +8,6 @@ import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.block.ClientBlockAir;
 import unknowndomain.engine.client.block.ClientBlockDefault;
-import unknowndomain.engine.client.event.asset.AssetReloadEvent;
 import unknowndomain.engine.client.event.rendering.EntityRendererRegistrationEvent;
 import unknowndomain.engine.client.event.rendering.ItemRendererRegistrationEvent;
 import unknowndomain.engine.client.gui.Scene;
@@ -16,12 +15,10 @@ import unknowndomain.engine.client.input.controller.MotionType;
 import unknowndomain.engine.client.input.keybinding.ActionMode;
 import unknowndomain.engine.client.input.keybinding.Key;
 import unknowndomain.engine.client.input.keybinding.KeyBinding;
-import unknowndomain.engine.client.rendering.block.model.BlockModel;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.entity.EntityItemRenderer;
 import unknowndomain.engine.client.rendering.item.ItemBlockRenderer;
-import unknowndomain.engine.client.rendering.texture.TextureAtlasPart;
-import unknowndomain.engine.client.rendering.texture.TextureManager;
+import unknowndomain.engine.client.rendering.model.voxel.VoxelMeshGenerator;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.entity.item.ItemEntity;
@@ -46,8 +43,6 @@ import unknowndomain.game.client.gui.hud.HUDGameDebug;
 import unknowndomain.game.init.Blocks;
 import unknowndomain.game.init.Items;
 import unknowndomain.game.registry.SimpleBlockRegistry;
-
-import static unknowndomain.engine.client.rendering.texture.StandardTextureAtlas.BLOCK;
 
 public final class DefaultGameMode {
 
@@ -85,9 +80,10 @@ public final class DefaultGameMode {
     }
 
     private static void registerClientBlock(Registry<ClientBlock> registry) {
+        AssetPath blockModelPath = AssetPath.of("unknowndomain", "models", "block");
         registry.register(new ClientBlockAir(Blocks.AIR));
-        registry.register(new ClientBlockDefault(Blocks.GRASS));
-        registry.register(new ClientBlockDefault(Blocks.DIRT));
+        registry.register(new ClientBlockDefault(Blocks.GRASS).setRenderer(VoxelMeshGenerator.create(AssetPath.of(blockModelPath, "grass.json"))));
+        registry.register(new ClientBlockDefault(Blocks.DIRT).setRenderer(VoxelMeshGenerator.create(AssetPath.of(blockModelPath, "dirt.json"))));
     }
 
     private static void registerKeyBindings(Registry<KeyBinding> registry) {
@@ -165,26 +161,6 @@ public final class DefaultGameMode {
         renderContext.getScheduler().runTaskEveryFrame(() -> hudGameDebug.update(renderContext));
         registry.register(KeyBinding.create("debug.switch", Key.KEY_F3, gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug))
                 , ActionMode.SWITCH).endAction((gameClient, integer) -> guiManager.hideHud("debugGame")));
-    }
-
-    @Listener
-    @Deprecated
-    public static void assetLoad(AssetReloadEvent event) {
-        AssetPath enginePath = AssetPath.of("engine");
-        AssetPath udPath = AssetPath.of("unknowndomain");
-        AssetPath blockTexturePath = AssetPath.of(udPath, "textures", "block");
-        TextureManager textureManager = Platform.getEngineClient().getRenderContext().getTextureManager();
-        TextureAtlasPart side = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_side.png"), BLOCK);
-        TextureAtlasPart top = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "grass_top.png"), BLOCK);
-        TextureAtlasPart bottom = textureManager.addTextureToAtlas(AssetPath.of(blockTexturePath, "dirt.png"), BLOCK);
-
-        BlockModel blockModel = new BlockModel();
-        blockModel.addCube(0, 0, 0, 1, 1, 1, new TextureAtlasPart[]{side, side, side, side, top, bottom});
-        ClientBlockDefault.blockRendererMap.put(Blocks.GRASS, blockModel);
-
-        blockModel = new BlockModel();
-        blockModel.addCube(0, 0, 0, 1, 1, 1, bottom);
-        ClientBlockDefault.blockRendererMap.put(Blocks.DIRT, blockModel);
     }
 
     @Listener

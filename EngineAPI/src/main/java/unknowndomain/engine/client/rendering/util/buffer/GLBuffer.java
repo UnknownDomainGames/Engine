@@ -130,9 +130,7 @@ public abstract class GLBuffer implements Disposable {
         }
     }
 
-    protected int computeNewSize(int oldSize, int needLength) {
-        return oldSize + Math2.ceil(needLength, 0x200000);
-    }
+    protected abstract int computeNewSize(int oldSize, int needLength);
 
     @Override
     public void dispose() {
@@ -184,6 +182,7 @@ public abstract class GLBuffer implements Disposable {
             if (bits % format.getStride() != 0) {
                 throw new IllegalArgumentException();
             }
+            grow(bits);
             backingBuffer.put(bytes);
             vertexCount += bits / format.getStride();
         } else {
@@ -199,6 +198,7 @@ public abstract class GLBuffer implements Disposable {
             if (bits % format.getStride() != 0) {
                 throw new IllegalArgumentException();
             }
+            grow(bits);
             for (int i = 0; i < ints.length; i++) {
                 backingBuffer.putInt(ints[i]);
             }
@@ -218,6 +218,7 @@ public abstract class GLBuffer implements Disposable {
             if (bits % format.getStride() != 0) {
                 throw new IllegalArgumentException();
             }
+            grow(bits);
             for (int i = 0; i < floats.length; i++) {
                 backingBuffer.putFloat(floats[i]);
             }
@@ -349,6 +350,11 @@ public abstract class GLBuffer implements Disposable {
         protected void freeBuffer(ByteBuffer buffer) {
             MemoryUtil.memFree(buffer);
         }
+
+        @Override
+        protected int computeNewSize(int oldSize, int needLength) {
+            return oldSize + Math2.ceil(needLength, 0x200000);
+        }
     }
 
     public static class GLHeapBuffer extends GLBuffer {
@@ -365,6 +371,11 @@ public abstract class GLBuffer implements Disposable {
         @Override
         protected void freeBuffer(ByteBuffer buffer) {
             // Don't need free buffer.
+        }
+
+        @Override
+        protected int computeNewSize(int oldSize, int needLength) {
+            return Math2.ceilPowerOfTwo(oldSize + needLength);
         }
     }
 }

@@ -8,7 +8,6 @@ import org.joml.Vector3fc;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
 import unknowndomain.engine.client.asset.AssetPath;
-import unknowndomain.engine.client.rendering.texture.TextureAtlas;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.util.JsonUtils;
 
@@ -21,12 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ModelLoader {
+class ModelLoader {
 
-    public final TextureAtlas textureAtlas;
+    private final VoxelModelManager modelManager;
 
-    public ModelLoader(TextureAtlas textureAtlas) {
-        this.textureAtlas = textureAtlas;
+    public ModelLoader(VoxelModelManager modelManager) {
+        this.modelManager = modelManager;
     }
 
     public ModelData load(Path path) throws IOException {
@@ -37,20 +36,25 @@ public class ModelLoader {
 
     public ModelData load(JsonObject json) {
         ModelData modelData = new ModelData();
+        ModelData parent = null;
         if (json.has("parent")) {
-            modelData.parent = AssetPath.of(json.get("parent").getAsString());
+            parent = modelManager.getModel(AssetPath.of(json.get("parent").getAsString()));
         }
         if (json.has("textures")) {
-            modelData.textures = loadTextures(json.getAsJsonObject("textures"));
+            modelData.textures = loadTextures(json.getAsJsonObject("textures"), parent != null && parent.textures != null ? parent.textures : Map.of());
         }
-        if (json.has("elements")) {
-            modelData.elements = loadElements(json.getAsJsonArray("elements"));
-        }
+        JsonArray elements = parent != null ? parent.rawElements : json.getAsJsonArray("elements");
+        modelData.elements = loadElements(elements);
+        modelData.rawElements = elements;
         return modelData;
     }
 
-    private Map<String, String> loadTextures(JsonObject json) {
-        Map<String, String> map = new HashMap<>();
+    private Map<String, String> loadTextures(JsonObject json, Map<String, String> parent) {
+        if (json == null) {
+            return Map.copyOf(parent);
+        }
+
+        Map<String, String> map = new HashMap<>(parent);
         for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
             map.put(entry.getKey(), entry.getValue().getAsString());
         }
@@ -58,11 +62,15 @@ public class ModelLoader {
     }
 
     private List<ModelData.Element> loadElements(JsonArray json) {
+        if (json == null) {
+            return List.of();
+        }
+
         List<ModelData.Element> elements = new ArrayList<>();
         for (JsonElement jsonElement : json) {
             elements.add(loadCube(jsonElement.getAsJsonObject()));
         }
-        return elements;
+        return List.copyOf(elements);
     }
 
     private ModelData.Element.Cube loadCube(JsonObject json) {
@@ -75,16 +83,20 @@ public class ModelLoader {
 
     private ModelData.Element.Cube.Face[] loadFaces(JsonObject json) {
         ModelData.Element.Cube.Face[] faces = new ModelData.Element.Cube.Face[6];
-        for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-            faces[Facing.valueOf(entry.getKey().toUpperCase()).index] = loadFace(entry.getValue().getAsJsonObject());
+        if (json != null) {
+            for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+                Facing facing = Facing.valueOf(entry.getKey().toUpperCase());
+                faces[facing.index] = loadFace(entry.getValue().getAsJsonObject(), facing);
+            }
         }
         return faces;
     }
 
-    private ModelData.Element.Cube.Face loadFace(JsonObject json) {
+    private ModelData.Element.Cube.Face loadFace(JsonObject json, Facing facing) {
         ModelData.Element.Cube.Face face = new ModelData.Element.Cube.Face();
-        face.texture = loadTexture(json.getAsJsonObject("texture"));
-        face.cullFace = loadCullFace(json.get("cullFace"));
+        face.texture = json.get("texture").getAsString();
+        face.uv = loadVector4f(json.getAsJsonArray("uv"));
+        face.cullFace = loadCullFace(json.get("cullFace"), facing);
         return face;
     }
 
@@ -92,25 +104,21 @@ public class ModelLoader {
         return new Vector3f(json.get(0).getAsFloat(), json.get(1).getAsFloat(), json.get(2).getAsFloat());
     }
 
-    private ModelData.Texture loadTexture(JsonObject json) {
-        ModelData.Texture texture = new ModelData.Texture();
-        texture.textureAtlasPart = textureAtlas.addTexture(AssetPath.of(json.get("name").getAsString()));
-        texture.uv = loadVector4f(json.getAsJsonArray("uv"));
-        return texture;
-    }
+    private static final Vector4fc DEFAULT_UV = new Vector4f(0, 0, 1, 1);
 
     private Vector4fc loadVector4f(JsonArray json) {
-        return new Vector4f(json.get(0).getAsFloat(), json.get(1).getAsFloat(), json.get(2).getAsFloat(), json.get(3).getAsFloat());
+        return json == null ? DEFAULT_UV :
+                new Vector4f(json.get(0).getAsFloat(), json.get(1).getAsFloat(), json.get(2).getAsFloat(), json.get(3).getAsFloat());
     }
 
-    private boolean[] loadCullFace(JsonElement json) {
+    private boolean[] loadCullFace(JsonElement json, Facing defaultCullFace) {
         boolean[] cullFaces = new boolean[6];
-        if (json.isJsonArray()) {
+        if (json != null) {
             for (JsonElement jsonElement : json.getAsJsonArray()) {
                 cullFaces[Facing.valueOf(jsonElement.getAsString().toUpperCase()).index] = true;
             }
         } else {
-            cullFaces[Facing.valueOf(json.getAsString().toUpperCase()).index] = true;
+            cullFaces[defaultCullFace.index] = true;
         }
         return cullFaces;
     }

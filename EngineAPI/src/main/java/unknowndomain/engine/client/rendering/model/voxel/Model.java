@@ -1,8 +1,10 @@
 package unknowndomain.engine.client.rendering.model.voxel;
 
+import org.joml.Vector3fc;
+
 import java.util.List;
 
-public class Model {
+class Model {
 
     private List<Mesh> meshes;
 
@@ -14,12 +16,25 @@ public class Model {
         return meshes;
     }
 
+    public static class Vertex {
+        Vector3fc pos;
+        float u, v;
+        Vector3fc normal;
+
+        public Vertex(Vector3fc pos, float u, float v, Vector3fc normal) {
+            this.pos = pos;
+            this.u = u;
+            this.v = v;
+            this.normal = normal;
+        }
+    }
+
     public static class Mesh {
-        public final byte[] data;
+        public final Vertex[] vertexes;
         public final boolean[] cullFaces;
 
-        public Mesh(byte[] data, boolean[] cullFaces) {
-            this.data = data;
+        public Mesh(Vertex[] vertexes, boolean[] cullFaces) {
+            this.vertexes = vertexes;
             this.cullFaces = cullFaces;
         }
     }

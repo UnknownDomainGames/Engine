@@ -96,8 +96,9 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
         assetManager.getReloadListeners().add(() -> {
             ShaderManager.INSTANCE.reload();
+            voxelModelManager.reloadModelData();
             renderContext.getTextureManager().reload();
-            voxelModelManager.reload();
+            voxelModelManager.bake();
             soundManager.reload();
         });
 

@@ -1,5 +1,8 @@
 package unknowndomain.engine.client.rendering.model.voxel;
 
+import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
+import unknowndomain.engine.Platform;
+import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.block.BlockMeshGenerator;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
@@ -7,11 +10,17 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.BlockAccessor;
 
-public class VoxelBlockMeshGenerator implements BlockMeshGenerator {
+public class VoxelMeshGenerator implements BlockMeshGenerator {
 
-    private final Model model;
+    private static final VoxelModelManager MODEL_MANAGER = Platform.getEngineClient().getVoxelModelManager();
 
-    public VoxelBlockMeshGenerator(Model model) {
+    public static VoxelMeshGenerator create(AssetPath path) {
+        return new VoxelMeshGenerator(MODEL_MANAGER.registerModel(path));
+    }
+
+    private final ObservableValue<Model> model;
+
+    private VoxelMeshGenerator(ObservableValue<Model> model) {
         this.model = model;
     }
 
@@ -27,9 +36,12 @@ public class VoxelBlockMeshGenerator implements BlockMeshGenerator {
             }
         }
 
+        Model model = this.model.getValue();
         for (Model.Mesh mesh : model.getMeshes()) {
             if (!checkCullFaces(cullFaces, mesh.cullFaces)) {
-                buffer.put(mesh.data);
+                for (Model.Vertex vertex : mesh.vertexes) {
+                    buffer.pos(vertex.pos).color(1, 1, 1).uv(vertex.u, vertex.v).normal(vertex.normal).endVertex();
+                }
             }
         }
     }
@@ -44,9 +56,11 @@ public class VoxelBlockMeshGenerator implements BlockMeshGenerator {
 
     @Override
     public void generate(ClientBlock block, GLBuffer buffer) {
-        buffer.posOffset(0, 0, 0);
+        Model model = this.model.getValue();
         for (Model.Mesh mesh : model.getMeshes()) {
-            buffer.put(mesh.data);
+            for (Model.Vertex vertex : mesh.vertexes) {
+                buffer.pos(vertex.pos).color(1, 1, 1).uv(vertex.u, vertex.v).normal(vertex.normal).endVertex();
+            }
         }
     }
 }
