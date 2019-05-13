@@ -5,9 +5,9 @@ import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
 import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.asset.AssetPath;
+import unknowndomain.engine.client.block.AirClientBlock;
 import unknowndomain.engine.client.block.ClientBlock;
-import unknowndomain.engine.client.block.ClientBlockAir;
-import unknowndomain.engine.client.block.ClientBlockDefault;
+import unknowndomain.engine.client.block.DefaultClientBlock;
 import unknowndomain.engine.client.event.rendering.EntityRendererRegistrationEvent;
 import unknowndomain.engine.client.event.rendering.ItemRendererRegistrationEvent;
 import unknowndomain.engine.client.gui.Scene;
@@ -18,7 +18,6 @@ import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.rendering.camera.Camera;
 import unknowndomain.engine.client.rendering.entity.EntityItemRenderer;
 import unknowndomain.engine.client.rendering.item.ItemBlockRenderer;
-import unknowndomain.engine.client.rendering.model.voxel.VoxelMeshGenerator;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.component.TwoHands;
 import unknowndomain.engine.entity.item.ItemEntity;
@@ -81,9 +80,9 @@ public final class DefaultGameMode {
 
     private static void registerClientBlock(Registry<ClientBlock> registry) {
         AssetPath blockModelPath = AssetPath.of("unknowndomain", "models", "block");
-        registry.register(new ClientBlockAir(Blocks.AIR));
-        registry.register(new ClientBlockDefault(Blocks.GRASS).setRenderer(VoxelMeshGenerator.create(AssetPath.of(blockModelPath, "grass.json"))));
-        registry.register(new ClientBlockDefault(Blocks.DIRT).setRenderer(VoxelMeshGenerator.create(AssetPath.of(blockModelPath, "dirt.json"))));
+        registry.register(new AirClientBlock(Blocks.AIR));
+        registry.register(new DefaultClientBlock(Blocks.GRASS).setRenderer(blockModelPath.resolve("grass.json")));
+        registry.register(new DefaultClientBlock(Blocks.DIRT).setRenderer(blockModelPath.resolve("dirt.json")));
     }
 
     private static void registerKeyBindings(Registry<KeyBinding> registry) {

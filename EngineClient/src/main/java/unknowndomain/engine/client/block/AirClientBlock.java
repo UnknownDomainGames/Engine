@@ -5,9 +5,9 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.BlockAccessor;
 
-public class ClientBlockAir extends ClientBlockDefault {
+public class AirClientBlock extends DefaultClientBlock {
 
-    public ClientBlockAir(Block block) {
+    public AirClientBlock(Block block) {
         super(block);
     }
 

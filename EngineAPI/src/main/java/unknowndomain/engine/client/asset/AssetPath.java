@@ -8,6 +8,10 @@ public final class AssetPath {
 
     public static final char SEPARATOR = '/';
 
+    public static AssetPath of(@Nullable AssetPath parent, @Nonnull String first) {
+        return of(parent.getRealPath() + SEPARATOR + first);
+    }
+
     public static AssetPath of(@Nullable AssetPath parent, @Nonnull String first, @Nonnull String... others) {
         return of(parent == null ? first : parent.getRealPath() + SEPARATOR + first, others);
     }
@@ -20,6 +24,10 @@ public final class AssetPath {
         return new AssetPath(builder.toString());
     }
 
+    public static AssetPath of(@Nonnull String path) {
+        return new AssetPath(path);
+    }
+
     private final String path;
 
     protected AssetPath(@Nonnull String path) {
@@ -28,6 +36,14 @@ public final class AssetPath {
 
     public String getRealPath() {
         return path;
+    }
+
+    public AssetPath resolve(@Nonnull String first) {
+        return of(this, first);
+    }
+
+    public AssetPath resolve(@Nonnull String first, @Nonnull String... others) {
+        return of(this, first, others);
     }
 
     @Override
