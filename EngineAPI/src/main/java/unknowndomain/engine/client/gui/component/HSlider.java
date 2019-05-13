@@ -8,7 +8,7 @@ import unknowndomain.engine.event.Event;
 
 
 public class HSlider extends Region {
-    private Image slider = new Image();
+    private Texture slider = new Texture();
 
     private ImageButton back = new ImageButton();
 

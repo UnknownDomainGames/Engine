@@ -13,7 +13,7 @@ public class ImageButton extends Control {
     private final MutableValue<AssetPath> hoveredBg = new SimpleMutableObjectValue<>();
     private final MutableValue<AssetPath> pressedBg = new SimpleMutableObjectValue<>();
     private final MutableValue<AssetPath> disableBg = new SimpleMutableObjectValue<>();
-    private Image image = new Image();
+    private Texture texture = new Texture();
     public ImageButton(AssetPath path) {
         this();
         background.setValue(path);
@@ -28,7 +28,7 @@ public class ImageButton extends Control {
         hoveredBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         disableBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         handleBackground();
-        this.getChildren().addAll(image);
+        this.getChildren().addAll(texture);
     }
 
     public MutableValue<AssetPath> hoverBackground() {
@@ -60,23 +60,23 @@ public class ImageButton extends Control {
     }
 
     public MutableFloatValue buttonWidth() {
-        return image.imageHeight();
+        return texture.imageHeight();
     }
 
     public MutableFloatValue buttonHeight() {
-        return image.imageHeight();
+        return texture.imageHeight();
     }
 
 
     protected void handleBackground() {
         if (disabled().get() && disabledBackground().getValue() != null) {
-            image.path().setValue(disabledBackground().getValue());
+            texture.path().setValue(disabledBackground().getValue());
         } else if (pressed().get() && pressBackground().getValue() != null) {
-            image.path().setValue(pressBackground().getValue());
+            texture.path().setValue(pressBackground().getValue());
         } else if (hover().get() && hoverBackground().getValue() != null) {
-            image.path().setValue(hoverBackground().getValue());
+            texture.path().setValue(hoverBackground().getValue());
         } else {
-            image.path().setValue(buttonBackground().getValue());
+            texture.path().setValue(buttonBackground().getValue());
         }
     }
 

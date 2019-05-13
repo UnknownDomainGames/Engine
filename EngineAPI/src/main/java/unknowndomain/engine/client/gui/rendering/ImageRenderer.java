@@ -1,7 +1,7 @@
 package unknowndomain.engine.client.gui.rendering;
 
 import unknowndomain.engine.client.gui.Component;
-import unknowndomain.engine.client.gui.component.Image;
+import unknowndomain.engine.client.gui.component.Texture;
 
 public class ImageRenderer implements ComponentRenderer {
 
@@ -9,7 +9,7 @@ public class ImageRenderer implements ComponentRenderer {
 
     @Override
     public void render(Component component, Graphics graphics) {
-        Image img = (Image) component;
+        Texture img = (Texture) component;
         if(img.getCachedTexture() != null)
             graphics.drawTexture(img.getCachedTexture(), 0,0,img.prefWidth(),img.prefHeight());
     }

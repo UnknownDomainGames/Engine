@@ -12,7 +12,7 @@ import unknowndomain.engine.util.Color;
 
 import java.util.function.Consumer;
 
-public class Button extends Label {
+public class Button extends NLabel {
 
     private final MutableValue<Background> background = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLACK));
     private final MutableValue<Background> hoveredBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLUE));
