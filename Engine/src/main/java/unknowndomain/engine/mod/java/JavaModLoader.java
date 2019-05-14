@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModDescriptor;
 import unknowndomain.engine.mod.ModLoader;
+import unknowndomain.engine.mod.exception.ModLoadException;
 
 public class JavaModLoader implements ModLoader {
 
@@ -18,8 +19,7 @@ public class JavaModLoader implements ModLoader {
             Object instance = Class.forName(descriptor.getMainClass(), true, classLoader).newInstance();
             return new JavaModContainer(descriptor, classLoader, modLogger, instance);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            e.printStackTrace(); // TODO: throw it.
+            throw new ModLoadException(descriptor.getModId(), e);
         }
-        return null;
     }
 }
