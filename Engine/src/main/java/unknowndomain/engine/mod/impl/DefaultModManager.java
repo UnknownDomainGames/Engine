@@ -19,6 +19,6 @@ public class DefaultModManager extends AbstractModManager {
 
     @Override
     public DependencyManager createDependencyManager() {
-        return null;
+        return new DependencyManagerImpl(this);
     }
 }

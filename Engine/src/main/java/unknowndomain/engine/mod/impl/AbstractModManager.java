@@ -1,6 +1,7 @@
 package unknowndomain.engine.mod.impl;
 
 import unknowndomain.engine.mod.*;
+import unknowndomain.engine.mod.exception.MissingDependencyException;
 import unknowndomain.engine.mod.exception.ModAlreadyLoadedException;
 import unknowndomain.engine.mod.exception.ModLoadException;
 
@@ -17,11 +18,11 @@ public abstract class AbstractModManager implements ModManager {
     protected final ModDescriptorFinder modDescriptorFinder = createModDescriptorFinder();
     protected final DependencyManager dependencyManager = createDependencyManager();
 
-    public abstract ModLoader createModLoader();
+    protected abstract ModLoader createModLoader();
 
-    public abstract ModDescriptorFinder createModDescriptorFinder();
+    protected abstract ModDescriptorFinder createModDescriptorFinder();
 
-    public abstract DependencyManager createDependencyManager();
+    protected abstract DependencyManager createDependencyManager();
 
     @Nonnull
     @Override
@@ -34,6 +35,11 @@ public abstract class AbstractModManager implements ModManager {
     public ModContainer loadMod(ModDescriptor modDescriptor) {
         if (isModLoaded(modDescriptor.getModId())) {
             throw new ModAlreadyLoadedException(modDescriptor.getModId());
+        }
+
+        DependencyManager.CheckResult result = dependencyManager.checkDependencies(modDescriptor.getDependencies());
+        if (!result.isPassed()) {
+            throw new MissingDependencyException(modDescriptor.getModId(), result);
         }
 
         ModContainer modContainer;
@@ -61,6 +67,7 @@ public abstract class AbstractModManager implements ModManager {
         return modContainers;
     }
 
+    @Nullable
     @Override
     public ModContainer getMod(String modId) {
         return loadedModContainer.get(modId);

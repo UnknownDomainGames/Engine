@@ -8,17 +8,17 @@ public class ModDependencyEntry {
 
     public enum LoadOrder {
         /**
-         * Mod must be installed, and after it load your mod.
+         * Mod must be loaded, and after it load your mod.
          */
         REQUIRED,
         /**
-         * Mod needn't be installed, but after it load your mod.
+         * Mod needn't be loaded, but after it load your mod.
          */
         AFTER,
         /**
-         * Mod needn't be installed, but before it load your mod.
+         * Mod needn't be loaded, but before it load your mod.
          */
-        BEFORE;
+        BEFORE
     }
 
     public static ModDependencyEntry parse(String spec) {
