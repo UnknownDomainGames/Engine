@@ -4,10 +4,10 @@ import unknowndomain.engine.mod.exception.ModAlreadyLoadedException;
 import unknowndomain.engine.mod.exception.ModLoadException;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 
 public interface ModManager {
 
@@ -20,11 +20,9 @@ public interface ModManager {
     @Nonnull
     Collection<ModContainer> loadMod(Iterator<Path> pathIterator) throws ModLoadException, ModAlreadyLoadedException;
 
-    @Nullable
-    ModContainer getMod(String modId);
+    Optional<ModContainer> getMod(String modId);
 
-    @Nullable
-    ModContainer getMod(Class<?> clazz);
+    Optional<ModContainer> getMod(Class<?> clazz);
 
     boolean isModLoaded(String modId);
 

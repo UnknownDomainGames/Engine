@@ -1,6 +1,7 @@
 package unknowndomain.engine.mod.java;
 
 import org.slf4j.Logger;
+import unknowndomain.engine.mod.ModContainer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,14 +13,24 @@ import java.util.List;
 public class ModClassLoader extends URLClassLoader {
     private static final String JAVA_PACKAGE_PREFIX = "java.";
 
-    private Logger logger;
+    private final Logger logger;
     private final List<ClassLoader> dependencyClassLoaders = new ArrayList<>();
     private final List<ClassLoader> isDependedBy = new ArrayList<>();
+
+    private ModContainer owner;
 
     public ModClassLoader(Logger logger, Path src, ClassLoader parent) {
         super(new URL[0], parent);
         this.logger = logger;
         addPath(src);
+    }
+
+    void setMod(ModContainer owner) {
+        this.owner = owner;
+    }
+
+    public ModContainer getMod() {
+        return owner;
     }
 
     public static void addDependency(ModClassLoader loader, ModClassLoader dependency) {

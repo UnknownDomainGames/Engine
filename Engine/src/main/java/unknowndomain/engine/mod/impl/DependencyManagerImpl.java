@@ -7,6 +7,7 @@ import unknowndomain.engine.mod.ModManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static unknowndomain.engine.mod.ModDependencyEntry.LoadOrder.REQUIRED;
 
@@ -27,8 +28,8 @@ public class DependencyManagerImpl implements DependencyManager {
                 continue;
             }
 
-            ModContainer mod = modManager.getMod(dependency.getModId());
-            if (mod == null || !dependency.getVersionRange().containsVersion(mod.getDescriptor().getVersion())) {
+            Optional<ModContainer> mod = modManager.getMod(dependency.getModId());
+            if (mod.isEmpty() || !dependency.getVersionRange().containsVersion(mod.get().getDescriptor().getVersion())) {
                 missing.add(dependency);
             }
         }

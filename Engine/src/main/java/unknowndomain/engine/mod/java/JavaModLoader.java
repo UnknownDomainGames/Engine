@@ -13,11 +13,13 @@ public class JavaModLoader implements ModLoader {
     public ModContainer load(ModDescriptor descriptor) {
         Logger modLogger = LoggerFactory.getLogger(descriptor.getModId());
 
-        ClassLoader classLoader = new ModClassLoader(modLogger, descriptor.getSource(), Thread.currentThread().getContextClassLoader());
-        
+        ModClassLoader classLoader = new ModClassLoader(modLogger, descriptor.getSource(), Thread.currentThread().getContextClassLoader());
+
         try {
             Object instance = Class.forName(descriptor.getMainClass(), true, classLoader).newInstance();
-            return new JavaModContainer(descriptor, classLoader, modLogger, instance);
+            JavaModContainer modContainer = new JavaModContainer(descriptor, classLoader, modLogger, instance);
+            classLoader.setMod(modContainer);
+            return modContainer;
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             throw new ModLoadException(descriptor.getModId(), e);
         }

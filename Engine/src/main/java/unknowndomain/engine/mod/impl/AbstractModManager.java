@@ -4,6 +4,7 @@ import unknowndomain.engine.mod.*;
 import unknowndomain.engine.mod.exception.MissingDependencyException;
 import unknowndomain.engine.mod.exception.ModAlreadyLoadedException;
 import unknowndomain.engine.mod.exception.ModLoadException;
+import unknowndomain.engine.mod.java.ModClassLoader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -71,14 +72,15 @@ public abstract class AbstractModManager implements ModManager {
 
     @Nullable
     @Override
-    public ModContainer getMod(String modId) {
-        return loadedModContainer.get(modId);
+    public Optional<ModContainer> getMod(String modId) {
+        return Optional.ofNullable(loadedModContainer.get(modId));
     }
 
     @Nullable
     @Override
-    public ModContainer getMod(Class<?> clazz) {
-        throw new UnsupportedOperationException(); // TODO:
+    public Optional<ModContainer> getMod(Class<?> clazz) {
+        ClassLoader classLoader = clazz.getClassLoader();
+        return classLoader instanceof ModClassLoader ? Optional.of(((ModClassLoader) classLoader).getMod()) : Optional.empty();
     }
 
     @Override
