@@ -109,6 +109,12 @@ public class MouseEvent extends ComponentEvent {
             super(component, posX, posY, key, ActionMode.PRESS);
         }
     }
+    public static class MouseHoldEvent extends MouseButtonEvent{
+
+        public MouseHoldEvent(Component component, float posX, float posY, Key key) {
+            super(component, posX, posY, key, ActionMode.PRESS);
+        }
+    }
 
     public static class MouseWheelEvent extends MouseEvent{
         double xOffset;

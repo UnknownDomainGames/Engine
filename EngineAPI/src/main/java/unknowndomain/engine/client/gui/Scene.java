@@ -79,6 +79,7 @@ public class Scene {
             List<Component> moveEvent = old.stream().filter(n::contains).collect(Collectors.toList());
             List<Component> leaveEvent = old.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
             List<Component> enterEvent = n.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
+            moveEvent.addAll(root.getChildrenRecursive().stream().filter(c->c.focused.get()).collect(Collectors.toList()));
             moveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component, lastPosX, lastPosY, xPos, yPos)));
             enterEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component, lastPosX, lastPosY, xPos, yPos)));
             leaveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(component, lastPosX, lastPosY, xPos, yPos)));
@@ -97,9 +98,14 @@ public class Scene {
                     var pair = component.relativePos(((float) lastPosX), ((float) lastPosY));
                     component.handleEvent(new MouseEvent.MouseClickEvent(component, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)));
                 });
-        }
-            if (action == GLFW.GLFW_RELEASE)
+            }
+            if (action == GLFW.GLFW_RELEASE) {
+                list.addAll(root.getChildrenRecursive().stream().filter(c->c.focused.get()).collect(Collectors.toList()));
                 list.forEach(component -> component.handleEvent(new MouseEvent.MouseReleasedEvent(component, (float) lastPosX, (float) lastPosY, Key.valueOf(400 + button))));
+            }
+            if(action == GLFW.GLFW_REPEAT){
+                list.forEach(component -> component.handleEvent(new MouseEvent.MouseHoldEvent(component, (float) lastPosX, (float) lastPosY, Key.valueOf(400 + button))));
+            }
         }
     };
 

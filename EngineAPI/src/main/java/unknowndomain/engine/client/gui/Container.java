@@ -44,6 +44,17 @@ public abstract class Container extends Component {
         return unmodifiableChildren;
     }
 
+    public final List<Component> getChildrenRecursive(){
+        var list = new ArrayList<Component>();
+        for (Component child : children) {
+            if(child instanceof Container){
+                list.addAll(((Container) child).getChildrenRecursive());
+            }
+            list.add(child);
+        }
+        return list;
+    }
+
     @Override
     public float prefWidth() {
         float minX = 0, maxX = 0;

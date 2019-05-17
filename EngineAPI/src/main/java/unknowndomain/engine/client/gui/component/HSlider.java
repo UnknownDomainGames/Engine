@@ -73,7 +73,7 @@ public class HSlider extends Region {
         } else if (event instanceof MouseEvent.MouseReleasedEvent) {
             select = false;
         } else if (event instanceof MouseEvent.MouseLeaveEvent) {
-            select = false;
+            //select = false;
         }
     }
 
