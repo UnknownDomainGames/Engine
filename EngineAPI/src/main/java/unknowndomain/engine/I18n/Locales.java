@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.i18n;
+package unknowndomain.engine.I18n;
 
 import java.util.Locale;
 

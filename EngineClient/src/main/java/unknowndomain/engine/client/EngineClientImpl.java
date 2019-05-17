@@ -2,6 +2,8 @@ package unknowndomain.engine.client;
 
 import unknowndomain.engine.EngineBase;
 import unknowndomain.engine.Platform;
+import unknowndomain.engine.I18n.LocaleManager;
+import unknowndomain.engine.I18n.Locales;
 import unknowndomain.engine.client.asset.AssetManager;
 import unknowndomain.engine.client.asset.EngineAssetLoadManager;
 import unknowndomain.engine.client.asset.EngineAssetManager;
@@ -26,6 +28,7 @@ import unknowndomain.engine.util.disposer.Disposer;
 import unknowndomain.engine.util.disposer.DisposerImpl;
 import unknowndomain.game.DefaultGameMode;
 
+import java.util.Locale;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
@@ -41,6 +44,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     private VoxelModelManager voxelModelManager;
     private EngineSoundManager soundManager;
     private EngineRenderContext renderContext;
+    private LocaleManager localeManager;
 
     private Ticker ticker;
     private Disposer disposer;
@@ -101,7 +105,10 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             voxelModelManager.bake();
             soundManager.reload();
         });
-
+        
+        localeManager = LocaleManager.localeManager;
+        localeManager.register("engine");
+        		
         ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), Ticker.CLIENT_TICK);
     }
 
