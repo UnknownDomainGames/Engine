@@ -22,10 +22,6 @@ public class VSlider extends Region {
 
     public VSlider() {
         value.addChangeListener((ob, o, n) -> rebuild());
-        backHeight().addChangeListener((ob, o, n) -> rebuild());
-        sliderHeight().addChangeListener((ob, o, n) -> rebuild());
-        sliderWidth().addChangeListener((ob, o, n) -> rebuild());
-        backWidth().addChangeListener((ob, o, n) -> rebuild());
         this.getChildren().addAll(back, slider);
         backBg().setValue(new Background(Color.BLUE));
         sliderBg().setValue(new Background(Color.WHITE));
@@ -40,13 +36,13 @@ public class VSlider extends Region {
     }
 
     public void rebuild() {
-        if (value.get() > 1) {
-            value.set(1);
+        if (value.get() > 0.99) {
+            value.set(0.99);
         } else if (value.get() < 0) {
             value.set(0);
         }
         slider.x().set(back.x().get() + back.prefWidth() / 2 - slider.prefWidth() / 2);
-        slider.y().set((float) ((back.prefHeight() * value.get()) - slider.prefHeight() / 2));
+        slider.y().set((float) ((back.prefHeight() * value.get())));
     }
 
     @Override
@@ -65,9 +61,9 @@ public class VSlider extends Region {
     public void handleEvent(Event event) {
         super.handleEvent(event);
         if (event instanceof MouseEvent.MouseMoveEvent && select) {
-            if ((((MouseEvent.MouseMoveEvent) event).getNewPosY() - y().get() - slider.y().get()) / prefWidth() > preMove * 0.8) {
+            if ((((MouseEvent.MouseMoveEvent) event).getNewPosY() - y().get() - slider.y().get()) / prefWidth() > preMove * 0.9) {
                 value.set(value.getValue() + preMove);
-            } else if ((slider.y().get() - ((MouseEvent.MouseMoveEvent) event).getNewPosY() + y().get()) / prefWidth() > preMove * 0.8) {
+            } else if ((slider.y().get() - ((MouseEvent.MouseMoveEvent) event).getNewPosY() + y().get()) / prefWidth() > preMove * 0.9) {
                 value.set(value.getValue() - preMove);
             }
         } else if (event instanceof MouseEvent.MouseReleasedEvent) {
@@ -80,12 +76,15 @@ public class VSlider extends Region {
         }
     }
 
-    public MutableFloatValue backWidth() {
-        return back.labelWidth();
+
+    public void resizeBack(float width, float height){
+        back.resize(width,height);
+        rebuild();
     }
 
-    public MutableFloatValue backHeight() {
-        return back.labelHeight();
+    public void resizeSlider(float width, float height){
+        slider.resize(width,height);
+        rebuild();
     }
 
     public MutableValue<Background> backBg() {
@@ -96,11 +95,4 @@ public class VSlider extends Region {
         return slider.background();
     }
 
-    public MutableFloatValue sliderWidth() {
-        return slider.labelWidth();
-    }
-
-    public MutableFloatValue sliderHeight() {
-        return slider.labelHeight();
-    }
 }

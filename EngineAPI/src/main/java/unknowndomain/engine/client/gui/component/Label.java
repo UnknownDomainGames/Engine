@@ -15,9 +15,6 @@ public class Label extends Control {
         this.getChildren().addAll(text);
     }
 
-    private final MutableFloatValue labelWidth = new SimpleMutableFloatValue();
-    private final MutableFloatValue labelHeight = new SimpleMutableFloatValue();
-
     public final MutableValue<Font> font() {
         return text.font();
     }
@@ -32,22 +29,15 @@ public class Label extends Control {
         return text.textAlignment();
     }
 
-    public MutableFloatValue labelWidth() {
-        return labelWidth;
-    }
-
-    public MutableFloatValue labelHeight() {
-        return labelHeight;
-    }
-
     @Override
     public float prefWidth() {
-        return labelWidth().get() != 0 ? labelWidth().get() : text.prefWidth() + padding().getValue().getLeft() + padding().getValue().getRight();
+        System.out.println(width().get());
+        return width().get() != 0 ? width().get() : text.prefWidth() + padding().getValue().getLeft() + padding().getValue().getRight();
     }
 
     @Override
     public float prefHeight() {
-        return labelHeight().get() != 0 ? labelHeight().get() : text.prefHeight() + padding().getValue().getTop() + padding().getValue().getBottom();
+        return height().get() != 0 ? height().get() : text.prefHeight() + padding().getValue().getTop() + padding().getValue().getBottom();
     }
 
 }

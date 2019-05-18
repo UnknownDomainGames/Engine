@@ -61,14 +61,6 @@ public class Button extends Label {
         this.onClick = onClick;
     }
 
-    public MutableFloatValue buttonWidth() {
-        return labelWidth();
-    }
-
-    public MutableFloatValue buttonHeight() {
-        return labelHeight();
-    }
-
     public MutableValue<Background> buttonBackground() {
         return background;
     }
