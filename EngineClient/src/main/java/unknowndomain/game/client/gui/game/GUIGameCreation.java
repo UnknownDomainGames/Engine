@@ -48,13 +48,13 @@ public class GUIGameCreation extends BorderPane {
 		buttonExit.disabled().set(true);
 		vBox.getChildren().add(buttonExit);
 
-		HSlider v = new HSlider();
-		v.resizeBack(300,20);
-		v.backBg().setValue(new Background(Color.BLUE));
-		v.sliderBg().setValue(new Background(Color.WHITE));
-		v.resizeSlider(8,20);
-		v.setPreMove(0.02);
-		vBox.getChildren().addAll(v);
+		HSlider hSlider = new HSlider();
+		hSlider.resizeBack(300,20);
+		hSlider.backBg().setValue(new Background(Color.BLUE));
+		hSlider.sliderBg().setValue(new Background(Color.WHITE));
+		hSlider.resizeSlider(8,20);
+		hSlider.setPreMove(0.02);
+		vBox.getChildren().addAll(hSlider);
 		
 		Button buttonLocale = new Button("Lang: "+I18n.translation("engine.gui.lang.text.name"));
 		buttonLocale.setOnClick(onClick -> {

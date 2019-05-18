@@ -31,7 +31,6 @@ public class Label extends Control {
 
     @Override
     public float prefWidth() {
-        System.out.println(width().get());
         return width().get() != 0 ? width().get() : text.prefWidth() + padding().getValue().getLeft() + padding().getValue().getRight();
     }
 
