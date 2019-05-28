@@ -14,7 +14,7 @@ public final class Asset<T> {
 
     private volatile boolean disposed;
 
-    public Asset(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
+    Asset(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
         this.type = Objects.requireNonNull(type);
         this.path = Objects.requireNonNull(path);
     }
