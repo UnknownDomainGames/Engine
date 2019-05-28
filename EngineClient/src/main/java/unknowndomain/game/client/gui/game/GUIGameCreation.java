@@ -1,17 +1,19 @@
 package unknowndomain.game.client.gui.game;
 
 import unknowndomain.engine.Platform;
-import unknowndomain.engine.I18n.I18n;
-import unknowndomain.engine.I18n.LocaleManager;
-import unknowndomain.engine.I18n.Locales;
 import unknowndomain.engine.client.game.GameClientStandalone;
-import unknowndomain.engine.client.gui.component.*;
+import unknowndomain.engine.client.gui.component.Button;
+import unknowndomain.engine.client.gui.component.HSlider;
+import unknowndomain.engine.client.gui.component.Label;
 import unknowndomain.engine.client.gui.layout.BorderPane;
 import unknowndomain.engine.client.gui.layout.VBox;
 import unknowndomain.engine.client.gui.misc.Background;
 import unknowndomain.engine.client.gui.misc.Border;
 import unknowndomain.engine.client.gui.misc.Insets;
 import unknowndomain.engine.client.gui.text.Font;
+import unknowndomain.engine.i18n.I18n;
+import unknowndomain.engine.i18n.LocaleManager;
+import unknowndomain.engine.i18n.Locales;
 import unknowndomain.engine.player.PlayerImpl;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Color;

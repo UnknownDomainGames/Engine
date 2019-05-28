@@ -1,10 +1,6 @@
-package unknowndomain.engine.I18n;
+package unknowndomain.engine.i18n;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Locale;

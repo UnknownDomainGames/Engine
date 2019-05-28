@@ -1,4 +1,4 @@
-package unknowndomain.engine.I18n;
+package unknowndomain.engine.i18n;
 
 public final class I18n{
 	

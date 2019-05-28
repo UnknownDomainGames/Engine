@@ -1,7 +1,6 @@
 package unknowndomain.engine.client;
 
 import unknowndomain.engine.EngineBase;
-import unknowndomain.engine.I18n.LocaleManager;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetManager;
 import unknowndomain.engine.client.asset.EngineAssetManager;
@@ -20,6 +19,7 @@ import unknowndomain.engine.client.sound.EngineSoundManager;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.event.engine.GameStartEvent;
 import unknowndomain.engine.game.Game;
+import unknowndomain.engine.i18n.LocaleManager;
 import unknowndomain.engine.math.Ticker;
 import unknowndomain.engine.util.Side;
 import unknowndomain.engine.util.disposer.Disposer;
