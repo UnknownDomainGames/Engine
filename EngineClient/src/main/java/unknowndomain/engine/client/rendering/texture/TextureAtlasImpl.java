@@ -55,7 +55,7 @@ public class TextureAtlasImpl implements TextureAtlas {
     }
 
     private TextureBuffer loadTextureBuffer(AssetPath path) throws IOException {
-        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getPath(path);
+        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(path);
         if (nativePath.isPresent()) {
             try (var channel = Files.newByteChannel(nativePath.get())) {
                 var filebuf = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));

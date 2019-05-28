@@ -1,80 +1,80 @@
 package unknowndomain.engine.client.asset;
 
-import unknowndomain.engine.Platform;
-import unknowndomain.engine.client.asset.source.AssetSource;
-import unknowndomain.engine.client.event.asset.AssetReloadEvent;
+import unknowndomain.engine.client.asset.source.AssetSourceManager;
 
 import javax.annotation.Nonnull;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.Validate.notEmpty;
 
 public class EngineAssetManager implements AssetManager {
 
-    private final List<AssetSource> assetSources = new LinkedList<>();
+    private final AssetSourceManager sourceManager = new DefaultAssetSourceManager();
+    private final AssetReloadDispatcher reloadDispatcher = new DefaultAssetReloadDispatcher();
 
-    private final List<Runnable> reloadListeners = new LinkedList<>();
+    private final Map<String, AssetType<?>> registeredTypes = new HashMap<>();
 
     @Override
-    public Optional<AssetSource> getSource(AssetPath path) {
-        for (AssetSource assetSource : assetSources) {
-            if (assetSource.exists(path)) {
-                return Optional.of(assetSource);
-            }
-        }
-        return Optional.empty();
+    public <T> AssetType<T> register(@Nonnull Class<T> assetClass, @Nonnull AssetProvider<T> provider) {
+        return register(assetClass, assetClass.getSimpleName(), provider);
     }
 
     @Override
-    public List<AssetSource> getAllSources(AssetPath path) {
-        List<AssetSource> result = new LinkedList<>();
-        for (AssetSource assetSource : assetSources) {
-            if (assetSource.exists(path)) {
-                result.add(assetSource);
-            }
+    public <T> AssetType<T> register(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull AssetProvider<T> provider) {
+        requireNonNull(assetClass);
+        notEmpty(name);
+        requireNonNull(provider);
+
+        if (registeredTypes.containsKey(name)) {
+            throw new IllegalArgumentException(String.format("AssetType %s has been registered.", name));
         }
-        return List.copyOf(result);
+
+        AssetType<T> type = new AssetType<>(assetClass, name, provider);
+        registeredTypes.put(name, type);
+        provider.init(this, type);
+        return type;
     }
 
     @Override
-    public Optional<Path> getPath(@Nonnull AssetPath path) {
-        for (AssetSource assetSource : assetSources) {
-            Path _path = assetSource.toPath(path);
-            if (Files.exists(_path)) {
-                return Optional.of(_path);
-            }
-        }
-        return Optional.empty();
+    public Optional<AssetType<?>> getType(String name) {
+        return Optional.ofNullable(registeredTypes.get(name));
+    }
+
+    @Override
+    public Collection<AssetType<?>> getSupportedTypes() {
+        return registeredTypes.values();
     }
 
     @Nonnull
     @Override
-    public List<Path> getAllPaths(@Nonnull AssetPath path) {
-        List<Path> result = new LinkedList<>();
-        for (AssetSource assetSource : assetSources) {
-            Path _path = assetSource.toPath(path);
-            if (Files.exists(_path)) {
-                result.add(_path);
-            }
-        }
-        return List.copyOf(result);
+    public <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
+        Asset<T> asset = new Asset<>(type, path);
+        type.getProvider().register(asset);
+        return asset;
     }
 
-    public List<AssetSource> getSources() {
-        return assetSources;
+    @Nonnull
+    @Override
+    public <T> T loadDirect(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
+        return type.getProvider().load(path);
+    }
+
+    @Override
+    public AssetSourceManager getSourceManager() {
+        return sourceManager;
+    }
+
+    @Override
+    public AssetReloadDispatcher getReloadDispatcher() {
+        return reloadDispatcher;
     }
 
     @Override
     public void reload() {
-        reloadListeners.forEach(Runnable::run);
-        if (Platform.getEngine().isPlaying()) {
-            Platform.getEngine().getCurrentGame().getEventBus().post(new AssetReloadEvent());
-        }
-    }
-
-    public List<Runnable> getReloadListeners() {
-        return reloadListeners;
+        reloadDispatcher.dispatchReload();
     }
 }

@@ -1,55 +1,48 @@
-package unknowndomain.engine.client.rendering.model.voxel;
+package unknowndomain.engine.client.asset.model.voxel;
 
-import com.github.mouse0w0.lib4j.observable.value.MutableValue;
-import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
-import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
 import unknowndomain.engine.client.EngineClient;
-import unknowndomain.engine.client.asset.AssetManager;
-import unknowndomain.engine.client.asset.AssetPath;
+import unknowndomain.engine.client.asset.*;
 import unknowndomain.engine.client.asset.exception.AssetLoadException;
 import unknowndomain.engine.client.asset.exception.AssetNotFoundException;
+import unknowndomain.engine.client.asset.source.AssetSourceManager;
 import unknowndomain.engine.client.rendering.texture.TextureAtlas;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
 import static unknowndomain.engine.client.rendering.texture.StandardTextureAtlas.BLOCK;
 
-public class VoxelModelManager {
+public class VoxelModelManager implements AssetProvider<VoxelModel> {
 
-    private final AssetManager assetManager;
     private final TextureAtlas blockAtlas;
     private final ModelLoader modelLoader;
     private final ModelBaker modelBaker;
 
-    private final Set<AssetPath> registeredModels = new LinkedHashSet<>();
     private final Map<AssetPath, ModelData> modelDataMap = new HashMap<>();
-    private final Map<AssetPath, MutableValue<Model>> modelMap = new HashMap<>();
+
+    private AssetSourceManager sourceManager;
+
+    private final List<Asset<VoxelModel>> models = new LinkedList<>();
 
     public VoxelModelManager(EngineClient engineClient) {
-        this.assetManager = engineClient.getAssetManager();
         this.blockAtlas = engineClient.getRenderContext().getTextureManager().getTextureAtlas(BLOCK);
         this.modelLoader = new ModelLoader(this);
         this.modelBaker = new ModelBaker();
     }
 
-    public ObservableValue<Model> registerModel(AssetPath path) {
-        registeredModels.add(path);
-        return modelMap.computeIfAbsent(path, $ -> new SimpleMutableObjectValue<>());
-    }
-
-    ModelData getModel(AssetPath path) {
+    ModelData getModelData(AssetPath path) {
         ModelData modelData = modelDataMap.get(path);
         if (modelData == null) {
-            modelData = loadModel(path);
+            modelData = loadModelData(path);
             modelDataMap.put(path, modelData);
         }
         return modelData;
     }
 
-    private ModelData loadModel(AssetPath assetPath) {
-        Optional<Path> path = assetManager.getPath(assetPath);
+    private ModelData loadModelData(AssetPath assetPath) {
+        Optional<Path> path = sourceManager.getPath(assetPath);
         if (path.isEmpty())
             throw new AssetNotFoundException(assetPath);
         try {
@@ -59,11 +52,9 @@ public class VoxelModelManager {
         }
     }
 
-    public void reloadModelData() {
+    private void reloadModelData() {
         modelDataMap.clear();
-        for (AssetPath assetPath : registeredModels) {
-            modelDataMap.put(assetPath, resolveTexture(loadModel(assetPath)));
-        }
+        models.forEach(asset -> modelDataMap.put(asset.getPath(), resolveTexture(loadModelData(asset.getPath()))));
     }
 
     private ModelData resolveTexture(ModelData modelData) {
@@ -84,10 +75,35 @@ public class VoxelModelManager {
         return texture;
     }
 
-    public void bake() {
-        for (Map.Entry<AssetPath, MutableValue<Model>> entry : modelMap.entrySet()) {
-            entry.getValue().setValue(modelBaker.bake(modelDataMap.get(entry.getKey())));
-        }
-        modelDataMap.clear();
+    private void bake() {
+        models.forEach(Asset::reload);
+    }
+
+    @Override
+    public void init(AssetManager manager, AssetType<VoxelModel> type) {
+        this.sourceManager = manager.getSourceManager();
+        manager.getReloadDispatcher().addBefore("VoxelModelReload", "Texture", this::reloadModelData);
+        manager.getReloadDispatcher().addAfter("VoxelModelBake", "Texture", this::bake);
+    }
+
+    @Override
+    public void register(Asset<VoxelModel> asset) {
+        models.add(asset);
+    }
+
+    @Override
+    public void dispose(Asset<VoxelModel> asset) {
+        // Don't need do anything.
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+    @Nonnull
+    @Override
+    public VoxelModel load(AssetPath path) {
+        return modelBaker.bake(getModelData(path));
     }
 }

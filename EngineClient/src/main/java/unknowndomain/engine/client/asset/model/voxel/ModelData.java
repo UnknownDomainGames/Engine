@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.rendering.model.voxel;
+package unknowndomain.engine.client.asset.model.voxel;
 
 import com.google.gson.JsonArray;
 import org.joml.Vector3fc;

@@ -1,21 +1,19 @@
 package unknowndomain.engine.client;
 
 import unknowndomain.engine.EngineBase;
-import unknowndomain.engine.Platform;
 import unknowndomain.engine.I18n.LocaleManager;
-import unknowndomain.engine.I18n.Locales;
+import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetManager;
-import unknowndomain.engine.client.asset.EngineAssetLoadManager;
 import unknowndomain.engine.client.asset.EngineAssetManager;
 import unknowndomain.engine.client.asset.EngineAssetSource;
-import unknowndomain.engine.client.asset.loader.AssetLoadManager;
+import unknowndomain.engine.client.asset.model.voxel.VoxelModel;
+import unknowndomain.engine.client.asset.model.voxel.VoxelModelManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.EngineRenderContext;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.game3d.Game3DRenderer;
 import unknowndomain.engine.client.rendering.gui.GuiRenderer;
-import unknowndomain.engine.client.rendering.model.voxel.VoxelModelManager;
 import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.sound.ALSoundManager;
 import unknowndomain.engine.client.sound.EngineSoundManager;
@@ -28,7 +26,6 @@ import unknowndomain.engine.util.disposer.Disposer;
 import unknowndomain.engine.util.disposer.DisposerImpl;
 import unknowndomain.game.DefaultGameMode;
 
-import java.util.Locale;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
@@ -39,9 +36,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     private Thread clientThread;
 
     private AssetSource engineAssetSource;
-    private EngineAssetLoadManager assetLoadManager;
     private EngineAssetManager assetManager;
-    private VoxelModelManager voxelModelManager;
     private EngineSoundManager soundManager;
     private EngineRenderContext renderContext;
     private LocaleManager localeManager;
@@ -74,8 +69,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         logger.info("Initializing asset!");
         engineAssetSource = EngineAssetSource.create();
         assetManager = new EngineAssetManager();
-        assetManager.getSources().add(engineAssetSource);
-        assetLoadManager = new EngineAssetLoadManager(assetManager);
+        assetManager.getSourceManager().getSources().add(engineAssetSource);
 
         logger.info("Initializing render context!");
         renderContext = new EngineRenderContext(this);
@@ -90,21 +84,16 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             }
         });
         addShutdownListener(renderContext::dispose);
+        assetManager.getReloadDispatcher().addLast("Shader", ShaderManager.INSTANCE::reload);
+        assetManager.getReloadDispatcher().addLast("Texture", () -> renderContext.getTextureManager().reload());
 
-        voxelModelManager = new VoxelModelManager(this);
+        assetManager.register(VoxelModel.class, "VoxelModel", new VoxelModelManager(this));
 
         logger.info("Initializing audio context!");
         soundManager = new EngineSoundManager();
         soundManager.init();
         addShutdownListener(soundManager::dispose);
-
-        assetManager.getReloadListeners().add(() -> {
-            ShaderManager.INSTANCE.reload();
-            voxelModelManager.reloadModelData();
-            renderContext.getTextureManager().reload();
-            voxelModelManager.bake();
-            soundManager.reload();
-        });
+        assetManager.getReloadDispatcher().addLast("Sound", soundManager::reload);
         
         localeManager = LocaleManager.localeManager;
         localeManager.register("engine");
@@ -194,11 +183,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     @Override
-    public VoxelModelManager getVoxelModelManager() {
-        return voxelModelManager;
-    }
-
-    @Override
     public RenderContext getRenderContext() {
         return renderContext;
     }
@@ -206,11 +190,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     @Override
     public Disposer getDisposer() {
         return disposer;
-    }
-
-    @Override
-    public AssetLoadManager getAssetLoadManager() {
-        return assetLoadManager;
     }
 
     @Override

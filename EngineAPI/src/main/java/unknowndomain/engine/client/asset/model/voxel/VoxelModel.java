@@ -1,14 +1,14 @@
-package unknowndomain.engine.client.rendering.model.voxel;
+package unknowndomain.engine.client.asset.model.voxel;
 
 import org.joml.Vector3fc;
 
 import java.util.List;
 
-class Model {
+public class VoxelModel {
 
     private List<Mesh> meshes;
 
-    public Model(List<Mesh> meshes) {
+    public VoxelModel(List<Mesh> meshes) {
         this.meshes = meshes;
     }
 

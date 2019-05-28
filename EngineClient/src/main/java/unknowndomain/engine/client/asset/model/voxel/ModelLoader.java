@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.rendering.model.voxel;
+package unknowndomain.engine.client.asset.model.voxel;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -38,7 +38,7 @@ class ModelLoader {
         ModelData modelData = new ModelData();
         ModelData parent = null;
         if (json.has("parent")) {
-            parent = modelManager.getModel(AssetPath.of(json.get("parent").getAsString()));
+            parent = modelManager.getModelData(AssetPath.of(json.get("parent").getAsString()));
         }
         if (json.has("textures")) {
             modelData.textures = loadTextures(json.getAsJsonObject("textures"), parent != null && parent.textures != null ? parent.textures : Map.of());

@@ -2,9 +2,9 @@ package unknowndomain.engine.client.block;
 
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.client.asset.AssetPath;
+import unknowndomain.engine.client.asset.model.voxel.VoxelMeshGenerator;
 import unknowndomain.engine.client.rendering.block.BlockMeshGenerator;
 import unknowndomain.engine.client.rendering.block.BlockRenderType;
-import unknowndomain.engine.client.rendering.model.voxel.VoxelMeshGenerator;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.registry.Registries;
 import unknowndomain.engine.registry.RegistryEntry;

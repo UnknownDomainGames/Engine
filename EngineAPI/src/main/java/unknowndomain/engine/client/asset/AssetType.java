@@ -1,22 +1,22 @@
-package unknowndomain.engine.client.asset.loader;
+package unknowndomain.engine.client.asset;
 
 import javax.annotation.Nonnull;
 
 public class AssetType<T> {
 
-    private final Class<T> assetClass;
+    private final Class<T> type;
     private final String name;
-    private final AssetLoader<T> loader;
+    private final AssetProvider<T> provider;
 
-    public AssetType(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull AssetLoader<T> loader) {
-        this.assetClass = assetClass;
+    AssetType(@Nonnull Class<T> type, @Nonnull String name, @Nonnull AssetProvider<T> provider) {
+        this.type = type;
         this.name = name;
-        this.loader = loader;
+        this.provider = provider;
     }
 
     @Nonnull
-    public Class<T> getAssetClass() {
-        return assetClass;
+    public Class<T> getType() {
+        return type;
     }
 
     @Nonnull
@@ -24,9 +24,8 @@ public class AssetType<T> {
         return name;
     }
 
-    @Nonnull
-    public AssetLoader<T> getLoader() {
-        return loader;
+    AssetProvider<T> getProvider() {
+        return provider;
     }
 
     @Override
@@ -47,7 +46,7 @@ public class AssetType<T> {
     @Override
     public String toString() {
         return "AssetType{" +
-                "assetClass=" + assetClass +
+                "type=" + type.getName() +
                 ", name='" + name + '\'' +
                 '}';
     }

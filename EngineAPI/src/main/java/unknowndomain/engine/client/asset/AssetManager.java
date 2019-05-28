@@ -1,23 +1,43 @@
 package unknowndomain.engine.client.asset;
 
-import unknowndomain.engine.client.asset.source.AssetSource;
+import unknowndomain.engine.client.asset.exception.AssetLoadException;
+import unknowndomain.engine.client.asset.source.AssetSourceManager;
 
 import javax.annotation.Nonnull;
-import java.nio.file.Path;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 public interface AssetManager {
 
-    Optional<AssetSource> getSource(@Nonnull AssetPath path);
+    <T> AssetType<T> register(@Nonnull Class<T> assetClass, @Nonnull AssetProvider<T> provider);
 
+    <T> AssetType<T> register(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull AssetProvider<T> provider);
+
+    Optional<AssetType<?>> getType(String name);
+
+    Collection<AssetType<?>> getSupportedTypes();
+
+    /**
+     * @throws AssetLoadException;
+     */
     @Nonnull
-    List<AssetSource> getAllSources(@Nonnull AssetPath path);
+    <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull AssetPath path);
 
-    Optional<Path> getPath(@Nonnull AssetPath path);
-
+    /**
+     * @throws AssetLoadException;
+     */
     @Nonnull
-    List<Path> getAllPaths(@Nonnull AssetPath path);
+    <T> T loadDirect(@Nonnull AssetType<T> type, @Nonnull AssetPath path);
+
+    AssetSourceManager getSourceManager();
+
+    AssetReloadDispatcher getReloadDispatcher();
+
+//    /**
+//     * @throws AssetLoadException;
+//     */
+//    @Nonnull
+//    <T> CompletableFuture<T> loadAsync(@Nonnull AssetType<T> type, @Nonnull AssetPath path);
 
     void reload();
 }

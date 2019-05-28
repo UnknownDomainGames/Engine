@@ -1,8 +1,9 @@
-package unknowndomain.engine.client.rendering.model.voxel;
+package unknowndomain.engine.client.asset.model.voxel;
 
-import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
 import unknowndomain.engine.Platform;
+import unknowndomain.engine.client.asset.Asset;
 import unknowndomain.engine.client.asset.AssetPath;
+import unknowndomain.engine.client.asset.AssetTypes;
 import unknowndomain.engine.client.block.ClientBlock;
 import unknowndomain.engine.client.rendering.block.BlockMeshGenerator;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
@@ -12,15 +13,13 @@ import unknowndomain.engine.world.BlockAccessor;
 
 public class VoxelMeshGenerator implements BlockMeshGenerator {
 
-    private static final VoxelModelManager MODEL_MANAGER = Platform.getEngineClient().getVoxelModelManager();
-
     public static VoxelMeshGenerator create(AssetPath path) {
-        return new VoxelMeshGenerator(MODEL_MANAGER.registerModel(path));
+        return new VoxelMeshGenerator(Platform.getEngineClient().getAssetManager().create(AssetTypes.VOXEL_MODEL, path));
     }
 
-    private final ObservableValue<Model> model;
+    private final Asset<VoxelModel> model;
 
-    private VoxelMeshGenerator(ObservableValue<Model> model) {
+    private VoxelMeshGenerator(Asset<VoxelModel> model) {
         this.model = model;
     }
 
@@ -36,10 +35,10 @@ public class VoxelMeshGenerator implements BlockMeshGenerator {
             }
         }
 
-        Model model = this.model.getValue();
-        for (Model.Mesh mesh : model.getMeshes()) {
+        VoxelModel voxelModel = this.model.get();
+        for (VoxelModel.Mesh mesh : voxelModel.getMeshes()) {
             if (!checkCullFaces(cullFaces, mesh.cullFaces)) {
-                for (Model.Vertex vertex : mesh.vertexes) {
+                for (VoxelModel.Vertex vertex : mesh.vertexes) {
                     buffer.pos(vertex.pos).color(1, 1, 1).uv(vertex.u, vertex.v).normal(vertex.normal).endVertex();
                 }
             }
@@ -56,9 +55,9 @@ public class VoxelMeshGenerator implements BlockMeshGenerator {
 
     @Override
     public void generate(ClientBlock block, GLBuffer buffer) {
-        Model model = this.model.getValue();
-        for (Model.Mesh mesh : model.getMeshes()) {
-            for (Model.Vertex vertex : mesh.vertexes) {
+        VoxelModel voxelModel = this.model.get();
+        for (VoxelModel.Mesh mesh : voxelModel.getMeshes()) {
+            for (VoxelModel.Vertex vertex : mesh.vertexes) {
                 buffer.pos(vertex.pos).color(1, 1, 1).uv(vertex.u, vertex.v).normal(vertex.normal).endVertex();
             }
         }

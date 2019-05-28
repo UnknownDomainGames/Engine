@@ -94,7 +94,7 @@ public class EngineSoundManager implements ALSoundManager {
 
     @Override
     public ALSound getSoundDirect(AssetPath path){
-        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getPath(path);
+        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(path);
         if (nativePath.isPresent()) {
             try (var channel = Files.newByteChannel(nativePath.get(), StandardOpenOption.READ)) {
                 ByteBuffer buf = BufferUtils.createByteBuffer((int) channel.size());
@@ -132,7 +132,7 @@ public class EngineSoundManager implements ALSoundManager {
 
     public void reload(){
         for (Map.Entry<AssetPath, MutableValue<ALSound>> value : soundMap.entrySet()) {
-            Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getPath(value.getKey());
+            Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(value.getKey());
             if (nativePath.isPresent()) {
                 try (var channel = Files.newByteChannel(nativePath.get(), StandardOpenOption.READ)) {
                     ByteBuffer buf = BufferUtils.createByteBuffer((int) channel.size());

@@ -34,7 +34,7 @@ public class EngineTextureManager implements TextureManager {
 
     @Override
     public GLTexture getTextureDirect(AssetPath path) {
-        Optional<Path> localPath = Platform.getEngineClient().getAssetManager().getPath(path);
+        Optional<Path> localPath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(path);
         if (localPath.isEmpty()) {
             throw new AssetLoadException("Cannot load texture because missing asset. Path: " + path);
         }

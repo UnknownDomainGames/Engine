@@ -1,6 +1,6 @@
 package unknowndomain.engine.client.gui.internal;
 
-import unknowndomain.engine.exception.UninitializedException;
+import unknowndomain.engine.exception.NotInitializationException;
 
 public final class Internal {
 
@@ -8,7 +8,7 @@ public final class Internal {
 
     public static Context getContext() {
         if (context == null) {
-            throw new UninitializedException();
+            throw new NotInitializationException();
         }
         return context;
     }

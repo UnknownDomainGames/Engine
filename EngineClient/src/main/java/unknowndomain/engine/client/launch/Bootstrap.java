@@ -5,7 +5,7 @@ import org.lwjgl.system.windows.User32;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.EngineClientImpl;
-import unknowndomain.engine.exception.UninitializedException;
+import unknowndomain.engine.exception.NotInitializationException;
 
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
@@ -41,7 +41,7 @@ public class Bootstrap {
             engineField.setAccessible(true);
             engineField.set(null, engine);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new UninitializedException("Cannot initialize engine");
+            throw new NotInitializationException("Cannot initialize engine");
         }
     }
 }

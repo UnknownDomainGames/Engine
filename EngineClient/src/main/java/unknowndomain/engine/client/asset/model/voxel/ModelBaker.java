@@ -1,4 +1,4 @@
-package unknowndomain.engine.client.rendering.model.voxel;
+package unknowndomain.engine.client.asset.model.voxel;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Vector2f;
@@ -18,7 +18,7 @@ class ModelBaker {
     public ModelBaker() {
     }
 
-    public Model bake(ModelData modelData) {
+    public VoxelModel bake(ModelData modelData) {
         BakedModelPrimer primer = new BakedModelPrimer();
 
         List<ModelData.Element> elements = modelData.elements;
@@ -38,7 +38,7 @@ class ModelBaker {
         return primer.build();
     }
 
-    private void bakeFace(ModelData.Element.Cube cube, ModelData.Element.Cube.Face face, Facing facing, List<Model.Vertex> mesh) {
+    private void bakeFace(ModelData.Element.Cube cube, ModelData.Element.Cube.Face face, Facing facing, List<VoxelModel.Vertex> mesh) {
         TextureAtlasPart textureAtlasPart = face._texture;
         float u = textureAtlasPart.getMaxU() - textureAtlasPart.getMinU();
         float v = textureAtlasPart.getMaxV() - textureAtlasPart.getMinV();
@@ -94,38 +94,38 @@ class ModelBaker {
         bakeQuad(mesh, v1, v2, v3, v4, new Vector2f(minU, minV), new Vector2f(maxU, maxV));
     }
 
-    private void bakeQuad(List<Model.Vertex> mesh, Vector3fc v1, Vector3fc v2, Vector3fc v3, Vector3fc v4, Vector2fc minUv, Vector2fc maxUv) {
+    private void bakeQuad(List<VoxelModel.Vertex> mesh, Vector3fc v1, Vector3fc v2, Vector3fc v3, Vector3fc v4, Vector2fc minUv, Vector2fc maxUv) {
         var normal = Math2.calcNormalByVertices(v1, v2, v3);
         var normal1 = Math2.calcNormalByVertices(v1, v3, v4);
-        mesh.add(new Model.Vertex(v1, minUv.x(), maxUv.y(), normal)); // 1
-        mesh.add(new Model.Vertex(v2, maxUv.x(), maxUv.y(), normal)); // 2
-        mesh.add(new Model.Vertex(v3, maxUv.x(), minUv.y(), normal)); // 3
+        mesh.add(new VoxelModel.Vertex(v1, minUv.x(), maxUv.y(), normal)); // 1
+        mesh.add(new VoxelModel.Vertex(v2, maxUv.x(), maxUv.y(), normal)); // 2
+        mesh.add(new VoxelModel.Vertex(v3, maxUv.x(), minUv.y(), normal)); // 3
 
-        mesh.add(new Model.Vertex(v1, minUv.x(), maxUv.y(), normal)); // 1
-        mesh.add(new Model.Vertex(v3, maxUv.x(), minUv.y(), normal)); // 3
-        mesh.add(new Model.Vertex(v4, minUv.x(), minUv.y(), normal1)); // 4
+        mesh.add(new VoxelModel.Vertex(v1, minUv.x(), maxUv.y(), normal)); // 1
+        mesh.add(new VoxelModel.Vertex(v3, maxUv.x(), minUv.y(), normal)); // 3
+        mesh.add(new VoxelModel.Vertex(v4, minUv.x(), minUv.y(), normal1)); // 4
     }
 
     private class BakedModelPrimer {
-        public List<Pair<boolean[], List<Model.Vertex>>> vertexesList = new ArrayList<>();
+        public List<Pair<boolean[], List<VoxelModel.Vertex>>> vertexesList = new ArrayList<>();
 
-        public List<Model.Vertex> getVertexes(boolean[] cullFaces) {
-            for (Pair<boolean[], List<Model.Vertex>> mesh : vertexesList) {
+        public List<VoxelModel.Vertex> getVertexes(boolean[] cullFaces) {
+            for (Pair<boolean[], List<VoxelModel.Vertex>> mesh : vertexesList) {
                 if (Arrays.equals(mesh.getLeft(), cullFaces)) {
                     return mesh.getRight();
                 }
             }
-            List<Model.Vertex> mesh = new ArrayList<>();
+            List<VoxelModel.Vertex> mesh = new ArrayList<>();
             vertexesList.add(Pair.of(cullFaces, mesh));
             return mesh;
         }
 
-        public Model build() {
-            List<Model.Mesh> bakedMeshes = new ArrayList<>();
-            for (Pair<boolean[], List<Model.Vertex>> mesh : vertexesList) {
-                bakedMeshes.add(new Model.Mesh(mesh.getRight().toArray(new Model.Vertex[0]), mesh.getLeft()));
+        public VoxelModel build() {
+            List<VoxelModel.Mesh> bakedMeshes = new ArrayList<>();
+            for (Pair<boolean[], List<VoxelModel.Vertex>> mesh : vertexesList) {
+                bakedMeshes.add(new VoxelModel.Mesh(mesh.getRight().toArray(new VoxelModel.Vertex[0]), mesh.getLeft()));
             }
-            return new Model(List.copyOf(bakedMeshes));
+            return new VoxelModel(List.copyOf(bakedMeshes));
         }
     }
 }
