@@ -1,7 +1,7 @@
 package unknowndomain.engine.world.storage;
 
 import unknowndomain.engine.world.World;
-import unknowndomain.engine.world.chunk.storage.ChunkLoader;
+import unknowndomain.engine.world.chunk.storage.ChunkReader;
 
 import java.io.File;
 
@@ -14,5 +14,5 @@ public interface WorldLoader {
 
     void flush();
 
-    ChunkLoader getChunkLoader();
+    ChunkReader getChunkLoader();
 }
