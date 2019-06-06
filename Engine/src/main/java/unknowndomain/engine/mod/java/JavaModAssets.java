@@ -4,8 +4,7 @@ import unknowndomain.engine.Platform;
 import unknowndomain.engine.mod.ModAssets;
 
 import java.io.*;
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
+import java.nio.file.*;
 
 public class JavaModAssets implements ModAssets {
 
@@ -47,19 +46,45 @@ public class JavaModAssets implements ModAssets {
 
     @Override
     public void copy(Path target, String first) {
-        try (var output = new FileOutputStream(target.toFile())){
-            copy(output,first);
+        copy(target, first, false);
+    }
+
+    public void copy(Path target, String first, boolean forceCopying) {
+        if(Files.notExists(target)){
+            try {
+                Files.createFile(target);
+            } catch (IOException e) {
+                Platform.getLogger().warn(String.format("Exception thrown when attempted to create file %s", target), e);
+                return;
+            }
+        }
+        Path source = get(first);
+        try {
+            Files.copy(source,target, forceCopying ? new CopyOption[]{StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES} : new CopyOption[]{StandardCopyOption.COPY_ATTRIBUTES});
         } catch (IOException e) {
-            Platform.getLogger().warn(String.format("Exception thrown when copying file from %s to %s", get(first), target), e);
+            Platform.getLogger().warn(String.format("Exception thrown when copying file from %s to %s", source, target), e);
         }
     }
 
     @Override
     public void copy(Path target, String first, String... more) {
-        try (var output = new FileOutputStream(target.toFile())){
-            copy(output,first, more);
+        copy(target, false, first, more);
+    }
+
+    public void copy(Path target, boolean forceCopying, String first, String... more) {
+        if(Files.notExists(target)){
+            try {
+                Files.createFile(target);
+            } catch (IOException e) {
+                Platform.getLogger().warn(String.format("Exception thrown when attempted to create file %s", target), e);
+                return;
+            }
+        }
+        Path source = get(first, more);
+        try {
+            Files.copy(source,target, forceCopying ? new CopyOption[]{StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES} : new CopyOption[]{StandardCopyOption.COPY_ATTRIBUTES});
         } catch (IOException e) {
-            Platform.getLogger().warn(String.format("Exception thrown when copying file from %s to %s", get(first, more), target), e);
+            Platform.getLogger().warn(String.format("Exception thrown when copying file from %s to %s", source, target), e);
         }
     }
 
