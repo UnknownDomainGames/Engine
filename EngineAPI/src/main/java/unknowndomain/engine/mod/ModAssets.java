@@ -1,5 +1,6 @@
 package unknowndomain.engine.mod;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
@@ -11,9 +12,9 @@ public interface ModAssets {
 
     Path get(String first, String... more);
 
-    InputStream openStream(String first);
+    InputStream openStream(String first) throws IOException;
 
-    InputStream openStream(String first, String... more);
+    InputStream openStream(String first, String... more) throws IOException;
 
     boolean exists(String first);
 
