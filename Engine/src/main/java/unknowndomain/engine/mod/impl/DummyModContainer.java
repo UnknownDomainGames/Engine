@@ -2,6 +2,7 @@ package unknowndomain.engine.mod.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import unknowndomain.engine.mod.ModAssets;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModDescriptor;
 
@@ -34,6 +35,11 @@ public class DummyModContainer implements ModContainer {
 
     @Override
     public Path getSource() {
+        return null;
+    }
+
+    @Override
+    public ModAssets getAssets() {
         return null;
     }
 

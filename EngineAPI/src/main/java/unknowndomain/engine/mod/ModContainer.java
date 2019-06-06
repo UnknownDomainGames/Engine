@@ -23,6 +23,8 @@ public interface ModContainer {
 
     Path getSource();
 
+    ModAssets getAssets();
+
     Logger getLogger();
 
     ModDescriptor getDescriptor();
