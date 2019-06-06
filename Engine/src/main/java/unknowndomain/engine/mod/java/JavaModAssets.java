@@ -4,6 +4,7 @@ import unknowndomain.engine.Platform;
 import unknowndomain.engine.mod.ModAssets;
 
 import java.io.*;
+import java.nio.file.FileSystem;
 import java.nio.file.*;
 
 public class JavaModAssets implements ModAssets {
@@ -26,12 +27,12 @@ public class JavaModAssets implements ModAssets {
 
     @Override
     public InputStream openStream(String first) throws IOException {
-        return get(first).toUri().toURL().openStream();
+        return Files.newInputStream(get(first));
     }
 
     @Override
     public InputStream openStream(String first, String... more) throws IOException {
-        return get(first, more).toUri().toURL().openStream();
+        return Files.newInputStream(get(first, more));
     }
 
     @Override
@@ -46,10 +47,11 @@ public class JavaModAssets implements ModAssets {
 
     @Override
     public void copy(Path target, String first) {
-        copy(target, first, false);
+        copy(target, false, first);
     }
 
-    public void copy(Path target, String first, boolean forceCopying) {
+    @Override
+    public void copy(Path target, boolean forceCopying, String first) {
         if(Files.notExists(target)){
             try {
                 Files.createFile(target);
@@ -71,6 +73,7 @@ public class JavaModAssets implements ModAssets {
         copy(target, false, first, more);
     }
 
+    @Override
     public void copy(Path target, boolean forceCopying, String first, String... more) {
         if(Files.notExists(target)){
             try {

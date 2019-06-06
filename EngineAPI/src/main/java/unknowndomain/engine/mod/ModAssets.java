@@ -22,7 +22,11 @@ public interface ModAssets {
 
     void copy(Path target, String first);
 
+    void copy(Path target, boolean forceCopying, String first);
+
     void copy(Path target, String first, String... more);
+
+    void copy(Path target, boolean forceCopying, String first, String... more);
 
     void copy(OutputStream output, String first);
 
