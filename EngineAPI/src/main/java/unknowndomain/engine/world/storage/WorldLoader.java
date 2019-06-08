@@ -1,18 +1,16 @@
 package unknowndomain.engine.world.storage;
 
 import unknowndomain.engine.world.World;
-import unknowndomain.engine.world.chunk.storage.ChunkReader;
+import unknowndomain.engine.world.chunk.storage.ChunkStorer;
 
-import java.io.File;
+import java.nio.file.Path;
 
-public interface WorldLoader {
-    void saveWorld(World world);
+public interface WorldLoader<T extends World> {
+    void saveWorld();
 
-    File getStorageLocation();
+    Path getStorageLocation();
 
-    World loadWorld();
+    T loadWorld();
 
     void flush();
-
-    ChunkReader getChunkLoader();
 }

@@ -1,5 +1,7 @@
 package unknowndomain.engine.world.chunk;
 
+import unknowndomain.engine.math.BlockPos;
+
 public interface ChunkConstants {
 
     int SIZE_X = 16;
@@ -13,4 +15,14 @@ public interface ChunkConstants {
     int BITS_X = 4;
     int BITS_Y = 4;
     int BITS_Z = 4;
+
+    static long getChunkIndex(int chunkX, int chunkY, int chunkZ) {
+        return (abs(chunkX) << 42) | (abs(chunkY) << 21) | abs(chunkZ);
+    }
+
+    long MAX_POSITIVE_CHUNK_POS = (1 << 20) - 1;
+
+    private static long abs(long value) {
+        return value >= 0 ? value : MAX_POSITIVE_CHUNK_POS - value;
+    }
 }

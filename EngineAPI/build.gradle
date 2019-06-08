@@ -14,6 +14,7 @@ dependencies {
     compile 'com.github.Mouse0w0.Lib4j:lib4j-observable:1.0.6'
     compile 'com.github.Mouse0w0.Configuration:configuration-api:1.1.0'
     compile 'net.jodah:typetools:0.6.1'
+    compile 'net.sf.jopt-simple:jopt-simple:5.0.4'
 
     // ============CLIENT============
     compile "org.lwjgl:lwjgl:$lwjglVersion"

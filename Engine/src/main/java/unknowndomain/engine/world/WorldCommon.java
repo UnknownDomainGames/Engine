@@ -19,6 +19,8 @@ import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkConstants;
 import unknowndomain.engine.world.chunk.ChunkStorage;
+import unknowndomain.engine.world.chunk.WorldCommonChunkManager;
+import unknowndomain.engine.world.storage.WorldCommonLoader;
 import unknowndomain.engine.world.util.FastVoxelRayTrace;
 import unknowndomain.game.init.Blocks;
 
@@ -33,6 +35,9 @@ public class WorldCommon implements World, Runnable {
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
 
     private final ChunkStorage chunkStorage;
+    private WorldCommonLoader loader;
+    private WorldCommonChunkManager chunkManager;
+    private final List<Long> criticalChunks;
     private final List<Player> players = new ArrayList<>();
     private final List<Entity> entityList = new ArrayList<>();
     private final List<Runnable> nextTick = new ArrayList<>();
@@ -45,6 +50,7 @@ public class WorldCommon implements World, Runnable {
         this.game = game;
         this.chunkStorage = new ChunkStorage(this);
         this.ticker = new FixStepTicker(this::tick, FixStepTicker.LOGIC_TICK); // TODO: make tps configurable
+        criticalChunks = new ArrayList<>();
     }
 
     public void spawnEntity(Entity entity) {
@@ -71,6 +77,14 @@ public class WorldCommon implements World, Runnable {
     @Override
     public List<Entity> getEntities() {
         return entityList;
+    }
+
+    /**
+     * Get the list of chunkpos which the corresponding chunk should be force loaded
+     * @return
+     */
+    public List<Long> getCriticalChunks() {
+        return criticalChunks;
     }
 
     @Nonnull
@@ -243,6 +257,22 @@ public class WorldCommon implements World, Runnable {
 
     public void stop() {
         ticker.stop();
+    }
+
+    public WorldCommonLoader getLoader() {
+        return loader;
+    }
+
+    public void setLoader(WorldCommonLoader loader) {
+        this.loader = loader;
+    }
+
+    public WorldCommonChunkManager getChunkManager() {
+        return chunkManager;
+    }
+
+    public void setChunkManager(WorldCommonChunkManager chunkManager) {
+        this.chunkManager = chunkManager;
     }
 
     static class PhysicsSystem {

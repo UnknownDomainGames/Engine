@@ -4,7 +4,7 @@ import unknowndomain.engine.registry.RegistryEntry;
 
 import java.nio.file.Path;
 
-public interface WorldProvider extends RegistryEntry<WorldProvider> {
+public interface WorldProvider<T extends World> extends RegistryEntry<WorldProvider<T>> {
 
-    World create(String name, Path storagePath);
+    T create(String name, Path storagePath);
 }
