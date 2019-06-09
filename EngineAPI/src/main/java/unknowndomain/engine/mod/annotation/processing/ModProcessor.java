@@ -56,7 +56,7 @@ public class ModProcessor extends AbstractProcessor {
 
         try (Writer writer = fileObject.openWriter()) {
             ModIdentifier modIdentifier = ModIdentifier.from((String) getAnnotationValue(element, CLASS_NAME, "value").getValue());
-            writer.append(JsonModDescriptorSerializer.toJson(DefaultModDescriptor.Builder.create().modId(modIdentifier.getId()).version(modIdentifier.getVersion()).mainClass(element.getQualifiedName().toString()).build()).toString());
+            writer.append(JsonModDescriptorSerializer.toJson(DefaultModDescriptor.builder().modId(modIdentifier.getId()).version(modIdentifier.getVersion()).mainClass(element.getQualifiedName().toString()).build()).toString());
         } catch (IOException e) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
             e.printStackTrace();

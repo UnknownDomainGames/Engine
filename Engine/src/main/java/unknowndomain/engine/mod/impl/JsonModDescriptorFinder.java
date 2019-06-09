@@ -60,7 +60,7 @@ public class JsonModDescriptorFinder implements ModDescriptorFinder {
             throw new InvalidModDescriptorException(path, e);
         }
 
-        DefaultModDescriptor.Builder builder = DefaultModDescriptor.Builder.create().source(path);
+        DefaultModDescriptor.Builder builder = DefaultModDescriptor.builder().source(path);
 
         if (!jo.has("modId")) {
             throw new InvalidModDescriptorException(String.format("\"Invalid mod descriptor. Missing \"modId\". Source: %s", path.toAbsolutePath()));
