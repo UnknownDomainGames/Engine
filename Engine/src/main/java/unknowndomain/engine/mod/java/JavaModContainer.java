@@ -1,6 +1,9 @@
 package unknowndomain.engine.mod.java;
 
 import org.slf4j.Logger;
+import unknowndomain.engine.event.EventBus;
+import unknowndomain.engine.event.SimpleEventBus;
+import unknowndomain.engine.event.reflect.ReflectEventListenerFactory;
 import unknowndomain.engine.mod.ModAssets;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModDescriptor;
@@ -12,6 +15,7 @@ public class JavaModContainer implements ModContainer {
     private final ModDescriptor descriptor;
     private final ClassLoader classLoader;
     private final ModAssets assets;
+    private final EventBus eventBus;
     private final Logger logger;
     private final Object instance;
 
@@ -19,6 +23,7 @@ public class JavaModContainer implements ModContainer {
         this.descriptor = descriptor;
         this.classLoader = classLoader;
         this.assets = assets;
+        this.eventBus = SimpleEventBus.builder().eventListenerFactory(ReflectEventListenerFactory.instance()).build();
         this.logger = logger;
         this.instance = instance;
     }
@@ -46,6 +51,11 @@ public class JavaModContainer implements ModContainer {
     @Override
     public ModAssets getAssets() {
         return assets;
+    }
+
+    @Override
+    public EventBus getEventBus() {
+        return null;
     }
 
     @Override

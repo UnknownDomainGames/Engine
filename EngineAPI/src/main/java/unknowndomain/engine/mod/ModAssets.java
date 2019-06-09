@@ -1,20 +1,20 @@
 package unknowndomain.engine.mod;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Writer;
+import javax.annotation.Nullable;
+import java.io.*;
 import java.nio.file.Path;
 
 public interface ModAssets {
 
+    @Nullable
     Path get(String first);
 
+    @Nullable
     Path get(String first, String... more);
 
-    InputStream openStream(String first) throws IOException;
+    InputStream openStream(String first) throws IOException, FileNotFoundException;
 
-    InputStream openStream(String first, String... more) throws IOException;
+    InputStream openStream(String first, String... more) throws IOException, FileNotFoundException;
 
     boolean exists(String first);
 

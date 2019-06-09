@@ -1,6 +1,7 @@
 package unknowndomain.engine.mod;
 
 import org.slf4j.Logger;
+import unknowndomain.engine.event.EventBus;
 
 import java.nio.file.Path;
 
@@ -24,6 +25,8 @@ public interface ModContainer {
     Path getSource();
 
     ModAssets getAssets();
+
+    EventBus getEventBus();
 
     Logger getLogger();
 

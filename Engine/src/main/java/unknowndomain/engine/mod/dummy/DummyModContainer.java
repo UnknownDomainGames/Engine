@@ -1,7 +1,8 @@
-package unknowndomain.engine.mod.impl;
+package unknowndomain.engine.mod.dummy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.mod.ModAssets;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModDescriptor;
@@ -40,6 +41,11 @@ public class DummyModContainer implements ModContainer {
 
     @Override
     public ModAssets getAssets() {
+        return null;
+    }
+
+    @Override
+    public EventBus getEventBus() {
         return null;
     }
 
