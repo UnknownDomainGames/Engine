@@ -1,7 +1,6 @@
 package unknowndomain.engine;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unknowndomain.engine.event.EventBus;
@@ -10,8 +9,7 @@ import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModManager;
-import unknowndomain.engine.mod.impl.DefaultModManager;
-import unknowndomain.engine.mod.java.ModClassLoader;
+import unknowndomain.engine.mod.impl.EngineModManager;
 import unknowndomain.engine.util.RuntimeEnvironment;
 
 import java.io.IOException;
@@ -34,7 +32,7 @@ public abstract class EngineBase implements Engine {
     private RuntimeEnvironment runtimeEnvironment;
 
     protected EventBus eventBus;
-    protected ModManager modManager;
+    protected EngineModManager modManager;
 
     private boolean initialized = false;
     private boolean running = false;
@@ -122,7 +120,7 @@ public abstract class EngineBase implements Engine {
 
     private void loadMods() {
         logger.info("Loading Mods.");
-        modManager = new DefaultModManager();
+        modManager = new EngineModManager();
 
         Path modFolder = Paths.get("mods");
         if (!Files.exists(modFolder)) {
@@ -135,11 +133,11 @@ public abstract class EngineBase implements Engine {
 
         try {
             modManager.loadMod(createFolderModCollector(modFolder));
-            loadDevEnvMod();
+            modManager.loadDevEnvMod();
 
             Collection<ModContainer> loadedMods = modManager.getLoadedMods();
 
-            logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(ModContainer::getModId).iterator(), ",") + "]");
+            logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getModId() + "@" + modContainer.getDescriptor().getVersion()).iterator(), ",") + "]");
 
             loadedMods.forEach(modContainer -> eventBus.register(modContainer.getInstance()));
         } catch (IOException e) {
@@ -162,43 +160,6 @@ public abstract class EngineBase implements Engine {
         }
 
         return Files.find(folder, 1, (path, basicFileAttributes) -> path.getFileName().toString().endsWith(".jar")).iterator();
-    }
-
-    private void loadDevEnvMod() {
-        if (runtimeEnvironment != RuntimeEnvironment.MOD_DEVELOPMENT)
-            return;
-
-        List<Path> directories = findDirectoriesInClassPath();
-
-        Path modPath = findModInDirectories(directories);
-        if (modPath == null)
-            return;
-
-        ModContainer modContainer = modManager.loadMod(modPath);
-        ModClassLoader classLoader = (ModClassLoader) modContainer.getClassLoader();
-        for (Path directory : directories) {
-            classLoader.addPath(directory);
-        }
-    }
-
-    private List<Path> findDirectoriesInClassPath() {
-        List<Path> paths = new ArrayList<>();
-        for (String path : SystemUtils.JAVA_CLASS_PATH.split(";")) {
-            Path _path = Path.of(path);
-            if (Files.isDirectory(_path)) {
-                paths.add(_path);
-            }
-        }
-        return paths;
-    }
-
-    private Path findModInDirectories(List<Path> paths) {
-        for (Path path : paths) {
-            if (Files.exists(path.resolve("metadata.json"))) {
-                return path;
-            }
-        }
-        return null;
     }
 
     @Override

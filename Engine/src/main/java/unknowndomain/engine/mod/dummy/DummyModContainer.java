@@ -6,6 +6,7 @@ import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.mod.ModAssets;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModDescriptor;
+import unknowndomain.engine.util.versioning.ComparableVersion;
 
 import java.nio.file.Path;
 
@@ -22,6 +23,11 @@ public class DummyModContainer implements ModContainer {
     @Override
     public String getModId() {
         return descriptor.getModId();
+    }
+
+    @Override
+    public ComparableVersion getVersion() {
+        return descriptor.getVersion();
     }
 
     @Override

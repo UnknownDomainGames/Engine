@@ -2,6 +2,7 @@ package unknowndomain.engine.mod;
 
 import org.slf4j.Logger;
 import unknowndomain.engine.event.EventBus;
+import unknowndomain.engine.util.versioning.ComparableVersion;
 
 import java.nio.file.Path;
 
@@ -11,6 +12,8 @@ import java.nio.file.Path;
 public interface ModContainer {
 
     String getModId();
+
+    ComparableVersion getVersion();
 
     /**
      * The instance of the class which is annotated by {@link Mod}

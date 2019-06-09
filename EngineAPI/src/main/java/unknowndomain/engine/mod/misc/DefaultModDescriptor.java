@@ -91,6 +91,10 @@ public class DefaultModDescriptor implements ModDescriptor {
         return properties;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder {
         private String id = "";
         private ComparableVersion version = DEFAULT_VERSION;
@@ -103,10 +107,6 @@ public class DefaultModDescriptor implements ModDescriptor {
         private String logo = "";
         private List<ModDependencyEntry> dependencies = Collections.emptyList();
         private Map<String, String> properties = Collections.emptyMap();
-
-        public static Builder create() {
-            return new Builder();
-        }
 
         public Builder modId(String id) {
             this.id = id;

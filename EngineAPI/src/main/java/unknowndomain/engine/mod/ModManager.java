@@ -15,9 +15,6 @@ public interface ModManager {
     ModContainer loadMod(Path path) throws ModLoadException, ModAlreadyLoadedException;
 
     @Nonnull
-    ModContainer loadMod(ModDescriptor modDescriptor) throws ModLoadException, ModAlreadyLoadedException;
-
-    @Nonnull
     Collection<ModContainer> loadMod(Iterator<Path> pathIterator) throws ModLoadException, ModAlreadyLoadedException;
 
     Optional<ModContainer> getMod(String modId);
