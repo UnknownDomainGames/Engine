@@ -10,7 +10,10 @@ import unknowndomain.engine.mod.java.ModClassLoader;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public abstract class AbstractModManager implements ModManager {
 
@@ -61,16 +64,6 @@ public abstract class AbstractModManager implements ModManager {
 
     protected void addDummyModContainer(ModDescriptor modDescriptor) {
         loadedModContainer.put(modDescriptor.getModId(), new DummyModContainer(modDescriptor));
-    }
-
-    @Nonnull
-    @Override
-    public Collection<ModContainer> loadMod(Iterator<Path> pathIterator) throws ModLoadException, ModAlreadyLoadedException {
-        List<ModContainer> modContainers = new ArrayList<>();
-        while (pathIterator.hasNext()) {
-            modContainers.add(loadMod(pathIterator.next()));
-        }
-        return modContainers;
     }
 
     @Nullable

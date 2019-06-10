@@ -13,7 +13,6 @@ import unknowndomain.engine.mod.java.ModClassLoader;
 import unknowndomain.engine.mod.java.dev.DevModAssets;
 import unknowndomain.engine.mod.java.dev.DevModContainer;
 import unknowndomain.engine.mod.misc.DefaultModDescriptor;
-import unknowndomain.engine.util.RuntimeEnvironment;
 
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -42,15 +41,12 @@ public class EngineModManager extends AbstractModManager {
         return new DependencyManagerImpl(this);
     }
 
-    public ModContainer loadDevEnvMod() {
-        if (Platform.getEngine().getRuntimeEnvironment() != RuntimeEnvironment.MOD_DEVELOPMENT)
-            return null;
-
+    public void loadDevEnvMod() {
         List<Path> directories = findDirectoriesInClassPath();
 
         Path modPath = findModInDirectories(directories);
         if (modPath == null)
-            return null;
+            return;
 
         ModDescriptor modDescriptor = modDescriptorFinder.find(modPath);
 
@@ -81,8 +77,6 @@ public class EngineModManager extends AbstractModManager {
         }
 
         loadedModContainer.put(modContainer.getModId(), modContainer);
-
-        return modContainer;
     }
 
     private List<Path> findDirectoriesInClassPath() {

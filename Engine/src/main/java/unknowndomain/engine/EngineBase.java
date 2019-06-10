@@ -1,6 +1,7 @@
 package unknowndomain.engine;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unknowndomain.engine.event.EventBus;
@@ -9,6 +10,8 @@ import unknowndomain.engine.event.asm.AsmEventListenerFactory;
 import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModManager;
+import unknowndomain.engine.mod.dummy.DummyModContainer;
+import unknowndomain.engine.mod.exception.InvalidModDescriptorException;
 import unknowndomain.engine.mod.impl.EngineModManager;
 import unknowndomain.engine.util.RuntimeEnvironment;
 
@@ -19,7 +22,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.apache.commons.lang3.SystemUtils.*;
 
@@ -132,13 +138,24 @@ public abstract class EngineBase implements Engine {
         }
 
         try {
-            // TODO: Move it.
-            modManager.loadMod(createFolderModCollector(modFolder)).forEach(modContainer -> eventBus.register(modContainer.getInstance()));
-            Optional.ofNullable(modManager.loadDevEnvMod()).ifPresent(modContainer -> eventBus.register(modContainer.getInstance()));
+            Files.find(modFolder, 1,
+                    (path, basicFileAttributes) -> path.getFileName().toString().endsWith(".jar"))
+                    .forEach(modManager::loadMod);
+
+            loadDevEnvMod();
 
             Collection<ModContainer> loadedMods = modManager.getLoadedMods();
 
-            logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getModId() + "@" + modContainer.getDescriptor().getVersion()).iterator(), ",") + "]");
+            // TODO: Move it
+            for (ModContainer mod : loadedMods) {
+                if (mod instanceof DummyModContainer)
+                    continue;
+
+                eventBus.register(mod.getInstance());
+            }
+
+
+            logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getModId() + "@" + modContainer.getVersion()).iterator(), ",") + "]");
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
@@ -149,16 +166,25 @@ public abstract class EngineBase implements Engine {
 //        getContext().post(new EngineEvent.ModConstructionFinish(this));
     }
 
-    private Iterator<Path> createFolderModCollector(Path folder) throws IOException {
-        if (!Files.exists(folder)) {
-            throw new IllegalStateException("Path is not exists.");
-        }
+    private void loadDevEnvMod() {
+        if (runtimeEnvironment != RuntimeEnvironment.MOD_DEVELOPMENT)
+            return;
 
-        if (!Files.isDirectory(folder)) {
-            throw new IllegalArgumentException("Path must be directory.");
-        }
+        loadClassPathMods();
 
-        return Files.find(folder, 1, (path, basicFileAttributes) -> path.getFileName().toString().endsWith(".jar")).iterator();
+        modManager.loadDevEnvMod();
+    }
+
+    private void loadClassPathMods() {
+        for (String path : SystemUtils.JAVA_CLASS_PATH.split(";")) {
+            Path _path = Path.of(path);
+            if (!Files.isDirectory(_path)) {
+                try {
+                    modManager.loadMod(_path);
+                } catch (InvalidModDescriptorException ignored) {
+                }
+            }
+        }
     }
 
     @Override
