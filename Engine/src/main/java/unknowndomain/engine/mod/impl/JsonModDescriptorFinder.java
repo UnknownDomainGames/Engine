@@ -50,7 +50,6 @@ public class JsonModDescriptorFinder implements ModDescriptorFinder {
                         throw new InvalidModException(path);
                     }
 
-
                     try (Reader reader = new InputStreamReader(jarFile.getInputStream(jarEntry))) {
                         jo = JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonObject();
                     }

@@ -19,13 +19,15 @@ public class ModClassLoader extends URLClassLoader {
 
     private ModContainer owner;
 
-    public ModClassLoader(Logger logger, Path src, ClassLoader parent) {
+    public ModClassLoader(Logger logger, ClassLoader parent) {
         super(new URL[0], parent);
         this.logger = logger;
-        addPath(src);
     }
 
-    void setMod(ModContainer owner) {
+    public void setMod(ModContainer owner) {
+        if (this.owner != null) {
+            throw new IllegalStateException("Mod container has been set.");
+        }
         this.owner = owner;
     }
 

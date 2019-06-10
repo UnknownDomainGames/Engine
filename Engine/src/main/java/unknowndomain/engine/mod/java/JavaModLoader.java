@@ -17,7 +17,8 @@ public class JavaModLoader implements ModLoader {
     public ModContainer load(ModDescriptor descriptor) {
         Logger modLogger = LoggerFactory.getLogger(descriptor.getModId());
 
-        ModClassLoader classLoader = new ModClassLoader(modLogger, descriptor.getSource(), Thread.currentThread().getContextClassLoader());
+        ModClassLoader classLoader = new ModClassLoader(modLogger, Thread.currentThread().getContextClassLoader());
+        classLoader.addPath(descriptor.getSource());
 
         try {
             Object instance = Class.forName(descriptor.getMainClass(), true, classLoader).newInstance();

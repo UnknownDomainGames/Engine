@@ -132,14 +132,13 @@ public abstract class EngineBase implements Engine {
         }
 
         try {
-            modManager.loadMod(createFolderModCollector(modFolder));
-            modManager.loadDevEnvMod();
+            // TODO: Move it.
+            modManager.loadMod(createFolderModCollector(modFolder)).forEach(modContainer -> eventBus.register(modContainer.getInstance()));
+            eventBus.register(modManager.loadDevEnvMod().getInstance());
 
             Collection<ModContainer> loadedMods = modManager.getLoadedMods();
 
             logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getModId() + "@" + modContainer.getDescriptor().getVersion()).iterator(), ",") + "]");
-
-            loadedMods.forEach(modContainer -> eventBus.register(modContainer.getInstance()));
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }

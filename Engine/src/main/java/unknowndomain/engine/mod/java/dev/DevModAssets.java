@@ -5,13 +5,13 @@ import unknowndomain.engine.mod.java.JavaModAssets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.Collection;
 
 public class DevModAssets extends JavaModAssets {
 
-    private final Set<Path> roots;
+    private final Collection<Path> roots;
 
-    public DevModAssets(FileSystem fileSystem, Set<Path> roots) {
+    public DevModAssets(FileSystem fileSystem, Collection<Path> roots) {
         super(fileSystem);
         this.roots = roots;
     }
