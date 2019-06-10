@@ -134,7 +134,7 @@ public abstract class EngineBase implements Engine {
         try {
             // TODO: Move it.
             modManager.loadMod(createFolderModCollector(modFolder)).forEach(modContainer -> eventBus.register(modContainer.getInstance()));
-            eventBus.register(modManager.loadDevEnvMod().getInstance());
+            Optional.ofNullable(modManager.loadDevEnvMod()).ifPresent(modContainer -> eventBus.register(modContainer.getInstance()));
 
             Collection<ModContainer> loadedMods = modManager.getLoadedMods();
 
