@@ -27,7 +27,7 @@ public class GameServerFullAsync extends GameBase {
     @Override
     public World spawnWorld(World.Config config) {
         if (config == null) {
-            WorldCommon w = new WorldCommon(this);
+            WorldCommon w = new WorldCommon(this,null,null);
             this.worlds.put("default", w);
             this.internalWorlds.add(w);
             Thread thread = new Thread(w);

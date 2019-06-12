@@ -47,6 +47,8 @@ public interface World extends BlockAccessor {
         return this;
     }
 
+    WorldInfo getWorldInfo();
+
     interface Config {
 
     }

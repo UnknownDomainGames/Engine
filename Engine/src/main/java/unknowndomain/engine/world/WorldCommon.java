@@ -20,6 +20,7 @@ import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkConstants;
 import unknowndomain.engine.world.chunk.ChunkStorage;
 import unknowndomain.engine.world.chunk.WorldCommonChunkManager;
+import unknowndomain.engine.world.gen.ChunkGenerator;
 import unknowndomain.engine.world.storage.WorldCommonLoader;
 import unknowndomain.engine.world.util.FastVoxelRayTrace;
 import unknowndomain.game.init.Blocks;
@@ -41,14 +42,17 @@ public class WorldCommon implements World, Runnable {
     private final List<Player> players = new ArrayList<>();
     private final List<Entity> entityList = new ArrayList<>();
     private final List<Runnable> nextTick = new ArrayList<>();
+    private WorldInfo worldInfo;
 
     private final FixStepTicker ticker;
     private long gameTick;
 //    private ExecutorService service;
 
-    public WorldCommon(Game game) {
+    public WorldCommon(Game game, WorldCommonLoader loader, ChunkGenerator chunkGenerator) {
         this.game = game;
         this.chunkStorage = new ChunkStorage(this);
+        this.loader = loader;
+        this.chunkManager = new WorldCommonChunkManager(this, chunkGenerator);
         this.ticker = new FixStepTicker(this::tick, FixStepTicker.LOGIC_TICK); // TODO: make tps configurable
         criticalChunks = new ArrayList<>();
     }
@@ -72,6 +76,11 @@ public class WorldCommon implements World, Runnable {
     @Override
     public Game getGame() {
         return game;
+    }
+
+    @Override
+    public WorldInfo getWorldInfo() {
+        return worldInfo;
     }
 
     @Override
