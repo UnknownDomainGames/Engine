@@ -21,6 +21,9 @@ import unknowndomain.engine.event.engine.GameStartEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.i18n.LocaleManager;
 import unknowndomain.engine.math.Ticker;
+import unknowndomain.engine.mod.ModContainer;
+import unknowndomain.engine.mod.dummy.DummyModContainer;
+import unknowndomain.engine.mod.impl.EngineModAssets;
 import unknowndomain.engine.util.Side;
 import unknowndomain.engine.util.disposer.Disposer;
 import unknowndomain.engine.util.disposer.DisposerImpl;
@@ -70,6 +73,9 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         engineAssetSource = EngineAssetSource.create();
         assetManager = new EngineAssetManager();
         assetManager.getSourceManager().getSources().add(engineAssetSource);
+        ((DummyModContainer)getModManager().getMod("engine").get())
+                .setAssets(new EngineModAssets(engineAssetSource))
+                .setClassLoader(getClass().getClassLoader());
 
         logger.info("Initializing render context!");
         renderContext = new EngineRenderContext(this);
@@ -95,8 +101,13 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         addShutdownListener(soundManager::dispose);
         assetManager.getReloadDispatcher().addLast("Sound", soundManager::reload);
         
-        localeManager = LocaleManager.localeManager;
-        localeManager.register("engine");
+        localeManager = LocaleManager.INSTANCE;
+        assetManager.getReloadDispatcher().addLast("I18n", ()->{
+            localeManager.reset();
+            for (ModContainer mod : EngineClientImpl.this.getModManager().getLoadedMods()) {
+                localeManager.register(mod);
+            }
+        });
         		
         ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), Ticker.CLIENT_TICK);
     }

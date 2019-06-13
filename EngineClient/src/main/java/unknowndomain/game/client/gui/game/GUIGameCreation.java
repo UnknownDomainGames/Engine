@@ -13,11 +13,11 @@ import unknowndomain.engine.client.gui.misc.Insets;
 import unknowndomain.engine.client.gui.text.Font;
 import unknowndomain.engine.i18n.I18n;
 import unknowndomain.engine.i18n.LocaleManager;
-import unknowndomain.engine.i18n.Locales;
 import unknowndomain.engine.player.PlayerImpl;
 import unknowndomain.engine.player.Profile;
 import unknowndomain.engine.util.Color;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public class GUIGameCreation extends BorderPane {
@@ -60,10 +60,10 @@ public class GUIGameCreation extends BorderPane {
 		
 		Button buttonLocale = new Button("Lang: "+I18n.translation("engine.gui.lang.text.name"));
 		buttonLocale.setOnClick(onClick -> {
-			if (LocaleManager.localeManager.getLocale() == Locales.en_us) {
-				LocaleManager.localeManager.setLocale(Locales.zh_cn);
-			} else if (LocaleManager.localeManager.getLocale() == Locales.zh_cn) {
-				LocaleManager.localeManager.setLocale(Locales.en_us);
+			if (LocaleManager.INSTANCE.getLocale() == Locale.US) {
+				LocaleManager.INSTANCE.setLocale(Locale.CHINA);
+			} else if (LocaleManager.INSTANCE.getLocale() == Locale.CHINA) {
+				LocaleManager.INSTANCE.setLocale(Locale.US);
 			}
 			buttonLocale.text().setValue("Lang: "+I18n.translation("engine.gui.lang.text.name"));
 		});

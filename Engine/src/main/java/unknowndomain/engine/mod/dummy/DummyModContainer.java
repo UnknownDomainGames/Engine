@@ -14,6 +14,11 @@ public class DummyModContainer implements ModContainer {
 
     private final ModDescriptor descriptor;
     private final Logger logger;
+    private Object modInstance;
+    private ClassLoader classloader;
+    private Path source;
+    private ModAssets assets;
+    private EventBus eventbus;
 
     public DummyModContainer(ModDescriptor descriptor) {
         this.descriptor = descriptor;
@@ -32,27 +37,27 @@ public class DummyModContainer implements ModContainer {
 
     @Override
     public Object getInstance() {
-        return null;
+        return modInstance;
     }
 
     @Override
     public ClassLoader getClassLoader() {
-        return null;
+        return classloader;
     }
 
     @Override
     public Path getSource() {
-        return null;
+        return source;
     }
 
     @Override
     public ModAssets getAssets() {
-        return null;
+        return assets;
     }
 
     @Override
     public EventBus getEventBus() {
-        return null;
+        return eventbus;
     }
 
     @Override
@@ -63,5 +68,30 @@ public class DummyModContainer implements ModContainer {
     @Override
     public ModDescriptor getDescriptor() {
         return descriptor;
+    }
+
+    public DummyModContainer setInstance(Object modInstance) {
+        this.modInstance = modInstance;
+        return this;
+    }
+
+    public DummyModContainer setClassLoader(ClassLoader classloader) {
+        this.classloader = classloader;
+        return this;
+    }
+
+    public DummyModContainer setSource(Path source) {
+        this.source = source;
+        return this;
+    }
+
+    public DummyModContainer setAssets(ModAssets assets) {
+        this.assets = assets;
+        return this;
+    }
+
+    public DummyModContainer setEventBus(EventBus eventbus) {
+        this.eventbus = eventbus;
+        return this;
     }
 }

@@ -61,7 +61,7 @@ public class JavaModContainer implements ModContainer {
 
     @Override
     public EventBus getEventBus() {
-        return null;
+        return eventBus;
     }
 
     @Override

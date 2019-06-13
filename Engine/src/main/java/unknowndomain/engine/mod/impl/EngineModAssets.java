@@ -1,55 +1,60 @@
-package unknowndomain.engine.mod.java;
+package unknowndomain.engine.mod.impl;
 
 import unknowndomain.engine.Platform;
+import unknowndomain.engine.client.asset.AssetPath;
+import unknowndomain.engine.client.asset.source.AssetSource;
 import unknowndomain.engine.mod.ModAssets;
 
+import javax.annotation.Nullable;
 import java.io.*;
-import java.nio.file.FileSystem;
-import java.nio.file.*;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
-public class JavaModAssets implements ModAssets {
+public class EngineModAssets implements ModAssets {
 
-    private FileSystem fileSystem;
+    private final AssetSource source;
 
-    public JavaModAssets(FileSystem fileSystem) {
-        this.fileSystem = fileSystem;
+    public EngineModAssets(AssetSource source){
+        this.source = source;
     }
 
+    @Nullable
     @Override
     public Path get(String first) {
-        Path path = fileSystem.getPath(first);
-        if (Files.notExists(path)) {
-            return null;
-        }
-        return path;
+        return source.toPath(AssetPath.of(fixExtraAssets(first)));
     }
 
+    @Nullable
     @Override
     public Path get(String first, String... more) {
-        Path path = fileSystem.getPath(first, more);
-        if (Files.notExists(path)) {
-            return null;
-        }
-        return path;
+        return source.toPath(AssetPath.of(fixExtraAssets(first), more));
     }
 
     @Override
     public InputStream openStream(String first) throws IOException {
-        Path path = get(first);
-        if (path == null) {
-            return null;
-        }
-        return Files.newInputStream(path);
+        return source.openStream(AssetPath.of(fixExtraAssets(first)));
     }
 
     @Override
     public InputStream openStream(String first, String... more) throws IOException {
-        Path path = get(first, more);
-        if (path == null) {
-            return null;
-        }
-        return Files.newInputStream(path);
+        return source.openStream(AssetPath.of(fixExtraAssets(first), more));
+    }
+
+    @Override
+    public boolean exists(String first) {
+        return source.exists(AssetPath.of(fixExtraAssets(first)));
+    }
+
+    @Override
+    public boolean exists(String first, String... more) {
+        return source.exists(AssetPath.of(fixExtraAssets(first), more));
+    }
+
+    private String fixExtraAssets(String first) {
+        return first.replaceFirst("^assets/", "").replaceFirst("^assets", "");
     }
 
     @Override
@@ -74,16 +79,6 @@ public class JavaModAssets implements ModAssets {
             Platform.getLogger().warn(String.format("cannot list files of path %s", path), e);
             return Stream.empty();
         }
-    }
-
-    @Override
-    public boolean exists(String first) {
-        return Files.exists(fileSystem.getPath(first));
-    }
-
-    @Override
-    public boolean exists(String first, String... more) {
-        return Files.exists(fileSystem.getPath(first, more));
     }
 
     @Override
