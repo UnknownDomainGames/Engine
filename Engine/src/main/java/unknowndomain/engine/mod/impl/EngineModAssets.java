@@ -3,7 +3,6 @@ package unknowndomain.engine.mod.impl;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.asset.source.AssetSource;
-import unknowndomain.engine.mod.ModAssets;
 
 import javax.annotation.Nullable;
 import java.io.*;
@@ -13,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.stream.Stream;
 
-public class EngineModAssets implements ModAssets {
+public class EngineModAssets extends AbstractModAssets {
 
     private final AssetSource source;
 

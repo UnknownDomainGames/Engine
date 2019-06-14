@@ -1,7 +1,6 @@
 package unknowndomain.engine;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unknowndomain.engine.event.EventBus;
@@ -13,6 +12,7 @@ import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.mod.dummy.DummyModContainer;
 import unknowndomain.engine.mod.exception.InvalidModDescriptorException;
 import unknowndomain.engine.mod.impl.EngineModManager;
+import unknowndomain.engine.util.ClassPathUtils;
 import unknowndomain.engine.util.RuntimeEnvironment;
 
 import java.io.IOException;
@@ -21,13 +21,12 @@ import java.lang.management.RuntimeMXBean;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.apache.commons.lang3.SystemUtils.*;
+import static unknowndomain.engine.util.ClassPathUtils.getFilesInClassPath;
 
 public abstract class EngineBase implements Engine {
 
@@ -90,7 +89,7 @@ public abstract class EngineBase implements Engine {
         } catch (URISyntaxException ignored) {
         }
 
-        if (Arrays.stream(JAVA_CLASS_PATH.split(";")).anyMatch(path -> Files.isDirectory(Paths.get(path)))) {
+        if (!ClassPathUtils.getDirectoriesInClassPath().isEmpty()) {
             runtimeEnvironment = RuntimeEnvironment.MOD_DEVELOPMENT;
             return;
         }
@@ -128,10 +127,10 @@ public abstract class EngineBase implements Engine {
         logger.info("Loading Mods.");
         modManager = new EngineModManager();
 
-        Path modFolder = Paths.get("mods");
+        Path modFolder = Path.of("mods");
         if (!Files.exists(modFolder)) {
             try {
-                Files.createDirectory(modFolder);
+                Files.createDirectories(modFolder);
             } catch (IOException e) {
                 logger.warn(e.getMessage(), e);
             }
@@ -176,13 +175,10 @@ public abstract class EngineBase implements Engine {
     }
 
     private void loadClassPathMods() {
-        for (String path : SystemUtils.JAVA_CLASS_PATH.split(";")) {
-            Path _path = Path.of(path);
-            if (!Files.isDirectory(_path)) {
-                try {
-                    modManager.loadMod(_path);
-                } catch (InvalidModDescriptorException ignored) {
-                }
+        for (Path path : getFilesInClassPath()) {
+            try {
+                modManager.loadMod(path);
+            } catch (InvalidModDescriptorException ignored) {
             }
         }
     }

@@ -1,6 +1,5 @@
 package unknowndomain.engine.mod.impl;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unknowndomain.engine.Platform;
@@ -14,11 +13,11 @@ import unknowndomain.engine.mod.java.dev.DevModAssets;
 import unknowndomain.engine.mod.java.dev.DevModContainer;
 import unknowndomain.engine.mod.misc.DefaultModDescriptor;
 
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
+
+import static unknowndomain.engine.util.ClassPathUtils.getDirectoriesInClassPath;
 
 public class EngineModManager extends AbstractModManager {
 
@@ -42,7 +41,7 @@ public class EngineModManager extends AbstractModManager {
     }
 
     public void loadDevEnvMod() {
-        List<Path> directories = findDirectoriesInClassPath();
+        List<Path> directories = getDirectoriesInClassPath();
 
         Path modPath = findModInDirectories(directories);
         if (modPath == null)
@@ -69,7 +68,7 @@ public class EngineModManager extends AbstractModManager {
         DevModContainer modContainer;
         try {
             Object instance = Class.forName(modDescriptor.getMainClass(), true, classLoader).newInstance();
-            ModAssets assets = new DevModAssets(FileSystems.getDefault(), directories);
+            ModAssets assets = new DevModAssets(directories);
             modContainer = new DevModContainer(modDescriptor, classLoader, assets, modLogger, instance);
             classLoader.setMod(modContainer);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
@@ -77,17 +76,6 @@ public class EngineModManager extends AbstractModManager {
         }
 
         loadedModContainer.put(modContainer.getModId(), modContainer);
-    }
-
-    private List<Path> findDirectoriesInClassPath() {
-        List<Path> paths = new ArrayList<>();
-        for (String path : SystemUtils.JAVA_CLASS_PATH.split(";")) {
-            Path _path = Path.of(path);
-            if (Files.isDirectory(_path)) {
-                paths.add(_path);
-            }
-        }
-        return paths;
     }
 
     private Path findModInDirectories(List<Path> paths) {

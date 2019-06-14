@@ -23,16 +23,23 @@ import unknowndomain.engine.i18n.LocaleManager;
 import unknowndomain.engine.math.Ticker;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.dummy.DummyModContainer;
-import unknowndomain.engine.mod.impl.EngineModAssets;
+import unknowndomain.engine.mod.java.JavaModAssets;
+import unknowndomain.engine.mod.java.dev.DevModAssets;
+import unknowndomain.engine.util.RuntimeEnvironment;
 import unknowndomain.engine.util.Side;
 import unknowndomain.engine.util.disposer.Disposer;
 import unknowndomain.engine.util.disposer.DisposerImpl;
 import unknowndomain.game.DefaultGameMode;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static unknowndomain.engine.util.ClassPathUtils.getDirectoriesInClassPath;
 
 public class EngineClientImpl extends EngineBase implements EngineClient {
 
@@ -73,9 +80,16 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         engineAssetSource = EngineAssetSource.create();
         assetManager = new EngineAssetManager();
         assetManager.getSourceManager().getSources().add(engineAssetSource);
-        ((DummyModContainer)getModManager().getMod("engine").get())
-                .setAssets(new EngineModAssets(engineAssetSource))
-                .setClassLoader(getClass().getClassLoader());
+        try {
+            ((DummyModContainer) getModManager().getMod("engine").get())
+                    .setAssets(getRuntimeEnvironment() == RuntimeEnvironment.ENGINE_DEVELOPMENT ?
+                            new DevModAssets(getDirectoriesInClassPath()) :
+                            new JavaModAssets(FileSystems.newFileSystem(Path.of(EngineAssetSource.class.getProtectionDomain().getCodeSource().getLocation().toURI()), getClass().getClassLoader())))
+                    .setClassLoader(getClass().getClassLoader());
+        } catch (URISyntaxException | IOException e) {
+            // TODO: Crash report
+            e.printStackTrace();
+        }
 
         logger.info("Initializing render context!");
         renderContext = new EngineRenderContext(this);
@@ -100,15 +114,15 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         soundManager.init();
         addShutdownListener(soundManager::dispose);
         assetManager.getReloadDispatcher().addLast("Sound", soundManager::reload);
-        
+
         localeManager = LocaleManager.INSTANCE;
-        assetManager.getReloadDispatcher().addLast("I18n", ()->{
+        assetManager.getReloadDispatcher().addLast("I18n", () -> {
             localeManager.reset();
             for (ModContainer mod : EngineClientImpl.this.getModManager().getLoadedMods()) {
                 localeManager.register(mod);
             }
         });
-        		
+
         ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), Ticker.CLIENT_TICK);
     }
 
