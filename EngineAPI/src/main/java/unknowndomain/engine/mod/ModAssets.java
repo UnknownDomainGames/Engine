@@ -1,15 +1,27 @@
 package unknowndomain.engine.mod;
 
 import javax.annotation.Nullable;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
 public interface ModAssets {
 
+    /**
+     * @param first
+     * @return if path is not exists, return null
+     */
     @Nullable
     Path get(String first);
 
+    /**
+     * @param first
+     * @param more
+     * @return if path is not exists, return null
+     */
     @Nullable
     Path get(String first, String... more);
 
