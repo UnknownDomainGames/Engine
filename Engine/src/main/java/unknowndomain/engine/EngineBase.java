@@ -12,6 +12,9 @@ import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.mod.dummy.DummyModContainer;
 import unknowndomain.engine.mod.exception.InvalidModDescriptorException;
 import unknowndomain.engine.mod.impl.EngineModManager;
+import unknowndomain.engine.mod.java.JavaModAssets;
+import unknowndomain.engine.mod.java.dev.DevModAssets;
+import unknowndomain.engine.mod.misc.DefaultModDescriptor;
 import unknowndomain.engine.util.ClassPathUtils;
 import unknowndomain.engine.util.RuntimeEnvironment;
 
@@ -19,6 +22,8 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -26,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.apache.commons.lang3.SystemUtils.*;
+import static unknowndomain.engine.util.ClassPathUtils.getDirectoriesInClassPath;
 import static unknowndomain.engine.util.ClassPathUtils.getFilesInClassPath;
 
 public abstract class EngineBase implements Engine {
@@ -126,21 +132,9 @@ public abstract class EngineBase implements Engine {
     private void loadMods() {
         logger.info("Loading Mods.");
         modManager = new EngineModManager();
-
-        Path modFolder = Path.of("mods");
-        if (!Files.exists(modFolder)) {
-            try {
-                Files.createDirectories(modFolder);
-            } catch (IOException e) {
-                logger.warn(e.getMessage(), e);
-            }
-        }
-
         try {
-            Files.find(modFolder, 1,
-                    (path, basicFileAttributes) -> path.getFileName().toString().endsWith(".jar"))
-                    .forEach(modManager::loadMod);
-
+            loadEngineDummyMod();
+            loadDirMod();
             loadDevEnvMod();
 
             Collection<ModContainer> loadedMods = modManager.getLoadedMods();
@@ -153,16 +147,39 @@ public abstract class EngineBase implements Engine {
                 eventBus.register(mod.getInstance());
             }
 
-
             logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getModId() + "@" + modContainer.getVersion()).iterator(), ",") + "]");
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+        } catch (IOException | URISyntaxException e) {
+            // TODO: Crash report
+            logger.error("Cannot load mods.", e);
+        }
+    }
+
+    private void loadEngineDummyMod() throws IOException, URISyntaxException {
+        var engineMod = new DummyModContainer(DefaultModDescriptor.builder().modId("engine").version(Platform.getVersion()).build());
+        engineMod.setClassLoader(getClass().getClassLoader());
+        Path engineJarPath = Path.of(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+        if (Platform.getEngine().getRuntimeEnvironment() == RuntimeEnvironment.ENGINE_DEVELOPMENT) {
+            engineMod.setAssets(new DevModAssets(getDirectoriesInClassPath()));
+        } else {
+            FileSystem fileSystem = FileSystems.newFileSystem(engineJarPath, getClass().getClassLoader());
+            engineMod.setAssets(new JavaModAssets(fileSystem));
+        }
+        modManager.addDummyModContainer(engineMod);
+    }
+
+    private void loadDirMod() throws IOException {
+        Path modFolder = Path.of("mods");
+        if (!Files.exists(modFolder)) {
+            try {
+                Files.createDirectories(modFolder);
+            } catch (IOException e) {
+                logger.warn(e.getMessage(), e);
+            }
         }
 
-//        Platform.getLogger().info("Initializing Mods!");
-//        getContext().post(new EngineEvent.ModInitializationEvent(this));
-//        Platform.getLogger().info("Finishing Construction!");
-//        getContext().post(new EngineEvent.ModConstructionFinish(this));
+        Files.find(modFolder, 1,
+                (path, basicFileAttributes) -> path.getFileName().toString().endsWith(".jar"))
+                .forEach(modManager::loadMod);
     }
 
     private void loadDevEnvMod() {

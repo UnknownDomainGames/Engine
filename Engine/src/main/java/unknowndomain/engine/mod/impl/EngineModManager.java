@@ -2,7 +2,6 @@ package unknowndomain.engine.mod.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import unknowndomain.engine.Platform;
 import unknowndomain.engine.mod.*;
 import unknowndomain.engine.mod.exception.MissingDependencyException;
 import unknowndomain.engine.mod.exception.ModAlreadyLoadedException;
@@ -11,7 +10,6 @@ import unknowndomain.engine.mod.java.JavaModLoader;
 import unknowndomain.engine.mod.java.ModClassLoader;
 import unknowndomain.engine.mod.java.dev.DevModAssets;
 import unknowndomain.engine.mod.java.dev.DevModContainer;
-import unknowndomain.engine.mod.misc.DefaultModDescriptor;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,10 +18,6 @@ import java.util.List;
 import static unknowndomain.engine.util.ClassPathUtils.getDirectoriesInClassPath;
 
 public class EngineModManager extends AbstractModManager {
-
-    public EngineModManager() {
-        addDummyModContainer(DefaultModDescriptor.builder().modId("engine").version(Platform.getVersion()).build());
-    }
 
     @Override
     public ModLoader createModLoader() {

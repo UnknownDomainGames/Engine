@@ -62,8 +62,8 @@ public abstract class AbstractModManager implements ModManager {
         return modContainer;
     }
 
-    protected void addDummyModContainer(ModDescriptor modDescriptor) {
-        loadedModContainer.put(modDescriptor.getModId(), new DummyModContainer(modDescriptor));
+    public void addDummyModContainer(DummyModContainer dummyModContainer) {
+        loadedModContainer.put(dummyModContainer.getModId(), dummyModContainer);
     }
 
     @Nullable

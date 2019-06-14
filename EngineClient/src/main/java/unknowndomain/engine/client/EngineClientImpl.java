@@ -23,9 +23,6 @@ import unknowndomain.engine.game.Game;
 import unknowndomain.engine.i18n.LocaleManager;
 import unknowndomain.engine.math.Ticker;
 import unknowndomain.engine.mod.ModContainer;
-import unknowndomain.engine.mod.dummy.DummyModContainer;
-import unknowndomain.engine.mod.java.JavaModAssets;
-import unknowndomain.engine.mod.java.dev.DevModAssets;
 import unknowndomain.engine.util.RuntimeEnvironment;
 import unknowndomain.engine.util.Side;
 import unknowndomain.engine.util.disposer.Disposer;
@@ -81,19 +78,15 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
         logger.info("Initializing asset!");
         try {
-            var engineMod = (DummyModContainer) getModManager().getMod("engine").get();
-
             Path engineJarPath = Path.of(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
             if (getRuntimeEnvironment() == RuntimeEnvironment.ENGINE_DEVELOPMENT) {
                 engineAssetSource = new DirectoriesAssetSource(
                         getDirectoriesInClassPath().stream()
                                 .map($ -> $.resolve("assets"))
                                 .collect(Collectors.toList()));
-                engineMod.setAssets(new DevModAssets(getDirectoriesInClassPath()));
             } else {
                 FileSystem fileSystem = FileSystems.newFileSystem(engineJarPath, getClass().getClassLoader());
                 engineAssetSource = new FileSystemAssetSource(fileSystem, "assets");
-                engineMod.setAssets(new JavaModAssets(fileSystem));
             }
         } catch (URISyntaxException | IOException e) {
             // TODO: Crash report
