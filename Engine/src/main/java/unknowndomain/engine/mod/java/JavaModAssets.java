@@ -5,6 +5,7 @@ import unknowndomain.engine.mod.impl.AbstractModAssets;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 public class JavaModAssets extends AbstractModAssets {
 
@@ -15,28 +16,20 @@ public class JavaModAssets extends AbstractModAssets {
     }
 
     @Override
-    public Path get(String first) {
+    public Optional<Path> get(String first) {
         Path path = fileSystem.getPath(first);
         if (Files.notExists(path)) {
-            return null;
+            return Optional.empty();
         }
-        return path;
+        return Optional.of(path);
     }
 
     @Override
-    public Path get(String first, String... more) {
+    public Optional<Path> get(String first, String... more) {
         Path path = fileSystem.getPath(first, more);
         if (Files.notExists(path)) {
-            return null;
+            return Optional.empty();
         }
-        return path;
-    }
-
-    public boolean exists(String first) {
-        return Files.exists(fileSystem.getPath(first));
-    }
-
-    public boolean exists(String first, String... more) {
-        return Files.exists(fileSystem.getPath(first, more));
+        return Optional.of(path);
     }
 }

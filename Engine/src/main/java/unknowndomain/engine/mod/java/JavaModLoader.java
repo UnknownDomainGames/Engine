@@ -2,7 +2,6 @@ package unknowndomain.engine.mod.java;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import unknowndomain.engine.mod.ModAssets;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModDescriptor;
 import unknowndomain.engine.mod.ModLoader;
@@ -22,9 +21,10 @@ public class JavaModLoader implements ModLoader {
 
         try {
             Object instance = Class.forName(descriptor.getMainClass(), true, classLoader).newInstance();
-            ModAssets assets = new JavaModAssets(FileSystems.newFileSystem(descriptor.getSource(), classLoader));
+            JavaModAssets assets = new JavaModAssets(FileSystems.newFileSystem(descriptor.getSource(), classLoader));
             JavaModContainer modContainer = new JavaModContainer(descriptor, classLoader, assets, modLogger, instance);
             classLoader.setMod(modContainer);
+            assets.setMod(modContainer);
             return modContainer;
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | IOException e) {
             throw new ModLoadException(descriptor.getModId(), e);

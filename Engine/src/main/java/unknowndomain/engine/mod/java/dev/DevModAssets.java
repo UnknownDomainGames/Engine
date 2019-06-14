@@ -5,6 +5,7 @@ import unknowndomain.engine.mod.impl.AbstractModAssets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Optional;
 
 public class DevModAssets extends AbstractModAssets {
 
@@ -15,46 +16,24 @@ public class DevModAssets extends AbstractModAssets {
     }
 
     @Override
-    public Path get(String first) {
+    public Optional<Path> get(String first) {
         for (Path root : roots) {
             Path path = root.resolve(first);
             if (Files.exists(path)) {
-                return path;
+                return Optional.of(path);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public Path get(String first, String... more) {
+    public Optional<Path> get(String first, String... more) {
         for (Path root : roots) {
             Path path = root.resolve(Path.of(first, more));
             if (Files.exists(path)) {
-                return path;
+                return Optional.of(path);
             }
         }
-        return null;
-    }
-
-    @Override
-    public boolean exists(String first) {
-        for (Path root : roots) {
-            Path path = root.resolve(first);
-            if (Files.exists(path)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean exists(String first, String... more) {
-        for (Path root : roots) {
-            Path path = root.resolve(Path.of(first, more));
-            if (Files.exists(path)) {
-                return true;
-            }
-        }
-        return false;
+        return Optional.empty();
     }
 }

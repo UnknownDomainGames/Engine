@@ -2,7 +2,10 @@ package unknowndomain.engine.mod.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import unknowndomain.engine.mod.*;
+import unknowndomain.engine.mod.DependencyManager;
+import unknowndomain.engine.mod.ModDescriptor;
+import unknowndomain.engine.mod.ModDescriptorFinder;
+import unknowndomain.engine.mod.ModLoader;
 import unknowndomain.engine.mod.exception.MissingDependencyException;
 import unknowndomain.engine.mod.exception.ModAlreadyLoadedException;
 import unknowndomain.engine.mod.exception.ModLoadException;
@@ -62,9 +65,10 @@ public class EngineModManager extends AbstractModManager {
         DevModContainer modContainer;
         try {
             Object instance = Class.forName(modDescriptor.getMainClass(), true, classLoader).newInstance();
-            ModAssets assets = new DevModAssets(directories);
+            DevModAssets assets = new DevModAssets(directories);
             modContainer = new DevModContainer(modDescriptor, classLoader, assets, modLogger, instance);
             classLoader.setMod(modContainer);
+            assets.setMod(modContainer);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             throw new ModLoadException(modDescriptor.getModId(), e);
         }

@@ -1,40 +1,46 @@
 package unknowndomain.engine.mod;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface ModAssets {
 
     /**
      * @param first
-     * @return if path is not exists, return null
+     * @return if path is not exists, return {@link Optional#empty()}
      */
-    @Nullable
-    Path get(String first);
+    Optional<Path> get(String first);
 
     /**
      * @param first
      * @param more
-     * @return if path is not exists, return null
+     * @return if path is not exists, return {@link Optional#empty()}
      */
-    @Nullable
-    Path get(String first, String... more);
+    Optional<Path> get(String first, String... more);
 
-    InputStream openStream(String first) throws IOException;
+    /**
+     * @param first
+     * @return if file is not exists, return {@link Optional#empty()}
+     */
+    Optional<InputStream> openStream(String first) throws IOException;
 
-    InputStream openStream(String first, String... more) throws IOException;
+    /**
+     * @param first
+     * @param more
+     * @return if file is not exists, return {@link Optional#empty()}
+     */
+    Optional<InputStream> openStream(String first, String... more) throws IOException;
 
-    boolean exists(String first);
-
-    boolean exists(String first, String... more);
-
+    @Nonnull
     Stream<Path> list(String first);
 
+    @Nonnull
     Stream<Path> list(String first, String... more);
 
     default void copy(Path target, String first) {

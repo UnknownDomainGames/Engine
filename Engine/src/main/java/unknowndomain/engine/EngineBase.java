@@ -11,6 +11,7 @@ import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.mod.dummy.DummyModContainer;
 import unknowndomain.engine.mod.exception.InvalidModDescriptorException;
+import unknowndomain.engine.mod.impl.AbstractModAssets;
 import unknowndomain.engine.mod.impl.EngineModManager;
 import unknowndomain.engine.mod.java.JavaModAssets;
 import unknowndomain.engine.mod.java.dev.DevModAssets;
@@ -158,12 +159,15 @@ public abstract class EngineBase implements Engine {
         var engineMod = new DummyModContainer(DefaultModDescriptor.builder().modId("engine").version(Platform.getVersion()).build());
         engineMod.setClassLoader(getClass().getClassLoader());
         Path engineJarPath = Path.of(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+        AbstractModAssets modAssets;
         if (Platform.getEngine().getRuntimeEnvironment() == RuntimeEnvironment.ENGINE_DEVELOPMENT) {
-            engineMod.setAssets(new DevModAssets(getDirectoriesInClassPath()));
+            modAssets = new DevModAssets(getDirectoriesInClassPath());
         } else {
             FileSystem fileSystem = FileSystems.newFileSystem(engineJarPath, getClass().getClassLoader());
-            engineMod.setAssets(new JavaModAssets(fileSystem));
+            modAssets = new JavaModAssets(fileSystem);
         }
+        modAssets.setMod(engineMod);
+        engineMod.setAssets(modAssets);
         modManager.addDummyModContainer(engineMod);
     }
 
