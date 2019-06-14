@@ -4,7 +4,6 @@ import unknowndomain.engine.client.asset.source.AssetSource;
 import unknowndomain.engine.client.asset.source.AssetSourceManager;
 
 import javax.annotation.Nonnull;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -18,7 +17,7 @@ public class DefaultAssetSourceManager implements AssetSourceManager {
     @Override
     public Optional<AssetSource> getSource(AssetPath path) {
         for (AssetSource assetSource : assetSources) {
-            if (assetSource.exists(path)) {
+            if (assetSource.toPath(path).isPresent()) {
                 return Optional.of(assetSource);
             }
         }
@@ -29,7 +28,7 @@ public class DefaultAssetSourceManager implements AssetSourceManager {
     public List<AssetSource> getSources(@Nonnull AssetPath path) {
         List<AssetSource> result = new ArrayList<>();
         for (AssetSource assetSource : assetSources) {
-            if (assetSource.exists(path)) {
+            if (assetSource.toPath(path).isPresent()) {
                 result.add(assetSource);
             }
         }
@@ -44,9 +43,9 @@ public class DefaultAssetSourceManager implements AssetSourceManager {
     @Override
     public Optional<Path> getPath(@Nonnull AssetPath path) {
         for (AssetSource assetSource : assetSources) {
-            Path _path = assetSource.toPath(path);
-            if (Files.exists(_path)) {
-                return Optional.of(_path);
+            Optional<Path> _path = assetSource.toPath(path);
+            if (_path.isPresent()) {
+                return _path;
             }
         }
         return Optional.empty();
@@ -55,12 +54,7 @@ public class DefaultAssetSourceManager implements AssetSourceManager {
     @Override
     public List<Path> getPaths(@Nonnull AssetPath path) {
         List<Path> result = new ArrayList<>();
-        for (AssetSource assetSource : assetSources) {
-            Path _path = assetSource.toPath(path);
-            if (Files.exists(_path)) {
-                result.add(_path);
-            }
-        }
+        assetSources.forEach(assetSource -> assetSource.toPath(path).ifPresent(result::add));
         return List.copyOf(result);
     }
 }

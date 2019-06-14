@@ -5,10 +5,10 @@ import unknowndomain.engine.client.asset.AssetPath;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -23,18 +23,9 @@ public class FileSystemAssetSource implements AssetSource {
     }
 
     @Override
-    public boolean exists(AssetPath path) {
-        return Files.exists(toPath(path));
-    }
-
-    @Override
-    public InputStream openStream(AssetPath path) throws IOException {
-        return Files.newInputStream(toPath(path));
-    }
-
-    @Override
-    public Path toPath(AssetPath path) {
-        return fileSystem.getPath(root, path.getRealPath());
+    public Optional<Path> toPath(AssetPath path) {
+        Path _path = fileSystem.getPath(root, path.getRealPath());
+        return Files.exists(_path) ? Optional.of(_path) : Optional.empty();
     }
 
     public FileSystem getFileSystem() {
