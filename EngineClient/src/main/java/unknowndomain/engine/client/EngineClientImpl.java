@@ -4,10 +4,11 @@ import unknowndomain.engine.EngineBase;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.client.asset.AssetManager;
 import unknowndomain.engine.client.asset.EngineAssetManager;
-import unknowndomain.engine.client.asset.EngineAssetSource;
 import unknowndomain.engine.client.asset.model.voxel.VoxelModel;
 import unknowndomain.engine.client.asset.model.voxel.VoxelModelManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
+import unknowndomain.engine.client.asset.source.DirectoriesAssetSource;
+import unknowndomain.engine.client.asset.source.FileSystemAssetSource;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.rendering.EngineRenderContext;
 import unknowndomain.engine.client.rendering.RenderContext;
@@ -33,9 +34,11 @@ import unknowndomain.game.DefaultGameMode;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
@@ -77,19 +80,28 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         disposer = new DisposerImpl();
 
         logger.info("Initializing asset!");
-        engineAssetSource = EngineAssetSource.create();
-        assetManager = new EngineAssetManager();
-        assetManager.getSourceManager().getSources().add(engineAssetSource);
         try {
-            ((DummyModContainer) getModManager().getMod("engine").get())
-                    .setAssets(getRuntimeEnvironment() == RuntimeEnvironment.ENGINE_DEVELOPMENT ?
-                            new DevModAssets(getDirectoriesInClassPath()) :
-                            new JavaModAssets(FileSystems.newFileSystem(Path.of(EngineAssetSource.class.getProtectionDomain().getCodeSource().getLocation().toURI()), getClass().getClassLoader())))
-                    .setClassLoader(getClass().getClassLoader());
+            var engineMod = (DummyModContainer) getModManager().getMod("engine").get();
+
+            Path engineJarPath = Path.of(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+            if (getRuntimeEnvironment() == RuntimeEnvironment.ENGINE_DEVELOPMENT) {
+                engineAssetSource = new DirectoriesAssetSource(
+                        getDirectoriesInClassPath().stream()
+                                .map($ -> $.resolve("assets"))
+                                .collect(Collectors.toList()));
+                engineMod.setAssets(new DevModAssets(getDirectoriesInClassPath()));
+            } else {
+                FileSystem fileSystem = FileSystems.newFileSystem(engineJarPath, getClass().getClassLoader());
+                engineAssetSource = new FileSystemAssetSource(fileSystem, "assets");
+                engineMod.setAssets(new JavaModAssets(fileSystem));
+            }
         } catch (URISyntaxException | IOException e) {
             // TODO: Crash report
-            e.printStackTrace();
+            logger.error("Cannot init engine.", e);
         }
+
+        assetManager = new EngineAssetManager();
+        assetManager.getSourceManager().getSources().add(engineAssetSource);
 
         logger.info("Initializing render context!");
         renderContext = new EngineRenderContext(this);
