@@ -6,8 +6,8 @@ import unknowndomain.engine.client.rendering.item.ItemRenderManager;
 import unknowndomain.engine.client.rendering.item.ItemRenderManagerImpl;
 import unknowndomain.engine.client.rendering.world.WorldRenderer;
 import unknowndomain.engine.event.Listener;
-import unknowndomain.engine.event.engine.GameStartEvent;
-import unknowndomain.engine.event.engine.GameTerminationEvent;
+import unknowndomain.engine.event.game.GameStartEvent;
+import unknowndomain.engine.event.game.GameTerminationEvent;
 
 public class Game3DRenderer implements Renderer {
 

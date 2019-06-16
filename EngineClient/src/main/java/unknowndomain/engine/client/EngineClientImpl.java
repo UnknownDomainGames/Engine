@@ -18,7 +18,7 @@ import unknowndomain.engine.client.rendering.shader.ShaderManager;
 import unknowndomain.engine.client.sound.ALSoundManager;
 import unknowndomain.engine.client.sound.EngineSoundManager;
 import unknowndomain.engine.event.engine.EngineEvent;
-import unknowndomain.engine.event.engine.GameStartEvent;
+import unknowndomain.engine.event.game.GameStartEvent;
 import unknowndomain.engine.game.Game;
 import unknowndomain.engine.i18n.LocaleManager;
 import unknowndomain.engine.math.Ticker;

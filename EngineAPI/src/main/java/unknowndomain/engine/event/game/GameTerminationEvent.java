@@ -1,4 +1,4 @@
-package unknowndomain.engine.event.engine;
+package unknowndomain.engine.event.game;
 
 import unknowndomain.engine.event.Event;
 import unknowndomain.engine.game.Game;
