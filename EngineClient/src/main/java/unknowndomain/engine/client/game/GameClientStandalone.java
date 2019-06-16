@@ -8,7 +8,7 @@ import unknowndomain.engine.client.input.keybinding.KeyBinding;
 import unknowndomain.engine.client.input.keybinding.KeyBindingManager;
 import unknowndomain.engine.client.rendering.camera.FirstPersonCamera;
 import unknowndomain.engine.entity.item.ItemEntity;
-import unknowndomain.engine.event.engine.GameTerminationEvent;
+import unknowndomain.engine.event.game.GameTerminationEvent;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.item.ItemStack;
 import unknowndomain.engine.math.BlockPos;

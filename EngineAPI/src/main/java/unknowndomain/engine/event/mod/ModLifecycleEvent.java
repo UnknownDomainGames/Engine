@@ -15,14 +15,20 @@ public class ModLifecycleEvent implements Event {
         return modContainer;
     }
 
-    public static final class Construction extends ModLifecycleEvent {
-        public Construction(ModContainer modContainer) {
+    public static final class PreInitialization extends ModLifecycleEvent {
+        public PreInitialization(ModContainer modContainer) {
             super(modContainer);
         }
     }
 
     public static final class Initialization extends ModLifecycleEvent {
         public Initialization(ModContainer modContainer) {
+            super(modContainer);
+        }
+    }
+
+    public static final class PostInitialization extends ModLifecycleEvent {
+        public PostInitialization(ModContainer modContainer) {
             super(modContainer);
         }
     }
