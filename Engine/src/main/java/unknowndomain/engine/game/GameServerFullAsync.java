@@ -28,8 +28,8 @@ public class GameServerFullAsync extends GameBase {
 
     @Override
     public World spawnWorld(WorldProvider provider, String name) {
-        var world = (WorldCommon)provider.create(name, Path.of("/"));
-        this.worlds.put("default", world);
+        var world = (WorldCommon) provider.create(this, name, Path.of("world", name));
+        this.worlds.put(name, world);
         this.internalWorlds.add(world);
         Thread thread = new Thread(world);
         thread.setName("World Thread: default");

@@ -12,7 +12,6 @@ import unknowndomain.engine.entity.item.ItemEntity;
 import unknowndomain.engine.event.game.GameTerminationEvent;
 import unknowndomain.engine.game.GameServerFullAsync;
 import unknowndomain.engine.item.ItemStack;
-import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
@@ -22,7 +21,6 @@ import unknowndomain.game.init.Blocks;
 import unknowndomain.game.init.Items;
 
 import javax.annotation.Nonnull;
-import java.util.Random;
 
 public class GameClientStandalone extends GameServerFullAsync implements GameClient {
 
@@ -112,9 +110,8 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
         // TODO: Remove it
         WorldCommonProvider provider = new WorldCommonProvider();
-        provider.setCurrentGame(this);
         provider.setChunkGenerator(new ChunkGeneratorFlat(new ChunkGeneratorFlat.Setting().setLayers(new Block[]{Blocks.DIRT,Blocks.DIRT,Blocks.DIRT,Blocks.DIRT,Blocks.GRASS})));
-        spawnWorld(provider, "");
+        spawnWorld(provider, "default");
         var world = (WorldCommon) getWorld("default");
         world.playerJoin(player);
         player.getControlledEntity().getPosition().set(0, 5, 0);
