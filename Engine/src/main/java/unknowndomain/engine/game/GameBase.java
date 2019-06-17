@@ -77,7 +77,6 @@ public abstract class GameBase implements Game {
      * final stage of the
      */
     protected void finishStage() {
-        eventBus.post(new GameStartEvent.Post(this));
     }
 
     @Nonnull
