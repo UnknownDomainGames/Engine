@@ -6,7 +6,6 @@ import unknowndomain.engine.mod.ModDependencyEntry;
 import unknowndomain.engine.mod.ModDescriptor;
 import unknowndomain.engine.mod.ModDescriptorFinder;
 import unknowndomain.engine.mod.exception.InvalidModDescriptorException;
-import unknowndomain.engine.mod.exception.InvalidModException;
 import unknowndomain.engine.mod.misc.DefaultModDescriptor;
 import unknowndomain.engine.util.JsonUtils;
 
@@ -47,7 +46,7 @@ public class JsonModDescriptorFinder implements ModDescriptorFinder {
                 try (JarFile jarFile = new JarFile(path.toFile())) {
                     JarEntry jarEntry = jarFile.getJarEntry(fileName);
                     if (jarEntry == null) {
-                        throw new InvalidModException(path);
+                        throw new InvalidModDescriptorException(path);
                     }
 
                     try (Reader reader = new InputStreamReader(jarFile.getInputStream(jarEntry))) {
