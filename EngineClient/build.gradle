@@ -7,6 +7,7 @@ dependencies {
     compile project(':EngineServer')
 
     implementation 'org.slf4j:slf4j-simple:1.7.25'
+    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
     implementation 'com.github.Mouse0w0.Configuration:configuration-toml4j:1.1.0'
     implementation 'com.github.Mouse0w0.Configuration:configuration-gson:1.1.0'
 }
