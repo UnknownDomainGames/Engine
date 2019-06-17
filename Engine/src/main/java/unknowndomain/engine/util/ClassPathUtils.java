@@ -30,9 +30,9 @@ public class ClassPathUtils {
         if (files == null) {
             List<Path> paths = new ArrayList<>();
             for (String path : SystemUtils.JAVA_CLASS_PATH.split(";")) {
-                Path directory = Path.of(path);
-                if (Files.isDirectory(directory)) {
-                    paths.add(directory);
+                Path file = Path.of(path);
+                if (!Files.isDirectory(file)) {
+                    paths.add(file);
                 }
             }
             files = List.copyOf(paths);
