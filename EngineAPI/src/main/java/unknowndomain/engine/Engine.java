@@ -45,7 +45,7 @@ public interface Engine {
 
     void terminate();
 
-    boolean isTerminated();
+    boolean isMarkedTermination();
 
     void addShutdownListener(Runnable runnable);
 

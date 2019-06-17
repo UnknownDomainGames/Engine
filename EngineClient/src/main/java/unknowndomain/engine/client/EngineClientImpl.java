@@ -146,7 +146,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     private void clientTick() {
-        if (isTerminated()) {
+        if (isMarkedTermination()) {
             if (isPlaying()) {
                 game.terminate();
                 game.clientTick();

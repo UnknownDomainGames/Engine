@@ -48,7 +48,7 @@ public abstract class EngineBase implements Engine {
 
     private boolean initialized = false;
     private boolean running = false;
-    private boolean terminated = false;
+    private boolean markedTermination = false;
 
     @Override
     public Logger getLogger() {
@@ -214,18 +214,18 @@ public abstract class EngineBase implements Engine {
 
     @Override
     public synchronized void terminate() {
-        if (terminated) {
+        if (markedTermination) {
             return;
         }
 
-        terminated = true;
+        markedTermination = true;
         eventBus.post(new EngineEvent.MarkedTermination(this));
         logger.info("Marked engine terminated!");
     }
 
     @Override
-    public boolean isTerminated() {
-        return terminated;
+    public boolean isMarkedTermination() {
+        return markedTermination;
     }
 
     @Override
