@@ -79,12 +79,21 @@ public abstract class EngineBase implements Engine {
 
         logger.info("Initializing engine!");
 
+        initExceptionHandler();
         initEnvironment();
         printSystemInfo();
 
         eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
 
         loadMods();
+    }
+
+    private void initExceptionHandler() {
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            logger.error("Caught unhandled exception!!! Engine will terminate!", e);
+            // TODO: Crash report
+            System.exit(1);
+        });
     }
 
     private void initEnvironment() {
