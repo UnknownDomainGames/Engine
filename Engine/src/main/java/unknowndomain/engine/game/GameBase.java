@@ -7,7 +7,8 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.event.EventBus;
-import unknowndomain.engine.event.game.GameEvent;
+import unknowndomain.engine.event.game.GameStartEvent;
+import unknowndomain.engine.event.game.GameTerminationEvent;
 import unknowndomain.engine.event.registry.RegistrationEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
 import unknowndomain.engine.registry.Registries;
@@ -80,7 +81,7 @@ public abstract class GameBase implements Game {
      * final stage of the
      */
     protected void finishStage() {
-        eventBus.post(new GameEvent.Ready(this));
+        eventBus.post(new GameStartEvent.Post(this));
     }
 
     @Nonnull
@@ -109,6 +110,7 @@ public abstract class GameBase implements Game {
     @Override
     public void init() {
         logger.info(marker, "Initializing Game.");
+        eventBus.post(new GameStartEvent.Pre(this));
         constructStage();
         registerStage();
         resourceStage();
@@ -125,6 +127,7 @@ public abstract class GameBase implements Game {
     public synchronized void terminate() {
         terminated = true;
         logger.info(marker, "Marked game terminated!");
+        eventBus.post(new GameTerminationEvent.Marked(this));
     }
 
     @Override

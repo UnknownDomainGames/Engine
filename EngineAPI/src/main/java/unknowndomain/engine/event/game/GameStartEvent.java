@@ -1,18 +1,11 @@
 package unknowndomain.engine.event.game;
 
-import unknowndomain.engine.event.Event;
 import unknowndomain.engine.game.Game;
 
-public class GameStartEvent implements Event {
+public class GameStartEvent extends GameEvent {
 
-    private final Game game;
-
-    private GameStartEvent(Game game) {
-        this.game = game;
-    }
-
-    public Game getGame() {
-        return game;
+    GameStartEvent(Game game) {
+        super(game);
     }
 
     public static class Pre extends GameStartEvent {
