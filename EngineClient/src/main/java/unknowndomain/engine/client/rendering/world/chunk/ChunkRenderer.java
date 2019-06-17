@@ -103,7 +103,7 @@ public class ChunkRenderer {
         handleUploadTask();
 
         for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
-            if (context.getFrustumIntersection().testAab(chunkMesh.getChunk().getMin(), chunkMesh.getChunk().getMax())) {
+            if (chunkMesh != null && context.getFrustumIntersection().testAab(chunkMesh.getChunk().getMin(), chunkMesh.getChunk().getMax())) {
                 chunkMesh.render();
             }
         }

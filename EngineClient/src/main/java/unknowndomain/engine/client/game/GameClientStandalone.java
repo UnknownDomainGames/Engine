@@ -1,6 +1,7 @@
 package unknowndomain.engine.client.game;
 
 import org.joml.Vector3d;
+import unknowndomain.engine.block.Block;
 import unknowndomain.engine.client.EngineClient;
 import unknowndomain.engine.client.input.controller.EntityCameraController;
 import unknowndomain.engine.client.input.controller.EntityController;
@@ -15,6 +16,8 @@ import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
+import unknowndomain.engine.world.WorldCommonProvider;
+import unknowndomain.engine.world.gen.ChunkGeneratorFlat;
 import unknowndomain.game.init.Blocks;
 import unknowndomain.game.init.Items;
 
@@ -108,7 +111,10 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         logger.info("Finishing Game Initialization!");
 
         // TODO: Remove it
-        spawnWorld(null);
+        WorldCommonProvider provider = new WorldCommonProvider();
+        provider.setCurrentGame(this);
+        provider.setChunkGenerator(new ChunkGeneratorFlat(new ChunkGeneratorFlat.Setting().setLayers(new Block[]{Blocks.DIRT,Blocks.DIRT,Blocks.DIRT,Blocks.DIRT,Blocks.GRASS})));
+        spawnWorld(provider, "");
         var world = (WorldCommon) getWorld("default");
         world.playerJoin(player);
         player.getControlledEntity().getPosition().set(0, 5, 0);
@@ -124,14 +130,14 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         logger.info("Game Ready!");
 
         // TODO: Remove it
-        Random random = new Random();
-        for (int x = -16; x < 16; x++) {
-            for (int z = -16; z < 16; z++) {
-                for (int top = 3, y = top; y >= 0; y--) {
-                    world.setBlock(BlockPos.of(x, y, z), y == top ? Blocks.GRASS : Blocks.DIRT, null);
-                }
-            }
-        }
+//        Random random = new Random();
+//        for (int x = -16; x < 16; x++) {
+//            for (int z = -16; z < 16; z++) {
+//                for (int top = 3, y = top; y >= 0; y--) {
+//                    world.setBlock(BlockPos.of(x, y, z), y == top ? Blocks.GRASS : Blocks.DIRT, null);
+//                }
+//            }
+//        }
 
         world.spawnEntity(new ItemEntity(world.getEntities().size(), world, new Vector3d(0, 5, 0), new ItemStack(Items.DIRT)));
 //        a = Platform.getEngineClient().getSoundManager().createSoundSource("test sound").position(25,5,0).gain(1.0f).speed(dir);

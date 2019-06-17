@@ -4,6 +4,7 @@ import unknowndomain.engine.Engine;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.world.World;
+import unknowndomain.engine.world.WorldProvider;
 
 import javax.annotation.Nonnull;
 
@@ -29,7 +30,7 @@ public interface Game {
     @Nonnull
     Engine getEngine();
 
-    World spawnWorld(World.Config config);
+    World spawnWorld(WorldProvider provider, String name);
 
     void init();
 

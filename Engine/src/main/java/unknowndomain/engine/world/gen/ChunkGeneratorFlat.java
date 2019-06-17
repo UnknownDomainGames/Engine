@@ -8,12 +8,12 @@ import unknowndomain.engine.world.chunk.ChunkConstants;
 
 public class ChunkGeneratorFlat implements ChunkGenerator {
 
-    private final World world;
+//    private final World world;
     private final Setting setting;
 
 
-    public ChunkGeneratorFlat(World world, Setting setting){
-        this.world = world;
+    public ChunkGeneratorFlat(Setting setting){
+//        this.world = world;
         this.setting = setting;
     }
 
@@ -22,6 +22,8 @@ public class ChunkGeneratorFlat implements ChunkGenerator {
         int cx = chunk.getChunkX();
         int cy = chunk.getChunkY();
         int cz = chunk.getChunkZ();
+        if(cy < 0) //not making negative-Y chunks
+            return;
         for (int j = 0; j < ChunkConstants.SIZE_Y; j++) {
             if(j + cy * ChunkConstants.SIZE_Y >= setting.getLayers().length){
                 break;

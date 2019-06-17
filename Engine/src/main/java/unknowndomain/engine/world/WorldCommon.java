@@ -35,7 +35,7 @@ public class WorldCommon implements World, Runnable {
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
 
-    private final ChunkStorage chunkStorage;
+    //private final ChunkStorage chunkStorage;
     private WorldCommonLoader loader;
     private WorldCommonChunkManager chunkManager;
     private final List<Long> criticalChunks;
@@ -50,7 +50,7 @@ public class WorldCommon implements World, Runnable {
 
     public WorldCommon(Game game, WorldCommonLoader loader, ChunkGenerator chunkGenerator) {
         this.game = game;
-        this.chunkStorage = new ChunkStorage(this);
+        //this.chunkStorage = new ChunkStorage(this);
         this.loader = loader;
         this.chunkManager = new WorldCommonChunkManager(this, chunkGenerator);
         this.ticker = new FixStepTicker(this::tick, FixStepTicker.LOGIC_TICK); // TODO: make tps configurable
@@ -58,8 +58,8 @@ public class WorldCommon implements World, Runnable {
     }
 
     public void spawnEntity(Entity entity) {
-        BlockPos pos = BlockPos.of(entity.getPosition());
-        Chunk chunk = chunkStorage.getOrLoadChunk(pos);
+        BlockPos pos = ChunkConstants.toChunkPos(BlockPos.of(entity.getPosition()));
+        Chunk chunk = chunkManager.loadChunk(pos.getX(),pos.getY(),pos.getZ());
         chunk.getEntities().add(entity);
         entityList.add(entity);
     }
@@ -166,7 +166,7 @@ public class WorldCommon implements World, Runnable {
     }
 
     protected void tickChunks() {
-        chunkStorage.getChunks().forEach(this::tickChunk);
+        chunkManager.getChunks().forEach(this::tickChunk);
     }
 
     protected void tickEntities() {
@@ -178,12 +178,13 @@ public class WorldCommon implements World, Runnable {
         for (Entity entity : this.getEntities()) {
             Vector3d position = entity.getPosition();
             Vector3f motion = entity.getMotion();
-            BlockPos oldPosition = BlockPos.of(position);
+            BlockPos oldPosition = ChunkConstants.toChunkPos(BlockPos.of(position));
             position.add(motion);
-            BlockPos newPosition = BlockPos.of(position);
+            BlockPos newPosition = ChunkConstants.toChunkPos(BlockPos.of(position));
 
             if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
-                Chunk oldChunk = chunkStorage.getChunk(oldPosition), newChunk = chunkStorage.getOrLoadChunk(newPosition);
+                Chunk oldChunk = chunkManager.loadChunk(oldPosition.getX(),oldPosition.getY(),oldPosition.getZ()),
+                        newChunk = chunkManager.loadChunk(newPosition.getX(),newPosition.getY(),newPosition.getZ());
                 oldChunk.getEntities().remove(entity);
                 newChunk.getEntities().add(entity);
                 // entity leaving and enter chunk event
@@ -206,14 +207,14 @@ public class WorldCommon implements World, Runnable {
     @Nonnull
     @Override
     public Block getBlock(int x, int y, int z) {
-        Chunk chunk = chunkStorage.getChunkByBlockPos(x, y, z);
+        Chunk chunk = chunkManager.loadChunk(x >> ChunkConstants.BITS_X, y >> ChunkConstants.BITS_Y, z >> ChunkConstants.BITS_Z);
         return chunk == null ? Registries.getBlockRegistry().air() : chunk.getBlock(x, y, z);
     }
 
     @Nonnull
     @Override
     public int getBlockId(int x, int y, int z) {
-        Chunk chunk = chunkStorage.getChunkByBlockPos(x, y, z);
+        Chunk chunk = chunkManager.loadChunk(x >> ChunkConstants.BITS_X, y >> ChunkConstants.BITS_Y, z >> ChunkConstants.BITS_Z);
         return chunk == null ? Registries.getBlockRegistry().air().getId() : chunk.getBlockId(x, y, z);
     }
 
@@ -222,7 +223,7 @@ public class WorldCommon implements World, Runnable {
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
         Block oldBlock = getBlock(pos);
         if(!getGame().getEventBus().post(new BlockChangeEvent.Pre(this, pos, oldBlock, block,cause))) {
-            chunkStorage.getOrLoadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
+            chunkManager.loadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
                     .setBlock(pos, block, cause);
             if(block == Blocks.AIR){
                 oldBlock.getComponent(BlockPrototype.DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this,null,pos,oldBlock, cause));
@@ -247,12 +248,12 @@ public class WorldCommon implements World, Runnable {
 
     @Override
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
-        return chunkStorage.getChunk(chunkX, chunkY, chunkZ);
+        return chunkManager.loadChunk(chunkX, chunkY, chunkZ);
     }
 
     @Override
     public Collection<Chunk> getLoadedChunks() {
-        return chunkStorage.getLoadedChunks();
+        return chunkManager.getChunks();
     }
 
     @Override

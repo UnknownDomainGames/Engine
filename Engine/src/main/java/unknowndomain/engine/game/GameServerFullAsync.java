@@ -5,8 +5,10 @@ import com.google.common.collect.Maps;
 import unknowndomain.engine.Engine;
 import unknowndomain.engine.world.World;
 import unknowndomain.engine.world.WorldCommon;
+import unknowndomain.engine.world.WorldProvider;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -25,17 +27,14 @@ public class GameServerFullAsync extends GameBase {
     }
 
     @Override
-    public World spawnWorld(World.Config config) {
-        if (config == null) {
-            WorldCommon w = new WorldCommon(this,null,null);
-            this.worlds.put("default", w);
-            this.internalWorlds.add(w);
-            Thread thread = new Thread(w);
-            thread.setName("World Thread: default");
-            this.worldThreads.add(thread);
-            return w;
-        }
-        return null;
+    public World spawnWorld(WorldProvider provider, String name) {
+        var world = (WorldCommon)provider.create(name, Path.of("/"));
+        this.worlds.put("default", world);
+        this.internalWorlds.add(world);
+        Thread thread = new Thread(world);
+        thread.setName("World Thread: default");
+        this.worldThreads.add(thread);
+        return world;
     }
 
     // @Override

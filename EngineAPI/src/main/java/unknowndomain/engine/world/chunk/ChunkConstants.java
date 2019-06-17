@@ -20,6 +20,10 @@ public interface ChunkConstants {
         return (abs(chunkX) << 42) | (abs(chunkY) << 21) | abs(chunkZ);
     }
 
+    static BlockPos toChunkPos(BlockPos absPos){
+        return BlockPos.of(absPos.getX() >> BITS_X,absPos.getY() >> BITS_Y,absPos.getZ() >> BITS_Z);
+    }
+
     long MAX_POSITIVE_CHUNK_POS = (1 << 20) - 1;
 
     private static long abs(long value) {
