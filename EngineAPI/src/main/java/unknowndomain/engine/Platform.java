@@ -2,6 +2,7 @@ package unknowndomain.engine;
 
 import org.slf4j.Logger;
 import unknowndomain.engine.client.EngineClient;
+import unknowndomain.engine.util.RuntimeEnvironment;
 
 import java.util.Locale;
 
@@ -52,5 +53,9 @@ public class Platform {
 
     public static org.lwjgl.system.Platform getRunningOsPlatform(){
         return org.lwjgl.system.Platform.get();
+    }
+
+    public static RuntimeEnvironment getRuntimeEnvironment() {
+        return engine.getRuntimeEnvironment();
     }
 }

@@ -1,8 +1,6 @@
 package unknowndomain.engine.mod.annotation.processing;
 
-import com.google.gson.reflect.TypeToken;
-import unknowndomain.engine.mod.annotation.Inject;
-import unknowndomain.engine.mod.annotation.data.InjectItem;
+import com.google.inject.Inject;
 import unknowndomain.engine.util.JsonUtils;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -18,8 +16,7 @@ import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import static unknowndomain.engine.mod.annotation.processing.ProcessingUtils.createFile;
@@ -30,7 +27,7 @@ public class InjectProcessor extends AbstractProcessor {
 
     private static final String CLASS_NAME = Inject.class.getName();
 
-    private final List<InjectItem> items = new ArrayList<>();
+    private final Set<String> items = new HashSet<>();
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -41,22 +38,15 @@ public class InjectProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (!roundEnv.processingOver()) {
             for (Element element : roundEnv.getElementsAnnotatedWith(Inject.class)) {
-                if (element instanceof VariableElement) {
-                    if (!hasModifier(element, Modifier.STATIC)) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Cannot inject non static field.", element);
-                        continue;
-                    }
-
-                    if (hasModifier(element, Modifier.FINAL)) {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Cannot inject final field.", element);
-                        continue;
-                    }
-
-                    var owner = ((TypeElement) element.getEnclosingElement()).getQualifiedName().toString();
-                    var name = element.getSimpleName().toString();
-                    var type = element.asType().toString();
-                    items.add(new InjectItem(owner, name, type));
+                if (!(element instanceof VariableElement)) {
+                    continue;
                 }
+
+                if (!hasModifier(element, Modifier.STATIC)) {
+                    continue;
+                }
+
+                items.add(((TypeElement) element.getEnclosingElement()).getQualifiedName().toString());
             }
         } else {
             save();
@@ -67,8 +57,7 @@ public class InjectProcessor extends AbstractProcessor {
     private void save() {
         FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "META-INF/data/Inject.json");
         try (Writer writer = fileObject.openWriter()) {
-            writer.write(JsonUtils.gson().toJson(items, new TypeToken<List<InjectItem>>() {
-            }.getType()));
+            writer.write(JsonUtils.gson().toJson(items));
         } catch (IOException e) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
             e.printStackTrace();

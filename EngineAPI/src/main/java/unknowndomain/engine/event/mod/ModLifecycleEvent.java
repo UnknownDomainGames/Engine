@@ -33,12 +33,6 @@ public class ModLifecycleEvent implements Event {
         }
     }
 
-    public static final class Ready extends ModLifecycleEvent {
-        public Ready(ModContainer modContainer) {
-            super(modContainer);
-        }
-    }
-
     public static final class Unload extends ModLifecycleEvent {
         public Unload(ModContainer modContainer) {
             super(modContainer);

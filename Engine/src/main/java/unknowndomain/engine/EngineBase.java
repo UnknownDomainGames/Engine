@@ -13,6 +13,7 @@ import unknowndomain.engine.mod.dummy.DummyModContainer;
 import unknowndomain.engine.mod.exception.InvalidModDescriptorException;
 import unknowndomain.engine.mod.impl.AbstractModAssets;
 import unknowndomain.engine.mod.impl.EngineModManager;
+import unknowndomain.engine.mod.init.ModInitializer;
 import unknowndomain.engine.mod.java.JavaModAssets;
 import unknowndomain.engine.mod.java.dev.DevModAssets;
 import unknowndomain.engine.mod.misc.DefaultModDescriptor;
@@ -148,16 +149,16 @@ public abstract class EngineBase implements Engine {
             loadDevEnvMod();
 
             Collection<ModContainer> loadedMods = modManager.getLoadedMods();
+            logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getModId() + "@" + modContainer.getVersion()).iterator(), ",") + "]");
 
-            // TODO: Move it
+            ModInitializer initializer = new ModInitializer(this);
             for (ModContainer mod : loadedMods) {
-                if (mod instanceof DummyModContainer)
+                if (mod instanceof DummyModContainer) {
                     continue;
-
-                eventBus.register(mod.getInstance());
+                }
+                initializer.init(mod);
             }
 
-            logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getModId() + "@" + modContainer.getVersion()).iterator(), ",") + "]");
         } catch (IOException | URISyntaxException e) {
             // TODO: Crash report
             logger.error("Cannot load mods.", e);
