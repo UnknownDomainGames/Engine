@@ -1,4 +1,4 @@
-package unknowndomain.engine.i18n;
+package unknowndomain.engine.client.i18n;
 
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.mod.ModContainer;
