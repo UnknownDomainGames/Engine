@@ -33,8 +33,8 @@ public abstract class GameBase implements Game {
 
     protected EventBus eventBus;
 
+    protected boolean markedTermination = false;
     protected boolean terminated = false;
-    protected boolean stopped = false;
 
     public GameBase(Engine engine) {
         this.engine = engine;
@@ -103,8 +103,8 @@ public abstract class GameBase implements Game {
     }
 
     @Override
-    public boolean isTerminated() {
-        return terminated;
+    public boolean isMarkedTermination() {
+        return markedTermination;
     }
 
     @Override
@@ -125,23 +125,18 @@ public abstract class GameBase implements Game {
 
     @Override
     public synchronized void terminate() {
-        terminated = true;
+        markedTermination = true;
         logger.info(marker, "Marked game terminated!");
         eventBus.post(new GameTerminationEvent.Marked(this));
     }
 
-    @Override
-    public void terminateNow() {
-        tryTerminate();
-    }
-
     protected void tryTerminate() {
-        stopped = true;
+        terminated = true;
     }
 
     @Override
-    public boolean isStopped() {
-        return stopped;
+    public boolean isTerminated() {
+        return terminated;
     }
 
     // TODO: unload mod/resource

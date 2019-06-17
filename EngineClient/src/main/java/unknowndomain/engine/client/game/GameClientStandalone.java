@@ -141,7 +141,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     }
 
     public void clientTick() {
-        if (isTerminated()) {
+        if (isMarkedTermination()) {
             tryTerminate();
             return;
         }

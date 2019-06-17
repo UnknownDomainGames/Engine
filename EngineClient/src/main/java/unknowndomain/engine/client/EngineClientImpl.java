@@ -147,6 +147,10 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private void clientTick() {
         if (isTerminated()) {
+            if (isPlaying()) {
+                game.terminate();
+                game.clientTick();
+            }
             tryTerminate();
             return;
         }
@@ -161,7 +165,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     private void tryTerminate() {
         logger.info("Engine terminating!");
         if (isPlaying()) {
-            game.terminateNow();
+            game.terminate();
+            game.clientTick();
         }
 
         eventBus.post(new EngineEvent.PreTermination(this));
@@ -194,7 +199,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     @Override
     public boolean isPlaying() {
-        return game != null && !game.isStopped();
+        return game != null && !game.isTerminated();
     }
 
     @Override

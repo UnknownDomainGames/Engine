@@ -35,11 +35,9 @@ public interface Game {
 
     void terminate();
 
-    void terminateNow();
+    boolean isMarkedTermination();
 
     boolean isTerminated();
-
-    boolean isStopped();
 
     @Nonnull
     EventBus getEventBus();
