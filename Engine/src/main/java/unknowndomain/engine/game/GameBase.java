@@ -1,7 +1,6 @@
 package unknowndomain.engine.game;
 
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -13,14 +12,11 @@ import unknowndomain.engine.event.registry.RegistrationEvent;
 import unknowndomain.engine.event.registry.RegistryConstructionEvent;
 import unknowndomain.engine.registry.Registries;
 import unknowndomain.engine.registry.Registry;
-import unknowndomain.engine.registry.RegistryEntry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.impl.SimpleRegistryManager;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 public abstract class GameBase implements Game {
 
@@ -55,14 +51,14 @@ public abstract class GameBase implements Game {
         // Registration Stage
         logger.info(marker, "Creating Registry Manager!");
         Map<Class<?>, Registry<?>> registries = Maps.newHashMap();
-        Map<Class<?>, List<Pair<Class<? extends RegistryEntry>, BiConsumer<RegistryEntry, Registry>>>> afterRegistries = Maps.newHashMap();
-        eventBus.post(new RegistryConstructionEvent(registries, afterRegistries));
-        registryManager = new SimpleRegistryManager(Map.copyOf(registries), Map.copyOf(afterRegistries));
+        eventBus.post(new RegistryConstructionEvent(registries));
+        registryManager = new SimpleRegistryManager(Map.copyOf(registries));
         logger.info(marker, "Registering!");
         eventBus.post(new RegistrationEvent.Start(registryManager));
 
-        for (Registry<?> registry : registries.values())
+        for (Registry<?> registry : registries.values()) {
             eventBus.post(new RegistrationEvent.Register<>(registry));
+        }
 
         logger.info(marker, "Finishing Registration!");
         eventBus.post(new RegistrationEvent.Finish(registryManager));
