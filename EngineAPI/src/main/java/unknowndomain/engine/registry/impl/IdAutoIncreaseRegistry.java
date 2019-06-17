@@ -19,6 +19,7 @@ public class IdAutoIncreaseRegistry<T extends RegistryEntry<T>> extends SimpleRe
         super(entryType, name);
     }
 
+    @Nonnull
     @Override
     public T register(@Nonnull T obj) {
         super.register(obj);

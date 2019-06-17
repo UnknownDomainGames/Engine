@@ -35,6 +35,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
         this.name = name;
     }
 
+    @Nonnull
     @Override
     public T register(@Nonnull T obj) {
         requireNonNull(obj);

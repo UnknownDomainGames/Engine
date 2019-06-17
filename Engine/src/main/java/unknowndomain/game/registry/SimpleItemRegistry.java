@@ -42,6 +42,7 @@ public class SimpleItemRegistry implements ItemRegistry {
         return "item";
     }
 
+    @Nonnull
     @Override
     public Item register(@Nonnull Item obj) throws RegisterException {
         if (nameToObject.containsKey(obj.getRegisterName())) {

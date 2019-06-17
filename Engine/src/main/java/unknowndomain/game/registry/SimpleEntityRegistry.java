@@ -48,6 +48,7 @@ public class SimpleEntityRegistry implements EntityRegistry {
         return "entity";
     }
 
+    @Nonnull
     @Override
     public EntityEntry register(@Nonnull EntityEntry obj) throws RegisterException {
         if(containsKey(obj.getEntityType())){
