@@ -40,15 +40,6 @@ public class DefaultAssetReloadDispatcher implements AssetReloadDispatcher {
         throw new NoSuchElementException("Cannot find asset reload listener \"" + name + "\".");
     }
 
-    private boolean has(String name) {
-        for (Pair<String, AssetReloadListener> listener : listeners) {
-            if (name.equals(listener.getLeft())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public void dispatchReload() {
         listeners.forEach(pair -> pair.getRight().onReload());
