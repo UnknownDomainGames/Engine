@@ -3,7 +3,7 @@ package unknowndomain.engine.mod.annotation.processing;
 import unknowndomain.engine.mod.Mod;
 import unknowndomain.engine.mod.ModIdentifier;
 import unknowndomain.engine.mod.misc.DefaultModDescriptor;
-import unknowndomain.engine.mod.util.JsonModDescriptorSerializer;
+import unknowndomain.engine.mod.util.JsonModDescriptorUtils;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -56,7 +56,7 @@ public class ModProcessor extends AbstractProcessor {
 
         try (Writer writer = fileObject.openWriter()) {
             ModIdentifier modIdentifier = ModIdentifier.from((String) getAnnotationValue(element, CLASS_NAME, "value").getValue());
-            writer.append(JsonModDescriptorSerializer.toJson(DefaultModDescriptor.builder().modId(modIdentifier.getId()).version(modIdentifier.getVersion()).mainClass(element.getQualifiedName().toString()).build()).toString());
+            writer.append(JsonModDescriptorUtils.toJson(DefaultModDescriptor.builder().modId(modIdentifier.getId()).version(modIdentifier.getVersion()).mainClass(element.getQualifiedName().toString()).build()).toString());
         } catch (IOException e) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
             e.printStackTrace();

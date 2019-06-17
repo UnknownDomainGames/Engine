@@ -5,9 +5,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import unknowndomain.engine.mod.ModDependencyEntry;
 import unknowndomain.engine.mod.ModDescriptor;
-import java.util.*;
 
-public class JsonModDescriptorSerializer {
+import java.util.Map;
+
+public class JsonModDescriptorUtils {
 
     public static JsonObject toJson(ModDescriptor descriptor) {
         JsonObject jo = new JsonObject();
