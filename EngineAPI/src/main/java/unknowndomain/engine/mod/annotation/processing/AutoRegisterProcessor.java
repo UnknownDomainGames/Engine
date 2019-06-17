@@ -1,9 +1,10 @@
 package unknowndomain.engine.mod.annotation.processing;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import unknowndomain.engine.mod.annotation.AutoRegister;
+import unknowndomain.engine.mod.annotation.data.AutoRegisterItem;
 import unknowndomain.engine.registry.RegistryEntry;
+import unknowndomain.engine.util.JsonUtils;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -20,6 +21,8 @@ import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static unknowndomain.engine.mod.annotation.processing.ProcessingUtils.createFile;
@@ -30,7 +33,7 @@ public class AutoRegisterProcessor extends AbstractProcessor {
 
     private static final String CLASS_NAME = AutoRegister.class.getName();
 
-    private final JsonArray autoRegisterItems = new JsonArray();
+    private final List<AutoRegisterItem> items = new ArrayList<>();
 
     private TypeMirror registryEntryTypeMirror;
 
@@ -50,10 +53,8 @@ public class AutoRegisterProcessor extends AbstractProcessor {
         if (!roundEnv.processingOver()) {
             for (Element element : roundEnv.getElementsAnnotatedWith(AutoRegister.class)) {
                 if (element instanceof TypeElement) {
-                    JsonObject item = new JsonObject();
-                    item.addProperty("kind", "CLASS");
-                    item.addProperty("name", ((TypeElement) element).getQualifiedName().toString());
-                    autoRegisterItems.add(item);
+                    var owner = ((TypeElement) element).getQualifiedName().toString();
+                    items.add(new AutoRegisterItem(owner));
                 } else if (element instanceof VariableElement) {
                     if (!processingEnv.getTypeUtils().isAssignable(element.asType(), registryEntryTypeMirror)) {
                         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Cannot auto register field which type isn't RegistryEntry or its sub class.", element);
@@ -65,12 +66,10 @@ public class AutoRegisterProcessor extends AbstractProcessor {
                         continue;
                     }
 
-                    JsonObject item = new JsonObject();
-                    item.addProperty("kind", "FIELD");
-                    item.addProperty("owner", ((TypeElement) element.getEnclosingElement()).getQualifiedName().toString());
-                    item.addProperty("name", element.getSimpleName().toString());
-                    item.addProperty("type", element.asType().toString());
-                    autoRegisterItems.add(item);
+                    var owner = ((TypeElement) element.getEnclosingElement()).getQualifiedName().toString();
+                    var name = element.getSimpleName().toString();
+                    var type = element.asType().toString();
+                    items.add(new AutoRegisterItem(owner, name, type));
                 }
             }
         } else {
@@ -80,9 +79,10 @@ public class AutoRegisterProcessor extends AbstractProcessor {
     }
 
     private void save() {
-        FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "META-INF/cache/AutoRegister.json");
+        FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "META-INF/data/AutoRegister.json");
         try (Writer writer = fileObject.openWriter()) {
-            writer.write(autoRegisterItems.toString());
+            writer.write(JsonUtils.gson().toJson(items, new TypeToken<List<AutoRegisterItem>>() {
+            }.getType()));
         } catch (IOException e) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
             e.printStackTrace();

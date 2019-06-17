@@ -46,7 +46,7 @@ public class AutoListenProcessor extends AbstractProcessor {
     }
 
     private void save() {
-        FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "META-INF/cache/AutoListen.json");
+        FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "META-INF/data/AutoListen.json");
         try (Writer writer = fileObject.openWriter()) {
             writer.write(autoListenItems.toString());
         } catch (IOException e) {

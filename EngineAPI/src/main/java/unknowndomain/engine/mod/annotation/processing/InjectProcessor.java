@@ -1,8 +1,9 @@
 package unknowndomain.engine.mod.annotation.processing;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import unknowndomain.engine.mod.annotation.Inject;
+import unknowndomain.engine.mod.annotation.data.InjectItem;
+import unknowndomain.engine.util.JsonUtils;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -17,6 +18,8 @@ import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static unknowndomain.engine.mod.annotation.processing.ProcessingUtils.createFile;
@@ -27,7 +30,7 @@ public class InjectProcessor extends AbstractProcessor {
 
     private static final String CLASS_NAME = Inject.class.getName();
 
-    private final JsonArray injectItems = new JsonArray();
+    private final List<InjectItem> items = new ArrayList<>();
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -49,11 +52,10 @@ public class InjectProcessor extends AbstractProcessor {
                         continue;
                     }
 
-                    JsonObject item = new JsonObject();
-                    item.addProperty("owner", ((TypeElement) element.getEnclosingElement()).getQualifiedName().toString());
-                    item.addProperty("name", element.getSimpleName().toString());
-                    item.addProperty("type", element.asType().toString());
-                    injectItems.add(item);
+                    var owner = ((TypeElement) element.getEnclosingElement()).getQualifiedName().toString();
+                    var name = element.getSimpleName().toString();
+                    var type = element.asType().toString();
+                    items.add(new InjectItem(owner, name, type));
                 }
             }
         } else {
@@ -63,9 +65,10 @@ public class InjectProcessor extends AbstractProcessor {
     }
 
     private void save() {
-        FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "META-INF/cache/Inject.json");
+        FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "META-INF/data/Inject.json");
         try (Writer writer = fileObject.openWriter()) {
-            writer.write(injectItems.toString());
+            writer.write(JsonUtils.gson().toJson(items, new TypeToken<List<InjectItem>>() {
+            }.getType()));
         } catch (IOException e) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
             e.printStackTrace();
