@@ -19,9 +19,9 @@ public interface Registry<T extends RegistryEntry<T>> {
     String getRegistryName();
 
     @Nonnull
-    T register(@Nonnull T obj) throws RegisterException;
+    T register(@Nonnull T obj) throws RegistrationException;
 
-    default void registerAll(@Nonnull T... objs) throws RegisterException {
+    default void registerAll(@Nonnull T... objs) throws RegistrationException {
         for (T obj : objs)
             register(obj);
     }

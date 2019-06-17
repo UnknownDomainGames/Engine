@@ -4,7 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.EntityEntry;
-import unknowndomain.engine.registry.RegisterException;
+import unknowndomain.engine.registry.RegistrationException;
 import unknowndomain.engine.registry.game.EntityRegistry;
 
 import javax.annotation.Nonnull;
@@ -50,9 +50,9 @@ public class SimpleEntityRegistry implements EntityRegistry {
 
     @Nonnull
     @Override
-    public EntityEntry register(@Nonnull EntityEntry obj) throws RegisterException {
+    public EntityEntry register(@Nonnull EntityEntry obj) throws RegistrationException {
         if(containsKey(obj.getEntityType())){
-            throw new RegisterException(String.format("Entity with class %s has already registered!", obj.getEntityType().getName()));
+            throw new RegistrationException(String.format("Entity with class %s has already registered!", obj.getEntityType().getName()));
         }
         clazzToObject.put(obj.getEntityType(),obj);
         return obj;

@@ -5,7 +5,7 @@ import com.google.common.collect.HashBiMap;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.item.BlockItem;
 import unknowndomain.engine.item.Item;
-import unknowndomain.engine.registry.RegisterException;
+import unknowndomain.engine.registry.RegistrationException;
 import unknowndomain.engine.registry.game.ItemRegistry;
 
 import javax.annotation.Nonnull;
@@ -44,9 +44,9 @@ public class SimpleItemRegistry implements ItemRegistry {
 
     @Nonnull
     @Override
-    public Item register(@Nonnull Item obj) throws RegisterException {
+    public Item register(@Nonnull Item obj) throws RegistrationException {
         if (nameToObject.containsKey(obj.getRegisterName())) {
-            throw new RegisterException(String.format("Item id:%s has already registered!", obj.getRegisterName()));
+            throw new RegistrationException(String.format("Item id:%s has already registered!", obj.getRegisterName()));
         }
         nameToObject.put(obj.getRegisterName(), obj);
         setId(obj, nextId.getAndIncrement());

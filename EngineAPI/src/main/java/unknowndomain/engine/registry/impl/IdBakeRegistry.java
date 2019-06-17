@@ -4,7 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
-import unknowndomain.engine.registry.RegisterException;
+import unknowndomain.engine.registry.RegistrationException;
 import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryEntry;
 
@@ -38,18 +38,18 @@ public class IdBakeRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     @Override
     public T register(@Nonnull T obj) {
         if (baked) {
-            throw new RegisterException("Registry has been baked.");
+            throw new RegistrationException("Registry has been baked.");
         }
 
         requireNonNull(obj);
 
         if (!(obj instanceof RegistryEntry.Impl)) {
-            throw new RegisterException(String.format("%s must be a subclass of RegistryEntry.Impl", obj.getEntryType().getSimpleName()));
+            throw new RegistrationException(String.format("%s must be a subclass of RegistryEntry.Impl", obj.getEntryType().getSimpleName()));
         }
 
         String uniqueName = getUniqueName(obj);
         if (nameToObject.containsKey(uniqueName)) {
-            throw new RegisterException(String.format("%s has been registered.", uniqueName));
+            throw new RegistrationException(String.format("%s has been registered.", uniqueName));
         }
 
         setUniqueName(obj, uniqueName);
@@ -150,14 +150,14 @@ public class IdBakeRegistry<T extends RegistryEntry<T>> implements Registry<T> {
                 uniqueNameField = RegistryEntry.Impl.class.getDeclaredField("uniqueName");
                 uniqueNameField.setAccessible(true);
             } catch (NoSuchFieldException e) {
-                throw new RegisterException("Cannot init unique name.", e);
+                throw new RegistrationException("Cannot init unique name.", e);
             }
         }
         try {
             uniqueNameField.set(entry, uniqueName);
             nameToObject.put(uniqueName, entry);
         } catch (IllegalAccessException e) {
-            throw new RegisterException("Cannot set unique name.", e);
+            throw new RegistrationException("Cannot set unique name.", e);
         }
     }
 
@@ -167,14 +167,14 @@ public class IdBakeRegistry<T extends RegistryEntry<T>> implements Registry<T> {
                 idField = RegistryEntry.Impl.class.getDeclaredField("id");
                 idField.setAccessible(true);
             } catch (NoSuchFieldException e) {
-                throw new RegisterException("Cannot init id.", e);
+                throw new RegistrationException("Cannot init id.", e);
             }
         }
         try {
             idField.setInt(entry, id);
             idToObject.put(id, entry);
         } catch (IllegalAccessException e) {
-            throw new RegisterException("Cannot init id.", e);
+            throw new RegistrationException("Cannot init id.", e);
         }
     }
 

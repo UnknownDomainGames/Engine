@@ -3,7 +3,7 @@ package unknowndomain.game.registry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import unknowndomain.engine.registry.ClassToObjectRegistry;
-import unknowndomain.engine.registry.RegisterException;
+import unknowndomain.engine.registry.RegistrationException;
 import unknowndomain.engine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
@@ -17,9 +17,9 @@ public abstract class SimpleClassToObjectRegistry<T extends RegistryEntry<T>> im
 
     @Nonnull
     @Override
-    public T register(@Nonnull T obj) throws RegisterException {
+    public T register(@Nonnull T obj) throws RegistrationException {
         if(clazzToObject.containsKey(obj.getClass())){
-            throw new RegisterException(String.format("Class %s has already registered!", obj.getClass().getName()));
+            throw new RegistrationException(String.format("Class %s has already registered!", obj.getClass().getName()));
         }
         clazzToObject.put((Class<? extends T>) obj.getClass(), obj);
         return obj;
