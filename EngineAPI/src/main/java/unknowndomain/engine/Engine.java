@@ -23,7 +23,7 @@ public interface Engine {
     }
 
     default boolean isServer() {
-        return getSide() == Side.SERVER;
+        return getSide() == Side.DEDICATED_SERVER;
     }
 
     EventBus getEventBus();
