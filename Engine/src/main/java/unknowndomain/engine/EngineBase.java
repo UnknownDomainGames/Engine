@@ -191,9 +191,10 @@ public abstract class EngineBase implements Engine {
             }
         }
 
-        Files.find(modFolder, 1,
-                (path, basicFileAttributes) -> path.getFileName().toString().endsWith(".jar"))
-                .forEach(modManager::loadMod);
+        try (var stream = Files.find(modFolder, 1,
+                (path, basicFileAttributes) -> path.getFileName().toString().endsWith(".jar"))) {
+            stream.forEach(modManager::loadMod);
+        }
     }
 
     private void loadDevEnvMod() {
