@@ -1,14 +1,14 @@
 package unknowndomain.engine.mod;
 
-import unknowndomain.engine.util.versioning.ComparableVersion;
+import unknowndomain.engine.util.versioning.Version;
 
 import java.util.Objects;
 
 public class ModIdentifier {
     private final String id;
-    private final ComparableVersion version;
+    private final Version version;
 
-    protected ModIdentifier(String id, ComparableVersion version) {
+    protected ModIdentifier(String id, Version version) {
         this.id = id;
         this.version = version;
     }
@@ -16,7 +16,7 @@ public class ModIdentifier {
     /**
      * TODO check the modid style
      */
-    public static ModIdentifier of(String modid, ComparableVersion version) {
+    public static ModIdentifier of(String modid, Version version) {
         Objects.requireNonNull(modid);
         Objects.requireNonNull(version);
         return new ModIdentifier(modid, version);
@@ -26,14 +26,14 @@ public class ModIdentifier {
         String[] split = s.split(":");
         if (split.length != 2 || split[0].isEmpty() || split[1].isEmpty())
             throw new IllegalArgumentException("Invalid mod identifier syntax: " + s);
-        return new ModIdentifier(split[0], new ComparableVersion(split[1]));
+        return new ModIdentifier(split[0], new Version(split[1]));
     }
 
     public String getId() {
         return id;
     }
 
-    public ComparableVersion getVersion() {
+    public Version getVersion() {
         return version;
     }
 

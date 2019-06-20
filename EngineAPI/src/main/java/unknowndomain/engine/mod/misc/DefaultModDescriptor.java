@@ -2,7 +2,7 @@ package unknowndomain.engine.mod.misc;
 
 import unknowndomain.engine.mod.ModDependencyEntry;
 import unknowndomain.engine.mod.ModDescriptor;
-import unknowndomain.engine.util.versioning.ComparableVersion;
+import unknowndomain.engine.util.versioning.Version;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -12,12 +12,12 @@ import java.util.Map;
 
 public class DefaultModDescriptor implements ModDescriptor {
 
-    public static final ComparableVersion DEFAULT_VERSION = new ComparableVersion("1.0");
+    public static final Version DEFAULT_VERSION = new Version("1.0");
 
     private final Path source;
 
     private final String modId;
-    private final ComparableVersion version;
+    private final Version version;
     private final String mainClass;
     private final String name;
     private final String description;
@@ -27,7 +27,7 @@ public class DefaultModDescriptor implements ModDescriptor {
     private final List<ModDependencyEntry> dependencies;
     private final Map<String, String> properties;
 
-    protected DefaultModDescriptor(Path source, String modId, ComparableVersion version, String mainClass, String name, String description, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, String> properties) {
+    protected DefaultModDescriptor(Path source, String modId, Version version, String mainClass, String name, String description, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, String> properties) {
         this.source = source;
         this.modId = modId;
         this.version = version;
@@ -55,7 +55,7 @@ public class DefaultModDescriptor implements ModDescriptor {
 
     @Nonnull
     @Override
-    public ComparableVersion getVersion() {
+    public Version getVersion() {
         return version;
     }
 
@@ -97,7 +97,7 @@ public class DefaultModDescriptor implements ModDescriptor {
 
     public static class Builder {
         private String id = "";
-        private ComparableVersion version = DEFAULT_VERSION;
+        private Version version = DEFAULT_VERSION;
         private Path source;
         private String mainClass = "";
         private String name = "";
@@ -113,13 +113,13 @@ public class DefaultModDescriptor implements ModDescriptor {
             return this;
         }
 
-        public Builder version(ComparableVersion version) {
+        public Builder version(Version version) {
             this.version = version;
             return this;
         }
 
         public Builder version(String version) {
-            this.version = new ComparableVersion(version);
+            this.version = new Version(version);
             return this;
         }
 

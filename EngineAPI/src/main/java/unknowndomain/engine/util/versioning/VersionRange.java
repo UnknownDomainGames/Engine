@@ -32,18 +32,18 @@ import java.util.List;
  */
 public class VersionRange
 {
-    private final ComparableVersion recommendedVersion;
+    private final Version recommendedVersion;
 
     private final List<Restriction> restrictions;
 
-    private VersionRange(ComparableVersion recommendedVersion,
+    private VersionRange(Version recommendedVersion,
                          List<Restriction> restrictions )
     {
         this.recommendedVersion = recommendedVersion;
         this.restrictions = restrictions;
     }
 
-    public ComparableVersion getRecommendedVersion()
+    public Version getRecommendedVersion()
     {
         return recommendedVersion;
     }
@@ -97,9 +97,9 @@ public class VersionRange
 
         List<Restriction> restrictions = new ArrayList<Restriction>();
         String process = spec;
-        ComparableVersion version = null;
-        ComparableVersion upperBound = null;
-        ComparableVersion lowerBound = null;
+        Version version = null;
+        Version upperBound = null;
+        Version lowerBound = null;
 
         while ( process.startsWith( "[" ) || process.startsWith( "(" ) )
         {
@@ -152,7 +152,7 @@ public class VersionRange
             }
             else
             {
-                version = new ComparableVersion(process);
+                version = new Version(process);
                 restrictions.add( Restriction.EVERYTHING );
             }
         }
@@ -179,7 +179,7 @@ public class VersionRange
                 throw new InvalidVersionSpecificationException( "Single version must be surrounded by []: " + spec );
             }
 
-            ComparableVersion version = new ComparableVersion(process);
+            Version version = new Version(process);
 
             restriction = new Restriction( version, lowerBoundInclusive, version, upperBoundInclusive );
         }
@@ -192,15 +192,15 @@ public class VersionRange
                 throw new InvalidVersionSpecificationException( "Range cannot have identical boundaries: " + spec );
             }
 
-            ComparableVersion lowerVersion = null;
+            Version lowerVersion = null;
             if ( lowerBound.length() > 0 )
             {
-                lowerVersion = new ComparableVersion(lowerBound);
+                lowerVersion = new Version(lowerBound);
             }
-            ComparableVersion upperVersion = null;
+            Version upperVersion = null;
             if ( upperBound.length() > 0 )
             {
-                upperVersion = new ComparableVersion(upperBound);
+                upperVersion = new Version(upperBound);
             }
 
             if ( upperVersion != null && lowerVersion != null && upperVersion.compareTo( lowerVersion ) < 0 )
@@ -217,7 +217,7 @@ public class VersionRange
     public static VersionRange createFromVersion(String version)
     {
         List<Restriction> restrictions = Collections.emptyList();
-        return new VersionRange(new ComparableVersion(version), restrictions);
+        return new VersionRange(new Version(version), restrictions);
     }
 
     /**
@@ -263,7 +263,7 @@ public class VersionRange
             restrictions = intersection( r1, r2 );
         }
 
-        ComparableVersion version = null;
+        Version version = null;
         if ( restrictions.size() > 0 )
         {
             boolean found = false;
@@ -323,8 +323,8 @@ public class VersionRange
                 if (res1.getUpperBound() == null || res2.getLowerBound() == null ||
                         res1.getUpperBound().compareTo(res2.getLowerBound()) >= 0)
                 {
-                    ComparableVersion lower;
-                    ComparableVersion upper;
+                    Version lower;
+                    Version upper;
                     boolean lowerInclusive;
                     boolean upperInclusive;
 
@@ -477,12 +477,12 @@ public class VersionRange
         }
     }
 
-    public ComparableVersion matchVersion(List<ComparableVersion> versions)
+    public Version matchVersion(List<Version> versions)
     {
         // TODO: could be more efficient by sorting the list and then moving along the restrictions in order?
 
-        ComparableVersion matched = null;
-        for (ComparableVersion version : versions) {
+        Version matched = null;
+        for (Version version : versions) {
             if (containsVersion(version)) {
                 // valid - check if it is greater than the currently matched version
                 if (matched == null || version.compareTo(matched) > 0) {
@@ -493,7 +493,7 @@ public class VersionRange
         return matched;
     }
 
-    public boolean containsVersion(ComparableVersion version) {
+    public boolean containsVersion(Version version) {
         for (Restriction restriction : restrictions) {
             if (restriction.containsVersion(version)) {
                 return true;

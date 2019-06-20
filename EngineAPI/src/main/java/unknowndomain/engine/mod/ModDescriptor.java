@@ -1,6 +1,6 @@
 package unknowndomain.engine.mod;
 
-import unknowndomain.engine.util.versioning.ComparableVersion;
+import unknowndomain.engine.util.versioning.Version;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -16,7 +16,7 @@ public interface ModDescriptor {
     String getModId();
 
     @Nonnull
-    ComparableVersion getVersion();
+    Version getVersion();
 
     String getMainClass();
 

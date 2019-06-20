@@ -7,7 +7,7 @@ import unknowndomain.engine.event.reflect.ReflectEventListenerFactory;
 import unknowndomain.engine.mod.ModAssets;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModDescriptor;
-import unknowndomain.engine.util.versioning.ComparableVersion;
+import unknowndomain.engine.util.versioning.Version;
 
 import java.nio.file.Path;
 
@@ -35,7 +35,7 @@ public class JavaModContainer implements ModContainer {
     }
 
     @Override
-    public ComparableVersion getVersion() {
+    public Version getVersion() {
         return descriptor.getVersion();
     }
 

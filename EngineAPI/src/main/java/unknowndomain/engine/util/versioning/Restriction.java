@@ -28,19 +28,19 @@ package unknowndomain.engine.util.versioning;
  */
 public class Restriction
 {
-    private final ComparableVersion lowerBound;
+    private final Version lowerBound;
 
     private final boolean lowerBoundInclusive;
 
-    private final ComparableVersion upperBound;
+    private final Version upperBound;
 
     private final boolean upperBoundInclusive;
 
     public static final Restriction EVERYTHING = new Restriction( null, false, null, false );
 
-    public Restriction(ComparableVersion lowerBound,
+    public Restriction(Version lowerBound,
                        boolean lowerBoundInclusive,
-                       ComparableVersion upperBound,
+                       Version upperBound,
                        boolean upperBoundInclusive)
     {
         this.lowerBound = lowerBound;
@@ -49,7 +49,7 @@ public class Restriction
         this.upperBoundInclusive = upperBoundInclusive;
     }
 
-    public ComparableVersion getLowerBound()
+    public Version getLowerBound()
     {
         return lowerBound;
     }
@@ -59,7 +59,7 @@ public class Restriction
         return lowerBoundInclusive;
     }
 
-    public ComparableVersion getUpperBound()
+    public Version getUpperBound()
     {
         return upperBound;
     }
@@ -69,7 +69,7 @@ public class Restriction
         return upperBoundInclusive;
     }
 
-    public boolean containsVersion(ComparableVersion version)
+    public boolean containsVersion(Version version)
     {
         if ( lowerBound != null )
         {
