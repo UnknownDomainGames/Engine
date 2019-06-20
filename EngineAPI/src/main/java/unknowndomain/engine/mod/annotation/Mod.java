@@ -1,4 +1,4 @@
-package unknowndomain.engine.mod;
+package unknowndomain.engine.mod.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

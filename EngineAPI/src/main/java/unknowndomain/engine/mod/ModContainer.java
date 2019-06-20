@@ -2,6 +2,7 @@ package unknowndomain.engine.mod;
 
 import org.slf4j.Logger;
 import unknowndomain.engine.event.EventBus;
+import unknowndomain.engine.mod.annotation.Mod;
 import unknowndomain.engine.util.versioning.Version;
 
 import java.nio.file.Path;

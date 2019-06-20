@@ -1,7 +1,7 @@
 package unknowndomain.engine.mod.annotation.processing;
 
-import unknowndomain.engine.mod.Mod;
 import unknowndomain.engine.mod.ModIdentifier;
+import unknowndomain.engine.mod.annotation.Mod;
 import unknowndomain.engine.mod.misc.DefaultModDescriptor;
 import unknowndomain.engine.mod.util.JsonModDescriptorUtils;
 
