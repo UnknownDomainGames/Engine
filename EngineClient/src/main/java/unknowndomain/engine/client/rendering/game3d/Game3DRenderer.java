@@ -64,4 +64,8 @@ public class Game3DRenderer implements Renderer {
     public void onGameTermination(GameTerminationEvent.Pre event) {
         disposeGameRender();
     }
+
+    public RenderContext getContext() {
+        return context;
+    }
 }

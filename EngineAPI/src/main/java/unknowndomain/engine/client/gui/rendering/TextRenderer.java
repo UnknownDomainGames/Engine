@@ -3,13 +3,14 @@ package unknowndomain.engine.client.gui.rendering;
 import unknowndomain.engine.client.gui.Component;
 import unknowndomain.engine.client.gui.misc.Pos;
 import unknowndomain.engine.client.gui.text.Text;
+import unknowndomain.engine.client.rendering.RenderContext;
 
 public class TextRenderer implements ComponentRenderer {
 
     public static final TextRenderer INSTANCE = new TextRenderer();
 
     @Override
-    public void render(Component component, Graphics graphics) {
+    public void render(Component component, Graphics graphics, RenderContext context) {
         Text text = (Text) component;
         graphics.setColor(text.color().getValue());
         graphics.setFont(text.font().getValue());

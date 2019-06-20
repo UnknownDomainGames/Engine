@@ -4,6 +4,7 @@ import unknowndomain.engine.client.gui.component.TextField;
 import unknowndomain.engine.client.gui.internal.FontHelper;
 import unknowndomain.engine.client.gui.internal.Internal;
 import unknowndomain.engine.client.gui.text.Font;
+import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.util.Color;
 
 public class TextFieldRenderer extends RegionRenderer<TextField> {
@@ -11,8 +12,8 @@ public class TextFieldRenderer extends RegionRenderer<TextField> {
     public static final TextFieldRenderer INSTANCE = new TextFieldRenderer();
 
     @Override
-    public void render(TextField textField, Graphics graphics) {
-        super.render(textField, graphics);
+    public void render(TextField textField, Graphics graphics, RenderContext context) {
+        super.render(textField, graphics, context);
         float px, py, pw, ph;
         if (textField.padding().isPresent()) {
             px = textField.padding().getValue().getLeft();

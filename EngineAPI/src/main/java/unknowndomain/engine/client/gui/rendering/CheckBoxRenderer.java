@@ -3,10 +3,11 @@ package unknowndomain.engine.client.gui.rendering;
 import org.joml.Vector2f;
 import unknowndomain.engine.client.gui.component.CheckBox;
 import unknowndomain.engine.client.gui.misc.Insets;
+import unknowndomain.engine.client.rendering.RenderContext;
 
 public class CheckBoxRenderer implements ComponentRenderer<CheckBox> {
     @Override
-    public void render(CheckBox component, Graphics graphics) {
+    public void render(CheckBox component, Graphics graphics, RenderContext context) {
         component.background().getValue().render(component, graphics);
         component.border().getValue().render(component, graphics);
         if (component.state().getValue() == null || component.state().getValue()) {

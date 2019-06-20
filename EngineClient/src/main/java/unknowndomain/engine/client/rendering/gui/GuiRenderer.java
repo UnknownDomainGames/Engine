@@ -158,7 +158,7 @@ public class GuiRenderer implements Renderer {
         }
 
         graphics.pushClipRect(0, 0, scene.width().get(), scene.height().get());
-        root.getRenderer().render(root, graphics);
+        root.getRenderer().render(root, graphics, context);
         graphics.popClipRect();
     }
 
