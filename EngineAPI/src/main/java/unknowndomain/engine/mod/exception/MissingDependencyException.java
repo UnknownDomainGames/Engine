@@ -1,13 +1,13 @@
 package unknowndomain.engine.mod.exception;
 
-import unknowndomain.engine.mod.DependencyManager;
+import unknowndomain.engine.mod.DependencyCheckResult;
 
 public class MissingDependencyException extends RuntimeException {
 
     private final String modId;
-    private final DependencyManager.CheckResult result;
+    private final DependencyCheckResult result;
 
-    public MissingDependencyException(String modId, DependencyManager.CheckResult result) {
+    public MissingDependencyException(String modId, DependencyCheckResult result) {
         super(String.format("Missing dependency when load mod %s.", modId));
         this.modId = modId;
         this.result = result;
@@ -17,7 +17,7 @@ public class MissingDependencyException extends RuntimeException {
         return modId;
     }
 
-    public DependencyManager.CheckResult getResult() {
+    public DependencyCheckResult getResult() {
         return result;
     }
 }

@@ -1,9 +1,6 @@
 package unknowndomain.engine.mod.impl;
 
-import unknowndomain.engine.mod.DependencyManager;
-import unknowndomain.engine.mod.ModContainer;
-import unknowndomain.engine.mod.ModDependencyEntry;
-import unknowndomain.engine.mod.ModManager;
+import unknowndomain.engine.mod.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +17,7 @@ public class DependencyManagerImpl implements DependencyManager {
     }
 
     @Override
-    public CheckResult checkDependencies(List<ModDependencyEntry> dependencies) {
+    public DependencyCheckResult checkDependencies(List<ModDependencyEntry> dependencies) {
         List<ModDependencyEntry> missing = new ArrayList<>();
 
         for (ModDependencyEntry dependency : dependencies) {
@@ -34,6 +31,6 @@ public class DependencyManagerImpl implements DependencyManager {
             }
         }
 
-        return new CheckResult(List.copyOf(missing));
+        return new DependencyCheckResult(List.copyOf(missing));
     }
 }
