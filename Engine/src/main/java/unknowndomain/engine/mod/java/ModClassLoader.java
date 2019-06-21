@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ModClassLoader extends URLClassLoader {
@@ -50,6 +51,16 @@ public class ModClassLoader extends URLClassLoader {
             addURL(path.toUri().toURL());
         } catch (MalformedURLException e) {
             logger.error(e.getMessage(), e);
+        }
+    }
+
+    public void addPaths(Collection<Path> paths) {
+        for (Path path : paths) {
+            try {
+                addURL(path.toUri().toURL());
+            } catch (MalformedURLException e) {
+                logger.error(e.getMessage(), e);
+            }
         }
     }
 

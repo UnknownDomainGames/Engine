@@ -1,10 +1,11 @@
 package unknowndomain.engine.mod;
 
-import unknowndomain.engine.mod.exception.InvalidModDescriptorException;
+import unknowndomain.engine.mod.exception.InvalidModMetadataException;
 
 import java.nio.file.Path;
+import java.util.Collection;
 
 public interface ModMetadataFinder {
 
-    ModMetadata find(Path path) throws InvalidModDescriptorException;
+    ModMetadata find(Collection<Path> sources) throws InvalidModMetadataException;
 }

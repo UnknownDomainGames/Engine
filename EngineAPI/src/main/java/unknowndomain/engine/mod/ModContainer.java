@@ -6,6 +6,7 @@ import unknowndomain.engine.mod.annotation.Mod;
 import unknowndomain.engine.util.versioning.Version;
 
 import java.nio.file.Path;
+import java.util.Collection;
 
 /**
  * The runtime mod container of the mod.
@@ -26,7 +27,7 @@ public interface ModContainer {
 
     ClassLoader getClassLoader();
 
-    Path getSource();
+    Collection<Path> getSources();
 
     ModAssets getAssets();
 

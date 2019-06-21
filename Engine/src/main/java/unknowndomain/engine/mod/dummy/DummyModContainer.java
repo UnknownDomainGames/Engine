@@ -9,6 +9,7 @@ import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.util.versioning.Version;
 
 import java.nio.file.Path;
+import java.util.Collection;
 
 public class DummyModContainer implements ModContainer {
 
@@ -16,7 +17,7 @@ public class DummyModContainer implements ModContainer {
     private final Logger logger;
     private Object modInstance;
     private ClassLoader classloader;
-    private Path source;
+    private Collection<Path> sources;
     private ModAssets assets;
     private EventBus eventbus;
 
@@ -46,8 +47,8 @@ public class DummyModContainer implements ModContainer {
     }
 
     @Override
-    public Path getSource() {
-        return source;
+    public Collection<Path> getSources() {
+        return sources;
     }
 
     @Override
@@ -80,8 +81,8 @@ public class DummyModContainer implements ModContainer {
         return this;
     }
 
-    public DummyModContainer setSource(Path source) {
-        this.source = source;
+    public DummyModContainer setSources(Collection<Path> sources) {
+        this.sources = sources;
         return this;
     }
 

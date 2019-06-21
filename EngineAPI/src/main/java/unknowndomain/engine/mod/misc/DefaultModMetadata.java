@@ -5,16 +5,13 @@ import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.util.versioning.Version;
 
 import javax.annotation.Nonnull;
-import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class DefaultModMetadata implements ModMetadata {
 
-    public static final Version DEFAULT_VERSION = new Version("1.0");
-
-    private final Path source;
+    public static final Version DEFAULT_VERSION = new Version("1.0.0");
 
     private final String modId;
     private final Version version;
@@ -28,8 +25,7 @@ public class DefaultModMetadata implements ModMetadata {
     private final List<ModDependencyEntry> dependencies;
     private final Map<String, String> properties;
 
-    protected DefaultModMetadata(Path source, String modId, Version version, String mainClass, String name, String description, String license, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, String> properties) {
-        this.source = source;
+    protected DefaultModMetadata(String modId, Version version, String mainClass, String name, String description, String license, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, String> properties) {
         this.modId = modId;
         this.version = version;
         this.mainClass = mainClass;
@@ -41,12 +37,6 @@ public class DefaultModMetadata implements ModMetadata {
         this.logoFile = logoFile;
         this.dependencies = dependencies;
         this.properties = properties;
-    }
-
-    @Nonnull
-    @Override
-    public Path getSource() {
-        return source;
     }
 
     @Nonnull
@@ -105,7 +95,6 @@ public class DefaultModMetadata implements ModMetadata {
     public static class Builder {
         private String id = "";
         private Version version = DEFAULT_VERSION;
-        private Path source;
         private String mainClass = "";
         private String name = "";
         private String description = "";
@@ -128,11 +117,6 @@ public class DefaultModMetadata implements ModMetadata {
 
         public Builder version(String version) {
             this.version = new Version(version);
-            return this;
-        }
-
-        public Builder source(Path source) {
-            this.source = source;
             return this;
         }
 
@@ -182,7 +166,7 @@ public class DefaultModMetadata implements ModMetadata {
         }
 
         public DefaultModMetadata build() {
-            return new DefaultModMetadata(source, id, version, mainClass, name, description, license, url, authors, logo, dependencies, properties);
+            return new DefaultModMetadata(id, version, mainClass, name, description, license, url, authors, logo, dependencies, properties);
         }
     }
 }

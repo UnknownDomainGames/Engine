@@ -7,7 +7,7 @@ import unknowndomain.engine.client.asset.EngineAssetManager;
 import unknowndomain.engine.client.asset.model.voxel.VoxelModel;
 import unknowndomain.engine.client.asset.model.voxel.VoxelModelManager;
 import unknowndomain.engine.client.asset.source.AssetSource;
-import unknowndomain.engine.client.asset.source.DirectoriesAssetSource;
+import unknowndomain.engine.client.asset.source.CompositeAssetSource;
 import unknowndomain.engine.client.asset.source.FileSystemAssetSource;
 import unknowndomain.engine.client.game.GameClient;
 import unknowndomain.engine.client.i18n.LocaleManager;
@@ -35,7 +35,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
@@ -80,10 +79,10 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         try {
             Path engineJarPath = Path.of(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
             if (getRuntimeEnvironment() == RuntimeEnvironment.ENGINE_DEVELOPMENT) {
-                engineAssetSource = new DirectoriesAssetSource(
-                        getDirectoriesInClassPath().stream()
-                                .map($ -> $.resolve("assets"))
-                                .collect(Collectors.toList()));
+                engineAssetSource = new CompositeAssetSource(
+                        getDirectoriesInClassPath(),
+                        "assets",
+                        getClass().getClassLoader());
             } else {
                 FileSystem fileSystem = FileSystems.newFileSystem(engineJarPath, getClass().getClassLoader());
                 engineAssetSource = new FileSystemAssetSource(fileSystem, "assets");

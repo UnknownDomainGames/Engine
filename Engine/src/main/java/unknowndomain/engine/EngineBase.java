@@ -10,12 +10,11 @@ import unknowndomain.engine.event.engine.EngineEvent;
 import unknowndomain.engine.mod.ModContainer;
 import unknowndomain.engine.mod.ModManager;
 import unknowndomain.engine.mod.dummy.DummyModContainer;
-import unknowndomain.engine.mod.exception.InvalidModDescriptorException;
+import unknowndomain.engine.mod.exception.InvalidModMetadataException;
 import unknowndomain.engine.mod.impl.AbstractModAssets;
 import unknowndomain.engine.mod.impl.EngineModManager;
 import unknowndomain.engine.mod.init.ModInitializer;
 import unknowndomain.engine.mod.java.JavaModAssets;
-import unknowndomain.engine.mod.java.dev.DevModAssets;
 import unknowndomain.engine.mod.misc.DefaultModMetadata;
 import unknowndomain.engine.util.ClassPathUtils;
 import unknowndomain.engine.util.RuntimeEnvironment;
@@ -24,8 +23,6 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -149,7 +146,7 @@ public abstract class EngineBase implements Engine {
             loadDevEnvMod();
 
             Collection<ModContainer> loadedMods = modManager.getLoadedMods();
-            logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getId() + "@" + modContainer.getVersion()).iterator(), ",") + "]");
+            logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getId() + "(" + modContainer.getVersion() + ")").iterator(), ", ") + "]");
 
             ModInitializer initializer = new ModInitializer(this);
             for (ModContainer mod : loadedMods) {
@@ -171,10 +168,9 @@ public abstract class EngineBase implements Engine {
         Path engineJarPath = Path.of(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
         AbstractModAssets modAssets;
         if (Platform.getEngine().getRuntimeEnvironment() == RuntimeEnvironment.ENGINE_DEVELOPMENT) {
-            modAssets = new DevModAssets(getDirectoriesInClassPath());
+            modAssets = new JavaModAssets(getDirectoriesInClassPath(), getClass().getClassLoader());
         } else {
-            FileSystem fileSystem = FileSystems.newFileSystem(engineJarPath, getClass().getClassLoader());
-            modAssets = new JavaModAssets(fileSystem);
+            modAssets = new JavaModAssets(List.of(engineJarPath), getClass().getClassLoader());
         }
         modAssets.setMod(engineMod);
         engineMod.setAssets(modAssets);
@@ -210,7 +206,7 @@ public abstract class EngineBase implements Engine {
         for (Path path : getFilesInClassPath()) {
             try {
                 modManager.loadMod(path);
-            } catch (InvalidModDescriptorException ignored) {
+            } catch (InvalidModMetadataException ignored) {
             }
         }
     }

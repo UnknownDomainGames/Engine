@@ -8,25 +8,26 @@ import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.mod.exception.ModLoadException;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.Collection;
 
 public class JavaModLoader implements ModLoader {
 
     @Override
-    public ModContainer load(ModMetadata metadata) {
+    public ModContainer load(Collection<Path> sources, ModMetadata metadata) {
         Logger modLogger = LoggerFactory.getLogger(metadata.getId());
 
         ModClassLoader classLoader = new ModClassLoader(modLogger, Thread.currentThread().getContextClassLoader());
-        classLoader.addPath(metadata.getSource());
+        classLoader.addPaths(sources);
 
         try {
-            Object instance = Class.forName(metadata.getMainClass(), true, classLoader).newInstance();
-            JavaModAssets assets = new JavaModAssets(FileSystems.newFileSystem(metadata.getSource(), classLoader));
-            JavaModContainer modContainer = new JavaModContainer(metadata, classLoader, assets, modLogger, instance);
+            Object instance = Class.forName(metadata.getMainClass(), true, classLoader).getDeclaredConstructor().newInstance();
+            JavaModAssets assets = new JavaModAssets(sources, classLoader);
+            JavaModContainer modContainer = new JavaModContainer(sources, classLoader, metadata, assets, modLogger, instance);
             classLoader.setMod(modContainer);
             assets.setMod(modContainer);
             return modContainer;
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | IOException e) {
+        } catch (ReflectiveOperationException | IOException e) {
             throw new ModLoadException(metadata.getId(), e);
         }
     }
