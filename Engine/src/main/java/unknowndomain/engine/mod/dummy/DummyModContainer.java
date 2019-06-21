@@ -5,14 +5,14 @@ import org.slf4j.LoggerFactory;
 import unknowndomain.engine.event.EventBus;
 import unknowndomain.engine.mod.ModAssets;
 import unknowndomain.engine.mod.ModContainer;
-import unknowndomain.engine.mod.ModDescriptor;
+import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.util.versioning.Version;
 
 import java.nio.file.Path;
 
 public class DummyModContainer implements ModContainer {
 
-    private final ModDescriptor descriptor;
+    private final ModMetadata descriptor;
     private final Logger logger;
     private Object modInstance;
     private ClassLoader classloader;
@@ -20,14 +20,14 @@ public class DummyModContainer implements ModContainer {
     private ModAssets assets;
     private EventBus eventbus;
 
-    public DummyModContainer(ModDescriptor descriptor) {
+    public DummyModContainer(ModMetadata descriptor) {
         this.descriptor = descriptor;
-        this.logger = LoggerFactory.getLogger(descriptor.getModId());
+        this.logger = LoggerFactory.getLogger(descriptor.getId());
     }
 
     @Override
-    public String getModId() {
-        return descriptor.getModId();
+    public String getId() {
+        return descriptor.getId();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class DummyModContainer implements ModContainer {
     }
 
     @Override
-    public ModDescriptor getDescriptor() {
+    public ModMetadata getMetadata() {
         return descriptor;
     }
 

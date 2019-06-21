@@ -3,10 +3,10 @@ package unknowndomain.engine.mod.impl;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import unknowndomain.engine.mod.ModDependencyEntry;
-import unknowndomain.engine.mod.ModDescriptor;
-import unknowndomain.engine.mod.ModDescriptorFinder;
+import unknowndomain.engine.mod.ModMetadata;
+import unknowndomain.engine.mod.ModMetadataFinder;
 import unknowndomain.engine.mod.exception.InvalidModDescriptorException;
-import unknowndomain.engine.mod.misc.DefaultModDescriptor;
+import unknowndomain.engine.mod.misc.DefaultModMetadata;
 import unknowndomain.engine.util.JsonUtils;
 
 import java.io.IOException;
@@ -21,20 +21,20 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class JsonModDescriptorFinder implements ModDescriptorFinder {
+public class JsonModMetadataFinder implements ModMetadataFinder {
 
     private final String fileName;
 
-    public JsonModDescriptorFinder() {
+    public JsonModMetadataFinder() {
         this("metadata.json");
     }
 
-    public JsonModDescriptorFinder(String fileName) {
+    public JsonModMetadataFinder(String fileName) {
         this.fileName = fileName;
     }
 
     @Override
-    public ModDescriptor find(Path path) {
+    public ModMetadata find(Path path) {
         JsonObject jo;
 
         try {
@@ -58,17 +58,17 @@ public class JsonModDescriptorFinder implements ModDescriptorFinder {
             throw new InvalidModDescriptorException(path, e);
         }
 
-        DefaultModDescriptor.Builder builder = DefaultModDescriptor.builder().source(path);
+        DefaultModMetadata.Builder builder = DefaultModMetadata.builder().source(path);
 
-        if (!jo.has("modId")) {
-            throw new InvalidModDescriptorException(String.format("\"Invalid mod descriptor. Missing \"modId\". Source: %s", path.toAbsolutePath()));
+        if (!jo.has("id")) {
+            throw new InvalidModDescriptorException(String.format("\"Invalid mod descriptor. Missing \"id\". Source: %s", path.toAbsolutePath()));
         }
 
         if (!jo.has("mainClass")) {
             throw new InvalidModDescriptorException(String.format("\"Invalid mod descriptor. Missing \"mainClass\". Source: %s", path.toAbsolutePath()));
         }
 
-        builder.modId(jo.get("modId").getAsString());
+        builder.id(jo.get("id").getAsString());
         builder.mainClass(jo.get("mainClass").getAsString());
 
         if (jo.has("version")) {
@@ -80,11 +80,14 @@ public class JsonModDescriptorFinder implements ModDescriptorFinder {
         if (jo.has("description")) {
             builder.description(jo.get("description").getAsString());
         }
+        if (jo.has("license")) {
+            builder.license(jo.get("license").getAsString());
+        }
         if (jo.has("url")) {
             builder.url(jo.get("url").getAsString());
         }
-        if (jo.has("logoFile")) {
-            builder.logo(jo.get("logoFile").getAsString());
+        if (jo.has("logo")) {
+            builder.logo(jo.get("logo").getAsString());
         }
         if (jo.has("authors")) {
             List<String> authors = new ArrayList<>();

@@ -16,7 +16,7 @@ import unknowndomain.engine.mod.impl.EngineModManager;
 import unknowndomain.engine.mod.init.ModInitializer;
 import unknowndomain.engine.mod.java.JavaModAssets;
 import unknowndomain.engine.mod.java.dev.DevModAssets;
-import unknowndomain.engine.mod.misc.DefaultModDescriptor;
+import unknowndomain.engine.mod.misc.DefaultModMetadata;
 import unknowndomain.engine.util.ClassPathUtils;
 import unknowndomain.engine.util.RuntimeEnvironment;
 
@@ -149,7 +149,7 @@ public abstract class EngineBase implements Engine {
             loadDevEnvMod();
 
             Collection<ModContainer> loadedMods = modManager.getLoadedMods();
-            logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getModId() + "@" + modContainer.getVersion()).iterator(), ",") + "]");
+            logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getId() + "@" + modContainer.getVersion()).iterator(), ",") + "]");
 
             ModInitializer initializer = new ModInitializer(this);
             for (ModContainer mod : loadedMods) {
@@ -166,7 +166,7 @@ public abstract class EngineBase implements Engine {
     }
 
     private void loadEngineDummyMod() throws IOException, URISyntaxException {
-        var engineMod = new DummyModContainer(DefaultModDescriptor.builder().modId("engine").version(Platform.getVersion()).build());
+        var engineMod = new DummyModContainer(DefaultModMetadata.builder().id("engine").version(Platform.getVersion()).build());
         engineMod.setClassLoader(getClass().getClassLoader());
         Path engineJarPath = Path.of(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
         AbstractModAssets modAssets;

@@ -8,6 +8,8 @@ import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.JavaFileManager;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ProcessingUtils {
@@ -24,6 +26,10 @@ public class ProcessingUtils {
 
     public static boolean hasModifier(Element element, Modifier modifier) {
         return element.getModifiers().stream().anyMatch(m -> modifier == m);
+    }
+
+    public static AnnotationMirror getAnnotation(Element element, Class<? extends Annotation> anno) {
+        return getAnnotation(element, anno.getName());
     }
 
     public static AnnotationMirror getAnnotation(Element element, String annoName) {
@@ -46,6 +52,26 @@ public class ProcessingUtils {
 
     public static AnnotationValue getAnnotationValue(Element element, String annoName, String key) {
         return getAnnotationValue(getAnnotation(element, annoName), key);
+    }
+
+    public static AnnotationValue getAnnotationValue(Element element, Class<? extends Annotation> anno, String key) {
+        return getAnnotationValue(getAnnotation(element, anno), key);
+    }
+
+    public static Map<String, Object> getAnnotationValues(AnnotationMirror annotation) {
+        Map<String, Object> values = new HashMap<>();
+        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : annotation.getElementValues().entrySet()) {
+            values.put(entry.getKey().getSimpleName().toString(), entry.getValue().getValue());
+        }
+        return values;
+    }
+
+    public static Map<String, Object> getAnnotationValues(Element element, String annoName) {
+        return getAnnotationValues(getAnnotation(element, annoName));
+    }
+
+    public static Map<String, Object> getAnnotationValues(Element element, Class<? extends Annotation> anno) {
+        return getAnnotationValues(getAnnotation(element, anno));
     }
 
     public static Name getQualifiedName(TypeMirror typeMirror) {

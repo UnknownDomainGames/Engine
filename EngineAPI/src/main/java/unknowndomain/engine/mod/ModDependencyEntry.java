@@ -6,21 +6,6 @@ import unknowndomain.engine.util.versioning.VersionRange;
 
 public class ModDependencyEntry {
 
-    public enum LoadOrder {
-        /**
-         * Mod must be loaded, and after it load your mod.
-         */
-        REQUIRED,
-        /**
-         * Mod needn't be loaded, but after it load your mod.
-         */
-        AFTER,
-        /**
-         * Mod needn't be loaded, but before it load your mod.
-         */
-        BEFORE
-    }
-
     public static ModDependencyEntry parse(String spec) {
         String[] args = spec.split(":");
         if (args.length != 3) {
@@ -28,36 +13,45 @@ public class ModDependencyEntry {
         }
 
         try {
-            LoadOrder loadOrder = LoadOrder.valueOf(args[0].toUpperCase());
-            String modId = args[1];
-            VersionRange range = VersionRange.createFromVersionSpec(args[2]);
-            return new ModDependencyEntry(loadOrder, modId, range);
+            String id = args[0];
+            VersionRange versionRange = VersionRange.createFromVersionSpec(args[1]);
+            DependencyType type = DependencyType.valueOf(args[2].toUpperCase());
+            return new ModDependencyEntry(id, versionRange, type);
         } catch (InvalidVersionSpecificationException e) {
-            throw new InvalidDependencyException("Failed to parse dependency entry, invalid version range. Range: " + args[2], e);
+            throw new InvalidDependencyException(String.format("Failed to parse dependency entry, invalid version range \"%s\".", args[1]), e);
         } catch (IllegalArgumentException e) {
-            throw new InvalidDependencyException("Failed to parse dependency entry, illegal load order. Load order: " + args[0], e);
+            throw new InvalidDependencyException("Failed to parse dependency entry, illegal dependency type. Type: " + args[2], e);
         }
     }
 
-    private final LoadOrder loadOrder;
-    private final String modId;
+    private final String id;
     private final VersionRange versionRange;
+    private final DependencyType type;
 
-    public ModDependencyEntry(LoadOrder loadOrder, String modId, VersionRange versionRange) {
-        this.loadOrder = loadOrder;
-        this.modId = modId;
+    public ModDependencyEntry(String id, String versionRange, DependencyType type) {
+        this(id, VersionRange.createFromVersionSpec(versionRange), type);
+    }
+
+    public ModDependencyEntry(String id, VersionRange versionRange, DependencyType type) {
+        this.id = id;
         this.versionRange = versionRange;
+        this.type = type;
     }
 
-    public LoadOrder getLoadOrder() {
-        return loadOrder;
-    }
-
-    public String getModId() {
-        return modId;
+    public String getId() {
+        return id;
     }
 
     public VersionRange getVersionRange() {
         return versionRange;
+    }
+
+    public DependencyType getType() {
+        return type;
+    }
+
+    @Override
+    public String toString() {
+        return id + ":" + versionRange + ":" + type;
     }
 }

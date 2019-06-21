@@ -26,7 +26,7 @@ package unknowndomain.engine.util.versioning;
  * @version $Id$
  */
 public class InvalidVersionSpecificationException
-        extends Exception
+        extends RuntimeException
 {
     public InvalidVersionSpecificationException( String message )
     {

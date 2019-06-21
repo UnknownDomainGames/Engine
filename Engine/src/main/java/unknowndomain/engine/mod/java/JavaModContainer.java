@@ -6,21 +6,21 @@ import unknowndomain.engine.event.SimpleEventBus;
 import unknowndomain.engine.event.reflect.ReflectEventListenerFactory;
 import unknowndomain.engine.mod.ModAssets;
 import unknowndomain.engine.mod.ModContainer;
-import unknowndomain.engine.mod.ModDescriptor;
+import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.util.versioning.Version;
 
 import java.nio.file.Path;
 
 public class JavaModContainer implements ModContainer {
 
-    private final ModDescriptor descriptor;
+    private final ModMetadata descriptor;
     private final ClassLoader classLoader;
     private final ModAssets assets;
     private final EventBus eventBus;
     private final Logger logger;
     private final Object instance;
 
-    public JavaModContainer(ModDescriptor descriptor, ClassLoader classLoader, ModAssets assets, Logger logger, Object instance) {
+    public JavaModContainer(ModMetadata descriptor, ClassLoader classLoader, ModAssets assets, Logger logger, Object instance) {
         this.descriptor = descriptor;
         this.classLoader = classLoader;
         this.assets = assets;
@@ -30,8 +30,8 @@ public class JavaModContainer implements ModContainer {
     }
 
     @Override
-    public String getModId() {
-        return descriptor.getModId();
+    public String getId() {
+        return descriptor.getId();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class JavaModContainer implements ModContainer {
     }
 
     @Override
-    public ModDescriptor getDescriptor() {
+    public ModMetadata getMetadata() {
         return descriptor;
     }
 }

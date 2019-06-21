@@ -1,7 +1,7 @@
 package unknowndomain.engine.mod.misc;
 
 import unknowndomain.engine.mod.ModDependencyEntry;
-import unknowndomain.engine.mod.ModDescriptor;
+import unknowndomain.engine.mod.ModMetadata;
 import unknowndomain.engine.util.versioning.Version;
 
 import javax.annotation.Nonnull;
@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultModDescriptor implements ModDescriptor {
+public class DefaultModMetadata implements ModMetadata {
 
     public static final Version DEFAULT_VERSION = new Version("1.0");
 
@@ -21,19 +21,21 @@ public class DefaultModDescriptor implements ModDescriptor {
     private final String mainClass;
     private final String name;
     private final String description;
+    private final String license;
     private final String url;
     private final List<String> authors;
     private final String logoFile;
     private final List<ModDependencyEntry> dependencies;
     private final Map<String, String> properties;
 
-    protected DefaultModDescriptor(Path source, String modId, Version version, String mainClass, String name, String description, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, String> properties) {
+    protected DefaultModMetadata(Path source, String modId, Version version, String mainClass, String name, String description, String license, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, String> properties) {
         this.source = source;
         this.modId = modId;
         this.version = version;
         this.mainClass = mainClass;
         this.name = name;
         this.description = description;
+        this.license = license;
         this.url = url;
         this.authors = authors;
         this.logoFile = logoFile;
@@ -49,7 +51,7 @@ public class DefaultModDescriptor implements ModDescriptor {
 
     @Nonnull
     @Override
-    public String getModId() {
+    public String getId() {
         return modId;
     }
 
@@ -69,6 +71,11 @@ public class DefaultModDescriptor implements ModDescriptor {
 
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String getLicense() {
+        return license;
     }
 
     public String getUrl() {
@@ -102,13 +109,14 @@ public class DefaultModDescriptor implements ModDescriptor {
         private String mainClass = "";
         private String name = "";
         private String description = "";
+        private String license = "";
         private String url = "";
         private List<String> authors = Collections.emptyList();
         private String logo = "";
         private List<ModDependencyEntry> dependencies = Collections.emptyList();
         private Map<String, String> properties = Collections.emptyMap();
 
-        public Builder modId(String id) {
+        public Builder id(String id) {
             this.id = id;
             return this;
         }
@@ -143,6 +151,11 @@ public class DefaultModDescriptor implements ModDescriptor {
             return this;
         }
 
+        public Builder license(String license) {
+            this.license = license;
+            return this;
+        }
+
         public Builder url(String url) {
             this.url = url;
             return this;
@@ -168,8 +181,8 @@ public class DefaultModDescriptor implements ModDescriptor {
             return this;
         }
 
-        public DefaultModDescriptor build() {
-            return new DefaultModDescriptor(source, id, version, mainClass, name, description, url, authors, logo, dependencies, properties);
+        public DefaultModMetadata build() {
+            return new DefaultModMetadata(source, id, version, mainClass, name, description, license, url, authors, logo, dependencies, properties);
         }
     }
 }

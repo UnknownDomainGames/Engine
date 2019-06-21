@@ -3,9 +3,9 @@ package unknowndomain.engine.mod.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import unknowndomain.engine.mod.DependencyManager;
-import unknowndomain.engine.mod.ModDescriptor;
-import unknowndomain.engine.mod.ModDescriptorFinder;
 import unknowndomain.engine.mod.ModLoader;
+import unknowndomain.engine.mod.ModMetadata;
+import unknowndomain.engine.mod.ModMetadataFinder;
 import unknowndomain.engine.mod.exception.MissingDependencyException;
 import unknowndomain.engine.mod.exception.ModAlreadyLoadedException;
 import unknowndomain.engine.mod.exception.ModLoadException;
@@ -28,8 +28,8 @@ public class EngineModManager extends AbstractModManager {
     }
 
     @Override
-    public ModDescriptorFinder createModDescriptorFinder() {
-        return new JsonModDescriptorFinder();
+    public ModMetadataFinder createModDescriptorFinder() {
+        return new JsonModMetadataFinder();
     }
 
     @Override
@@ -44,18 +44,18 @@ public class EngineModManager extends AbstractModManager {
         if (modPath == null)
             return;
 
-        ModDescriptor modDescriptor = modDescriptorFinder.find(modPath);
+        ModMetadata modMetadata = modMetadataFinder.find(modPath);
 
-        if (isModLoaded(modDescriptor.getModId())) {
-            throw new ModAlreadyLoadedException(modDescriptor.getModId());
+        if (isModLoaded(modMetadata.getId())) {
+            throw new ModAlreadyLoadedException(modMetadata.getId());
         }
 
-        DependencyManager.CheckResult result = dependencyManager.checkDependencies(modDescriptor.getDependencies());
+        DependencyManager.CheckResult result = dependencyManager.checkDependencies(modMetadata.getDependencies());
         if (!result.isPassed()) {
-            throw new MissingDependencyException(modDescriptor.getModId(), result);
+            throw new MissingDependencyException(modMetadata.getId(), result);
         }
 
-        Logger modLogger = LoggerFactory.getLogger(modDescriptor.getModId());
+        Logger modLogger = LoggerFactory.getLogger(modMetadata.getId());
 
         ModClassLoader classLoader = new ModClassLoader(modLogger, Thread.currentThread().getContextClassLoader());
         for (Path directory : directories) {
@@ -64,16 +64,16 @@ public class EngineModManager extends AbstractModManager {
 
         DevModContainer modContainer;
         try {
-            Object instance = Class.forName(modDescriptor.getMainClass(), true, classLoader).newInstance();
+            Object instance = Class.forName(modMetadata.getMainClass(), true, classLoader).newInstance();
             DevModAssets assets = new DevModAssets(directories);
-            modContainer = new DevModContainer(modDescriptor, classLoader, assets, modLogger, instance);
+            modContainer = new DevModContainer(modMetadata, classLoader, assets, modLogger, instance);
             classLoader.setMod(modContainer);
             assets.setMod(modContainer);
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            throw new ModLoadException(modDescriptor.getModId(), e);
+            throw new ModLoadException(modMetadata.getId(), e);
         }
 
-        loadedModContainer.put(modContainer.getModId(), modContainer);
+        loadedModContainer.put(modContainer.getId(), modContainer);
     }
 
     private Path findModInDirectories(List<Path> paths) {

@@ -60,13 +60,13 @@ public class LocaleManager {
     }
 
     private void register(Locale locale, ModContainer mod) {
-        try (var stream = mod.getAssets().openStream("assets", mod.getModId(), "lang", locale.toLanguageTag().concat(".lang")).orElseThrow();
+        try (var stream = mod.getAssets().openStream("assets", mod.getId(), "lang", locale.toLanguageTag().concat(".lang")).orElseThrow();
              var reader = new BufferedReader(new InputStreamReader(stream, Charset.forName("UTF-8").newDecoder()))) {
             reader.lines().forEach(line -> LocaleManager.this.addTranslation(locale, line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1)));
         } catch (IOException e) {
-            Platform.getLogger().warn(String.format("cannot read language file of locale %s from mod %s", locale, mod.getModId()), e);
+            Platform.getLogger().warn(String.format("cannot read language file of locale %s from mod %s", locale, mod.getId()), e);
         } catch (NoSuchElementException e) {
-            Platform.getLogger().warn(String.format("cannot find language file %s.lang from mod %s", locale.toString(), mod.getModId()));
+            Platform.getLogger().warn(String.format("cannot find language file %s.lang from mod %s", locale.toString(), mod.getId()));
         }
     }
 
@@ -76,7 +76,7 @@ public class LocaleManager {
     }
 
     public void register(ModContainer mod) {
-        mod.getAssets().list("assets", mod.getModId(), "lang").forEach(path -> {
+        mod.getAssets().list("assets", mod.getId(), "lang").forEach(path -> {
             if (path.getFileName().toString().endsWith(".lang")) {
                 String filename = path.getFileName().toString();
                 var lang = filename.substring(0, filename.lastIndexOf("."));
@@ -84,7 +84,7 @@ public class LocaleManager {
                 try (var reader = Files.newBufferedReader(path, Charset.forName("UTF-8"))) {
                     reader.lines().forEach(line -> LocaleManager.this.addTranslation(locale, line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1)));
                 } catch (IOException e) {
-                    Platform.getLogger().warn(String.format("cannot read language file %s.lang from mod %s", lang, mod.getModId()), e);
+                    Platform.getLogger().warn(String.format("cannot read language file %s.lang from mod %s", lang, mod.getId()), e);
                 }
             }
         });

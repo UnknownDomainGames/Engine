@@ -7,13 +7,13 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-public interface ModDescriptor {
+public interface ModMetadata {
 
     @Nonnull
     Path getSource();
 
     @Nonnull
-    String getModId();
+    String getId();
 
     @Nonnull
     Version getVersion();
@@ -23,6 +23,8 @@ public interface ModDescriptor {
     String getName();
 
     String getDescription();
+
+    String getLicense();
 
     String getUrl();
 

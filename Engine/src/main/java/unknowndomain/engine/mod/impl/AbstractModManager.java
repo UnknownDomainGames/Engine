@@ -20,50 +20,50 @@ public abstract class AbstractModManager implements ModManager {
     protected final Map<String, ModContainer> loadedModContainer = new HashMap<>();
 
     protected final ModLoader modLoader = createModLoader();
-    protected final ModDescriptorFinder modDescriptorFinder = createModDescriptorFinder();
+    protected final ModMetadataFinder modMetadataFinder = createModDescriptorFinder();
     protected final DependencyManager dependencyManager = createDependencyManager();
 
     protected abstract ModLoader createModLoader();
 
-    protected abstract ModDescriptorFinder createModDescriptorFinder();
+    protected abstract ModMetadataFinder createModDescriptorFinder();
 
     protected abstract DependencyManager createDependencyManager();
 
     @Nonnull
     @Override
     public ModContainer loadMod(Path path) {
-        return loadMod(modDescriptorFinder.find(path));
+        return loadMod(modMetadataFinder.find(path));
     }
 
-    protected ModContainer loadMod(ModDescriptor modDescriptor) {
-        if (isModLoaded(modDescriptor.getModId())) {
-            throw new ModAlreadyLoadedException(modDescriptor.getModId());
+    protected ModContainer loadMod(ModMetadata modMetadata) {
+        if (isModLoaded(modMetadata.getId())) {
+            throw new ModAlreadyLoadedException(modMetadata.getId());
         }
 
-        DependencyManager.CheckResult result = dependencyManager.checkDependencies(modDescriptor.getDependencies());
+        DependencyManager.CheckResult result = dependencyManager.checkDependencies(modMetadata.getDependencies());
         if (!result.isPassed()) {
-            throw new MissingDependencyException(modDescriptor.getModId(), result);
+            throw new MissingDependencyException(modMetadata.getId(), result);
         }
 
         ModContainer modContainer;
         try {
-            modContainer = modLoader.load(modDescriptor);
+            modContainer = modLoader.load(modMetadata);
         } catch (ModLoadException e) {
             throw e;
         } catch (Exception e) {
-            throw new ModLoadException(modDescriptor.getModId(), e);
+            throw new ModLoadException(modMetadata.getId(), e);
         }
 
         if (modContainer == null) {
-            throw new ModLoadException(modDescriptor.getModId());
+            throw new ModLoadException(modMetadata.getId());
         }
 
-        loadedModContainer.put(modContainer.getModId(), modContainer);
+        loadedModContainer.put(modContainer.getId(), modContainer);
         return modContainer;
     }
 
     public void addDummyModContainer(DummyModContainer dummyModContainer) {
-        loadedModContainer.put(dummyModContainer.getModId(), dummyModContainer);
+        loadedModContainer.put(dummyModContainer.getId(), dummyModContainer);
     }
 
     @Nullable

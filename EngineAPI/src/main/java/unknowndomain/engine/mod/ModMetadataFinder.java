@@ -4,7 +4,7 @@ import unknowndomain.engine.mod.exception.InvalidModDescriptorException;
 
 import java.nio.file.Path;
 
-public interface ModDescriptorFinder {
+public interface ModMetadataFinder {
 
-    ModDescriptor find(Path path) throws InvalidModDescriptorException;
+    ModMetadata find(Path path) throws InvalidModDescriptorException;
 }

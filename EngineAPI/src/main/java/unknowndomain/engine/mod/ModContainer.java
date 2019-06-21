@@ -12,7 +12,7 @@ import java.nio.file.Path;
  */
 public interface ModContainer {
 
-    String getModId();
+    String getId();
 
     Version getVersion();
 
@@ -34,5 +34,5 @@ public interface ModContainer {
 
     Logger getLogger();
 
-    ModDescriptor getDescriptor();
+    ModMetadata getMetadata();
 }

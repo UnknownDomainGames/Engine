@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static unknowndomain.engine.mod.ModDependencyEntry.LoadOrder.REQUIRED;
+import static unknowndomain.engine.mod.DependencyType.REQUIRED;
 
 public class DependencyManagerImpl implements DependencyManager {
 
@@ -24,12 +24,12 @@ public class DependencyManagerImpl implements DependencyManager {
         List<ModDependencyEntry> missing = new ArrayList<>();
 
         for (ModDependencyEntry dependency : dependencies) {
-            if (dependency.getLoadOrder() != REQUIRED) {
+            if (dependency.getType() != REQUIRED) {
                 continue;
             }
 
-            Optional<ModContainer> mod = modManager.getMod(dependency.getModId());
-            if (mod.isEmpty() || !dependency.getVersionRange().containsVersion(mod.get().getDescriptor().getVersion())) {
+            Optional<ModContainer> mod = modManager.getMod(dependency.getId());
+            if (mod.isEmpty() || !dependency.getVersionRange().containsVersion(mod.get().getMetadata().getVersion())) {
                 missing.add(dependency);
             }
         }
