@@ -40,7 +40,7 @@ public abstract class AbstractModManager implements ModManager {
             throw new ModAlreadyLoadedException(modMetadata.getId());
         }
 
-        DependencyManager.CheckResult result = dependencyManager.checkDependencies(modMetadata.getDependencies());
+        DependencyCheckResult result = dependencyManager.checkDependencies(modMetadata.getDependencies());
         if (!result.isPassed()) {
             throw new MissingDependencyException(modMetadata.getId(), result);
         }

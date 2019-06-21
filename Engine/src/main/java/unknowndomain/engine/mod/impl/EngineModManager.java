@@ -2,10 +2,7 @@ package unknowndomain.engine.mod.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import unknowndomain.engine.mod.DependencyManager;
-import unknowndomain.engine.mod.ModLoader;
-import unknowndomain.engine.mod.ModMetadata;
-import unknowndomain.engine.mod.ModMetadataFinder;
+import unknowndomain.engine.mod.*;
 import unknowndomain.engine.mod.exception.MissingDependencyException;
 import unknowndomain.engine.mod.exception.ModAlreadyLoadedException;
 import unknowndomain.engine.mod.exception.ModLoadException;
@@ -50,7 +47,7 @@ public class EngineModManager extends AbstractModManager {
             throw new ModAlreadyLoadedException(modMetadata.getId());
         }
 
-        DependencyManager.CheckResult result = dependencyManager.checkDependencies(modMetadata.getDependencies());
+        DependencyCheckResult result = dependencyManager.checkDependencies(modMetadata.getDependencies());
         if (!result.isPassed()) {
             throw new MissingDependencyException(modMetadata.getId(), result);
         }
