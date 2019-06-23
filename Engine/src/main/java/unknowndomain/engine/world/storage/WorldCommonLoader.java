@@ -1,8 +1,6 @@
 package unknowndomain.engine.world.storage;
 
 import unknowndomain.engine.world.WorldCommon;
-import unknowndomain.engine.world.chunk.WorldCommonChunkStorer;
-import unknowndomain.engine.world.chunk.storage.ChunkStorer;
 
 import java.nio.file.Path;
 
@@ -21,7 +19,7 @@ public class WorldCommonLoader implements WorldLoader<WorldCommon> {
     }
 
     @Override
-    public Path getStorageLocation() {
+    public Path getStoragePath() {
         return storage;
     }
 
