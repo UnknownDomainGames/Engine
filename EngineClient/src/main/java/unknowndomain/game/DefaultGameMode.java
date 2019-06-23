@@ -3,7 +3,6 @@ package unknowndomain.game;
 import unknowndomain.engine.Platform;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
-import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.asset.AssetPath;
 import unknowndomain.engine.client.block.AirClientBlock;
 import unknowndomain.engine.client.block.ClientBlock;
@@ -36,6 +35,7 @@ import unknowndomain.engine.registry.Registry;
 import unknowndomain.engine.registry.RegistryManager;
 import unknowndomain.engine.registry.game.BlockRegistry;
 import unknowndomain.engine.registry.impl.IdAutoIncreaseRegistry;
+import unknowndomain.engine.world.collision.RayTraceBlockHit;
 import unknowndomain.game.client.gui.game.GUIGameCreation;
 import unknowndomain.game.client.gui.game.GuiChat;
 import unknowndomain.game.client.gui.hud.HUDGameDebug;
@@ -108,7 +108,7 @@ public final class DefaultGameMode {
             Player player = game.getPlayer();
             Camera camera = game.getEngine().getRenderContext().getCamera();
             Entity controllingEntity = player.getControlledEntity();
-            RayTraceBlockHit blockHit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
+            RayTraceBlockHit blockHit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
             if(blockHit.isSuccess()) {
                 controllingEntity.getComponent(TwoHands.class)
                         .ifPresent(twoHands -> twoHands.getMainHand()
@@ -126,7 +126,7 @@ public final class DefaultGameMode {
             Player player = game.getPlayer();
             Camera camera = game.getEngine().getRenderContext().getCamera();
             Entity entity = player.getControlledEntity();
-            RayTraceBlockHit hit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
+            RayTraceBlockHit hit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
             if(hit.isSuccess()) {
                 entity.getComponent(TwoHands.class)
                         .ifPresent(twoHands -> twoHands.getMainHand()
@@ -143,7 +143,7 @@ public final class DefaultGameMode {
             Player player = game.getPlayer();
             Camera camera = game.getEngine().getRenderContext().getCamera();
             Entity entity = player.getControlledEntity();
-            player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
+            player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
                     // TODO: Dont create BlockItem
                     entity.getComponent(TwoHands.class)
                             .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new BlockItem(hit.getBlock()))))

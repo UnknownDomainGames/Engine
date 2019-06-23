@@ -1,6 +1,7 @@
-package unknowndomain.engine.block;
+package unknowndomain.engine.world.collision;
 
 import org.joml.Vector3f;
+import unknowndomain.engine.block.Block;
 import unknowndomain.engine.math.BlockPos;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.World;

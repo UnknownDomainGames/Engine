@@ -1,12 +1,12 @@
 package unknowndomain.engine.client.rendering.world;
 
-import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.client.rendering.RenderContext;
 import unknowndomain.engine.client.rendering.Tessellator;
 import unknowndomain.engine.client.rendering.util.buffer.GLBuffer;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferFormats;
 import unknowndomain.engine.client.rendering.util.buffer.GLBufferMode;
 import unknowndomain.engine.util.Color;
+import unknowndomain.engine.world.collision.RayTraceBlockHit;
 
 public class BlockSelectionRenderer {
 
@@ -22,7 +22,7 @@ public class BlockSelectionRenderer {
 
         var player = context.getEngine().getCurrentGame().getPlayer();
         var camera = context.getCamera();
-        RayTraceBlockHit hit = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
+        RayTraceBlockHit hit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
         if (hit.isSuccess()) {
             float minX = hit.getPos().getX() - 0.001f, maxX = hit.getPos().getX() + 1.001f,
                     minY = hit.getPos().getY() - 0.001f, maxY = hit.getPos().getY() + 1.001f,

@@ -1,10 +1,10 @@
 package unknowndomain.engine.world;
 
-import com.google.common.collect.Sets;
-import org.joml.*;
+import org.joml.AABBd;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 import unknowndomain.engine.block.Block;
 import unknowndomain.engine.block.BlockPrototype;
-import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.entity.Entity;
 import unknowndomain.engine.entity.PlayerEntity;
 import unknowndomain.engine.event.world.block.BlockChangeEvent;
@@ -18,22 +18,24 @@ import unknowndomain.engine.registry.Registries;
 import unknowndomain.engine.util.Facing;
 import unknowndomain.engine.world.chunk.Chunk;
 import unknowndomain.engine.world.chunk.ChunkConstants;
-import unknowndomain.engine.world.chunk.ChunkStorage;
 import unknowndomain.engine.world.chunk.WorldCommonChunkManager;
+import unknowndomain.engine.world.collision.WorldCollisionManager;
+import unknowndomain.engine.world.collision.WorldCollisionManagerImpl;
 import unknowndomain.engine.world.gen.ChunkGenerator;
 import unknowndomain.engine.world.storage.WorldCommonLoader;
-import unknowndomain.engine.world.util.FastVoxelRayTrace;
 import unknowndomain.game.init.Blocks;
 
 import javax.annotation.Nonnull;
-import java.lang.Math;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class WorldCommon implements World, Runnable {
-    public static final float CALC_ERROR_FIXING = 1e-6f;
+
     private final Game game;
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
+    private final WorldCollisionManager collisionManager = new WorldCollisionManagerImpl(this);
 
     //private final ChunkStorage chunkStorage;
     private WorldCommonLoader loader;
@@ -96,55 +98,9 @@ public class WorldCommon implements World, Runnable {
         return criticalChunks;
     }
 
-    @Nonnull
     @Override
-    public RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance) {
-        return raycast(from, dir, distance, Sets.newHashSet(Registries.getBlockRegistry().air()));
-    }
-
-    @Nonnull
-    @Override
-    public RayTraceBlockHit raycast(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore) {
-        Vector3f rayOffset = dir.normalize(new Vector3f()).mul(distance);
-        Vector3f dist = rayOffset.add(from, new Vector3f());
-
-        var all = FastVoxelRayTrace.rayTrace(from, dist);
-
-        all.sort(Comparator.comparingDouble(pos -> from.distanceSquared(pos.getX(), pos.getY(), pos.getZ())));
-
-        for (BlockPos pos : all) {
-            Block block = getBlock(pos);
-            if (ignore.contains(block))
-                continue;
-            Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
-            AABBd[] boxes = block.getBoundingBoxes();
-            Vector2d result = new Vector2d();
-            for (AABBd box : boxes) {
-                boolean hit = box.intersectRay(local.x, local.y, local.z, rayOffset.x, rayOffset.y, rayOffset.z,
-                        result);
-                if (hit) {
-                    Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
-                    Facing facing = null;
-                    if (hitPoint.x <= 0f + CALC_ERROR_FIXING) {
-                        facing = Facing.WEST;
-                    } else if (hitPoint.x >= 1f - CALC_ERROR_FIXING) {
-                        facing = Facing.EAST;
-                    } else if (hitPoint.y <= 0f + CALC_ERROR_FIXING) {
-                        facing = Facing.DOWN;
-                    } else if (hitPoint.y >= 1f - CALC_ERROR_FIXING) {
-                        facing = Facing.UP;
-                    } else if (hitPoint.z <= 0f + CALC_ERROR_FIXING) {
-                        facing = Facing.SOUTH;
-                    } else if (hitPoint.z >= 1f - CALC_ERROR_FIXING) {
-                        facing = Facing.NORTH;
-                    }
-                    if (facing != null) {
-                        return new RayTraceBlockHit(this, pos, block, hitPoint, facing);
-                    }
-                }
-            }
-        }
-        return RayTraceBlockHit.failure();
+    public WorldCollisionManager getCollisionManager() {
+        return collisionManager;
     }
 
     protected void tick() {

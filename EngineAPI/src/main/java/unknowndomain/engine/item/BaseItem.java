@@ -1,10 +1,10 @@
 package unknowndomain.engine.item;
 
-import unknowndomain.engine.block.RayTraceBlockHit;
 import unknowndomain.engine.component.Component;
 import unknowndomain.engine.component.ComponentContainer;
 import unknowndomain.engine.player.Player;
 import unknowndomain.engine.registry.RegistryEntry;
+import unknowndomain.engine.world.collision.RayTraceBlockHit;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
