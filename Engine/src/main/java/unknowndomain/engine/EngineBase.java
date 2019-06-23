@@ -133,6 +133,7 @@ public abstract class EngineBase implements Engine {
         }
         logger.info("\tJVM Flags ({} totals): {}", jvmFlags.size(), formattedFlags.toString());
         logger.info("\tEngine Version: {}", Platform.getVersion());
+        logger.info("\tEngine Side: {}", getSide().name());
         logger.info("\tRuntime Environment: {}", runtimeEnvironment.name());
         logger.info("------------------------------");
     }
