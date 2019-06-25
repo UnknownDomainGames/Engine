@@ -1,5 +1,16 @@
 # Contributing to NullEngine
 
+## 代码规范
+本项目代码规范基于[Google Java 编程风格指南](http://www.hawstein.com/posts/google-java-style.html)。
+
+此外仍需遵守以下规范：
+1. 对于文件路径，**禁止**使用`File`，应使用`Path`或`URL`。
+2. 当方法参数可能为`null`时，应添加`@javax.annotation.Nullable`注解。
+3. 当方法返回值可能为`null`时，应使用`Optional`作为返回值。
+4. 当方法参数、返回值不可能为`null`时，应添加`@javax.annotation.Nonnull`，并使用`Validate.notNull()`检查参数值。
+5. 任何确认为线程安全的类或认为必须为线程安全的类需注解为`@ThreadSafe`。
+6. 当方法使用JOML库的向量或矩阵类时，除非需要修改传入参数，否则应当使用其接口（即后带c的类型，如`Vector3fc`，`Matrix4fc`）作为传入类型。
+
 ## Commit 消息规范
 
 ### Commit 消息格式
@@ -50,14 +61,3 @@ feat(Mod): support to load mod in development environment
 
 ### Revert
 如果要恢复以前的Commit，则其标头应由`revert:`开头，后接标头的主题。在详情中应写`This reverts commit <hash>.`，其中hash是要还原的commit的SHA。
-
-## 代码规范
-本项目代码规范基于[Google Java 编程风格指南](http://www.hawstein.com/posts/google-java-style.html)。
-
-此外仍需遵守以下规范：
-1. 对于文件路径，**禁止**使用`File`，应使用`Path`或`URL`。
-2. 当方法参数可能为`null`时，应添加`@javax.annotation.Nullable`注解。
-3. 当方法返回值可能为`null`时，应使用`Optional`作为返回值。
-4. 当方法参数、返回值不可能为`null`时，应添加`@javax.annotation.Nonnull`，并使用`Validate.notNull()`检查参数值。
-5. 任何确认为线程安全的类或认为必须为线程安全的类需注解为`@ThreadSafe`。
-6. 当方法使用JOML库的向量或矩阵类时，除非需要修改传入参数，否则应当使用其接口（即后带c的类型，如`Vector3fc`，`Matrix4fc`）作为传入类型。
