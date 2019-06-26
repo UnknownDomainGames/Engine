@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface AutoListen {
 
-    EventBus value() default EventBus.ENGINE;
+    EventBus[] value() default EventBus.ENGINE;
 
     enum EventBus {
         ENGINE, MOD

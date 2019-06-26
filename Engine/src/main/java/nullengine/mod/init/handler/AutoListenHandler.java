@@ -31,13 +31,16 @@ public class AutoListenHandler implements ModInitializationHandler {
                         Class<?> listenerClass = Class.forName(listener.getAsString(), false, mod.getClassLoader());
                         AutoListen anno = listenerClass.getAnnotation(AutoListen.class);
                         Object instance = listenerClass.getDeclaredConstructor().newInstance();
-                        switch (anno.value()) {
-                            case ENGINE:
-                                initializer.getEngine().getEventBus().register(instance);
-                                break;
-                            case MOD:
-                                mod.getEventBus().register(instance);
-                                break;
+                        for (AutoListen.EventBus bus : anno.value()) {
+                            switch (bus) {
+                                case ENGINE:
+                                default:
+                                    initializer.getEngine().getEventBus().register(instance);
+                                    break;
+                                case MOD:
+                                    mod.getEventBus().register(instance);
+                                    break;
+                            }
                         }
                     } catch (Exception e) {
                         mod.getLogger().warn(String.format("Cannot register listener %s.", listener.getAsString()), e);
