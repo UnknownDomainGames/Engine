@@ -1,24 +1,32 @@
 package nullengine.mod.java;
 
 import nullengine.mod.ModContainer;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class ModClassLoader extends URLClassLoader {
-    private static final String JAVA_PACKAGE_PREFIX = "java.";
 
     private final Logger logger;
     private final List<ClassLoader> dependencyClassLoaders = new ArrayList<>();
     private final List<ClassLoader> isDependedBy = new ArrayList<>();
 
-    private ModContainer owner;
+    private final LinkedList<ModTransfromer> transformers = new LinkedList<>();
+    private final Set<String> unfoundClasses = new HashSet<>();
+
+    private ModContainer mod;
+
+    public static void addDependency(ModClassLoader loader, ModClassLoader dependency) {
+        loader.dependencyClassLoaders.add(dependency);
+        dependency.isDependedBy.add(loader);
+    }
 
     public ModClassLoader(Logger logger, ClassLoader parent) {
         super(new URL[0], parent);
@@ -26,19 +34,18 @@ public class ModClassLoader extends URLClassLoader {
     }
 
     public void setMod(ModContainer owner) {
-        if (this.owner != null) {
+        if (this.mod != null) {
             throw new IllegalStateException("Mod container has been set.");
         }
-        this.owner = owner;
+        this.mod = owner;
     }
 
     public ModContainer getMod() {
-        return owner;
+        return mod;
     }
 
-    public static void addDependency(ModClassLoader loader, ModClassLoader dependency) {
-        loader.dependencyClassLoaders.add(dependency);
-        dependency.isDependedBy.add(loader);
+    public LinkedList<ModTransfromer> getTransformers() {
+        return transformers;
     }
 
     @Override
@@ -69,36 +76,17 @@ public class ModClassLoader extends URLClassLoader {
     }
 
     @Override
-    public URL getResource(String name) {
-        URL resource = findResource(name);
-        if (resource != null)
-            return resource;
-
-        resource = findResourceFromDependencies(name);
-        if (resource != null)
-            return resource;
-
-        return super.getResource(name);
-    }
-
-    @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         synchronized (getClassLoadingLock(name)) {
-            if (name.startsWith(JAVA_PACKAGE_PREFIX)) {
-                return findSystemClass(name);
-            }
-
-            Class<?> loadedClass;
-
-            loadedClass = findLoadedClass(name);
+            Class<?> loadedClass = findLoadedClass(name);
             if (loadedClass != null) {
                 return loadedClass;
             }
 
             try {
-                return findClass(name);
-            } catch (ClassNotFoundException e) {
-
+                ClassLoader parent = getParent();
+                return parent != null ? parent.loadClass(name) : findSystemClass(name);
+            } catch (ClassNotFoundException ignored) {
             }
 
             loadedClass = loadClassFromDependencies(name);
@@ -107,13 +95,45 @@ public class ModClassLoader extends URLClassLoader {
             }
 
             try {
-                return super.loadClass(name);
-            } catch (ClassNotFoundException e) {
-
+                return findClass(name);
+            } catch (ClassNotFoundException ignored) {
             }
 
             throw new ClassNotFoundException(name);
         }
+    }
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        if (unfoundClasses.contains(name)) {
+            throw new ClassNotFoundException(name);
+        }
+
+        Class<?> result;
+
+        String path = name.replace('.', '/').concat(".class");
+        URL resource = getResource(path);
+        if (resource == null) {
+            unfoundClasses.add(name);
+            throw new ClassNotFoundException(name);
+        }
+
+        try (InputStream inputStream = resource.openStream()) {
+            byte[] bytes = IOUtils.toByteArray(inputStream);
+            for (ModTransfromer transformer : transformers) {
+                bytes = transformer.transform(mod, name, bytes);
+            }
+            result = defineClass(name, bytes, 0, bytes.length);
+        } catch (IOException e) {
+            unfoundClasses.add(name);
+            throw new ClassNotFoundException(name, e);
+        }
+
+        if (result == null) {
+            unfoundClasses.add(name);
+            throw new ClassNotFoundException(name);
+        }
+        return result;
     }
 
     private Class<?> loadClassFromDependencies(String name) {
@@ -123,16 +143,6 @@ public class ModClassLoader extends URLClassLoader {
             } catch (ClassNotFoundException e) {
                 // Try load class from next dependency.
             }
-        }
-        return null;
-    }
-
-    private URL findResourceFromDependencies(String name) {
-        URL resource;
-        for (ClassLoader classLoader : dependencyClassLoaders) {
-            resource = classLoader.getResource(name);
-            if (resource != null)
-                return resource;
         }
         return null;
     }
