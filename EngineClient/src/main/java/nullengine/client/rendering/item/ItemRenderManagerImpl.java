@@ -1,10 +1,10 @@
 package nullengine.client.rendering.item;
 
-import nullengine.client.event.rendering.ItemRendererRegistrationEvent;
 import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.item.Item;
 import nullengine.item.ItemStack;
+import nullengine.registry.Registries;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
@@ -20,8 +20,7 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
 
     private RenderContext context;
 
-    @Override
-    public void register(Item item, ItemRenderer renderer) {
+    private void register(Item item, ItemRenderer renderer) {
         if (itemRendererMap.containsKey(item))
             throw new IllegalArgumentException();
 
@@ -30,10 +29,10 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
 
     public void init(RenderContext context) {
         this.context = context;
+        Registries.getItemRegistry().getValues().forEach(item ->
+                item.getComponent(ItemRenderer.class)
+                        .ifPresent(itemRenderer -> register(item, itemRenderer)));
         defaultItemRenderer.init(context);
-
-        context.getEngine().getCurrentGame().getEventBus().post(new ItemRendererRegistrationEvent(this));
-
         itemRendererMap.values().forEach(itemRenderer -> itemRenderer.init(context));
     }
 

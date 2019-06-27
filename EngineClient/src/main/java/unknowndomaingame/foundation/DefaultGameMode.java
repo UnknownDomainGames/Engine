@@ -8,7 +8,6 @@ import nullengine.client.block.AirClientBlock;
 import nullengine.client.block.ClientBlock;
 import nullengine.client.block.DefaultClientBlock;
 import nullengine.client.event.rendering.EntityRendererRegistrationEvent;
-import nullengine.client.event.rendering.ItemRendererRegistrationEvent;
 import nullengine.client.gui.Scene;
 import nullengine.client.input.controller.MotionType;
 import nullengine.client.input.keybinding.ActionMode;
@@ -17,6 +16,7 @@ import nullengine.client.input.keybinding.KeyBinding;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.entity.EntityItemRenderer;
 import nullengine.client.rendering.item.ItemBlockRenderer;
+import nullengine.client.rendering.item.ItemRenderer;
 import nullengine.entity.Entity;
 import nullengine.entity.component.TwoHands;
 import nullengine.entity.item.ItemEntity;
@@ -42,6 +42,7 @@ import unknowndomaingame.foundation.client.gui.hud.HUDGameDebug;
 import unknowndomaingame.foundation.init.Blocks;
 import unknowndomaingame.foundation.init.Items;
 import unknowndomaingame.foundation.registry.SimpleBlockRegistry;
+import unknowndomaingame.foundation.registry.SimpleItemRegistry;
 
 public final class DefaultGameMode {
 
@@ -49,7 +50,7 @@ public final class DefaultGameMode {
     public static void constructionRegistry(RegistryConstructionEvent e) {
         // TODO: move to common.
         e.register(new SimpleBlockRegistry());
-        e.register(new IdAutoIncreaseRegistry<>(Item.class));
+        e.register(new SimpleItemRegistry());
 
         e.register(new IdAutoIncreaseRegistry<>(KeyBinding.class));
         e.register(new IdAutoIncreaseRegistry<>(ClientBlock.class));
@@ -76,6 +77,9 @@ public final class DefaultGameMode {
         registry.register(new BlockItem(Blocks.AIR));
         registry.register(Items.GRASS);
         registry.register(Items.DIRT);
+
+        Items.GRASS.setComponent(ItemRenderer.class, new ItemBlockRenderer());
+        Items.DIRT.setComponent(ItemRenderer.class, new ItemBlockRenderer());
     }
 
     private static void registerClientBlock(Registry<ClientBlock> registry) {
@@ -169,12 +173,6 @@ public final class DefaultGameMode {
 
         var scene = new Scene(new GUIGameCreation());
         guiManager.showScreen(scene);
-    }
-
-    @Listener
-    public static void registerItemRenderer(ItemRendererRegistrationEvent event) {
-        event.register(Items.GRASS, new ItemBlockRenderer());
-        event.register(Items.DIRT, new ItemBlockRenderer());
     }
 
     @Listener
