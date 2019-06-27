@@ -33,4 +33,15 @@ public class DependencyManagerImpl implements DependencyManager {
 
         return new DependencyCheckResult(List.copyOf(missing));
     }
+
+    @Override
+    public List<ModContainer> getDependencies(List<ModDependencyEntry> dependencies) {
+        List<ModContainer> mods = new ArrayList<>();
+
+        for (ModDependencyEntry dependency : dependencies) {
+            modManager.getMod(dependency.getId()).ifPresent(mods::add);
+        }
+
+        return mods;
+    }
 }

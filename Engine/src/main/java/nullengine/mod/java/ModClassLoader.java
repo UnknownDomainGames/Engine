@@ -15,7 +15,7 @@ import java.util.*;
 public class ModClassLoader extends URLClassLoader {
 
     private final Logger logger;
-    private final List<ClassLoader> dependencyClassLoaders = new ArrayList<>();
+    private final List<ClassLoader> dependentClassLoaders = new ArrayList<>();
     private final List<ClassLoader> isDependedBy = new ArrayList<>();
 
     private final LinkedList<ModTransfromer> transformers = new LinkedList<>();
@@ -24,7 +24,7 @@ public class ModClassLoader extends URLClassLoader {
     private ModContainer mod;
 
     public static void addDependency(ModClassLoader loader, ModClassLoader dependency) {
-        loader.dependencyClassLoaders.add(dependency);
+        loader.dependentClassLoaders.add(dependency);
         dependency.isDependedBy.add(loader);
     }
 
@@ -71,8 +71,21 @@ public class ModClassLoader extends URLClassLoader {
         }
     }
 
-    public List<ClassLoader> getDependencyClassLoaders() {
-        return dependencyClassLoaders;
+    public List<ClassLoader> getDependentClassLoaders() {
+        return dependentClassLoaders;
+    }
+
+    public List<ClassLoader> getIsDependedBy() {
+        return isDependedBy;
+    }
+
+    public void addDependencies(Collection<ModContainer> mods) {
+        for (ModContainer mod : mods) {
+            ClassLoader classLoader = mod.getClassLoader();
+            if (classLoader instanceof ModClassLoader) {
+                addDependency(this, (ModClassLoader) classLoader);
+            }
+        }
     }
 
     @Override
@@ -137,7 +150,7 @@ public class ModClassLoader extends URLClassLoader {
     }
 
     private Class<?> loadClassFromDependencies(String name) {
-        for (ClassLoader classLoader : dependencyClassLoaders) {
+        for (ClassLoader classLoader : dependentClassLoaders) {
             try {
                 return classLoader.loadClass(name);
             } catch (ClassNotFoundException e) {

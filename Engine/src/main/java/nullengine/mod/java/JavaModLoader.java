@@ -10,17 +10,19 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class JavaModLoader implements ModLoader {
 
     @Override
-    public ModContainer load(Collection<Path> sources, ModMetadata metadata) {
+    public ModContainer load(Collection<Path> sources, ModMetadata metadata, List<ModContainer> dependencies) {
         Logger logger = LoggerFactory.getLogger(isNullOrEmpty(metadata.getName()) ? metadata.getId() : metadata.getName());
 
-        ModClassLoader classLoader = new ModClassLoader(logger, Thread.currentThread().getContextClassLoader());
+        ModClassLoader classLoader = new ModClassLoader(logger, JavaModLoader.class.getClassLoader());
         classLoader.addPaths(sources);
+        classLoader.addDependencies(dependencies);
 
         try {
             Object instance = Class.forName(metadata.getMainClass(), true, classLoader).getDeclaredConstructor().newInstance();

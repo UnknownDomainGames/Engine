@@ -45,7 +45,7 @@ public abstract class AbstractModManager implements ModManager {
 
         ModContainer modContainer;
         try {
-            modContainer = modLoader.load(sources, modMetadata);
+            modContainer = modLoader.load(sources, modMetadata, dependencyManager.getDependencies(modMetadata.getDependencies()));
         } catch (ModLoadException e) {
             throw e;
         } catch (Exception e) {
