@@ -1,7 +1,9 @@
 package nullengine.world;
 
 import nullengine.block.Block;
-import nullengine.block.BlockPrototype;
+import nullengine.block.component.DestroyBehavior;
+import nullengine.block.component.NeighborChangeListener;
+import nullengine.block.component.PlaceBehavior;
 import nullengine.entity.Entity;
 import nullengine.entity.PlayerEntity;
 import nullengine.event.world.block.BlockChangeEvent;
@@ -183,16 +185,16 @@ public class WorldCommon implements World, Runnable {
             chunkManager.loadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
                     .setBlock(pos, block, cause);
             if (block == Blocks.AIR) {
-                oldBlock.getComponent(BlockPrototype.DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, null, pos, oldBlock, cause));
+                oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, null, pos, oldBlock, cause));
             } else {
-                block.getComponent(BlockPrototype.PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
+                block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
 //                oldBlock.getComponent(BlockPrototype.PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
             }
             getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause)); // TODO:
             for (Facing facing : Facing.values()) {
                 BlockPos pos1 = pos.offset(facing);
                 Block block1 = getBlock(pos1);
-                block1.getComponent(BlockPrototype.NeighborChangeListener.class).ifPresent(neighborChangeListener -> neighborChangeListener.onNeighborChange(this, pos1, block1, facing.opposite(), pos, block, cause));
+                block1.getComponent(NeighborChangeListener.class).ifPresent(neighborChangeListener -> neighborChangeListener.onNeighborChange(this, pos1, block1, facing.opposite(), pos, block, cause));
             }
         }
         return oldBlock;

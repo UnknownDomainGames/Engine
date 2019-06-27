@@ -2,7 +2,8 @@ package unknowndomaingame.foundation;
 
 import nullengine.Platform;
 import nullengine.block.Block;
-import nullengine.block.BlockPrototype;
+import nullengine.block.component.ActivateBehavior;
+import nullengine.block.component.ClickBehavior;
 import nullengine.client.asset.AssetPath;
 import nullengine.client.block.AirClientBlock;
 import nullengine.client.block.ClientBlock;
@@ -118,7 +119,7 @@ public final class DefaultGameMode {
                 controllingEntity.getComponent(TwoHands.class)
                         .ifPresent(twoHands -> twoHands.getMainHand()
                                 .ifNonEmpty(itemStack -> {
-                                    blockHit.getBlock().getComponent(BlockPrototype.ClickBehavior.class).ifPresent(clickBehavior -> clickBehavior.onClicked(player.getWorld(), blockHit.getPos(), blockHit.getBlock()));
+                                    blockHit.getBlock().getComponent(ClickBehavior.class).ifPresent(clickBehavior -> clickBehavior.onClicked(player.getWorld(), blockHit.getPos(), blockHit.getBlock()));
                                     game.getEngine().getEventBus().post(new BlockClickEvent(player.getWorld(), controllingEntity, blockHit.getPos(), blockHit.getBlock()));
                                     itemStack.getItem()
                                             .getComponent(HitBlockBehavior.class)
@@ -136,7 +137,7 @@ public final class DefaultGameMode {
                 entity.getComponent(TwoHands.class)
                         .ifPresent(twoHands -> twoHands.getMainHand()
                                 .ifNonEmpty(itemStack -> {
-                                    hit.getBlock().getComponent(BlockPrototype.ActivateBehavior.class).ifPresent(activateBehavior -> activateBehavior.onActivated(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
+                                    hit.getBlock().getComponent(ActivateBehavior.class).ifPresent(activateBehavior -> activateBehavior.onActivated(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
                                     game.getEngine().getEventBus().post(new BlockActivateEvent(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
                                     itemStack.getItem()
                                             .getComponent(UseBlockBehavior.class)
