@@ -11,19 +11,21 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 public class JavaModLoader implements ModLoader {
 
     @Override
     public ModContainer load(Collection<Path> sources, ModMetadata metadata) {
-        Logger modLogger = LoggerFactory.getLogger(metadata.getId());
+        Logger logger = LoggerFactory.getLogger(isNullOrEmpty(metadata.getName()) ? metadata.getId() : metadata.getName());
 
-        ModClassLoader classLoader = new ModClassLoader(modLogger, Thread.currentThread().getContextClassLoader());
+        ModClassLoader classLoader = new ModClassLoader(logger, Thread.currentThread().getContextClassLoader());
         classLoader.addPaths(sources);
 
         try {
             Object instance = Class.forName(metadata.getMainClass(), true, classLoader).getDeclaredConstructor().newInstance();
             JavaModAssets assets = new JavaModAssets(sources, classLoader);
-            JavaModContainer modContainer = new JavaModContainer(sources, classLoader, metadata, assets, modLogger, instance);
+            JavaModContainer modContainer = new JavaModContainer(sources, classLoader, metadata, assets, logger, instance);
             classLoader.setMod(modContainer);
             assets.setMod(modContainer);
             return modContainer;
