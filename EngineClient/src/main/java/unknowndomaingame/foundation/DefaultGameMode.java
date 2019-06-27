@@ -28,8 +28,9 @@ import nullengine.event.world.block.BlockActivateEvent;
 import nullengine.event.world.block.BlockClickEvent;
 import nullengine.item.BlockItem;
 import nullengine.item.Item;
-import nullengine.item.ItemPrototype;
 import nullengine.item.ItemStack;
+import nullengine.item.component.HitBlockBehavior;
+import nullengine.item.component.UseBlockBehavior;
 import nullengine.player.Player;
 import nullengine.registry.Registry;
 import nullengine.registry.RegistryManager;
@@ -120,7 +121,7 @@ public final class DefaultGameMode {
                                     blockHit.getBlock().getComponent(BlockPrototype.ClickBehavior.class).ifPresent(clickBehavior -> clickBehavior.onClicked(player.getWorld(), blockHit.getPos(), blockHit.getBlock()));
                                     game.getEngine().getEventBus().post(new BlockClickEvent(player.getWorld(), controllingEntity, blockHit.getPos(), blockHit.getBlock()));
                                     itemStack.getItem()
-                                            .getComponent(ItemPrototype.HitBlockBehavior.class)
+                                            .getComponent(HitBlockBehavior.class)
                                             .ifPresent(hitBlockBehavior -> hitBlockBehavior.onHit(player, itemStack, blockHit));
                                 }));
             }
@@ -138,7 +139,7 @@ public final class DefaultGameMode {
                                     hit.getBlock().getComponent(BlockPrototype.ActivateBehavior.class).ifPresent(activateBehavior -> activateBehavior.onActivated(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
                                     game.getEngine().getEventBus().post(new BlockActivateEvent(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
                                     itemStack.getItem()
-                                            .getComponent(ItemPrototype.UseBlockBehavior.class)
+                                            .getComponent(UseBlockBehavior.class)
                                             .ifPresent(useBlockBehavior -> useBlockBehavior.onUseBlockStart(player, itemStack, hit));
                                 }));
             }

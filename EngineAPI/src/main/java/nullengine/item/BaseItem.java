@@ -2,6 +2,7 @@ package nullengine.item;
 
 import nullengine.component.Component;
 import nullengine.component.ComponentContainer;
+import nullengine.item.component.HitBlockBehavior;
 import nullengine.player.Player;
 import nullengine.registry.RegistryEntry;
 import nullengine.world.collision.RayTraceBlockHit;
@@ -15,7 +16,7 @@ public class BaseItem extends RegistryEntry.Impl<Item> implements Item {
     private final ComponentContainer components = new ComponentContainer();
 
     protected BaseItem() {
-        setComponent(ItemPrototype.HitBlockBehavior.class, new ItemPrototype.HitBlockBehavior() {
+        setComponent(HitBlockBehavior.class, new HitBlockBehavior() {
             @Override
             public void onHit(Player player, ItemStack itemStack, RayTraceBlockHit hit) {
                 //TODO: use send packet
