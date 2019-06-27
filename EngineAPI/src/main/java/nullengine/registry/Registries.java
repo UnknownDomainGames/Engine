@@ -2,28 +2,43 @@ package nullengine.registry;
 
 import nullengine.block.Block;
 import nullengine.client.block.ClientBlock;
+import nullengine.exception.NotInitializationException;
+import nullengine.item.Item;
 import nullengine.registry.game.BlockRegistry;
+import nullengine.registry.game.ItemRegistry;
 
-import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 
 public final class Registries {
 
     private static WeakReference<BlockRegistry> blockRegistry;
+    private static WeakReference<ItemRegistry> itemRegistry;
     private static WeakReference<Registry<ClientBlock>> clientBlockRegistry;
 
-    @Nullable
     public static BlockRegistry getBlockRegistry() {
-        return blockRegistry != null ? blockRegistry.get() : null;
+        if (blockRegistry == null) {
+            throw new NotInitializationException();
+        }
+        return blockRegistry.get();
     }
 
-    @Nullable
+    public static ItemRegistry getItemRegistry() {
+        if (itemRegistry == null) {
+            throw new NotInitializationException();
+        }
+        return itemRegistry.get();
+    }
+
     public static Registry<ClientBlock> getClientBlockRegistry() {
-        return clientBlockRegistry != null ? clientBlockRegistry.get() : null;
+        if (clientBlockRegistry == null) {
+            throw new NotInitializationException();
+        }
+        return clientBlockRegistry.get();
     }
 
     public static void init(RegistryManager registryManager) {
         blockRegistry = new WeakReference<>((BlockRegistry) registryManager.getRegistry(Block.class));
+        itemRegistry = new WeakReference<>((ItemRegistry) registryManager.getRegistry(Item.class));
         clientBlockRegistry = new WeakReference<>(registryManager.getRegistry(ClientBlock.class));
     }
 

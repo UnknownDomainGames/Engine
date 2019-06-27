@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 public interface ItemRegistry extends Registry<Item> {
 
     @Nullable
-    BlockItem getItemBlock(Block block);
+    BlockItem getBlockItem(Block block);
 
-    boolean hasItemBlock(Block block);
+    boolean hasBlockItem(Block block);
 }

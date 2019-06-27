@@ -22,12 +22,12 @@ public class SimpleItemRegistry implements ItemRegistry {
     protected final BiMap<Block, BlockItem> blockToCorrItem = HashBiMap.create();
 
     @Override
-    public BlockItem getItemBlock(Block block) {
+    public BlockItem getBlockItem(Block block) {
         return blockToCorrItem.get(block);
     }
 
     @Override
-    public boolean hasItemBlock(Block block) {
+    public boolean hasBlockItem(Block block) {
         return blockToCorrItem.containsKey(block);
     }
 
