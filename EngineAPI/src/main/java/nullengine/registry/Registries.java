@@ -2,7 +2,7 @@ package nullengine.registry;
 
 import nullengine.block.Block;
 import nullengine.client.block.ClientBlock;
-import nullengine.exception.NotInitializationException;
+import nullengine.exception.NoInitializationException;
 import nullengine.item.Item;
 import nullengine.registry.game.BlockRegistry;
 import nullengine.registry.game.ItemRegistry;
@@ -17,21 +17,21 @@ public final class Registries {
 
     public static BlockRegistry getBlockRegistry() {
         if (blockRegistry == null) {
-            throw new NotInitializationException();
+            throw new NoInitializationException();
         }
         return blockRegistry.get();
     }
 
     public static ItemRegistry getItemRegistry() {
         if (itemRegistry == null) {
-            throw new NotInitializationException();
+            throw new NoInitializationException();
         }
         return itemRegistry.get();
     }
 
     public static Registry<ClientBlock> getClientBlockRegistry() {
         if (clientBlockRegistry == null) {
-            throw new NotInitializationException();
+            throw new NoInitializationException();
         }
         return clientBlockRegistry.get();
     }

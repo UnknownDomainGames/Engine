@@ -3,7 +3,7 @@ package nullengine.client.launch;
 import nullengine.Engine;
 import nullengine.Platform;
 import nullengine.client.EngineClientImpl;
-import nullengine.exception.NotInitializationException;
+import nullengine.exception.NoInitializationException;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.system.windows.User32;
 
@@ -41,7 +41,7 @@ public class Bootstrap {
             engineField.setAccessible(true);
             engineField.set(null, engine);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new NotInitializationException("Cannot initialize engine");
+            throw new NoInitializationException("Cannot initialize engine");
         }
     }
 }

@@ -1,6 +1,6 @@
 package nullengine.client.gui.internal;
 
-import nullengine.exception.NotInitializationException;
+import nullengine.exception.NoInitializationException;
 
 public final class Internal {
 
@@ -8,7 +8,7 @@ public final class Internal {
 
     public static Context getContext() {
         if (context == null) {
-            throw new NotInitializationException();
+            throw new NoInitializationException();
         }
         return context;
     }
