@@ -32,6 +32,7 @@ public class WorldRenderer {
 
     private final ChunkRenderer chunkRenderer = new ChunkRenderer();
     private final BlockSelectionRenderer blockSelectionRenderer = new BlockSelectionRenderer();
+    private final SkyboxRenderer skyboxRenderer = new SkyboxRenderer();
 
     private final EntityRenderManagerImpl entityRenderManager = new EntityRenderManagerImpl();
 
@@ -60,6 +61,7 @@ public class WorldRenderer {
                 ShaderManager.INSTANCE.registerShader("world_shader",
                         new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "world.vert"))
                                 .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "world.frag")));
+        skyboxRenderer.init(context);
         frameBuffer = new FrameBuffer();
         frameBuffer.createFrameBuffer();
         frameBuffer.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
@@ -134,6 +136,7 @@ public class WorldRenderer {
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
+        //skyboxRenderer.render(partial);
         // TODO: Remove it
         context.getTextureManager().getWhiteTexture().bind();
         Tessellator tessellator = Tessellator.getInstance();

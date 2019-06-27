@@ -4,6 +4,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -45,6 +46,7 @@ public class GLMesh {
     public static GLMesh of(Mesh t) {
         if (t == null) return null;
         FloatBuffer posBuffer = null;
+        FloatBuffer colorBuffer = null;
         FloatBuffer textCoordsBuffer = null;
         IntBuffer indicesBuffer = null;
         int[] indices = t.getIndices();
@@ -54,7 +56,7 @@ public class GLMesh {
         int mode = t.getMode();
         try {
             int vertexCount = indices.length;
-            int[] vboIdList = new int[3];
+            int[] vboIdList = new int[4];
 
             int vaoId = glGenVertexArrays();
             glBindVertexArray(vaoId);
@@ -69,11 +71,21 @@ public class GLMesh {
 
             vboId = glGenBuffers();
             vboIdList[1] = (vboId);
+            colorBuffer = MemoryUtil.memAllocFloat(textCoords.length * 2);
+            var color = new float[textCoords.length * 2];
+            Arrays.fill(color, 1.0f);
+            colorBuffer.put(color).flip();
+            glBindBuffer(GL_ARRAY_BUFFER, vboId);
+            glBufferData(GL_ARRAY_BUFFER, colorBuffer, GL_STATIC_DRAW);
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
+
+            vboId = glGenBuffers();
+            vboIdList[2] = (vboId);
             textCoordsBuffer = MemoryUtil.memAllocFloat(textCoords.length);
             textCoordsBuffer.put(textCoords).flip();
             glBindBuffer(GL_ARRAY_BUFFER, vboId);
             glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
-            glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+            glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0);
 
 //            vboId = glGenBuffers();
 //            vboIdList[2] = (vboId);
@@ -84,7 +96,7 @@ public class GLMesh {
 //            glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
 
             vboId = glGenBuffers();
-            vboIdList[2] = (vboId);
+            vboIdList[3] = (vboId);
             indicesBuffer = MemoryUtil.memAllocInt(indices.length);
             indicesBuffer.put(indices).flip();
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboId);
@@ -93,7 +105,7 @@ public class GLMesh {
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             glBindVertexArray(0);
 
-            return new GLMesh(vaoId, vboIdList, vertexCount, new byte[]{0, 1}, mode);
+            return new GLMesh(vaoId, vboIdList, vertexCount, new byte[]{0, 1, 2}, mode);
         } finally {
             if (posBuffer != null) {
                 MemoryUtil.memFree(posBuffer);
