@@ -3,10 +3,10 @@ package nullengine.block;
 import nullengine.component.Component;
 import nullengine.component.ComponentContainer;
 import nullengine.registry.RegistryEntry;
-import org.joml.AABBd;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -14,21 +14,23 @@ public class BaseBlock extends RegistryEntry.Impl<Block> implements Block {
 
     private final ComponentContainer components = new ComponentContainer();
 
-    private AABBd[] boundingBoxes = new AABBd[]{DEFAULT_BOUNDING_BOX};
+    private BlockShape shape = BlockShape.NORMAL_CUBE;
 
+    @Nonnull
     @Override
-    public AABBd[] getBoundingBoxes() {
-        return boundingBoxes;
+    public BlockShape getShape() {
+        return shape;
+    }
+
+    @Nonnull
+    public BaseBlock setShape(@Nonnull BlockShape shape) {
+        this.shape = Objects.requireNonNull(shape);
+        return this;
     }
 
     @Override
     public <T extends Component> Block addComponent(@Nonnull Class<T> type, @Nullable T value) {
         setComponent(type, value);
-        return this;
-    }
-
-    public BaseBlock setBoundingBoxes(AABBd[] boundingBoxes) {
-        this.boundingBoxes = boundingBoxes;
         return this;
     }
 

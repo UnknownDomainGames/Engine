@@ -7,7 +7,6 @@ import nullengine.registry.Registries;
 import nullengine.util.Facing;
 import nullengine.world.World;
 import nullengine.world.util.FastVoxelRayTrace;
-import org.joml.AABBd;
 import org.joml.Vector2d;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -54,30 +53,28 @@ public class WorldCollisionManagerImpl implements WorldCollisionManager {
             if (ignore.contains(block))
                 continue;
             Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
-            AABBd[] boxes = block.getBoundingBoxes();
             Vector2d result = new Vector2d();
-            for (AABBd box : boxes) {
-                boolean hit = box.intersectRay(local.x, local.y, local.z, rayOffset.x, rayOffset.y, rayOffset.z,
-                        result);
-                if (hit) {
-                    Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
-                    Facing facing = null;
-                    if (hitPoint.x <= 0f + CALC_ERROR_FIXING) {
-                        facing = Facing.WEST;
-                    } else if (hitPoint.x >= 1f - CALC_ERROR_FIXING) {
-                        facing = Facing.EAST;
-                    } else if (hitPoint.y <= 0f + CALC_ERROR_FIXING) {
-                        facing = Facing.DOWN;
-                    } else if (hitPoint.y >= 1f - CALC_ERROR_FIXING) {
-                        facing = Facing.UP;
-                    } else if (hitPoint.z <= 0f + CALC_ERROR_FIXING) {
-                        facing = Facing.SOUTH;
-                    } else if (hitPoint.z >= 1f - CALC_ERROR_FIXING) {
-                        facing = Facing.NORTH;
-                    }
-                    if (facing != null) {
-                        return new RayTraceBlockHit(world, pos, block, hitPoint, facing);
-                    }
+            if (block.getShape().intersectRay(world, pos, block,
+                    local.x, local.y, local.z,
+                    rayOffset.x, rayOffset.y, rayOffset.z,
+                    result)) {
+                Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
+                Facing facing = null;
+                if (hitPoint.x <= 0f + CALC_ERROR_FIXING) {
+                    facing = Facing.WEST;
+                } else if (hitPoint.x >= 1f - CALC_ERROR_FIXING) {
+                    facing = Facing.EAST;
+                } else if (hitPoint.y <= 0f + CALC_ERROR_FIXING) {
+                    facing = Facing.DOWN;
+                } else if (hitPoint.y >= 1f - CALC_ERROR_FIXING) {
+                    facing = Facing.UP;
+                } else if (hitPoint.z <= 0f + CALC_ERROR_FIXING) {
+                    facing = Facing.SOUTH;
+                } else if (hitPoint.z >= 1f - CALC_ERROR_FIXING) {
+                    facing = Facing.NORTH;
+                }
+                if (facing != null) {
+                    return new RayTraceBlockHit(world, pos, block, hitPoint, facing);
                 }
             }
         }

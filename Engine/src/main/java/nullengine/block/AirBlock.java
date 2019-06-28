@@ -1,11 +1,9 @@
 package nullengine.block;
 
-import org.joml.AABBd;
-
 public class AirBlock extends BaseBlock {
 
     public AirBlock() {
-        setBoundingBoxes(new AABBd[0]);
+        setShape(BlockShape.EMPTY);
         registerName("air");
     }
 }

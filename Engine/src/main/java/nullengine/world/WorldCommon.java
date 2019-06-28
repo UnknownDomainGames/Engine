@@ -275,7 +275,7 @@ public class WorldCommon implements World, Runnable {
                 if (faceX.size() != 0) {
                     for (BlockPos pos : faceX) {
                         Block block = world.getBlock(pos);
-                        AABBd[] blockBoxes = block.getBoundingBoxes();
+                        AABBd[] blockBoxes = block.getShape().getBoundingBoxes(world, pos, block);
                         if (blockBoxes.length != 0)
                             for (AABBd blockBoxLocal : blockBoxes) {
                                 AABBd blockBox = AABBs.translate(blockBoxLocal,
@@ -290,7 +290,8 @@ public class WorldCommon implements World, Runnable {
                 if (faceY.size() != 0) {
                     for (BlockPos pos : faceY) {
                         Block block = world.getBlock(pos);
-                        AABBd[] blockBoxes = block.getBoundingBoxes();
+                        AABBd[] blockBoxes = block.getShape()
+                                .getBoundingBoxes(world, pos, block);
                         if (blockBoxes.length != 0)
                             for (AABBd blockBox : blockBoxes) {
                                 AABBd translated = AABBs.translate(blockBox,
@@ -305,7 +306,8 @@ public class WorldCommon implements World, Runnable {
                 if (faceZ.size() != 0) {
                     for (BlockPos pos : faceZ) {
                         Block block = world.getBlock(pos);
-                        AABBd[] blockBoxes = block.getBoundingBoxes();
+                        AABBd[] blockBoxes = block.getShape()
+                                .getBoundingBoxes(world, pos, block);
                         if (blockBoxes.length != 0)
                             for (AABBd blockBox : blockBoxes) {
                                 AABBd translated = AABBs.translate(blockBox,
