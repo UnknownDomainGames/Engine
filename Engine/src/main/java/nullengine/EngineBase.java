@@ -12,7 +12,7 @@ import nullengine.mod.impl.AbstractModAssets;
 import nullengine.mod.impl.EngineModManager;
 import nullengine.mod.init.ModInitializer;
 import nullengine.mod.java.JavaModAssets;
-import nullengine.mod.misc.DefaultModMetadata;
+import nullengine.mod.misc.SimpleModMetadata;
 import nullengine.util.ClassPathUtils;
 import nullengine.util.RuntimeEnvironment;
 import org.apache.commons.lang3.StringUtils;
@@ -164,7 +164,7 @@ public abstract class EngineBase implements Engine {
     }
 
     private void loadEngineDummyMod() throws IOException, URISyntaxException {
-        var engineMod = new DummyModContainer(DefaultModMetadata.builder().id("engine").version(Platform.getVersion()).build());
+        var engineMod = new DummyModContainer(SimpleModMetadata.builder().id("engine").version(Platform.getVersion()).build());
         engineMod.setClassLoader(getClass().getClassLoader());
         Path engineJarPath = Path.of(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
         AbstractModAssets modAssets;

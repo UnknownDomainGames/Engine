@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultModMetadata implements ModMetadata {
+public class SimpleModMetadata implements ModMetadata {
 
     public static final Version DEFAULT_VERSION = new Version("1.0.0");
 
@@ -26,7 +26,7 @@ public class DefaultModMetadata implements ModMetadata {
     private final List<ModDependencyEntry> dependencies;
     private final Map<String, JsonElement> properties;
 
-    protected DefaultModMetadata(String id, Version version, String mainClass, String name, String description, String license, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, JsonElement> properties) {
+    protected SimpleModMetadata(String id, Version version, String mainClass, String name, String description, String license, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, JsonElement> properties) {
         this.id = id;
         this.version = version;
         this.mainClass = mainClass;
@@ -171,8 +171,8 @@ public class DefaultModMetadata implements ModMetadata {
             return this;
         }
 
-        public DefaultModMetadata build() {
-            return new DefaultModMetadata(id, version, mainClass, name, description, license, url, authors, logo, dependencies, properties);
+        public SimpleModMetadata build() {
+            return new SimpleModMetadata(id, version, mainClass, name, description, license, url, authors, logo, dependencies, properties);
         }
     }
 }

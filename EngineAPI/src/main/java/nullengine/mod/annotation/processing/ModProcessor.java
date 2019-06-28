@@ -5,8 +5,8 @@ import nullengine.mod.DependencyType;
 import nullengine.mod.ModDependencyEntry;
 import nullengine.mod.ModMetadata;
 import nullengine.mod.annotation.Mod;
-import nullengine.mod.misc.DefaultModMetadata;
-import nullengine.mod.util.JsonModMetadataUtils;
+import nullengine.mod.misc.SimpleModMetadata;
+import nullengine.mod.util.ModMetadataUtils;
 import nullengine.util.JsonUtils;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -63,7 +63,7 @@ public class ModProcessor extends AbstractProcessor {
         FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "metadata.json");
 
         try (Writer writer = fileObject.openWriter()) {
-            ModMetadata metadata = DefaultModMetadata.builder()
+            ModMetadata metadata = SimpleModMetadata.builder()
                     .id((String) values.get("id"))
                     .version((String) values.getOrDefault("version", "1.0.0"))
                     .mainClass(element.getQualifiedName().toString())
@@ -76,7 +76,7 @@ public class ModProcessor extends AbstractProcessor {
                     .dependencies(createDependencyList((List<AnnotationMirror>) values.get("dependencies")))
                     .properties(createPropertyMap((List<AnnotationMirror>) values.get("properties")))
                     .build();
-            writer.append(JsonModMetadataUtils.toJson(metadata).toString());
+            writer.append(ModMetadataUtils.toJson(metadata).toString());
         } catch (IOException e) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
             e.printStackTrace();

@@ -5,11 +5,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import nullengine.mod.ModDependencyEntry;
 import nullengine.mod.ModMetadata;
-import nullengine.mod.misc.DefaultModMetadata;
+import nullengine.mod.misc.SimpleModMetadata;
 
 import java.util.*;
 
-public class JsonModMetadataUtils {
+public class ModMetadataUtils {
 
     public static final Set<String> VANILLA_KEYS = Set.of("id", "version", "main", "name",
             "description", "license", "url", "logo", "authors", "dependencies", "properties");
@@ -46,7 +46,7 @@ public class JsonModMetadataUtils {
     }
 
     public static ModMetadata fromJson(JsonObject jo) {
-        DefaultModMetadata.Builder builder = DefaultModMetadata.builder();
+        SimpleModMetadata.Builder builder = SimpleModMetadata.builder();
 
         if (jo.has("id")) {
             builder.id(jo.get("id").getAsString());

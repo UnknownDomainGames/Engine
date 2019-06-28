@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import nullengine.mod.ModMetadata;
 import nullengine.mod.ModMetadataFinder;
 import nullengine.mod.exception.InvalidModMetadataException;
-import nullengine.mod.util.JsonModMetadataUtils;
+import nullengine.mod.util.ModMetadataUtils;
 import nullengine.util.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -68,6 +68,6 @@ public class JsonModMetadataFinder implements ModMetadataFinder {
             throw new InvalidModMetadataException(String.format("\"Invalid mod metadata. Missing \"mainClass\". Sources: [%s]", StringUtils.join(sources, ",")));
         }
 
-        return JsonModMetadataUtils.fromJson(jo);
+        return ModMetadataUtils.fromJson(jo);
     }
 }
