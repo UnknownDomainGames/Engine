@@ -1,5 +1,6 @@
 package nullengine.mod;
 
+import com.google.gson.JsonElement;
 import nullengine.util.versioning.Version;
 
 import javax.annotation.Nonnull;
@@ -30,5 +31,7 @@ public interface ModMetadata {
 
     List<ModDependencyEntry> getDependencies();
 
-    Map<String, String> getProperties();
+    Map<String, JsonElement> getProperties();
+
+    JsonElement getProperty(String key);
 }

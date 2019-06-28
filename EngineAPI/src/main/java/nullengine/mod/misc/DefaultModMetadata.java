@@ -1,5 +1,6 @@
 package nullengine.mod.misc;
 
+import com.google.gson.JsonElement;
 import nullengine.mod.ModDependencyEntry;
 import nullengine.mod.ModMetadata;
 import nullengine.util.versioning.Version;
@@ -13,7 +14,7 @@ public class DefaultModMetadata implements ModMetadata {
 
     public static final Version DEFAULT_VERSION = new Version("1.0.0");
 
-    private final String modId;
+    private final String id;
     private final Version version;
     private final String mainClass;
     private final String name;
@@ -23,10 +24,10 @@ public class DefaultModMetadata implements ModMetadata {
     private final List<String> authors;
     private final String logoFile;
     private final List<ModDependencyEntry> dependencies;
-    private final Map<String, String> properties;
+    private final Map<String, JsonElement> properties;
 
-    protected DefaultModMetadata(String modId, Version version, String mainClass, String name, String description, String license, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, String> properties) {
-        this.modId = modId;
+    protected DefaultModMetadata(String id, Version version, String mainClass, String name, String description, String license, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, JsonElement> properties) {
+        this.id = id;
         this.version = version;
         this.mainClass = mainClass;
         this.name = name;
@@ -42,7 +43,7 @@ public class DefaultModMetadata implements ModMetadata {
     @Nonnull
     @Override
     public String getId() {
-        return modId;
+        return id;
     }
 
     @Nonnull
@@ -84,8 +85,13 @@ public class DefaultModMetadata implements ModMetadata {
         return dependencies;
     }
 
-    public Map<String, String> getProperties() {
+    public Map<String, JsonElement> getProperties() {
         return properties;
+    }
+
+    @Override
+    public JsonElement getProperty(String key) {
+        return null;
     }
 
     public static Builder builder() {
@@ -103,7 +109,7 @@ public class DefaultModMetadata implements ModMetadata {
         private List<String> authors = Collections.emptyList();
         private String logo = "";
         private List<ModDependencyEntry> dependencies = Collections.emptyList();
-        private Map<String, String> properties = Collections.emptyMap();
+        private Map<String, JsonElement> properties = Collections.emptyMap();
 
         public Builder id(String id) {
             this.id = id;
@@ -155,7 +161,7 @@ public class DefaultModMetadata implements ModMetadata {
             return this;
         }
 
-        public Builder properties(Map<String, String> properties) {
+        public Builder properties(Map<String, JsonElement> properties) {
             this.properties = properties;
             return this;
         }

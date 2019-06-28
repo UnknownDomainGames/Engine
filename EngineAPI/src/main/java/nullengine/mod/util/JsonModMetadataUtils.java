@@ -7,18 +7,18 @@ import nullengine.mod.ModDependencyEntry;
 import nullengine.mod.ModMetadata;
 import nullengine.mod.misc.DefaultModMetadata;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JsonModMetadataUtils {
+
+    public static final Set<String> VANILLA_KEYS = Set.of("id", "version", "main", "name",
+            "description", "license", "url", "logo", "authors", "dependencies", "properties");
 
     public static JsonObject toJson(ModMetadata descriptor) {
         JsonObject jo = new JsonObject();
         jo.addProperty("id", descriptor.getId());
         jo.addProperty("version", descriptor.getVersion().toString());
-        jo.addProperty("mainClass", descriptor.getMainClass());
+        jo.addProperty("main", descriptor.getMainClass());
         jo.addProperty("name", descriptor.getName());
         jo.addProperty("description", descriptor.getDescription());
         jo.addProperty("license", descriptor.getLicense());
@@ -38,8 +38,8 @@ public class JsonModMetadataUtils {
         jo.add("dependencies", ja);
 
         JsonObject properties = new JsonObject();
-        for (Map.Entry<String, String> entry : descriptor.getProperties().entrySet()) {
-            properties.addProperty(entry.getKey(), entry.getValue());
+        for (Map.Entry<String, JsonElement> entry : descriptor.getProperties().entrySet()) {
+            properties.add(entry.getKey(), entry.getValue());
         }
         jo.add("properties", properties);
         return jo;
@@ -52,8 +52,8 @@ public class JsonModMetadataUtils {
             builder.id(jo.get("id").getAsString());
         }
 
-        if (jo.has("mainClass")) {
-            builder.mainClass(jo.get("mainClass").getAsString());
+        if (jo.has("main")) {
+            builder.mainClass(jo.get("main").getAsString());
         }
 
         if (jo.has("version")) {
@@ -91,10 +91,10 @@ public class JsonModMetadataUtils {
             builder.dependencies(List.copyOf(dependencies));
         }
         if (jo.has("properties")) {
-            Map<String, String> properties = new HashMap<>();
+            Map<String, JsonElement> properties = new HashMap<>();
             JsonObject jProperties = jo.getAsJsonObject("properties");
             for (Map.Entry<String, JsonElement> entry : jProperties.entrySet()) {
-                properties.put(entry.getKey(), entry.getValue().getAsString());
+                properties.put(entry.getKey(), entry.getValue());
             }
             builder.properties(Map.copyOf(properties));
         }

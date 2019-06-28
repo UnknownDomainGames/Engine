@@ -1,11 +1,13 @@
 package nullengine.mod.annotation.processing;
 
+import com.google.gson.JsonElement;
 import nullengine.mod.DependencyType;
 import nullengine.mod.ModDependencyEntry;
 import nullengine.mod.ModMetadata;
 import nullengine.mod.annotation.Mod;
 import nullengine.mod.misc.DefaultModMetadata;
 import nullengine.mod.util.JsonModMetadataUtils;
+import nullengine.util.JsonUtils;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -94,13 +96,13 @@ public class ModProcessor extends AbstractProcessor {
         return list;
     }
 
-    private Map<String, String> createPropertyMap(List<AnnotationMirror> properties) {
-        Map<String, String> map = new HashMap<>();
+    private Map<String, JsonElement> createPropertyMap(List<AnnotationMirror> properties) {
+        Map<String, JsonElement> map = new HashMap<>();
         if (properties == null)
             return map;
         for (AnnotationMirror property : properties) {
             Map<String, Object> values = getAnnotationValues(property);
-            map.put((String) values.get("key"), (String) values.get("value"));
+            map.put((String) values.get("key"), JsonUtils.DEFAULT_JSON_PARSER.parse((String) values.get("value")));
         }
         return map;
     }
