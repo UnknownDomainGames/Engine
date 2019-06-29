@@ -62,7 +62,7 @@ public class EntityCameraController extends EntityController {
 
     @Override
     public void handleCursorMove(double x, double y) {
-        double yaw = (x - lastX) * SENSIBILITY;
+        double yaw = (lastX - x) * SENSIBILITY;
         double pitch = (lastY - y) * SENSIBILITY;
         lastX = x;
         lastY = y;
@@ -78,7 +78,7 @@ public class EntityCameraController extends EntityController {
     private void updateMotion() {
         Vector3f rotation = getPlayer().getControlledEntity().getRotation();
         if (movingDirection.lengthSquared() != 0) {
-            movingDirection.normalize(getPlayer().getControlledEntity().getMotion()).mul(MOTION_FACTOR).rotateAxis((float) -Math.toRadians(rotation.x), 0, 1, 0);
+            movingDirection.normalize(getPlayer().getControlledEntity().getMotion()).mul(MOTION_FACTOR).rotateAxis((float) Math.toRadians(rotation.x), 0, 1, 0);
         } else {
             getPlayer().getControlledEntity().getMotion().set(0);
         }

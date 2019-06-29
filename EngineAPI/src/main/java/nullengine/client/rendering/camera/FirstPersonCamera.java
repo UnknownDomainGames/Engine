@@ -30,8 +30,8 @@ public class FirstPersonCamera implements Camera {
         Vector3f motion = entity.getMotion();
         Vector3f rotation = entity.getRotation();
         this.position.set((float) position.x + motion.x * partial, (float) position.y + motion.y * partial, (float) position.z + motion.z * partial);
-        this.frontVector.set((float) (Math.cos(Math.toRadians(rotation.y)) * Math.cos(Math.toRadians(rotation.x))),
-                (float) Math.sin(Math.toRadians(rotation.y)), (float) (Math.cos(Math.toRadians(rotation.y)) * Math.sin(Math.toRadians(rotation.x)))).normalize();
+        this.frontVector.set((float) (Math.cos(Math.toRadians(rotation.y)) * Math.cos(Math.toRadians(-rotation.x))),
+                (float) Math.sin(Math.toRadians(rotation.y)), (float) (Math.cos(Math.toRadians(rotation.y)) * Math.sin(Math.toRadians(-rotation.x)))).normalize();
         this.lookAt.set(this.position).add(this.frontVector);
         this.viewMatrix.identity().lookAt(this.position, this.lookAt, UP_VECTOR);
     }

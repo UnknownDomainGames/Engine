@@ -1,8 +1,8 @@
 package nullengine.util;
 
 public enum Facing {
-    NORTH(0, 1, 0, 0, 1),
-    SOUTH(1, 0, 0, 0, -1),
+    NORTH(0, 1, 0, 0, -1),
+    SOUTH(1, 0, 0, 0, 1),
     EAST(2, 3, 1, 0, 0),
     WEST(3, 2, -1, 0, 0),
     UP(4, 5, 0, 1, 0),

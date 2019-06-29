@@ -53,16 +53,16 @@ class ModelBaker {
 
         switch (facing) {
             case NORTH:
-                v1 = new Vector3f(from.x(), from.y(), to.z());
-                v2 = new Vector3f(to.x(), from.y(), to.z());
-                v3 = new Vector3f(to.x(), to.y(), to.z());
-                v4 = new Vector3f(from.x(), to.y(), to.z());
-                break;
-            case SOUTH:
                 v1 = new Vector3f(to.x(), from.y(), from.z());
                 v2 = new Vector3f(from.x(), from.y(), from.z());
                 v3 = new Vector3f(from.x(), to.y(), from.z());
                 v4 = new Vector3f(to.x(), to.y(), from.z());
+                break;
+            case SOUTH:
+                v1 = new Vector3f(from.x(), from.y(), to.z());
+                v2 = new Vector3f(to.x(), from.y(), to.z());
+                v3 = new Vector3f(to.x(), to.y(), to.z());
+                v4 = new Vector3f(from.x(), to.y(), to.z());
                 break;
             case EAST:
                 v1 = new Vector3f(to.x(), from.y(), to.z());

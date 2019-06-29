@@ -48,7 +48,7 @@ public class HUDGameDebug extends VBox {
         fps.text().setValue("FPS: " + context.getFPS());
         playerPosition.text().setValue(String.format("Player Position: %.2f, %.2f, %.2f", player.getPosition().x, player.getPosition().y, player.getPosition().z));
         playerMotion.text().setValue(String.format("Player Motion: %.2f, %.2f, %.2f", player.getMotion().x, player.getMotion().y, player.getMotion().z));
-        playerDirection.text().setValue(String.format("Player Direction (yaw, pitch, roll): %.2f, %.2f, %.2f", player.getRotation().x, player.getRotation().y, player.getRotation().z));
+        playerDirection.text().setValue(String.format("Player Direction (yaw, pitch, roll): %.2f, %.2f, %.2f (%s)", player.getRotation().x, player.getRotation().y, player.getRotation().z, getDirection(player.getRotation().x)));
         playerChunkPos.text().setValue(String.format("Player At Chunk: %d, %d, %d", (int) player.getPosition().x >> 4, (int) player.getPosition().y >> 4, (int) player.getPosition().z >> 4));
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
@@ -63,5 +63,26 @@ public class HUDGameDebug extends VBox {
 //            lookingBlockPos.text().setValue(String.format("Looking pos: %s(%d, %d, %d)", hit.getFace().name(), hit.getPos().getX(), hit.getPos().getY(), hit.getPos().getZ()));
 //            hitPos.text().setValue(String.format("Looking at: (%.2f, %.2f, %.2f)", hit.getHitPoint().x, hit.getHitPoint().y, hit.getHitPoint().z));
 //        }
+    }
+
+    private String getDirection(float x) {
+        float roundedX = Math.round(x * 100f) / 100f;
+        if(roundedX == 0 || roundedX == 360){
+            return "E";
+        }else if(roundedX < 90){
+            return String.format("N%.2fE", 90-roundedX);
+        }else if(roundedX == 90){
+            return "N";
+        }else if(roundedX < 180){
+            return String.format("N%.2fW", roundedX - 90);
+        }else if(roundedX == 180){
+            return "W";
+        }else if(roundedX < 270){
+            return String.format("S%.2fW", 270-roundedX);
+        }else if(roundedX == 270){
+            return "S";
+        }else {
+            return String.format("S%.2fE", roundedX - 270);
+        }
     }
 }

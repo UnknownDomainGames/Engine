@@ -69,9 +69,9 @@ public class WorldCollisionManagerImpl implements WorldCollisionManager {
                 } else if (hitPoint.y >= 1f - CALC_ERROR_FIXING) {
                     facing = Facing.UP;
                 } else if (hitPoint.z <= 0f + CALC_ERROR_FIXING) {
-                    facing = Facing.SOUTH;
-                } else if (hitPoint.z >= 1f - CALC_ERROR_FIXING) {
                     facing = Facing.NORTH;
+                } else if (hitPoint.z >= 1f - CALC_ERROR_FIXING) {
+                    facing = Facing.SOUTH;
                 }
                 if (facing != null) {
                     return new RayTraceBlockHit(world, pos, block, hitPoint, facing);
