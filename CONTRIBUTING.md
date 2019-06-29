@@ -42,7 +42,7 @@ feat(Mod): support to load mod in development environment
 - **docs**: 文档的更改
 - **feat**: 添加一个新特性
 - **fix**: 修复一个bug
-- **pref**: 提高性能的更改
+- **perf**: 提高性能的更改
 - **refactor**: 重构
 - **style**: 不影响代码的更改(空格, 格式化等)
 - **test**: 添加测试
