@@ -1,0 +1,11 @@
+{
+  "parent": "unknowndomain/models/block/cube.json",
+  "textures": {
+    "top": "unknowndomain/textures/block/debug_top.png",
+    "bottom": "unknowndomain/textures/block/debug_bottom.png",
+    "north": "unknowndomain/textures/block/debug_north.png",
+    "east": "unknowndomain/textures/block/debug_east.png",
+    "south": "unknowndomain/textures/block/debug_south.png",
+    "west": "unknowndomain/textures/block/debug_west.png"
+  }
+}

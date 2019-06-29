@@ -55,6 +55,7 @@ public class VoxelMeshGenerator implements BlockMeshGenerator {
 
     @Override
     public void generate(ClientBlock block, GLBuffer buffer) {
+        buffer.posOffset(-0.5f,-0.5f,-0.5f);
         VoxelModel voxelModel = this.model.get();
         for (VoxelModel.Mesh mesh : voxelModel.getMeshes()) {
             for (VoxelModel.Vertex vertex : mesh.vertexes) {

@@ -19,7 +19,10 @@ public class ItemViewRenderer implements ComponentRenderer<ItemView> {
     public void render(ItemView component, Graphics graphics, RenderContext context) {
         Optional<ItemRenderManager> optionalItemRenderManager = context.getComponent(ItemRenderManager.class);
         if (optionalItemRenderManager.isPresent()) {
-            ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().translationRotateScale(new Vector3f(component.viewSize().get() * 0.08f, component.viewSize().get() * 0.75f, 0), new Quaternionf(new AxisAngle4f(3.141592625f, 1, 0, 0)).rotateAxis((float) (Math.PI / 4), 0, 1, 0).rotateAxis((float) Math.PI / 6f, (float) Math.cos(Math.PI / 4), 0, (float) Math.cos(Math.PI / 4)), component.viewSize().get() * 0.6f));
+            ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().translationRotateScale(
+                    new Vector3f(component.viewSize().get() * 0.5f, component.viewSize().get() * 0.5f, 0),
+                    new Quaternionf(new AxisAngle4f()).rotateAxis((float) -(Math.PI / 4), 0, 1, 0).rotateAxis((float) -Math.PI / 6f, 1, 0, -1),
+                    new Vector3f(component.viewSize().get() * 0.6f,-component.viewSize().get() * 0.6f,component.viewSize().get() * 0.6f)));
             optionalItemRenderManager.get().render(component.item().getValue(), 0);
             ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
         }
