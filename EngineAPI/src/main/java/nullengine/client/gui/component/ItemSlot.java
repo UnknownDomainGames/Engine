@@ -7,12 +7,12 @@ import nullengine.item.ItemStack;
 
 public class ItemSlot extends Button {
     private final MutableValue<ItemStack> itemstack = new SimpleMutableObjectValue<>();
-    private TextureItem textureItem;
+    private ItemView itemView;
 
     public ItemSlot() {
-        textureItem = new TextureItem();
-        this.getChildren().add(textureItem);
-        itemstack.addChangeListener((observable, oldValue, newValue) -> textureItem.item().setValue(newValue));
+        itemView = new ItemView();
+        this.getChildren().add(itemView);
+        itemstack.addChangeListener((observable, oldValue, newValue) -> itemView.item().setValue(newValue));
     }
 
     public ItemSlot(ItemStack stack) {
@@ -25,7 +25,7 @@ public class ItemSlot extends Button {
     }
 
     public MutableFloatValue slotLength() {
-        return textureItem.imgLength();
+        return itemView.viewSize();
     }
 
     @Override
