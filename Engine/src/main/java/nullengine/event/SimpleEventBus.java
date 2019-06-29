@@ -29,22 +29,11 @@ public class SimpleEventBus implements EventBus {
     @Override
     public boolean post(Event event) {
         ListenerList listenerList = getListenerList(event.getClass());
-        for (Order order : Order.values()) {
-            for (RegisteredListener listener : listenerList.getListeners().getOrDefault(order, Collections.emptyList())) {
-                try {
-                    listener.post(event);
-                } catch (Exception e) {
-                    eventExceptionHandler.handle(listenerList, listener, event, e);
-                }
-            }
-            for (ListenerList parent : listenerList.getParents()) {
-                for (RegisteredListener listener : parent.getListeners().getOrDefault(order, Collections.emptyList())) {
-                    try {
-                        listener.post(event);
-                    } catch (Exception e) {
-                        eventExceptionHandler.handle(listenerList, listener, event, e);
-                    }
-                }
+        for (RegisteredListener listener : listenerList.getListeners()) {
+            try {
+                listener.post(event);
+            } catch (Exception e) {
+                eventExceptionHandler.handle(listenerList, listener, event, e);
             }
         }
         return event.isCancellable() && ((Cancellable) event).isCancelled();
@@ -60,7 +49,7 @@ public class SimpleEventBus implements EventBus {
             if (entry.getKey().isAssignableFrom(eventType)) {
                 listenerList.addParent(entry.getValue());
             } else if (eventType.isAssignableFrom(entry.getKey())) {
-                entry.getValue().addParent(listenerList);
+                listenerList.addChild(entry.getValue());
             }
         }
         return listenerList;

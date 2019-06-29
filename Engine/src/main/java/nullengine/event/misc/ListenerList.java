@@ -1,17 +1,18 @@
 package nullengine.event.misc;
 
-import nullengine.event.Order;
+import nullengine.util.SortedList;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 public class ListenerList {
 
     private final Class<?> eventType;
-    private final List<ListenerList> parents = new ArrayList<>();
+    private final List<ListenerList> children = new ArrayList<>();
 
-    private final EnumMap<Order, List<RegisteredListener>> listeners = new EnumMap<>(Order.class);
+    private final Collection<RegisteredListener> listeners = SortedList.wrap(new ArrayList<>(), Comparator.comparingInt(o -> o.getOrder().ordinal()));
 
     public ListenerList(Class<?> eventType) {
         this.eventType = eventType;
@@ -22,22 +23,26 @@ public class ListenerList {
     }
 
     public void register(RegisteredListener listener) {
-        listeners.computeIfAbsent(listener.getOrder(), order -> new ArrayList<>()).add(listener);
+        listeners.add(listener);
+        children.forEach(listenerList -> listenerList.listeners.add(listener));
     }
 
     public void unregister(RegisteredListener listener) {
-        listeners.computeIfAbsent(listener.getOrder(), order -> new ArrayList<>()).remove(listener);
+        listeners.remove(listener);
+        children.forEach(listenerList -> listenerList.listeners.remove(listener));
     }
 
-    public void addParent(ListenerList list) {
-        parents.add(list);
+    public void addParent(ListenerList parent) {
+        parent.children.add(this);
+        listeners.addAll(parent.listeners);
     }
 
-    public List<ListenerList> getParents() {
-        return parents;
+    public void addChild(ListenerList child) {
+        children.add(child);
+        child.listeners.addAll(listeners);
     }
 
-    public EnumMap<Order, List<RegisteredListener>> getListeners() {
+    public Collection<RegisteredListener> getListeners() {
         return listeners;
     }
 }
