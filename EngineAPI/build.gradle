@@ -12,7 +12,7 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.25'
 
     compile 'org.joml:joml:1.9.12'
-    compile 'com.github.Mouse0w0.Lib4j:lib4j-observable:1.0.6'
+    compile 'com.github.Mouse0w0:Observable:1.0.2'
     compile 'com.github.Mouse0w0.Configuration:configuration-api:1.1.0'
     compile 'net.jodah:typetools:0.6.1'
 

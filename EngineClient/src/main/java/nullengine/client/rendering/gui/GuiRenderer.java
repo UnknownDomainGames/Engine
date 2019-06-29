@@ -1,6 +1,6 @@
 package nullengine.client.rendering.gui;
 
-import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
+import com.github.mouse0w0.observable.value.ObservableValue;
 import nullengine.client.asset.AssetPath;
 import nullengine.client.gui.Container;
 import nullengine.client.gui.GuiManager;

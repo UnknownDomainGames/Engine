@@ -1,7 +1,7 @@
 package nullengine.client.sound;
 
-import com.github.mouse0w0.lib4j.observable.value.MutableValue;
-import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
+import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.Platform;
 import nullengine.client.asset.AssetPath;
 import nullengine.client.asset.exception.AssetLoadException;

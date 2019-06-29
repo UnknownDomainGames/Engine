@@ -1,7 +1,7 @@
 package nullengine.client.gui.component;
 
-import com.github.mouse0w0.lib4j.observable.value.MutableBooleanValue;
-import com.github.mouse0w0.lib4j.observable.value.SimpleMutableBooleanValue;
+import com.github.mouse0w0.observable.value.MutableBooleanValue;
+import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
 import nullengine.client.gui.event.MouseEvent;
 import nullengine.client.gui.misc.Border;
 import nullengine.util.Color;

@@ -1,7 +1,7 @@
 package nullengine.client.gui;
 
-import com.github.mouse0w0.lib4j.observable.value.MutableValue;
-import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
+import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.misc.*;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.RegionRenderer;

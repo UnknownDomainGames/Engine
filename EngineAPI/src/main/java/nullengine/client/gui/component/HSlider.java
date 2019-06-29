@@ -1,8 +1,8 @@
 package nullengine.client.gui.component;
 
-import com.github.mouse0w0.lib4j.observable.value.MutableDoubleValue;
-import com.github.mouse0w0.lib4j.observable.value.MutableValue;
-import com.github.mouse0w0.lib4j.observable.value.SimpleMutableDoubleValue;
+import com.github.mouse0w0.observable.value.MutableDoubleValue;
+import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.SimpleMutableDoubleValue;
 import nullengine.client.gui.Region;
 import nullengine.client.gui.event.MouseEvent;
 import nullengine.client.gui.misc.Background;

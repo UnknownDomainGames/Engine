@@ -1,8 +1,8 @@
 package nullengine.client.gui;
 
-import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
-import com.github.mouse0w0.lib4j.observable.collection.ObservableMap;
-import com.github.mouse0w0.lib4j.observable.value.*;
+import com.github.mouse0w0.observable.collection.ObservableCollections;
+import com.github.mouse0w0.observable.collection.ObservableMap;
+import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.FocusEvent;
 import nullengine.client.gui.event.MouseEvent;
 import nullengine.client.gui.rendering.ComponentRenderer;

@@ -1,6 +1,6 @@
 package nullengine.client.gui.layout;
 
-import com.github.mouse0w0.lib4j.observable.collection.ObservableList;
+import com.github.mouse0w0.observable.collection.ObservableList;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.Region;
 

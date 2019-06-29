@@ -1,8 +1,8 @@
 package nullengine.client.rendering.texture;
 
-import com.github.mouse0w0.lib4j.observable.value.MutableValue;
-import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
-import com.github.mouse0w0.lib4j.observable.value.SimpleMutableObjectValue;
+import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.ObservableValue;
+import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.Platform;
 import nullengine.client.asset.AssetPath;
 import nullengine.client.asset.exception.AssetLoadException;

@@ -1,6 +1,6 @@
 package nullengine.client.gui.component;
 
-import com.github.mouse0w0.lib4j.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableValue;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.text.Font;
 import nullengine.client.gui.text.Text;

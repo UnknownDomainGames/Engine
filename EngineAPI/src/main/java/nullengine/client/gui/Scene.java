@@ -1,8 +1,8 @@
 package nullengine.client.gui;
 
-import com.github.mouse0w0.lib4j.observable.value.MutableIntValue;
-import com.github.mouse0w0.lib4j.observable.value.ObservableIntValue;
-import com.github.mouse0w0.lib4j.observable.value.SimpleMutableIntValue;
+import com.github.mouse0w0.observable.value.MutableIntValue;
+import com.github.mouse0w0.observable.value.ObservableIntValue;
+import com.github.mouse0w0.observable.value.SimpleMutableIntValue;
 import nullengine.client.gui.event.CharEvent;
 import nullengine.client.gui.event.FocusEvent;
 import nullengine.client.gui.event.KeyEvent;

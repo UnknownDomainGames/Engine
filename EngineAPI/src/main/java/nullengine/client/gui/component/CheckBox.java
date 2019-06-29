@@ -1,6 +1,6 @@
 package nullengine.client.gui.component;
 
-import com.github.mouse0w0.lib4j.observable.value.*;
+import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.MouseEvent;
 import nullengine.client.gui.layout.BorderPane;
 import nullengine.client.gui.misc.Background;

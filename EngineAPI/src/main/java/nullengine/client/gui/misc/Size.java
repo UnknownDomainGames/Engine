@@ -1,7 +1,7 @@
 package nullengine.client.gui.misc;
 
-import com.github.mouse0w0.lib4j.observable.value.MutableFloatValue;
-import com.github.mouse0w0.lib4j.observable.value.SimpleMutableFloatValue;
+import com.github.mouse0w0.observable.value.MutableFloatValue;
+import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 
 public final class Size {
     public static final int USE_PREF_VALUE = -1;

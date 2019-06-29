@@ -1,6 +1,6 @@
 package nullengine.client.rendering.world.chunk;
 
-import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
+import com.github.mouse0w0.observable.value.ObservableValue;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import nullengine.client.asset.AssetPath;

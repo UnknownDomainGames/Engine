@@ -1,7 +1,7 @@
 package nullengine.client.gui.layout;
 
-import com.github.mouse0w0.lib4j.observable.value.MutableFloatValue;
-import com.github.mouse0w0.lib4j.observable.value.SimpleMutableFloatValue;
+import com.github.mouse0w0.observable.value.MutableFloatValue;
+import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.misc.Insets;
 

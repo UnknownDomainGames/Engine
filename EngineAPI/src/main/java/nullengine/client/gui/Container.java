@@ -1,9 +1,9 @@
 package nullengine.client.gui;
 
-import com.github.mouse0w0.lib4j.observable.collection.ObservableCollections;
-import com.github.mouse0w0.lib4j.observable.collection.ObservableList;
-import com.github.mouse0w0.lib4j.observable.value.ObservableValue;
-import com.github.mouse0w0.lib4j.observable.value.ValueChangeListener;
+import com.github.mouse0w0.observable.collection.ObservableCollections;
+import com.github.mouse0w0.observable.collection.ObservableList;
+import com.github.mouse0w0.observable.value.ObservableValue;
+import com.github.mouse0w0.observable.value.ValueChangeListener;
 import nullengine.client.gui.component.Control;
 import nullengine.client.gui.util.Utils;
 
