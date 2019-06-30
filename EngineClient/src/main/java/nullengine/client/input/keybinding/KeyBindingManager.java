@@ -113,6 +113,10 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     }
 
     public void handleMouse(Window window, int button, int action, int modifiers) {
+        if (engineClient.getRenderContext().getGuiManager().isDisplayingScreen()) {
+            return;
+        }
+
         switch (action) {
             case GLFW.GLFW_PRESS:
                 handlePress(button + 400, modifiers);
@@ -126,6 +130,10 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     }
 
     public void handleKey(Window window, int key, int scancode, int action, int modifiers) {
+        if (engineClient.getRenderContext().getGuiManager().isDisplayingScreen()) {
+            return;
+        }
+
         switch (action) {
             case GLFW.GLFW_PRESS:
                 handlePress(key, modifiers);
@@ -143,6 +151,11 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
      */
     @Override
     public void tick() {
+        if (engineClient.getRenderContext().getGuiManager().isDisplayingScreen()) {
+            releaseAllPressedKeys();
+            return;
+        }
+
         for (KeyBinding keyBinding : indexToBinding.values()) {
             if (keyBinding.isDirty()) {
                 // state change
@@ -162,6 +175,32 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
             } else if (keyBinding.isActive()) {
                 // keep key
                 keyBinding.onKeyKeep(engineClient);
+            }
+        }
+    }
+
+    private void releaseAllPressedKeys() {
+        for (KeyBinding keyBinding : indexToBinding.values()) {
+            if (keyBinding.isDirty()) {
+                // state change
+                keyBinding.setDirty(false);
+                if (keyBinding.getActionMode() == ActionMode.PRESS) {
+                    keyBinding.setActive(keyBinding.isPressed());
+                } else {
+                    if (keyBinding.isPressed()) {
+                        keyBinding.setActive(!keyBinding.isActive());
+                    }
+                }
+                if (keyBinding.isActive()) {
+                    keyBinding.setPressed(false);
+                    keyBinding.setActive(false);
+                } else {
+                    keyBinding.onKeyEnd(engineClient);
+                }
+            } else if (keyBinding.isActive()) {
+                keyBinding.setPressed(false);
+                keyBinding.setActive(false);
+                keyBinding.onKeyEnd(engineClient);
             }
         }
     }
