@@ -1,6 +1,7 @@
 package nullengine.client.rendering.world.chunk;
 
-import nullengine.client.block.ClientBlock;
+import nullengine.block.Block;
+import nullengine.client.rendering.block.BlockRenderer;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferFormats;
 import nullengine.client.rendering.util.buffer.GLBufferMode;
@@ -38,10 +39,12 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
         buffer.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
         while (blockPosIterator.hasNext()) {
             BlockPos pos = blockPosIterator.next();
-            ClientBlock block = chunkRenderer.getClientBlockRegistry().getValue(chunkCache.getBlockId(pos));
-            if (block.isVisible()) {
-                block.getRenderer().generate(block, chunkCache, pos, buffer);
-            }
+            Block block = chunkCache.getBlock(pos);
+            block.getComponent(BlockRenderer.class).ifPresent(blockRenderer -> {
+                if (blockRenderer.isVisible()) {
+                    blockRenderer.generateMesh(block, chunkCache, pos, buffer);
+                }
+            });
         }
         buffer.finish();
         chunkRenderer.upload(chunkMesh, buffer);

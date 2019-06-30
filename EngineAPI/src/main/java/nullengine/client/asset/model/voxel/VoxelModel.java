@@ -17,9 +17,9 @@ public class VoxelModel {
     }
 
     public static class Vertex {
-        Vector3fc pos;
-        float u, v;
-        Vector3fc normal;
+        public Vector3fc pos;
+        public float u, v;
+        public Vector3fc normal;
 
         public Vertex(Vector3fc pos, float u, float v, Vector3fc normal) {
             this.pos = pos;

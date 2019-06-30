@@ -5,15 +5,15 @@ import nullengine.block.Block;
 import nullengine.block.component.ActivateBehavior;
 import nullengine.block.component.ClickBehavior;
 import nullengine.client.asset.AssetPath;
-import nullengine.client.block.AirClientBlock;
-import nullengine.client.block.ClientBlock;
-import nullengine.client.block.DefaultClientBlock;
+import nullengine.client.block.AirBlockRenderer;
 import nullengine.client.event.rendering.EntityRendererRegistrationEvent;
 import nullengine.client.gui.Scene;
 import nullengine.client.input.controller.MotionType;
 import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyBinding;
+import nullengine.client.rendering.block.BlockRenderer;
+import nullengine.client.rendering.block.DefaultBlockRenderer;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.entity.EntityItemRenderer;
 import nullengine.client.rendering.item.ItemBlockRenderer;
@@ -56,8 +56,6 @@ public final class DefaultGameMode {
         e.register(new SimpleItemRegistry());
 
         e.register(new IdAutoIncreaseRegistry<>(KeyBinding.class));
-        e.register(new IdAutoIncreaseRegistry<>(ClientBlock.class));
-//        e.registerPostTask(Block.class, Item.class, (block, registry)->registry.register(new BlockItem(block)));
     }
 
     @Listener
@@ -66,14 +64,18 @@ public final class DefaultGameMode {
         registerBlocks((BlockRegistry) registryManager.getRegistry(Block.class));
         registerItems(registryManager.getRegistry(Item.class));
         registerKeyBindings(registryManager.getRegistry(KeyBinding.class));
-        registerClientBlock(registryManager.getRegistry(ClientBlock.class));
     }
 
     private static void registerBlocks(BlockRegistry registry) {
         registry.register(Blocks.AIR);
+        Blocks.AIR.addComponent(BlockRenderer.class, new AirBlockRenderer());
+        registry.setAirBlock(Blocks.AIR);
+
+        AssetPath blockModelPath = AssetPath.of("unknowndomain", "models", "block");
+        Blocks.GRASS.addComponent(BlockRenderer.class, new DefaultBlockRenderer().setModelPath(blockModelPath.resolve("grass.json")));
+        Blocks.DIRT.addComponent(BlockRenderer.class, new DefaultBlockRenderer().setModelPath(blockModelPath.resolve("dirt.json")));
         registry.register(Blocks.GRASS);
         registry.register(Blocks.DIRT);
-        registry.setAirBlock(Blocks.AIR);
     }
 
     private static void registerItems(Registry<Item> registry) {
@@ -83,13 +85,6 @@ public final class DefaultGameMode {
 
         Items.GRASS.setComponent(ItemRenderer.class, new ItemBlockRenderer());
         Items.DIRT.setComponent(ItemRenderer.class, new ItemBlockRenderer());
-    }
-
-    private static void registerClientBlock(Registry<ClientBlock> registry) {
-        AssetPath blockModelPath = AssetPath.of("unknowndomain", "models", "block");
-        registry.register(new AirClientBlock(Blocks.AIR));
-        registry.register(new DefaultClientBlock(Blocks.GRASS).setRenderer(blockModelPath.resolve("grass.json")));
-        registry.register(new DefaultClientBlock(Blocks.DIRT).setRenderer(blockModelPath.resolve("dirt.json")));
     }
 
     private static void registerKeyBindings(Registry<KeyBinding> registry) {

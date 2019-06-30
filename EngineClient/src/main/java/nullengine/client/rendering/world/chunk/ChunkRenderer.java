@@ -4,7 +4,6 @@ import com.github.mouse0w0.observable.value.ObservableValue;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import nullengine.client.asset.AssetPath;
-import nullengine.client.block.ClientBlock;
 import nullengine.client.game.GameClient;
 import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.light.DirectionalLight;
@@ -21,7 +20,6 @@ import nullengine.event.Listener;
 import nullengine.event.world.block.BlockChangeEvent;
 import nullengine.event.world.chunk.ChunkLoadEvent;
 import nullengine.math.BlockPos;
-import nullengine.registry.Registry;
 import nullengine.world.World;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
@@ -52,8 +50,6 @@ public class ChunkRenderer {
 
     private ThreadPoolExecutor updateExecutor;
 
-    private Registry<ClientBlock> clientBlockRegistry;
-
     Light dirLight, ptLight;
     Material mat;
 
@@ -61,7 +57,6 @@ public class ChunkRenderer {
         this.context = context;
         this.game = context.getEngine().getCurrentGame();
         game.getEventBus().register(this);
-        this.clientBlockRegistry = game.getRegistryManager().getRegistry(ClientBlock.class);
 
         chunkSolidShader = ShaderManager.INSTANCE.registerShader("chunk_solid",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "chunk_solid.vert"))
@@ -147,10 +142,6 @@ public class ChunkRenderer {
         glDisable(GL11.GL_TEXTURE_2D);
         glDisable(GL11.GL_DEPTH_TEST);
         glDisable(GL11.GL_BLEND);
-    }
-
-    public Registry<ClientBlock> getClientBlockRegistry() {
-        return clientBlockRegistry;
     }
 
     public void dispose() {
