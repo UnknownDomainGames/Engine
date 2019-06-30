@@ -7,6 +7,9 @@ import nullengine.block.component.PlaceBehavior;
 import nullengine.entity.Entity;
 import nullengine.entity.PlayerEntity;
 import nullengine.event.world.block.BlockChangeEvent;
+import nullengine.event.world.block.BlockDestroyEvent;
+import nullengine.event.world.block.BlockPlaceEvent;
+import nullengine.event.world.block.BlockReplaceEvent;
 import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.game.Game;
 import nullengine.math.AABBs;
@@ -186,9 +189,14 @@ public class WorldCommon implements World, Runnable {
                     .setBlock(pos, block, cause);
             if (block == Blocks.AIR) {
                 oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, null, pos, oldBlock, cause));
-            } else {
+                getGame().getEventBus().post(new BlockDestroyEvent(this, pos, oldBlock, cause));
+            } else if (oldBlock == Blocks.AIR) {
                 block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
-//                oldBlock.getComponent(BlockPrototype.PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
+                getGame().getEventBus().post(new BlockPlaceEvent(this, pos, block, cause));
+            }else{
+                oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, null, pos, oldBlock, cause));
+                block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
+                getGame().getEventBus().post(new BlockReplaceEvent(this, pos, oldBlock, block, cause));
             }
             getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause)); // TODO:
             for (Facing facing : Facing.values()) {
