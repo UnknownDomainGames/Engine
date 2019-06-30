@@ -2,6 +2,7 @@ package nullengine.client.game;
 
 import nullengine.block.Block;
 import nullengine.client.EngineClient;
+import nullengine.client.gui.Scene;
 import nullengine.client.input.controller.EntityCameraController;
 import nullengine.client.input.controller.EntityController;
 import nullengine.client.input.keybinding.KeyBinding;
@@ -17,6 +18,7 @@ import nullengine.world.WorldCommon;
 import nullengine.world.WorldCommonProvider;
 import nullengine.world.gen.ChunkGeneratorFlat;
 import org.joml.Vector3d;
+import unknowndomaingame.foundation.client.gui.hud.HUDGame;
 import unknowndomaingame.foundation.init.Blocks;
 import unknowndomaingame.foundation.init.Items;
 
@@ -118,9 +120,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
         entityController = new EntityCameraController(player);
         engineClient.getRenderContext().getWindow().addCursorCallback((window, xpos, ypos) -> {
-            if (window.getCursor().isHiddenCursor()) {
-                entityController.handleCursorMove(xpos, ypos);
-            }
+            entityController.handleCursorMove(xpos, ypos);
         });
 
         super.finishStage();
@@ -137,6 +137,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 //        }
 
         world.spawnEntity(new ItemEntity(world.getEntities().size(), world, new Vector3d(0, 5, 0), new ItemStack(Items.DIRT)));
+        engineClient.getRenderContext().getGuiManager().showHud("game-hud", new Scene(new HUDGame()));
 //        a = Platform.getEngineClient().getSoundManager().createSoundSource("test sound").position(25,5,0).gain(1.0f).speed(dir);
 //        a.setLoop(true);
 //        a.assignSound(sound);

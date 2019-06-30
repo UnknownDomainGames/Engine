@@ -86,10 +86,6 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
     protected void handleRelease(int code, int modifiers) {
         // TODO: Remove it, hard code.
-        if (Platform.getEngineClient().getRenderContext().getGuiManager().isDisplayingScreen()) {
-            return;
-        }
-
         Key key = Key.valueOf(code);
         pressedKey.remove(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));

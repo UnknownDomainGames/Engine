@@ -1,5 +1,6 @@
 package nullengine.client.input.controller;
 
+import nullengine.client.EngineClient;
 import nullengine.math.Math2;
 import nullengine.player.Player;
 import org.joml.Vector3f;
@@ -66,13 +67,17 @@ public class EntityCameraController extends EntityController {
         double pitch = (lastY - y) * SENSIBILITY;
         lastX = x;
         lastY = y;
-        if (setupLast) {
-            Vector3f rotation = getPlayer().getControlledEntity().getRotation();
-            rotation.y += pitch;
-            rotation.y = Math.min(89.0f, Math.max(-89.0f, rotation.y));
-            rotation.x = Math2.loop(rotation.x + (float) yaw, 360);
+        if(((EngineClient)getPlayer().getWorld().getGame().getEngine()).getRenderContext().getWindow().getCursor().isHiddenCursor()) {
+            if (setupLast) {
+                Vector3f rotation = getPlayer().getControlledEntity().getRotation();
+                rotation.y += pitch;
+                rotation.y = Math.min(89.0f, Math.max(-89.0f, rotation.y));
+                rotation.x = Math2.loop(rotation.x + (float) yaw, 360);
+                updateMotion();
+            } else setupLast = true;
+        }else{
             updateMotion();
-        } else setupLast = true;
+        }
     }
 
     private void updateMotion() {

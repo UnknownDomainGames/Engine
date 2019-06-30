@@ -1,11 +1,14 @@
 package nullengine.client.gui;
 
 import nullengine.Platform;
+import nullengine.client.gui.event.KeyEvent;
+import nullengine.client.input.keybinding.Key;
 import nullengine.client.rendering.RenderContext;
 import nullengine.util.UndoHistory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class EngineGuiManager implements GuiManager {
 
@@ -16,6 +19,7 @@ public class EngineGuiManager implements GuiManager {
     private Map<String, Scene> huds;
     private Scene displayingScreen;
     private UndoHistory<Scene> sceneHistory;
+    private Consumer<KeyEvent.KeyDownEvent> escCloseHandler;
 
     public EngineGuiManager(RenderContext context) {
         this.context = context;
@@ -33,6 +37,12 @@ public class EngineGuiManager implements GuiManager {
 
     private void showScreenInternal(Scene scene) {
         pushToHistory();
+        escCloseHandler = keyDownEvent -> {
+            if (keyDownEvent.getKey() == Key.KEY_ESCAPE) {
+                scene.getRoot().requireCLose();
+            }
+        };
+        scene.getRoot().addEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
         displayingScreen = scene;
         displayingScreen.setSize(context.getWindow().getWidth(), context.getWindow().getHeight());
         displayingScreen.update();
@@ -49,6 +59,7 @@ public class EngineGuiManager implements GuiManager {
             if (!incognito) {
                 sceneHistory.pushHistory(displayingScreen);
             }
+            displayingScreen.getRoot().removeEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
             context.getWindow().removeCharCallback(displayingScreen.charCallback);
             context.getWindow().removeCursorCallback(displayingScreen.cursorCallback);
             context.getWindow().removeKeyCallback(displayingScreen.keyCallback);
@@ -73,7 +84,12 @@ public class EngineGuiManager implements GuiManager {
         if (huds.containsKey(id)) {
             Platform.getLogger().warn(String.format("Conflicting HUD id!: %s", id));
         } else {
+            hud.setSize(context.getWindow().getWidth(), context.getWindow().getHeight());
+            hud.update();
             huds.put(id, hud);
+            if(hud.getRoot() instanceof GuiTickable){
+                context.getScheduler().runTaskEveryFrame(()->((GuiTickable) hud.getRoot()).update(context));
+            }
         }
     }
 
@@ -86,7 +102,10 @@ public class EngineGuiManager implements GuiManager {
 
     @Override
     public void hideHud(String id) {
-        huds.remove(id);
+        Scene hud = huds.remove(id);
+        if(hud.getRoot() instanceof GuiTickable){
+            context.getScheduler().cancelTask(()->((GuiTickable) hud.getRoot()).update(context));
+        }
     }
 
     @Override

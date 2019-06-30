@@ -36,7 +36,9 @@ public class ItemRendererTest implements ItemRenderer {
         Tessellator tessellator = Tessellator.getInstance();
         GLBuffer buffer = tessellator.getBuffer();
         buffer.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
-        clientBlock.getRenderer().generate(clientBlock, buffer);
+        if(clientBlock.getRenderer() != null) {
+            clientBlock.getRenderer().generate(clientBlock, buffer);
+        }
         tessellator.draw();
     }
 

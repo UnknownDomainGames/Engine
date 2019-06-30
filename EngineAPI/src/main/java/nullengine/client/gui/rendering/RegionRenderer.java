@@ -11,7 +11,7 @@ public class RegionRenderer<E extends Region> implements ComponentRenderer<E> {
 
     @Override
     public void render(E region, Graphics graphics, RenderContext context) {
-        region.background().getValue().render(region, graphics);
+        region.background().ifPresent(background -> background.render(region,graphics));
         if (region.border().isPresent()) {
             Border border = region.border().getValue();
             border.render(region, graphics);

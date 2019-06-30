@@ -1,5 +1,6 @@
 package unknowndomaingame.foundation.client.gui.hud;
 
+import nullengine.client.gui.GuiTickable;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.text.Text;
@@ -8,7 +9,7 @@ import nullengine.entity.Entity;
 
 import java.util.Collections;
 
-public class HUDGameDebug extends VBox {
+public class HUDGameDebug extends VBox implements GuiTickable {
 
     private final Text fps;
     private final Text playerPosition;

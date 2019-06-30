@@ -40,6 +40,7 @@ import nullengine.registry.impl.IdAutoIncreaseRegistry;
 import nullengine.world.collision.RayTraceBlockHit;
 import unknowndomaingame.foundation.client.gui.game.GUIGameCreation;
 import unknowndomaingame.foundation.client.gui.game.GuiChat;
+import unknowndomaingame.foundation.client.gui.game.GuiItemList;
 import unknowndomaingame.foundation.client.gui.hud.HUDGameDebug;
 import unknowndomaingame.foundation.init.Blocks;
 import unknowndomaingame.foundation.init.Items;
@@ -159,11 +160,15 @@ public final class DefaultGameMode {
             Scene scene = new Scene(new GuiChat(game));
             game.getEngine().getRenderContext().getGuiManager().showScreen(scene);
         }, ActionMode.PRESS));
+        registry.register(KeyBinding.create("game.inventory", Key.KEY_E, (game) -> {
+            Scene scene = new Scene(new GuiItemList(game.getEngine().getRenderContext()));
+            game.getEngine().getRenderContext().getGuiManager().showScreen(scene);
+        }, ActionMode.PRESS));
 
         var renderContext = Platform.getEngineClient().getRenderContext();
         var guiManager = renderContext.getGuiManager();
         var hudGameDebug = new HUDGameDebug();
-        renderContext.getScheduler().runTaskEveryFrame(() -> hudGameDebug.update(renderContext));
+//        renderContext.getScheduler().runTaskEveryFrame(() -> hudGameDebug.update(renderContext));
         registry.register(KeyBinding.create("debug.switch", Key.KEY_F3, gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug))
                 , ActionMode.SWITCH).endAction((gameClient, integer) -> guiManager.hideHud("debugGame")));
     }

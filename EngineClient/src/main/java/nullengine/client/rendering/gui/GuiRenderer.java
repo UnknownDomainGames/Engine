@@ -95,9 +95,11 @@ public class GuiRenderer implements Renderer {
 
         // render scene
         for (Scene scene : guiManager.getHuds().values()) {
+            startRenderFlag();
             renderScene(scene);
         }
         if (guiManager.isDisplayingScreen()) {
+            startRenderFlag();
             renderScene(guiManager.getDisplayingScreen());
         }
 
@@ -115,6 +117,18 @@ public class GuiRenderer implements Renderer {
     private void startRender() {
         ShaderManager.INSTANCE.bindShader(shader.getValue());
 
+        startRenderFlag();
+
+        int width = window.getWidth(), height = window.getHeight();
+        ShaderManager.INSTANCE.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
+        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
+        ShaderManager.INSTANCE.setUniform("u_WindowSize", new Vector2f(width, height));
+        ShaderManager.INSTANCE.setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
+
+        context.getTextureManager().getWhiteTexture().bind();
+    }
+
+    private void startRenderFlag() {
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -124,14 +138,6 @@ public class GuiRenderer implements Renderer {
         glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
         glEnable(GL_POLYGON_SMOOTH);
         glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-
-        int width = window.getWidth(), height = window.getHeight();
-        ShaderManager.INSTANCE.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
-        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
-        ShaderManager.INSTANCE.setUniform("u_WindowSize", new Vector2f(width, height));
-        ShaderManager.INSTANCE.setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
-
-        context.getTextureManager().getWhiteTexture().bind();
     }
 
     private void endRender() {
