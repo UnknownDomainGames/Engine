@@ -1,6 +1,7 @@
 package nullengine.world.chunk;
 
 import nullengine.block.Block;
+import nullengine.registry.Registries;
 import nullengine.util.BitArray;
 
 public class BlockStorage {
@@ -14,7 +15,7 @@ public class BlockStorage {
     }
 
     public Block getBlock(int x, int y, int z) {
-        return chunk.getWorld().getGame().getRegistryManager().getRegistry(Block.class).getValue(getBlockId(x, y, z));
+        return Registries.getBlockRegistry().getValue(getBlockId(x, y, z));
     }
 
     public int getBlockId(int x, int y, int z) {
@@ -22,7 +23,7 @@ public class BlockStorage {
     }
 
     public Block setBlock(int x, int y, int z, Block block) {
-        return chunk.getWorld().getGame().getRegistryManager().getRegistry(Block.class).getValue(data.getAndSet(getPosIndex(x, y, z), block.getId()));
+        return Registries.getBlockRegistry().getValue(data.getAndSet(getPosIndex(x, y, z), block.getId()));
     }
 
     private int getPosIndex(int x, int y, int z) {
