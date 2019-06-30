@@ -22,7 +22,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Optional;
 
-public class InjectHandler implements ModInitializationHandler {
+public class InjectionHandler implements ModInitializationHandler {
 
     @Override
     public void handle(ModInitializer initializer, ModContainer mod) {

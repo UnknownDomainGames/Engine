@@ -22,7 +22,7 @@ public class ModInitializer {
         addLast("Instance", new InstanceHandler());
         addLast("AutoListen", new AutoListenHandler());
         addLast("PreInitialization", new PreInitializationHandler());
-        addLast("Injection", new InjectHandler());
+        addLast("Injection", new InjectionHandler());
         addLast("Initialization", new InitializationHandler());
         addLast("PostInitialization", new PostInitializationHandler());
     }
