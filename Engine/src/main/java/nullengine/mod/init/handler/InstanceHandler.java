@@ -8,6 +8,5 @@ public class InstanceHandler implements ModInitializationHandler {
     @Override
     public void handle(ModInitializer initializer, ModContainer mod) {
         mod.getEventBus().register(mod.getInstance());
-        initializer.getEngine().getEventBus().register(mod.getInstance());
     }
 }
