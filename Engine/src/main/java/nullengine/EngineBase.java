@@ -1,9 +1,12 @@
 package nullengine;
 
+import com.google.common.collect.Maps;
 import nullengine.event.EventBus;
 import nullengine.event.SimpleEventBus;
 import nullengine.event.asm.AsmEventListenerFactory;
 import nullengine.event.engine.EngineEvent;
+import nullengine.event.registry.RegistrationEvent;
+import nullengine.event.registry.RegistryConstructionEvent;
 import nullengine.mod.ModContainer;
 import nullengine.mod.ModManager;
 import nullengine.mod.dummy.DummyModContainer;
@@ -13,6 +16,10 @@ import nullengine.mod.impl.EngineModManager;
 import nullengine.mod.init.ModInitializer;
 import nullengine.mod.java.JavaModAssets;
 import nullengine.mod.misc.SimpleModMetadata;
+import nullengine.registry.Registries;
+import nullengine.registry.Registry;
+import nullengine.registry.RegistryManager;
+import nullengine.registry.impl.SimpleRegistryManager;
 import nullengine.util.ClassPathUtils;
 import nullengine.util.RuntimeEnvironment;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +35,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static nullengine.util.ClassPathUtils.getDirectoriesInClassPath;
 import static nullengine.util.ClassPathUtils.getFilesInClassPath;
@@ -42,6 +50,8 @@ public abstract class EngineBase implements Engine {
     private RuntimeEnvironment runtimeEnvironment;
 
     protected EventBus eventBus;
+    protected RegistryManager registryManager;
+
     protected EngineModManager modManager;
 
     private boolean initialized = false;
@@ -61,6 +71,11 @@ public abstract class EngineBase implements Engine {
     @Override
     public EventBus getEventBus() {
         return eventBus;
+    }
+
+    @Override
+    public RegistryManager getRegistryManager() {
+        return registryManager;
     }
 
     @Override
@@ -84,6 +99,25 @@ public abstract class EngineBase implements Engine {
         eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
 
         loadMods();
+    }
+
+    protected void initRegistration() {
+        // Registration Stage
+        logger.info("Creating Registry Manager!");
+        Map<Class<?>, Registry<?>> registries = Maps.newHashMap();
+        eventBus.post(new RegistryConstructionEvent(registries));
+        registryManager = new SimpleRegistryManager(Map.copyOf(registries));
+        logger.info("Registering!");
+        eventBus.post(new RegistrationEvent.Start(registryManager));
+
+        for (Registry<?> registry : registries.values()) {
+            eventBus.post(new RegistrationEvent.Register<>(registry));
+        }
+
+        logger.info("Finishing Registration!");
+        eventBus.post(new RegistrationEvent.Finish(registryManager));
+
+        Registries.init(registryManager);
     }
 
     private void initExceptionHandler() {

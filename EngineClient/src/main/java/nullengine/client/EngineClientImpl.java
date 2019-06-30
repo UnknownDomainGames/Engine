@@ -11,6 +11,8 @@ import nullengine.client.asset.source.CompositeAssetSource;
 import nullengine.client.asset.source.FileSystemAssetSource;
 import nullengine.client.game.GameClient;
 import nullengine.client.i18n.LocaleManager;
+import nullengine.client.input.keybinding.KeyBinding;
+import nullengine.client.input.keybinding.KeyBindingManager;
 import nullengine.client.rendering.EngineRenderContext;
 import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.game3d.Game3DRenderer;
@@ -54,6 +56,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     private Disposer disposer;
 
     private GameClient game;
+
+    private KeyBindingManager keyBindingManager;
 
     @Override
     public Side getSide() {
@@ -119,6 +123,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         addShutdownListener(soundManager::dispose);
         assetManager.getReloadDispatcher().addLast("Sound", soundManager::reload);
 
+        logger.info("Initializing internalization!");
         localeManager = LocaleManager.INSTANCE;
         assetManager.getReloadDispatcher().addLast("I18n", () -> {
             localeManager.reset();
@@ -126,6 +131,15 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
                 localeManager.register(mod);
             }
         });
+
+        initRegistration();
+
+        logger.info("Initializing key binding!");
+        var window = renderContext.getWindow();
+        keyBindingManager = new KeyBindingManager(this, registryManager.getRegistry(KeyBinding.class));
+        keyBindingManager.reload();
+        window.addKeyCallback(keyBindingManager::handleKey);
+        window.addMouseCallback(keyBindingManager::handleMouse);
 
         ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), Ticker.CLIENT_TICK);
     }
@@ -145,20 +159,21 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     private void clientTick() {
-        if (isMarkedTermination()) {
-            if (isPlaying()) {
-                game.terminate();
-                game.clientTick();
-            }
-            tryTerminate();
-            return;
-        }
-
         if (isPlaying()) { // TODO: Remove it.
             game.clientTick();
         }
 
-        soundManager.updateListener(renderContext.getCamera()); // TODO: Remove it.
+        // TODO: Remove it.
+        keyBindingManager.tick();
+        soundManager.updateListener(renderContext.getCamera());
+
+        if (isMarkedTermination()) {
+            if (isPlaying()) {
+                game.terminate();
+            } else {
+                tryTerminate();
+            }
+        }
     }
 
     private void tryTerminate() {

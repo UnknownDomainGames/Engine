@@ -2,7 +2,6 @@ package nullengine.game;
 
 import nullengine.Engine;
 import nullengine.event.EventBus;
-import nullengine.registry.RegistryManager;
 import nullengine.world.World;
 import nullengine.world.WorldProvider;
 
@@ -42,7 +41,4 @@ public interface Game {
 
     @Nonnull
     EventBus getEventBus();
-
-    @Nonnull
-    RegistryManager getRegistryManager();
 }

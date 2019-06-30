@@ -7,6 +7,7 @@ import nullengine.block.component.ClickBehavior;
 import nullengine.client.asset.AssetPath;
 import nullengine.client.block.AirBlockRenderer;
 import nullengine.client.event.rendering.EntityRendererRegistrationEvent;
+import nullengine.client.game.GameClient;
 import nullengine.client.gui.Scene;
 import nullengine.client.input.controller.MotionType;
 import nullengine.client.input.keybinding.ActionMode;
@@ -92,23 +93,24 @@ public final class DefaultGameMode {
         // TODO: When separating common and client, only register on client side
         // TODO: almost everything is hardcoded... Fix when GameContext and
         registry.register(
-                KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> c.getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
-                        .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.FORWARD, false)));
+                KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
+                        .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.FORWARD, false)));
         registry.register(
-                KeyBinding.create("player.move.backward", Key.KEY_S, (c) -> c.getEntityController().handleMotion(MotionType.BACKWARD, true), ActionMode.PRESS)
-                        .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.BACKWARD, false)));
-        registry.register(KeyBinding.create("player.move.left", Key.KEY_A, (c) -> c.getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
-                .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.LEFT, false)));
-        registry.register(KeyBinding.create("player.move.right", Key.KEY_D, (c) -> c.getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
-                .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.RIGHT, false)));
-        registry.register(KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> c.getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
-                .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.UP, false)));
+                KeyBinding.create("player.move.backward", Key.KEY_S, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.BACKWARD, true), ActionMode.PRESS)
+                        .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.BACKWARD, false)));
+        registry.register(KeyBinding.create("player.move.left", Key.KEY_A, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
+                .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.LEFT, false)));
+        registry.register(KeyBinding.create("player.move.right", Key.KEY_D, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
+                .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.RIGHT, false)));
+        registry.register(KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
+                .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.UP, false)));
         registry.register(
-                KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> c.getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
-                        .endAction((c, i) -> c.getEntityController().handleMotion(MotionType.DOWN, false)));
-        registry.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (game) -> {
+                KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
+                        .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, false)));
+        registry.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
+            GameClient game = c.getCurrentGame();
             Player player = game.getPlayer();
-            Camera camera = game.getEngine().getRenderContext().getCamera();
+            Camera camera = c.getRenderContext().getCamera();
             Entity controllingEntity = player.getControlledEntity();
             RayTraceBlockHit blockHit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
             if (blockHit.isSuccess()) {
@@ -124,9 +126,10 @@ public final class DefaultGameMode {
             }
 
         }, ActionMode.PRESS));
-        registry.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (game) -> {
+        registry.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (c) -> {
+            GameClient game = c.getCurrentGame();
             Player player = game.getPlayer();
-            Camera camera = game.getEngine().getRenderContext().getCamera();
+            Camera camera = c.getRenderContext().getCamera();
             Entity entity = player.getControlledEntity();
             RayTraceBlockHit hit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
             if (hit.isSuccess()) {
@@ -141,9 +144,10 @@ public final class DefaultGameMode {
                                 }));
             }
         }, ActionMode.PRESS));
-        registry.register(KeyBinding.create("player.mouse.middle", Key.MOUSE_BUTTON_3, (game) -> {
+        registry.register(KeyBinding.create("player.mouse.middle", Key.MOUSE_BUTTON_3, (c) -> {
+            GameClient game = c.getCurrentGame();
             Player player = game.getPlayer();
-            Camera camera = game.getEngine().getRenderContext().getCamera();
+            Camera camera = c.getRenderContext().getCamera();
             Entity entity = player.getControlledEntity();
             player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
                     // TODO: Dont create BlockItem
@@ -151,13 +155,13 @@ public final class DefaultGameMode {
                             .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new BlockItem(hit.getBlock()))))
             );
         }, ActionMode.PRESS));
-        registry.register(KeyBinding.create("game.chat", Key.KEY_T, (game) -> {
-            Scene scene = new Scene(new GuiChat(game));
-            game.getEngine().getRenderContext().getGuiManager().showScreen(scene);
+        registry.register(KeyBinding.create("game.chat", Key.KEY_T, (c) -> {
+            Scene scene = new Scene(new GuiChat(c.getCurrentGame()));
+            c.getRenderContext().getGuiManager().showScreen(scene);
         }, ActionMode.PRESS));
-        registry.register(KeyBinding.create("game.inventory", Key.KEY_E, (game) -> {
-            Scene scene = new Scene(new GuiItemList(game.getEngine().getRenderContext()));
-            game.getEngine().getRenderContext().getGuiManager().showScreen(scene);
+        registry.register(KeyBinding.create("game.inventory", Key.KEY_E, (c) -> {
+            Scene scene = new Scene(new GuiItemList(c.getRenderContext()));
+            c.getRenderContext().getGuiManager().showScreen(scene);
         }, ActionMode.PRESS));
 
         var renderContext = Platform.getEngineClient().getRenderContext();

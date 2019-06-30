@@ -5,8 +5,6 @@ import nullengine.client.EngineClient;
 import nullengine.client.gui.Scene;
 import nullengine.client.input.controller.EntityCameraController;
 import nullengine.client.input.controller.EntityController;
-import nullengine.client.input.keybinding.KeyBinding;
-import nullengine.client.input.keybinding.KeyBindingManager;
 import nullengine.client.rendering.camera.FirstPersonCamera;
 import nullengine.entity.item.ItemEntity;
 import nullengine.event.game.GameTerminationEvent;
@@ -29,7 +27,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     private final EngineClient engineClient;
     private final Player player;
 
-    private KeyBindingManager keyBindingManager;
     private EntityController entityController;
 
     public GameClientStandalone(EngineClient engine, Player player) {
@@ -72,31 +69,9 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         this.entityController = controller;
     }
 
-    public KeyBindingManager getKeyBindingManager() {
-        return keyBindingManager;
-    }
-
     @Override
     protected void constructStage() {
         super.constructStage();
-    }
-
-    @Override
-    protected void registerStage() {
-        super.registerStage();
-
-        var renderContext = engineClient.getRenderContext();
-        var window = renderContext.getWindow();
-
-        logger.info("Loading Client-only stuff!");
-
-        logger.info("Initializing key binding!");
-        keyBindingManager = new KeyBindingManager(this, registryManager.getRegistry(KeyBinding.class));
-        keyBindingManager.reload();
-        window.addKeyCallback(keyBindingManager::handleKey);
-        window.addMouseCallback(keyBindingManager::handleMouse);
-
-        renderContext.setCamera(new FirstPersonCamera(player));
     }
 
     @Override
@@ -117,6 +92,8 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         var world = (WorldCommon) getWorld("default");
         world.playerJoin(player);
         player.getControlledEntity().getPosition().set(0, 5, 0);
+
+        engineClient.getRenderContext().setCamera(new FirstPersonCamera(player));
 
         entityController = new EntityCameraController(player);
         engineClient.getRenderContext().getWindow().addCursorCallback((window, xpos, ypos) -> {
@@ -149,7 +126,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
             tryTerminate();
             return;
         }
-        keyBindingManager.tick();
         // TODO upload particle physics here
     }
 

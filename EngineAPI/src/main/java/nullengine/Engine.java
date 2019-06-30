@@ -3,6 +3,7 @@ package nullengine;
 import nullengine.event.EventBus;
 import nullengine.game.Game;
 import nullengine.mod.ModManager;
+import nullengine.registry.RegistryManager;
 import nullengine.util.RuntimeEnvironment;
 import nullengine.util.Side;
 import org.slf4j.Logger;
@@ -27,6 +28,8 @@ public interface Engine {
     }
 
     EventBus getEventBus();
+
+    RegistryManager getRegistryManager();
 
     ModManager getModManager();
 

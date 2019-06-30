@@ -4,7 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import nullengine.Platform;
-import nullengine.client.game.GameClient;
+import nullengine.client.EngineClient;
 import nullengine.client.rendering.display.Window;
 import nullengine.logic.Tickable;
 import nullengine.registry.Registry;
@@ -21,6 +21,7 @@ import java.util.Set;
  */
 public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
+    private final EngineClient engineClient;
     /**
      * Mappes the key binding index to the KeyBinding objects.
      */
@@ -29,15 +30,14 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
      * KeyBinding Registry
      */
     private final Registry<KeyBinding> registry;
-    private GameClient gameClient;
     /**
      * @Deprecated Not used.
      */
     @Deprecated
     private final Set<Key> pressedKey = new HashSet<>();
 
-    public KeyBindingManager(GameClient gameClient, Registry<KeyBinding> keyBindingRegistry) {
-        this.gameClient = gameClient;
+    public KeyBindingManager(EngineClient engineClient, Registry<KeyBinding> keyBindingRegistry) {
+        this.engineClient = engineClient;
         this.registry = keyBindingRegistry;
     }
 
@@ -155,13 +155,13 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
                     }
                 }
                 if (keyBinding.isActive()) {
-                    keyBinding.onKeyStart(gameClient);
+                    keyBinding.onKeyStart(engineClient);
                 } else {
-                    keyBinding.onKeyEnd(gameClient);
+                    keyBinding.onKeyEnd(engineClient);
                 }
             } else if (keyBinding.isActive()) {
                 // keep key
-                keyBinding.onKeyKeep(gameClient);
+                keyBinding.onKeyKeep(engineClient);
             }
         }
     }

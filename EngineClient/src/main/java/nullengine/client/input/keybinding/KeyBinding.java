@@ -1,5 +1,6 @@
 package nullengine.client.input.keybinding;
 
+import nullengine.client.EngineClient;
 import nullengine.client.game.GameClient;
 import nullengine.registry.RegistryEntry;
 import org.apache.commons.lang3.Validate;
@@ -25,21 +26,21 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
     /**
      * Handles Single press of the key
      */
-    private final Consumer<GameClient> keyStartHandler;
+    private final Consumer<EngineClient> keyStartHandler;
     /**
      * Handles keeping of the key
      */
-    private Optional<BiConsumer<GameClient, Integer>> keepHandler;
+    private Optional<BiConsumer<EngineClient, Integer>> keepHandler;
     /**
      * Handles release of the key
      */
-    private Optional<BiConsumer<GameClient, Integer>> endHandler;
+    private Optional<BiConsumer<EngineClient, Integer>> endHandler;
     /**
      * Time Elapsed while holding the key
      */
     private int timeElapsed;
 
-    private KeyBinding(Key defaultKey, @Nonnull Consumer<GameClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
+    private KeyBinding(Key defaultKey, @Nonnull Consumer<EngineClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
         Validate.notNull(keyStartHandler);
         this.keyStartHandler = keyStartHandler;
         this.key = defaultKey;
@@ -58,7 +59,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      * @param keyMods
      * @return
      */
-    public static KeyBinding create(String target, Key defaultKey, @Nonnull Consumer<GameClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
+    public static KeyBinding create(String target, Key defaultKey, @Nonnull Consumer<EngineClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
         return new KeyBinding(Key.getKeySafe(defaultKey), keyStartHandler, actionMode != null ? actionMode : ActionMode.PRESS, keyMods == null || keyMods.length == 0 ? KeyModifier.EMPTY : keyMods)
                 .registerName(target);
     }
@@ -69,7 +70,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      * @param keepHandler Keep Action
      * @return This KeyBinding
      */
-    public KeyBinding keepAction(BiConsumer<GameClient, Integer> keepHandler) {
+    public KeyBinding keepAction(BiConsumer<EngineClient, Integer> keepHandler) {
         this.keepHandler = Optional.ofNullable(keepHandler);
         return this;
     }
@@ -80,7 +81,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      * @param endHandler End Action
      * @return This KeyBinding
      */
-    public KeyBinding endAction(BiConsumer<GameClient, Integer> endHandler) {
+    public KeyBinding endAction(BiConsumer<EngineClient, Integer> endHandler) {
         this.endHandler = Optional.ofNullable(endHandler);
         return this;
     }
@@ -131,17 +132,17 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
         this.pressed = pressed;
     }
 
-    public void onKeyStart(GameClient context) {
+    public void onKeyStart(EngineClient context) {
         Validate.notNull(keyStartHandler);
         keyStartHandler.accept(context);
     }
 
-    public void onKeyKeep(GameClient context) {
+    public void onKeyKeep(EngineClient context) {
         onKeepable(context, keepHandler);
         timeElapsed++;
     }
 
-    public void onKeyEnd(GameClient context) {
+    public void onKeyEnd(EngineClient context) {
         onKeepable(context, endHandler);
         timeElapsed = 0;
     }
@@ -153,7 +154,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      * @param handler
      * @see #onKeyKeep(GameClient)
      */
-    private void onKeepable(GameClient context, Optional<BiConsumer<GameClient, Integer>> handler) {
+    private void onKeepable(EngineClient context, Optional<BiConsumer<EngineClient, Integer>> handler) {
         handler.ifPresent((handle) -> handle.accept(context, timeElapsed));
     }
 
