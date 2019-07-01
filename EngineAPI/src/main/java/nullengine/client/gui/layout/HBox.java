@@ -20,7 +20,7 @@ public class HBox extends Pane {
             width += component.prefWidth();
         }
         Insets padding = padding().getValue();
-        return padding.getLeft() + width + getChildren().size() == 0 ? 0 : spacing * (getChildren().size() - 1) + padding.getRight();
+        return padding.getLeft() + width + ((getChildren().size() == 0) ? 0 : spacing * (getChildren().size() - 1)) + padding.getRight();
     }
 
     @Override

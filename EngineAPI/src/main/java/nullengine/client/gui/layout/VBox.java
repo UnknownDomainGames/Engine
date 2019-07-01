@@ -29,12 +29,12 @@ public class VBox extends Pane {
 
     @Override
     public float prefHeight() {
-        float y = 0, spacing = spacing().get();
+        float height = 0, spacing = spacing().get();
         for (Component component : getChildren()) {
-            y += component.prefHeight();
+            height += component.prefHeight();
         }
         Insets padding = padding().getValue();
-        return padding.getTop() + y + getChildren().size() == 0 ? 0 : spacing * (getChildren().size() - 1) + padding.getBottom();
+        return padding.getTop() + height + ((getChildren().size() == 0) ? 0 : spacing * (getChildren().size() - 1)) + padding.getBottom();
     }
 
     @Override
