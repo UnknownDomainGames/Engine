@@ -32,6 +32,8 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -97,11 +99,20 @@ public class ChunkRenderer {
 
         handleUploadTask();
 
-        for (ChunkMesh chunkMesh : loadedChunkMeshes.values()) {
-            if (chunkMesh != null && context.getFrustumIntersection().testAab(chunkMesh.getChunk().getMin(), chunkMesh.getChunk().getMax())) {
-                chunkMesh.render();
+        var faillist = new ArrayList<Long>();
+        for (Map.Entry<Long, ChunkMesh> entry : loadedChunkMeshes.entrySet()) {
+            var chunkMesh = entry.getValue();
+            if (chunkMesh != null) {
+                if (context.getFrustumIntersection().testAab(chunkMesh.getChunk().getMin(), chunkMesh.getChunk().getMax())) {
+                    chunkMesh.render();
+                }
+            }
+            else{
+                faillist.add(entry.getKey());
             }
         }
+
+        context.getEngine().getCurrentGame().getWorld().getLoadedChunks().parallelStream().filter(chunk->faillist.contains(getChunkIndex(chunk))).forEach(this::initChunkMesh);
 //        ShaderProgram assimpShader = this.assimpShader.getValue();
 //        ShaderManager.INSTANCE.bindShader(assimpShader);
 //        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().rotate((float)-Math.PI / 2, 1,0,0).setTranslation(0,5,0));
