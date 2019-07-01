@@ -1,6 +1,7 @@
 package nullengine.math;
 
 import nullengine.logic.Tickable;
+import java.util.concurrent.*;
 
 public class Ticker implements Runnable {
 
@@ -53,6 +54,15 @@ public class Ticker implements Runnable {
             if (!stopped) {
                 dynamic.tick((float) (lag / tickPerSecond));
             }
+        }
+    }
+    //Do you want to remove Tickable?Runnable should do this
+    public static class DefaultTicker{
+        public static int TICK_LENGTH=50;
+        private static int cpus= Runtime.getRuntime().availableProcessors();
+        private static Executor executor= Executors.newScheduledThreadPool(cpus, Executors.defaultThreadFactory());
+        public static void executeTick(Runnable runnable){
+            ((ScheduledThreadPoolExecutor)executor).scheduleAtFixedRate(runnable, 0, TICK_LENGTH, TimeUnit.MILLISECONDS);
         }
     }
 }

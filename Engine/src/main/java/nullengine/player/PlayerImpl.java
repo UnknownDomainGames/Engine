@@ -1,5 +1,6 @@
 package nullengine.player;
 
+import nullengine.container.PlayerContainer;
 import nullengine.entity.Entity;
 import nullengine.world.World;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -7,6 +8,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public class PlayerImpl implements Player {
 
     private final Profile profile;
+    private final PlayerContainer playerContainer=new PlayerContainer();
 
     private Entity controlledEntity;
 

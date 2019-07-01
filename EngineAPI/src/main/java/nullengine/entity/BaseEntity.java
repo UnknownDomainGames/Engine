@@ -2,6 +2,7 @@ package nullengine.entity;
 
 import nullengine.component.Component;
 import nullengine.component.ComponentContainer;
+import nullengine.event.world.entity.EntityEvent;
 import nullengine.world.World;
 import org.joml.AABBd;
 import org.joml.Vector3d;
@@ -70,6 +71,10 @@ public abstract class BaseEntity implements Entity {
 
     @Override
     public void destroy() {
+    }
+
+    public void onDeath(Object source){
+
     }
 
     @Override

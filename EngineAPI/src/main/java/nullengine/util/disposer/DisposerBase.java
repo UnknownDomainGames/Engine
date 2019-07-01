@@ -11,11 +11,11 @@ public abstract class DisposerBase implements Disposer, Runnable {
         this.queue = new ReferenceQueue<>();
     }
 
-    public Disposable register(Object obj, Runnable action) {
+    public DisposablePhantomReference register(Object obj, Runnable action) {
         return new DisposablePhantomReference(obj, queue, action);
     }
 
-    public static class DisposablePhantomReference extends PhantomReference implements Disposable {
+    public static class DisposablePhantomReference extends PhantomReference{
 
         private final Runnable action;
 
@@ -26,14 +26,12 @@ public abstract class DisposerBase implements Disposer, Runnable {
             this.action = action;
         }
 
-        @Override
-        public void dispose() {
+        public void close() {
             disposed = true;
             action.run();
         }
 
-        @Override
-        public boolean isDisposed() {
+        public boolean isClosed() {
             return disposed;
         }
     }

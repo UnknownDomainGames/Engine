@@ -37,6 +37,7 @@ subprojects {
     version '1.0.0'
 
     sourceCompatibility = targetCompatibility = 11
+    //sourceCompatibility = targetCompatibility = 8 (for Graal VM) 
 
     repositories {
         mavenLocal()

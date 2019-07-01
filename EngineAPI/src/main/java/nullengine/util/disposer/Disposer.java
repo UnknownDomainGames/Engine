@@ -1,6 +1,8 @@
 package nullengine.util.disposer;
 
+import java.lang.ref.Reference;
+
 public interface Disposer {
 
-    Disposable register(Object obj, Runnable action);
+    Reference register(Object obj, Runnable action);
 }

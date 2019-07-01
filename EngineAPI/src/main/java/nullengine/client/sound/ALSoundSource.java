@@ -1,6 +1,5 @@
 package nullengine.client.sound;
 
-import nullengine.util.disposer.Disposable;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -9,7 +8,7 @@ import java.nio.FloatBuffer;
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.system.MemoryStack.*;
 
-public class ALSoundSource implements Disposable {
+public class ALSoundSource{
 
     private int sourceId = 0;
     private boolean loop;
@@ -118,7 +117,7 @@ public class ALSoundSource implements Disposable {
         return this;
     }
 
-    public void dispose() {
+    public void close() {
         if (sourceId != 0) {
             stop();
             alDeleteSources(sourceId);
@@ -126,8 +125,7 @@ public class ALSoundSource implements Disposable {
         }
     }
 
-    @Override
-    public boolean isDisposed() {
+    public boolean isClosed() {
         return sourceId == 0;
     }
 }

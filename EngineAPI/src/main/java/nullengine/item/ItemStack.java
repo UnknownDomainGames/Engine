@@ -55,4 +55,9 @@ public final class ItemStack {
             consumer.accept(this);
         }
     }
+
+    //amount can be less than 0
+    public void changeAmount(int change){
+        amount+=change;
+    }
 }

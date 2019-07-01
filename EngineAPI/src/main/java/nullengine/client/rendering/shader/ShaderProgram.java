@@ -1,7 +1,6 @@
 package nullengine.client.rendering.shader;
 
 import nullengine.Platform;
-import nullengine.util.disposer.Disposable;
 import org.joml.*;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -13,7 +12,7 @@ import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
 import static org.lwjgl.opengl.GL20.GL_VALIDATE_STATUS;
 
-public class ShaderProgram implements Disposable {
+public class ShaderProgram{
 
     protected int programId = -1;
 
@@ -116,7 +115,7 @@ public class ShaderProgram implements Disposable {
         for (Shader shader : shaders)
             shader.deleteShader();
 
-        unuse();
+        //unuse();
     }
 
     void use() {
@@ -140,16 +139,14 @@ public class ShaderProgram implements Disposable {
         return GL20.glGetAttribLocation(programId, name);
     }
 
-    @Override
-    public void dispose() {
-        unuse();
+    public void close() {
+        //unuse();
 
         GL20.glDeleteProgram(programId);
         programId = -1;
     }
 
-    @Override
-    public boolean isDisposed() {
+    public boolean isClosed() {
         return programId == -1;
     }
 

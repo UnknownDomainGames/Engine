@@ -1,7 +1,6 @@
 package nullengine.client.rendering.util;
 
 import nullengine.client.rendering.util.buffer.GLBuffer;
-import nullengine.util.disposer.Disposable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
@@ -11,7 +10,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 // TODO: Don't use GL_STATIC_DRAW
-public class VertexBufferObject implements Disposable {
+public class VertexBufferObject{
     private int vaoId = -1;
     private int id = -1;
     private int eleid = -1;
@@ -93,8 +92,7 @@ public class VertexBufferObject implements Disposable {
         unbind();
     }
 
-    @Override
-    public void dispose() {
+    public void close() {
         if (id != -1) {
             GL15.glDeleteBuffers(id);
             id = -1;
@@ -105,8 +103,7 @@ public class VertexBufferObject implements Disposable {
         }
     }
 
-    @Override
-    public boolean isDisposed() {
+    public boolean isClosed() {
         return id == -1;
     }
 }

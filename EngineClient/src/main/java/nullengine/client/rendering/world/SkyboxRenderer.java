@@ -20,7 +20,7 @@ public class SkyboxRenderer {
 
     public void init(RenderContext context){
         this.context = context;
-        worldShader = ShaderManager.INSTANCE.getShader("world_shader");
+        worldShader = ShaderManager.getShader("world_shader");
         texsky = context.getTextureManager().getTextureDirect(AssetPath.of("engine","texture", "misc","skybox.png"));
         glMesh = GLMesh.of(new Mesh(
                 new float[]{
@@ -97,7 +97,7 @@ public class SkyboxRenderer {
 
     public void render(float partial){
         ShaderProgram program = worldShader.getValue();
-        ShaderManager.INSTANCE.bindShader(program);
+        ShaderManager.bindShader(program);
         texsky.bind();
         program.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         program.setUniform("u_ProjMatrix", context.getWindow().projection());

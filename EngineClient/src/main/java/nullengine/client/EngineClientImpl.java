@@ -112,7 +112,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             }
         });
         addShutdownListener(renderContext::dispose);
-        assetManager.getReloadDispatcher().addLast("Shader", ShaderManager.INSTANCE::reload);
+        assetManager.getReloadDispatcher().addLast("Shader", ShaderManager::reload);
         assetManager.getReloadDispatcher().addLast("Texture", () -> renderContext.getTextureManager().reload());
 
         assetManager.register(VoxelModel.class, "VoxelModel", new VoxelModelManager(this));
@@ -120,7 +120,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         logger.info("Initializing audio context!");
         soundManager = new EngineSoundManager();
         soundManager.init();
-        addShutdownListener(soundManager::dispose);
+        //addShutdownListener(soundManager::dispose;
         assetManager.getReloadDispatcher().addLast("Sound", soundManager::reload);
 
         logger.info("Initializing internalization!");

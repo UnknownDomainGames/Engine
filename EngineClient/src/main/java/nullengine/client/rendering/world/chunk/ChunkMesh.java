@@ -2,14 +2,13 @@ package nullengine.client.rendering.world.chunk;
 
 import nullengine.client.rendering.shader.ShaderProgram;
 import nullengine.client.rendering.util.VertexBufferObject;
-import nullengine.util.disposer.Disposable;
 import nullengine.world.chunk.Chunk;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ChunkMesh implements Disposable {
+public class ChunkMesh{
 
     private AtomicInteger changeCount = new AtomicInteger(0);
 
@@ -68,18 +67,17 @@ public class ChunkMesh implements Disposable {
         changeCount.set(0);
     }
 
-    @Override
-    public void dispose() {
+    public void close() {
         if (disposed) {
             return;
         }
 
         disposed = true;
 
-        chunkSolidVbo.dispose();
+        chunkSolidVbo.close();
     }
 
-    public boolean isDisposed() {
+    public boolean isClosed() {
         return disposed;
     }
 }

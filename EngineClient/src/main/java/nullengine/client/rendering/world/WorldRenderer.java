@@ -58,7 +58,7 @@ public class WorldRenderer {
 
 //        context.getGame().getContext().register(chunkRenderer);
         worldShader =
-                ShaderManager.INSTANCE.registerShader("world_shader",
+                ShaderManager.registerShader("world_shader",
                         new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "world.vert"))
                                 .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "world.frag")));
         skyboxRenderer.init(context);
@@ -70,13 +70,13 @@ public class WorldRenderer {
         frameBufferMultisampled.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
         frameBuffer.check();
         frameBufferMultisampled.check();
-        frameBufferSP = ShaderManager.INSTANCE.registerShader("frame_buffer_shader",
+        frameBufferSP = ShaderManager.registerShader("frame_buffer_shader",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "framebuffer.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "framebuffer.frag")));
         //TODO init Client shader in a formal way
         frameBufferShadow = new FrameBufferShadow();
         frameBufferShadow.createFrameBuffer();
-        shadowShader = ShaderManager.INSTANCE.registerShader("shadow_shader",
+        shadowShader = ShaderManager.registerShader("shadow_shader",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "shadow.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "shadow.frag")));
     }
@@ -86,7 +86,7 @@ public class WorldRenderer {
         GL11.glViewport(0, 0, FrameBufferShadow.SHADOW_WIDTH, FrameBufferShadow.SHADOW_HEIGHT);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         ShaderProgram shadowShader = this.shadowShader.getValue();
-        ShaderManager.INSTANCE.bindShaderOverriding(shadowShader);
+        ShaderManager.bindShaderOverriding(shadowShader);
         var lightProj = new Matrix4f().ortho(-10f * 2, 10f * 2, -10f * 2, 10f * 2, 1.0f / 2, 7.5f * 2);
 
         var lightView = new Matrix4f().lookAt(new Vector3f(-0.15f, -1f, -0.35f).negate().mul(8).add(0, 5, 0), new Vector3f(0, 5, 0), new Vector3f(0, 1, 0));
@@ -94,13 +94,13 @@ public class WorldRenderer {
         var lightSpaceMat = new Matrix4f();
         lightProj.mul(lightView, lightSpaceMat);
 
-        ShaderManager.INSTANCE.setUniform("u_LightSpace", lightSpaceMat);
-        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
+        ShaderManager.setUniform("u_LightSpace", lightSpaceMat);
+        ShaderManager.setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
         GL11.glCullFace(GL_FRONT);
         chunkRenderer.render();
         GL11.glCullFace(GL_BACK);
 
-        ShaderManager.INSTANCE.unbindOverriding();
+        ShaderManager.unbindOverriding();
         frameBufferShadow.unbind();
 
         GL11.glViewport(0, 0, context.getWindow().getWidth(), context.getWindow().getHeight());
@@ -110,23 +110,23 @@ public class WorldRenderer {
         glEnable(GL_DEPTH_TEST);
 
         // TODO: Remove it
-        ShaderManager.INSTANCE.bindShader("chunk_solid");
-        ShaderProgram chunkSolidShader = ShaderManager.INSTANCE.getShader("chunk_solid").getValue();
+        ShaderManager.bindShader("chunk_solid");
+        ShaderProgram chunkSolidShader = ShaderManager.getShader("chunk_solid").getValue();
         if (chunkSolidShader != null) {
-            ShaderManager.INSTANCE.setUniform("u_LightSpace", lightSpaceMat);
-            ShaderManager.INSTANCE.setUniform("u_ShadowMap", 8);
+            ShaderManager.setUniform("u_LightSpace", lightSpaceMat);
+            ShaderManager.setUniform("u_ShadowMap", 8);
         }
         GL15.glActiveTexture(GL13.GL_TEXTURE8);
         GL11.glBindTexture(GL_TEXTURE_2D, frameBufferShadow.getDstexid());
         GL15.glActiveTexture(GL13.GL_TEXTURE0);
         chunkRenderer.render();
 
-        ShaderManager.INSTANCE.bindShader(worldShader.getValue());
+        ShaderManager.bindShader(worldShader.getValue());
 
-        ShaderManager.INSTANCE.setUniform("u_ProjMatrix", context.getWindow().projection());
-        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
+        ShaderManager.setUniform("u_ProjMatrix", context.getWindow().projection());
+        ShaderManager.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
 
-        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
+        ShaderManager.setUniform("u_ModelMatrix", new Matrix4f());
 
         // TODO: Support shadow and light. Move it.
         world.getValue().getEntities().forEach(entity -> entityRenderManager.render(entity, partial));
@@ -134,9 +134,8 @@ public class WorldRenderer {
         glEnable(GL11.GL_DEPTH_TEST);
         glEnable(GL11.GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        ShaderManager.setUniform("u_ModelMatrix", new Matrix4f());
 
-        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
-        //skyboxRenderer.render(partial);
         // TODO: Remove it
         context.getTextureManager().getWhiteTexture().bind();
         Tessellator tessellator = Tessellator.getInstance();
@@ -157,7 +156,7 @@ public class WorldRenderer {
         frameBuffer.blitFrom(frameBufferMultisampled);
         defaultFBO.bind();
         glClear(GL_COLOR_BUFFER_BIT);
-        ShaderManager.INSTANCE.bindShader(frameBufferSP.getValue());
+        ShaderManager.bindShader(frameBufferSP.getValue());
         glDisable(GL_DEPTH_TEST);
         defaultFBO.drawFrameBuffer(frameBuffer);
 
@@ -175,8 +174,8 @@ public class WorldRenderer {
         blockSelectionRenderer.dispose();
         entityRenderManager.dispose();
 
-        ShaderManager.INSTANCE.unregisterShader("world_shader");
-        ShaderManager.INSTANCE.unregisterShader("frame_buffer_shader");
-        ShaderManager.INSTANCE.unregisterShader("shadow_shader");
+        ShaderManager.unregisterShader("world_shader");
+        ShaderManager.unregisterShader("frame_buffer_shader");
+        ShaderManager.unregisterShader("shadow_shader");
     }
 }

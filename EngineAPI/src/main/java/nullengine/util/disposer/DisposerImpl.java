@@ -9,7 +9,7 @@ public class DisposerImpl extends DisposerBase {
                 if (reference == null) {
                     break;
                 }
-                reference.dispose();
+                reference.close();
                 reference.clear();
             } catch (InterruptedException ignored) {
             }

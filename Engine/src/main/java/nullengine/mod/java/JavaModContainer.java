@@ -9,7 +9,10 @@ import nullengine.mod.ModMetadata;
 import nullengine.util.versioning.Version;
 import org.slf4j.Logger;
 
+import javax.net.ssl.X509KeyManager;
 import java.nio.file.Path;
+import java.security.PublicKey;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.Collection;
 
 public class JavaModContainer implements ModContainer {

@@ -148,23 +148,7 @@ public class EngineSoundManager implements ALSoundManager {
         }
     }
 
-    @Override
-    public void dispose() {
-        soundSourceMap.forEach((k, v) -> v.ifPresent(ALSoundSource::dispose));
-        soundMap.forEach((k, v) -> v.ifPresent(ALSound::dispose));
-        listener = null;
-        if (context != 0) {
-            alcDestroyContext(context);
-            context = 0;
-        }
-        if (device != 0) {
-            alcCloseDevice(device);
-            device = 0;
-        }
-    }
-
-    @Override
-    public boolean isDisposed() {
+    public boolean isClosed() {
         return context == 0;
     }
 }

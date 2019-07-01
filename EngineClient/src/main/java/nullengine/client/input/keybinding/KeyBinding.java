@@ -89,7 +89,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
     /**
      * Get the registered name of the key binding
      *
-     * @Deprecated Use {@link RegistryEntry.getUniqueName()} directly
+     * @Deprecated Use {@link //RegistryEntry.getUniqueName()} directly
      */
     @Deprecated
     public String getTarget() {
@@ -152,7 +152,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      *
      * @param context
      * @param handler
-     * @see #onKeyKeep(GameClient)
+     //* @see #onKeyKeep(GameClient)
      */
     private void onKeepable(EngineClient context, Optional<BiConsumer<EngineClient, Integer>> handler) {
         handler.ifPresent((handle) -> handle.accept(context, timeElapsed));

@@ -22,8 +22,9 @@ public class EntityItemRenderer implements EntityRenderer<ItemEntity> {
 
     @Override
     public void render(ItemEntity entity, double x, double y, double z, float partial) {
-        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f()
-                .translate((float) x, (float) y + .5f, (float) z)
+        ShaderManager.setUniform("u_ModelMatrix", new Matrix4f()
+                .translate((float) x, (float) y + .5f - .5f * (float) Math.sin(Math.toRadians((entity.getWorld().getGameTick() + partial) * 10)), (float) z)
+
                 .scale(1f / 3, 1f / 3, 1f / 3)
                 .rotateY(((int) entity.getWorld().getGameTick() % 360000) / 20f));
 

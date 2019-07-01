@@ -94,7 +94,7 @@ public class AssimpModel {
     public void render() {
         //GLBufferFormats.POSITION_TEXTURE_NORMAL.bind();
         GL30.glBindVertexArray(vaoid);
-        ShaderManager.INSTANCE.setUniform("useDirectUV", false);
+        ShaderManager.setUniform("useDirectUV", false);
         for (AssimpMesh mesh : meshes.values()) {
             GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getVertexBufferId());
             GL30.glVertexAttribPointer(0, 3, GLDataType.FLOAT.glId, false, 0, 0);
@@ -128,7 +128,7 @@ public class AssimpModel {
             var mat = materials.get(mesh.getRawMesh().mMaterialIndex());
             mat.getEngineMaterial().bind("material");
 
-            ShaderManager.INSTANCE.setUniform("u_Bones", currentAnimation.getCurrentFrame().getJointMatrices());
+            ShaderManager.setUniform("u_Bones", currentAnimation.getCurrentFrame().getJointMatrices());
 
             GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, mesh.getElementArrayBufferId());
             GL30.glDrawElements(GL11.GL_TRIANGLES, mesh.getElementCount(), GLDataType.UNSIGNED_INT.glId, 0);

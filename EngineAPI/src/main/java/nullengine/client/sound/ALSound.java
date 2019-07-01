@@ -1,7 +1,6 @@
 package nullengine.client.sound;
 
 import nullengine.Platform;
-import nullengine.util.disposer.Disposable;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -11,7 +10,7 @@ import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_memory;
 import static org.lwjgl.system.MemoryStack.*;
 
-public class ALSound implements Disposable {
+public class ALSound{
 
     private int soundId = 0;
     private int channel;
@@ -78,10 +77,10 @@ public class ALSound implements Disposable {
                 break;
             case AL_INVALID_ENUM:
                 Platform.getLogger().warn("Cannot load sound! (Invalid enum) bit depth: {} channel: {}", bitDepth, channel);
-                dispose();
+                close();
             case AL_OUT_OF_MEMORY:
                 Platform.getLogger().warn("Cannot load sound! (Out of memory)!");
-                dispose();
+                close();
         }
     }
 
@@ -101,15 +100,14 @@ public class ALSound implements Disposable {
         return rate;
     }
 
-    public void dispose() {
+    public void close() {
         if (soundId != 0) {
             alDeleteBuffers(soundId);
             soundId = 0;
         }
     }
 
-    @Override
-    public boolean isDisposed() {
+    public boolean isClosed() {
         return soundId == 0;
     }
 }
