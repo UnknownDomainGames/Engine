@@ -90,7 +90,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         provider.setChunkGenerator(new ChunkGeneratorFlat(new ChunkGeneratorFlat.Setting().setLayers(new Block[]{Blocks.DIRT, Blocks.DIRT, Blocks.DIRT, Blocks.DIRT, Blocks.GRASS})));
         spawnWorld(provider, "default");
         var world = (WorldCommon) getWorld("default");
-        world.playerJoin(player);
+        world.onPlayerJoin(player);
         player.getControlledEntity().getPosition().set(0, 5, 0);
 
         engineClient.getRenderContext().setCamera(new FirstPersonCamera(player));

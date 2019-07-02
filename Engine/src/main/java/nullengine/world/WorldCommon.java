@@ -25,11 +25,13 @@ import nullengine.world.collision.WorldCollisionManager;
 import nullengine.world.collision.WorldCollisionManagerImpl;
 import nullengine.world.gen.ChunkGenerator;
 import nullengine.world.storage.WorldCommonLoader;
+import org.apache.commons.lang3.Validate;
 import org.joml.AABBd;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 import unknowndomaingame.foundation.init.Blocks;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,11 +73,11 @@ public class WorldCommon implements World, Runnable {
         entityList.add(entity);
     }
 
-    @Deprecated
-    public void playerJoin(Player player) {
-        // FIXME:
+
+    public void onPlayerJoin(@Nonnull Player player) {
+        Player player1=Validate.notNull(player);
         var entity = new PlayerEntity(entityList.size(), this);
-        player.controlEntity(entity);
+        player1.controlEntity(entity);
         spawnEntity(entity);
         players.add(player);
     }
