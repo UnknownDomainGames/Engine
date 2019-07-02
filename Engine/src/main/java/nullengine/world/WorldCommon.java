@@ -31,7 +31,6 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 import unknowndomaingame.foundation.init.Blocks;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collection;

@@ -29,13 +29,13 @@ public abstract class GameBase implements Game {
     }
 
     /**
-     * Construct stage, collect mod and resource according to it option
+     * Construct stage, collect mod and nullengine.resource according to it option
      */
     protected void constructStage() {
     }
 
     /**
-     * let mod and resource related module load resources.
+     * let mod and nullengine.resource related module load resources.
      */
     protected void resourceStage() {
 
@@ -95,5 +95,5 @@ public abstract class GameBase implements Game {
         return terminated;
     }
 
-    // TODO: unload mod/resource
+    // TODO: unload mod/nullengine.resource
 }
