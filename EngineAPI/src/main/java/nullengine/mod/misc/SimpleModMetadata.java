@@ -44,56 +44,68 @@ public class SimpleModMetadata implements ModMetadata {
     }
 
     @Nonnull
+    @Override
     public String getId() {
         return id;
     }
 
     @Nonnull
+    @Override
     public Version getVersion() {
         return version;
     }
 
+    @Override
     public String getMainClass() {
         return mainClass;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public String getLicense() {
         return license;
     }
 
+    @Override
     public String getUrl() {
         return url;
     }
 
+    @Override
     public List<String> getAuthors() {
         return authors;
     }
 
     @Override
     public List<String> getPermissions() {
-        return null;
+        return permissions;
     }
 
+    @Override
     public String getLogoFile() {
         return logo;
     }
 
+    @Override
     public List<ModDependencyItem> getDependencies() {
         return dependencies;
     }
 
+    @Override
     public Map<String, JsonElement> getProperties() {
         return properties;
     }
 
+    @Override
     public Optional<JsonElement> getProperty(String key) {
         return Optional.ofNullable(properties.get(key));
     }
