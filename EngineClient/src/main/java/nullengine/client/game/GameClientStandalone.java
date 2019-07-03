@@ -1,6 +1,5 @@
 package nullengine.client.game;
 
-import io.netty.bootstrap.Bootstrap;
 import nullengine.block.Block;
 import nullengine.client.EngineClient;
 import nullengine.client.gui.Scene;
@@ -22,7 +21,6 @@ import unknowndomaingame.foundation.init.Blocks;
 import unknowndomaingame.foundation.init.Items;
 
 import javax.annotation.Nonnull;
-import java.net.InetSocketAddress;
 
 public class GameClientStandalone extends GameServerFullAsync implements GameClient {
 
@@ -30,17 +28,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     private final Player player;
 
     private EntityController entityController;
-    private Bootstrap bootstrap=new Bootstrap();
-    private InetSocketAddress address;
-
-    @Override
-    public void init() {
-        if(!address.getHostName().equals("127.0.0.1"))
-            bootstrap.connect(address);
-    }
-    public InetSocketAddress getServerAddress(GameClientStandalone client){
-        return address;
-    }
 
     public GameClientStandalone(EngineClient engine, Player player) {
         super(engine);
@@ -90,6 +77,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     @Override
     protected void resourceStage() {
         super.resourceStage();
+
         engineClient.getAssetManager().reload();
     }
 
@@ -99,8 +87,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
         // TODO: Remove it
         WorldCommonProvider provider = new WorldCommonProvider();
-        provider.setChunkGenerator(new ChunkGeneratorFlat(new ChunkGeneratorFlat.Setting().setLayers
-            (new Block[]{Blocks.DIRT, Blocks.DIRT, Blocks.DIRT, Blocks.DIRT, Blocks.GRASS})));
+        provider.setChunkGenerator(new ChunkGeneratorFlat(new ChunkGeneratorFlat.Setting().setLayers(new Block[]{Blocks.DIRT, Blocks.DIRT, Blocks.DIRT, Blocks.DIRT, Blocks.GRASS})));
         spawnWorld(provider, "default");
         var world = (WorldCommon) getWorld("default");
         world.onPlayerJoin(player);
@@ -115,8 +102,23 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
         super.finishStage();
         logger.info("Game Ready!");
+
+        // TODO: Remove it
+//        Random random = new Random();
+//        for (int x = -16; x < 16; x++) {
+//            for (int z = -16; z < 16; z++) {
+//                for (int top = 3, y = top; y >= 0; y--) {
+//                    world.setBlock(BlockPos.of(x, y, z), y == top ? Blocks.GRASS : Blocks.DIRT, null);
+//                }
+//            }
+//        }
+
         world.spawnEntity(new ItemEntity(world.getEntities().size(), world, new Vector3d(0, 5, 0), new ItemStack(Items.DIRT)));
         engineClient.getRenderContext().getGuiManager().showHud("game-hud", new Scene(new HUDGame()));
+//        a = Platform.getEngineClient().getSoundManager().createSoundSource("test sound").position(25,5,0).gain(1.0f).speed(dir);
+//        a.setLoop(true);
+//        a.assignSound(sound);
+//        a.play();
     }
 
     public void clientTick() {

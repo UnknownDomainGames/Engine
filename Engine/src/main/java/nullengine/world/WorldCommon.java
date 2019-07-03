@@ -255,93 +255,91 @@ public class WorldCommon implements World, Runnable {
 
     static class PhysicsSystem {
         public void tick(World world) {
-			List<Entity> entityList = world.getEntities();
-			for (Entity entity : entityList) {
-				//Vector3f motion = entity.getMotion();
-				//if (motion.x == 0 && motion.y == 0 && motion.z == 0)
-					//continue;
-				Vector3f direction = new Vector3f();
-				Vector3d position = entity.getPosition();
-				AABBd box = entity.getBoundingBox();
-				if (box == null)
-				    continue;
-				else setBoxXYZ(world,box,position,direction);
-			}
-		}
-		public void setBoxXYZ (World world,AABBd box,Vector3d position,Vector3f direction){
-			BlockPos localPos = BlockPos.of(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
-				((int) Math.floor(position.z)));
-			//                 int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
-			//                 directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
-			//                 directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
-			AABBd entityBox = AABBs.translate(box, position.add(direction, new Vector3d()), new AABBd());
-			List<BlockPos>[] around = AABBs.around(entityBox, direction);
-			for (List<BlockPos> ls : around) {
-				ls.add(localPos);
-			}
-			List<BlockPos> faceX = around[0], faceY = around[1], faceZ = around[2];
+            List<Entity> entityList = world.getEntities();
+            for (Entity entity : entityList) {
+                Vector3f motion = entity.getMotion();
+                if (motion.x == 0 && motion.y == 0 && motion.z == 0)
+                    continue;
+                Vector3f direction = new Vector3f(motion);
+                Vector3d position = entity.getPosition();
+                AABBd box = entity.getBoundingBox();
+                if (box == null)
+                    continue;
 
-			double xFix = Integer.MAX_VALUE, yFix = Integer.MAX_VALUE, zFix = Integer.MAX_VALUE;
-			if (faceX.size() != 0) {
-				for (BlockPos pos : faceX) {
-					Block block = world.getBlock(pos);
-					AABBd[] blockBoxes = block.getShape().getBoundingBoxes(world, pos, block);
-					if (blockBoxes.length != 0)
-						for (AABBd blockBoxLocal : blockBoxes) {
-							AABBd blockBox = AABBs.translate(blockBoxLocal,
-								new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
-							if (blockBox.testAABB(entityBox)) {
-								xFix = Math.min(xFix, Math.min(Math.abs(blockBox.maxX - entityBox.minX),
-									Math.abs(blockBox.minX - entityBox.maxX)));
-							}
-						}
-				}
-			}
-			if (faceY.size() != 0) {
-				for (BlockPos pos : faceY) {
-					Block block = world.getBlock(pos);
-					AABBd[] blockBoxes = block.getShape()
-						.getBoundingBoxes(world, pos, block);
-					if (blockBoxes.length != 0)
-						for (AABBd blockBox : blockBoxes) {
-							AABBd translated = AABBs.translate(blockBox,
-								new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
-							if (translated.testAABB(entityBox)) {
-								yFix = Math.min(yFix, Math.min(Math.abs(translated.maxY - entityBox.minY),
-									Math.abs(translated.minY - entityBox.maxY)));
-							}
-						}
-				}
-			}
-			if (faceZ.size() != 0) {
-				for (BlockPos pos : faceZ) {
-					Block block = world.getBlock(pos);
-					AABBd[] blockBoxes = block.getShape()
-						.getBoundingBoxes(world, pos, block);
-					if (blockBoxes.length != 0)
-						for (AABBd blockBox : blockBoxes) {
-							AABBd translated = AABBs.translate(blockBox,
-								new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
-							if (translated.testAABB(entityBox)) {
-								zFix = Math.min(zFix, Math.min(Math.abs(translated.maxZ - entityBox.minZ),
-									Math.abs(translated.minZ - entityBox.maxZ)));
-							}
-						}
-				}
-			}
-			if (Integer.MAX_VALUE != xFix)
-				direction.x = 0;
-			if (Integer.MAX_VALUE != yFix)
-				direction.y = 0;
-			if (Integer.MAX_VALUE != zFix) {
-				direction.z = 0;
-			}
+                BlockPos localPos = BlockPos.of(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
+                        ((int) Math.floor(position.z)));
 
-			// if (motion.y > 0) motion.y -= 0.01f;
-			// else if (motion.y < 0) motion.y += 0.01f;
-			// if (Math.abs(motion.y) <= 0.01f) motion.y = 0; // physics update
-				}
-			}
-		}
-    
+//                 int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
+//                 directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
+//                 directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
 
+                AABBd entityBox = AABBs.translate(box, position.add(direction, new Vector3d()), new AABBd());
+                List<BlockPos>[] around = AABBs.around(entityBox, motion);
+                for (List<BlockPos> ls : around) {
+                    ls.add(localPos);
+                }
+                List<BlockPos> faceX = around[0], faceY = around[1], faceZ = around[2];
+
+                double xFix = Integer.MAX_VALUE, yFix = Integer.MAX_VALUE, zFix = Integer.MAX_VALUE;
+                if (faceX.size() != 0) {
+                    for (BlockPos pos : faceX) {
+                        Block block = world.getBlock(pos);
+                        AABBd[] blockBoxes = block.getShape().getBoundingBoxes(world, pos, block);
+                        if (blockBoxes.length != 0)
+                            for (AABBd blockBoxLocal : blockBoxes) {
+                                AABBd blockBox = AABBs.translate(blockBoxLocal,
+                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
+                                if (blockBox.testAABB(entityBox)) {
+                                    xFix = Math.min(xFix, Math.min(Math.abs(blockBox.maxX - entityBox.minX),
+                                            Math.abs(blockBox.minX - entityBox.maxX)));
+                                }
+                            }
+                    }
+                }
+                if (faceY.size() != 0) {
+                    for (BlockPos pos : faceY) {
+                        Block block = world.getBlock(pos);
+                        AABBd[] blockBoxes = block.getShape()
+                                .getBoundingBoxes(world, pos, block);
+                        if (blockBoxes.length != 0)
+                            for (AABBd blockBox : blockBoxes) {
+                                AABBd translated = AABBs.translate(blockBox,
+                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
+                                if (translated.testAABB(entityBox)) {
+                                    yFix = Math.min(yFix, Math.min(Math.abs(translated.maxY - entityBox.minY),
+                                            Math.abs(translated.minY - entityBox.maxY)));
+                                }
+                            }
+                    }
+                }
+                if (faceZ.size() != 0) {
+                    for (BlockPos pos : faceZ) {
+                        Block block = world.getBlock(pos);
+                        AABBd[] blockBoxes = block.getShape()
+                                .getBoundingBoxes(world, pos, block);
+                        if (blockBoxes.length != 0)
+                            for (AABBd blockBox : blockBoxes) {
+                                AABBd translated = AABBs.translate(blockBox,
+                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
+                                if (translated.testAABB(entityBox)) {
+                                    zFix = Math.min(zFix, Math.min(Math.abs(translated.maxZ - entityBox.minZ),
+                                            Math.abs(translated.minZ - entityBox.maxZ)));
+                                }
+                            }
+                    }
+                }
+                if (Integer.MAX_VALUE != xFix)
+                    motion.x = 0;
+                if (Integer.MAX_VALUE != yFix)
+                    motion.y = 0;
+                if (Integer.MAX_VALUE != zFix) {
+                    motion.z = 0;
+                }
+
+                // if (motion.y > 0) motion.y -= 0.01f;
+                // else if (motion.y < 0) motion.y += 0.01f;
+                // if (Math.abs(motion.y) <= 0.01f) motion.y = 0; // physics update
+            }
+        }
+    }
+}
