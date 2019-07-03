@@ -58,11 +58,15 @@ public class ModMetadataFinder {
             throw new InvalidModMetadataException(sources);
         }
 
-        if (!jo.has("id")) {
+        if (!jo.has("id") || jo.get("id").getAsString().isEmpty()) {
             throw new InvalidModMetadataException(String.format("\"Invalid mod metadata. Missing \"id\". Sources: [%s]", StringUtils.join(sources, ",")));
         }
 
-        if (!jo.has("main")) {
+        if (!jo.has("version") || jo.get("version").getAsString().isEmpty()) {
+            throw new InvalidModMetadataException(String.format("\"Invalid mod metadata. Missing \"version\". Sources: [%s]", StringUtils.join(sources, ",")));
+        }
+
+        if (!jo.has("main") || jo.get("main").getAsString().isEmpty()) {
             throw new InvalidModMetadataException(String.format("\"Invalid mod metadata. Missing \"main\". Sources: [%s]", StringUtils.join(sources, ",")));
         }
 
