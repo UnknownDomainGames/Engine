@@ -9,12 +9,15 @@ import org.lwjgl.opengl.GL30;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public class ShaderManager {
+
+    @Deprecated
+    public static final ShaderManager INSTANCE = new ShaderManager();
+
     private static Map<String, MutableValue<ShaderProgram>> loadedShaders;
     private static Map<String, ShaderProgramBuilder> registeredShaders;
 
