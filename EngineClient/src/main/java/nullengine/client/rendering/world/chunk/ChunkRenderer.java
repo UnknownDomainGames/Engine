@@ -60,10 +60,10 @@ public class ChunkRenderer {
         this.game = context.getEngine().getCurrentGame();
         game.getEventBus().register(this);
 
-        chunkSolidShader = ShaderManager.registerShader("chunk_solid",
+        chunkSolidShader = ShaderManager.INSTANCE.registerShader("chunk_solid",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "chunk_solid.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "chunk_solid.frag")));
-        assimpShader = ShaderManager.registerShader("assimp_model",
+        assimpShader = ShaderManager.INSTANCE.registerShader("assimp_model",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "assimp_model.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "chunk_solid.frag")));
 
@@ -114,8 +114,8 @@ public class ChunkRenderer {
 
         context.getEngine().getCurrentGame().getWorld().getLoadedChunks().parallelStream().filter(chunk->faillist.contains(getChunkIndex(chunk))).forEach(this::initChunkMesh);
 //        ShaderProgram assimpShader = this.assimpShader.getValue();
-//        ShaderManager.bindShader(assimpShader);
-//        ShaderManager.setUniform("u_ModelMatrix", new Matrix4f().rotate((float)-Math.PI / 2, 1,0,0).setTranslation(0,5,0));
+//        ShaderManager.INSTANCE.bindShader(assimpShader);
+//        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().rotate((float)-Math.PI / 2, 1,0,0).setTranslation(0,5,0));
 //        tmp.render();
 
         postRenderChunk();
@@ -123,7 +123,7 @@ public class ChunkRenderer {
 
     private void preRenderChunk() {
         ShaderProgram chunkSolidShader = this.chunkSolidShader.getValue();
-        ShaderManager.bindShader(chunkSolidShader);
+        ShaderManager.INSTANCE.bindShader(chunkSolidShader);
 
         glEnable(GL11.GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -135,10 +135,10 @@ public class ChunkRenderer {
 
         Matrix4fc projMatrix = context.getWindow().projection();
         Matrix4f modelMatrix = new Matrix4f();
-        ShaderManager.setUniform("u_ProjMatrix", projMatrix);
-        ShaderManager.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
-        ShaderManager.setUniform("u_ModelMatrix", modelMatrix);
-        ShaderManager.setUniform("u_viewPos", context.getCamera().getPosition());
+        ShaderManager.INSTANCE.setUniform("u_ProjMatrix", projMatrix);
+        ShaderManager.INSTANCE.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
+        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", modelMatrix);
+        ShaderManager.INSTANCE.setUniform("u_viewPos", context.getCamera().getPosition());
 
         context.getTextureManager().getTextureAtlas(StandardTextureAtlas.BLOCK).getTexture().getValue().bind();
         chunkSolidShader.setUniform("useDirectUV", true);
@@ -158,7 +158,7 @@ public class ChunkRenderer {
     public void dispose() {
         updateExecutor.shutdownNow();
 
-        ShaderManager.unregisterShader("chunk_solid");
+        ShaderManager.INSTANCE.unregisterShader("chunk_solid");
 
         game.getEventBus().unregister(this);
     }

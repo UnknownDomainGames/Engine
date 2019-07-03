@@ -11,8 +11,8 @@ public class SpotLight extends PointLight {
     @Override
     public void bind(String fieldName) {
         super.bind(fieldName);
-        ShaderManager.setUniform(fieldName + ".direction", direction);
-        ShaderManager.setUniform(fieldName + ".cutoffCosine", (float) Math.cos(cutoffAngle));
-        ShaderManager.setUniform(fieldName + ".direction", (float) Math.cos(outerCutoffAngle));
+        ShaderManager.INSTANCE.setUniform(fieldName + ".direction", direction);
+        ShaderManager.INSTANCE.setUniform(fieldName + ".cutoffCosine", (float) Math.cos(cutoffAngle));
+        ShaderManager.INSTANCE.setUniform(fieldName + ".direction", (float) Math.cos(outerCutoffAngle));
     }
 }
