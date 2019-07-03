@@ -13,16 +13,6 @@ import nullengine.world.World;
 public abstract class BlockInteractEvent implements Event, Cancellable {
     private boolean isCancelled;
 
-    @Override
-    public void setCancelled(boolean cancelled) {
-        this.isCancelled = cancelled;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return this.isCancelled;
-    }
-
     private World world;
     private Block block;
     /**
@@ -41,6 +31,16 @@ public abstract class BlockInteractEvent implements Event, Cancellable {
      */
     private BlockInteractCause cause;
 
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.isCancelled = cancelled;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return this.isCancelled;
+    }
+    
     public Block getBlock() {
         return block;
     }

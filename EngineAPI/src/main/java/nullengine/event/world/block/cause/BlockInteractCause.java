@@ -10,6 +10,10 @@ public interface BlockInteractCause extends Cause {
     class EntityTrigger implements BlockInteractCause {
         public static final String HIT = "entity.hit", USE = "entity.use";
 
+        private Entity entity;
+        private Optional<ItemStack> item;
+        private String causeName;
+
         public static EntityTrigger hit(Entity entity, ItemStack item) {
             return new EntityTrigger(entity, item, HIT);
         }
@@ -17,10 +21,6 @@ public interface BlockInteractCause extends Cause {
         public static EntityTrigger use(Entity entity, ItemStack item) {
             return new EntityTrigger(entity, item, USE);
         }
-
-        private Entity entity;
-        private Optional<ItemStack> item;
-        private String causeName;
 
         public EntityTrigger(Entity entity, ItemStack item, String causeName) {
             this.entity = entity;
