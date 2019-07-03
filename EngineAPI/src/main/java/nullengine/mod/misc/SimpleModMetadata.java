@@ -1,7 +1,7 @@
 package nullengine.mod.misc;
 
 import com.google.gson.JsonElement;
-import nullengine.mod.ModDependencyEntry;
+import nullengine.mod.ModDependencyItem;
 import nullengine.mod.ModMetadata;
 import nullengine.util.versioning.Version;
 
@@ -23,10 +23,10 @@ public class SimpleModMetadata implements ModMetadata {
     private final String url;
     private final List<String> authors;
     private final String logoFile;
-    private final List<ModDependencyEntry> dependencies;
+    private final List<ModDependencyItem> dependencies;
     private final Map<String, JsonElement> properties;
 
-    protected SimpleModMetadata(String id, Version version, String mainClass, String name, String description, String license, String url, List<String> authors, String logoFile, List<ModDependencyEntry> dependencies, Map<String, JsonElement> properties) {
+    protected SimpleModMetadata(String id, Version version, String mainClass, String name, String description, String license, String url, List<String> authors, String logoFile, List<ModDependencyItem> dependencies, Map<String, JsonElement> properties) {
         this.id = id;
         this.version = version;
         this.mainClass = mainClass;
@@ -81,7 +81,7 @@ public class SimpleModMetadata implements ModMetadata {
         return logoFile;
     }
 
-    public List<ModDependencyEntry> getDependencies() {
+    public List<ModDependencyItem> getDependencies() {
         return dependencies;
     }
 
@@ -108,7 +108,7 @@ public class SimpleModMetadata implements ModMetadata {
         private String url = "";
         private List<String> authors = Collections.emptyList();
         private String logo = "";
-        private List<ModDependencyEntry> dependencies = Collections.emptyList();
+        private List<ModDependencyItem> dependencies = Collections.emptyList();
         private Map<String, JsonElement> properties = Collections.emptyMap();
 
         public Builder id(String id) {
@@ -166,7 +166,7 @@ public class SimpleModMetadata implements ModMetadata {
             return this;
         }
 
-        public Builder dependencies(List<ModDependencyEntry> dependencies) {
+        public Builder dependencies(List<ModDependencyItem> dependencies) {
             this.dependencies = dependencies;
             return this;
         }

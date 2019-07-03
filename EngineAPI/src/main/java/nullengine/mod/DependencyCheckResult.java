@@ -4,9 +4,9 @@ import java.util.List;
 
 public class DependencyCheckResult {
     private final boolean passed;
-    private final List<ModDependencyEntry> missing;
+    private final List<ModDependencyItem> missing;
 
-    public DependencyCheckResult(List<ModDependencyEntry> missing) {
+    public DependencyCheckResult(List<ModDependencyItem> missing) {
         this.passed = missing.isEmpty();
         this.missing = missing;
     }
@@ -15,7 +15,7 @@ public class DependencyCheckResult {
         return passed;
     }
 
-    public List<ModDependencyEntry> getMissing() {
+    public List<ModDependencyItem> getMissing() {
         return missing;
     }
 }

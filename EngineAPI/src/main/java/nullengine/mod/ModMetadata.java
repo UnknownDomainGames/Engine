@@ -29,7 +29,7 @@ public interface ModMetadata {
 
     String getLogoFile();
 
-    List<ModDependencyEntry> getDependencies();
+    List<ModDependencyItem> getDependencies();
 
     Map<String, JsonElement> getProperties();
 

@@ -3,7 +3,7 @@ package nullengine.mod.util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import nullengine.mod.ModDependencyEntry;
+import nullengine.mod.ModDependencyItem;
 import nullengine.mod.ModMetadata;
 import nullengine.mod.misc.SimpleModMetadata;
 
@@ -32,7 +32,7 @@ public class ModMetadataUtils {
         jo.add("authors", ja);
 
         ja = new JsonArray();
-        for (ModDependencyEntry dependencyEntry : descriptor.getDependencies()) {
+        for (ModDependencyItem dependencyEntry : descriptor.getDependencies()) {
             ja.add(dependencyEntry.toString());
         }
         jo.add("dependencies", ja);
@@ -84,9 +84,9 @@ public class ModMetadataUtils {
             builder.authors(List.copyOf(authors));
         }
         if (jo.has("dependencies")) {
-            List<ModDependencyEntry> dependencies = new ArrayList<>();
+            List<ModDependencyItem> dependencies = new ArrayList<>();
             for (JsonElement je : jo.getAsJsonArray("dependencies")) {
-                dependencies.add(ModDependencyEntry.parse(je.getAsString()));
+                dependencies.add(ModDependencyItem.parse(je.getAsString()));
             }
             builder.dependencies(List.copyOf(dependencies));
         }

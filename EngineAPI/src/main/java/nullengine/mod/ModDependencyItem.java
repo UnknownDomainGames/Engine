@@ -4,9 +4,9 @@ import nullengine.mod.exception.InvalidDependencyException;
 import nullengine.util.versioning.InvalidVersionSpecificationException;
 import nullengine.util.versioning.VersionRange;
 
-public class ModDependencyEntry {
+public class ModDependencyItem {
 
-    public static ModDependencyEntry parse(String spec) {
+    public static ModDependencyItem parse(String spec) {
         String[] args = spec.split(":");
         if (args.length != 3) {
             throw new InvalidDependencyException("Failed to parse dependency entry. Source: " + spec);
@@ -16,7 +16,7 @@ public class ModDependencyEntry {
             String id = args[0];
             VersionRange versionRange = VersionRange.createFromVersionSpec(args[1]);
             DependencyType type = DependencyType.valueOf(args[2].toUpperCase());
-            return new ModDependencyEntry(id, versionRange, type);
+            return new ModDependencyItem(id, versionRange, type);
         } catch (InvalidVersionSpecificationException e) {
             throw new InvalidDependencyException(String.format("Failed to parse dependency entry, invalid version range \"%s\".", args[1]), e);
         } catch (IllegalArgumentException e) {
@@ -28,11 +28,11 @@ public class ModDependencyEntry {
     private final VersionRange versionRange;
     private final DependencyType type;
 
-    public ModDependencyEntry(String id, String versionRange, DependencyType type) {
+    public ModDependencyItem(String id, String versionRange, DependencyType type) {
         this(id, VersionRange.createFromVersionSpec(versionRange), type);
     }
 
-    public ModDependencyEntry(String id, VersionRange versionRange, DependencyType type) {
+    public ModDependencyItem(String id, VersionRange versionRange, DependencyType type) {
         this.id = id;
         this.versionRange = versionRange;
         this.type = type;
