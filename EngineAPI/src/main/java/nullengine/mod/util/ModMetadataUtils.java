@@ -37,11 +37,13 @@ public class ModMetadataUtils {
         }
         jo.add("dependencies", ja);
 
-        JsonObject properties = new JsonObject();
         for (Map.Entry<String, JsonElement> entry : descriptor.getProperties().entrySet()) {
-            properties.add(entry.getKey(), entry.getValue());
+            if (VANILLA_KEYS.contains(entry.getKey())) {
+                continue;
+            }
+
+            jo.add(entry.getKey(), entry.getValue());
         }
-        jo.add("properties", properties);
         return jo;
     }
 
@@ -90,14 +92,14 @@ public class ModMetadataUtils {
             }
             builder.dependencies(List.copyOf(dependencies));
         }
-        if (jo.has("properties")) {
-            Map<String, JsonElement> properties = new HashMap<>();
-            JsonObject jProperties = jo.getAsJsonObject("properties");
-            for (Map.Entry<String, JsonElement> entry : jProperties.entrySet()) {
-                properties.put(entry.getKey(), entry.getValue());
+        Map<String, JsonElement> properties = new HashMap<>();
+        for (Map.Entry<String, JsonElement> entry : jo.entrySet()) {
+            if (VANILLA_KEYS.contains(entry.getKey())) {
+                continue;
             }
-            builder.properties(Map.copyOf(properties));
+            properties.put(entry.getKey(), entry.getValue());
         }
+        builder.properties(Map.copyOf(properties));
         return builder.build();
     }
 }

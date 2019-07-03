@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class SimpleModMetadata implements ModMetadata {
 
@@ -41,13 +42,11 @@ public class SimpleModMetadata implements ModMetadata {
     }
 
     @Nonnull
-    @Override
     public String getId() {
         return id;
     }
 
     @Nonnull
-    @Override
     public Version getVersion() {
         return version;
     }
@@ -64,7 +63,6 @@ public class SimpleModMetadata implements ModMetadata {
         return description;
     }
 
-    @Override
     public String getLicense() {
         return license;
     }
@@ -89,9 +87,8 @@ public class SimpleModMetadata implements ModMetadata {
         return properties;
     }
 
-    @Override
-    public JsonElement getProperty(String key) {
-        return null;
+    public Optional<JsonElement> getProperty(String key) {
+        return Optional.ofNullable(properties.get(key));
     }
 
     public static Builder builder() {

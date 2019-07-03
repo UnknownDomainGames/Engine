@@ -6,6 +6,7 @@ import nullengine.util.versioning.Version;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface ModMetadata {
 
@@ -33,5 +34,5 @@ public interface ModMetadata {
 
     Map<String, JsonElement> getProperties();
 
-    JsonElement getProperty(String key);
+    Optional<JsonElement> getProperty(String key);
 }
