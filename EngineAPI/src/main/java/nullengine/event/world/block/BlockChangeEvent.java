@@ -6,6 +6,9 @@ import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.math.BlockPos;
 import nullengine.world.World;
 
+/**
+ * The generic block change event
+ */
 public abstract class BlockChangeEvent implements Event {
 
     private final World world;

@@ -25,8 +25,8 @@ import nullengine.event.Listener;
 import nullengine.event.engine.EngineEvent;
 import nullengine.event.registry.RegistrationEvent;
 import nullengine.event.registry.RegistryConstructionEvent;
-import nullengine.event.world.block.BlockActivateEvent;
-import nullengine.event.world.block.BlockClickEvent;
+import nullengine.event.world.block.BlockInteractEvent;
+import nullengine.event.world.block.cause.BlockInteractCause;
 import nullengine.item.BlockItem;
 import nullengine.item.Item;
 import nullengine.item.ItemStack;
@@ -56,7 +56,8 @@ public final class DefaultGameMode {
 
         e.register(new IdAutoIncreaseRegistry<>(KeyBinding.class));
         e.register(new IdAutoIncreaseRegistry<>(ClientBlock.class));
-//        e.registerPostTask(Block.class, Item.class, (block, registry)->registry.register(new BlockItem(block)));
+        // e.registerPostTask(Block.class, Item.class, (block,
+        // registry)->registry.register(new BlockItem(block)));
     }
 
     @Listener
@@ -119,11 +120,18 @@ public final class DefaultGameMode {
                 controllingEntity.getComponent(TwoHands.class)
                         .ifPresent(twoHands -> twoHands.getMainHand()
                                 .ifNonEmpty(itemStack -> {
-                                    blockHit.getBlock().getComponent(ClickBehavior.class).ifPresent(clickBehavior -> clickBehavior.onClicked(player.getWorld(), blockHit.getPos(), blockHit.getBlock()));
-                                    game.getEngine().getEventBus().post(new BlockClickEvent(player.getWorld(), controllingEntity, blockHit.getPos(), blockHit.getBlock()));
-                                    itemStack.getItem()
+                                    var block = blockHit.getBlock();
+                                    var world = player.getWorld();
+                                    var position = blockHit.getPos();
+                                    var entity = player.getControlledEntity();
+                                    var cause = BlockInteractCause.EntityTrigger.hit(entity, itemStack);
+                                    block.getComponent(ClickBehavior.class).ifPresent(clickBehavior -> clickBehavior.onClicked(player.getWorld(), blockHit.getPos(), blockHit.getBlock()));
+                                    if (game.getEngine().getEventBus().post(new BlockInteractEvent.Pre(world, block, position, blockHit.getHitPoint(), blockHit.getFace(), cause))){
+                                        itemStack.getItem()
                                             .getComponent(HitBlockBehavior.class)
                                             .ifPresent(hitBlockBehavior -> hitBlockBehavior.onHit(player, itemStack, blockHit));
+                                        game.getEngine().getEventBus().post(new BlockInteractEvent.Post(world, block, position, blockHit.getHitPoint(), blockHit.getFace(), cause));
+                                    }
                                 }));
             }
 
@@ -137,11 +145,18 @@ public final class DefaultGameMode {
                 entity.getComponent(TwoHands.class)
                         .ifPresent(twoHands -> twoHands.getMainHand()
                                 .ifNonEmpty(itemStack -> {
+                                    var block = hit.getBlock();
+                                    var world = player.getWorld();
+                                    var position = hit.getPos();
+                                    var cause = BlockInteractCause.EntityTrigger.use(entity, itemStack);
+                                  
                                     hit.getBlock().getComponent(ActivateBehavior.class).ifPresent(activateBehavior -> activateBehavior.onActivated(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
-                                    game.getEngine().getEventBus().post(new BlockActivateEvent(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
-                                    itemStack.getItem()
-                                            .getComponent(UseBlockBehavior.class)
-                                            .ifPresent(useBlockBehavior -> useBlockBehavior.onUseBlockStart(player, itemStack, hit));
+                                    if (game.getEngine().getEventBus().post(new BlockInteractEvent.Pre(world, block, position, hit.getHitPoint(), hit.getFace(), cause))) {
+                                        itemStack.getItem()
+                                                .getComponent(UseBlockBehavior.class)
+                                                .ifPresent(useBlockBehavior -> useBlockBehavior.onUseBlockStart(player, itemStack, hit));
+                                        game.getEngine().getEventBus().post(new BlockInteractEvent.Post(world, block, position, hit.getHitPoint(), hit.getFace(), cause));
+                                    }
                                 }));
             }
         }, ActionMode.PRESS));
