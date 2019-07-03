@@ -1,6 +1,4 @@
-package nullengine.math;
-
-import nullengine.logic.Tickable;
+package nullengine.logic;
 
 public class Ticker implements Runnable {
 

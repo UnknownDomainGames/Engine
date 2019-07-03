@@ -23,7 +23,7 @@ import nullengine.client.sound.EngineSoundManager;
 import nullengine.event.engine.EngineEvent;
 import nullengine.event.game.GameStartEvent;
 import nullengine.game.Game;
-import nullengine.math.Ticker;
+import nullengine.logic.Ticker;
 import nullengine.mod.ModContainer;
 import nullengine.util.ClassPathUtils;
 import nullengine.util.RuntimeEnvironment;
