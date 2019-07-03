@@ -264,7 +264,7 @@ public class WorldCommon implements World, Runnable {
 				Vector3d position = entity.getPosition();
 				AABBd box = entity.getBoundingBox();
 				if (box == null)
-				    break;
+				    continue;
 				else setBoxXYZ(world,box,position,direction);
 			}
 		}
@@ -343,5 +343,5 @@ public class WorldCommon implements World, Runnable {
 				}
 			}
 		}
-
+    
 
