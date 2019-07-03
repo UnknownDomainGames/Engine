@@ -1,10 +1,18 @@
 package nullengine.item;
 
+import nullengine.block.Block;
 import nullengine.component.Component;
 import nullengine.component.ComponentContainer;
-import nullengine.item.component.HitBlockBehavior;
+import nullengine.entity.Entity;
+import nullengine.event.Event;
+import nullengine.event.world.block.BlockDestroyEvent;
+import nullengine.event.world.entity.EntityHitEvent;
+import nullengine.event.world.item.ItemBreakEvent;
+import nullengine.event.world.item.ItemThrowEvent;
+import nullengine.item.component.*;
 import nullengine.player.Player;
 import nullengine.registry.RegistryEntry;
+import nullengine.world.World;
 import nullengine.world.collision.RayTraceBlockHit;
 
 import javax.annotation.Nonnull;
@@ -22,6 +30,7 @@ public class BaseItem extends RegistryEntry.Impl<Item> implements Item {
                 //TODO: use send packet
                 if (hit.isSuccess()) {
                     player.getWorld().removeBlock(hit.getPos(), null);
+                    new BlockDestroyEvent(player.getWorld(),hit.getPos(),hit.getBlock(),null);
                 }
             }
 
@@ -33,6 +42,48 @@ public class BaseItem extends RegistryEntry.Impl<Item> implements Item {
             @Override
             public void onHitStop(Player player, ItemStack itemStack, RayTraceBlockHit hit) {
                 //TODO: send packet
+            }
+        });
+        setComponent(HitEntityBehavior.class,new HitEntityBehavior(){
+            @Override
+            public void onStart(Entity hitter, Item item, Entity entity, int tickElapsed) {
+                Event event=new EntityHitEvent(entity.getWorld(),hitter,entity,(BaseItem)item);
+            }
+
+            @Override
+            public void onStart(Entity hitter, Item item, Entity entity) {
+                Event event=new EntityHitEvent(entity.getWorld(),hitter,entity,(BaseItem)item);
+            }
+
+            @Override
+            public boolean onKeep(Entity hitter, Item item, Entity entity, int tickElapsed) {
+                return false;
+            }
+        });
+        setComponent(UseBehavior.class, ((player, itemStack) -> {
+                Event itemDamageEvent=new ItemBreakEvent(itemStack.getItem(),player.getWorld(),player);
+
+        }));
+        setComponent(ItemDurabilityComponent.class,new ItemDurabilityComponent(){
+            @Override
+            public int getDurability(int durability) {
+                return -1;
+            }
+
+            @Override
+            public void setDurability(int durability) {
+
+            }
+        });
+        setComponent(ItemHarmComponent.class, new ItemHarmComponent() {
+            @Override
+            public void setHarm(int harm) {
+
+            }
+
+            @Override
+            public int getHarm() {
+                return 0;
             }
         });
     }
@@ -64,4 +115,7 @@ public class BaseItem extends RegistryEntry.Impl<Item> implements Item {
         return components.getComponents();
     }
 
+    public void onThrowAway(BaseItem item,World world,Entity entity,Block block){
+        Event itemThrowEvent=new ItemThrowEvent(item,world,entity,block);
+    }
 }

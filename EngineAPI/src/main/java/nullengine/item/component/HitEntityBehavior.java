@@ -3,12 +3,11 @@ package nullengine.item.component;
 import nullengine.component.Component;
 import nullengine.entity.Entity;
 import nullengine.item.Item;
-import nullengine.player.Player;
 
 public interface HitEntityBehavior extends Component {
-    void onStart(Player player, Item item, Entity entity);
+    void onStart(Entity hitter, Item item, Entity entity);
 
-    boolean onKeep(Player player, Item item, Entity entity, int tickElapsed);
+    boolean onKeep(Entity hitter, Item item, Entity entity, int tickElapsed);
 
-    void onStart(Player player, Item item, Entity entity, int tickElapsed);
+    void onStart(Entity hitter, Item item, Entity entity, int tickElapsed);
 }
