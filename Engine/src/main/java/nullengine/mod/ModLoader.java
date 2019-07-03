@@ -1,10 +1,10 @@
 package nullengine.mod;
 
-import java.nio.file.Path;
-import java.util.Collection;
+import nullengine.mod.impl.ModCandidate;
+
 import java.util.List;
 
 public interface ModLoader {
 
-    ModContainer load(Collection<Path> sources, ModMetadata metadata, List<ModContainer> dependencies);
+    ModContainer load(ModCandidate modCandidate, List<ModContainer> dependencies);
 }

@@ -2,7 +2,6 @@ package nullengine.mod.impl;
 
 import com.google.gson.JsonObject;
 import nullengine.mod.ModMetadata;
-import nullengine.mod.ModMetadataFinder;
 import nullengine.mod.exception.InvalidModMetadataException;
 import nullengine.mod.util.ModMetadataUtils;
 import nullengine.util.JsonUtils;
@@ -17,19 +16,18 @@ import java.util.Collection;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class JsonModMetadataFinder implements ModMetadataFinder {
+public class ModMetadataFinder {
 
     private final String fileName;
 
-    public JsonModMetadataFinder() {
+    public ModMetadataFinder() {
         this("metadata.json");
     }
 
-    public JsonModMetadataFinder(String fileName) {
+    public ModMetadataFinder(String fileName) {
         this.fileName = fileName;
     }
 
-    @Override
     public ModMetadata find(Collection<Path> sources) {
         JsonObject jo = null;
 
@@ -64,8 +62,8 @@ public class JsonModMetadataFinder implements ModMetadataFinder {
             throw new InvalidModMetadataException(String.format("\"Invalid mod metadata. Missing \"id\". Sources: [%s]", StringUtils.join(sources, ",")));
         }
 
-        if (!jo.has("mainClass")) {
-            throw new InvalidModMetadataException(String.format("\"Invalid mod metadata. Missing \"mainClass\". Sources: [%s]", StringUtils.join(sources, ",")));
+        if (!jo.has("main")) {
+            throw new InvalidModMetadataException(String.format("\"Invalid mod metadata. Missing \"main\". Sources: [%s]", StringUtils.join(sources, ",")));
         }
 
         return ModMetadataUtils.fromJson(jo);

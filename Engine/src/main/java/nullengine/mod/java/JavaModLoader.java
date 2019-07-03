@@ -2,14 +2,12 @@ package nullengine.mod.java;
 
 import nullengine.mod.ModContainer;
 import nullengine.mod.ModLoader;
-import nullengine.mod.ModMetadata;
 import nullengine.mod.exception.ModLoadException;
+import nullengine.mod.impl.ModCandidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -17,7 +15,10 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class JavaModLoader implements ModLoader {
 
     @Override
-    public ModContainer load(Collection<Path> sources, ModMetadata metadata, List<ModContainer> dependencies) {
+    public ModContainer load(ModCandidate modCandidate, List<ModContainer> dependencies) {
+        var sources = modCandidate.getSources();
+        var metadata = modCandidate.getMetadata();
+
         Logger logger = LoggerFactory.getLogger(isNullOrEmpty(metadata.getName()) ? metadata.getId() : metadata.getName());
 
         ModClassLoader classLoader = new ModClassLoader(logger, JavaModLoader.class.getClassLoader());
