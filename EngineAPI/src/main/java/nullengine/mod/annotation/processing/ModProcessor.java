@@ -73,6 +73,7 @@ public class ModProcessor extends AbstractProcessor {
                     .url((String) values.getOrDefault("url", ""))
                     .logo((String) values.getOrDefault("logo", ""))
                     .authors(Arrays.asList((String[]) values.getOrDefault("authors", new String[0])))
+                    .authors(Arrays.asList((String[]) values.getOrDefault("permissions", new String[0])))
                     .dependencies(createDependencyList((List<AnnotationMirror>) values.get("dependencies")))
                     .properties(createPropertyMap((List<AnnotationMirror>) values.get("properties")))
                     .build();

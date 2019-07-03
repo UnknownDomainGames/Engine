@@ -22,12 +22,13 @@ public class SimpleModMetadata implements ModMetadata {
     private final String description;
     private final String license;
     private final String url;
+    private final String logo;
     private final List<String> authors;
-    private final String logoFile;
+    private final List<String> permissions;
     private final List<ModDependencyItem> dependencies;
     private final Map<String, JsonElement> properties;
 
-    protected SimpleModMetadata(String id, Version version, String mainClass, String name, String description, String license, String url, List<String> authors, String logoFile, List<ModDependencyItem> dependencies, Map<String, JsonElement> properties) {
+    protected SimpleModMetadata(String id, Version version, String mainClass, String name, String description, String license, String url, String logo, List<String> authors, List<String> permissions, List<ModDependencyItem> dependencies, Map<String, JsonElement> properties) {
         this.id = id;
         this.version = version;
         this.mainClass = mainClass;
@@ -35,8 +36,9 @@ public class SimpleModMetadata implements ModMetadata {
         this.description = description;
         this.license = license;
         this.url = url;
+        this.logo = logo;
         this.authors = authors;
-        this.logoFile = logoFile;
+        this.permissions = permissions;
         this.dependencies = dependencies;
         this.properties = properties;
     }
@@ -75,8 +77,13 @@ public class SimpleModMetadata implements ModMetadata {
         return authors;
     }
 
+    @Override
+    public List<String> getPermissions() {
+        return null;
+    }
+
     public String getLogoFile() {
-        return logoFile;
+        return logo;
     }
 
     public List<ModDependencyItem> getDependencies() {
@@ -103,8 +110,9 @@ public class SimpleModMetadata implements ModMetadata {
         private String description = "";
         private String license = "";
         private String url = "";
-        private List<String> authors = Collections.emptyList();
         private String logo = "";
+        private List<String> authors = Collections.emptyList();
+        private List<String> permissions = Collections.emptyList();
         private List<ModDependencyItem> dependencies = Collections.emptyList();
         private Map<String, JsonElement> properties = Collections.emptyMap();
 
@@ -148,13 +156,18 @@ public class SimpleModMetadata implements ModMetadata {
             return this;
         }
 
+        public Builder logo(String logo) {
+            this.logo = logo;
+            return this;
+        }
+
         public Builder authors(List<String> authors) {
             this.authors = authors;
             return this;
         }
 
-        public Builder logo(String logo) {
-            this.logo = logo;
+        public Builder permissions(List<String> permissions) {
+            this.permissions = permissions;
             return this;
         }
 
@@ -169,7 +182,7 @@ public class SimpleModMetadata implements ModMetadata {
         }
 
         public SimpleModMetadata build() {
-            return new SimpleModMetadata(id, version, mainClass, name, description, license, url, authors, logo, dependencies, properties);
+            return new SimpleModMetadata(id, version, mainClass, name, description, license, url, logo, authors, permissions, dependencies, properties);
         }
     }
 }

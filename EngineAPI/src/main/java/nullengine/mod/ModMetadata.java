@@ -26,9 +26,11 @@ public interface ModMetadata {
 
     String getUrl();
 
+    String getLogoFile();
+
     List<String> getAuthors();
 
-    String getLogoFile();
+    List<String> getPermissions();
 
     List<ModDependencyItem> getDependencies();
 

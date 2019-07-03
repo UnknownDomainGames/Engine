@@ -12,7 +12,7 @@ import java.util.*;
 public class ModMetadataUtils {
 
     public static final Set<String> VANILLA_KEYS = Set.of("id", "version", "main", "name",
-            "description", "license", "url", "logo", "authors", "dependencies", "properties");
+            "description", "license", "url", "logo", "authors", "permissions", "dependencies");
 
     public static JsonObject toJson(ModMetadata descriptor) {
         JsonObject jo = new JsonObject();
@@ -30,6 +30,12 @@ public class ModMetadataUtils {
             ja.add(author);
         }
         jo.add("authors", ja);
+
+        ja = new JsonArray();
+        for (String permission : descriptor.getPermissions()) {
+            ja.add(permission);
+        }
+        jo.add("permissions", ja);
 
         ja = new JsonArray();
         for (ModDependencyItem dependencyEntry : descriptor.getDependencies()) {
@@ -84,6 +90,15 @@ public class ModMetadataUtils {
                 }
             }
             builder.authors(List.copyOf(authors));
+        }
+        if (jo.has("permissions")) {
+            List<String> permissions = new ArrayList<>();
+            for (JsonElement je : jo.getAsJsonArray("permissions")) {
+                if (je.isJsonPrimitive()) {
+                    permissions.add(je.getAsString());
+                }
+            }
+            builder.permissions(List.copyOf(permissions));
         }
         if (jo.has("dependencies")) {
             List<ModDependencyItem> dependencies = new ArrayList<>();

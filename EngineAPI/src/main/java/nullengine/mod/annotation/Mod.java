@@ -32,6 +32,8 @@ public @interface Mod {
 
     String[] authors() default {};
 
+    String[] permissions() default {};
+
     Dependency[] dependencies() default {};
 
     Property[] properties() default {};
