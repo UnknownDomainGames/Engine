@@ -10,7 +10,7 @@ import org.joml.Vector3fc;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public interface Chunk extends Runnable {
+public interface Chunk {
 
     @Nonnull
     World getWorld();
