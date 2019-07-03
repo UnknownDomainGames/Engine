@@ -74,7 +74,7 @@ public class GameServerFullAsync extends GameBase {
         for (WorldCommon worldCommon : internalWorlds) {
             worldCommon.stop();
         }
-        // TODO: unload mod/nullengine.resource here
+        // TODO: unload mod/resource here
         super.tryTerminate();
     }
 }

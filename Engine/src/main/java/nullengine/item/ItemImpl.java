@@ -25,12 +25,7 @@ public class ItemImpl implements Item,Runnable {
 		this.maxStackAmount=maxStackAmount;
 	}
 
-	public static class ItemBuilder{
-		private int maxStackAmount; //Max Amount can stack,you can set it
-		private String name;
-		private int hp;
-		private int harm;
-		private boolean canBeDestroy;
+	public class ItemBuilder{
 		public ItemBuilder setName(String setname){
 			name=setname;
 			return this;
