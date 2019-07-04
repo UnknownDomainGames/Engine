@@ -23,12 +23,16 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.Pattern;
 
+import static java.lang.String.format;
 import static nullengine.util.ClassPathUtils.getDirectoriesInClassPath;
 import static nullengine.util.ClassPathUtils.getFilesInClassPath;
 import static nullengine.util.RuntimeEnvironment.MOD_DEVELOPMENT;
 
 public class EngineModManager implements ModManager {
+
+    private static final Pattern MOD_ID_PATTERN = Pattern.compile("[a-z0-9]+");
 
     private final Map<String, ModContainer> loadedModContainers = new LinkedHashMap<>();
 
@@ -80,6 +84,10 @@ public class EngineModManager implements ModManager {
 
     private void loadMod(ModCandidate modCandidate) {
         var metadata = modCandidate.getMetadata();
+        if (!MOD_ID_PATTERN.matcher(metadata.getId()).matches()) {
+            throw new ModLoadException(format("Illegal mod id \"%s\"", metadata.getId()));
+        }
+
         if (isModLoaded(metadata.getId())) {
             throw new ModAlreadyLoadedException(metadata.getId());
         }
@@ -95,11 +103,11 @@ public class EngineModManager implements ModManager {
         } catch (ModLoadException e) {
             throw e;
         } catch (Exception e) {
-            throw new ModLoadException(String.format("Cannot load mod \"%s\" because caught a exception.", metadata.getId()), e);
+            throw new ModLoadException(format("Cannot load mod \"%s\" because caught a exception.", metadata.getId()), e);
         }
 
         if (modContainer == null) {
-            throw new ModLoadException(String.format("Cannot load mod \"%s\" because do not support load it.", metadata.getId()));
+            throw new ModLoadException(format("Cannot load mod \"%s\" because do not support load it.", metadata.getId()));
         }
 
         loadedModContainers.put(modContainer.getId(), modContainer);
