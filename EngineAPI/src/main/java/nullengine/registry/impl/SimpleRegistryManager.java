@@ -2,6 +2,7 @@ package nullengine.registry.impl;
 
 import nullengine.registry.Registry;
 import nullengine.registry.RegistryEntry;
+import nullengine.registry.RegistryException;
 import nullengine.registry.RegistryManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -9,6 +10,7 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 
 public class SimpleRegistryManager implements RegistryManager {
 
@@ -37,6 +39,14 @@ public class SimpleRegistryManager implements RegistryManager {
     @Override
     public <T extends RegistryEntry<T>> T register(@NonNull T obj) {
         return getRegistry(obj.getEntryType()).register(obj);
+    }
+
+    @Override
+    public <T extends RegistryEntry<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier) {
+        if (registries.containsKey(type)) {
+            throw new RegistryException("Registry has been registered");
+        }
+        registries.put(type, supplier.get());
     }
 
     @Nonnull

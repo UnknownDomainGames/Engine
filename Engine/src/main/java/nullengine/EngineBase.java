@@ -1,19 +1,14 @@
 package nullengine;
 
-import com.google.common.collect.Maps;
 import nullengine.event.EventBus;
 import nullengine.event.SimpleEventBus;
 import nullengine.event.asm.AsmEventListenerFactory;
 import nullengine.event.engine.EngineEvent;
-import nullengine.event.registry.RegistrationEvent;
-import nullengine.event.registry.RegistryConstructionEvent;
 import nullengine.mod.ModContainer;
 import nullengine.mod.ModManager;
-import nullengine.mod.dummy.DummyModContainer;
 import nullengine.mod.impl.EngineModManager;
 import nullengine.mod.init.ModInitializer;
 import nullengine.registry.Registries;
-import nullengine.registry.Registry;
 import nullengine.registry.RegistryManager;
 import nullengine.registry.impl.SimpleRegistryManager;
 import nullengine.util.ClassPathUtils;
@@ -28,9 +23,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import static org.apache.commons.lang3.SystemUtils.*;
 
@@ -83,6 +78,13 @@ public abstract class EngineBase implements Engine {
         }
         initialized = true;
 
+        constructionStage();
+        resourceStage();
+        modStage();
+        finishStage();
+    }
+
+    protected void constructionStage() {
         logger.info("Initializing engine!");
 
         initExceptionHandler();
@@ -90,26 +92,19 @@ public abstract class EngineBase implements Engine {
         printSystemInfo();
 
         eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+        registryManager = new SimpleRegistryManager(new HashMap<>());
+        modManager = new EngineModManager(this);
+    }
 
+    protected void resourceStage() {
+
+    }
+
+    protected void modStage() {
         loadMods();
     }
 
-    protected void initRegistration() {
-        // Registration Stage
-        logger.info("Creating Registry Manager!");
-        Map<Class<?>, Registry<?>> registries = Maps.newHashMap();
-        eventBus.post(new RegistryConstructionEvent(registries));
-        registryManager = new SimpleRegistryManager(Map.copyOf(registries));
-        logger.info("Registering!");
-        eventBus.post(new RegistrationEvent.Start(registryManager));
-
-        for (Registry<?> registry : registries.values()) {
-            eventBus.post(new RegistrationEvent.Register<>(registry));
-        }
-
-        logger.info("Finishing Registration!");
-        eventBus.post(new RegistrationEvent.Finish(registryManager));
-
+    protected void finishStage() {
         Registries.init(registryManager);
     }
 
@@ -167,7 +162,6 @@ public abstract class EngineBase implements Engine {
 
     private void loadMods() {
         logger.info("Loading Mods.");
-        modManager = new EngineModManager(this);
         modManager.loadMods();
 
         Collection<ModContainer> loadedMods = modManager.getLoadedMods();
@@ -175,9 +169,6 @@ public abstract class EngineBase implements Engine {
 
         ModInitializer initializer = new ModInitializer(this);
         for (ModContainer mod : loadedMods) {
-            if (mod instanceof DummyModContainer) {
-                continue;
-            }
             initializer.init(mod);
         }
     }

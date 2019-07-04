@@ -30,7 +30,7 @@ import nullengine.util.RuntimeEnvironment;
 import nullengine.util.Side;
 import nullengine.util.disposer.Disposer;
 import nullengine.util.disposer.DisposerImpl;
-import unknowndomaingame.foundation.DefaultGameMode;
+import unknowndomaingame.foundation.EngineModListeners;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -39,7 +39,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 
 public class EngineClientImpl extends EngineBase implements EngineClient {
 
@@ -64,19 +65,25 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     @Override
-    public void initEngine() {
-        super.initEngine();
+    protected void constructionStage() {
+        super.constructionStage();
 
-        // TODO: Remove it
-        getEventBus().register(DefaultGameMode.class);
-
-        initEngineClient();
-    }
-
-    private void initEngineClient() {
         logger.info("Initializing client engine!");
         clientThread = Thread.currentThread();
         disposer = new DisposerImpl();
+
+        // TODO: Remove it
+        modManager.getMod("engine").ifPresent(modContainer -> modContainer.getEventBus().register(EngineModListeners.class));
+    }
+
+    @Override
+    protected void modStage() {
+        super.modStage();
+    }
+
+    @Override
+    protected void resourceStage() {
+        super.resourceStage();
 
         logger.info("Initializing asset!");
         try {
@@ -130,8 +137,11 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
                 localeManager.register(mod);
             }
         });
+    }
 
-        initRegistration();
+    @Override
+    protected void finishStage() {
+        super.finishStage();
 
         logger.info("Initializing key binding!");
         var window = renderContext.getWindow();

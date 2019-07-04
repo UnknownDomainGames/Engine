@@ -24,8 +24,8 @@ import nullengine.entity.component.TwoHands;
 import nullengine.entity.item.ItemEntity;
 import nullengine.event.Listener;
 import nullengine.event.engine.EngineEvent;
-import nullengine.event.registry.RegistrationEvent;
-import nullengine.event.registry.RegistryConstructionEvent;
+import nullengine.event.mod.ModLifecycleEvent;
+import nullengine.event.mod.ModRegistrationEvent;
 import nullengine.event.world.block.BlockActivateEvent;
 import nullengine.event.world.block.BlockClickEvent;
 import nullengine.item.BlockItem;
@@ -34,8 +34,6 @@ import nullengine.item.ItemStack;
 import nullengine.item.component.HitBlockBehavior;
 import nullengine.item.component.UseBlockBehavior;
 import nullengine.player.Player;
-import nullengine.registry.Registry;
-import nullengine.registry.RegistryManager;
 import nullengine.registry.game.BlockRegistry;
 import nullengine.registry.impl.IdAutoIncreaseRegistry;
 import nullengine.world.collision.RayTraceBlockHit;
@@ -49,66 +47,66 @@ import unknowndomaingame.foundation.init.Items;
 import unknowndomaingame.foundation.registry.SimpleBlockRegistry;
 import unknowndomaingame.foundation.registry.SimpleItemRegistry;
 
-public final class DefaultGameMode {
+public final class EngineModListeners {
 
     @Listener
-    public static void constructionRegistry(RegistryConstructionEvent e) {
+    public static void onPreInit(ModLifecycleEvent.PreInitialization event) {
+        Platform.getEngine().getEventBus().register(EngineModListeners.class);
+    }
+
+    @Listener
+    public static void constructRegistry(ModRegistrationEvent.Construction e) {
         // TODO: move to common.
-        e.register(new SimpleBlockRegistry());
-        e.register(new SimpleItemRegistry());
+        e.addRegistry(Block.class, SimpleBlockRegistry::new);
+        e.addRegistry(Item.class, SimpleItemRegistry::new);
 
-        e.register(new IdAutoIncreaseRegistry<>(KeyBinding.class));
+        e.addRegistry(KeyBinding.class, () -> new IdAutoIncreaseRegistry<>(KeyBinding.class));
     }
 
     @Listener
-    public static void registerStage(RegistrationEvent.Start e) {
-        RegistryManager registryManager = e.getRegistryManager();
-        registerBlocks((BlockRegistry) registryManager.getRegistry(Block.class));
-        registerItems(registryManager.getRegistry(Item.class));
-        registerKeyBindings(registryManager.getRegistry(KeyBinding.class));
-    }
-
-    private static void registerBlocks(BlockRegistry registry) {
-        registry.register(Blocks.AIR);
+    public static void registerBlocks(ModRegistrationEvent.Register<Block> event) {
+        event.register(Blocks.AIR);
         Blocks.AIR.addComponent(BlockRenderer.class, new AirBlockRenderer());
-        registry.setAirBlock(Blocks.AIR);
+        ((BlockRegistry) event.getRegistry()).setAirBlock(Blocks.AIR);
 
         AssetPath blockModelPath = AssetPath.of("unknowndomain", "models", "block");
         Blocks.GRASS.addComponent(BlockRenderer.class, new DefaultBlockRenderer().setModelPath(blockModelPath.resolve("grass.json")));
         Blocks.DIRT.addComponent(BlockRenderer.class, new DefaultBlockRenderer().setModelPath(blockModelPath.resolve("dirt.json")));
-        registry.register(Blocks.GRASS);
-        registry.register(Blocks.DIRT);
+        event.register(Blocks.GRASS);
+        event.register(Blocks.DIRT);
     }
 
-    private static void registerItems(Registry<Item> registry) {
-        registry.register(new BlockItem(Blocks.AIR));
-        registry.register(Items.GRASS);
-        registry.register(Items.DIRT);
+    @Listener
+    public static void registerItems(ModRegistrationEvent.Register<Item> event) {
+        event.register(new BlockItem(Blocks.AIR));
+        event.register(Items.GRASS);
+        event.register(Items.DIRT);
 
         Items.GRASS.setComponent(ItemRenderer.class, new ItemBlockRenderer());
         Items.DIRT.setComponent(ItemRenderer.class, new ItemBlockRenderer());
     }
 
-    private static void registerKeyBindings(Registry<KeyBinding> registry) {
+    @Listener
+    public static void registerKeyBindings(ModRegistrationEvent.Register<KeyBinding> envet) {
 
         // TODO: When separating common and client, only register on client side
         // TODO: almost everything is hardcoded... Fix when GameContext and
-        registry.register(
+        envet.register(
                 KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
                         .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.FORWARD, false)));
-        registry.register(
+        envet.register(
                 KeyBinding.create("player.move.backward", Key.KEY_S, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.BACKWARD, true), ActionMode.PRESS)
                         .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.BACKWARD, false)));
-        registry.register(KeyBinding.create("player.move.left", Key.KEY_A, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
+        envet.register(KeyBinding.create("player.move.left", Key.KEY_A, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
                 .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.LEFT, false)));
-        registry.register(KeyBinding.create("player.move.right", Key.KEY_D, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
+        envet.register(KeyBinding.create("player.move.right", Key.KEY_D, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
                 .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.RIGHT, false)));
-        registry.register(KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
+        envet.register(KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
                 .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.UP, false)));
-        registry.register(
+        envet.register(
                 KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
                         .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, false)));
-        registry.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
+        envet.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
             GameClient game = c.getCurrentGame();
             Player player = game.getPlayer();
             Camera camera = c.getRenderContext().getCamera();
@@ -127,7 +125,7 @@ public final class DefaultGameMode {
             }
 
         }, ActionMode.PRESS));
-        registry.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (c) -> {
+        envet.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (c) -> {
             GameClient game = c.getCurrentGame();
             Player player = game.getPlayer();
             Camera camera = c.getRenderContext().getCamera();
@@ -145,7 +143,7 @@ public final class DefaultGameMode {
                                 }));
             }
         }, ActionMode.PRESS));
-        registry.register(KeyBinding.create("player.mouse.middle", Key.MOUSE_BUTTON_3, (c) -> {
+        envet.register(KeyBinding.create("player.mouse.middle", Key.MOUSE_BUTTON_3, (c) -> {
             GameClient game = c.getCurrentGame();
             Player player = game.getPlayer();
             Camera camera = c.getRenderContext().getCamera();
@@ -156,16 +154,16 @@ public final class DefaultGameMode {
                             .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new BlockItem(hit.getBlock()))))
             );
         }, ActionMode.PRESS));
-        registry.register(KeyBinding.create("game.chat", Key.KEY_T, (c) -> {
+        envet.register(KeyBinding.create("game.chat", Key.KEY_T, (c) -> {
             Scene scene = new Scene(new GuiChat(c.getCurrentGame()));
             c.getRenderContext().getGuiManager().showScreen(scene);
         }, ActionMode.PRESS));
-        registry.register(KeyBinding.create("game.inventory", Key.KEY_E, (c) -> {
+        envet.register(KeyBinding.create("game.inventory", Key.KEY_E, (c) -> {
             Scene scene = new Scene(new GuiItemList(c.getRenderContext()));
             c.getRenderContext().getGuiManager().showScreen(scene);
         }, ActionMode.PRESS));
-        registry.register(KeyBinding.create("game.menu", Key.KEY_ESCAPE, (c) -> {
-            if(!c.getRenderContext().getGuiManager().isDisplayingScreen()){
+        envet.register(KeyBinding.create("game.menu", Key.KEY_ESCAPE, (c) -> {
+            if (!c.getRenderContext().getGuiManager().isDisplayingScreen()) {
                 c.getRenderContext().getGuiManager().showScreen(new Scene(new GuiGameMenu()));
             }
         }, ActionMode.PRESS));
@@ -174,21 +172,21 @@ public final class DefaultGameMode {
         var guiManager = renderContext.getGuiManager();
         var hudGameDebug = new HUDGameDebug();
 //        renderContext.getScheduler().runTaskEveryFrame(() -> hudGameDebug.update(renderContext));
-        registry.register(KeyBinding.create("debug.switch", Key.KEY_F3, gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug))
+        envet.register(KeyBinding.create("debug.switch", Key.KEY_F3, gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug))
                 , ActionMode.SWITCH).endAction((gameClient, integer) -> guiManager.hideHud("debugGame")));
-    }
-
-    @Listener
-    public static void engineInit(EngineEvent.Ready event) {
-        var renderContext = Platform.getEngineClient().getRenderContext();
-        var guiManager = renderContext.getGuiManager();
-
-        var scene = new Scene(new GUIGameCreation());
-        guiManager.showScreen(scene);
     }
 
     @Listener
     public static void registerEntityRenderer(EntityRendererRegistrationEvent event) {
         event.register(ItemEntity.class, new EntityItemRenderer());
+    }
+
+    @Listener
+    public static void onEngineReady(EngineEvent.Ready event) {
+        var renderContext = Platform.getEngineClient().getRenderContext();
+        var guiManager = renderContext.getGuiManager();
+
+        var scene = new Scene(new GUIGameCreation());
+        guiManager.showScreen(scene);
     }
 }

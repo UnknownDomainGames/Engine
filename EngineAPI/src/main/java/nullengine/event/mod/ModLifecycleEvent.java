@@ -3,11 +3,11 @@ package nullengine.event.mod;
 import nullengine.event.Event;
 import nullengine.mod.ModContainer;
 
-public class ModLifecycleEvent implements Event {
+public abstract class ModLifecycleEvent implements Event {
 
     private final ModContainer modContainer;
 
-    public ModLifecycleEvent(ModContainer modContainer) {
+    private ModLifecycleEvent(ModContainer modContainer) {
         this.modContainer = modContainer;
     }
 

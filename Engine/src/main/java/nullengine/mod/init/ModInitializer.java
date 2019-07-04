@@ -21,8 +21,9 @@ public class ModInitializer {
 
         addLast("Instance", new InstanceTask());
         addLast("AutoListen", new AutoListenTask());
-        addLast("PreInitialization", new PreInitializationTask());
         addLast("Injection", new InjectionTask());
+        addLast("PreInitialization", new PreInitializationTask());
+        addLast("Registration", new RegistrationTask());
         addLast("Initialization", new InitializationTask());
         addLast("PostInitialization", new PostInitializationTask());
     }

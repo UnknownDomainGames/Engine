@@ -1,4 +1,4 @@
-package nullengine.event.registry;
+package nullengine.event.mod;
 
 import nullengine.event.Event;
 import nullengine.event.GenericEvent;
@@ -8,11 +8,12 @@ import nullengine.registry.RegistryManager;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
+import java.util.function.Supplier;
 
-public abstract class RegistrationEvent implements Event {
+public abstract class ModRegistrationEvent implements Event {
     private final RegistryManager manager;
 
-    private RegistrationEvent(RegistryManager registryManager) {
+    private ModRegistrationEvent(RegistryManager registryManager) {
         manager = registryManager;
     }
 
@@ -20,16 +21,29 @@ public abstract class RegistrationEvent implements Event {
         return manager;
     }
 
-    public static class Start extends RegistrationEvent {
+    public static class Construction implements Event {
 
-        public Start(RegistryManager registryManager) {
+        private final RegistryManager manager;
+
+        public Construction(RegistryManager registryManager) {
+            manager = registryManager;
+        }
+
+        public <T extends RegistryEntry<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier) {
+            manager.addRegistry(type, supplier);
+        }
+    }
+
+    public static class Pre extends ModRegistrationEvent {
+
+        public Pre(RegistryManager registryManager) {
             super(registryManager);
         }
     }
 
-    public static class Finish extends RegistrationEvent {
+    public static class Post extends ModRegistrationEvent {
 
-        public Finish(RegistryManager registryManager) {
+        public Post(RegistryManager registryManager) {
             super(registryManager);
         }
     }
@@ -45,6 +59,10 @@ public abstract class RegistrationEvent implements Event {
         @Override
         public Type getGenericType() {
             return registry.getEntryType();
+        }
+
+        public Registry<T> getRegistry() {
+            return registry;
         }
 
         public T register(@Nonnull T obj) {

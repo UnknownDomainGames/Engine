@@ -2,6 +2,8 @@ package nullengine.mod.impl;
 
 import nullengine.Engine;
 import nullengine.Platform;
+import nullengine.event.SimpleEventBus;
+import nullengine.event.reflect.ReflectEventListenerFactory;
 import nullengine.mod.ModContainer;
 import nullengine.mod.ModLoader;
 import nullengine.mod.ModManager;
@@ -115,7 +117,7 @@ public class EngineModManager implements ModManager {
 
     private void loadEngineDummyMod() {
         try {
-            var engineMod = new DummyModContainer(SimpleModMetadata.builder().id("engine").version(Platform.getVersion()).build());
+            var engineMod = new DummyModContainer(SimpleModMetadata.builder().id("engine").version(Platform.getVersion()).name("Engine").build());
             var classLoader = engine.getClass().getClassLoader();
             engineMod.setClassLoader(classLoader);
             Path engineJarPath = Path.of(engine.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -127,6 +129,7 @@ public class EngineModManager implements ModManager {
             }
             modAssets.setMod(engineMod);
             engineMod.setAssets(modAssets);
+            engineMod.setEventBus(SimpleEventBus.builder().eventListenerFactory(ReflectEventListenerFactory.instance()).build());
             loadedModContainers.put(engineMod.getId(), engineMod);
         } catch (IOException | URISyntaxException ignored) {
         }
