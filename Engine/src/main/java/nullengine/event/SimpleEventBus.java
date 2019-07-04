@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class SimpleEventBus implements EventBus {
-
+    private Event activeEvent = null;
     private final Map<Class<?>, ListenerList> listenerLists = new HashMap<>();
     private final Map<Object, List<RegisteredListener>> registeredListeners = new HashMap<>();
 
@@ -28,6 +28,9 @@ public class SimpleEventBus implements EventBus {
 
     @Override
     public boolean post(Event event) {
+        event.setCausality(this.activeEvent);
+        this.activeEvent = event;
+
         ListenerList listenerList = getListenerList(event.getClass());
         for (RegisteredListener listener : listenerList.getListeners()) {
             try {
@@ -36,6 +39,7 @@ public class SimpleEventBus implements EventBus {
                 eventExceptionHandler.handle(listenerList, listener, event, e);
             }
         }
+        this.activeEvent = event.getCausality().orElse(null);
         return event.isCancellable() && ((Cancellable) event).isCancelled();
     }
 

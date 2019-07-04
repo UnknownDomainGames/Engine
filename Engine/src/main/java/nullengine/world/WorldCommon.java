@@ -1,25 +1,21 @@
 package nullengine.world;
 
 import nullengine.block.Block;
-import nullengine.block.component.DestroyBehavior;
-import nullengine.block.component.NeighborChangeListener;
-import nullengine.block.component.PlaceBehavior;
 import nullengine.entity.Entity;
 import nullengine.entity.PlayerEntity;
-import nullengine.event.world.block.BlockChangeEvent;
-import nullengine.event.world.block.BlockDestroyEvent;
-import nullengine.event.world.block.BlockPlaceEvent;
-import nullengine.event.world.block.BlockReplaceEvent;
-import nullengine.event.world.block.cause.BlockChangeCause;
+import nullengine.event.Event;
+import nullengine.event.EventBus;
+import nullengine.event.world.WorldTickEvent;
+import nullengine.event.world.block.*;
 import nullengine.game.Game;
 import nullengine.math.AABBs;
 import nullengine.math.BlockPos;
 import nullengine.math.FixStepTicker;
 import nullengine.player.Player;
 import nullengine.registry.Registries;
-import nullengine.util.Facing;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
+import nullengine.world.chunk.ChunkManager;
 import nullengine.world.chunk.WorldCommonChunkManager;
 import nullengine.world.collision.WorldCollisionManager;
 import nullengine.world.collision.WorldCollisionManagerImpl;
@@ -28,6 +24,7 @@ import nullengine.world.storage.WorldCommonLoader;
 import org.joml.AABBd;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import unknowndomaingame.foundation.init.Blocks;
 
 import javax.annotation.Nonnull;
@@ -36,7 +33,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class WorldCommon implements World, Runnable {
-
     private final Game game;
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
@@ -115,9 +111,8 @@ public class WorldCommon implements World, Runnable {
                 tick.run();
             }
         }
-        physicsSystem.tick(this);
-        tickEntityMotion();
-        tickChunks();
+
+        game.getEventBus().post(new WorldTickEvent(this));
         tickEntities();
         gameTick++;
     }
@@ -127,43 +122,9 @@ public class WorldCommon implements World, Runnable {
         return gameTick;
     }
 
-    protected void tickChunks() {
-        chunkManager.getChunks().forEach(this::tickChunk);
-    }
-
     protected void tickEntities() {
         for (Entity entity : entityList)
             entity.tick(); // state machine update
-    }
-
-    protected void tickEntityMotion() {
-        for (Entity entity : this.getEntities()) {
-            Vector3d position = entity.getPosition();
-            Vector3f motion = entity.getMotion();
-            BlockPos oldPosition = ChunkConstants.toChunkPos(BlockPos.of(position));
-            position.add(motion);
-            BlockPos newPosition = ChunkConstants.toChunkPos(BlockPos.of(position));
-
-            if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
-                Chunk oldChunk = chunkManager.loadChunk(oldPosition.getX(), oldPosition.getY(), oldPosition.getZ()),
-                        newChunk = chunkManager.loadChunk(newPosition.getX(), newPosition.getY(), newPosition.getZ());
-                oldChunk.getEntities().remove(entity);
-                newChunk.getEntities().add(entity);
-                // entity leaving and enter chunk event
-            }
-        }
-    }
-
-    private void tickChunk(Chunk chunk) {
-//        Collection<Block> blocks = chunk.getRuntimeBlock();
-//        if (blocks.size() != 0) {
-//            for (Block object : blocks) {
-//                BlockPrototype.TickBehavior behavior = object.getBehavior(BlockPrototype.TickBehavior.class);
-//                if (behavior != null) {
-//                    behavior.tick(object);
-//                }
-//            }
-//        }
     }
 
     @Nonnull
@@ -182,35 +143,48 @@ public class WorldCommon implements World, Runnable {
 
     @Nonnull
     @Override
-    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
+    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block) {
         Block oldBlock = getBlock(pos);
-        if (!getGame().getEventBus().post(new BlockChangeEvent.Pre(this, pos, oldBlock, block, cause))) {
+        EventBus eventBus = getGame().getEventBus();
+
+        Event preEvent;
+        if (block == Blocks.AIR) {
+            preEvent = new BlockDestroyEvent.Pre(this, pos, oldBlock);
+        } else if (oldBlock == Blocks.AIR) {
+            preEvent = new BlockPlaceEvent.Pre(this, pos, block);
+        } else {
+            preEvent = new BlockReplaceEvent.Pre(this, pos, oldBlock, block);
+        }
+        if (!eventBus.post(preEvent)) {
             chunkManager.loadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
-                    .setBlock(pos, block, cause);
+                    .setBlock(pos, block);
+
+            Event postEvent;
             if (block == Blocks.AIR) {
-                oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, null, pos, oldBlock, cause));
-                getGame().getEventBus().post(new BlockDestroyEvent(this, pos, oldBlock, cause));
+                postEvent = new BlockDestroyEvent.Post(this, pos, oldBlock);
             } else if (oldBlock == Blocks.AIR) {
-                block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
-                getGame().getEventBus().post(new BlockPlaceEvent(this, pos, block, cause));
-            }else{
-                oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, null, pos, oldBlock, cause));
-                block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
-                getGame().getEventBus().post(new BlockReplaceEvent(this, pos, oldBlock, block, cause));
+                postEvent = new BlockPlaceEvent.Post(this, pos, block);
+            } else {
+                postEvent = new BlockReplaceEvent.Post(this, pos, oldBlock, block);
             }
-            getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause)); // TODO:
-            for (Facing facing : Facing.values()) {
-                BlockPos pos1 = pos.offset(facing);
-                Block block1 = getBlock(pos1);
-                block1.getComponent(NeighborChangeListener.class).ifPresent(neighborChangeListener -> neighborChangeListener.onNeighborChange(this, pos1, block1, facing.opposite(), pos, block, cause));
-            }
+            eventBus.post(postEvent);
         }
         return oldBlock;
     }
 
     @Override
-    public Block removeBlock(@Nonnull BlockPos pos, BlockChangeCause cause) {
-        return setBlock(pos, Blocks.AIR, cause);
+    public boolean interactBlock(@Nonnull BlockPos pos, @Nonnull Block block, Vector3fc localPos) {
+        EventBus eventBus = getGame().getEventBus();
+
+        if (eventBus.post(new BlockInteractEvent.Pre(this, pos, block, localPos))) {
+            return eventBus.post(new BlockInteractEvent.Post(this, pos, block, localPos));
+        }
+        return false;
+    }
+
+    @Override
+    public Block removeBlock(@Nonnull BlockPos pos) {
+        return setBlock(pos, Blocks.AIR);
     }
 
     @Override
@@ -244,101 +218,11 @@ public class WorldCommon implements World, Runnable {
         this.loader = loader;
     }
 
-    public WorldCommonChunkManager getChunkManager() {
-        return chunkManager;
+    public ChunkManager<World> getChunkManager() {
+        return ((ChunkManager<World>) (Object) chunkManager);
     }
 
     public void setChunkManager(WorldCommonChunkManager chunkManager) {
         this.chunkManager = chunkManager;
-    }
-
-    static class PhysicsSystem {
-        public void tick(World world) {
-            List<Entity> entityList = world.getEntities();
-            for (Entity entity : entityList) {
-                Vector3f motion = entity.getMotion();
-                if (motion.x == 0 && motion.y == 0 && motion.z == 0)
-                    continue;
-                Vector3f direction = new Vector3f(motion);
-                Vector3d position = entity.getPosition();
-                AABBd box = entity.getBoundingBox();
-                if (box == null)
-                    continue;
-
-                BlockPos localPos = BlockPos.of(((int) Math.floor(position.x)), ((int) Math.floor(position.y)),
-                        ((int) Math.floor(position.z)));
-
-//                 int directionX = motion.x == -0 ? 0 : Float.compare(motion.x, 0),
-//                 directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
-//                 directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
-
-                AABBd entityBox = AABBs.translate(box, position.add(direction, new Vector3d()), new AABBd());
-                List<BlockPos>[] around = AABBs.around(entityBox, motion);
-                for (List<BlockPos> ls : around) {
-                    ls.add(localPos);
-                }
-                List<BlockPos> faceX = around[0], faceY = around[1], faceZ = around[2];
-
-                double xFix = Integer.MAX_VALUE, yFix = Integer.MAX_VALUE, zFix = Integer.MAX_VALUE;
-                if (faceX.size() != 0) {
-                    for (BlockPos pos : faceX) {
-                        Block block = world.getBlock(pos);
-                        AABBd[] blockBoxes = block.getShape().getBoundingBoxes(world, pos, block);
-                        if (blockBoxes.length != 0)
-                            for (AABBd blockBoxLocal : blockBoxes) {
-                                AABBd blockBox = AABBs.translate(blockBoxLocal,
-                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
-                                if (blockBox.testAABB(entityBox)) {
-                                    xFix = Math.min(xFix, Math.min(Math.abs(blockBox.maxX - entityBox.minX),
-                                            Math.abs(blockBox.minX - entityBox.maxX)));
-                                }
-                            }
-                    }
-                }
-                if (faceY.size() != 0) {
-                    for (BlockPos pos : faceY) {
-                        Block block = world.getBlock(pos);
-                        AABBd[] blockBoxes = block.getShape()
-                                .getBoundingBoxes(world, pos, block);
-                        if (blockBoxes.length != 0)
-                            for (AABBd blockBox : blockBoxes) {
-                                AABBd translated = AABBs.translate(blockBox,
-                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
-                                if (translated.testAABB(entityBox)) {
-                                    yFix = Math.min(yFix, Math.min(Math.abs(translated.maxY - entityBox.minY),
-                                            Math.abs(translated.minY - entityBox.maxY)));
-                                }
-                            }
-                    }
-                }
-                if (faceZ.size() != 0) {
-                    for (BlockPos pos : faceZ) {
-                        Block block = world.getBlock(pos);
-                        AABBd[] blockBoxes = block.getShape()
-                                .getBoundingBoxes(world, pos, block);
-                        if (blockBoxes.length != 0)
-                            for (AABBd blockBox : blockBoxes) {
-                                AABBd translated = AABBs.translate(blockBox,
-                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
-                                if (translated.testAABB(entityBox)) {
-                                    zFix = Math.min(zFix, Math.min(Math.abs(translated.maxZ - entityBox.minZ),
-                                            Math.abs(translated.minZ - entityBox.maxZ)));
-                                }
-                            }
-                    }
-                }
-                if (Integer.MAX_VALUE != xFix)
-                    motion.x = 0;
-                if (Integer.MAX_VALUE != yFix)
-                    motion.y = 0;
-                if (Integer.MAX_VALUE != zFix) {
-                    motion.z = 0;
-                }
-
-                // if (motion.y > 0) motion.y -= 0.01f;
-                // else if (motion.y < 0) motion.y += 0.01f;
-                // if (Math.abs(motion.y) <= 0.01f) motion.y = 0; // physics update
-            }
-        }
     }
 }

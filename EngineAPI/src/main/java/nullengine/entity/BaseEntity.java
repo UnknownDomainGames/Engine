@@ -17,7 +17,7 @@ public abstract class BaseEntity implements Entity {
     private int id;
 
     private World world;
-    private Vector3d position = new Vector3d();
+    private Vector3f position = new Vector3f();
     private Vector3f rotation = new Vector3f();
     private Vector3f motion = new Vector3f();
     private AABBd boundingBox;
@@ -41,7 +41,7 @@ public abstract class BaseEntity implements Entity {
     }
 
     @Override
-    public Vector3d getPosition() {
+    public Vector3f getPosition() {
         return position;
     }
 

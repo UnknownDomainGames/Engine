@@ -59,10 +59,10 @@ public class HUDGameDebug extends VBox implements GuiTickable {
 //
 //        blockHitInfo.visible().set(context.getHit() != null);
 //        if (context.getHit() != null) {
-//            RayTraceBlockHit hit = context.getHit();
-//            lookingBlock.text().setValue(String.format("Looking block: %s", hit.getBlock().getUniqueName()));
-//            lookingBlockPos.text().setValue(String.format("Looking pos: %s(%d, %d, %d)", hit.getFace().name(), hit.getPos().getX(), hit.getPos().getY(), hit.getPos().getZ()));
-//            hitPos.text().setValue(String.format("Looking at: (%.2f, %.2f, %.2f)", hit.getHitPoint().x, hit.getHitPoint().y, hit.getHitPoint().z));
+//            RayTraceBlockHit hitBlock = context.getHit();
+//            lookingBlock.text().setValue(String.format("Looking block: %s", hitBlock.getBlock().getUniqueName()));
+//            lookingBlockPos.text().setValue(String.format("Looking pos: %s(%d, %d, %d)", hitBlock.getFace().name(), hitBlock.getPos().getX(), hitBlock.getPos().getY(), hitBlock.getPos().getZ()));
+//            hitPos.text().setValue(String.format("Looking at: (%.2f, %.2f, %.2f)", hitBlock.getHitPoint().x, hitBlock.getHitPoint().y, hitBlock.getHitPoint().z));
 //        }
     }
 

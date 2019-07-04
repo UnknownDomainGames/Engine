@@ -8,7 +8,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public class ComponentContainer implements GameObject {
-
     private final Map<Class<?>, Optional<Component>> components;
 
     public ComponentContainer() {

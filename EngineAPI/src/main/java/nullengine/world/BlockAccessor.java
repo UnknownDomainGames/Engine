@@ -1,18 +1,22 @@
 package nullengine.world;
 
 import nullengine.block.Block;
-import nullengine.event.world.block.cause.BlockChangeCause;
+import nullengine.event.Event;
+import nullengine.event.world.block.cause.BlockInteractCause;
 import nullengine.math.BlockPos;
+import org.joml.Vector3fc;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public interface BlockAccessor {
-
     @Nonnull
     World getWorld();
 
     @Nonnull
-    Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause);
+    Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block);
+
+    boolean interactBlock(@Nonnull BlockPos pos, @Nonnull Block block, Vector3fc localPos);
 
     @Nonnull
     default Block getBlock(@Nonnull BlockPos pos) {

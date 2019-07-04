@@ -12,7 +12,7 @@ public interface Entity extends GameObject, Tickable {
 
     World getWorld();
 
-    Vector3d getPosition();
+    Vector3f getPosition();
 
     Vector3f getRotation();
 

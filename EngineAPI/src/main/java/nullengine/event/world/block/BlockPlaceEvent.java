@@ -2,21 +2,24 @@ package nullengine.event.world.block;
 
 import nullengine.block.Block;
 import nullengine.event.Event;
-import nullengine.event.world.block.cause.BlockChangeCause;
+import nullengine.event.EventBase;
 import nullengine.math.BlockPos;
 import nullengine.world.World;
 
-public class BlockPlaceEvent implements Event {
+public abstract class BlockPlaceEvent extends BlockChangeEvent implements Event {
+    public BlockPlaceEvent(World world, BlockPos pos, Block newBlock) {
+        super(world, pos, null, newBlock);
+    }
 
-    private final World world;
-    private final BlockPos pos;
-    private final Block newBlock;
-    private final BlockChangeCause cause;
+    public static class Pre extends BlockPlaceEvent {
+        public Pre(World world, BlockPos pos, Block newBlock) {
+            super(world, pos, newBlock);
+        }
+    }
 
-    public BlockPlaceEvent(World world, BlockPos pos, Block newBlock, BlockChangeCause cause) {
-        this.world = world;
-        this.pos = pos;
-        this.newBlock = newBlock;
-        this.cause = cause;
+    public static class Post extends BlockPlaceEvent {
+        public Post(World world, BlockPos pos, Block newBlock) {
+            super(world, pos, newBlock);
+        }
     }
 }

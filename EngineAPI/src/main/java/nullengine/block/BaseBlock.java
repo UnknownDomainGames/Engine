@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public class BaseBlock extends RegistryEntry.Impl<Block> implements Block {
-
     private final ComponentContainer components = new ComponentContainer();
 
     private BlockShape shape = BlockShape.NORMAL_CUBE;

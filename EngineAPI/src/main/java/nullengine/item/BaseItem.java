@@ -21,7 +21,7 @@ public class BaseItem extends RegistryEntry.Impl<Item> implements Item {
             public void onHit(Player player, ItemStack itemStack, RayTraceBlockHit hit) {
                 //TODO: use send packet
                 if (hit.isSuccess()) {
-                    player.getWorld().removeBlock(hit.getPos(), null);
+                    player.getWorld().removeBlock(hit.getPos());
                 }
             }
 

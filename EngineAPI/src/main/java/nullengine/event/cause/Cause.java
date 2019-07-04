@@ -1,6 +1,15 @@
 package nullengine.event.cause;
 
-public interface Cause {
+import nullengine.event.Event;
 
-    String getCauseName();
+import java.util.Optional;
+
+/**
+ * Represent the causality of an event.
+ */
+public interface Cause {
+    /**
+     * The causality event (parent event)
+     */
+    Optional<Event> getCausality();
 }

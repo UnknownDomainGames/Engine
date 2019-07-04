@@ -2,6 +2,8 @@ package nullengine.world.chunk;
 
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
+import nullengine.event.Listener;
+import nullengine.event.world.WorldTickEvent;
 import nullengine.event.world.chunk.ChunkLoadEvent;
 import nullengine.event.world.chunk.ChunkUnloadEvent;
 import nullengine.player.Player;
@@ -15,7 +17,6 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 
 public class WorldCommonChunkManager implements ChunkManager<WorldCommon> {
-
     private final WeakReference<WorldCommon> world;
     private final ChunkStorer chunkLoader;
     private final LongObjectMap<Chunk> chunkMap;
@@ -32,7 +33,7 @@ public class WorldCommonChunkManager implements ChunkManager<WorldCommon> {
     public boolean shouldChunkUnload(Chunk chunk, Player player) {
         int viewDistanceSquared = 36864; //TODO game config
         return !world.get().getCriticalChunks().contains(ChunkConstants.getChunkIndex(chunk.getChunkX(), chunk.getChunkY(), chunk.getChunkZ()))
-                && player.getControlledEntity().getPosition().distanceSquared(new Vector3d(chunk.getMin().add(chunk.getMax(), new Vector3f()).div(2))) > viewDistanceSquared;
+                && player.getControlledEntity().getPosition().distanceSquared(new Vector3f(chunk.getMin().add(chunk.getMax(), new Vector3f()).div(2))) > viewDistanceSquared;
     }
 
 
@@ -69,6 +70,11 @@ public class WorldCommonChunkManager implements ChunkManager<WorldCommon> {
             chunkMap.remove(chunkIndex);
             world.get().getGame().getEventBus().post(new ChunkUnloadEvent(chunk));
         }
+    }
+
+    @Listener
+    public void tickWorld(WorldTickEvent event) {
+//        this.getChunks().forEach(this::tickChunk);
     }
 
     @Override

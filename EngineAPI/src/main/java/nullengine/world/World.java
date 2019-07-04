@@ -2,10 +2,10 @@ package nullengine.world;
 
 import nullengine.block.Block;
 import nullengine.entity.Entity;
-import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.game.Game;
 import nullengine.math.BlockPos;
 import nullengine.world.chunk.Chunk;
+import nullengine.world.chunk.ChunkManager;
 import nullengine.world.collision.WorldCollisionManager;
 
 import javax.annotation.Nonnull;
@@ -16,10 +16,11 @@ import java.util.List;
  * World instance, should spawn by {@link Game}
  */
 public interface World extends BlockAccessor {
-
     Game getGame();
 
     WorldCollisionManager getCollisionManager();
+
+    ChunkManager<World> getChunkManager();
 
     long getGameTick();
 
@@ -31,7 +32,7 @@ public interface World extends BlockAccessor {
 
     Chunk getChunk(int chunkX, int chunkY, int chunkZ);
 
-    Block removeBlock(@Nonnull BlockPos pos, BlockChangeCause cause);
+    Block removeBlock(@Nonnull BlockPos pos);
 
     Collection<Chunk> getLoadedChunks();
 
