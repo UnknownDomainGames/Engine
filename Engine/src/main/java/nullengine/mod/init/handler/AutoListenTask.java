@@ -20,7 +20,7 @@ public class AutoListenTask implements ModInitializationTask {
         try {
             Optional<InputStream> stream = mod.getAssets().openStream("META-INF", "data", "AutoListen.json");
             if (stream.isEmpty()) {
-                mod.getLogger().warn("Not found \"AutoListen.json\" file, skip AutoListen stage.");
+                mod.getLogger().debug("Not found \"AutoListen.json\" file, skip AutoListen stage.");
                 return;
             }
 
