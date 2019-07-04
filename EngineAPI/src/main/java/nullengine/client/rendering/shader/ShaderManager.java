@@ -58,7 +58,7 @@ public class ShaderManager {
 
     public ObservableValue<ShaderProgram> registerShader(String name, ShaderProgramBuilder builder) {
         if (registeredShaders.containsKey(name)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(String.format("Shader %s has already registered!", name));
         }
         registeredShaders.put(name, builder);
         MutableValue<ShaderProgram> value = new SimpleMutableObjectValue<>();

@@ -159,6 +159,7 @@ public class ChunkRenderer {
         updateExecutor.shutdownNow();
 
         ShaderManager.INSTANCE.unregisterShader("chunk_solid");
+        ShaderManager.INSTANCE.unregisterShader("assimp_model");
 
         game.getEventBus().unregister(this);
     }
