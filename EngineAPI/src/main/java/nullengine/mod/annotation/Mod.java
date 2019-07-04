@@ -1,5 +1,7 @@
 package nullengine.mod.annotation;
 
+import nullengine.mod.InstallationType;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -22,6 +24,8 @@ public @interface Mod {
 
     String name() default "";
 
+    InstallationType installationType() default InstallationType.CLIENT_REQUIRED;
+
     String description() default "";
 
     String license() default "";
@@ -36,7 +40,7 @@ public @interface Mod {
 
     Dependency[] dependencies() default {};
 
-    Property[] properties() default {};
+    Element[] elements() default {};
 
     boolean generateMetadata() default true;
 }

@@ -3,6 +3,7 @@ package nullengine.mod.util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import nullengine.mod.InstallationType;
 import nullengine.mod.ModDependencyItem;
 import nullengine.mod.ModMetadata;
 import nullengine.mod.misc.SimpleModMetadata;
@@ -11,7 +12,7 @@ import java.util.*;
 
 public class ModMetadataUtils {
 
-    public static final Set<String> VANILLA_KEYS = Set.of("id", "version", "main", "name",
+    public static final Set<String> VANILLA_KEYS = Set.of("id", "version", "main", "name", "installationType",
             "description", "license", "url", "logo", "authors", "permissions", "dependencies");
 
     public static JsonObject toJson(ModMetadata descriptor) {
@@ -19,6 +20,7 @@ public class ModMetadataUtils {
         jo.addProperty("id", descriptor.getId());
         jo.addProperty("version", descriptor.getVersion().toString());
         jo.addProperty("main", descriptor.getMainClass());
+        jo.addProperty("installationType", descriptor.getInstallationType().name());
         jo.addProperty("name", descriptor.getName());
         jo.addProperty("description", descriptor.getDescription());
         jo.addProperty("license", descriptor.getLicense());
@@ -43,7 +45,7 @@ public class ModMetadataUtils {
         }
         jo.add("dependencies", ja);
 
-        for (Map.Entry<String, JsonElement> entry : descriptor.getProperties().entrySet()) {
+        for (Map.Entry<String, JsonElement> entry : descriptor.getCustomElements().entrySet()) {
             if (VANILLA_KEYS.contains(entry.getKey())) {
                 continue;
             }
@@ -55,20 +57,20 @@ public class ModMetadataUtils {
 
     public static ModMetadata fromJson(JsonObject jo) {
         SimpleModMetadata.Builder builder = SimpleModMetadata.builder();
-
         if (jo.has("id")) {
             builder.id(jo.get("id").getAsString());
         }
-
         if (jo.has("main")) {
             builder.mainClass(jo.get("main").getAsString());
         }
-
         if (jo.has("version")) {
             builder.version(jo.get("version").getAsString());
         }
         if (jo.has("name")) {
             builder.name(jo.get("name").getAsString());
+        }
+        if (jo.has("installationType")) {
+            builder.installationType(InstallationType.valueOf(jo.get("installationType").getAsString()));
         }
         if (jo.has("description")) {
             builder.description(jo.get("description").getAsString());
@@ -107,14 +109,14 @@ public class ModMetadataUtils {
             }
             builder.dependencies(List.copyOf(dependencies));
         }
-        Map<String, JsonElement> properties = new HashMap<>();
+        Map<String, JsonElement> elements = new HashMap<>();
         for (Map.Entry<String, JsonElement> entry : jo.entrySet()) {
             if (VANILLA_KEYS.contains(entry.getKey())) {
                 continue;
             }
-            properties.put(entry.getKey(), entry.getValue());
+            elements.put(entry.getKey(), entry.getValue());
         }
-        builder.properties(Map.copyOf(properties));
+        builder.elements(Map.copyOf(elements));
         return builder.build();
     }
 }

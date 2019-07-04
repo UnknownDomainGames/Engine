@@ -1,6 +1,7 @@
 package nullengine.mod.misc;
 
 import com.google.gson.JsonElement;
+import nullengine.mod.InstallationType;
 import nullengine.mod.ModDependencyItem;
 import nullengine.mod.ModMetadata;
 import nullengine.util.versioning.Version;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static nullengine.mod.InstallationType.CLIENT_REQUIRED;
+
 public class SimpleModMetadata implements ModMetadata {
 
     public static final Version DEFAULT_VERSION = new Version("1.0.0");
@@ -19,6 +22,7 @@ public class SimpleModMetadata implements ModMetadata {
     private final Version version;
     private final String mainClass;
     private final String name;
+    private final InstallationType installationType;
     private final String description;
     private final String license;
     private final String url;
@@ -26,13 +30,14 @@ public class SimpleModMetadata implements ModMetadata {
     private final List<String> authors;
     private final List<String> permissions;
     private final List<ModDependencyItem> dependencies;
-    private final Map<String, JsonElement> properties;
+    private final Map<String, JsonElement> elements;
 
-    protected SimpleModMetadata(String id, Version version, String mainClass, String name, String description, String license, String url, String logo, List<String> authors, List<String> permissions, List<ModDependencyItem> dependencies, Map<String, JsonElement> properties) {
+    protected SimpleModMetadata(String id, Version version, String mainClass, String name, InstallationType installationType, String description, String license, String url, String logo, List<String> authors, List<String> permissions, List<ModDependencyItem> dependencies, Map<String, JsonElement> elements) {
         this.id = id;
         this.version = version;
         this.mainClass = mainClass;
         this.name = name;
+        this.installationType = installationType;
         this.description = description;
         this.license = license;
         this.url = url;
@@ -40,7 +45,7 @@ public class SimpleModMetadata implements ModMetadata {
         this.authors = authors;
         this.permissions = permissions;
         this.dependencies = dependencies;
-        this.properties = properties;
+        this.elements = elements;
     }
 
     @Nonnull
@@ -55,6 +60,7 @@ public class SimpleModMetadata implements ModMetadata {
         return version;
     }
 
+    @Nonnull
     @Override
     public String getMainClass() {
         return mainClass;
@@ -63,6 +69,12 @@ public class SimpleModMetadata implements ModMetadata {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Nonnull
+    @Override
+    public InstallationType getInstallationType() {
+        return installationType;
     }
 
     @Override
@@ -101,13 +113,13 @@ public class SimpleModMetadata implements ModMetadata {
     }
 
     @Override
-    public Map<String, JsonElement> getProperties() {
-        return properties;
+    public Map<String, JsonElement> getCustomElements() {
+        return elements;
     }
 
     @Override
-    public Optional<JsonElement> getProperty(String key) {
-        return Optional.ofNullable(properties.get(key));
+    public Optional<JsonElement> getCustomElement(String key) {
+        return Optional.ofNullable(elements.get(key));
     }
 
     public static Builder builder() {
@@ -119,6 +131,7 @@ public class SimpleModMetadata implements ModMetadata {
         private Version version = DEFAULT_VERSION;
         private String mainClass = "";
         private String name = "";
+        private InstallationType installationType = CLIENT_REQUIRED;
         private String description = "";
         private String license = "";
         private String url = "";
@@ -126,7 +139,7 @@ public class SimpleModMetadata implements ModMetadata {
         private List<String> authors = Collections.emptyList();
         private List<String> permissions = Collections.emptyList();
         private List<ModDependencyItem> dependencies = Collections.emptyList();
-        private Map<String, JsonElement> properties = Collections.emptyMap();
+        private Map<String, JsonElement> elements = Collections.emptyMap();
 
         public Builder id(String id) {
             this.id = id;
@@ -150,6 +163,11 @@ public class SimpleModMetadata implements ModMetadata {
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder installationType(InstallationType installationType) {
+            this.installationType = installationType;
             return this;
         }
 
@@ -183,8 +201,8 @@ public class SimpleModMetadata implements ModMetadata {
             return this;
         }
 
-        public Builder properties(Map<String, JsonElement> properties) {
-            this.properties = properties;
+        public Builder elements(Map<String, JsonElement> elements) {
+            this.elements = elements;
             return this;
         }
 
@@ -194,7 +212,7 @@ public class SimpleModMetadata implements ModMetadata {
         }
 
         public SimpleModMetadata build() {
-            return new SimpleModMetadata(id, version, mainClass, name, description, license, url, logo, authors, permissions, dependencies, properties);
+            return new SimpleModMetadata(id, version, mainClass, name, installationType, description, license, url, logo, authors, permissions, dependencies, elements);
         }
     }
 }

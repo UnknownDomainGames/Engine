@@ -16,9 +16,13 @@ public interface ModMetadata {
     @Nonnull
     Version getVersion();
 
+    @Nonnull
     String getMainClass();
 
     String getName();
+
+    @Nonnull
+    InstallationType getInstallationType();
 
     String getDescription();
 
@@ -34,7 +38,7 @@ public interface ModMetadata {
 
     List<ModDependencyItem> getDependencies();
 
-    Map<String, JsonElement> getProperties();
+    Map<String, JsonElement> getCustomElements();
 
-    Optional<JsonElement> getProperty(String key);
+    Optional<JsonElement> getCustomElement(String key);
 }

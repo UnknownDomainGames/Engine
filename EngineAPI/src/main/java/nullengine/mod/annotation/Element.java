@@ -6,9 +6,12 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({})
-public @interface Property {
+public @interface Element {
 
     String key();
 
+    /**
+     * @return json element
+     */
     String value();
 }

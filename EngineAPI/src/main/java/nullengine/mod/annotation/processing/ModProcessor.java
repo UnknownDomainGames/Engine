@@ -2,6 +2,7 @@ package nullengine.mod.annotation.processing;
 
 import com.google.gson.JsonElement;
 import nullengine.mod.DependencyType;
+import nullengine.mod.InstallationType;
 import nullengine.mod.ModDependencyItem;
 import nullengine.mod.ModMetadata;
 import nullengine.mod.annotation.Mod;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 
+import static nullengine.mod.InstallationType.CLIENT_REQUIRED;
 import static nullengine.mod.annotation.processing.ProcessingUtils.createFile;
 import static nullengine.mod.annotation.processing.ProcessingUtils.getAnnotationValues;
 
@@ -68,6 +70,7 @@ public class ModProcessor extends AbstractProcessor {
                     .version((String) values.getOrDefault("version", "1.0.0"))
                     .mainClass(element.getQualifiedName().toString())
                     .name((String) values.getOrDefault("name", ""))
+                    .installationType(InstallationType.valueOf(values.getOrDefault("installationType", CLIENT_REQUIRED.name()).toString()))
                     .description((String) values.getOrDefault("description", ""))
                     .license((String) values.getOrDefault("license", ""))
                     .url((String) values.getOrDefault("url", ""))
@@ -75,7 +78,7 @@ public class ModProcessor extends AbstractProcessor {
                     .authors(Arrays.asList((String[]) values.getOrDefault("authors", new String[0])))
                     .permissions(Arrays.asList((String[]) values.getOrDefault("permissions", new String[0])))
                     .dependencies(createDependencyList((List<AnnotationMirror>) values.get("dependencies")))
-                    .properties(createPropertyMap((List<AnnotationMirror>) values.get("properties")))
+                    .elements(createElementMap((List<AnnotationMirror>) values.get("elements")))
                     .build();
             writer.append(ModMetadataUtils.toJson(metadata).toString());
         } catch (IOException e) {
@@ -97,12 +100,12 @@ public class ModProcessor extends AbstractProcessor {
         return list;
     }
 
-    private Map<String, JsonElement> createPropertyMap(List<AnnotationMirror> properties) {
+    private Map<String, JsonElement> createElementMap(List<AnnotationMirror> elements) {
         Map<String, JsonElement> map = new HashMap<>();
-        if (properties == null)
+        if (elements == null)
             return map;
-        for (AnnotationMirror property : properties) {
-            Map<String, Object> values = getAnnotationValues(property);
+        for (AnnotationMirror element : elements) {
+            Map<String, Object> values = getAnnotationValues(element);
             map.put((String) values.get("key"), JsonUtils.DEFAULT_JSON_PARSER.parse((String) values.get("value")));
         }
         return map;
