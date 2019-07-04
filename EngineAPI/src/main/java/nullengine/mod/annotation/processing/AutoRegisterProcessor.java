@@ -25,8 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static nullengine.mod.annotation.processing.ProcessingUtils.createFile;
-import static nullengine.mod.annotation.processing.ProcessingUtils.hasModifier;
+import static nullengine.mod.annotation.processing.ProcessingUtils.*;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class AutoRegisterProcessor extends AbstractProcessor {
@@ -56,7 +55,7 @@ public class AutoRegisterProcessor extends AbstractProcessor {
                     var owner = ((TypeElement) element).getQualifiedName().toString();
                     items.add(new AutoRegisterItem(owner));
                 } else if (element instanceof VariableElement) {
-                    if (!processingEnv.getTypeUtils().isAssignable(element.asType(), registryEntryTypeMirror)) {
+                    if (!isAssignableIgnoreGeneric(processingEnv.getTypeUtils(), registryEntryTypeMirror, element.asType())) {
                         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Cannot auto register field which type isn't RegistryEntry or its sub class.", element);
                         continue;
                     }
@@ -67,9 +66,9 @@ public class AutoRegisterProcessor extends AbstractProcessor {
                     }
 
                     var owner = ((TypeElement) element.getEnclosingElement()).getQualifiedName().toString();
-                    var name = element.getSimpleName().toString();
                     var type = element.asType().toString();
-                    items.add(new AutoRegisterItem(owner, name, type));
+                    var name = element.getSimpleName().toString();
+                    items.add(new AutoRegisterItem(owner, type, name));
                 }
             }
         } else {
