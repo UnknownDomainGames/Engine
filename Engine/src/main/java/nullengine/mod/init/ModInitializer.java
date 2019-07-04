@@ -12,39 +12,39 @@ public class ModInitializer {
 
     private final Engine engine;
 
-    private final LinkedList<Pair<String, ModInitializationHandler>> handlers = new LinkedList<>();
+    private final LinkedList<Pair<String, ModInitializationTask>> handlers = new LinkedList<>();
 
     private String stage;
 
     public ModInitializer(Engine engine) {
         this.engine = engine;
 
-        addLast("Instance", new InstanceHandler());
-        addLast("AutoListen", new AutoListenHandler());
-        addLast("PreInitialization", new PreInitializationHandler());
-        addLast("Injection", new InjectionHandler());
-        addLast("Initialization", new InitializationHandler());
-        addLast("PostInitialization", new PostInitializationHandler());
+        addLast("Instance", new InstanceTask());
+        addLast("AutoListen", new AutoListenTask());
+        addLast("PreInitialization", new PreInitializationTask());
+        addLast("Injection", new InjectionTask());
+        addLast("Initialization", new InitializationTask());
+        addLast("PostInitialization", new PostInitializationTask());
     }
 
-    public void addFirst(String name, ModInitializationHandler handler) {
+    public void addFirst(String name, ModInitializationTask handler) {
         handlers.addFirst(Pair.of(name, handler));
     }
 
-    public void addLast(String name, ModInitializationHandler handler) {
+    public void addLast(String name, ModInitializationTask handler) {
         handlers.addLast(Pair.of(name, handler));
     }
 
-    public void addBefore(String name, String nextHandler, ModInitializationHandler handler) {
+    public void addBefore(String name, String nextHandler, ModInitializationTask handler) {
         handlers.add(indexOf(nextHandler), Pair.of(name, handler));
     }
 
-    public void addAfter(String name, String previousHandler, ModInitializationHandler handler) {
+    public void addAfter(String name, String previousHandler, ModInitializationTask handler) {
         handlers.add(indexOf(previousHandler) + 1, Pair.of(name, handler));
     }
 
-    public ModInitializationHandler getHandler(String name) {
-        for (Pair<String, ModInitializationHandler> handler : handlers) {
+    public ModInitializationTask getHandler(String name) {
+        for (Pair<String, ModInitializationTask> handler : handlers) {
             if (name.equals(handler.getLeft())) {
                 return handler.getRight();
             }
@@ -54,7 +54,7 @@ public class ModInitializer {
 
     private int indexOf(String name) {
         int i = 0;
-        for (Pair<String, ModInitializationHandler> handler : handlers) {
+        for (Pair<String, ModInitializationTask> handler : handlers) {
             if (name.equals(handler.getLeft())) {
                 return i;
             }
@@ -64,9 +64,9 @@ public class ModInitializer {
     }
 
     public void init(ModContainer mod) {
-        for (Pair<String, ModInitializationHandler> handler : handlers) {
+        for (Pair<String, ModInitializationTask> handler : handlers) {
             stage = handler.getLeft();
-            handler.getRight().handle(this, mod);
+            handler.getRight().run(this, mod);
         }
     }
 

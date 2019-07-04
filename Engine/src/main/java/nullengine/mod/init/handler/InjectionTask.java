@@ -9,7 +9,7 @@ import nullengine.Engine;
 import nullengine.Platform;
 import nullengine.mod.ModAssets;
 import nullengine.mod.ModContainer;
-import nullengine.mod.init.ModInitializationHandler;
+import nullengine.mod.init.ModInitializationTask;
 import nullengine.mod.init.ModInitializer;
 import nullengine.util.JsonUtils;
 import nullengine.util.RuntimeEnvironment;
@@ -22,10 +22,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Optional;
 
-public class InjectionHandler implements ModInitializationHandler {
+public class InjectionTask implements ModInitializationTask {
 
     @Override
-    public void handle(ModInitializer initializer, ModContainer mod) {
+    public void run(ModInitializer initializer, ModContainer mod) {
         try {
             Optional<InputStream> stream = mod.getAssets().openStream("META-INF", "data", "Inject.json");
             if (stream.isEmpty()) {

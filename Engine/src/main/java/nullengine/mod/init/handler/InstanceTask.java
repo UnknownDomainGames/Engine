@@ -1,12 +1,12 @@
 package nullengine.mod.init.handler;
 
 import nullengine.mod.ModContainer;
-import nullengine.mod.init.ModInitializationHandler;
+import nullengine.mod.init.ModInitializationTask;
 import nullengine.mod.init.ModInitializer;
 
-public class InstanceHandler implements ModInitializationHandler {
+public class InstanceTask implements ModInitializationTask {
     @Override
-    public void handle(ModInitializer initializer, ModContainer mod) {
+    public void run(ModInitializer initializer, ModContainer mod) {
         mod.getEventBus().register(mod.getInstance());
     }
 }

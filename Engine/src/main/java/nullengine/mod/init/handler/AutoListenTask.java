@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import nullengine.mod.ModContainer;
 import nullengine.mod.annotation.AutoListen;
-import nullengine.mod.init.ModInitializationHandler;
+import nullengine.mod.init.ModInitializationTask;
 import nullengine.mod.init.ModInitializer;
 import nullengine.util.JsonUtils;
 
@@ -14,9 +14,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Optional;
 
-public class AutoListenHandler implements ModInitializationHandler {
+public class AutoListenTask implements ModInitializationTask {
     @Override
-    public void handle(ModInitializer initializer, ModContainer mod) {
+    public void run(ModInitializer initializer, ModContainer mod) {
         try {
             Optional<InputStream> stream = mod.getAssets().openStream("META-INF", "data", "AutoListen.json");
             if (stream.isEmpty()) {
