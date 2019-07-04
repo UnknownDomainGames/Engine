@@ -136,8 +136,9 @@ public class GuiRenderer implements Renderer {
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
         glEnable(GL_POINT_SMOOTH);
         glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-        glEnable(GL_POLYGON_SMOOTH);
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+        // GL_POLYGON_SMOOTH will cause transparent lines on objects
+//        glEnable(GL_POLYGON_SMOOTH);
+//        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     }
 
     private void endRender() {
@@ -145,7 +146,7 @@ public class GuiRenderer implements Renderer {
         glDisable(GL_BLEND);
         glDisable(GL_LINE_SMOOTH);
         glDisable(GL_POINT_SMOOTH);
-        glDisable(GL_POLYGON_SMOOTH);
+//        glDisable(GL_POLYGON_SMOOTH);
     }
 
     private void renderScene(Scene scene) {
