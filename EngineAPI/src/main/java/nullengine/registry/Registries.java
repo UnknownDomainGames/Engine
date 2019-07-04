@@ -1,35 +1,30 @@
 package nullengine.registry;
 
 import nullengine.block.Block;
-import nullengine.exception.NoInitializationException;
+import nullengine.exception.UninitializationException;
 import nullengine.item.Item;
 import nullengine.registry.game.BlockRegistry;
 import nullengine.registry.game.ItemRegistry;
+import nullengine.util.Suppliers;
 
-import java.lang.ref.WeakReference;
+import java.util.function.Supplier;
 
 public final class Registries {
 
-    private static WeakReference<BlockRegistry> blockRegistry;
-    private static WeakReference<ItemRegistry> itemRegistry;
+    private static Supplier<BlockRegistry> blockRegistry = UninitializationException.supplier("Block registry is uninitialized");
+    private static Supplier<ItemRegistry> itemRegistry = UninitializationException.supplier("Item registry is uninitialized");
 
     public static BlockRegistry getBlockRegistry() {
-        if (blockRegistry == null) {
-            throw new NoInitializationException();
-        }
         return blockRegistry.get();
     }
 
     public static ItemRegistry getItemRegistry() {
-        if (itemRegistry == null) {
-            throw new NoInitializationException();
-        }
         return itemRegistry.get();
     }
 
     public static void init(RegistryManager registryManager) {
-        blockRegistry = new WeakReference<>((BlockRegistry) registryManager.getRegistry(Block.class));
-        itemRegistry = new WeakReference<>((ItemRegistry) registryManager.getRegistry(Item.class));
+        blockRegistry = Suppliers.ofWeakReference((BlockRegistry) registryManager.getRegistry(Block.class));
+        itemRegistry = Suppliers.ofWeakReference((ItemRegistry) registryManager.getRegistry(Item.class));
     }
 
     private Registries() {
