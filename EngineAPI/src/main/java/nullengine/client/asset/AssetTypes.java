@@ -2,7 +2,7 @@ package nullengine.client.asset;
 
 import nullengine.Platform;
 import nullengine.client.asset.model.voxel.VoxelModel;
-import nullengine.exception.NoInitializationException;
+import nullengine.exception.UninitializationException;
 
 import java.util.Optional;
 
@@ -13,7 +13,7 @@ public final class AssetTypes {
     private static <T> AssetType<T> getType(String name) {
         Optional<AssetType<?>> type = Platform.getEngineClient().getAssetManager().getType(name);
         if (type.isEmpty()) {
-            throw new NoInitializationException("Not initialize type \"" + name + "\".");
+            throw new UninitializationException("Not initialize type \"" + name + "\".");
         }
         return (AssetType<T>) type.get();
     }
