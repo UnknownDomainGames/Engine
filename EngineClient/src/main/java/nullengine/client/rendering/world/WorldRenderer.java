@@ -164,7 +164,7 @@ public class WorldRenderer {
 
         glDisable(GL11.GL_DEPTH_TEST);
         glDisable(GL11.GL_BLEND);
-
+        glEnable(GL13.GL_MULTISAMPLE);
         if (context.getWindow().isResized()) {
             frameBuffer.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
             frameBufferMultisampled.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
