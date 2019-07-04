@@ -1,5 +1,6 @@
 package nullengine.mod.dummy;
 
+import com.google.common.base.Strings;
 import nullengine.event.EventBus;
 import nullengine.mod.ModAssets;
 import nullengine.mod.ModContainer;
@@ -23,7 +24,7 @@ public class DummyModContainer implements ModContainer {
 
     public DummyModContainer(ModMetadata descriptor) {
         this.descriptor = descriptor;
-        this.logger = LoggerFactory.getLogger(descriptor.getId());
+        this.logger = LoggerFactory.getLogger(Strings.isNullOrEmpty(descriptor.getName()) ? descriptor.getId() : descriptor.getName());
     }
 
     @Override
