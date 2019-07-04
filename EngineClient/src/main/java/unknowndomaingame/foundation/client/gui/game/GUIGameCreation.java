@@ -3,7 +3,6 @@ package unknowndomaingame.foundation.client.gui.game;
 import nullengine.Platform;
 import nullengine.client.game.GameClientStandalone;
 import nullengine.client.gui.component.Button;
-import nullengine.client.gui.component.HSlider;
 import nullengine.client.gui.component.Label;
 import nullengine.client.gui.layout.BorderPane;
 import nullengine.client.gui.layout.VBox;
@@ -36,7 +35,7 @@ public class GUIGameCreation extends BorderPane {
         text.font().setValue(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
-        Button buttonCreate = new Button("Create");
+        Button buttonCreate = new Button("New World");
         buttonCreate.border().setValue(new Border(Color.WHITE));
 
         buttonCreate.setOnClick(mouseClickEvent -> {
@@ -51,14 +50,6 @@ public class GUIGameCreation extends BorderPane {
         Button buttonExit = new Button("exit");
         buttonExit.setOnClick(mouseClickEvent -> Platform.getEngine().terminate());
         vBox.getChildren().add(buttonExit);
-
-        HSlider hSlider = new HSlider();
-        hSlider.resizeBack(300, 20);
-        hSlider.backBg().setValue(new Background(Color.BLUE));
-        hSlider.sliderBg().setValue(new Background(Color.WHITE));
-        hSlider.resizeSlider(8, 20);
-        hSlider.setPreMove(0.02);
-        vBox.getChildren().addAll(hSlider);
 
         Button buttonLocale = new Button("Lang: " + I18n.translation("engine.gui.lang.text.name"));
         buttonLocale.setOnClick(onClick -> {
