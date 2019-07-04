@@ -241,6 +241,7 @@ public class ChunkRenderer {
     private void markChunkMeshDirty(long index) {
         ChunkMesh chunkMesh = loadedChunkMeshes.get(index);
         if (chunkMesh == null) {
+            context.getEngine().getCurrentGame().getWorld().getLoadedChunks().parallelStream().filter(chunk->getChunkIndex(chunk) == index).forEach(this::initChunkMesh);
             return;
         }
         if (!chunkMesh.isDirty()) {
