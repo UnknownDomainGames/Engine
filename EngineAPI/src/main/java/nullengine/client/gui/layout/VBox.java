@@ -1,20 +1,29 @@
 package nullengine.client.gui.layout;
 
 import com.github.mouse0w0.observable.value.MutableFloatValue;
+import com.github.mouse0w0.observable.value.MutableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
+import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.misc.Insets;
+import nullengine.client.gui.misc.Pos;
 
 public class VBox extends Pane {
 
     private final MutableFloatValue spacing = new SimpleMutableFloatValue();
+    private final MutableValue<Pos.HPos> alignment = new SimpleMutableObjectValue<>();
 
     public final MutableFloatValue spacing() {
         return spacing;
     }
 
+    public final MutableValue<Pos.HPos> alignment(){
+        return alignment;
+    }
+
     public VBox() {
         spacing.addChangeListener((observable, oldValue, newValue) -> needsLayout());
+        alignment.addChangeListener((observable, oldValue, newValue) -> needsLayout());
     }
 
     @Override
@@ -40,10 +49,12 @@ public class VBox extends Pane {
     @Override
     protected void layoutChildren() {
         Insets padding = padding().getValue();
-        float x = padding.getLeft(), y = padding.getTop(), spacing = spacing().get();
+        float x, y = padding.getTop(), spacing = spacing().get(), w = width().get() - padding.getLeft() - padding.getRight();
         for (Component component : getChildren()) {
             float prefWidth = component.prefWidth();
             float prefHeight = component.prefHeight();
+            x = alignment.getValue() == Pos.HPos.RIGHT ? w - prefWidth : alignment.getValue() == Pos.HPos.CENTER ? (w - prefWidth) / 2 : 0;
+            x += padding.getLeft();
             layoutInArea(component, x, y, prefWidth, prefHeight);
             y += prefHeight + spacing;
         }
