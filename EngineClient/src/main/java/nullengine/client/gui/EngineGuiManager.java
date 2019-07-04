@@ -109,6 +109,16 @@ public class EngineGuiManager implements GuiManager {
     }
 
     @Override
+    public void clearHuds() {
+        for (Scene hud : huds.values()) {
+            if(hud.getRoot() instanceof GuiTickable){
+                context.getScheduler().cancelTask(()->((GuiTickable) hud.getRoot()).update(context));
+            }
+        }
+        huds.clear();
+    }
+
+    @Override
     public Map<String, Scene> getHuds() {
         return huds;
     }

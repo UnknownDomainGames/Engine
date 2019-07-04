@@ -10,6 +10,7 @@ import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.misc.Insets;
+import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.text.Font;
 import nullengine.client.i18n.I18n;
 import nullengine.client.i18n.LocaleManager;
@@ -25,6 +26,7 @@ public class GUIGameCreation extends BorderPane {
     public GUIGameCreation() {
         VBox vBox = new VBox();
         vBox.spacing().set(5);
+        vBox.alignment().setValue(Pos.HPos.CENTER);
         center().setValue(vBox);
         this.background().setValue(new Background(Color.fromRGB(0xAAAAAA)));
         vBox.padding().setValue(new Insets(100, 350, 0, 350));
@@ -47,7 +49,7 @@ public class GUIGameCreation extends BorderPane {
         vBox.getChildren().add(buttonCreate);
 
         Button buttonExit = new Button("exit");
-        buttonExit.disabled().set(true);
+        buttonExit.setOnClick(mouseClickEvent -> Platform.getEngine().terminate());
         vBox.getChildren().add(buttonExit);
 
         HSlider hSlider = new HSlider();

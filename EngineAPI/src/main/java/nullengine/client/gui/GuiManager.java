@@ -13,6 +13,8 @@ public interface GuiManager {
 
     void hideHud(String id);
 
+    void clearHuds();
+
     Map<String, Scene> getHuds();
 
     Scene getDisplayingScreen();

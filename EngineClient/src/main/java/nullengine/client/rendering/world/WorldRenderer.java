@@ -82,6 +82,7 @@ public class WorldRenderer {
     }
 
     public void render(float partial) {
+        glDisable(GL13.GL_MULTISAMPLE);
         frameBufferShadow.bind();
         GL11.glViewport(0, 0, FrameBufferShadow.SHADOW_WIDTH, FrameBufferShadow.SHADOW_HEIGHT);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
