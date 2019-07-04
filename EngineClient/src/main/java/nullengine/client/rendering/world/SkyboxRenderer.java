@@ -15,65 +15,65 @@ public class SkyboxRenderer {
 
     private RenderContext context;
     private ObservableValue<ShaderProgram> worldShader;
-    private GLTexture texsky;
-    private GLMesh glMesh;
+    private GLTexture skybox;
+    private GLMesh skyboxMesh;
 
     public void init(RenderContext context){
         this.context = context;
         worldShader = ShaderManager.INSTANCE.getShader("world_shader");
-        texsky = context.getTextureManager().getTextureDirect(AssetPath.of("engine","texture", "misc","skybox.png"));
-        glMesh = GLMesh.of(new Mesh(
+        skybox = context.getTextureManager().getTextureDirect(AssetPath.of("engine","texture", "misc","skybox.png"));
+        skyboxMesh = GLMesh.of(new Mesh(
                 new float[]{
-                        128, 128, -128,
-                        128, 128, 128,
-                        128, -128, -128,
-                        128, -128, 128, //East
-                        -128, 128, -128,
-                        -128, 128, 128,
-                        -128, -128, -128,
-                        -128, -128, 128, //West
-                        -128, 128, -128,
-                        128, 128, -128,
-                        -128, -128, -128,
-                        128, -128, -128, //North
-                        128, 128, 128,
-                        -128, 128, 128,
-                        128, -128, 128,
-                        -128, -128, 128, //South
-                        128, 128, -128,
-                        128, 128, 128,
-                        -128, 128, -128,
-                        -128, 128, 128, //Up
-                        128, -128, -128,
-                        128, -128, 128,
-                        -128, -128, -128,
-                        -128, -128, 128, //Down
+                        256, 256, -256,
+                        256, 256, 256,
+                        256, -256, -256,
+                        256, -256, 256, //East
+                        -256, 256, -256,
+                        -256, 256, 256,
+                        -256, -256, -256,
+                        -256, -256, 256, //West
+                        -256, 256, -256,
+                        256, 256, -256,
+                        -256, -256, -256,
+                        256, -256, -256, //North
+                        256, 256, 256,
+                        -256, 256, 256,
+                        256, -256, 256,
+                        -256, -256, 256, //South
+                        256, 256, -256,
+                        256, 256, 256,
+                        -256, 256, -256,
+                        -256, 256, 256, //Up
+                        256, -256, -256,
+                        256, -256, 256,
+                        -256, -256, -256,
+                        -256, -256, 256, //Down
                 },
                 new float[]{
-                        2 * (1 / 3f), 0 * (1 / 2f),
-                        (1 + 2) * (1 / 3f), 0 * (1 / 2f),
-                        2 * (1 / 3f), 1 * (1 / 2f),
-                        (1 + 2) * (1 / 3f), 1 * (1 / 2f), //East
-                        1 * (1 / 3f), 0 * (1 / 2f),
-                        0 * (1 / 3f), 0 * (1 / 2f),
-                        1 * (1 / 3f), 1 * (1 / 2f),
-                        0 * (1 / 3f), 1 * (1 / 2f), //West
-                        1 * (1 / 3f), 0 * (1 / 2f),
-                        (1 + 1) * (1 / 3f), 0 * (1 / 2f),
-                        1 * (1 / 3f), 1 * (1 / 2f),
-                        (1 + 1) * (1 / 3f), 1 * (1 / 2f), //North
-                        0 * (1 / 3f), 1 * (1 / 2f),
-                        1 * (1 / 3f), 1 * (1 / 2f),
-                        0 * (1 / 3f), (1 + 1) * (1 / 2f),
-                        1 * (1 / 3f), (1 + 1) * (1 / 2f), //South
-                        1 * (1 / 3f), (1 + 1) * (1 / 2f),
-                        (1 + 1) * (1 / 3f), (1 + 1) * (1 / 2f),
-                        1 * (1 / 3f), 1 * (1 / 2f),
-                        (1 + 1) * (1 / 3f), 1 * (1 / 2f), //Up
-                        2 * (1 / 3f), 1 * (1 / 2f),
-                        (1 + 2) * (1 / 3f), 1 * (1 / 2f),
-                        2 * (1 / 3f), (1 + 1) * (1 / 2f),
-                        (1 + 2) * (1 / 3f), (1 + 1) * (1 / 2f), //Down
+                        0.6666667f, 0.0f,
+                        1.0f, 0.0f,
+                        0.6666667f, 0.5f,
+                        1.0f, 0.5f, //East
+                        0.33333334f, 0.0f,
+                        0.0f, 0.0f,
+                        0.33333334f, 0.5f,
+                        0.0f, 0.5f, //West
+                        0.33333334f, 0.0f,
+                        0.6666667f, 0.0f,
+                        0.33333334f, 0.5f,
+                        0.6666667f, 0.5f, //North
+                        0.0f, 0.5f,
+                        0.33333334f, 0.5f,
+                        0.0f, 1.0f,
+                        0.33333334f, 1.0f, //South
+                        0.33333334f, 1.0f,
+                        0.6666667f, 1.0f,
+                        0.33333334f, 0.5f,
+                        0.6666667f, 0.5f, //Up
+                        0.6666667f, 0.5f,
+                        1.0f, 0.5f,
+                        0.6666667f, 1.0f,
+                        1.0f, 1.0f, //Down
                 },
                 new float[0],
                 new int[]{
@@ -98,10 +98,10 @@ public class SkyboxRenderer {
     public void render(float partial){
         ShaderProgram program = worldShader.getValue();
         ShaderManager.INSTANCE.bindShader(program);
-        texsky.bind();
+        skybox.bind();
         program.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         program.setUniform("u_ProjMatrix", context.getWindow().projection());
         program.setUniform("u_ModelMatrix", new Matrix4f());
-        glMesh.render();
+        skyboxMesh.render();
     }
 }

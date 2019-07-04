@@ -136,7 +136,7 @@ public class WorldRenderer {
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
-        //skyboxRenderer.render(partial);
+        skyboxRenderer.render(partial);
         // TODO: Remove it
         context.getTextureManager().getWhiteTexture().bind();
         Tessellator tessellator = Tessellator.getInstance();
