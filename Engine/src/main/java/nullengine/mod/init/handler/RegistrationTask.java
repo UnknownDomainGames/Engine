@@ -54,8 +54,10 @@ public class RegistrationTask implements ModInitializationTask {
                 switch (item.getKind()) {
                     case CLASS:
                         doAutoRegisterClass(registryManager, mod, item);
+                        break;
                     case FIELD:
                         doAutoRegisterField(registryManager, mod, item);
+                        break;
                 }
             }
         } catch (IOException e) {
