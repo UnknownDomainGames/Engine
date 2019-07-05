@@ -1,6 +1,7 @@
 package nullengine.world.gen;
 
 import nullengine.block.Block;
+import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.math.BlockPos;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
@@ -29,7 +30,7 @@ public class ChunkGeneratorFlat implements ChunkGenerator {
             }
             for (int i = 0; i < ChunkConstants.SIZE_X; i++) {
                 for (int k = 0; k < ChunkConstants.SIZE_Z; k++) {
-                    chunk.setBlock(BlockPos.of(i, j, k), setting.getLayers()[j + cy * ChunkConstants.SIZE_Y], null);
+                    chunk.setBlock(BlockPos.of(i, j, k), setting.getLayers()[j + cy * ChunkConstants.SIZE_Y], new BlockChangeCause.WorldGenCause());
                 }
             }
         }

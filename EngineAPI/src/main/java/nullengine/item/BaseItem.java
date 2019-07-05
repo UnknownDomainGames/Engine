@@ -2,6 +2,7 @@ package nullengine.item;
 
 import nullengine.component.Component;
 import nullengine.component.ComponentContainer;
+import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.item.component.HitBlockBehavior;
 import nullengine.player.Player;
 import nullengine.registry.RegistryEntry;
@@ -21,7 +22,7 @@ public class BaseItem extends RegistryEntry.Impl<Item> implements Item {
             public void onHit(Player player, ItemStack itemStack, RayTraceBlockHit hit) {
                 //TODO: use send packet
                 if (hit.isSuccess()) {
-                    player.getWorld().destoryBlock(hit.getPos(), null);
+                    player.getWorld().destoryBlock(hit.getPos(), new BlockChangeCause.EntityCause(player.getControlledEntity()));
                 }
             }
 

@@ -1,6 +1,7 @@
 package nullengine.item;
 
 import nullengine.block.Block;
+import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.item.component.UseBlockBehavior;
 
 import javax.annotation.Nonnull;
@@ -18,7 +19,7 @@ public class BlockItem extends BaseItem {
 
     protected void initComponent() {
         setComponent(UseBlockBehavior.class,
-                (player, itemStack, hit) -> hit.ifSuccess($ -> $.getWorld().setBlock($.getPos().offset($.getFace()), block, null)));
+                (player, itemStack, hit) -> hit.ifSuccess($ -> $.getWorld().setBlock($.getPos().offset($.getFace()), block, new BlockChangeCause.EntityCause(player.getControlledEntity()))));
     }
 
     @Nonnull

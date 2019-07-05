@@ -101,15 +101,20 @@ public class ChunkRenderer {
 
         var faillist = new ArrayList<Long>();
         for (Map.Entry<Long, ChunkMesh> entry : loadedChunkMeshes.entrySet()) {
-            var chunkMesh = entry.getValue();
-            if (chunkMesh != null) {
-                if (context.getFrustumIntersection().testAab(chunkMesh.getChunk().getMin(), chunkMesh.getChunk().getMax())) {
-                    chunkMesh.render();
+            try {
+                ChunkMesh chunkMesh = entry.getValue();
+                if (chunkMesh != null) {
+                    if (context.getFrustumIntersection().testAab(chunkMesh.getChunk().getMin(), chunkMesh.getChunk().getMax())) {
+                        chunkMesh.render();
+                    }
+                }
+                else{
+                    faillist.add(entry.getKey());
                 }
             }
-            else{
-                faillist.add(entry.getKey());
+            catch (IllegalStateException ex){
             }
+
         }
 
         context.getEngine().getCurrentGame().getWorld().getLoadedChunks().parallelStream().filter(chunk->faillist.contains(getChunkIndex(chunk))).forEach(this::initChunkMesh);
