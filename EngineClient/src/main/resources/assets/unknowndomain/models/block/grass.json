@@ -1,8 +1,0 @@
-{
-  "parent": "unknowndomain/models/block/cube_top_bottom.json",
-  "textures": {
-    "top": "unknowndomain/textures/block/grass_top.png",
-    "bottom": "unknowndomain/textures/block/dirt.png",
-    "side": "unknowndomain/textures/block/grass_side.png"
-  }
-}

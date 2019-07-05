@@ -1,5 +1,6 @@
 package nullengine.world;
 
+import nullengine.block.AirBlock;
 import nullengine.block.Block;
 import nullengine.block.component.DestroyBehavior;
 import nullengine.block.component.NeighborChangeListener;
@@ -28,7 +29,6 @@ import nullengine.world.storage.WorldCommonLoader;
 import org.joml.AABBd;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
-import unknowndomaingame.foundation.init.Blocks;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -187,10 +187,10 @@ public class WorldCommon implements World, Runnable {
         if (!getGame().getEventBus().post(new BlockChangeEvent.Pre(this, pos, oldBlock, block, cause))) {
             chunkManager.loadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
                     .setBlock(pos, block, cause);
-            if (block == Blocks.AIR) {
+            if (block == AirBlock.AIR) {
                 oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, null, pos, oldBlock, cause));
                 getGame().getEventBus().post(new BlockDestroyEvent(this, pos, oldBlock, cause));
-            } else if (oldBlock == Blocks.AIR) {
+            } else if (oldBlock == AirBlock.AIR) {
                 block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
                 getGame().getEventBus().post(new BlockPlaceEvent(this, pos, block, cause));
             }else{
@@ -211,7 +211,7 @@ public class WorldCommon implements World, Runnable {
     @Nonnull
     @Override
     public Block destoryBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
-        return setBlock(pos, Blocks.AIR, cause);
+        return setBlock(pos, Registries.getBlockRegistry().air(), cause);
     }
 
     @Override

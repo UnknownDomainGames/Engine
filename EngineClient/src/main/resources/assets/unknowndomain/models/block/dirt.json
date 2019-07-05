@@ -1,6 +1,0 @@
-{
-  "parent": "unknowndomain/models/block/cube_all.json",
-  "textures": {
-    "all": "unknowndomain/textures/block/dirt.png"
-  }
-}

@@ -6,19 +6,15 @@ import nullengine.client.gui.Scene;
 import nullengine.client.input.controller.EntityCameraController;
 import nullengine.client.input.controller.EntityController;
 import nullengine.client.rendering.camera.FirstPersonCamera;
-import nullengine.entity.item.ItemEntity;
+import nullengine.enginemod.client.gui.hud.HUDGame;
 import nullengine.event.game.GameTerminationEvent;
 import nullengine.game.GameServerFullAsync;
-import nullengine.item.ItemStack;
 import nullengine.player.Player;
+import nullengine.registry.Registries;
 import nullengine.world.World;
 import nullengine.world.WorldCommon;
 import nullengine.world.WorldCommonProvider;
 import nullengine.world.gen.ChunkGeneratorFlat;
-import org.joml.Vector3d;
-import unknowndomaingame.foundation.client.gui.hud.HUDGame;
-import unknowndomaingame.foundation.init.Blocks;
-import unknowndomaingame.foundation.init.Items;
 
 import javax.annotation.Nonnull;
 
@@ -87,7 +83,9 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
         // TODO: Remove it
         WorldCommonProvider provider = new WorldCommonProvider();
-        provider.setChunkGenerator(new ChunkGeneratorFlat(new ChunkGeneratorFlat.Setting().setLayers(new Block[]{Blocks.DIRT, Blocks.DIRT, Blocks.DIRT, Blocks.DIRT, Blocks.GRASS})));
+        var dirt = Registries.getBlockRegistry().getValue("unknowndomain.block.dirt");
+        var grass = Registries.getBlockRegistry().getValue("unknowndomain.block.grass");
+        provider.setChunkGenerator(new ChunkGeneratorFlat(new ChunkGeneratorFlat.Setting().setLayers(new Block[]{dirt, dirt, dirt, dirt, grass})));
         spawnWorld(provider, "default");
         var world = (WorldCommon) getWorld("default");
         world.playerJoin(player);
@@ -113,7 +111,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 //            }
 //        }
 
-        world.spawnEntity(new ItemEntity(world.getEntities().size(), world, new Vector3d(0, 5, 0), new ItemStack(Items.DIRT)));
         engineClient.getRenderContext().getGuiManager().showHud("game-hud", new Scene(new HUDGame()));
 //        a = Platform.getEngineClient().getSoundManager().createSoundSource("test sound").position(25,5,0).gain(1.0f).speed(dir);
 //        a.setLoop(true);

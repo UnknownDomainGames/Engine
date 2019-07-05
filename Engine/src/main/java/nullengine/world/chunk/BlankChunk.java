@@ -1,5 +1,6 @@
 package nullengine.world.chunk;
 
+import nullengine.block.AirBlock;
 import nullengine.block.Block;
 import nullengine.entity.Entity;
 import nullengine.event.world.block.cause.BlockChangeCause;
@@ -7,7 +8,6 @@ import nullengine.math.BlockPos;
 import nullengine.world.World;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import unknowndomaingame.foundation.init.Blocks;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class BlankChunk implements Chunk {
 
     @Override
     public Block getBlock(int x, int y, int z) {
-        return Blocks.AIR;
+        return AirBlock.AIR;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class BlankChunk implements Chunk {
 
     @Override
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
-        return Blocks.AIR;
+        return AirBlock.AIR;
     }
 
     @Override

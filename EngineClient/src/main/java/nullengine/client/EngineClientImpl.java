@@ -20,6 +20,7 @@ import nullengine.client.rendering.gui.GuiRenderer;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.sound.ALSoundManager;
 import nullengine.client.sound.EngineSoundManager;
+import nullengine.enginemod.EngineModListeners;
 import nullengine.event.engine.EngineEvent;
 import nullengine.event.game.GameStartEvent;
 import nullengine.game.Game;
@@ -30,7 +31,6 @@ import nullengine.util.RuntimeEnvironment;
 import nullengine.util.Side;
 import nullengine.util.disposer.Disposer;
 import nullengine.util.disposer.DisposerImpl;
-import unknowndomaingame.foundation.EngineModListeners;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
