@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * World instance, should spawn by {@link Game}
  */
-public interface World extends BlockAccessor {
+public interface World extends BlockGetter {
 
     Game getGame();
 
@@ -31,7 +31,10 @@ public interface World extends BlockAccessor {
 
     Chunk getChunk(int chunkX, int chunkY, int chunkZ);
 
-    Block removeBlock(@Nonnull BlockPos pos, BlockChangeCause cause);
+    @Nonnull
+    Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause);
+
+    Block removeBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause);
 
     Collection<Chunk> getLoadedChunks();
 

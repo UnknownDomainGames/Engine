@@ -9,7 +9,7 @@ import nullengine.client.asset.model.voxel.VoxelModel;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.BlockPos;
 import nullengine.util.Facing;
-import nullengine.world.BlockAccessor;
+import nullengine.world.BlockGetter;
 
 import java.util.Optional;
 
@@ -19,7 +19,7 @@ public class DefaultBlockRenderer implements BlockRenderer {
     private Asset<VoxelModel> model;
 
     @Override
-    public boolean canRenderFace(BlockAccessor world, BlockPos pos, Block block, Facing facing) {
+    public boolean canRenderFace(BlockGetter world, BlockPos pos, Block block, Facing facing) {
         BlockPos neighborPos = pos.offset(facing);
         Block neighborBlock = world.getBlock(neighborPos);
         Optional<BlockRenderer> neighborBlockRenderer = neighborBlock.getComponent(BlockRenderer.class);
@@ -27,12 +27,12 @@ public class DefaultBlockRenderer implements BlockRenderer {
     }
 
     @Override
-    public boolean canRenderNeighborBlockFace(BlockAccessor world, BlockPos pos, Block block, Facing facing) {
+    public boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, Block block, Facing facing) {
         return false;
     }
 
     @Override
-    public void generateMesh(Block block, BlockAccessor world, BlockPos pos, GLBuffer buffer) {
+    public void generateMesh(Block block, BlockGetter world, BlockPos pos, GLBuffer buffer) {
         buffer.posOffset(pos.getX(), pos.getY(), pos.getZ());
         BlockPos.Mutable mutablePos = new BlockPos.Mutable(pos);
         boolean[] cullFaces = new boolean[6];

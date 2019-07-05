@@ -4,7 +4,7 @@ import nullengine.block.Block;
 import nullengine.client.rendering.block.DefaultBlockRenderer;
 import nullengine.math.BlockPos;
 import nullengine.util.Facing;
-import nullengine.world.BlockAccessor;
+import nullengine.world.BlockGetter;
 
 public class AirBlockRenderer extends DefaultBlockRenderer {
 
@@ -17,12 +17,12 @@ public class AirBlockRenderer extends DefaultBlockRenderer {
     }
 
     @Override
-    public boolean canRenderFace(BlockAccessor world, BlockPos pos, Block block, Facing facing) {
+    public boolean canRenderFace(BlockGetter world, BlockPos pos, Block block, Facing facing) {
         return false;
     }
 
     @Override
-    public boolean canRenderNeighborBlockFace(BlockAccessor world, BlockPos pos, Block block, Facing facing) {
+    public boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, Block block, Facing facing) {
         return true;
     }
 }

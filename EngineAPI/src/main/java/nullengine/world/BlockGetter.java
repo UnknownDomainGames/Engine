@@ -1,18 +1,14 @@
 package nullengine.world;
 
 import nullengine.block.Block;
-import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.math.BlockPos;
 
 import javax.annotation.Nonnull;
 
-public interface BlockAccessor {
+public interface BlockGetter {
 
     @Nonnull
     World getWorld();
-
-    @Nonnull
-    Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause);
 
     @Nonnull
     default Block getBlock(@Nonnull BlockPos pos) {

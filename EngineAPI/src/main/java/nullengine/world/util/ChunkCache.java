@@ -1,16 +1,14 @@
 package nullengine.world.util;
 
 import nullengine.block.Block;
-import nullengine.event.world.block.cause.BlockChangeCause;
-import nullengine.math.BlockPos;
 import nullengine.registry.Registries;
-import nullengine.world.BlockAccessor;
+import nullengine.world.BlockGetter;
 import nullengine.world.World;
 import nullengine.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
 
-public class ChunkCache implements BlockAccessor {
+public class ChunkCache implements BlockGetter {
 
     public static ChunkCache create(World world, int fromX, int fromY, int fromZ, int toX, int toY, int toZ) {
         int xLength = toX - fromX + 1;
@@ -66,11 +64,5 @@ public class ChunkCache implements BlockAccessor {
             return chunk == null ? Registries.getBlockRegistry().air().getId() : chunk.getBlockId(x, y, z); // FIXME:
         }
         return world.getBlockId(x, y, z);
-    }
-
-    @Nonnull
-    @Override
-    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
-        throw new UnsupportedOperationException();
     }
 }

@@ -5,7 +5,7 @@ import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.component.Component;
 import nullengine.math.BlockPos;
 import nullengine.util.Facing;
-import nullengine.world.BlockAccessor;
+import nullengine.world.BlockGetter;
 
 public interface BlockRenderer extends Component {
 
@@ -13,11 +13,11 @@ public interface BlockRenderer extends Component {
         return true;
     }
 
-    boolean canRenderFace(BlockAccessor world, BlockPos pos, Block block, Facing facing);
+    boolean canRenderFace(BlockGetter world, BlockPos pos, Block block, Facing facing);
 
-    boolean canRenderNeighborBlockFace(BlockAccessor world, BlockPos pos, Block block, Facing facing);
+    boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, Block block, Facing facing);
 
-    void generateMesh(Block block, BlockAccessor world, BlockPos pos, GLBuffer buffer);
+    void generateMesh(Block block, BlockGetter world, BlockPos pos, GLBuffer buffer);
 
     void generateMesh(Block block, GLBuffer buffer);
 
