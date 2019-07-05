@@ -49,6 +49,10 @@ public class Region extends Container {
                 halignment, valignment, isSnapToPixel);
     }
 
+    protected static float snap(float value, boolean snapToPixel) {
+        return snapToPixel ? Math.round(value) : value;
+    }
+
     private static void position(Component child, float areaX, float areaY, float areaWidth, float areaHeight,
                                  float areaBaselineOffset,
                                  float topMargin, float rightMargin, float bottomMargin, float leftMargin,
@@ -69,8 +73,8 @@ public class Region extends Container {
             yoffset = topMargin + computeYOffset(areaHeight - topMargin - bottomMargin,
                     child.height().get(), vpos);
         }
-        final float x = areaX + xoffset;
-        final float y = areaY + yoffset;
+        final float x = snap(areaX + xoffset, isSnapToPixel);
+        final float y = snap(areaY + yoffset, isSnapToPixel);
 
         child.relocate(x, y);
     }
@@ -169,7 +173,7 @@ public class Region extends Container {
         c.resize(areaWidth - left - right, areaHeight - top - bottom);
 //        }
         position(c, areaX, areaY, areaWidth, areaHeight, areaBaselineOffset,
-                top, right, bottom, left, hAlign, vAlign, false);
+                top, right, bottom, left, hAlign, vAlign, true);
     }
 
     protected float computeChildPrefAreaWidth(Component child, float baselineComplement, Insets margin, float height, boolean fillHeight) {

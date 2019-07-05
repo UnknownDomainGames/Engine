@@ -185,7 +185,7 @@ public class BorderPane extends Pane {
             positionInArea(t, insideX, insideY, insideWidth, topHeight, 0/*ignore baseline*/,
                     topMargin,
                     alignment != null ? alignment.getHpos() : Pos.HPos.LEFT,
-                    alignment != null ? alignment.getVpos() : Pos.VPos.TOP, false);
+                    alignment != null ? alignment.getVpos() : Pos.VPos.TOP, true);
         }
 
         float bottomHeight = 0;
@@ -206,7 +206,7 @@ public class BorderPane extends Pane {
                     insideWidth, bottomHeight, 0/*ignore baseline*/,
                     bottomMargin,
                     alignment != null ? alignment.getHpos() : Pos.HPos.LEFT,
-                    alignment != null ? alignment.getVpos() : Pos.VPos.BOTTOM, false);
+                    alignment != null ? alignment.getVpos() : Pos.VPos.BOTTOM, true);
         }
 
         float leftWidth = 0;
@@ -227,7 +227,7 @@ public class BorderPane extends Pane {
                     leftWidth, insideHeight - topHeight - bottomHeight, 0/*ignore baseline*/,
                     leftMargin,
                     alignment != null ? alignment.getHpos() : Pos.HPos.LEFT,
-                    alignment != null ? alignment.getVpos() : Pos.VPos.TOP, false);
+                    alignment != null ? alignment.getVpos() : Pos.VPos.TOP, true);
         }
         float rightWidth = 0;
         if (r != null) {
@@ -248,7 +248,7 @@ public class BorderPane extends Pane {
                     rightWidth, insideHeight - topHeight - bottomHeight, 0/*ignore baseline*/,
                     rightMargin,
                     alignment != null ? alignment.getHpos() : Pos.HPos.RIGHT,
-                    alignment != null ? alignment.getVpos() : Pos.VPos.TOP, false);
+                    alignment != null ? alignment.getVpos() : Pos.VPos.TOP, true);
         }
 
         if (c != null) {

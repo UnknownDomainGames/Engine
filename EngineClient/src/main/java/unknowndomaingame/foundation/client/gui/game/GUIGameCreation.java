@@ -28,7 +28,7 @@ public class GUIGameCreation extends BorderPane {
         vBox.alignment().setValue(Pos.HPos.CENTER);
         center().setValue(vBox);
         this.background().setValue(new Background(Color.fromRGB(0xAAAAAA)));
-        vBox.padding().setValue(new Insets(100, 350, 0, 350));
+        vBox.padding().setValue(new Insets(100, 0, 0, 0));
 
         Label text = new Label();
         text.text().setValue(I18n.translation("engine.gui.game_creation.text.name"));
