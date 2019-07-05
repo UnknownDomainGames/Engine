@@ -7,8 +7,8 @@ import java.io.DataOutputStream;
 
 public interface EntitySerializer<T extends Entity> {
 
-    T load(World world, DataInputStream dis, EntityEntry entityEntry);
+    T load(World world, DataInputStream dis, EntityProvider entityProvider);
 
-    void save(World world, DataOutputStream dos, EntityEntry entityEntry, T entity);
+    void save(World world, DataOutputStream dos, EntityProvider entityProvider, T entity);
 
 }

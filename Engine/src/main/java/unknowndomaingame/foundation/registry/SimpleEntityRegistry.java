@@ -3,7 +3,7 @@ package unknowndomaingame.foundation.registry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import nullengine.entity.Entity;
-import nullengine.entity.EntityEntry;
+import nullengine.entity.EntityProvider;
 import nullengine.registry.RegistrationException;
 import nullengine.registry.game.EntityRegistry;
 
@@ -14,10 +14,10 @@ import java.util.Set;
 
 public class SimpleEntityRegistry implements EntityRegistry {
 
-    protected final BiMap<Class<? extends Entity>, EntityEntry> clazzToObject = HashBiMap.create();
+    protected final BiMap<Class<? extends Entity>, EntityProvider> clazzToObject = HashBiMap.create();
 
     @Override
-    public <T extends Entity> EntityEntry getValue(Class<T> clazz) {
+    public <T extends Entity> EntityProvider getValue(Class<T> clazz) {
         return clazzToObject.get(clazz);
     }
 
@@ -32,14 +32,14 @@ public class SimpleEntityRegistry implements EntityRegistry {
     }
 
     @Override
-    public Collection<Map.Entry<Class<? extends Entity>, EntityEntry>> getEntity2EntryEntries() {
+    public Collection<Map.Entry<Class<? extends Entity>, EntityProvider>> getEntity2EntryEntries() {
         return clazzToObject.entrySet();
     }
 
     @Nonnull
     @Override
-    public Class<EntityEntry> getEntryType() {
-        return EntityEntry.class;
+    public Class<EntityProvider> getEntryType() {
+        return EntityProvider.class;
     }
 
     @Nonnull
@@ -50,7 +50,7 @@ public class SimpleEntityRegistry implements EntityRegistry {
 
     @Nonnull
     @Override
-    public EntityEntry register(@Nonnull EntityEntry obj) throws RegistrationException {
+    public EntityProvider register(@Nonnull EntityProvider obj) throws RegistrationException {
         if (containsKey(obj.getEntityType())) {
             throw new RegistrationException(String.format("Entity with class %s has already registered!", obj.getEntityType().getName()));
         }
@@ -59,17 +59,17 @@ public class SimpleEntityRegistry implements EntityRegistry {
     }
 
     @Override
-    public boolean containsValue(EntityEntry value) {
+    public boolean containsValue(EntityProvider value) {
         return clazzToObject.containsValue(value);
     }
 
     @Override
-    public EntityEntry getValue(String registryName) {
+    public EntityProvider getValue(String registryName) {
         return null;
     }
 
     @Override
-    public String getKey(EntityEntry value) {
+    public String getKey(EntityProvider value) {
         return null;
     }
 
@@ -79,7 +79,7 @@ public class SimpleEntityRegistry implements EntityRegistry {
     }
 
     @Override
-    public Collection<EntityEntry> getValues() {
+    public Collection<EntityProvider> getValues() {
         return clazzToObject.values();
     }
 
@@ -89,7 +89,7 @@ public class SimpleEntityRegistry implements EntityRegistry {
     }
 
     @Override
-    public int getId(EntityEntry obj) {
+    public int getId(EntityProvider obj) {
         return 0;
     }
 
@@ -104,12 +104,12 @@ public class SimpleEntityRegistry implements EntityRegistry {
     }
 
     @Override
-    public EntityEntry getValue(int id) {
+    public EntityProvider getValue(int id) {
         return null;
     }
 
     @Override
-    public Collection<Map.Entry<String, EntityEntry>> getEntries() {
+    public Collection<Map.Entry<String, EntityProvider>> getEntries() {
         return null;
     }
 }

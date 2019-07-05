@@ -7,13 +7,13 @@ import org.joml.Vector3dc;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-public class EntityEntry extends RegistryEntry.Impl<EntityEntry> {
+public class EntityProvider extends RegistryEntry.Impl<EntityProvider> {
 
     private final Class<? extends Entity> entityType;
     private final EntityFactory factory;
     private final EntitySerializer serializer;
 
-    public EntityEntry(Class<? extends Entity> entityType, EntityFactory factory, EntitySerializer serializer) {
+    public EntityProvider(Class<? extends Entity> entityType, EntityFactory factory, EntitySerializer serializer) {
         this.entityType = entityType;
         this.factory = factory;
         this.serializer = serializer;
@@ -76,8 +76,8 @@ public class EntityEntry extends RegistryEntry.Impl<EntityEntry> {
             return this;
         }
 
-        public EntityEntry build() {
-            return new EntityEntry(entityType, factory, serializer).registerName(registeredName);
+        public EntityProvider build() {
+            return new EntityProvider(entityType, factory, serializer).registerName(registeredName);
         }
     }
 }
