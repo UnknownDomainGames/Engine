@@ -8,6 +8,9 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 public interface Entity extends GameObject, Tickable {
+
+    EntityProvider getProvider();
+
     int getId();
 
     World getWorld();

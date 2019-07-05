@@ -14,8 +14,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public abstract class BaseEntity implements Entity {
-    private int id;
 
+    protected final EntityProvider provider;
+
+    private int id;
     private World world;
     private Vector3d position = new Vector3d();
     private Vector3f rotation = new Vector3f();
@@ -25,6 +27,7 @@ public abstract class BaseEntity implements Entity {
     private final ComponentContainer components;
 
     public BaseEntity(int id, World world) {
+        this.provider = null; // TODO:
         this.id = id;
         this.world = world;
         this.components = new ComponentContainer();
@@ -33,6 +36,11 @@ public abstract class BaseEntity implements Entity {
     public BaseEntity(int id, World world, Vector3dc position) {
         this(id, world);
         this.position.set(position);
+    }
+
+    @Override
+    public EntityProvider getProvider() {
+        return null;
     }
 
     @Override
