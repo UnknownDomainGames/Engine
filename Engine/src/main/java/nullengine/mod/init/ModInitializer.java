@@ -20,6 +20,7 @@ public class ModInitializer {
         this.engine = engine;
 
         addLast("Instance", new InstanceTask());
+        addLast("Asset", new AssetTask());
         addLast("AutoListen", new AutoListenTask());
         addLast("Injection", new InjectionTask());
         addLast("PreInitialization", new PreInitializationTask());
