@@ -208,8 +208,9 @@ public class WorldCommon implements World, Runnable {
         return oldBlock;
     }
 
+    @Nonnull
     @Override
-    public Block removeBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
+    public Block destoryBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
         return setBlock(pos, Blocks.AIR, cause);
     }
 

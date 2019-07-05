@@ -1,8 +1,6 @@
 package nullengine.world;
 
-import nullengine.block.Block;
 import nullengine.entity.Entity;
-import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.game.Game;
 import nullengine.math.BlockPos;
 import nullengine.world.chunk.Chunk;
@@ -15,7 +13,7 @@ import java.util.List;
 /**
  * World instance, should spawn by {@link Game}
  */
-public interface World extends BlockGetter {
+public interface World extends BlockGetter, BlockSetter {
 
     Game getGame();
 
@@ -30,11 +28,6 @@ public interface World extends BlockGetter {
     }
 
     Chunk getChunk(int chunkX, int chunkY, int chunkZ);
-
-    @Nonnull
-    Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause);
-
-    Block removeBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause);
 
     Collection<Chunk> getLoadedChunks();
 
