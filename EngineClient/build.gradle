@@ -12,17 +12,16 @@ dependencies {
     implementation 'com.github.Mouse0w0.Configuration:configuration-gson:1.1.0'
 }
 
-configurations {
-    embed
-    compile.extendsFrom(embed)
-}
+//configurations {
+//    embed
+//    compile.extendsFrom(embed)
+//}
 
 jar {
     manifest {
         attributes 'Main-Class': mainClassName
     }
-//    from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
-    from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+//    from configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
 

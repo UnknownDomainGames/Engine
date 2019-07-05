@@ -76,6 +76,6 @@ dependencies {
     // compile "org.lwjgl:lwjgl-zstd:$lwjglVersion:$lwjglNatives"
 }
 
-jar {
-    from configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
-}
+//jar {
+//    from configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
+//}
