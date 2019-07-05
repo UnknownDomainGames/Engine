@@ -39,7 +39,7 @@ import nullengine.registry.impl.IdAutoIncreaseRegistry;
 import nullengine.world.collision.RayTraceBlockHit;
 import unknowndomaingame.foundation.client.gui.game.GUIGameCreation;
 import unknowndomaingame.foundation.client.gui.game.GuiChat;
-import unknowndomaingame.foundation.client.gui.game.GuiGameMenu;
+import unknowndomaingame.foundation.client.gui.game.GuiIngameMenu;
 import unknowndomaingame.foundation.client.gui.game.GuiItemList;
 import unknowndomaingame.foundation.client.gui.hud.HUDGameDebug;
 import unknowndomaingame.foundation.init.Blocks;
@@ -164,7 +164,7 @@ public final class EngineModListeners {
         }, ActionMode.PRESS));
         envet.register(KeyBinding.create("game.menu", Key.KEY_ESCAPE, (c) -> {
             if (!c.getRenderContext().getGuiManager().isDisplayingScreen()) {
-                c.getRenderContext().getGuiManager().showScreen(new Scene(new GuiGameMenu()));
+                c.getRenderContext().getGuiManager().showScreen(new Scene(new GuiIngameMenu()));
             }
         }, ActionMode.PRESS));
 

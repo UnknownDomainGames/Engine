@@ -13,8 +13,8 @@ import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.text.Font;
 import nullengine.util.Color;
 
-public class GuiGameMenu extends BorderPane {
-    public GuiGameMenu(){
+public class GuiIngameMenu extends BorderPane {
+    public GuiIngameMenu(){
         VBox vBox = new VBox();
         vBox.spacing().set(5);
         vBox.alignment().setValue(Pos.HPos.CENTER);
