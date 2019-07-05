@@ -32,25 +32,29 @@ public class ModMetadataFinder {
         JsonObject jo = null;
 
         for (Path source : sources) {
-            try {
-                if (Files.isDirectory(source)) {
-                    try (Reader reader = new InputStreamReader(Files.newInputStream(source.resolve(fileName)))) {
+            if (Files.isDirectory(source)) {
+                try (Reader reader = new InputStreamReader(Files.newInputStream(source.resolve(fileName)))) {
+                    jo = JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonObject();
+                } catch (IOException e) {
+                    throw new InvalidModMetadataException(sources, e);
+                }
+            } else {
+                try (JarFile jarFile = new JarFile(source.toFile())) {
+                    JarEntry jarEntry = jarFile.getJarEntry(fileName);
+                    if (jarEntry == null) {
+                        continue;
+                    }
+
+                    try (Reader reader = new InputStreamReader(jarFile.getInputStream(jarEntry))) {
                         jo = JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonObject();
                     }
-                } else {
-                    try (JarFile jarFile = new JarFile(source.toFile())) {
-                        JarEntry jarEntry = jarFile.getJarEntry(fileName);
-                        if (jarEntry == null) {
-                            continue;
-                        }
-
-                        try (Reader reader = new InputStreamReader(jarFile.getInputStream(jarEntry))) {
-                            jo = JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonObject();
-                        }
-                    }
+                } catch (IOException e) {
+                    throw new InvalidModMetadataException(sources, e);
                 }
-            } catch (IOException e) {
-                throw new InvalidModMetadataException(sources, e);
+            }
+
+            if (jo != null) {
+                break;
             }
         }
 
