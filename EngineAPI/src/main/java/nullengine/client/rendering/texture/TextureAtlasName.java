@@ -8,6 +8,6 @@ import nullengine.registry.RegistryEntry;
 public final class TextureAtlasName extends RegistryEntry.Impl<TextureAtlasName> {
 
     public static TextureAtlasName of(String name) {
-        return new TextureAtlasName().registerName(name);
+        return new TextureAtlasName().name(name);
     }
 }

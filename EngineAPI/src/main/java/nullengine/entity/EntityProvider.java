@@ -77,7 +77,7 @@ public class EntityProvider extends RegistryEntry.Impl<EntityProvider> {
         }
 
         public EntityProvider build() {
-            return new EntityProvider(entityType, factory, serializer).registerName(registeredName);
+            return new EntityProvider(entityType, factory, serializer).name(registeredName);
         }
     }
 }

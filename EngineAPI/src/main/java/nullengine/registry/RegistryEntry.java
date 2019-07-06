@@ -19,15 +19,15 @@ public interface RegistryEntry<T> {
      * @param name The local name, which is unique under YOUR mod and THIS registry type!
      * @return this
      */
-    T registerName(String name);
+    T name(String name);
 
     /**
      * The user set local name for this object.
      *
      * @return The user set local name for this object.
-     * @see #registerName(String)
+     * @see #name(String)
      */
-    String getRegisterName();
+    String getName();
 
     int getId();
 
@@ -39,7 +39,7 @@ public interface RegistryEntry<T> {
     abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<T> {
         private final TypeToken<T> token = new TypeToken<T>(getClass()) {
         };
-        private String registeredName;
+        private String name;
 
         private String uniqueName;
         private int id;
@@ -51,15 +51,15 @@ public interface RegistryEntry<T> {
         }
 
         @Override
-        public final String getRegisterName() {
-            return registeredName;
+        public final String getName() {
+            return name;
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public final T registerName(String name) {
-            if (this.registeredName != null) throw new Error("Duplicated register " + name);
-            this.registeredName = name;
+        public final T name(String name) {
+            if (this.name != null) throw new Error("Duplicated register " + name);
+            this.name = name;
             return (T) this;
         }
 
@@ -71,13 +71,6 @@ public interface RegistryEntry<T> {
         @Override
         public final int getId() {
             return id;
-        }
-
-        @Override
-        public String toString() {
-            return token.getRawType().getSimpleName() + "{" +
-                    "uniqueName='" + uniqueName + '\'' +
-                    '}';
         }
     }
 }

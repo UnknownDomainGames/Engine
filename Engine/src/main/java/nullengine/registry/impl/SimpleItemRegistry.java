@@ -46,10 +46,10 @@ public class SimpleItemRegistry implements ItemRegistry {
     @Nonnull
     @Override
     public Item register(@Nonnull Item obj) throws RegistrationException {
-        if (nameToObject.containsKey(obj.getRegisterName())) {
-            throw new RegistrationException(String.format("Item id:%s has already registered!", obj.getRegisterName()));
+        if (nameToObject.containsKey(obj.getName())) {
+            throw new RegistrationException(String.format("Item id:%s has already registered!", obj.getName()));
         }
-        nameToObject.put(obj.getRegisterName(), obj);
+        nameToObject.put(obj.getName(), obj);
         setId(obj, nextId.getAndIncrement());
         if (obj instanceof BlockItem) {
             BlockItem itemBlock = (BlockItem) obj;

@@ -13,7 +13,7 @@ public class BlockItem extends BaseItem {
 
     public BlockItem(@Nonnull Block block) {
         this.block = Objects.requireNonNull(block);
-        registerName(block.getRegisterName());
+        name(block.getName());
         initComponent();
     }
 

@@ -138,7 +138,7 @@ public class IdBakeRegistry<T extends RegistryEntry<T>> implements Registry<T> {
 
     protected String getUniqueName(T entry) {
         // FIXME: Support mod
-        return "unknowndomain." + name + "." + entry.getRegisterName();
+        return "unknowndomain." + name + "." + entry.getName();
     }
 
     private static Field uniqueNameField;

@@ -4,6 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
+import nullengine.registry.Namespaces;
 import nullengine.registry.RegistrationException;
 import nullengine.registry.Registry;
 import nullengine.registry.RegistryEntry;
@@ -44,7 +45,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
             throw new RegistrationException(String.format("%s must be a subclass of RegistryEntry.Impl", obj.getEntryType().getSimpleName()));
         }
 
-        setUniqueName(obj, getUniqueName(obj));
+        setUniqueName(obj, Namespaces.namespaced(obj.getName()));
         return obj;
     }
 
@@ -113,11 +114,6 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     @Override
     public Collection<Map.Entry<String, T>> getEntries() {
         return nameToObject.entrySet();
-    }
-
-    protected String getUniqueName(T entry) {
-        // FIXME: Support mod
-        return "unknowndomain." + name + "." + entry.getRegisterName();
     }
 
     private static Field uniqueNameField;
