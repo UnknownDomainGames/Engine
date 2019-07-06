@@ -19,6 +19,9 @@ public class Namespaces {
     }
 
     public static String namespaced(String name) {
+        if (name.indexOf(':') != -1) {
+            return name;
+        }
         return Strings.isNullOrEmpty(currentNamespace) ? name : currentNamespace + ":" + name;
     }
 }
