@@ -83,8 +83,8 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
         // TODO: Remove it
         WorldCommonProvider provider = new WorldCommonProvider();
-        var dirt = Registries.getBlockRegistry().getValue("unknowndomain.block.dirt");
-        var grass = Registries.getBlockRegistry().getValue("unknowndomain.block.grass");
+        var dirt = Registries.getBlockRegistry().getValue("foundation:dirt");
+        var grass = Registries.getBlockRegistry().getValue("foundation:grass");
         provider.setChunkGenerator(new ChunkGeneratorFlat(new ChunkGeneratorFlat.Setting().setLayers(new Block[]{dirt, dirt, dirt, dirt, grass})));
         spawnWorld(provider, "default");
         var world = (WorldCommon) getWorld("default");
