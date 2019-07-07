@@ -22,7 +22,6 @@ import nullengine.client.sound.ALSoundManager;
 import nullengine.client.sound.EngineSoundManager;
 import nullengine.enginemod.EngineModListeners;
 import nullengine.event.engine.EngineEvent;
-import nullengine.event.game.GameStartEvent;
 import nullengine.game.Game;
 import nullengine.logic.Ticker;
 import nullengine.mod.ModContainer;
@@ -209,10 +208,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             throw new IllegalArgumentException("Game must be GameClient");
         }
 
-        eventBus.post(new GameStartEvent.Pre(game));
         this.game = (GameClient) Objects.requireNonNull(game);
         game.init();
-        eventBus.post(new GameStartEvent.Post(game));
     }
 
     @Override
