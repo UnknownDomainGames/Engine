@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class WorldCollisionManagerImpl implements WorldCollisionManager {
 
-    public static final float CALC_ERROR_FIXING = 1e-6f;
+    public static final float CALC_ERROR_FIXING = 1e-5f;
 
     private final World world;
 

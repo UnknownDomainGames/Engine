@@ -20,6 +20,14 @@ public interface ChunkConstants {
         return (abs(chunkX) << 42) | (abs(chunkY) << 21) | abs(chunkZ);
     }
 
+    static long getChunkIndex(Chunk chunk) {
+        return getChunkIndex(chunk.getChunkX(), chunk.getChunkY(), chunk.getChunkZ());
+    }
+
+    static long getChunkIndex(BlockPos blockPos) {
+        return getChunkIndex(blockPos.getX() >> BITS_X, blockPos.getY() >> BITS_Y, blockPos.getZ() >> BITS_Z);
+    }
+
     static BlockPos toChunkPos(BlockPos absPos) {
         return BlockPos.of(absPos.getX() >> BITS_X, absPos.getY() >> BITS_Y, absPos.getZ() >> BITS_Z);
     }
