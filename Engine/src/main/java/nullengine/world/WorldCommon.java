@@ -8,9 +8,6 @@ import nullengine.block.component.PlaceBehavior;
 import nullengine.entity.Entity;
 import nullengine.entity.PlayerEntity;
 import nullengine.event.world.block.BlockChangeEvent;
-import nullengine.event.world.block.BlockDestroyEvent;
-import nullengine.event.world.block.BlockPlaceEvent;
-import nullengine.event.world.block.BlockReplaceEvent;
 import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.game.Game;
 import nullengine.logic.FixStepTicker;
@@ -184,21 +181,30 @@ public class WorldCommon implements World, Runnable {
     @Override
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
         Block oldBlock = getBlock(pos);
-        if (!getGame().getEventBus().post(new BlockChangeEvent.Pre(this, pos, oldBlock, block, cause))) {
+        BlockChangeEvent.BlockAction action;
+        if (block == AirBlock.AIR) {
+            action = BlockChangeEvent.BlockAction.DESTROY;
+        } else if (oldBlock == AirBlock.AIR) {
+            action = BlockChangeEvent.BlockAction.PLACE;
+        }else{
+            action = BlockChangeEvent.BlockAction.REPLACE;
+        }
+        if (!getGame().getEventBus().post(new BlockChangeEvent.Pre(this, pos, oldBlock, block, action, cause))) {
             chunkManager.loadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
                     .setBlock(pos, block, cause);
-            if (block == AirBlock.AIR) {
-                oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, null, pos, oldBlock, cause));
-                getGame().getEventBus().post(new BlockDestroyEvent(this, pos, oldBlock, cause));
-            } else if (oldBlock == AirBlock.AIR) {
-                block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
-                getGame().getEventBus().post(new BlockPlaceEvent(this, pos, block, cause));
-            }else{
-                oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, null, pos, oldBlock, cause));
-                block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
-                getGame().getEventBus().post(new BlockReplaceEvent(this, pos, oldBlock, block, cause));
+            switch (action) {
+                case DESTROY:
+                    oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
+                    break;
+                case PLACE:
+                    block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
+                    break;
+                case REPLACE:
+                    oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
+                    block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
+                    break;
             }
-            getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause));
+            getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, action, cause));
             notifyNeighborChanged(pos, block, cause);
         }
         return oldBlock;

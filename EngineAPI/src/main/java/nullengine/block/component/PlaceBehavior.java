@@ -8,9 +8,9 @@ import nullengine.math.BlockPos;
 import nullengine.world.World;
 
 public interface PlaceBehavior extends Component {
-    default boolean canPlace(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
+    default boolean canPlace(World world, BlockPos blockPos, Block block, BlockChangeCause cause) {
         return true;
     }
 
-    void onPlaced(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause);
+    void onPlaced(World world, BlockPos blockPos, Block block, BlockChangeCause cause);
 }

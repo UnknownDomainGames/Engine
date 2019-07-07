@@ -11,13 +11,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface DestroyBehavior extends Component {
-    default boolean canDestroy(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause) {
+    default boolean canDestroy(World world, BlockPos blockPos, Block block, BlockChangeCause cause) {
         return true;
     }
 
-    void onDestroyed(World world, Entity entity, BlockPos blockPos, Block block, BlockChangeCause cause);
+    void onDestroyed(World world,BlockPos blockPos, Block block, BlockChangeCause cause);
 
-    default DestroyableProperty getProperty(World world, Entity entity, BlockPos blockPos, Block block) {
+    default DestroyableProperty getProperty(World world, BlockPos blockPos, Block block) {
         return DEFAULT_PROPERTY;
     }
 

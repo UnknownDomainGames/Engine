@@ -14,12 +14,14 @@ public abstract class BlockChangeEvent implements Event {
     private final Block oldBlock;
     private final Block newBlock;
     private final BlockChangeCause cause;
+    private final BlockAction action;
 
-    protected BlockChangeEvent(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
+    protected BlockChangeEvent(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockAction action, BlockChangeCause cause) {
         this.world = world;
         this.pos = pos;
         this.oldBlock = oldBlock;
         this.newBlock = newBlock;
+        this.action = action;
         this.cause = cause;
     }
 
@@ -43,12 +45,20 @@ public abstract class BlockChangeEvent implements Event {
         return pos;
     }
 
+    public BlockAction getAction() {
+        return action;
+    }
+
+    public enum BlockAction{
+        PLACE, DESTROY, REPLACE
+    }
+
     public static class Pre extends BlockChangeEvent implements Cancellable {
 
         private boolean cancelled;
 
-        public Pre(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
-            super(world, pos, oldBlock, newBlock, cause);
+        public Pre(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockAction action, BlockChangeCause cause) {
+            super(world, pos, oldBlock, newBlock, action, cause);
         }
 
         @Override
@@ -63,8 +73,8 @@ public abstract class BlockChangeEvent implements Event {
     }
 
     public static class Post extends BlockChangeEvent {
-        public Post(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
-            super(world, pos, oldBlock, newBlock, cause);
+        public Post(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockAction action, BlockChangeCause cause) {
+            super(world, pos, oldBlock, newBlock, action, cause);
         }
     }
 }

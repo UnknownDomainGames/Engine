@@ -18,4 +18,20 @@ public class BlockActivateEvent implements Event {
         this.pos = pos;
         this.world = world;
     }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public Block getBlock() {
+        return block;
+    }
+
+    public BlockPos getBlockPos() {
+        return pos;
+    }
+
+    public Entity getEntity() {
+        return entity;
+    }
 }

@@ -71,7 +71,7 @@ public abstract class GameBase implements Game {
         constructStage();
         resourceStage();
         finishStage();
-
+        eventBus.post(new GameStartEvent.Post(this));
         // TODO: loop to check if we need to gc the world
 
         // for (WorldCommon worldCommon : internalWorlds) {
