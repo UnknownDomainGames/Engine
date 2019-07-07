@@ -8,6 +8,9 @@ import nullengine.block.component.PlaceBehavior;
 import nullengine.entity.Entity;
 import nullengine.entity.PlayerEntity;
 import nullengine.event.world.block.BlockChangeEvent;
+import nullengine.event.world.block.BlockDestroyEvent;
+import nullengine.event.world.block.BlockPlaceEvent;
+import nullengine.event.world.block.BlockReplaceEvent;
 import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.game.Game;
 import nullengine.logic.FixStepTicker;
@@ -181,30 +184,25 @@ public class WorldCommon implements World, Runnable {
     @Override
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
         Block oldBlock = getBlock(pos);
-        BlockChangeEvent.BlockAction action;
+        BlockChangeEvent pre, post;
         if (block == AirBlock.AIR) {
-            action = BlockChangeEvent.BlockAction.DESTROY;
+            pre = new BlockDestroyEvent.Pre(this,pos,oldBlock, cause);
+            post = new BlockDestroyEvent.Post(this,pos,oldBlock, cause);
         } else if (oldBlock == AirBlock.AIR) {
-            action = BlockChangeEvent.BlockAction.PLACE;
+            pre = new BlockPlaceEvent.Pre(this,pos,block, cause);
+            post = new BlockPlaceEvent.Post(this,pos,block, cause);
         }else{
-            action = BlockChangeEvent.BlockAction.REPLACE;
+            pre = new BlockReplaceEvent.Pre(this,pos,oldBlock, block, cause);
+            post = new BlockReplaceEvent.Post(this,pos,oldBlock, block, cause);
         }
-        if (!getGame().getEventBus().post(new BlockChangeEvent.Pre(this, pos, oldBlock, block, action, cause))) {
+        if (!getGame().getEventBus().post(pre)) {
             chunkManager.loadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
                     .setBlock(pos, block, cause);
-            switch (action) {
-                case DESTROY:
-                    oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
-                    break;
-                case PLACE:
-                    block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
-                    break;
-                case REPLACE:
-                    oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
-                    block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
-                    break;
-            }
-            getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, action, cause));
+
+            oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
+            block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
+
+            getGame().getEventBus().post(post);
             notifyNeighborChanged(pos, block, cause);
         }
         return oldBlock;
