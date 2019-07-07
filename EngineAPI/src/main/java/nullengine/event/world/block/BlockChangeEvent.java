@@ -7,47 +7,60 @@ import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.math.BlockPos;
 import nullengine.world.World;
 
-public abstract class BlockChangeEvent implements Event {
+public interface BlockChangeEvent extends Event {
 
-    private final World world;
-    private final BlockPos pos;
-    private final Block oldBlock;
-    private final Block newBlock;
-    private final BlockChangeCause cause;
+    World getWorld();
 
-    protected BlockChangeEvent(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
-        this.world = world;
-        this.pos = pos;
-        this.oldBlock = oldBlock;
-        this.newBlock = newBlock;
-        this.cause = cause;
+    BlockPos getPos();
+
+    Block getOldBlock();
+
+    Block getNewBlock();
+
+    BlockChangeCause getCause();
+
+    class Base implements BlockChangeEvent {
+
+        private final World world;
+        private final BlockPos pos;
+        private final Block oldBlock;
+        private final Block newBlock;
+        private final BlockChangeCause cause;
+
+        private Base(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
+            this.world = world;
+            this.pos = pos;
+            this.oldBlock = oldBlock;
+            this.newBlock = newBlock;
+            this.cause = cause;
+        }
+
+        public World getWorld() {
+            return world;
+        }
+
+        public BlockPos getPos() {
+            return pos;
+        }
+
+        public Block getOldBlock() {
+            return oldBlock;
+        }
+
+        public Block getNewBlock() {
+            return newBlock;
+        }
+
+        public BlockChangeCause getCause() {
+            return cause;
+        }
     }
 
-    public BlockChangeCause getCause() {
-        return cause;
-    }
-
-    public Block getOldBlock() {
-        return oldBlock;
-    }
-
-    public Block getNewBlock() {
-        return newBlock;
-    }
-
-    public World getWorld() {
-        return world;
-    }
-
-    public BlockPos getPos() {
-        return pos;
-    }
-
-    public static class Pre extends BlockChangeEvent implements Cancellable {
+    class Pre extends BlockChangeEvent.Base implements Cancellable {
 
         private boolean cancelled;
 
-        public Pre(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
+        protected Pre(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
             super(world, pos, oldBlock, newBlock, cause);
         }
 
@@ -62,8 +75,8 @@ public abstract class BlockChangeEvent implements Event {
         }
     }
 
-    public static class Post extends BlockChangeEvent {
-        public Post(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
+    class Post extends BlockChangeEvent.Base {
+        protected Post(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
             super(world, pos, oldBlock, newBlock, cause);
         }
     }

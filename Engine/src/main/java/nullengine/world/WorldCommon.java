@@ -186,14 +186,14 @@ public class WorldCommon implements World, Runnable {
         Block oldBlock = getBlock(pos);
         BlockChangeEvent pre, post;
         if (block == AirBlock.AIR) {
-            pre = new BlockDestroyEvent.Pre(this,pos,oldBlock, cause);
-            post = new BlockDestroyEvent.Post(this,pos,oldBlock, cause);
+            pre = new BlockDestroyEvent.Pre(this, pos, oldBlock, block, cause);
+            post = new BlockDestroyEvent.Post(this, pos, oldBlock, block, cause);
         } else if (oldBlock == AirBlock.AIR) {
-            pre = new BlockPlaceEvent.Pre(this,pos,block, cause);
-            post = new BlockPlaceEvent.Post(this,pos,block, cause);
-        }else{
-            pre = new BlockReplaceEvent.Pre(this,pos,oldBlock, block, cause);
-            post = new BlockReplaceEvent.Post(this,pos,oldBlock, block, cause);
+            pre = new BlockPlaceEvent.Pre(this, pos, oldBlock, block, cause);
+            post = new BlockPlaceEvent.Post(this, pos, oldBlock, block, cause);
+        } else {
+            pre = new BlockReplaceEvent.Pre(this, pos, oldBlock, block, cause);
+            post = new BlockReplaceEvent.Post(this, pos, oldBlock, block, cause);
         }
         if (!getGame().getEventBus().post(pre)) {
             chunkManager.loadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)

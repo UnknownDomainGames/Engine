@@ -2,18 +2,13 @@ package nullengine.event.world.block;
 
 import nullengine.block.Block;
 import nullengine.event.Cancellable;
-import nullengine.event.Event;
 import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.math.BlockPos;
 import nullengine.world.World;
 
-public class BlockReplaceEvent extends BlockChangeEvent {
+public interface BlockReplaceEvent extends BlockChangeEvent {
 
-    public BlockReplaceEvent(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
-        super(world, pos, oldBlock, newBlock, cause);
-    }
-
-    public static class Pre extends BlockReplaceEvent implements Cancellable {
+    class Pre extends BlockChangeEvent.Pre implements BlockReplaceEvent, Cancellable {
 
         private boolean cancelled;
 
@@ -32,7 +27,7 @@ public class BlockReplaceEvent extends BlockChangeEvent {
         }
     }
 
-    public static class Post extends BlockReplaceEvent {
+    class Post extends BlockChangeEvent.Post implements BlockReplaceEvent {
         public Post(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
             super(world, pos, oldBlock, newBlock, cause);
         }
