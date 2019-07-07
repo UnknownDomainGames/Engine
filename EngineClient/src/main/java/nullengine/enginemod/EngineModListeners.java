@@ -40,6 +40,7 @@ import nullengine.registry.game.BlockRegistry;
 import nullengine.registry.impl.IdAutoIncreaseRegistry;
 import nullengine.registry.impl.SimpleBlockRegistry;
 import nullengine.registry.impl.SimpleItemRegistry;
+import nullengine.world.WorldProvider;
 import nullengine.world.collision.RayTraceBlockHit;
 
 public final class EngineModListeners {
@@ -52,6 +53,7 @@ public final class EngineModListeners {
     @Listener
     public static void constructRegistry(ModRegistrationEvent.Construction e) {
         // TODO: move to common.
+        e.addRegistry(WorldProvider.class, () -> new IdAutoIncreaseRegistry<>(WorldProvider.class));
         e.addRegistry(Block.class, SimpleBlockRegistry::new);
         e.addRegistry(Item.class, SimpleItemRegistry::new);
 
