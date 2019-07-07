@@ -198,14 +198,19 @@ public class WorldCommon implements World, Runnable {
                 block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, null, pos, block, cause));
                 getGame().getEventBus().post(new BlockReplaceEvent(this, pos, oldBlock, block, cause));
             }
-            getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause)); // TODO:
-            for (Facing facing : Facing.values()) {
-                BlockPos pos1 = pos.offset(facing);
-                Block block1 = getBlock(pos1);
-                block1.getComponent(NeighborChangeListener.class).ifPresent(neighborChangeListener -> neighborChangeListener.onNeighborChange(this, pos1, block1, facing.opposite(), pos, block, cause));
-            }
+            getGame().getEventBus().post(new BlockChangeEvent.Post(this, pos, oldBlock, block, cause));
+            notifyNeighborChanged(pos, block, cause);
         }
         return oldBlock;
+    }
+
+    protected void notifyNeighborChanged(BlockPos pos, Block block, BlockChangeCause cause) {
+        for (Facing facing : Facing.values()) {
+            BlockPos neighborPos = pos.offset(facing);
+            Block neighbor = getBlock(neighborPos);
+            neighbor.getComponent(NeighborChangeListener.class)
+                    .ifPresent(listener -> listener.onNeighborChanged(this, neighborPos, neighbor, facing.opposite(), pos, block, cause));
+        }
     }
 
     @Nonnull
