@@ -9,6 +9,8 @@ import nullengine.client.rendering.display.GLFWWindow;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.TextureManager;
+import nullengine.client.rendering.util.GPUMemoryInfo;
+import nullengine.client.rendering.util.NVXGPUMemoryInfo;
 import nullengine.component.Component;
 import nullengine.component.ComponentContainer;
 import org.joml.FrustumIntersection;
@@ -40,6 +42,7 @@ public class EngineRenderContext implements RenderContext {
     private GLFWWindow window;
     private TextureManager textureManager;
     private GuiManager guiManager;
+    private GPUMemoryInfo gpuMemoryInfo;
 
     private Camera camera;
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
@@ -82,6 +85,11 @@ public class EngineRenderContext implements RenderContext {
     @Override
     public RenderScheduler getScheduler() {
         return scheduler;
+    }
+
+    @Override
+    public GPUMemoryInfo getGPUMemoryInfo() {
+        return gpuMemoryInfo;
     }
 
     private long lastUpdateFps = System.currentTimeMillis();
@@ -147,6 +155,10 @@ public class EngineRenderContext implements RenderContext {
 
         textureManager = new EngineTextureManager();
         guiManager = new EngineGuiManager(this);
+        NVXGPUMemoryInfo nvxgpuMemoryInfo = new NVXGPUMemoryInfo();
+        nvxgpuMemoryInfo.init();
+        scheduler.runTaskEveryFrame(nvxgpuMemoryInfo::update);
+        gpuMemoryInfo = nvxgpuMemoryInfo;
 
         camera = new FixedCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
 
