@@ -20,7 +20,6 @@ import nullengine.mod.misc.SimpleModMetadata;
 import nullengine.util.RuntimeEnvironment;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -53,13 +52,11 @@ public class EngineModManager implements ModManager {
         loadEngineDummyMod();
     }
 
-    @Nullable
     @Override
     public Optional<ModContainer> getMod(String id) {
         return Optional.ofNullable(loadedModContainers.get(id));
     }
 
-    @Nullable
     @Override
     public Optional<ModContainer> getMod(Class<?> clazz) {
         var classLoader = clazz.getClassLoader();
@@ -138,6 +135,10 @@ public class EngineModManager implements ModManager {
             loadedModContainers.put(engineMod.getId(), engineMod);
         } catch (IOException | URISyntaxException ignored) {
         }
+    }
+
+    public void initEngineDummyMod() {
+        getMod("engine").ifPresent(modInitializer::init);
     }
 
     private List<ModCandidate> collectMods() {

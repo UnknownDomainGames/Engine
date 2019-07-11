@@ -111,6 +111,8 @@ public abstract class EngineBase implements Engine {
     }
 
     protected void modStage() {
+        modManager.initEngineDummyMod();
+        
         loadMods();
     }
 
