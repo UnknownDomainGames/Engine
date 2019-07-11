@@ -4,6 +4,7 @@ import nullengine.event.EventBus;
 import nullengine.game.Game;
 import nullengine.mod.ModManager;
 import nullengine.registry.RegistryManager;
+import nullengine.util.CrashHandler;
 import nullengine.util.RuntimeEnvironment;
 import nullengine.util.Side;
 import org.slf4j.Logger;
@@ -36,6 +37,8 @@ public interface Engine {
     RegistryManager getRegistryManager();
 
     ModManager getModManager();
+
+    CrashHandler getCrashHandler();
 
     /**
      * Initialize the Engine. Load all mods and complete registration

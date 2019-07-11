@@ -11,6 +11,7 @@ import nullengine.registry.Registries;
 import nullengine.registry.RegistryManager;
 import nullengine.registry.impl.SimpleRegistryManager;
 import nullengine.util.ClassPathUtils;
+import nullengine.util.CrashHandlerImpl;
 import nullengine.util.RuntimeEnvironment;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -40,8 +41,8 @@ public abstract class EngineBase implements Engine {
 
     protected EventBus eventBus;
     protected RegistryManager registryManager;
-
     protected EngineModManager modManager;
+    protected CrashHandlerImpl crashHandler;
 
     private boolean initialized = false;
     private boolean running = false;
@@ -82,6 +83,11 @@ public abstract class EngineBase implements Engine {
     }
 
     @Override
+    public CrashHandlerImpl getCrashHandler() {
+        return crashHandler;
+    }
+
+    @Override
     public void initEngine() {
         if (initialized) {
             throw new IllegalStateException("Engine has been initialized.");
@@ -112,7 +118,7 @@ public abstract class EngineBase implements Engine {
 
     protected void modStage() {
         modManager.initEngineDummyMod();
-        
+
         loadMods();
     }
 
@@ -121,10 +127,10 @@ public abstract class EngineBase implements Engine {
     }
 
     private void initExceptionHandler() {
+        crashHandler = new CrashHandlerImpl(this, getRunPath().resolve("crashreports"));
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
-            logger.error("Caught unhandled exception!!! Engine will terminate!", e);
-            // TODO: Crash report
-            System.exit(1);
+            logger.error("Caught unhandled exception!!! Engine will terminate!");
+            getCrashHandler().crash(e);
         });
     }
 
