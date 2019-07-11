@@ -8,10 +8,14 @@ import nullengine.util.RuntimeEnvironment;
 import nullengine.util.Side;
 import org.slf4j.Logger;
 
+import java.nio.file.Path;
+
 /**
  * really, just the {@link Game} starter, nothing else
  */
 public interface Engine {
+
+    Path getRunPath();
 
     Logger getLogger();
 

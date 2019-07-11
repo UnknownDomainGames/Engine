@@ -9,6 +9,7 @@ import org.lwjgl.system.windows.User32;
 
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
+import java.nio.file.Path;
 
 public class Bootstrap {
 
@@ -29,7 +30,7 @@ public class Bootstrap {
 
         System.out.println(ManagementFactory.getRuntimeMXBean().getName());
 
-        Engine engine = new EngineClientImpl();
+        Engine engine = new EngineClientImpl(Path.of("run"));
         injectEngine(engine);
         engine.initEngine();
         engine.runEngine();

@@ -33,6 +33,8 @@ public abstract class EngineBase implements Engine {
 
     protected final Logger logger = LoggerFactory.getLogger("Engine");
 
+    protected final Path runPath;
+
     protected final List<Runnable> shutdownListeners = new LinkedList<>();
 
     private RuntimeEnvironment runtimeEnvironment;
@@ -45,6 +47,15 @@ public abstract class EngineBase implements Engine {
     private boolean initialized = false;
     private boolean running = false;
     private boolean markedTermination = false;
+
+    protected EngineBase(Path runPath) {
+        this.runPath = runPath;
+    }
+
+    @Override
+    public Path getRunPath() {
+        return runPath;
+    }
 
     @Override
     public Logger getLogger() {

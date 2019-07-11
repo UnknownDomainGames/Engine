@@ -22,6 +22,7 @@ import nullengine.enginemod.client.gui.game.GuiIngameMenu;
 import nullengine.enginemod.client.gui.game.GuiItemList;
 import nullengine.enginemod.client.gui.hud.HUDGameDebug;
 import nullengine.entity.Entity;
+import nullengine.entity.EntityProvider;
 import nullengine.entity.component.TwoHands;
 import nullengine.entity.item.ItemEntity;
 import nullengine.event.Listener;
@@ -39,6 +40,7 @@ import nullengine.player.Player;
 import nullengine.registry.game.BlockRegistry;
 import nullengine.registry.impl.IdAutoIncreaseRegistry;
 import nullengine.registry.impl.SimpleBlockRegistry;
+import nullengine.registry.impl.SimpleEntityRegistry;
 import nullengine.registry.impl.SimpleItemRegistry;
 import nullengine.world.WorldProvider;
 import nullengine.world.collision.RayTraceBlockHit;
@@ -56,6 +58,7 @@ public final class EngineModListeners {
         e.addRegistry(WorldProvider.class, () -> new IdAutoIncreaseRegistry<>(WorldProvider.class));
         e.addRegistry(Block.class, SimpleBlockRegistry::new);
         e.addRegistry(Item.class, SimpleItemRegistry::new);
+        e.addRegistry(EntityProvider.class, SimpleEntityRegistry::new);
 
         e.addRegistry(KeyBinding.class, () -> new IdAutoIncreaseRegistry<>(KeyBinding.class));
     }

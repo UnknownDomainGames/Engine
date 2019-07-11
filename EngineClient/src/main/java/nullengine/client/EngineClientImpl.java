@@ -58,6 +58,10 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private KeyBindingManager keyBindingManager;
 
+    public EngineClientImpl(Path runPath) {
+        super(runPath);
+    }
+
     @Override
     public Side getSide() {
         return Side.CLIENT;
