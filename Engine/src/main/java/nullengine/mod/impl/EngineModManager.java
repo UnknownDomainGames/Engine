@@ -12,6 +12,7 @@ import nullengine.mod.exception.InvalidModMetadataException;
 import nullengine.mod.exception.MissingDependencyException;
 import nullengine.mod.exception.ModAlreadyLoadedException;
 import nullengine.mod.exception.ModLoadException;
+import nullengine.mod.init.ModInitializer;
 import nullengine.mod.java.JavaModAssets;
 import nullengine.mod.java.JavaModLoader;
 import nullengine.mod.java.ModClassLoader;
@@ -42,11 +43,13 @@ public class EngineModManager implements ModManager {
 
     private final ModMetadataFinder modMetadataFinder = new ModMetadataFinder();
     private final DependencyManager dependencyManager = new DependencyManager(this);
+    private final ModInitializer modInitializer;
 
     private final Engine engine;
 
     public EngineModManager(Engine engine) {
         this.engine = engine;
+        this.modInitializer = new ModInitializer(engine);
         loadEngineDummyMod();
     }
 
@@ -80,11 +83,12 @@ public class EngineModManager implements ModManager {
         dependencyManager.sortModCandidates(modCandidates);
 
         for (ModCandidate modCandidate : modCandidates) {
-            loadMod(modCandidate);
+            var mod = loadMod(modCandidate);
+            modInitializer.init(mod);
         }
     }
 
-    private void loadMod(ModCandidate modCandidate) {
+    private ModContainer loadMod(ModCandidate modCandidate) {
         var metadata = modCandidate.getMetadata();
         if (!MOD_ID_PATTERN.matcher(metadata.getId()).matches()) {
             throw new ModLoadException(format("Illegal mod id \"%s\"", metadata.getId()));
@@ -113,6 +117,7 @@ public class EngineModManager implements ModManager {
         }
 
         loadedModContainers.put(modContainer.getId(), modContainer);
+        return modContainer;
     }
 
     private void loadEngineDummyMod() {

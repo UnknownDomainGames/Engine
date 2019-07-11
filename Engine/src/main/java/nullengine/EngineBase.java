@@ -7,7 +7,6 @@ import nullengine.event.engine.EngineEvent;
 import nullengine.mod.ModContainer;
 import nullengine.mod.ModManager;
 import nullengine.mod.impl.EngineModManager;
-import nullengine.mod.init.ModInitializer;
 import nullengine.registry.Registries;
 import nullengine.registry.RegistryManager;
 import nullengine.registry.impl.SimpleRegistryManager;
@@ -177,11 +176,6 @@ public abstract class EngineBase implements Engine {
 
         Collection<ModContainer> loadedMods = modManager.getLoadedMods();
         logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getId() + "(" + modContainer.getVersion() + ")").iterator(), ", ") + "]");
-
-        ModInitializer initializer = new ModInitializer(this);
-        for (ModContainer mod : loadedMods) {
-            initializer.init(mod);
-        }
     }
 
     @Override
