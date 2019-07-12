@@ -35,7 +35,7 @@ public class GuiChat extends AnchorPane {
                     // TODO go to server
 
                 }
-                requireCLose();
+                requireClose();
             }
         });
     }

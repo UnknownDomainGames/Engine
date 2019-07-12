@@ -41,7 +41,7 @@ public class EngineGuiManager implements GuiManager {
         // TODO: Remove it
         escCloseHandler = keyDownEvent -> {
             if (keyDownEvent.getKey() == Key.KEY_ESCAPE) {
-                scene.getRoot().requireCLose();
+                scene.getRoot().requireClose();
             }
         };
         scene.getRoot().addEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);

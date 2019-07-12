@@ -169,7 +169,7 @@ public abstract class Container extends Component {
         return closeRequired;
     }
 
-    public void requireCLose() {
+    public void requireClose() {
         closeRequired = true;
     }
 }

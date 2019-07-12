@@ -66,7 +66,7 @@ public class GUIGameCreation extends BorderPane {
 
 
     @Override
-    public void requireCLose() {
+    public void requireClose() {
         // Main Menu should not be required close
     }
 }
