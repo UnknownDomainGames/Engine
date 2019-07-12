@@ -82,6 +82,15 @@ public class BitArray {
         return (int) (oldValue & maxEntryValue);
     }
 
+    public int[] toArray() {
+        int length = length();
+        int[] array = new int[length];
+        for (int i = 0; i < length; i++) {
+            array[i] = get(i);
+        }
+        return array;
+    }
+
     public long[] getBackingArray() {
         return array;
     }

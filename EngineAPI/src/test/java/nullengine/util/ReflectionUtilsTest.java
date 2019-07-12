@@ -8,10 +8,10 @@ public class ReflectionUtilsTest {
 
     @Test
     public void testGetCallerClassName() {
-        dummyMethod();
+        assertEquals(ReflectionUtilsTest.class.getName(), dummyMethod());
     }
 
-    public void dummyMethod() {
-        assertEquals(ReflectionUtils.getCallerClassName(), ReflectionUtilsTest.class.getName());
+    private String dummyMethod() {
+        return ReflectionUtils.getCallerClassName();
     }
 }

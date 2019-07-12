@@ -3,6 +3,7 @@ package nullengine.util;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BitArrayTest {
@@ -30,36 +31,21 @@ public class BitArrayTest {
 
     @Test
     public void get() {
-        for (int i = 0; i < bit8Array.length(); i++) {
-            assertEquals(bit8Array.get(i), bit8RawArray[i]);
-        }
-        for (int i = 0; i < bit24Array.length(); i++) {
-            assertEquals(bit24Array.get(i), bit24RawArray[i]);
-        }
-        for (int i = 0; i < bit31Array.length(); i++) {
-            assertEquals(bit31Array.get(i), bit31RawArray[i]);
-        }
+        assertArrayEquals(bit8RawArray, bit8Array.toArray());
+        assertArrayEquals(bit24RawArray, bit24Array.toArray());
+        assertArrayEquals(bit31RawArray, bit31Array.toArray());
     }
 
     @Test
     public void getAndSet() {
         for (int i = 0; i < bit8Array.length(); i++) {
-            assertEquals(bit8Array.getAndSet(i, bit8RawArray2[i]), bit8RawArray[i]);
-        }
-        for (int i = 0; i < bit8Array.length(); i++) {
-            assertEquals(bit8Array.get(i), bit8RawArray2[i]);
+            assertEquals(bit8RawArray[i], bit8Array.getAndSet(i, bit8RawArray2[i]));
         }
         for (int i = 0; i < bit24Array.length(); i++) {
-            assertEquals(bit24Array.getAndSet(i, bit24RawArray2[i]), bit24RawArray[i]);
-        }
-        for (int i = 0; i < bit24Array.length(); i++) {
-            assertEquals(bit24Array.get(i), bit24RawArray2[i]);
+            assertEquals(bit24RawArray[i], bit24Array.getAndSet(i, bit24RawArray2[i]));
         }
         for (int i = 0; i < bit31Array.length(); i++) {
-            assertEquals(bit31Array.getAndSet(i, bit31RawArray2[i]), bit31RawArray[i]);
-        }
-        for (int i = 0; i < bit31Array.length(); i++) {
-            assertEquals(bit31Array.get(i), bit31RawArray2[i]);
+            assertEquals(bit31RawArray[i], bit31Array.getAndSet(i, bit31RawArray2[i]));
         }
     }
 }
