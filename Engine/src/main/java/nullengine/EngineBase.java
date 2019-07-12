@@ -4,7 +4,6 @@ import nullengine.event.EventBus;
 import nullengine.event.SimpleEventBus;
 import nullengine.event.asm.AsmEventListenerFactory;
 import nullengine.event.engine.EngineEvent;
-import nullengine.mod.ModContainer;
 import nullengine.mod.ModManager;
 import nullengine.mod.impl.EngineModManager;
 import nullengine.registry.Registries;
@@ -22,11 +21,11 @@ import java.lang.management.RuntimeMXBean;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang3.SystemUtils.*;
 
 public abstract class EngineBase implements Engine {
@@ -103,9 +102,9 @@ public abstract class EngineBase implements Engine {
     protected void constructionStage() {
         logger.info("Initializing engine!");
 
-        initExceptionHandler();
         initEnvironment();
         printSystemInfo();
+        initExceptionHandler();
 
         eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
         registryManager = new SimpleRegistryManager(new HashMap<>());
@@ -126,12 +125,45 @@ public abstract class EngineBase implements Engine {
         Registries.init(registryManager);
     }
 
-    private void initExceptionHandler() {
+    protected void initExceptionHandler() {
         crashHandler = new CrashHandlerImpl(this, getRunPath().resolve("crashreports"));
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             logger.error("Caught unhandled exception!!! Engine will terminate!");
-            getCrashHandler().crash(e);
+            crashHandler.crash(e);
         });
+        crashHandler.addReportDetail("Engine Version",
+                builder -> builder.append(Platform.getVersion()));
+        crashHandler.addReportDetail("Engine Side",
+                builder -> builder.append(getSide()));
+        crashHandler.addReportDetail("Runtime Environment",
+                builder -> builder.append(getRuntimeEnvironment()));
+        crashHandler.addReportDetail("Loaded Mods",
+                builder -> {
+                    if (modManager == null)
+                        builder.append("[]");
+                    else
+                        builder.append("[").append(StringUtils.join(modManager.getLoadedMods().stream().map(modContainer -> modContainer.getId() + "(" + modContainer.getVersion() + ")").iterator(), ", ")).append("]");
+                });
+        crashHandler.addReportDetail("Operating System",
+                builder -> builder.append(format("%s (%s) version %s", OS_NAME, OS_ARCH, OS_VERSION)));
+        crashHandler.addReportDetail("Java Version",
+                builder -> builder.append(format("%s (%s), %s", JAVA_VERSION, JAVA_VM_VERSION, JAVA_VERSION)));
+        crashHandler.addReportDetail("JVM Information",
+                builder -> builder.append(format("%s (%s), %s", JAVA_VM_NAME, JAVA_VM_INFO, JAVA_VM_VENDOR)));
+        crashHandler.addReportDetail("Memory",
+                builder -> {
+                    Runtime runtime = Runtime.getRuntime();
+                    long usedMemory = (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024;
+                    long totalMemory = runtime.totalMemory() / 1024 / 1024;
+                    long maxMemory = runtime.maxMemory() / 1024 / 1024;
+                    builder.append(format("%d MB / %d MB (Max: %d MB)", usedMemory, totalMemory, maxMemory));
+                });
+        crashHandler.addReportDetail("JVM Flags",
+                builder -> {
+                    RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+                    List<String> jvmFlags = runtimeMXBean.getInputArguments();
+                    builder.append(format("(%s totals) %s", jvmFlags.size(), String.join(" ", jvmFlags)));
+                });
     }
 
     private void initEnvironment() {
@@ -154,6 +186,9 @@ public abstract class EngineBase implements Engine {
     private void printSystemInfo() {
         Logger logger = Platform.getLogger();
         logger.info("----- System Information -----");
+        logger.info("\tEngine Version: {}", Platform.getVersion());
+        logger.info("\tEngine Side: {}", getSide());
+        logger.info("\tRuntime Environment: {}", runtimeEnvironment);
         logger.info("\tOperating System: {} ({}) version {}", OS_NAME, OS_ARCH, OS_VERSION);
         logger.info("\tJava Version: {} ({}), {}", JAVA_VERSION, JAVA_VM_VERSION, JAVA_VENDOR);
         logger.info("\tJVM Information: {} ({}), {}", JAVA_VM_NAME, JAVA_VM_INFO, JAVA_VM_VENDOR);
@@ -164,17 +199,7 @@ public abstract class EngineBase implements Engine {
         logger.info("\tTotal Memory: {} bytes ({} MB)", totalMemory, totalMemory / 1024L / 1024L);
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         List<String> jvmFlags = runtimeMXBean.getInputArguments();
-        StringBuilder formattedFlags = new StringBuilder();
-        for (String flag : jvmFlags) {
-            if (formattedFlags.length() > 0) {
-                formattedFlags.append(' ');
-            }
-            formattedFlags.append(flag);
-        }
-        logger.info("\tJVM Flags ({} totals): {}", jvmFlags.size(), formattedFlags.toString());
-        logger.info("\tEngine Version: {}", Platform.getVersion());
-        logger.info("\tEngine Side: {}", getSide().name());
-        logger.info("\tRuntime Environment: {}", runtimeEnvironment.name());
+        logger.info("\tJVM Flags ({} totals): {}", jvmFlags.size(), String.join(" ", jvmFlags));
         logger.info("------------------------------");
     }
 
@@ -182,8 +207,7 @@ public abstract class EngineBase implements Engine {
         logger.info("Loading Mods.");
         modManager.loadMods();
 
-        Collection<ModContainer> loadedMods = modManager.getLoadedMods();
-        logger.info("Loaded mods: [" + StringUtils.join(loadedMods.stream().map(modContainer -> modContainer.getId() + "(" + modContainer.getVersion() + ")").iterator(), ", ") + "]");
+        logger.info("Loaded Mods: [" + StringUtils.join(modManager.getLoadedMods().stream().map(modContainer -> modContainer.getId() + "(" + modContainer.getVersion() + ")").iterator() + "]", ", "));
     }
 
     @Override
