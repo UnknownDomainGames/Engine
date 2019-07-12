@@ -207,7 +207,7 @@ public abstract class EngineBase implements Engine {
         logger.info("Loading Mods.");
         modManager.loadMods();
 
-        logger.info("Loaded Mods: [" + StringUtils.join(modManager.getLoadedMods().stream().map(modContainer -> modContainer.getId() + "(" + modContainer.getVersion() + ")").iterator() + "]", ", "));
+        logger.info("Loaded Mods: [" + StringUtils.join(modManager.getLoadedMods().stream().map(modContainer -> modContainer.getId() + "(" + modContainer.getVersion() + ")").iterator(), ", ") + "]");
     }
 
     @Override
