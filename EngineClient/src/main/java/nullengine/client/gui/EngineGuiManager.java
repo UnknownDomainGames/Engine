@@ -36,7 +36,9 @@ public class EngineGuiManager implements GuiManager {
     }
 
     private void showScreenInternal(Scene scene) {
+        hideHuds();
         pushToHistory();
+        // TODO: Remove it
         escCloseHandler = keyDownEvent -> {
             if (keyDownEvent.getKey() == Key.KEY_ESCAPE) {
                 scene.getRoot().requireCLose();
@@ -81,16 +83,31 @@ public class EngineGuiManager implements GuiManager {
 
     @Override
     public void showHud(String id, Scene hud) {
-        if (huds.containsKey(id)) {
-            Platform.getLogger().warn(String.format("Conflicting HUD id!: %s", id));
+        Scene currentHud = huds.get(id);
+        if (currentHud != null) {
+            Platform.getLogger().debug("Conflicted HUD id {}", id);
+            currentHud.getRoot().visible().set(true);
         } else {
             hud.setSize(context.getWindow().getWidth(), context.getWindow().getHeight());
             hud.update();
             huds.put(id, hud);
-            if(hud.getRoot() instanceof GuiTickable){
-                context.getScheduler().runTaskEveryFrame(()->((GuiTickable) hud.getRoot()).update(context));
+            if (hud.getRoot() instanceof GuiTickable) {
+                context.getScheduler().runTaskEveryFrame(() -> ((GuiTickable) hud.getRoot()).update(context));
             }
         }
+    }
+
+    @Override
+    public void showHud(String id) {
+        Scene hud = huds.get(id);
+        if (hud != null) {
+            hud.getRoot().visible().set(true);
+        }
+    }
+
+    @Override
+    public void showHuds() {
+        huds.values().forEach(scene -> scene.getRoot().visible().set(true));
     }
 
     @Override
@@ -98,21 +115,35 @@ public class EngineGuiManager implements GuiManager {
         pushToHistory();
         displayingScreen = null;
         context.getWindow().getCursor().disableCursor();
+        showHuds();
     }
 
     @Override
     public void hideHud(String id) {
+        Scene hud = huds.get(id);
+        if (hud != null) {
+            hud.getRoot().visible().set(false);
+        }
+    }
+
+    @Override
+    public void hideHuds() {
+        huds.values().forEach(scene -> scene.getRoot().visible().set(false));
+    }
+
+    @Override
+    public void removeHud(String id) {
         Scene hud = huds.remove(id);
-        if(hud.getRoot() instanceof GuiTickable){
-            context.getScheduler().cancelTask(()->((GuiTickable) hud.getRoot()).update(context));
+        if (hud.getRoot() instanceof GuiTickable) {
+            context.getScheduler().cancelTask(() -> ((GuiTickable) hud.getRoot()).update(context));
         }
     }
 
     @Override
     public void clearHuds() {
         for (Scene hud : huds.values()) {
-            if(hud.getRoot() instanceof GuiTickable){
-                context.getScheduler().cancelTask(()->((GuiTickable) hud.getRoot()).update(context));
+            if (hud.getRoot() instanceof GuiTickable) {
+                context.getScheduler().cancelTask(() -> ((GuiTickable) hud.getRoot()).update(context));
             }
         }
         huds.clear();

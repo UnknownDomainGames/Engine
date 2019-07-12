@@ -157,8 +157,10 @@ public class GuiRenderer implements Renderer {
         scene.update();
 
         Container root = scene.getRoot();
-        if (!root.visible().get())
+        if (!root.visible().get()) {
             return;
+        }
+
         if (root.closeRequired()) {
             guiManager.closeScreen();
             return;
