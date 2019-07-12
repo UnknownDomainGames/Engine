@@ -3,12 +3,13 @@ package nullengine.world.util;
 import nullengine.math.BlockPos;
 import nullengine.world.chunk.Chunk;
 
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public class BlockPosIterator {
+public class BlockPosIterator implements Iterator<BlockPos> {
 
     public static BlockPosIterator create(BlockPos from, BlockPos to) {
         return new BlockPosIterator(from.getX(), from.getY(), from.getZ(), to.getX(), to.getY(), to.getZ());
