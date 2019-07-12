@@ -38,9 +38,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-
 public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private Thread clientThread;
@@ -114,12 +111,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         renderContext.getRenderers().add(new GuiRenderer());
         renderContext.init(clientThread);
         renderContext.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
-        // TODO: Remove it.
-        renderContext.getWindow().addKeyCallback((window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
-//                Platform.getEngine().terminate();
-            }
-        });
         addShutdownListener(renderContext::dispose);
         assetManager.getReloadDispatcher().addLast("Shader", ShaderManager.INSTANCE::reload);
         assetManager.getReloadDispatcher().addLast("Texture", () -> renderContext.getTextureManager().reload());
