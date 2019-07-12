@@ -9,6 +9,8 @@ import nullengine.client.rendering.display.GLFWWindow;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.TextureManager;
+import nullengine.client.rendering.util.GLInfo;
+import nullengine.client.rendering.util.GLInfoImpl;
 import nullengine.client.rendering.util.GPUMemoryInfo;
 import nullengine.client.rendering.util.NVXGPUMemoryInfo;
 import nullengine.component.Component;
@@ -18,7 +20,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -42,6 +43,7 @@ public class EngineRenderContext implements RenderContext {
     private GLFWWindow window;
     private TextureManager textureManager;
     private GuiManager guiManager;
+    private GLInfo glInfo;
     private GPUMemoryInfo gpuMemoryInfo;
 
     private Camera camera;
@@ -85,6 +87,11 @@ public class EngineRenderContext implements RenderContext {
     @Override
     public RenderScheduler getScheduler() {
         return scheduler;
+    }
+
+    @Override
+    public GLInfo getGLInfo() {
+        return glInfo;
     }
 
     @Override
@@ -155,10 +162,6 @@ public class EngineRenderContext implements RenderContext {
 
         textureManager = new EngineTextureManager();
         guiManager = new EngineGuiManager(this);
-        NVXGPUMemoryInfo nvxgpuMemoryInfo = new NVXGPUMemoryInfo();
-        nvxgpuMemoryInfo.init();
-        scheduler.runTaskEveryFrame(nvxgpuMemoryInfo::update);
-        gpuMemoryInfo = nvxgpuMemoryInfo;
 
         camera = new FixedCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
 
@@ -169,14 +172,19 @@ public class EngineRenderContext implements RenderContext {
         logger.info("Initializing OpenGL context!");
 
         GL.createCapabilities();
-
+        glInfo = new GLInfoImpl();
         logger.info("----- OpenGL Information -----");
-        logger.info("\tGL_VENDOR: {}", GL11.glGetString(GL11.GL_VENDOR));
-        logger.info("\tGL_RENDERER: {}", GL11.glGetString(GL11.GL_RENDERER));
-        logger.info("\tGL_VERSION: {}", GL11.glGetString(GL11.GL_VERSION));
-        logger.info("\tGL_EXTENSIONS: {}", GL11.glGetString(GL11.GL_EXTENSIONS));
-        logger.info("\tGL_SHADING_LANGUAGE_VERSION: {}", GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
+        logger.info("\tGL_VENDOR: {}", glInfo.getVendor());
+        logger.info("\tGL_RENDERER: {}", glInfo.getRenderer());
+        logger.info("\tGL_VERSION: {}", glInfo.getVersion());
+        logger.info("\tGL_EXTENSIONS: {}", glInfo.getExtensions());
+        logger.info("\tGL_SHADING_LANGUAGE_VERSION: {}", glInfo.getShadingLanguageVersion());
         logger.info("------------------------------");
+
+        NVXGPUMemoryInfo nvxgpuMemoryInfo = new NVXGPUMemoryInfo();
+        nvxgpuMemoryInfo.init();
+        scheduler.runTaskEveryFrame(nvxgpuMemoryInfo::update);
+        gpuMemoryInfo = nvxgpuMemoryInfo;
 
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     }

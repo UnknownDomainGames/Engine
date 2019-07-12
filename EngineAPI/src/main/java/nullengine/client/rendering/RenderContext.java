@@ -5,6 +5,7 @@ import nullengine.client.gui.GuiManager;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.TextureManager;
+import nullengine.client.rendering.util.GLInfo;
 import nullengine.client.rendering.util.GPUMemoryInfo;
 import nullengine.component.GameObject;
 import org.joml.FrustumIntersection;
@@ -33,6 +34,8 @@ public interface RenderContext extends GameObject {
     GuiManager getGuiManager();
 
     RenderScheduler getScheduler();
+
+    GLInfo getGLInfo();
 
     GPUMemoryInfo getGPUMemoryInfo();
 
