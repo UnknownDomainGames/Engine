@@ -110,6 +110,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         renderContext.getRenderers().add(new Game3DRenderer());
         renderContext.getRenderers().add(new GuiRenderer());
         renderContext.init(clientThread);
+        initRenderCrashReportDetails();
         renderContext.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         addShutdownListener(renderContext::dispose);
         assetManager.getReloadDispatcher().addLast("Shader", ShaderManager.INSTANCE::reload);
@@ -131,6 +132,14 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
                 localeManager.register(mod);
             }
         });
+    }
+
+    private void initRenderCrashReportDetails() {
+        crashHandler.addReportDetail("GL Vendor", builder -> builder.append(renderContext.getGLInfo().getVendor()));
+        crashHandler.addReportDetail("GL Renderer", builder -> builder.append(renderContext.getGLInfo().getRenderer()));
+        crashHandler.addReportDetail("GL Version", builder -> builder.append(renderContext.getGLInfo().getVersion()));
+        crashHandler.addReportDetail("GL Extensions", builder -> builder.append(renderContext.getGLInfo().getExtensions()));
+        crashHandler.addReportDetail("GL Shading Language Version", builder -> builder.append(renderContext.getGLInfo().getShadingLanguageVersion()));
     }
 
     @Override
