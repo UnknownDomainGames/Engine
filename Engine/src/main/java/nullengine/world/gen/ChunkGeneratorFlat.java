@@ -6,19 +6,34 @@ import nullengine.math.BlockPos;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
 
-public class ChunkGeneratorFlat implements ChunkGenerator {
+public class ChunkGeneratorFlat implements ChunkGenerator<ChunkGeneratorFlat.Setting> {
 
     //    private final World world;
-    private final Setting setting;
+    private Setting setting;
 
 
-    public ChunkGeneratorFlat(Setting setting) {
+    public ChunkGeneratorFlat() {
 //        this.world = world;
+//        this.setting = setting;
+    }
+
+    @Override
+    public Setting getSetting() {
+        return setting;
+    }
+
+    @Override
+    public void setSetting(Setting setting) {
         this.setting = setting;
     }
 
     @Override
-    public void base(Chunk chunk) {
+    public void generate(Chunk chunk, Setting setting){
+        this.setting = setting;
+        base(chunk);
+    }
+
+    private void base(Chunk chunk) {
         int cx = chunk.getChunkX();
         int cy = chunk.getChunkY();
         int cz = chunk.getChunkZ();
@@ -36,7 +51,7 @@ public class ChunkGeneratorFlat implements ChunkGenerator {
         }
     }
 
-    public static class Setting {
+    public static class Setting implements ChunkGeneratorSetting {
         private Block[] layers;
 
         public Block[] getLayers() {

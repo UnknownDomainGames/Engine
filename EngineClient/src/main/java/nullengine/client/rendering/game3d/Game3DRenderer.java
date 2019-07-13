@@ -50,9 +50,10 @@ public class Game3DRenderer implements Renderer {
 
     @Listener
     public void onGameStart(GameStartEvent.Post event) {
-        worldRenderer = new WorldRenderer();
-        worldRenderer.init(context);
-
+        if(context.getEngine().getCurrentGame().getWorld() != null) {
+            worldRenderer = new WorldRenderer();
+            worldRenderer.init(context);
+        }
         itemRenderManager = new ItemRenderManagerImpl();
         itemRenderManager.init(context);
         context.setComponent(ItemRenderManager.class, itemRenderManager);

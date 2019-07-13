@@ -115,8 +115,9 @@ public class ChunkRenderer {
             }
 
         }
-
-        context.getEngine().getCurrentGame().getWorld().getLoadedChunks().parallelStream().filter(chunk->faillist.contains(getChunkIndex(chunk))).forEach(this::initChunkMesh);
+        if(!faillist.isEmpty()) {
+            context.getEngine().getCurrentGame().getWorld().getLoadedChunks().parallelStream().filter(chunk->faillist.contains(getChunkIndex(chunk))).forEach(this::initChunkMesh);
+        }
 //        ShaderProgram assimpShader = this.assimpShader.getValue();
 //        ShaderManager.INSTANCE.bindShader(assimpShader);
 //        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f().rotate((float)-Math.PI / 2, 1,0,0).setTranslation(0,5,0));
@@ -204,7 +205,8 @@ public class ChunkRenderer {
 
         uploadTasks.clear();
 
-        world.getLoadedChunks().forEach(this::initChunkMesh);
+        if(world != null)
+            world.getLoadedChunks().forEach(this::initChunkMesh);
     }
 
     @Listener

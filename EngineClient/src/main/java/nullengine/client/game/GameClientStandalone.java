@@ -52,7 +52,10 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     @Nonnull
     @Override
     public World getWorld() {
-        return player.getControlledEntity().getWorld();
+        if(player != null && player.getControlledEntity() != null) {
+            return player.getControlledEntity().getWorld();
+        }
+        return null;
     }
 
     @Override
@@ -82,36 +85,27 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         logger.info("Finishing Game Initialization!");
 
         // TODO: Remove it
-        WorldCommonProvider provider = new WorldCommonProvider();
-        var dirt = Registries.getBlockRegistry().getValue("foundation:dirt");
-        var grass = Registries.getBlockRegistry().getValue("foundation:grass");
-        provider.setChunkGenerator(new ChunkGeneratorFlat(new ChunkGeneratorFlat.Setting().setLayers(new Block[]{dirt, dirt, dirt, dirt, grass})));
-        spawnWorld(provider, "default");
-        var world = (WorldCommon) getWorld("default");
-        world.playerJoin(player);
-        player.getControlledEntity().getPosition().set(0, 5, 0);
-
-        engineClient.getRenderContext().setCamera(new FirstPersonCamera(player));
-
-        entityController = new EntityCameraController(player);
-        engineClient.getRenderContext().getWindow().addCursorCallback((window, xpos, ypos) -> {
-            entityController.handleCursorMove(xpos, ypos);
-        });
+//        WorldCommonProvider provider = new WorldCommonProvider();
+//        var dirt = Registries.getBlockRegistry().getValue("foundation:dirt");
+//        var grass = Registries.getBlockRegistry().getValue("foundation:grass");
+////        provider.setChunkGenerator(new ChunkGeneratorFlat(new ChunkGeneratorFlat.Setting().setLayers(new Block[]{dirt, dirt, dirt, dirt, grass})));
+//        spawnWorld(provider, "default");
+//        var world = (WorldCommon) getWorld("default");
+//        world.playerJoin(player);
+//        player.getControlledEntity().getPosition().set(0, 5, 0);
+//
+//        engineClient.getRenderContext().setCamera(new FirstPersonCamera(player));
+//
+//        entityController = new EntityCameraController(player);
+//        engineClient.getRenderContext().getWindow().addCursorCallback((window, xpos, ypos) -> {
+//            entityController.handleCursorMove(xpos, ypos);
+//        });
 
         super.finishStage();
         logger.info("Game Ready!");
 
-        // TODO: Remove it
-//        Random random = new Random();
-//        for (int x = -16; x < 16; x++) {
-//            for (int z = -16; z < 16; z++) {
-//                for (int top = 3, y = top; y >= 0; y--) {
-//                    world.setBlock(BlockPos.of(x, y, z), y == top ? Blocks.GRASS : Blocks.DIRT, null);
-//                }
-//            }
-//        }
 
-        engineClient.getRenderContext().getGuiManager().showHud("game-hud", new Scene(new HUDGame()));
+//        engineClient.getRenderContext().getGuiManager().showHud("game-hud", new Scene(new HUDGame()));
 //        a = Platform.getEngineClient().getSoundManager().createSoundSource("test sound").position(25,5,0).gain(1.0f).speed(dir);
 //        a.setLoop(true);
 //        a.assignSound(sound);

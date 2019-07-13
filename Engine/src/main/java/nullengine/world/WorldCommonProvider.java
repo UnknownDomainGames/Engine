@@ -17,8 +17,13 @@ public class WorldCommonProvider extends BaseWorldProvider<WorldCommon> {
 
     }
 
-    public void setChunkGenerator(ChunkGenerator chunkGenerator) {
+    public WorldCommonProvider setChunkGenerator(ChunkGenerator chunkGenerator) {
         this.chunkGenerator = chunkGenerator;
+        return this;
+    }
+
+    public ChunkGenerator getChunkGenerator(){
+        return chunkGenerator;
     }
 
     @Nonnull

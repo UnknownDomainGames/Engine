@@ -53,7 +53,7 @@ public class WorldCommonChunkManager implements ChunkManager<WorldCommon> {
         Chunk chunk = chunkLoader.load(x, y, z);
         if (chunk == null) { //Chunk has not been created
             chunk = new ChunkImpl(world.get(), x, y, z);
-            generator.base(chunk); //TODO: not directly call this thing
+            generator.generate(chunk);
         }
         chunkMap.put(chunkIndex, chunk);
         world.get().getGame().getEventBus().post(new ChunkLoadEvent(chunk));
