@@ -161,6 +161,8 @@ public final class EngineModListeners {
 //        renderContext.getScheduler().runTaskEveryFrame(() -> hudGameDebug.update(renderContext));
         envet.register(KeyBinding.create("game.debug_display_switch", Key.KEY_F3, gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug))
                 , ActionMode.SWITCH).endAction((gameClient, integer) -> guiManager.hideHud("debugGame")));
+        envet.register(KeyBinding.create("game.hud_display_switch", Key.KEY_F1, gameClient -> guiManager.showHuds()
+                , ActionMode.SWITCH).endAction((gameClient, integer) -> guiManager.hideHuds()));
     }
 
     @Listener
