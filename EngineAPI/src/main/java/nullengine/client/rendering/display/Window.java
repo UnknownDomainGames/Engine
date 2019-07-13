@@ -70,6 +70,14 @@ public interface Window {
 
     void endRender();
 
+    default void toggleFullscreen(){
+        setFullscreen(!isFullscreen());
+    }
+
+    boolean isFullscreen();
+
+    void setFullscreen(boolean fullscreen);
+
     @FunctionalInterface
     interface KeyCallback {
         void invoke(Window window, int key, int scancode, int action, int mods);

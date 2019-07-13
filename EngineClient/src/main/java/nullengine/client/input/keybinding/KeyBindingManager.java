@@ -66,15 +66,11 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     }
 
     protected void handlePress(int code, int modifiers) {
-        // TODO: Remove it, hard code.
-        if (Platform.getEngineClient().getRenderContext().getGuiManager().isDisplayingScreen()) {
-            return;
-        }
-
         Key key = Key.valueOf(code);
         pressedKey.add(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
         for (KeyBinding binding : keyBindings) {
+            if(engineClient.getRenderContext().getGuiManager().isDisplayingScreen() && !binding.isAllowInScreen())continue;
             binding.setPressed(true);
             binding.setDirty(true);
         }
@@ -90,6 +86,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         pressedKey.remove(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
         for (KeyBinding binding : keyBindings) {
+            if(engineClient.getRenderContext().getGuiManager().isDisplayingScreen() && !binding.isAllowInScreen())continue;
             binding.setPressed(false);
             if (binding.getActionMode() == ActionMode.PRESS) {
                 binding.setDirty(true);
@@ -113,10 +110,6 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     }
 
     public void handleMouse(Window window, int button, int action, int modifiers) {
-        if (engineClient.getRenderContext().getGuiManager().isDisplayingScreen()) {
-            return;
-        }
-
         switch (action) {
             case GLFW.GLFW_PRESS:
                 handlePress(button + 400, modifiers);
@@ -130,10 +123,6 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     }
 
     public void handleKey(Window window, int key, int scancode, int action, int modifiers) {
-        if (engineClient.getRenderContext().getGuiManager().isDisplayingScreen()) {
-            return;
-        }
-
         switch (action) {
             case GLFW.GLFW_PRESS:
                 handlePress(key, modifiers);
@@ -151,12 +140,13 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
      */
     @Override
     public void tick() {
-        if (engineClient.getRenderContext().getGuiManager().isDisplayingScreen()) {
-            releaseAllPressedKeys();
-            return;
+        boolean displayingScreen = engineClient.getRenderContext().getGuiManager().isDisplayingScreen();
+        if (displayingScreen) {
+            releaseAllPressedKeys(false);
         }
 
         for (KeyBinding keyBinding : indexToBinding.values()) {
+            if(displayingScreen && !keyBinding.isAllowInScreen()) continue;
             if (keyBinding.isDirty()) {
                 // state change
                 keyBinding.setDirty(false);
@@ -179,8 +169,9 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         }
     }
 
-    private void releaseAllPressedKeys() {
+    private void releaseAllPressedKeys(boolean releaseAll) {
         for (KeyBinding keyBinding : indexToBinding.values()) {
+            if(!releaseAll && keyBinding.isAllowInScreen()) continue;
             if (keyBinding.isDirty()) {
                 // state change
                 keyBinding.setDirty(false);

@@ -23,6 +23,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
     private boolean active = false;
     private boolean pressed = false;
     private boolean dirty = false;
+    private final boolean allowInScreen;
     /**
      * Handles Single press of the key
      */
@@ -40,11 +41,12 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      */
     private int timeElapsed;
 
-    private KeyBinding(Key defaultKey, @Nonnull Consumer<EngineClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
+    private KeyBinding(Key defaultKey, boolean allowInScreen, @Nonnull Consumer<EngineClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
         Validate.notNull(keyStartHandler);
         this.keyStartHandler = keyStartHandler;
         this.key = defaultKey;
         this.defaultKey = defaultKey;
+        this.allowInScreen = allowInScreen;
         this.actionMode = actionMode;
         this.mods = keyMods;
         keepHandler = endHandler = Optional.empty();
@@ -60,7 +62,22 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
      * @return
      */
     public static KeyBinding create(String target, Key defaultKey, @Nonnull Consumer<EngineClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
-        return new KeyBinding(Key.getKeySafe(defaultKey), keyStartHandler, actionMode != null ? actionMode : ActionMode.PRESS, keyMods == null || keyMods.length == 0 ? KeyModifier.EMPTY : keyMods)
+        return create(target, false, defaultKey, keyStartHandler, actionMode, keyMods);
+    }
+
+    /**
+     * Create a KeyBinding with a specific key, its press action and its action mode
+     * and modifiers
+     *
+     *
+     * @param allowInScreen true if this keybinding should still handling events despite showing gui screen
+     * @param defaultKey
+     * @param actionMode
+     * @param keyMods
+     * @return
+     */
+    public static KeyBinding create(String target, boolean allowInScreen, Key defaultKey, @Nonnull Consumer<EngineClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
+        return new KeyBinding(Key.getKeySafe(defaultKey), allowInScreen, keyStartHandler, actionMode != null ? actionMode : ActionMode.PRESS, keyMods == null || keyMods.length == 0 ? KeyModifier.EMPTY : keyMods)
                 .name(target);
     }
 
@@ -98,6 +115,10 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
 
     public Key getKey() {
         return key;
+    }
+
+    public boolean isAllowInScreen() {
+        return allowInScreen;
     }
 
     public KeyModifier[] getModifier() {

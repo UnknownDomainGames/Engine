@@ -151,6 +151,9 @@ public final class EngineModListeners {
                 c.getRenderContext().getGuiManager().showScreen(new Scene(new GuiIngameMenu()));
             }
         }, ActionMode.PRESS));
+        envet.register(KeyBinding.create("engine.fullscreen", true, Key.KEY_F11, (c) -> {
+            c.getRenderContext().getWindow().toggleFullscreen();
+        }, ActionMode.PRESS));
 
         var renderContext = Platform.getEngineClient().getRenderContext();
         var guiManager = renderContext.getGuiManager();

@@ -38,6 +38,7 @@ public class GLFWWindow implements Window {
 
     private boolean closed = false;
     private boolean visible = false;
+    private boolean fullscreen = false;
 
     private Cursor cursor;
 
@@ -280,6 +281,34 @@ public class GLFWWindow implements Window {
         enableVSync();
         cursor = new GLFWCursor(pointer);
         setupInput();
+    }
+
+    @Override
+    public boolean isFullscreen() {
+        return fullscreen;
+    }
+
+    private int lastPosX, lastPosY, lastWidth, lastHeight;
+
+    @Override
+    public void setFullscreen(boolean fullscreen){
+        var mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        if(fullscreen) {
+            if(!this.fullscreen) {
+                int[] a = new int[1], b = new int[1];
+                glfwGetWindowPos(pointer, a, b);
+                lastPosX = a[0];
+                lastPosY = b[0];
+                glfwGetWindowSize(pointer, a, b);
+                lastWidth = a[0];
+                lastHeight = b[0];
+                glfwSetWindowMonitor(pointer, glfwGetPrimaryMonitor(), 0, 0, mode.width(), mode.height(), mode.refreshRate());
+            }
+        }
+        else if(this.fullscreen){
+            glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, lastWidth, lastHeight, mode.refreshRate());
+        }
+        this.fullscreen = fullscreen;
     }
 
     private void setupInput() {
