@@ -151,7 +151,7 @@ public final class EngineModListeners {
                 c.getRenderContext().getGuiManager().showScreen(new Scene(new GuiIngameMenu()));
             }
         }, ActionMode.PRESS));
-        envet.register(KeyBinding.create("engine.fullscreen", true, Key.KEY_F11, (c) -> {
+        envet.register(KeyBinding.create("game.fullscreen", true, Key.KEY_F11, (c) -> {
             c.getRenderContext().getWindow().toggleFullscreen();
         }, ActionMode.PRESS));
 
@@ -159,7 +159,7 @@ public final class EngineModListeners {
         var guiManager = renderContext.getGuiManager();
         var hudGameDebug = new HUDGameDebug();
 //        renderContext.getScheduler().runTaskEveryFrame(() -> hudGameDebug.update(renderContext));
-        envet.register(KeyBinding.create("debug.switch", Key.KEY_F3, gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug))
+        envet.register(KeyBinding.create("game.debug_display_switch", Key.KEY_F3, gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug))
                 , ActionMode.SWITCH).endAction((gameClient, integer) -> guiManager.hideHud("debugGame")));
     }
 
