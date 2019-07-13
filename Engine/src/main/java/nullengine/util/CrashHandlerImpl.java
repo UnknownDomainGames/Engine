@@ -36,15 +36,26 @@ public class CrashHandlerImpl implements CrashHandler {
     }
 
     @Override
+    public void crash(@Nonnull Thread thread, @Nonnull Throwable cause) {
+        crash(thread, cause, Map.of());
+    }
+
+    @Override
     public void crash(@Nonnull Throwable cause, @Nonnull Map<String, Consumer<StringBuilder>> details) {
+        crash(Thread.currentThread(), cause, details);
+    }
+
+    @Override
+    public void crash(@Nonnull Thread thread, @Nonnull Throwable cause, @Nonnull Map<String, Consumer<StringBuilder>> details) {
         engine.getLogger().error("/////////////// CRASH ///////////////");
+        engine.getLogger().error("Thread: {}", thread.getName());
         engine.getLogger().error(cause.getMessage(), cause);
         Path crashReportFile = crashReportPath.resolve("Crash_" + now().format(FILE_SAFE_DATE_TIME) + "_" + engine.getSide() + ".txt").toAbsolutePath();
         try {
             if (!Files.exists(crashReportFile.getParent())) {
                 Files.createDirectories(crashReportFile.getParent());
             }
-            Files.writeString(crashReportFile, generateCrashReport(cause, details));
+            Files.writeString(crashReportFile, generateCrashReport(thread, cause, details));
             engine.getLogger().error("Generated crash report file at {}.", crashReportFile);
         } catch (IOException e) {
             engine.getLogger().warn(format("Cannot generate crash report file at %s.", crashReportFile), e);
@@ -52,11 +63,7 @@ public class CrashHandlerImpl implements CrashHandler {
         System.exit(1);
     }
 
-    public String generateCrashReport(@Nonnull Throwable cause) {
-        return generateCrashReport(cause, Map.of());
-    }
-
-    public String generateCrashReport(@Nonnull Throwable cause, @Nonnull Map<String, Consumer<StringBuilder>> details) {
+    public String generateCrashReport(@Nonnull Thread thread, @Nonnull Throwable cause, @Nonnull Map<String, Consumer<StringBuilder>> details) {
         Objects.requireNonNull(cause);
         Objects.requireNonNull(details);
 
@@ -69,12 +76,13 @@ public class CrashHandlerImpl implements CrashHandler {
         builder.append("\n");
 
         builder.append("--- Exception Stack Traces ---\n");
+        builder.append("Thread: ").append(thread.getName()).append("\n");
         try (var output = new AppendableOutputStream<>(builder);
              var print = new PrintStream(output)) {
             cause.printStackTrace(print);
         } catch (IOException ignored) {
         }
-        builder.append("\n").append("-".repeat(64)).append("\n\n");
+        builder.append("-".repeat(64)).append("\n\n");
 
         builder.append("--- Exception Details ---\n");
         for (var entry : details.entrySet()) {
@@ -82,7 +90,7 @@ public class CrashHandlerImpl implements CrashHandler {
             entry.getValue().accept(builder);
             builder.append("\n");
         }
-        builder.append("\n").append("-".repeat(64)).append("\n\n");
+        builder.append("-".repeat(64)).append("\n\n");
 
         builder.append("--- System Details ---\n");
         for (var entry : this.details.entrySet()) {
@@ -90,9 +98,9 @@ public class CrashHandlerImpl implements CrashHandler {
             entry.getValue().accept(builder);
             builder.append("\n");
         }
-        builder.append("\n").append("-".repeat(64)).append("\n\n");
+        builder.append("-".repeat(64)).append("\n\n");
 
-        builder.append("--- Stack Traces ---\n");
+        builder.append("--- All Stack Traces ---\n");
         for (var entry : Thread.getAllStackTraces().entrySet()) {
             printThreadStack(builder, entry.getKey(), entry.getValue());
             builder.append("\n");

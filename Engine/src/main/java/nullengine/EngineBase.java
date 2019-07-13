@@ -129,7 +129,7 @@ public abstract class EngineBase implements Engine {
         crashHandler = new CrashHandlerImpl(this, getRunPath().resolve("crashreports"));
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             logger.error("Caught unhandled exception!!! Engine will terminate!");
-            crashHandler.crash(e);
+            crashHandler.crash(t, e);
         });
         crashHandler.addReportDetail("Engine Version",
                 builder -> builder.append(Platform.getVersion()));
