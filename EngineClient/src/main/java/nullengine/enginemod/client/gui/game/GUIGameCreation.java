@@ -31,7 +31,7 @@ public class GUIGameCreation extends BorderPane {
         vBox.padding().setValue(new Insets(100, 0, 0, 0));
 
         Label text = new Label();
-        text.text().setValue(I18n.translation("engine.gui.game_creation.text.name"));
+        text.text().setValue(I18n.translate("engine.gui.game_creation.text.name"));
         text.font().setValue(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
@@ -51,14 +51,14 @@ public class GUIGameCreation extends BorderPane {
         buttonExit.setOnClick(mouseClickEvent -> Platform.getEngine().terminate());
         vBox.getChildren().add(buttonExit);
 
-        Button buttonLocale = new Button("Lang: " + I18n.translation("engine.gui.lang.text.name"));
+        Button buttonLocale = new Button("Lang: " + I18n.translate("engine.gui.lang.text.name"));
         buttonLocale.setOnClick(onClick -> {
             if (LocaleManager.INSTANCE.getLocale() == Locale.US) {
                 LocaleManager.INSTANCE.setLocale(Locale.CHINA);
             } else if (LocaleManager.INSTANCE.getLocale() == Locale.CHINA) {
                 LocaleManager.INSTANCE.setLocale(Locale.US);
             }
-            buttonLocale.text().setValue("Lang: " + I18n.translation("engine.gui.lang.text.name"));
+            buttonLocale.text().setValue("Lang: " + I18n.translate("engine.gui.lang.text.name"));
         });
         vBox.getChildren().add(buttonLocale);
 

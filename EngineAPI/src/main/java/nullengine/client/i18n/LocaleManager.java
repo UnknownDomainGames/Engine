@@ -25,14 +25,14 @@ public class LocaleManager {
     private LocaleManager() {
     }
 
-    public String translation(String key) {
+    public String translate(String key) {
         if (!localeMap.containsKey(currentLocale)) {
-            return translation(key, defaultLocale);
+            return translate(key, defaultLocale);
         }
-        return translation(key, currentLocale);
+        return translate(key, currentLocale);
     }
 
-    public String translation(String key, Locale locale) {
+    public String translate(String key, Locale locale) {
         if (!localeMap.containsKey(locale)) {
             return key;
         }
