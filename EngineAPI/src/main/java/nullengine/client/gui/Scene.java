@@ -118,11 +118,11 @@ public class Scene {
         a.add(root);
         for (Component component : a) {
             if (action == GLFW.GLFW_PRESS) {
-                component.handleEvent(new KeyEvent.KeyDownEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+                component.handleEvent(new KeyEvent.KeyDownEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
             } else if (action == GLFW.GLFW_REPEAT) {
-                component.handleEvent(new KeyEvent.KeyHoldEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+                component.handleEvent(new KeyEvent.KeyHoldEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
             } else if (action == GLFW.GLFW_RELEASE) {
-                component.handleEvent(new KeyEvent.KeyUpEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.valueOf(mods)));
+                component.handleEvent(new KeyEvent.KeyUpEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
             }
         }
     };

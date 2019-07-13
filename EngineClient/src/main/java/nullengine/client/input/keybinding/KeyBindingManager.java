@@ -3,7 +3,6 @@ package nullengine.client.input.keybinding;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
-import nullengine.Platform;
 import nullengine.client.EngineClient;
 import nullengine.client.rendering.display.Window;
 import nullengine.logic.Tickable;
@@ -60,7 +59,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         indexToBinding.clear();
         for (KeyBinding keybinding : registry.getValues()) {
             int code = keybinding.getKey().code;
-            byte mods = KeyModifier.getCode(keybinding.getModifier());
+            int mods = keybinding.getModifier().getInternalCode();
             indexToBinding.put(getIndex(code, mods), keybinding);
         }
     }
@@ -70,7 +69,8 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         pressedKey.add(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
         for (KeyBinding binding : keyBindings) {
-            if(engineClient.getRenderContext().getGuiManager().isDisplayingScreen() && !binding.isAllowInScreen())continue;
+            if (engineClient.getRenderContext().getGuiManager().isDisplayingScreen() && !binding.isAllowInScreen())
+                continue;
             binding.setPressed(true);
             binding.setDirty(true);
         }
@@ -86,7 +86,8 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         pressedKey.remove(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
         for (KeyBinding binding : keyBindings) {
-            if(engineClient.getRenderContext().getGuiManager().isDisplayingScreen() && !binding.isAllowInScreen())continue;
+            if (engineClient.getRenderContext().getGuiManager().isDisplayingScreen() && !binding.isAllowInScreen())
+                continue;
             binding.setPressed(false);
             if (binding.getActionMode() == ActionMode.PRESS) {
                 binding.setDirty(true);
@@ -146,7 +147,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         }
 
         for (KeyBinding keyBinding : indexToBinding.values()) {
-            if(displayingScreen && !keyBinding.isAllowInScreen()) continue;
+            if (displayingScreen && !keyBinding.isAllowInScreen()) continue;
             if (keyBinding.isDirty()) {
                 // state change
                 keyBinding.setDirty(false);
@@ -171,7 +172,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
     private void releaseAllPressedKeys(boolean releaseAll) {
         for (KeyBinding keyBinding : indexToBinding.values()) {
-            if(!releaseAll && keyBinding.isAllowInScreen()) continue;
+            if (!releaseAll && keyBinding.isAllowInScreen()) continue;
             if (keyBinding.isDirty()) {
                 // state change
                 keyBinding.setDirty(false);
@@ -208,13 +209,13 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
     @Override
     public void setBoundKeyFor(String target, Key key) {
-        registry.getValue(target).rebind(key);
+        registry.getValue(target).setKey(key);
     }
 
     @Override
     public void setBoundKeyToDefault(String target) {
         KeyBinding binding = registry.getValue(target);
-        binding.rebind(binding.getDefaultKey());
+        binding.setKey(binding.getDefaultKey());
     }
 
     @Override

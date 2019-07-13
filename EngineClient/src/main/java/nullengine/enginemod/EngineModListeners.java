@@ -71,98 +71,156 @@ public final class EngineModListeners {
     }
 
     @Listener
-    public static void registerKeyBindings(ModRegistrationEvent.Register<KeyBinding> envet) {
+    public static void registerKeyBindings(ModRegistrationEvent.Register<KeyBinding> event) {
 
         // TODO: When separating common and client, only register on client side
         // TODO: almost everything is hardcoded... Fix when GameContext and
-        envet.register(
-                KeyBinding.create("player.move.forward", Key.KEY_W, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.FORWARD, true), ActionMode.PRESS)
-                        .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.FORWARD, false)));
-        envet.register(
-                KeyBinding.create("player.move.backward", Key.KEY_S, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.BACKWARD, true), ActionMode.PRESS)
-                        .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.BACKWARD, false)));
-        envet.register(KeyBinding.create("player.move.left", Key.KEY_A, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.LEFT, true), ActionMode.PRESS)
-                .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.LEFT, false)));
-        envet.register(KeyBinding.create("player.move.right", Key.KEY_D, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.RIGHT, true), ActionMode.PRESS)
-                .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.RIGHT, false)));
-        envet.register(KeyBinding.create("player.move.jump", Key.KEY_SPACE, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.UP, true), ActionMode.PRESS)
-                .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.UP, false)));
-        envet.register(
-                KeyBinding.create("player.move.sneak", Key.KEY_LEFT_SHIFT, (c) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, true), ActionMode.PRESS)
-                        .endAction((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, false)));
-        envet.register(KeyBinding.create("player.mouse.left", Key.MOUSE_BUTTON_LEFT, (c) -> {
-            GameClient game = c.getCurrentGame();
-            Player player = game.getPlayer();
-            Camera camera = c.getRenderContext().getCamera();
-            Entity controllingEntity = player.getControlledEntity();
-            RayTraceBlockHit blockHit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
-            if (blockHit.isSuccess()) {
-                controllingEntity.getComponent(TwoHands.class)
-                        .ifPresent(twoHands -> twoHands.getMainHand()
-                                .ifNonEmpty(itemStack -> {
-                                    blockHit.getBlock().getComponent(ClickBehavior.class).ifPresent(clickBehavior -> clickBehavior.onClicked(player.getWorld(), blockHit.getPos(), blockHit.getBlock()));
-                                    game.getEngine().getEventBus().post(new BlockClickEvent(player.getWorld(), controllingEntity, blockHit.getPos(), blockHit.getBlock()));
-                                    itemStack.getItem()
-                                            .getComponent(HitBlockBehavior.class)
-                                            .ifPresent(hitBlockBehavior -> hitBlockBehavior.onHit(player, itemStack, blockHit));
-                                }));
-            }
-
-        }, ActionMode.PRESS));
-        envet.register(KeyBinding.create("player.mouse.right", Key.MOUSE_BUTTON_RIGHT, (c) -> {
-            GameClient game = c.getCurrentGame();
-            Player player = game.getPlayer();
-            Camera camera = c.getRenderContext().getCamera();
-            Entity entity = player.getControlledEntity();
-            RayTraceBlockHit hit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
-            if (hit.isSuccess()) {
-                entity.getComponent(TwoHands.class)
-                        .ifPresent(twoHands -> twoHands.getMainHand()
-                                .ifNonEmpty(itemStack -> {
-                                    hit.getBlock().getComponent(ActivateBehavior.class).ifPresent(activateBehavior -> activateBehavior.onActivated(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
-                                    game.getEngine().getEventBus().post(new BlockActivateEvent(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
-                                    itemStack.getItem()
-                                            .getComponent(UseBlockBehavior.class)
-                                            .ifPresent(useBlockBehavior -> useBlockBehavior.onUseBlockStart(player, itemStack, hit));
-                                }));
-            }
-        }, ActionMode.PRESS));
-        envet.register(KeyBinding.create("player.mouse.middle", Key.MOUSE_BUTTON_3, (c) -> {
-            GameClient game = c.getCurrentGame();
-            Player player = game.getPlayer();
-            Camera camera = c.getRenderContext().getCamera();
-            Entity entity = player.getControlledEntity();
-            player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
-                    // TODO: Dont create BlockItem
-                    entity.getComponent(TwoHands.class)
-                            .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new BlockItem(hit.getBlock()))))
-            );
-        }, ActionMode.PRESS));
-        envet.register(KeyBinding.create("game.chat", Key.KEY_T, (c) -> {
-            Scene scene = new Scene(new GuiChat(c.getCurrentGame()));
-            c.getRenderContext().getGuiManager().showScreen(scene);
-        }, ActionMode.PRESS));
-        envet.register(KeyBinding.create("game.inventory", Key.KEY_E, (c) -> {
-            Scene scene = new Scene(new GuiItemList(c.getRenderContext()));
-            c.getRenderContext().getGuiManager().showScreen(scene);
-        }, ActionMode.PRESS));
-        envet.register(KeyBinding.create("game.menu", Key.KEY_ESCAPE, (c) -> {
-            if (!c.getRenderContext().getGuiManager().isDisplayingScreen()) {
-                c.getRenderContext().getGuiManager().showScreen(new Scene(new GuiIngameMenu()));
-            }
-        }, ActionMode.PRESS));
-        envet.register(KeyBinding.create("game.fullscreen", true, Key.KEY_F11, (c) -> {
-            c.getRenderContext().getWindow().toggleFullscreen();
-        }, ActionMode.PRESS));
+        event.register(
+                KeyBinding.builder()
+                        .name("player.move.forward")
+                        .key(Key.KEY_W)
+                        .startHandler(c -> c.getCurrentGame().getEntityController().handleMotion(MotionType.FORWARD, true))
+                        .endHandler((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.FORWARD, false))
+                        .build());
+        event.register(
+                KeyBinding.builder()
+                        .name("player.move.backward")
+                        .key(Key.KEY_S)
+                        .startHandler(c -> c.getCurrentGame().getEntityController().handleMotion(MotionType.BACKWARD, true))
+                        .endHandler((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.BACKWARD, false))
+                        .build());
+        event.register(KeyBinding.builder()
+                .name("player.move.left")
+                .key(Key.KEY_A)
+                .startHandler(c -> c.getCurrentGame().getEntityController().handleMotion(MotionType.LEFT, true))
+                .endHandler((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.LEFT, false))
+                .build());
+        event.register(KeyBinding.builder()
+                .name("player.move.right")
+                .key(Key.KEY_D)
+                .startHandler(c -> c.getCurrentGame().getEntityController().handleMotion(MotionType.RIGHT, true))
+                .endHandler((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.RIGHT, false))
+                .build());
+        event.register(KeyBinding.builder()
+                .name("player.move.jump")
+                .key(Key.KEY_SPACE)
+                .startHandler(c -> c.getCurrentGame().getEntityController().handleMotion(MotionType.UP, true))
+                .endHandler((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.UP, false))
+                .build());
+        event.register(KeyBinding.builder()
+                .name("player.move.sneak")
+                .key(Key.KEY_LEFT_SHIFT)
+                .startHandler(c -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, true))
+                .endHandler((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, false))
+                .build());
+        event.register(KeyBinding.builder()
+                .name("player.mouse.left")
+                .key(Key.MOUSE_BUTTON_LEFT)
+                .startHandler(c -> {
+                    GameClient game = c.getCurrentGame();
+                    Player player = game.getPlayer();
+                    Camera camera = c.getRenderContext().getCamera();
+                    Entity controllingEntity = player.getControlledEntity();
+                    RayTraceBlockHit blockHit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
+                    if (blockHit.isSuccess()) {
+                        controllingEntity.getComponent(TwoHands.class)
+                                .ifPresent(twoHands -> twoHands.getMainHand()
+                                        .ifNonEmpty(itemStack -> {
+                                            blockHit.getBlock().getComponent(ClickBehavior.class).ifPresent(clickBehavior -> clickBehavior.onClicked(player.getWorld(), blockHit.getPos(), blockHit.getBlock()));
+                                            game.getEngine().getEventBus().post(new BlockClickEvent(player.getWorld(), controllingEntity, blockHit.getPos(), blockHit.getBlock()));
+                                            itemStack.getItem()
+                                                    .getComponent(HitBlockBehavior.class)
+                                                    .ifPresent(hitBlockBehavior -> hitBlockBehavior.onHit(player, itemStack, blockHit));
+                                        }));
+                    }
+                })
+                .build());
+        event.register(KeyBinding.builder()
+                .name("player.mouse.right")
+                .key(Key.MOUSE_BUTTON_RIGHT)
+                .startHandler(c -> {
+                    GameClient game = c.getCurrentGame();
+                    Player player = game.getPlayer();
+                    Camera camera = c.getRenderContext().getCamera();
+                    Entity entity = player.getControlledEntity();
+                    RayTraceBlockHit hit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
+                    if (hit.isSuccess()) {
+                        entity.getComponent(TwoHands.class)
+                                .ifPresent(twoHands -> twoHands.getMainHand()
+                                        .ifNonEmpty(itemStack -> {
+                                            hit.getBlock().getComponent(ActivateBehavior.class).ifPresent(activateBehavior -> activateBehavior.onActivated(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
+                                            game.getEngine().getEventBus().post(new BlockActivateEvent(player.getWorld(), entity, hit.getPos(), hit.getBlock()));
+                                            itemStack.getItem()
+                                                    .getComponent(UseBlockBehavior.class)
+                                                    .ifPresent(useBlockBehavior -> useBlockBehavior.onUseBlockStart(player, itemStack, hit));
+                                        }));
+                    }
+                })
+                .build());
+        event.register(KeyBinding.builder()
+                .name("player.mouse.middle")
+                .key(Key.MOUSE_BUTTON_3)
+                .startHandler(c -> {
+                    GameClient game = c.getCurrentGame();
+                    Player player = game.getPlayer();
+                    Camera camera = c.getRenderContext().getCamera();
+                    Entity entity = player.getControlledEntity();
+                    player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
+                            // TODO: Dont create BlockItem
+                            entity.getComponent(TwoHands.class)
+                                    .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new BlockItem(hit.getBlock()))))
+                    );
+                })
+                .build());
+        event.register(KeyBinding.builder()
+                .name("game.chat")
+                .key(Key.KEY_ENTER)
+                .startHandler(c -> {
+                    Scene scene = new Scene(new GuiChat(c.getCurrentGame()));
+                    c.getRenderContext().getGuiManager().showScreen(scene);
+                })
+                .build());
+        event.register(KeyBinding.builder()
+                .name("game.inventory")
+                .key(Key.KEY_E)
+                .startHandler(c -> {
+                    Scene scene = new Scene(new GuiItemList(c.getRenderContext()));
+                    c.getRenderContext().getGuiManager().showScreen(scene);
+                })
+                .build());
+        event.register(KeyBinding.builder()
+                .name("game.menu")
+                .key(Key.KEY_ESCAPE)
+                .startHandler(c -> {
+                    if (!c.getRenderContext().getGuiManager().isDisplayingScreen()) {
+                        c.getRenderContext().getGuiManager().showScreen(new Scene(new GuiIngameMenu()));
+                    }
+                })
+                .build());
+        event.register(KeyBinding.builder()
+                .name("game.fullscreen")
+                .allowInScreen(true)
+                .key(Key.KEY_F11)
+                .startHandler(c -> c.getRenderContext().getWindow().toggleFullscreen())
+                .build());
 
         var renderContext = Platform.getEngineClient().getRenderContext();
         var guiManager = renderContext.getGuiManager();
         var hudGameDebug = new HUDGameDebug();
 //        renderContext.getScheduler().runTaskEveryFrame(() -> hudGameDebug.update(renderContext));
-        envet.register(KeyBinding.create("game.debug_display_switch", Key.KEY_F3, gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug))
-                , ActionMode.SWITCH).endAction((gameClient, integer) -> guiManager.hideHud("debugGame")));
-        envet.register(KeyBinding.create("game.hud_display_switch", Key.KEY_F1, gameClient -> guiManager.showHuds()
-                , ActionMode.SWITCH).endAction((gameClient, integer) -> guiManager.hideHuds()));
+        event.register(KeyBinding.builder()
+                .name("game.debug_display_switch")
+                .key(Key.KEY_F3)
+                .actionMode(ActionMode.SWITCH)
+                .startHandler(gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug)))
+                .endHandler((gameClient, integer) -> guiManager.removeHud("debugGame"))
+                .build());
+        event.register(KeyBinding.builder()
+                .name("game.hud_display_switch")
+                .key(Key.KEY_F1)
+                .startHandler(gameClient -> guiManager.showHuds())
+                .endHandler((gameClient, integer) -> guiManager.hideHuds())
+                .build());
     }
 
     @Listener

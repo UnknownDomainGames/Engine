@@ -1,12 +1,8 @@
 package nullengine.client.input.keybinding;
 
 import nullengine.client.EngineClient;
-import nullengine.client.game.GameClient;
 import nullengine.registry.RegistryEntry;
-import org.apache.commons.lang3.Validate;
 
-import javax.annotation.Nonnull;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -16,117 +12,97 @@ import java.util.function.Consumer;
  * @author Mouse0w0 and iTNTPiston
  */
 public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
-    private Key key;
+
     private final Key defaultKey;
-    private final KeyModifier[] mods;
-    private final ActionMode actionMode;
-    private boolean active = false;
-    private boolean pressed = false;
-    private boolean dirty = false;
+    private final KeyModifier defaultModifier;
+    private final ActionMode defaultActionMode;
+    private final boolean allowChangeActionMode;
     private final boolean allowInScreen;
+
     /**
      * Handles Single press of the key
      */
-    private final Consumer<EngineClient> keyStartHandler;
+    private final Consumer<EngineClient> startHandler;
     /**
      * Handles keeping of the key
      */
-    private Optional<BiConsumer<EngineClient, Integer>> keepHandler;
+    private final BiConsumer<EngineClient, Integer> keepHandler;
     /**
      * Handles release of the key
      */
-    private Optional<BiConsumer<EngineClient, Integer>> endHandler;
+    private final BiConsumer<EngineClient, Integer> endHandler;
+
+    private Key key;
+    private KeyModifier modifier;
+    private ActionMode actionMode;
+
+    private boolean active = false;
+    private boolean pressed = false;
+    private boolean dirty = false;
+
     /**
      * Time Elapsed while holding the key
      */
     private int timeElapsed;
 
-    private KeyBinding(Key defaultKey, boolean allowInScreen, @Nonnull Consumer<EngineClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
-        Validate.notNull(keyStartHandler);
-        this.keyStartHandler = keyStartHandler;
-        this.key = defaultKey;
+    protected KeyBinding(Key defaultKey, KeyModifier defaultModifier, ActionMode defaultActionMode, boolean allowChangeActionMode, boolean allowInScreen, Consumer<EngineClient> startHandler, BiConsumer<EngineClient, Integer> keepHandler, BiConsumer<EngineClient, Integer> endHandler) {
         this.defaultKey = defaultKey;
+        this.defaultModifier = defaultModifier;
+        this.defaultActionMode = defaultActionMode;
+        this.key = defaultKey;
+        this.modifier = defaultModifier;
+        this.actionMode = defaultActionMode;
+        this.allowChangeActionMode = allowChangeActionMode;
         this.allowInScreen = allowInScreen;
-        this.actionMode = actionMode;
-        this.mods = keyMods;
-        keepHandler = endHandler = Optional.empty();
+        this.startHandler = startHandler;
+        this.keepHandler = keepHandler;
+        this.endHandler = endHandler;
     }
 
-    /**
-     * Create a KeyBinding with a specific key, its press action and its action mode
-     * and modifiers
-     *
-     * @param defaultKey
-     * @param actionMode
-     * @param keyMods
-     * @return
-     */
-    public static KeyBinding create(String target, Key defaultKey, @Nonnull Consumer<EngineClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
-        return create(target, false, defaultKey, keyStartHandler, actionMode, keyMods);
+    public Key getDefaultKey() {
+        return this.defaultKey;
     }
 
-    /**
-     * Create a KeyBinding with a specific key, its press action and its action mode
-     * and modifiers
-     *
-     *
-     * @param allowInScreen true if this keybinding should still handling events despite showing gui screen
-     * @param defaultKey
-     * @param actionMode
-     * @param keyMods
-     * @return
-     */
-    public static KeyBinding create(String target, boolean allowInScreen, Key defaultKey, @Nonnull Consumer<EngineClient> keyStartHandler, ActionMode actionMode, KeyModifier... keyMods) {
-        return new KeyBinding(Key.getKeySafe(defaultKey), allowInScreen, keyStartHandler, actionMode != null ? actionMode : ActionMode.PRESS, keyMods == null || keyMods.length == 0 ? KeyModifier.EMPTY : keyMods)
-                .name(target);
+    public KeyModifier getDefaultModifier() {
+        return defaultModifier;
     }
 
-    /**
-     * Bind a keep action to this KeyBinding. This method is chainable.
-     *
-     * @param keepHandler Keep Action
-     * @return This KeyBinding
-     */
-    public KeyBinding keepAction(BiConsumer<EngineClient, Integer> keepHandler) {
-        this.keepHandler = Optional.ofNullable(keepHandler);
-        return this;
+    public ActionMode getDefaultActionMode() {
+        return defaultActionMode;
     }
 
-    /**
-     * Bind an end action to this KeyBinding. This method is chainable.
-     *
-     * @param endHandler End Action
-     * @return This KeyBinding
-     */
-    public KeyBinding endAction(BiConsumer<EngineClient, Integer> endHandler) {
-        this.endHandler = Optional.ofNullable(endHandler);
-        return this;
-    }
-
-    /**
-     * Get the registered name of the key binding
-     *
-     * @Deprecated Use {@link RegistryEntry.getUniqueName()} directly
-     */
-    @Deprecated
-    public String getTarget() {
-        return this.getUniqueName();
-    }
-
-    public Key getKey() {
-        return key;
+    public boolean isAllowChangeActionMode() {
+        return allowChangeActionMode;
     }
 
     public boolean isAllowInScreen() {
         return allowInScreen;
     }
 
-    public KeyModifier[] getModifier() {
-        return mods;
+    public Key getKey() {
+        return key;
+    }
+
+    public void setKey(Key key) {
+        this.key = key == null ? Key.KEY_UNKNOWN : key;
+    }
+
+    public KeyModifier getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(KeyModifier modifier) {
+        this.modifier = modifier == null ? KeyModifier.of() : modifier;
     }
 
     public ActionMode getActionMode() {
         return actionMode;
+    }
+
+    public void setActionMode(ActionMode actionMode) {
+        if (!isAllowChangeActionMode())
+            throw new UnsupportedOperationException("Key binding isn't allow change action mode");
+        this.actionMode = actionMode;
     }
 
     public boolean isActive() {
@@ -154,37 +130,89 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
     }
 
     public void onKeyStart(EngineClient context) {
-        Validate.notNull(keyStartHandler);
-        keyStartHandler.accept(context);
+        if (startHandler != null) {
+            startHandler.accept(context);
+        }
     }
 
     public void onKeyKeep(EngineClient context) {
-        onKeepable(context, keepHandler);
+        if (keepHandler != null) {
+            keepHandler.accept(context, timeElapsed);
+        }
         timeElapsed++;
     }
 
     public void onKeyEnd(EngineClient context) {
-        onKeepable(context, endHandler);
+        if (endHandler != null) {
+            endHandler.accept(context, timeElapsed);
+        }
         timeElapsed = 0;
     }
 
-    /**
-     * Handles keepable key action (keep or end)
-     *
-     * @param context
-     * @param handler
-     * @see #onKeyKeep(GameClient)
-     */
-    private void onKeepable(EngineClient context, Optional<BiConsumer<EngineClient, Integer>> handler) {
-        handler.ifPresent((handle) -> handle.accept(context, timeElapsed));
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public void rebind(Key key) {
-        this.key = Key.getKeySafe(key);
-    }
+    public static final class Builder {
+        private Key defaultKey = Key.KEY_UNKNOWN;
+        private KeyModifier defaultModifier = KeyModifier.of();
+        private ActionMode defaultActionMode = ActionMode.PRESS;
+        private boolean allowChangeActionMode = true;
+        private boolean allowInScreen = false;
+        private Consumer<EngineClient> startHandler;
+        private BiConsumer<EngineClient, Integer> keepHandler;
+        private BiConsumer<EngineClient, Integer> endHandler;
+        private String name;
 
-    public Key getDefaultKey() {
-        return this.defaultKey;
-    }
+        public Builder key(Key defaultKey) {
+            this.defaultKey = defaultKey == null ? Key.KEY_UNKNOWN : defaultKey;
+            return this;
+        }
 
+        public Builder modifier(KeyModifier defaultModifier) {
+            this.defaultModifier = defaultModifier == null ? KeyModifier.of() : defaultModifier;
+            return this;
+        }
+
+        public Builder actionMode(ActionMode defaultActionMode) {
+            this.defaultActionMode = defaultActionMode == null ? ActionMode.PRESS : defaultActionMode;
+            return this;
+        }
+
+        public Builder allowChangeActionMode(boolean allowChangeActionMode) {
+            this.allowChangeActionMode = allowChangeActionMode;
+            return this;
+        }
+
+        public Builder allowInScreen(boolean allowInScreen) {
+            this.allowInScreen = allowInScreen;
+            return this;
+        }
+
+        public Builder startHandler(Consumer<EngineClient> startHandler) {
+            this.startHandler = startHandler;
+            return this;
+        }
+
+        public Builder keepHandler(BiConsumer<EngineClient, Integer> keepHandler) {
+            this.keepHandler = keepHandler;
+            return this;
+        }
+
+        public Builder endHandler(BiConsumer<EngineClient, Integer> endHandler) {
+            this.endHandler = endHandler;
+            return this;
+        }
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public KeyBinding build() {
+            KeyBinding keyBinding = new KeyBinding(defaultKey, defaultModifier, defaultActionMode, allowChangeActionMode, allowInScreen, startHandler, keepHandler, endHandler);
+            keyBinding.name(name);
+            return keyBinding;
+        }
+    }
 }

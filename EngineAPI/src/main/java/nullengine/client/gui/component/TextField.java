@@ -17,7 +17,6 @@ import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.event.Event;
 import nullengine.math.Math2;
 import nullengine.util.Color;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.text.BreakIterator;
 
@@ -103,14 +102,14 @@ public class TextField extends Control {
     public void onKeyDown(KeyEvent.KeyDownEvent event) {
         switch (event.getKey()) {
             case KEY_LEFT:
-                if (ArrayUtils.contains(event.getModifiers(), KeyModifier.SHIFT)) {
+                if (event.getModifier().isShift()) {
                     selectBackward();
                 } else {
                     backward();
                 }
                 break;
             case KEY_RIGHT:
-                if (ArrayUtils.contains(event.getModifiers(), KeyModifier.SHIFT)) {
+                if (event.getModifier().isShift()) {
                     selectForward();
                 } else {
                     forward();
@@ -133,22 +132,22 @@ public class TextField extends Control {
                 }
                 break;
             case KEY_X:
-                if (event.getModifiers().length == 1 && event.getModifiers()[0] == KeyModifier.CONTROL) {
+                if (event.getModifier().is(KeyModifier.Modifier.CONTROL)) {
                     cut();
                 }
                 break;
             case KEY_C:
-                if (event.getModifiers().length == 1 && event.getModifiers()[0] == KeyModifier.CONTROL) {
+                if (event.getModifier().is(KeyModifier.Modifier.CONTROL)) {
                     copy();
                 }
                 break;
             case KEY_V:
-                if (event.getModifiers().length == 1 && event.getModifiers()[0] == KeyModifier.CONTROL) {
+                if (event.getModifier().is(KeyModifier.Modifier.CONTROL)) {
                     paste();
                 }
                 break;
             case KEY_A:
-                if (event.getModifiers().length == 1 && event.getModifiers()[0] == KeyModifier.CONTROL) {
+                if (event.getModifier().is(KeyModifier.Modifier.CONTROL)) {
                     selectAll();
                 }
                 break;
@@ -166,7 +165,7 @@ public class TextField extends Control {
                 //No need to repeat
                 break;
             default:
-                onKeyDown(new KeyEvent.KeyDownEvent(event.getComponent(), event.getKey(), event.getMode(), event.getModifiers()));
+                onKeyDown(new KeyEvent.KeyDownEvent(event.getComponent(), event.getKey(), event.getMode(), event.getModifier()));
         }
     }
 
