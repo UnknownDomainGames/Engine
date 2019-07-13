@@ -140,6 +140,12 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         crashHandler.addReportDetail("GL Version", builder -> builder.append(renderContext.getGLInfo().getVersion()));
         crashHandler.addReportDetail("GL Extensions", builder -> builder.append(renderContext.getGLInfo().getExtensions()));
         crashHandler.addReportDetail("GL Shading Language Version", builder -> builder.append(renderContext.getGLInfo().getShadingLanguageVersion()));
+        crashHandler.addReportDetail("GPU Memory Usage", builder -> {
+            var gpuMemoryInfo = renderContext.getGPUMemoryInfo();
+            var usedMemory = (gpuMemoryInfo.getTotalMemory() - gpuMemoryInfo.getFreeMemory()) / 1024;
+            var totalMemory = gpuMemoryInfo.getTotalMemory() / 1024;
+            builder.append(usedMemory).append(" MB / ").append(totalMemory).append(" MB");
+        });
     }
 
     @Override
