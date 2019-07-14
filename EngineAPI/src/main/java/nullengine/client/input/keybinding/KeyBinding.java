@@ -157,7 +157,7 @@ public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
         private Key defaultKey = Key.KEY_UNKNOWN;
         private KeyModifier defaultModifier = KeyModifier.of();
         private ActionMode defaultActionMode = ActionMode.PRESS;
-        private boolean allowChangeActionMode = true;
+        private boolean allowChangeActionMode = false;
         private boolean allowInScreen = false;
         private Consumer<EngineClient> startHandler;
         private BiConsumer<EngineClient, Integer> keepHandler;
