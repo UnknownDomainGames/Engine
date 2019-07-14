@@ -6,6 +6,7 @@ import nullengine.client.input.keybinding.Key;
 import nullengine.client.rendering.RenderContext;
 import nullengine.util.UndoHistory;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -16,14 +17,19 @@ public class EngineGuiManager implements GuiManager {
     public static final int MAX_SCENE_HISTORY = 20;
     private final RenderContext context;
 
-    private Map<String, Scene> huds;
+    private final Map<String, Scene> huds = new HashMap<>();
+    private final Map<String, Scene> unmodifiableHuds = Collections.unmodifiableMap(huds);
+    private final Map<String, Scene> displayingHuds = new HashMap<>();
+    private final Map<String, Scene> unmodifiableDisplayingHuds = Collections.unmodifiableMap(displayingHuds);
+
     private Scene displayingScreen;
     private UndoHistory<Scene> sceneHistory;
     private Consumer<KeyEvent.KeyDownEvent> escCloseHandler;
 
+    private boolean hudVisible = true;
+
     public EngineGuiManager(RenderContext context) {
         this.context = context;
-        huds = new HashMap<>();
         sceneHistory = new UndoHistory<>(MAX_SCENE_HISTORY);
     }
 
@@ -36,7 +42,6 @@ public class EngineGuiManager implements GuiManager {
     }
 
     private void showScreenInternal(Scene scene) {
-        hideHuds();
         pushToHistory();
         // TODO: Remove it
         escCloseHandler = keyDownEvent -> {
@@ -82,6 +87,38 @@ public class EngineGuiManager implements GuiManager {
     }
 
     @Override
+    public void closeScreen() {
+        pushToHistory();
+        displayingScreen = null;
+        context.getWindow().getCursor().disableCursor();
+    }
+
+    @Override
+    public Scene getDisplayingScreen() {
+        return displayingScreen;
+    }
+
+    @Override
+    public boolean isDisplayingScreen() {
+        return displayingScreen != null;
+    }
+
+    @Override
+    public void toggleHudVisible() {
+        setHudVisible(!isHudVisible());
+    }
+
+    @Override
+    public void setHudVisible(boolean visible) {
+        hudVisible = visible;
+    }
+
+    @Override
+    public boolean isHudVisible() {
+        return hudVisible;
+    }
+
+    @Override
     public void showHud(String id, Scene hud) {
         Scene currentHud = huds.get(id);
         if (currentHud != null) {
@@ -91,6 +128,7 @@ public class EngineGuiManager implements GuiManager {
             hud.setSize(context.getWindow().getWidth(), context.getWindow().getHeight());
             hud.update();
             huds.put(id, hud);
+            displayingHuds.put(id, hud);
             if (hud.getRoot() instanceof GuiTickable) {
                 context.getScheduler().runTaskEveryFrame(() -> ((GuiTickable) hud.getRoot()).update(context));
             }
@@ -101,38 +139,18 @@ public class EngineGuiManager implements GuiManager {
     public void showHud(String id) {
         Scene hud = huds.get(id);
         if (hud != null) {
-            hud.getRoot().visible().set(true);
+            displayingHuds.put(id, hud);
         }
-    }
-
-    @Override
-    public void showHuds() {
-        huds.values().forEach(scene -> scene.getRoot().visible().set(true));
-    }
-
-    @Override
-    public void closeScreen() {
-        pushToHistory();
-        displayingScreen = null;
-        context.getWindow().getCursor().disableCursor();
-        showHuds();
     }
 
     @Override
     public void hideHud(String id) {
-        Scene hud = huds.get(id);
-        if (hud != null) {
-            hud.getRoot().visible().set(false);
-        }
-    }
-
-    @Override
-    public void hideHuds() {
-        huds.values().forEach(scene -> scene.getRoot().visible().set(false));
+        displayingHuds.remove(id);
     }
 
     @Override
     public void removeHud(String id) {
+        hideHud(id);
         Scene hud = huds.remove(id);
         if (hud.getRoot() instanceof GuiTickable) {
             context.getScheduler().cancelTask(() -> ((GuiTickable) hud.getRoot()).update(context));
@@ -151,16 +169,11 @@ public class EngineGuiManager implements GuiManager {
 
     @Override
     public Map<String, Scene> getHuds() {
-        return huds;
+        return unmodifiableHuds;
     }
 
     @Override
-    public Scene getDisplayingScreen() {
-        return displayingScreen;
-    }
-
-    @Override
-    public boolean isDisplayingScreen() {
-        return displayingScreen != null;
+    public Map<String, Scene> getDisplayingHuds() {
+        return unmodifiableDisplayingHuds;
     }
 }

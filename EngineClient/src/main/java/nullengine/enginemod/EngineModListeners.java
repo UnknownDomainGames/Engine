@@ -218,9 +218,7 @@ public final class EngineModListeners {
         event.register(KeyBinding.builder()
                 .name("game.hud_display_switch")
                 .key(Key.KEY_F1)
-                .actionMode(ActionMode.SWITCH)
-                .startHandler(gameClient -> guiManager.showHuds())
-                .endHandler((gameClient, integer) -> guiManager.hideHuds())
+                .startHandler(gameClient -> guiManager.toggleHudVisible())
                 .build());
     }
 

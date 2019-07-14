@@ -94,10 +94,13 @@ public class GuiRenderer implements Renderer {
         startRender();
 
         // render scene
-        for (Scene scene : guiManager.getHuds().values()) {
-            startRenderFlag();
-            renderScene(scene);
+        if (guiManager.isHudVisible() && !guiManager.isDisplayingScreen()) {
+            for (Scene scene : guiManager.getDisplayingHuds().values()) {
+                startRenderFlag();
+                renderScene(scene);
+            }
         }
+
         if (guiManager.isDisplayingScreen()) {
             startRenderFlag();
             renderScene(guiManager.getDisplayingScreen());
