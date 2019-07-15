@@ -25,11 +25,6 @@ public class Platform {
         return "0.1.0-alpha";
     }
 
-    @Deprecated
-    public static Locale getLocale() {
-        return Locale.getDefault(); // TODO Game locale
-    }
-
     public static boolean isClient() {
         return engine.isClient();
     }
