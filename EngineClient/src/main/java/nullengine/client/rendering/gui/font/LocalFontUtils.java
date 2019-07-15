@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 
 public class LocalFontUtils {
 
-    public static List<Path> findLocalFonts() {
+    public static List<Path> findLocalTTFonts() {
         try {
-            return Files.find(getLocalFontStoragePath(), 1, (path, basicFileAttributes) -> true).collect(Collectors.toList());
+            return Files.list(getLocalFontStoragePath()).filter(path -> path.getFileName().toString().endsWith(".ttf")).collect(Collectors.toList());
         } catch (IOException e) {
             return List.of();
         }
@@ -23,9 +23,5 @@ public class LocalFontUtils {
             return Path.of("C:\\Windows\\Fonts").toAbsolutePath();
         }
         throw new UnsupportedOperationException();
-    }
-
-    public static void main(String[] args) {
-        System.out.println(findLocalFonts());
     }
 }
