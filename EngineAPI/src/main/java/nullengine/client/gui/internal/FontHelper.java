@@ -1,6 +1,6 @@
 package nullengine.client.gui.internal;
 
-import nullengine.client.gui.text.Font;
+import nullengine.client.rendering.font.Font;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,9 +1,9 @@
 package nullengine.client.rendering.gui;
 
 import nullengine.client.gui.rendering.Graphics;
-import nullengine.client.gui.text.Font;
 import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.Tessellator;
+import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.gui.font.NativeTTFont;
 import nullengine.client.rendering.texture.GLTexture;
 import nullengine.client.rendering.util.buffer.GLBuffer;

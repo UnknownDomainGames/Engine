@@ -7,6 +7,7 @@ import nullengine.client.gui.internal.Internal;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.TextRenderer;
+import nullengine.client.rendering.font.Font;
 import nullengine.util.Color;
 
 public class Text extends Component {

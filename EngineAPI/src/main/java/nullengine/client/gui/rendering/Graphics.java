@@ -1,6 +1,6 @@
 package nullengine.client.gui.rendering;
 
-import nullengine.client.gui.text.Font;
+import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.texture.GLTexture;
 import nullengine.util.Color;
 import org.joml.Vector2fc;

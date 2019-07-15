@@ -3,8 +3,8 @@ package nullengine.client.gui.rendering;
 import nullengine.client.gui.component.TextField;
 import nullengine.client.gui.internal.FontHelper;
 import nullengine.client.gui.internal.Internal;
-import nullengine.client.gui.text.Font;
 import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.font.Font;
 import nullengine.util.Color;
 
 public class TextFieldRenderer extends RegionRenderer<TextField> {

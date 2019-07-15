@@ -1,7 +1,7 @@
 package nullengine.client.rendering.gui.font;
 
 import nullengine.Platform;
-import nullengine.client.gui.text.Font;
+import nullengine.client.rendering.font.Font;
 import org.lwjgl.stb.STBTTFontinfo;
 
 import java.io.IOException;

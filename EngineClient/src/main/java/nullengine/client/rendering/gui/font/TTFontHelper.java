@@ -3,8 +3,9 @@ package nullengine.client.rendering.gui.font;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import nullengine.client.gui.internal.FontHelper;
-import nullengine.client.gui.text.Font;
 import nullengine.client.rendering.Tessellator;
+import nullengine.client.rendering.font.Font;
+import nullengine.client.rendering.font.UnavailableFontException;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferFormats;
 import nullengine.client.rendering.util.buffer.GLBufferMode;
@@ -188,7 +189,7 @@ public final class TTFontHelper implements FontHelper {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, bitmapSize, bitmapSize, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        return new NativeTTFont(info, size, textureId, charBuffer, bitmapSize);
+        return new NativeTTFont(info, font, textureId, charBuffer, bitmapSize);
     }
 
     private NativeTTFontInfo loadNativeFontInfo(Path path) throws IOException {

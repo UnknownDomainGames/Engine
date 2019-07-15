@@ -1,6 +1,6 @@
 package nullengine.client.rendering.gui.font;
 
-import nullengine.client.gui.text.Font;
+import nullengine.client.rendering.font.Font;
 import org.lwjgl.stb.STBTTBakedChar;
 
 public class NativeTTFont {
@@ -12,12 +12,12 @@ public class NativeTTFont {
     private final STBTTBakedChar.Buffer charBuffer;
     private final int bitmapSize;
 
-    public NativeTTFont(NativeTTFontInfo parent, float fontSize, int textureId, STBTTBakedChar.Buffer charBuffer, int bitmapSize) {
+    public NativeTTFont(NativeTTFontInfo parent, Font font, int textureId, STBTTBakedChar.Buffer charBuffer, int bitmapSize) {
         this.parent = parent;
         this.textureId = textureId;
         this.charBuffer = charBuffer;
         this.bitmapSize = bitmapSize;
-        this.font = new Font(parent.getFamily(), parent.getStyle(), fontSize);
+        this.font = font;
     }
 
     public NativeTTFontInfo getInfo() {

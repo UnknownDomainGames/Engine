@@ -1,4 +1,4 @@
-package nullengine.client.gui.text;
+package nullengine.client.rendering.font;
 
 import nullengine.client.gui.internal.Internal;
 
