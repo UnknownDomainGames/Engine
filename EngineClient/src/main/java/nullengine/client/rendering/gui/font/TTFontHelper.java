@@ -165,23 +165,19 @@ public final class TTFontHelper implements FontHelper {
     }
 
     private NativeTTFont loadNativeFont(Font font) {
-        return loadNativeFont(font.getFamily(), font.getStyle(), font.getSize());
-    }
-
-    private NativeTTFont loadNativeFont(String family, String style, float size) {
-        NativeTTFontInfo parent = loadedFontInfos.get(family, style);
+        NativeTTFontInfo parent = loadedFontInfos.get(font.getFamily(), font.getStyle());
         if (parent == null) {
-            throw new UnsupportedOperationException(String.format("Unsupported font. Family: %s, Style: %s", family, style));
+            throw new UnavailableFontException(font);
         }
-        return loadNativeFont(parent, size);
+        return loadNativeFont(parent, font);
     }
 
-    private NativeTTFont loadNativeFont(NativeTTFontInfo info, float size) {
+    private NativeTTFont loadNativeFont(NativeTTFontInfo info, Font font) {
         int textureId = GL11.glGenTextures();
         STBTTBakedChar.Buffer charBuffer = STBTTBakedChar.malloc(SUPPORTING_CHARACTER_COUNT);
-        int bitmapSize = getBitmapSize(size, SUPPORTING_CHARACTER_COUNT);
+        int bitmapSize = getBitmapSize(font.getSize(), SUPPORTING_CHARACTER_COUNT);
         ByteBuffer bitmap = BufferUtils.createByteBuffer(bitmapSize * bitmapSize);
-        stbtt_BakeFontBitmap(info.getFontData(), size, bitmap, bitmapSize, bitmapSize, 0, charBuffer);
+        stbtt_BakeFontBitmap(info.getFontData(), font.getSize(), bitmap, bitmapSize, bitmapSize, 0, charBuffer);
 
         glBindTexture(GL_TEXTURE_2D, textureId);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
