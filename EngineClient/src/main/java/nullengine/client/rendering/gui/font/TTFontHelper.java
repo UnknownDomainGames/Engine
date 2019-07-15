@@ -29,7 +29,7 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.memUTF16;
+import static org.lwjgl.system.MemoryUtil.memUTF8;
 
 public final class TTFontHelper implements FontHelper {
 
@@ -177,9 +177,9 @@ public final class TTFontHelper implements FontHelper {
             throw new IllegalStateException("Failed in initializing ttf font info");
         }
 
-        String family = memUTF16(stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 1)
+        String family = memUTF8(stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 1)
                 .order(ByteOrder.BIG_ENDIAN));
-        String style = memUTF16(stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 2)
+        String style = memUTF8(stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 2)
                 .order(ByteOrder.BIG_ENDIAN));
 
         try (MemoryStack stack = stackPush()) {
