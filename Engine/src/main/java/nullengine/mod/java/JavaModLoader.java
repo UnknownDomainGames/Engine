@@ -21,7 +21,7 @@ public class JavaModLoader implements ModLoader {
 
         Logger logger = LoggerFactory.getLogger(isNullOrEmpty(metadata.getName()) ? metadata.getId() : metadata.getName());
 
-        ModClassLoader classLoader = new ModClassLoader(logger, JavaModLoader.class.getClassLoader());
+        ModClassLoader classLoader = new ModClassLoader("ModClassLoader-" + metadata.getId(), logger, JavaModLoader.class.getClassLoader());
         classLoader.addPaths(sources);
         classLoader.addDependencies(dependencies);
 

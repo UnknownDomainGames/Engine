@@ -28,8 +28,8 @@ public class ModClassLoader extends URLClassLoader {
         dependency.isDependedBy.add(loader);
     }
 
-    public ModClassLoader(Logger logger, ClassLoader parent) {
-        super(new URL[0], parent);
+    public ModClassLoader(String name, Logger logger, ClassLoader parent) {
+        super(name, new URL[0], parent);
         this.logger = logger;
     }
 
