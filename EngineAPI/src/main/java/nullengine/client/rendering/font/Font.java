@@ -6,16 +6,16 @@ import static org.apache.commons.lang3.Validate.notEmpty;
 
 public class Font {
 
-    public static Font getDefaultFont() {
-        return Internal.getContext().getFontHelper().getDefaultFont();
-    }
-
     private final String family;
     private final String style;
     private final String fullName;
     private final float size;
 
     private int hash = 0;
+
+    public static Font getDefaultFont() {
+        return Internal.getContext().getFontHelper().getDefaultFont();
+    }
 
     public Font(String family, String style, float size) {
         this.family = notEmpty(family);
