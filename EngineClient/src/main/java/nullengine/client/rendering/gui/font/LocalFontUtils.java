@@ -12,7 +12,9 @@ public class LocalFontUtils {
 
     public static List<Path> findLocalTTFonts() {
         try {
-            return Files.list(getLocalFontStoragePath()).filter(path -> path.getFileName().toString().endsWith(".ttf")).collect(Collectors.toList());
+            return Files.walk(getLocalFontStoragePath())
+                    .filter(path -> path.getFileName().toString().endsWith(".ttf"))
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             return List.of();
         }
@@ -23,5 +25,9 @@ public class LocalFontUtils {
             return Path.of("C:\\Windows\\Fonts").toAbsolutePath();
         }
         throw new UnsupportedOperationException();
+    }
+
+    public static void main(String[] args) {
+        findLocalTTFonts().forEach(System.out::println);
     }
 }

@@ -25,8 +25,6 @@ import org.joml.Vector4f;
 import org.joml.Vector4fc;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -65,11 +63,7 @@ public class GuiRenderer implements Renderer {
         this.graphics = new GraphicsImpl(context, this);
 
         try {
-            byte[] fontDataBytes = Files.readAllBytes(context.getEngine().getAssetManager().getSourceManager().getPath(AssetPath.of("engine", "font", "font.ttf")).get());
-            ByteBuffer fontData = ByteBuffer.allocateDirect(fontDataBytes.length);
-            fontData.put(fontDataBytes);
-            fontData.flip();
-            Font defaultFont = fontHelper.loadNativeFont(fontData, 16).getFont();
+            Font defaultFont = fontHelper.loadFont(context.getEngine().getAssetManager().getSourceManager().getPath(AssetPath.of("engine", "font", "font.ttf")).get(), 16);
             fontHelper.setDefaultFont(defaultFont);
             graphics.setFont(defaultFont);
         } catch (IOException e) {
