@@ -5,7 +5,7 @@ import nullengine.exception.UninitializationException;
 import nullengine.item.Item;
 import nullengine.registry.game.BlockRegistry;
 import nullengine.registry.game.ItemRegistry;
-import nullengine.util.Suppliers;
+import nullengine.util.function.Suppliers;
 
 import java.util.function.Supplier;
 

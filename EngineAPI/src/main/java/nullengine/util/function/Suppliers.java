@@ -1,4 +1,4 @@
-package nullengine.util;
+package nullengine.util.function;
 
 import java.lang.ref.WeakReference;
 import java.util.function.Supplier;
