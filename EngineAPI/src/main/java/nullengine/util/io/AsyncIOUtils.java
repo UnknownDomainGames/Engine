@@ -1,10 +1,15 @@
 package nullengine.util.io;
 
+import nullengine.util.function.SupplierWithException;
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class AsyncIOUtils {
 
@@ -40,6 +45,30 @@ public class AsyncIOUtils {
             try {
                 return Files.readAllBytes(path);
             } catch (IOException e) {
+                throw new AsyncIOException(e.getMessage(), e);
+            }
+        }, EXECUTOR);
+    }
+
+    public static CompletableFuture<byte[]> readAllBytes(InputStream input) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (input) {
+                return IOUtils.toByteArray(input);
+            } catch (IOException e) {
+                throw new AsyncIOException(e.getMessage(), e);
+            }
+        }, EXECUTOR);
+    }
+
+    public static <T> CompletableFuture<T> supply(Supplier<T> supplier) {
+        return CompletableFuture.supplyAsync(supplier, EXECUTOR);
+    }
+
+    public static <T> CompletableFuture<T> supply(SupplierWithException<T> supplier) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return supplier.get();
+            } catch (Exception e) {
                 throw new AsyncIOException(e.getMessage(), e);
             }
         }, EXECUTOR);
