@@ -4,8 +4,6 @@ import nullengine.client.EngineClient;
 import nullengine.util.RuntimeEnvironment;
 import org.slf4j.Logger;
 
-import java.util.Locale;
-
 /**
  * Engine platform
  */
@@ -49,10 +47,6 @@ public class Platform {
             throw new UnsupportedOperationException("Cannot get EngineClient on server.");
         }
         return (EngineClient) engine;
-    }
-
-    public static org.lwjgl.system.Platform getRunningOsPlatform() {
-        return org.lwjgl.system.Platform.get();
     }
 
     public static RuntimeEnvironment getRuntimeEnvironment() {

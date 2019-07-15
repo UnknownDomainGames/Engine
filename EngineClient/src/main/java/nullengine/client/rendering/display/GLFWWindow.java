@@ -2,6 +2,7 @@ package nullengine.client.rendering.display;
 
 import nullengine.Platform;
 import nullengine.util.RuntimeEnvironment;
+import org.apache.commons.lang3.SystemUtils;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -342,7 +343,7 @@ public class GLFWWindow implements Window {
         if (Platform.getEngineClient().getRuntimeEnvironment() != RuntimeEnvironment.DEPLOYMENT) {
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         }
-        if (Platform.getRunningOsPlatform() == org.lwjgl.system.Platform.MACOSX) {
+        if (SystemUtils.IS_OS_MAC) {
             glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
         }
     }
