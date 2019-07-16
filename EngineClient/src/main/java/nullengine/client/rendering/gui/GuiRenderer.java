@@ -10,7 +10,6 @@ import nullengine.client.gui.internal.ImageHelper;
 import nullengine.client.gui.internal.Internal;
 import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.RenderContext;
-import nullengine.client.rendering.RenderException;
 import nullengine.client.rendering.Renderer;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.Font;
@@ -23,8 +22,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
-
-import java.io.IOException;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -62,13 +59,9 @@ public class GuiRenderer implements Renderer {
 
         this.graphics = new GraphicsImpl(context, this);
 
-        try {
-            Font defaultFont = fontHelper.loadFont(context.getEngine().getAssetManager().getSourceManager().getPath(AssetPath.of("engine", "font", "font.ttf")).get(), 16);
-            fontHelper.setDefaultFont(defaultFont);
-            graphics.setFont(defaultFont);
-        } catch (IOException e) {
-            throw new RenderException("Cannot initialize gui renderer", e);
-        }
+        Font defaultFont = new Font("Arial", "Regular", 16);
+        fontHelper.setDefaultFont(defaultFont);
+        graphics.setFont(defaultFont);
 
         Internal.setContext(new Internal.Context() {
             @Override
