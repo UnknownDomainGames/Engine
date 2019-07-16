@@ -12,18 +12,20 @@ public class NativeTTFont {
     private final STBTTBakedChar.Buffer charBuffer;
     private final int bitmapSize;
 
-    public NativeTTFont(NativeTTFontInfo parent, Font font, int textureId, STBTTBakedChar.Buffer charBuffer, int bitmapSize) {
+    private final float scale;
+
+    public NativeTTFont(NativeTTFontInfo parent, Font font, int textureId, STBTTBakedChar.Buffer charBuffer, int bitmapSize, float scale) {
         this.parent = parent;
         this.textureId = textureId;
         this.charBuffer = charBuffer;
         this.bitmapSize = bitmapSize;
         this.font = font;
+        this.scale = scale;
     }
 
     public NativeTTFontInfo getInfo() {
         return parent;
     }
-
 
     public Font getFont() {
         return font;
@@ -41,5 +43,7 @@ public class NativeTTFont {
         return bitmapSize;
     }
 
-
+    public float getScale() {
+        return scale;
+    }
 }

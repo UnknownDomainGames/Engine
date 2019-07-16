@@ -66,6 +66,10 @@ public final class TTFontHelper implements FontHelper {
         return defaultFont;
     }
 
+    public void setDefaultFont(Font defaultFont) {
+        this.defaultFont = defaultFont;
+    }
+
     @Override
     public List<Font> getAvailableFonts() {
         return Collections.unmodifiableList(availableFonts);
@@ -82,8 +86,9 @@ public final class TTFontHelper implements FontHelper {
         return new Font(nativeTTFontInfo.getFont(), size);
     }
 
-    public void setDefaultFont(Font defaultFont) {
-        this.defaultFont = defaultFont;
+    @Override
+    public Font loadFont(InputStream input) throws IOException {
+        return new Font(loadNativeFontInfo(input).getFont(), 1);
     }
 
     @Override
@@ -160,6 +165,72 @@ public final class TTFontHelper implements FontHelper {
         }
     }
 
+    @Override
+    public void bindTexture(Font font) {
+        bindTexture(getNativeFont(font));
+    }
+
+    private void bindTexture(NativeTTFont nativeTTFont) {
+        glBindTexture(GL_TEXTURE_2D, nativeTTFont.getTextureId());
+    }
+
+    @Override
+    public void generateMesh(GLBuffer buffer, CharSequence text, Font font, int color) {
+        generateMesh(buffer, 0, 0, text, getNativeFont(font), color);
+    }
+
+    private void generateMesh(GLBuffer buffer, float x, float y, CharSequence text, NativeTTFont nativeTTFont, int color) {
+        STBTTFontinfo fontInfo = nativeTTFont.getInfo().getFontInfo();
+        float fontHeight = nativeTTFont.getFont().getSize();
+        float scale = stbtt_ScaleForPixelHeight(nativeTTFont.getInfo().getFontInfo(), fontHeight);
+
+        STBTTBakedChar.Buffer cdata = nativeTTFont.getCharBuffer();
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer charPointBuffer = stack.mallocInt(1);
+            FloatBuffer posX = stack.floats(x);
+            FloatBuffer posY = stack.floats(y + fontHeight);
+
+            float factorX = 1.0f / nativeTTFont.getInfo().getContentScaleX();
+            float factorY = 1.0f / nativeTTFont.getInfo().getContentScaleY();
+            factorX = 1.0f;
+            factorY = 1.0f;
+
+            float r = ((color >> 16) & 255) / 255f;
+            float g = ((color >> 8) & 255) / 255f;
+            float b = (color & 255) / 255f;
+            float a = ((color >> 24) & 255) / 255f;
+
+            float centerY = y + fontHeight;
+
+            int bitmapSize = nativeTTFont.getBitmapSize();
+            STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
+            buffer.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE);
+            for (int i = 0; i < text.length(); ) {
+                i += getCodePoint(text, i, charPointBuffer);
+
+                int charPoint = charPointBuffer.get(0);
+
+                float centerX = posX.get(0);
+                stbtt_GetBakedQuad(cdata, bitmapSize, bitmapSize, charPoint, posX, posY, stbQuad, true);
+                posX.put(0, scale(centerX, posX.get(0), factorX));
+                if (i < text.length()) {
+                    getCodePoint(text, i, charPointBuffer);
+                    posX.put(0, posX.get(0)
+                            + stbtt_GetCodepointKernAdvance(fontInfo, charPoint, charPointBuffer.get(0)) * scale);
+                }
+                float x0 = scale(centerX, stbQuad.x0(), factorX), x1 = scale(centerX, stbQuad.x1(), factorX),
+                        y0 = scale(centerY, stbQuad.y0(), factorY), y1 = scale(centerY, stbQuad.y1(), factorY); // FIXME: Incorrect y0
+                buffer.pos(x0, y0, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t0()).endVertex();
+                buffer.pos(x0, y1, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t1()).endVertex();
+                buffer.pos(x1, y0, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t0()).endVertex();
+
+                buffer.pos(x1, y0, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t0()).endVertex();
+                buffer.pos(x0, y1, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t1()).endVertex();
+                buffer.pos(x1, y1, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t1()).endVertex();
+            }
+        }
+    }
+
     public NativeTTFont getNativeFont(Font font) {
         return loadedNativeFonts.computeIfAbsent(font, this::loadNativeFont);
     }
@@ -185,7 +256,9 @@ public final class TTFontHelper implements FontHelper {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, bitmapSize, bitmapSize, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        return new NativeTTFont(info, font, textureId, charBuffer, bitmapSize);
+        float scale = stbtt_ScaleForPixelHeight(info.getFontInfo(), font.getSize());
+
+        return new NativeTTFont(info, font, textureId, charBuffer, bitmapSize, scale);
     }
 
     private NativeTTFontInfo loadNativeFontInfo(Path path) throws IOException {
@@ -196,10 +269,10 @@ public final class TTFontHelper implements FontHelper {
             throw new IllegalStateException("Failed in initializing ttf font info");
         }
 
-        String family = memUTF8(stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 1)
-                .order(ByteOrder.BIG_ENDIAN));
-        String style = memUTF8(stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 2)
-                .order(ByteOrder.BIG_ENDIAN));
+        String family = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 1)
+                .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
+        String style = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 2)
+                .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
 
         try (MemoryStack stack = stackPush()) {
             IntBuffer pAscent = stack.mallocInt(1);
@@ -266,61 +339,12 @@ public final class TTFontHelper implements FontHelper {
 
         beforeTextRender.run();
 
-        STBTTFontinfo fontinfo = nativeTTFont.getInfo().getFontInfo();
-        float fontHeight = nativeTTFont.getFont().getSize();
-        float scale = stbtt_ScaleForPixelHeight(nativeTTFont.getInfo().getFontInfo(), fontHeight);
+        bindTexture(nativeTTFont);
 
-        glBindTexture(GL_TEXTURE_2D, nativeTTFont.getTextureId());
-
-        STBTTBakedChar.Buffer cdata = nativeTTFont.getCharBuffer();
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer charPointBuffer = stack.mallocInt(1);
-            FloatBuffer posX = stack.floats(x);
-            FloatBuffer posY = stack.floats(y + fontHeight);
-
-            float factorX = 1.0f / nativeTTFont.getInfo().getContentScaleX();
-            float factorY = 1.0f / nativeTTFont.getInfo().getContentScaleY();
-            factorX = 1.0f;
-            factorY = 1.0f;
-
-            float r = ((color >> 16) & 255) / 255f;
-            float g = ((color >> 8) & 255) / 255f;
-            float b = (color & 255) / 255f;
-            float a = ((color >> 24) & 255) / 255f;
-
-            float centerY = y + fontHeight;
-
-            int bitmapSize = nativeTTFont.getBitmapSize();
-            STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
-            Tessellator tessellator = Tessellator.getInstance();
-            GLBuffer builder = tessellator.getBuffer();
-            builder.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE);
-            for (int i = 0; i < text.length(); ) {
-                i += getCodePoint(text, i, charPointBuffer);
-
-                int charPoint = charPointBuffer.get(0);
-
-                float centerX = posX.get(0);
-                stbtt_GetBakedQuad(cdata, bitmapSize, bitmapSize, charPoint, posX, posY, stbQuad, true);
-                posX.put(0, scale(centerX, posX.get(0), factorX));
-                if (i < text.length()) {
-                    getCodePoint(text, i, charPointBuffer);
-                    posX.put(0, posX.get(0)
-                            + stbtt_GetCodepointKernAdvance(fontinfo, charPoint, charPointBuffer.get(0)) * scale);
-                }
-                float x0 = scale(centerX, stbQuad.x0(), factorX), x1 = scale(centerX, stbQuad.x1(), factorX),
-                        y0 = scale(centerY, stbQuad.y0(), factorY), y1 = scale(centerY, stbQuad.y1(), factorY); // FIXME: Incorrect y0
-                builder.pos(x0, y0, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t0()).endVertex();
-                builder.pos(x0, y1, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t1()).endVertex();
-                builder.pos(x1, y0, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t0()).endVertex();
-
-                builder.pos(x1, y0, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t0()).endVertex();
-                builder.pos(x0, y1, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t1()).endVertex();
-                builder.pos(x1, y1, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t1()).endVertex();
-
-            }
-            tessellator.draw();
-        }
+        Tessellator tessellator = Tessellator.getInstance();
+        GLBuffer buffer = tessellator.getBuffer();
+        generateMesh(buffer, x, y, text, nativeTTFont, color);
+        tessellator.draw();
 
         afterTextRender.run();
     }
