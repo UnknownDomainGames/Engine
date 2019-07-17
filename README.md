@@ -7,8 +7,8 @@
 
 A voxel sandbox game engine based on Java. Waiting for your assignment.
 
-## 贡献代码
-请阅读我们的贡献指南：[简体中文(zh_CN)](https://github.com/UnknownDomainGame/NullEngine/blob/dev/CONTRIBUTING.md)
+## 贡献代码 (Contributing)
+请阅读我们的贡献指南：[简体中文(zh_CN)](https://github.com/UnknownDomainGame/NullEngine/blob/dev/CONTRIBUTING.md) [English(en_US)](https://github.com/UnknownDomainGame/NullEngine/blob/dev/CONTRIBUTING_EN.md)
 
 请在[Projects](https://github.com/UnknownDomainGame/NullEngine/projects)了解我们正在进行的工作。
 
