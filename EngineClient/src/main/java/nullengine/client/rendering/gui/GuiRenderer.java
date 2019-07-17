@@ -140,7 +140,7 @@ public class GuiRenderer implements Renderer {
     }
 
     private void renderScene(Scene scene) {
-        if (window.isResized()) {
+        if (window.isResized() || window.getWidth() != scene.getWidth() || window.getHeight() != scene.getHeight()) {
             scene.setSize(window.getWidth(), window.getHeight());
         }
 

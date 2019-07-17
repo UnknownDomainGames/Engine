@@ -92,7 +92,11 @@ public abstract class Container extends Component {
 
     public void needsLayout() {
         layoutState = LayoutState.NEED_LAYOUT;
-
+        for (Component child : children) {
+            if(child instanceof Container) {
+                ((Container) child).needsLayout();
+            }
+        }
         Container parent = parent().getValue();
         while (parent != null && parent.layoutState == LayoutState.CLEAN) {
             parent.layoutState = LayoutState.DIRTY_BRANCH;
