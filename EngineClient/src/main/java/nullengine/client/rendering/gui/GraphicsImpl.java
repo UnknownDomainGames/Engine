@@ -5,7 +5,6 @@ import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
-import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.texture.GLTexture;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferFormats;
@@ -181,11 +180,7 @@ public class GraphicsImpl implements Graphics {
     public void drawText(CharSequence text, float x, float y) {
         GLBuffer buffer = tessellator.getBuffer();
         buffer.posOffset(x, y, 0);
-        FontHelper.instance().renderText(buffer, text, font, color.toRGBA(), () -> {
-            ShaderManager.INSTANCE.setUniform("u_RenderText", true);
-            tessellator.draw();
-            ShaderManager.INSTANCE.setUniform("u_RenderText", false);
-        });
+        FontHelper.instance().renderText(buffer, text, font, color.toRGBA(), tessellator::draw);
     }
 
     @Override

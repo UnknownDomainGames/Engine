@@ -31,7 +31,7 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 public final class TTFontHelper implements FontHelper {
 
-    public static final int SUPPORTING_CHARACTER_COUNT = 0x10000;
+    public static final int SUPPORTING_CHARACTER_COUNT = 0xffff;
 
     private final List<Font> availableFonts = new ArrayList<>();
     private final Table<String, String, NativeTTFontInfo> loadedFontInfos = Tables.newCustomTable(new HashMap<>(), HashMap::new);
@@ -167,6 +167,10 @@ public final class TTFontHelper implements FontHelper {
 
     @Override
     public void renderText(GLBuffer buffer, CharSequence text, Font font, int color, Runnable renderer) throws UnavailableFontException {
+        if (text == null || text.length() == 0) {
+            return;
+        }
+
         NativeTTFont nativeFont = getNativeFont(font);
         bindTexture(nativeFont);
         generateMesh(buffer, text, nativeFont, color);
@@ -244,16 +248,26 @@ public final class TTFontHelper implements FontHelper {
         int bitmapSize = getBitmapSize(font.getSize(), SUPPORTING_CHARACTER_COUNT);
         ByteBuffer bitmap = BufferUtils.createByteBuffer(bitmapSize * bitmapSize);
         stbtt_BakeFontBitmap(info.getFontData(), font.getSize(), bitmap, bitmapSize, bitmapSize, 0, charBuffer);
+        bitmap = createRGBAFontBitmap(bitmap);
 
         glBindTexture(GL_TEXTURE_2D, textureId);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, bitmapSize, bitmapSize, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bitmapSize, bitmapSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, bitmap);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         float scale = stbtt_ScaleForPixelHeight(info.getFontInfo(), font.getSize());
 
         return new NativeTTFont(info, font, textureId, charBuffer, bitmapSize, scale);
+    }
+
+    private ByteBuffer createRGBAFontBitmap(ByteBuffer bitmap) {
+        ByteBuffer newBitmap = BufferUtils.createByteBuffer(bitmap.limit() * 4);
+        for (int i = 0; i < bitmap.limit(); i++) {
+            newBitmap.put((byte) 0xff).put((byte) 0xff).put((byte) 0xff).put(bitmap.get());
+        }
+        newBitmap.flip();
+        return newBitmap;
     }
 
     private NativeTTFontInfo loadNativeFontInfo(Path path) throws IOException {
