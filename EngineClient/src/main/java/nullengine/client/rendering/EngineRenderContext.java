@@ -161,12 +161,12 @@ public class EngineRenderContext implements RenderContext {
 
         initGL();
 
-        textureManager = new EngineTextureManager();
+        initFont();
+        initTexture();
         guiManager = new EngineGuiManager(this);
 
         camera = new FixedCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
 
-        initFont();
         initRenderer();
 
         window.show();
@@ -191,6 +191,11 @@ public class EngineRenderContext implements RenderContext {
         gpuMemoryInfo = nvxgpuMemoryInfo;
 
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+
+    private void initTexture() {
+        textureManager = new EngineTextureManager();
+        TextureManager.Internal.setInstance(textureManager);
     }
 
     private void initFont() {

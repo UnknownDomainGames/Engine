@@ -2,7 +2,7 @@ package nullengine.client.rendering.font;
 
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import nullengine.Platform;
+import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferFormats;
 import nullengine.client.rendering.util.buffer.GLBufferMode;
@@ -171,7 +171,7 @@ public final class TTFontHelper implements FontHelper {
         bindTexture(nativeFont);
         generateMesh(buffer, text, nativeFont, color);
         renderer.run();
-        Platform.getEngineClient().getRenderContext().getTextureManager().getWhiteTexture().bind();
+        TextureManager.instance().getWhiteTexture().bind();
     }
 
     private void generateMesh(GLBuffer buffer, CharSequence text, NativeTTFont nativeTTFont, int color) {
