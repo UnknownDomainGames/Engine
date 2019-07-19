@@ -167,6 +167,10 @@ public final class TTFontHelper implements FontHelper {
 
     @Override
     public void renderText(GLBuffer buffer, CharSequence text, Font font, int color, Runnable renderer) throws UnavailableFontException {
+        if (text == null || text.length() == 0) {
+            return;
+        }
+
         NativeTTFont nativeFont = getNativeFont(font);
         bindTexture(nativeFont);
         generateMesh(buffer, text, nativeFont, color);
