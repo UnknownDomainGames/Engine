@@ -4,7 +4,8 @@ import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.font.Font;
-import nullengine.client.rendering.gui.font.NativeTTFont;
+import nullengine.client.rendering.font.FontHelper;
+import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.texture.GLTexture;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferFormats;
@@ -25,7 +26,6 @@ public class GraphicsImpl implements Graphics {
 
     private Color color;
     private Font font;
-    private NativeTTFont nativeTTFont;
 
     private final Stack<Vector4fc> clipRect = new Stack<>();
 
@@ -53,7 +53,6 @@ public class GraphicsImpl implements Graphics {
     @Override
     public void setFont(Font font) {
         this.font = font;
-        this.nativeTTFont = guiRenderer.getFontHelper().getNativeFont(font);
     }
 
     @Override
@@ -180,7 +179,13 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawText(CharSequence text, float x, float y) {
-        guiRenderer.getFontHelper().renderText(text, x, y, color.toRGBA(), nativeTTFont);
+        GLBuffer buffer = tessellator.getBuffer();
+        buffer.posOffset(x, y, 0);
+        FontHelper.instance().renderText(buffer, text, font, color.toRGBA(), () -> {
+            ShaderManager.INSTANCE.setUniform("u_RenderText", true);
+            tessellator.draw();
+            ShaderManager.INSTANCE.setUniform("u_RenderText", false);
+        });
     }
 
     @Override

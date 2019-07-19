@@ -7,6 +7,9 @@ import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.camera.FixedCamera;
 import nullengine.client.rendering.display.GLFWWindow;
 import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.font.Font;
+import nullengine.client.rendering.font.FontHelper;
+import nullengine.client.rendering.font.TTFontHelper;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GLInfo;
@@ -158,14 +161,15 @@ public class EngineRenderContext implements RenderContext {
 
         initGL();
 
-        window.show();
-
         textureManager = new EngineTextureManager();
         guiManager = new EngineGuiManager(this);
 
         camera = new FixedCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
 
+        initFont();
         initRenderer();
+
+        window.show();
     }
 
     private void initGL() {
@@ -187,6 +191,13 @@ public class EngineRenderContext implements RenderContext {
         gpuMemoryInfo = nvxgpuMemoryInfo;
 
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+
+    private void initFont() {
+        var fontHelper = new TTFontHelper();
+        FontHelper.Internal.setInstance(fontHelper);
+        Font defaultFont = new Font("Arial", "Regular", 16);
+        fontHelper.setDefaultFont(defaultFont);
     }
 
     public void initRenderer() {

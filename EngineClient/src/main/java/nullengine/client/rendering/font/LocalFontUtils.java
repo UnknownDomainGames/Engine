@@ -1,4 +1,4 @@
-package nullengine.client.rendering.gui.font;
+package nullengine.client.rendering.font;
 
 import org.apache.commons.lang3.SystemUtils;
 

@@ -4,7 +4,6 @@ import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.CharEvent;
 import nullengine.client.gui.event.KeyEvent;
 import nullengine.client.gui.event.MouseEvent;
-import nullengine.client.gui.internal.Internal;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.misc.IndexRange;
@@ -14,6 +13,7 @@ import nullengine.client.gui.rendering.TextFieldRenderer;
 import nullengine.client.input.Clipboard;
 import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.client.rendering.font.Font;
+import nullengine.client.rendering.font.FontHelper;
 import nullengine.event.Event;
 import nullengine.math.Math2;
 import nullengine.util.Color;
@@ -180,7 +180,7 @@ public class TextField extends Control {
         int posExclusive = 1;
         float x = 0;
         while (posExclusive <= length()) {
-            x += Internal.getContext().getFontHelper().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().getValue());
+            x += FontHelper.instance().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().getValue());
             if (x > adjustedX)
                 break;
             posExclusive++;
@@ -481,7 +481,7 @@ public class TextField extends Control {
 
     private void updatePointer() {
         var viewableWidth = width().get() - padding().getValue().getLeft() - padding().getValue().getRight();
-        var caretOffset = Internal.getContext().getFontHelper().computeTextWidth(getTextInRange(0, caret().get()), font().getValue());
+        var caretOffset = FontHelper.instance().computeTextWidth(getTextInRange(0, caret().get()), font().getValue());
         var adjusted = caretOffset + lineScrollOffset;
         if (viewableWidth < adjusted) {
             lineScrollOffset = viewableWidth - caretOffset;

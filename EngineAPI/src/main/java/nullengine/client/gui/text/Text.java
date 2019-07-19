@@ -3,11 +3,11 @@ package nullengine.client.gui.text;
 import com.github.mouse0w0.observable.value.MutableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Component;
-import nullengine.client.gui.internal.Internal;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.TextRenderer;
 import nullengine.client.rendering.font.Font;
+import nullengine.client.rendering.font.FontHelper;
 import nullengine.util.Color;
 
 public class Text extends Component {
@@ -46,13 +46,13 @@ public class Text extends Component {
 
     @Override
     public float prefWidth() {
-        return (int) Internal.getContext().getFontHelper().computeTextWidth(text().getValue(), font().getValue());
+        return (int) FontHelper.instance().computeTextWidth(text().getValue(), font().getValue());
     }
 
     @Override
     public float prefHeight() {
 //        return font().getValue().getSize();
-        return Internal.getContext().getFontHelper().computeTextHeight(text().getValue(), font().getValue());
+        return FontHelper.instance().computeTextHeight(text().getValue(), font().getValue());
     }
 
     @Override

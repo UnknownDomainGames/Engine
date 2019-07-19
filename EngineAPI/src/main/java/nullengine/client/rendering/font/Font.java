@@ -1,7 +1,5 @@
 package nullengine.client.rendering.font;
 
-import nullengine.client.gui.internal.Internal;
-
 import static org.apache.commons.lang3.Validate.notEmpty;
 
 public class Font {
@@ -14,7 +12,7 @@ public class Font {
     private int hash = 0;
 
     public static Font getDefaultFont() {
-        return Internal.getContext().getFontHelper().getDefaultFont();
+        return FontHelper.instance().getDefaultFont();
     }
 
     public Font(String family, String style, float size) {

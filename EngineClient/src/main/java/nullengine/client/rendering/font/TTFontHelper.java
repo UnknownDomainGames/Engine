@@ -1,11 +1,8 @@
-package nullengine.client.rendering.gui.font;
+package nullengine.client.rendering.font;
 
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import nullengine.client.gui.internal.FontHelper;
-import nullengine.client.rendering.Tessellator;
-import nullengine.client.rendering.font.Font;
-import nullengine.client.rendering.font.UnavailableFontException;
+import nullengine.Platform;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferFormats;
 import nullengine.client.rendering.util.buffer.GLBufferMode;
@@ -40,14 +37,9 @@ public final class TTFontHelper implements FontHelper {
     private final Table<String, String, NativeTTFontInfo> loadedFontInfos = Tables.newCustomTable(new HashMap<>(), HashMap::new);
     private final Map<Font, NativeTTFont> loadedNativeFonts = new HashMap<>();
 
-    private final Runnable beforeTextRender;
-    private final Runnable afterTextRender;
-
     private Font defaultFont;
 
-    public TTFontHelper(Runnable beforeTextRender, Runnable afterTextRender) {
-        this.beforeTextRender = beforeTextRender;
-        this.afterTextRender = afterTextRender;
+    public TTFontHelper() {
         initLocalFonts();
     }
 
@@ -72,6 +64,11 @@ public final class TTFontHelper implements FontHelper {
     @Override
     public List<Font> getAvailableFonts() {
         return Collections.unmodifiableList(availableFonts);
+    }
+
+    @Override
+    public boolean isAvailableFont(Font font) {
+        return loadedFontInfos.contains(font.getFamily(), font.getStyle());
     }
 
     @Override
@@ -164,21 +161,20 @@ public final class TTFontHelper implements FontHelper {
         }
     }
 
-    @Override
-    public void bindTexture(Font font) {
-        bindTexture(getNativeFont(font));
-    }
-
     private void bindTexture(NativeTTFont nativeTTFont) {
         glBindTexture(GL_TEXTURE_2D, nativeTTFont.getTextureId());
     }
 
     @Override
-    public void generateMesh(GLBuffer buffer, CharSequence text, Font font, int color) {
-        generateMesh(buffer, 0, 0, text, getNativeFont(font), color);
+    public void renderText(GLBuffer buffer, CharSequence text, Font font, int color, Runnable renderer) throws UnavailableFontException {
+        NativeTTFont nativeFont = getNativeFont(font);
+        bindTexture(nativeFont);
+        generateMesh(buffer, text, nativeFont, color);
+        renderer.run();
+        Platform.getEngineClient().getRenderContext().getTextureManager().getWhiteTexture().bind();
     }
 
-    private void generateMesh(GLBuffer buffer, float x, float y, CharSequence text, NativeTTFont nativeTTFont, int color) {
+    private void generateMesh(GLBuffer buffer, CharSequence text, NativeTTFont nativeTTFont, int color) {
         STBTTFontinfo fontInfo = nativeTTFont.getInfo().getFontInfo();
         float fontHeight = nativeTTFont.getFont().getSize();
         float scale = stbtt_ScaleForPixelHeight(nativeTTFont.getInfo().getFontInfo(), fontHeight);
@@ -186,8 +182,8 @@ public final class TTFontHelper implements FontHelper {
         STBTTBakedChar.Buffer cdata = nativeTTFont.getCharBuffer();
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer charPointBuffer = stack.mallocInt(1);
-            FloatBuffer posX = stack.floats(x);
-            FloatBuffer posY = stack.floats(y + fontHeight);
+            FloatBuffer posX = stack.floats(0);
+            FloatBuffer posY = stack.floats(0 + fontHeight);
 
             float factorX = 1.0f / nativeTTFont.getInfo().getContentScaleX();
             float factorY = 1.0f / nativeTTFont.getInfo().getContentScaleY();
@@ -199,7 +195,7 @@ public final class TTFontHelper implements FontHelper {
             float b = (color & 255) / 255f;
             float a = ((color >> 24) & 255) / 255f;
 
-            float centerY = y + fontHeight;
+            float centerY = 0 + fontHeight;
 
             int bitmapSize = nativeTTFont.getBitmapSize();
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
@@ -285,7 +281,7 @@ public final class TTFontHelper implements FontHelper {
 
             GLFW.glfwGetMonitorContentScale(GLFW.glfwGetPrimaryMonitor(), p1, p2);
 
-            NativeTTFontInfo parent = new NativeTTFontInfo(path, fontInfo, family, style, pAscent.get(0), pDescent.get(0), pLineGap.get(0), p1.get(0), p2.get(0));
+            NativeTTFontInfo parent = new NativeTTFontInfo(path, family, style, pAscent.get(0), pDescent.get(0), pLineGap.get(0), p1.get(0), p2.get(0));
             loadedFontInfos.put(family, style, parent);
             availableFonts.add(parent.getFont());
             return parent;
@@ -327,23 +323,6 @@ public final class TTFontHelper implements FontHelper {
 
     private int getBitmapSize(float size, int countOfChar) {
         return (int) Math.ceil((size + 2 * size / 16.0f) * Math.sqrt(countOfChar));
-    }
-
-    public void renderText(CharSequence text, float x, float y, int color, NativeTTFont nativeTTFont) {
-        if (text == null || text.length() == 0) {
-            return;
-        }
-
-        beforeTextRender.run();
-
-        bindTexture(nativeTTFont);
-
-        Tessellator tessellator = Tessellator.getInstance();
-        GLBuffer buffer = tessellator.getBuffer();
-        generateMesh(buffer, x, y, text, nativeTTFont, color);
-        tessellator.draw();
-
-        afterTextRender.run();
     }
 
     private float scale(float center, float offset, float factor) {

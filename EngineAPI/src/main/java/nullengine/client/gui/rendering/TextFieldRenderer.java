@@ -1,10 +1,9 @@
 package nullengine.client.gui.rendering;
 
 import nullengine.client.gui.component.TextField;
-import nullengine.client.gui.internal.FontHelper;
-import nullengine.client.gui.internal.Internal;
 import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.font.Font;
+import nullengine.client.rendering.font.FontHelper;
 import nullengine.util.Color;
 
 public class TextFieldRenderer extends RegionRenderer<TextField> {
@@ -30,7 +29,7 @@ public class TextFieldRenderer extends RegionRenderer<TextField> {
         graphics.setColor(textField.fontcolor().getValue());
         Font font = textField.font().getValue();
         graphics.setFont(font);
-        FontHelper helper = Internal.getContext().getFontHelper();
+        FontHelper helper = FontHelper.instance();
         float caretWidth = helper.computeTextWidth(textField.getTextInRange(0, textField.caret().get()), font);
         float offset = textField.getLineScrollOffset();
         Color selectionColor = Color.BLUE;

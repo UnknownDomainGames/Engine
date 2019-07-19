@@ -1,6 +1,5 @@
-package nullengine.client.rendering.gui.font;
+package nullengine.client.rendering.font;
 
-import nullengine.client.rendering.font.Font;
 import org.lwjgl.stb.STBTTBakedChar;
 
 public class NativeTTFont {

@@ -1,7 +1,6 @@
-package nullengine.client.rendering.gui.font;
+package nullengine.client.rendering.font;
 
 import nullengine.Platform;
-import nullengine.client.rendering.font.Font;
 import org.lwjgl.stb.STBTTFontinfo;
 
 import java.io.IOException;
@@ -30,9 +29,9 @@ public class NativeTTFontInfo {
     private final float contentScaleX;
     private final float contentScaleY;
 
-    public NativeTTFontInfo(Path fontFile, STBTTFontinfo fontInfo, String family, String style, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY) {
+    public NativeTTFontInfo(Path fontFile, String family, String style, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY) {
         this.fontFile = fontFile;
-        this.fontInfo = fontInfo;
+        this.fontInfo = null;
         this.fontData = null;
         this.family = family;
         this.style = style;

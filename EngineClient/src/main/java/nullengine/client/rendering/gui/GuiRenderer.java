@@ -5,15 +5,12 @@ import nullengine.client.asset.AssetPath;
 import nullengine.client.gui.Container;
 import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.Scene;
-import nullengine.client.gui.internal.FontHelper;
-import nullengine.client.gui.internal.ImageHelper;
 import nullengine.client.gui.internal.Internal;
 import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.Renderer;
 import nullengine.client.rendering.display.Window;
-import nullengine.client.rendering.font.Font;
-import nullengine.client.rendering.gui.font.TTFontHelper;
+import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgram;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
@@ -36,7 +33,6 @@ public class GuiRenderer implements Renderer {
 
     private ObservableValue<ShaderProgram> shader;
 
-    private TTFontHelper fontHelper;
     private Graphics graphics;
 
     @Override
@@ -50,30 +46,10 @@ public class GuiRenderer implements Renderer {
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "gui.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "gui.frag")));
 
-        this.fontHelper = new TTFontHelper(() -> {
-            ShaderManager.INSTANCE.setUniform("u_RenderText", true);
-        }, () -> {
-            ShaderManager.INSTANCE.setUniform("u_RenderText", false);
-            context.getTextureManager().getWhiteTexture().bind();
-        });
-
         this.graphics = new GraphicsImpl(context, this);
+        graphics.setFont(FontHelper.instance().getDefaultFont());
 
-        Font defaultFont = new Font("Arial", "Regular", 16);
-        fontHelper.setDefaultFont(defaultFont);
-        graphics.setFont(defaultFont);
-
-        Internal.setContext(new Internal.Context() {
-            @Override
-            public FontHelper getFontHelper() {
-                return fontHelper;
-            }
-
-            @Override
-            public ImageHelper getImageHelper() {
-                return textureManager::getTextureDirect;
-            }
-        });
+        Internal.setContext(() -> textureManager::getTextureDirect);
     }
 
     @Override
@@ -94,10 +70,6 @@ public class GuiRenderer implements Renderer {
         }
 
         endRender();
-    }
-
-    public TTFontHelper getFontHelper() {
-        return fontHelper;
     }
 
     public void setClipRect(Vector4fc clipRect) {
