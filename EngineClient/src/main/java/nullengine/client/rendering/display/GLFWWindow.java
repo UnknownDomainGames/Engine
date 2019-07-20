@@ -268,11 +268,11 @@ public class GLFWWindow implements Window {
         pointer = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
         if (!checkCreated())
             throw new RuntimeException("Failed to parse the GLFW window");
-        long moniter = glfwGetPrimaryMonitor();
+        long monitor = glfwGetPrimaryMonitor();
         try (MemoryStack memoryStack = MemoryStack.stackPush()) {
             FloatBuffer f1 = memoryStack.mallocFloat(1);
             FloatBuffer f2 = memoryStack.mallocFloat(1);
-            glfwGetMonitorContentScale(moniter, f1, f2);
+            glfwGetMonitorContentScale(monitor, f1, f2);
             contentScaleX = f1.get(0);
             contentScaleY = f2.get(0);
         }
@@ -292,10 +292,10 @@ public class GLFWWindow implements Window {
     private int lastPosX, lastPosY, lastWidth, lastHeight;
 
     @Override
-    public void setDisplayMode(DisplayMode displaymode){
-        if(displayMode == displaymode) return;
+    public void setDisplayMode(DisplayMode displayMode) {
+        if (this.displayMode == displayMode) return;
         var mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        switch (displaymode){
+        switch (displayMode) {
             case FULLSCREEN:
                 if(this.displayMode == DisplayMode.WINDOWED){
                     int[] a = new int[1], b = new int[1];
@@ -325,7 +325,7 @@ public class GLFWWindow implements Window {
                 glfwSetWindowAttrib(pointer, GLFW_DECORATED, GL_TRUE);
                 glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, lastWidth, lastHeight, mode.refreshRate());
         }
-        this.displayMode = displaymode;
+        this.displayMode = displayMode;
     }
 
     private void setupInput() {
