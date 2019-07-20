@@ -15,6 +15,8 @@ import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyBinding;
 import nullengine.client.rendering.block.BlockRenderer;
 import nullengine.client.rendering.camera.Camera;
+import nullengine.client.rendering.display.DisplayMode;
+import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.entity.EntityItemRenderer;
 import nullengine.enginemod.client.gui.game.GUIGameCreation;
 import nullengine.enginemod.client.gui.game.GuiChat;
@@ -196,12 +198,6 @@ public final class EngineModListeners {
                         c.getRenderContext().getGuiManager().showScreen(new Scene(new GuiIngameMenu()));
                     }
                 })
-                .build());
-        event.register(KeyBinding.builder()
-                .name("game.fullscreen")
-                .allowInScreen(true)
-                .key(Key.KEY_F11)
-                .startHandler(c -> c.getRenderContext().getWindow().toggleFullscreen())
                 .build());
 
         var renderContext = Platform.getEngineClient().getRenderContext();

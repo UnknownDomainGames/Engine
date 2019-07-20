@@ -1,6 +1,12 @@
 package nullengine.client.rendering.display;
 
 import org.joml.Matrix4fc;
+import org.lwjgl.glfw.GLFW;
+
+import java.awt.*;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public interface Window {
 
@@ -70,13 +76,9 @@ public interface Window {
 
     void endRender();
 
-    default void toggleFullscreen(){
-        setFullscreen(!isFullscreen());
-    }
+    DisplayMode getDisplayMode();
 
-    boolean isFullscreen();
-
-    void setFullscreen(boolean fullscreen);
+    void setDisplayMode(DisplayMode mode);
 
     @FunctionalInterface
     interface KeyCallback {

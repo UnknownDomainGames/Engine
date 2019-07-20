@@ -39,7 +39,7 @@ public class GLFWWindow implements Window {
 
     private boolean closed = false;
     private boolean visible = false;
-    private boolean fullscreen = false;
+    private DisplayMode displayMode = DisplayMode.WINDOWED;
 
     private Cursor cursor;
 
@@ -285,31 +285,47 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public boolean isFullscreen() {
-        return fullscreen;
+    public DisplayMode getDisplayMode(){
+        return displayMode;
     }
 
     private int lastPosX, lastPosY, lastWidth, lastHeight;
 
     @Override
-    public void setFullscreen(boolean fullscreen){
+    public void setDisplayMode(DisplayMode displaymode){
+        if(displayMode == displaymode) return;
         var mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-        if(fullscreen) {
-            if(!this.fullscreen) {
-                int[] a = new int[1], b = new int[1];
-                glfwGetWindowPos(pointer, a, b);
-                lastPosX = a[0];
-                lastPosY = b[0];
-                glfwGetWindowSize(pointer, a, b);
-                lastWidth = a[0];
-                lastHeight = b[0];
-                glfwSetWindowMonitor(pointer, glfwGetPrimaryMonitor(), 0, 0, mode.width(), mode.height(), mode.refreshRate());
-            }
+        switch (displaymode){
+            case FULLSCREEN:
+                if(this.displayMode == DisplayMode.WINDOWED){
+                    int[] a = new int[1], b = new int[1];
+                    glfwGetWindowPos(pointer, a, b);
+                    lastPosX = a[0];
+                    lastPosY = b[0];
+                    glfwGetWindowSize(pointer, a, b);
+                    lastWidth = a[0];
+                    lastHeight = b[0];
+                }
+                glfwSetWindowMonitor(pointer, getCurrentMonitor(), 0, 0, mode.width(), mode.height(), mode.refreshRate());
+                break;
+            case WINDOWED_FULLSCREEN:
+                if(this.displayMode == DisplayMode.WINDOWED){
+                    int[] a = new int[1], b = new int[1];
+                    glfwGetWindowPos(pointer, a, b);
+                    lastPosX = a[0];
+                    lastPosY = b[0];
+                    glfwGetWindowSize(pointer, a, b);
+                    lastWidth = a[0];
+                    lastHeight = b[0];
+                }
+                glfwSetWindowAttrib(pointer, GLFW_DECORATED, GL_FALSE);
+                glfwSetWindowMonitor(pointer, NULL, 0, 0, mode.width(), mode.height(), mode.refreshRate());
+                break;
+            case WINDOWED:
+                glfwSetWindowAttrib(pointer, GLFW_DECORATED, GL_TRUE);
+                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, lastWidth, lastHeight, mode.refreshRate());
         }
-        else if(this.fullscreen){
-            glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, lastWidth, lastHeight, mode.refreshRate());
-        }
-        this.fullscreen = fullscreen;
+        this.displayMode = displaymode;
     }
 
     private void setupInput() {
@@ -360,5 +376,33 @@ public class GLFWWindow implements Window {
 
     private void enableVSync() {
         glfwSwapInterval(1);
+    }
+
+    public long getCurrentMonitor(){
+        int[] a = new int[1], b = new int[1];
+        org.lwjgl.glfw.GLFW.glfwGetWindowPos(getPointer(), a, b);
+        var wx = a[0];
+        var wy = b[0];
+        org.lwjgl.glfw.GLFW.glfwGetWindowSize(getPointer(), a, b);
+        var ww = a[0];
+        var wh = b[0];
+        var monitors = glfwGetMonitors();
+        var bestOverlap = 0;
+        var bestMonitor = NULL;
+        for(int i = 0; i < monitors.limit(); i++){
+            var mode = glfwGetVideoMode(monitors.get(i));
+            glfwGetMonitorPos(monitors.get(i), a,b);
+            var mx = a[0];
+            var my = b[0];
+            var mw = mode.width();
+            var mh = mode.height();
+            var overlap = Math.max(0, Math.min(wx + ww, mx + mw) - Math.max(wx, mx)) *
+                            Math.max(0, Math.min(wy + wh, my + mh) - Math.max(wy, my));
+            if(bestOverlap < overlap){
+                bestOverlap = overlap;
+                bestMonitor = monitors.get(i);
+            }
+        }
+        return bestMonitor;
     }
 }
