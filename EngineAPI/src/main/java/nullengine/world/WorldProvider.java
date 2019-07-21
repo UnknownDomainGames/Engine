@@ -6,7 +6,7 @@ import nullengine.registry.RegistryEntry;
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 
-public interface WorldProvider<T extends World> extends RegistryEntry<WorldProvider<T>> {
+public interface WorldProvider extends RegistryEntry<WorldProvider> {
 
     /**
      * @param game        The game of the world
@@ -15,5 +15,8 @@ public interface WorldProvider<T extends World> extends RegistryEntry<WorldProvi
      * @return
      */
     @Nonnull
-    T create(@Nonnull Game game, @Nonnull String name, @Nonnull Path storagePath);
+    World create(@Nonnull Game game, @Nonnull Path storagePath, @Nonnull String name, @Nonnull WorldCreationSetting creationSetting);
+
+    @Nonnull
+    World load(@Nonnull Game game, @Nonnull Path storagePath);
 }

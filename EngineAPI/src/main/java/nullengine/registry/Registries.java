@@ -6,13 +6,19 @@ import nullengine.item.Item;
 import nullengine.registry.game.BlockRegistry;
 import nullengine.registry.game.ItemRegistry;
 import nullengine.util.function.Suppliers;
+import nullengine.world.WorldProvider;
 
 import java.util.function.Supplier;
 
 public final class Registries {
 
+    private static Supplier<Registry<WorldProvider>> worldProviderRegistry = UninitializationException.supplier("WorldProvider registry is uninitialized");
     private static Supplier<BlockRegistry> blockRegistry = UninitializationException.supplier("Block registry is uninitialized");
     private static Supplier<ItemRegistry> itemRegistry = UninitializationException.supplier("Item registry is uninitialized");
+
+    public static Registry<WorldProvider> getWorldProviderRegistry() {
+        return worldProviderRegistry.get();
+    }
 
     public static BlockRegistry getBlockRegistry() {
         return blockRegistry.get();
@@ -23,6 +29,7 @@ public final class Registries {
     }
 
     public static void init(RegistryManager registryManager) {
+        worldProviderRegistry = Suppliers.ofWeakReference(registryManager.getRegistry(WorldProvider.class));
         blockRegistry = Suppliers.ofWeakReference((BlockRegistry) registryManager.getRegistry(Block.class));
         itemRegistry = Suppliers.ofWeakReference((ItemRegistry) registryManager.getRegistry(Item.class));
     }

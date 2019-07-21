@@ -10,10 +10,13 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
+import java.nio.file.Path;
 
 public abstract class GameBase implements Game {
 
     protected final Engine engine;
+
+    protected final Path storagePath;
 
     protected final Logger logger;
     protected final Marker marker = MarkerFactory.getMarker("Game");
@@ -23,10 +26,11 @@ public abstract class GameBase implements Game {
     protected boolean markedTermination = false;
     protected boolean terminated = false;
 
-    public GameBase(Engine engine) {
+    public GameBase(Engine engine, Path storagePath) {
         this.engine = engine;
         this.logger = engine.getLogger();
         this.eventBus = engine.getEventBus();
+        this.storagePath = storagePath;
     }
 
     /**
@@ -52,6 +56,12 @@ public abstract class GameBase implements Game {
     @Override
     public Engine getEngine() {
         return engine;
+    }
+
+    @Nonnull
+    @Override
+    public Path getStoragePath() {
+        return storagePath;
     }
 
     @Nonnull

@@ -3,9 +3,10 @@ package nullengine.game;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import nullengine.Engine;
+import nullengine.registry.Registries;
 import nullengine.world.World;
 import nullengine.world.WorldCommon;
-import nullengine.world.WorldProvider;
+import nullengine.world.WorldCreationSetting;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
@@ -19,20 +20,19 @@ import java.util.Map;
 public class GameServerFullAsync extends GameBase {
 
     protected Map<String, World> worlds;
-    protected List<WorldCommon> internalWorlds;
     protected List<Thread> worldThreads;
 
-    public GameServerFullAsync(Engine engine) {
-        super(engine);
+    public GameServerFullAsync(Engine engine, Path storagePath) {
+        super(engine, storagePath);
     }
 
     @Override
-    public World spawnWorld(WorldProvider provider, String name) {
-        var world = (WorldCommon) provider.create(this, name, Path.of("world", name));
+    public World createWorld(String providerName, String name, WorldCreationSetting creationConfig) {
+        var provider = Registries.getWorldProviderRegistry().getValue(providerName);
+        var world = provider.create(this, storagePath.resolve(Path.of("world", name)), name, creationConfig);
         this.worlds.put(name, world);
-        this.internalWorlds.add(world);
-        Thread thread = new Thread(world);
-        thread.setName("World Thread: default");
+        Thread thread = new Thread((Runnable) world);
+        thread.setName("World Thread - " + name);
         this.worldThreads.add(thread);
         return world;
     }
@@ -51,7 +51,6 @@ public class GameServerFullAsync extends GameBase {
     @Override
     protected void constructStage() {
         this.worlds = Maps.newTreeMap();
-        this.internalWorlds = Lists.newArrayList();
         this.worldThreads = Lists.newArrayList();
         super.constructStage();
     }
@@ -71,8 +70,8 @@ public class GameServerFullAsync extends GameBase {
 
     @Override
     protected void tryTerminate() {
-        for (WorldCommon worldCommon : internalWorlds) {
-            worldCommon.stop();
+        for (World worldCommon : worlds.values()) {
+            ((WorldCommon) worldCommon).stop();
         }
         // TODO: unload mod/resource here
         super.tryTerminate();

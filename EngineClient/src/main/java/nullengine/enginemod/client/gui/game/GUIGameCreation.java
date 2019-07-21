@@ -42,8 +42,7 @@ public class GUIGameCreation extends BorderPane {
             var engine = Platform.getEngineClient();
             var player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
             engine.getRenderContext().getGuiManager().closeScreen();
-            engine.startGame(new GameClientStandalone(engine, player));
-
+            engine.startGame(new GameClientStandalone(engine, engine.getRunPath().resolve("game"), player));
         });
         vBox.getChildren().add(buttonCreate);
 

@@ -31,6 +31,7 @@ import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -38,6 +39,9 @@ import java.util.List;
 public class WorldCommon implements World, Runnable {
 
     private final Game game;
+    private final WorldProvider provider;
+    private final Path storagePath;
+    private final WorldCreationSetting creationSetting;
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
     private final WorldCollisionManager collisionManager = new WorldCollisionManagerImpl(this);
@@ -49,14 +53,16 @@ public class WorldCommon implements World, Runnable {
     private final List<Player> players = new ArrayList<>();
     private final List<Entity> entityList = new ArrayList<>();
     private final List<Runnable> nextTick = new ArrayList<>();
-    private WorldInfo worldInfo;
 
     private final FixStepTicker ticker;
     private long gameTick;
 //    private ExecutorService service;
 
-    public WorldCommon(Game game, WorldCommonLoader loader, ChunkGenerator chunkGenerator) {
+    public WorldCommon(Game game, WorldProvider provider, Path storagePath, WorldCreationSetting creationSetting, WorldCommonLoader loader, ChunkGenerator chunkGenerator) {
         this.game = game;
+        this.provider = provider;
+        this.storagePath = storagePath;
+        this.creationSetting = creationSetting;
         //this.chunkStorage = new ChunkStorage(this);
         this.loader = loader;
         this.chunkManager = new WorldCommonChunkManager(this, chunkGenerator);
@@ -86,8 +92,23 @@ public class WorldCommon implements World, Runnable {
     }
 
     @Override
-    public WorldInfo getWorldInfo() {
-        return worldInfo;
+    public WorldProvider getProvider() {
+        return provider;
+    }
+
+    @Override
+    public Path getStoragePath() {
+        return null;
+    }
+
+    @Override
+    public WorldCreationSetting getCreationSetting() {
+        return creationSetting;
+    }
+
+    @Override
+    public WorldSetting getSetting() {
+        return null;
     }
 
     @Override

@@ -3,9 +3,10 @@ package nullengine.game;
 import nullengine.Engine;
 import nullengine.event.EventBus;
 import nullengine.world.World;
-import nullengine.world.WorldProvider;
+import nullengine.world.WorldCreationSetting;
 
 import javax.annotation.Nonnull;
+import java.nio.file.Path;
 
 /**
  * The game shares the same set of mod and resources pack manifest.
@@ -29,7 +30,10 @@ public interface Game {
     @Nonnull
     Engine getEngine();
 
-    World spawnWorld(WorldProvider provider, String name);
+    @Nonnull
+    Path getStoragePath();
+
+    World createWorld(String providerName, String name, WorldCreationSetting config);
 
     void init();
 

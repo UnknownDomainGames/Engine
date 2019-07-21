@@ -7,6 +7,7 @@ import nullengine.world.chunk.Chunk;
 import nullengine.world.collision.WorldCollisionManager;
 
 import javax.annotation.Nonnull;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 
@@ -16,6 +17,14 @@ import java.util.List;
 public interface World extends BlockGetter, BlockSetter {
 
     Game getGame();
+
+    WorldProvider getProvider();
+
+    Path getStoragePath();
+
+    WorldCreationSetting getCreationSetting();
+
+    WorldSetting getSetting();
 
     WorldCollisionManager getCollisionManager();
 
@@ -35,11 +44,5 @@ public interface World extends BlockGetter, BlockSetter {
     @Override
     default World getWorld() {
         return this;
-    }
-
-    WorldInfo getWorldInfo();
-
-    interface Config {
-
     }
 }

@@ -15,8 +15,6 @@ import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyBinding;
 import nullengine.client.rendering.block.BlockRenderer;
 import nullengine.client.rendering.camera.Camera;
-import nullengine.client.rendering.display.DisplayMode;
-import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.entity.EntityItemRenderer;
 import nullengine.enginemod.client.gui.game.GUIGameCreation;
 import nullengine.enginemod.client.gui.game.GuiChat;
@@ -46,6 +44,7 @@ import nullengine.registry.impl.SimpleEntityRegistry;
 import nullengine.registry.impl.SimpleItemRegistry;
 import nullengine.world.WorldProvider;
 import nullengine.world.collision.RayTraceBlockHit;
+import nullengine.world.provider.FlatWorldProvider;
 
 public final class EngineModListeners {
 
@@ -63,6 +62,11 @@ public final class EngineModListeners {
         e.addRegistry(EntityProvider.class, SimpleEntityRegistry::new);
 
         e.addRegistry(KeyBinding.class, () -> new IdAutoIncreaseRegistry<>(KeyBinding.class));
+    }
+
+    @Listener
+    public static void registerWorldProvider(ModRegistrationEvent.Register<WorldProvider> event) {
+        event.register(new FlatWorldProvider().name("flat"));
     }
 
     @Listener
