@@ -33,7 +33,7 @@ public interface Game {
     @Nonnull
     Path getStoragePath();
 
-    World createWorld(String providerName, String name, WorldCreationSetting config);
+    World createWorld(@Nonnull String providerName, @Nonnull String name, @Nonnull WorldCreationSetting config);
 
     void init();
 
