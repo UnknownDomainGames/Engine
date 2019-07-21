@@ -21,7 +21,7 @@ public class AsyncIOUtils {
 
             @Override
             public Thread newThread(Runnable r) {
-                return new Thread(r, "AsyncIO-" + nextThreadId.getAndIncrement());
+                return new Thread(r, "AsyncIO - " + nextThreadId.getAndIncrement());
             }
         });
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
