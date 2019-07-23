@@ -1,6 +1,10 @@
 package nullengine.client.rendering.util;
 
+import nullengine.Platform;
+import nullengine.client.rendering.display.Window;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.stb.STBImageWrite;
+import org.lwjgl.system.MemoryUtil;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
@@ -15,6 +19,11 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.TemporalField;
+import java.util.Calendar;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
@@ -143,5 +152,29 @@ public class GLHelper {
                 break;
         }
         return error;
+    }
+
+    public static void takeScreenshot(Path storagePath){
+        var window = Platform.getEngineClient().getRenderContext().getWindow();
+        var buffer = ByteBuffer.allocateDirect(window.getWidth() * window.getHeight() * 4);
+        glReadPixels(0,0, window.getWidth(),window.getHeight(),GL_RGBA,GL_UNSIGNED_BYTE,buffer);
+        var filename = "Screenshot-" + DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) + ".png";
+        if(Files.notExists(storagePath)){
+            try {
+                Files.createDirectory(storagePath);
+            } catch (IOException e) {
+                Platform.getLogger().warn("Cannot create directory " + storagePath, e);
+                return;
+            }
+        }
+        var path = storagePath.resolve(filename).toAbsolutePath().toString();
+        STBImageWrite.stbi_flip_vertically_on_write(true);
+        if(STBImageWrite.stbi_write_png(path, window.getWidth(), window.getHeight(), 4, buffer, 0)){
+            Platform.getLogger().info("Screenshot successfully saved at " + path);
+        }
+        else {
+            Platform.getLogger().warn("Cannot save screenshot at " + path + "!");
+        }
+
     }
 }

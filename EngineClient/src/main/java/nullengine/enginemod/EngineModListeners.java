@@ -16,6 +16,7 @@ import nullengine.client.input.keybinding.KeyBinding;
 import nullengine.client.rendering.block.BlockRenderer;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.entity.EntityItemRenderer;
+import nullengine.client.rendering.util.GLHelper;
 import nullengine.enginemod.client.gui.game.GUIGameCreation;
 import nullengine.enginemod.client.gui.game.GuiChat;
 import nullengine.enginemod.client.gui.game.GuiIngameMenu;
@@ -202,6 +203,11 @@ public final class EngineModListeners {
                         c.getRenderContext().getGuiManager().showScreen(new Scene(new GuiIngameMenu()));
                     }
                 })
+                .build());
+        event.register(KeyBinding.builder()
+                .name("game.screenshot")
+                .key(Key.KEY_F2)
+                .startHandler(engineClient -> GLHelper.takeScreenshot(engineClient.getRunPath().resolve("screenshot")))
                 .build());
 
         var renderContext = Platform.getEngineClient().getRenderContext();
