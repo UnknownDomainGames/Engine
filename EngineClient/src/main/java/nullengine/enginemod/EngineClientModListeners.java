@@ -47,21 +47,15 @@ import nullengine.world.WorldProvider;
 import nullengine.world.collision.RayTraceBlockHit;
 import nullengine.world.provider.FlatWorldProvider;
 
-public final class EngineModListeners {
+public final class EngineClientModListeners {
 
     @Listener
     public static void onPreInit(ModLifecycleEvent.PreInitialization event) {
-        Platform.getEngine().getEventBus().register(EngineModListeners.class);
+        Platform.getEngine().getEventBus().register(EngineClientModListeners.class);
     }
 
     @Listener
     public static void constructRegistry(ModRegistrationEvent.Construction e) {
-        // TODO: move to common.
-        e.addRegistry(WorldProvider.class, () -> new IdAutoIncreaseRegistry<>(WorldProvider.class));
-        e.addRegistry(Block.class, SimpleBlockRegistry::new);
-        e.addRegistry(Item.class, SimpleItemRegistry::new);
-        e.addRegistry(EntityProvider.class, SimpleEntityRegistry::new);
-
         e.addRegistry(KeyBinding.class, () -> new IdAutoIncreaseRegistry<>(KeyBinding.class));
     }
 
@@ -72,9 +66,7 @@ public final class EngineModListeners {
 
     @Listener
     public static void registerBlocks(ModRegistrationEvent.Register<Block> event) {
-        event.register(AirBlock.AIR);
         AirBlock.AIR.addComponent(BlockRenderer.class, new AirBlockRenderer());
-        ((BlockRegistry) event.getRegistry()).setAirBlock(AirBlock.AIR);
     }
 
     @Listener
