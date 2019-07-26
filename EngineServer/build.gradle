@@ -1,3 +1,6 @@
 dependencies {
     compile project(':Engine')
+
+    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
 }
