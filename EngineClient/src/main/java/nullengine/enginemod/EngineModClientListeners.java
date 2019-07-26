@@ -30,8 +30,8 @@ import nullengine.event.Listener;
 import nullengine.event.engine.EngineEvent;
 import nullengine.event.mod.ModLifecycleEvent;
 import nullengine.event.mod.ModRegistrationEvent;
-import nullengine.event.block.BlockActivateEvent;
-import nullengine.event.block.BlockClickEvent;
+import nullengine.event.world.block.BlockActivateEvent;
+import nullengine.event.world.block.BlockClickEvent;
 import nullengine.item.BlockItem;
 import nullengine.item.Item;
 import nullengine.item.ItemStack;
@@ -51,22 +51,12 @@ public final class EngineModClientListeners {
 
     @Listener
     public static void onPreInit(ModLifecycleEvent.PreInitialization event) {
-        if (Platform.isClient()) {
-            Platform.getEngine().getEventBus().register(EngineModClientListeners.class);
-        }
+        Platform.getEngine().getEventBus().register(EngineClientModListeners.class);
     }
 
     @Listener
     public static void constructRegistry(ModRegistrationEvent.Construction e) {
-        // TODO: move to common.
-        e.addRegistry(WorldProvider.class, () -> new IdAutoIncreaseRegistry<>(WorldProvider.class));
-        e.addRegistry(Block.class, SimpleBlockRegistry::new);
-        e.addRegistry(Item.class, SimpleItemRegistry::new);
-        e.addRegistry(EntityProvider.class, SimpleEntityRegistry::new);
-
-        if (Platform.isClient()) {
-            e.addRegistry(KeyBinding.class, () -> new IdAutoIncreaseRegistry<>(KeyBinding.class));
-        }
+        e.addRegistry(KeyBinding.class, () -> new IdAutoIncreaseRegistry<>(KeyBinding.class));
     }
 
     @Listener
@@ -76,9 +66,7 @@ public final class EngineModClientListeners {
 
     @Listener
     public static void registerBlocks(ModRegistrationEvent.Register<Block> event) {
-        event.register(AirBlock.AIR);
         AirBlock.AIR.addComponent(BlockRenderer.class, new AirBlockRenderer());
-        ((BlockRegistry) event.getRegistry()).setAirBlock(AirBlock.AIR);
     }
 
     @Listener
@@ -120,7 +108,7 @@ public final class EngineModClientListeners {
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.move.sneak")
-                .key(Key.KEY_C)
+                .key(Key.KEY_LEFT_SHIFT)
                 .startHandler(c -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, true))
                 .endHandler((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, false))
                 .build());

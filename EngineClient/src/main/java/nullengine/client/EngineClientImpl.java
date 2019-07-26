@@ -22,6 +22,7 @@ import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.sound.ALSoundManager;
 import nullengine.client.sound.EngineSoundManager;
 import nullengine.enginemod.EngineModClientListeners;
+import nullengine.enginemod.EngineModListeners;
 import nullengine.event.engine.EngineEvent;
 import nullengine.game.Game;
 import nullengine.logic.Ticker;
@@ -74,7 +75,10 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         disposer = new DisposerImpl();
 
         // TODO: Remove it
-        modManager.getMod("engine").ifPresent(modContainer -> modContainer.getEventBus().register(EngineModClientListeners.class));
+        modManager.getMod("engine").ifPresent(modContainer -> {
+            modContainer.getEventBus().register(EngineModListeners.class);
+            modContainer.getEventBus().register(EngineModClientListeners.class);
+        });
     }
 
     @Override
