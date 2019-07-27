@@ -3,4 +3,9 @@ dependencies {
         exclude group: 'org.lwjgl'
         exclude group: 'org.l33tlabs.twl'
     }
+
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+
+    implementation 'com.github.Mouse0w0.Configuration:configuration-toml4j:1.1.0'
+    implementation 'com.github.Mouse0w0.Configuration:configuration-gson:1.1.0'
 }

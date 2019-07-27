@@ -11,6 +11,7 @@ import nullengine.registry.RegistryManager;
 import nullengine.registry.impl.SimpleRegistryManager;
 import nullengine.util.ClassPathUtils;
 import nullengine.util.CrashHandlerImpl;
+import nullengine.util.LoggerUtils;
 import nullengine.util.RuntimeEnvironment;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -93,6 +94,9 @@ public abstract class EngineBase implements Engine {
         }
         initialized = true;
 
+        initEnvironment();
+        LoggerUtils.initLogger(getRunPath().resolve("logs"), getRuntimeEnvironment() != RuntimeEnvironment.DEPLOYMENT);
+
         constructionStage();
         resourceStage();
         modStage();
@@ -102,7 +106,6 @@ public abstract class EngineBase implements Engine {
     protected void constructionStage() {
         logger.info("Initializing engine!");
 
-        initEnvironment();
         printSystemInfo();
         initExceptionHandler();
 
