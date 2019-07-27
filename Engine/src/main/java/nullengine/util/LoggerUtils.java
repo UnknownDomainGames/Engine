@@ -1,6 +1,5 @@
 package nullengine.util;
 
-import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -45,13 +44,16 @@ public class LoggerUtils {
         fileAppender.setContext(context);
         fileAppender.start();
 
-        var asyncAppender = new AsyncAppender();
-        asyncAppender.setContext(context);
-        asyncAppender.setName("Async");
-        asyncAppender.addAppender(consoleAppender);
-        asyncAppender.addAppender(fileAppender);
-        asyncAppender.start();
-        rootLogger.addAppender(asyncAppender);
+//        var asyncAppender = new AsyncAppender();
+//        asyncAppender.setContext(context);
+//        asyncAppender.setName("Async");
+//        asyncAppender.addAppender(consoleAppender);
+//        asyncAppender.addAppender(fileAppender);
+//        asyncAppender.start();
+//        rootLogger.addAppender(asyncAppender);
+
+        rootLogger.addAppender(consoleAppender);
+        rootLogger.addAppender(fileAppender);
 
         rootLogger.setLevel(level);
     }
