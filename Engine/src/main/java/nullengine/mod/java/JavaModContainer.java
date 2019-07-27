@@ -63,12 +63,12 @@ public class JavaModContainer implements ModContainer {
 
     @Override
     public Path getConfigPath() {
-        return null;
+        return configPath;
     }
 
     @Override
     public Path getDataPath() {
-        return null;
+        return dataPath;
     }
 
     @Override

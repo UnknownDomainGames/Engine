@@ -49,7 +49,7 @@ public abstract class EngineBase implements Engine {
     private boolean markedTermination = false;
 
     protected EngineBase(Path runPath) {
-        this.runPath = runPath;
+        this.runPath = runPath.toAbsolutePath();
     }
 
     @Override
