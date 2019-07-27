@@ -106,7 +106,7 @@ public class EngineModManager implements ModManager {
         }
 
         modCandidate.setConfigPath(modConfigsPath.resolve(metadata.getId()));
-        modCandidate.setConfigPath(modDatasPath.resolve(metadata.getId()));
+        modCandidate.setDataPath(modDatasPath.resolve(metadata.getId()));
 
         ModContainer modContainer;
         try {
@@ -130,7 +130,7 @@ public class EngineModManager implements ModManager {
             var engineMod = new DummyModContainer(SimpleModMetadata.builder().id("engine").version(Platform.getVersion()).name("Engine").build());
             var classLoader = engine.getClass().getClassLoader();
             engineMod.setClassLoader(classLoader);
-            Path engineJarPath = Path.of(engine.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
+            var engineJarPath = Path.of(engine.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
             AbstractModAssets modAssets;
             if (engine.getRuntimeEnvironment() == RuntimeEnvironment.ENGINE_DEVELOPMENT) {
                 modAssets = new JavaModAssets(getDirectoriesInClassPath(), classLoader);
@@ -140,6 +140,8 @@ public class EngineModManager implements ModManager {
             modAssets.setMod(engineMod);
             engineMod.setAssets(modAssets);
             engineMod.setEventBus(SimpleEventBus.builder().eventListenerFactory(ReflectEventListenerFactory.instance()).build());
+            engineMod.setConfigPath(modConfigsPath.resolve(engineMod.getId()));
+            engineMod.setDataPath(modDatasPath.resolve(engineMod.getId()));
             loadedModContainers.put(engineMod.getId(), engineMod);
         } catch (IOException | URISyntaxException ignored) {
         }
