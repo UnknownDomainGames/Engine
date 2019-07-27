@@ -29,6 +29,10 @@ public interface ModContainer {
 
     Collection<Path> getSources();
 
+    Path getConfigPath();
+
+    Path getDataPath();
+
     ModAssets getAssets();
 
     EventBus getEventBus();

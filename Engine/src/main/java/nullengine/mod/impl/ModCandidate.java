@@ -11,6 +11,9 @@ public class ModCandidate {
     private final Collection<Path> sources;
     private final ModMetadata metadata;
 
+    private Path configPath;
+    private Path dataPath;
+
     private DependencyCheckResult dependencyCheckResult;
 
     public ModCandidate(Collection<Path> sources, ModMetadata metadata) {
@@ -24,6 +27,22 @@ public class ModCandidate {
 
     public ModMetadata getMetadata() {
         return metadata;
+    }
+
+    public Path getConfigPath() {
+        return configPath;
+    }
+
+    public void setConfigPath(Path configPath) {
+        this.configPath = configPath;
+    }
+
+    public Path getDataPath() {
+        return dataPath;
+    }
+
+    public void setDataPath(Path dataPath) {
+        this.dataPath = dataPath;
     }
 
     public DependencyCheckResult getDependencyCheckResult() {
