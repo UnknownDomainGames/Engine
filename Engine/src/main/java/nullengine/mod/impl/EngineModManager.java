@@ -46,8 +46,13 @@ public class EngineModManager implements ModManager {
 
     private final Engine engine;
 
-    public EngineModManager(Engine engine) {
+    private final Path modConfigsPath;
+    private final Path modDatasPath;
+
+    public EngineModManager(Engine engine, Path modConfigsPath, Path modDatasPath) {
         this.engine = engine;
+        this.modConfigsPath = modConfigsPath;
+        this.modDatasPath = modDatasPath;
         this.modInitializer = new ModInitializer(engine);
         loadEngineDummyMod();
     }
@@ -99,6 +104,9 @@ public class EngineModManager implements ModManager {
         if (!result.isPassed()) {
             throw new MissingDependencyException(metadata.getId(), result);
         }
+
+        modCandidate.setConfigPath(modConfigsPath.resolve(metadata.getId()));
+        modCandidate.setConfigPath(modDatasPath.resolve(metadata.getId()));
 
         ModContainer modContainer;
         try {
@@ -199,31 +207,4 @@ public class EngineModManager implements ModManager {
             Platform.getLogger().warn("Not found mod in workspace!");
         }
     }
-
-//    public void loadMods() {
-//        if (isModLoaded(modMetadata.getId())) {
-//            throw new ModAlreadyLoadedException(modMetadata.getId());
-//        }
-//
-//        DependencyCheckResult result = dependencyManager.checkDependencies(modMetadata.getDependencies());
-//        if (!result.isPassed()) {
-//            throw new MissingDependencyException(modMetadata.getId(), result);
-//        }
-//
-//        ModContainer modContainer;
-//        try {
-//            modContainer = modLoader.load(sources, modMetadata, dependencyManager.getDependentMods(modMetadata.getDependencies()));
-//        } catch (ModLoadException e) {
-//            throw e;
-//        } catch (Exception e) {
-//            throw new ModLoadException(modMetadata.getId(), e);
-//        }
-//
-//        if (modContainer == null) {
-//            throw new ModLoadException(modMetadata.getId());
-//        }
-//
-//        loadedModContainers.put(modContainer.getId(), modContainer);
-//        return modContainer;
-//    }
 }

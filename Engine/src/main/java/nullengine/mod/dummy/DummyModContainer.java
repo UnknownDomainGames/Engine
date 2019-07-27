@@ -19,6 +19,8 @@ public class DummyModContainer implements ModContainer {
     private Object modInstance;
     private ClassLoader classloader;
     private Collection<Path> sources;
+    private Path configPath;
+    private Path dataPath;
     private ModAssets assets;
     private EventBus eventbus;
 
@@ -53,6 +55,16 @@ public class DummyModContainer implements ModContainer {
     }
 
     @Override
+    public Path getConfigPath() {
+        return configPath;
+    }
+
+    @Override
+    public Path getDataPath() {
+        return dataPath;
+    }
+
+    @Override
     public ModAssets getAssets() {
         return assets;
     }
@@ -84,6 +96,16 @@ public class DummyModContainer implements ModContainer {
 
     public DummyModContainer setSources(Collection<Path> sources) {
         this.sources = sources;
+        return this;
+    }
+
+    public DummyModContainer setConfigPath(Path configPath) {
+        this.configPath = configPath;
+        return this;
+    }
+
+    public DummyModContainer setDataPath(Path dataPath) {
+        this.dataPath = dataPath;
         return this;
     }
 

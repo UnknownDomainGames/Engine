@@ -17,15 +17,19 @@ public class JavaModContainer implements ModContainer {
     private final Collection<Path> sources;
     private final ClassLoader classLoader;
     private final ModMetadata metadata;
+    private final Path configPath;
+    private final Path dataPath;
     private final ModAssets assets;
     private final EventBus eventBus;
     private final Logger logger;
     private final Object instance;
 
-    public JavaModContainer(Collection<Path> sources, ClassLoader classLoader, ModMetadata metadata, ModAssets assets, Logger logger, Object instance) {
+    public JavaModContainer(Collection<Path> sources, ClassLoader classLoader, ModMetadata metadata, Path configPath, Path dataPath, ModAssets assets, Logger logger, Object instance) {
         this.sources = sources;
         this.classLoader = classLoader;
         this.metadata = metadata;
+        this.configPath = configPath;
+        this.dataPath = dataPath;
         this.assets = assets;
         this.eventBus = SimpleEventBus.builder().eventListenerFactory(ReflectEventListenerFactory.instance()).build();
         this.logger = logger;
@@ -55,6 +59,16 @@ public class JavaModContainer implements ModContainer {
     @Override
     public Collection<Path> getSources() {
         return sources;
+    }
+
+    @Override
+    public Path getConfigPath() {
+        return null;
+    }
+
+    @Override
+    public Path getDataPath() {
+        return null;
     }
 
     @Override

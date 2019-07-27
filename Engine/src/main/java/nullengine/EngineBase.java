@@ -108,7 +108,7 @@ public abstract class EngineBase implements Engine {
 
         eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
         registryManager = new SimpleRegistryManager(new HashMap<>());
-        modManager = new EngineModManager(this);
+        modManager = new EngineModManager(this, getRunPath().resolve("config"), getRunPath().resolve("data"));
     }
 
     protected void resourceStage() {

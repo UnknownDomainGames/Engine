@@ -4,7 +4,6 @@ import nullengine.mod.ModContainer;
 import nullengine.mod.ModLoader;
 import nullengine.mod.exception.ModLoadException;
 import nullengine.mod.impl.ModCandidate;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -19,16 +18,16 @@ public class JavaModLoader implements ModLoader {
         var sources = modCandidate.getSources();
         var metadata = modCandidate.getMetadata();
 
-        Logger logger = LoggerFactory.getLogger(isNullOrEmpty(metadata.getName()) ? metadata.getId() : metadata.getName());
+        var logger = LoggerFactory.getLogger(isNullOrEmpty(metadata.getName()) ? metadata.getId() : metadata.getName());
 
-        ModClassLoader classLoader = new ModClassLoader("ModClassLoader-" + metadata.getId(), logger, JavaModLoader.class.getClassLoader());
+        var classLoader = new ModClassLoader("ModClassLoader-" + metadata.getId(), logger, JavaModLoader.class.getClassLoader());
         classLoader.addPaths(sources);
         classLoader.addDependencies(dependencies);
 
         try {
-            Object instance = Class.forName(metadata.getMainClass(), true, classLoader).getDeclaredConstructor().newInstance();
-            JavaModAssets assets = new JavaModAssets(sources, classLoader);
-            JavaModContainer modContainer = new JavaModContainer(sources, classLoader, metadata, assets, logger, instance);
+            var instance = Class.forName(metadata.getMainClass(), true, classLoader).getDeclaredConstructor().newInstance();
+            var assets = new JavaModAssets(sources, classLoader);
+            var modContainer = new JavaModContainer(sources, classLoader, metadata, modCandidate.getConfigPath(), modCandidate.getDataPath(), assets, logger, instance);
             classLoader.setMod(modContainer);
             assets.setMod(modContainer);
             return modContainer;
