@@ -9,6 +9,8 @@ import nullengine.Engine;
 import nullengine.Platform;
 import nullengine.mod.ModAssets;
 import nullengine.mod.ModContainer;
+import nullengine.mod.annotation.ConfigPath;
+import nullengine.mod.annotation.DataPath;
 import nullengine.mod.init.ModInitializationTask;
 import nullengine.mod.init.ModInitializer;
 import nullengine.util.JsonUtils;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Path;
 import java.util.Optional;
 
 public class InjectionTask implements ModInitializationTask {
@@ -48,6 +51,8 @@ public class InjectionTask implements ModInitializationTask {
                                 bind((Class) mod.getInstance().getClass()).toInstance(mod.getInstance());
                                 bind(Logger.class).toInstance(mod.getLogger());
                                 bind(ModAssets.class).toInstance(mod.getAssets());
+                                bind(Path.class).annotatedWith(ConfigPath.class).toInstance(mod.getConfigPath());
+                                bind(Path.class).annotatedWith(DataPath.class).toInstance(mod.getDataPath());
                             }
                         },
                         new AbstractModule() {
