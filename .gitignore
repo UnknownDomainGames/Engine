@@ -451,3 +451,6 @@ manifest.mf
 
 # visual studio code
 .vscode/
+
+# null engine run path
+run/
