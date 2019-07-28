@@ -40,7 +40,7 @@ public @interface Mod {
 
     Dependency[] dependencies() default {};
 
-    Element[] elements() default {};
+    CustomElement[] customElements() default {};
 
     boolean generateMetadata() default true;
 }
