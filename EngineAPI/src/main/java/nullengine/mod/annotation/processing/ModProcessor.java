@@ -78,7 +78,7 @@ public class ModProcessor extends AbstractProcessor {
                     .authors(Arrays.asList((String[]) values.getOrDefault("authors", new String[0])))
                     .permissions(Arrays.asList((String[]) values.getOrDefault("permissions", new String[0])))
                     .dependencies(createDependencyList((List<AnnotationMirror>) values.get("dependencies")))
-                    .elements(createElementMap((List<AnnotationMirror>) values.get("elements")))
+                    .elements(createElementMap((List<AnnotationMirror>) values.get("customElements")))
                     .build();
             writer.append(ModMetadataUtils.toJson(metadata).toString());
         } catch (IOException e) {
