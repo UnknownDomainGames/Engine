@@ -11,9 +11,17 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class SimpleClassToObjectRegistry<T extends RegistryEntry<T>> implements ClassToObjectRegistry<T> {
+public abstract class SimpleClassToObjectRegistry<T extends RegistryEntry<T>> extends SimpleRegistry<T> implements ClassToObjectRegistry<T> {
 
     protected final BiMap<Class<? extends T>, T> clazzToObject = HashBiMap.create();
+
+    public SimpleClassToObjectRegistry(Class<T> entryType) {
+        super(entryType);
+    }
+
+    public SimpleClassToObjectRegistry(Class<T> entryType, String name) {
+        super(entryType, name);
+    }
 
     @Nonnull
     @Override
@@ -21,13 +29,9 @@ public abstract class SimpleClassToObjectRegistry<T extends RegistryEntry<T>> im
         if (clazzToObject.containsKey(obj.getClass())) {
             throw new RegistrationException(String.format("Class %s has already registered!", obj.getClass().getName()));
         }
+        super.register(obj);
         clazzToObject.put((Class<? extends T>) obj.getClass(), obj);
         return obj;
-    }
-
-    @Override
-    public boolean containsValue(T value) {
-        return clazzToObject.containsValue(value);
     }
 
     @Override
@@ -36,18 +40,8 @@ public abstract class SimpleClassToObjectRegistry<T extends RegistryEntry<T>> im
     }
 
     @Override
-    public T getValue(String registryName) {
-        return null;
-    }
-
-    @Override
     public Class<? extends T> getClassKey(T value) {
         return clazzToObject.inverse().get(value);
-    }
-
-    @Override
-    public String getKey(T value) {
-        return null;
     }
 
     @Override
@@ -56,38 +50,8 @@ public abstract class SimpleClassToObjectRegistry<T extends RegistryEntry<T>> im
     }
 
     @Override
-    public boolean containsKey(String key) {
-        return false;
-    }
-
-    @Override
-    public Collection<T> getValues() {
-        return clazzToObject.values();
-    }
-
-    @Override
     public Set<Class<? extends T>> getClassKeys() {
         return clazzToObject.keySet();
-    }
-
-    @Override
-    public int getId(T obj) {
-        return 0;
-    }
-
-    @Override
-    public int getId(String key) {
-        return 0;
-    }
-
-    @Override
-    public String getKey(int id) {
-        return null;
-    }
-
-    @Override
-    public T getValue(int id) {
-        return null;
     }
 
     @Override
@@ -95,8 +59,4 @@ public abstract class SimpleClassToObjectRegistry<T extends RegistryEntry<T>> im
         return clazzToObject.entrySet();
     }
 
-    @Override
-    public Collection<Map.Entry<String, T>> getEntries() {
-        return null;
-    }
 }

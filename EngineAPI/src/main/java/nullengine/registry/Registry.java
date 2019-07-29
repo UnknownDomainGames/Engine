@@ -31,21 +31,17 @@ public interface Registry<T extends RegistryEntry<T>> {
     /**
      * Get the registered object by the unique name of the object.
      *
-     * @param registryName The unique name of the object
+     * @param key The unique name of the object
      * @return The object
-     * @see RegistryEntry#getUniqueName()
+     * @see RegistryEntry#getName()
      */
-    T getValue(String registryName);
+    T getValue(String key);
 
-    /**
-     * Well... this method is not really...
-     *
-     * @return The unique name of the object
-     * @see RegistryEntry#getUniqueName()
-     */
-    String getKey(T value);
+    T getValue(Name key);
 
     boolean containsKey(String key);
+
+    boolean containsKey(Name key);
 
     Collection<T> getValues();
 
@@ -55,7 +51,9 @@ public interface Registry<T extends RegistryEntry<T>> {
 
     int getId(String key);
 
-    String getKey(int id);
+    int getId(Name key);
+
+    Name getKey(int id);
 
     T getValue(int id);
 

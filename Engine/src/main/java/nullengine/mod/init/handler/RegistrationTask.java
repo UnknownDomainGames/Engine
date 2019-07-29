@@ -6,7 +6,6 @@ import nullengine.mod.ModContainer;
 import nullengine.mod.annotation.data.AutoRegisterItem;
 import nullengine.mod.init.ModInitializationTask;
 import nullengine.mod.init.ModInitializer;
-import nullengine.registry.Namespaces;
 import nullengine.registry.Registry;
 import nullengine.registry.RegistryEntry;
 import nullengine.registry.RegistryManager;
@@ -27,8 +26,6 @@ public class RegistrationTask implements ModInitializationTask {
 
     @Override
     public void run(ModInitializer initializer, ModContainer mod) {
-        Namespaces.setNamespace(mod.getId());
-
         var registryManager = initializer.getEngine().getRegistryManager();
         mod.getEventBus().post(new ModRegistrationEvent.Construction(registryManager));
         mod.getEventBus().post(new ModRegistrationEvent.Pre(registryManager));
@@ -37,8 +34,6 @@ public class RegistrationTask implements ModInitializationTask {
         }
         doAutoRegister(registryManager, mod);
         mod.getEventBus().post(new ModRegistrationEvent.Post(registryManager));
-
-        Namespaces.clearNamespace();
     }
 
     private void doAutoRegister(RegistryManager registryManager, ModContainer mod) {

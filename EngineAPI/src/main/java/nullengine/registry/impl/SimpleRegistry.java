@@ -4,7 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
-import nullengine.registry.Namespaces;
+import nullengine.registry.Name;
 import nullengine.registry.RegistrationException;
 import nullengine.registry.Registry;
 import nullengine.registry.RegistryEntry;
@@ -45,7 +45,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
             throw new RegistrationException(String.format("%s must be a subclass of RegistryEntry.Impl", obj.getEntryType().getSimpleName()));
         }
 
-        setUniqueName(obj, Namespaces.namespaced(obj.getName()));
+        nameToObject.put(obj.getName().toString(), obj);
         return obj;
     }
 
@@ -62,18 +62,23 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     }
 
     @Override
-    public T getValue(String registryName) {
-        return nameToObject.get(registryName);
+    public T getValue(String key) {
+        return nameToObject.get(key);
     }
 
     @Override
-    public String getKey(T value) {
-        return nameToObject.inverse().get(value);
+    public T getValue(Name key) {
+        return getValue(key.toString());
     }
 
     @Override
     public boolean containsKey(String key) {
         return nameToObject.containsKey(key);
+    }
+
+    @Override
+    public boolean containsKey(Name key) {
+        return containsKey(key.toString());
     }
 
     @Override
@@ -102,8 +107,13 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     }
 
     @Override
-    public String getKey(int id) {
-        return idToObject.get(id).getUniqueName();
+    public int getId(Name key) {
+        return getId(key.toString());
+    }
+
+    @Override
+    public Name getKey(int id) {
+        return idToObject.get(id).getName();
     }
 
     @Override
@@ -116,25 +126,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
         return nameToObject.entrySet();
     }
 
-    private static Field uniqueNameField;
     private static Field idField;
-
-    protected void setUniqueName(T entry, String uniqueName) {
-        if (uniqueNameField == null) {
-            try {
-                uniqueNameField = RegistryEntry.Impl.class.getDeclaredField("uniqueName");
-                uniqueNameField.setAccessible(true);
-            } catch (NoSuchFieldException e) {
-                throw new RegistrationException("Cannot init unique name.", e);
-            }
-        }
-        try {
-            uniqueNameField.set(entry, uniqueName);
-            nameToObject.put(uniqueName, entry);
-        } catch (IllegalAccessException e) {
-            throw new RegistrationException("Cannot set unique name.", e);
-        }
-    }
 
     protected void setId(T entry, int id) {
         if (idField == null) {

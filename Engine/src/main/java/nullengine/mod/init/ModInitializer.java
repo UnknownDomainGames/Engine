@@ -3,6 +3,7 @@ package nullengine.mod.init;
 import nullengine.Engine;
 import nullengine.mod.ModContainer;
 import nullengine.mod.init.handler.*;
+import nullengine.registry.Namespaces;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.LinkedList;
@@ -66,10 +67,12 @@ public class ModInitializer {
     }
 
     public void init(ModContainer mod) {
+        Namespaces.setNamespace(mod.getId());
         for (Pair<String, ModInitializationTask> handler : handlers) {
             stage = handler.getLeft();
             handler.getRight().run(this, mod);
         }
+        Namespaces.setNamespace(null);
     }
 
     public String getStage() {

@@ -4,6 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import nullengine.entity.Entity;
 import nullengine.entity.EntityProvider;
+import nullengine.registry.Name;
 import nullengine.registry.RegistrationException;
 import nullengine.registry.game.EntityRegistry;
 
@@ -64,17 +65,22 @@ public class SimpleEntityRegistry implements EntityRegistry {
     }
 
     @Override
-    public EntityProvider getValue(String registryName) {
+    public EntityProvider getValue(String key) {
         return null;
     }
 
     @Override
-    public String getKey(EntityProvider value) {
+    public EntityProvider getValue(Name key) {
         return null;
     }
 
     @Override
     public boolean containsKey(String key) {
+        return false;
+    }
+
+    @Override
+    public boolean containsKey(Name key) {
         return false;
     }
 
@@ -99,7 +105,12 @@ public class SimpleEntityRegistry implements EntityRegistry {
     }
 
     @Override
-    public String getKey(int id) {
+    public int getId(Name key) {
+        return 0;
+    }
+
+    @Override
+    public Name getKey(int id) {
         return null;
     }
 
