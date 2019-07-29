@@ -21,27 +21,20 @@ public interface RegistryEntry<T> {
      */
     T name(String name);
 
+    T name(Name name);
+
     /**
-     * The user set local name for this object.
-     *
-     * @return The user set local name for this object.
-     * @see #name(String)
+     * Get the name with its "namespaces" which is mod container and registry.
      */
-    String getName();
+    Name getName();
 
     int getId();
-
-    /**
-     * Get the long name with its "namespaces" which is mod container and registry.
-     */
-    String getUniqueName();
 
     abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<T> {
         private final TypeToken<T> token = new TypeToken<T>(getClass()) {
         };
-        private String name;
+        private Name name;
 
-        private String uniqueName;
         private int id;
 
         @SuppressWarnings("unchecked")
@@ -51,7 +44,7 @@ public interface RegistryEntry<T> {
         }
 
         @Override
-        public final String getName() {
+        public final Name getName() {
             return name;
         }
 
@@ -59,13 +52,15 @@ public interface RegistryEntry<T> {
         @Override
         public final T name(String name) {
             if (this.name != null) throw new Error("Duplicated register " + name);
-            this.name = name;
+            this.name = Name.fromString(name);
             return (T) this;
         }
 
         @Override
-        public final String getUniqueName() {
-            return uniqueName;
+        public final T name(Name name) {
+            if (this.name != null) throw new Error("Duplicated register " + name);
+            this.name = name;
+            return (T) this;
         }
 
         @Override
