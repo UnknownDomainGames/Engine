@@ -9,6 +9,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import nullengine.Platform;
+import nullengine.util.Side;
 
 import javax.annotation.Nullable;
 import java.net.InetAddress;
@@ -20,7 +21,7 @@ import java.util.List;
 public class NetworkServer {
     private ChannelFuture future;
 
-    private List<NetworkServerHandler> handlers = Collections.synchronizedList(new ArrayList<>());
+    private List<NetworkHandler> handlers = Collections.synchronizedList(new ArrayList<>());
 
     public void run(int port){
         run(null, port);
@@ -43,7 +44,7 @@ public class NetworkServer {
                         }
                         ch.pipeline().addLast("decoder", new StringDecoder())
                                 .addLast("encoder", new StringEncoder());
-                        var handler = new NetworkServerHandler();
+                        var handler = new NetworkHandler(Side.DEDICATED_SERVER);
                         handlers.add(handler);
                         ch.pipeline().addLast("handler", handler);
                     }
@@ -63,7 +64,7 @@ public class NetworkServer {
 
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
-                        var handler = new NetworkServerHandler();
+                        var handler = new NetworkHandler(Side.DEDICATED_SERVER);
                         handlers.add(handler);
                         ch.pipeline().addLast("handler", handler);
                     }

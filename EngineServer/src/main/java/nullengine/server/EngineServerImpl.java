@@ -3,12 +3,14 @@ package nullengine.server;
 import nullengine.EngineBase;
 import nullengine.enginemod.EngineModListeners;
 import nullengine.game.Game;
+import nullengine.server.network.NetworkServer;
 import nullengine.util.Side;
 
 import java.nio.file.Path;
 
 public class EngineServerImpl extends EngineBase implements EngineServer {
     private Thread serverThread;
+    private NetworkServer nettyServer;
     public EngineServerImpl(Path runPath) {
         super(runPath);
     }

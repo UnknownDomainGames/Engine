@@ -7,6 +7,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import nullengine.util.Side;
 
 import java.net.InetAddress;
 import java.net.SocketAddress;
@@ -29,7 +30,7 @@ public class NetworkClient {
                         }
                         ch.pipeline().addLast("decoder", new StringDecoder())
                                 .addLast("encoder", new StringEncoder());
-                        ch.pipeline().addLast("handler", new NetworkClientHandler());
+                        ch.pipeline().addLast("handler", new NetworkHandler(Side.CLIENT));
                     }
                 })
                 .option(ChannelOption.SO_KEEPALIVE, true).connect(address, port).syncUninterruptibly();
@@ -45,7 +46,7 @@ public class NetworkClient {
 
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
-                        ch.pipeline().addLast("handler", new NetworkClientHandler());
+                        ch.pipeline().addLast("handler", new NetworkHandler(Side.CLIENT));
                     }
                 })
                 .connect(localServerAddress).syncUninterruptibly();

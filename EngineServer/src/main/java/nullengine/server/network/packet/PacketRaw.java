@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import nullengine.server.network.PacketBuf;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public final class PacketRaw extends BasePacket {
@@ -16,13 +16,13 @@ public final class PacketRaw extends BasePacket {
         var str = new Gson().toJson(content);
         var len = str.length();
         buf.writeVarInt(len);
-        buf.writeCharSequence(str, Charset.forName("utf-8"));
+        buf.writeCharSequence(str, StandardCharsets.UTF_8);
     }
 
     @Override
     public void read(PacketBuf buf) throws IOException {
         var len = buf.readVarInt();
-        var str = (String) buf.readCharSequence(len, Charset.forName("utf-8"));
+        var str = (String) buf.readCharSequence(len, StandardCharsets.UTF_8);
         content = new Gson().fromJson(str, Map.class);
     }
 
