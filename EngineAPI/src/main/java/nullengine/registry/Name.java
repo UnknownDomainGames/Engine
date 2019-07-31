@@ -10,6 +10,10 @@ public class Name {
     private final String name;
     private final String uniqueName;
 
+    public static Name of(@Nonnull String name) {
+        return new Name(Namespaces.getNamespace(), name);
+    }
+
     public static Name of(@Nonnull String namespace, @Nonnull String name) {
         return new Name(namespace, name);
     }

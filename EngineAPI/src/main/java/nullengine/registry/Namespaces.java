@@ -1,6 +1,5 @@
 package nullengine.registry;
 
-@Deprecated
 public class Namespaces {
 
     private static String currentNamespace;
