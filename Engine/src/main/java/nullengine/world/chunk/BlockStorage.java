@@ -2,6 +2,7 @@ package nullengine.world.chunk;
 
 import nullengine.block.Block;
 import nullengine.registry.Registries;
+import nullengine.server.network.PacketBuf;
 import nullengine.util.BitArray;
 
 public class BlockStorage {
@@ -28,5 +29,13 @@ public class BlockStorage {
 
     private int getPosIndex(int x, int y, int z) {
         return ((x & 0xF) << 8) | ((y & 0xF) << 4) | z & 0xF;
+    }
+
+    public void writeToPacketBuffer(PacketBuf buf){
+
+    }
+
+    public void readFromPacketBuffer(PacketBuf buf){
+
     }
 }
