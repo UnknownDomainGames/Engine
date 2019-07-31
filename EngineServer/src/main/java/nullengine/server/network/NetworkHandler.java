@@ -6,11 +6,20 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.local.LocalChannel;
 import io.netty.channel.local.LocalServerChannel;
 import io.netty.handler.timeout.TimeoutException;
+import nullengine.Platform;
+import nullengine.server.event.PacketReceivedEvent;
 import nullengine.server.network.packet.Packet;
+import nullengine.util.Side;
 
-public class NetworkServerHandler extends SimpleChannelInboundHandler<Packet> {
+public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     private Channel channel;
+    //which is THIS handler located
+    private final Side instanceSide;
+
+    public NetworkHandler(Side side){
+        instanceSide = side;
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -36,7 +45,7 @@ public class NetworkServerHandler extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) throws Exception {
-
+        Platform.getEngine().getEventBus().post(new PacketReceivedEvent(packet));
     }
 
     @Override

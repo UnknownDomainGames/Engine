@@ -4,7 +4,7 @@ import nullengine.Platform;
 import nullengine.server.network.PacketBuf;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,10 +16,10 @@ public class PacketHandshake extends BasePacket {
     @Override
     public void write(PacketBuf buf) throws IOException {
         buf.writeVarInt(Platform.getVersion().length());
-        buf.writeCharSequence(Platform.getVersion(), Charset.forName("ascii"));
+        buf.writeCharSequence(Platform.getVersion(), StandardCharsets.US_ASCII);
         var modlist = Platform.getEngine().getModManager().getLoadedMods().stream().map(container -> container.getId() + ":" + container.getVersion().toString()).collect(Collectors.toList());
         buf.writeVarInt(modlist.size());
-        var charset = Charset.forName("utf-8");
+        var charset = StandardCharsets.UTF_8;
         for (String s : modlist) {
             buf.writeVarInt(s.length());
             buf.writeCharSequence(s, charset);
@@ -29,10 +29,10 @@ public class PacketHandshake extends BasePacket {
     @Override
     public void read(PacketBuf buf) throws IOException {
         var len = buf.readVarInt();
-        engineVersion = (String) buf.readCharSequence(len, Charset.forName("ascii"));
+        engineVersion = (String) buf.readCharSequence(len, StandardCharsets.US_ASCII);
         mods = new ArrayList<>();
         var size = buf.readVarInt();
-        var charset = Charset.forName("utf-8");
+        var charset = StandardCharsets.UTF_8;
         for (int i = 0; i < size; i++) {
             len = buf.readVarInt();
             mods.add((String) buf.readCharSequence(len, charset));
