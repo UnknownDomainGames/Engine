@@ -85,11 +85,11 @@ public class RegistrationTask implements ModInitializationTask {
     private void doAutoRegisterField(RegistryManager registryManager, ModContainer mod, AutoRegisterItem item) {
         try {
             Class<?> clazz = Class.forName(item.getOwner(), true, mod.getClassLoader());
-            Field field = clazz.getDeclaredField(item.getName());
+            Field field = clazz.getDeclaredField(item.getField());
             field.setAccessible(true);
             registryManager.register((RegistryEntry) field.get(null));
         } catch (ReflectiveOperationException e) {
-            mod.getLogger().warn(format("Cannot auto register field %s.%s.", item.getOwner(), item.getName()), e);
+            mod.getLogger().warn(format("Cannot auto register field %s.%s.", item.getOwner(), item.getField()), e);
         }
     }
 }
