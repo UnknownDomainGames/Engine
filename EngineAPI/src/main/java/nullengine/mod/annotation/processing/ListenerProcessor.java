@@ -20,13 +20,11 @@ import static nullengine.mod.annotation.processing.ProcessingUtils.hasModifier;
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class ListenerProcessor extends AbstractProcessor {
 
-    private static final String CLASS_NAME = Listener.class.getName();
-
     private TypeMirror eventTypeMirror;
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(CLASS_NAME);
+        return Set.of(Listener.class.getName());
     }
 
     @Override
