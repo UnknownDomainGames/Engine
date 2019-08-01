@@ -25,13 +25,11 @@ import static nullengine.mod.annotation.processing.ProcessingUtils.hasModifier;
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class InjectProcessor extends AbstractProcessor {
 
-    private static final String CLASS_NAME = Inject.class.getName();
-
     private final Set<String> items = new HashSet<>();
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(CLASS_NAME);
+        return Set.of(Inject.class.getName());
     }
 
     @Override

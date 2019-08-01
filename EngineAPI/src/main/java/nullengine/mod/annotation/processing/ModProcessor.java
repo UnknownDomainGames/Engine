@@ -42,9 +42,6 @@ public class ModProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (!roundEnv.processingOver()) {
             for (Element element : roundEnv.getElementsAnnotatedWith(Mod.class)) {
-                if (!(element instanceof TypeElement))
-                    continue;
-
                 if (foundMod) {
                     processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Too many mods.", element);
                 }

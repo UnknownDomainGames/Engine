@@ -30,15 +30,13 @@ import static nullengine.mod.annotation.processing.ProcessingUtils.*;
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class AutoRegisterProcessor extends AbstractProcessor {
 
-    private static final String CLASS_NAME = AutoRegister.class.getName();
-
     private final List<AutoRegisterItem> items = new ArrayList<>();
 
     private TypeMirror registryEntryTypeMirror;
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(CLASS_NAME);
+        return Set.of(AutoRegister.class.getName());
     }
 
     @Override

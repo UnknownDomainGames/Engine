@@ -19,22 +19,17 @@ import java.util.Set;
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 public class AutoListenProcessor extends AbstractProcessor {
 
-    private static final String CLASS_NAME = AutoListen.class.getName();
-
     private final JsonArray autoListenItems = new JsonArray();
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(CLASS_NAME);
+        return Set.of(AutoListen.class.getName());
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (!roundEnv.processingOver()) {
             for (Element element : roundEnv.getElementsAnnotatedWith(AutoListen.class)) {
-                if (!(element instanceof TypeElement))
-                    continue;
-
                 autoListenItems.add(((TypeElement) element).getQualifiedName().toString());
             }
         } else {
