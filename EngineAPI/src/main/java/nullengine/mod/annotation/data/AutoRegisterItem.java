@@ -10,13 +10,13 @@ public class AutoRegisterItem {
     private Kind kind;
     private String owner;
     private String type;
-    private String name;
+    private String field;
 
-    public AutoRegisterItem(String owner, String type, String name) {
+    public AutoRegisterItem(String owner, String type, String field) {
         this.kind = Kind.FIELD;
         this.owner = owner;
         this.type = type;
-        this.name = name;
+        this.field = field;
     }
 
     public AutoRegisterItem(String owner) {
@@ -48,11 +48,11 @@ public class AutoRegisterItem {
         this.type = type;
     }
 
-    public String getName() {
-        return name;
+    public String getField() {
+        return field;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setField(String field) {
+        this.field = field;
     }
 }
