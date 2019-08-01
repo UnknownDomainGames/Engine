@@ -28,31 +28,15 @@ public class AutoRegisterItem {
         return kind;
     }
 
-    public void setKind(Kind kind) {
-        this.kind = kind;
-    }
-
     public String getOwner() {
         return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getField() {
         return field;
-    }
-
-    public void setField(String field) {
-        this.field = field;
     }
 }
