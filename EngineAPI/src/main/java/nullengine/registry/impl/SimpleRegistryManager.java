@@ -1,16 +1,16 @@
 package nullengine.registry.impl;
 
-import nullengine.registry.Registry;
-import nullengine.registry.RegistryEntry;
-import nullengine.registry.RegistryException;
-import nullengine.registry.RegistryManager;
+import nullengine.registry.*;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Supplier;
+
+import static java.lang.String.format;
 
 public class SimpleRegistryManager implements RegistryManager {
 
@@ -20,15 +20,10 @@ public class SimpleRegistryManager implements RegistryManager {
         this.registries = registries;
     }
 
-    @Nonnull
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends RegistryEntry<T>> Registry<T> getRegistry(Class<T> type) {
-        Registry<T> registry = (Registry<T>) registries.get(type);
-        if (registry == null) {
-            throw new UnsupportedOperationException(String.format("Has not registered registry for type %s", type.getSimpleName()));
-        }
-        return registry;
+    public <T extends RegistryEntry<T>> Optional<Registry<T>> getRegistry(Class<T> type) {
+        return Optional.ofNullable((Registry<T>) registries.get(type));
     }
 
     @Override
@@ -38,7 +33,9 @@ public class SimpleRegistryManager implements RegistryManager {
 
     @Override
     public <T extends RegistryEntry<T>> T register(@NonNull T obj) {
-        return getRegistry(obj.getEntryType()).register(obj);
+        return getRegistry(obj.getEntryType())
+                .orElseThrow(() -> new RegistrationException(format("Not found registry \"%s\"", obj.getEntryType().getSimpleName())))
+                .register(obj);
     }
 
     @Override

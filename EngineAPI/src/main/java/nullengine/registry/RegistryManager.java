@@ -3,6 +3,7 @@ package nullengine.registry;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public interface RegistryManager {
@@ -38,8 +39,7 @@ public interface RegistryManager {
      * @param type The type of the registry contained
      * @return The registry for this type
      */
-    @Nonnull
-    <T extends RegistryEntry<T>> Registry<T> getRegistry(Class<T> type);
+    <T extends RegistryEntry<T>> Optional<Registry<T>> getRegistry(Class<T> type);
 
     /**
      * @param type The type of the registry contained
