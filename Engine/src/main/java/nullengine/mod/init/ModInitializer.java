@@ -2,7 +2,7 @@ package nullengine.mod.init;
 
 import nullengine.Engine;
 import nullengine.mod.ModContainer;
-import nullengine.mod.init.handler.*;
+import nullengine.mod.init.task.*;
 import nullengine.registry.Namespaces;
 import org.apache.commons.lang3.tuple.Pair;
 

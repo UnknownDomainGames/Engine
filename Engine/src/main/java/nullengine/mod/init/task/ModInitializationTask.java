@@ -1,6 +1,7 @@
-package nullengine.mod.init;
+package nullengine.mod.init.task;
 
 import nullengine.mod.ModContainer;
+import nullengine.mod.init.ModInitializer;
 
 public interface ModInitializationTask {
 
