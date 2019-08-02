@@ -12,14 +12,14 @@ public class PointLight extends Light {
 
     @Override
     public void bind(String fieldName) {
-        ShaderManager.INSTANCE.setUniform(fieldName + ".filled", true);
-        ShaderManager.INSTANCE.setUniform(fieldName + ".position", position);
-        ShaderManager.INSTANCE.setUniform(fieldName + ".constant", kconstant);
-        ShaderManager.INSTANCE.setUniform(fieldName + ".linear", klinear);
-        ShaderManager.INSTANCE.setUniform(fieldName + ".quadratic", kquadratic);
-        ShaderManager.INSTANCE.setUniform(fieldName + ".light.ambient", ambient);
-        ShaderManager.INSTANCE.setUniform(fieldName + ".light.diffuse", diffuse);
-        ShaderManager.INSTANCE.setUniform(fieldName + ".light.specular", specular);
+        ShaderManager.instance().setUniform(fieldName + ".filled", true);
+        ShaderManager.instance().setUniform(fieldName + ".position", position);
+        ShaderManager.instance().setUniform(fieldName + ".constant", kconstant);
+        ShaderManager.instance().setUniform(fieldName + ".linear", klinear);
+        ShaderManager.instance().setUniform(fieldName + ".quadratic", kquadratic);
+        ShaderManager.instance().setUniform(fieldName + ".light.ambient", ambient);
+        ShaderManager.instance().setUniform(fieldName + ".light.diffuse", diffuse);
+        ShaderManager.instance().setUniform(fieldName + ".light.specular", specular);
     }
 
     public PointLight setPosition(Vector3f position) {

@@ -16,19 +16,18 @@ import java.util.stream.Stream;
 
 public class ShaderManager {
 
-    @Deprecated
-    public static final ShaderManager INSTANCE = new ShaderManager();
+    private static final ShaderManager INSTANCE = new ShaderManager();
+    private static final List<Class<?>> SUPPORTED_UNIFORM_TYPE;
 
     private final Map<String, MutableValue<ShaderProgram>> loadedShaders;
     private final Map<String, ShaderProgramBuilder> registeredShaders;
 
-    private ShaderProgram lastShader;
+    private final Map<String, Object> uniforms;
 
+    private ShaderProgram lastShader;
     private ShaderProgram usingShader;
 
     private boolean overriding;
-
-    private static final List<Class<?>> SUPPORTED_UNIFORM_TYPE;
 
     static {
         SUPPORTED_UNIFORM_TYPE = new ArrayList<>();
@@ -45,16 +44,16 @@ public class ShaderManager {
         GL30.glBindVertexArray(id);
     }
 
+    public static ShaderManager instance() {
+        return INSTANCE;
+    }
+
     private ShaderManager() {
         loadedShaders = new HashMap<>();
         registeredShaders = new HashMap<>();
         uniforms = new HashMap<>();
         overriding = false;
-
-
     }
-
-    private Map<String, Object> uniforms;
 
     public ObservableValue<ShaderProgram> registerShader(String name, ShaderProgramBuilder builder) {
         if (registeredShaders.containsKey(name)) {

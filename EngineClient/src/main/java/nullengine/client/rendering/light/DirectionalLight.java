@@ -8,11 +8,11 @@ public class DirectionalLight extends Light {
 
     @Override
     public void bind(String fieldName) {
-        ShaderManager.INSTANCE.setUniform(fieldName + ".filled", true);
-        ShaderManager.INSTANCE.setUniform(fieldName + ".direction", direction);
-        ShaderManager.INSTANCE.setUniform(fieldName + ".light.ambient", ambient);
-        ShaderManager.INSTANCE.setUniform(fieldName + ".light.diffuse", diffuse);
-        ShaderManager.INSTANCE.setUniform(fieldName + ".light.specular", specular);
+        ShaderManager.instance().setUniform(fieldName + ".filled", true);
+        ShaderManager.instance().setUniform(fieldName + ".direction", direction);
+        ShaderManager.instance().setUniform(fieldName + ".light.ambient", ambient);
+        ShaderManager.instance().setUniform(fieldName + ".light.diffuse", diffuse);
+        ShaderManager.instance().setUniform(fieldName + ".light.specular", specular);
     }
 
     public DirectionalLight setDirection(Vector3f direction) {
