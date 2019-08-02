@@ -112,7 +112,7 @@ public class RegistrationTask implements ModInitializationTask {
     }
 
     private Registry<?> findRegistry(RegistryManager registryManager, Class<? extends RegistryEntry> type) {
-        return registryManager.getRegistry(type);
+        return (Registry<?>) registryManager.getRegistry(type).orElseThrow();
     }
 
     private Map<String, List<String>> loadRegObjectItems(ModContainer mod) {

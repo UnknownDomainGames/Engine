@@ -35,9 +35,9 @@ public final class Registries {
 
     public static void init(RegistryManager registryManager) {
         Registries.registryManager = Suppliers.ofWeakReference(registryManager);
-        worldProviderRegistry = Suppliers.ofWeakReference(registryManager.getRegistry(WorldProvider.class));
-        blockRegistry = Suppliers.ofWeakReference((BlockRegistry) registryManager.getRegistry(Block.class));
-        itemRegistry = Suppliers.ofWeakReference((ItemRegistry) registryManager.getRegistry(Item.class));
+        worldProviderRegistry = Suppliers.ofWeakReference(registryManager.getRegistry(WorldProvider.class).orElseThrow());
+        blockRegistry = Suppliers.ofWeakReference((BlockRegistry) registryManager.getRegistry(Block.class).orElseThrow());
+        itemRegistry = Suppliers.ofWeakReference((ItemRegistry) registryManager.getRegistry(Item.class).orElseThrow());
     }
 
     private Registries() {

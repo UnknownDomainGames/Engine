@@ -154,7 +154,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
         logger.info("Initializing key binding!");
         var window = renderContext.getWindow();
-        keyBindingManager = new KeyBindingManager(this, registryManager.getRegistry(KeyBinding.class));
+        keyBindingManager = new KeyBindingManager(this, registryManager.getRegistry(KeyBinding.class).orElseThrow());
         keyBindingManager.reload();
         window.addKeyCallback(keyBindingManager::handleKey);
         window.addMouseCallback(keyBindingManager::handleMouse);
