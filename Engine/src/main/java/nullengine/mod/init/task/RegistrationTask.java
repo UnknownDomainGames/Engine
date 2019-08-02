@@ -3,23 +3,19 @@ package nullengine.mod.init.task;
 import com.google.gson.reflect.TypeToken;
 import nullengine.event.mod.ModRegistrationEvent;
 import nullengine.mod.ModContainer;
+import nullengine.mod.annotation.RegObject;
 import nullengine.mod.annotation.data.AutoRegisterItem;
 import nullengine.mod.init.ModInitializer;
+import nullengine.registry.Name;
 import nullengine.registry.Registry;
 import nullengine.registry.RegistryEntry;
 import nullengine.registry.RegistryManager;
 import nullengine.util.JsonUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
-import static java.lang.String.format;
 
 public class RegistrationTask implements ModInitializationTask {
 
@@ -33,43 +29,46 @@ public class RegistrationTask implements ModInitializationTask {
         }
         doAutoRegister(registryManager, mod);
         mod.getEventBus().post(new ModRegistrationEvent.Post(registryManager));
+        doInjectRegisteredObject(registryManager, mod);
     }
 
     private void doAutoRegister(RegistryManager registryManager, ModContainer mod) {
+        for (var item : loadAutoRegisterItems(mod)) {
+            switch (item.getKind()) {
+                case CLASS:
+                    doAutoRegisterClass(registryManager, mod, item);
+                    break;
+                case FIELD:
+                    doAutoRegisterField(registryManager, mod, item);
+                    break;
+            }
+        }
+    }
+
+    private List<AutoRegisterItem> loadAutoRegisterItems(ModContainer mod) {
         try {
-            Optional<InputStream> stream = mod.getAssets().openStream("META-INF", "data", "AutoRegister.json");
+            var stream = mod.getAssets().openStream("META-INF", "data", "AutoRegister.json");
             if (stream.isEmpty()) {
                 mod.getLogger().debug("Not found \"AutoRegister.json\" file, skip AutoRegister stage.");
-                return;
+                return List.of();
             }
 
-            List<AutoRegisterItem> items;
-            try (Reader reader = new InputStreamReader(stream.get())) {
-                items = JsonUtils.gson().fromJson(reader, new TypeToken<List<AutoRegisterItem>>() {
+            try (var reader = new InputStreamReader(stream.get())) {
+                return JsonUtils.gson().fromJson(reader, new TypeToken<List<AutoRegisterItem>>() {
                 }.getType());
-            }
-
-            for (AutoRegisterItem item : items) {
-                switch (item.getKind()) {
-                    case CLASS:
-                        doAutoRegisterClass(registryManager, mod, item);
-                        break;
-                    case FIELD:
-                        doAutoRegisterField(registryManager, mod, item);
-                        break;
-                }
             }
         } catch (IOException e) {
             mod.getLogger().warn("Cannot open \"AutoRegister.json\" file, skip AutoRegister stage.", e);
         } catch (Exception e) {
             mod.getLogger().warn("Caught exception when auto register, skip AutoRegister stage.", e);
         }
+        return List.of();
     }
 
     private void doAutoRegisterClass(RegistryManager registryManager, ModContainer mod, AutoRegisterItem item) {
         try {
-            Class<?> clazz = Class.forName(item.getOwner(), true, mod.getClassLoader());
-            for (Field field : clazz.getDeclaredFields()) {
+            var clazz = Class.forName(item.getOwner(), true, mod.getClassLoader());
+            for (var field : clazz.getDeclaredFields()) {
                 if (!RegistryEntry.class.isAssignableFrom(field.getType()))
                     continue;
 
@@ -77,18 +76,62 @@ public class RegistrationTask implements ModInitializationTask {
                 registryManager.register((RegistryEntry) field.get(null));
             }
         } catch (ReflectiveOperationException e) {
-            mod.getLogger().warn(format("Cannot auto register class %s.", item.getOwner()), e);
+            throw new RuntimeException(e);
+            // TODO: crash report
         }
     }
 
     private void doAutoRegisterField(RegistryManager registryManager, ModContainer mod, AutoRegisterItem item) {
         try {
-            Class<?> clazz = Class.forName(item.getOwner(), true, mod.getClassLoader());
-            Field field = clazz.getDeclaredField(item.getField());
+            var clazz = Class.forName(item.getOwner(), true, mod.getClassLoader());
+            var field = clazz.getDeclaredField(item.getField());
             field.setAccessible(true);
             registryManager.register((RegistryEntry) field.get(null));
         } catch (ReflectiveOperationException e) {
-            mod.getLogger().warn(format("Cannot auto register field %s.%s.", item.getOwner(), item.getField()), e);
+            throw new RuntimeException(e);
+            // TODO: crash report
         }
+    }
+
+    private void doInjectRegisteredObject(RegistryManager registryManager, ModContainer mod) {
+        for (var entry : loadRegObjectItems(mod).entrySet()) {
+            try {
+                var clazz = Class.forName(entry.getKey(), true, mod.getClassLoader());
+                for (var fieldName : entry.getValue()) {
+                    var field = clazz.getDeclaredField(fieldName);
+                    var annotation = field.getAnnotation(RegObject.class);
+                    var registry = findRegistry(registryManager, (Class<? extends RegistryEntry>) field.getType());
+                    field.setAccessible(true);
+                    field.set(null, registry.getValue(Name.fromString(annotation.value())));
+                }
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+                // TODO: crash report
+            }
+        }
+    }
+
+    private Registry<?> findRegistry(RegistryManager registryManager, Class<? extends RegistryEntry> type) {
+        return registryManager.getRegistry(type);
+    }
+
+    private Map<String, List<String>> loadRegObjectItems(ModContainer mod) {
+        try {
+            var stream = mod.getAssets().openStream("META-INF", "data", "RegObject.json");
+            if (stream.isEmpty()) {
+                mod.getLogger().debug("Not found \"RegObject.json\" file, skip inject registered object.");
+                return Map.of();
+            }
+
+            try (var reader = new InputStreamReader(stream.get())) {
+                return JsonUtils.gson().fromJson(reader, new TypeToken<Map<String, List<String>>>() {
+                }.getType());
+            }
+        } catch (IOException e) {
+            mod.getLogger().warn("Cannot open \"RegObject.json\" file, skip inject registered object.", e);
+        } catch (Exception e) {
+            mod.getLogger().warn("Caught exception when inject registered object, skip it.", e);
+        }
+        return Map.of();
     }
 }
