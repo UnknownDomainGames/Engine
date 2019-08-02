@@ -1,6 +1,6 @@
 package nullengine.mod.annotation.processing;
 
-import com.google.inject.Inject;
+import nullengine.mod.annotation.RegObject;
 import nullengine.util.JsonUtils;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -10,42 +10,37 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static nullengine.mod.annotation.processing.ProcessingUtils.createFile;
 import static nullengine.mod.annotation.processing.ProcessingUtils.hasModifier;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
-public class InjectProcessor extends AbstractProcessor {
+public class RegObjectProcessor extends AbstractProcessor {
 
-    private final List<String> items = new ArrayList<>();
+    private final Map<String, List<String>> items = new HashMap<>();
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(Inject.class.getName());
+        return Set.of(RegObject.class.getName());
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (!roundEnv.processingOver()) {
-            for (Element element : roundEnv.getElementsAnnotatedWith(Inject.class)) {
-                if (!(element instanceof VariableElement)) {
-                    continue;
-                }
-
+            for (Element element : roundEnv.getElementsAnnotatedWith(RegObject.class)) {
                 if (!hasModifier(element, Modifier.STATIC)) {
-                    continue;
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "The field which annotated by RegObject must be static.", element);
                 }
 
-                items.add(((TypeElement) element.getEnclosingElement()).getQualifiedName().toString());
+                var owner = ((TypeElement) element.getEnclosingElement()).getQualifiedName().toString();
+                var field = element.getSimpleName().toString();
+                items.computeIfAbsent(owner, key -> new ArrayList<>()).add(field);
             }
         } else {
             save();
@@ -54,7 +49,7 @@ public class InjectProcessor extends AbstractProcessor {
     }
 
     private void save() {
-        FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "META-INF/data/Inject.json");
+        FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "META-INF/data/RegObject.json");
         try (Writer writer = fileObject.openWriter()) {
             writer.write(JsonUtils.gson().toJson(items));
         } catch (IOException e) {
