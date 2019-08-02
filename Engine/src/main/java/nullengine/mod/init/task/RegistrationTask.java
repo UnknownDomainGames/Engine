@@ -1,10 +1,9 @@
-package nullengine.mod.init.handler;
+package nullengine.mod.init.task;
 
 import com.google.gson.reflect.TypeToken;
 import nullengine.event.mod.ModRegistrationEvent;
 import nullengine.mod.ModContainer;
 import nullengine.mod.annotation.data.AutoRegisterItem;
-import nullengine.mod.init.ModInitializationTask;
 import nullengine.mod.init.ModInitializer;
 import nullengine.registry.Registry;
 import nullengine.registry.RegistryEntry;

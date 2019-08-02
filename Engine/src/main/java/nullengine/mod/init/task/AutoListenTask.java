@@ -1,10 +1,9 @@
-package nullengine.mod.init.handler;
+package nullengine.mod.init.task;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import nullengine.mod.ModContainer;
 import nullengine.mod.annotation.AutoListen;
-import nullengine.mod.init.ModInitializationTask;
 import nullengine.mod.init.ModInitializer;
 import nullengine.util.JsonUtils;
 

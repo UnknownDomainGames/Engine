@@ -1,10 +1,9 @@
-package nullengine.mod.init.handler;
+package nullengine.mod.init.task;
 
 import nullengine.Platform;
 import nullengine.client.asset.source.ModAssetSource;
 import nullengine.mod.ModContainer;
 import nullengine.mod.dummy.DummyModContainer;
-import nullengine.mod.init.ModInitializationTask;
 import nullengine.mod.init.ModInitializer;
 
 import java.io.IOException;
