@@ -182,9 +182,9 @@ public class GraphicsImpl implements Graphics {
         GLBuffer buffer = tessellator.getBuffer();
         buffer.posOffset(x, y, 0);
         FontHelper.instance().renderText(buffer, text, font, color.toRGBA(), () -> {
-            ShaderManager.INSTANCE.setUniform("u_RenderText", true);
+            ShaderManager.instance().setUniform("u_RenderText", true);
             tessellator.draw();
-            ShaderManager.INSTANCE.setUniform("u_RenderText", false);
+            ShaderManager.instance().setUniform("u_RenderText", false);
         });
     }
 

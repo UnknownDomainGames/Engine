@@ -42,7 +42,7 @@ public class GuiRenderer implements Renderer {
         this.window = context.getWindow();
         var textureManager = context.getTextureManager();
 
-        shader = ShaderManager.INSTANCE.registerShader("gui_shader",
+        shader = ShaderManager.instance().registerShader("gui_shader",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "gui.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "gui.frag")));
 
@@ -73,19 +73,19 @@ public class GuiRenderer implements Renderer {
     }
 
     public void setClipRect(Vector4fc clipRect) {
-        ShaderManager.INSTANCE.setUniform("u_ClipRect", clipRect);
+        ShaderManager.instance().setUniform("u_ClipRect", clipRect);
     }
 
     private void startRender() {
-        ShaderManager.INSTANCE.bindShader(shader.getValue());
+        ShaderManager.instance().bindShader(shader.getValue());
 
         startRenderFlag();
 
         int width = window.getWidth(), height = window.getHeight();
-        ShaderManager.INSTANCE.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
-        ShaderManager.INSTANCE.setUniform("u_ModelMatrix", new Matrix4f());
-        ShaderManager.INSTANCE.setUniform("u_WindowSize", new Vector2f(width, height));
-        ShaderManager.INSTANCE.setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
+        ShaderManager.instance().setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
+        ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
+        ShaderManager.instance().setUniform("u_WindowSize", new Vector2f(width, height));
+        ShaderManager.instance().setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
 
         context.getTextureManager().getWhiteTexture().bind();
     }
@@ -144,6 +144,6 @@ public class GuiRenderer implements Renderer {
 
     @Override
     public void dispose() {
-        ShaderManager.INSTANCE.unregisterShader("gui_shader");
+        ShaderManager.instance().unregisterShader("gui_shader");
     }
 }
