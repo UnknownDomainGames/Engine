@@ -3,7 +3,6 @@ package nullengine.client.rendering.texture;
 import nullengine.util.Color;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -18,22 +17,22 @@ public class TextureBuffer {
             direct.flip();
             filebuf = direct;
         }
-        MemoryStack.stackPush();
-        IntBuffer w = MemoryUtil.memAllocInt(1);
-        IntBuffer h = MemoryUtil.memAllocInt(1);
-        IntBuffer c = MemoryUtil.memAllocInt(1);
-        ByteBuffer pixelbuf = STBImage.stbi_load_from_memory(filebuf, w, h, c, 4);
-        int width = w.get(0);
-        int height = h.get(0);
-        MemoryStack.stackPop();
-        if (pixelbuf == null) {
-            throw new IOException("File buffer cannot be load as pixel buffer by STBImage");
+        try (var stack = MemoryStack.stackPush()) {
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+            IntBuffer c = stack.mallocInt(1);
+            ByteBuffer pixelbuf = STBImage.stbi_load_from_memory(filebuf, w, h, c, 4);
+            int width = w.get(0);
+            int height = h.get(0);
+            if (pixelbuf == null) {
+                throw new IOException("File buffer cannot be load as pixel buffer by STBImage");
+            }
+            var tex = new TextureBuffer(width, height);
+            tex.getBuffer().put(pixelbuf);
+            tex.getBuffer().flip();
+            pixelbuf.clear();
+            return tex;
         }
-        var tex = new TextureBuffer(width, height);
-        tex.getBuffer().put(pixelbuf);
-        tex.getBuffer().flip();
-        pixelbuf.clear();
-        return tex;
     }
 
     private int width, height;
