@@ -16,13 +16,8 @@ public class EngineAssetManager implements AssetManager {
 
     private final Map<String, AssetType<?>> registeredTypes = new HashMap<>();
 
-    private final AssetSourceManager sourceManager;
-    private final AssetReloadManager reloadManager;
-
-    public EngineAssetManager() {
-        sourceManager = new AssetSourceManagerImpl();
-        reloadManager = new AssetReloadManagerImpl(registeredTypes.values());
-    }
+    private final AssetSourceManager sourceManager = new AssetSourceManagerImpl();
+    private final AssetReloadManagerImpl reloadManager = new AssetReloadManagerImpl();
 
     @Override
     public <T> AssetType<T> register(@Nonnull Class<T> assetClass, @Nonnull AssetProvider<T> provider) {
@@ -87,5 +82,10 @@ public class EngineAssetManager implements AssetManager {
     @Override
     public void reload() throws InterruptedException {
         reloadManager.reload();
+    }
+
+    public void dispose() {
+        registeredTypes.values().forEach(type -> type.getProvider().dispose());
+        reloadManager.dispose();
     }
 }

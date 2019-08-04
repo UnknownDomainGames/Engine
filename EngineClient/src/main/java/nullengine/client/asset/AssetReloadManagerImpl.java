@@ -2,21 +2,15 @@ package nullengine.client.asset;
 
 import nullengine.client.asset.reloading.AssetReloadListener;
 import nullengine.client.asset.reloading.AssetReloadManager;
-import nullengine.client.asset.reloading.AssetReloadScheduler;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 public class AssetReloadManagerImpl implements AssetReloadManager {
 
-    private final AssetReloadScheduler scheduler = new AssetReloadSchedulerImpl();
+    private final AssetReloadSchedulerImpl scheduler = new AssetReloadSchedulerImpl();
     private final LinkedList<Pair<String, AssetReloadListener>> listeners = new LinkedList<>();
-
-    public AssetReloadManagerImpl(Collection<AssetType<?>> registeredTypes) {
-        addLast("ReloadProviders", scheduler -> registeredTypes.forEach(type -> type.getProvider().reload(scheduler)));
-    }
 
     @Override
     public void addFirst(String name, AssetReloadListener listener) {
@@ -53,5 +47,9 @@ public class AssetReloadManagerImpl implements AssetReloadManager {
     public void reload() throws InterruptedException {
         listeners.forEach(pair -> pair.getRight().onReload(scheduler));
         scheduler.awaitCompletion();
+    }
+
+    public void dispose() {
+        scheduler.dispose();
     }
 }
