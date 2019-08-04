@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AssetMetadata {
+public class PackedAssetMetadata {
 
-    public static AssetMetadata fromJson(JsonObject jo) {
+    public static PackedAssetMetadata fromJson(JsonObject jo) {
         var builder = Builder.create();
 
         if (jo.has("name")) {
@@ -50,7 +50,7 @@ public class AssetMetadata {
     private final List<String> authors;
     private final Map<String, String> properties;
 
-    public AssetMetadata(String name, String description, String logoFile, String url, List<String> authors, Map<String, String> properties) {
+    public PackedAssetMetadata(String name, String description, String logoFile, String url, List<String> authors, Map<String, String> properties) {
         this.name = name;
         this.description = description;
         this.logoFile = logoFile;
@@ -128,8 +128,8 @@ public class AssetMetadata {
             return this;
         }
 
-        public AssetMetadata build() {
-            return new AssetMetadata(name, description, logoFile, url, authors, properties);
+        public PackedAssetMetadata build() {
+            return new PackedAssetMetadata(name, description, logoFile, url, authors, properties);
         }
     }
 }
