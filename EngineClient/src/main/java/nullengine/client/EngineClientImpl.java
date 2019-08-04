@@ -118,7 +118,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         initRenderCrashReportDetails();
         renderContext.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         addShutdownListener(renderContext::dispose);
-        assetManager.getReloadManager().addFirst("Texture", () -> renderContext.getTextureManager().reload());
         assetManager.getReloadManager().addFirst("Shader", ShaderManager.instance()::reload);
 
         assetManager.register(VoxelModel.class, "VoxelModel", new VoxelModelManager(this));
