@@ -1,6 +1,7 @@
 package nullengine.client.asset;
 
 import nullengine.client.asset.exception.AssetLoadException;
+import nullengine.client.asset.reloading.AssetReloadManager;
 import nullengine.client.asset.source.AssetSourceManager;
 
 import javax.annotation.Nonnull;
@@ -14,6 +15,8 @@ public interface AssetManager {
     <T> AssetType<T> register(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull AssetProvider<T> provider);
 
     Optional<AssetType<?>> getType(String name);
+
+    boolean hasType(String name);
 
     Collection<AssetType<?>> getSupportedTypes();
 
@@ -31,13 +34,7 @@ public interface AssetManager {
 
     AssetSourceManager getSourceManager();
 
-    AssetReloadDispatcher getReloadDispatcher();
+    AssetReloadManager getReloadManager();
 
-//    /**
-//     * @throws AssetLoadException;
-//     */
-//    @Nonnull
-//    <T> CompletableFuture<T> loadAsync(@Nonnull AssetType<T> type, @Nonnull AssetPath path);
-
-    void reload();
+    void reload() throws InterruptedException;
 }

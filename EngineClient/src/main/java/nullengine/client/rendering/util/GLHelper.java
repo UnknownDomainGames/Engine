@@ -1,10 +1,8 @@
 package nullengine.client.rendering.util;
 
 import nullengine.Platform;
-import nullengine.client.rendering.display.Window;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBImageWrite;
-import org.lwjgl.system.MemoryUtil;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
@@ -21,9 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.TemporalField;
-import java.util.Calendar;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
@@ -80,7 +75,7 @@ public class GLHelper {
                     }
                 }
             } catch (Exception e) {
-                throw new IOException(String.format("cannot load resource: %s", resource), e);
+                throw new IOException(String.format("cannot loadDirect resource: %s", resource), e);
             }
         }
 

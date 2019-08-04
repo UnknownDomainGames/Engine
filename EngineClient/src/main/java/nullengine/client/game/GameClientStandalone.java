@@ -69,7 +69,10 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     protected void resourceStage() {
         super.resourceStage();
 
-        engineClient.getAssetManager().reload();
+        try {
+            engineClient.getAssetManager().reload();
+        } catch (InterruptedException ignored) {
+        }
     }
 
     @Override

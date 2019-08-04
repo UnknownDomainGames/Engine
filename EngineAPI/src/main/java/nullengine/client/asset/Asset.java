@@ -45,7 +45,7 @@ public final class Asset<T> {
         if (disposed)
             throw new IllegalStateException("Asset has been disposed.");
 
-        value = type.getProvider().load(path);
+        value = type.getProvider().loadDirect(path);
     }
 
     public boolean isDisposed() {
@@ -57,7 +57,7 @@ public final class Asset<T> {
             return;
 
         disposed = true;
-        type.getProvider().dispose(this);
+        type.getProvider().unregister(this);
         value = null;
     }
 

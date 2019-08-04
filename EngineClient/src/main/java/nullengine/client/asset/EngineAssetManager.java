@@ -1,5 +1,6 @@
 package nullengine.client.asset;
 
+import nullengine.client.asset.reloading.AssetReloadManager;
 import nullengine.client.asset.source.AssetSourceManager;
 
 import javax.annotation.Nonnull;
@@ -13,10 +14,15 @@ import static org.apache.commons.lang3.Validate.notEmpty;
 
 public class EngineAssetManager implements AssetManager {
 
-    private final AssetSourceManager sourceManager = new DefaultAssetSourceManager();
-    private final AssetReloadDispatcher reloadDispatcher = new DefaultAssetReloadDispatcher();
-
     private final Map<String, AssetType<?>> registeredTypes = new HashMap<>();
+
+    private final AssetSourceManager sourceManager;
+    private final AssetReloadManager reloadManager;
+
+    public EngineAssetManager() {
+        sourceManager = new AssetSourceManagerImpl();
+        reloadManager = new AssetReloadManagerImpl(registeredTypes.values());
+    }
 
     @Override
     public <T> AssetType<T> register(@Nonnull Class<T> assetClass, @Nonnull AssetProvider<T> provider) {
@@ -45,6 +51,11 @@ public class EngineAssetManager implements AssetManager {
     }
 
     @Override
+    public boolean hasType(String name) {
+        return registeredTypes.containsKey(name);
+    }
+
+    @Override
     public Collection<AssetType<?>> getSupportedTypes() {
         return registeredTypes.values();
     }
@@ -60,7 +71,7 @@ public class EngineAssetManager implements AssetManager {
     @Nonnull
     @Override
     public <T> T loadDirect(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
-        return type.getProvider().load(path);
+        return type.getProvider().loadDirect(path);
     }
 
     @Override
@@ -69,12 +80,12 @@ public class EngineAssetManager implements AssetManager {
     }
 
     @Override
-    public AssetReloadDispatcher getReloadDispatcher() {
-        return reloadDispatcher;
+    public AssetReloadManager getReloadManager() {
+        return reloadManager;
     }
 
     @Override
-    public void reload() {
-        reloadDispatcher.dispatchReload();
+    public void reload() throws InterruptedException {
+        reloadManager.reload();
     }
 }

@@ -46,7 +46,7 @@ public class GLTexture {
         int height = h.get(0);
         MemoryStack.stackPop();
         if (pixelbuf == null) {
-            throw new IOException("File buffer cannot be load as pixel buffer by STBImage");
+            throw new IOException("File buffer cannot be loadDirect as pixel buffer by STBImage");
         }
         pixelbuf.flip();
         return of(width, height, pixelbuf);

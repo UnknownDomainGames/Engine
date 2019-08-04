@@ -25,7 +25,7 @@ public class WorldCommonLoader implements WorldLoader<WorldCommon> {
 
     @Override
     public WorldCommon loadWorld() {
-        //TODO load world
+        //TODO loadDirect world
         return null;
     }
 

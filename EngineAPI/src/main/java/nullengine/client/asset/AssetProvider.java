@@ -1,6 +1,7 @@
 package nullengine.client.asset;
 
 import nullengine.client.asset.exception.AssetLoadException;
+import nullengine.client.asset.reloading.AssetReloadScheduler;
 
 import javax.annotation.Nonnull;
 
@@ -10,13 +11,15 @@ public interface AssetProvider<T> {
 
     void register(Asset<T> asset);
 
+    void unregister(Asset<T> asset);
+
+    void reload(AssetReloadScheduler scheduler);
+
     /**
      * @throws AssetLoadException
      */
     @Nonnull
-    T load(AssetPath path);
-
-    void dispose(Asset<T> asset);
+    T loadDirect(AssetPath path);
 
     void dispose();
 }
