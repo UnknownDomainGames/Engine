@@ -24,6 +24,15 @@ public class AssetReloadSchedulerImpl implements AssetReloadScheduler {
                 return new Thread(r, "AssetLoadThread-" + nextThreadId.getAndIncrement());
             }
         });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            executor.shutdownNow();
+            try {
+                while (true) {
+                    if (executor.awaitTermination(1L, TimeUnit.MILLISECONDS)) break;
+                }
+            } catch (InterruptedException ignored) {
+            }
+        }));
     }
 
     @Override
