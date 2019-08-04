@@ -1,52 +1,29 @@
 package nullengine.client.rendering.texture;
 
-import com.github.mouse0w0.observable.value.MutableValue;
-import com.github.mouse0w0.observable.value.ObservableValue;
-import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.Platform;
-import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.*;
 import nullengine.client.asset.exception.AssetLoadException;
+import nullengine.client.asset.reloading.AssetReloadScheduler;
+import nullengine.client.asset.source.AssetSourceManager;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-public class EngineTextureManager implements TextureManager {
+public class EngineTextureManager implements TextureManager, AssetProvider<GLTexture> {
 
-    private final Map<AssetPath, MutableValue<GLTexture>> textures = new HashMap<>();
-
+    private final List<Asset<GLTexture>> assets = new ArrayList<>();
     private final Map<TextureAtlasName, TextureAtlasImpl> texturesAtlases = new HashMap<>();
 
     private final GLTexture whiteTexture;
 
+    private AssetSourceManager sourceManager;
+
     public EngineTextureManager() {
         this.whiteTexture = getTextureDirect(new TextureBuffer(2, 2, 0xffffffff));
-    }
-
-    @Override
-    public ObservableValue<GLTexture> getTexture(AssetPath path) {
-        return textures.computeIfAbsent(path, key -> new SimpleMutableObjectValue<>(getTextureDirect(path)));
-    }
-
-    @Override
-    public GLTexture getTextureDirect(AssetPath path) {
-        Optional<Path> localPath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(path);
-        if (localPath.isEmpty()) {
-            throw new AssetLoadException("Cannot loadDirect texture because missing asset. Path: " + path);
-        }
-
-        try (var channel = Files.newByteChannel(localPath.get())) {
-            var buffer = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
-            channel.read(buffer);
-            buffer.flip();
-            return getTextureDirect(TextureBuffer.create(buffer));
-        } catch (IOException e) {
-            throw new AssetLoadException("Cannot loadDirect texture because catch exception. Path: " + path, e);
-        }
     }
 
     @Override
@@ -76,17 +53,66 @@ public class EngineTextureManager implements TextureManager {
     }
 
     @Override
-    public void reload() {
-        for (Map.Entry<AssetPath, MutableValue<GLTexture>> entry : textures.entrySet()) {
-            entry.getValue().ifPresent(GLTexture::dispose);
-            entry.getValue().setValue(getTextureDirect(entry.getKey()));
-        }
-
-        texturesAtlases.keySet().forEach(this::reloadTextureAtlas);
+    public GLTexture getWhiteTexture() {
+        return whiteTexture;
     }
 
     @Override
-    public GLTexture getWhiteTexture() {
-        return whiteTexture;
+    public void init(AssetManager manager, AssetType<GLTexture> type) {
+        sourceManager = manager.getSourceManager();
+        manager.getReloadManager().addFirst("Texture", this::reload);
+    }
+
+    @Override
+    public void register(Asset<GLTexture> asset) {
+        assets.add(asset);
+    }
+
+    @Override
+    public void unregister(Asset<GLTexture> asset) {
+        var glTexture = asset.get();
+        if (glTexture != null) {
+            glTexture.dispose();
+        }
+        assets.remove(asset);
+    }
+
+    private void reload(AssetReloadScheduler scheduler) {
+        assets.forEach(asset -> {
+            var glTexture = asset.get();
+            if (glTexture != null) {
+                glTexture.dispose();
+            }
+            asset.reload();
+        });
+        texturesAtlases.keySet().forEach(this::reloadTextureAtlas);
+    }
+
+    @Nonnull
+    @Override
+    public GLTexture loadDirect(AssetPath path) {
+        Optional<Path> localPath = sourceManager.getPath(path);
+        if (localPath.isEmpty()) {
+            throw new AssetLoadException("Cannot loadDirect texture because missing asset. Path: " + path);
+        }
+
+        try (var channel = Files.newByteChannel(localPath.get())) {
+            var buffer = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
+            channel.read(buffer);
+            buffer.flip();
+            return getTextureDirect(TextureBuffer.create(buffer));
+        } catch (IOException e) {
+            throw new AssetLoadException("Cannot loadDirect texture because catch exception. Path: " + path, e);
+        }
+    }
+
+    @Override
+    public void dispose() {
+        assets.forEach(asset -> {
+            var glTexture = asset.get();
+            if (glTexture != null) {
+                glTexture.dispose();
+            }
+        });
     }
 }

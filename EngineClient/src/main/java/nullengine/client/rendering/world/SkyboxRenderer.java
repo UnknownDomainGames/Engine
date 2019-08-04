@@ -1,6 +1,7 @@
 package nullengine.client.rendering.world;
 
 import com.github.mouse0w0.observable.value.ObservableValue;
+import nullengine.client.asset.Asset;
 import nullengine.client.asset.AssetPath;
 import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.model.GLMesh;
@@ -11,17 +12,19 @@ import nullengine.client.rendering.texture.GLTexture;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
+import static nullengine.client.asset.AssetTypes.TEXTURE;
+
 public class SkyboxRenderer {
 
     private RenderContext context;
     private ObservableValue<ShaderProgram> worldShader;
-    private GLTexture skybox;
+    private Asset<GLTexture> skybox;
     private GLMesh skyboxMesh;
 
     public void init(RenderContext context){
         this.context = context;
         worldShader = ShaderManager.instance().getShader("world_shader");
-        skybox = context.getTextureManager().getTextureDirect(AssetPath.of("engine","texture", "misc","skybox.png"));
+        skybox = context.getEngine().getAssetManager().create(TEXTURE, AssetPath.of("engine", "texture", "misc", "skybox.png"));
         skyboxMesh = GLMesh.of(new Mesh(
                 new float[]{
                         256, 256, -256,
@@ -98,7 +101,7 @@ public class SkyboxRenderer {
     public void render(float partial){
         ShaderProgram program = worldShader.getValue();
         ShaderManager.instance().bindShader(program);
-        skybox.bind();
+        skybox.get().bind();
         program.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         program.setUniform("u_ProjMatrix", context.getWindow().projection());
         program.setUniform("u_ModelMatrix", new Matrix4f());

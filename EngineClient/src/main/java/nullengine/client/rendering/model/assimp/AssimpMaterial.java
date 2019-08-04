@@ -2,6 +2,7 @@ package nullengine.client.rendering.model.assimp;
 
 import nullengine.Platform;
 import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetTypes;
 import nullengine.client.rendering.light.Material;
 import nullengine.client.rendering.texture.GLTexture;
 import org.apache.commons.io.FilenameUtils;
@@ -91,7 +92,7 @@ public class AssimpMaterial {
                 }
             } else {
                 //Promise: Loader now only search in texture/model/[FILENAME] folder
-                return Platform.getEngineClient().getRenderContext().getTextureManager().getTextureDirect(AssetPath.of("texture", "model", FilenameUtils.getBaseName(filename), s));
+                return Platform.getEngineClient().getAssetManager().loadDirect(AssetTypes.TEXTURE, AssetPath.of("texture", "model", FilenameUtils.getBaseName(filename), s));
             }
         }
         return GLTexture.EMPTY;

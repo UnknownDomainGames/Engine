@@ -2,6 +2,7 @@ package nullengine.client.rendering.gui;
 
 import com.github.mouse0w0.observable.value.ObservableValue;
 import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetTypes;
 import nullengine.client.gui.Container;
 import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.Scene;
@@ -40,7 +41,6 @@ public class GuiRenderer implements Renderer {
         this.context = context;
         this.guiManager = context.getGuiManager();
         this.window = context.getWindow();
-        var textureManager = context.getTextureManager();
 
         shader = ShaderManager.instance().registerShader("gui_shader",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "gui.vert"))
@@ -49,7 +49,8 @@ public class GuiRenderer implements Renderer {
         this.graphics = new GraphicsImpl(context, this);
         graphics.setFont(FontHelper.instance().getDefaultFont());
 
-        Internal.setContext(() -> textureManager::getTextureDirect);
+        var assetManager = context.getEngine().getAssetManager();
+        Internal.setContext(() -> path -> assetManager.loadDirect(AssetTypes.TEXTURE, path));
     }
 
     @Override

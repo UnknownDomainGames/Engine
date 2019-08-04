@@ -11,6 +11,7 @@ import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.font.TTFontHelper;
 import nullengine.client.rendering.texture.EngineTextureManager;
+import nullengine.client.rendering.texture.GLTexture;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GLInfo;
 import nullengine.client.rendering.util.GLInfoImpl;
@@ -44,7 +45,7 @@ public class EngineRenderContext implements RenderContext {
 
     private Thread renderThread;
     private GLFWWindow window;
-    private TextureManager textureManager;
+    private EngineTextureManager textureManager;
     private GuiManager guiManager;
     private GLInfo glInfo;
     private GPUMemoryInfo gpuMemoryInfo;
@@ -196,6 +197,7 @@ public class EngineRenderContext implements RenderContext {
     private void initTexture() {
         textureManager = new EngineTextureManager();
         TextureManager.Internal.setInstance(textureManager);
+        getEngine().getAssetManager().register(GLTexture.class, "Texture", textureManager);
     }
 
     private void initFont() {

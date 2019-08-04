@@ -1,16 +1,11 @@
 package nullengine.client.rendering.texture;
 
-import com.github.mouse0w0.observable.value.ObservableValue;
 import nullengine.client.asset.AssetPath;
 import nullengine.exception.UninitializationException;
 
 import java.util.function.Supplier;
 
 public interface TextureManager {
-
-    ObservableValue<GLTexture> getTexture(AssetPath path);
-
-    GLTexture getTextureDirect(AssetPath path);
 
     GLTexture getTextureDirect(TextureBuffer buffer);
 
@@ -19,8 +14,6 @@ public interface TextureManager {
     TextureAtlas getTextureAtlas(TextureAtlasName type);
 
     void reloadTextureAtlas(TextureAtlasName type);
-
-    void reload();
 
     GLTexture getWhiteTexture();
 
