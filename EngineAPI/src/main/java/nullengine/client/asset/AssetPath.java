@@ -56,7 +56,7 @@ public final class AssetPath {
 
     @Override
     public int hashCode() {
-        return Objects.hash(path);
+        return path.hashCode();
     }
 
     @Override

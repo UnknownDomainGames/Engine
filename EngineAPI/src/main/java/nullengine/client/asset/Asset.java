@@ -72,7 +72,7 @@ public final class Asset<T> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(path, type);
+        return path.hashCode() * 31 + type.hashCode();
     }
 
     @Override
