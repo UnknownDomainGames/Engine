@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-public class DefaultAssetSourceManager implements AssetSourceManager {
+public class AssetSourceManagerImpl implements AssetSourceManager {
 
     private final LinkedList<AssetSource> assetSources = new LinkedList<>();
 

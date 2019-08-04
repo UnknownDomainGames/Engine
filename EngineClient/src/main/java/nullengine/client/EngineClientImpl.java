@@ -117,8 +117,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         initRenderCrashReportDetails();
         renderContext.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         addShutdownListener(renderContext::dispose);
-        assetManager.getReloadDispatcher().addLast("Shader", ShaderManager.instance()::reload);
-        assetManager.getReloadDispatcher().addLast("Texture", () -> renderContext.getTextureManager().reload());
+        assetManager.getReloadManager().addFirst("Texture", () -> renderContext.getTextureManager().reload());
+        assetManager.getReloadManager().addFirst("Shader", ShaderManager.instance()::reload);
 
         assetManager.register(VoxelModel.class, "VoxelModel", new VoxelModelManager(this));
 
@@ -126,16 +126,21 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         soundManager = new EngineSoundManager();
         soundManager.init();
         addShutdownListener(soundManager::dispose);
-        assetManager.getReloadDispatcher().addLast("Sound", soundManager::reload);
+        assetManager.getReloadManager().addLast("Sound", soundManager::reload);
 
         logger.info("Initializing internalization!");
         localeManager = LocaleManager.INSTANCE;
-        assetManager.getReloadDispatcher().addLast("I18n", () -> {
+        assetManager.getReloadManager().addLast("I18n", () -> {
             localeManager.reset();
             for (ModContainer mod : EngineClientImpl.this.getModManager().getLoadedMods()) {
                 localeManager.register(mod);
             }
         });
+
+        try {
+            assetManager.reload();
+        } catch (InterruptedException ignored) {
+        }
     }
 
     private void initRenderCrashReportDetails() {
@@ -169,8 +174,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     @Override
     public void runEngine() {
         super.runEngine();
-
-        assetManager.reload();
 
         addShutdownListener(ticker::stop);
 

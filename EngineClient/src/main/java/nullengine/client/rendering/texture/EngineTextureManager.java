@@ -36,7 +36,7 @@ public class EngineTextureManager implements TextureManager {
     public GLTexture getTextureDirect(AssetPath path) {
         Optional<Path> localPath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(path);
         if (localPath.isEmpty()) {
-            throw new AssetLoadException("Cannot load texture because missing asset. Path: " + path);
+            throw new AssetLoadException("Cannot loadDirect texture because missing asset. Path: " + path);
         }
 
         try (var channel = Files.newByteChannel(localPath.get())) {
@@ -45,7 +45,7 @@ public class EngineTextureManager implements TextureManager {
             buffer.flip();
             return getTextureDirect(TextureBuffer.create(buffer));
         } catch (IOException e) {
-            throw new AssetLoadException("Cannot load texture because catch exception. Path: " + path, e);
+            throw new AssetLoadException("Cannot loadDirect texture because catch exception. Path: " + path, e);
         }
     }
 

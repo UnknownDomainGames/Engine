@@ -25,7 +25,7 @@ public class TextureBuffer {
             int width = w.get(0);
             int height = h.get(0);
             if (pixelbuf == null) {
-                throw new IOException("File buffer cannot be load as pixel buffer by STBImage");
+                throw new IOException("File buffer cannot be loadDirect as pixel buffer by STBImage");
             }
             var tex = new TextureBuffer(width, height);
             tex.getBuffer().put(pixelbuf);

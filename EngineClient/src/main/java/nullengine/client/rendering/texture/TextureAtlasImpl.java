@@ -64,6 +64,6 @@ public class TextureAtlasImpl implements TextureAtlas {
                 return TextureBuffer.create(filebuf);
             }
         }
-        throw new AssetLoadException("Cannot load texture because missing asset. Path: " + path);
+        throw new AssetLoadException("Cannot loadDirect texture because missing asset. Path: " + path);
     }
 }

@@ -4,6 +4,7 @@ import nullengine.client.EngineClient;
 import nullengine.client.asset.*;
 import nullengine.client.asset.exception.AssetLoadException;
 import nullengine.client.asset.exception.AssetNotFoundException;
+import nullengine.client.asset.reloading.AssetReloadScheduler;
 import nullengine.client.asset.source.AssetSourceManager;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.client.rendering.texture.TextureAtlas;
@@ -23,12 +24,44 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
 
     private AssetSourceManager sourceManager;
 
-    private final List<Asset<VoxelModel>> models = new LinkedList<>();
+    private final List<Asset<VoxelModel>> modelAssets = new LinkedList<>();
 
     public VoxelModelManager(EngineClient engineClient) {
         this.blockAtlas = engineClient.getRenderContext().getTextureManager().getTextureAtlas(StandardTextureAtlas.BLOCK);
         this.modelLoader = new ModelLoader(this);
         this.modelBaker = new ModelBaker();
+    }
+
+    @Override
+    public void init(AssetManager manager, AssetType<VoxelModel> type) {
+        this.sourceManager = manager.getSourceManager();
+        manager.getReloadManager().addBefore("VoxelModelData", "Texture", this::reloadModelData);
+    }
+
+    @Override
+    public void register(Asset<VoxelModel> asset) {
+        modelAssets.add(asset);
+    }
+
+    @Override
+    public void unregister(Asset<VoxelModel> asset) {
+        modelAssets.remove(asset);
+    }
+
+    @Override
+    public void reload(AssetReloadScheduler scheduler) {
+        modelAssets.forEach(asset -> scheduler.execute(asset::reload));
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+    @Nonnull
+    @Override
+    public VoxelModel loadDirect(AssetPath path) {
+        return modelBaker.bake(getModelData(path));
     }
 
     ModelData getModelData(AssetPath path) {
@@ -47,13 +80,13 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
         try {
             return modelLoader.load(path.get());
         } catch (IOException e) {
-            throw new AssetLoadException("Cannot load model.", e);
+            throw new AssetLoadException("Cannot loadDirect model.", e);
         }
     }
 
     private void reloadModelData() {
         modelDataMap.clear();
-        models.forEach(asset -> modelDataMap.put(asset.getPath(), resolveTexture(loadModelData(asset.getPath()))));
+        modelAssets.forEach(asset -> modelDataMap.put(asset.getPath(), resolveTexture(loadModelData(asset.getPath()))));
     }
 
     private ModelData resolveTexture(ModelData modelData) {
@@ -72,37 +105,5 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
             texture = textures.get(texture.substring(1));
         }
         return texture;
-    }
-
-    private void bake() {
-        models.forEach(Asset::reload);
-    }
-
-    @Override
-    public void init(AssetManager manager, AssetType<VoxelModel> type) {
-        this.sourceManager = manager.getSourceManager();
-        manager.getReloadDispatcher().addBefore("VoxelModelReload", "Texture", this::reloadModelData);
-        manager.getReloadDispatcher().addAfter("VoxelModelBake", "Texture", this::bake);
-    }
-
-    @Override
-    public void register(Asset<VoxelModel> asset) {
-        models.add(asset);
-    }
-
-    @Override
-    public void dispose(Asset<VoxelModel> asset) {
-        // Don't need do anything.
-    }
-
-    @Override
-    public void dispose() {
-
-    }
-
-    @Nonnull
-    @Override
-    public VoxelModel load(AssetPath path) {
-        return modelBaker.bake(getModelData(path));
     }
 }

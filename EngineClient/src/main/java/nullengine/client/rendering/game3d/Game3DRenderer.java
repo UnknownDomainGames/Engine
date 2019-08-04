@@ -58,7 +58,10 @@ public class Game3DRenderer implements Renderer {
         itemRenderManager.init(context);
         context.setComponent(ItemRenderManager.class, itemRenderManager);
 
-        context.getEngine().getAssetManager().reload();
+        try {
+            context.getEngine().getAssetManager().reload();
+        } catch (InterruptedException ignored) {
+        }
     }
 
     @Listener

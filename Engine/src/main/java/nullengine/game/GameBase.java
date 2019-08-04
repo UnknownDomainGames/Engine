@@ -40,7 +40,7 @@ public abstract class GameBase implements Game {
     }
 
     /**
-     * let mod and resource related module load resources.
+     * let mod and resource related module loadDirect resources.
      */
     protected void resourceStage() {
 
@@ -78,8 +78,8 @@ public abstract class GameBase implements Game {
     @Override
     public void init() {
         logger.info(marker, "Initializing Game.");
-        eventBus.post(new GameStartEvent.Pre(this));
         eventBus.post(new GameCreationEvent.Pre(this));
+        eventBus.post(new GameStartEvent.Pre(this));
         constructStage();
         resourceStage();
         finishStage();

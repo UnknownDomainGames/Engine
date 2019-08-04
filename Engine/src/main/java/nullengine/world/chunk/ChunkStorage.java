@@ -12,7 +12,7 @@ import java.util.Collection;
 
 public class ChunkStorage {
 
-    // should do the io operation to load chunk
+    // should do the io operation to loadDirect chunk
     private final World world;
 
     private LongObjectMap<Chunk> chunks = new LongObjectHashMap<>();
