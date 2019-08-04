@@ -104,6 +104,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
         assetManager = new EngineAssetManager();
         assetManager.getSourceManager().getSources().add(engineAssetSource);
+        shutdownListeners.add(() -> assetManager.dispose());
 
         logger.info("Initializing render context!");
         renderContext = new EngineRenderContext(this);

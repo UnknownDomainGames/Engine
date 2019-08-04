@@ -35,7 +35,8 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
     @Override
     public void init(AssetManager manager, AssetType<VoxelModel> type) {
         this.sourceManager = manager.getSourceManager();
-        manager.getReloadManager().addBefore("VoxelModelData", "Texture", this::reloadModelData);
+        manager.getReloadManager().addBefore("VoxelModelDataReload", "Texture", this::reloadModelData);
+        manager.getReloadManager().addAfter("VoxelModelBake", "Texture", this::reload);
     }
 
     @Override
@@ -48,8 +49,7 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
         modelAssets.remove(asset);
     }
 
-    @Override
-    public void reload(AssetReloadScheduler scheduler) {
+    private void reload(AssetReloadScheduler scheduler) {
         modelAssets.forEach(asset -> scheduler.execute(asset::reload));
     }
 
