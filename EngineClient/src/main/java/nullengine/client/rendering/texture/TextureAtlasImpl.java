@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.value.MutableValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.Platform;
-import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetURL;
 import nullengine.client.asset.exception.AssetLoadException;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -16,12 +16,12 @@ import java.util.*;
 
 public class TextureAtlasImpl implements TextureAtlas {
 
-    private final Map<AssetPath, TextureAtlasPartImpl> textures = new HashMap<>();
+    private final Map<AssetURL, TextureAtlasPartImpl> textures = new HashMap<>();
     private final MutableValue<GLTexture> bakedTextureAtlas = new SimpleMutableObjectValue<>();
 
     @Override
-    public TextureAtlasPart addTexture(AssetPath path) {
-        return textures.computeIfAbsent(path, key -> new TextureAtlasPartImpl());
+    public TextureAtlasPart addTexture(AssetURL url) {
+        return textures.computeIfAbsent(url, key -> new TextureAtlasPartImpl());
     }
 
     @Override
@@ -31,7 +31,7 @@ public class TextureAtlasImpl implements TextureAtlas {
 
     public void reload() throws IOException {
         List<Pair<TextureBuffer, TextureAtlasPartImpl>> loadedTextures = new LinkedList<>();
-        for (Map.Entry<AssetPath, TextureAtlasPartImpl> entry : textures.entrySet()) {
+        for (Map.Entry<AssetURL, TextureAtlasPartImpl> entry : textures.entrySet()) {
             loadedTextures.add(Pair.of(loadTextureBuffer(entry.getKey()), entry.getValue()));
         }
         int sumWidth = 0;
@@ -54,8 +54,8 @@ public class TextureAtlasImpl implements TextureAtlas {
         bakedTextureAtlas.setValue(GLTexture.of(sumWidth, maxHeight, textureBuffer.getBuffer()));
     }
 
-    private TextureBuffer loadTextureBuffer(AssetPath path) throws IOException {
-        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(path);
+    private TextureBuffer loadTextureBuffer(AssetURL url) throws IOException {
+        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(url.toFileLocation());
         if (nativePath.isPresent()) {
             try (var channel = Files.newByteChannel(nativePath.get())) {
                 var filebuf = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
@@ -64,6 +64,6 @@ public class TextureAtlasImpl implements TextureAtlas {
                 return TextureBuffer.create(filebuf);
             }
         }
-        throw new AssetLoadException("Cannot loadDirect texture because missing asset. Path: " + path);
+        throw new AssetLoadException("Cannot loadDirect texture because missing asset. Path: " + url);
     }
 }

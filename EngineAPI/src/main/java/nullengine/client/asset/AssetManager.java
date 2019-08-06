@@ -10,9 +10,7 @@ import java.util.Optional;
 
 public interface AssetManager {
 
-    <T> AssetType<T> register(@Nonnull Class<T> assetClass, @Nonnull AssetProvider<T> provider);
-
-    <T> AssetType<T> register(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull AssetProvider<T> provider);
+    <T> AssetType<T> register(@Nonnull AssetType<T> type);
 
     Optional<AssetType<?>> getType(String name);
 
@@ -24,13 +22,13 @@ public interface AssetManager {
      * @throws AssetLoadException ;
      */
     @Nonnull
-    <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull AssetPath path);
+    <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull AssetURL path);
 
     /**
      * @throws AssetLoadException;
      */
     @Nonnull
-    <T> T loadDirect(@Nonnull AssetType<T> type, @Nonnull AssetPath path);
+    <T> T loadDirect(@Nonnull AssetType<T> type, @Nonnull AssetURL path);
 
     AssetSourceManager getSourceManager();
 

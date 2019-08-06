@@ -3,18 +3,18 @@ package nullengine.client.gui.component;
 import com.github.mouse0w0.observable.value.MutableFloatValue;
 import com.github.mouse0w0.observable.value.MutableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetURL;
 import nullengine.client.gui.event.MouseEvent;
 
 import java.util.function.Consumer;
 
 public class ImageButton extends Image {
-    private final MutableValue<AssetPath> background = new SimpleMutableObjectValue<>();
-    private final MutableValue<AssetPath> hoveredBg = new SimpleMutableObjectValue<>();
-    private final MutableValue<AssetPath> pressedBg = new SimpleMutableObjectValue<>();
-    private final MutableValue<AssetPath> disableBg = new SimpleMutableObjectValue<>();
+    private final MutableValue<AssetURL> background = new SimpleMutableObjectValue<>();
+    private final MutableValue<AssetURL> hoveredBg = new SimpleMutableObjectValue<>();
+    private final MutableValue<AssetURL> pressedBg = new SimpleMutableObjectValue<>();
+    private final MutableValue<AssetURL> disableBg = new SimpleMutableObjectValue<>();
 
-    public ImageButton(AssetPath path) {
+    public ImageButton(AssetURL path) {
         this();
         background.setValue(path);
     }
@@ -30,19 +30,19 @@ public class ImageButton extends Image {
         handleBackground();
     }
 
-    public MutableValue<AssetPath> hoverBackground() {
+    public MutableValue<AssetURL> hoverBackground() {
         return hoveredBg;
     }
 
-    public MutableValue<AssetPath> pressBackground() {
+    public MutableValue<AssetURL> pressBackground() {
         return pressedBg;
     }
 
-    public MutableValue<AssetPath> disabledBackground() {
+    public MutableValue<AssetURL> disabledBackground() {
         return disableBg;
     }
 
-    public MutableValue<AssetPath> buttonBackground() {
+    public MutableValue<AssetURL> buttonBackground() {
         return background;
     }
 

@@ -10,8 +10,10 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EngineTextureManager implements TextureManager, AssetProvider<GLTexture> {
 
@@ -32,7 +34,7 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
     }
 
     @Override
-    public TextureAtlasPart addTextureToAtlas(AssetPath path, TextureAtlasName type) {
+    public TextureAtlasPart addTextureToAtlas(AssetURL path, TextureAtlasName type) {
         return texturesAtlases.computeIfAbsent(type, key -> new TextureAtlasImpl()).addTexture(path);
     }
 
@@ -90,8 +92,8 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
 
     @Nonnull
     @Override
-    public GLTexture loadDirect(AssetPath path) {
-        Optional<Path> localPath = sourceManager.getPath(path);
+    public GLTexture loadDirect(AssetURL path) {
+        var localPath = sourceManager.getPath(path.toFileLocation());
         if (localPath.isEmpty()) {
             throw new AssetLoadException("Cannot loadDirect texture because missing asset. Path: " + path);
         }

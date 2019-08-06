@@ -1,6 +1,7 @@
 package nullengine.client.rendering;
 
 import nullengine.client.EngineClient;
+import nullengine.client.asset.AssetType;
 import nullengine.client.gui.EngineGuiManager;
 import nullengine.client.gui.GuiManager;
 import nullengine.client.rendering.camera.Camera;
@@ -197,7 +198,7 @@ public class EngineRenderContext implements RenderContext {
     private void initTexture() {
         textureManager = new EngineTextureManager();
         TextureManager.Internal.setInstance(textureManager);
-        getEngine().getAssetManager().register(GLTexture.class, "Texture", textureManager);
+        getEngine().getAssetManager().register(AssetType.builder(GLTexture.class).name("Texture").provider(textureManager).parentLocation("texture").extensionName(".png").build());
     }
 
     private void initFont() {

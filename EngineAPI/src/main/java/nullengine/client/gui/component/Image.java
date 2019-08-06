@@ -2,7 +2,7 @@ package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetURL;
 
 public class Image extends Control {
     private TextureImg textureImg = new TextureImg();
@@ -27,7 +27,7 @@ public class Image extends Control {
         return textureImg.imageHeight();
     }
 
-    public SimpleMutableObjectValue<AssetPath> path() {
+    public SimpleMutableObjectValue<AssetURL> path() {
         return textureImg.path();
     }
 

@@ -1,7 +1,5 @@
 package nullengine.client.asset.source;
 
-import nullengine.client.asset.AssetPath;
-
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -10,13 +8,13 @@ import java.util.Optional;
 
 public interface AssetSourceManager {
 
-    Optional<Path> getPath(@Nonnull AssetPath path);
+    Optional<Path> getPath(@Nonnull String url);
 
-    List<Path> getPaths(@Nonnull AssetPath path);
+    List<Path> getPaths(@Nonnull String url);
 
-    Optional<AssetSource> getSource(@Nonnull AssetPath path);
+    Optional<AssetSource> getSource(@Nonnull String url);
 
-    List<AssetSource> getSources(@Nonnull AssetPath path);
+    List<AssetSource> getSources(@Nonnull String url);
 
     LinkedList<AssetSource> getSources();
 }

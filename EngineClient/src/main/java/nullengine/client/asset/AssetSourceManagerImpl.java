@@ -15,9 +15,27 @@ public class AssetSourceManagerImpl implements AssetSourceManager {
     private final LinkedList<AssetSource> assetSources = new LinkedList<>();
 
     @Override
-    public Optional<AssetSource> getSource(AssetPath path) {
+    public Optional<Path> getPath(@Nonnull String url) {
         for (AssetSource assetSource : assetSources) {
-            if (assetSource.toPath(path).isPresent()) {
+            var path = assetSource.getPath(url);
+            if (path.isPresent()) {
+                return path;
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public List<Path> getPaths(@Nonnull String url) {
+        List<Path> result = new ArrayList<>();
+        assetSources.forEach(assetSource -> assetSource.getPath(url).ifPresent(result::add));
+        return List.copyOf(result);
+    }
+
+    @Override
+    public Optional<AssetSource> getSource(@Nonnull String url) {
+        for (AssetSource assetSource : assetSources) {
+            if (assetSource.getPath(url).isPresent()) {
                 return Optional.of(assetSource);
             }
         }
@@ -25,10 +43,10 @@ public class AssetSourceManagerImpl implements AssetSourceManager {
     }
 
     @Override
-    public List<AssetSource> getSources(@Nonnull AssetPath path) {
+    public List<AssetSource> getSources(@Nonnull String url) {
         List<AssetSource> result = new ArrayList<>();
         for (AssetSource assetSource : assetSources) {
-            if (assetSource.toPath(path).isPresent()) {
+            if (assetSource.getPath(url).isPresent()) {
                 result.add(assetSource);
             }
         }
@@ -38,23 +56,5 @@ public class AssetSourceManagerImpl implements AssetSourceManager {
     @Override
     public LinkedList<AssetSource> getSources() {
         return assetSources;
-    }
-
-    @Override
-    public Optional<Path> getPath(@Nonnull AssetPath path) {
-        for (AssetSource assetSource : assetSources) {
-            Optional<Path> _path = assetSource.toPath(path);
-            if (_path.isPresent()) {
-                return _path;
-            }
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Path> getPaths(@Nonnull AssetPath path) {
-        List<Path> result = new ArrayList<>();
-        assetSources.forEach(assetSource -> assetSource.toPath(path).ifPresent(result::add));
-        return List.copyOf(result);
     }
 }

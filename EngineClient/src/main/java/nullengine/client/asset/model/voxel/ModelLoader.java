@@ -3,7 +3,7 @@ package nullengine.client.asset.model.voxel;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetURL;
 import nullengine.util.Facing;
 import nullengine.util.JsonUtils;
 import org.joml.Vector3f;
@@ -38,7 +38,7 @@ class ModelLoader {
         ModelData modelData = new ModelData();
         ModelData parent = null;
         if (json.has("parent")) {
-            parent = modelManager.getModelData(AssetPath.of(json.get("parent").getAsString()));
+            parent = modelManager.getModelData(AssetURL.fromString(json.get("parent").getAsString()));
         }
         if (json.has("textures")) {
             modelData.textures = loadTextures(json.getAsJsonObject("textures"), parent != null && parent.textures != null ? parent.textures : Map.of());

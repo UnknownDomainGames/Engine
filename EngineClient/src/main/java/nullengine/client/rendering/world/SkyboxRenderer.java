@@ -2,7 +2,7 @@ package nullengine.client.rendering.world;
 
 import com.github.mouse0w0.observable.value.ObservableValue;
 import nullengine.client.asset.Asset;
-import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.model.GLMesh;
 import nullengine.client.rendering.model.Mesh;
@@ -24,7 +24,7 @@ public class SkyboxRenderer {
     public void init(RenderContext context){
         this.context = context;
         worldShader = ShaderManager.instance().getShader("world_shader");
-        skybox = context.getEngine().getAssetManager().create(TEXTURE, AssetPath.of("engine", "texture", "misc", "skybox.png"));
+        skybox = context.getEngine().getAssetManager().create(TEXTURE, AssetURL.of("engine", "texture/misc/skybox.png"));
         skyboxMesh = GLMesh.of(new Mesh(
                 new float[]{
                         256, 256, -256,
