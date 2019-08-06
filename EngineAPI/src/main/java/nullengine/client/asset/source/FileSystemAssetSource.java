@@ -1,7 +1,6 @@
 package nullengine.client.asset.source;
 
 import com.google.common.base.Strings;
-import nullengine.client.asset.AssetPath;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -23,9 +22,9 @@ public class FileSystemAssetSource implements AssetSource {
     }
 
     @Override
-    public Optional<Path> toPath(AssetPath path) {
-        Path _path = fileSystem.getPath(root, path.getRealPath());
-        return Files.exists(_path) ? Optional.of(_path) : Optional.empty();
+    public Optional<Path> getPath(String url) {
+        var path = fileSystem.getPath(root, url);
+        return Files.exists(path) ? Optional.of(path) : Optional.empty();
     }
 
     public FileSystem getFileSystem() {

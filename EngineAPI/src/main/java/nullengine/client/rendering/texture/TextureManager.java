@@ -1,6 +1,6 @@
 package nullengine.client.rendering.texture;
 
-import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetURL;
 import nullengine.exception.UninitializationException;
 
 import java.util.function.Supplier;
@@ -9,7 +9,7 @@ public interface TextureManager {
 
     GLTexture getTextureDirect(TextureBuffer buffer);
 
-    TextureAtlasPart addTextureToAtlas(AssetPath path, TextureAtlasName type);
+    TextureAtlasPart addTextureToAtlas(AssetURL path, TextureAtlasName type);
 
     TextureAtlas getTextureAtlas(TextureAtlasName type);
 

@@ -20,11 +20,11 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
     private final ModelLoader modelLoader;
     private final ModelBaker modelBaker;
 
-    private final Map<AssetPath, ModelData> modelDataMap = new HashMap<>();
+    private final Map<AssetURL, ModelData> modelDataMap = new HashMap<>();
+    private final List<Asset<VoxelModel>> modelAssets = new LinkedList<>();
 
     private AssetSourceManager sourceManager;
-
-    private final List<Asset<VoxelModel>> modelAssets = new LinkedList<>();
+    private AssetType<VoxelModel> type;
 
     public VoxelModelManager(EngineClient engineClient) {
         this.blockAtlas = engineClient.getRenderContext().getTextureManager().getTextureAtlas(StandardTextureAtlas.BLOCK);
@@ -35,6 +35,7 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
     @Override
     public void init(AssetManager manager, AssetType<VoxelModel> type) {
         this.sourceManager = manager.getSourceManager();
+        this.type = type;
         manager.getReloadManager().addBefore("VoxelModelDataReload", "Texture", this::reloadModelData);
         manager.getReloadManager().addAfter("VoxelModelBake", "Texture", this::reload);
     }
@@ -60,11 +61,11 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
 
     @Nonnull
     @Override
-    public VoxelModel loadDirect(AssetPath path) {
+    public VoxelModel loadDirect(AssetURL path) {
         return modelBaker.bake(getModelData(path));
     }
 
-    ModelData getModelData(AssetPath path) {
+    ModelData getModelData(AssetURL path) {
         ModelData modelData = modelDataMap.get(path);
         if (modelData == null) {
             modelData = loadModelData(path);
@@ -73,10 +74,10 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
         return modelData;
     }
 
-    private ModelData loadModelData(AssetPath assetPath) {
-        Optional<Path> path = sourceManager.getPath(assetPath);
+    private ModelData loadModelData(AssetURL url) {
+        Optional<Path> path = sourceManager.getPath(url.toFileLocation(type));
         if (path.isEmpty())
-            throw new AssetNotFoundException(assetPath);
+            throw new AssetNotFoundException(url);
         try {
             return modelLoader.load(path.get());
         } catch (IOException e) {
@@ -94,7 +95,7 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
             ModelData.Element.Cube cube = (ModelData.Element.Cube) element;
             for (ModelData.Element.Cube.Face face : cube.faces) {
                 face.texture = resolveTexture(face.texture, modelData.textures);
-                face._texture = blockAtlas.addTexture(AssetPath.of(face.texture));
+                face._texture = blockAtlas.addTexture(AssetURL.fromString(face.texture));
             }
         }
         return modelData;

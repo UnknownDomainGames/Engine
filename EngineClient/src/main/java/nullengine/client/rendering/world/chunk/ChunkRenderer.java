@@ -3,7 +3,7 @@ package nullengine.client.rendering.world.chunk;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
-import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetURL;
 import nullengine.client.game.GameClient;
 import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.light.DirectionalLight;
@@ -60,11 +60,11 @@ public class ChunkRenderer {
         game.getEventBus().register(this);
 
         chunkSolidShader = ShaderManager.instance().registerShader("chunk_solid",
-                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "chunk_solid.vert"))
-                        .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "chunk_solid.frag")));
+                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/chunk_solid.vert"))
+                        .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/chunk_solid.frag")));
         assimpShader = ShaderManager.instance().registerShader("assimp_model",
-                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "assimp_model.vert"))
-                        .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "chunk_solid.frag")));
+                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/assimp_model.vert"))
+                        .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/chunk_solid.frag")));
 
         //tmp = AssimpHelper.loadModel("assets/tmp/untitled.obj");
         dirLight = new DirectionalLight().setDirection(new Vector3f(-0.15f, -1f, -0.35f))

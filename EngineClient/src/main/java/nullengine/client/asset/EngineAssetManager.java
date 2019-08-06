@@ -9,9 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.Validate.notEmpty;
-
 public class EngineAssetManager implements AssetManager {
 
     private final Map<String, AssetType<?>> registeredTypes = new HashMap<>();
@@ -20,23 +17,13 @@ public class EngineAssetManager implements AssetManager {
     private final AssetReloadManagerImpl reloadManager = new AssetReloadManagerImpl();
 
     @Override
-    public <T> AssetType<T> register(@Nonnull Class<T> assetClass, @Nonnull AssetProvider<T> provider) {
-        return register(assetClass, assetClass.getSimpleName(), provider);
-    }
-
-    @Override
-    public <T> AssetType<T> register(@Nonnull Class<T> assetClass, @Nonnull String name, @Nonnull AssetProvider<T> provider) {
-        requireNonNull(assetClass);
-        notEmpty(name);
-        requireNonNull(provider);
-
-        if (registeredTypes.containsKey(name)) {
-            throw new IllegalArgumentException(String.format("AssetType %s has been registered.", name));
+    public <T> AssetType<T> register(@Nonnull AssetType<T> type) {
+        if (registeredTypes.containsKey(type.getName())) {
+            throw new IllegalArgumentException(String.format("AssetType %s has been registered.", type.getName()));
         }
 
-        AssetType<T> type = new AssetType<>(assetClass, name, provider);
-        registeredTypes.put(name, type);
-        provider.init(this, type);
+        registeredTypes.put(type.getName(), type);
+        type.getProvider().init(this, type);
         return type;
     }
 
@@ -57,7 +44,7 @@ public class EngineAssetManager implements AssetManager {
 
     @Nonnull
     @Override
-    public <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
+    public <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull AssetURL path) {
         Asset<T> asset = new Asset<>(type, path);
         type.getProvider().register(asset);
         return asset;
@@ -65,7 +52,7 @@ public class EngineAssetManager implements AssetManager {
 
     @Nonnull
     @Override
-    public <T> T loadDirect(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
+    public <T> T loadDirect(@Nonnull AssetType<T> type, @Nonnull AssetURL path) {
         return type.getProvider().loadDirect(path);
     }
 

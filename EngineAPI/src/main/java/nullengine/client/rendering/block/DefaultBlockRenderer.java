@@ -3,8 +3,8 @@ package nullengine.client.rendering.block;
 import nullengine.Platform;
 import nullengine.block.Block;
 import nullengine.client.asset.Asset;
-import nullengine.client.asset.AssetPath;
 import nullengine.client.asset.AssetTypes;
+import nullengine.client.asset.AssetURL;
 import nullengine.client.asset.model.voxel.VoxelModel;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.BlockPos;
@@ -82,7 +82,7 @@ public class DefaultBlockRenderer implements BlockRenderer {
         return this;
     }
 
-    public DefaultBlockRenderer setModelPath(AssetPath path) {
+    public DefaultBlockRenderer setModelPath(AssetURL path) {
         this.model = Platform.getEngineClient().getAssetManager().create(AssetTypes.VOXEL_MODEL, path);
         return this;
     }

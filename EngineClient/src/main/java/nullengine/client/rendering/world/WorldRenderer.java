@@ -3,7 +3,7 @@ package nullengine.client.rendering.world;
 import com.github.mouse0w0.observable.value.MutableValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.entity.EntityRenderManagerImpl;
@@ -59,8 +59,8 @@ public class WorldRenderer {
 //        context.getGame().getContext().register(chunkRenderer);
         worldShader =
                 ShaderManager.instance().registerShader("world_shader",
-                        new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "world.vert"))
-                                .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "world.frag")));
+                        new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/world.vert"))
+                                .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/world.frag")));
         skyboxRenderer.init(context);
         frameBuffer = new FrameBuffer();
         frameBuffer.createFrameBuffer();
@@ -71,14 +71,14 @@ public class WorldRenderer {
         frameBuffer.check();
         frameBufferMultisampled.check();
         frameBufferSP = ShaderManager.instance().registerShader("frame_buffer_shader",
-                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "framebuffer.vert"))
-                        .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "framebuffer.frag")));
+                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/framebuffer.vert"))
+                        .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/framebuffer.frag")));
         //TODO init Client shader in a formal way
         frameBufferShadow = new FrameBufferShadow();
         frameBufferShadow.createFrameBuffer();
         shadowShader = ShaderManager.instance().registerShader("shadow_shader",
-                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "shadow.vert"))
-                        .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "shadow.frag")));
+                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/shadow.vert"))
+                        .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/shadow.frag")));
     }
 
     public void render(float partial) {

@@ -3,6 +3,7 @@ package nullengine.client;
 import nullengine.EngineBase;
 import nullengine.Platform;
 import nullengine.client.asset.AssetManager;
+import nullengine.client.asset.AssetType;
 import nullengine.client.asset.EngineAssetManager;
 import nullengine.client.asset.model.voxel.VoxelModel;
 import nullengine.client.asset.model.voxel.VoxelModelManager;
@@ -120,7 +121,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         addShutdownListener(renderContext::dispose);
         assetManager.getReloadManager().addFirst("Shader", ShaderManager.instance()::reload);
 
-        assetManager.register(VoxelModel.class, "VoxelModel", new VoxelModelManager(this));
+        assetManager.register(AssetType.builder(VoxelModel.class).name("VoxelModel").provider(new VoxelModelManager(this)).parentLocation("model").extensionName(".json").build());
 
         logger.info("Initializing audio context!");
         soundManager = new EngineSoundManager();

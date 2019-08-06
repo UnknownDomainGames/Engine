@@ -1,7 +1,5 @@
 package nullengine.client.asset.source;
 
-import nullengine.client.asset.AssetPath;
-
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -29,12 +27,11 @@ public class CompositeAssetSource implements AssetSource {
     }
 
     @Override
-    public Optional<Path> toPath(AssetPath path) {
-        var fullPath = path.getRealPath();
+    public Optional<Path> getPath(String url) {
         for (Source source : sources) {
-            Path _path = source.toPath(fullPath);
-            if (Files.exists(_path)) {
-                return Optional.of(_path);
+            var path = source.toPath(url);
+            if (Files.exists(path)) {
+                return Optional.of(path);
             }
         }
         return Optional.empty();

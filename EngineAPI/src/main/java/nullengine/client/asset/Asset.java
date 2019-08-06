@@ -8,13 +8,13 @@ import java.util.Objects;
 public final class Asset<T> {
 
     private final AssetType<T> type;
-    private final AssetPath path;
+    private final AssetURL path;
 
     private T value;
 
     private volatile boolean disposed;
 
-    Asset(@Nonnull AssetType<T> type, @Nonnull AssetPath path) {
+    Asset(@Nonnull AssetType<T> type, @Nonnull AssetURL path) {
         this.type = Objects.requireNonNull(type);
         this.path = Objects.requireNonNull(path);
     }
@@ -37,7 +37,7 @@ public final class Asset<T> {
     }
 
     @Nonnull
-    public AssetPath getPath() {
+    public AssetURL getPath() {
         return path;
     }
 

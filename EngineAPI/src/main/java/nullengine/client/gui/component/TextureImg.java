@@ -2,7 +2,7 @@ package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetURL;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.internal.Internal;
 import nullengine.client.gui.rendering.ComponentRenderer;
@@ -10,12 +10,12 @@ import nullengine.client.gui.rendering.ImageRenderer;
 import nullengine.client.rendering.texture.GLTexture;
 
 public class TextureImg extends Component {
-    private final SimpleMutableObjectValue<AssetPath> image = new SimpleMutableObjectValue<>();
+    private final SimpleMutableObjectValue<AssetURL> image = new SimpleMutableObjectValue<>();
     private final SimpleMutableFloatValue imgX = new SimpleMutableFloatValue();
     private final SimpleMutableFloatValue imgY = new SimpleMutableFloatValue();
     private final SimpleMutableFloatValue imgWidth = new SimpleMutableFloatValue();
     private final SimpleMutableFloatValue imgHeight = new SimpleMutableFloatValue();
-    private AssetPath cachedPath;
+    private AssetURL cachedPath;
     private GLTexture cachedTexture;
 
     public TextureImg() {
@@ -29,7 +29,7 @@ public class TextureImg extends Component {
         imgHeight.addChangeListener((ob, o, n) -> requestParentLayout());
     }
 
-    public TextureImg(AssetPath path) {
+    public TextureImg(AssetURL path) {
         this();
         image.setValue(path);
     }
@@ -78,7 +78,7 @@ public class TextureImg extends Component {
         return imgHeight;
     }
 
-    public SimpleMutableObjectValue<AssetPath> path() {
+    public SimpleMutableObjectValue<AssetURL> path() {
         return image;
     }
 

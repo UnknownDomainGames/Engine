@@ -3,7 +3,7 @@ package nullengine.client.sound;
 import com.github.mouse0w0.observable.value.MutableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.Platform;
-import nullengine.client.asset.AssetPath;
+import nullengine.client.asset.AssetURL;
 import nullengine.client.asset.exception.AssetLoadException;
 import nullengine.client.rendering.camera.Camera;
 import org.joml.Matrix4f;
@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 
@@ -32,7 +31,7 @@ public class EngineSoundManager implements ALSoundManager {
 
     private ALSoundListener listener;
 
-    private final Map<AssetPath, MutableValue<ALSound>> soundMap = new HashMap<>();
+    private final Map<AssetURL, MutableValue<ALSound>> soundMap = new HashMap<>();
 
     private final Map<String, MutableValue<ALSoundSource>> soundSourceMap = new HashMap<>();
 
@@ -87,14 +86,14 @@ public class EngineSoundManager implements ALSoundManager {
     }
 
     @Override
-    public MutableValue<ALSound> getSound(AssetPath path) {
-        return soundMap.computeIfAbsent(path, key -> new SimpleMutableObjectValue<>(getSoundDirect(key)));
+    public MutableValue<ALSound> getSound(AssetURL url) {
+        return soundMap.computeIfAbsent(url, key -> new SimpleMutableObjectValue<>(getSoundDirect(key)));
 
     }
 
     @Override
-    public ALSound getSoundDirect(AssetPath path) {
-        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(path);
+    public ALSound getSoundDirect(AssetURL url) {
+        var nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(url.toFileLocation());
         if (nativePath.isPresent()) {
             try (var channel = Files.newByteChannel(nativePath.get(), StandardOpenOption.READ)) {
                 ByteBuffer buf = BufferUtils.createByteBuffer((int) channel.size());
@@ -102,10 +101,10 @@ public class EngineSoundManager implements ALSoundManager {
                 buf.flip();
                 return ALSound.ofOGG(buf);
             } catch (IOException e) {
-                throw new AssetLoadException("Cannot loadDirect sound. Path: " + path, e);
+                throw new AssetLoadException("Cannot loadDirect sound. Path: " + url, e);
             }
         } else {
-            throw new AssetLoadException("Cannot loadDirect sound (Missing file). Path: " + path);
+            throw new AssetLoadException("Cannot loadDirect sound (Missing file). Path: " + url);
         }
     }
 
@@ -131,8 +130,8 @@ public class EngineSoundManager implements ALSoundManager {
     }
 
     public void reload() {
-        for (Map.Entry<AssetPath, MutableValue<ALSound>> value : soundMap.entrySet()) {
-            Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(value.getKey());
+        for (Map.Entry<AssetURL, MutableValue<ALSound>> value : soundMap.entrySet()) {
+            var nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(value.getKey().toFileLocation());
             if (nativePath.isPresent()) {
                 try (var channel = Files.newByteChannel(nativePath.get(), StandardOpenOption.READ)) {
                     ByteBuffer buf = BufferUtils.createByteBuffer((int) channel.size());

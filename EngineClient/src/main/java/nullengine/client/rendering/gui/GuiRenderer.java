@@ -1,8 +1,8 @@
 package nullengine.client.rendering.gui;
 
 import com.github.mouse0w0.observable.value.ObservableValue;
-import nullengine.client.asset.AssetPath;
 import nullengine.client.asset.AssetTypes;
+import nullengine.client.asset.AssetURL;
 import nullengine.client.gui.Container;
 import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.Scene;
@@ -43,8 +43,8 @@ public class GuiRenderer implements Renderer {
         this.window = context.getWindow();
 
         shader = ShaderManager.instance().registerShader("gui_shader",
-                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetPath.of("engine", "shader", "gui.vert"))
-                        .addShader(ShaderType.FRAGMENT_SHADER, AssetPath.of("engine", "shader", "gui.frag")));
+                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/gui.vert"))
+                        .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/gui.frag")));
 
         this.graphics = new GraphicsImpl(context, this);
         graphics.setFont(FontHelper.instance().getDefaultFont());
