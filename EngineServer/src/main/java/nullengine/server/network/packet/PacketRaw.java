@@ -22,7 +22,7 @@ public final class PacketRaw extends BasePacket {
     @Override
     public void read(PacketBuf buf) throws IOException {
         var len = buf.readVarInt();
-        var str = (String) buf.readCharSequence(len, StandardCharsets.UTF_8);
+        var str = buf.readCharSequence(len, StandardCharsets.UTF_8).toString();
         content = new Gson().fromJson(str, Map.class);
     }
 

@@ -42,8 +42,8 @@ public class NetworkServer {
                         } catch (ChannelException var3) {
 
                         }
-                        ch.pipeline().addLast("decoder", new StringDecoder())
-                                .addLast("encoder", new StringEncoder());
+                        ch.pipeline().addLast("decoder", new PacketDecoder())
+                                .addLast("encoder", new PacketEncoder());
                         var handler = new NetworkHandler(Side.DEDICATED_SERVER);
                         handlers.add(handler);
                         ch.pipeline().addLast("handler", handler);
@@ -71,6 +71,12 @@ public class NetworkServer {
                 }).bind(LocalAddress.ANY).syncUninterruptibly();
         Platform.getLogger().debug("Launched netty local server at %s:%d");
         return future.channel().localAddress();
+    }
+
+    public void tick(){
+        for (NetworkHandler handler : handlers) {
+
+        }
     }
 
     public void shutdown(){

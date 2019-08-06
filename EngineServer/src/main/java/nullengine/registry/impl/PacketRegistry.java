@@ -1,11 +1,18 @@
-package nullengine.server.network.packet;
+package nullengine.registry.impl;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import nullengine.Platform;
 import nullengine.event.Listener;
+import nullengine.registry.RegistrationException;
 import nullengine.registry.impl.IdAutoIncreaseRegistry;
 import nullengine.server.event.PacketReceivedEvent;
+import nullengine.server.network.packet.Packet;
+import nullengine.server.network.packet.PacketSyncRegistry;
+
+import javax.annotation.Nonnull;
+import java.util.Map;
+import java.util.Optional;
 
 public class PacketRegistry extends IdAutoIncreaseRegistry<Packet> {
 
@@ -17,9 +24,25 @@ public class PacketRegistry extends IdAutoIncreaseRegistry<Packet> {
         Platform.getEngine().getEventBus().register(this);
     }
 
-    @Listener
-    public void onMappingPacketReceived(PacketReceivedEvent event){
+    @Nonnull
+    @Override
+    public Packet register(@Nonnull Packet obj) {
+        if(getValues().stream().anyMatch(packet -> packet.getClass() == obj.getClass()))
+            throw new RegistrationException(String.format("Packet %s is already registered", obj.getClass().getSimpleName()));
+        return super.register(obj);
+    }
 
+    @Listener
+    public void onMappingPacketReceived(PacketReceivedEvent<PacketSyncRegistry> event){
+        if(event.getPacket().getRegistryName().equals(this.getRegistryName())){
+            for (var entry : event.getPacket().getIdMap().entrySet()) {
+                var local = getId(entry.getKey(), false);
+                if(!entry.getKey().equals(getKey(local, false))){ // true if this name is actually not registered
+                    continue;
+                }
+                mapping.put(local, entry.getValue());
+            }
+        }
     }
 
     @Override
@@ -28,7 +51,9 @@ public class PacketRegistry extends IdAutoIncreaseRegistry<Packet> {
     }
 
     public int getId(Packet obj, boolean remapped){
-        int id = super.getId(obj);
+        int id = getEntries().stream()
+                .filter(entry -> entry.getValue().getClass() == obj.getClass())
+                .findFirst().map(entry-> getValue(entry.getKey()).getId()).get();
         if(remapped){
             return mapping.getOrDefault(id,id);
         }

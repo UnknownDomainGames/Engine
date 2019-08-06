@@ -7,6 +7,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import nullengine.server.network.packet.Packet;
 import nullengine.util.Side;
 
 import java.net.InetAddress;
@@ -28,8 +29,8 @@ public class NetworkClient {
                         } catch (ChannelException var3) {
 
                         }
-                        ch.pipeline().addLast("decoder", new StringDecoder())
-                                .addLast("encoder", new StringEncoder());
+                        ch.pipeline().addLast("decoder", new PacketDecoder())
+                                .addLast("encoder", new PacketEncoder());
                         ch.pipeline().addLast("handler", new NetworkHandler(Side.CLIENT));
                     }
                 })
@@ -53,7 +54,7 @@ public class NetworkClient {
         future = channelFuture;
     }
 
-    public void send(String msg){
+    public void send(Packet msg){
         future.channel().writeAndFlush(msg);
     }
 }
