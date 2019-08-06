@@ -1,5 +1,6 @@
 package nullengine.server.network.packet;
 
+import nullengine.Engine;
 import nullengine.Platform;
 import nullengine.server.network.PacketBuf;
 
@@ -29,13 +30,12 @@ public class PacketHandshake extends BasePacket {
     @Override
     public void read(PacketBuf buf) throws IOException {
         var len = buf.readVarInt();
-        engineVersion = (String) buf.readCharSequence(len, StandardCharsets.US_ASCII);
+        engineVersion = buf.readCharSequence(len, StandardCharsets.US_ASCII).toString();
         mods = new ArrayList<>();
         var size = buf.readVarInt();
-        var charset = StandardCharsets.UTF_8;
         for (int i = 0; i < size; i++) {
             len = buf.readVarInt();
-            mods.add((String) buf.readCharSequence(len, charset));
+            mods.add(buf.readCharSequence(len, StandardCharsets.UTF_8).toString());
         }
     }
 

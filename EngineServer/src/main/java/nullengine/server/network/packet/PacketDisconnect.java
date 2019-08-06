@@ -14,6 +14,14 @@ public class PacketDisconnect extends BasePacket {
     private String reason;
     private Map<String, Object> extra = new HashMap<>();
 
+    public PacketDisconnect(){
+        this("");
+    }
+
+    public PacketDisconnect(String reason){
+        this.reason = reason;
+    }
+
     @Override
     public void write(PacketBuf buf) throws IOException {
         var len = reason.length();
@@ -34,10 +42,10 @@ public class PacketDisconnect extends BasePacket {
     @Override
     public void read(PacketBuf buf) throws IOException {
         var len = buf.readVarInt();
-        reason = ((String) buf.readCharSequence(len, StandardCharsets.UTF_8));
+        reason = buf.readCharSequence(len, StandardCharsets.UTF_8).toString();
         if(buf.readBoolean()){
             len = buf.readVarInt();
-            var str = (String) buf.readCharSequence(len, StandardCharsets.UTF_8);
+            var str = buf.readCharSequence(len, StandardCharsets.UTF_8).toString();
             extra = new Gson().fromJson(str, Map.class);
         }
         else{
