@@ -39,7 +39,7 @@ class ModelBaker {
     }
 
     private void bakeFace(ModelData.Element.Cube cube, ModelData.Element.Cube.Face face, Facing facing, List<VoxelModel.Vertex> mesh) {
-        TextureAtlasPart textureAtlasPart = face._texture;
+        TextureAtlasPart textureAtlasPart = face.resolvedTexture;
         float u = textureAtlasPart.getMaxU() - textureAtlasPart.getMinU();
         float v = textureAtlasPart.getMaxV() - textureAtlasPart.getMinV();
         float minU = textureAtlasPart.getMinU() + u * face.uv.x();
