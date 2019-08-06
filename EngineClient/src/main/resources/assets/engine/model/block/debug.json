@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "top": "texture/block/debug_top.png",
+    "bottom": "texture/block/debug_bottom.png",
+    "north": "texture/block/debug_north.png",
+    "east": "texture/block/debug_east.png",
+    "south": "texture/block/debug_south.png",
+    "west": "texture/block/debug_west.png"
+  }
+}
