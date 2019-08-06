@@ -16,7 +16,7 @@ public interface AssetProvider<T> {
      * @throws AssetLoadException
      */
     @Nonnull
-    T loadDirect(AssetURL path);
+    T loadDirect(AssetURL url);
 
     void dispose();
 }
