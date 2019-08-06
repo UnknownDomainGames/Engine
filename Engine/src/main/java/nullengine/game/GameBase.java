@@ -40,7 +40,7 @@ public abstract class GameBase implements Game {
     }
 
     /**
-     * let mod and resource related module loadDirect resources.
+     * let mod and resource related module load resources.
      */
     protected void resourceStage() {
 

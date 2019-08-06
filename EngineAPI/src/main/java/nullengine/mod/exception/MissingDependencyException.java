@@ -8,7 +8,7 @@ public class MissingDependencyException extends RuntimeException {
     private final DependencyCheckResult result;
 
     public MissingDependencyException(String modId, DependencyCheckResult result) {
-        super(String.format("Missing dependency when loadDirect mod %s.", modId));
+        super(String.format("Missing dependency when load mod %s.", modId));
         this.modId = modId;
         this.result = result;
     }

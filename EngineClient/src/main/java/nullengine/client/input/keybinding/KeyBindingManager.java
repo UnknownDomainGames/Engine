@@ -225,7 +225,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     }
 
     public void loadConfig() {
-        // TODO: loadDirect config file from disk
+        // TODO: load config file from disk
     }
 
 }

@@ -114,11 +114,11 @@ public class EngineModManager implements ModManager {
         } catch (ModLoadException e) {
             throw e;
         } catch (Exception e) {
-            throw new ModLoadException(format("Cannot loadDirect mod \"%s\" because caught a exception.", metadata.getId()), e);
+            throw new ModLoadException(format("Cannot load mod \"%s\" because caught a exception.", metadata.getId()), e);
         }
 
         if (modContainer == null) {
-            throw new ModLoadException(format("Cannot loadDirect mod \"%s\" because do not support loadDirect it.", metadata.getId()));
+            throw new ModLoadException(format("Cannot load mod \"%s\" because do not support load it.", metadata.getId()));
         }
 
         loadedModContainers.put(modContainer.getId(), modContainer);

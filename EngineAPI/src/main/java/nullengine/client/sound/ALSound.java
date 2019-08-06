@@ -77,10 +77,10 @@ public class ALSound implements Disposable {
             case AL_NO_ERROR:
                 break;
             case AL_INVALID_ENUM:
-                Platform.getLogger().warn("Cannot loadDirect sound! (Invalid enum) bit depth: {} channel: {}", bitDepth, channel);
+                Platform.getLogger().warn("Cannot load sound! (Invalid enum) bit depth: {} channel: {}", bitDepth, channel);
                 dispose();
             case AL_OUT_OF_MEMORY:
-                Platform.getLogger().warn("Cannot loadDirect sound! (Out of memory)!");
+                Platform.getLogger().warn("Cannot load sound! (Out of memory)!");
                 dispose();
         }
     }
