@@ -154,7 +154,7 @@ public class ModClassLoader extends URLClassLoader {
             try {
                 return classLoader.loadClass(name);
             } catch (ClassNotFoundException e) {
-                // Try loadDirect class from next dependency.
+                // Try load class from next dependency.
             }
         }
         return null;

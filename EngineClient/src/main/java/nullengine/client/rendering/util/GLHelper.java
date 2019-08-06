@@ -75,7 +75,7 @@ public class GLHelper {
                     }
                 }
             } catch (Exception e) {
-                throw new IOException(String.format("cannot loadDirect resource: %s", resource), e);
+                throw new IOException(String.format("cannot load resource: %s", resource), e);
             }
         }
 
