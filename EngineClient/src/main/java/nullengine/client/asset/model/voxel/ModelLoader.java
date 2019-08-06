@@ -3,7 +3,11 @@ package nullengine.client.asset.model.voxel;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import nullengine.client.asset.AssetType;
 import nullengine.client.asset.AssetURL;
+import nullengine.client.asset.exception.AssetLoadException;
+import nullengine.client.asset.exception.AssetNotFoundException;
+import nullengine.client.asset.source.AssetSourceManager;
 import nullengine.util.Facing;
 import nullengine.util.JsonUtils;
 import org.joml.Vector3f;
@@ -15,30 +19,39 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class ModelLoader {
 
     private final VoxelModelManager modelManager;
+    private final AssetSourceManager sourceManager;
+    private final AssetType<VoxelModel> type;
 
-    public ModelLoader(VoxelModelManager modelManager) {
+    public ModelLoader(VoxelModelManager modelManager, AssetSourceManager sourceManager, AssetType<VoxelModel> type) {
         this.modelManager = modelManager;
+        this.sourceManager = sourceManager;
+        this.type = type;
     }
 
-    public ModelData load(Path path) throws IOException {
-        try (Reader reader = Files.newBufferedReader(path)) {
-            return load(JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonObject());
+    public ModelData load(AssetURL url) {
+        Optional<Path> path = sourceManager.getPath(url.toFileLocation(type));
+        if (path.isEmpty())
+            throw new AssetNotFoundException(url);
+        try {
+            try (Reader reader = Files.newBufferedReader(path.get())) {
+                return load(url, JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonObject());
+            }
+        } catch (IOException e) {
+            throw new AssetLoadException("Cannot load model.", e);
         }
     }
 
-    public ModelData load(JsonObject json) {
+    public ModelData load(AssetURL url, JsonObject json) {
         ModelData modelData = new ModelData();
+        modelData.url = url;
         ModelData parent = null;
         if (json.has("parent")) {
-            parent = modelManager.getModelData(AssetURL.fromString(json.get("parent").getAsString()));
+            parent = modelManager.getModelData(AssetURL.fromString(url, json.get("parent").getAsString()));
         }
         if (json.has("textures")) {
             modelData.textures = loadTextures(json.getAsJsonObject("textures"), parent != null && parent.textures != null ? parent.textures : Map.of());

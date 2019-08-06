@@ -2,39 +2,35 @@ package nullengine.client.asset.model.voxel;
 
 import nullengine.client.EngineClient;
 import nullengine.client.asset.*;
-import nullengine.client.asset.exception.AssetLoadException;
-import nullengine.client.asset.exception.AssetNotFoundException;
 import nullengine.client.asset.reloading.AssetReloadScheduler;
-import nullengine.client.asset.source.AssetSourceManager;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.client.rendering.texture.TextureAtlas;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class VoxelModelManager implements AssetProvider<VoxelModel> {
 
     private final TextureAtlas blockAtlas;
-    private final ModelLoader modelLoader;
-    private final ModelBaker modelBaker;
 
     private final Map<AssetURL, ModelData> modelDataMap = new HashMap<>();
     private final List<Asset<VoxelModel>> modelAssets = new LinkedList<>();
 
-    private AssetSourceManager sourceManager;
+    private ModelLoader modelLoader;
+    private ModelBaker modelBaker;
     private AssetType<VoxelModel> type;
 
     public VoxelModelManager(EngineClient engineClient) {
         this.blockAtlas = engineClient.getRenderContext().getTextureManager().getTextureAtlas(StandardTextureAtlas.BLOCK);
-        this.modelLoader = new ModelLoader(this);
-        this.modelBaker = new ModelBaker();
     }
 
     @Override
     public void init(AssetManager manager, AssetType<VoxelModel> type) {
-        this.sourceManager = manager.getSourceManager();
+        this.modelLoader = new ModelLoader(this, manager.getSourceManager(), type);
+        this.modelBaker = new ModelBaker();
         this.type = type;
         manager.getReloadManager().addBefore("VoxelModelDataReload", "Texture", this::reloadModelData);
         manager.getReloadManager().addAfter("VoxelModelBake", "Texture", this::reload);
@@ -61,33 +57,22 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
 
     @Nonnull
     @Override
-    public VoxelModel loadDirect(AssetURL path) {
-        return modelBaker.bake(getModelData(path));
+    public VoxelModel loadDirect(AssetURL url) {
+        return modelBaker.bake(getModelData(url));
     }
 
-    ModelData getModelData(AssetURL path) {
-        ModelData modelData = modelDataMap.get(path);
+    ModelData getModelData(AssetURL url) {
+        ModelData modelData = modelDataMap.get(url);
         if (modelData == null) {
-            modelData = loadModelData(path);
-            modelDataMap.put(path, modelData);
+            modelData = modelLoader.load(url);
+            modelDataMap.put(url, modelData);
         }
         return modelData;
     }
 
-    private ModelData loadModelData(AssetURL url) {
-        Optional<Path> path = sourceManager.getPath(url.toFileLocation(type));
-        if (path.isEmpty())
-            throw new AssetNotFoundException(url);
-        try {
-            return modelLoader.load(path.get());
-        } catch (IOException e) {
-            throw new AssetLoadException("Cannot loadDirect model.", e);
-        }
-    }
-
     private void reloadModelData() {
         modelDataMap.clear();
-        modelAssets.forEach(asset -> modelDataMap.put(asset.getPath(), resolveTexture(loadModelData(asset.getPath()))));
+        modelAssets.forEach(asset -> modelDataMap.put(asset.getPath(), resolveTexture(modelLoader.load(asset.getPath()))));
     }
 
     private ModelData resolveTexture(ModelData modelData) {
@@ -95,7 +80,7 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
             ModelData.Element.Cube cube = (ModelData.Element.Cube) element;
             for (ModelData.Element.Cube.Face face : cube.faces) {
                 face.texture = resolveTexture(face.texture, modelData.textures);
-                face._texture = blockAtlas.addTexture(AssetURL.fromString(face.texture));
+                face.resolvedTexture = blockAtlas.addTexture(AssetURL.fromString(modelData.url, face.texture));
             }
         }
         return modelData;

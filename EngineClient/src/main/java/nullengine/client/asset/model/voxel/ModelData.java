@@ -1,6 +1,7 @@
 package nullengine.client.asset.model.voxel;
 
 import com.google.gson.JsonArray;
+import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.texture.TextureAtlasPart;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 class ModelData {
 
+    AssetURL url;
     Map<String, String> textures;
     List<Element> elements;
     JsonArray rawElements;
@@ -22,7 +24,7 @@ class ModelData {
 
             static class Face {
                 String texture;
-                TextureAtlasPart _texture;
+                TextureAtlasPart resolvedTexture;
                 Vector4fc uv;
                 boolean[] cullFace = new boolean[6];
             }
