@@ -13,7 +13,7 @@ import nullengine.event.world.block.BlockPlaceEvent;
 import nullengine.event.world.block.BlockReplaceEvent;
 import nullengine.event.world.block.cause.BlockChangeCause;
 import nullengine.game.Game;
-import nullengine.logic.FixStepTicker;
+import nullengine.logic.Ticker;
 import nullengine.math.AABBs;
 import nullengine.math.BlockPos;
 import nullengine.player.Player;
@@ -54,7 +54,7 @@ public class WorldCommon implements World, Runnable {
     private final List<Entity> entityList = new ArrayList<>();
     private final List<Runnable> nextTick = new ArrayList<>();
 
-    private final FixStepTicker ticker;
+    private final Ticker ticker;
     private long gameTick;
 //    private ExecutorService service;
 
@@ -66,7 +66,7 @@ public class WorldCommon implements World, Runnable {
         //this.chunkStorage = new ChunkStorage(this);
         this.loader = loader;
         this.chunkManager = new WorldCommonChunkManager(this, chunkGenerator);
-        this.ticker = new FixStepTicker(this::tick, FixStepTicker.LOGIC_TICK); // TODO: make tps configurable
+        this.ticker = new Ticker(this::tick, Ticker.LOGIC_TICK); // TODO: make tps configurable
         criticalChunks = new ArrayList<>();
     }
 
@@ -256,11 +256,11 @@ public class WorldCommon implements World, Runnable {
 
     @Override
     public void run() {
-        ticker.start();
+        ticker.run();
     }
 
     public boolean isStopped() {
-        return ticker.isStop();
+        return ticker.isStopped();
     }
 
     public void stop() {

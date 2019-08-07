@@ -2,17 +2,30 @@ package nullengine.logic;
 
 public class Ticker implements Runnable {
 
+    public static final int LOGIC_TICK = 20;
     public static final int CLIENT_TICK = 60; // 暂时用常量
 
-    protected final Tickable fix;
+    protected final Tickable fixed;
     protected final Tickable.Partial dynamic;
     protected final int tickPerSecond;
     protected final double interval;
 
     protected boolean stopped = false;
 
+    public Ticker(Tickable task, int tickPerSecond) {
+        this.fixed = task;
+        this.dynamic = partial -> {
+            try {
+                Thread.sleep((long) ((getInterval() - partial) * 1000));
+            } catch (InterruptedException ignored) {
+            }
+        };
+        this.tickPerSecond = tickPerSecond;
+        this.interval = 1D / tickPerSecond;
+    }
+
     public Ticker(Tickable task, Tickable.Partial dynamic, int tickPerSecond) {
-        fix = task;
+        this.fixed = task;
         this.dynamic = dynamic;
         this.tickPerSecond = tickPerSecond;
         this.interval = 1D / tickPerSecond;
@@ -26,6 +39,10 @@ public class Ticker implements Runnable {
         return stopped;
     }
 
+    public double getInterval() {
+        return interval;
+    }
+
     /**
      * @return current time in second
      */
@@ -35,7 +52,7 @@ public class Ticker implements Runnable {
 
     public void run() {
         double previous = getCurrentTime();
-        double lag = 0.0;
+        double lag = 0D;
         while (!stopped) {
             double current = getCurrentTime();
 
@@ -44,7 +61,7 @@ public class Ticker implements Runnable {
             lag += elapsed;
 
             while (lag >= interval && !stopped) {
-                fix.tick();
+                fixed.tick();
                 lag -= interval;
             }
 
