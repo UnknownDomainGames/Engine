@@ -163,6 +163,8 @@ public class ChunkRenderer {
     public void dispose() {
         updateExecutor.shutdownNow();
 
+        loadedChunkMeshes.values().forEach(ChunkMesh::dispose);
+
         ShaderManager.instance().unregisterShader("chunk_solid");
         ShaderManager.instance().unregisterShader("assimp_model");
 

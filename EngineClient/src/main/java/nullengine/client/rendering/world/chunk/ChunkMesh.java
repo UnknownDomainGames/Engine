@@ -76,7 +76,9 @@ public class ChunkMesh implements Disposable {
 
         disposed = true;
 
-        chunkSolidVbo.dispose();
+        if (chunkSolidVbo != null) {
+            chunkSolidVbo.dispose();
+        }
     }
 
     public boolean isDisposed() {
