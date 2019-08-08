@@ -73,6 +73,5 @@ public class EngineAssetManager implements AssetManager {
 
     public void dispose() {
         registeredTypes.values().forEach(type -> type.getProvider().dispose());
-        reloadManager.dispose();
     }
 }

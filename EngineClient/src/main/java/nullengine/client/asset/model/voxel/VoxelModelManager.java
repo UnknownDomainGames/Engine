@@ -2,7 +2,6 @@ package nullengine.client.asset.model.voxel;
 
 import nullengine.client.EngineClient;
 import nullengine.client.asset.*;
-import nullengine.client.asset.reloading.AssetReloadScheduler;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.client.rendering.texture.TextureAtlas;
 
@@ -46,8 +45,8 @@ public class VoxelModelManager implements AssetProvider<VoxelModel> {
         modelAssets.remove(asset);
     }
 
-    private void reload(AssetReloadScheduler scheduler) {
-        modelAssets.forEach(asset -> scheduler.execute(asset::reload));
+    private void reload() {
+        modelAssets.forEach(Asset::reload);
     }
 
     @Override
