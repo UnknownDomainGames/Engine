@@ -9,7 +9,6 @@ import java.util.NoSuchElementException;
 
 public class AssetReloadManagerImpl implements AssetReloadManager {
 
-    private final AssetReloadSchedulerImpl scheduler = new AssetReloadSchedulerImpl();
     private final LinkedList<Pair<String, AssetReloadListener>> listeners = new LinkedList<>();
 
     @Override
@@ -44,12 +43,7 @@ public class AssetReloadManagerImpl implements AssetReloadManager {
     }
 
     @Override
-    public void reload() throws InterruptedException {
-        listeners.forEach(pair -> pair.getRight().onReload(scheduler));
-        scheduler.awaitCompletion();
-    }
-
-    public void dispose() {
-        scheduler.dispose();
+    public void reload() {
+        listeners.forEach(pair -> pair.getRight().onReload());
     }
 }

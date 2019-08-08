@@ -3,7 +3,6 @@ package nullengine.client.rendering.texture;
 import nullengine.Platform;
 import nullengine.client.asset.*;
 import nullengine.client.asset.exception.AssetLoadException;
-import nullengine.client.asset.reloading.AssetReloadScheduler;
 import nullengine.client.asset.source.AssetSourceManager;
 
 import javax.annotation.Nonnull;
@@ -79,7 +78,7 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
         assets.remove(asset);
     }
 
-    private void reload(AssetReloadScheduler scheduler) {
+    private void reload() {
         assets.forEach(asset -> {
             var glTexture = asset.get();
             if (glTexture != null) {
