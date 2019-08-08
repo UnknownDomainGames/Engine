@@ -134,10 +134,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             }
         });
 
-        try {
-            assetManager.reload();
-        } catch (InterruptedException ignored) {
-        }
+        assetManager.reload();
     }
 
     private void initRenderCrashReportDetails() {

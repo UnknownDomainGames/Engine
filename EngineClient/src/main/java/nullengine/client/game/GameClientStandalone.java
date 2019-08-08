@@ -44,7 +44,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     @Nonnull
     @Override
     public World getWorld() {
-        if(player != null && player.getControlledEntity() != null) {
+        if (player != null && player.getControlledEntity() != null) {
             return player.getControlledEntity().getWorld();
         }
         return null;
@@ -69,10 +69,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     protected void resourceStage() {
         super.resourceStage();
 
-        try {
-            engineClient.getAssetManager().reload();
-        } catch (InterruptedException ignored) {
-        }
+        engineClient.getAssetManager().reload();
     }
 
     @Override

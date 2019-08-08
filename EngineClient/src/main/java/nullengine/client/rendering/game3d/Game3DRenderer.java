@@ -50,18 +50,14 @@ public class Game3DRenderer implements Renderer {
 
     @Listener
     public void onGameStart(GameStartEvent.Post event) {
-        if(context.getEngine().getCurrentGame().getWorld() != null) {
-            worldRenderer = new WorldRenderer();
-            worldRenderer.init(context);
-        }
+        worldRenderer = new WorldRenderer();
+        worldRenderer.init(context);
+
         itemRenderManager = new ItemRenderManagerImpl();
         itemRenderManager.init(context);
         context.setComponent(ItemRenderManager.class, itemRenderManager);
 
-        try {
-            context.getEngine().getAssetManager().reload();
-        } catch (InterruptedException ignored) {
-        }
+        context.getEngine().getAssetManager().reload();
     }
 
     @Listener

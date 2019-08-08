@@ -67,7 +67,7 @@ public class EngineAssetManager implements AssetManager {
     }
 
     @Override
-    public void reload() throws InterruptedException {
+    public void reload() {
         reloadManager.reload();
     }
 
