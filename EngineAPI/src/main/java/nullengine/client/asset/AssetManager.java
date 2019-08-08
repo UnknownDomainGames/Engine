@@ -34,5 +34,5 @@ public interface AssetManager {
 
     AssetReloadManager getReloadManager();
 
-    void reload() throws InterruptedException;
+    void reload();
 }
