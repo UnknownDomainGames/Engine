@@ -20,7 +20,7 @@ class ModelBaker {
 
     public VoxelModel bake(ModelData modelData) {
         BakedModelPrimer primer = new BakedModelPrimer();
-
+        primer.fullFaces = modelData.fullFaces;
         List<ModelData.Element> elements = modelData.elements;
         for (ModelData.Element element : elements) {
             ModelData.Element.Cube cube = (ModelData.Element.Cube) element;
@@ -31,7 +31,7 @@ class ModelBaker {
                 if (face == null)
                     continue;
 
-                bakeFace(cube, face, facing, primer.getVertexes(face.cullFace));
+                bakeFace(cube, face, facing, primer.getVertexes(face.cullFaces));
             }
 
         }
@@ -107,7 +107,9 @@ class ModelBaker {
     }
 
     private class BakedModelPrimer {
+
         public List<Pair<boolean[], List<VoxelModel.Vertex>>> vertexesList = new ArrayList<>();
+        public boolean[] fullFaces;
 
         public List<VoxelModel.Vertex> getVertexes(boolean[] cullFaces) {
             for (Pair<boolean[], List<VoxelModel.Vertex>> mesh : vertexesList) {
@@ -125,7 +127,7 @@ class ModelBaker {
             for (Pair<boolean[], List<VoxelModel.Vertex>> mesh : vertexesList) {
                 bakedMeshes.add(new VoxelModel.Mesh(mesh.getRight().toArray(new VoxelModel.Vertex[0]), mesh.getLeft()));
             }
-            return new VoxelModel(List.copyOf(bakedMeshes));
+            return new VoxelModel(List.copyOf(bakedMeshes), fullFaces);
         }
     }
 }

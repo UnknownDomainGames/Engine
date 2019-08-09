@@ -6,20 +6,26 @@ import java.util.List;
 
 public class VoxelModel {
 
-    private List<Mesh> meshes;
+    private final List<Mesh> meshes;
+    private final boolean[] fullFaces;
 
-    public VoxelModel(List<Mesh> meshes) {
+    public VoxelModel(List<Mesh> meshes, boolean[] fullFaces) {
         this.meshes = meshes;
+        this.fullFaces = fullFaces;
     }
 
     public List<Mesh> getMeshes() {
         return meshes;
     }
 
+    public boolean[] getFullFaces() {
+        return fullFaces;
+    }
+
     public static class Vertex {
-        public Vector3fc pos;
-        public float u, v;
-        public Vector3fc normal;
+        public final Vector3fc pos;
+        public final float u, v;
+        public final Vector3fc normal;
 
         public Vertex(Vector3fc pos, float u, float v, Vector3fc normal) {
             this.pos = pos;

@@ -49,6 +49,7 @@ class ModelLoader {
     public ModelData load(AssetURL url, JsonObject json) {
         ModelData modelData = new ModelData();
         modelData.url = url;
+        modelData.fullFaces = loadFullFace(json.getAsJsonObject("fullFaces"));
         ModelData parent = null;
         if (json.has("parent")) {
             parent = modelManager.getModelData(AssetURL.fromString(url, json.get("parent").getAsString()));
@@ -60,6 +61,19 @@ class ModelLoader {
         modelData.elements = loadElements(elements);
         modelData.rawElements = elements;
         return modelData;
+    }
+
+    private boolean[] loadFullFace(JsonObject json) {
+        boolean[] fullFaces = new boolean[6];
+        if (json == null) {
+            Arrays.fill(fullFaces, true);
+            return fullFaces;
+        }
+
+        for (JsonElement jsonElement : json.getAsJsonArray()) {
+            fullFaces[Facing.valueOf(jsonElement.getAsString().toUpperCase()).index] = true;
+        }
+        return fullFaces;
     }
 
     private Map<String, String> loadTextures(JsonObject json, Map<String, String> parent) {
@@ -109,7 +123,7 @@ class ModelLoader {
         ModelData.Element.Cube.Face face = new ModelData.Element.Cube.Face();
         face.texture = json.get("texture").getAsString();
         face.uv = loadVector4f(json.getAsJsonArray("uv"));
-        face.cullFace = loadCullFace(json.get("cullFace"), facing);
+        face.cullFaces = loadCullFace(json.get("cullFaces"), facing);
         return face;
     }
 
