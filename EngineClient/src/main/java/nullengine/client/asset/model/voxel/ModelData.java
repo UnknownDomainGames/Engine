@@ -15,6 +15,7 @@ class ModelData {
     Map<String, String> textures;
     List<Element> elements;
     JsonArray rawElements;
+    boolean[] fullFaces = new boolean[6];
 
     static class Element {
         static class Cube extends Element {
@@ -26,7 +27,7 @@ class ModelData {
                 String texture;
                 TextureAtlasPart resolvedTexture;
                 Vector4fc uv;
-                boolean[] cullFace = new boolean[6];
+                boolean[] cullFaces = new boolean[6];
             }
         }
     }

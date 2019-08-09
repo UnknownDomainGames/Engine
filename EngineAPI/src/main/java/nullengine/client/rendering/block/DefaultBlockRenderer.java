@@ -28,7 +28,7 @@ public class DefaultBlockRenderer implements BlockRenderer {
 
     @Override
     public boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, Block block, Facing facing) {
-        return false;
+        return !model.get().getFullFaces()[facing.index];
     }
 
     @Override
