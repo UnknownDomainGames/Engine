@@ -1,4 +1,4 @@
-package nullengine.client.asset.model.voxel;
+package nullengine.client.asset.model.block;
 
 import com.google.gson.JsonArray;
 import nullengine.client.asset.AssetURL;

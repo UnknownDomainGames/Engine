@@ -5,7 +5,7 @@ import nullengine.block.Block;
 import nullengine.client.asset.Asset;
 import nullengine.client.asset.AssetTypes;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.asset.model.voxel.VoxelModel;
+import nullengine.client.asset.model.block.BlockModel;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.BlockPos;
 import nullengine.util.Facing;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class DefaultBlockRenderer implements BlockRenderer {
 
     private BlockRenderType renderType;
-    private Asset<VoxelModel> model;
+    private Asset<BlockModel> model;
 
     @Override
     public boolean canRenderFace(BlockGetter world, BlockPos pos, Block block, Facing facing) {
@@ -43,10 +43,10 @@ public class DefaultBlockRenderer implements BlockRenderer {
             }
         }
 
-        VoxelModel voxelModel = this.model.get();
-        for (VoxelModel.Mesh mesh : voxelModel.getMeshes()) {
+        BlockModel blockModel = this.model.get();
+        for (BlockModel.Mesh mesh : blockModel.getMeshes()) {
             if (!checkCullFaces(cullFaces, mesh.cullFaces)) {
-                for (VoxelModel.Vertex vertex : mesh.vertexes) {
+                for (BlockModel.Vertex vertex : mesh.vertexes) {
                     buffer.pos(vertex.pos).color(1, 1, 1).uv(vertex.u, vertex.v).normal(vertex.normal).endVertex();
                 }
             }
@@ -64,9 +64,9 @@ public class DefaultBlockRenderer implements BlockRenderer {
     @Override
     public void generateMesh(Block block, GLBuffer buffer) {
         buffer.posOffset(-0.5f, -0.5f, -0.5f);
-        VoxelModel voxelModel = this.model.get();
-        for (VoxelModel.Mesh mesh : voxelModel.getMeshes()) {
-            for (VoxelModel.Vertex vertex : mesh.vertexes) {
+        BlockModel blockModel = this.model.get();
+        for (BlockModel.Mesh mesh : blockModel.getMeshes()) {
+            for (BlockModel.Vertex vertex : mesh.vertexes) {
                 buffer.pos(vertex.pos).color(1, 1, 1).uv(vertex.u, vertex.v).normal(vertex.normal).endVertex();
             }
         }
@@ -77,13 +77,13 @@ public class DefaultBlockRenderer implements BlockRenderer {
         return renderType;
     }
 
-    public DefaultBlockRenderer setModel(Asset<VoxelModel> model) {
+    public DefaultBlockRenderer setModel(Asset<BlockModel> model) {
         this.model = model;
         return this;
     }
 
     public DefaultBlockRenderer setModelPath(AssetURL path) {
-        this.model = Platform.getEngineClient().getAssetManager().create(AssetTypes.VOXEL_MODEL, path);
+        this.model = Platform.getEngineClient().getAssetManager().create(AssetTypes.BLOCK_MODEL, path);
         return this;
     }
 
