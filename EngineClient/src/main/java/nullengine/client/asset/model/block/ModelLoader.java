@@ -1,4 +1,4 @@
-package nullengine.client.asset.model.voxel;
+package nullengine.client.asset.model.block;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -23,11 +23,11 @@ import java.util.*;
 
 class ModelLoader {
 
-    private final VoxelModelManager modelManager;
+    private final BlockModelManager modelManager;
     private final AssetSourceManager sourceManager;
-    private final AssetType<VoxelModel> type;
+    private final AssetType<BlockModel> type;
 
-    public ModelLoader(VoxelModelManager modelManager, AssetSourceManager sourceManager, AssetType<VoxelModel> type) {
+    public ModelLoader(BlockModelManager modelManager, AssetSourceManager sourceManager, AssetType<BlockModel> type) {
         this.modelManager = modelManager;
         this.sourceManager = sourceManager;
         this.type = type;

@@ -1,15 +1,15 @@
-package nullengine.client.asset.model.voxel;
+package nullengine.client.asset.model.block;
 
 import org.joml.Vector3fc;
 
 import java.util.List;
 
-public class VoxelModel {
+public class BlockModel {
 
     private final List<Mesh> meshes;
     private final boolean[] fullFaces;
 
-    public VoxelModel(List<Mesh> meshes, boolean[] fullFaces) {
+    public BlockModel(List<Mesh> meshes, boolean[] fullFaces) {
         this.meshes = meshes;
         this.fullFaces = fullFaces;
     }
