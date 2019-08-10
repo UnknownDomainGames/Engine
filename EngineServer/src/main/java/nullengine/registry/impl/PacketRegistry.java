@@ -5,14 +5,11 @@ import com.google.common.collect.HashBiMap;
 import nullengine.Platform;
 import nullengine.event.Listener;
 import nullengine.registry.RegistrationException;
-import nullengine.registry.impl.IdAutoIncreaseRegistry;
 import nullengine.server.event.PacketReceivedEvent;
 import nullengine.server.network.packet.Packet;
 import nullengine.server.network.packet.PacketSyncRegistry;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
-import java.util.Optional;
 
 public class PacketRegistry extends IdAutoIncreaseRegistry<Packet> {
 
@@ -37,7 +34,7 @@ public class PacketRegistry extends IdAutoIncreaseRegistry<Packet> {
         if(event.getPacket().getRegistryName().equals(this.getRegistryName())){
             for (var entry : event.getPacket().getIdMap().entrySet()) {
                 var local = getId(entry.getKey(), false);
-                if(!entry.getKey().equals(getKey(local, false))){ // true if this name is actually not registered
+                if (!entry.getKey().equals(getValue(local, false).getName().getUniqueName())) { // true if this name is actually not registered
                     continue;
                 }
                 mapping.put(local, entry.getValue());
@@ -71,18 +68,6 @@ public class PacketRegistry extends IdAutoIncreaseRegistry<Packet> {
             return mapping.getOrDefault(id,id);
         }
         return id;
-    }
-
-    @Override
-    public String getKey(int id) {
-        return getKey(id, true);
-    }
-
-    public String getKey(int id, boolean fromRemapped){
-        if(fromRemapped){
-            id = mapping.inverse().getOrDefault(id, id);
-        }
-        return super.getKey(id);
     }
 
     @Override
