@@ -22,13 +22,17 @@ public class RegistrationTask implements ModInitializationTask {
     @Override
     public void run(ModInitializer initializer, ModContainer mod) {
         var registryManager = initializer.getEngine().getRegistryManager();
-        mod.getEventBus().post(new ModRegistrationEvent.Construction(registryManager));
-        mod.getEventBus().post(new ModRegistrationEvent.Pre(registryManager));
+        mod.getEventBus().post(new ModRegistrationEvent.Construction(mod, registryManager));
+        var pre = new ModRegistrationEvent.Pre(mod, registryManager);
+        mod.getEventBus().post(pre);
+        initializer.getEngine().getEventBus().post(pre);
         for (Map.Entry<Class<?>, Registry<?>> registry : registryManager.getEntries()) {
             mod.getEventBus().post(new ModRegistrationEvent.Register<>(registry.getValue()));
         }
         doAutoRegister(registryManager, mod);
-        mod.getEventBus().post(new ModRegistrationEvent.Post(registryManager));
+        var post = new ModRegistrationEvent.Post(mod, registryManager);
+        mod.getEventBus().post(post);
+        initializer.getEngine().getEventBus().post(post);
         doInjectRegisteredObject(registryManager, mod);
     }
 
