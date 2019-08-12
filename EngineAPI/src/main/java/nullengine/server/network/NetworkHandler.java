@@ -20,6 +20,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     private Channel channel;
     //which is THIS handler located
     private final Side instanceSide;
+    private ConnectionStatus status;
 
     public NetworkHandler(Side side){
         instanceSide = side;
@@ -27,6 +28,14 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     public Side getSide() {
         return instanceSide;
+    }
+
+    public ConnectionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ConnectionStatus status) {
+        this.status = status;
     }
 
     @Override
