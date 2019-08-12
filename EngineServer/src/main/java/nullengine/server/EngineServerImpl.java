@@ -1,5 +1,6 @@
 package nullengine.server;
 
+import configuration.parser.ConfigParseException;
 import nullengine.EngineBase;
 import nullengine.enginemod.EngineModListeners;
 import nullengine.event.engine.EngineEvent;
@@ -8,14 +9,21 @@ import nullengine.logic.Ticker;
 import nullengine.server.network.NetworkServer;
 import nullengine.util.Side;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class EngineServerImpl extends EngineBase implements EngineServer {
     private Thread serverThread;
     private Ticker ticker;
     private NetworkServer nettyServer;
-    public EngineServerImpl(Path runPath) {
+    private ServerConfig serverConfig;
+    private final Path configPath;
+    private Game game;
+    public EngineServerImpl(Path runPath, Path configPath) {
         super(runPath);
+        this.configPath = configPath;
     }
 
     @Override
@@ -39,6 +47,14 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
 
         logger.info("Initializing server engine!");
         serverThread = Thread.currentThread();
+        try {
+            serverConfig = new ServerConfig(configPath);
+            serverConfig.load();
+        }catch (ConfigParseException e){
+            logger.warn("Cannot parse server config! Try creating new one", e);
+            serverConfig = new ServerConfig();
+            serverConfig.save();
+        }
         // TODO: Remove it
         modManager.getMod("engine").ifPresent(modContainer -> modContainer.getEventBus().register(EngineModListeners.class));
     }
@@ -59,27 +75,38 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
         logger.info("Finishing initialization!");
         eventBus.post(new EngineEvent.Ready(this));
         nettyServer = new NetworkServer();
-        var port = 1;
-        logger.info("Starting server at {}:{}", "*", port);
-        nettyServer.run(null, port);
+        var ipStr = serverConfig.getServerIp();
+        var port = serverConfig.getServerPort();
+        logger.info("Starting server at {}:{}", ipStr.isEmpty() ? "*" : ipStr, port);
+        try {
+            nettyServer.run(ipStr.isEmpty() ? null : InetAddress.getByName(ipStr), port);
+        } catch (UnknownHostException e) {
+            logger.warn(String.format("cannot start server at %s:%d", ipStr, port), e);
+            terminate();
+            return;
+        }
         ticker.run();
     }
 
     @Override
     public Game getCurrentGame() {
-        return null;
+        return game;
     }
 
     @Override
     public void startGame(Game game) {
-
+        if(isPlaying()){
+            throw new IllegalStateException("Game is running");
+        }
+        this.game = Objects.requireNonNull(game);
+        game.init();
     }
 
     public void serverTick(){
         nettyServer.tick();
         if (isMarkedTermination()) {
             if (isPlaying()) {
-//                game.terminate();
+                game.terminate();
             } else {
                 tryTerminate();
             }
@@ -88,10 +115,9 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
 
     private void tryTerminate() {
         logger.info("Engine terminating!");
-//        if (isPlaying()) {
-//            game.terminate();
-//            game.clientTick();
-//        }
+        if (isPlaying()) {
+            game.terminate();
+        }
 
         eventBus.post(new EngineEvent.PreTermination(this));
 
@@ -102,6 +128,6 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
 
     @Override
     public boolean isPlaying() {
-        return false;
+        return game != null && !game.isTerminated();
     }
 }
