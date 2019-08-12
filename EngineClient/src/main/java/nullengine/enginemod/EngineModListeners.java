@@ -116,7 +116,7 @@ public final class EngineModListeners {
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.move.sneak")
-                .key(Key.KEY_LEFT_SHIFT)
+                .key(Key.KEY_C)
                 .startHandler(c -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, true))
                 .endHandler((c, i) -> c.getCurrentGame().getEntityController().handleMotion(MotionType.DOWN, false))
                 .build());
