@@ -1,6 +1,7 @@
 package nullengine.mod.init;
 
 import nullengine.Engine;
+import nullengine.Platform;
 import nullengine.mod.ModContainer;
 import nullengine.mod.init.task.*;
 import nullengine.registry.Namespaces;
@@ -21,7 +22,9 @@ public class ModInitializer {
         this.engine = engine;
 
         addLast("Instance", new InstanceTask());
-        addLast("Asset", new AssetTask());
+        if(Platform.isClient()) {
+            addLast("Asset", new AssetTask());
+        }
         addLast("AutoListen", new AutoListenTask());
         addLast("Injection", new InjectionTask());
         addLast("PreInitialization", new PreInitializationTask());

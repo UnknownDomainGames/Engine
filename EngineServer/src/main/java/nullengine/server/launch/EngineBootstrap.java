@@ -7,6 +7,9 @@ import nullengine.Platform;
 import nullengine.exception.UninitializationException;
 import nullengine.server.EngineServerImpl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 
@@ -14,17 +17,27 @@ public class EngineBootstrap {
     public static void main(String[] args) {
         var optionparser = new OptionParser();
         optionparser.allowsUnrecognizedOptions();
+        var runArg = optionparser.accepts("runDirectory").withRequiredArg().ofType(String.class).defaultsTo("");
         var configArg = optionparser.accepts("config").withRequiredArg().ofType(String.class).defaultsTo("config.json");
 
         var parsed = optionparser.parse(args);
+        var configPath = "/server.json";
         if(parsed.has("config")){
-            var configPath = parsed.valueOf(configArg);
+            configPath = parsed.valueOf(configArg);
         }
 
-        var engine = new EngineServerImpl(Path.of(""));
+        var engine = new EngineServerImpl(Path.of(parsed.valueOf(runArg)), Path.of(configPath));
         injectEngine(engine);
         engine.initEngine();
         engine.runEngine();
+        var in = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            while(true){
+                in.readLine();
+            }
+        } catch (IOException e) {
+            Platform.getLogger().warn("Cannot read console input!", e);
+        }
     }
 
     private static void injectEngine(Engine engine) {
