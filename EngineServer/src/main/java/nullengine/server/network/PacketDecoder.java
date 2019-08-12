@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import nullengine.Platform;
 import nullengine.server.network.packet.Packet;
+import nullengine.server.network.packet.PacketProvider;
 import nullengine.server.network.packet.UnrecognizedPacketException;
 
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
         if(in.readableBytes() != 0){
             var wrapper = new PacketBuf(in);
             var id = wrapper.readVarInt();
-            Packet packet = Platform.getEngine().getRegistryManager().getRegistry(Packet.class).getValue(id);
+            Packet packet = Platform.getEngine().getRegistryManager().getRegistry(PacketProvider.class).orElseThrow().getValue(id).create();
             if(packet == null){
                 throw new UnrecognizedPacketException("Unknown packet id: " + id);
             }

@@ -1,13 +1,14 @@
 package nullengine.server.network.packet;
 
 import com.google.gson.Gson;
+import nullengine.registry.RegistryEntry;
 import nullengine.server.network.PacketBuf;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public final class PacketRaw extends BasePacket {
+public final class PacketRaw implements Packet {
 
     private Map<String, Object> content;
 

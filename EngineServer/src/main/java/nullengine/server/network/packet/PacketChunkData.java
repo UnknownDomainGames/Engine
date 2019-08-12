@@ -1,11 +1,12 @@
 package nullengine.server.network.packet;
 
+import nullengine.registry.RegistryEntry;
 import nullengine.server.network.PacketBuf;
 import nullengine.world.chunk.Chunk;
 
 import java.io.IOException;
 
-public class PacketChunkData extends BasePacket {
+public class PacketChunkData implements Packet {
 
     private int chunkX;
     private int chunkY;

@@ -5,7 +5,7 @@ import nullengine.server.network.PacketBuf;
 
 import java.io.IOException;
 
-public interface Packet extends RegistryEntry<Packet> {
+public interface Packet {
     void write(PacketBuf buf) throws IOException;
 
     void read(PacketBuf buf) throws IOException;

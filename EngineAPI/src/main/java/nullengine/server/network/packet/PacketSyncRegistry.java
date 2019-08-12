@@ -1,6 +1,7 @@
 package nullengine.server.network.packet;
 
 import nullengine.registry.Registry;
+import nullengine.registry.RegistryEntry;
 import nullengine.server.network.PacketBuf;
 
 import java.io.IOException;
@@ -8,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PacketSyncRegistry extends BasePacket {
+public class PacketSyncRegistry implements Packet {
 
     private String registryName;
     private Map<String, Integer> idMap;
