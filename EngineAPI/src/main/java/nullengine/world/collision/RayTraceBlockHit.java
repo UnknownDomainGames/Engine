@@ -2,7 +2,7 @@ package nullengine.world.collision;
 
 import nullengine.block.Block;
 import nullengine.math.BlockPos;
-import nullengine.util.Facing;
+import nullengine.util.Direction;
 import nullengine.world.World;
 import org.joml.Vector3f;
 
@@ -20,9 +20,9 @@ public class RayTraceBlockHit {
     private final BlockPos pos;
     private final Block block;
     private final Vector3f hitPoint;
-    private final Facing face;
+    private final Direction face;
 
-    public RayTraceBlockHit(World world, BlockPos pos, Block block, Vector3f hitPoint, Facing face) {
+    public RayTraceBlockHit(World world, BlockPos pos, Block block, Vector3f hitPoint, Direction face) {
         this.world = world;
         this.pos = pos;
         this.block = block;
@@ -46,7 +46,7 @@ public class RayTraceBlockHit {
         return hitPoint;
     }
 
-    public Facing getFace() {
+    public Direction getFace() {
         return face;
     }
 

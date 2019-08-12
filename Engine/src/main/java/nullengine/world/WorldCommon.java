@@ -18,7 +18,7 @@ import nullengine.math.AABBs;
 import nullengine.math.BlockPos;
 import nullengine.player.Player;
 import nullengine.registry.Registries;
-import nullengine.util.Facing;
+import nullengine.util.Direction;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
 import nullengine.world.chunk.WorldCommonChunkManager;
@@ -230,11 +230,11 @@ public class WorldCommon implements World, Runnable {
     }
 
     protected void notifyNeighborChanged(BlockPos pos, Block block, BlockChangeCause cause) {
-        for (Facing facing : Facing.values()) {
-            BlockPos neighborPos = pos.offset(facing);
+        for (Direction direction : Direction.values()) {
+            BlockPos neighborPos = pos.offset(direction);
             Block neighbor = getBlock(neighborPos);
             neighbor.getComponent(NeighborChangeListener.class)
-                    .ifPresent(listener -> listener.onNeighborChanged(this, neighborPos, neighbor, facing.opposite(), pos, block, cause));
+                    .ifPresent(listener -> listener.onNeighborChanged(this, neighborPos, neighbor, direction.opposite(), pos, block, cause));
         }
     }
 

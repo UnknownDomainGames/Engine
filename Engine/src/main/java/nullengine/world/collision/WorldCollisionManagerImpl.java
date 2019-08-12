@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import nullengine.block.Block;
 import nullengine.math.BlockPos;
 import nullengine.registry.Registries;
-import nullengine.util.Facing;
+import nullengine.util.Direction;
 import nullengine.world.World;
 import nullengine.world.util.FastVoxelRayTrace;
 import org.joml.Vector2d;
@@ -59,22 +59,22 @@ public class WorldCollisionManagerImpl implements WorldCollisionManager {
                     rayOffset.x, rayOffset.y, rayOffset.z,
                     result)) {
                 Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
-                Facing facing = null;
+                Direction direction = null;
                 if (hitPoint.x <= 0f + CALC_ERROR_FIXING) {
-                    facing = Facing.WEST;
+                    direction = Direction.WEST;
                 } else if (hitPoint.x >= 1f - CALC_ERROR_FIXING) {
-                    facing = Facing.EAST;
+                    direction = Direction.EAST;
                 } else if (hitPoint.y <= 0f + CALC_ERROR_FIXING) {
-                    facing = Facing.DOWN;
+                    direction = Direction.DOWN;
                 } else if (hitPoint.y >= 1f - CALC_ERROR_FIXING) {
-                    facing = Facing.UP;
+                    direction = Direction.UP;
                 } else if (hitPoint.z <= 0f + CALC_ERROR_FIXING) {
-                    facing = Facing.NORTH;
+                    direction = Direction.NORTH;
                 } else if (hitPoint.z >= 1f - CALC_ERROR_FIXING) {
-                    facing = Facing.SOUTH;
+                    direction = Direction.SOUTH;
                 }
-                if (facing != null) {
-                    return new RayTraceBlockHit(world, pos, block, hitPoint, facing);
+                if (direction != null) {
+                    return new RayTraceBlockHit(world, pos, block, hitPoint, direction);
                 }
             }
         }

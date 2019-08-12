@@ -1,7 +1,7 @@
 package nullengine.math;
 
 import com.google.common.base.MoreObjects;
-import nullengine.util.Facing;
+import nullengine.util.Direction;
 import nullengine.world.chunk.ChunkConstants;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -45,52 +45,52 @@ public abstract class BlockPos {
         return x * x + y * y + z * z;
     }
 
-    public BlockPos offset(Facing facing) {
-        return add(facing.offsetX, facing.offsetY, facing.offsetZ);
+    public BlockPos offset(Direction direction) {
+        return add(direction.offsetX, direction.offsetY, direction.offsetZ);
     }
 
-    public BlockPos offset(Facing facing, int offset) {
-        return add(facing.offsetX * offset, facing.offsetY * offset, facing.offsetZ * offset);
+    public BlockPos offset(Direction direction, int offset) {
+        return add(direction.offsetX * offset, direction.offsetY * offset, direction.offsetZ * offset);
     }
 
     public BlockPos north() {
-        return offset(Facing.NORTH);
+        return offset(Direction.NORTH);
     }
 
     public BlockPos north(int offset) {
-        return offset(Facing.NORTH, offset);
+        return offset(Direction.NORTH, offset);
     }
 
     public BlockPos south() {
-        return offset(Facing.SOUTH);
+        return offset(Direction.SOUTH);
     }
 
     public BlockPos south(int offset) {
-        return offset(Facing.SOUTH, offset);
+        return offset(Direction.SOUTH, offset);
     }
 
     public BlockPos east() {
-        return offset(Facing.EAST);
+        return offset(Direction.EAST);
     }
 
     public BlockPos east(int offset) {
-        return offset(Facing.EAST, offset);
+        return offset(Direction.EAST, offset);
     }
 
     public BlockPos up() {
-        return offset(Facing.UP);
+        return offset(Direction.UP);
     }
 
     public BlockPos up(int offset) {
-        return offset(Facing.UP, offset);
+        return offset(Direction.UP, offset);
     }
 
     public BlockPos down() {
-        return offset(Facing.DOWN);
+        return offset(Direction.DOWN);
     }
 
     public BlockPos down(int offset) {
-        return offset(Facing.DOWN, offset);
+        return offset(Direction.DOWN, offset);
     }
 
     @Override

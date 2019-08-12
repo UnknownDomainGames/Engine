@@ -2,7 +2,7 @@ package nullengine.client.asset.model.block;
 
 import nullengine.client.rendering.texture.TextureAtlasPart;
 import nullengine.math.Math2;
-import nullengine.util.Facing;
+import nullengine.util.Direction;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
@@ -26,19 +26,19 @@ class ModelBaker {
             ModelData.Element.Cube cube = (ModelData.Element.Cube) element;
 
             ModelData.Element.Cube.Face[] faces = cube.faces;
-            for (Facing facing : Facing.values()) {
-                ModelData.Element.Cube.Face face = faces[facing.index];
+            for (Direction direction : Direction.values()) {
+                ModelData.Element.Cube.Face face = faces[direction.index];
                 if (face == null)
                     continue;
 
-                bakeFace(cube, face, facing, primer.getVertexes(face.cullFaces));
+                bakeFace(cube, face, direction, primer.getVertexes(face.cullFaces));
             }
 
         }
         return primer.build();
     }
 
-    private void bakeFace(ModelData.Element.Cube cube, ModelData.Element.Cube.Face face, Facing facing, List<BlockModel.Vertex> mesh) {
+    private void bakeFace(ModelData.Element.Cube cube, ModelData.Element.Cube.Face face, Direction direction, List<BlockModel.Vertex> mesh) {
         TextureAtlasPart textureAtlasPart = face.resolvedTexture;
         float u = textureAtlasPart.getMaxU() - textureAtlasPart.getMinU();
         float v = textureAtlasPart.getMaxV() - textureAtlasPart.getMinV();
@@ -51,7 +51,7 @@ class ModelBaker {
 
         Vector3f v1, v2, v3, v4;
 
-        switch (facing) {
+        switch (direction) {
             case NORTH:
                 v1 = new Vector3f(to.x(), from.y(), from.z());
                 v2 = new Vector3f(from.x(), from.y(), from.z());
@@ -89,7 +89,7 @@ class ModelBaker {
                 v4 = new Vector3f(to.x(), from.y(), from.z());
                 break;
             default:
-                throw new IllegalStateException("Unexpected value: " + facing);
+                throw new IllegalStateException("Unexpected value: " + direction);
         }
         bakeQuad(mesh, v1, v2, v3, v4, new Vector2f(minU, minV), new Vector2f(maxU, maxV));
     }

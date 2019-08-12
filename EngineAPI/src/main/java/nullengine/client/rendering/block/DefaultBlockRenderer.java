@@ -8,7 +8,7 @@ import nullengine.client.asset.AssetURL;
 import nullengine.client.asset.model.block.BlockModel;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.BlockPos;
-import nullengine.util.Facing;
+import nullengine.util.Direction;
 import nullengine.world.BlockGetter;
 
 import java.util.Optional;
@@ -19,16 +19,16 @@ public class DefaultBlockRenderer implements BlockRenderer {
     private Asset<BlockModel> model;
 
     @Override
-    public boolean canRenderFace(BlockGetter world, BlockPos pos, Block block, Facing facing) {
-        BlockPos neighborPos = pos.offset(facing);
+    public boolean canRenderFace(BlockGetter world, BlockPos pos, Block block, Direction direction) {
+        BlockPos neighborPos = pos.offset(direction);
         Block neighborBlock = world.getBlock(neighborPos);
         Optional<BlockRenderer> neighborBlockRenderer = neighborBlock.getComponent(BlockRenderer.class);
-        return neighborBlockRenderer.map(blockRenderer -> blockRenderer.canRenderNeighborBlockFace(world, neighborPos, neighborBlock, facing.opposite())).orElse(true);
+        return neighborBlockRenderer.map(blockRenderer -> blockRenderer.canRenderNeighborBlockFace(world, neighborPos, neighborBlock, direction.opposite())).orElse(true);
     }
 
     @Override
-    public boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, Block block, Facing facing) {
-        return !model.get().getFullFaces()[facing.index];
+    public boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, Block block, Direction direction) {
+        return !model.get().getFullFaces()[direction.index];
     }
 
     @Override
@@ -36,10 +36,10 @@ public class DefaultBlockRenderer implements BlockRenderer {
         buffer.posOffset(pos.getX(), pos.getY(), pos.getZ());
         BlockPos.Mutable mutablePos = new BlockPos.Mutable(pos);
         byte cullFaces = 0;
-        for (Facing facing : Facing.values()) {
+        for (Direction direction : Direction.values()) {
             mutablePos.set(pos);
-            if (!canRenderFace(world, mutablePos, block, facing)) {
-                cullFaces |= 1 << facing.index;
+            if (!canRenderFace(world, mutablePos, block, direction)) {
+                cullFaces |= 1 << direction.index;
             }
         }
 

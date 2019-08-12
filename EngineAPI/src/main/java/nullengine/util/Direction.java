@@ -1,6 +1,6 @@
 package nullengine.util;
 
-public enum Facing {
+public enum Direction {
     NORTH(0, 1, 0, 0, -1),
     SOUTH(1, 0, 0, 0, 1),
     EAST(2, 3, 1, 0, 0),
@@ -12,7 +12,7 @@ public enum Facing {
     public final int opposite;
     public final int offsetX, offsetY, offsetZ;
 
-    Facing(int index, int opposite, int offsetX, int offsetY, int offsetZ) {
+    Direction(int index, int opposite, int offsetX, int offsetY, int offsetZ) {
         this.index = index;
         this.opposite = opposite;
         this.offsetX = offsetX;
@@ -20,11 +20,11 @@ public enum Facing {
         this.offsetZ = offsetZ;
     }
 
-    public Facing opposite() {
+    public Direction opposite() {
         return values()[opposite];
     }
 
-    public static Facing valueOf(int index) {
+    public static Direction valueOf(int index) {
         switch (index) {
             case 0:
                 return NORTH;

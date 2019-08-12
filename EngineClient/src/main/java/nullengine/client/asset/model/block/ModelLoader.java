@@ -8,7 +8,7 @@ import nullengine.client.asset.AssetURL;
 import nullengine.client.asset.exception.AssetLoadException;
 import nullengine.client.asset.exception.AssetNotFoundException;
 import nullengine.client.asset.source.AssetSourceManager;
-import nullengine.util.Facing;
+import nullengine.util.Direction;
 import nullengine.util.JsonUtils;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -71,7 +71,7 @@ class ModelLoader {
         }
 
         for (JsonElement jsonElement : json.getAsJsonArray()) {
-            fullFaces[Facing.valueOf(jsonElement.getAsString().toUpperCase()).index] = true;
+            fullFaces[Direction.valueOf(jsonElement.getAsString().toUpperCase()).index] = true;
         }
         return fullFaces;
     }
@@ -112,18 +112,18 @@ class ModelLoader {
         ModelData.Element.Cube.Face[] faces = new ModelData.Element.Cube.Face[6];
         if (json != null) {
             for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-                Facing facing = Facing.valueOf(entry.getKey().toUpperCase());
-                faces[facing.index] = loadFace(entry.getValue().getAsJsonObject(), facing);
+                Direction direction = Direction.valueOf(entry.getKey().toUpperCase());
+                faces[direction.index] = loadFace(entry.getValue().getAsJsonObject(), direction);
             }
         }
         return faces;
     }
 
-    private ModelData.Element.Cube.Face loadFace(JsonObject json, Facing facing) {
+    private ModelData.Element.Cube.Face loadFace(JsonObject json, Direction direction) {
         ModelData.Element.Cube.Face face = new ModelData.Element.Cube.Face();
         face.texture = json.get("texture").getAsString();
         face.uv = loadVector4f(json.getAsJsonArray("uv"));
-        face.cullFaces = loadCullFaces(json.get("cullFaces"), facing);
+        face.cullFaces = loadCullFaces(json.get("cullFaces"), direction);
         return face;
     }
 
@@ -138,11 +138,11 @@ class ModelLoader {
                 new Vector4f(json.get(0).getAsFloat(), json.get(1).getAsFloat(), json.get(2).getAsFloat(), json.get(3).getAsFloat());
     }
 
-    private byte loadCullFaces(JsonElement json, Facing defaultCullFace) {
+    private byte loadCullFaces(JsonElement json, Direction defaultCullFace) {
         byte cullFaces = 0;
         if (json != null) {
             for (JsonElement jsonElement : json.getAsJsonArray()) {
-                cullFaces |= 1 << Facing.valueOf(jsonElement.getAsString().toUpperCase()).index;
+                cullFaces |= 1 << Direction.valueOf(jsonElement.getAsString().toUpperCase()).index;
             }
         } else {
             cullFaces |= 1 << defaultCullFace.index;
