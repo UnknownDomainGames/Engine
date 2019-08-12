@@ -123,7 +123,7 @@ class ModelLoader {
         ModelData.Element.Cube.Face face = new ModelData.Element.Cube.Face();
         face.texture = json.get("texture").getAsString();
         face.uv = loadVector4f(json.getAsJsonArray("uv"));
-        face.cullFaces = loadCullFace(json.get("cullFaces"), facing);
+        face.cullFaces = loadCullFaces(json.get("cullFaces"), facing);
         return face;
     }
 
@@ -138,14 +138,14 @@ class ModelLoader {
                 new Vector4f(json.get(0).getAsFloat(), json.get(1).getAsFloat(), json.get(2).getAsFloat(), json.get(3).getAsFloat());
     }
 
-    private boolean[] loadCullFace(JsonElement json, Facing defaultCullFace) {
-        boolean[] cullFaces = new boolean[6];
+    private byte loadCullFaces(JsonElement json, Facing defaultCullFace) {
+        byte cullFaces = 0;
         if (json != null) {
             for (JsonElement jsonElement : json.getAsJsonArray()) {
-                cullFaces[Facing.valueOf(jsonElement.getAsString().toUpperCase()).index] = true;
+                cullFaces |= 1 << Facing.valueOf(jsonElement.getAsString().toUpperCase()).index;
             }
         } else {
-            cullFaces[defaultCullFace.index] = true;
+            cullFaces |= 1 << defaultCullFace.index;
         }
         return cullFaces;
     }

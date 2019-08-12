@@ -27,7 +27,7 @@ class ModelData {
                 String texture;
                 TextureAtlasPart resolvedTexture;
                 Vector4fc uv;
-                boolean[] cullFaces = new boolean[6];
+                byte cullFaces;
             }
         }
     }

@@ -3,15 +3,15 @@ package nullengine.client.asset.model.block;
 import nullengine.client.rendering.texture.TextureAtlasPart;
 import nullengine.math.Math2;
 import nullengine.util.Facing;
-import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class ModelBaker {
 
@@ -108,24 +108,17 @@ class ModelBaker {
 
     private class BakedModelPrimer {
 
-        public List<Pair<boolean[], List<BlockModel.Vertex>>> vertexesList = new ArrayList<>();
+        public Map<Byte, List<BlockModel.Vertex>> vertexes = new HashMap<>();
         public boolean[] fullFaces;
 
-        public List<BlockModel.Vertex> getVertexes(boolean[] cullFaces) {
-            for (Pair<boolean[], List<BlockModel.Vertex>> mesh : vertexesList) {
-                if (Arrays.equals(mesh.getLeft(), cullFaces)) {
-                    return mesh.getRight();
-                }
-            }
-            List<BlockModel.Vertex> mesh = new ArrayList<>();
-            vertexesList.add(Pair.of(cullFaces, mesh));
-            return mesh;
+        public List<BlockModel.Vertex> getVertexes(byte cullFaces) {
+            return vertexes.computeIfAbsent(cullFaces, key -> new ArrayList<>());
         }
 
         public BlockModel build() {
             List<BlockModel.Mesh> bakedMeshes = new ArrayList<>();
-            for (Pair<boolean[], List<BlockModel.Vertex>> mesh : vertexesList) {
-                bakedMeshes.add(new BlockModel.Mesh(mesh.getRight().toArray(new BlockModel.Vertex[0]), mesh.getLeft()));
+            for (var mesh : vertexes.entrySet()) {
+                bakedMeshes.add(new BlockModel.Mesh(mesh.getValue().toArray(new BlockModel.Vertex[0]), mesh.getKey()));
             }
             return new BlockModel(List.copyOf(bakedMeshes), fullFaces);
         }

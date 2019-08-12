@@ -37,9 +37,9 @@ public class BlockModel {
 
     public static class Mesh {
         public final Vertex[] vertexes;
-        public final boolean[] cullFaces;
+        public final byte cullFaces;
 
-        public Mesh(Vertex[] vertexes, boolean[] cullFaces) {
+        public Mesh(Vertex[] vertexes, byte cullFaces) {
             this.vertexes = vertexes;
             this.cullFaces = cullFaces;
         }
