@@ -47,11 +47,13 @@ import nullengine.world.WorldProvider;
 import nullengine.world.collision.RayTraceBlockHit;
 import nullengine.world.provider.FlatWorldProvider;
 
-public final class EngineModListeners {
+public final class EngineModClientListeners {
 
     @Listener
     public static void onPreInit(ModLifecycleEvent.PreInitialization event) {
-        Platform.getEngine().getEventBus().register(EngineModListeners.class);
+        if (Platform.isClient()) {
+            Platform.getEngine().getEventBus().register(EngineModClientListeners.class);
+        }
     }
 
     @Listener
@@ -62,7 +64,9 @@ public final class EngineModListeners {
         e.addRegistry(Item.class, SimpleItemRegistry::new);
         e.addRegistry(EntityProvider.class, SimpleEntityRegistry::new);
 
-        e.addRegistry(KeyBinding.class, () -> new IdAutoIncreaseRegistry<>(KeyBinding.class));
+        if (Platform.isClient()) {
+            e.addRegistry(KeyBinding.class, () -> new IdAutoIncreaseRegistry<>(KeyBinding.class));
+        }
     }
 
     @Listener
