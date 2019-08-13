@@ -2,7 +2,7 @@ package nullengine.game;
 
 import nullengine.Engine;
 import nullengine.event.EventBus;
-import nullengine.event.game.GameCreationEvent;
+import nullengine.event.game.GameCreateEvent;
 import nullengine.event.game.GameStartEvent;
 import nullengine.event.game.GameTerminationEvent;
 import org.slf4j.Logger;
@@ -78,12 +78,12 @@ public abstract class GameBase implements Game {
     @Override
     public void init() {
         logger.info(marker, "Initializing Game.");
-        eventBus.post(new GameCreationEvent.Pre(this));
+        eventBus.post(new GameCreateEvent.Pre(this));
         eventBus.post(new GameStartEvent.Pre(this));
         constructStage();
         resourceStage();
         finishStage();
-        eventBus.post(new GameCreationEvent.Post(this));
+        eventBus.post(new GameCreateEvent.Post(this));
         eventBus.post(new GameStartEvent.Post(this));
         // TODO: loop to check if we need to gc the world
 
