@@ -35,14 +35,17 @@ public class AutoListenTask implements ModInitializationTask {
             try {
                 var listenerClass = Class.forName(listener.getAsString(), true, mod.getClassLoader());
                 var anno = listenerClass.getAnnotation(AutoListen.class);
-                var instance = listenerClass.getDeclaredConstructor().newInstance();
-                switch (anno.value()) {
+                if (anno.clientOnly() && !initializer.getEngine().isClient()) {
+                    continue;
+                }
+
+                switch (anno.bus()) {
                     case ENGINE:
                     default:
-                        initializer.getEngine().getEventBus().register(instance);
+                        initializer.getEngine().getEventBus().register(listenerClass);
                         break;
                     case MOD:
-                        mod.getEventBus().register(instance);
+                        mod.getEventBus().register(listenerClass);
                         break;
                 }
             } catch (ReflectiveOperationException e) {

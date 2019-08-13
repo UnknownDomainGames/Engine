@@ -5,13 +5,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Auto listen static listener when annotated class.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface AutoListen {
 
-    EventBus value() default EventBus.ENGINE;
+    Bus bus() default Bus.ENGINE;
 
-    enum EventBus {
+    boolean clientOnly() default false;
+
+    enum Bus {
         ENGINE, MOD
     }
 }
