@@ -17,7 +17,7 @@ import nullengine.client.rendering.shader.ShaderType;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.event.Listener;
-import nullengine.event.world.block.BlockChangeEvent;
+import nullengine.event.block.BlockChangeEvent;
 import nullengine.event.world.chunk.ChunkLoadEvent;
 import nullengine.math.BlockPos;
 import nullengine.world.World;

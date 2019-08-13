@@ -1,7 +1,7 @@
 package nullengine.item;
 
 import nullengine.block.Block;
-import nullengine.event.world.block.cause.BlockChangeCause;
+import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.item.component.UseBlockBehavior;
 
 import javax.annotation.Nonnull;

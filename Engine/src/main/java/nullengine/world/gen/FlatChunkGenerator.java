@@ -1,7 +1,7 @@
 package nullengine.world.gen;
 
 import nullengine.block.Block;
-import nullengine.event.world.block.cause.BlockChangeCause;
+import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.math.BlockPos;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;

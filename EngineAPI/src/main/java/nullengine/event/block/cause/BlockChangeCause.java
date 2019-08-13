@@ -1,4 +1,4 @@
-package nullengine.event.world.block.cause;
+package nullengine.event.block.cause;
 
 import nullengine.entity.Entity;
 import nullengine.event.cause.Cause;

@@ -1,8 +1,8 @@
-package nullengine.event.world.block;
+package nullengine.event.block;
 
 import nullengine.block.Block;
 import nullengine.event.Cancellable;
-import nullengine.event.world.block.cause.BlockChangeCause;
+import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.math.BlockPos;
 import nullengine.world.World;
 

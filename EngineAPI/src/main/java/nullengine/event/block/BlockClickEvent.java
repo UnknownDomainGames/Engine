@@ -1,4 +1,4 @@
-package nullengine.event.world.block;
+package nullengine.event.block;
 
 import nullengine.block.Block;
 import nullengine.entity.Entity;

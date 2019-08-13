@@ -2,7 +2,7 @@ package nullengine.item;
 
 import nullengine.component.Component;
 import nullengine.component.ComponentContainer;
-import nullengine.event.world.block.cause.BlockChangeCause;
+import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.item.component.HitBlockBehavior;
 import nullengine.player.Player;
 import nullengine.registry.RegistryEntry;

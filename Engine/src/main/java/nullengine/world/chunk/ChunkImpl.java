@@ -2,7 +2,7 @@ package nullengine.world.chunk;
 
 import nullengine.block.Block;
 import nullengine.entity.Entity;
-import nullengine.event.world.block.cause.BlockChangeCause;
+import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.math.BlockPos;
 import nullengine.registry.Registries;
 import nullengine.world.World;
