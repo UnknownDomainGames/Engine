@@ -120,7 +120,7 @@ class ModelBaker {
             for (var mesh : vertexes.entrySet()) {
                 bakedMeshes.add(new BlockModel.Mesh(mesh.getValue().toArray(new BlockModel.Vertex[0]), mesh.getKey()));
             }
-            return new BlockModel(List.copyOf(bakedMeshes), fullFaces);
+            return new BlockModel(bakedMeshes.toArray(new BlockModel.Mesh[0]), fullFaces);
         }
     }
 }

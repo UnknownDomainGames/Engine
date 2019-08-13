@@ -2,6 +2,7 @@ package nullengine.client.asset.model.block;
 
 import nullengine.client.EngineClient;
 import nullengine.client.asset.*;
+import nullengine.client.rendering.model.BakedModel;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.client.rendering.texture.TextureAtlas;
 
@@ -11,23 +12,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class BlockModelManager implements AssetProvider<BlockModel> {
+public class BlockModelManager implements AssetProvider<BakedModel> {
 
     private final TextureAtlas blockAtlas;
 
     private final Map<AssetURL, ModelData> modelDataMap = new HashMap<>();
-    private final List<Asset<BlockModel>> modelAssets = new LinkedList<>();
+    private final List<Asset<BakedModel>> modelAssets = new LinkedList<>();
 
     private ModelLoader modelLoader;
     private ModelBaker modelBaker;
-    private AssetType<BlockModel> type;
+    private AssetType<BakedModel> type;
 
     public BlockModelManager(EngineClient engineClient) {
         this.blockAtlas = engineClient.getRenderContext().getTextureManager().getTextureAtlas(StandardTextureAtlas.BLOCK);
     }
 
     @Override
-    public void init(AssetManager manager, AssetType<BlockModel> type) {
+    public void init(AssetManager manager, AssetType<BakedModel> type) {
         this.modelLoader = new ModelLoader(this, manager.getSourceManager(), type);
         this.modelBaker = new ModelBaker();
         this.type = type;
@@ -36,12 +37,12 @@ public class BlockModelManager implements AssetProvider<BlockModel> {
     }
 
     @Override
-    public void register(Asset<BlockModel> asset) {
+    public void register(Asset<BakedModel> asset) {
         modelAssets.add(asset);
     }
 
     @Override
-    public void unregister(Asset<BlockModel> asset) {
+    public void unregister(Asset<BakedModel> asset) {
         modelAssets.remove(asset);
     }
 
@@ -56,7 +57,7 @@ public class BlockModelManager implements AssetProvider<BlockModel> {
 
     @Nonnull
     @Override
-    public BlockModel loadDirect(AssetURL url) {
+    public BakedModel loadDirect(AssetURL url) {
         return modelBaker.bake(getModelData(url));
     }
 

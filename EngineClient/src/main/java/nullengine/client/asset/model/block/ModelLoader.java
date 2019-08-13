@@ -8,6 +8,7 @@ import nullengine.client.asset.AssetURL;
 import nullengine.client.asset.exception.AssetLoadException;
 import nullengine.client.asset.exception.AssetNotFoundException;
 import nullengine.client.asset.source.AssetSourceManager;
+import nullengine.client.rendering.model.BakedModel;
 import nullengine.util.Direction;
 import nullengine.util.JsonUtils;
 import org.joml.Vector3f;
@@ -25,9 +26,9 @@ class ModelLoader {
 
     private final BlockModelManager modelManager;
     private final AssetSourceManager sourceManager;
-    private final AssetType<BlockModel> type;
+    private final AssetType<BakedModel> type;
 
-    public ModelLoader(BlockModelManager modelManager, AssetSourceManager sourceManager, AssetType<BlockModel> type) {
+    public ModelLoader(BlockModelManager modelManager, AssetSourceManager sourceManager, AssetType<BakedModel> type) {
         this.modelManager = modelManager;
         this.sourceManager = sourceManager;
         this.type = type;

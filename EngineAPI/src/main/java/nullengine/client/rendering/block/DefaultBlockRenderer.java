@@ -5,77 +5,56 @@ import nullengine.block.Block;
 import nullengine.client.asset.Asset;
 import nullengine.client.asset.AssetTypes;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.asset.model.block.BlockModel;
+import nullengine.client.rendering.model.BakedModel;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.BlockPos;
 import nullengine.util.Direction;
 import nullengine.world.BlockGetter;
 
-import java.util.Optional;
-
 public class DefaultBlockRenderer implements BlockRenderer {
 
     private BlockRenderType renderType;
-    private Asset<BlockModel> model;
+    private Asset<BakedModel> model;
 
     @Override
     public boolean canRenderFace(BlockGetter world, BlockPos pos, Block block, Direction direction) {
-        BlockPos neighborPos = pos.offset(direction);
-        Block neighborBlock = world.getBlock(neighborPos);
-        Optional<BlockRenderer> neighborBlockRenderer = neighborBlock.getComponent(BlockRenderer.class);
-        return neighborBlockRenderer.map(blockRenderer -> blockRenderer.canRenderNeighborBlockFace(world, neighborPos, neighborBlock, direction.opposite())).orElse(true);
+        var neighborPos = pos.offset(direction);
+        var neighborBlock = world.getBlock(neighborPos);
+        var neighborBlockRenderer = neighborBlock.getComponent(BlockRenderer.class);
+        return neighborBlockRenderer
+                .map(blockRenderer -> blockRenderer.canRenderNeighborBlockFace(world, neighborPos, neighborBlock, direction.opposite()))
+                .orElse(true);
     }
 
     @Override
     public boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, Block block, Direction direction) {
-        return !model.get().getFullFaces()[direction.index];
+        return !model.get().isFullFace(direction);
     }
 
     @Override
     public void generateMesh(Block block, BlockGetter world, BlockPos pos, GLBuffer buffer) {
         buffer.posOffset(pos.getX(), pos.getY(), pos.getZ());
-        BlockPos.Mutable mutablePos = new BlockPos.Mutable(pos);
-        byte cullFaces = 0;
-        for (Direction direction : Direction.values()) {
+        var mutablePos = new BlockPos.Mutable(pos);
+        byte coveredFace = 0;
+        for (var direction : Direction.values()) {
             mutablePos.set(pos);
             if (!canRenderFace(world, mutablePos, block, direction)) {
-                cullFaces |= 1 << direction.index;
+                coveredFace |= 1 << direction.index;
             }
         }
 
-        BlockModel blockModel = this.model.get();
-        for (BlockModel.Mesh mesh : blockModel.getMeshes()) {
-            if (!checkCullFace(cullFaces, mesh.cullFaces)) {
-                for (BlockModel.Vertex vertex : mesh.vertexes) {
-                    buffer.pos(vertex.pos).color(1, 1, 1).uv(vertex.u, vertex.v).normal(vertex.normal).endVertex();
-                }
-            }
-        }
-    }
-
-    private boolean checkCullFace(byte cullFaces, byte meshCullFaces) {
-        return (cullFaces & meshCullFaces) == meshCullFaces;
+        model.get().putVertexes(buffer, coveredFace);
     }
 
     @Override
     public void generateMesh(Block block, GLBuffer buffer) {
         buffer.posOffset(-0.5f, -0.5f, -0.5f);
-        BlockModel blockModel = this.model.get();
-        for (BlockModel.Mesh mesh : blockModel.getMeshes()) {
-            for (BlockModel.Vertex vertex : mesh.vertexes) {
-                buffer.pos(vertex.pos).color(1, 1, 1).uv(vertex.u, vertex.v).normal(vertex.normal).endVertex();
-            }
-        }
+        model.get().putVertexes(buffer, 0);
     }
 
     @Override
     public BlockRenderType getRenderType() {
         return renderType;
-    }
-
-    public DefaultBlockRenderer setModel(Asset<BlockModel> model) {
-        this.model = model;
-        return this;
     }
 
     public DefaultBlockRenderer setModelPath(AssetURL path) {
