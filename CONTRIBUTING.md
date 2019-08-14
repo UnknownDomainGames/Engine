@@ -1,7 +1,7 @@
 # Contributing to NullEngine
 
 ## 代码规范
-本项目代码规范基于[Google Java 编程风格指南](http://www.hawstein.com/posts/google-java-style.html)。
+本项目代码规范基于[Google Java 编程风格指南](http://hawstein.com/2014/01/20/google-java-style/)。
 
 此外仍需遵守以下规范：
 1. 对于文件路径，**禁止**使用`File`，应使用`Path`或`URL`。
