@@ -19,15 +19,12 @@ class ModelBaker {
     }
 
     public BlockModel bake(ModelData modelData) {
-        BakedModelPrimer primer = new BakedModelPrimer();
+        var primer = new BakedModelPrimer();
         primer.fullFaces = modelData.fullFaces;
-        List<ModelData.Element> elements = modelData.elements;
-        for (ModelData.Element element : elements) {
-            ModelData.Element.Cube cube = (ModelData.Element.Cube) element;
-
-            ModelData.Element.Cube.Face[] faces = cube.faces;
+        for (var cube : modelData.cubes) {
+            ModelData.Cube.Face[] faces = cube.faces;
             for (Direction direction : Direction.values()) {
-                ModelData.Element.Cube.Face face = faces[direction.index];
+                ModelData.Cube.Face face = faces[direction.index];
                 if (face == null)
                     continue;
 
@@ -38,7 +35,7 @@ class ModelBaker {
         return primer.build();
     }
 
-    private void bakeFace(ModelData.Element.Cube cube, ModelData.Element.Cube.Face face, Direction direction, List<BlockModel.Vertex> mesh) {
+    private void bakeFace(ModelData.Cube cube, ModelData.Cube.Face face, Direction direction, List<BlockModel.Vertex> mesh) {
         TextureAtlasPart textureAtlasPart = face.resolvedTexture;
         float u = textureAtlasPart.getMaxU() - textureAtlasPart.getMinU();
         float v = textureAtlasPart.getMaxV() - textureAtlasPart.getMinV();

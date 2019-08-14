@@ -21,7 +21,6 @@ public class BlockModelManager implements AssetProvider<BakedModel> {
 
     private ModelLoader modelLoader;
     private ModelBaker modelBaker;
-    private AssetType<BakedModel> type;
 
     public BlockModelManager(EngineClient engineClient) {
         this.blockAtlas = engineClient.getRenderContext().getTextureManager().getTextureAtlas(StandardTextureAtlas.BLOCK);
@@ -31,7 +30,6 @@ public class BlockModelManager implements AssetProvider<BakedModel> {
     public void init(AssetManager manager, AssetType<BakedModel> type) {
         this.modelLoader = new ModelLoader(this, manager.getSourceManager(), type);
         this.modelBaker = new ModelBaker();
-        this.type = type;
         manager.getReloadManager().addBefore("VoxelModelDataReload", "Texture", this::reloadModelData);
         manager.getReloadManager().addAfter("VoxelModelBake", "Texture", this::reload);
     }
@@ -76,19 +74,17 @@ public class BlockModelManager implements AssetProvider<BakedModel> {
     }
 
     private ModelData resolveTexture(ModelData modelData) {
-        for (ModelData.Element element : modelData.elements) {
-            ModelData.Element.Cube cube = (ModelData.Element.Cube) element;
-            for (ModelData.Element.Cube.Face face : cube.faces) {
-                face.texture = resolveTexture(face.texture, modelData.textures);
-                face.resolvedTexture = blockAtlas.addTexture(AssetURL.fromString(modelData.url, face.texture));
+        for (var cube : modelData.cubes) {
+            for (var face : cube.faces) {
+                face.resolvedTexture = blockAtlas.addTexture(AssetURL.fromString(modelData.url, resolveTexture(face.texture, modelData.textures)));
             }
         }
         return modelData;
     }
 
     private String resolveTexture(String texture, Map<String, String> textures) {
-        while (texture.charAt(0) == '$') {
-            texture = textures.get(texture.substring(1));
+        if (texture.charAt(0) == '$') {
+            texture = textures.getOrDefault(texture.substring(1), texture);
         }
         return texture;
     }
