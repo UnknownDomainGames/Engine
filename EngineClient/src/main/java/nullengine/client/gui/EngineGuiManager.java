@@ -49,8 +49,11 @@ public class EngineGuiManager implements GuiManager {
                 scene.getRoot().requireClose();
             }
         };
-        scene.getRoot().addEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
         displayingScreen = scene;
+        if(scene == null){
+            return;
+        }
+        scene.getRoot().addEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
         displayingScreen.setSize(context.getWindow().getWidth(), context.getWindow().getHeight());
         displayingScreen.update();
         context.getWindow().addCharCallback(displayingScreen.charCallback);
@@ -83,7 +86,8 @@ public class EngineGuiManager implements GuiManager {
     @Override
     public void showLastScreen() {
         var lastscreen = sceneHistory.undo();
-        showIncognitoScreen(lastscreen);
+        incognito = true;
+        showScreen(lastscreen);
     }
 
     @Override

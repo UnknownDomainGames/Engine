@@ -1,0 +1,52 @@
+package nullengine.enginemod.client.gui.game;
+
+import nullengine.Platform;
+import nullengine.client.gui.Scene;
+import nullengine.client.gui.component.Button;
+import nullengine.client.gui.component.Label;
+import nullengine.client.gui.component.TextField;
+import nullengine.client.gui.layout.BorderPane;
+import nullengine.client.gui.layout.HBox;
+import nullengine.client.gui.layout.VBox;
+import nullengine.client.gui.misc.Background;
+import nullengine.client.gui.misc.Border;
+import nullengine.client.gui.misc.Pos;
+import nullengine.util.Color;
+
+public class GuiDirectConnectServer extends BorderPane {
+    public GuiDirectConnectServer(){
+        var vbox = new VBox();
+        setAlignment(vbox, Pos.CENTER);
+        center().setValue(vbox);
+        var label1 = new Label();
+        label1.text().setValue("Connect to server");
+        var lblAddress = new Label();
+        lblAddress.text().setValue("Address");
+        var txtboxAddress = new TextField();
+        txtboxAddress.getSize().prefHeight().set(23.0f);
+        txtboxAddress.getSize().prefWidth().set(200f);
+        var hbox = new HBox();
+        hbox.spacing().set(10f);
+        var butConnect = new Button("Connect");
+        butConnect.setOnClick(e->{
+            var fullAddress = txtboxAddress.text().getValue();
+            var port = 18104;
+            var colonIndex = fullAddress.lastIndexOf(":");
+            if(colonIndex != -1) {
+                try {
+                    port = Integer.parseInt(fullAddress.substring(colonIndex + 1));
+                }
+                catch (NumberFormatException ex){
+
+                }
+                fullAddress = fullAddress.substring(0,colonIndex);
+            }
+            Platform.getEngineClient().getRenderContext().getGuiManager().showScreen(new Scene(new GuiConnectServer(fullAddress, port)));
+        });
+        var butBack = new Button("Back");
+        butBack.setOnClick(e->requireClose());
+        hbox.getChildren().addAll(butConnect, butBack);
+        vbox.getChildren().addAll(label1,lblAddress,txtboxAddress, hbox);
+        background().setValue(Background.fromColor(Color.fromRGB(0x7f7f7f)));
+    }
+}

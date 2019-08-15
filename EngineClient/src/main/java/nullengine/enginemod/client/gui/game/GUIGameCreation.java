@@ -2,6 +2,7 @@ package nullengine.enginemod.client.gui.game;
 
 import nullengine.Platform;
 import nullengine.client.game.GameClientStandalone;
+import nullengine.client.gui.Scene;
 import nullengine.client.gui.component.Button;
 import nullengine.client.gui.component.Label;
 import nullengine.client.gui.layout.BorderPane;
@@ -60,7 +61,11 @@ public class GUIGameCreation extends BorderPane {
             buttonLocale.text().setValue("Lang: " + I18n.translate("engine.gui.lang.text.name"));
         });
         vBox.getChildren().add(buttonLocale);
-
+        var butCS = new Button("Multiplayer");
+        butCS.setOnClick(e->{
+            Platform.getEngineClient().getRenderContext().getGuiManager().showScreen(new Scene(new GuiDirectConnectServer()));
+        });
+        vBox.getChildren().add(butCS);
     }
 
 

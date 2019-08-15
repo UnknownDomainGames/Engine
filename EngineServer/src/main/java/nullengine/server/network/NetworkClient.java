@@ -15,8 +15,10 @@ import java.net.SocketAddress;
 
 public class NetworkClient {
     private ChannelFuture future;
+    private NetworkHandler handler;
+    private NioEventLoopGroup workerGroup;
     public void run(InetAddress address, int port){
-        var workerGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
         var channelFuture = new Bootstrap()
                 .group(workerGroup)
                 .channel(NioSocketChannel.class)
@@ -31,7 +33,8 @@ public class NetworkClient {
                         }
                         ch.pipeline().addLast("decoder", new PacketDecoder())
                                 .addLast("encoder", new PacketEncoder());
-                        ch.pipeline().addLast("handler", new NetworkHandler(Side.CLIENT));
+                        handler = new NetworkHandler(Side.CLIENT);
+                        ch.pipeline().addLast("handler", handler);
                     }
                 })
                 .option(ChannelOption.SO_KEEPALIVE, true).connect(address, port).syncUninterruptibly();
@@ -47,7 +50,8 @@ public class NetworkClient {
 
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
-                        ch.pipeline().addLast("handler", new NetworkHandler(Side.CLIENT));
+                        handler = new NetworkHandler(Side.CLIENT);
+                        ch.pipeline().addLast("handler", handler);
                     }
                 })
                 .connect(localServerAddress).syncUninterruptibly();
@@ -56,5 +60,16 @@ public class NetworkClient {
 
     public void send(Packet msg){
         future.channel().writeAndFlush(msg);
+    }
+
+    public NetworkHandler getHandler() {
+        return handler;
+    }
+
+    public void close(){
+        if(handler.isChannelOpen()){
+            handler.closeChannel();
+        }
+        workerGroup.shutdownGracefully();
     }
 }
