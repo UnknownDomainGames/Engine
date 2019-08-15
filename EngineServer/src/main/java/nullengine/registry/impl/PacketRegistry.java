@@ -29,7 +29,7 @@ public class PacketRegistry extends IdAutoIncreaseRegistry<PacketProvider> {
     @Nonnull
     @Override
     public PacketProvider register(@Nonnull PacketProvider obj) {
-        if(getValues().stream().anyMatch(packet -> packet.getClass() == obj.getClass()))
+        if(getValues().stream().anyMatch(packet -> packet.getPacketType() == obj.getPacketType()))
             throw new RegistrationException(String.format("Packet %s is already registered", obj.getClass().getSimpleName()));
         return super.register(obj);
     }

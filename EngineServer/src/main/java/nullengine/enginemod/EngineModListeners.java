@@ -41,9 +41,9 @@ public final class EngineModListeners {
     @Listener
     public static void registerPacket(ModRegistrationEvent.Register<PacketProvider> event){
         event.register(new PacketProvider.Builder().type(PacketRaw.class).name("raw").build());
-        event.register(new PacketProvider.Builder().type(PacketHandshake.class).name("raw").build());
-        event.register(new PacketProvider.Builder().type(PacketDisconnect.class).name("raw").build());
-        event.register(new PacketProvider.Builder().type(PacketSyncRegistry.class).name("raw").build());
+        event.register(new PacketProvider.Builder().type(PacketHandshake.class).name("handshake").build());
+        event.register(new PacketProvider.Builder().type(PacketDisconnect.class).name("disconnect").build());
+        event.register(new PacketProvider.Builder().type(PacketSyncRegistry.class).name("registry-sync").build());
     }
 
 }

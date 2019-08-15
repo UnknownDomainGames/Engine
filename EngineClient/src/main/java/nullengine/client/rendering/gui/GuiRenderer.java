@@ -64,7 +64,9 @@ public class GuiRenderer implements Renderer {
                 renderScene(scene);
             }
         }
-
+        if(guiManager.isDisplayingScreen() && guiManager.getDisplayingScreen().getRoot().closeRequired()){
+            guiManager.showLastScreen();
+        }
         if (guiManager.isDisplayingScreen()) {
             startRenderFlag();
             renderScene(guiManager.getDisplayingScreen());
@@ -121,11 +123,6 @@ public class GuiRenderer implements Renderer {
 
         Container root = scene.getRoot();
         if (!root.visible().get()) {
-            return;
-        }
-
-        if (root.closeRequired()) {
-            guiManager.closeScreen();
             return;
         }
 

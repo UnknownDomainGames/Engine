@@ -114,7 +114,7 @@ public class Scene {
     };
 
     public final Window.KeyCallback keyCallback = (window, key, scanCode, action, mods) -> {
-        var a = root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
+        var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
         a.add(root);
         for (Component component : a) {
             if (action == GLFW.GLFW_PRESS) {
@@ -128,6 +128,6 @@ public class Scene {
     };
 
     public final Window.CharCallback charCallback = (window, c) -> {
-        root.getUnmodifiableChildren().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(component, c)));
+        root.getChildrenRecursive().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(component, c)));
     };
 }

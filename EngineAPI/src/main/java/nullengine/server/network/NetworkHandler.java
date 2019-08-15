@@ -51,7 +51,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     }
 
     public void closeChannel(){
-        if(this.channel.isOpen()){
+        if(this.channel != null && this.channel.isOpen()){
             this.channel.close().awaitUninterruptibly();
         }
     }
