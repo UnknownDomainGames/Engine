@@ -38,7 +38,7 @@ public final class ModelUtils {
         return directions.toArray(new Direction[0]);
     }
 
-    public static boolean chechCullFace(int coveredFace, int cullFace) {
+    public static boolean checkCullFace(int coveredFace, int cullFace) {
         return (coveredFace & cullFace) == cullFace;
     }
 

@@ -19,7 +19,7 @@ public class BlockModel implements BakedModel {
     @Override
     public void putVertexes(GLBuffer buffer, int coveredFace) {
         for (var mesh : meshes) {
-            if (ModelUtils.chechCullFace(coveredFace, mesh.cullFaces)) {
+            if (ModelUtils.checkCullFace(coveredFace, mesh.cullFaces)) {
                 continue;
             }
 
