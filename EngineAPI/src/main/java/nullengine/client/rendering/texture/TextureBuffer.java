@@ -10,27 +10,27 @@ import java.nio.IntBuffer;
 
 public class TextureBuffer {
 
-    public static TextureBuffer create(ByteBuffer filebuf) throws IOException {
-        if (!filebuf.isDirect()) {
-            ByteBuffer direct = ByteBuffer.allocateDirect(filebuf.capacity());
-            direct.put(filebuf);
+    public static TextureBuffer create(ByteBuffer buffer) throws IOException {
+        if (!buffer.isDirect()) {
+            ByteBuffer direct = ByteBuffer.allocateDirect(buffer.capacity());
+            direct.put(buffer);
             direct.flip();
-            filebuf = direct;
+            buffer = direct;
         }
         try (var stack = MemoryStack.stackPush()) {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer c = stack.mallocInt(1);
-            ByteBuffer pixelbuf = STBImage.stbi_load_from_memory(filebuf, w, h, c, 4);
+            ByteBuffer bitmapBuffer = STBImage.stbi_load_from_memory(buffer, w, h, c, 4);
             int width = w.get(0);
             int height = h.get(0);
-            if (pixelbuf == null) {
+            if (bitmapBuffer == null) {
                 throw new IOException("File buffer cannot be load as pixel buffer by STBImage");
             }
             var tex = new TextureBuffer(width, height);
-            tex.getBuffer().put(pixelbuf);
+            tex.getBuffer().put(bitmapBuffer);
             tex.getBuffer().flip();
-            pixelbuf.clear();
+            bitmapBuffer.clear();
             return tex;
         }
     }
@@ -50,6 +50,12 @@ public class TextureBuffer {
         this.height = height;
         initBuffer();
         fill(initColor);
+    }
+
+    public TextureBuffer(int width, int height, ByteBuffer buffer) {
+        this.width = width;
+        this.height = height;
+        this.backingBuffer = buffer;
     }
 
     protected void initBuffer() {
@@ -106,6 +112,7 @@ public class TextureBuffer {
     }
 
     public void fill(int color) {
+        backingBuffer.position(0);
         for (int i = 0; i < width * height; i++) {
             backingBuffer.putInt(color);
         }

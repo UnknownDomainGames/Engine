@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
-public class GLTexture {
+public class GLTexture implements Texture {
 
     public static final GLTexture EMPTY = new GLTexture(0, 0, 0);
 
