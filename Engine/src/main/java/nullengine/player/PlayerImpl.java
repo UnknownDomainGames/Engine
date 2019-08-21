@@ -1,6 +1,7 @@
 package nullengine.player;
 
 import nullengine.entity.Entity;
+import nullengine.server.network.NetworkHandler;
 import nullengine.world.World;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -10,8 +11,15 @@ public class PlayerImpl implements Player {
 
     private Entity controlledEntity;
 
+    private NetworkHandler handler;
+
     public PlayerImpl(Profile data) {
         this.profile = data;
+    }
+
+    public PlayerImpl(Profile data, NetworkHandler handler){
+        this.profile = data;
+        this.handler = handler;
     }
 
 //    public void enter(ChunkStorage chunkStore) {

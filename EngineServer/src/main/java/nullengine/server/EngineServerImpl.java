@@ -6,6 +6,7 @@ import nullengine.enginemod.EngineModListeners;
 import nullengine.enginemod.ServerHandlingListeners;
 import nullengine.event.engine.EngineEvent;
 import nullengine.game.Game;
+import nullengine.game.GameServerFullAsync;
 import nullengine.logic.Ticker;
 import nullengine.server.network.NetworkServer;
 import nullengine.util.Side;
@@ -25,6 +26,12 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
     public EngineServerImpl(Path runPath, Path configPath) {
         super(runPath);
         this.configPath = configPath;
+    }
+
+    public EngineServerImpl(Path runPath, ServerConfig serverConfig){
+        super(runPath);
+        this.configPath = Path.of("");
+        this.serverConfig = serverConfig;
     }
 
     @Override
@@ -48,13 +55,15 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
 
         logger.info("Initializing server engine!");
         serverThread = Thread.currentThread();
-        try {
-            serverConfig = new ServerConfig(configPath);
-            serverConfig.load();
-        }catch (ConfigParseException e){
-            logger.warn("Cannot parse server config! Try creating new one", e);
-            serverConfig = new ServerConfig();
-            serverConfig.save();
+        if (serverConfig == null || !configPath.equals(Path.of(""))) {
+            try {
+                serverConfig = new ServerConfig(configPath);
+                serverConfig.load();
+            }catch (ConfigParseException e){
+                logger.warn("Cannot parse server config! Try creating new one", e);
+                serverConfig = new ServerConfig();
+                serverConfig.save();
+            }
         }
         // TODO: Remove it
         modManager.getMod("engine").ifPresent(modContainer -> modContainer.getEventBus().register(EngineModListeners.class));
@@ -87,6 +96,8 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
             terminate();
             return;
         }
+        logger.info("Starting game for world");
+        startGame(new GameServerFullAsync(this, this.getRunPath().resolve("game")));
         ticker.run();
     }
 

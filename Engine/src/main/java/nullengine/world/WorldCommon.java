@@ -98,7 +98,7 @@ public class WorldCommon implements World, Runnable {
 
     @Override
     public Path getStoragePath() {
-        return null;
+        return storagePath;
     }
 
     @Override
