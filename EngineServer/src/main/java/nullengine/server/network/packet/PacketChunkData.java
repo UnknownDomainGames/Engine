@@ -30,4 +30,16 @@ public class PacketChunkData implements Packet {
     public void read(PacketBuf buf) throws IOException {
 
     }
+
+    public int getChunkX() {
+        return chunkX;
+    }
+
+    public int getChunkY() {
+        return chunkY;
+    }
+
+    public int getChunkZ() {
+        return chunkZ;
+    }
 }
