@@ -3,6 +3,7 @@ package nullengine.server;
 import configuration.parser.ConfigParseException;
 import nullengine.EngineBase;
 import nullengine.enginemod.EngineModListeners;
+import nullengine.enginemod.ServerHandlingListeners;
 import nullengine.event.engine.EngineEvent;
 import nullengine.game.Game;
 import nullengine.logic.Ticker;
@@ -77,6 +78,7 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
         nettyServer = new NetworkServer();
         var ipStr = serverConfig.getServerIp();
         var port = serverConfig.getServerPort();
+        getEventBus().register(ServerHandlingListeners.class);
         logger.info("Starting server at {}:{}", ipStr.isEmpty() ? "*" : ipStr, port);
         try {
             nettyServer.run(ipStr.isEmpty() ? null : InetAddress.getByName(ipStr), port);
@@ -124,6 +126,10 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
         ticker.stop();
         shutdownListeners.forEach(Runnable::run);
         logger.info("Engine terminated!");
+    }
+
+    public NetworkServer getNettyServer() {
+        return nettyServer;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package nullengine.server.network;
 
-import com.google.gson.reflect.TypeToken;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -8,12 +7,10 @@ import io.netty.channel.local.LocalChannel;
 import io.netty.channel.local.LocalServerChannel;
 import io.netty.handler.timeout.TimeoutException;
 import nullengine.Platform;
-import nullengine.event.Event;
+import nullengine.server.event.NetworkDisconnectedEvent;
 import nullengine.server.event.PacketReceivedEvent;
 import nullengine.server.network.packet.Packet;
 import nullengine.util.Side;
-
-import java.lang.reflect.Type;
 
 public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
@@ -24,6 +21,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     public NetworkHandler(Side side){
         instanceSide = side;
+        status = ConnectionStatus.HANDSHAKE;
     }
 
     public Side getSide() {
@@ -50,9 +48,14 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
         closeChannel();
     }
 
-    public void closeChannel(){
+    public void closeChannel() {
+        closeChannel("");
+    }
+
+    public void closeChannel(String reason){
         if(this.channel != null && this.channel.isOpen()){
             this.channel.close().awaitUninterruptibly();
+            Platform.getEngine().getEventBus().post(new NetworkDisconnectedEvent(reason));
         }
     }
 
@@ -70,11 +73,11 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if(cause instanceof TimeoutException){
-            closeChannel();
+            closeChannel("Connection timed out");
         }
         else{
-            cause.printStackTrace();
-            closeChannel();
+            Platform.getLogger().warn("exception thrown in connection", cause);
+            closeChannel(cause.getMessage());
         }
     }
 

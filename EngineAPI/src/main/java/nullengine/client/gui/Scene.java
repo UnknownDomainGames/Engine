@@ -3,6 +3,7 @@ package nullengine.client.gui;
 import com.github.mouse0w0.observable.value.MutableIntValue;
 import com.github.mouse0w0.observable.value.ObservableIntValue;
 import com.github.mouse0w0.observable.value.SimpleMutableIntValue;
+import nullengine.Platform;
 import nullengine.client.gui.event.CharEvent;
 import nullengine.client.gui.event.FocusEvent;
 import nullengine.client.gui.event.KeyEvent;
@@ -11,6 +12,7 @@ import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.client.rendering.display.Window;
+import nullengine.event.Event;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -56,6 +58,8 @@ public class Scene {
 
     public void setRoot(Container root) {
         this.root = Objects.requireNonNull(root);
+        root.scene.setValue(this);
+        root.getChildrenRecursive().forEach(component -> component.scene.setValue(this));
         updateRoot();
     }
 
@@ -63,6 +67,19 @@ public class Scene {
         this.root.width.set(getWidth() - root.x().get());
         this.root.height.set(getHeight() - root.y().get());
         this.root.needsLayout();
+    }
+
+    public void hookToEventBus(){
+        Platform.getEngine().getEventBus().addListener(this::eventBusHook);
+    }
+
+    public void unhookFromEventBus(){
+//        Platform.getEngine().getEventBus().
+    }
+
+    private void eventBusHook(Event event){
+        root.handleEvent(event);
+        root.getChildrenRecursive().forEach(component -> component.handleEvent(event));
     }
 
     public void update() {

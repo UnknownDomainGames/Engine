@@ -21,7 +21,7 @@ public class EngineBootstrap {
         var configArg = optionparser.accepts("config").withRequiredArg().ofType(String.class).defaultsTo("config.json");
 
         var parsed = optionparser.parse(args);
-        var configPath = "/server.json";
+        var configPath = "server.json";
         if(parsed.has("config")){
             configPath = parsed.valueOf(configArg);
         }
@@ -33,7 +33,11 @@ public class EngineBootstrap {
         var in = new BufferedReader(new InputStreamReader(System.in));
         try {
             while(true){
-                in.readLine();
+                var s = in.readLine();
+                if("/stop".equals(s)){
+                    engine.terminate();
+                    break;
+                }
             }
         } catch (IOException e) {
             Platform.getLogger().warn("Cannot read console input!", e);

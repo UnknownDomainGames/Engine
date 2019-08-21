@@ -3,6 +3,8 @@ package nullengine.enginemod.client.gui.game;
 import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
 import nullengine.Platform;
+import nullengine.client.gui.GuiTickable;
+import nullengine.client.gui.Scene;
 import nullengine.client.gui.component.Button;
 import nullengine.client.gui.component.Label;
 import nullengine.client.gui.layout.AnchorPane;
@@ -11,8 +13,12 @@ import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
+import nullengine.client.rendering.RenderContext;
+import nullengine.server.event.NetworkDisconnectedEvent;
+import nullengine.server.event.PacketReceivedEvent;
 import nullengine.server.network.ConnectionStatus;
 import nullengine.server.network.NetworkClient;
+import nullengine.server.network.packet.PacketDisconnect;
 import nullengine.server.network.packet.PacketHandshake;
 import nullengine.util.Color;
 
@@ -20,7 +26,7 @@ import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
 
-public class GuiConnectServer extends BorderPane {
+public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
 
     private Label lblStatus;
     private Label lblReason;
@@ -48,6 +54,9 @@ public class GuiConnectServer extends BorderPane {
             }
             super.requireClose();
         });
+        lblStatus.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
+        lblReason.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
+        button.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         vbox.getChildren().add(button);
         isFailed.addChangeListener((observable, oldValue, newValue) -> {
             button.text().setValue("Back");
@@ -58,6 +67,23 @@ public class GuiConnectServer extends BorderPane {
         background().setValue(Background.fromColor(Color.fromRGB(0x7f7f7f)));
         setAlignment(vbox, Pos.CENTER);
         center().setValue(vbox);
+        addEventHandler(PacketReceivedEvent.class, event -> {
+            if(event.getPacket() instanceof PacketDisconnect){
+                Platform.getLogger().warn("Disconnected from server");
+                lblStatus.text().setValue("Disconnected");
+                lblReason.text().setValue(((PacketDisconnect) event.getPacket()).getReason());
+                isFailed.set(true);
+            }
+        });
+        addEventHandler(NetworkDisconnectedEvent.class, event ->{
+            Platform.getLogger().warn("Disconnected from server: {}", event.getReason());
+            lblStatus.text().setValue("Disconnected");
+            lblReason.text().setValue(event.getReason());
+            isFailed.set(true);
+        });
+        scene().ifPresentOrElse(Scene::hookToEventBus, ()-> scene().addChangeListener((observable, oldValue, newValue) -> {
+                newValue.hookToEventBus();
+        }));
         connect(ip, port);
     }
 
@@ -73,11 +99,13 @@ public class GuiConnectServer extends BorderPane {
             } catch (UnknownHostException ex) {
                 if(isCancelled) return;
                 Platform.getLogger().error("Cannot connect to server", ex);
+                lblStatus.text().setValue("Disconnected");
                 lblReason.text().setValue("Unknown host");
                 isFailed.set(true);
             } catch (Exception ex) {
                 if(isCancelled) return;
                 Platform.getLogger().error("Cannot connect to server", ex);
+                lblStatus.text().setValue("Disconnected");
                 lblReason.text().setValue(ex.getMessage());
                 isFailed.set(true);
             }
@@ -91,5 +119,15 @@ public class GuiConnectServer extends BorderPane {
     @Override
     public void requireClose() {
         // require close by Esc may cause unintended result
+    }
+
+    public void update(RenderContext context) {
+//        if(networkClient != null && networkClient.getHandler() != null) {
+//            if(!networkClient.getHandler().isChannelOpen()){
+//                lblStatus.text().setValue("Disconnected");
+//                lblReason.text().setValue("event.getReason()");
+//                isFailed.set(true);
+//            }
+//        }
     }
 }

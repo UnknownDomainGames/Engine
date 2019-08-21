@@ -26,7 +26,7 @@ public class ServerConfig {
     }
 
     public void load(){
-        var config = ConfigParsers.load(configPath);
+        var config = ConfigParsers.load(configPath.toAbsolutePath());
         serverIp = config.getString("server-ip", "");
         serverPort = config.getInt("server-port", 18104);
     }
