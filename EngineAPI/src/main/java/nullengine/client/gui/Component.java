@@ -35,6 +35,10 @@ public abstract class Component {
 
     private ComponentRenderer renderer;
 
+    public ObservableValue<Scene> scene() {
+        return scene;
+    }
+
     public final ObservableValue<Container> parent() {
         return parent.toImmutable();
     }

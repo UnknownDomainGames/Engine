@@ -56,6 +56,9 @@ public class EngineGuiManager implements GuiManager {
         scene.getRoot().addEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
         displayingScreen.setSize(context.getWindow().getWidth(), context.getWindow().getHeight());
         displayingScreen.update();
+        if (scene.getRoot() instanceof GuiTickable) {
+            context.getScheduler().runTaskEveryFrame(() -> ((GuiTickable) scene.getRoot()).update(context));
+        }
         context.getWindow().addCharCallback(displayingScreen.charCallback);
         context.getWindow().addCursorCallback(displayingScreen.cursorCallback);
         context.getWindow().addKeyCallback(displayingScreen.keyCallback);
@@ -70,6 +73,9 @@ public class EngineGuiManager implements GuiManager {
                 sceneHistory.pushHistory(displayingScreen);
             }
             displayingScreen.getRoot().removeEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
+            if (displayingScreen.getRoot() instanceof GuiTickable) {
+                context.getScheduler().cancelTask(() -> ((GuiTickable) displayingScreen.getRoot()).update(context));
+            }
             context.getWindow().removeCharCallback(displayingScreen.charCallback);
             context.getWindow().removeCursorCallback(displayingScreen.cursorCallback);
             context.getWindow().removeKeyCallback(displayingScreen.keyCallback);

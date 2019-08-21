@@ -15,9 +15,12 @@ import nullengine.util.Color;
 
 public class GuiDirectConnectServer extends BorderPane {
     public GuiDirectConnectServer(){
+        var vmain = new VBox();
+        vmain.alignment().setValue(Pos.HPos.CENTER);
         var vbox = new VBox();
-        setAlignment(vbox, Pos.CENTER);
-        center().setValue(vbox);
+        vmain.getChildren().add(vbox);
+        setAlignment(vmain, Pos.CENTER);
+        center().setValue(vmain);
         var label1 = new Label();
         label1.text().setValue("Connect to server");
         var lblAddress = new Label();

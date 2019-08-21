@@ -7,6 +7,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import nullengine.server.network.packet.Packet;
 import nullengine.util.Side;
 
@@ -31,7 +32,7 @@ public class NetworkClient {
                         } catch (ChannelException var3) {
 
                         }
-                        ch.pipeline().addLast("decoder", new PacketDecoder())
+                        ch.pipeline().addLast("timeout", new ReadTimeoutHandler(10)).addLast("decoder", new PacketDecoder())
                                 .addLast("encoder", new PacketEncoder());
                         handler = new NetworkHandler(Side.CLIENT);
                         ch.pipeline().addLast("handler", handler);
