@@ -3,7 +3,7 @@ package nullengine.client.world;
 import nullengine.block.Block;
 import nullengine.client.world.chunk.WorldClientChunkManager;
 import nullengine.entity.Entity;
-import nullengine.event.world.block.cause.BlockChangeCause;
+import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.game.Game;
 import nullengine.math.BlockPos;
 import nullengine.registry.Registries;

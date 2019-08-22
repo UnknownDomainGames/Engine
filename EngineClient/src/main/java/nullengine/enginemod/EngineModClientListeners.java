@@ -23,26 +23,20 @@ import nullengine.enginemod.client.gui.game.GuiIngameMenu;
 import nullengine.enginemod.client.gui.game.GuiItemList;
 import nullengine.enginemod.client.gui.hud.HUDGameDebug;
 import nullengine.entity.Entity;
-import nullengine.entity.EntityProvider;
 import nullengine.entity.component.TwoHands;
 import nullengine.entity.item.ItemEntity;
 import nullengine.event.Listener;
+import nullengine.event.block.BlockActivateEvent;
+import nullengine.event.block.BlockClickEvent;
 import nullengine.event.engine.EngineEvent;
 import nullengine.event.mod.ModLifecycleEvent;
 import nullengine.event.mod.ModRegistrationEvent;
-import nullengine.event.world.block.BlockActivateEvent;
-import nullengine.event.world.block.BlockClickEvent;
 import nullengine.item.BlockItem;
-import nullengine.item.Item;
 import nullengine.item.ItemStack;
 import nullengine.item.component.HitBlockBehavior;
 import nullengine.item.component.UseBlockBehavior;
 import nullengine.player.Player;
-import nullengine.registry.game.BlockRegistry;
 import nullengine.registry.impl.IdAutoIncreaseRegistry;
-import nullengine.registry.impl.SimpleBlockRegistry;
-import nullengine.registry.impl.SimpleEntityRegistry;
-import nullengine.registry.impl.SimpleItemRegistry;
 import nullengine.world.WorldProvider;
 import nullengine.world.collision.RayTraceBlockHit;
 import nullengine.world.provider.FlatWorldProvider;
@@ -51,7 +45,7 @@ public final class EngineModClientListeners {
 
     @Listener
     public static void onPreInit(ModLifecycleEvent.PreInitialization event) {
-        Platform.getEngine().getEventBus().register(EngineClientModListeners.class);
+        Platform.getEngine().getEventBus().register(EngineModClientListeners.class);
     }
 
     @Listener
