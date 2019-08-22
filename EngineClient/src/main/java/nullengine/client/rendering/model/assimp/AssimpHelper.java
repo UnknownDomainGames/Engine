@@ -1,7 +1,7 @@
 package nullengine.client.rendering.model.assimp;
 
+import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.util.GLHelper;
-import org.apache.commons.io.FilenameUtils;
 import org.joml.Matrix4f;
 import org.lwjgl.assimp.*;
 
@@ -68,17 +68,17 @@ public class AssimpHelper {
     /**
      * Load a model from jar
      *
-     * @param path relative path of the model from root
+     * @param url relative path of the model from root
      * @return a model
      * @todo Use ResourceLocation-styled instead
      */
-    public static AssimpModel loadModel(String path) {
-        AIScene scene = aiImportFileEx(path,
+    public static AssimpModel loadModel(AssetURL url) {
+        AIScene scene = aiImportFileEx("assets/" + url.toFileLocation(),
                 /*aiProcess_JoinIdenticalVertices | */aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_FlipUVs, ASSIMP_JARFILEIO);
         if (scene == null) {
             throw new IllegalStateException(aiGetErrorString());
         }
-        return new AssimpModel(scene, FilenameUtils.getBaseName(path));
+        return new AssimpModel(scene, url);
     }
 
     public static Matrix4f generalizeNativeMatrix(AIMatrix4x4 aiMatrix4x4) {

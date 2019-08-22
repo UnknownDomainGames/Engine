@@ -66,7 +66,7 @@ public class ChunkRenderer {
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/assimp_model.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/chunk_solid.frag")));
 
-        //tmp = AssimpHelper.loadModel("assets/tmp/untitled.obj");
+        //tmp = AssimpHelper.loadModel(AssetURL.of("tmp", "untitled.obj"));
         dirLight = new DirectionalLight().setDirection(new Vector3f(-0.15f, -1f, -0.35f))
                 .setAmbient(new Vector3f(0.4f))
                 .setDiffuse(new Vector3f(1.0f, 1f, 1f))
@@ -145,7 +145,7 @@ public class ChunkRenderer {
         ShaderManager.instance().setUniform("u_ModelMatrix", modelMatrix);
         ShaderManager.instance().setUniform("u_viewPos", context.getCamera().getPosition());
 
-        context.getTextureManager().getTextureAtlas(StandardTextureAtlas.BLOCK).getTexture().getValue().bind();
+        context.getTextureManager().getTextureAtlas(StandardTextureAtlas.BLOCK).bind();
         chunkSolidShader.setUniform("useDirectUV", true);
         dirLight.bind("dirLights[0]");
         //ptLight.bind(chunkSolidShader,"pointLights[0]");

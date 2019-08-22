@@ -18,6 +18,7 @@ public class AssimpMesh {
 
     private final AIMesh mesh;
     private final String name;
+    private String matName;
 
     private final int vertexBuf;
     private final int texBuf;
@@ -152,5 +153,13 @@ public class AssimpMesh {
 
     public List<AssimpBone> getBones() {
         return bones;
+    }
+
+    void assignMaterialName(String matName) {
+        this.matName = matName;
+    }
+
+    public String getMaterialName() {
+        return matName;
     }
 }

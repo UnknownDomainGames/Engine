@@ -24,11 +24,6 @@ public class TextureAtlasImpl implements TextureAtlas {
         return textures.computeIfAbsent(url, key -> new TextureAtlasPartImpl());
     }
 
-    @Override
-    public ObservableValue<GLTexture> getTexture() {
-        return bakedTextureAtlas.toImmutable();
-    }
-
     public void reload() throws IOException {
         List<Pair<TextureBuffer, TextureAtlasPartImpl>> loadedTextures = new LinkedList<>();
         for (Map.Entry<AssetURL, TextureAtlasPartImpl> entry : textures.entrySet()) {
@@ -65,5 +60,25 @@ public class TextureAtlasImpl implements TextureAtlas {
             }
         }
         throw new AssetLoadException("Cannot loadDirect texture because missing asset. Path: " + url);
+    }
+
+    @Override
+    public int getWidth() {
+        return bakedTextureAtlas.getValue().getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return bakedTextureAtlas.getValue().getHeight();
+    }
+
+    @Override
+    public void bind() {
+        bakedTextureAtlas.getValue().bind();
+    }
+
+    @Override
+    public void dispose() {
+        bakedTextureAtlas.getValue().dispose();
     }
 }

@@ -25,16 +25,16 @@ public class AssimpMaterial {
 
     private Material referenceMat;
 
-    AssimpMaterial(AIScene scene, AIMaterial material, String filename) {
+    AssimpMaterial(AIScene scene, AIMaterial material, AssetURL url) {
 
         mScene = scene;
         mMaterial = material;
 
 
-        GLTexture diffuseTexture = loadTexture(aiTextureType_DIFFUSE, filename);
-        GLTexture specularTexture = loadTexture(aiTextureType_SPECULAR, filename);
-        GLTexture normalTexture = loadTexture(aiTextureType_NORMALS, filename);
-        GLTexture alphaTexture = loadTexture(aiTextureType_OPACITY, filename);
+        GLTexture diffuseTexture = loadTexture(aiTextureType_DIFFUSE, url);
+        GLTexture specularTexture = loadTexture(aiTextureType_SPECULAR, url);
+        GLTexture normalTexture = loadTexture(aiTextureType_NORMALS, url);
+        GLTexture alphaTexture = loadTexture(aiTextureType_OPACITY, url);
         AIString mName = AIString.create();
         aiGetMaterialString(mMaterial, AI_MATKEY_NAME, aiTextureType_NONE, 0, mName);
         name = mName.dataString();
@@ -69,7 +69,7 @@ public class AssimpMaterial {
         referenceMat.setAlphaUV(alphaTexture);
     }
 
-    private GLTexture loadTexture(int textureType, String filename) {
+    private GLTexture loadTexture(int textureType, AssetURL url) {
         AIString path = AIString.calloc();
         aiGetMaterialTexture(mMaterial, textureType, 0, path, null, null, null, null, null, (IntBuffer) null);
         String s = path.dataString();
@@ -92,7 +92,7 @@ public class AssimpMaterial {
                 }
             } else {
                 //Promise: Loader now only search in texture/model/[FILENAME] folder
-                return Platform.getEngineClient().getAssetManager().loadDirect(AssetTypes.TEXTURE, AssetURL.of("engine", "texture/model/" + FilenameUtils.getBaseName(filename) + "/" + s));
+                return Platform.getEngineClient().getAssetManager().loadDirect(AssetTypes.TEXTURE, AssetURL.of(url.getDomain(), "texture/model/" + FilenameUtils.getBaseName(url.getLocation()) + "/" + s));
             }
         }
         return GLTexture.EMPTY;
@@ -104,5 +104,9 @@ public class AssimpMaterial {
 
     public String getName() {
         return name;
+    }
+
+    void assignName(String name){
+        this.name = name;
     }
 }

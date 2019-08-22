@@ -1,5 +1,6 @@
 package nullengine.client.rendering.model.assimp;
 
+import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.util.GLDataType;
 import org.lwjgl.PointerBuffer;
@@ -28,7 +29,7 @@ public class AssimpModel {
 
     private int vaoid;
 
-    public AssimpModel(AIScene scene, String filename) {
+    public AssimpModel(AIScene scene, AssetURL filename) {
         this.scene = scene;
         var materials = new ArrayList<AssimpMaterial>();
         int materialCount = scene.mNumMaterials();
@@ -41,7 +42,8 @@ public class AssimpModel {
         c.put(0);
         this.materials = materials.stream().collect(Collectors.toMap(mat -> {
             if (mat.getName().isBlank()) {
-                String s = String.format("Material_#%d", c);
+                String s = String.format("Material_#%d", c.get(0));
+                mat.assignName(s);
                 c.put(0, c.get(0) + 1);
                 return s;
             }
@@ -51,12 +53,14 @@ public class AssimpModel {
         PointerBuffer meshesBuffer = scene.mMeshes();
         var meshes = new ArrayList<AssimpMesh>();
         for (int i = 0; i < meshCount; ++i) {
-            meshes.add(new AssimpMesh(AIMesh.create(meshesBuffer.get(i))));
+            var mesh = new AssimpMesh(AIMesh.create(meshesBuffer.get(i)));
+            mesh.assignMaterialName(materials.get(mesh.getRawMesh().mMaterialIndex()).getName());
+            meshes.add(mesh);
         }
         c.put(0, 0);
         this.meshes = meshes.stream().collect(Collectors.toMap(mesh -> {
             if (mesh.getName().isBlank()) {
-                String s = String.format("Mesh_#%d", c);
+                String s = String.format("Mesh_#%d", c.get(0));
                 c.put(0, c.get(0) + 1);
                 return s;
             }
@@ -125,7 +129,7 @@ public class AssimpModel {
 
 
             GL11.glEnable(GL11.GL_TEXTURE_2D);
-            var mat = materials.get(mesh.getRawMesh().mMaterialIndex());
+            var mat = materials.get(mesh.getMaterialName());
             mat.getEngineMaterial().bind("material");
 
             ShaderManager.instance().setUniform("u_Bones", currentAnimation.getCurrentFrame().getJointMatrices());
