@@ -1,8 +1,5 @@
 package nullengine.client.rendering.texture;
 
-import com.github.mouse0w0.observable.value.MutableValue;
-import com.github.mouse0w0.observable.value.ObservableValue;
-import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.Platform;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.asset.exception.AssetLoadException;
@@ -17,7 +14,8 @@ import java.util.*;
 public class TextureAtlasImpl implements TextureAtlas {
 
     private final Map<AssetURL, TextureAtlasPartImpl> textures = new HashMap<>();
-    private final MutableValue<GLTexture> bakedTextureAtlas = new SimpleMutableObjectValue<>();
+
+    private GLTexture bakedTextureAtlas;
 
     @Override
     public TextureAtlasPart addTexture(AssetURL url) {
@@ -45,8 +43,11 @@ public class TextureAtlasImpl implements TextureAtlas {
             pair.getRight().init(sumWidth, maxHeight, offsetX, 0, source.getWidth(), source.getHeight());
             offsetX += source.getWidth();
         }
-        bakedTextureAtlas.ifPresent(GLTexture::dispose);
-        bakedTextureAtlas.setValue(GLTexture.of(sumWidth, maxHeight, textureBuffer.getBuffer()));
+
+        if (bakedTextureAtlas != null) {
+            bakedTextureAtlas.dispose();
+        }
+        bakedTextureAtlas = GLTexture.of(sumWidth, maxHeight, textureBuffer.getBuffer());
     }
 
     private TextureBuffer loadTextureBuffer(AssetURL url) throws IOException {
@@ -64,21 +65,25 @@ public class TextureAtlasImpl implements TextureAtlas {
 
     @Override
     public int getWidth() {
-        return bakedTextureAtlas.getValue().getWidth();
+        return bakedTextureAtlas.getWidth();
     }
 
     @Override
     public int getHeight() {
-        return bakedTextureAtlas.getValue().getHeight();
+        return bakedTextureAtlas.getHeight();
     }
 
     @Override
     public void bind() {
-        bakedTextureAtlas.getValue().bind();
+        if (bakedTextureAtlas != null) {
+            bakedTextureAtlas.bind();
+        }
     }
 
     @Override
     public void dispose() {
-        bakedTextureAtlas.getValue().dispose();
+        if (bakedTextureAtlas != null) {
+            bakedTextureAtlas.dispose();
+        }
     }
 }
