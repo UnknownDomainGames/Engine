@@ -2,8 +2,8 @@ package nullengine.player;
 
 import nullengine.Platform;
 import nullengine.entity.Entity;
-import nullengine.server.network.NetworkHandler;
 import nullengine.event.player.PlayerControlEntityEvent;
+import nullengine.server.network.NetworkHandler;
 import nullengine.world.World;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -21,7 +21,7 @@ public class PlayerImpl implements Player {
         this.profile = profile;
     }
 
-    public PlayerImpl(Profile profile, NetworkHandler handler){
+    public PlayerImpl(Profile profile, NetworkHandler handler) {
         this.profile = profile;
         this.handler = handler;
     }
@@ -52,6 +52,10 @@ public class PlayerImpl implements Player {
     @NonNull
     @Override
     public Entity controlEntity(@Nonnull Entity entity) {
+        if (controlledEntity == entity) {
+            return controlledEntity;
+        }
+
         var old = controlledEntity;
         var event = new PlayerControlEntityEvent.Pre(this, old, entity);
         if (Platform.getEngine().getEventBus().post(event)) {
