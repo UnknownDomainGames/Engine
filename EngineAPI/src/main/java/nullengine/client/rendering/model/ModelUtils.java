@@ -6,6 +6,10 @@ import java.util.ArrayList;
 
 public final class ModelUtils {
 
+    public static int toDirectionInt(Direction direction) {
+        return 1 << direction.index;
+    }
+
     public static int toDirectionInt(Direction... directions) {
         int result = 0;
         for (var direction : directions) {
