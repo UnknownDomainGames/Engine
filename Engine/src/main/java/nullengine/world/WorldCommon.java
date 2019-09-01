@@ -12,6 +12,7 @@ import nullengine.event.block.BlockDestroyEvent;
 import nullengine.event.block.BlockPlaceEvent;
 import nullengine.event.block.BlockReplaceEvent;
 import nullengine.event.block.cause.BlockChangeCause;
+import nullengine.event.entity.EntitySpawnEvent;
 import nullengine.game.Game;
 import nullengine.logic.Ticker;
 import nullengine.math.AABBs;
@@ -32,9 +33,7 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class WorldCommon implements World, Runnable {
 
@@ -50,8 +49,9 @@ public class WorldCommon implements World, Runnable {
     private WorldCommonLoader loader;
     private WorldCommonChunkManager chunkManager;
     private final List<Long> criticalChunks;
-    private final List<Player> players = new ArrayList<>();
-    private final List<Entity> entityList = new ArrayList<>();
+    private final Set<Player> players = new HashSet<>();
+    private final Set<Entity> entities = new HashSet<>();
+    private final Collection<Entity> unmodifiableEntities = Collections.unmodifiableSet(entities);
     private final List<Runnable> nextTick = new ArrayList<>();
 
     private final Ticker ticker;
@@ -71,16 +71,27 @@ public class WorldCommon implements World, Runnable {
     }
 
     public void spawnEntity(Entity entity) {
+        if (entities.contains(entity)) {
+            return;
+        }
+
+        var event = new EntitySpawnEvent.Pre(entity);
+        if (getGame().getEventBus().post(event)) {
+            return;
+        }
+
         BlockPos pos = ChunkConstants.toChunkPos(BlockPos.of(entity.getPosition()));
         Chunk chunk = chunkManager.loadChunk(pos.getX(), pos.getY(), pos.getZ());
         chunk.getEntities().add(entity);
-        entityList.add(entity);
+        entities.add(entity);
+
+        getGame().getEventBus().post(new EntitySpawnEvent.Post(entity));
     }
 
     @Deprecated
     public void playerJoin(Player player) {
         // FIXME:
-        var entity = new PlayerEntity(entityList.size(), this);
+        var entity = new PlayerEntity(entities.size(), this);
         player.controlEntity(entity);
         spawnEntity(entity);
         players.add(player);
@@ -112,8 +123,8 @@ public class WorldCommon implements World, Runnable {
     }
 
     @Override
-    public List<Entity> getEntities() {
-        return entityList;
+    public Collection<Entity> getEntities() {
+        return unmodifiableEntities;
     }
 
     /**
@@ -153,7 +164,7 @@ public class WorldCommon implements World, Runnable {
     }
 
     protected void tickEntities() {
-        for (Entity entity : entityList)
+        for (Entity entity : entities)
             entity.tick(); // state machine update
     }
 
@@ -283,10 +294,9 @@ public class WorldCommon implements World, Runnable {
         this.chunkManager = chunkManager;
     }
 
-    static class PhysicsSystem {
+    static final class PhysicsSystem {
         public void tick(World world) {
-            List<Entity> entityList = world.getEntities();
-            for (Entity entity : entityList) {
+            for (Entity entity : world.getEntities()) {
                 Vector3f motion = entity.getMotion();
                 if (motion.x == 0 && motion.y == 0 && motion.z == 0)
                     continue;

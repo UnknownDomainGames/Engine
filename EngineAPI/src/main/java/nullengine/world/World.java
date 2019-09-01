@@ -9,7 +9,6 @@ import nullengine.world.collision.WorldCollisionManager;
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * World instance, should spawn by {@link Game}
@@ -30,7 +29,7 @@ public interface World extends BlockGetter, BlockSetter {
 
     long getGameTick();
 
-    List<Entity> getEntities();
+    Collection<Entity> getEntities();
 
     default Chunk getChunk(@Nonnull BlockPos pos) {
         return getChunk(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
