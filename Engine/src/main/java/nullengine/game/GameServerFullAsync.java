@@ -3,6 +3,7 @@ package nullengine.game;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import nullengine.Engine;
+import nullengine.event.world.WorldCreateEvent;
 import nullengine.registry.Registries;
 import nullengine.world.World;
 import nullengine.world.WorldCommon;
@@ -46,6 +47,8 @@ public class GameServerFullAsync extends GameBase {
 
         var world = provider.create(this, storagePath.resolve(Path.of("world", name)), name, creationConfig);
         this.worlds.put(name, world);
+
+        getEventBus().post(new WorldCreateEvent(world));
 
         Thread thread = new Thread((Runnable) world);
         thread.setName("World Thread - " + name);
