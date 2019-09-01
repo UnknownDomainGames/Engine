@@ -12,11 +12,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 public abstract class BaseEntity implements Entity {
 
     protected final EntityProvider provider;
 
+    private UUID uniqueId;
     private int id;
     private World world;
     private Vector3d position = new Vector3d();
@@ -28,6 +30,7 @@ public abstract class BaseEntity implements Entity {
 
     public BaseEntity(int id, World world) {
         this.provider = null; // TODO:
+        this.uniqueId = UUID.randomUUID();
         this.id = id;
         this.world = world;
         this.components = new ComponentContainer();
@@ -38,11 +41,19 @@ public abstract class BaseEntity implements Entity {
         this.position.set(position);
     }
 
+    @Nonnull
     @Override
     public EntityProvider getProvider() {
         return null;
     }
 
+    @Nonnull
+    @Override
+    public UUID getUniqueId() {
+        return uniqueId;
+    }
+
+    @Nonnull
     @Override
     public World getWorld() {
         return world;
@@ -110,5 +121,18 @@ public abstract class BaseEntity implements Entity {
     @Override
     public Set<Class<?>> getComponents() {
         return components.getComponents();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseEntity that = (BaseEntity) o;
+        return uniqueId.equals(that.uniqueId);
+    }
+
+    @Override
+    public int hashCode() {
+        return uniqueId.hashCode();
     }
 }

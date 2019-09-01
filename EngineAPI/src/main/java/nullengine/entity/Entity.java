@@ -7,12 +7,20 @@ import org.joml.AABBd;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
+import javax.annotation.Nonnull;
+import java.util.UUID;
+
 public interface Entity extends GameObject, Tickable {
 
+    @Nonnull
     EntityProvider getProvider();
+
+    @Nonnull
+    UUID getUniqueId();
 
     int getId();
 
+    @Nonnull
     World getWorld();
 
     // TODO: Don't use Vector3d, it isn't observable
