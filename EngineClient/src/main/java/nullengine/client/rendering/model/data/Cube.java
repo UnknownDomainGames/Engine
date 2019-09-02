@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import nullengine.util.Direction;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.lang.reflect.Type;
 
@@ -13,6 +14,51 @@ public final class Cube {
     public Vector3f from;
     public Vector3f to;
     public Face[] faces;
+
+    public Vector3fc[] getFacePositions(Direction direction) {
+        Vector3fc[] positions = new Vector3fc[4];
+        switch (direction) {
+            case NORTH:
+                positions[0] = new Vector3f(to.x(), from.y(), from.z());
+                positions[1] = new Vector3f(from.x(), from.y(), from.z());
+                positions[2] = new Vector3f(from.x(), to.y(), from.z());
+                positions[3] = new Vector3f(to.x(), to.y(), from.z());
+                break;
+            case SOUTH:
+                positions[0] = new Vector3f(from.x(), from.y(), to.z());
+                positions[1] = new Vector3f(to.x(), from.y(), to.z());
+                positions[2] = new Vector3f(to.x(), to.y(), to.z());
+                positions[3] = new Vector3f(from.x(), to.y(), to.z());
+                break;
+            case EAST:
+                positions[0] = new Vector3f(to.x(), from.y(), to.z());
+                positions[1] = new Vector3f(to.x(), from.y(), from.z());
+                positions[2] = new Vector3f(to.x(), to.y(), from.z());
+                positions[3] = new Vector3f(to.x(), to.y(), to.z());
+                break;
+            case WEST:
+                positions[0] = new Vector3f(from.x(), from.y(), from.z());
+                positions[1] = new Vector3f(from.x(), from.y(), to.z());
+                positions[2] = new Vector3f(from.x(), to.y(), to.z());
+                positions[3] = new Vector3f(from.x(), to.y(), from.z());
+                break;
+            case UP:
+                positions[0] = new Vector3f(from.x(), to.y(), to.z());
+                positions[1] = new Vector3f(to.x(), to.y(), to.z());
+                positions[2] = new Vector3f(to.x(), to.y(), from.z());
+                positions[3] = new Vector3f(from.x(), to.y(), from.z());
+                break;
+            case DOWN:
+                positions[0] = new Vector3f(to.x(), from.y(), to.z());
+                positions[1] = new Vector3f(from.x(), from.y(), to.z());
+                positions[2] = new Vector3f(from.x(), from.y(), from.z());
+                positions[3] = new Vector3f(to.x(), from.y(), from.z());
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + direction);
+        }
+        return positions;
+    }
 
     public enum Deserializer implements JsonDeserializer<Cube> {
         INSTANCE;

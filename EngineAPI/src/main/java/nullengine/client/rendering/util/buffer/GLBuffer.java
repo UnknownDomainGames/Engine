@@ -253,6 +253,10 @@ public abstract class GLBuffer implements Disposable {
         return pos(vec.x(), vec.y(), vec.z());
     }
 
+    public GLBuffer pos(float[] array, int start) {
+        return pos(array[start], array[start + 1], array[start + 2]);
+    }
+
     public GLBuffer color(Color color) {
         return color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
@@ -304,6 +308,14 @@ public abstract class GLBuffer implements Disposable {
         return this;
     }
 
+    public GLBuffer colorRGB(float[] array, int start) {
+        return color(array[start], array[start + 1], array[start + 2]);
+    }
+
+    public GLBuffer colorRGBA(float[] array, int start) {
+        return color(array[start], array[start + 1], array[start + 2], array[start + 3]);
+    }
+
     public GLBuffer uv(Vector2fc uv) {
         return uv(uv.x(), uv.y());
     }
@@ -315,6 +327,10 @@ public abstract class GLBuffer implements Disposable {
             backingBuffer.putFloat(v);
         }
         return this;
+    }
+
+    public GLBuffer uv(float[] array, int start) {
+        return uv(array[start], array[start + 1]);
     }
 
     public GLBuffer normal(Vector3fc vec) {
@@ -329,6 +345,10 @@ public abstract class GLBuffer implements Disposable {
             backingBuffer.putFloat(nz);
         }
         return this;
+    }
+
+    public GLBuffer normal(float[] array, int start) {
+        return normal(array[start], array[start + 1], array[start + 2]);
     }
 
     private void putByteCount(int count) {
@@ -370,7 +390,7 @@ public abstract class GLBuffer implements Disposable {
 
         @Override
         protected void freeBuffer(ByteBuffer buffer) {
-            // Don't need free buffer.
+            // Don't need free heap buffer.
         }
 
         @Override
