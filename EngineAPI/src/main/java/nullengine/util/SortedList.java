@@ -1,36 +1,49 @@
 package nullengine.util;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class SortedList<E> extends AbstractList<E> {
 
     public static <E> SortedList<E> create(Comparator<E> comparator) {
-        return new SortedList<>(new LinkedList<>(), comparator);
+        return create(comparator, LinkedList::new);
+    }
+
+    public static <E> SortedList<E> create(Comparator<E> comparator, Supplier<List<E>> constructor) {
+        return new SortedList<>(constructor.get(), comparator);
     }
 
     public static <E extends Comparable<E>> SortedList<E> create() {
         return create(Comparable::compareTo);
     }
 
-    public static <E> SortedList<E> wrap(List<E> list, Comparator<E> comparator) {
+    public static <E extends Comparable<E>> SortedList<E> create(Supplier<List<E>> constructor) {
+        return create(Comparable::compareTo, constructor);
+    }
+
+    public static <E> SortedList<E> copyOf(List<E> list, Comparator<E> comparator) {
         for (int i = 0, size = list.size(); i < size; i++) {
             E element = list.get(i);
             if (element == null)
                 list.remove(i);
         }
-        return new SortedList<>(list, comparator);
+        var sortedList = create(comparator);
+        sortedList.addAll(list);
+        return sortedList;
     }
 
-    public static <E extends Comparable<E>> SortedList<E> wrap(List<E> list) {
-        return wrap(list, Comparable::compareTo);
+    public static <E extends Comparable<E>> SortedList<E> copyOf(List<E> list) {
+        return copyOf(list, Comparable::compareTo);
     }
 
-    public static <E> SortedList<E> from(Comparator<E> comparator, E... elements) {
-        return new SortedList<>(Arrays.asList(elements), comparator);
+    public static <E> SortedList<E> of(Comparator<E> comparator, E... elements) {
+        var sortedList = create(comparator);
+        Collections.addAll(sortedList, elements);
+        return sortedList;
     }
 
-    public static <E extends Comparable<E>> SortedList<E> from(E... elements) {
-        return from(Comparable::compareTo, elements);
+    public static <E extends Comparable<E>> SortedList<E> of(E... elements) {
+        return of(Comparable::compareTo, elements);
     }
 
     private final List<E> list;
@@ -83,6 +96,5 @@ public class SortedList<E> extends AbstractList<E> {
     public int size() {
         return list.size();
     }
-
 
 }

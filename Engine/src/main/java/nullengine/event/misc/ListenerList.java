@@ -12,7 +12,7 @@ public class ListenerList {
     private final Class<?> eventType;
     private final List<ListenerList> children = new ArrayList<>();
 
-    private final Collection<RegisteredListener> listeners = SortedList.wrap(new ArrayList<>(), Comparator.comparingInt(o -> o.getOrder().ordinal()));
+    private final Collection<RegisteredListener> listeners = SortedList.create(Comparator.comparingInt(o -> o.getOrder().ordinal()), ArrayList::new);
 
     public ListenerList(Class<?> eventType) {
         this.eventType = eventType;
