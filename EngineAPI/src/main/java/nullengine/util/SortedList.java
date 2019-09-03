@@ -46,7 +46,7 @@ public class SortedList<E> extends AbstractList<E> {
         Objects.requireNonNull(e, "Element cannot be null.");
         int index = 0;
         for (int size = size(); index < size; index++) {
-            if (comparator.compare(e, get(index)) <= 0) {
+            if (comparator.compare(e, get(index)) < 0) {
                 list.add(index, e);
                 return true;
             }
