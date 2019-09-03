@@ -5,6 +5,7 @@ import nullengine.Platform;
 import nullengine.client.asset.AssetManager;
 import nullengine.client.asset.AssetType;
 import nullengine.client.asset.EngineAssetManager;
+import nullengine.client.asset.reloading.AssetReloadListener;
 import nullengine.client.asset.source.AssetSource;
 import nullengine.client.asset.source.CompositeAssetSource;
 import nullengine.client.asset.source.FileSystemAssetSource;
@@ -119,7 +120,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         initRenderCrashReportDetails();
         renderContext.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         addShutdownListener(renderContext::dispose);
-        assetManager.getReloadManager().addFirst("Shader", ShaderManager.instance()::reload);
+        assetManager.getReloadManager().addListener(new AssetReloadListener().name("Shader").runnable(ShaderManager.instance()::reload));
 
         assetManager.register(AssetType.builder(BakedModel.class).name("VoxelModel").provider(new BlockModelManager(this)).parentLocation("model").extensionName(".json").build());
 
@@ -127,16 +128,16 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         soundManager = new EngineSoundManager();
         soundManager.init();
         addShutdownListener(soundManager::dispose);
-        assetManager.getReloadManager().addLast("Sound", soundManager::reload);
+        assetManager.getReloadManager().addListener(new AssetReloadListener().name("Sound").runnable(soundManager::reload));
 
         logger.info("Initializing internalization!");
         localeManager = LocaleManager.INSTANCE;
-        assetManager.getReloadManager().addLast("I18n", () -> {
+        assetManager.getReloadManager().addListener(new AssetReloadListener().name("I18n").runnable(() -> {
             localeManager.reset();
             for (ModContainer mod : EngineClientImpl.this.getModManager().getLoadedMods()) {
                 localeManager.register(mod);
             }
-        });
+        }));
 
         assetManager.reload();
     }

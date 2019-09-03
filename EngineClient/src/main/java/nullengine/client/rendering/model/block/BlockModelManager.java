@@ -2,6 +2,7 @@ package nullengine.client.rendering.model.block;
 
 import nullengine.client.EngineClient;
 import nullengine.client.asset.*;
+import nullengine.client.asset.reloading.AssetReloadListener;
 import nullengine.client.rendering.model.BakedModel;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.client.rendering.texture.TextureAtlas;
@@ -30,8 +31,10 @@ public class BlockModelManager implements AssetProvider<BakedModel> {
     public void init(AssetManager manager, AssetType<BakedModel> type) {
         this.modelLoader = new ModelLoader(this, manager.getSourceManager(), type);
         this.modelBaker = new ModelBaker();
-        manager.getReloadManager().addBefore("VoxelModelDataReload", "Texture", this::reloadModelData);
-        manager.getReloadManager().addAfter("VoxelModelBake", "Texture", this::reload);
+        manager.getReloadManager().addListener(
+                new AssetReloadListener().name("ReloadModel").befores("Texture", "BakeModel").runnable(this::reloadModelData));
+        manager.getReloadManager().addListener(
+                new AssetReloadListener().name("BakeModel").befores("CleanTextureCache").afters("Texture").runnable(this::reload));
     }
 
     @Override

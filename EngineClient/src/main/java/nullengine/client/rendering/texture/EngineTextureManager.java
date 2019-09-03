@@ -3,6 +3,7 @@ package nullengine.client.rendering.texture;
 import nullengine.Platform;
 import nullengine.client.asset.*;
 import nullengine.client.asset.exception.AssetLoadException;
+import nullengine.client.asset.reloading.AssetReloadListener;
 import nullengine.client.asset.source.AssetSourceManager;
 
 import javax.annotation.Nonnull;
@@ -56,7 +57,8 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
     @Override
     public void init(AssetManager manager, AssetType<GLTexture> type) {
         sourceManager = manager.getSourceManager();
-        manager.getReloadManager().addFirst("Texture", this::reload);
+        manager.getReloadManager().addListener(new AssetReloadListener().name("Texture").befores("CleanTextureCache").runnable(this::reload));
+        manager.getReloadManager().addListener(new AssetReloadListener().name("CleanTextureCache").runnable(this::cleanCache));
     }
 
     @Override
