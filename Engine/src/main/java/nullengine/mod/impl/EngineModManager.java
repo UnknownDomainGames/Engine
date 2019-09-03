@@ -80,10 +80,7 @@ public class EngineModManager implements ModManager {
     }
 
     public void loadMods() {
-        List<ModCandidate> modCandidates = collectMods();
-
-        dependencyManager.sortModCandidates(modCandidates);
-
+        var modCandidates = dependencyManager.sortModCandidates(collectMods());
         for (ModCandidate modCandidate : modCandidates) {
             var mod = loadMod(modCandidate);
             modInitializer.init(mod);

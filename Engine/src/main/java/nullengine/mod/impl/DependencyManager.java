@@ -4,6 +4,7 @@ import nullengine.mod.DependencyCheckResult;
 import nullengine.mod.ModContainer;
 import nullengine.mod.ModDependencyItem;
 import nullengine.mod.ModManager;
+import nullengine.util.SortedList;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -34,8 +35,8 @@ public class DependencyManager {
         this.modManager = modManager;
     }
 
-    public void sortModCandidates(List<ModCandidate> modCandidates) {
-        modCandidates.sort(MOD_CANDIDATE_COMPARATOR);
+    public List<ModCandidate> sortModCandidates(List<ModCandidate> modCandidates) {
+        return SortedList.copyOf(modCandidates, MOD_CANDIDATE_COMPARATOR);
     }
 
     public DependencyCheckResult checkDependencies(List<ModDependencyItem> dependencies) {
