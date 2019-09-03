@@ -33,11 +33,6 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
     }
 
     @Override
-    public TextureAtlasPart addTextureToAtlas(AssetURL path, TextureAtlasName type) {
-        return texturesAtlases.computeIfAbsent(type, key -> new TextureAtlasImpl()).addTexture(path);
-    }
-
-    @Override
     public TextureAtlas getTextureAtlas(TextureAtlasName type) {
         return texturesAtlases.computeIfAbsent(type, key -> new TextureAtlasImpl());
     }
