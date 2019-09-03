@@ -5,4 +5,6 @@ import nullengine.client.asset.AssetURL;
 public interface TextureAtlas extends Texture {
 
     TextureAtlasPart addTexture(AssetURL url);
+
+    void reload();
 }

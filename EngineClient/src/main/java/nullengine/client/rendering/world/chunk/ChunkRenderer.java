@@ -89,7 +89,7 @@ public class ChunkRenderer {
             }
         });
 
-        context.getTextureManager().reloadTextureAtlas(StandardTextureAtlas.BLOCK);
+        context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).reload();
         initWorld(game.getWorld());
     }
 
@@ -145,7 +145,7 @@ public class ChunkRenderer {
         ShaderManager.instance().setUniform("u_ModelMatrix", modelMatrix);
         ShaderManager.instance().setUniform("u_viewPos", context.getCamera().getPosition());
 
-        context.getTextureManager().getTextureAtlas(StandardTextureAtlas.BLOCK).bind();
+        context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).bind();
         chunkSolidShader.setUniform("useDirectUV", true);
         dirLight.bind("dirLights[0]");
         //ptLight.bind(chunkSolidShader,"pointLights[0]");

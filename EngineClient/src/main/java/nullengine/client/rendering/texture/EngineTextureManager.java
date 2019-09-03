@@ -1,6 +1,5 @@
 package nullengine.client.rendering.texture;
 
-import nullengine.Platform;
 import nullengine.client.asset.*;
 import nullengine.client.asset.exception.AssetLoadException;
 import nullengine.client.asset.reloading.AssetReloadListener;
@@ -29,6 +28,11 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
     }
 
     @Override
+    public GLTexture getWhiteTexture() {
+        return whiteTexture;
+    }
+
+    @Override
     public GLTexture getTextureDirect(TextureBuffer buffer) {
         return GLTexture.of(buffer.getWidth(), buffer.getHeight(), buffer.getBuffer());
     }
@@ -36,22 +40,6 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
     @Override
     public TextureAtlas getTextureAtlas(TextureAtlasName type) {
         return texturesAtlases.computeIfAbsent(type, key -> new TextureAtlasImpl());
-    }
-
-    @Override
-    public void reloadTextureAtlas(TextureAtlasName type) {
-        try {
-            if (texturesAtlases.containsKey(type)) {
-                texturesAtlases.get(type).reload();
-            }
-        } catch (IOException e) {
-            Platform.getLogger().warn(String.format("Cannot reload texture atlas %s.", type), e);
-        }
-    }
-
-    @Override
-    public GLTexture getWhiteTexture() {
-        return whiteTexture;
     }
 
     @Override
@@ -83,7 +71,11 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
             }
             asset.reload();
         });
-        texturesAtlases.keySet().forEach(this::reloadTextureAtlas);
+        texturesAtlases.values().forEach(TextureAtlas::reload);
+    }
+
+    private void cleanCache() {
+        texturesAtlases.values().forEach(TextureAtlasImpl::cleanCache);
     }
 
     @Nonnull

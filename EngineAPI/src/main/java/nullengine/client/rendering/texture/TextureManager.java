@@ -12,8 +12,6 @@ public interface TextureManager {
 
     TextureAtlas getTextureAtlas(TextureAtlasName type);
 
-    void reloadTextureAtlas(TextureAtlasName type);
-
     static TextureManager instance() {
         return Internal.instance.get();
     }

@@ -24,7 +24,7 @@ public class BlockModelManager implements AssetProvider<BakedModel> {
     private ModelBaker modelBaker;
 
     public BlockModelManager(EngineClient engineClient) {
-        this.blockAtlas = engineClient.getRenderContext().getTextureManager().getTextureAtlas(StandardTextureAtlas.BLOCK);
+        this.blockAtlas = engineClient.getRenderContext().getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT);
     }
 
     @Override

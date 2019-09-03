@@ -1,10 +1,24 @@
 package nullengine.client.rendering.texture;
 
+import nullengine.Platform;
+import nullengine.client.asset.AssetURL;
+import nullengine.client.asset.exception.AssetLoadException;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
+
 public class TextureAtlasPartImpl implements TextureAtlasPart {
 
+    private final AssetURL url;
+
+    private TextureBuffer data;
     private float minU, minV, maxU, maxV;
 
-    public TextureAtlasPartImpl() {
+    public TextureAtlasPartImpl(AssetURL url) {
+        this.url = url;
     }
 
     public void init(float minU, float minV, float maxU, float maxV) {
@@ -19,6 +33,36 @@ public class TextureAtlasPartImpl implements TextureAtlasPart {
                 (float) offsetY / textureMapHeight,
                 (float) (offsetX + width) / textureMapWidth,
                 (float) (offsetY + height) / textureMapHeight);
+    }
+
+    public void reload() {
+        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(url.toFileLocation());
+        if (nativePath.isEmpty()) {
+            throw new AssetLoadException("Cannot load texture because of missing asset. URL: " + url);
+        }
+
+        try (var channel = Files.newByteChannel(nativePath.get())) {
+            var bytes = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
+            channel.read(bytes);
+            bytes.flip();
+            data = TextureBuffer.create(bytes);
+        } catch (IOException e) {
+            throw new AssetLoadException("Cannot load texture because of catching exception. URL: " + url);
+        }
+    }
+
+    public void cleanCache() {
+        data = null;
+    }
+
+    @Override
+    public AssetURL getUrl() {
+        return url;
+    }
+
+    @Override
+    public TextureBuffer getData() {
+        return data;
     }
 
     @Override

@@ -1,15 +1,9 @@
 package nullengine.client.rendering.texture;
 
-import nullengine.Platform;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.asset.exception.AssetLoadException;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TextureAtlasImpl implements TextureAtlas {
 
@@ -19,29 +13,28 @@ public class TextureAtlasImpl implements TextureAtlas {
 
     @Override
     public TextureAtlasPart addTexture(AssetURL url) {
-        return textures.computeIfAbsent(url, key -> new TextureAtlasPartImpl());
+        return textures.computeIfAbsent(url, key -> new TextureAtlasPartImpl(url));
     }
 
-    public void reload() throws IOException {
-        List<Pair<TextureBuffer, TextureAtlasPartImpl>> loadedTextures = new LinkedList<>();
-        for (Map.Entry<AssetURL, TextureAtlasPartImpl> entry : textures.entrySet()) {
-            loadedTextures.add(Pair.of(loadTextureBuffer(entry.getKey()), entry.getValue()));
-        }
+    @Override
+    public void reload() {
         int sumWidth = 0;
         int maxHeight = 0;
-        for (Pair<TextureBuffer, TextureAtlasPartImpl> pair : loadedTextures) {
-            TextureBuffer source = pair.getLeft();
-            sumWidth += source.getWidth();
-            if (source.getHeight() > maxHeight)
-                maxHeight = source.getHeight();
+        for (var part : textures.values()) {
+            part.reload();
+            var data = part.getData();
+            sumWidth += data.getWidth();
+            if (data.getHeight() > maxHeight)
+                maxHeight = data.getHeight();
         }
+
         TextureBuffer textureBuffer = new TextureBuffer(sumWidth, maxHeight);
         int offsetX = 0;
-        for (Pair<TextureBuffer, TextureAtlasPartImpl> pair : loadedTextures) {
-            TextureBuffer source = pair.getLeft();
-            textureBuffer.setTexture(offsetX, 0, source);
-            pair.getRight().init(sumWidth, maxHeight, offsetX, 0, source.getWidth(), source.getHeight());
-            offsetX += source.getWidth();
+        for (var part : textures.values()) {
+            var data = part.getData();
+            textureBuffer.setTexture(offsetX, 0, data);
+            part.init(sumWidth, maxHeight, offsetX, 0, data.getWidth(), data.getHeight());
+            offsetX += data.getWidth();
         }
 
         if (bakedTextureAtlas != null) {
@@ -50,17 +43,8 @@ public class TextureAtlasImpl implements TextureAtlas {
         bakedTextureAtlas = GLTexture.of(sumWidth, maxHeight, textureBuffer.getBuffer());
     }
 
-    private TextureBuffer loadTextureBuffer(AssetURL url) throws IOException {
-        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(url.toFileLocation());
-        if (nativePath.isPresent()) {
-            try (var channel = Files.newByteChannel(nativePath.get())) {
-                var filebuf = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
-                channel.read(filebuf);
-                filebuf.flip();
-                return TextureBuffer.create(filebuf);
-            }
-        }
-        throw new AssetLoadException("Cannot loadDirect texture because missing asset. Path: " + url);
+    public void cleanCache() {
+        textures.values().forEach(TextureAtlasPartImpl::cleanCache);
     }
 
     @Override
