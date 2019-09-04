@@ -2,6 +2,7 @@ package nullengine.client.rendering.model;
 
 import nullengine.client.asset.*;
 import nullengine.client.asset.exception.AssetLoadException;
+import nullengine.client.asset.reloading.AssetReloadListener;
 import nullengine.client.rendering.model.data.ModelData;
 import nullengine.client.rendering.model.item.ItemGenerationModelBaker;
 
@@ -23,8 +24,10 @@ public class ModelManager implements AssetProvider<BakedModel> {
 
     @Override
     public void init(AssetManager manager, AssetType<BakedModel> type) {
-        manager.getReloadManager().addBefore("ReloadModels", "Texture", this::reloadModels);
-        manager.getReloadManager().addAfter("BakeModels", "Texture", this::bakeModels);
+        manager.getReloadManager().addListener(
+                new AssetReloadListener().name("ReloadModel").befores("Texture").runnable(this::reloadModels));
+        manager.getReloadManager().addListener(
+                new AssetReloadListener().name("BakeModel").befores("CleanTextureCache").afters("Texture").runnable(this::bakeModels));
     }
 
     @Override

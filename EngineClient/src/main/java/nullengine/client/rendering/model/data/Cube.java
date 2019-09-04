@@ -1,14 +1,9 @@
 package nullengine.client.rendering.model.data;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import nullengine.util.Direction;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-
-import java.lang.reflect.Type;
 
 public final class Cube {
     public Vector3f from;
@@ -60,43 +55,38 @@ public final class Cube {
         return positions;
     }
 
-    public enum Deserializer implements JsonDeserializer<Cube> {
-        INSTANCE;
+    public static Cube deserialize(ModelData modelData, JsonElement json) {
+        var object = json.getAsJsonObject();
+        var cube = new Cube();
+        cube.from = ModelJsonUtils.vector3f(object.get("from"));
+        cube.to = ModelJsonUtils.vector3f(object.get("to"));
+        checkMinAndMax(cube.from, cube.to);
 
-        @Override
-        public Cube deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            var object = json.getAsJsonObject();
-            var cube = new Cube();
-            cube.from = context.deserialize(object.get("from"), Vector3f.class);
-            cube.to = context.deserialize(object.get("to"), Vector3f.class);
-            checkMinAndMax(cube.from, cube.to);
-
-            cube.faces = new Face[6];
-            var faces = object.getAsJsonObject("faces");
-            for (var face : faces.entrySet()) {
-                var direction = Direction.valueOf(face.getKey().toUpperCase());
-                cube.faces[direction.index] = context.deserialize(face.getValue(), Face.class);
-            }
-            return cube;
+        cube.faces = new Face[6];
+        var faces = object.getAsJsonObject("faces");
+        for (var face : faces.entrySet()) {
+            var direction = Direction.valueOf(face.getKey().toUpperCase());
+            cube.faces[direction.index] = Face.deserialize(modelData, face.getValue());
         }
+        return cube;
+    }
 
-        private void checkMinAndMax(Vector3f min, Vector3f max) {
-            float t;
-            if (min.x > max.x) {
-                t = min.x;
-                min.x = max.x;
-                max.x = t;
-            }
-            if (min.y > max.y) {
-                t = min.y;
-                min.y = max.y;
-                max.y = t;
-            }
-            if (min.z > max.z) {
-                t = min.z;
-                min.z = max.z;
-                max.z = t;
-            }
+    private static void checkMinAndMax(Vector3f min, Vector3f max) {
+        float t;
+        if (min.x > max.x) {
+            t = min.x;
+            min.x = max.x;
+            max.x = t;
+        }
+        if (min.y > max.y) {
+            t = min.y;
+            min.y = max.y;
+            max.y = t;
+        }
+        if (min.z > max.z) {
+            t = min.z;
+            min.z = max.z;
+            max.z = t;
         }
     }
 }

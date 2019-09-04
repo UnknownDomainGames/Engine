@@ -1,50 +1,32 @@
 package nullengine.client.rendering.model;
 
-import com.google.gson.*;
 import nullengine.client.asset.AssetType;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.asset.exception.AssetLoadException;
 import nullengine.client.asset.source.AssetSourceManager;
-import nullengine.client.rendering.model.data.Cube;
 import nullengine.client.rendering.model.data.ModelData;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import nullengine.client.rendering.texture.StandardTextureAtlas;
+import nullengine.client.rendering.texture.TextureAtlas;
+import nullengine.client.rendering.texture.TextureManager;
+import nullengine.util.JsonUtils;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public final class ModelLoader {
 
+    private final TextureAtlas textureAtlas;
     private final ModelManager modelManager;
 
     public ModelLoader(ModelManager modelManager) {
         this.modelManager = modelManager;
+        this.textureAtlas = TextureManager.instance().getTextureAtlas(StandardTextureAtlas.DEFAULT);
     }
-
-    private final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(Vector3f.class, new JsonDeserializer<Vector3f>() {
-                @Override
-                public Vector3f deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                    var array = json.getAsJsonArray();
-                    return new Vector3f(array.get(0).getAsFloat(), array.get(1).getAsFloat(), array.get(2).getAsFloat());
-                }
-            })
-            .registerTypeAdapter(Vector4f.class, new JsonDeserializer<Vector4f>() {
-                @Override
-                public Vector4f deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                    var array = json.getAsJsonArray();
-                    return new Vector4f(array.get(0).getAsFloat(), array.get(1).getAsFloat(),
-                            array.get(2).getAsFloat(), array.get(3).getAsFloat());
-                }
-            })
-            .registerTypeAdapter(Cube.class, Cube.Deserializer.INSTANCE)
-            .registerTypeAdapter(ModelData.class, ModelData.Deserializer.INSTANCE)
-            .create();
 
     public ModelData load(AssetSourceManager sourceManager, AssetType<?> type, AssetURL url) {
         return load(url, sourceManager.getPath(url.toFileLocation(type))
@@ -53,8 +35,7 @@ public final class ModelLoader {
 
     private ModelData load(AssetURL url, Path path) {
         try (var reader = Files.newBufferedReader(path)) {
-            var modelData = GSON.fromJson(reader, ModelData.class);
-            modelData.url = url;
+            var modelData = ModelData.deserialize(url, JsonUtils.DEFAULT_JSON_PARSER.parse(reader));
             resolveParent(modelData);
             resolveTextures(modelData);
             return modelData;
@@ -74,9 +55,15 @@ public final class ModelLoader {
 
     private void resolveTextures(ModelData modelData) {
         var parent = modelData.parentInstance;
-        if (parent == null) {
-            return;
+        Map<String, String> resolvedTextures = new HashMap<>();
+        if (parent != null) {
+            resolvedTextures.putAll(parent.textures);
         }
+        modelData.textures.forEach((key, value) -> resolvedTextures.put(key, resolveTexture(value, resolvedTextures)));
+        modelData.textures = Map.copyOf(resolvedTextures);
+        modelData.textureInstances.forEach(texture -> texture.instance = textureAtlas.addTexture(
+                AssetURL.fromString(modelData.url,
+                        resolveTexture(texture.name, resolvedTextures))));
     }
 
     private String resolveTexture(String texture, Map<String, String> textures) {

@@ -24,6 +24,15 @@ public final class DefaultModelBaker implements ModelBaker {
     @Override
     public BakedModel bake(ModelData data) {
         Map<Integer, List<float[]>> vertexes = new HashMap<>();
+        bakeModel(data, vertexes);
+        return new Model(Map.copyOf(vertexes), data.fullFaces);
+    }
+
+    private void bakeModel(ModelData data, Map<Integer, List<float[]>> vertexes) {
+        if (data.parentInstance != null) {
+            bakeModel(data.parentInstance, vertexes);
+        }
+
         for (var cube : data.cubes) {
             var faces = cube.faces;
             for (Direction direction : Direction.values()) {
@@ -34,17 +43,17 @@ public final class DefaultModelBaker implements ModelBaker {
                 bakeFace(cube, face, direction, vertexes.computeIfAbsent(face.cullFaces, key -> new ArrayList<>()));
             }
         }
-        return new Model(Map.copyOf(vertexes), data.fullFaces);
     }
 
     private void bakeFace(Cube cube, Face face, Direction direction, List<float[]> mesh) {
-        var textureAtlasPart = face.textureInstance;
-        var u = textureAtlasPart.getMaxU() - textureAtlasPart.getMinU();
-        var v = textureAtlasPart.getMaxV() - textureAtlasPart.getMinV();
-        var minU = textureAtlasPart.getMinU() + u * face.uv.x();
-        var maxU = textureAtlasPart.getMinU() + u * face.uv.z();
-        var minV = textureAtlasPart.getMinV() + v * face.uv.y();
-        var maxV = textureAtlasPart.getMinV() + v * face.uv.w();
+        var textureAtlasPart = face.texture.instance;
+        var uv = face.texture.uv;
+        var width = textureAtlasPart.getMaxU() - textureAtlasPart.getMinU();
+        var height = textureAtlasPart.getMaxV() - textureAtlasPart.getMinV();
+        var minU = textureAtlasPart.getMinU() + width * uv.x();
+        var maxU = textureAtlasPart.getMinU() + width * uv.z();
+        var minV = textureAtlasPart.getMinV() + height * uv.y();
+        var maxV = textureAtlasPart.getMinV() + height * uv.w();
         var positions = cube.getFacePositions(direction);
         bakeQuad(mesh, positions[0], positions[1], positions[2], positions[3], new Vector2f(minU, minV), new Vector2f(maxU, maxV));
     }
