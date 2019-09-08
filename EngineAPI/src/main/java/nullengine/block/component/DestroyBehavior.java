@@ -3,10 +3,13 @@ package nullengine.block.component;
 import nullengine.block.Block;
 import nullengine.component.Component;
 import nullengine.event.block.cause.BlockChangeCause;
+import nullengine.item.ItemStack;
 import nullengine.math.BlockPos;
+import nullengine.registry.Registries;
 import nullengine.world.World;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public interface DestroyBehavior extends Component {
@@ -14,7 +17,17 @@ public interface DestroyBehavior extends Component {
         return true;
     }
 
-    void onDestroyed(World world,BlockPos blockPos, Block block, BlockChangeCause cause);
+    void onDestroyed(World world, BlockPos blockPos, Block block, BlockChangeCause cause);
+
+    default boolean canDropItem(World world, BlockPos pos, Block block, BlockChangeCause cause) {
+        return true;
+    }
+
+    default List<ItemStack> getDropItems(World world, BlockPos pos, Block block, BlockChangeCause cause) {
+        var item = Registries.getItemRegistry().getBlockItem(block);
+        assert item != null;
+        return List.of(new ItemStack(item, 1));
+    }
 
     default DestroyableProperty getProperty(World world, BlockPos blockPos, Block block) {
         return DEFAULT_PROPERTY;
