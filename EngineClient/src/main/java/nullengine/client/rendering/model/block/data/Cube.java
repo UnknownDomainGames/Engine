@@ -1,4 +1,4 @@
-package nullengine.client.rendering.model.data;
+package nullengine.client.rendering.model.block.data;
 
 import com.google.gson.JsonElement;
 import nullengine.util.Direction;
@@ -55,7 +55,7 @@ public final class Cube {
         return positions;
     }
 
-    public static Cube deserialize(ModelData modelData, JsonElement json) {
+    public static Cube deserialize(BlockModel blockModel, JsonElement json) {
         var object = json.getAsJsonObject();
         var cube = new Cube();
         cube.from = ModelJsonUtils.vector3f(object.get("from"));
@@ -66,7 +66,7 @@ public final class Cube {
         var faces = object.getAsJsonObject("faces");
         for (var face : faces.entrySet()) {
             var direction = Direction.valueOf(face.getKey().toUpperCase());
-            cube.faces[direction.index] = Face.deserialize(modelData, face.getValue());
+            cube.faces[direction.index] = Face.deserialize(blockModel, face.getValue());
         }
         return cube;
     }

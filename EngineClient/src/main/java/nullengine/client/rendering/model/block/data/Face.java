@@ -1,4 +1,4 @@
-package nullengine.client.rendering.model.data;
+package nullengine.client.rendering.model.block.data;
 
 import com.google.gson.JsonElement;
 
@@ -7,7 +7,7 @@ public final class Face {
     public Texture texture;
     public int cullFaces;
 
-    public static Face deserialize(ModelData modelData, JsonElement json) {
+    public static Face deserialize(BlockModel blockModel, JsonElement json) {
         if (json == null) {
             return null;
         }
@@ -15,7 +15,7 @@ public final class Face {
         var object = json.getAsJsonObject();
         var face = new Face();
         face.texture = Texture.deserialize(json);
-        modelData.textureInstances.add(face.texture);
+        blockModel.textureInstances.add(face.texture);
         face.cullFaces = ModelJsonUtils.cullFaces(object.get("cullFaces"));
         return face;
     }

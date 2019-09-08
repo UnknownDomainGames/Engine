@@ -18,7 +18,7 @@ import nullengine.client.rendering.RenderContext;
 import nullengine.client.rendering.game3d.Game3DRenderer;
 import nullengine.client.rendering.gui.GuiRenderer;
 import nullengine.client.rendering.model.BakedModel;
-import nullengine.client.rendering.model.block.BlockModelManager;
+import nullengine.client.rendering.model._block.BlockModelManager;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.sound.ALSoundManager;
 import nullengine.client.sound.EngineSoundManager;

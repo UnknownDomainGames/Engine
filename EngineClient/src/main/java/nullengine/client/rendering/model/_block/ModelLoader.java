@@ -1,4 +1,4 @@
-package nullengine.client.rendering.model.block;
+package nullengine.client.rendering.model._block;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

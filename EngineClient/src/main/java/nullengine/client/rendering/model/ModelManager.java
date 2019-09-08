@@ -3,7 +3,7 @@ package nullengine.client.rendering.model;
 import nullengine.client.asset.*;
 import nullengine.client.asset.exception.AssetLoadException;
 import nullengine.client.asset.reloading.AssetReloadListener;
-import nullengine.client.rendering.model.data.ModelData;
+import nullengine.client.rendering.model.block.data.BlockModel;
 import nullengine.client.rendering.model.item.ItemGenerationModelBaker;
 
 import javax.annotation.Nonnull;
@@ -14,7 +14,7 @@ import static java.lang.String.format;
 public class ModelManager implements AssetProvider<BakedModel> {
 
     private final Set<Asset<BakedModel>> registeredModels = new HashSet<>();
-    private final Map<AssetURL, ModelData> loadedModelData = new HashMap<>();
+    private final Map<AssetURL, Model> loadedModels = new HashMap<>();
 
     private final List<ModelBaker> modelBakers;
 
@@ -46,26 +46,26 @@ public class ModelManager implements AssetProvider<BakedModel> {
         return bakeModelData(getModelData(url));
     }
 
-    public ModelData getModelData(AssetURL url) {
+    public BlockModel getModelData(AssetURL url) {
         return null;
     }
 
-    public BakedModel bakeModelData(ModelData modelData) {
+    public BakedModel bakeModelData(BlockModel blockModel) {
         for (ModelBaker modelBaker : modelBakers) {
-            if (modelBaker.isAccepts(modelData)) {
-                return modelBaker.bake(modelData);
+            if (modelBaker.isAccepts(blockModel)) {
+                return modelBaker.bake(blockModel);
             }
         }
-        throw new AssetLoadException(format("Cannot bake model: %s", modelData.url));
+        throw new AssetLoadException(format("Cannot bake model: %s", blockModel.url));
     }
 
     private void reloadModels() {
-        loadedModelData.clear();
+        loadedModels.clear();
     }
 
     private void bakeModels() {
         registeredModels.forEach(Asset::reload);
-        loadedModelData.clear();
+        loadedModels.clear();
     }
 
     @Override

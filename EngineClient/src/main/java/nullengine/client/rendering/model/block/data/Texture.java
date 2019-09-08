@@ -1,4 +1,4 @@
-package nullengine.client.rendering.model.data;
+package nullengine.client.rendering.model.block.data;
 
 import com.google.gson.JsonElement;
 import nullengine.client.rendering.texture.TextureAtlasPart;

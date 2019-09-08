@@ -1,4 +1,4 @@
-package nullengine.client.rendering.model.block;
+package nullengine.client.rendering.model._block;
 
 import nullengine.client.rendering.texture.TextureAtlasPart;
 import nullengine.math.Math2;

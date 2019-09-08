@@ -1,8 +1,8 @@
 package nullengine.client.rendering.model;
 
-import nullengine.client.rendering.model.data.Cube;
-import nullengine.client.rendering.model.data.Face;
-import nullengine.client.rendering.model.data.ModelData;
+import nullengine.client.rendering.model.block.data.BlockModel;
+import nullengine.client.rendering.model.block.data.Cube;
+import nullengine.client.rendering.model.block.data.Face;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.Math2;
 import nullengine.util.Direction;
@@ -17,18 +17,18 @@ import java.util.Map;
 
 public final class DefaultModelBaker implements ModelBaker {
     @Override
-    public boolean isAccepts(ModelData data) {
+    public boolean isAccepts(BlockModel data) {
         return true;
     }
 
     @Override
-    public BakedModel bake(ModelData data) {
+    public BakedModel bake(BlockModel data) {
         Map<Integer, List<float[]>> vertexes = new HashMap<>();
         bakeModel(data, vertexes);
         return new Model(Map.copyOf(vertexes), data.fullFaces);
     }
 
-    private void bakeModel(ModelData data, Map<Integer, List<float[]>> vertexes) {
+    private void bakeModel(BlockModel data, Map<Integer, List<float[]>> vertexes) {
         if (data.parentInstance != null) {
             bakeModel(data.parentInstance, vertexes);
         }
