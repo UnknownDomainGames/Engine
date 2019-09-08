@@ -3,14 +3,14 @@ package nullengine.client.gui.rendering;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.text.Text;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 
 public class TextRenderer implements ComponentRenderer {
 
     public static final TextRenderer INSTANCE = new TextRenderer();
 
     @Override
-    public void render(Component component, Graphics graphics, RenderContext context) {
+    public void render(Component component, Graphics graphics, RenderManager context) {
         Text text = (Text) component;
         graphics.setColor(text.color().getValue());
         graphics.setFont(text.font().getValue());

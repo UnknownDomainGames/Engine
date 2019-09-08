@@ -42,7 +42,7 @@ public class GUIGameCreation extends BorderPane {
         buttonCreate.setOnClick(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
             var player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
-            engine.getRenderContext().getGuiManager().closeScreen();
+            engine.getRenderManager().getGuiManager().closeScreen();
             engine.startGame(new GameClientStandalone(engine, engine.getRunPath().resolve("game"), player));
         });
         vBox.getChildren().add(buttonCreate);
@@ -63,7 +63,7 @@ public class GUIGameCreation extends BorderPane {
         vBox.getChildren().add(buttonLocale);
         var butCS = new Button("Multiplayer");
         butCS.setOnClick(e->{
-            Platform.getEngineClient().getRenderContext().getGuiManager().showScreen(new Scene(new GuiDirectConnectServer()));
+            Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiDirectConnectServer()));
         });
         vBox.getChildren().add(butCS);
     }

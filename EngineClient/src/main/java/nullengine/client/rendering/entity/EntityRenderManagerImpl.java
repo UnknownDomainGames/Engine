@@ -1,7 +1,7 @@
 package nullengine.client.rendering.entity;
 
 import nullengine.client.event.rendering.EntityRendererRegistrationEvent;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.entity.Entity;
 
 import java.util.HashMap;
@@ -11,7 +11,7 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
 
     private final Map<Class<? extends Entity>, EntityRenderer<?>> renderers = new HashMap<>();
 
-    private RenderContext context;
+    private RenderManager context;
 
     @Override
     public <T extends Entity> void register(Class<T> entityType, EntityRenderer<T> renderer) {
@@ -21,7 +21,7 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
         renderers.put(entityType, renderer);
     }
 
-    public void init(RenderContext context) {
+    public void init(RenderManager context) {
         this.context = context;
 
         context.getEngine().getCurrentGame().getEventBus().post(new EntityRendererRegistrationEvent(this));

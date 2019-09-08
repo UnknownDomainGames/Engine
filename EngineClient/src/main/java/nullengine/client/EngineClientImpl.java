@@ -13,8 +13,8 @@ import nullengine.client.game.GameClient;
 import nullengine.client.i18n.LocaleManager;
 import nullengine.client.input.keybinding.KeyBinding;
 import nullengine.client.input.keybinding.KeyBindingManager;
-import nullengine.client.rendering.EngineRenderContext;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.EngineRenderManager;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.game3d.Game3DRenderer;
 import nullengine.client.rendering.gui.GuiRenderer;
 import nullengine.client.rendering.model.BakedModel;
@@ -48,7 +48,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     private AssetSource engineAssetSource;
     private EngineAssetManager assetManager;
     private EngineSoundManager soundManager;
-    private EngineRenderContext renderContext;
+    private EngineRenderManager renderManager;
     private LocaleManager localeManager;
 
     private Ticker ticker;
@@ -113,13 +113,14 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         shutdownListeners.add(() -> assetManager.dispose());
 
         logger.info("Initializing render context!");
-        renderContext = new EngineRenderContext(this);
-        renderContext.getRenderers().add(new Game3DRenderer());
-        renderContext.getRenderers().add(new GuiRenderer());
-        renderContext.init(clientThread);
+        renderManager = new EngineRenderManager(this);
+        RenderManager.Internal.setInstance(renderManager);
+        renderManager.getRenderers().add(new Game3DRenderer());
+        renderManager.getRenderers().add(new GuiRenderer());
+        renderManager.init(clientThread);
         initRenderCrashReportDetails();
-        renderContext.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
-        addShutdownListener(renderContext::dispose);
+        renderManager.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
+        addShutdownListener(renderManager::dispose);
         assetManager.getReloadManager().addListener(new AssetReloadListener().name("Shader").runnable(ShaderManager.instance()::reload));
 
         assetManager.register(AssetType.builder(BakedModel.class).name("VoxelModel").provider(new BlockModelManager(this)).parentLocation("model").extensionName(".json").build());
@@ -143,13 +144,13 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     private void initRenderCrashReportDetails() {
-        crashHandler.addReportDetail("GL Vendor", builder -> builder.append(renderContext.getGLInfo().getVendor()));
-        crashHandler.addReportDetail("GL Renderer", builder -> builder.append(renderContext.getGLInfo().getRenderer()));
-        crashHandler.addReportDetail("GL Version", builder -> builder.append(renderContext.getGLInfo().getVersion()));
-        crashHandler.addReportDetail("GL Extensions", builder -> builder.append(renderContext.getGLInfo().getExtensions()));
-        crashHandler.addReportDetail("GL Shading Language Version", builder -> builder.append(renderContext.getGLInfo().getShadingLanguageVersion()));
+        crashHandler.addReportDetail("GL Vendor", builder -> builder.append(renderManager.getGLInfo().getVendor()));
+        crashHandler.addReportDetail("GL Renderer", builder -> builder.append(renderManager.getGLInfo().getRenderer()));
+        crashHandler.addReportDetail("GL Version", builder -> builder.append(renderManager.getGLInfo().getVersion()));
+        crashHandler.addReportDetail("GL Extensions", builder -> builder.append(renderManager.getGLInfo().getExtensions()));
+        crashHandler.addReportDetail("GL Shading Language Version", builder -> builder.append(renderManager.getGLInfo().getShadingLanguageVersion()));
         crashHandler.addReportDetail("GPU Memory Usage", builder -> {
-            var gpuMemoryInfo = renderContext.getGPUMemoryInfo();
+            var gpuMemoryInfo = renderManager.getGPUMemoryInfo();
             var usedMemory = (gpuMemoryInfo.getTotalMemory() - gpuMemoryInfo.getFreeMemory()) / 1024;
             var totalMemory = gpuMemoryInfo.getTotalMemory() / 1024;
             builder.append(usedMemory).append(" MB / ").append(totalMemory).append(" MB");
@@ -161,13 +162,13 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         super.finishStage();
 
         logger.info("Initializing key binding!");
-        var window = renderContext.getWindow();
+        var window = renderManager.getWindow();
         keyBindingManager = new KeyBindingManager(this, registryManager.getRegistry(KeyBinding.class).orElseThrow());
         keyBindingManager.reload();
         window.addKeyCallback(keyBindingManager::handleKey);
         window.addMouseCallback(keyBindingManager::handleMouse);
 
-        ticker = new Ticker(this::clientTick, partial -> renderContext.render(partial), Ticker.CLIENT_TICK);
+        ticker = new Ticker(this::clientTick, partial -> renderManager.render(partial), Ticker.CLIENT_TICK);
     }
 
     @Override
@@ -189,7 +190,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
         // TODO: Remove it.
         keyBindingManager.tick();
-        soundManager.updateListener(renderContext.getCamera());
+        soundManager.updateListener(renderManager.getCamera());
 
         if (isMarkedTermination()) {
             if (isPlaying()) {
@@ -254,8 +255,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     @Override
-    public RenderContext getRenderContext() {
-        return renderContext;
+    public RenderManager getRenderManager() {
+        return renderManager;
     }
 
     @Override

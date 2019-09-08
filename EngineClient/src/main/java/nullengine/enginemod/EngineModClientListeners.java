@@ -112,7 +112,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getPlayer();
-                    Camera camera = c.getRenderContext().getCamera();
+                    Camera camera = c.getRenderManager().getCamera();
                     Entity controllingEntity = player.getControlledEntity();
                     RayTraceBlockHit blockHit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
                     if (blockHit.isSuccess()) {
@@ -134,7 +134,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getPlayer();
-                    Camera camera = c.getRenderContext().getCamera();
+                    Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
                     RayTraceBlockHit hit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
                     if (hit.isSuccess()) {
@@ -156,7 +156,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getPlayer();
-                    Camera camera = c.getRenderContext().getCamera();
+                    Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
                     player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
                             // TODO: Dont create BlockItem
@@ -170,23 +170,23 @@ public final class EngineModClientListeners {
                 .key(Key.KEY_ENTER)
                 .startHandler(c -> {
                     Scene scene = new Scene(new GuiChat(c.getCurrentGame()));
-                    c.getRenderContext().getGuiManager().showScreen(scene);
+                    c.getRenderManager().getGuiManager().showScreen(scene);
                 })
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.inventory")
                 .key(Key.KEY_E)
                 .startHandler(c -> {
-                    Scene scene = new Scene(new GuiItemList(c.getRenderContext()));
-                    c.getRenderContext().getGuiManager().showScreen(scene);
+                    Scene scene = new Scene(new GuiItemList(c.getRenderManager()));
+                    c.getRenderManager().getGuiManager().showScreen(scene);
                 })
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.menu")
                 .key(Key.KEY_ESCAPE)
                 .startHandler(c -> {
-                    if (!c.getRenderContext().getGuiManager().isDisplayingScreen()) {
-                        c.getRenderContext().getGuiManager().showScreen(new Scene(new GuiIngameMenu()));
+                    if (!c.getRenderManager().getGuiManager().isDisplayingScreen()) {
+                        c.getRenderManager().getGuiManager().showScreen(new Scene(new GuiIngameMenu()));
                     }
                 })
                 .build());
@@ -196,7 +196,7 @@ public final class EngineModClientListeners {
                 .startHandler(engineClient -> GLHelper.takeScreenshot(engineClient.getRunPath().resolve("screenshot")))
                 .build());
 
-        var renderContext = Platform.getEngineClient().getRenderContext();
+        var renderContext = Platform.getEngineClient().getRenderManager();
         var guiManager = renderContext.getGuiManager();
         var hudGameDebug = new HUDGameDebug();
 //        renderContext.getScheduler().runTaskEveryFrame(() -> hudGameDebug.update(renderContext));
@@ -221,7 +221,7 @@ public final class EngineModClientListeners {
 
     @Listener
     public static void onEngineReady(EngineEvent.Ready event) {
-        var renderContext = Platform.getEngineClient().getRenderContext();
+        var renderContext = Platform.getEngineClient().getRenderManager();
         var guiManager = renderContext.getGuiManager();
 
         var scene = new Scene(new GUIGameCreation());

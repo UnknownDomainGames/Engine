@@ -1,6 +1,6 @@
 package nullengine.client.rendering.item;
 
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.item.Item;
 import nullengine.item.ItemStack;
@@ -18,7 +18,7 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
 
     private final ItemRendererTest defaultItemRenderer = new ItemRendererTest();
 
-    private RenderContext context;
+    private RenderManager context;
 
     private void register(Item item, ItemRenderer renderer) {
         if (itemRendererMap.containsKey(item))
@@ -27,7 +27,7 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
         itemRendererMap.put(item, renderer);
     }
 
-    public void init(RenderContext context) {
+    public void init(RenderManager context) {
         this.context = context;
         Registries.getItemRegistry().getValues().forEach(item ->
                 item.getComponent(ItemRenderer.class)

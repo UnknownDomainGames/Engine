@@ -3,17 +3,15 @@ package nullengine.enginemod.client.gui.game;
 import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
 import nullengine.Platform;
-import nullengine.client.gui.GuiTickable;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.component.Button;
 import nullengine.client.gui.component.Label;
-import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.layout.BorderPane;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.server.event.NetworkDisconnectedEvent;
 import nullengine.server.event.PacketReceivedEvent;
 import nullengine.server.network.ConnectionStatus;
@@ -23,7 +21,6 @@ import nullengine.server.network.packet.PacketHandshake;
 import nullengine.util.Color;
 
 import java.net.InetAddress;
-import java.net.SocketAddress;
 import java.net.UnknownHostException;
 
 public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
@@ -121,7 +118,7 @@ public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
         // require close by Esc may cause unintended result
     }
 
-    public void update(RenderContext context) {
+    public void update(RenderManager context) {
 //        if(networkClient != null && networkClient.getHandler() != null) {
 //            if(!networkClient.getHandler().isChannelOpen()){
 //                lblStatus.text().setValue("Disconnected");

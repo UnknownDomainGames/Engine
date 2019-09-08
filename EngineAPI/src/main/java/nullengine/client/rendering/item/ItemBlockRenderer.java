@@ -1,6 +1,6 @@
 package nullengine.client.rendering.item;
 
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.block.BlockRenderer;
 import nullengine.client.rendering.util.buffer.GLBuffer;
@@ -12,7 +12,7 @@ import nullengine.item.ItemStack;
 public class ItemBlockRenderer implements ItemRenderer {
 
     @Override
-    public void init(RenderContext context) {
+    public void init(RenderManager context) {
     }
 
     @Override

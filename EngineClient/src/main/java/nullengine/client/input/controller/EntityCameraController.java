@@ -67,7 +67,7 @@ public class EntityCameraController extends EntityController {
         double pitch = (lastY - y) * SENSIBILITY;
         lastX = x;
         lastY = y;
-        if(((EngineClient)getPlayer().getWorld().getGame().getEngine()).getRenderContext().getWindow().getCursor().isHiddenCursor()) {
+        if (((EngineClient) getPlayer().getWorld().getGame().getEngine()).getRenderManager().getWindow().getCursor().isHiddenCursor()) {
             if (setupLast) {
                 Vector3f rotation = getPlayer().getControlledEntity().getRotation();
                 rotation.y += pitch;

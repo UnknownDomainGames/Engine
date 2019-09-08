@@ -4,7 +4,7 @@ import nullengine.client.gui.GuiTickable;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.text.Text;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.util.GPUMemoryInfo;
 import nullengine.entity.Entity;
 
@@ -46,7 +46,7 @@ public class HUDGameDebug extends VBox implements GuiTickable {
         blockHitInfo.spacing().set(5);
     }
 
-    public void update(RenderContext context) {
+    public void update(RenderManager context) {
         Entity player = context.getEngine().getCurrentGame().getPlayer().getControlledEntity();
 
         fps.text().setValue("FPS: " + context.getFPS());

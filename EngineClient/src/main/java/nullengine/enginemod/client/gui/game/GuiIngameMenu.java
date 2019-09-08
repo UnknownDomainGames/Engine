@@ -31,7 +31,7 @@ public class GuiIngameMenu extends BorderPane {
         terminateGame.setOnClick(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
             engine.getCurrentGame().terminate();
-            GuiManager guiManager = engine.getRenderContext().getGuiManager();
+            GuiManager guiManager = engine.getRenderManager().getGuiManager();
             guiManager.showScreen(new Scene(new GUIGameCreation()));
         });
         vBox.getChildren().add(terminateGame);

@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class EngineRenderContext implements RenderContext {
+public class EngineRenderManager implements RenderManager {
 
     public static final int WINDOW_WIDTH = 854, WINDOW_HEIGHT = 480;
 
@@ -54,7 +54,7 @@ public class EngineRenderContext implements RenderContext {
     private Camera camera;
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
 
-    public EngineRenderContext(EngineClient engine) {
+    public EngineRenderManager(EngineClient engine) {
         this.engine = engine;
         this.logger = engine.getLogger();
     }

@@ -1,6 +1,6 @@
 package nullengine.client.rendering.game3d;
 
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Renderer;
 import nullengine.client.rendering.item.ItemRenderManager;
 import nullengine.client.rendering.item.ItemRenderManagerImpl;
@@ -15,10 +15,10 @@ public class Game3DRenderer implements Renderer {
 
     private ItemRenderManagerImpl itemRenderManager;
 
-    private RenderContext context;
+    private RenderManager context;
 
     @Override
-    public void init(RenderContext context) {
+    public void init(RenderManager context) {
         this.context = context;
 
         context.getEngine().getEventBus().register(this);
@@ -65,7 +65,7 @@ public class Game3DRenderer implements Renderer {
         disposeGameRender();
     }
 
-    public RenderContext getContext() {
+    public RenderManager getContext() {
         return context;
     }
 }

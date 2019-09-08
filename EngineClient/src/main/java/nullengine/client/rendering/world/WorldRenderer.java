@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.value.MutableValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.entity.EntityRenderManagerImpl;
 import nullengine.client.rendering.shader.ShaderManager;
@@ -46,9 +46,9 @@ public class WorldRenderer {
     private FrameBufferShadow frameBufferShadow; //TODO: move to 3D Renderer!!!
     private ObservableValue<ShaderProgram> shadowShader;
 
-    private RenderContext context;
+    private RenderManager context;
 
-    public void init(RenderContext context) {
+    public void init(RenderManager context) {
         this.context = context;
         chunkRenderer.init(context);
         blockSelectionRenderer.init(context);

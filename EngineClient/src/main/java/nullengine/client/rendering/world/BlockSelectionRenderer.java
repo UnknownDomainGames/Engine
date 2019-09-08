@@ -1,6 +1,6 @@
 package nullengine.client.rendering.world;
 
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferFormats;
@@ -10,9 +10,9 @@ import nullengine.world.collision.RayTraceBlockHit;
 
 public class BlockSelectionRenderer {
 
-    private RenderContext context;
+    private RenderManager context;
 
-    public void init(RenderContext context) {
+    public void init(RenderManager context) {
         this.context = context;
     }
 

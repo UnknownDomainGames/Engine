@@ -1,7 +1,7 @@
 package nullengine.client.rendering.item;
 
 import nullengine.client.game.GameClient;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.block.BlockRenderer;
 import nullengine.client.rendering.shader.ShaderManager;
@@ -17,10 +17,10 @@ import java.util.Optional;
 
 public class ItemRendererTest implements ItemRenderer {
 
-    private RenderContext context;
+    private RenderManager context;
     private GameClient game;
 
-    public void init(RenderContext context) {
+    public void init(RenderManager context) {
         this.context = context;
         this.game = context.getEngine().getCurrentGame();
     }

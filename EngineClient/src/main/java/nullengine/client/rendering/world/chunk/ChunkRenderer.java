@@ -5,7 +5,7 @@ import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.game.GameClient;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.light.DirectionalLight;
 import nullengine.client.rendering.light.Light;
 import nullengine.client.rendering.light.Material;
@@ -46,7 +46,7 @@ public class ChunkRenderer {
     private ObservableValue<ShaderProgram> chunkSolidShader;
     private ObservableValue<ShaderProgram> assimpShader;
 
-    private RenderContext context;
+    private RenderManager context;
     private GameClient game;
 
     private ThreadPoolExecutor updateExecutor;
@@ -54,7 +54,7 @@ public class ChunkRenderer {
     Light dirLight, ptLight;
     Material mat;
 
-    public void init(RenderContext context) {
+    public void init(RenderManager context) {
         this.context = context;
         this.game = context.getEngine().getCurrentGame();
         game.getEventBus().register(this);

@@ -98,11 +98,11 @@ public class NativeTTFontInfo {
     }
 
     public float getContentScaleX() {
-        return Platform.isClient() ? Platform.getEngineClient().getRenderContext().getWindow().getContentScaleX() : contentScaleX;
+        return Platform.isClient() ? Platform.getEngineClient().getRenderManager().getWindow().getContentScaleX() : contentScaleX;
     }
 
     public float getContentScaleY() {
-        return Platform.isClient() ? Platform.getEngineClient().getRenderContext().getWindow().getContentScaleY() : contentScaleY;
+        return Platform.isClient() ? Platform.getEngineClient().getRenderManager().getWindow().getContentScaleY() : contentScaleY;
     }
 
     public Font getFont() {

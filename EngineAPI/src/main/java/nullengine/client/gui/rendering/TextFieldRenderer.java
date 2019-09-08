@@ -1,7 +1,7 @@
 package nullengine.client.gui.rendering;
 
 import nullengine.client.gui.component.TextField;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.util.Color;
@@ -11,7 +11,7 @@ public class TextFieldRenderer extends RegionRenderer<TextField> {
     public static final TextFieldRenderer INSTANCE = new TextFieldRenderer();
 
     @Override
-    public void render(TextField textField, Graphics graphics, RenderContext context) {
+    public void render(TextField textField, Graphics graphics, RenderManager context) {
         super.render(textField, graphics, context);
         float px, py, pw, ph;
         if (textField.padding().isPresent()) {

@@ -1,6 +1,6 @@
 package nullengine.client.rendering.entity;
 
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.item.ItemRenderManager;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.entity.item.ItemEntity;
@@ -8,10 +8,10 @@ import org.joml.Matrix4f;
 
 public class EntityItemRenderer implements EntityRenderer<ItemEntity> {
 
-    private RenderContext context;
+    private RenderManager context;
 
     @Override
-    public void init(RenderContext context) {
+    public void init(RenderManager context) {
         this.context = context;
     }
 

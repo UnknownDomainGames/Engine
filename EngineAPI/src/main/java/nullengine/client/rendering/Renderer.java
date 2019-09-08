@@ -6,7 +6,7 @@ package nullengine.client.rendering;
  */
 public interface Renderer {
 
-    void init(RenderContext context);
+    void init(RenderManager context);
 
     void render(float partial);
 

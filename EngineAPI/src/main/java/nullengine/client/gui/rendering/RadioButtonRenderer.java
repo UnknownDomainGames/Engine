@@ -2,11 +2,11 @@ package nullengine.client.gui.rendering;
 
 import nullengine.client.gui.component.RadioButton;
 import nullengine.client.gui.misc.Insets;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 
 public class RadioButtonRenderer implements ComponentRenderer<RadioButton> {
     @Override
-    public void render(RadioButton component, Graphics graphics, RenderContext context) {
+    public void render(RadioButton component, Graphics graphics, RenderManager context) {
         component.background().getValue().render(component, graphics);
         component.border().getValue().render(component, graphics);
         if (component.selected().get()) {

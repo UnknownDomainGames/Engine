@@ -9,7 +9,6 @@ import nullengine.client.gui.layout.BorderPane;
 import nullengine.client.gui.layout.HBox;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Background;
-import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.misc.Pos;
 import nullengine.util.Color;
 
@@ -44,7 +43,7 @@ public class GuiDirectConnectServer extends BorderPane {
                 }
                 fullAddress = fullAddress.substring(0,colonIndex);
             }
-            Platform.getEngineClient().getRenderContext().getGuiManager().showScreen(new Scene(new GuiConnectServer(fullAddress, port)));
+            Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiConnectServer(fullAddress, port)));
         });
         var butBack = new Button("Back");
         butBack.setOnClick(e->requireClose());

@@ -3,7 +3,7 @@ package nullengine.client.gui;
 import nullengine.Platform;
 import nullengine.client.gui.event.KeyEvent;
 import nullengine.client.input.keybinding.Key;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.util.UndoHistory;
 
 import java.util.Collections;
@@ -15,7 +15,7 @@ public class EngineGuiManager implements GuiManager {
 
     //TODO: review on availability of customizing limit of history
     public static final int MAX_SCENE_HISTORY = 20;
-    private final RenderContext context;
+    private final RenderManager context;
 
     private final Map<String, Scene> huds = new HashMap<>();
     private final Map<String, Scene> unmodifiableHuds = Collections.unmodifiableMap(huds);
@@ -28,7 +28,7 @@ public class EngineGuiManager implements GuiManager {
 
     private boolean hudVisible = true;
 
-    public EngineGuiManager(RenderContext context) {
+    public EngineGuiManager(RenderManager context) {
         this.context = context;
         sceneHistory = new UndoHistory<>(MAX_SCENE_HISTORY);
     }

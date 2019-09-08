@@ -7,7 +7,7 @@ import nullengine.client.gui.layout.HBox;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.text.Text;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.entity.component.TwoHands;
 import nullengine.item.Item;
 import nullengine.item.ItemStack;
@@ -17,7 +17,7 @@ import nullengine.util.Color;
 import java.util.Map;
 
 public class GuiItemList extends AnchorPane {
-    public GuiItemList(RenderContext context){
+    public GuiItemList(RenderManager context) {
         var vBox = new VBox();
         vBox.background().setValue(Background.fromColor(Color.fromARGB(0x7f000000)));
         vBox.spacing().set(5f);

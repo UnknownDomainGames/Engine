@@ -1,7 +1,7 @@
 package nullengine.client.rendering.gui;
 
 import nullengine.client.gui.rendering.Graphics;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
@@ -20,7 +20,7 @@ import java.util.Stack;
 
 public class GraphicsImpl implements Graphics {
 
-    private final RenderContext context;
+    private final RenderManager context;
     private final Tessellator tessellator = Tessellator.getInstance();
     private final GuiRenderer guiRenderer;
 
@@ -29,7 +29,7 @@ public class GraphicsImpl implements Graphics {
 
     private final Stack<Vector4fc> clipRect = new Stack<>();
 
-    public GraphicsImpl(RenderContext context, GuiRenderer guiRenderer) {
+    public GraphicsImpl(RenderManager context, GuiRenderer guiRenderer) {
         this.context = context;
         this.guiRenderer = guiRenderer;
         setColor(Color.WHITE);

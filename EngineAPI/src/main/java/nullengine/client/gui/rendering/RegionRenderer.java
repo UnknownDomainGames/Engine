@@ -3,14 +3,14 @@ package nullengine.client.gui.rendering;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.Region;
 import nullengine.client.gui.misc.Border;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 
 public class RegionRenderer<E extends Region> implements ComponentRenderer<E> {
 
     public static final RegionRenderer INSTANCE = new RegionRenderer();
 
     @Override
-    public void render(E region, Graphics graphics, RenderContext context) {
+    public void render(E region, Graphics graphics, RenderManager context) {
         region.background().ifPresent(background -> background.render(region,graphics));
         if (region.border().isPresent()) {
             Border border = region.border().getValue();

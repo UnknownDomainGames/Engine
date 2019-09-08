@@ -69,7 +69,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         pressedKey.add(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
         for (KeyBinding binding : keyBindings) {
-            if (engineClient.getRenderContext().getGuiManager().isDisplayingScreen() && !binding.isAllowInScreen())
+            if (engineClient.getRenderManager().getGuiManager().isDisplayingScreen() && !binding.isAllowInScreen())
                 continue;
             binding.setPressed(true);
             binding.setDirty(true);
@@ -86,7 +86,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         pressedKey.remove(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
         for (KeyBinding binding : keyBindings) {
-            if (engineClient.getRenderContext().getGuiManager().isDisplayingScreen() && !binding.isAllowInScreen())
+            if (engineClient.getRenderManager().getGuiManager().isDisplayingScreen() && !binding.isAllowInScreen())
                 continue;
             binding.setPressed(false);
             if (binding.getActionMode() == ActionMode.PRESS) {
@@ -141,7 +141,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
      */
     @Override
     public void tick() {
-        boolean displayingScreen = engineClient.getRenderContext().getGuiManager().isDisplayingScreen();
+        boolean displayingScreen = engineClient.getRenderManager().getGuiManager().isDisplayingScreen();
         if (displayingScreen) {
             releaseAllPressedKeys(false);
         }

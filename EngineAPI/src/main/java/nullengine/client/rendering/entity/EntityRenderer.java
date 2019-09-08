@@ -1,11 +1,11 @@
 package nullengine.client.rendering.entity;
 
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.entity.Entity;
 
 public interface EntityRenderer<T extends Entity> {
 
-    void init(RenderContext context);
+    void init(RenderManager context);
 
     boolean shouldRender(T entity, double x, double y, double z, float partial);
 

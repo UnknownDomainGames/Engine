@@ -8,7 +8,7 @@ import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.internal.Internal;
 import nullengine.client.gui.rendering.Graphics;
-import nullengine.client.rendering.RenderContext;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Renderer;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.FontHelper;
@@ -28,7 +28,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class GuiRenderer implements Renderer {
 
-    private RenderContext context;
+    private RenderManager context;
     private Window window;
     private GuiManager guiManager;
 
@@ -37,7 +37,7 @@ public class GuiRenderer implements Renderer {
     private Graphics graphics;
 
     @Override
-    public void init(RenderContext context) {
+    public void init(RenderManager context) {
         this.context = context;
         this.guiManager = context.getGuiManager();
         this.window = context.getWindow();
