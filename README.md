@@ -5,7 +5,9 @@
 [![](https://api.codeclimate.com/v1/badges/811191d64c6508954327/maintainability)](https://codeclimate.com/github/UnknownDomainGame/NullEngine/maintainability)
 [![](https://api.codacy.com/project/badge/Grade/cd2c9f15a88a42b886a59f6410f0ca05)](https://app.codacy.com/app/Mouse0w0/NullEngine?utm_source=github.com&utm_medium=referral&utm_content=UnknownDomainGame/NullEngine&utm_campaign=Badge_Grade_Dashboard)
 
-A voxel sandbox game engine based on Java. Waiting for your assignment.
+A voxel sandbox game engine based on Java. **Waiting for your assignment.**
+
+基于Java的体素沙盒游戏引擎。**等你为它赋值。**
 
 ## 贡献代码 (Contributing)
 请阅读我们的贡献指南：[简体中文(zh_CN)](https://github.com/UnknownDomainGame/NullEngine/blob/dev/CONTRIBUTING.md) [English(en_US)](https://github.com/UnknownDomainGame/NullEngine/blob/dev/CONTRIBUTING_EN.md)
@@ -13,6 +15,6 @@ A voxel sandbox game engine based on Java. Waiting for your assignment.
 请在[Projects](https://github.com/UnknownDomainGame/NullEngine/projects)了解我们正在进行的工作。
 
 ## 相关链接
-- [项目简介](https://github.com/UnknownDomainGame/NullEngine/wiki/%E6%9C%AA%E7%9F%A5%E4%B9%8B%E5%9F%9F%E6%B8%B8%E6%88%8F%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D%EF%BC%88Introducing-Unknown-Domain-Game%EF%BC%89)
+- [项目简介](https://github.com/UnknownDomainGame/NullEngine/wiki/%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D%EF%BC%88Introducing-Project%EF%BC%89)
 - [示例模组](https://github.com/UnknownDomainGame/ExampleMod)
 - 外部交流QQ群：[965101316](https://jq.qq.com/?_wv=1027&k=5exnX2o)
