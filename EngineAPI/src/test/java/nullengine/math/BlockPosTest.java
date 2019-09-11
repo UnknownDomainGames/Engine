@@ -27,27 +27,27 @@ class BlockPosTest {
     }
 
     List<BlockPos> getAll(BlockPos pos, BlockPos dest) {
-        Vector3f dir = new Vector3f(dest.getX() - pos.getX(), dest.getY() - pos.getY(), dest.getZ() - pos.getZ());
+        Vector3f dir = new Vector3f(dest.x() - pos.x(), dest.y() - pos.y(), dest.z() - pos.z());
         System.out.println(dir);
         dir.mul(1F / Math.abs(dir.x));
         System.out.println(dir);
         List<BlockPos> posList = new ArrayList<>();
         posList.add(pos);
         BlockPos last = pos;
-        for (int x : intRange(pos.getX(), dest.getX())) {
-            int y = (int) (pos.getY() + dir.y);
-            int z = (int) (pos.getZ() + dir.z);
-            boolean yMiss = Math.abs(y - last.getY()) > 0,
-                    zMiss = Math.abs(z - last.getZ()) > 0;
+        for (int x : intRange(pos.x(), dest.x())) {
+            int y = (int) (pos.y() + dir.y);
+            int z = (int) (pos.z() + dir.z);
+            boolean yMiss = Math.abs(y - last.y()) > 0,
+                    zMiss = Math.abs(z - last.z()) > 0;
             System.out.println(BlockPos.of(x, y, z));
             if (yMiss && zMiss) {
             } else if (yMiss) {
                 System.out.println("Y");
-                for (int j : intRange(last.getY() + 1, y - 1)) {
+                for (int j : intRange(last.y() + 1, y - 1)) {
                     posList.add(last = BlockPos.of(x, j, z));
                 }
             } else if (zMiss) {
-                for (int j : intRange(last.getZ() + 1, z - 1)) {
+                for (int j : intRange(last.z() + 1, z - 1)) {
                     posList.add(last = BlockPos.of(x, y, j));
                 }
             }

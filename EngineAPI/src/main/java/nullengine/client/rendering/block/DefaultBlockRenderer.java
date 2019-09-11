@@ -33,7 +33,7 @@ public class DefaultBlockRenderer implements BlockRenderer {
 
     @Override
     public void generateMesh(Block block, BlockGetter world, BlockPos pos, GLBuffer buffer) {
-        buffer.posOffset(pos.getX(), pos.getY(), pos.getZ());
+        buffer.posOffset(pos.x(), pos.y(), pos.z());
         var mutablePos = new BlockPos.Mutable(pos);
         byte coveredFace = 0;
         for (var direction : Direction.values()) {

@@ -6,7 +6,7 @@ import nullengine.world.chunk.ChunkConstants;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
-public abstract class BlockPos {
+public abstract class BlockPos extends Vector3iBase {
 
     public static final BlockPos ZERO = of(0, 0, 0);
 
@@ -23,27 +23,14 @@ public abstract class BlockPos {
     }
 
     public static boolean inSameChunk(BlockPos a, BlockPos b) {
-        return ((a.getX() >> ChunkConstants.BITS_X) == (b.getX() >> ChunkConstants.BITS_X)) && ((a.getY() >> ChunkConstants.BITS_Y) == (b.getY() >> ChunkConstants.BITS_Y)) && ((a.getZ() >> ChunkConstants.BITS_Z) == (b.getZ() >> ChunkConstants.BITS_Z));
+        return ((a.x() >> ChunkConstants.BITS_X) == (b.x() >> ChunkConstants.BITS_X)) && ((a.y() >> ChunkConstants.BITS_Y) == (b.y() >> ChunkConstants.BITS_Y)) && ((a.z() >> ChunkConstants.BITS_Z) == (b.z() >> ChunkConstants.BITS_Z));
     }
-
-    public abstract int getX();
-
-    public abstract int getY();
-
-    public abstract int getZ();
 
     public abstract BlockPos toImmutable();
 
     public abstract BlockPos add(int x, int y, int z);
 
-    public abstract BlockPos minus(int x, int y, int z);
-
-    public int squareDistanceTo(BlockPos another) {
-        int x = this.getX() - another.getX();
-        int y = this.getY() - another.getY();
-        int z = this.getZ() - another.getZ();
-        return x * x + y * y + z * z;
-    }
+    public abstract BlockPos sub(int x, int y, int z);
 
     public BlockPos offset(Direction direction) {
         return add(direction.offsetX, direction.offsetY, direction.offsetZ);
@@ -100,17 +87,17 @@ public abstract class BlockPos {
 
         BlockPos others = (BlockPos) obj;
 
-        return getX() == others.getX() && getY() == others.getY() && getZ() == others.getZ();
+        return this.x() == others.x() && y() == others.y() && z() == others.z();
     }
 
     @Override
     public int hashCode() {
-        return (getX() * 31 + getY()) * 31 + getZ();
+        return (this.x() * 31 + y()) * 31 + z();
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("x", getX()).add("y", getY()).add("z", getZ()).toString();
+        return MoreObjects.toStringHelper(this).add("x", this.x()).add("y", y()).add("z", z()).toString();
     }
 
     private static final class Immutable extends BlockPos {
@@ -123,17 +110,17 @@ public abstract class BlockPos {
         }
 
         @Override
-        public int getX() {
+        public int x() {
             return x;
         }
 
         @Override
-        public int getY() {
+        public int y() {
             return y;
         }
 
         @Override
-        public int getZ() {
+        public int z() {
             return z;
         }
 
@@ -148,7 +135,7 @@ public abstract class BlockPos {
         }
 
         @Override
-        public BlockPos minus(int x, int y, int z) {
+        public BlockPos sub(int x, int y, int z) {
             return BlockPos.of(this.x - x, this.y - y, this.z - z);
         }
     }
@@ -159,7 +146,7 @@ public abstract class BlockPos {
         private BlockPos immutable;
 
         public Mutable(BlockPos pos) {
-            this(pos.getX(), pos.getY(), pos.getZ());
+            this(pos.x(), pos.y(), pos.z());
         }
 
         public Mutable(int x, int y, int z) {
@@ -169,17 +156,17 @@ public abstract class BlockPos {
         }
 
         @Override
-        public int getX() {
+        public int x() {
             return x;
         }
 
         @Override
-        public int getY() {
+        public int y() {
             return y;
         }
 
         @Override
-        public int getZ() {
+        public int z() {
             return z;
         }
 
@@ -201,7 +188,7 @@ public abstract class BlockPos {
         }
 
         @Override
-        public BlockPos minus(int x, int y, int z) {
+        public BlockPos sub(int x, int y, int z) {
             this.x -= x;
             this.y -= y;
             this.z -= z;
@@ -217,7 +204,7 @@ public abstract class BlockPos {
         }
 
         public void set(BlockPos blockPos) {
-            set(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+            set(blockPos.x(), blockPos.y(), blockPos.z());
         }
     }
 }

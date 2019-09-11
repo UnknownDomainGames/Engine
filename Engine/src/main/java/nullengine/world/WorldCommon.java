@@ -81,7 +81,7 @@ public class WorldCommon implements World, Runnable {
         }
 
         BlockPos pos = ChunkConstants.toChunkPos(BlockPos.of(entity.getPosition()));
-        Chunk chunk = chunkManager.loadChunk(pos.getX(), pos.getY(), pos.getZ());
+        Chunk chunk = chunkManager.loadChunk(pos.x(), pos.y(), pos.z());
         chunk.getEntities().add(entity);
         entities.add(entity);
 
@@ -177,8 +177,8 @@ public class WorldCommon implements World, Runnable {
             BlockPos newPosition = ChunkConstants.toChunkPos(BlockPos.of(position));
 
             if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
-                Chunk oldChunk = chunkManager.loadChunk(oldPosition.getX(), oldPosition.getY(), oldPosition.getZ()),
-                        newChunk = chunkManager.loadChunk(newPosition.getX(), newPosition.getY(), newPosition.getZ());
+                Chunk oldChunk = chunkManager.loadChunk(oldPosition.x(), oldPosition.y(), oldPosition.z()),
+                        newChunk = chunkManager.loadChunk(newPosition.x(), newPosition.y(), newPosition.z());
                 oldChunk.getEntities().remove(entity);
                 newChunk.getEntities().add(entity);
                 // entity leaving and enter chunk event
@@ -228,7 +228,7 @@ public class WorldCommon implements World, Runnable {
             post = new BlockReplaceEvent.Post(this, pos, oldBlock, block, cause);
         }
         if (!getGame().getEventBus().post(pre)) {
-            chunkManager.loadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z)
+            chunkManager.loadChunk(pos.x() >> ChunkConstants.BITS_X, pos.y() >> ChunkConstants.BITS_Y, pos.z() >> ChunkConstants.BITS_Z)
                     .setBlock(pos, block, cause);
 
             oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
@@ -328,7 +328,7 @@ public class WorldCommon implements World, Runnable {
                         if (blockBoxes.length != 0)
                             for (AABBd blockBoxLocal : blockBoxes) {
                                 AABBd blockBox = AABBs.translate(blockBoxLocal,
-                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
+                                        new Vector3f(pos.x(), pos.y(), pos.z()), new AABBd());
                                 if (blockBox.testAABB(entityBox)) {
                                     xFix = Math.min(xFix, Math.min(Math.abs(blockBox.maxX - entityBox.minX),
                                             Math.abs(blockBox.minX - entityBox.maxX)));
@@ -344,7 +344,7 @@ public class WorldCommon implements World, Runnable {
                         if (blockBoxes.length != 0)
                             for (AABBd blockBox : blockBoxes) {
                                 AABBd translated = AABBs.translate(blockBox,
-                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
+                                        new Vector3f(pos.x(), pos.y(), pos.z()), new AABBd());
                                 if (translated.testAABB(entityBox)) {
                                     yFix = Math.min(yFix, Math.min(Math.abs(translated.maxY - entityBox.minY),
                                             Math.abs(translated.minY - entityBox.maxY)));
@@ -360,7 +360,7 @@ public class WorldCommon implements World, Runnable {
                         if (blockBoxes.length != 0)
                             for (AABBd blockBox : blockBoxes) {
                                 AABBd translated = AABBs.translate(blockBox,
-                                        new Vector3f(pos.getX(), pos.getY(), pos.getZ()), new AABBd());
+                                        new Vector3f(pos.x(), pos.y(), pos.z()), new AABBd());
                                 if (translated.testAABB(entityBox)) {
                                     zFix = Math.min(zFix, Math.min(Math.abs(translated.maxZ - entityBox.minZ),
                                             Math.abs(translated.minZ - entityBox.maxZ)));

@@ -90,7 +90,7 @@ public class ChunkImpl implements Chunk {
 
     @Override
     public Block setBlock(BlockPos pos, Block block, BlockChangeCause cause) {
-        return setBlock(pos.getX(), pos.getY(), pos.getZ(), block);
+        return setBlock(pos.x(), pos.y(), pos.z(), block);
     }
 
     @NonNull

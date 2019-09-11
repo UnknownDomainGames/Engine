@@ -214,33 +214,33 @@ public class ChunkRenderer {
     @Listener
     public void onBlockChange(BlockChangeEvent.Post event) {
         BlockPos pos = event.getPos().toImmutable();
-        int chunkX = pos.getX() >> BITS_X,
-                chunkY = pos.getY() >> BITS_Y,
-                chunkZ = pos.getZ() >> BITS_Z;
+        int chunkX = pos.x() >> BITS_X,
+                chunkY = pos.y() >> BITS_Y,
+                chunkZ = pos.z() >> BITS_Z;
         markChunkMeshDirty(getChunkIndex(event.getPos()));
 
         // Update neighbor chunks.
-        int chunkW = pos.getX() + 1 >> BITS_X;
+        int chunkW = pos.x() + 1 >> BITS_X;
         if (chunkW != chunkX) {
             markChunkMeshDirty(getChunkIndex(chunkW, chunkY, chunkZ));
         }
-        chunkW = pos.getX() - 1 >> BITS_X;
+        chunkW = pos.x() - 1 >> BITS_X;
         if (chunkW != chunkX) {
             markChunkMeshDirty(getChunkIndex(chunkW, chunkY, chunkZ));
         }
-        chunkW = pos.getY() + 1 >> BITS_Y;
+        chunkW = pos.y() + 1 >> BITS_Y;
         if (chunkW != chunkY) {
             markChunkMeshDirty(getChunkIndex(chunkX, chunkW, chunkZ));
         }
-        chunkW = pos.getY() - 1 >> BITS_Y;
+        chunkW = pos.y() - 1 >> BITS_Y;
         if (chunkW != chunkY) {
             markChunkMeshDirty(getChunkIndex(chunkX, chunkW, chunkZ));
         }
-        chunkW = pos.getZ() + 1 >> BITS_Z;
+        chunkW = pos.z() + 1 >> BITS_Z;
         if (chunkW != chunkZ) {
             markChunkMeshDirty(getChunkIndex(chunkX, chunkY, chunkW));
         }
-        chunkW = pos.getZ() - 1 >> BITS_Z;
+        chunkW = pos.z() - 1 >> BITS_Z;
         if (chunkW != chunkZ) {
             markChunkMeshDirty(getChunkIndex(chunkX, chunkY, chunkW));
         }

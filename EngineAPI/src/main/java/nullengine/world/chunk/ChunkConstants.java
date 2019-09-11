@@ -25,11 +25,11 @@ public interface ChunkConstants {
     }
 
     static long getChunkIndex(BlockPos blockPos) {
-        return getChunkIndex(blockPos.getX() >> BITS_X, blockPos.getY() >> BITS_Y, blockPos.getZ() >> BITS_Z);
+        return getChunkIndex(blockPos.x() >> BITS_X, blockPos.y() >> BITS_Y, blockPos.z() >> BITS_Z);
     }
 
     static BlockPos toChunkPos(BlockPos absPos) {
-        return BlockPos.of(absPos.getX() >> BITS_X, absPos.getY() >> BITS_Y, absPos.getZ() >> BITS_Z);
+        return BlockPos.of(absPos.x() >> BITS_X, absPos.y() >> BITS_Y, absPos.z() >> BITS_Z);
     }
 
     long MAX_POSITIVE_CHUNK_POS = (1 << 20) - 1;

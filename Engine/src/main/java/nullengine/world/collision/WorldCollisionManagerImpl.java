@@ -46,13 +46,13 @@ public class WorldCollisionManagerImpl implements WorldCollisionManager {
 
         var all = FastVoxelRayTrace.rayTrace(from, dist);
 
-        all.sort(Comparator.comparingDouble(pos -> from.distanceSquared(pos.getX(), pos.getY(), pos.getZ())));
+        all.sort(Comparator.comparingDouble(pos -> from.distanceSquared(pos.x(), pos.y(), pos.z())));
 
         for (BlockPos pos : all) {
             Block block = world.getBlock(pos);
             if (ignore.contains(block))
                 continue;
-            Vector3f local = from.sub(pos.getX(), pos.getY(), pos.getZ(), new Vector3f());
+            Vector3f local = from.sub(pos.x(), pos.y(), pos.z(), new Vector3f());
             Vector2d result = new Vector2d();
             if (block.getShape().intersectRay(world, pos, block,
                     local.x, local.y, local.z,

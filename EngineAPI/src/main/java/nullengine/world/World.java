@@ -32,7 +32,7 @@ public interface World extends BlockGetter, BlockSetter {
     Collection<Entity> getEntities();
 
     default Chunk getChunk(@Nonnull BlockPos pos) {
-        return getChunk(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
+        return getChunk(pos.x() >> 4, pos.y() >> 4, pos.z() >> 4);
     }
 
     Chunk getChunk(int chunkX, int chunkY, int chunkZ);

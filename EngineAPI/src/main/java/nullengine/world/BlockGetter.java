@@ -12,14 +12,14 @@ public interface BlockGetter {
 
     @Nonnull
     default Block getBlock(@Nonnull BlockPos pos) {
-        return getBlock(pos.getX(), pos.getY(), pos.getZ());
+        return getBlock(pos.x(), pos.y(), pos.z());
     }
 
     @Nonnull
     Block getBlock(int x, int y, int z);
 
     default int getBlockId(@Nonnull BlockPos pos) {
-        return getBlockId(pos.getX(), pos.getY(), pos.getZ());
+        return getBlockId(pos.x(), pos.y(), pos.z());
     }
 
     int getBlockId(int x, int y, int z);

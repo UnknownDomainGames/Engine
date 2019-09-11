@@ -27,7 +27,7 @@ public class ChunkStorage {
 
     @Nonnull
     public Chunk getChunk(BlockPos pos) {
-        return getChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z);
+        return getChunk(pos.x() >> ChunkConstants.BITS_X, pos.y() >> ChunkConstants.BITS_Y, pos.z() >> ChunkConstants.BITS_Z);
     }
 
     @Nullable // FIXME:
@@ -43,7 +43,7 @@ public class ChunkStorage {
 
     @Nonnull
     public Chunk getOrLoadChunk(BlockPos pos) {
-        return getOrLoadChunk(pos.getX() >> ChunkConstants.BITS_X, pos.getY() >> ChunkConstants.BITS_Y, pos.getZ() >> ChunkConstants.BITS_Z);
+        return getOrLoadChunk(pos.x() >> ChunkConstants.BITS_X, pos.y() >> ChunkConstants.BITS_Y, pos.z() >> ChunkConstants.BITS_Z);
     }
 
     @Nonnull

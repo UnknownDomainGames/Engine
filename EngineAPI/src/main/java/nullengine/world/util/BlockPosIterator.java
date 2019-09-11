@@ -12,7 +12,7 @@ import static java.lang.Math.min;
 public class BlockPosIterator implements Iterator<BlockPos> {
 
     public static BlockPosIterator create(BlockPos from, BlockPos to) {
-        return new BlockPosIterator(from.getX(), from.getY(), from.getZ(), to.getX(), to.getY(), to.getZ());
+        return new BlockPosIterator(from.x(), from.y(), from.z(), to.x(), to.y(), to.z());
     }
 
     public static BlockPosIterator createFromChunk(Chunk chunk) {
@@ -34,7 +34,7 @@ public class BlockPosIterator implements Iterator<BlockPos> {
     }
 
     public boolean hasNext() {
-        return pos.getX() != toX || pos.getY() != toY || pos.getZ() != toZ;
+        return pos.x() != toX || pos.y() != toY || pos.z() != toZ;
     }
 
     /**
@@ -42,13 +42,13 @@ public class BlockPosIterator implements Iterator<BlockPos> {
      */
     public BlockPos next() {
         pos.add(1, 0, 0);
-        if (pos.getX() > toX) {
-            pos.set(fromX, pos.getY() + 1, pos.getZ());
+        if (pos.x() > toX) {
+            pos.set(fromX, pos.y() + 1, pos.z());
         }
-        if (pos.getY() > toY) {
-            pos.set(pos.getX(), fromY, pos.getZ() + 1);
+        if (pos.y() > toY) {
+            pos.set(pos.x(), fromY, pos.z() + 1);
         }
-        if (pos.getZ() > toZ) {
+        if (pos.z() > toZ) {
             throw new NoSuchElementException();
         }
         return pos;

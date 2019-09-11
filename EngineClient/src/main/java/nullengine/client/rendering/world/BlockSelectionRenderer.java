@@ -24,9 +24,9 @@ public class BlockSelectionRenderer {
         var camera = context.getCamera();
         RayTraceBlockHit hit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
         if (hit.isSuccess()) {
-            float minX = hit.getPos().getX() - 0.001f, maxX = hit.getPos().getX() + 1.001f,
-                    minY = hit.getPos().getY() - 0.001f, maxY = hit.getPos().getY() + 1.001f,
-                    minZ = hit.getPos().getZ() - 0.001f, maxZ = hit.getPos().getZ() + 1.001f;
+            float minX = hit.getPos().x() - 0.001f, maxX = hit.getPos().x() + 1.001f,
+                    minY = hit.getPos().y() - 0.001f, maxY = hit.getPos().y() + 1.001f,
+                    minZ = hit.getPos().z() - 0.001f, maxZ = hit.getPos().z() + 1.001f;
             buffer.begin(GLBufferMode.LINES, GLBufferFormats.POSITION_COLOR);
             buffer.pos(minX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
             buffer.pos(maxX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();

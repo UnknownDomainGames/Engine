@@ -119,12 +119,12 @@ public class WorldClient implements World, Runnable {
     @Nonnull
     @Override
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
-        return getBlock(pos.getX(),pos.getY(), pos.getZ());
+        return getBlock(pos.x(), pos.y(), pos.z());
     }
 
     @Nonnull
     @Override
     public Block destoryBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
-        return getBlock(pos.getX(),pos.getY(), pos.getZ());
+        return getBlock(pos.x(), pos.y(), pos.z());
     }
 }
