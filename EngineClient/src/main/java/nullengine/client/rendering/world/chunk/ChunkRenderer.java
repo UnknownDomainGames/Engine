@@ -16,22 +16,19 @@ import nullengine.client.rendering.shader.ShaderProgramBuilder;
 import nullengine.client.rendering.shader.ShaderType;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.client.rendering.util.buffer.GLBuffer;
+import nullengine.client.rendering.util.buffer.GLBufferPool;
 import nullengine.event.Listener;
 import nullengine.event.block.BlockChangeEvent;
+import nullengine.event.player.PlayerControlEntityEvent;
 import nullengine.event.world.chunk.ChunkLoadEvent;
 import nullengine.math.BlockPos;
 import nullengine.world.World;
 import nullengine.world.chunk.Chunk;
 import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,16 +40,20 @@ public class ChunkRenderer {
     private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
 
+    private final GLBufferPool bufferPool = GLBufferPool.createDirectBufferPool();
+
+    private World world;
+
     private ObservableValue<ShaderProgram> chunkSolidShader;
     private ObservableValue<ShaderProgram> assimpShader;
 
     private RenderManager context;
     private GameClient game;
 
-    private ThreadPoolExecutor updateExecutor;
+    private ThreadPoolExecutor chunkBakeExecutor;
 
-    Light dirLight, ptLight;
-    Material mat;
+    private Light dirLight, ptLight;
+    private Material mat;
 
     public void init(RenderManager context) {
         this.context = context;
@@ -78,55 +79,41 @@ public class ChunkRenderer {
 
         // TODO: Configurable and manage
         int threadCount = Runtime.getRuntime().availableProcessors() / 2;
-        this.updateExecutor = new ThreadPoolExecutor(threadCount, threadCount,
+        this.chunkBakeExecutor = new ThreadPoolExecutor(threadCount, threadCount,
                 0L, TimeUnit.MILLISECONDS,
                 new PriorityBlockingQueue<>(), new ThreadFactory() {
             private final AtomicInteger poolNumber = new AtomicInteger(0);
 
             @Override
             public Thread newThread(Runnable r) {
-                return new BakeChunkThread(r, "Chunk Baker " + poolNumber.getAndIncrement());
+                return new Thread(r, "Chunk Baker " + poolNumber.getAndIncrement());
             }
         });
 
         context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).reload();
-        initWorld(game.getWorld());
+        initWorld(context.getEngine().getCurrentGame().getPlayer().getWorld());
     }
 
     public void render() {
-        preRenderChunk();
+        preRender();
 
-        handleUploadTask();
+        runUploadTasks();
 
-        var faillist = new ArrayList<Long>();
-        for (Map.Entry<Long, ChunkMesh> entry : loadedChunkMeshes.entrySet()) {
-            try {
-                ChunkMesh chunkMesh = entry.getValue();
-                if (chunkMesh != null) {
-                    if (context.getFrustumIntersection().testAab(chunkMesh.getChunk().getMin(), chunkMesh.getChunk().getMax())) {
-                        chunkMesh.render();
-                    }
-                }
-                else{
-                    faillist.add(entry.getKey());
-                }
+        for (var entry : loadedChunkMeshes.entrySet()) {
+            var mesh = entry.getValue();
+            if (shouldRenderChunk(mesh)) {
+                mesh.render();
             }
-            catch (IllegalStateException ex){
-            }
-
         }
-        if(!faillist.isEmpty()) {
-            context.getEngine().getCurrentGame().getWorld().getLoadedChunks().parallelStream().filter(chunk->faillist.contains(getChunkIndex(chunk))).forEach(this::initChunkMesh);
-        }
-//        ShaderProgram assimpShader = this.assimpShader.getValue();
-//       ShaderManager.instance().bindShader(assimpShader);
-//       ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f().rotate((float)-Math.PI / 2, 1,0,0).setTranslation(0,5,0));
-//        tmp.render();
 
-        postRenderChunk();
+        postRender();
     }
 
-    private void preRenderChunk() {
+    private boolean shouldRenderChunk(ChunkMesh mesh) {
+        return context.getFrustumIntersection().testAab(mesh.getChunk().getMin(), mesh.getChunk().getMax());
+    }
+
+    private void preRender() {
         ShaderProgram chunkSolidShader = this.chunkSolidShader.getValue();
         ShaderManager.instance().bindShader(chunkSolidShader);
 
@@ -138,11 +125,9 @@ public class ChunkRenderer {
         glEnable(GL11.GL_TEXTURE_2D);
         glEnable(GL11.GL_DEPTH_TEST);
 
-        Matrix4fc projMatrix = context.getWindow().projection();
-        Matrix4f modelMatrix = new Matrix4f();
-        ShaderManager.instance().setUniform("u_ProjMatrix", projMatrix);
+        ShaderManager.instance().setUniform("u_ProjMatrix", context.getWindow().projection());
         ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
-        ShaderManager.instance().setUniform("u_ModelMatrix", modelMatrix);
+        ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
         ShaderManager.instance().setUniform("u_viewPos", context.getCamera().getPosition());
 
         context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).bind();
@@ -152,7 +137,7 @@ public class ChunkRenderer {
         mat.bind("material");
     }
 
-    private void postRenderChunk() {
+    private void postRender() {
         glBindTexture(GL_TEXTURE_2D, 0);
         glDisable(GL11.GL_CULL_FACE);
         glDisable(GL11.GL_TEXTURE_2D);
@@ -161,9 +146,8 @@ public class ChunkRenderer {
     }
 
     public void dispose() {
-        updateExecutor.shutdownNow();
-
-        loadedChunkMeshes.values().forEach(ChunkMesh::dispose);
+        clearChunkMeshes();
+        chunkBakeExecutor.shutdownNow();
 
         ShaderManager.instance().unregisterShader("chunk_solid");
         ShaderManager.instance().unregisterShader("assimp_model");
@@ -171,18 +155,18 @@ public class ChunkRenderer {
         game.getEventBus().unregister(this);
     }
 
-    public void upload(ChunkMesh chunkMesh, GLBuffer buffer) {
-        ByteBuffer finalBuffer = BufferUtils.createByteBuffer(buffer.getBackingBuffer().limit());
-        finalBuffer.put(buffer.getBackingBuffer());
-        finalBuffer.flip();
-        uploadTasks.add(new UploadTask(chunkMesh, finalBuffer, buffer.getVertexCount()));
-
-        if (chunkMesh.isDirty()) {
-            addBakeChunkTask(chunkMesh);
-        }
+    public GLBufferPool getBufferPool() {
+        return bufferPool;
     }
 
-    public void handleUploadTask() {
+    public void uploadChunk(ChunkMesh chunkMesh, GLBuffer buffer) {
+        uploadTasks.add(() -> {
+            chunkMesh.upload(buffer);
+            bufferPool.free(buffer);
+        });
+    }
+
+    private void runUploadTasks() {
         Runnable runnable;
         while ((runnable = uploadTasks.poll()) != null) {
             runnable.run();
@@ -191,24 +175,16 @@ public class ChunkRenderer {
 
     @Listener
     public void onChunkLoad(ChunkLoadEvent event) {
-        // TODO: Fix it.
-        initChunkMesh(event.getChunk());
+        if (event.getChunk().getWorld() != world) {
+            return;
+        }
+
+        initChunk(event.getChunk());
     }
 
-    private void initChunkMesh(Chunk chunk) {
-        long chunkIndex = getChunkIndex(chunk);
-        loadedChunkMeshes.put(chunkIndex, new ChunkMesh(chunk));
-        markChunkMeshDirty(chunkIndex);
-    }
-
-    private void initWorld(World world) {
-        loadedChunkMeshes.values().forEach(ChunkMesh::dispose);
-        loadedChunkMeshes.clear();
-
-        uploadTasks.clear();
-
-        if(world != null)
-            world.getLoadedChunks().forEach(this::initChunkMesh);
+    @Listener
+    public void onPlayerControlEntity(PlayerControlEntityEvent.Post event) {
+        initWorld(event.getNewEntity().getWorld());
     }
 
     @Listener
@@ -217,51 +193,76 @@ public class ChunkRenderer {
         int chunkX = pos.x() >> BITS_X,
                 chunkY = pos.y() >> BITS_Y,
                 chunkZ = pos.z() >> BITS_Z;
-        markChunkMeshDirty(getChunkIndex(event.getPos()));
+        markChunkDirty(getChunkIndex(event.getPos()));
 
-        // Update neighbor chunks.
+        // Mark neighbor chunk dirty.
         int chunkW = pos.x() + 1 >> BITS_X;
         if (chunkW != chunkX) {
-            markChunkMeshDirty(getChunkIndex(chunkW, chunkY, chunkZ));
+            markChunkDirty(getChunkIndex(chunkW, chunkY, chunkZ));
         }
         chunkW = pos.x() - 1 >> BITS_X;
         if (chunkW != chunkX) {
-            markChunkMeshDirty(getChunkIndex(chunkW, chunkY, chunkZ));
+            markChunkDirty(getChunkIndex(chunkW, chunkY, chunkZ));
         }
         chunkW = pos.y() + 1 >> BITS_Y;
         if (chunkW != chunkY) {
-            markChunkMeshDirty(getChunkIndex(chunkX, chunkW, chunkZ));
+            markChunkDirty(getChunkIndex(chunkX, chunkW, chunkZ));
         }
         chunkW = pos.y() - 1 >> BITS_Y;
         if (chunkW != chunkY) {
-            markChunkMeshDirty(getChunkIndex(chunkX, chunkW, chunkZ));
+            markChunkDirty(getChunkIndex(chunkX, chunkW, chunkZ));
         }
         chunkW = pos.z() + 1 >> BITS_Z;
         if (chunkW != chunkZ) {
-            markChunkMeshDirty(getChunkIndex(chunkX, chunkY, chunkW));
+            markChunkDirty(getChunkIndex(chunkX, chunkY, chunkW));
         }
         chunkW = pos.z() - 1 >> BITS_Z;
         if (chunkW != chunkZ) {
-            markChunkMeshDirty(getChunkIndex(chunkX, chunkY, chunkW));
+            markChunkDirty(getChunkIndex(chunkX, chunkY, chunkW));
         }
     }
 
-    private void markChunkMeshDirty(long index) {
-        ChunkMesh chunkMesh = loadedChunkMeshes.get(index);
-        if (chunkMesh == null) {
-            context.getEngine().getCurrentGame().getWorld().getLoadedChunks().parallelStream().filter(chunk->getChunkIndex(chunk) == index).forEach(this::initChunkMesh);
+    private void initChunk(Chunk chunk) {
+        long chunkIndex = getChunkIndex(chunk);
+        loadedChunkMeshes.computeIfAbsent(chunkIndex, key -> new ChunkMesh(chunk));
+        markChunkDirty(chunkIndex);
+    }
+
+    private void initWorld(World world) {
+        if (this.world == world) {
             return;
         }
+
+        clearChunkMeshes();
+
+        this.world = world;
+        if (world == null) {
+            return;
+        }
+
+        world.getLoadedChunks().forEach(this::initChunk);
+    }
+
+    private void clearChunkMeshes() {
+        loadedChunkMeshes.values().forEach(ChunkMesh::dispose);
+        loadedChunkMeshes.clear();
+        uploadTasks.clear();
+    }
+
+    private void markChunkDirty(long index) {
+        ChunkMesh chunkMesh = loadedChunkMeshes.get(index);
+        if (chunkMesh == null) {
+            return;
+        }
+
         if (!chunkMesh.isDirty()) {
             chunkMesh.markDirty();
             addBakeChunkTask(chunkMesh);
-        } else {
-            chunkMesh.markDirty();
         }
     }
 
     private void addBakeChunkTask(ChunkMesh chunkMesh) {
-        updateExecutor.execute(new BakeChunkTask(this, chunkMesh, getDistanceSqChunkToCamera(chunkMesh.getChunk())));
+        chunkBakeExecutor.execute(new BakeChunkTask(this, chunkMesh, getDistanceSqChunkToCamera(chunkMesh.getChunk())));
     }
 
     private double getDistanceSqChunkToCamera(Chunk chunk) {
@@ -275,23 +276,5 @@ public class ChunkRenderer {
         double y = chunk.getMin().y() + 8 - position.y();
         double z = chunk.getMin().z() + 8 - position.z();
         return x * x + y * y + z * z;
-    }
-
-    private class UploadTask implements Runnable {
-
-        private final ChunkMesh chunkMesh;
-        private final ByteBuffer buffer;
-        private final int vertexCount;
-
-        public UploadTask(ChunkMesh chunkMesh, ByteBuffer buffer, int vertexCount) {
-            this.chunkMesh = chunkMesh;
-            this.buffer = buffer;
-            this.vertexCount = vertexCount;
-        }
-
-        @Override
-        public void run() {
-            chunkMesh.upload(buffer, vertexCount);
-        }
     }
 }

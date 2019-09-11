@@ -90,10 +90,9 @@ public class WorldCommon implements World, Runnable {
 
     @Deprecated
     public void playerJoin(Player player) {
-        // FIXME:
         var entity = new PlayerEntity(entities.size(), this);
-        player.controlEntity(entity);
         spawnEntity(entity);
+        player.controlEntity(entity);
         players.add(player);
     }
 

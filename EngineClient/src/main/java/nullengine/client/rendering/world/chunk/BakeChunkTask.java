@@ -25,7 +25,7 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
 
     @Override
     public void run() {
-        chunkMesh.startBake();
+        chunkMesh.clearDirty();
 
         Chunk chunk = chunkMesh.getChunk();
         if (chunk.isAirChunk()) {
@@ -35,7 +35,7 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
         ChunkCache chunkCache = createChunkCache(chunk.getWorld(), chunk);
         BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunk(chunk);
 
-        GLBuffer buffer = ((BakeChunkThread) Thread.currentThread()).getBuffer();
+        GLBuffer buffer = chunkRenderer.getBufferPool().get(0x200000);
         buffer.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
         while (blockPosIterator.hasNext()) {
             BlockPos pos = blockPosIterator.next();
@@ -47,8 +47,7 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
             });
         }
         buffer.finish();
-        chunkRenderer.upload(chunkMesh, buffer);
-        buffer.reset();
+        chunkRenderer.uploadChunk(chunkMesh, buffer);
     }
 
     private ChunkCache createChunkCache(World world, Chunk chunk) {

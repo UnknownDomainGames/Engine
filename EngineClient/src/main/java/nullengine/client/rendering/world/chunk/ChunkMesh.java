@@ -2,16 +2,16 @@ package nullengine.client.rendering.world.chunk;
 
 import nullengine.client.rendering.shader.ShaderProgram;
 import nullengine.client.rendering.util.VertexBufferObject;
+import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.util.disposer.Disposable;
 import nullengine.world.chunk.Chunk;
 import org.lwjgl.opengl.GL11;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChunkMesh implements Disposable {
 
-    private AtomicInteger changeCount = new AtomicInteger(0);
+    private AtomicInteger dirtyCount = new AtomicInteger(0);
 
     private VertexBufferObject chunkSolidVbo;
 
@@ -23,11 +23,11 @@ public class ChunkMesh implements Disposable {
         this.chunk = chunk;
     }
 
-    public void upload(ByteBuffer buffer, int vertexCount) {
+    public void upload(GLBuffer buffer) {
         if (chunkSolidVbo == null) {
             chunkSolidVbo = new VertexBufferObject();
         }
-        chunkSolidVbo.uploadData(buffer, vertexCount);
+        chunkSolidVbo.uploadData(buffer.getBackingBuffer(), buffer.getVertexCount());
     }
 
     public void render() {
@@ -57,15 +57,15 @@ public class ChunkMesh implements Disposable {
     }
 
     public void markDirty() {
-        changeCount.getAndIncrement();
+        dirtyCount.getAndIncrement();
     }
 
     public boolean isDirty() {
-        return changeCount.get() != 0;
+        return dirtyCount.get() != 0;
     }
 
-    public void startBake() {
-        changeCount.set(0);
+    public void clearDirty() {
+        dirtyCount.set(0);
     }
 
     @Override

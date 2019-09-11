@@ -11,12 +11,6 @@ import java.util.Set;
 @ThreadSafe
 public abstract class GLBufferPool {
 
-    private static GLBufferPool DEFAULT_DIRECT_BUFFER_POOL = createDirectBufferPool();
-
-    public static GLBufferPool getDefaultDirectBufferPool() {
-        return DEFAULT_DIRECT_BUFFER_POOL;
-    }
-
     public static GLBufferPool createHeapBufferPool() {
         return new HeapBufferPool();
     }
