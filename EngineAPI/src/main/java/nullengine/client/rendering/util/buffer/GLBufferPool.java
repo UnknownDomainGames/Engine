@@ -2,18 +2,19 @@ package nullengine.client.rendering.util.buffer;
 
 import com.google.common.collect.Sets;
 
-import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
-@NotThreadSafe
+@ThreadSafe
 public abstract class GLBufferPool {
-    private static GLBufferPool DEFAULT_HEAP_BUFFER_POOL = createHeapBufferPool();
 
-    public static GLBufferPool getDefaultHeapBufferPool() {
-        return DEFAULT_HEAP_BUFFER_POOL;
+    private static GLBufferPool DEFAULT_DIRECT_BUFFER_POOL = createDirectBufferPool();
+
+    public static GLBufferPool getDefaultDirectBufferPool() {
+        return DEFAULT_DIRECT_BUFFER_POOL;
     }
 
     public static GLBufferPool createHeapBufferPool() {
@@ -32,17 +33,19 @@ public abstract class GLBufferPool {
     }
 
     public GLBuffer get(int capacity) {
-        if (!availableBuffers.isEmpty()) {
-            for (GLBuffer byteBuffer : availableBuffers) {
-                if (byteBuffer.getBackingBuffer().capacity() >= capacity) {
-                    availableBuffers.remove(byteBuffer);
-                    return byteBuffer;
+        synchronized (availableBuffers) {
+            if (!availableBuffers.isEmpty()) {
+                for (GLBuffer buffer : availableBuffers) {
+                    if (buffer.getBackingBuffer().capacity() >= capacity) {
+                        availableBuffers.remove(buffer);
+                        return buffer;
+                    }
                 }
             }
         }
-        GLBuffer byteBuffer = createBuffer(capacity);
-        buffers.add(byteBuffer);
-        return byteBuffer;
+        GLBuffer buffer = createBuffer(capacity);
+        buffers.add(buffer);
+        return buffer;
     }
 
     protected abstract GLBuffer createBuffer(int capacity);
@@ -52,11 +55,15 @@ public abstract class GLBufferPool {
             throw new IllegalArgumentException("The buffer doesn't belong to this pool.");
         }
         buffer.reset();
-        availableBuffers.offer(buffer);
+        synchronized (availableBuffers) {
+            availableBuffers.offer(buffer);
+        }
     }
 
     public void clear() {
-        availableBuffers.clear();
+        synchronized (availableBuffers) {
+            availableBuffers.clear();
+        }
         buffers.clear();
     }
 
