@@ -6,18 +6,12 @@ import nullengine.math.Math2;
 import javax.annotation.concurrent.ThreadSafe;
 import java.nio.ByteBuffer;
 import java.util.Comparator;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
 
 @ThreadSafe
 public abstract class BufferPool {
-
-    private static BufferPool DEFAULT_HEAP_BUFFER_POOL = createHeapBufferPool();
-
-    public static BufferPool getDefaultHeapBufferPool() {
-        return DEFAULT_HEAP_BUFFER_POOL;
-    }
 
     public static BufferPool createHeapBufferPool() {
         return new HeapBufferPool();
@@ -28,14 +22,16 @@ public abstract class BufferPool {
     }
 
     private final Set<ByteBuffer> buffers = Sets.newConcurrentHashSet();
-    private final BlockingQueue<ByteBuffer> availableBuffers = new PriorityBlockingQueue<>(11, Comparator.comparingInt(o -> -o.capacity()));
+    private final Queue<ByteBuffer> availableBuffers = new PriorityQueue<>(11, Comparator.comparingInt(o -> -o.capacity()));
 
     public ByteBuffer get(int capacity) {
-        if (!availableBuffers.isEmpty()) {
-            for (ByteBuffer byteBuffer : availableBuffers) {
-                if (byteBuffer.capacity() >= capacity) {
-                    availableBuffers.remove(byteBuffer);
-                    return byteBuffer;
+        synchronized (availableBuffers) {
+            if (!availableBuffers.isEmpty()) {
+                for (ByteBuffer byteBuffer : availableBuffers) {
+                    if (byteBuffer.capacity() >= capacity) {
+                        availableBuffers.remove(byteBuffer);
+                        return byteBuffer;
+                    }
                 }
             }
         }
@@ -51,7 +47,9 @@ public abstract class BufferPool {
             throw new IllegalArgumentException("The buffer doesn't belong to this pool.");
         }
         buffer.clear();
-        availableBuffers.offer(buffer);
+        synchronized (availableBuffers) {
+            availableBuffers.offer(buffer);
+        }
     }
 
     public void clear() {
