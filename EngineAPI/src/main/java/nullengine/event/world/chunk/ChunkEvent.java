@@ -1,8 +1,9 @@
 package nullengine.event.world.chunk;
 
+import nullengine.event.Event;
 import nullengine.world.chunk.Chunk;
 
-public abstract class ChunkEvent {
+public abstract class ChunkEvent implements Event {
 
     private final Chunk chunk;
 
