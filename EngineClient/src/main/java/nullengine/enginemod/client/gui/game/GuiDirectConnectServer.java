@@ -1,6 +1,7 @@
 package nullengine.enginemod.client.gui.game;
 
 import nullengine.Platform;
+import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.component.Button;
 import nullengine.client.gui.component.Label;
@@ -50,5 +51,10 @@ public class GuiDirectConnectServer extends BorderPane {
         hbox.getChildren().addAll(butConnect, butBack);
         vbox.getChildren().addAll(label1,lblAddress,txtboxAddress, hbox);
         background().setValue(Background.fromColor(Color.fromRGB(0x7f7f7f)));
+    }
+
+    @Override
+    public void doClosing(GuiManager manager) {
+        manager.showLastScreen();
     }
 }

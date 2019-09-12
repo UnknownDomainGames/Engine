@@ -176,4 +176,8 @@ public abstract class Container extends Component {
     public void requireClose() {
         closeRequired = true;
     }
+
+    public void doClosing(GuiManager manager){
+        manager.closeScreen();
+    }
 }

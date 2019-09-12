@@ -65,7 +65,7 @@ public class GuiRenderer implements Renderer {
             }
         }
         if(guiManager.isDisplayingScreen() && guiManager.getDisplayingScreen().getRoot().closeRequired()){
-            guiManager.showLastScreen();
+            guiManager.getDisplayingScreen().getRoot().doClosing(guiManager);
         }
         if (guiManager.isDisplayingScreen()) {
             startRenderFlag();
