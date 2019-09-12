@@ -88,7 +88,17 @@ public class WorldClient implements World, Runnable {
     }
 
     @Override
+    public <T extends Entity> T spawnEntity(Class<T> entityType, double x, double y, double z) {
+        return null;
+    }
+
+    @Override
     public <T extends Entity> T spawnEntity(Class<T> entityType, Vector3dc position) {
+        return null;
+    }
+
+    @Override
+    public Entity spawnEntity(String providerName, double x, double y, double z) {
         return null;
     }
 

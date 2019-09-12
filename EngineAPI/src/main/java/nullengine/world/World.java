@@ -38,9 +38,13 @@ public interface World extends BlockGetter, BlockSetter {
 
     WorldEntityManager getEntityManager();
 
+    <T extends Entity> T spawnEntity(Class<T> entityType, double x, double y, double z);
+
     <T extends Entity> T spawnEntity(Class<T> entityType, Vector3dc position);
 
-    Entity spawnEntity(String provider, Vector3dc position);
+    Entity spawnEntity(String providerName, double x, double y, double z);
+
+    Entity spawnEntity(String providerName, Vector3dc position);
 
     Collection<Entity> getEntities();
 

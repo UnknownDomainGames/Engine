@@ -117,17 +117,9 @@ public class WorldCommon implements World, Runnable {
         return entityManager;
     }
 
-    protected void tick() {
-        if (nextTick.size() != 0) {
-            for (Runnable tick : nextTick) { // TODO: limit time
-                tick.run();
-            }
-        }
-        physicsSystem.tick(this);
-        tickEntityMotion();
-        tickChunks();
-        entityManager.tick();
-        gameTick++;
+    @Override
+    public <T extends Entity> T spawnEntity(Class<T> entityType, double x, double y, double z) {
+        return entityManager.spawnEntity(entityType, x, y, z);
     }
 
     @Override
@@ -141,8 +133,21 @@ public class WorldCommon implements World, Runnable {
     }
 
     @Override
+    public Entity spawnEntity(String providerName, double x, double y, double z) {
+        return entityManager.spawnEntity(providerName, x, y, z);
+    }
+
+    @Override
     public Entity spawnEntity(String provider, Vector3dc position) {
         return entityManager.spawnEntity(provider, position);
+    }
+
+    protected void tick() {
+        physicsSystem.tick(this);
+        tickEntityMotion();
+        tickChunks();
+        entityManager.tick();
+        gameTick++;
     }
 
     protected void tickChunks() {
