@@ -3,7 +3,6 @@ package nullengine.entity;
 import nullengine.registry.RegistryEntry;
 import nullengine.world.World;
 import org.apache.commons.lang3.Validate;
-import org.joml.Vector3dc;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -32,8 +31,8 @@ public class EntityProvider extends RegistryEntry.Impl<EntityProvider> {
         return serializer;
     }
 
-    public Entity createEntity(int id, World world, Vector3dc position) {
-        return factory.create(id, world, position);
+    public Entity createEntity(int id, World world, double x, double y, double z) {
+        return factory.create(id, world, x, y, z);
     }
 
     public Entity load(World world, DataInputStream dis) {

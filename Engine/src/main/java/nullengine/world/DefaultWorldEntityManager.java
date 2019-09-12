@@ -33,20 +33,30 @@ public class DefaultWorldEntityManager implements WorldEntityManager, Tickable {
     }
 
     @Override
-    public <T extends Entity> T spawnEntity(Class<T> entityType, Vector3dc position) {
+    public <T extends Entity> T spawnEntity(Class<T> entityType, double x, double y, double z) {
         var provider = Registries.getEntityRegistry().getValue(entityType);
-        return (T) spawnEntity(provider, position);
+        return (T) spawnEntity(provider, x, y, z);
+    }
+
+    @Override
+    public <T extends Entity> T spawnEntity(Class<T> entityType, Vector3dc position) {
+        return spawnEntity(entityType, position.x(), position.y(), position.z());
+    }
+
+    @Override
+    public Entity spawnEntity(String providerName, double x, double y, double z) {
+        var provider = Registries.getEntityRegistry().getValue(providerName);
+        return spawnEntity(provider, x, y, z);
     }
 
     @Override
     public Entity spawnEntity(String providerName, Vector3dc position) {
-        var provider = Registries.getEntityRegistry().getValue(providerName);
-        return spawnEntity(provider, position);
+        return spawnEntity(providerName, position.x(), position.y(), position.z());
     }
 
-    private Entity spawnEntity(EntityProvider provider, Vector3dc position) {
+    private Entity spawnEntity(EntityProvider provider, double x, double y, double z) {
         Validate.notNull(provider, "Entity provider is not found");
-        return spawnEntity(provider.createEntity(nextId.getAndIncrement(), world, position));
+        return spawnEntity(provider.createEntity(nextId.getAndIncrement(), world, x, y, z));
     }
 
     private Entity spawnEntity(Entity entity) {

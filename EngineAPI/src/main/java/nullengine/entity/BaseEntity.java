@@ -5,7 +5,6 @@ import nullengine.component.ComponentContainer;
 import nullengine.world.World;
 import org.joml.AABBd;
 import org.joml.Vector3d;
-import org.joml.Vector3dc;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
@@ -28,13 +27,13 @@ public abstract class BaseEntity implements Entity {
 
     private final ComponentContainer components;
 
-    public BaseEntity(int id, World world, Vector3dc position) {
+    public BaseEntity(int id, World world, double x, double y, double z) {
         this.provider = null; // TODO:
         this.uniqueId = UUID.randomUUID();
         this.id = id;
         this.world = world;
         this.components = new ComponentContainer();
-        this.position.set(position);
+        this.position.set(x, y, z);
     }
 
     @Nonnull

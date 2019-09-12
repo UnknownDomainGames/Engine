@@ -3,14 +3,13 @@ package nullengine.entity.item;
 import nullengine.entity.BaseEntity;
 import nullengine.item.ItemStack;
 import nullengine.world.World;
-import org.joml.Vector3dc;
 
 public class ItemEntity extends BaseEntity {
 
     private ItemStack itemStack;
 
-    public ItemEntity(int id, World world, Vector3dc position) {
-        super(id, world, position);
+    public ItemEntity(int id, World world, double x, double y, double z) {
+        super(id, world, x, y, z);
     }
 
     public ItemStack getItemStack() {
