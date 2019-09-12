@@ -2,6 +2,7 @@ package nullengine.client.rendering;
 
 import nullengine.client.EngineClient;
 import nullengine.client.asset.AssetType;
+import nullengine.client.event.rendering.CameraChangeEvent;
 import nullengine.client.gui.EngineGuiManager;
 import nullengine.client.gui.GuiManager;
 import nullengine.client.rendering.camera.Camera;
@@ -29,7 +30,12 @@ import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static org.apache.commons.lang3.Validate.notNull;
 
 public class EngineRenderManager implements RenderManager {
 
@@ -131,7 +137,12 @@ public class EngineRenderManager implements RenderManager {
 
     @Override
     public void setCamera(@Nonnull Camera camera) {
-        this.camera = Objects.requireNonNull(camera);
+        if (this.camera == camera) {
+            return;
+        }
+
+        this.camera = notNull(camera);
+        getEngine().getEventBus().post(new CameraChangeEvent(camera));
     }
 
     @Override
