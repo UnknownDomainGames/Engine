@@ -2,6 +2,7 @@ package nullengine.world;
 
 import nullengine.entity.Entity;
 import nullengine.entity.EntityProvider;
+import nullengine.event.entity.EntityCreateEvent;
 import nullengine.event.entity.EntitySpawnEvent;
 import nullengine.logic.Tickable;
 import nullengine.registry.Registries;
@@ -56,21 +57,23 @@ public class DefaultWorldEntityManager implements WorldEntityManager, Tickable {
 
     private Entity spawnEntity(EntityProvider provider, double x, double y, double z) {
         Validate.notNull(provider, "Entity provider is not found");
-        return spawnEntity(provider.createEntity(nextId.getAndIncrement(), world, x, y, z));
+        var entity = provider.createEntity(nextId.getAndIncrement(), world, x, y, z);
+        world.getGame().getEventBus().post(new EntityCreateEvent(entity));
+        spawnEntity(entity);
+        return entity;
     }
 
-    private Entity spawnEntity(Entity entity) {
+    private void spawnEntity(Entity entity) {
         if (entities.contains(entity)) {
-            return entity;
+            return;
         }
 
         var event = new EntitySpawnEvent.Pre(entity);
         if (world.getGame().getEventBus().post(event)) {
-            return entity;
+            return;
         }
         entities.add(entity);
         world.getGame().getEventBus().post(new EntitySpawnEvent.Post(entity));
-        return entity;
     }
 
 
