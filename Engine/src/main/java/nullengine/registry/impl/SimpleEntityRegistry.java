@@ -4,7 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import nullengine.entity.Entity;
 import nullengine.entity.EntityProvider;
-import nullengine.registry.Name;
 import nullengine.registry.RegistrationException;
 import nullengine.registry.game.EntityRegistry;
 
@@ -13,9 +12,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public class SimpleEntityRegistry implements EntityRegistry {
+public class SimpleEntityRegistry extends IdAutoIncreaseRegistry<EntityProvider> implements EntityRegistry {
 
     protected final BiMap<Class<? extends Entity>, EntityProvider> clazzToObject = HashBiMap.create();
+
+    public SimpleEntityRegistry() {
+        super(EntityProvider.class, "entity");
+    }
 
     @Override
     public <T extends Entity> EntityProvider getValue(Class<T> clazz) {
@@ -39,88 +42,12 @@ public class SimpleEntityRegistry implements EntityRegistry {
 
     @Nonnull
     @Override
-    public Class<EntityProvider> getEntryType() {
-        return EntityProvider.class;
-    }
-
-    @Nonnull
-    @Override
-    public String getRegistryName() {
-        return "entity";
-    }
-
-    @Nonnull
-    @Override
     public EntityProvider register(@Nonnull EntityProvider obj) throws RegistrationException {
         if (containsKey(obj.getEntityType())) {
             throw new RegistrationException(String.format("Entity with class %s has already registered!", obj.getEntityType().getName()));
         }
+        super.register(obj);
         clazzToObject.put(obj.getEntityType(), obj);
         return obj;
-    }
-
-    @Override
-    public boolean containsValue(EntityProvider value) {
-        return clazzToObject.containsValue(value);
-    }
-
-    @Override
-    public EntityProvider getValue(String key) {
-        return null;
-    }
-
-    @Override
-    public EntityProvider getValue(Name key) {
-        return null;
-    }
-
-    @Override
-    public boolean containsKey(String key) {
-        return false;
-    }
-
-    @Override
-    public boolean containsKey(Name key) {
-        return false;
-    }
-
-    @Override
-    public Collection<EntityProvider> getValues() {
-        return clazzToObject.values();
-    }
-
-    @Override
-    public Set<String> getKeys() {
-        return null;
-    }
-
-    @Override
-    public int getId(EntityProvider obj) {
-        return 0;
-    }
-
-    @Override
-    public int getId(String key) {
-        return 0;
-    }
-
-    @Override
-    public int getId(Name key) {
-        return 0;
-    }
-
-    @Override
-    public Name getKey(int id) {
-        return null;
-    }
-
-    @Override
-    public EntityProvider getValue(int id) {
-        return null;
-    }
-
-    @Override
-    public Collection<Map.Entry<String, EntityProvider>> getEntries() {
-        return null;
     }
 }

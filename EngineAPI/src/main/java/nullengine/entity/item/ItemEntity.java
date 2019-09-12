@@ -9,14 +9,8 @@ public class ItemEntity extends BaseEntity {
 
     private ItemStack itemStack;
 
-    public ItemEntity(int id, World world, ItemStack itemStack) {
-        super(id, world);
-        this.itemStack = itemStack;
-    }
-
-    public ItemEntity(int id, World world, Vector3dc position, ItemStack itemStack) {
+    public ItemEntity(int id, World world, Vector3dc position) {
         super(id, world, position);
-        this.itemStack = itemStack;
     }
 
     public ItemStack getItemStack() {

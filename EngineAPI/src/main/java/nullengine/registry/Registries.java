@@ -1,9 +1,11 @@
 package nullengine.registry;
 
 import nullengine.block.Block;
+import nullengine.entity.EntityProvider;
 import nullengine.exception.UninitializationException;
 import nullengine.item.Item;
 import nullengine.registry.game.BlockRegistry;
+import nullengine.registry.game.EntityRegistry;
 import nullengine.registry.game.ItemRegistry;
 import nullengine.util.function.Suppliers;
 import nullengine.world.WorldProvider;
@@ -16,6 +18,7 @@ public final class Registries {
     private static Supplier<Registry<WorldProvider>> worldProviderRegistry = UninitializationException.supplier("WorldProvider registry is uninitialized");
     private static Supplier<BlockRegistry> blockRegistry = UninitializationException.supplier("Block registry is uninitialized");
     private static Supplier<ItemRegistry> itemRegistry = UninitializationException.supplier("Item registry is uninitialized");
+    private static Supplier<EntityRegistry> entityRegistry = UninitializationException.supplier("Entity registry is uninitialized");
 
     public static RegistryManager getRegistryManager() {
         return registryManager.get();
@@ -33,11 +36,16 @@ public final class Registries {
         return itemRegistry.get();
     }
 
+    public static EntityRegistry getEntityRegistry() {
+        return entityRegistry.get();
+    }
+
     public static void init(RegistryManager registryManager) {
         Registries.registryManager = Suppliers.ofWeakReference(registryManager);
         worldProviderRegistry = Suppliers.ofWeakReference(registryManager.getRegistry(WorldProvider.class).orElseThrow());
         blockRegistry = Suppliers.ofWeakReference((BlockRegistry) registryManager.getRegistry(Block.class).orElseThrow());
         itemRegistry = Suppliers.ofWeakReference((ItemRegistry) registryManager.getRegistry(Item.class).orElseThrow());
+        entityRegistry = Suppliers.ofWeakReference((EntityRegistry) registryManager.getRegistry(EntityProvider.class).orElseThrow());
     }
 
     private Registries() {

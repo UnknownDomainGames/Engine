@@ -3,15 +3,15 @@ package nullengine.enginemod;
 import nullengine.Platform;
 import nullengine.block.AirBlock;
 import nullengine.block.Block;
+import nullengine.entity.CameraEntity;
 import nullengine.entity.EntityProvider;
+import nullengine.entity.item.ItemEntity;
 import nullengine.event.Listener;
 import nullengine.event.mod.ModLifecycleEvent;
 import nullengine.event.mod.ModRegistrationEvent;
 import nullengine.item.Item;
-import nullengine.registry.Registry;
 import nullengine.registry.game.BlockRegistry;
 import nullengine.registry.impl.*;
-import nullengine.server.event.PacketReceivedEvent;
 import nullengine.server.network.packet.*;
 import nullengine.world.WorldProvider;
 
@@ -36,6 +36,12 @@ public final class EngineModListeners {
     public static void registerBlocks(ModRegistrationEvent.Register<Block> event) {
         event.register(AirBlock.AIR);
         ((BlockRegistry) event.getRegistry()).setAirBlock(AirBlock.AIR);
+    }
+
+    @Listener
+    public static void registerEntities(ModRegistrationEvent.Register<EntityProvider> event) {
+        event.register(new EntityProvider(CameraEntity.class, CameraEntity::new, null).name("camera"));
+        event.register(new EntityProvider(ItemEntity.class, ItemEntity::new, null).name("item"));
     }
 
     @Listener

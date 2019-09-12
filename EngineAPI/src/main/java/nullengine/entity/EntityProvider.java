@@ -2,6 +2,7 @@ package nullengine.entity;
 
 import nullengine.registry.RegistryEntry;
 import nullengine.world.World;
+import org.apache.commons.lang3.Validate;
 import org.joml.Vector3dc;
 
 import java.io.DataInputStream;
@@ -14,8 +15,8 @@ public class EntityProvider extends RegistryEntry.Impl<EntityProvider> {
     private final EntitySerializer serializer;
 
     public EntityProvider(Class<? extends Entity> entityType, EntityFactory factory, EntitySerializer serializer) {
-        this.entityType = entityType;
-        this.factory = factory;
+        this.entityType = Validate.notNull(entityType);
+        this.factory = Validate.notNull(factory);
         this.serializer = serializer;
     }
 
@@ -31,8 +32,8 @@ public class EntityProvider extends RegistryEntry.Impl<EntityProvider> {
         return serializer;
     }
 
-    public Entity createEntity(World world, Vector3dc position) {
-        return factory.create(world, position);
+    public Entity createEntity(int id, World world, Vector3dc position) {
+        return factory.create(id, world, position);
     }
 
     public Entity load(World world, DataInputStream dis) {
