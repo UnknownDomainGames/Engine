@@ -1,19 +1,14 @@
 package nullengine.client.rendering.display;
 
 import nullengine.Platform;
+import nullengine.client.rendering.RenderManager;
 import nullengine.util.RuntimeEnvironment;
 import org.apache.commons.lang3.SystemUtils;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.system.MemoryStack;
 
-import java.io.PrintStream;
-import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 import static org.lwjgl.glfw.GLFW.*;
@@ -24,13 +19,15 @@ public class GLFWWindow implements Window {
 
     private long pointer;
 
+    private int posX;
+    private int posY;
+
     private int windowWidth;
     private int windowHeight;
     private int fboWidth;
     private int fboHeight;
 
-    private float contentScaleX;
-    private float contentScaleY;
+    private Monitor monitor;
 
     private boolean resized = false;
     private Matrix4f projection;
@@ -53,8 +50,18 @@ public class GLFWWindow implements Window {
 
     public GLFWWindow(int width, int height, String title) {
         this.title = title;
-        this.windowWidth = width;
-        this.windowHeight = height;
+        this.fboWidth = width;
+        this.fboHeight = height;
+    }
+
+    @Override
+    public int getX() {
+        return posX;
+    }
+
+    @Override
+    public int getY() {
+        return posY;
     }
 
     @Override
@@ -68,34 +75,42 @@ public class GLFWWindow implements Window {
     }
 
     @Override
+    public Monitor getMonitor() {
+        return monitor;
+    }
+
+    @Override
+    public void setMonitor(Monitor monitor) {
+        if (this.monitor == monitor) return;
+        this.monitor = monitor;
+        resize(fboWidth, fboHeight);
+    }
+
+    @Override
     public float getContentScaleX() {
-        return contentScaleX;
+        return monitor.getScaleX();
     }
 
     @Override
     public float getContentScaleY() {
-        return contentScaleY;
+        return monitor.getScaleY();
     }
 
     @Override
     public void setSize(int width, int height) {
-        this.fboWidth = width;
-        this.fboHeight = height;
-        try (MemoryStack memoryStack = MemoryStack.stackPush()) {
-            FloatBuffer f1 = memoryStack.mallocFloat(1);
-            FloatBuffer f2 = memoryStack.mallocFloat(1);
+        resize();
+    }
 
-            glfwGetWindowContentScale(pointer, f1, f2);
+    protected void resize() {
+        resize(fboWidth, fboHeight);
+    }
 
-            if (contentScaleX != f1.get(0) || contentScaleY != f2.get(0)) {
-                contentScaleX = f1.get(0);
-                contentScaleY = f2.get(0);
-            }
-        }
-        this.windowWidth = Math.round(width / contentScaleX);
-        this.windowHeight = Math.round(height / contentScaleX);
-        this.resized = true;
-        glViewport(0, 0, width, height);
+    protected void resize(int width, int height) {
+        resized = true;
+        fboWidth = width;
+        fboHeight = height;
+        windowWidth = Math.round(width * getContentScaleX());
+        windowHeight = Math.round(height * getContentScaleY());
     }
 
     @Override
@@ -118,6 +133,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void setTitle(String title) {
+        this.title = title;
         glfwSetWindowTitle(pointer, title);
     }
 
@@ -214,6 +230,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void close() {
+        if (closed) return;
         closed = true;
         glfwDestroyWindow(pointer);
     }
@@ -246,7 +263,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public boolean isVisible() {
-        return false;
+        return visible;
     }
 
     @Override
@@ -261,21 +278,12 @@ public class GLFWWindow implements Window {
     }
 
     public void init() {
-        initErrorCallback(System.err);
-        if (!glfwInit())
-            throw new IllegalStateException("Unable to initialize GLFW");
+        setMonitor(RenderManager.instance().getDisplayInfo().getPrimaryMonitor());
+        resize();
         initWindowHint();
         pointer = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
         if (!checkCreated())
             throw new RuntimeException("Failed to parse the GLFW window");
-        long monitor = glfwGetPrimaryMonitor();
-        try (MemoryStack memoryStack = MemoryStack.stackPush()) {
-            FloatBuffer f1 = memoryStack.mallocFloat(1);
-            FloatBuffer f2 = memoryStack.mallocFloat(1);
-            glfwGetMonitorContentScale(monitor, f1, f2);
-            contentScaleX = f1.get(0);
-            contentScaleY = f2.get(0);
-        }
         initCallbacks();
         setWindowPosCenter();
         glfwMakeContextCurrent(pointer);
@@ -285,7 +293,7 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public DisplayMode getDisplayMode(){
+    public DisplayMode getDisplayMode() {
         return displayMode;
     }
 
@@ -294,36 +302,29 @@ public class GLFWWindow implements Window {
     @Override
     public void setDisplayMode(DisplayMode displayMode) {
         if (this.displayMode == displayMode) return;
-        var mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         switch (displayMode) {
             case FULLSCREEN:
-                if(this.displayMode == DisplayMode.WINDOWED){
-                    int[] a = new int[1], b = new int[1];
-                    glfwGetWindowPos(pointer, a, b);
-                    lastPosX = a[0];
-                    lastPosY = b[0];
-                    glfwGetWindowSize(pointer, a, b);
-                    lastWidth = a[0];
-                    lastHeight = b[0];
+                if (this.displayMode == DisplayMode.WINDOWED) {
+                    lastPosX = posX;
+                    lastPosY = posY;
+                    lastWidth = windowWidth;
+                    lastHeight = windowHeight;
                 }
-                glfwSetWindowMonitor(pointer, getCurrentMonitor(), 0, 0, mode.width(), mode.height(), mode.refreshRate());
+                glfwSetWindowMonitor(pointer, monitor.getPointer(), 0, 0, monitor.getWidth(), monitor.getHeight(), monitor.getRefreshRate());
                 break;
             case WINDOWED_FULLSCREEN:
-                if(this.displayMode == DisplayMode.WINDOWED){
-                    int[] a = new int[1], b = new int[1];
-                    glfwGetWindowPos(pointer, a, b);
-                    lastPosX = a[0];
-                    lastPosY = b[0];
-                    glfwGetWindowSize(pointer, a, b);
-                    lastWidth = a[0];
-                    lastHeight = b[0];
+                if (this.displayMode == DisplayMode.WINDOWED) {
+                    lastPosX = posX;
+                    lastPosY = posY;
+                    lastWidth = windowWidth;
+                    lastHeight = windowHeight;
                 }
                 glfwSetWindowAttrib(pointer, GLFW_DECORATED, GL_FALSE);
-                glfwSetWindowMonitor(pointer, NULL, 0, 0, mode.width(), mode.height(), mode.refreshRate());
+                glfwSetWindowMonitor(pointer, NULL, 0, 0, monitor.getWidth(), monitor.getHeight(), monitor.getRefreshRate());
                 break;
             case WINDOWED:
                 glfwSetWindowAttrib(pointer, GLFW_DECORATED, GL_TRUE);
-                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, lastWidth, lastHeight, mode.refreshRate());
+                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, lastWidth, lastHeight, monitor.getRefreshRate());
         }
         this.displayMode = displayMode;
     }
@@ -343,7 +344,11 @@ public class GLFWWindow implements Window {
     }
 
     private void initCallbacks() {
-        glfwSetFramebufferSizeCallback(pointer, (window, width, height) -> setSize(width, height));
+        glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> {
+            posX = xpos;
+            posY = ypos;
+        });
+        glfwSetFramebufferSizeCallback(pointer, (window, width, height) -> resize(width, height));
     }
 
     private void initWindowHint() {
@@ -364,45 +369,11 @@ public class GLFWWindow implements Window {
         }
     }
 
-    private void initErrorCallback(PrintStream stream) {
-        GLFWErrorCallback.createPrint(stream).set();
-    }
-
     private void setWindowPosCenter() {
-        GLFWVidMode vidmode = Objects.requireNonNull(glfwGetVideoMode(glfwGetPrimaryMonitor()));
-        // Center our window
-        glfwSetWindowPos(pointer, (vidmode.width() - windowWidth) / 2, (vidmode.height() - windowHeight) / 2);
+        glfwSetWindowPos(pointer, (monitor.getWidth() - windowWidth) / 2, (monitor.getHeight() - windowHeight) / 2);
     }
 
     private void enableVSync() {
         glfwSwapInterval(1);
-    }
-
-    public long getCurrentMonitor(){
-        int[] a = new int[1], b = new int[1];
-        org.lwjgl.glfw.GLFW.glfwGetWindowPos(getPointer(), a, b);
-        var wx = a[0];
-        var wy = b[0];
-        org.lwjgl.glfw.GLFW.glfwGetWindowSize(getPointer(), a, b);
-        var ww = a[0];
-        var wh = b[0];
-        var monitors = glfwGetMonitors();
-        var bestOverlap = 0;
-        var bestMonitor = NULL;
-        for(int i = 0; i < monitors.limit(); i++){
-            var mode = glfwGetVideoMode(monitors.get(i));
-            glfwGetMonitorPos(monitors.get(i), a,b);
-            var mx = a[0];
-            var my = b[0];
-            var mw = mode.width();
-            var mh = mode.height();
-            var overlap = Math.max(0, Math.min(wx + ww, mx + mw) - Math.max(wx, mx)) *
-                            Math.max(0, Math.min(wy + wh, my + mh) - Math.max(wy, my));
-            if(bestOverlap < overlap){
-                bestOverlap = overlap;
-                bestMonitor = monitors.get(i);
-            }
-        }
-        return bestMonitor;
     }
 }

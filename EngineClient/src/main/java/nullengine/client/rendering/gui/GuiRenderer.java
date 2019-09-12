@@ -64,7 +64,7 @@ public class GuiRenderer implements Renderer {
                 renderScene(scene);
             }
         }
-        if(guiManager.isDisplayingScreen() && guiManager.getDisplayingScreen().getRoot().closeRequired()){
+        if (guiManager.isDisplayingScreen() && guiManager.getDisplayingScreen().getRoot().closeRequired()) {
             guiManager.getDisplayingScreen().getRoot().doClosing(guiManager);
         }
         if (guiManager.isDisplayingScreen()) {
@@ -80,6 +80,10 @@ public class GuiRenderer implements Renderer {
     }
 
     private void startRender() {
+        if (window.isResized()) {
+            glViewport(0, 0, window.getWidth(), window.getHeight());
+        }
+
         ShaderManager.instance().bindShader(shader.getValue());
 
         startRenderFlag();

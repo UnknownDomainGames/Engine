@@ -7,6 +7,8 @@ import nullengine.client.gui.EngineGuiManager;
 import nullengine.client.gui.GuiManager;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.camera.FixedCamera;
+import nullengine.client.rendering.display.DisplayInfo;
+import nullengine.client.rendering.display.GLFWDisplayInfo;
 import nullengine.client.rendering.display.GLFWWindow;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.Font;
@@ -24,6 +26,7 @@ import nullengine.component.ComponentContainer;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.slf4j.Logger;
@@ -36,6 +39,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.apache.commons.lang3.Validate.notNull;
+import static org.lwjgl.glfw.GLFW.glfwInit;
 
 public class EngineRenderManager implements RenderManager {
 
@@ -54,6 +58,7 @@ public class EngineRenderManager implements RenderManager {
     private GLFWWindow window;
     private EngineTextureManager textureManager;
     private GuiManager guiManager;
+    private DisplayInfo displayInfo;
     private GLInfo glInfo;
     private GPUMemoryInfo gpuMemoryInfo;
 
@@ -98,6 +103,11 @@ public class EngineRenderManager implements RenderManager {
     @Override
     public RenderScheduler getScheduler() {
         return scheduler;
+    }
+
+    @Override
+    public DisplayInfo getDisplayInfo() {
+        return displayInfo;
     }
 
     @Override
@@ -168,6 +178,7 @@ public class EngineRenderManager implements RenderManager {
         this.renderThread = renderThread;
 
         logger.info("Initializing window!");
+        initGLFW();
         window = new GLFWWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "");
         window.init();
         engine.addShutdownListener(window::dispose);
@@ -183,6 +194,14 @@ public class EngineRenderManager implements RenderManager {
         initRenderer();
 
         window.show();
+    }
+
+    private void initGLFW() {
+        logger.info("Initializing GLFW context!");
+        GLFWErrorCallback.createPrint(System.err).set();
+        if (!glfwInit())
+            throw new IllegalStateException("Unable to initialize GLFW");
+        displayInfo = new GLFWDisplayInfo();
     }
 
     private void initGL() {

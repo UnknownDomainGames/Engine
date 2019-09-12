@@ -184,12 +184,12 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     private void clientTick() {
-        if (isPlaying()) { // TODO: Remove it.
+        if (isPlaying()) {
+            keyBindingManager.tick();
             game.clientTick();
         }
 
         // TODO: Remove it.
-        keyBindingManager.tick();
         soundManager.updateListener(renderManager.getCamera());
 
         if (isMarkedTermination()) {

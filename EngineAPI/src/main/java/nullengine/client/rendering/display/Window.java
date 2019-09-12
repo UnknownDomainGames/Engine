@@ -1,18 +1,20 @@
 package nullengine.client.rendering.display;
 
 import org.joml.Matrix4fc;
-import org.lwjgl.glfw.GLFW;
-
-import java.awt.*;
-
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.system.MemoryUtil.NULL;
 
 public interface Window {
+
+    int getX();
+
+    int getY();
 
     int getWidth();
 
     int getHeight();
+
+    Monitor getMonitor();
+
+    void setMonitor(Monitor monitor);
 
     float getContentScaleX();
 
