@@ -2,7 +2,6 @@ package nullengine.world.chunk;
 
 import nullengine.block.AirBlock;
 import nullengine.block.Block;
-import nullengine.entity.Entity;
 import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.math.BlockPos;
 import nullengine.world.World;
@@ -10,8 +9,6 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BlankChunk implements Chunk {
 
@@ -22,8 +19,6 @@ public class BlankChunk implements Chunk {
 
     private final Vector3fc min;
     private final Vector3fc max;
-
-    private final List<Entity> entities = new ArrayList<>();
 
     public BlankChunk(World world, int chunkX, int chunkY, int chunkZ) {
         this.world = world;
@@ -65,13 +60,6 @@ public class BlankChunk implements Chunk {
     @Override
     public Vector3fc getMax() {
         return max;
-    }
-
-
-    @Nonnull
-    @Override
-    public List<Entity> getEntities() {
-        return entities;
     }
 
     @Override

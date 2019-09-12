@@ -1,18 +1,14 @@
 package nullengine.world.chunk;
 
 import nullengine.block.Block;
-import nullengine.entity.Entity;
 import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.math.BlockPos;
 import nullengine.registry.Registries;
 import nullengine.world.World;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ChunkImpl implements Chunk {
 
@@ -23,8 +19,6 @@ public class ChunkImpl implements Chunk {
 
     private final Vector3fc min;
     private final Vector3fc max;
-
-    private final List<Entity> entities = new ArrayList<>();
 
     private BlockStorage blockStorage;
     private int nonAirBlockCount = 0;
@@ -38,6 +32,7 @@ public class ChunkImpl implements Chunk {
         this.max = min.add(16, 16, 16, new Vector3f());
     }
 
+    @Nonnull
     @Override
     public World getWorld() {
         return world;
@@ -91,12 +86,6 @@ public class ChunkImpl implements Chunk {
     @Override
     public Block setBlock(BlockPos pos, Block block, BlockChangeCause cause) {
         return setBlock(pos.x(), pos.y(), pos.z(), block);
-    }
-
-    @NonNull
-    @Override
-    public List<Entity> getEntities() {
-        return entities;
     }
 
     protected Block setBlock(int x, int y, int z, Block block) {

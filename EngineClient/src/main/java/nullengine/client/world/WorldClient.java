@@ -8,13 +8,11 @@ import nullengine.game.Game;
 import nullengine.math.BlockPos;
 import nullengine.registry.Registries;
 import nullengine.server.network.NetworkHandler;
-import nullengine.world.World;
-import nullengine.world.WorldCreationSetting;
-import nullengine.world.WorldProvider;
-import nullengine.world.WorldSetting;
+import nullengine.world.*;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
 import nullengine.world.collision.WorldCollisionManager;
+import org.joml.Vector3dc;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -81,6 +79,21 @@ public class WorldClient implements World, Runnable {
 
     @Override
     public WorldCollisionManager getCollisionManager() {
+        return null;
+    }
+
+    @Override
+    public WorldEntityManager getEntityManager() {
+        return null;
+    }
+
+    @Override
+    public <T extends Entity> T spawnEntity(Class<T> entityType, Vector3dc position) {
+        return null;
+    }
+
+    @Override
+    public Entity spawnEntity(String provider, Vector3dc position) {
         return null;
     }
 

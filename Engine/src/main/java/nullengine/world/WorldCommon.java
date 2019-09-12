@@ -6,18 +6,15 @@ import nullengine.block.component.DestroyBehavior;
 import nullengine.block.component.NeighborChangeListener;
 import nullengine.block.component.PlaceBehavior;
 import nullengine.entity.Entity;
-import nullengine.entity.PlayerEntity;
 import nullengine.event.block.BlockChangeEvent;
 import nullengine.event.block.BlockDestroyEvent;
 import nullengine.event.block.BlockPlaceEvent;
 import nullengine.event.block.BlockReplaceEvent;
 import nullengine.event.block.cause.BlockChangeCause;
-import nullengine.event.entity.EntitySpawnEvent;
 import nullengine.game.Game;
 import nullengine.logic.Ticker;
 import nullengine.math.AABBs;
 import nullengine.math.BlockPos;
-import nullengine.player.Player;
 import nullengine.registry.Registries;
 import nullengine.util.Direction;
 import nullengine.world.chunk.Chunk;
@@ -29,11 +26,14 @@ import nullengine.world.gen.ChunkGenerator;
 import nullengine.world.storage.WorldCommonLoader;
 import org.joml.AABBd;
 import org.joml.Vector3d;
+import org.joml.Vector3dc;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class WorldCommon implements World, Runnable {
 
@@ -44,14 +44,12 @@ public class WorldCommon implements World, Runnable {
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
     private final WorldCollisionManager collisionManager = new WorldCollisionManagerImpl(this);
+    private final DefaultWorldEntityManager entityManager = new DefaultWorldEntityManager(this);
 
     //private final ChunkStorage chunkStorage;
     private WorldCommonLoader loader;
     private WorldCommonChunkManager chunkManager;
     private final List<Long> criticalChunks;
-    private final Set<Player> players = new HashSet<>();
-    private final Set<Entity> entities = new HashSet<>();
-    private final Collection<Entity> unmodifiableEntities = Collections.unmodifiableSet(entities);
     private final List<Runnable> nextTick = new ArrayList<>();
 
     private final Ticker ticker;
@@ -68,32 +66,6 @@ public class WorldCommon implements World, Runnable {
         this.chunkManager = new WorldCommonChunkManager(this, chunkGenerator);
         this.ticker = new Ticker(this::tick, Ticker.LOGIC_TICK); // TODO: make tps configurable
         criticalChunks = new ArrayList<>();
-    }
-
-    public void spawnEntity(Entity entity) {
-        if (entities.contains(entity)) {
-            return;
-        }
-
-        var event = new EntitySpawnEvent.Pre(entity);
-        if (getGame().getEventBus().post(event)) {
-            return;
-        }
-
-        BlockPos pos = ChunkConstants.toChunkPos(BlockPos.of(entity.getPosition()));
-        Chunk chunk = chunkManager.loadChunk(pos.x(), pos.y(), pos.z());
-        chunk.getEntities().add(entity);
-        entities.add(entity);
-
-        getGame().getEventBus().post(new EntitySpawnEvent.Post(entity));
-    }
-
-    @Deprecated
-    public void playerJoin(Player player) {
-        var entity = new PlayerEntity(entities.size(), this);
-        spawnEntity(entity);
-        player.controlEntity(entity);
-        players.add(player);
     }
 
     @Override
@@ -123,7 +95,7 @@ public class WorldCommon implements World, Runnable {
 
     @Override
     public Collection<Entity> getEntities() {
-        return unmodifiableEntities;
+        return entityManager.getEntities();
     }
 
     /**
@@ -140,6 +112,11 @@ public class WorldCommon implements World, Runnable {
         return collisionManager;
     }
 
+    @Override
+    public WorldEntityManager getEntityManager() {
+        return entityManager;
+    }
+
     protected void tick() {
         if (nextTick.size() != 0) {
             for (Runnable tick : nextTick) { // TODO: limit time
@@ -149,7 +126,7 @@ public class WorldCommon implements World, Runnable {
         physicsSystem.tick(this);
         tickEntityMotion();
         tickChunks();
-        tickEntities();
+        entityManager.tick();
         gameTick++;
     }
 
@@ -158,30 +135,35 @@ public class WorldCommon implements World, Runnable {
         return gameTick;
     }
 
-    protected void tickChunks() {
-        chunkManager.getChunks().forEach(this::tickChunk);
+    @Override
+    public <T extends Entity> T spawnEntity(Class<T> entityType, Vector3dc position) {
+        return entityManager.spawnEntity(entityType, position);
     }
 
-    protected void tickEntities() {
-        for (Entity entity : entities)
-            entity.tick(); // state machine update
+    @Override
+    public Entity spawnEntity(String provider, Vector3dc position) {
+        return entityManager.spawnEntity(provider, position);
+    }
+
+    protected void tickChunks() {
+        chunkManager.getChunks().forEach(this::tickChunk);
     }
 
     protected void tickEntityMotion() {
         for (Entity entity : this.getEntities()) {
             Vector3d position = entity.getPosition();
             Vector3f motion = entity.getMotion();
-            BlockPos oldPosition = ChunkConstants.toChunkPos(BlockPos.of(position));
             position.add(motion);
-            BlockPos newPosition = ChunkConstants.toChunkPos(BlockPos.of(position));
+//            BlockPos oldPosition = ChunkConstants.toChunkPos(BlockPos.of(position));
+//            BlockPos newPosition = ChunkConstants.toChunkPos(BlockPos.of(position));
 
-            if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
-                Chunk oldChunk = chunkManager.loadChunk(oldPosition.x(), oldPosition.y(), oldPosition.z()),
-                        newChunk = chunkManager.loadChunk(newPosition.x(), newPosition.y(), newPosition.z());
-                oldChunk.getEntities().remove(entity);
-                newChunk.getEntities().add(entity);
-                // entity leaving and enter chunk event
-            }
+//            if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
+//                Chunk oldChunk = chunkManager.loadChunk(oldPosition.x(), oldPosition.y(), oldPosition.z()),
+//                        newChunk = chunkManager.loadChunk(newPosition.x(), newPosition.y(), newPosition.z());
+//                oldChunk.getEntities().remove(entity);
+//                newChunk.getEntities().add(entity);
+//                // entity leaving and enter chunk event
+//            }
         }
     }
 

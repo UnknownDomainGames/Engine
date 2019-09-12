@@ -5,6 +5,7 @@ import nullengine.game.Game;
 import nullengine.math.BlockPos;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.collision.WorldCollisionManager;
+import org.joml.Vector3dc;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -25,9 +26,21 @@ public interface World extends BlockGetter, BlockSetter {
 
     WorldSetting getSetting();
 
-    WorldCollisionManager getCollisionManager();
+    @Nonnull
+    @Override
+    default World getWorld() {
+        return this;
+    }
 
     long getGameTick();
+
+    WorldCollisionManager getCollisionManager();
+
+    WorldEntityManager getEntityManager();
+
+    <T extends Entity> T spawnEntity(Class<T> entityType, Vector3dc position);
+
+    Entity spawnEntity(String provider, Vector3dc position);
 
     Collection<Entity> getEntities();
 
@@ -38,10 +51,4 @@ public interface World extends BlockGetter, BlockSetter {
     Chunk getChunk(int chunkX, int chunkY, int chunkZ);
 
     Collection<Chunk> getLoadedChunks();
-
-    @Nonnull
-    @Override
-    default World getWorld() {
-        return this;
-    }
 }
