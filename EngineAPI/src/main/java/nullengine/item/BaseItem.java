@@ -2,11 +2,7 @@ package nullengine.item;
 
 import nullengine.component.Component;
 import nullengine.component.ComponentContainer;
-import nullengine.event.block.cause.BlockChangeCause;
-import nullengine.item.component.HitBlockBehavior;
-import nullengine.player.Player;
 import nullengine.registry.RegistryEntry;
-import nullengine.world.collision.RayTraceBlockHit;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -15,28 +11,6 @@ import java.util.Set;
 
 public class BaseItem extends RegistryEntry.Impl<Item> implements Item {
     private final ComponentContainer components = new ComponentContainer();
-
-    protected BaseItem() {
-        setComponent(HitBlockBehavior.class, new HitBlockBehavior() {
-            @Override
-            public void onHit(Player player, ItemStack itemStack, RayTraceBlockHit hit) {
-                //TODO: use send packet
-                if (hit.isSuccess()) {
-                    player.getWorld().destoryBlock(hit.getPos(), new BlockChangeCause.EntityCause(player.getControlledEntity()));
-                }
-            }
-
-            @Override
-            public boolean onKeep(Player player, ItemStack itemStack, RayTraceBlockHit hit, int tickElapsed) {
-                return false;
-            }
-
-            @Override
-            public void onHitStop(Player player, ItemStack itemStack, RayTraceBlockHit hit) {
-                //TODO: send packet
-            }
-        });
-    }
 
     @Nonnull
     @Override

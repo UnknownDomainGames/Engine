@@ -1,7 +1,6 @@
 package nullengine.item;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -27,7 +26,6 @@ public final class ItemStack {
         this.amount = 0;
     }
 
-    @Nullable
     public Item getItem() {
         return item;
     }

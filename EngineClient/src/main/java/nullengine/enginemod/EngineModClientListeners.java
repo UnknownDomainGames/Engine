@@ -28,6 +28,7 @@ import nullengine.entity.item.ItemEntity;
 import nullengine.event.Listener;
 import nullengine.event.block.BlockActivateEvent;
 import nullengine.event.block.BlockClickEvent;
+import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.event.engine.EngineEvent;
 import nullengine.event.mod.ModLifecycleEvent;
 import nullengine.event.mod.ModRegistrationEvent;
@@ -116,15 +117,14 @@ public final class EngineModClientListeners {
                     Entity controllingEntity = player.getControlledEntity();
                     RayTraceBlockHit blockHit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
                     if (blockHit.isSuccess()) {
-                        controllingEntity.getComponent(TwoHands.class)
-                                .ifPresent(twoHands -> twoHands.getMainHand()
-                                        .ifNonEmpty(itemStack -> {
-                                            blockHit.getBlock().getComponent(ClickBehavior.class).ifPresent(clickBehavior -> clickBehavior.onClicked(player.getWorld(), blockHit.getPos(), blockHit.getBlock()));
-                                            game.getEngine().getEventBus().post(new BlockClickEvent(player.getWorld(), controllingEntity, blockHit.getPos(), blockHit.getBlock()));
-                                            itemStack.getItem()
-                                                    .getComponent(HitBlockBehavior.class)
-                                                    .ifPresent(hitBlockBehavior -> hitBlockBehavior.onHit(player, itemStack, blockHit));
-                                        }));
+                        blockHit.getBlock().getComponent(ClickBehavior.class).ifPresent(clickBehavior -> clickBehavior.onClicked(player.getWorld(), blockHit.getPos(), blockHit.getBlock()));
+                        game.getEngine().getEventBus().post(new BlockClickEvent(player.getWorld(), controllingEntity, blockHit.getPos(), blockHit.getBlock()));
+                        controllingEntity.getComponent(TwoHands.class).ifPresent(twoHands ->
+                                twoHands.getMainHand().ifNonEmpty(itemStack ->
+                                        itemStack.getItem().getComponent(HitBlockBehavior.class).ifPresent(hitBlockBehavior ->
+                                                hitBlockBehavior.onHit(player, itemStack, blockHit))));
+                        // TODO: Remove it
+                        player.getWorld().destoryBlock(blockHit.getPos(), new BlockChangeCause.PlayerEntityCause(player));
                     }
                 })
                 .build());

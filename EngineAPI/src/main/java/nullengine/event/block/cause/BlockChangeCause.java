@@ -2,14 +2,24 @@ package nullengine.event.block.cause;
 
 import nullengine.entity.Entity;
 import nullengine.event.cause.Cause;
+import nullengine.player.Player;
 
 public interface BlockChangeCause extends Cause {
-    class EntityCause implements BlockChangeCause{
 
-        private Entity entity;
+    interface PlayerCause extends BlockChangeCause {
+        Player getPlayer();
+    }
 
-        public EntityCause(Entity entity){
+    class EntityCause implements BlockChangeCause {
+
+        private final Entity entity;
+
+        public EntityCause(Entity entity) {
             this.entity = entity;
+        }
+
+        public Entity getEntity() {
+            return entity;
         }
 
         @Override
@@ -18,7 +28,27 @@ public interface BlockChangeCause extends Cause {
         }
     }
 
-    class CommandCause implements BlockChangeCause{
+    class PlayerEntityCause extends EntityCause implements PlayerCause {
+
+        private final Player player;
+
+        public PlayerEntityCause(Player player) {
+            super(player.getControlledEntity());
+            this.player = player;
+        }
+
+        @Override
+        public Player getPlayer() {
+            return player;
+        }
+
+        @Override
+        public String getCauseName() {
+            return "player_entity_block_change";
+        }
+    }
+
+    class CommandCause implements BlockChangeCause {
 
         @Override
         public String getCauseName() {
@@ -26,7 +56,7 @@ public interface BlockChangeCause extends Cause {
         }
     }
 
-    class WorldGenCause implements BlockChangeCause{
+    class WorldGenCause implements BlockChangeCause {
 
         @Override
         public String getCauseName() {
