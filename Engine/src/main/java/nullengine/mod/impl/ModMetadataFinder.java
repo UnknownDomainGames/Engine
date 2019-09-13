@@ -34,7 +34,7 @@ public class ModMetadataFinder {
         for (Path source : sources) {
             if (Files.isDirectory(source)) {
                 try (Reader reader = new InputStreamReader(Files.newInputStream(source.resolve(fileName)))) {
-                    jo = JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonObject();
+                    jo = JsonUtils.parser().parse(reader).getAsJsonObject();
                 } catch (IOException e) {
                     throw new InvalidModMetadataException(sources, e);
                 }
@@ -46,7 +46,7 @@ public class ModMetadataFinder {
                     }
 
                     try (Reader reader = new InputStreamReader(jarFile.getInputStream(jarEntry))) {
-                        jo = JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonObject();
+                        jo = JsonUtils.parser().parse(reader).getAsJsonObject();
                     }
                 } catch (IOException e) {
                     throw new InvalidModMetadataException(sources, e);

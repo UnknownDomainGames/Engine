@@ -38,7 +38,7 @@ class ModelLoader {
             throw new AssetNotFoundException(url);
         try {
             try (var reader = Files.newBufferedReader(path.get())) {
-                return load(url, JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonObject());
+                return load(url, JsonUtils.parser().parse(reader).getAsJsonObject());
             }
         } catch (IOException e) {
             throw new AssetLoadException("Cannot load model.", e);

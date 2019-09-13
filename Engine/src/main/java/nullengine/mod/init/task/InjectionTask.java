@@ -36,7 +36,7 @@ public class InjectionTask implements ModInitializationTask {
             }
 
             try (Reader reader = new InputStreamReader(stream.get())) {
-                JsonArray items = JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonArray();
+                JsonArray items = JsonUtils.parser().parse(reader).getAsJsonArray();
                 Guice.createInjector(
                         Platform.getRuntimeEnvironment() == RuntimeEnvironment.DEPLOYMENT ? Stage.PRODUCTION : Stage.DEVELOPMENT,
                         new AbstractModule() {

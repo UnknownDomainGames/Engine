@@ -103,7 +103,7 @@ public class ModProcessor extends AbstractProcessor {
             return map;
         for (AnnotationMirror element : elements) {
             Map<String, Object> values = getAnnotationValues(element);
-            map.put((String) values.get("key"), JsonUtils.DEFAULT_JSON_PARSER.parse((String) values.get("value")));
+            map.put((String) values.get("key"), JsonUtils.parser().parse((String) values.get("value")));
         }
         return map;
     }

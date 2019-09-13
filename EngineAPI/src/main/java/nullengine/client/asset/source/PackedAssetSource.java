@@ -32,7 +32,7 @@ public class PackedAssetSource extends FileSystemAssetSource {
         Path assetMetadataPath = root.resolve("assetpack.json");
         PackedAssetMetadata metadata;
         try (Reader reader = new InputStreamReader(Files.newInputStream(assetMetadataPath))) {
-            metadata = PackedAssetMetadata.fromJson(JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonObject());
+            metadata = PackedAssetMetadata.fromJson(JsonUtils.parser().parse(reader).getAsJsonObject());
         }
         return new PackedAssetSource(fileSystem, root.toString(), path, metadata);
     }

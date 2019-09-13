@@ -23,7 +23,7 @@ public class AutoListenTask implements ModInitializationTask {
 
 
             try (var reader = new InputStreamReader(stream.get())) {
-                listeners = JsonUtils.DEFAULT_JSON_PARSER.parse(reader).getAsJsonArray();
+                listeners = JsonUtils.parser().parse(reader).getAsJsonArray();
             }
 
         } catch (IOException e) {
