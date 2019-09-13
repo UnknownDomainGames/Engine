@@ -17,5 +17,7 @@ public interface WorldEntityManager {
 
     Entity spawnEntity(String providerName, Vector3dc position);
 
+    void destroyEntity(Entity entity);
+
     Collection<Entity> getEntities();
 }

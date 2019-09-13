@@ -9,29 +9,31 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 public abstract class BaseEntity implements Entity {
 
+    private final ComponentContainer components;
+
     protected final EntityProvider provider;
 
     private UUID uniqueId;
     private int id;
-    private World world;
+    private WeakReference<World> world;
     private Vector3d position = new Vector3d();
     private Vector3f rotation = new Vector3f();
     private Vector3f motion = new Vector3f();
     private AABBd boundingBox;
-
-    private final ComponentContainer components;
+    private boolean destroyed = false;
 
     public BaseEntity(int id, World world, double x, double y, double z) {
         this.provider = null; // TODO:
         this.uniqueId = UUID.randomUUID();
         this.id = id;
-        this.world = world;
+        this.world = new WeakReference<>(world);
         this.components = new ComponentContainer();
         this.position.set(x, y, z);
     }
@@ -51,7 +53,7 @@ public abstract class BaseEntity implements Entity {
     @Nonnull
     @Override
     public World getWorld() {
-        return world;
+        return world.get();
     }
 
     @Override
@@ -83,7 +85,21 @@ public abstract class BaseEntity implements Entity {
     }
 
     @Override
-    public void destroy() {
+    public synchronized final void destroy() {
+        if (destroyed) {
+            return;
+        }
+        destroyed = true;
+        doDestroy();
+        getWorld().getEntityManager().destroyEntity(this);
+    }
+
+    protected void doDestroy() {
+    }
+
+    @Override
+    public final boolean isDestroyed() {
+        return destroyed;
     }
 
     @Override

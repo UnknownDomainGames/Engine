@@ -35,4 +35,6 @@ public interface Entity extends GameObject, Tickable {
     AABBd getBoundingBox();
 
     void destroy();
+
+    boolean isDestroyed();
 }

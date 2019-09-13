@@ -2,8 +2,11 @@ package nullengine.world;
 
 import nullengine.entity.Entity;
 import nullengine.entity.EntityProvider;
+import nullengine.event.EventBus;
 import nullengine.event.entity.EntityCreateEvent;
+import nullengine.event.entity.EntityDestroyEvent;
 import nullengine.event.entity.EntitySpawnEvent;
+import nullengine.event.entity.EntityTickEvent;
 import nullengine.logic.Tickable;
 import nullengine.registry.Registries;
 import org.apache.commons.lang3.Validate;
@@ -18,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DefaultWorldEntityManager implements WorldEntityManager, Tickable {
 
     private final World world;
+    private final EventBus eventBus;
 
     private final AtomicInteger nextId = new AtomicInteger(0);
 
@@ -26,6 +30,7 @@ public class DefaultWorldEntityManager implements WorldEntityManager, Tickable {
 
     public DefaultWorldEntityManager(World world) {
         this.world = world;
+        this.eventBus = world.getGame().getEventBus();
     }
 
     @Override
@@ -55,10 +60,24 @@ public class DefaultWorldEntityManager implements WorldEntityManager, Tickable {
         return spawnEntity(providerName, position.x(), position.y(), position.z());
     }
 
+    @Override
+    public void destroyEntity(Entity entity) {
+        if (!world.equals(entity.getWorld())) {
+            throw new IllegalStateException("Cannot destroy entity which is not belonged to this world");
+        }
+
+        if (!entity.isDestroyed()) {
+            throw new IllegalStateException("Entity is not destroyed");
+        }
+
+        entities.remove(entity);
+        eventBus.post(new EntityDestroyEvent(entity));
+    }
+
     private Entity spawnEntity(EntityProvider provider, double x, double y, double z) {
         Validate.notNull(provider, "Entity provider is not found");
         var entity = provider.createEntity(nextId.getAndIncrement(), world, x, y, z);
-        world.getGame().getEventBus().post(new EntityCreateEvent(entity));
+        eventBus.post(new EntityCreateEvent(entity));
         spawnEntity(entity);
         return entity;
     }
@@ -69,11 +88,11 @@ public class DefaultWorldEntityManager implements WorldEntityManager, Tickable {
         }
 
         var event = new EntitySpawnEvent.Pre(entity);
-        if (world.getGame().getEventBus().post(event)) {
+        if (eventBus.post(event)) {
             return;
         }
         entities.add(entity);
-        world.getGame().getEventBus().post(new EntitySpawnEvent.Post(entity));
+        eventBus.post(new EntitySpawnEvent.Post(entity));
     }
 
 
