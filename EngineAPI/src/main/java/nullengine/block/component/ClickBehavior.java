@@ -1,15 +1,14 @@
 package nullengine.block.component;
 
-import nullengine.block.Block;
 import nullengine.component.Component;
-import nullengine.math.BlockPos;
-import nullengine.world.World;
+import nullengine.event.block.cause.BlockInteractCause;
+import nullengine.world.collision.RayTraceBlockHit;
 
 /**
  * Call when the block is left clicked.
  */
 public interface ClickBehavior extends Component {
-    default boolean onClicked(World world, BlockPos pos, Block block) {
+    default boolean onClicked(RayTraceBlockHit blockHit, BlockInteractCause cause) {
         return false;
     }
 }

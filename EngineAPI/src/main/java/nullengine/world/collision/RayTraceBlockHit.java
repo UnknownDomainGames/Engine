@@ -4,7 +4,7 @@ import nullengine.block.Block;
 import nullengine.math.BlockPos;
 import nullengine.util.Direction;
 import nullengine.world.World;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.util.function.Consumer;
 
@@ -19,15 +19,15 @@ public class RayTraceBlockHit {
     private final World world;
     private final BlockPos pos;
     private final Block block;
-    private final Vector3f hitPoint;
-    private final Direction face;
+    private final Vector3fc hitPoint;
+    private final Direction direction;
 
-    public RayTraceBlockHit(World world, BlockPos pos, Block block, Vector3f hitPoint, Direction face) {
+    public RayTraceBlockHit(World world, BlockPos pos, Block block, Vector3fc hitPoint, Direction direction) {
         this.world = world;
         this.pos = pos;
         this.block = block;
         this.hitPoint = hitPoint;
-        this.face = face;
+        this.direction = direction;
     }
 
     public World getWorld() {
@@ -42,12 +42,12 @@ public class RayTraceBlockHit {
         return block;
     }
 
-    public Vector3f getHitPoint() {
+    public Vector3fc getHitPoint() {
         return hitPoint;
     }
 
-    public Direction getFace() {
-        return face;
+    public Direction getDirection() {
+        return direction;
     }
 
     public boolean isSuccess() {

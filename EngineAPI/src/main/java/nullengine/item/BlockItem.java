@@ -2,7 +2,8 @@ package nullengine.item;
 
 import nullengine.block.Block;
 import nullengine.event.block.cause.BlockChangeCause;
-import nullengine.item.component.UseBlockBehavior;
+import nullengine.event.block.cause.BlockInteractCause;
+import nullengine.item.component.ActivateBlockBehavior;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -18,8 +19,12 @@ public class BlockItem extends BaseItem {
     }
 
     protected void initComponent() {
-        setComponent(UseBlockBehavior.class,
-                (player, itemStack, hit) -> hit.ifSuccess($ -> $.getWorld().setBlock($.getPos().offset($.getFace()), block, new BlockChangeCause.EntityCause(player.getControlledEntity()))));
+        setComponent(ActivateBlockBehavior.class, (itemStack, hit, cause) -> {
+            if (cause instanceof BlockInteractCause.PlayerCause) {
+                hit.ifSuccess($ -> hit.getWorld().setBlock(hit.getPos().offset(hit.getDirection()), block,
+                        new BlockChangeCause.PlayerCause(((BlockInteractCause.PlayerCause) cause).getPlayer())));
+            }
+        });
     }
 
     @Nonnull

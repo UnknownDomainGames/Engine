@@ -6,8 +6,21 @@ import nullengine.player.Player;
 
 public interface BlockChangeCause extends Cause {
 
-    interface PlayerCause extends BlockChangeCause {
-        Player getPlayer();
+    class PlayerCause implements BlockChangeCause {
+        private final Player player;
+
+        public PlayerCause(Player player) {
+            this.player = player;
+        }
+
+        public Player getPlayer() {
+            return player;
+        }
+
+        @Override
+        public String getName() {
+            return "PlayerBlockChange";
+        }
     }
 
     class EntityCause implements BlockChangeCause {
@@ -23,44 +36,16 @@ public interface BlockChangeCause extends Cause {
         }
 
         @Override
-        public String getCauseName() {
-            return "entity_block_change";
-        }
-    }
-
-    class PlayerEntityCause extends EntityCause implements PlayerCause {
-
-        private final Player player;
-
-        public PlayerEntityCause(Player player) {
-            super(player.getControlledEntity());
-            this.player = player;
-        }
-
-        @Override
-        public Player getPlayer() {
-            return player;
-        }
-
-        @Override
-        public String getCauseName() {
-            return "player_entity_block_change";
-        }
-    }
-
-    class CommandCause implements BlockChangeCause {
-
-        @Override
-        public String getCauseName() {
-            return "command_block_change";
+        public String getName() {
+            return "EntityBlockChange";
         }
     }
 
     class WorldGenCause implements BlockChangeCause {
 
         @Override
-        public String getCauseName() {
-            return "worldgen_block_change";
+        public String getName() {
+            return "WorldGenBlockChange";
         }
     }
 }

@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public final class ItemStack {
+public final class ItemStack implements Cloneable {
 
     public static final ItemStack EMPTY = new ItemStack();
 
@@ -51,6 +51,17 @@ public final class ItemStack {
     public void ifNonEmpty(Consumer<ItemStack> consumer) {
         if (!isEmpty()) {
             consumer.accept(this);
+        }
+    }
+
+    @Override
+    protected Object clone() {
+        try {
+            ItemStack itemStack = (ItemStack) super.clone();
+            itemStack.setAmount(amount);
+            return itemStack;
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError(e);
         }
     }
 }
