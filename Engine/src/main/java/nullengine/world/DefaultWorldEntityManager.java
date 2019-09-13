@@ -103,6 +103,9 @@ public class DefaultWorldEntityManager implements WorldEntityManager, Tickable {
 
     @Override
     public void tick() {
-        entities.forEach(Tickable::tick);
+        for (Entity entity : entities) {
+            entity.tick();
+            eventBus.post(new EntityTickEvent(entity));
+        }
     }
 }
