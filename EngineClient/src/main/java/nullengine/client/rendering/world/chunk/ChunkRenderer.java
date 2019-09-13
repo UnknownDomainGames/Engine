@@ -99,10 +99,12 @@ public class ChunkRenderer {
 
         runUploadTasks();
 
-        for (var entry : loadedChunkMeshes.entrySet()) {
-            var mesh = entry.getValue();
-            if (shouldRenderChunk(mesh)) {
-                mesh.render();
+        synchronized (loadedChunkMeshes) {
+            for (var entry : loadedChunkMeshes.entrySet()) {
+                var mesh = entry.getValue();
+                if (shouldRenderChunk(mesh)) {
+                    mesh.render();
+                }
             }
         }
 
@@ -224,7 +226,9 @@ public class ChunkRenderer {
 
     private void initChunk(Chunk chunk) {
         long chunkIndex = getChunkIndex(chunk);
-        loadedChunkMeshes.computeIfAbsent(chunkIndex, key -> new ChunkMesh(chunk));
+        synchronized (loadedChunkMeshes) {
+            loadedChunkMeshes.computeIfAbsent(chunkIndex, key -> new ChunkMesh(chunk));
+        }
         markChunkDirty(chunkIndex);
     }
 
