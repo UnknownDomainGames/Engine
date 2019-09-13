@@ -73,7 +73,7 @@ public class BlockModelManager implements AssetProvider<BakedModel> {
 
     private void reloadModelData() {
         modelDataMap.clear();
-        modelAssets.forEach(asset -> modelDataMap.put(asset.getPath(), resolveTexture(modelLoader.load(asset.getPath()))));
+        modelAssets.forEach(asset -> modelDataMap.put(asset.getUrl(), resolveTexture(modelLoader.load(asset.getUrl()))));
     }
 
     private ModelData resolveTexture(ModelData modelData) {

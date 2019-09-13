@@ -1,22 +1,23 @@
 package nullengine.client.asset;
 
+import org.apache.commons.lang3.Validate;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
-import java.util.Objects;
 
 @ThreadSafe
 public final class Asset<T> {
 
     private final AssetType<T> type;
-    private final AssetURL path;
+    private final AssetURL url;
 
     private T value;
 
     private volatile boolean disposed;
 
-    Asset(@Nonnull AssetType<T> type, @Nonnull AssetURL path) {
-        this.type = Objects.requireNonNull(type);
-        this.path = Objects.requireNonNull(path);
+    Asset(@Nonnull AssetType<T> type, @Nonnull AssetURL url) {
+        this.type = Validate.notNull(type);
+        this.url = Validate.notNull(url);
     }
 
     public T get() {
@@ -37,15 +38,15 @@ public final class Asset<T> {
     }
 
     @Nonnull
-    public AssetURL getPath() {
-        return path;
+    public AssetURL getUrl() {
+        return url;
     }
 
     public synchronized void reload() {
         if (disposed)
             throw new IllegalStateException("Asset has been disposed.");
 
-        value = type.getProvider().loadDirect(path);
+        value = type.getProvider().loadDirect(url);
     }
 
     public boolean isDisposed() {
@@ -66,19 +67,19 @@ public final class Asset<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Asset<?> asset = (Asset<?>) o;
-        return path.equals(asset.path) &&
+        return url.equals(asset.url) &&
                 type.equals(asset.type);
     }
 
     @Override
     public int hashCode() {
-        return path.hashCode() * 31 + type.hashCode();
+        return url.hashCode() * 31 + type.hashCode();
     }
 
     @Override
     public String toString() {
         return "Asset{" +
-                "path=" + path +
+                "path=" + url +
                 ", type=" + type +
                 '}';
     }

@@ -1,6 +1,7 @@
 package nullengine.client.asset;
 
 import nullengine.client.asset.exception.AssetLoadException;
+import nullengine.client.asset.exception.AssetNotFoundException;
 
 import javax.annotation.Nonnull;
 
@@ -12,11 +13,8 @@ public interface AssetProvider<T> {
 
     void unregister(Asset<T> asset);
 
-    /**
-     * @throws AssetLoadException
-     */
     @Nonnull
-    T loadDirect(AssetURL url);
+    T loadDirect(AssetURL url) throws AssetLoadException, AssetNotFoundException;
 
     void dispose();
 }
