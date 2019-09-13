@@ -118,7 +118,7 @@ public class WorldRenderer {
             ShaderManager.instance().setUniform("u_ShadowMap", 8);
         }
         GL15.glActiveTexture(GL13.GL_TEXTURE8);
-        GL11.glBindTexture(GL_TEXTURE_2D, frameBufferShadow.getDstexid());
+        GL11.glBindTexture(GL_TEXTURE_2D, frameBufferShadow.getDstexPointer());
         GL15.glActiveTexture(GL13.GL_TEXTURE0);
         chunkRenderer.render();
 
@@ -175,6 +175,11 @@ public class WorldRenderer {
         chunkRenderer.dispose();
         blockSelectionRenderer.dispose();
         entityRenderManager.dispose();
+
+        frameBuffer.dispose();
+        frameBufferMultisampled.dispose();
+        frameBufferShadow.dispose();
+        defaultFBO.dispose();
 
         ShaderManager.instance().unregisterShader("world_shader");
         ShaderManager.instance().unregisterShader("frame_buffer_shader");

@@ -14,7 +14,7 @@ import static org.lwjgl.opengl.GL11.*;
 public final class DefaultFBOWrapper extends FrameBuffer {
 
     @Override
-    public int getFboId() {
+    public int getFboPointer() {
         return 0;
     }
 
@@ -28,11 +28,6 @@ public final class DefaultFBOWrapper extends FrameBuffer {
     }
 
     @Override
-    public void deleteFrameBuffer() {
-
-    }
-
-    @Override
     public void check() {
 
     }
@@ -42,7 +37,7 @@ public final class DefaultFBOWrapper extends FrameBuffer {
         bindDrawOnly();
         bindReadOnly();
         glDisable(GL_DEPTH_TEST);
-        glBindTexture(GL_TEXTURE_2D, frameBuffer.getTexId());
+        glBindTexture(GL_TEXTURE_2D, frameBuffer.getTexPointer());
         Tessellator t = Tessellator.getInstance();
         GLBuffer bb = t.getBuffer();
         bb.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_TEXTURE);

@@ -19,10 +19,10 @@ public class FrameBufferShadow extends FrameBuffer {
 
     @Override
     public void resize(int width, int height) {
-        if (dstexid == -1) {
-            dstexid = GL11.glGenTextures();
+        if (dstexPointer == -1) {
+            dstexPointer = GL11.glGenTextures();
         }
-        GL11.glBindTexture(GL_TEXTURE_2D, dstexid);
+        GL11.glBindTexture(GL_TEXTURE_2D, dstexPointer);
         GL11.glTexImage2D(GL_TEXTURE_2D, 0, GL11.GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL11.GL_DEPTH_COMPONENT, GLDataType.FLOAT.glId, (ByteBuffer) null);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -32,7 +32,7 @@ public class FrameBufferShadow extends FrameBuffer {
         GL11.glTexParameteri(GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL_REPEAT);
 //        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, new float[]{1f,1f,1f,1f});
         bind();
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dstexid, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dstexPointer, 0);
         glDrawBuffer(GL_NONE);
         glReadBuffer(GL_NONE);
         unbind();

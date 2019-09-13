@@ -77,12 +77,8 @@ public class ShaderManager {
     }
 
     public void reload() {
-
         for (MutableValue<ShaderProgram> value : loadedShaders.values()) {
-            ShaderProgram shaderProgram = value.getValue();
-            if (shaderProgram != null) {
-                shaderProgram.dispose();
-            }
+            value.ifPresent(ShaderProgram::dispose);
         }
 
         for (Map.Entry<String, ShaderProgramBuilder> entry : registeredShaders.entrySet()) {
