@@ -40,7 +40,7 @@ public class ChunkRenderer {
     private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
 
-    private final GLBufferPool bufferPool = GLBufferPool.createDirectBufferPool();
+    private final GLBufferPool bufferPool = GLBufferPool.createDirectBufferPool(0x200000, 64);
 
     private World world;
 

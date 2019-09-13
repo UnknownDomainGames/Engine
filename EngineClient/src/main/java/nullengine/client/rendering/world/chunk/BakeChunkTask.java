@@ -35,19 +35,22 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
         ChunkCache chunkCache = createChunkCache(chunk.getWorld(), chunk);
         BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunk(chunk);
 
-        GLBuffer buffer = chunkRenderer.getBufferPool().get(0x200000);
-        buffer.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
-        while (blockPosIterator.hasNext()) {
-            BlockPos pos = blockPosIterator.next();
-            Block block = chunkCache.getBlock(pos);
-            block.getComponent(BlockRenderer.class).ifPresent(blockRenderer -> {
-                if (blockRenderer.isVisible()) {
-                    blockRenderer.generateMesh(block, chunkCache, pos, buffer);
-                }
-            });
+        try {
+            GLBuffer buffer = chunkRenderer.getBufferPool().get();
+            buffer.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
+            while (blockPosIterator.hasNext()) {
+                BlockPos pos = blockPosIterator.next();
+                Block block = chunkCache.getBlock(pos);
+                block.getComponent(BlockRenderer.class).ifPresent(blockRenderer -> {
+                    if (blockRenderer.isVisible()) {
+                        blockRenderer.generateMesh(block, chunkCache, pos, buffer);
+                    }
+                });
+            }
+            buffer.finish();
+            chunkRenderer.uploadChunk(chunkMesh, buffer);
+        } catch (InterruptedException ignored) {
         }
-        buffer.finish();
-        chunkRenderer.uploadChunk(chunkMesh, buffer);
     }
 
     private ChunkCache createChunkCache(World world, Chunk chunk) {

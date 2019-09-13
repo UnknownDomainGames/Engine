@@ -11,35 +11,54 @@ import java.util.Set;
 @ThreadSafe
 public abstract class GLBufferPool {
 
-    public static GLBufferPool createHeapBufferPool() {
-        return new HeapBufferPool();
-    }
-
-    public static GLBufferPool createDirectBufferPool() {
-        return new DirectBufferPool();
-    }
-
     private final Set<GLBuffer> buffers = Sets.newConcurrentHashSet();
     private final Queue<GLBuffer> availableBuffers = new PriorityQueue<>(11, Comparator.comparingInt(o -> -o.getBackingBuffer().capacity()));
 
-    public GLBuffer get() {
-        return get(256);
+    private final int capacity;
+    private final int limit;
+
+    public static GLBufferPool createHeapBufferPool(int capacity, int limit) {
+        return new HeapBufferPool(capacity, limit);
     }
 
-    public GLBuffer get(int capacity) {
-        synchronized (availableBuffers) {
-            if (!availableBuffers.isEmpty()) {
-                for (GLBuffer buffer : availableBuffers) {
-                    if (buffer.getBackingBuffer().capacity() >= capacity) {
-                        availableBuffers.remove(buffer);
-                        return buffer;
-                    }
+    public static GLBufferPool createHeapBufferPool() {
+        return createHeapBufferPool(256, Integer.MAX_VALUE);
+    }
+
+    public static GLBufferPool createDirectBufferPool(int capacity, int limit) {
+        return new DirectBufferPool(capacity, limit);
+    }
+
+    public static GLBufferPool createDirectBufferPool() {
+        return createDirectBufferPool(256, Integer.MAX_VALUE);
+    }
+
+    protected GLBufferPool(int capacity, int limit) {
+        this.capacity = capacity;
+        this.limit = limit;
+    }
+
+    public GLBuffer get() throws InterruptedException {
+        return get(capacity);
+    }
+
+    public GLBuffer get(int capacity) throws InterruptedException {
+        while (true) {
+            synchronized (availableBuffers) {
+                GLBuffer buffer = availableBuffers.poll();
+                if (buffer != null) {
+                    return buffer;
                 }
+
+                if (buffers.size() < limit) {
+                    buffer = createBuffer(capacity);
+                    buffers.add(buffer);
+                    return buffer;
+                }
+
+                availableBuffers.wait();
             }
         }
-        GLBuffer buffer = createBuffer(capacity);
-        buffers.add(buffer);
-        return buffer;
     }
 
     protected abstract GLBuffer createBuffer(int capacity);
@@ -51,17 +70,22 @@ public abstract class GLBufferPool {
         buffer.reset();
         synchronized (availableBuffers) {
             availableBuffers.offer(buffer);
+            availableBuffers.notify();
         }
     }
 
     public void clear() {
         synchronized (availableBuffers) {
             availableBuffers.clear();
+            buffers.clear();
         }
-        buffers.clear();
     }
 
     private static class HeapBufferPool extends GLBufferPool {
+        private HeapBufferPool(int capacity, int limit) {
+            super(capacity, limit);
+        }
+
         @Override
         protected GLBuffer createBuffer(int capacity) {
             return GLBuffer.createHeapBuffer(capacity);
@@ -69,6 +93,10 @@ public abstract class GLBufferPool {
     }
 
     private static class DirectBufferPool extends GLBufferPool {
+        private DirectBufferPool(int capacity, int limit) {
+            super(capacity, limit);
+        }
+
         @Override
         protected GLBuffer createBuffer(int capacity) {
             return GLBuffer.createDirectBuffer(capacity);
