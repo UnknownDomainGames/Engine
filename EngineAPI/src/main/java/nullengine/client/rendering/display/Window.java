@@ -8,6 +8,8 @@ public interface Window {
 
     int getY();
 
+    void setPos(int x, int y);
+
     int getWidth();
 
     int getHeight();

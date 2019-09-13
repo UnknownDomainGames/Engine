@@ -65,6 +65,13 @@ public class GLFWWindow implements Window {
     }
 
     @Override
+    public void setPos(int x, int y) {
+        posX = x;
+        posY = y;
+        glfwSetWindowPos(pointer, x, y);
+    }
+
+    @Override
     public int getWidth() {
         return fboWidth;
     }
@@ -221,7 +228,7 @@ public class GLFWWindow implements Window {
     public void endRender() {
         glfwSwapBuffers(pointer);
 
-        if (isResized()) {
+        if (resized) {
             resized = false;
         }
 
@@ -370,7 +377,7 @@ public class GLFWWindow implements Window {
     }
 
     private void setWindowPosCenter() {
-        glfwSetWindowPos(pointer, (monitor.getWidth() - windowWidth) / 2, (monitor.getHeight() - windowHeight) / 2);
+        setPos((monitor.getWidth() - windowWidth) / 2, (monitor.getHeight() - windowHeight) / 2);
     }
 
     private void enableVSync() {
