@@ -1,4 +1,4 @@
-package nullengine.client.rendering.model;
+package nullengine.client.rendering.mesh;
 
 public class Mesh {
     private final float[] vertices;
