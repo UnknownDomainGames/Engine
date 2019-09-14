@@ -81,9 +81,9 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
     @Nonnull
     @Override
     public GLTexture loadDirect(AssetURL url) {
-        var localPath = sourceManager.getPath(url.toFileLocation());
+        var localPath = sourceManager.getPath(url.toFileLocation("texture", ".png"));
         if (localPath.isEmpty()) {
-            throw new AssetLoadException("Cannot load texture because missing asset. Path: " + url);
+            throw new AssetLoadException("Cannot load texture because missing asset. Path: " + url.toFileLocation("texture", ".png"));
         }
 
         try (var channel = Files.newByteChannel(localPath.get())) {
@@ -92,7 +92,7 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
             buffer.flip();
             return getTextureDirect(TextureBuffer.create(buffer));
         } catch (IOException e) {
-            throw new AssetLoadException("Cannot load texture because catch exception. Path: " + url, e);
+            throw new AssetLoadException("Cannot load texture because catch exception. Path: " + url.toFileLocation("texture", ".png"), e);
         }
     }
 

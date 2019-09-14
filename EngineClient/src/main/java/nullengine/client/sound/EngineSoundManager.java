@@ -101,10 +101,10 @@ public class EngineSoundManager implements ALSoundManager {
                 buf.flip();
                 return ALSound.ofOGG(buf);
             } catch (IOException e) {
-                throw new AssetLoadException("Cannot loadDirect sound. Path: " + url, e);
+                throw new AssetLoadException("Cannot loadDirect sound. Path: " + url.toFileLocation("texture", ".png"), e);
             }
         } else {
-            throw new AssetLoadException("Cannot loadDirect sound (Missing file). Path: " + url);
+            throw new AssetLoadException("Cannot loadDirect sound (Missing file). Path: " + url.toFileLocation("texture", ".png"));
         }
     }
 

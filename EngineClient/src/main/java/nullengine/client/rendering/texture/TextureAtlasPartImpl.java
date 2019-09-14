@@ -36,9 +36,9 @@ public class TextureAtlasPartImpl implements TextureAtlasPart {
     }
 
     public void reload() {
-        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(url.toFileLocation());
+        Optional<Path> nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(url.toFileLocation("texture", ".png"));
         if (nativePath.isEmpty()) {
-            throw new AssetLoadException("Cannot load texture because of missing asset. URL: " + url);
+            throw new AssetLoadException("Cannot load texture because of missing asset. Path: " + url.toFileLocation("texture", ".png"));
         }
 
         try (var channel = Files.newByteChannel(nativePath.get())) {
@@ -47,7 +47,7 @@ public class TextureAtlasPartImpl implements TextureAtlasPart {
             bytes.flip();
             data = TextureBuffer.create(bytes);
         } catch (IOException e) {
-            throw new AssetLoadException("Cannot load texture because of catching exception. URL: " + url);
+            throw new AssetLoadException("Cannot load texture because of catching exception. Path: " + url.toFileLocation("texture", ".png"));
         }
     }
 

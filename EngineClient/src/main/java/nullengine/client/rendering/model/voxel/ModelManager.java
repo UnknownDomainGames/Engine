@@ -70,7 +70,7 @@ public class ModelManager implements AssetProvider<BakedModel> {
     }
 
     private Model loadModel(AssetURL url) {
-        var path = source.getPath(url.toFileLocation(type)).orElseThrow(() -> new AssetNotFoundException(url));
+        var path = source.getPath(url.toFileLocation(type)).orElseThrow(() -> new AssetNotFoundException(url.toFileLocation(type)));
         try (var reader = Files.newBufferedReader(path)) {
             var json = JsonUtils.parser().parse(reader).getAsJsonObject();
             for (var loader : loaders) {

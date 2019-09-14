@@ -23,7 +23,7 @@ public class SkyboxRenderer {
     public void init(RenderManager context) {
         this.context = context;
         worldShader = ShaderManager.instance().getShader("world_shader");
-        skybox = context.getEngine().getAssetManager().create(TEXTURE, AssetURL.of("engine", "texture/misc/skybox.png"));
+        skybox = context.getEngine().getAssetManager().create(TEXTURE, AssetURL.of("engine", "misc/skybox"));
         skyboxMesh = GLMesh.of(new Mesh(
                 new float[]{
                         256, 256, -256,
