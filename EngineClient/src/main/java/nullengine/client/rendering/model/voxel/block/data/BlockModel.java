@@ -102,7 +102,7 @@ public final class BlockModel implements Model {
     }
 
     @Override
-    public List<AssetURL> getTextures() {
+    public Collection<AssetURL> getTextures() {
         return requestTextures.stream().filter(BlockModel::isResolvedTexture).collect(Collectors.toList());
     }
 

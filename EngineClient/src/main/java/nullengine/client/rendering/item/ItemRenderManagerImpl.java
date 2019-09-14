@@ -5,12 +5,12 @@ import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.item.Item;
 import nullengine.item.ItemStack;
 import nullengine.registry.Registries;
-import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 
 public class ItemRenderManagerImpl implements ItemRenderManager {
 
@@ -49,21 +49,11 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
     }
 
     private void preRender() {
-        glEnable(GL11.GL_BLEND);
-        glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL11.GL_CULL_FACE);
-        glEnable(GL11.GL_TEXTURE_2D);
-        glEnable(GL11.GL_DEPTH_TEST);
-
         context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).bind();
     }
 
     private void postRender() {
         glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL11.GL_CULL_FACE);
-        glDisable(GL11.GL_TEXTURE_2D);
-        glDisable(GL11.GL_DEPTH_TEST);
-        glDisable(GL11.GL_BLEND);
     }
 
     public void dispose() {
