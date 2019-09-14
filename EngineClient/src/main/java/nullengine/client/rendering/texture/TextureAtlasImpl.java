@@ -58,6 +58,26 @@ public class TextureAtlasImpl implements TextureAtlas {
     }
 
     @Override
+    public float getMinU() {
+        return 0;
+    }
+
+    @Override
+    public float getMinV() {
+        return 0;
+    }
+
+    @Override
+    public float getMaxU() {
+        return 1;
+    }
+
+    @Override
+    public float getMaxV() {
+        return 1;
+    }
+
+    @Override
     public void bind() {
         if (bakedTextureAtlas != null) {
             bakedTextureAtlas.bind();

@@ -19,17 +19,6 @@ public class GLTexture implements Texture {
     private final int id;
     private final int width, height;
 
-    protected GLTexture(int id, int width, int height) {
-        this.id = id;
-        this.width = width;
-        this.height = height;
-    }
-
-    public void bind() {
-        // glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, id);
-    }
-
     public static GLTexture of(ByteBuffer filebuf) throws IOException {
         if (!filebuf.isDirect()) {
             ByteBuffer direct = ByteBuffer.allocateDirect(filebuf.capacity());
@@ -74,6 +63,49 @@ public class GLTexture implements Texture {
         return glTexture;
     }
 
+    protected GLTexture(int id, int width, int height) {
+        this.id = id;
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public float getMinU() {
+        return 0;
+    }
+
+    @Override
+    public float getMinV() {
+        return 0;
+    }
+
+    @Override
+    public float getMaxU() {
+        return 1;
+    }
+
+    @Override
+    public float getMaxV() {
+        return 1;
+    }
+
+    @Override
+    public void bind() {
+        // glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, id);
+    }
+
+    @Override
     public void dispose() {
         glDeleteTextures(id);
     }
@@ -85,14 +117,6 @@ public class GLTexture implements Texture {
 
     public void unbind() {
         glBindTexture(GL_TEXTURE_2D, 0);
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
     }
 
     public int getId() {

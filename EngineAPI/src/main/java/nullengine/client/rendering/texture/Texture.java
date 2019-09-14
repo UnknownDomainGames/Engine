@@ -6,6 +6,14 @@ public interface Texture {
 
     int getHeight();
 
+    float getMinU();
+
+    float getMinV();
+
+    float getMaxU();
+
+    float getMaxV();
+
     void bind();
 
     void dispose();
