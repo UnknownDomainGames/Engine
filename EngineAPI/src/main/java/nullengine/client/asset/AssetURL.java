@@ -68,12 +68,21 @@ public final class AssetURL {
     }
 
     public String toFileLocation(AssetType<?> type) {
-        return domain + SEPARATOR + type.getParentLocation() + SEPARATOR + location + type.getExtensionName();
+        return toFileLocation(type.getParentLocation(), type.getExtensionName());
     }
 
-    public String toFileLocation(String parentLocation) {
-        return domain + SEPARATOR + parentLocation + SEPARATOR + location;
+    public String toFileLocation(String parentLocation, String extensionName) {
+        StringBuilder builder = new StringBuilder(domain).append(SEPARATOR);
+        if (parentLocation != null) {
+            builder.append(parentLocation).append(SEPARATOR);
+        }
+        builder.append(location);
+        if (extensionName != null) {
+            builder.append(extensionName);
+        }
+        return builder.toString();
     }
+
 
     @Override
     public boolean equals(Object o) {
