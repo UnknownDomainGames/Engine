@@ -23,6 +23,7 @@ public class Transform {
 
     public Transform(Vector3fc translation, Vector3fc rotation, Vector3fc scale) {
         this.translation.set(translation);
+        this.rotation.set(rotation);
         this.scale.set(scale);
     }
 }
