@@ -27,6 +27,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 
 public class WorldRenderer {
 
@@ -82,7 +83,9 @@ public class WorldRenderer {
     }
 
     public void render(float partial) {
-        glDisable(GL13.GL_MULTISAMPLE);
+
+        // shadow
+        glDisable(GL_MULTISAMPLE);
         frameBufferShadow.bind();
         GL11.glViewport(0, 0, FrameBufferShadow.SHADOW_WIDTH, FrameBufferShadow.SHADOW_HEIGHT);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
@@ -97,13 +100,14 @@ public class WorldRenderer {
 
         ShaderManager.instance().setUniform("u_LightSpace", lightSpaceMat);
         ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f().setTranslation(0, 0, 0));
-        GL11.glCullFace(GL_FRONT);
+        glCullFace(GL_FRONT);
         chunkRenderer.render();
-        GL11.glCullFace(GL_BACK);
+        glCullFace(GL_BACK);
 
         ShaderManager.instance().unbindOverriding();
         frameBufferShadow.unbind();
 
+        // render world
         GL11.glViewport(0, 0, context.getWindow().getWidth(), context.getWindow().getHeight());
 
         frameBufferMultisampled.bind();
@@ -127,17 +131,16 @@ public class WorldRenderer {
         ShaderManager.instance().setUniform("u_ProjMatrix", context.getWindow().projection());
         ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
 
-        ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
-
-        // TODO: Support shadow and light. Move it.
-        world.getValue().getEntities().forEach(entity -> entityRenderManager.render(entity, partial));
-
-        glEnable(GL11.GL_DEPTH_TEST);
-        glEnable(GL11.GL_BLEND);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
+
         skyboxRenderer.render(partial);
+
         // TODO: Remove it
         context.getTextureManager().getWhiteTexture().bind();
         Tessellator tessellator = Tessellator.getInstance();
@@ -153,8 +156,11 @@ public class WorldRenderer {
 
         blockSelectionRenderer.render(partial);
 
+        // TODO: Support shadow and light. Move it.
+        world.getValue().getEntities().forEach(entity -> entityRenderManager.render(entity, partial));
+
+        // multi sample
         frameBuffer.bind();
-        glEnable(GL_DEPTH_TEST);
         frameBuffer.blitFrom(frameBufferMultisampled);
         defaultFBO.bind();
         glClear(GL_COLOR_BUFFER_BIT);
@@ -162,9 +168,9 @@ public class WorldRenderer {
         glDisable(GL_DEPTH_TEST);
         defaultFBO.drawFrameBuffer(frameBuffer);
 
-        glDisable(GL11.GL_DEPTH_TEST);
-        glDisable(GL11.GL_BLEND);
-        glEnable(GL13.GL_MULTISAMPLE);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+        glEnable(GL_MULTISAMPLE);
         if (context.getWindow().isResized()) {
             frameBuffer.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
             frameBufferMultisampled.resize(context.getWindow().getWidth(), context.getWindow().getHeight());

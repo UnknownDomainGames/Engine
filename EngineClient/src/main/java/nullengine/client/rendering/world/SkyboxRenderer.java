@@ -9,7 +9,6 @@ import nullengine.client.rendering.mesh.Mesh;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgram;
 import nullengine.client.rendering.texture.GLTexture;
-import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
 import static nullengine.client.asset.AssetTypes.TEXTURE;
@@ -99,12 +98,7 @@ public class SkyboxRenderer {
     }
 
     public void render(float partial){
-        ShaderProgram program = worldShader.getValue();
-        ShaderManager.instance().bindShader(program);
         skybox.get().bind();
-        program.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
-        program.setUniform("u_ProjMatrix", context.getWindow().projection());
-        program.setUniform("u_ModelMatrix", new Matrix4f());
         skyboxMesh.render();
     }
 }
