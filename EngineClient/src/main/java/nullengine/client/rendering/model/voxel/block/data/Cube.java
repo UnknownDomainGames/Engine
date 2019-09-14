@@ -1,16 +1,35 @@
-package nullengine.client.rendering.model.block.data;
+package nullengine.client.rendering.model.voxel.block.data;
 
 import com.google.gson.JsonElement;
+import nullengine.client.asset.AssetURL;
 import nullengine.util.Direction;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
-public final class Cube {
-    public Vector3f from;
-    public Vector3f to;
-    public Face[] faces;
+import java.util.Set;
 
-    public Vector3fc[] getFacePositions(Direction direction) {
+final class Cube {
+    Vector3f from;
+    Vector3f to;
+    Face[] faces;
+
+    static Cube deserialize(BlockModel blockModel, JsonElement json, Set<AssetURL> requestTextures) {
+        var object = json.getAsJsonObject();
+        var cube = new Cube();
+        cube.from = ModelJsonUtils.vector3f(object.get("from"));
+        cube.to = ModelJsonUtils.vector3f(object.get("to"));
+        checkMinAndMax(cube.from, cube.to);
+
+        cube.faces = new Face[6];
+        var faces = object.getAsJsonObject("faces");
+        for (var face : faces.entrySet()) {
+            var direction = Direction.valueOf(face.getKey().toUpperCase());
+            cube.faces[direction.index] = Face.deserialize(blockModel, face.getValue(), requestTextures);
+        }
+        return cube;
+    }
+
+    Vector3fc[] getFacePositions(Direction direction) {
         Vector3fc[] positions = new Vector3fc[4];
         switch (direction) {
             case NORTH:
@@ -53,22 +72,6 @@ public final class Cube {
                 throw new IllegalStateException("Unexpected value: " + direction);
         }
         return positions;
-    }
-
-    public static Cube deserialize(BlockModel blockModel, JsonElement json) {
-        var object = json.getAsJsonObject();
-        var cube = new Cube();
-        cube.from = ModelJsonUtils.vector3f(object.get("from"));
-        cube.to = ModelJsonUtils.vector3f(object.get("to"));
-        checkMinAndMax(cube.from, cube.to);
-
-        cube.faces = new Face[6];
-        var faces = object.getAsJsonObject("faces");
-        for (var face : faces.entrySet()) {
-            var direction = Direction.valueOf(face.getKey().toUpperCase());
-            cube.faces[direction.index] = Face.deserialize(blockModel, face.getValue());
-        }
-        return cube;
     }
 
     private static void checkMinAndMax(Vector3f min, Vector3f max) {

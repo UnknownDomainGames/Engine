@@ -25,10 +25,10 @@ public final class AssetURL {
         return new AssetURL(domain, location);
     }
 
-    public static AssetURL fromString(@Nonnull AssetURL parent, @Nonnull String value) {
-        String[] split = value.split(":");
+    public static AssetURL fromString(@Nonnull AssetURL parent, @Nonnull String url) {
+        String[] split = url.split(":");
         if (split.length == 1) {
-            return of(parent.getDomain(), value);
+            return of(parent.getDomain(), url);
         } else if (split.length == 2) {
             return of(split[0], split[1]);
         } else {
@@ -36,10 +36,10 @@ public final class AssetURL {
         }
     }
 
-    public static AssetURL fromString(@Nonnull String value) {
-        String[] split = value.split(":");
+    public static AssetURL fromString(@Nonnull String url) {
+        String[] split = url.split(":");
         if (split.length == 1) {
-            return of(Namespaces.getNamespace(), value);
+            return of(Namespaces.getNamespace(), url);
         } else if (split.length == 2) {
             return of(split[0], split[1]);
         } else {

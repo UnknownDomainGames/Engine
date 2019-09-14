@@ -10,7 +10,7 @@ import java.util.Optional;
 public final class AssetTypes {
 
     public static final AssetType<GLTexture> TEXTURE = getType("Texture");
-    public static final AssetType<BakedModel> BLOCK_MODEL = getType("VoxelModel");
+    public static final AssetType<BakedModel> VOXEL_MODEL = getType("VoxelModel");
 
     private static <T> AssetType<T> getType(String name) {
         Optional<AssetType<?>> type = Platform.getEngineClient().getAssetManager().getType(name);

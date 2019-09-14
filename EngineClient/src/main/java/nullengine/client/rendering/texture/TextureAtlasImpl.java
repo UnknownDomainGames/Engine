@@ -12,6 +12,11 @@ public class TextureAtlasImpl implements TextureAtlas {
     private GLTexture bakedTextureAtlas;
 
     @Override
+    public TextureAtlasPart getTexture(AssetURL url) {
+        return textures.get(url);
+    }
+
+    @Override
     public TextureAtlasPart addTexture(AssetURL url) {
         return textures.computeIfAbsent(url, key -> new TextureAtlasPartImpl(url));
     }

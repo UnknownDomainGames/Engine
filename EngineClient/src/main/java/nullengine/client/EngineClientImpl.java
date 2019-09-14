@@ -18,7 +18,7 @@ import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.game3d.Game3DRenderer;
 import nullengine.client.rendering.gui.GuiRenderer;
 import nullengine.client.rendering.model.BakedModel;
-import nullengine.client.rendering.model._block.BlockModelManager;
+import nullengine.client.rendering.model.voxel.ModelManager;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.sound.ALSoundManager;
 import nullengine.client.sound.EngineSoundManager;
@@ -123,7 +123,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         addShutdownListener(renderManager::dispose);
         assetManager.getReloadManager().addListener(new AssetReloadListener().name("Shader").runnable(ShaderManager.instance()::reload));
 
-        assetManager.register(AssetType.builder(BakedModel.class).name("VoxelModel").provider(new BlockModelManager(this)).parentLocation("model").extensionName(".json").build());
+        assetManager.register(AssetType.builder(BakedModel.class).name("VoxelModel").provider(new ModelManager()).parentLocation("model").extensionName(".json").build());
 
         logger.info("Initializing audio context!");
         soundManager = new EngineSoundManager();

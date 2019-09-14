@@ -58,7 +58,7 @@ public class DefaultBlockRenderer implements BlockRenderer {
     }
 
     public DefaultBlockRenderer setModelPath(AssetURL path) {
-        this.model = Platform.getEngineClient().getAssetManager().create(AssetTypes.BLOCK_MODEL, path);
+        this.model = Platform.getEngineClient().getAssetManager().create(AssetTypes.VOXEL_MODEL, path);
         return this;
     }
 

@@ -1,4 +1,4 @@
-package nullengine.client.rendering.model.block.data;
+package nullengine.client.rendering.model.voxel.block.data;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
@@ -26,9 +26,9 @@ public class ModelJsonUtils {
                 array.get(2).getAsFloat());
     }
 
-    public static Vector4f vector4f(JsonElement json) {
+    public static Vector4f vector4f(JsonElement json, Vector4f defaultValue) {
         if (json == null) {
-            return null;
+            return defaultValue;
         }
         var array = json.getAsJsonArray();
         return new Vector4f(array.get(0).getAsFloat(), array.get(1).getAsFloat(),
@@ -82,9 +82,9 @@ public class ModelJsonUtils {
     }
 
     public static int cullFaces(JsonElement json) {
-        if (json.isJsonPrimitive()) {
-            return toDirectionInt(Direction.valueOf(json.getAsString().toUpperCase()));
-        } else if (json.isJsonArray()) {
+        if (json == null) return 0;
+        if (json.isJsonPrimitive()) return toDirectionInt(Direction.valueOf(json.getAsString().toUpperCase()));
+        if (json.isJsonArray()) {
             var array = json.getAsJsonArray();
             int result = 0;
             for (var element : array) {
