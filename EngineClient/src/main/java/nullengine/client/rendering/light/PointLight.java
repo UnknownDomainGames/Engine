@@ -41,4 +41,22 @@ public class PointLight extends Light {
         this.kquadratic = kquadratic;
         return this;
     }
+
+    @Override
+    public PointLight setAmbient(Vector3f ambient) {
+        super.setAmbient(ambient);
+        return this;
+    }
+
+    @Override
+    public PointLight setDiffuse(Vector3f diffuse) {
+        super.setDiffuse(diffuse);
+        return this;
+    }
+
+    @Override
+    public PointLight setSpecular(Vector3f specular) {
+        super.setSpecular(specular);
+        return this;
+    }
 }

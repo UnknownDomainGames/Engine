@@ -7,9 +7,8 @@ import nullengine.client.asset.AssetURL;
 import nullengine.client.game.GameClient;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.light.DirectionalLight;
-import nullengine.client.rendering.light.Light;
+import nullengine.client.rendering.light.LightManager;
 import nullengine.client.rendering.light.Material;
-import nullengine.client.rendering.light.PointLight;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgram;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
@@ -52,7 +51,7 @@ public class ChunkRenderer {
 
     private ThreadPoolExecutor chunkBakeExecutor;
 
-    private Light dirLight, ptLight;
+    private LightManager lightManager;
     private Material mat;
 
     public void init(RenderManager context) {
@@ -68,11 +67,19 @@ public class ChunkRenderer {
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/chunk_solid.frag")));
 
         //tmp = AssimpHelper.loadModel(AssetURL.of("tmp", "untitled.obj"));
-        dirLight = new DirectionalLight().setDirection(new Vector3f(-0.15f, -1f, -0.35f))
+        lightManager = new LightManager();
+        lightManager.getDirectionalLights().add(new DirectionalLight()
+                .setDirection(new Vector3f(-0.15f, -1f, -0.35f))
                 .setAmbient(new Vector3f(0.4f))
-                .setDiffuse(new Vector3f(1.0f, 1f, 1f))
-                .setSpecular(new Vector3f(1.0f));
-        ptLight = new PointLight().setPosition(new Vector3f(3.5f, 7.5f, -3.5f)).setKlinear(0.7f).setKquadratic(1.8f).setAmbient(new Vector3f(0.1f)).setDiffuse(new Vector3f(0.0f * .5f, 0.0f * .5f, 0.9f)).setSpecular(new Vector3f(0.6f));
+                .setDiffuse(new Vector3f(1f))
+                .setSpecular(new Vector3f(1f)));
+//        lightManager.getPointLights().add(new PointLight()
+//                .setPosition(new Vector3f(8, 6, 8))
+//                .setKlinear(0.7f)
+//                .setKquadratic(1.8f)
+//                .setAmbient(new Vector3f(0.1f))
+//                .setDiffuse(new Vector3f(0.0f * .5f, 0.0f * .5f, 0.9f))
+//                .setSpecular(new Vector3f(0.6f)));
         mat = new Material().setAmbientColor(new Vector3f(0.5f))
                 .setDiffuseColor(new Vector3f(1.0f))
                 .setSpecularColor(new Vector3f(1.0f)).setShininess(32f);
@@ -134,8 +141,7 @@ public class ChunkRenderer {
 
         context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).bind();
         chunkSolidShader.setUniform("useDirectUV", true);
-        dirLight.bind("dirLights[0]");
-        //ptLight.bind(chunkSolidShader,"pointLights[0]");
+        lightManager.bind(context.getCamera());
         mat.bind("material");
     }
 

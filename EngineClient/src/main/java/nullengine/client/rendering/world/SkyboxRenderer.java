@@ -1,13 +1,10 @@
 package nullengine.client.rendering.world;
 
-import com.github.mouse0w0.observable.value.ObservableValue;
 import nullengine.client.asset.Asset;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.mesh.GLMesh;
 import nullengine.client.rendering.mesh.Mesh;
-import nullengine.client.rendering.shader.ShaderManager;
-import nullengine.client.rendering.shader.ShaderProgram;
 import nullengine.client.rendering.texture.GLTexture;
 import org.lwjgl.opengl.GL11;
 
@@ -15,14 +12,10 @@ import static nullengine.client.asset.AssetTypes.TEXTURE;
 
 public class SkyboxRenderer {
 
-    private RenderManager context;
-    private ObservableValue<ShaderProgram> worldShader;
     private Asset<GLTexture> skybox;
     private GLMesh skyboxMesh;
 
     public void init(RenderManager context) {
-        this.context = context;
-        worldShader = ShaderManager.instance().getShader("world_shader");
         skybox = context.getEngine().getAssetManager().create(TEXTURE, AssetURL.of("engine", "misc/skybox"));
         skyboxMesh = GLMesh.of(new Mesh(
                 new float[]{

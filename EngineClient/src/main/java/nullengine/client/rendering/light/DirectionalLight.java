@@ -19,4 +19,22 @@ public class DirectionalLight extends Light {
         this.direction = direction;
         return this;
     }
+
+    @Override
+    public DirectionalLight setAmbient(Vector3f ambient) {
+        super.setAmbient(ambient);
+        return this;
+    }
+
+    @Override
+    public DirectionalLight setDiffuse(Vector3f diffuse) {
+        super.setDiffuse(diffuse);
+        return this;
+    }
+
+    @Override
+    public DirectionalLight setSpecular(Vector3f specular) {
+        super.setSpecular(specular);
+        return this;
+    }
 }

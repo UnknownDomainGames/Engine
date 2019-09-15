@@ -83,7 +83,6 @@ public class WorldRenderer {
     }
 
     public void render(float partial) {
-
         // shadow
         glDisable(GL_MULTISAMPLE);
         frameBufferShadow.bind();
@@ -128,15 +127,13 @@ public class WorldRenderer {
 
         ShaderManager.instance().bindShader(worldShader.getValue());
 
-        ShaderManager.instance().setUniform("u_ProjMatrix", context.getWindow().projection());
-        ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
-
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
+        ShaderManager.instance().setUniform("u_ProjMatrix", context.getWindow().projection());
+        ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
 
         skyboxRenderer.render(partial);
