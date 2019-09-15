@@ -35,17 +35,17 @@ public final class BlockModel implements Model {
         var object = json.getAsJsonObject();
         var data = new BlockModel();
         data.url = url;
-        data.parent = getAsStringOrNull(object.get("parent"));
+        data.parent = getAsStringOrNull(object.get("Parent"));
         resolveParent(data, modelGetter);
-        data.textures = map(object.get("textures"), jsonElement -> AssetURL.fromString(url, jsonElement.getAsString()));
+        data.textures = map(object.get("Textures"), jsonElement -> AssetURL.fromString(url, jsonElement.getAsString()));
         Set<AssetURL> requestTextures = new HashSet<>();
-        data.cubes = array(object.get("cubes"), Cube.class, element -> Cube.deserialize(data, element, requestTextures));
+        data.cubes = array(object.get("Cubes"), Cube.class, element -> Cube.deserialize(data, element, requestTextures));
         resolveTextures(data, requestTextures);
         data.fullFaces = new boolean[6];
         if (data.resolvedParent != null) {
             System.arraycopy(data.resolvedParent.fullFaces, 0, data.fullFaces, 0, 6);
         }
-        var fullFaces = object.getAsJsonArray("fullFaces");
+        var fullFaces = object.getAsJsonArray("FullFaces");
         if (fullFaces != null) {
             for (var fullFace : fullFaces) {
                 data.fullFaces[Direction.valueOf(fullFace.getAsString().toUpperCase()).index] = true;

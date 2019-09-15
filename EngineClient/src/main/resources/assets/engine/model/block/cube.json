@@ -1,45 +1,45 @@
 {
-  "cubes": [
+  "Cubes": [
     {
-      "from": [
+      "From": [
         0.0,
         0.0,
         0.0
       ],
-      "to": [
+      "To": [
         1.0,
         1.0,
         1.0
       ],
-      "faces": {
-        "up": {
-          "texture": "$top",
-          "cullFaces": "UP"
+      "Faces": {
+        "Up": {
+          "Texture": "$Top",
+          "CullFaces": "UP"
         },
-        "down": {
-          "texture": "$bottom",
-          "cullFaces": "DOWN"
+        "Down": {
+          "Texture": "$Bottom",
+          "CullFaces": "DOWN"
         },
-        "north": {
-          "texture": "$north",
-          "cullFaces": "NORTH"
+        "North": {
+          "Texture": "$North",
+          "CullFaces": "NORTH"
         },
-        "south": {
-          "texture": "$south",
-          "cullFaces": "SOUTH"
+        "South": {
+          "Texture": "$South",
+          "CullFaces": "SOUTH"
         },
-        "east": {
-          "texture": "$east",
-          "cullFaces": "EAST"
+        "East": {
+          "Texture": "$East",
+          "CullFaces": "EAST"
         },
-        "west": {
-          "texture": "$west",
-          "cullFaces": "WEST"
+        "West": {
+          "Texture": "$West",
+          "CullFaces": "WEST"
         }
       }
     }
   ],
-  "fullFaces": [
+  "FullFaces": [
     "UP",
     "DOWN",
     "NORTH",

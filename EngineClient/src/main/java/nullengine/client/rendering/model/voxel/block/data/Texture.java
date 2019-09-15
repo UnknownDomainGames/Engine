@@ -16,9 +16,9 @@ class Texture {
     static Texture deserialize(BlockModel blockModel, JsonElement json, Set<AssetURL> requestTextures) {
         var object = json.getAsJsonObject();
         var texture = new Texture();
-        texture.name = AssetURL.fromString(blockModel.url, object.get("texture").getAsString());
+        texture.name = AssetURL.fromString(blockModel.url, object.get("Texture").getAsString());
         requestTextures.add(texture.name);
-        texture.uv = ModelJsonUtils.vector4f(object.get("uv"), DEFAULT_UV);
+        texture.uv = ModelJsonUtils.vector4f(object.get("UV"), DEFAULT_UV);
         return texture;
     }
 }

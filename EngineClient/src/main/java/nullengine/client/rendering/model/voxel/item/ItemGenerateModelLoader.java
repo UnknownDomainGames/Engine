@@ -12,14 +12,14 @@ public final class ItemGenerateModelLoader implements ModelLoader {
 
     @Override
     public boolean isAccepts(AssetURL url, JsonObject json) {
-        return json.has("parent") && "item/generate".equals(json.get("parent").getAsString());
+        return json.has("Parent") && "item/generate".equals(json.get("Parent").getAsString());
     }
 
     @Override
     public Model load(AssetURL url, JsonObject json, Function<AssetURL, Model> modelGetter) {
         ItemGenerateModel model = new ItemGenerateModel();
         model.url = url;
-        model.texture = AssetURL.fromString(url, JsonUtils.getAsStringOrNull(json.get("texture")));
+        model.texture = AssetURL.fromString(url, JsonUtils.getAsStringOrNull(json.get("Texture")));
         return model;
     }
 }

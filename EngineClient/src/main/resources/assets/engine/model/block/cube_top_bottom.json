@@ -1,11 +1,11 @@
 {
-  "parent": "block/cube",
-  "textures": {
-    "top": "$top",
-    "bottom": "$bottom",
-    "north": "$side",
-    "south": "$side",
-    "east": "$side",
-    "west": "$side"
+  "Parent": "block/cube",
+  "Textures": {
+    "Top": "$Top",
+    "Bottom": "$Bottom",
+    "North": "$Side",
+    "South": "$Side",
+    "East": "$Side",
+    "West": "$Side"
   }
 }

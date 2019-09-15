@@ -16,12 +16,12 @@ final class Cube {
     static Cube deserialize(BlockModel blockModel, JsonElement json, Set<AssetURL> requestTextures) {
         var object = json.getAsJsonObject();
         var cube = new Cube();
-        cube.from = ModelJsonUtils.vector3f(object.get("from"));
-        cube.to = ModelJsonUtils.vector3f(object.get("to"));
+        cube.from = ModelJsonUtils.vector3f(object.get("From"));
+        cube.to = ModelJsonUtils.vector3f(object.get("To"));
         checkMinAndMax(cube.from, cube.to);
 
         cube.faces = new Face[6];
-        var faces = object.getAsJsonObject("faces");
+        var faces = object.getAsJsonObject("Faces");
         for (var face : faces.entrySet()) {
             var direction = Direction.valueOf(face.getKey().toUpperCase());
             cube.faces[direction.index] = Face.deserialize(blockModel, face.getValue(), requestTextures);

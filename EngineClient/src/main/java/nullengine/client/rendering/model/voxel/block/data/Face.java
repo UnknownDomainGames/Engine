@@ -20,7 +20,7 @@ final class Face {
         var object = json.getAsJsonObject();
         var face = new Face();
         face.texture = Texture.deserialize(blockModel, json, requestTextures);
-        face.cullFaces = cullFaces(object.get("cullFaces"));
+        face.cullFaces = cullFaces(object.get("CullFaces"));
         return face;
     }
 }
