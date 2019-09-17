@@ -40,9 +40,22 @@ public class GLFWDisplayInfo implements DisplayInfo {
             IntBuffer yPos = memoryStack.mallocInt(1);
             GLFW.glfwGetMonitorPos(pointer, xPos, yPos);
             GLFWVidMode vidMode = GLFW.glfwGetVideoMode(pointer);
+            GLFWVidMode.Buffer vidModes = GLFW.glfwGetVideoModes(pointer);
             return new Monitor(pointer, name, width.get(), height.get(), xScale.get(), yScale.get(), xPos.get(), yPos.get(),
-                    vidMode.width(), vidMode.height(), vidMode.redBits(), vidMode.greenBits(), vidMode.blueBits(), vidMode.refreshRate());
+                    createVideoMode(vidMode), createVideoModes(vidModes));
         }
+    }
+
+    private List<VideoMode> createVideoModes(GLFWVidMode.Buffer vidModes) {
+        List<VideoMode> videoModes = new ArrayList<>();
+        for (int i = 0; i < vidModes.limit(); i++) {
+            videoModes.add(createVideoMode(vidModes.get()));
+        }
+        return List.copyOf(videoModes);
+    }
+
+    private VideoMode createVideoMode(GLFWVidMode vidMode) {
+        return new VideoMode(vidMode.width(), vidMode.height(), vidMode.redBits(), vidMode.greenBits(), vidMode.blueBits(), vidMode.refreshRate());
     }
 
     @Override

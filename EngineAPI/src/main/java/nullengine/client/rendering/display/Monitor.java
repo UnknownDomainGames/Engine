@@ -1,5 +1,7 @@
 package nullengine.client.rendering.display;
 
+import java.util.List;
+
 public class Monitor {
     private final long pointer;
     private final String name;
@@ -13,14 +15,10 @@ public class Monitor {
     private final int posX;
     private final int posY;
 
-    private final int width;
-    private final int height;
-    private final int redBits;
-    private final int greenBits;
-    private final int blueBits;
-    private final int refreshRate;
+    private final VideoMode videoMode;
+    private final List<VideoMode> videoModes;
 
-    public Monitor(long pointer, String name, int physicsWidth, int physicsHeight, float scaleX, float scaleY, int posX, int posY, int width, int height, int redBits, int greenBits, int blueBits, int refreshRate) {
+    public Monitor(long pointer, String name, int physicsWidth, int physicsHeight, float scaleX, float scaleY, int posX, int posY, VideoMode videoMode, List<VideoMode> videoModes) {
         this.pointer = pointer;
         this.name = name;
         this.physicsWidth = physicsWidth;
@@ -29,12 +27,8 @@ public class Monitor {
         this.scaleY = scaleY;
         this.posX = posX;
         this.posY = posY;
-        this.width = width;
-        this.height = height;
-        this.redBits = redBits;
-        this.greenBits = greenBits;
-        this.blueBits = blueBits;
-        this.refreshRate = refreshRate;
+        this.videoMode = videoMode;
+        this.videoModes = videoModes;
     }
 
     public long getPointer() {
@@ -69,27 +63,11 @@ public class Monitor {
         return posY;
     }
 
-    public int getWidth() {
-        return width;
+    public VideoMode getVideoMode() {
+        return videoMode;
     }
 
-    public int getHeight() {
-        return height;
-    }
-
-    public int getRedBits() {
-        return redBits;
-    }
-
-    public int getGreenBits() {
-        return greenBits;
-    }
-
-    public int getBlueBits() {
-        return blueBits;
-    }
-
-    public int getRefreshRate() {
-        return refreshRate;
+    public List<VideoMode> getVideoModes() {
+        return videoModes;
     }
 }

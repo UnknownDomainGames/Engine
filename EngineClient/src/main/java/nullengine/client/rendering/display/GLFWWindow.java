@@ -317,7 +317,7 @@ public class GLFWWindow implements Window {
                     lastWidth = windowWidth;
                     lastHeight = windowHeight;
                 }
-                glfwSetWindowMonitor(pointer, monitor.getPointer(), 0, 0, monitor.getWidth(), monitor.getHeight(), monitor.getRefreshRate());
+                glfwSetWindowMonitor(pointer, monitor.getPointer(), 0, 0, monitor.getVideoMode().getWidth(), monitor.getVideoMode().getHeight(), monitor.getVideoMode().getRefreshRate());
                 break;
             case WINDOWED_FULLSCREEN:
                 if (this.displayMode == DisplayMode.WINDOWED) {
@@ -327,11 +327,11 @@ public class GLFWWindow implements Window {
                     lastHeight = windowHeight;
                 }
                 glfwSetWindowAttrib(pointer, GLFW_DECORATED, GL_FALSE);
-                glfwSetWindowMonitor(pointer, NULL, 0, 0, monitor.getWidth(), monitor.getHeight(), monitor.getRefreshRate());
+                glfwSetWindowMonitor(pointer, NULL, 0, 0, monitor.getVideoMode().getWidth(), monitor.getVideoMode().getHeight(), monitor.getVideoMode().getRefreshRate());
                 break;
             case WINDOWED:
                 glfwSetWindowAttrib(pointer, GLFW_DECORATED, GL_TRUE);
-                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, lastWidth, lastHeight, monitor.getRefreshRate());
+                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, lastWidth, lastHeight, monitor.getVideoMode().getRefreshRate());
         }
         this.displayMode = displayMode;
     }
@@ -377,7 +377,7 @@ public class GLFWWindow implements Window {
     }
 
     private void setWindowPosCenter() {
-        setPos((monitor.getWidth() - windowWidth) / 2, (monitor.getHeight() - windowHeight) / 2);
+        setPos((monitor.getVideoMode().getWidth() - windowWidth) / 2, (monitor.getVideoMode().getHeight() - windowHeight) / 2);
     }
 
     private void enableVSync() {
