@@ -34,11 +34,11 @@ import nullengine.event.item.ItemInteractEvent;
 import nullengine.event.item.cause.ItemInteractCause;
 import nullengine.event.mod.ModLifecycleEvent;
 import nullengine.event.mod.ModRegistrationEvent;
-import nullengine.item.BlockItem;
 import nullengine.item.ItemStack;
 import nullengine.item.component.ActivateBlockBehavior;
 import nullengine.item.component.ClickBlockBehavior;
 import nullengine.player.Player;
+import nullengine.registry.Registries;
 import nullengine.registry.impl.IdAutoIncreaseRegistry;
 import nullengine.world.WorldProvider;
 import nullengine.world.collision.RayTraceBlockHit;
@@ -178,10 +178,9 @@ public final class EngineModClientListeners {
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
                     player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
-                            // TODO: Dont create BlockItem
-                            entity.getComponent(TwoHands.class)
-                                    .ifPresent(twoHands -> twoHands.setMainHand(new ItemStack(new BlockItem(hit.getBlock()))))
-                    );
+                            entity.getComponent(TwoHands.class).ifPresent(twoHands ->
+                                    Registries.getItemRegistry().getBlockItem(hit.getBlock()).ifPresent(item ->
+                                            twoHands.setMainHand(new ItemStack(item)))));
                 })
                 .build());
         event.register(KeyBinding.builder()

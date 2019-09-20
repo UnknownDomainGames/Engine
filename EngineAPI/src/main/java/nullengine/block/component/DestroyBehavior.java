@@ -25,8 +25,7 @@ public interface DestroyBehavior extends Component {
 
     default List<ItemStack> getDropItems(World world, BlockPos pos, Block block, BlockChangeCause cause) {
         var item = Registries.getItemRegistry().getBlockItem(block);
-        assert item != null;
-        return List.of(new ItemStack(item, 1));
+        return item.map(blockItem -> List.of(new ItemStack(blockItem, 1))).orElseGet(List::of);
     }
 
     default DestroyableProperty getProperty(World world, BlockPos blockPos, Block block) {

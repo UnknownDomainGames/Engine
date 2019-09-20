@@ -5,12 +5,11 @@ import nullengine.item.BlockItem;
 import nullengine.item.Item;
 import nullengine.registry.Registry;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 public interface ItemRegistry extends Registry<Item> {
 
-    @Nullable
-    BlockItem getBlockItem(Block block);
+    Optional<BlockItem> getBlockItem(Block block);
 
     boolean hasBlockItem(Block block);
 }

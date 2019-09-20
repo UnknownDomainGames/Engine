@@ -12,8 +12,9 @@ import nullengine.server.event.PacketReceivedEvent;
 import nullengine.server.network.packet.PacketSyncRegistry;
 
 import javax.annotation.Nonnull;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SimpleItemRegistry extends IdBakeRegistry<Item> implements ItemRegistry {
@@ -25,8 +26,8 @@ public class SimpleItemRegistry extends IdBakeRegistry<Item> implements ItemRegi
     }
 
     @Override
-    public BlockItem getBlockItem(Block block) {
-        return blockToCorrItem.get(block);
+    public Optional<BlockItem> getBlockItem(Block block) {
+        return Optional.ofNullable(blockToCorrItem.get(block));
     }
 
     @Override
