@@ -16,8 +16,6 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
 
     private final Map<Item, ItemRenderer> itemRendererMap = new HashMap<>();
 
-    private final ItemRendererTest defaultItemRenderer = new ItemRendererTest();
-
     private RenderManager context;
 
     private void register(Item item, ItemRenderer renderer) {
@@ -32,7 +30,6 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
         Registries.getItemRegistry().getValues().forEach(item ->
                 item.getComponent(ItemRenderer.class)
                         .ifPresent(itemRenderer -> register(item, itemRenderer)));
-        defaultItemRenderer.init(context);
         itemRendererMap.values().forEach(itemRenderer -> itemRenderer.init(context));
     }
 
@@ -41,9 +38,14 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
         if (itemStack.isEmpty())
             return;
 
+        var render = itemRendererMap.get(itemStack.getItem());
+        if (render == null) {
+            return;
+        }
+
         preRender();
 
-        itemRendererMap.getOrDefault(itemStack.getItem(), defaultItemRenderer).render(itemStack, partial);
+        render.render(itemStack, partial);
 
         postRender();
     }
@@ -57,8 +59,6 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
     }
 
     public void dispose() {
-        defaultItemRenderer.dispose();
-
         itemRendererMap.values().forEach(ItemRenderer::dispose);
     }
 }
