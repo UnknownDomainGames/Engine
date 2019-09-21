@@ -59,9 +59,9 @@ public class ModelJsonUtils {
         }
 
         JsonObject object = json.getAsJsonObject();
-        Vector3fc translate = vector3f(object.get("translation"));
-        Vector3fc rotation = vector3f(object.get("rotation"));
-        Vector3fc scale = vector3f(object.get("scale"));
+        Vector3fc translate = vector3f(object.get("Translate"));
+        Vector3fc rotation = vector3f(object.get("Rotate"));
+        Vector3fc scale = vector3f(object.get("Scale"));
         return new Transformation(translate, rotation, scale);
     }
 
