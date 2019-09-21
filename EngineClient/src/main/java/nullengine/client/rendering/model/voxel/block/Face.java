@@ -1,11 +1,11 @@
-package nullengine.client.rendering.model.voxel.block.data;
+package nullengine.client.rendering.model.voxel.block;
 
 import com.google.gson.JsonElement;
 import nullengine.client.asset.AssetURL;
 
 import java.util.Set;
 
-import static nullengine.client.rendering.model.voxel.block.data.ModelJsonUtils.cullFaces;
+import static nullengine.client.rendering.model.voxel.ModelJsonUtils.cullFaces;
 
 final class Face {
 

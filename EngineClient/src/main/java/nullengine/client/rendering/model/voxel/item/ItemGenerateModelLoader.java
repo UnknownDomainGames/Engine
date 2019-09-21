@@ -8,6 +8,8 @@ import nullengine.util.JsonUtils;
 
 import java.util.function.Function;
 
+import static nullengine.client.rendering.model.voxel.ModelJsonUtils.transformations;
+
 public final class ItemGenerateModelLoader implements ModelLoader {
 
     @Override
@@ -20,6 +22,7 @@ public final class ItemGenerateModelLoader implements ModelLoader {
         ItemGenerateModel model = new ItemGenerateModel();
         model.url = url;
         model.texture = AssetURL.fromString(url, JsonUtils.getAsStringOrNull(json.get("Texture")));
+        model.transformations = transformations(json.get("Display"));
         return model;
     }
 }

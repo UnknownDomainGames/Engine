@@ -1,12 +1,13 @@
-package nullengine.client.rendering.model.voxel.block.data;
+package nullengine.client.rendering.model.voxel.block;
 
-import com.google.gson.JsonElement;
 import nullengine.client.asset.AssetURL;
+import nullengine.client.rendering.model.DisplayType;
 import nullengine.client.rendering.model.ModelUtils;
 import nullengine.client.rendering.model.voxel.Model;
 import nullengine.client.rendering.texture.TextureAtlasPart;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.Math2;
+import nullengine.math.Transformation;
 import nullengine.util.Direction;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -16,10 +17,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static nullengine.client.rendering.model.voxel.block.data.ModelJsonUtils.array;
-import static nullengine.client.rendering.model.voxel.block.data.ModelJsonUtils.map;
-import static nullengine.util.JsonUtils.getAsStringOrNull;
+import static nullengine.client.rendering.model.voxel.ModelLoadUtils.fillTransformationArray;
+import static nullengine.client.rendering.model.voxel.block.BlockModelLoader.resolveTexture;
 
 public final class BlockModel implements Model {
 
@@ -30,80 +29,19 @@ public final class BlockModel implements Model {
     transient List<AssetURL> requestTextures;
     Cube[] cubes;
     boolean[] fullFaces;
-
-    public static BlockModel deserialize(AssetURL url, JsonElement json, Function<AssetURL, Model> modelGetter) {
-        var object = json.getAsJsonObject();
-        var data = new BlockModel();
-        data.url = url;
-        data.parent = getAsStringOrNull(object.get("Parent"));
-        resolveParent(data, modelGetter);
-        data.textures = map(object.get("Textures"), jsonElement -> AssetURL.fromString(url, jsonElement.getAsString()));
-        Set<AssetURL> requestTextures = new HashSet<>();
-        data.cubes = array(object.get("Cubes"), Cube.class, element -> Cube.deserialize(data, element, requestTextures));
-        resolveTextures(data, requestTextures);
-        data.fullFaces = new boolean[6];
-        if (data.resolvedParent != null) {
-            System.arraycopy(data.resolvedParent.fullFaces, 0, data.fullFaces, 0, 6);
-        }
-        var fullFaces = object.getAsJsonArray("FullFaces");
-        if (fullFaces != null) {
-            for (var fullFace : fullFaces) {
-                data.fullFaces[Direction.valueOf(fullFace.getAsString().toUpperCase()).index] = true;
-            }
-        }
-        return data;
-    }
-
-    private static void resolveParent(BlockModel blockModel, Function<AssetURL, Model> modelGetter) {
-        if (isNullOrEmpty(blockModel.parent)) {
-            return;
-        }
-
-        var parentUrl = AssetURL.fromString(blockModel.url, blockModel.parent);
-        var parentInstance = modelGetter.apply(parentUrl);
-        if (parentInstance instanceof BlockModel) {
-            blockModel.resolvedParent = (BlockModel) parentInstance;
-        }
-    }
-
-    private static void resolveTextures(BlockModel blockModel, Set<AssetURL> requestTextures) {
-        Map<String, AssetURL> textures = new HashMap<>();
-        blockModel.textures.forEach((key, value) -> textures.put(key, resolveTexture(value, textures)));
-        var parent = blockModel.resolvedParent;
-        if (parent != null) {
-            parent.textures.forEach((key, value) -> textures.put(key, resolveTexture(value, textures)));
-        }
-        blockModel.textures = Map.copyOf(textures);
-        Set<AssetURL> resolvedRequestTextures = new HashSet<>();
-        if (parent != null) {
-            for (AssetURL requestTexture : parent.requestTextures) {
-                resolvedRequestTextures.add(resolveTexture(requestTexture, textures));
-            }
-        }
-        for (AssetURL requestTexture : requestTextures) {
-            resolvedRequestTextures.add(resolveTexture(requestTexture, textures));
-        }
-        blockModel.requestTextures = List.copyOf(resolvedRequestTextures);
-    }
-
-    static AssetURL resolveTexture(AssetURL texture, Map<String, AssetURL> textures) {
-        return isResolvedTexture(texture) ? texture : textures.getOrDefault(texture.getLocation().substring(1), texture);
-    }
-
-    static boolean isResolvedTexture(AssetURL texture) {
-        return texture.getLocation().charAt(0) != '$';
-    }
+    Transformation[] transformations;
 
     @Override
     public nullengine.client.rendering.model.BakedModel bake(Function<AssetURL, TextureAtlasPart> textureGetter) {
         Map<Integer, List<float[]>> vertexes = new HashMap<>();
         bakeModel(this, vertexes, textureGetter);
-        return new BakedModel(Map.copyOf(vertexes), fullFaces);
+        fillTransformationArray(transformations);
+        return new BakedModel(Map.copyOf(vertexes), fullFaces, transformations);
     }
 
     @Override
     public Collection<AssetURL> getTextures() {
-        return requestTextures.stream().filter(BlockModel::isResolvedTexture).collect(Collectors.toList());
+        return requestTextures.stream().filter(BlockModelLoader::isResolvedTexture).collect(Collectors.toList());
     }
 
     private void bakeModel(BlockModel data, Map<Integer, List<float[]>> vertexes, Function<AssetURL, TextureAtlasPart> textureGetter) {
@@ -170,10 +108,12 @@ public final class BlockModel implements Model {
 
         private final Map<Integer, List<float[]>> vertexes;
         private final boolean[] fullFaces;
+        private final Transformation[] transformations;
 
-        BakedModel(Map<Integer, List<float[]>> vertexes, boolean[] fullFaces) {
+        BakedModel(Map<Integer, List<float[]>> vertexes, boolean[] fullFaces, Transformation[] transformations) {
             this.vertexes = vertexes;
             this.fullFaces = fullFaces;
+            this.transformations = transformations;
         }
 
         @Override
@@ -192,6 +132,11 @@ public final class BlockModel implements Model {
         @Override
         public boolean isFullFace(Direction direction) {
             return fullFaces[direction.index];
+        }
+
+        @Override
+        public Transformation getTransformation(DisplayType type) {
+            return transformations[type.ordinal()];
         }
     }
 }

@@ -1,11 +1,13 @@
 package nullengine.client.rendering.model.voxel.item;
 
 import nullengine.client.asset.AssetURL;
+import nullengine.client.rendering.model.DisplayType;
 import nullengine.client.rendering.model.voxel.Model;
 import nullengine.client.rendering.texture.TextureAtlasPart;
 import nullengine.client.rendering.texture.TextureBuffer;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.Math2;
+import nullengine.math.Transformation;
 import nullengine.util.Direction;
 
 import java.util.ArrayList;
@@ -13,13 +15,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import static nullengine.client.rendering.model.voxel.ModelLoadUtils.fillTransformationArray;
+
 public class ItemGenerateModel implements Model {
 
-    private static float positivePixel = 1f / 16;
+    private static final float positivePixel = 1f / 16;
     private static final float negativePixel = -1f / 16;
 
     transient AssetURL url;
     AssetURL texture;
+    Transformation[] transformations;
 
     @Override
     public BakedModel bake(Function<AssetURL, TextureAtlasPart> textureGetter) {
@@ -62,7 +67,8 @@ public class ItemGenerateModel implements Model {
         }
         bakeSouth(vertexes, texture);
         bakeNorth(vertexes, texture);
-        return new BakedModel(vertexes);
+        fillTransformationArray(transformations);
+        return new BakedModel(vertexes, transformations);
     }
 
     private int getAlpha(TextureBuffer buffer, int pixelX, int pixelY) {
@@ -146,9 +152,11 @@ public class ItemGenerateModel implements Model {
     private static final class BakedModel implements nullengine.client.rendering.model.BakedModel {
 
         private final List<float[]> vertexes;
+        private final Transformation[] transformations;
 
-        private BakedModel(List<float[]> vertexes) {
+        private BakedModel(List<float[]> vertexes, Transformation[] transformations) {
             this.vertexes = vertexes;
+            this.transformations = transformations;
         }
 
         @Override
@@ -161,6 +169,11 @@ public class ItemGenerateModel implements Model {
         @Override
         public boolean isFullFace(Direction direction) {
             return false;
+        }
+
+        @Override
+        public Transformation getTransformation(DisplayType type) {
+            return transformations[type.ordinal()];
         }
     }
 }

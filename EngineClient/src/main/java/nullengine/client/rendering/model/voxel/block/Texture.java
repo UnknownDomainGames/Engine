@@ -1,7 +1,8 @@
-package nullengine.client.rendering.model.voxel.block.data;
+package nullengine.client.rendering.model.voxel.block;
 
 import com.google.gson.JsonElement;
 import nullengine.client.asset.AssetURL;
+import nullengine.client.rendering.model.voxel.ModelJsonUtils;
 import org.joml.Vector4f;
 
 import java.util.Set;

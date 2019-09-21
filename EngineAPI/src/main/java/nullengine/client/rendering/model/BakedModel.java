@@ -1,6 +1,7 @@
 package nullengine.client.rendering.model;
 
 import nullengine.client.rendering.util.buffer.GLBuffer;
+import nullengine.math.Transformation;
 import nullengine.util.Direction;
 
 public interface BakedModel {
@@ -12,4 +13,6 @@ public interface BakedModel {
     void putVertexes(GLBuffer buffer, int coveredFace);
 
     boolean isFullFace(Direction direction);
+
+    Transformation getTransformation(DisplayType type);
 }
