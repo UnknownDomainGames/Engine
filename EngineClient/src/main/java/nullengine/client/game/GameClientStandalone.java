@@ -6,6 +6,7 @@ import nullengine.event.game.GameTerminationEvent;
 import nullengine.game.GameServerFullAsync;
 import nullengine.player.Player;
 import nullengine.world.World;
+import nullengine.world.WorldCommon;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -47,7 +48,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         if (player != null && player.getControlledEntity() != null) {
             return player.getControlledEntity().getWorld();
         }
-        return null;
+        throw new IllegalStateException("The world hasn't initialize");
     }
 
     @Override
@@ -83,8 +84,9 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     public void clientTick() {
         if (isMarkedTermination()) {
             tryTerminate();
-            return;
         }
+
+        ((WorldCommon) getWorld()).tick();
         // TODO upload particle physics here
     }
 

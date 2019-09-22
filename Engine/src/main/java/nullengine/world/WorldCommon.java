@@ -12,7 +12,6 @@ import nullengine.event.block.BlockPlaceEvent;
 import nullengine.event.block.BlockReplaceEvent;
 import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.game.Game;
-import nullengine.logic.Ticker;
 import nullengine.math.AABBs;
 import nullengine.math.BlockPos;
 import nullengine.registry.Registries;
@@ -35,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class WorldCommon implements World, Runnable {
+public class WorldCommon implements World {
 
     private final Game game;
     private final WorldProvider provider;
@@ -50,9 +49,8 @@ public class WorldCommon implements World, Runnable {
     private WorldCommonLoader loader;
     private WorldCommonChunkManager chunkManager;
     private final List<Long> criticalChunks;
-    private final List<Runnable> nextTick = new ArrayList<>();
 
-    private final Ticker ticker;
+    //    private final Ticker ticker;
     private long gameTick;
 //    private ExecutorService service;
 
@@ -64,7 +62,7 @@ public class WorldCommon implements World, Runnable {
         //this.chunkStorage = new ChunkStorage(this);
         this.loader = loader;
         this.chunkManager = new WorldCommonChunkManager(this, chunkGenerator);
-        this.ticker = new Ticker(this::tick, Ticker.LOGIC_TICK); // TODO: make tps configurable
+//        this.ticker = new Ticker(this::tick, Ticker.LOGIC_TICK); // TODO: make tps configurable
         this.collisionManager = new WorldCollisionManagerImpl(this);
         this.entityManager = new DefaultWorldEntityManager(this);
         criticalChunks = new ArrayList<>();
@@ -144,7 +142,7 @@ public class WorldCommon implements World, Runnable {
         return entityManager.spawnEntity(provider, position);
     }
 
-    protected void tick() {
+    public void tick() {
         physicsSystem.tick(this);
         tickEntityMotion();
         tickChunks();
@@ -161,16 +159,6 @@ public class WorldCommon implements World, Runnable {
             Vector3d position = entity.getPosition();
             Vector3f motion = entity.getMotion();
             position.add(motion);
-//            BlockPos oldPosition = ChunkConstants.toChunkPos(BlockPos.of(position));
-//            BlockPos newPosition = ChunkConstants.toChunkPos(BlockPos.of(position));
-
-//            if (!BlockPos.inSameChunk(oldPosition, newPosition)) {
-//                Chunk oldChunk = chunkManager.loadChunk(oldPosition.x(), oldPosition.y(), oldPosition.z()),
-//                        newChunk = chunkManager.loadChunk(newPosition.x(), newPosition.y(), newPosition.z());
-//                oldChunk.getEntities().remove(entity);
-//                newChunk.getEntities().add(entity);
-//                // entity leaving and enter chunk event
-//            }
         }
     }
 
@@ -258,18 +246,18 @@ public class WorldCommon implements World, Runnable {
         return chunkManager.getChunks();
     }
 
-    @Override
-    public void run() {
-        ticker.run();
-    }
-
-    public boolean isStopped() {
-        return ticker.isStopped();
-    }
-
-    public void stop() {
-        ticker.stop();
-    }
+//    @Override
+//    public void run() {
+//        ticker.run();
+//    }
+//
+//    public boolean isStopped() {
+//        return ticker.isStopped();
+//    }
+//
+//    public void stop() {
+//        ticker.stop();
+//    }
 
     public WorldCommonLoader getLoader() {
         return loader;

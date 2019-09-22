@@ -30,7 +30,6 @@ import nullengine.event.engine.EngineEvent;
 import nullengine.game.Game;
 import nullengine.logic.Ticker;
 import nullengine.mod.ModContainer;
-import nullengine.server.ServerConfig;
 import nullengine.util.ClassPathUtils;
 import nullengine.util.RuntimeEnvironment;
 import nullengine.util.Side;
@@ -199,8 +198,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private void clientTick() {
         if (isPlaying()) {
-            keyBindingManager.tick();
             game.clientTick();
+            keyBindingManager.tick();
         }
 
         // TODO: Remove it.

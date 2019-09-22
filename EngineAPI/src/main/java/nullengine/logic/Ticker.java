@@ -3,7 +3,7 @@ package nullengine.logic;
 public class Ticker implements Runnable {
 
     public static final int LOGIC_TICK = 20;
-    public static final int CLIENT_TICK = 60; // 暂时用常量
+    public static final int CLIENT_TICK = 20; // 暂时用常量
 
     protected final Tickable fixed;
     protected final Tickable.Partial dynamic;
@@ -16,7 +16,7 @@ public class Ticker implements Runnable {
         this.fixed = task;
         this.dynamic = partial -> {
             try {
-                Thread.sleep((long) ((getInterval() - partial) * 1000));
+                Thread.sleep((long) ((getInterval() - partial / tickPerSecond) * 1000));
             } catch (InterruptedException ignored) {
             }
         };
@@ -66,7 +66,7 @@ public class Ticker implements Runnable {
             }
 
             if (!stopped) {
-                dynamic.tick((float) (lag / tickPerSecond));
+                dynamic.tick((float) (lag * tickPerSecond));
             }
         }
     }
