@@ -192,6 +192,7 @@ public class WorldRenderer {
         defaultFBO.dispose();
 
         ShaderManager.instance().unregisterShader("world_shader");
+        ShaderManager.instance().unregisterShader("entity_shader");
         ShaderManager.instance().unregisterShader("frame_buffer_shader");
         ShaderManager.instance().unregisterShader("shadow_shader");
     }
