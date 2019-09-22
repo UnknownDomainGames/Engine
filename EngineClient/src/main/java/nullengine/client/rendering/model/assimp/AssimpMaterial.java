@@ -3,7 +3,7 @@ package nullengine.client.rendering.model.assimp;
 import nullengine.Platform;
 import nullengine.client.asset.AssetTypes;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.rendering.light.Material;
+import nullengine.client.rendering.material.Material;
 import nullengine.client.rendering.texture.GLTexture;
 import org.apache.commons.io.FilenameUtils;
 import org.joml.Vector3f;

@@ -1,12 +1,12 @@
 package nullengine.client.rendering.world;
 
-import com.github.mouse0w0.observable.value.MutableValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
-import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderManager;
-import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.entity.EntityRenderManagerImpl;
+import nullengine.client.rendering.light.DirectionalLight;
+import nullengine.client.rendering.light.LightManager;
+import nullengine.client.rendering.material.Material;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgram;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
@@ -15,11 +15,7 @@ import nullengine.client.rendering.util.DefaultFBOWrapper;
 import nullengine.client.rendering.util.FrameBuffer;
 import nullengine.client.rendering.util.FrameBufferMultiSampled;
 import nullengine.client.rendering.util.FrameBufferShadow;
-import nullengine.client.rendering.util.buffer.GLBuffer;
-import nullengine.client.rendering.util.buffer.GLBufferFormats;
-import nullengine.client.rendering.util.buffer.GLBufferMode;
 import nullengine.client.rendering.world.chunk.ChunkRenderer;
-import nullengine.world.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -37,9 +33,11 @@ public class WorldRenderer {
 
     private final EntityRenderManagerImpl entityRenderManager = new EntityRenderManagerImpl();
 
-    private final MutableValue<World> world = new SimpleMutableObjectValue<>();
+    private LightManager lightManager;
+    private Material material;
 
     private ObservableValue<ShaderProgram> worldShader;
+    private ObservableValue<ShaderProgram> entityShader;
     private FrameBuffer frameBuffer;
     private FrameBuffer frameBufferMultisampled;
     private final DefaultFBOWrapper defaultFBO = new DefaultFBOWrapper();
@@ -51,18 +49,30 @@ public class WorldRenderer {
 
     public void init(RenderManager context) {
         this.context = context;
-        chunkRenderer.init(context);
+
+        chunkRenderer.init(context, this);
         blockSelectionRenderer.init(context);
         entityRenderManager.init(context);
-
-        world.setValue(context.getEngine().getCurrentGame().getWorld());
-
-//        context.getGame().getContext().register(chunkRenderer);
-        worldShader =
-                ShaderManager.instance().registerShader("world_shader",
-                        new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/world.vert"))
-                                .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/world.frag")));
         skyboxRenderer.init(context);
+
+        lightManager = new LightManager();
+        lightManager.getDirectionalLights().add(new DirectionalLight()
+                .setDirection(new Vector3f(-0.15f, -1f, -0.35f))
+                .setAmbient(new Vector3f(0.4f))
+                .setDiffuse(new Vector3f(1f))
+                .setSpecular(new Vector3f(1f)));
+
+        material = new Material().setAmbientColor(new Vector3f(0.5f))
+                .setDiffuseColor(new Vector3f(1.0f))
+                .setSpecularColor(new Vector3f(1.0f)).setShininess(32f);
+
+        worldShader = ShaderManager.instance().registerShader("world_shader", new ShaderProgramBuilder()
+                .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/world.vert"))
+                .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/world.frag")));
+        entityShader = ShaderManager.instance().registerShader("entity_shader", new ShaderProgramBuilder()
+                .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/entity.vert"))
+                .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/entity.frag")));
+
         frameBuffer = new FrameBuffer();
         frameBuffer.createFrameBuffer();
         frameBuffer.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
@@ -106,14 +116,14 @@ public class WorldRenderer {
         ShaderManager.instance().unbindOverriding();
         frameBufferShadow.unbind();
 
-        // render world
+        // render chunk
         GL11.glViewport(0, 0, context.getWindow().getWidth(), context.getWindow().getHeight());
 
         frameBufferMultisampled.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
 
-        // TODO: Remove it
+        // TODO: Move it
         ShaderManager.instance().bindShader("chunk_solid");
         ShaderProgram chunkSolidShader = ShaderManager.instance().getShader("chunk_solid").getValue();
         if (chunkSolidShader != null) {
@@ -125,36 +135,21 @@ public class WorldRenderer {
         GL15.glActiveTexture(GL13.GL_TEXTURE0);
         chunkRenderer.render();
 
+        // render world
         ShaderManager.instance().bindShader(worldShader.getValue());
-
+        ShaderManager.instance().setUniform("u_ProjMatrix", context.getWindow().projection());
+        ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
+        ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        ShaderManager.instance().setUniform("u_ProjMatrix", context.getWindow().projection());
-        ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
-        ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
 
         skyboxRenderer.render(partial);
-
-        // TODO: Remove it
-        context.getTextureManager().getWhiteTexture().bind();
-        Tessellator tessellator = Tessellator.getInstance();
-        GLBuffer buffer = tessellator.getBuffer();
-        buffer.begin(GLBufferMode.LINES, GLBufferFormats.POSITION_COLOR_TEXTURE);
-        buffer.pos(0, 0, 0).color(1, 0, 0).uv(0, 0).endVertex();
-        buffer.pos(100, 0, 0).color(1, 0, 0).uv(0, 0).endVertex();
-        buffer.pos(0, 0, 0).color(0, 1, 0).uv(0, 0).endVertex();
-        buffer.pos(0, 100, 0).color(0, 1, 0).uv(0, 0).endVertex();
-        buffer.pos(0, 0, 0).color(0, 0, 1).uv(0, 0).endVertex();
-        buffer.pos(0, 0, 100).color(0, 0, 1).uv(0, 0).endVertex();
-        tessellator.draw();
-
         blockSelectionRenderer.render(partial);
 
-        // TODO: Support shadow and light. Move it.
-        world.getValue().getEntities().forEach(entity -> entityRenderManager.render(entity, partial));
+        renderEntity(lightSpaceMat, partial);
 
         // multi sample
         frameBuffer.bind();
@@ -174,6 +169,18 @@ public class WorldRenderer {
         }
     }
 
+    private void renderEntity(Matrix4f lightSpaceMat, float partial) {
+        ShaderManager.instance().bindShader(entityShader.getValue());
+        ShaderManager.instance().setUniform("u_ProjMatrix", context.getWindow().projection());
+        ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
+        ShaderManager.instance().setUniform("u_LightSpace", lightSpaceMat);
+        ShaderManager.instance().setUniform("u_ShadowMap", 8);
+        lightManager.bind(context.getCamera());
+        material.bind("material");
+        context.getEngine().getCurrentGame().getWorld().getEntities().forEach(entity ->
+                entityRenderManager.render(entity, partial));
+    }
+
     public void dispose() {
         chunkRenderer.dispose();
         blockSelectionRenderer.dispose();
@@ -187,5 +194,13 @@ public class WorldRenderer {
         ShaderManager.instance().unregisterShader("world_shader");
         ShaderManager.instance().unregisterShader("frame_buffer_shader");
         ShaderManager.instance().unregisterShader("shadow_shader");
+    }
+
+    public LightManager getLightManager() {
+        return lightManager;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 }

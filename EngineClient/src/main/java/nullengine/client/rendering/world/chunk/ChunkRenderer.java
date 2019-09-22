@@ -6,9 +6,6 @@ import io.netty.util.collection.LongObjectMap;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.game.GameClient;
 import nullengine.client.rendering.RenderManager;
-import nullengine.client.rendering.light.DirectionalLight;
-import nullengine.client.rendering.light.LightManager;
-import nullengine.client.rendering.light.Material;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgram;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
@@ -16,6 +13,7 @@ import nullengine.client.rendering.shader.ShaderType;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferPool;
+import nullengine.client.rendering.world.WorldRenderer;
 import nullengine.event.Listener;
 import nullengine.event.block.BlockChangeEvent;
 import nullengine.event.player.PlayerControlEntityEvent;
@@ -24,7 +22,6 @@ import nullengine.math.BlockPos;
 import nullengine.world.World;
 import nullengine.world.chunk.Chunk;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.lwjgl.opengl.GL11;
 
@@ -48,41 +45,23 @@ public class ChunkRenderer {
 
     private RenderManager context;
     private GameClient game;
+    private WorldRenderer worldRenderer;
 
     private ThreadPoolExecutor chunkBakeExecutor;
 
-    private LightManager lightManager;
-    private Material mat;
 
-    public void init(RenderManager context) {
+    public void init(RenderManager context, WorldRenderer worldRenderer) {
         this.context = context;
         this.game = context.getEngine().getCurrentGame();
         game.getEventBus().register(this);
+        this.worldRenderer = worldRenderer;
 
-        chunkSolidShader = ShaderManager.instance().registerShader("chunk_solid",
-                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/chunk_solid.vert"))
-                        .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/chunk_solid.frag")));
-        assimpShader = ShaderManager.instance().registerShader("assimp_model",
-                new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/assimp_model.vert"))
-                        .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/chunk_solid.frag")));
-
-        //tmp = AssimpHelper.loadModel(AssetURL.of("tmp", "untitled.obj"));
-        lightManager = new LightManager();
-        lightManager.getDirectionalLights().add(new DirectionalLight()
-                .setDirection(new Vector3f(-0.15f, -1f, -0.35f))
-                .setAmbient(new Vector3f(0.4f))
-                .setDiffuse(new Vector3f(1f))
-                .setSpecular(new Vector3f(1f)));
-//        lightManager.getPointLights().add(new PointLight()
-//                .setPosition(new Vector3f(8, 6, 8))
-//                .setKlinear(0.7f)
-//                .setKquadratic(1.8f)
-//                .setAmbient(new Vector3f(0.1f))
-//                .setDiffuse(new Vector3f(0.0f * .5f, 0.0f * .5f, 0.9f))
-//                .setSpecular(new Vector3f(0.6f)));
-        mat = new Material().setAmbientColor(new Vector3f(0.5f))
-                .setDiffuseColor(new Vector3f(1.0f))
-                .setSpecularColor(new Vector3f(1.0f)).setShininess(32f);
+        chunkSolidShader = ShaderManager.instance().registerShader("chunk_solid", new ShaderProgramBuilder()
+                .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/chunk_solid.vert"))
+                .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/chunk_solid.frag")));
+        assimpShader = ShaderManager.instance().registerShader("assimp_model", new ShaderProgramBuilder()
+                .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/assimp_model.vert"))
+                .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/chunk_solid.frag")));
 
         // TODO: Configurable and manage
         int threadCount = Runtime.getRuntime().availableProcessors() / 2;
@@ -141,8 +120,8 @@ public class ChunkRenderer {
 
         context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).bind();
         chunkSolidShader.setUniform("useDirectUV", true);
-        lightManager.bind(context.getCamera());
-        mat.bind("material");
+        worldRenderer.getLightManager().bind(context.getCamera());
+        worldRenderer.getMaterial().bind("material");
     }
 
     private void postRender() {

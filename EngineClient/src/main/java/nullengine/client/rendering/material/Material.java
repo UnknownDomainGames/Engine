@@ -1,4 +1,4 @@
-package nullengine.client.rendering.light;
+package nullengine.client.rendering.material;
 
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.texture.GLTexture;
@@ -8,55 +8,56 @@ import org.lwjgl.opengl.GL15;
 
 //TODO to have a home his own (move to a specific package)
 public class Material {
-    Vector3f ambient = new Vector3f(0.1f);
-    Vector3f diffuse = new Vector3f(1f);
-    Vector3f specular = new Vector3f(1f);
-    float shininess;
-    GLTexture diffuseUV = GLTexture.EMPTY;
-    GLTexture specularUV = GLTexture.EMPTY;
-    GLTexture normalUV = GLTexture.EMPTY;
-    GLTexture alphaUV = GLTexture.EMPTY;
+    private Vector3f ambient = new Vector3f(0.1f);
+    private Vector3f diffuse = new Vector3f(1f);
+    private Vector3f specular = new Vector3f(1f);
+    private float shininess;
+    private GLTexture diffuseUV = GLTexture.EMPTY;
+    private GLTexture specularUV = GLTexture.EMPTY;
+    private GLTexture normalUV = GLTexture.EMPTY;
+    private GLTexture alphaUV = GLTexture.EMPTY;
 
     public void bind(String fieldName) {
-        ShaderManager.instance().setUniform(fieldName + ".ambient", ambient);
-        ShaderManager.instance().setUniform(fieldName + ".diffuseColor", diffuse);
-        ShaderManager.instance().setUniform(fieldName + ".specularColor", specular);
-        ShaderManager.instance().setUniform(fieldName + ".diffuse", 1);
-        ShaderManager.instance().setUniform(fieldName + ".specular", 2);
-        ShaderManager.instance().setUniform(fieldName + ".normalUV", 3);
-        ShaderManager.instance().setUniform(fieldName + ".alphaUV", 4);
-        ShaderManager.instance().setUniform(fieldName + ".shininess", shininess);
+        ShaderManager shaderManager = ShaderManager.instance();
+        shaderManager.setUniform(fieldName + ".ambient", ambient);
+        shaderManager.setUniform(fieldName + ".diffuseColor", diffuse);
+        shaderManager.setUniform(fieldName + ".specularColor", specular);
+        shaderManager.setUniform(fieldName + ".diffuse", 1);
+        shaderManager.setUniform(fieldName + ".specular", 2);
+        shaderManager.setUniform(fieldName + ".normalUV", 3);
+        shaderManager.setUniform(fieldName + ".alphaUV", 4);
+        shaderManager.setUniform(fieldName + ".shininess", shininess);
         if (diffuseUV != GLTexture.EMPTY) {
-            ShaderManager.instance().setUniform(fieldName + ".diffuseUseUV", true);
+            shaderManager.setUniform(fieldName + ".diffuseUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE1);
             diffuseUV.bind();
             GL15.glActiveTexture(GL13.GL_TEXTURE0);
         } else {
-            ShaderManager.instance().setUniform(fieldName + ".diffuseUseUV", false);
+            shaderManager.setUniform(fieldName + ".diffuseUseUV", false);
         }
         if (specularUV != GLTexture.EMPTY) {
-            ShaderManager.instance().setUniform(fieldName + ".specularUseUV", true);
+            shaderManager.setUniform(fieldName + ".specularUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE2);
             specularUV.bind();
             GL15.glActiveTexture(GL13.GL_TEXTURE0);
         } else {
-            ShaderManager.instance().setUniform(fieldName + ".specularUseUV", false);
+            shaderManager.setUniform(fieldName + ".specularUseUV", false);
         }
         if (normalUV != GLTexture.EMPTY) {
-            ShaderManager.instance().setUniform(fieldName + ".normalUseUV", true);
+            shaderManager.setUniform(fieldName + ".normalUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE3);
             normalUV.bind();
             GL15.glActiveTexture(GL13.GL_TEXTURE0);
         } else {
-            ShaderManager.instance().setUniform(fieldName + ".normalUseUV", false);
+            shaderManager.setUniform(fieldName + ".normalUseUV", false);
         }
         if (alphaUV != GLTexture.EMPTY) {
-            ShaderManager.instance().setUniform(fieldName + ".alphaUseUV", true);
+            shaderManager.setUniform(fieldName + ".alphaUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE4);
             alphaUV.bind();
             GL15.glActiveTexture(GL13.GL_TEXTURE0);
         } else {
-            ShaderManager.instance().setUniform(fieldName + ".alphaUseUV", false);
+            shaderManager.setUniform(fieldName + ".alphaUseUV", false);
         }
     }
 

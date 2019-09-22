@@ -2,6 +2,7 @@ package nullengine.client.rendering.world;
 
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Tessellator;
+import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferFormats;
 import nullengine.client.rendering.util.buffer.GLBufferMode;
@@ -55,6 +56,7 @@ public class BlockSelectionRenderer {
             buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
             buffer.pos(maxX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
             buffer.pos(maxX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            TextureManager.instance().getWhiteTexture().bind();
             tessellator.draw();
         }
     }
