@@ -1,5 +1,6 @@
 package nullengine.client;
 
+import configuration.parser.ConfigParseException;
 import nullengine.EngineBase;
 import nullengine.Platform;
 import nullengine.client.asset.AssetManager;
@@ -20,6 +21,7 @@ import nullengine.client.rendering.gui.GuiRenderer;
 import nullengine.client.rendering.model.BakedModel;
 import nullengine.client.rendering.model.voxel.ModelManager;
 import nullengine.client.rendering.shader.ShaderManager;
+import nullengine.client.settings.EngineSettings;
 import nullengine.client.sound.ALSoundManager;
 import nullengine.client.sound.EngineSoundManager;
 import nullengine.enginemod.EngineModClientListeners;
@@ -28,6 +30,7 @@ import nullengine.event.engine.EngineEvent;
 import nullengine.game.Game;
 import nullengine.logic.Ticker;
 import nullengine.mod.ModContainer;
+import nullengine.server.ServerConfig;
 import nullengine.util.ClassPathUtils;
 import nullengine.util.RuntimeEnvironment;
 import nullengine.util.Side;
@@ -58,6 +61,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private KeyBindingManager keyBindingManager;
 
+    private EngineSettings settings;
+
     public EngineClientImpl(Path runPath) {
         super(runPath);
     }
@@ -74,6 +79,15 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         logger.info("Initializing client engine!");
         clientThread = Thread.currentThread();
         disposer = new DisposerImpl();
+
+        settings = new EngineSettings();
+        try {
+            settings.load(getRunPath().resolve("config/engine.json"));
+        }catch (ConfigParseException e){
+            logger.warn("Cannot parse engine config! Try creating new one", e);
+            settings = new EngineSettings();
+            settings.save(getRunPath().resolve("config/engine.json"));
+        }
 
         // TODO: Remove it
         modManager.getMod("engine").ifPresent(modContainer -> {
@@ -272,5 +286,10 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     @Override
     public ALSoundManager getSoundManager() {
         return soundManager;
+    }
+
+    @Override
+    public EngineSettings getSettings() {
+        return settings;
     }
 }

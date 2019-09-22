@@ -4,6 +4,7 @@ import com.github.mouse0w0.observable.value.MutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.misc.Insets;
+import nullengine.client.gui.util.Utils;
 
 public class HBox extends Pane {
 
@@ -17,7 +18,7 @@ public class HBox extends Pane {
     public float prefWidth() {
         float width = 0, spacing = spacing().get();
         for (Component component : getChildren()) {
-            width += component.prefWidth();
+            width += Math.max(component.width().get(), Utils.prefWidth(component));
         }
         Insets padding = padding().getValue();
         return padding.getLeft() + width + ((getChildren().size() == 0) ? 0 : spacing * (getChildren().size() - 1)) + padding.getRight();
@@ -27,7 +28,7 @@ public class HBox extends Pane {
     public float prefHeight() {
         float height = 0;
         for (Component component : getChildren()) {
-            height = Math.max(height, component.prefHeight());
+            height = Math.max(Math.max(height, component.height().get()),Utils.prefHeight(component));
         }
         Insets padding = padding().getValue();
         return padding.getTop() + height + padding.getBottom();
@@ -38,8 +39,8 @@ public class HBox extends Pane {
         Insets padding = padding().getValue();
         float x = padding.getLeft(), y = padding.getTop(), spacing = spacing().get();
         for (Component component : getChildren()) {
-            float prefWidth = component.prefWidth();
-            float prefHeight = component.prefHeight();
+            float prefWidth = Utils.prefWidth(component);
+            float prefHeight = Utils.prefHeight(component);
             layoutInArea(component, x, y, prefWidth, prefHeight);
             x += prefWidth + spacing;
         }

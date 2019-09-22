@@ -286,17 +286,19 @@ public class GLFWWindow implements Window {
 
     public void init() {
         setMonitor(RenderManager.instance().getDisplayInfo().getPrimaryMonitor());
-        resize();
         initWindowHint();
         pointer = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
-        if (!checkCreated())
+        if (!checkCreated()) {
             throw new RuntimeException("Failed to parse the GLFW window");
+        }
         initCallbacks();
         setWindowPosCenter();
         glfwMakeContextCurrent(pointer);
         enableVSync();
         cursor = new GLFWCursor(pointer);
         setupInput();
+        setDisplayMode(Platform.getEngineClient().getSettings().getDisplaySettings().getDisplayMode(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionWidth(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionHeight(), Platform.getEngineClient().getSettings().getDisplaySettings().getFrameRate());
+        resize();
     }
 
     @Override
@@ -307,8 +309,10 @@ public class GLFWWindow implements Window {
     private int lastPosX, lastPosY, lastWidth, lastHeight;
 
     @Override
-    public void setDisplayMode(DisplayMode displayMode) {
-        if (this.displayMode == displayMode) return;
+    public void setDisplayMode(DisplayMode displayMode, int newWidth, int newHeight, int frameRate) {
+        if (this.displayMode == displayMode && newWidth == -1 && newHeight == -1) return;
+        var nw = newWidth != -1 ? newWidth : monitor.getVideoMode().getWidth();
+        var nh = newHeight != -1 ? newHeight :monitor.getVideoMode().getHeight();
         switch (displayMode) {
             case FULLSCREEN:
                 if (this.displayMode == DisplayMode.WINDOWED) {
@@ -317,7 +321,7 @@ public class GLFWWindow implements Window {
                     lastWidth = windowWidth;
                     lastHeight = windowHeight;
                 }
-                glfwSetWindowMonitor(pointer, monitor.getPointer(), 0, 0, monitor.getVideoMode().getWidth(), monitor.getVideoMode().getHeight(), monitor.getVideoMode().getRefreshRate());
+                glfwSetWindowMonitor(pointer, monitor.getPointer(), 0, 0, nw, nh, frameRate > 0 ? frameRate : monitor.getVideoMode().getRefreshRate());
                 break;
             case WINDOWED_FULLSCREEN:
                 if (this.displayMode == DisplayMode.WINDOWED) {
@@ -331,7 +335,7 @@ public class GLFWWindow implements Window {
                 break;
             case WINDOWED:
                 glfwSetWindowAttrib(pointer, GLFW_DECORATED, GL_TRUE);
-                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, lastWidth, lastHeight, monitor.getVideoMode().getRefreshRate());
+                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, newWidth != -1 ? newWidth : lastWidth, newHeight != -1 ? newHeight : lastHeight, monitor.getVideoMode().getRefreshRate());
         }
         this.displayMode = displayMode;
     }

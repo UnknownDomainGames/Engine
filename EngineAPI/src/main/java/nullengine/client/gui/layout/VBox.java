@@ -7,6 +7,7 @@ import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
+import nullengine.client.gui.util.Utils;
 
 public class VBox extends Pane {
 
@@ -30,7 +31,7 @@ public class VBox extends Pane {
     public float prefWidth() {
         float width = 0;
         for (Component component : getChildren()) {
-            width = Math.max(width, component.prefWidth());
+            width = Math.max(Math.max(width, component.width().get()), Utils.prefWidth(component));
         }
         Insets padding = padding().getValue();
         return padding.getLeft() + width + padding.getRight();
@@ -40,7 +41,7 @@ public class VBox extends Pane {
     public float prefHeight() {
         float height = 0, spacing = spacing().get();
         for (Component component : getChildren()) {
-            height += component.prefHeight();
+            height += Math.max(component.height().get(), Utils.prefHeight(component));
         }
         Insets padding = padding().getValue();
         return padding.getTop() + height + ((getChildren().size() == 0) ? 0 : spacing * (getChildren().size() - 1)) + padding.getBottom();

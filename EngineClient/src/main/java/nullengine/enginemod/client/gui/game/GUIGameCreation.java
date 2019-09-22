@@ -14,6 +14,7 @@ import nullengine.client.gui.misc.Pos;
 import nullengine.client.i18n.I18n;
 import nullengine.client.i18n.LocaleManager;
 import nullengine.client.rendering.font.Font;
+import nullengine.enginemod.client.gui.GuiSettings;
 import nullengine.player.PlayerImpl;
 import nullengine.player.Profile;
 import nullengine.util.Color;
@@ -46,6 +47,12 @@ public class GUIGameCreation extends BorderPane {
             engine.startGame(new GameClientStandalone(engine, engine.getRunPath().resolve("game"), player));
         });
         vBox.getChildren().add(buttonCreate);
+
+        var buttonSettings = new Button("Settings");
+        buttonSettings.setOnClick(mouseClickEvent -> {
+            Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiSettings()));
+        });
+        vBox.getChildren().add(buttonSettings);
 
         Button buttonExit = new Button("exit");
         buttonExit.setOnClick(mouseClickEvent -> Platform.getEngine().terminate());

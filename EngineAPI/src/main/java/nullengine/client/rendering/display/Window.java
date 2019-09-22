@@ -82,7 +82,11 @@ public interface Window {
 
     DisplayMode getDisplayMode();
 
-    void setDisplayMode(DisplayMode mode);
+    default void setDisplayMode(DisplayMode mode){
+        setDisplayMode(mode, -1, -1, -1);
+    }
+
+    void setDisplayMode(DisplayMode mode, int newWidth, int newHeight, int frameRate);
 
     @FunctionalInterface
     interface KeyCallback {

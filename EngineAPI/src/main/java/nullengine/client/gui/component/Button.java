@@ -25,6 +25,7 @@ public class Button extends Label {
         pressedBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         hoveredBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         disableBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         handleBackground();
         padding().setValue(new Insets(0, 5, 5, 5));
     }
