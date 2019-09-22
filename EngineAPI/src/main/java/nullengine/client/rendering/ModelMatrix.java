@@ -10,7 +10,7 @@ public class ModelMatrix {
 
     private static final Stack<Matrix4f> matrixStack = new Stack<>();
 
-    private static Matrix4f currentMatrix;
+    private static Matrix4f currentMatrix = new Matrix4f();
 
     public static void pop() {
         currentMatrix = matrixStack.pop();
