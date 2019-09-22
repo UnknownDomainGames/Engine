@@ -65,4 +65,9 @@ public class ChunkCache implements BlockGetter {
         }
         return world.getBlockId(x, y, z);
     }
+
+    @Override
+    public boolean isAirBlock(int x, int y, int z) {
+        return getBlock(x, y, z) == Registries.getBlockRegistry().air();
+    }
 }

@@ -200,6 +200,11 @@ public class WorldCommon implements World, Runnable {
         return chunk == null ? Registries.getBlockRegistry().air().getId() : chunk.getBlockId(x, y, z);
     }
 
+    @Override
+    public boolean isAirBlock(int x, int y, int z) {
+        return getBlock(x, y, z) == Registries.getBlockRegistry().air();
+    }
+
     @Nonnull
     @Override
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {

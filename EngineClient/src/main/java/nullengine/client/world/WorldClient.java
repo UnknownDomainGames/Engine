@@ -30,7 +30,7 @@ public class WorldClient implements World, Runnable {
 
     protected boolean isClient = true;
 
-    public WorldClient(Game game, NetworkHandler handler, WorldProvider provider){
+    public WorldClient(Game game, NetworkHandler handler, WorldProvider provider) {
         this.game = game;
         this.networkHandler = handler;
         this.worldProvider = provider;
@@ -42,7 +42,7 @@ public class WorldClient implements World, Runnable {
 
     }
 
-    protected void tick(){
+    protected void tick() {
 
         tickChunks();
         gameTick++;
@@ -129,7 +129,7 @@ public class WorldClient implements World, Runnable {
 
     @Nonnull
     @Override
-    public Block getBlock(int x, int y, int z){
+    public Block getBlock(int x, int y, int z) {
         Chunk chunk = chunkManager.loadChunk(x >> ChunkConstants.BITS_X, y >> ChunkConstants.BITS_Y, z >> ChunkConstants.BITS_Z);
         return chunk != null ? chunk.getBlock(x, y, z) : Registries.getBlockRegistry().air();
     }
@@ -137,6 +137,11 @@ public class WorldClient implements World, Runnable {
     @Override
     public int getBlockId(int x, int y, int z) {
         return getBlock(x, y, z).getId();
+    }
+
+    @Override
+    public boolean isAirBlock(int x, int y, int z) {
+        return getBlock(x, y, z) == Registries.getBlockRegistry().air();
     }
 
     @Nonnull

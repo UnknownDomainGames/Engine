@@ -23,4 +23,10 @@ public interface BlockGetter {
     }
 
     int getBlockId(int x, int y, int z);
+
+    default boolean isAirBlock(@Nonnull BlockPos pos) {
+        return isAirBlock(pos.x(), pos.y(), pos.z());
+    }
+
+    boolean isAirBlock(int x, int y, int z);
 }
