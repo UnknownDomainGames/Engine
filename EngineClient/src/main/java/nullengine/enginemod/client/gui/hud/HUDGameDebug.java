@@ -5,8 +5,12 @@ import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.text.Text;
 import nullengine.client.rendering.RenderManager;
+import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.util.GPUMemoryInfo;
 import nullengine.entity.Entity;
+import nullengine.world.raytrace.RayTraceEntityHit;
+import org.joml.Vector3d;
+import org.joml.Vector3fc;
 
 import static java.lang.String.format;
 
@@ -69,6 +73,20 @@ public class HUDGameDebug extends VBox implements GuiTickable {
 //            lookingBlockPos.text().setValue(String.format("Looking pos: %s(%d, %d, %d)", hit.getFace().name(), hit.getPos().getX(), hit.getPos().getY(), hit.getPos().getZ()));
 //            hitPos.text().setValue(String.format("Looking at: (%.2f, %.2f, %.2f)", hit.getHitPoint().x, hit.getHitPoint().y, hit.getHitPoint().z));
 //        }
+
+        Camera camera = context.getCamera();
+        RayTraceEntityHit entityHit = context.getEngine().getCurrentGame().getWorld().raycastEntity(camera.getPosition(), camera.getFrontVector(), 10);
+        if (entityHit.isSuccess()) {
+            blockHitInfo.visible().set(true);
+            Entity entity = entityHit.getEntity();
+            lookingBlock.text().setValue(String.format("Looking Entity: %s@%s", entity.getClass().getSimpleName(), Integer.toHexString(entity.hashCode())));
+            Vector3d position = entity.getPosition();
+            lookingBlockPos.text().setValue(String.format("Looking Entity Position: %.2f, %.2f, %.2f", position.x, position.y, position.z));
+            Vector3fc hitPoint = entityHit.getHitPoint();
+            hitPos.text().setValue(String.format("Looking Entity Hit: %.2f, %.2f, %.2f", hitPoint.x(), hitPoint.y(), hitPoint.z()));
+        } else {
+            blockHitInfo.visible().set(false);
+        }
     }
 
     private String getDirection(float x) {
