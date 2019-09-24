@@ -11,8 +11,6 @@ import java.util.function.Predicate;
 
 public interface EntityManager {
 
-    World getWorld();
-
     <T extends Entity> T spawnEntity(Class<T> entityType, double x, double y, double z);
 
     <T extends Entity> T spawnEntity(Class<T> entityType, Vector3dc position);

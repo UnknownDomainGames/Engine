@@ -33,11 +33,6 @@ public class DefaultEntityManager implements EntityManager, Tickable {
     }
 
     @Override
-    public World getWorld() {
-        return world;
-    }
-
-    @Override
     public <T extends Entity> T spawnEntity(Class<T> entityType, double x, double y, double z) {
         var provider = Registries.getEntityRegistry().getValue(entityType);
         return (T) spawnEntity(provider, x, y, z);
