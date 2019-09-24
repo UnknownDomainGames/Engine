@@ -128,7 +128,7 @@ public final class EngineModClientListeners {
                                         itemStack.getItem().getComponent(ClickBlockBehavior.class).ifPresent(clickBlockBehavior ->
                                                 clickBlockBehavior.onClicked(itemStack, blockHit, cause))));
                         // TODO: Remove it
-                        player.getWorld().destoryBlock(blockHit.getPos(), new BlockChangeCause.PlayerCause(player));
+                        player.getWorld().destroyBlock(blockHit.getPos(), new BlockChangeCause.PlayerCause(player));
                     } else {
                         var cause = new ItemInteractCause.PlayerCause(player);
                         entity.getComponent(TwoHands.class).ifPresent(twoHands ->

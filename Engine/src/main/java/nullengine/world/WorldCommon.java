@@ -264,7 +264,7 @@ public class WorldCommon implements World {
 
     @Nonnull
     @Override
-    public Block destoryBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
+    public Block destroyBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
         return setBlock(pos, Registries.getBlockRegistry().air(), cause);
     }
 

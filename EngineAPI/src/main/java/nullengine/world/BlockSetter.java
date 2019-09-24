@@ -11,5 +11,5 @@ public interface BlockSetter {
     Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause);
 
     @Nonnull
-    Block destoryBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause);
+    Block destroyBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause);
 }

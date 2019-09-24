@@ -195,7 +195,7 @@ public class WorldClient implements World, Runnable {
 
     @Nonnull
     @Override
-    public Block destoryBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
+    public Block destroyBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
         return getBlock(pos.x(), pos.y(), pos.z());
     }
 }
