@@ -11,4 +11,9 @@ public class CameraEntity extends BaseEntity {
         setComponent(TwoHands.class, new TwoHands.Impl());
         getComponent(TwoHands.class).ifPresent(twoHands -> twoHands.setMainHand(ItemStack.EMPTY));
     }
+
+    @Override
+    public boolean hasCollision() {
+        return false;
+    }
 }

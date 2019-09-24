@@ -1,9 +1,13 @@
 package nullengine.world;
 
 import nullengine.entity.Entity;
+import nullengine.world.raytrace.RayTraceEntityHit;
+import org.joml.AABBd;
 import org.joml.Vector3dc;
+import org.joml.Vector3fc;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
 
 public interface WorldEntityManager {
 
@@ -19,5 +23,17 @@ public interface WorldEntityManager {
 
     void destroyEntity(Entity entity);
 
-    Collection<Entity> getEntities();
+    List<Entity> getEntities();
+
+    List<Entity> getEntities(Predicate<Entity> predicate);
+
+    <T extends Entity> List<T> getEntitiesWithType(Class<T> entityType);
+
+    List<Entity> getEntitiesWithBoundingBox(AABBd boundingBox);
+
+    List<Entity> getEntitiesWithBoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ);
+
+    List<Entity> getEntitiesWithSphere(double centerX, double centerY, double centerZ, double radius);
+
+    RayTraceEntityHit raycastEntity(Vector3fc from, Vector3fc dir, float distance);
 }

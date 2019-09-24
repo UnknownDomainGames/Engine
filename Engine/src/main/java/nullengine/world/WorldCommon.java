@@ -19,20 +19,22 @@ import nullengine.util.Direction;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
 import nullengine.world.chunk.WorldCommonChunkManager;
+import nullengine.world.collision.RayTraceBlockHit;
 import nullengine.world.collision.WorldCollisionManager;
 import nullengine.world.collision.WorldCollisionManagerImpl;
 import nullengine.world.gen.ChunkGenerator;
+import nullengine.world.raytrace.RayTraceEntityHit;
 import nullengine.world.storage.WorldCommonLoader;
-import org.joml.AABBd;
-import org.joml.Vector3d;
-import org.joml.Vector3dc;
-import org.joml.Vector3f;
+import org.joml.*;
 
 import javax.annotation.Nonnull;
+import java.lang.Math;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public class WorldCommon implements World {
 
@@ -94,8 +96,32 @@ public class WorldCommon implements World {
     }
 
     @Override
-    public Collection<Entity> getEntities() {
+    public List<Entity> getEntities() {
         return entityManager.getEntities();
+    }
+
+    public List<Entity> getEntities(Predicate<Entity> predicate) {
+        return entityManager.getEntities(predicate);
+    }
+
+    public <T extends Entity> List<T> getEntitiesWithType(Class<T> entityType) {
+        return entityManager.getEntitiesWithType(entityType);
+    }
+
+    public List<Entity> getEntitiesWithBoundingBox(AABBd boundingBox) {
+        return entityManager.getEntitiesWithBoundingBox(boundingBox);
+    }
+
+    public List<Entity> getEntitiesWithBoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+        return entityManager.getEntitiesWithBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+    }
+
+    public List<Entity> getEntitiesWithSphere(double centerX, double centerY, double centerZ, double radius) {
+        return entityManager.getEntitiesWithSphere(centerX, centerY, centerZ, radius);
+    }
+
+    public RayTraceEntityHit raycastEntity(Vector3fc from, Vector3fc dir, float distance) {
+        return entityManager.raycastEntity(from, dir, distance);
     }
 
     /**
@@ -108,23 +134,8 @@ public class WorldCommon implements World {
     }
 
     @Override
-    public WorldCollisionManager getCollisionManager() {
-        return collisionManager;
-    }
-
-    @Override
-    public WorldEntityManager getEntityManager() {
-        return entityManager;
-    }
-
-    @Override
     public <T extends Entity> T spawnEntity(Class<T> entityType, double x, double y, double z) {
         return entityManager.spawnEntity(entityType, x, y, z);
-    }
-
-    @Override
-    public long getGameTick() {
-        return gameTick;
     }
 
     @Override
@@ -138,8 +149,29 @@ public class WorldCommon implements World {
     }
 
     @Override
-    public Entity spawnEntity(String provider, Vector3dc position) {
-        return entityManager.spawnEntity(provider, position);
+    public Entity spawnEntity(String providerName, Vector3dc position) {
+        return entityManager.spawnEntity(providerName, position);
+    }
+
+    public void destroyEntity(Entity entity) {
+        entityManager.destroyEntity(entity);
+    }
+
+    @Override
+    public long getGameTick() {
+        return gameTick;
+    }
+
+    @Nonnull
+    @Override
+    public RayTraceBlockHit raycastBlock(Vector3fc from, Vector3fc dir, float distance) {
+        return collisionManager.raycastBlock(from, dir, distance);
+    }
+
+    @Nonnull
+    @Override
+    public RayTraceBlockHit raycastBlock(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore) {
+        return collisionManager.raycastBlock(from, dir, distance, ignore);
     }
 
     public void tick() {

@@ -71,6 +71,11 @@ public abstract class BaseEntity implements Entity {
     }
 
     @Override
+    public boolean hasCollision() {
+        return true;
+    }
+
+    @Override
     public int getId() {
         return id;
     }
@@ -91,7 +96,7 @@ public abstract class BaseEntity implements Entity {
         }
         destroyed = true;
         doDestroy();
-        getWorld().getEntityManager().destroyEntity(this);
+        getWorld().destroyEntity(this);
     }
 
     protected void doDestroy() {

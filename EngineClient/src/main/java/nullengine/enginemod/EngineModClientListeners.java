@@ -117,7 +117,7 @@ public final class EngineModClientListeners {
                     Player player = game.getPlayer();
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
-                    RayTraceBlockHit blockHit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
+                    RayTraceBlockHit blockHit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
                     if (blockHit.isSuccess()) {
                         var cause = new BlockInteractCause.PlayerCause(player);
                         game.getEngine().getEventBus().post(new BlockInteractEvent.Click(blockHit, cause));
@@ -148,7 +148,7 @@ public final class EngineModClientListeners {
                     Player player = game.getPlayer();
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
-                    RayTraceBlockHit blockHit = player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
+                    RayTraceBlockHit blockHit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
                     if (blockHit.isSuccess()) {
                         var cause = new BlockInteractCause.PlayerCause(player);
                         game.getEngine().getEventBus().post(new BlockInteractEvent.Activate(blockHit, cause));
@@ -177,7 +177,7 @@ public final class EngineModClientListeners {
                     Player player = game.getPlayer();
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
-                    player.getWorld().getCollisionManager().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
+                    player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
                             entity.getComponent(TwoHands.class).ifPresent(twoHands ->
                                     Registries.getItemRegistry().getBlockItem(hit.getBlock()).ifPresent(item ->
                                             twoHands.setMainHand(new ItemStack(item)))));
