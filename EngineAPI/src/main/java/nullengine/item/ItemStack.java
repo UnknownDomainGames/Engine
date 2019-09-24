@@ -34,6 +34,10 @@ public final class ItemStack {
         return amount;
     }
 
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
     public boolean isEmpty() {
         return item == null || amount <= 0;
     }

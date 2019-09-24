@@ -6,6 +6,8 @@ import nullengine.item.ItemStack;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static nullengine.item.ItemStack.EMPTY;
+
 public class SimpleInventory implements Inventory {
 
     private final Optional<Object> owner;
@@ -20,7 +22,7 @@ public class SimpleInventory implements Inventory {
         this.rowSize = rowSize;
         this.columnSize = columnSize;
         this.itemStacks = new ItemStack[size];
-        Arrays.fill(itemStacks, ItemStack.EMPTY);
+        Arrays.fill(itemStacks, EMPTY);
     }
 
     @Override
@@ -40,6 +42,19 @@ public class SimpleInventory implements Inventory {
 
     @Override
     public boolean add(Item item, int amount) {
+        List<Integer> foundMatchedSlots = new ArrayList<>();
+        List<Integer> foundEmptySlots = new ArrayList<>();
+        int foundItemAmount = 0;
+        for (int i = 0; i < itemStacks.length; i++) {
+            ItemStack itemStack = get(i);
+            if (itemStack == EMPTY) {
+                foundEmptySlots.add(i);
+            } else if (itemStack.isItemEquals(item)) {
+                foundMatchedSlots.add(i);
+                foundItemAmount += itemStack.getAmount();
+            }
+        }
+        // TODO: add item
         return false;
     }
 
@@ -60,12 +75,37 @@ public class SimpleInventory implements Inventory {
 
     @Override
     public boolean take(Item item, int amount) {
+        List<Integer> foundMatchedSlots = new ArrayList<>();
+        int foundItemAmount = 0;
+        for (int i = 0; i < itemStacks.length; i++) {
+            ItemStack itemStack = get(i);
+            if (itemStack.isItemEquals(item)) {
+                foundMatchedSlots.add(i);
+                foundItemAmount += itemStack.getAmount();
+                if (foundItemAmount >= amount) {
+                    take(foundMatchedSlots, amount);
+                    return true;
+                }
+            }
+        }
         return false;
+    }
+
+    private void take(List<Integer> indexes, int amount) {
+        for (Integer index : indexes) {
+            ItemStack itemStack = get(index);
+            if (itemStack.getAmount() <= amount) {
+                set(index, EMPTY);
+                amount -= itemStack.getAmount();
+            } else {
+                itemStack.setAmount(itemStack.getAmount() - amount);
+            }
+        }
     }
 
     @Override
     public void clear() {
-        Arrays.fill(itemStacks, ItemStack.EMPTY);
+        Arrays.fill(itemStacks, EMPTY);
     }
 
     @Override
