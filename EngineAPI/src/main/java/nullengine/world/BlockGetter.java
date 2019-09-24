@@ -8,9 +8,6 @@ import javax.annotation.Nonnull;
 public interface BlockGetter {
 
     @Nonnull
-    World getWorld();
-
-    @Nonnull
     default Block getBlock(@Nonnull BlockPos pos) {
         return getBlock(pos.x(), pos.y(), pos.z());
     }

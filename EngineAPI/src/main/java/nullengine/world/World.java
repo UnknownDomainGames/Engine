@@ -27,12 +27,6 @@ public interface World extends BlockGetter, BlockSetter, EntityManager {
 
     WorldSetting getSetting();
 
-    @Nonnull
-    @Override
-    default World getWorld() {
-        return this;
-    }
-
     long getGameTick();
 
     RayTraceBlockHit raycastBlock(Vector3fc from, Vector3fc dir, float distance);

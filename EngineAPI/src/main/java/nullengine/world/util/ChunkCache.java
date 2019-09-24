@@ -40,7 +40,6 @@ public class ChunkCache implements BlockGetter {
     }
 
     @Nonnull
-    @Override
     public World getWorld() {
         return world;
     }
