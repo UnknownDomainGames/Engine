@@ -110,45 +110,63 @@ public class DefaultEntityManager implements EntityManager, Tickable {
 
     @Override
     public List<Entity> getEntitiesWithBoundingBox(AABBd boundingBox) {
-        return getEntities(entity -> testAABB(entity, boundingBox));
+        return getEntitiesWithBoundingBox(boundingBox.minX, boundingBox.minY, boundingBox.minZ, boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
     }
 
-    private boolean testAABB(Entity entity, AABBd boundingBox) {
-        return entity.hasCollision() ? boundingBox.testAABB(entity.getBoundingBox()) : boundingBox.testPoint(entity.getPosition());
+    private boolean testAABB(Entity entity, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+        Vector3d position = entity.getPosition();
+        if (entity.hasCollision()) {
+            AABBd boundingBox = entity.getBoundingBox();
+            double localMinX = minX - position.x(), localMinY = minY - position.y(), localMinZ = minZ - position.z(),
+                    localMaxX = maxX - position.x(), localMaxY = maxY - position.y(), localMaxZ = maxZ - position.z();
+            return Intersectiond.testAabAab(localMinX, localMinY, localMinZ, localMaxX, localMaxY, localMaxZ,
+                    boundingBox.minX, boundingBox.minY, boundingBox.minZ, boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
+        } else {
+            return position.x() >= minX && position.y() >= minY && position.z() >= minZ
+                    && position.x() <= maxX && position.y() <= maxY && position.z() <= maxZ;
+        }
     }
 
     @Override
     public List<Entity> getEntitiesWithBoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-        return getEntitiesWithBoundingBox(new AABBd(minX, minY, minZ, maxX, maxY, maxZ));
+        return getEntities(entity -> testAABB(entity, minX, minY, minZ, maxX, maxY, maxZ));
     }
 
     @Override
     public List<Entity> getEntitiesWithSphere(double centerX, double centerY, double centerZ, double radius) {
         double radiusSquared = radius * radius;
-        return getEntities(entity -> entity.getBoundingBox().testSphere(centerX, centerY, centerZ, radiusSquared));
+        return getEntities(entity -> testSphere(entity, centerX, centerY, centerZ, radiusSquared));
     }
 
     private boolean testSphere(Entity entity, double centerX, double centerY, double centerZ, double radiusSquared) {
-        return entity.hasCollision() ? entity.getBoundingBox().testSphere(centerX, centerY, centerZ, radiusSquared) : entity.getPosition().distanceSquared(centerX, centerY, centerZ) <= radiusSquared;
+        Vector3d position = entity.getPosition();
+        if (entity.hasCollision()) {
+            double localX = centerX - position.x();
+            double localY = centerY - position.y();
+            double localZ = centerZ - position.z();
+            return entity.getBoundingBox().testSphere(localX, localY, localZ, radiusSquared);
+        } else {
+            return position.distanceSquared(centerX, centerY, centerZ) <= radiusSquared;
+        }
     }
 
     @Override
     public RayTraceEntityHit raycastEntity(Vector3fc from, Vector3fc dir, float distance) {
         List<Entity> entities = getEntitiesWithSphere(from.x(), from.y(), from.z(), distance);
         entities.sort(Comparator.comparingDouble(entity -> entity.getPosition().distanceSquared(from.x(), from.y(), from.z())));
-        Vector3d rayOffset = new Vector3d(dir.x(), dir.y(), dir.z()).normalize().mul(distance);
+        Vector3f rayOffset = dir.normalize(new Vector3f()).mul(distance);
+        Vector2d result = new Vector2d();
         for (Entity entity : entities) {
             if (!entity.hasCollision()) {
                 continue;
             }
 
             Vector3d pos = entity.getPosition();
-            Vector3d local = new Vector3d(from).sub(pos.x(), pos.y(), pos.z());
-            Vector2d result = new Vector2d();
+            Vector3f local = from.sub((float) pos.x(), (float) pos.y(), (float) pos.z(), new Vector3f());
             if (entity.getBoundingBox().intersectRay(local.x, local.y, local.z,
                     rayOffset.x, rayOffset.y, rayOffset.z, result)) {
-                Vector3d hitPoint = local.add(rayOffset.mul(result.x, new Vector3d()));
-                return new RayTraceEntityHit(entity, new Vector3f((float) hitPoint.x, (float) hitPoint.y, (float) hitPoint.z));
+                Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
+                return new RayTraceEntityHit(entity, hitPoint);
             }
         }
         return RayTraceEntityHit.failure();
