@@ -14,7 +14,7 @@ import nullengine.world.WorldProvider;
 import nullengine.world.WorldSetting;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
-import nullengine.world.collision.RayTraceBlockHit;
+import nullengine.world.raytrace.RayTraceBlockHit;
 import nullengine.world.raytrace.RayTraceEntityHit;
 import org.joml.AABBd;
 import org.joml.Vector3dc;

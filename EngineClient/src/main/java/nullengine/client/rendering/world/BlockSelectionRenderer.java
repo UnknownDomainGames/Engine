@@ -7,7 +7,7 @@ import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferFormats;
 import nullengine.client.rendering.util.buffer.GLBufferMode;
 import nullengine.util.Color;
-import nullengine.world.collision.RayTraceBlockHit;
+import nullengine.world.raytrace.RayTraceBlockHit;
 
 public class BlockSelectionRenderer {
 

@@ -19,11 +19,11 @@ import nullengine.util.Direction;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
 import nullengine.world.chunk.WorldCommonChunkManager;
-import nullengine.world.collision.RayTraceBlockHit;
-import nullengine.world.collision.WorldCollisionManager;
 import nullengine.world.collision.WorldCollisionManagerImpl;
 import nullengine.world.gen.ChunkGenerator;
+import nullengine.world.raytrace.RayTraceBlockHit;
 import nullengine.world.raytrace.RayTraceEntityHit;
+import nullengine.world.raytrace.WorldCollisionManager;
 import nullengine.world.storage.WorldCommonLoader;
 import org.joml.*;
 

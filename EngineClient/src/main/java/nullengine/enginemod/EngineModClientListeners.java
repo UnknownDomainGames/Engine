@@ -41,8 +41,8 @@ import nullengine.player.Player;
 import nullengine.registry.Registries;
 import nullengine.registry.impl.IdAutoIncreaseRegistry;
 import nullengine.world.WorldProvider;
-import nullengine.world.collision.RayTraceBlockHit;
 import nullengine.world.provider.FlatWorldProvider;
+import nullengine.world.raytrace.RayTraceBlockHit;
 
 public final class EngineModClientListeners {
 

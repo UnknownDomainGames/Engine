@@ -1,4 +1,4 @@
-package nullengine.world.collision;
+package nullengine.world.raytrace;
 
 import nullengine.block.Block;
 import nullengine.world.World;

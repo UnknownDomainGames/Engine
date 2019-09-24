@@ -6,7 +6,7 @@ import nullengine.event.block.cause.BlockInteractCause;
 import nullengine.math.BlockPos;
 import nullengine.util.Direction;
 import nullengine.world.World;
-import nullengine.world.collision.RayTraceBlockHit;
+import nullengine.world.raytrace.RayTraceBlockHit;
 import org.joml.Vector3fc;
 
 import java.util.Optional;

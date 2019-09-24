@@ -5,7 +5,7 @@ import nullengine.entity.Entity;
 import nullengine.game.Game;
 import nullengine.math.BlockPos;
 import nullengine.world.chunk.Chunk;
-import nullengine.world.collision.RayTraceBlockHit;
+import nullengine.world.raytrace.RayTraceBlockHit;
 import nullengine.world.raytrace.RayTraceEntityHit;
 import org.joml.AABBd;
 import org.joml.Vector3dc;

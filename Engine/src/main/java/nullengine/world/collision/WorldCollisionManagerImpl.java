@@ -6,6 +6,8 @@ import nullengine.math.BlockPos;
 import nullengine.registry.Registries;
 import nullengine.util.Direction;
 import nullengine.world.World;
+import nullengine.world.raytrace.RayTraceBlockHit;
+import nullengine.world.raytrace.WorldCollisionManager;
 import nullengine.world.util.FastVoxelRayTrace;
 import org.joml.Vector2d;
 import org.joml.Vector3f;
