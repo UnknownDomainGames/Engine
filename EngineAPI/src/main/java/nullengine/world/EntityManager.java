@@ -9,7 +9,7 @@ import org.joml.Vector3fc;
 import java.util.List;
 import java.util.function.Predicate;
 
-public interface WorldEntityManager {
+public interface EntityManager {
 
     World getWorld();
 

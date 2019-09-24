@@ -45,7 +45,7 @@ public class WorldCommon implements World {
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
     private final WorldCollisionManager collisionManager;
-    private final DefaultWorldEntityManager entityManager;
+    private final DefaultEntityManager entityManager;
 
     //private final ChunkStorage chunkStorage;
     private WorldCommonLoader loader;
@@ -66,7 +66,7 @@ public class WorldCommon implements World {
         this.chunkManager = new WorldCommonChunkManager(this, chunkGenerator);
 //        this.ticker = new Ticker(this::tick, Ticker.LOGIC_TICK); // TODO: make tps configurable
         this.collisionManager = new WorldCollisionManagerImpl(this);
-        this.entityManager = new DefaultWorldEntityManager(this);
+        this.entityManager = new DefaultEntityManager(this);
         criticalChunks = new ArrayList<>();
     }
 

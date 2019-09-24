@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class DefaultWorldEntityManager implements WorldEntityManager, Tickable {
+public class DefaultEntityManager implements EntityManager, Tickable {
 
     private final World world;
     private final EventBus eventBus;
@@ -27,7 +27,7 @@ public class DefaultWorldEntityManager implements WorldEntityManager, Tickable {
 
     private final Set<Entity> entities = new HashSet<>();
 
-    public DefaultWorldEntityManager(World world) {
+    public DefaultEntityManager(World world) {
         this.world = world;
         this.eventBus = world.getGame().getEventBus();
     }
