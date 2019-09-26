@@ -42,7 +42,7 @@ public interface Window {
 
     void hide();
 
-    void setVisible(boolean visable);
+    void setVisible(boolean visible);
 
     boolean isVisible();
 
