@@ -3,7 +3,7 @@ package nullengine.util;
 import nullengine.math.Math2;
 import org.apache.commons.lang3.Validate;
 
-public class BitArray {
+public class NibbleArray {
 
     private final long[] array;
 
@@ -11,7 +11,7 @@ public class BitArray {
     private final long maxEntryValue;
     private final int length;
 
-    public BitArray(int bitsPreEntry, int length) {
+    public NibbleArray(int bitsPreEntry, int length) {
         Validate.inclusiveBetween(1L, 31L, bitsPreEntry); // TODO: Support 32bits.
         this.bitsPreEntry = bitsPreEntry;
         this.maxEntryValue = (1L << bitsPreEntry) - 1;

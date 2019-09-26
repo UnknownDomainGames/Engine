@@ -3,16 +3,16 @@ package nullengine.world.chunk;
 import nullengine.block.Block;
 import nullengine.registry.Registries;
 import nullengine.server.network.PacketBuf;
-import nullengine.util.BitArray;
+import nullengine.util.NibbleArray;
 
 public class BlockStorage {
 
     private final Chunk chunk;
-    private final BitArray data;
+    private final NibbleArray data;
 
     public BlockStorage(Chunk chunk) {
         this.chunk = chunk;
-        this.data = new BitArray(16, 4096);
+        this.data = new NibbleArray(16, 4096);
     }
 
     public Block getBlock(int x, int y, int z) {

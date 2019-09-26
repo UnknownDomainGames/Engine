@@ -6,24 +6,24 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BitArrayTest {
+public class NibbleArrayTest {
 
     private static final int[] bit8RawArray = {0, (1 << 8) - 1}, bit8RawArray2 = {(1 << 8) - 1, 0};
     private static final int[] bit24RawArray = {0, (1 << 24) - 1, (1 << 24) - 1, (1 << 24) - 1, 0}, bit24RawArray2 = {(1 << 24) - 1, 0, 0, 0, (1 << 24) - 1};
     private static final int[] bit31RawArray = {0, 0x7fffffff}, bit31RawArray2 = {0x7fffffff, 0};
-    private static BitArray bit8Array, bit24Array, bit31Array;
+    private static NibbleArray bit8Array, bit24Array, bit31Array;
 
     @BeforeAll
     public static void init() {
-        bit8Array = new BitArray(8, 2);
+        bit8Array = new NibbleArray(8, 2);
         for (int i = 0; i < bit8Array.length(); i++) {
             bit8Array.set(i, bit8RawArray[i]);
         }
-        bit24Array = new BitArray(24, 5);
+        bit24Array = new NibbleArray(24, 5);
         for (int i = 0; i < bit24Array.length(); i++) {
             bit24Array.set(i, bit24RawArray[i]);
         }
-        bit31Array = new BitArray(31, 2);
+        bit31Array = new NibbleArray(31, 2);
         for (int i = 0; i < bit31Array.length(); i++) {
             bit31Array.set(i, bit31RawArray[i]);
         }
