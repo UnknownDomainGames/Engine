@@ -19,8 +19,8 @@ import static nullengine.client.rendering.model.voxel.ModelLoadUtils.fillTransfo
 
 public class ItemGenerateModel implements Model {
 
-    private static final float positivePixel = 1f / 16;
-    private static final float negativePixel = -1f / 16;
+    private static final float positivePixel = 1f / 32;
+    private static final float negativePixel = -1f / 32;
 
     transient AssetURL url;
     AssetURL texture;
