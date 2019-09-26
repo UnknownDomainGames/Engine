@@ -2,6 +2,7 @@ package nullengine.client.game;
 
 import nullengine.client.EngineClient;
 import nullengine.client.input.controller.EntityController;
+import nullengine.client.rendering.display.Window;
 import nullengine.event.game.GameTerminationEvent;
 import nullengine.game.GameServerFullAsync;
 import nullengine.player.Player;
@@ -17,6 +18,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     private final Player player;
 
     private EntityController entityController;
+    private Window.CursorCallback cursorCallback;
 
     public GameClientStandalone(EngineClient engineClient, Path storagePath, Player player) {
         super(engineClient, storagePath);
@@ -58,7 +60,13 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
     @Override
     public void setEntityController(EntityController controller) {
-        this.entityController = controller;
+        if (entityController == controller) {
+            return;
+        }
+        entityController = controller;
+        getEngine().getRenderManager().getWindow().removeCursorCallback(cursorCallback);
+        cursorCallback = (window, xpos, ypos) -> entityController.handleCursorMove(xpos, ypos);
+        getEngine().getRenderManager().getWindow().addCursorCallback(cursorCallback);
     }
 
     @Override
