@@ -28,6 +28,11 @@ public class BaseItem extends RegistryEntry.Impl<Item> implements Item {
         components.setComponent(type, value);
     }
 
+    public <T extends Component> BaseItem addComponent(@Nonnull Class<T> type, @Nullable T value) {
+        setComponent(type, value);
+        return this;
+    }
+
     @Override
     public <T extends Component> void removeComponent(@Nonnull Class<T> type) {
         components.removeComponent(type);

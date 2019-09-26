@@ -9,7 +9,7 @@ import nullengine.client.rendering.util.buffer.GLBufferMode;
 import nullengine.item.BlockItem;
 import nullengine.item.ItemStack;
 
-public class ItemBlockRenderer implements ItemRenderer {
+public class BlockItemRenderer implements ItemRenderer {
 
     @Override
     public void init(RenderManager context) {

@@ -12,11 +12,11 @@ import nullengine.client.rendering.util.buffer.GLBufferFormats;
 import nullengine.client.rendering.util.buffer.GLBufferMode;
 import nullengine.item.ItemStack;
 
-public class ItemNormalRenderer implements ItemRenderer {
+public class VoxelItemRenderer implements ItemRenderer {
 
     private Asset<BakedModel> model;
 
-    public ItemNormalRenderer(AssetURL url) {
+    public VoxelItemRenderer(AssetURL url) {
         this.model = Platform.getEngineClient().getAssetManager().create(AssetTypes.VOXEL_MODEL, url);
     }
 
