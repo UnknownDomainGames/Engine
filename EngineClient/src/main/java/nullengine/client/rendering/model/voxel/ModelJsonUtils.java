@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import nullengine.client.rendering.model.DisplayType;
-import nullengine.math.Transformation;
+import nullengine.math.Transform;
 import nullengine.util.Direction;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -39,21 +39,21 @@ public class ModelJsonUtils {
                 array.get(2).getAsFloat(), array.get(3).getAsFloat());
     }
 
-    public static Transformation[] transformations(JsonElement json) {
-        Transformation[] transformations = new Transformation[DisplayType.values().length];
+    public static Transform[] transformations(JsonElement json) {
+        Transform[] transforms = new Transform[DisplayType.values().length];
         if (json == null || !json.isJsonObject()) {
-            return transformations;
+            return transforms;
         }
 
         JsonObject object = json.getAsJsonObject();
         for (var entry : object.entrySet()) {
             DisplayType type = DisplayType.valueOf(entry.getValue().getAsString().toUpperCase());
-            transformations[type.ordinal()] = transformation(entry.getValue());
+            transforms[type.ordinal()] = transformation(entry.getValue());
         }
-        return transformations;
+        return transforms;
     }
 
-    public static Transformation transformation(JsonElement json) {
+    public static Transform transformation(JsonElement json) {
         if (json == null || !json.isJsonObject()) {
             return null;
         }
@@ -62,7 +62,7 @@ public class ModelJsonUtils {
         Vector3fc translate = vector3f(object.get("Translate"));
         Vector3fc rotation = vector3f(object.get("Rotate"));
         Vector3fc scale = vector3f(object.get("Scale"));
-        return new Transformation(translate, rotation, scale);
+        return new Transform(translate, rotation, scale);
     }
 
     public static <E> List<E> list(JsonElement json, Function<JsonElement, E> mapper) {

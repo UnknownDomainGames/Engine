@@ -7,7 +7,7 @@ import nullengine.client.rendering.texture.TextureAtlasPart;
 import nullengine.client.rendering.texture.TextureBuffer;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.Math2;
-import nullengine.math.Transformation;
+import nullengine.math.Transform;
 import nullengine.util.Direction;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class ItemGenerateModel implements Model {
 
     transient AssetURL url;
     AssetURL texture;
-    Transformation[] transformations;
+    Transform[] transforms;
 
     @Override
     public BakedModel bake(Function<AssetURL, TextureAtlasPart> textureGetter) {
@@ -67,8 +67,8 @@ public class ItemGenerateModel implements Model {
         }
         bakeSouth(vertexes, texture);
         bakeNorth(vertexes, texture);
-        fillTransformationArray(transformations);
-        return new BakedModel(vertexes, transformations);
+        fillTransformationArray(transforms);
+        return new BakedModel(vertexes, transforms);
     }
 
     private int getAlpha(TextureBuffer buffer, int pixelX, int pixelY) {
@@ -152,11 +152,11 @@ public class ItemGenerateModel implements Model {
     private static final class BakedModel implements nullengine.client.rendering.model.BakedModel {
 
         private final List<float[]> vertexes;
-        private final Transformation[] transformations;
+        private final Transform[] transforms;
 
-        private BakedModel(List<float[]> vertexes, Transformation[] transformations) {
+        private BakedModel(List<float[]> vertexes, Transform[] transforms) {
             this.vertexes = vertexes;
-            this.transformations = transformations;
+            this.transforms = transforms;
         }
 
         @Override
@@ -172,8 +172,8 @@ public class ItemGenerateModel implements Model {
         }
 
         @Override
-        public Transformation getTransformation(DisplayType type) {
-            return transformations[type.ordinal()];
+        public Transform getTransformation(DisplayType type) {
+            return transforms[type.ordinal()];
         }
     }
 }

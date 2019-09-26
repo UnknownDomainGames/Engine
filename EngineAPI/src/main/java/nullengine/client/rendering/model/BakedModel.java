@@ -1,7 +1,7 @@
 package nullengine.client.rendering.model;
 
 import nullengine.client.rendering.util.buffer.GLBuffer;
-import nullengine.math.Transformation;
+import nullengine.math.Transform;
 import nullengine.util.Direction;
 
 public interface BakedModel {
@@ -14,5 +14,5 @@ public interface BakedModel {
 
     boolean isFullFace(Direction direction);
 
-    Transformation getTransformation(DisplayType type);
+    Transform getTransformation(DisplayType type);
 }

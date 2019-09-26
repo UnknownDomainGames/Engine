@@ -43,12 +43,12 @@ public final class BlockModelLoader implements ModelLoader {
                 data.fullFaces[Direction.valueOf(fullFace.getAsString().toUpperCase()).index] = true;
             }
         }
-        data.transformations = ModelJsonUtils.transformations(object.get("Display"));
+        data.transforms = ModelJsonUtils.transformations(object.get("Display"));
         var parent = data.resolvedParent;
         if (parent != null) {
-            for (int i = 0; i < data.transformations.length; i++) {
-                if (data.transformations[i] == null && parent.transformations[i] != null) {
-                    data.transformations[i] = parent.transformations[i];
+            for (int i = 0; i < data.transforms.length; i++) {
+                if (data.transforms[i] == null && parent.transforms[i] != null) {
+                    data.transforms[i] = parent.transforms[i];
                 }
             }
         }

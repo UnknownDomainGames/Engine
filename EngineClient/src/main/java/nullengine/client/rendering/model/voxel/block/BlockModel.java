@@ -7,7 +7,7 @@ import nullengine.client.rendering.model.voxel.Model;
 import nullengine.client.rendering.texture.TextureAtlasPart;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.Math2;
-import nullengine.math.Transformation;
+import nullengine.math.Transform;
 import nullengine.util.Direction;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -29,14 +29,14 @@ public final class BlockModel implements Model {
     transient List<AssetURL> requestTextures;
     Cube[] cubes;
     boolean[] fullFaces;
-    Transformation[] transformations;
+    Transform[] transforms;
 
     @Override
     public nullengine.client.rendering.model.BakedModel bake(Function<AssetURL, TextureAtlasPart> textureGetter) {
         Map<Integer, List<float[]>> vertexes = new HashMap<>();
         bakeModel(this, vertexes, textureGetter);
-        fillTransformationArray(transformations);
-        return new BakedModel(Map.copyOf(vertexes), fullFaces, transformations);
+        fillTransformationArray(transforms);
+        return new BakedModel(Map.copyOf(vertexes), fullFaces, transforms);
     }
 
     @Override
@@ -108,12 +108,12 @@ public final class BlockModel implements Model {
 
         private final Map<Integer, List<float[]>> vertexes;
         private final boolean[] fullFaces;
-        private final Transformation[] transformations;
+        private final Transform[] transforms;
 
-        BakedModel(Map<Integer, List<float[]>> vertexes, boolean[] fullFaces, Transformation[] transformations) {
+        BakedModel(Map<Integer, List<float[]>> vertexes, boolean[] fullFaces, Transform[] transforms) {
             this.vertexes = vertexes;
             this.fullFaces = fullFaces;
-            this.transformations = transformations;
+            this.transforms = transforms;
         }
 
         @Override
@@ -135,8 +135,8 @@ public final class BlockModel implements Model {
         }
 
         @Override
-        public Transformation getTransformation(DisplayType type) {
-            return transformations[type.ordinal()];
+        public Transform getTransformation(DisplayType type) {
+            return transforms[type.ordinal()];
         }
     }
 }

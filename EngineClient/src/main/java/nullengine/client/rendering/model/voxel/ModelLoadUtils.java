@@ -1,13 +1,13 @@
 package nullengine.client.rendering.model.voxel;
 
-import nullengine.math.Transformation;
+import nullengine.math.Transform;
 
 public class ModelLoadUtils {
 
-    public static void fillTransformationArray(Transformation[] transformations) {
-        for (int i = 0; i < transformations.length; i++) {
-            if (transformations[i] == null) {
-                transformations[i] = Transformation.DEFAULT;
+    public static void fillTransformationArray(Transform[] transforms) {
+        for (int i = 0; i < transforms.length; i++) {
+            if (transforms[i] == null) {
+                transforms[i] = Transform.DEFAULT;
             }
         }
     }
