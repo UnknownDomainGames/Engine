@@ -55,7 +55,7 @@ public class Game3DRenderer implements Renderer {
 
         itemRenderManager = new ItemRenderManagerImpl();
         itemRenderManager.init(context);
-        context.setComponent(ItemRenderManager.class, itemRenderManager);
+        ItemRenderManager.Internal.setInstance(itemRenderManager);
 
         context.getEngine().getAssetManager().reload();
     }

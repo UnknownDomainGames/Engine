@@ -27,7 +27,7 @@ public class EntityItemRenderer implements EntityRenderer<ItemEntity> {
                 .scale(1f / 3, 1f / 3, 1f / 3)
                 .rotateY(((int) entity.getWorld().getGameTick() % 360000) / 20f));
 
-        context.getComponent(ItemRenderManager.class).ifPresent(itemRenderManager -> itemRenderManager.render(entity.getItemStack(), partial));
+        ItemRenderManager.instance().render(entity.getItemStack(), partial);
     }
 
     @Override
