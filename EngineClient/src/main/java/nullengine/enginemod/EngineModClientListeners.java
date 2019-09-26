@@ -63,7 +63,7 @@ public final class EngineModClientListeners {
 
     @Listener
     public static void registerBlocks(ModRegistrationEvent.Register<Block> event) {
-        AirBlock.AIR.addComponent(BlockRenderer.class, new AirBlockRenderer());
+        AirBlock.AIR.setComponent(BlockRenderer.class, new AirBlockRenderer());
     }
 
     @Listener

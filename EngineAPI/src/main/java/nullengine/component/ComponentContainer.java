@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class ComponentContainer implements GameObject {
+public class ComponentContainer implements GameObject<ComponentContainer> {
 
     private final Map<Class<?>, Optional<Component>> components;
 
@@ -20,27 +20,29 @@ public class ComponentContainer implements GameObject {
     }
 
     @Override
-    public <T extends Component> Optional<T> getComponent(@Nonnull Class<T> type) {
-        return (Optional<T>) components.getOrDefault(type, Optional.empty());
+    public <C extends Component> Optional<C> getComponent(@Nonnull Class<C> type) {
+        return (Optional<C>) components.getOrDefault(type, Optional.empty());
     }
 
     @Override
-    public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
+    public <C extends Component> boolean hasComponent(@Nonnull Class<C> type) {
         return components.containsKey(type);
     }
 
     @Override
-    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nullable T value) {
+    public <C extends Component> ComponentContainer setComponent(@Nonnull Class<C> type, @Nullable C value) {
         if (value == null) {
             removeComponent(type);
         } else {
             components.put(type, Optional.of(value));
         }
+        return this;
     }
 
     @Override
-    public <T extends Component> void removeComponent(@Nonnull Class<T> type) {
+    public <T extends Component> ComponentContainer removeComponent(@Nonnull Class<T> type) {
         components.remove(type);
+        return this;
     }
 
     @Override

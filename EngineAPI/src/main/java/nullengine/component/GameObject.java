@@ -8,15 +8,15 @@ import java.util.Set;
 /**
  * Represent the runtime data for a "thing". The life-cycle of it will depend on its context.
  */
-public interface GameObject {
+public interface GameObject<T extends GameObject> {
 
-    <T extends Component> Optional<T> getComponent(@Nonnull Class<T> type);
+    <C extends Component> Optional<C> getComponent(@Nonnull Class<C> type);
 
-    <T extends Component> boolean hasComponent(@Nonnull Class<T> type);
+    <C extends Component> boolean hasComponent(@Nonnull Class<C> type);
 
-    <T extends Component> void setComponent(@Nonnull Class<T> type, @Nullable T value);
+    <C extends Component> T setComponent(@Nonnull Class<C> type, @Nullable C value);
 
-    <T extends Component> void removeComponent(@Nonnull Class<T> type);
+    <C extends Component> T removeComponent(@Nonnull Class<C> type);
 
     @Nonnull
     Set<Class<?>> getComponents();

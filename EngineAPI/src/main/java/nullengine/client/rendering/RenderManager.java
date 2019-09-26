@@ -15,7 +15,7 @@ import org.joml.FrustumIntersection;
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
-public interface RenderManager extends GameObject {
+public interface RenderManager extends GameObject<RenderManager> {
 
     EngineClient getEngine();
 

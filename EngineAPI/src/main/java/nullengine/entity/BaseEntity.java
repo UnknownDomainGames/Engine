@@ -114,23 +114,25 @@ public abstract class BaseEntity implements Entity {
 
     @Nonnull
     @Override
-    public <T extends Component> Optional<T> getComponent(@Nonnull Class<T> type) {
+    public <C extends Component> Optional<C> getComponent(@Nonnull Class<C> type) {
         return components.getComponent(type);
     }
 
     @Override
-    public <T extends Component> boolean hasComponent(@Nonnull Class<T> type) {
+    public <C extends Component> boolean hasComponent(@Nonnull Class<C> type) {
         return components.hasComponent(type);
     }
 
     @Override
-    public <T extends Component> void setComponent(@Nonnull Class<T> type, @Nullable T value) {
+    public <C extends Component> Entity setComponent(@Nonnull Class<C> type, @Nullable C value) {
         components.setComponent(type, value);
+        return this;
     }
 
     @Override
-    public <T extends Component> void removeComponent(@Nonnull Class<T> type) {
+    public <C extends Component> Entity removeComponent(@Nonnull Class<C> type) {
         components.removeComponent(type);
+        return this;
     }
 
     @Nonnull

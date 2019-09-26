@@ -10,7 +10,7 @@ import org.joml.Vector3f;
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
-public interface Entity extends GameObject, Tickable {
+public interface Entity extends GameObject<Entity>, Tickable {
 
     @Nonnull
     EntityProvider getProvider();
