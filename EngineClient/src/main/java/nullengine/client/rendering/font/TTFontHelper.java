@@ -31,7 +31,7 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 public final class TTFontHelper implements FontHelper {
 
-    public static final int SUPPORTING_CHARACTER_COUNT = 0x10000;
+    public static final int SUPPORTED_CHARACTER_COUNT = 0x10000;
 
     private final List<Font> availableFonts = new ArrayList<>();
     private final Table<String, String, NativeTTFontInfo> loadedFontInfos = Tables.newCustomTable(new HashMap<>(), HashMap::new);
@@ -98,7 +98,8 @@ public final class TTFontHelper implements FontHelper {
             return 0;
         }
 
-        STBTTFontinfo info = getNativeFont(font).getInfo().getFontInfo();
+        NativeTTFont nativeFont = getNativeFont(font);
+        STBTTFontinfo info = nativeFont.getInfo().getFontInfo();
         int width = 0;
 
         try (MemoryStack stack = stackPush()) {
@@ -121,7 +122,7 @@ public final class TTFontHelper implements FontHelper {
             }
         }
 
-        return width * stbtt_ScaleForPixelHeight(info, font.getSize());
+        return width * nativeFont.getScaleForPixelHeight();
     }
 
     @Override
@@ -142,7 +143,8 @@ public final class TTFontHelper implements FontHelper {
 
             float centerY = 0 + font.getSize();
 
-            int bitmapSize = nativeTTFont.getBitmapSize();
+            int bitmapWidth = nativeTTFont.getBitmapWidth();
+            int bitmapHeight = nativeTTFont.getBitmapHeight();
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
             float maxY = (float) (nativeTTFont.getInfo().getAscent() - nativeTTFont.getInfo().getDescent()) * stbtt_ScaleForPixelHeight(nativeTTFont.getInfo().getFontInfo(), font.getSize());
             for (int i = 0; i < text.length(); ) {
@@ -151,7 +153,7 @@ public final class TTFontHelper implements FontHelper {
                 int charPoint = charPointBuffer.get(0);
 
                 float centerX = posX.get(0);
-                stbtt_GetBakedQuad(cdata, bitmapSize, bitmapSize, charPoint, posX, posY, stbQuad, true);
+                stbtt_GetBakedQuad(cdata, bitmapWidth, bitmapHeight, charPoint, posX, posY, stbQuad, true);
                 float diff = /*Math.abs(stbQuad.y0() - stbQuad.y1())*/ stbQuad.y1();
                 if (maxY < diff) {
                     maxY = diff;
@@ -181,7 +183,7 @@ public final class TTFontHelper implements FontHelper {
     private void generateMesh(GLBuffer buffer, CharSequence text, NativeTTFont nativeTTFont, int color) {
         STBTTFontinfo fontInfo = nativeTTFont.getInfo().getFontInfo();
         float fontHeight = nativeTTFont.getFont().getSize();
-        float scale = stbtt_ScaleForPixelHeight(nativeTTFont.getInfo().getFontInfo(), fontHeight);
+        float scale = nativeTTFont.getScaleForPixelHeight();
 
         STBTTBakedChar.Buffer cdata = nativeTTFont.getCharBuffer();
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -201,7 +203,8 @@ public final class TTFontHelper implements FontHelper {
 
             float centerY = 0 + fontHeight;
 
-            int bitmapSize = nativeTTFont.getBitmapSize();
+            int bitmapWidth = nativeTTFont.getBitmapWidth();
+            int bitmapHeight = nativeTTFont.getBitmapHeight();
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
             buffer.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE);
             for (int i = 0; i < text.length(); ) {
@@ -210,7 +213,7 @@ public final class TTFontHelper implements FontHelper {
                 int charPoint = charPointBuffer.get(0);
 
                 float centerX = posX.get(0);
-                stbtt_GetBakedQuad(cdata, bitmapSize, bitmapSize, charPoint, posX, posY, stbQuad, true);
+                stbtt_GetBakedQuad(cdata, bitmapWidth, bitmapHeight, charPoint, posX, posY, stbQuad, true);
                 posX.put(0, scale(centerX, posX.get(0), factorX));
                 if (i < text.length()) {
                     getCodePoint(text, i, charPointBuffer);
@@ -243,9 +246,12 @@ public final class TTFontHelper implements FontHelper {
     }
 
     private NativeTTFont loadNativeFont(NativeTTFontInfo info, Font font) {
+        ByteBuffer fontData = info.getFontData();
+        float scale = stbtt_ScaleForPixelHeight(info.getFontInfo(), font.getSize());
+
         int textureId = GL11.glGenTextures();
-        STBTTBakedChar.Buffer charBuffer = STBTTBakedChar.malloc(SUPPORTING_CHARACTER_COUNT);
-        int bitmapSize = getBitmapSize(font.getSize(), SUPPORTING_CHARACTER_COUNT);
+        STBTTBakedChar.Buffer charBuffer = STBTTBakedChar.malloc(SUPPORTED_CHARACTER_COUNT);
+        int bitmapSize = getBitmapSize(font.getSize(), SUPPORTED_CHARACTER_COUNT);
         ByteBuffer bitmap = BufferUtils.createByteBuffer(bitmapSize * bitmapSize);
         stbtt_BakeFontBitmap(info.getFontData(), font.getSize(), bitmap, bitmapSize, bitmapSize, 0, charBuffer);
 
@@ -255,9 +261,7 @@ public final class TTFontHelper implements FontHelper {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, bitmapSize, bitmapSize, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        float scale = stbtt_ScaleForPixelHeight(info.getFontInfo(), font.getSize());
-
-        return new NativeTTFont(info, font, textureId, charBuffer, bitmapSize, scale);
+        return new NativeTTFont(info, font, textureId, charBuffer, bitmapSize, bitmapSize, scale);
     }
 
     private NativeTTFontInfo loadNativeFontInfo(Path path) throws IOException {
@@ -285,7 +289,13 @@ public final class TTFontHelper implements FontHelper {
 
             GLFW.glfwGetMonitorContentScale(GLFW.glfwGetPrimaryMonitor(), p1, p2);
 
-            NativeTTFontInfo parent = new NativeTTFontInfo(path, family, style, pAscent.get(0), pDescent.get(0), pLineGap.get(0), p1.get(0), p2.get(0));
+            IntBuffer x0 = stack.mallocInt(1);
+            IntBuffer y0 = stack.mallocInt(1);
+            IntBuffer x1 = stack.mallocInt(1);
+            IntBuffer y1 = stack.mallocInt(1);
+            stbtt_GetFontBoundingBox(fontInfo, x0, y0, x1, y1);
+
+            NativeTTFontInfo parent = new NativeTTFontInfo(path, family, style, pAscent.get(0), pDescent.get(0), pLineGap.get(0), p1.get(0), p2.get(0), new int[]{x0.get(), y0.get(), x1.get(), y1.get()});
             loadedFontInfos.put(family, style, parent);
             availableFonts.add(parent.getFont());
             return parent;
@@ -318,7 +328,13 @@ public final class TTFontHelper implements FontHelper {
 
             GLFW.glfwGetMonitorContentScale(GLFW.glfwGetPrimaryMonitor(), p1, p2);
 
-            NativeTTFontInfo parent = new NativeTTFontInfo(buffer, fontInfo, family, style, pAscent.get(0), pDescent.get(0), pLineGap.get(0), p1.get(0), p2.get(0));
+            IntBuffer x0 = stack.mallocInt(1);
+            IntBuffer y0 = stack.mallocInt(1);
+            IntBuffer x1 = stack.mallocInt(1);
+            IntBuffer y1 = stack.mallocInt(1);
+            stbtt_GetFontBoundingBox(fontInfo, x0, y0, x1, y1);
+
+            NativeTTFontInfo parent = new NativeTTFontInfo(buffer, fontInfo, family, style, pAscent.get(0), pDescent.get(0), pLineGap.get(0), p1.get(0), p2.get(0), new int[]{x0.get(), y0.get(), x1.get(), y1.get()});
             loadedFontInfos.put(family, style, parent);
             availableFonts.add(parent.getFont());
             return parent;

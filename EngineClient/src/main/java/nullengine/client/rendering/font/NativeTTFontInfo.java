@@ -29,8 +29,11 @@ public class NativeTTFontInfo {
     private final float contentScaleX;
     private final float contentScaleY;
 
-    public NativeTTFontInfo(Path fontFile, String family, String style, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY) {
+    private final int[] boundingBox;
+
+    public NativeTTFontInfo(Path fontFile, String family, String style, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY, int[] boundingBox) {
         this.fontFile = fontFile;
+        this.boundingBox = boundingBox;
         this.fontInfo = null;
         this.fontData = null;
         this.family = family;
@@ -43,7 +46,8 @@ public class NativeTTFontInfo {
         this.contentScaleY = contentScaleY;
     }
 
-    public NativeTTFontInfo(ByteBuffer fontData, STBTTFontinfo fontInfo, String family, String style, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY) {
+    public NativeTTFontInfo(ByteBuffer fontData, STBTTFontinfo fontInfo, String family, String style, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY, int[] boundingBox) {
+        this.boundingBox = boundingBox;
         this.fontFile = null;
         this.fontInfo = fontInfo;
         this.fontData = fontData;
@@ -103,6 +107,10 @@ public class NativeTTFontInfo {
 
     public float getContentScaleY() {
         return Platform.isClient() ? Platform.getEngineClient().getRenderManager().getWindow().getContentScaleY() : contentScaleY;
+    }
+
+    public int[] getBoundingBox() {
+        return boundingBox;
     }
 
     public Font getFont() {
