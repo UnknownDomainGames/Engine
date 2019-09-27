@@ -2,16 +2,14 @@ package nullengine.client.rendering.block;
 
 import nullengine.block.Block;
 import nullengine.client.rendering.util.buffer.GLBuffer;
-import nullengine.component.Component;
+import nullengine.exception.UninitializationException;
 import nullengine.math.BlockPos;
 import nullengine.util.Direction;
 import nullengine.world.BlockGetter;
 
-public interface BlockRenderer extends Component {
+import java.util.function.Supplier;
 
-    default boolean isVisible() {
-        return true;
-    }
+public interface BlockRenderManager {
 
     boolean canRenderFace(BlockGetter world, BlockPos pos, Block block, Direction direction);
 
@@ -21,5 +19,15 @@ public interface BlockRenderer extends Component {
 
     void generateMesh(Block block, GLBuffer buffer);
 
-    BlockRenderType getRenderType();
+    static BlockRenderManager instance() {
+        return BlockRenderManager.Internal.instance.get();
+    }
+
+    class Internal {
+        private static Supplier<BlockRenderManager> instance = UninitializationException.supplier("BlockRenderManager is uninitialized");
+
+        public static void setInstance(BlockRenderManager instance) {
+            BlockRenderManager.Internal.instance = () -> instance;
+        }
+    }
 }

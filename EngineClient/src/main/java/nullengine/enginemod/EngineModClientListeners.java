@@ -5,7 +5,6 @@ import nullengine.block.AirBlock;
 import nullengine.block.Block;
 import nullengine.block.component.ActivateBehavior;
 import nullengine.block.component.ClickBehavior;
-import nullengine.client.block.AirBlockRenderer;
 import nullengine.client.event.rendering.EntityRendererRegistrationEvent;
 import nullengine.client.game.GameClient;
 import nullengine.client.gui.Scene;
@@ -13,7 +12,7 @@ import nullengine.client.input.controller.MotionType;
 import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyBinding;
-import nullengine.client.rendering.block.BlockRenderer;
+import nullengine.client.rendering.block.BlockDisplay;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.entity.EntityItemRenderer;
 import nullengine.client.rendering.util.GLHelper;
@@ -63,7 +62,7 @@ public final class EngineModClientListeners {
 
     @Listener
     public static void registerBlocks(ModRegistrationEvent.Register<Block> event) {
-        AirBlock.AIR.setComponent(BlockRenderer.class, new AirBlockRenderer());
+        AirBlock.AIR.setComponent(BlockDisplay.class, new BlockDisplay().visible(false));
     }
 
     @Listener

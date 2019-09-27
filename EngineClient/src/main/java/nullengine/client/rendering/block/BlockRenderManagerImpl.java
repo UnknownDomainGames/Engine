@@ -4,35 +4,52 @@ import nullengine.Platform;
 import nullengine.block.Block;
 import nullengine.client.asset.Asset;
 import nullengine.client.asset.AssetTypes;
-import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.model.BakedModel;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.BlockPos;
+import nullengine.registry.Registries;
 import nullengine.util.Direction;
 import nullengine.world.BlockGetter;
 
-public class DefaultBlockRenderer implements BlockRenderer {
+import java.util.HashMap;
+import java.util.Map;
 
-    private BlockRenderType renderType;
-    private Asset<BakedModel> model;
+public class BlockRenderManagerImpl implements BlockRenderManager {
+
+    private final Map<Block, Asset<BakedModel>> blockModelMap = new HashMap<>();
+
+    public void init() {
+        Registries.getBlockRegistry().getValues().forEach(this::registerBlockRenderer);
+    }
+
+    private void registerBlockRenderer(Block block) {
+        block.getComponent(BlockDisplay.class).ifPresent(blockDisplay -> {
+            if (blockDisplay.isVisible()) {
+                blockModelMap.put(block, Platform.getEngineClient().getAssetManager().create(AssetTypes.VOXEL_MODEL, blockDisplay.getModelUrl()));
+            }
+        });
+    }
 
     @Override
     public boolean canRenderFace(BlockGetter world, BlockPos pos, Block block, Direction direction) {
         var neighborPos = pos.offset(direction);
         var neighborBlock = world.getBlock(neighborPos);
-        var neighborBlockRenderer = neighborBlock.getComponent(BlockRenderer.class);
-        return neighborBlockRenderer
-                .map(blockRenderer -> blockRenderer.canRenderNeighborBlockFace(world, neighborPos, neighborBlock, direction.opposite()))
-                .orElse(true);
+        return canRenderNeighborBlockFace(world, neighborPos, neighborBlock, direction.opposite());
     }
 
     @Override
     public boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, Block block, Direction direction) {
-        return !model.get().isFullFace(direction);
+        Asset<BakedModel> model = blockModelMap.get(block);
+        return model == null || !model.get().isFullFace(direction);
     }
 
     @Override
     public void generateMesh(Block block, BlockGetter world, BlockPos pos, GLBuffer buffer) {
+        Asset<BakedModel> model = blockModelMap.get(block);
+        if (model == null) {
+            return;
+        }
+
         buffer.posOffset(pos.x(), pos.y(), pos.z());
         var mutablePos = new BlockPos.Mutable(pos);
         byte coveredFace = 0;
@@ -48,22 +65,15 @@ public class DefaultBlockRenderer implements BlockRenderer {
 
     @Override
     public void generateMesh(Block block, GLBuffer buffer) {
+        Asset<BakedModel> model = blockModelMap.get(block);
+        if (model == null) {
+            return;
+        }
         buffer.posOffset(-0.5f, -0.5f, -0.5f);
         model.get().putVertexes(buffer, 0);
     }
 
-    @Override
-    public BlockRenderType getRenderType() {
-        return renderType;
-    }
-
-    public DefaultBlockRenderer setModelPath(AssetURL path) {
-        this.model = Platform.getEngineClient().getAssetManager().create(AssetTypes.VOXEL_MODEL, path);
-        return this;
-    }
-
-    public DefaultBlockRenderer setRenderType(BlockRenderType renderType) {
-        this.renderType = renderType;
-        return this;
+    public void dispose() {
+        blockModelMap.values().forEach(Asset::dispose);
     }
 }

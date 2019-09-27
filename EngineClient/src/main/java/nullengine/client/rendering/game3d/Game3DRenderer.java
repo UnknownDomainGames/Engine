@@ -2,6 +2,8 @@ package nullengine.client.rendering.game3d;
 
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Renderer;
+import nullengine.client.rendering.block.BlockRenderManager;
+import nullengine.client.rendering.block.BlockRenderManagerImpl;
 import nullengine.client.rendering.item.ItemRenderManager;
 import nullengine.client.rendering.item.ItemRenderManagerImpl;
 import nullengine.client.rendering.world.WorldRenderer;
@@ -11,11 +13,12 @@ import nullengine.event.game.GameTerminationEvent;
 
 public class Game3DRenderer implements Renderer {
 
-    private WorldRenderer worldRenderer;
+    private RenderManager context;
 
     private ItemRenderManagerImpl itemRenderManager;
+    private BlockRenderManagerImpl blockRenderManager;
 
-    private RenderManager context;
+    private WorldRenderer worldRenderer;
 
     @Override
     public void init(RenderManager context) {
@@ -39,23 +42,32 @@ public class Game3DRenderer implements Renderer {
     }
 
     private void disposeGameRender() {
-        if (worldRenderer != null) {
-            worldRenderer.dispose();
-            worldRenderer = null;
-
-            itemRenderManager.dispose();
-            itemRenderManager = null;
+        if (worldRenderer == null) {
+            return;
         }
+
+        blockRenderManager.dispose();
+        blockRenderManager = null;
+
+        itemRenderManager.dispose();
+        itemRenderManager = null;
+
+        worldRenderer.dispose();
+        worldRenderer = null;
     }
 
     @Listener
     public void onGameStart(GameStartEvent.Post event) {
-        worldRenderer = new WorldRenderer();
-        worldRenderer.init(context);
+        blockRenderManager = new BlockRenderManagerImpl();
+        blockRenderManager.init();
+        BlockRenderManager.Internal.setInstance(blockRenderManager);
 
         itemRenderManager = new ItemRenderManagerImpl();
         itemRenderManager.init(context);
         ItemRenderManager.Internal.setInstance(itemRenderManager);
+
+        worldRenderer = new WorldRenderer();
+        worldRenderer.init(context);
 
         context.getEngine().getAssetManager().reload();
     }
