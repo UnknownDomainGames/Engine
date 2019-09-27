@@ -1,7 +1,7 @@
 package nullengine.client.input.keybinding;
 
 import nullengine.client.EngineClient;
-import nullengine.registry.RegistryEntry;
+import nullengine.registry.Registrable;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  *
  * @author Mouse0w0 and iTNTPiston
  */
-public class KeyBinding extends RegistryEntry.Impl<KeyBinding> {
+public class KeyBinding extends Registrable.Impl<KeyBinding> {
 
     private final Key defaultKey;
     private final KeyModifier defaultModifier;

@@ -1,12 +1,12 @@
 package nullengine.world;
 
 import nullengine.game.Game;
-import nullengine.registry.RegistryEntry;
+import nullengine.registry.Registrable;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 
-public interface WorldProvider extends RegistryEntry<WorldProvider> {
+public interface WorldProvider extends Registrable<WorldProvider> {
 
     /**
      * @param game        The game of the world

@@ -10,7 +10,7 @@ import java.util.Set;
  *
  * @param <T> The managed type
  */
-public interface Registry<T extends RegistryEntry<T>> {
+public interface Registry<T extends Registrable<T>> {
 
     @Nonnull
     Class<T> getEntryType();
@@ -33,7 +33,7 @@ public interface Registry<T extends RegistryEntry<T>> {
      *
      * @param key The unique name of the object
      * @return The object
-     * @see RegistryEntry#getName()
+     * @see Registrable#getName()
      */
     T getValue(String key);
 

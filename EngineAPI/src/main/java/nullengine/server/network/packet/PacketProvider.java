@@ -1,10 +1,10 @@
 package nullengine.server.network.packet;
 
-import nullengine.registry.RegistryEntry;
+import nullengine.registry.Registrable;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class PacketProvider extends RegistryEntry.Impl<PacketProvider> {
+public class PacketProvider extends Registrable.Impl<PacketProvider> {
     private final Class<? extends Packet> packetType;
     private final PacketFactory factory;
 

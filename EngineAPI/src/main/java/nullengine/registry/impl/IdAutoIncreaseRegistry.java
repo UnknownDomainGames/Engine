@@ -1,13 +1,13 @@
 package nullengine.registry.impl;
 
-import nullengine.registry.RegistryEntry;
+import nullengine.registry.Registrable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @NotThreadSafe
-public class IdAutoIncreaseRegistry<T extends RegistryEntry<T>> extends SimpleRegistry<T> {
+public class IdAutoIncreaseRegistry<T extends Registrable<T>> extends SimpleRegistry<T> {
 
     private final AtomicInteger nextId = new AtomicInteger(0);
 

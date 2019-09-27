@@ -2,14 +2,14 @@ package nullengine.item;
 
 import nullengine.component.Component;
 import nullengine.component.ComponentContainer;
-import nullengine.registry.RegistryEntry;
+import nullengine.registry.Registrable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Set;
 
-public class BaseItem extends RegistryEntry.Impl<Item> implements Item {
+public class BaseItem extends Registrable.Impl<Item> implements Item {
     private final ComponentContainer components = new ComponentContainer();
 
     @Nonnull

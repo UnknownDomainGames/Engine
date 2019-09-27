@@ -2,7 +2,7 @@ package nullengine.block;
 
 import nullengine.component.Component;
 import nullengine.component.ComponentContainer;
-import nullengine.registry.RegistryEntry;
+import nullengine.registry.Registrable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-public class BaseBlock extends RegistryEntry.Impl<Block> implements Block {
+public class BaseBlock extends Registrable.Impl<Block> implements Block {
 
     private final ComponentContainer components = new ComponentContainer();
 

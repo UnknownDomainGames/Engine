@@ -22,24 +22,24 @@ public class SimpleRegistryManager implements RegistryManager {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends RegistryEntry<T>> Optional<Registry<T>> getRegistry(Class<T> type) {
+    public <T extends Registrable<T>> Optional<Registry<T>> getRegistry(Class<T> type) {
         return Optional.ofNullable((Registry<T>) registries.get(type));
     }
 
     @Override
-    public <T extends RegistryEntry<T>> boolean hasRegistry(Class<T> type) {
+    public <T extends Registrable<T>> boolean hasRegistry(Class<T> type) {
         return registries.containsKey(type);
     }
 
     @Override
-    public <T extends RegistryEntry<T>> T register(@NonNull T obj) {
+    public <T extends Registrable<T>> T register(@NonNull T obj) {
         return getRegistry(obj.getEntryType())
                 .orElseThrow(() -> new RegistrationException(format("Not found registry \"%s\"", obj.getEntryType().getSimpleName())))
                 .register(obj);
     }
 
     @Override
-    public <T extends RegistryEntry<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier) {
+    public <T extends Registrable<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier) {
         if (registries.containsKey(type)) {
             throw new RegistryException("Registry has been registered");
         }

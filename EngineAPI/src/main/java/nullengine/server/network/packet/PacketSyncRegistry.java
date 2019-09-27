@@ -1,7 +1,6 @@
 package nullengine.server.network.packet;
 
 import nullengine.registry.Registry;
-import nullengine.registry.RegistryEntry;
 import nullengine.server.network.PacketBuf;
 
 import java.io.IOException;

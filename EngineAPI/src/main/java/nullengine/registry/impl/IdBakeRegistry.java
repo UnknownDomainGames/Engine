@@ -1,11 +1,11 @@
 package nullengine.registry.impl;
 
-import nullengine.registry.RegistryEntry;
+import nullengine.registry.Registrable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IdBakeRegistry<T extends RegistryEntry<T>> extends SimpleRegistry<T> {
+public class IdBakeRegistry<T extends Registrable<T>> extends SimpleRegistry<T> {
 
     protected List<T> registeredObjects = new ArrayList<>();
     private volatile boolean baked = false;

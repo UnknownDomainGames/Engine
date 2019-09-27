@@ -4,8 +4,8 @@ import nullengine.Engine;
 import nullengine.event.Event;
 import nullengine.event.GenericEvent;
 import nullengine.mod.ModContainer;
+import nullengine.registry.Registrable;
 import nullengine.registry.Registry;
-import nullengine.registry.RegistryEntry;
 import nullengine.registry.RegistryManager;
 
 import javax.annotation.Nonnull;
@@ -47,7 +47,7 @@ public abstract class ModRegistrationEvent implements Event {
             return mod;
         }
 
-        public <T extends RegistryEntry<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier) {
+        public <T extends Registrable<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier) {
             manager.addRegistry(type, supplier);
         }
     }
@@ -77,7 +77,7 @@ public abstract class ModRegistrationEvent implements Event {
     /**
      * @see ModContainer#getEventBus()
      */
-    public static class Register<T extends RegistryEntry<T>> implements GenericEvent<T> {
+    public static class Register<T extends Registrable<T>> implements GenericEvent<T> {
 
         private final Registry<T> registry;
 

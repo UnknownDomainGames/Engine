@@ -3,15 +3,15 @@ package nullengine.registry.impl;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import nullengine.registry.ClassToObjectRegistry;
+import nullengine.registry.Registrable;
 import nullengine.registry.RegistrationException;
-import nullengine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class SimpleClassToObjectRegistry<T extends RegistryEntry<T>> extends SimpleRegistry<T> implements ClassToObjectRegistry<T> {
+public abstract class SimpleClassToObjectRegistry<T extends Registrable<T>> extends SimpleRegistry<T> implements ClassToObjectRegistry<T> {
 
     protected final BiMap<Class<? extends T>, T> clazzToObject = HashBiMap.create();
 

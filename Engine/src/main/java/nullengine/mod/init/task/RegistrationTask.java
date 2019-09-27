@@ -7,8 +7,8 @@ import nullengine.mod.annotation.RegObject;
 import nullengine.mod.annotation.data.AutoRegisterItem;
 import nullengine.mod.init.ModInitializer;
 import nullengine.registry.Name;
+import nullengine.registry.Registrable;
 import nullengine.registry.Registry;
-import nullengine.registry.RegistryEntry;
 import nullengine.registry.RegistryManager;
 import nullengine.util.JsonUtils;
 
@@ -73,11 +73,11 @@ public class RegistrationTask implements ModInitializationTask {
         try {
             var clazz = Class.forName(item.getOwner(), true, mod.getClassLoader());
             for (var field : clazz.getDeclaredFields()) {
-                if (!RegistryEntry.class.isAssignableFrom(field.getType()))
+                if (!Registrable.class.isAssignableFrom(field.getType()))
                     continue;
 
                 field.setAccessible(true);
-                registryManager.register((RegistryEntry) field.get(null));
+                registryManager.register((Registrable) field.get(null));
             }
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
@@ -90,7 +90,7 @@ public class RegistrationTask implements ModInitializationTask {
             var clazz = Class.forName(item.getOwner(), true, mod.getClassLoader());
             var field = clazz.getDeclaredField(item.getField());
             field.setAccessible(true);
-            registryManager.register((RegistryEntry) field.get(null));
+            registryManager.register((Registrable) field.get(null));
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
             // TODO: crash report
@@ -104,7 +104,7 @@ public class RegistrationTask implements ModInitializationTask {
                 for (var fieldName : entry.getValue()) {
                     var field = clazz.getDeclaredField(fieldName);
                     var annotation = field.getAnnotation(RegObject.class);
-                    var registry = findRegistry(registryManager, (Class<? extends RegistryEntry>) field.getType());
+                    var registry = findRegistry(registryManager, (Class<? extends Registrable>) field.getType());
                     field.setAccessible(true);
                     field.set(null, registry.getValue(Name.fromString(annotation.value())));
                 }
@@ -115,7 +115,7 @@ public class RegistrationTask implements ModInitializationTask {
         }
     }
 
-    private Registry<?> findRegistry(RegistryManager registryManager, Class<? extends RegistryEntry> type) {
+    private Registry<?> findRegistry(RegistryManager registryManager, Class<? extends Registrable> type) {
         return (Registry<?>) registryManager.getRegistry(type).orElseThrow();
     }
 

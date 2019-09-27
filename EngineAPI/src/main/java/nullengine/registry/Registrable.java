@@ -9,7 +9,7 @@ import com.google.common.reflect.TypeToken;
  * @see Registry
  * @see Impl
  */
-public interface RegistryEntry<T> {
+public interface Registrable<T> {
 
     Class<T> getEntryType();
 
@@ -30,7 +30,7 @@ public interface RegistryEntry<T> {
 
     int getId();
 
-    abstract class Impl<T extends RegistryEntry<T>> implements RegistryEntry<T> {
+    abstract class Impl<T extends Registrable<T>> implements Registrable<T> {
         private final TypeToken<T> token = new TypeToken<T>(getClass()) {
         };
         private Name name;

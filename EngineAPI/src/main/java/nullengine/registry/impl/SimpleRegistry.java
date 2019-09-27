@@ -5,9 +5,9 @@ import com.google.common.collect.HashBiMap;
 import io.netty.util.collection.IntObjectHashMap;
 import io.netty.util.collection.IntObjectMap;
 import nullengine.registry.Name;
+import nullengine.registry.Registrable;
 import nullengine.registry.RegistrationException;
 import nullengine.registry.Registry;
-import nullengine.registry.RegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -19,7 +19,7 @@ import java.util.Set;
 import static java.util.Objects.requireNonNull;
 
 @NotThreadSafe
-public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
+public class SimpleRegistry<T extends Registrable<T>> implements Registry<T> {
 
     private final Class<T> entryType;
     private final String name;
@@ -41,7 +41,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     public T register(@Nonnull T obj) {
         requireNonNull(obj);
 
-        if (!(obj instanceof RegistryEntry.Impl)) {
+        if (!(obj instanceof Registrable.Impl)) {
             throw new RegistrationException(String.format("%s must be a subclass of RegistryEntry.Impl", obj.getEntryType().getSimpleName()));
         }
 
@@ -131,7 +131,7 @@ public class SimpleRegistry<T extends RegistryEntry<T>> implements Registry<T> {
     protected void setId(T entry, int id) {
         if (idField == null) {
             try {
-                idField = RegistryEntry.Impl.class.getDeclaredField("id");
+                idField = Registrable.Impl.class.getDeclaredField("id");
                 idField.setAccessible(true);
             } catch (NoSuchFieldException e) {
                 throw new RegistrationException("Cannot init id.", e);

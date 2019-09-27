@@ -3,7 +3,7 @@ package nullengine.mod.annotation.processing;
 import com.google.gson.reflect.TypeToken;
 import nullengine.mod.annotation.AutoRegister;
 import nullengine.mod.annotation.data.AutoRegisterItem;
-import nullengine.registry.RegistryEntry;
+import nullengine.registry.Registrable;
 import nullengine.util.JsonUtils;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -42,7 +42,7 @@ public class AutoRegisterProcessor extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        registryEntryTypeMirror = processingEnv.getElementUtils().getTypeElement(RegistryEntry.class.getName()).asType();
+        registryEntryTypeMirror = processingEnv.getElementUtils().getTypeElement(Registrable.class.getName()).asType();
     }
 
     @Override

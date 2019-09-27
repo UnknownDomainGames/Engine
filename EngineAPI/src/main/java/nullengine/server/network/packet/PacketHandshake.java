@@ -1,7 +1,6 @@
 package nullengine.server.network.packet;
 
 import nullengine.Platform;
-import nullengine.registry.RegistryEntry;
 import nullengine.server.network.ConnectionStatus;
 import nullengine.server.network.PacketBuf;
 

@@ -1,13 +1,13 @@
 package nullengine.entity;
 
-import nullengine.registry.RegistryEntry;
+import nullengine.registry.Registrable;
 import nullengine.world.World;
 import org.apache.commons.lang3.Validate;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
-public class EntityProvider extends RegistryEntry.Impl<EntityProvider> {
+public class EntityProvider extends Registrable.Impl<EntityProvider> {
 
     private final Class<? extends Entity> entityType;
     private final EntityFactory factory;
