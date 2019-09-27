@@ -16,6 +16,7 @@ import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
 import nullengine.world.hit.BlockHitResult;
 import nullengine.world.hit.EntityHitResult;
+import nullengine.world.hit.HitResult;
 import org.joml.AABBd;
 import org.joml.Vector3dc;
 import org.joml.Vector3fc;
@@ -29,8 +30,6 @@ import java.util.function.Predicate;
 
 public class WorldClient implements World, Runnable {
 
-    private final NetworkHandler networkHandler;
-
     private final Game game;
     private final WorldProvider worldProvider;
     private WorldClientChunkManager chunkManager;
@@ -40,7 +39,6 @@ public class WorldClient implements World, Runnable {
 
     public WorldClient(Game game, NetworkHandler handler, WorldProvider provider) {
         this.game = game;
-        this.networkHandler = handler;
         this.worldProvider = provider;
         this.chunkManager = new WorldClientChunkManager(this);
     }
@@ -122,6 +120,11 @@ public class WorldClient implements World, Runnable {
 
     @Override
     public BlockHitResult raycastBlock(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore) {
+        return null;
+    }
+
+    @Override
+    public HitResult raycast(Vector3fc from, Vector3fc dir, float distance) {
         return null;
     }
 
