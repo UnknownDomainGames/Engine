@@ -69,7 +69,7 @@ public class CrashHandlerImpl implements CrashHandler {
 
         var builder = new StringBuilder();
 
-        builder.append("====== Engine Crash Report ======\n");
+        builder.append("====== Crash Report ======\n");
         builder.append("\n");
 
         builder.append("Time: ").append(now().format(OFFSET_DATE_TIME)).append("\n");
@@ -102,6 +102,7 @@ public class CrashHandlerImpl implements CrashHandler {
 
         builder.append("--- All Stack Traces ---\n");
         for (var entry : Thread.getAllStackTraces().entrySet()) {
+            if (thread.equals(entry.getKey())) continue; // Don't need print the report crash thread stack
             printThreadStack(builder, entry.getKey(), entry.getValue());
             builder.append("\n");
         }
