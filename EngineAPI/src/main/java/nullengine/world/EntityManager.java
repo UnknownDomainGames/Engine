@@ -1,7 +1,7 @@
 package nullengine.world;
 
 import nullengine.entity.Entity;
-import nullengine.world.raytrace.RayTraceEntityHit;
+import nullengine.world.hit.EntityHitResult;
 import org.joml.AABBd;
 import org.joml.Vector3dc;
 import org.joml.Vector3fc;
@@ -33,5 +33,5 @@ public interface EntityManager {
 
     List<Entity> getEntitiesWithSphere(double centerX, double centerY, double centerZ, double radius);
 
-    RayTraceEntityHit raycastEntity(Vector3fc from, Vector3fc dir, float distance);
+    EntityHitResult raycastEntity(Vector3fc from, Vector3fc dir, float distance);
 }

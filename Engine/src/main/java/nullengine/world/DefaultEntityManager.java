@@ -9,7 +9,7 @@ import nullengine.event.entity.EntitySpawnEvent;
 import nullengine.event.entity.EntityTickEvent;
 import nullengine.logic.Tickable;
 import nullengine.registry.Registries;
-import nullengine.world.raytrace.RayTraceEntityHit;
+import nullengine.world.hit.EntityHitResult;
 import org.apache.commons.lang3.Validate;
 import org.joml.*;
 
@@ -151,7 +151,7 @@ public class DefaultEntityManager implements EntityManager, Tickable {
     }
 
     @Override
-    public RayTraceEntityHit raycastEntity(Vector3fc from, Vector3fc dir, float distance) {
+    public EntityHitResult raycastEntity(Vector3fc from, Vector3fc dir, float distance) {
         List<Entity> entities = getEntitiesWithSphere(from.x(), from.y(), from.z(), distance);
         entities.sort(Comparator.comparingDouble(entity -> entity.getPosition().distanceSquared(from.x(), from.y(), from.z())));
         Vector3f rayOffset = dir.normalize(new Vector3f()).mul(distance);
@@ -166,10 +166,10 @@ public class DefaultEntityManager implements EntityManager, Tickable {
             if (entity.getBoundingBox().intersectRay(local.x, local.y, local.z,
                     rayOffset.x, rayOffset.y, rayOffset.z, result)) {
                 Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
-                return new RayTraceEntityHit(entity, hitPoint);
+                return new EntityHitResult(entity, hitPoint);
             }
         }
-        return RayTraceEntityHit.failure();
+        return EntityHitResult.failure();
     }
 
     @Override

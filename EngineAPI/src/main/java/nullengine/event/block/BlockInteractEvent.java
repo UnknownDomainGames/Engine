@@ -6,16 +6,16 @@ import nullengine.event.block.cause.BlockInteractCause;
 import nullengine.math.BlockPos;
 import nullengine.util.Direction;
 import nullengine.world.World;
-import nullengine.world.raytrace.RayTraceBlockHit;
+import nullengine.world.hit.BlockHitResult;
 import org.joml.Vector3fc;
 
 import java.util.Optional;
 
 public abstract class BlockInteractEvent implements InteractEvent {
-    private final RayTraceBlockHit blockHit;
+    private final BlockHitResult blockHit;
     private final BlockInteractCause cause;
 
-    public BlockInteractEvent(RayTraceBlockHit blockHit, BlockInteractCause cause) {
+    public BlockInteractEvent(BlockHitResult blockHit, BlockInteractCause cause) {
         this.blockHit = blockHit;
         this.cause = cause;
     }
@@ -47,14 +47,14 @@ public abstract class BlockInteractEvent implements InteractEvent {
 
     public static final class Click extends BlockInteractEvent {
 
-        public Click(RayTraceBlockHit blockHit, BlockInteractCause cause) {
+        public Click(BlockHitResult blockHit, BlockInteractCause cause) {
             super(blockHit, cause);
         }
     }
 
     public static final class Activate extends BlockInteractEvent {
 
-        public Activate(RayTraceBlockHit blockHit, BlockInteractCause cause) {
+        public Activate(BlockHitResult blockHit, BlockInteractCause cause) {
             super(blockHit, cause);
         }
     }

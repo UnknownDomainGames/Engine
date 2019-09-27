@@ -19,11 +19,11 @@ import nullengine.util.Direction;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
 import nullengine.world.chunk.WorldCommonChunkManager;
-import nullengine.world.collision.WorldCollisionManagerImpl;
+import nullengine.world.collision.DefaultCollisionManager;
 import nullengine.world.gen.ChunkGenerator;
-import nullengine.world.raytrace.RayTraceBlockHit;
-import nullengine.world.raytrace.RayTraceEntityHit;
-import nullengine.world.raytrace.WorldCollisionManager;
+import nullengine.world.hit.BlockHitResult;
+import nullengine.world.hit.EntityHitResult;
+import nullengine.world.hit.HitResult;
 import nullengine.world.storage.WorldCommonLoader;
 import org.joml.*;
 
@@ -44,7 +44,7 @@ public class WorldCommon implements World {
     private final WorldCreationSetting creationSetting;
 
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
-    private final WorldCollisionManager collisionManager;
+    private final CollisionManager collisionManager;
     private final DefaultEntityManager entityManager;
 
     //private final ChunkStorage chunkStorage;
@@ -65,7 +65,7 @@ public class WorldCommon implements World {
         this.loader = loader;
         this.chunkManager = new WorldCommonChunkManager(this, chunkGenerator);
 //        this.ticker = new Ticker(this::tick, Ticker.LOGIC_TICK); // TODO: make tps configurable
-        this.collisionManager = new WorldCollisionManagerImpl(this);
+        this.collisionManager = new DefaultCollisionManager(this);
         this.entityManager = new DefaultEntityManager(this);
         criticalChunks = new ArrayList<>();
     }
@@ -120,7 +120,7 @@ public class WorldCommon implements World {
         return entityManager.getEntitiesWithSphere(centerX, centerY, centerZ, radius);
     }
 
-    public RayTraceEntityHit raycastEntity(Vector3fc from, Vector3fc dir, float distance) {
+    public EntityHitResult raycastEntity(Vector3fc from, Vector3fc dir, float distance) {
         return entityManager.raycastEntity(from, dir, distance);
     }
 
@@ -164,14 +164,34 @@ public class WorldCommon implements World {
 
     @Nonnull
     @Override
-    public RayTraceBlockHit raycastBlock(Vector3fc from, Vector3fc dir, float distance) {
+    public BlockHitResult raycastBlock(Vector3fc from, Vector3fc dir, float distance) {
         return collisionManager.raycastBlock(from, dir, distance);
     }
 
     @Nonnull
     @Override
-    public RayTraceBlockHit raycastBlock(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore) {
+    public BlockHitResult raycastBlock(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore) {
         return collisionManager.raycastBlock(from, dir, distance, ignore);
+    }
+
+    @Override
+    public HitResult raycast(Vector3fc from, Vector3fc dir, float distance) {
+        BlockHitResult blockHitResult = raycastBlock(from, dir, distance);
+
+        float newDistance;
+        if (blockHitResult.isSuccess()) {
+            BlockPos pos = blockHitResult.getPos();
+            newDistance = from.distance(new Vector3f(pos).add(blockHitResult.getHitPoint()));
+        } else {
+            newDistance = distance;
+        }
+
+        EntityHitResult entityHitResult = raycastEntity(from, dir, newDistance);
+        if (entityHitResult.isSuccess()) {
+            return entityHitResult;
+        }
+
+        return blockHitResult;
     }
 
     public void tick() {

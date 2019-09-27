@@ -1,4 +1,4 @@
-package nullengine.world.raytrace;
+package nullengine.world.hit;
 
 import nullengine.block.Block;
 import nullengine.math.BlockPos;
@@ -8,11 +8,11 @@ import org.joml.Vector3fc;
 
 import java.util.function.Consumer;
 
-public class RayTraceBlockHit {
+public class BlockHitResult extends HitResult {
 
-    private static final RayTraceBlockHit FAILURE = new RayTraceBlockHit(null, null, null, null, null);
+    private static final BlockHitResult FAILURE = new BlockHitResult();
 
-    public static RayTraceBlockHit failure() {
+    public static BlockHitResult failure() {
         return FAILURE;
     }
 
@@ -22,7 +22,16 @@ public class RayTraceBlockHit {
     private final Vector3fc hitPoint;
     private final Direction direction;
 
-    public RayTraceBlockHit(World world, BlockPos pos, Block block, Vector3fc hitPoint, Direction direction) {
+    public BlockHitResult(World world, BlockPos pos, Block block, Vector3fc hitPoint, Direction direction) {
+        this(Type.BLOCK, world, pos, block, hitPoint, direction);
+    }
+
+    private BlockHitResult() {
+        this(Type.MISS, null, null, null, null, null);
+    }
+
+    private BlockHitResult(Type type, World world, BlockPos pos, Block block, Vector3fc hitPoint, Direction direction) {
+        super(type);
         this.world = world;
         this.pos = pos;
         this.block = block;
@@ -50,11 +59,7 @@ public class RayTraceBlockHit {
         return direction;
     }
 
-    public boolean isSuccess() {
-        return block != null;
-    }
-
-    public void ifSuccess(Consumer<RayTraceBlockHit> consumer) {
+    public void ifSuccess(Consumer<BlockHitResult> consumer) {
         if (isSuccess())
             consumer.accept(this);
     }

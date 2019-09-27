@@ -8,7 +8,7 @@ import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.util.GPUMemoryInfo;
 import nullengine.entity.Entity;
-import nullengine.world.raytrace.RayTraceEntityHit;
+import nullengine.world.hit.EntityHitResult;
 import org.joml.Vector3d;
 import org.joml.Vector3fc;
 
@@ -75,7 +75,7 @@ public class HUDGameDebug extends VBox implements GuiTickable {
 //        }
 
         Camera camera = context.getCamera();
-        RayTraceEntityHit entityHit = context.getEngine().getCurrentGame().getWorld().raycastEntity(camera.getPosition(), camera.getFrontVector(), 10);
+        EntityHitResult entityHit = context.getEngine().getCurrentGame().getWorld().raycastEntity(camera.getPosition(), camera.getFrontVector(), 10);
         if (entityHit.isSuccess()) {
             blockHitInfo.visible().set(true);
             Entity entity = entityHit.getEntity();

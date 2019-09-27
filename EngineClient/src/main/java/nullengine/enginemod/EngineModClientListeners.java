@@ -41,8 +41,8 @@ import nullengine.player.Player;
 import nullengine.registry.Registries;
 import nullengine.registry.impl.IdAutoIncreaseRegistry;
 import nullengine.world.WorldProvider;
+import nullengine.world.hit.BlockHitResult;
 import nullengine.world.provider.FlatWorldProvider;
-import nullengine.world.raytrace.RayTraceBlockHit;
 
 public final class EngineModClientListeners {
 
@@ -117,7 +117,7 @@ public final class EngineModClientListeners {
                     Player player = game.getPlayer();
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
-                    RayTraceBlockHit blockHit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
+                    BlockHitResult blockHit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
                     if (blockHit.isSuccess()) {
                         var cause = new BlockInteractCause.PlayerCause(player);
                         game.getEngine().getEventBus().post(new BlockInteractEvent.Click(blockHit, cause));
@@ -148,7 +148,7 @@ public final class EngineModClientListeners {
                     Player player = game.getPlayer();
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
-                    RayTraceBlockHit blockHit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
+                    BlockHitResult blockHit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
                     if (blockHit.isSuccess()) {
                         var cause = new BlockInteractCause.PlayerCause(player);
                         game.getEngine().getEventBus().post(new BlockInteractEvent.Activate(blockHit, cause));

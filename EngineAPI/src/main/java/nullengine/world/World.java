@@ -4,7 +4,8 @@ import nullengine.block.Block;
 import nullengine.game.Game;
 import nullengine.math.BlockPos;
 import nullengine.world.chunk.Chunk;
-import nullengine.world.raytrace.RayTraceBlockHit;
+import nullengine.world.hit.BlockHitResult;
+import nullengine.world.hit.HitResult;
 import org.joml.Vector3fc;
 
 import javax.annotation.Nonnull;
@@ -29,9 +30,11 @@ public interface World extends BlockGetter, BlockSetter, EntityManager {
 
     long getGameTick();
 
-    RayTraceBlockHit raycastBlock(Vector3fc from, Vector3fc dir, float distance);
+    BlockHitResult raycastBlock(Vector3fc from, Vector3fc dir, float distance);
 
-    RayTraceBlockHit raycastBlock(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore);
+    BlockHitResult raycastBlock(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore);
+
+    HitResult raycast(Vector3fc from, Vector3fc dir, float distance);
 
     default Chunk getChunk(@Nonnull BlockPos pos) {
         return getChunk(pos.x() >> 4, pos.y() >> 4, pos.z() >> 4);

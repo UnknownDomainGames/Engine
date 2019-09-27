@@ -14,8 +14,8 @@ import nullengine.world.WorldProvider;
 import nullengine.world.WorldSetting;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
-import nullengine.world.raytrace.RayTraceBlockHit;
-import nullengine.world.raytrace.RayTraceEntityHit;
+import nullengine.world.hit.BlockHitResult;
+import nullengine.world.hit.EntityHitResult;
 import org.joml.AABBd;
 import org.joml.Vector3dc;
 import org.joml.Vector3fc;
@@ -116,12 +116,12 @@ public class WorldClient implements World, Runnable {
     }
 
     @Override
-    public RayTraceBlockHit raycastBlock(Vector3fc from, Vector3fc dir, float distance) {
+    public BlockHitResult raycastBlock(Vector3fc from, Vector3fc dir, float distance) {
         return null;
     }
 
     @Override
-    public RayTraceBlockHit raycastBlock(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore) {
+    public BlockHitResult raycastBlock(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore) {
         return null;
     }
 
@@ -156,7 +156,7 @@ public class WorldClient implements World, Runnable {
     }
 
     @Override
-    public RayTraceEntityHit raycastEntity(Vector3fc from, Vector3fc dir, float distance) {
+    public EntityHitResult raycastEntity(Vector3fc from, Vector3fc dir, float distance) {
         return null;
     }
 
