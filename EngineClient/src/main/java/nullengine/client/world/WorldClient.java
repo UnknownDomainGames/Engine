@@ -173,6 +173,16 @@ public class WorldClient implements World, Runnable {
         return chunkManager.getLoadedChunks();
     }
 
+    @Override
+    public void unload() {
+
+    }
+
+    @Override
+    public void save() {
+
+    }
+
     @Nonnull
     @Override
     public Block getBlock(int x, int y, int z) {

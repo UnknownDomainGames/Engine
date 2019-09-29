@@ -2,7 +2,6 @@ package nullengine.world.chunk.storage;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
 import nullengine.world.World;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkStorage;
@@ -38,16 +37,7 @@ public class RegionBasedChunkStorage implements ChunkStorage {
                         ((RegionFile) notification.getValue()).close();
                     } catch (IOException ignored) {
                     }
-                }).build(new CacheLoader<>() {
-                    @Override
-                    public RegionFile load(Long key) throws Exception {
-                        Path regionFile = storagePath.resolve(key + ".region");
-                        if (!Files.exists(regionFile)) {
-                            Files.createFile(regionFile);
-                        }
-                        return new RegionFile(regionFile.toFile());
-                    }
-                });
+                }).build();
     }
 
     @Override
@@ -59,7 +49,13 @@ public class RegionBasedChunkStorage implements ChunkStorage {
     public Chunk load(int chunkX, int chunkY, int chunkZ) {
         long regionIndex = getRegionIndex(chunkX, chunkY, chunkZ);
         try {
-            byte[] data = regionFileCache.get(regionIndex, null).read(chunkX, chunkY, chunkZ);
+            byte[] data = regionFileCache.get(regionIndex, () -> {
+                Path regionFile = storagePath.resolve(regionIndex + ".region");
+                if (!Files.exists(regionFile)) {
+                    Files.createFile(regionFile);
+                }
+                return new RegionFile(regionFile.toFile());
+            }).read(chunkX, chunkY, chunkZ);
             if (data == null) {
                 return null;
             }
@@ -92,8 +88,13 @@ public class RegionBasedChunkStorage implements ChunkStorage {
         try {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ((CubicChunk) chunk).write(new DataOutputStream(byteArrayOutputStream));
-            regionFileCache.get(regionIndex, null)
-                    .write(chunk.getChunkX(), chunk.getChunkY(), chunk.getChunkZ(), byteArrayOutputStream.toByteArray(), byteArrayOutputStream.size());
+            regionFileCache.get(regionIndex, () -> {
+                Path regionFile = storagePath.resolve(regionIndex + ".region");
+                if (!Files.exists(regionFile)) {
+                    Files.createFile(regionFile);
+                }
+                return new RegionFile(regionFile.toFile());
+            }).write(chunk.getChunkX(), chunk.getChunkY(), chunk.getChunkZ(), byteArrayOutputStream.toByteArray(), byteArrayOutputStream.size());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

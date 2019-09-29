@@ -11,10 +11,12 @@ import org.joml.Vector3fc;
 import javax.annotation.Nonnull;
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 public class CubicChunk implements Chunk {
 
-    private final World world;
+    private final WeakReference<World> world;
     private final int chunkX;
     private final int chunkY;
     private final int chunkZ;
@@ -26,7 +28,7 @@ public class CubicChunk implements Chunk {
     private int nonAirBlockCount = 0;
 
     public CubicChunk(World world, int chunkX, int chunkY, int chunkZ) {
-        this.world = world;
+        this.world = new WeakReference<>(world);
         this.chunkX = chunkX;
         this.chunkY = chunkY;
         this.chunkZ = chunkZ;
@@ -37,7 +39,7 @@ public class CubicChunk implements Chunk {
     @Nonnull
     @Override
     public World getWorld() {
-        return world;
+        return world.get();
     }
 
     @Override
@@ -109,11 +111,25 @@ public class CubicChunk implements Chunk {
         return nonAirBlockCount == 0;
     }
 
-    public void write(DataOutput output) {
+    public void write(DataOutput output) throws IOException {
+        if (blockStorage == null) {
+            blockStorage = new BlockStorage(this);
+        }
 
+        long[] data = blockStorage.getData().getBackingArray();
+        for (int i = 0; i < data.length; i++) {
+            output.writeLong(data[i]);
+        }
     }
 
-    public void read(DataInput input) {
+    public void read(DataInput input) throws IOException {
+        if (blockStorage == null) {
+            blockStorage = new BlockStorage(this);
+        }
 
+        long[] data = blockStorage.getData().getBackingArray();
+        for (int i = 0; i < data.length; i++) {
+            data[i] = input.readLong();
+        }
     }
 }

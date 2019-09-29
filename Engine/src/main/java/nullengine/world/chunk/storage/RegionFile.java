@@ -14,6 +14,8 @@ import static nullengine.world.chunk.storage.RegionConstants.REGION_SIZE;
 public class RegionFile implements AutoCloseable {
 
     private static final int SECTOR_SIZE = 0x1000;
+    private static final int REGION_HEADER_SIZE = REGION_SIZE * Integer.BYTES;
+    private static final int CHUNK_HEADER_SIZE = Integer.BYTES;
 
     private final RandomAccessFile file;
     private final int[] chunkStartSectors;
@@ -24,7 +26,8 @@ public class RegionFile implements AutoCloseable {
         this.chunkStartSectors = new int[REGION_SIZE];
         Arrays.fill(chunkStartSectors, -1);
 
-        if (this.file.length() < REGION_SIZE * Integer.BYTES) { // Initialize empty region file
+        if (this.file.length() < REGION_HEADER_SIZE) { // Initialize empty region file
+            this.file.seek(0);
             for (int i = 0; i < REGION_SIZE; i++) {
                 this.file.writeInt(-1);
             }
@@ -45,7 +48,7 @@ public class RegionFile implements AutoCloseable {
 
     private void loadChunkStartSectors() throws IOException {
         file.seek(0);
-        for (int i = 0; i < chunkStartSectors.length; i++) {
+        for (int i = 0; i < REGION_SIZE; i++) {
             chunkStartSectors[i] = file.readInt();
         }
     }
@@ -66,17 +69,17 @@ public class RegionFile implements AutoCloseable {
         int startSector = chunkStartSectors[chunkIndex];
 
         if (startSector != -1) {
-            int sectorCount = getSectorCount(getChunkDataLength(startSector));
-            int newSectorCount = getSectorCount(length + Integer.BYTES);
-            if (sectorCount >= newSectorCount) {
-                freeSectors(startSector + newSectorCount, startSector + sectorCount);
+            int oldSectorCount = getSectorCount(getChunkDataLength(startSector) + CHUNK_HEADER_SIZE);
+            int newSectorCount = getSectorCount(length + CHUNK_HEADER_SIZE);
+            if (oldSectorCount >= newSectorCount) {
+                freeSectors(startSector + newSectorCount, startSector + oldSectorCount);
             } else {
-                freeSectors(startSector, startSector + sectorCount);
-                startSector = allocateSectors(getSectorCount(length + Integer.BYTES));
+                freeSectors(startSector, startSector + oldSectorCount);
+                startSector = allocateSectors(getSectorCount(length + CHUNK_HEADER_SIZE));
                 setStartSector(chunkIndex, startSector);
             }
         } else {
-            startSector = allocateSectors(getSectorCount(length + Integer.BYTES));
+            startSector = allocateSectors(getSectorCount(length + CHUNK_HEADER_SIZE));
             setStartSector(chunkIndex, startSector);
         }
 
@@ -115,7 +118,7 @@ public class RegionFile implements AutoCloseable {
     }
 
     private int getSectorPosition(int sector) {
-        return (sector + 4) * SECTOR_SIZE;
+        return sector * SECTOR_SIZE + REGION_HEADER_SIZE;
     }
 
     private int getChunkIndex(int chunkX, int chunkY, int chunkZ) {
@@ -136,8 +139,8 @@ public class RegionFile implements AutoCloseable {
 
     private void setStartSector(int chunkIndex, int startSector) throws IOException {
         chunkStartSectors[chunkIndex] = startSector;
-        file.seek(chunkIndex);
-        file.write(startSector);
+        file.seek(chunkIndex * Integer.BYTES);
+        file.writeInt(startSector);
     }
 
     private int allocateSectors(int count) {

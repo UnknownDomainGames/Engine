@@ -90,6 +90,7 @@ public class GameServerFullAsync extends GameBase {
 //        for (World worldCommon : worlds.values()) {
 //            ((WorldCommon) worldCommon).stop();
 //        }
+        worlds.values().forEach(World::unload);
         // TODO: unload mod/resource here
         super.tryTerminate();
     }

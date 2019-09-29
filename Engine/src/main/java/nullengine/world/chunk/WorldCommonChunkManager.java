@@ -38,13 +38,15 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     }
 
     @Override
-    public Chunk getChunkIfPresent(int x, int y, int z) {
-        return null;
+    public Chunk getChunk(int x, int y, int z) {
+        long chunkIndex = ChunkConstants.getChunkIndex(x, y, z);
+        return chunkMap.get(chunkIndex);
     }
 
     @Override
     public Chunk getOrLoadChunk(int x, int y, int z) {
-        return null;
+        long chunkIndex = ChunkConstants.getChunkIndex(x, y, z);
+        return chunkMap.computeIfAbsent(chunkIndex, key -> loadChunk(x, y, z));
     }
 
 
@@ -55,10 +57,14 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     }
 
     @Override
-    public Chunk loadChunk(int x, int y, int z) {
-        if (!shouldChunkOnline(x, y, z, new Vector3d(0, 5, 0)))
-            return new AirChunk(world.get(), x, y, z);
+    public synchronized Chunk loadChunk(int x, int y, int z) {
         long chunkIndex = ChunkConstants.getChunkIndex(x, y, z);
+        if (!shouldChunkOnline(x, y, z, new Vector3d(0, 5, 0))) {
+            Chunk chunk = new AirChunk(world.get(), x, y, z);
+            chunkMap.put(chunkIndex, chunk);
+            return chunk;
+        }
+
         if (chunkMap.containsKey(chunkIndex)) {
             return chunkMap.get(chunkIndex);
         }
@@ -73,7 +79,7 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     }
 
     @Override
-    public void unloadChunk(int x, int y, int z) {
+    public synchronized void unloadChunk(int x, int y, int z) {
         long chunkIndex = ChunkConstants.getChunkIndex(x, y, z);
         if (chunkMap.containsKey(chunkIndex)) {
             Chunk chunk = chunkMap.get(chunkIndex);
@@ -81,6 +87,29 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
             chunkMap.remove(chunkIndex);
             world.get().getGame().getEventBus().post(new ChunkUnloadEvent(chunk));
         }
+    }
+
+    @Override
+    public synchronized void unloadChunk(Chunk chunk) {
+        if (chunk == null) {
+            return;
+        }
+        long chunkIndex = ChunkConstants.getChunkIndex(chunk.getChunkX(), chunk.getChunkY(), chunk.getChunkZ());
+        if (!chunkMap.containsKey(chunkIndex))
+            return;
+        chunkStorage.save(chunk);
+        chunkMap.remove(chunkIndex);
+        world.get().getGame().getEventBus().post(new ChunkUnloadEvent(chunk));
+    }
+
+    @Override
+    public void unloadAll() {
+        chunkMap.values().forEach(this::unloadChunk);
+    }
+
+    @Override
+    public void saveAll() {
+        chunkMap.values().forEach(chunkStorage::save);
     }
 
     @Override

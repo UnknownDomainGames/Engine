@@ -2,7 +2,6 @@ package nullengine.world.chunk;
 
 import nullengine.block.Block;
 import nullengine.registry.Registries;
-import nullengine.server.network.PacketBuf;
 import nullengine.util.NibbleArray;
 
 public class BlockStorage {
@@ -12,7 +11,7 @@ public class BlockStorage {
 
     public BlockStorage(Chunk chunk) {
         this.chunk = chunk;
-        this.data = new NibbleArray(16, 4096);
+        this.data = new NibbleArray(8, 4096);
     }
 
     public Block getBlock(int x, int y, int z) {
@@ -31,11 +30,7 @@ public class BlockStorage {
         return ((x & 0xF) << 8) | ((y & 0xF) << 4) | z & 0xF;
     }
 
-    public void writeToPacketBuffer(PacketBuf buf){
-
-    }
-
-    public void readFromPacketBuffer(PacketBuf buf){
-
+    public NibbleArray getData() {
+        return data;
     }
 }

@@ -43,4 +43,8 @@ public interface World extends BlockGetter, BlockSetter, EntityManager {
     Chunk getChunk(int chunkX, int chunkY, int chunkZ);
 
     Collection<Chunk> getLoadedChunks();
+
+    void unload();
+
+    void save();
 }

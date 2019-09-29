@@ -24,7 +24,6 @@ import nullengine.world.gen.ChunkGenerator;
 import nullengine.world.hit.BlockHitResult;
 import nullengine.world.hit.EntityHitResult;
 import nullengine.world.hit.HitResult;
-import nullengine.world.storage.WorldCommonLoader;
 import org.joml.*;
 
 import javax.annotation.Nonnull;
@@ -48,7 +47,6 @@ public class WorldCommon implements World {
     private final DefaultEntityManager entityManager;
 
     //private final ChunkStorage chunkStorage;
-    private WorldCommonLoader loader;
     private WorldCommonChunkManager chunkManager;
     private final List<Long> criticalChunks;
 
@@ -56,13 +54,12 @@ public class WorldCommon implements World {
     private long gameTick;
 //    private ExecutorService service;
 
-    public WorldCommon(Game game, WorldProvider provider, Path storagePath, WorldCreationSetting creationSetting, WorldCommonLoader loader, ChunkGenerator chunkGenerator) {
+    public WorldCommon(Game game, WorldProvider provider, Path storagePath, WorldCreationSetting creationSetting, ChunkGenerator chunkGenerator) {
         this.game = game;
         this.provider = provider;
         this.storagePath = storagePath;
         this.creationSetting = creationSetting;
         //this.chunkStorage = new ChunkStorage(this);
-        this.loader = loader;
         this.chunkManager = new WorldCommonChunkManager(this, chunkGenerator);
 //        this.ticker = new Ticker(this::tick, Ticker.LOGIC_TICK); // TODO: make tps configurable
         this.collisionManager = new DefaultCollisionManager(this);
@@ -197,13 +194,9 @@ public class WorldCommon implements World {
     public void tick() {
         physicsSystem.tick(this);
         tickEntityMotion();
-        tickChunks();
+        chunkManager.tick();
         entityManager.tick();
         gameTick++;
-    }
-
-    protected void tickChunks() {
-        chunkManager.getChunks().forEach(this::tickChunk);
     }
 
     protected void tickEntityMotion() {
@@ -214,29 +207,17 @@ public class WorldCommon implements World {
         }
     }
 
-    private void tickChunk(Chunk chunk) {
-//        Collection<Block> blocks = chunk.getRuntimeBlock();
-//        if (blocks.size() != 0) {
-//            for (Block object : blocks) {
-//                BlockPrototype.TickBehavior behavior = object.getBehavior(BlockPrototype.TickBehavior.class);
-//                if (behavior != null) {
-//                    behavior.tick(object);
-//                }
-//            }
-//        }
-    }
-
     @Nonnull
     @Override
     public Block getBlock(int x, int y, int z) {
-        Chunk chunk = chunkManager.loadChunk(x >> ChunkConstants.BITS_X, y >> ChunkConstants.BITS_Y, z >> ChunkConstants.BITS_Z);
+        Chunk chunk = chunkManager.getOrLoadChunk(x >> ChunkConstants.BITS_X, y >> ChunkConstants.BITS_Y, z >> ChunkConstants.BITS_Z);
         return chunk == null ? Registries.getBlockRegistry().air() : chunk.getBlock(x, y, z);
     }
 
     @Nonnull
     @Override
     public int getBlockId(int x, int y, int z) {
-        Chunk chunk = chunkManager.loadChunk(x >> ChunkConstants.BITS_X, y >> ChunkConstants.BITS_Y, z >> ChunkConstants.BITS_Z);
+        Chunk chunk = chunkManager.getOrLoadChunk(x >> ChunkConstants.BITS_X, y >> ChunkConstants.BITS_Y, z >> ChunkConstants.BITS_Z);
         return chunk == null ? Registries.getBlockRegistry().air().getId() : chunk.getBlockId(x, y, z);
     }
 
@@ -295,7 +276,17 @@ public class WorldCommon implements World {
 
     @Override
     public Collection<Chunk> getLoadedChunks() {
-        return chunkManager.getChunks();
+        return chunkManager.getLoadedChunks();
+    }
+
+    @Override
+    public void unload() {
+        chunkManager.unloadAll();
+    }
+
+    @Override
+    public void save() {
+        chunkManager.saveAll();
     }
 
 //    @Override
@@ -310,14 +301,6 @@ public class WorldCommon implements World {
 //    public void stop() {
 //        ticker.stop();
 //    }
-
-    public WorldCommonLoader getLoader() {
-        return loader;
-    }
-
-    public void setLoader(WorldCommonLoader loader) {
-        this.loader = loader;
-    }
 
     public WorldCommonChunkManager getChunkManager() {
         return chunkManager;

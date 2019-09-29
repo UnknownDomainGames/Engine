@@ -31,6 +31,16 @@ public class WorldClientChunkManager implements ChunkManager {
     }
 
     @Override
+    public Chunk getChunk(int x, int y, int z) {
+        return null;
+    }
+
+    @Override
+    public Chunk getOrLoadChunk(int x, int y, int z) {
+        return null;
+    }
+
+    @Override
     public Chunk loadChunk(int x, int y, int z) {
         long chunkIndex = ChunkConstants.getChunkIndex(x, y, z);
         if(!chunkMap.containsKey(chunkIndex)){
@@ -51,6 +61,21 @@ public class WorldClientChunkManager implements ChunkManager {
             var chunk = chunkMap.remove(chunkIndex);
             world.get().getGame().getEventBus().post(new ChunkUnloadEvent(chunk));
         }
+    }
+
+    @Override
+    public void unloadChunk(Chunk chunk) {
+
+    }
+
+    @Override
+    public void unloadAll() {
+
+    }
+
+    @Override
+    public void saveAll() {
+
     }
 
     @Override

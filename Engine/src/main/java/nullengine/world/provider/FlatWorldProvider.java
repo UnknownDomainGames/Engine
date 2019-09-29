@@ -7,7 +7,6 @@ import nullengine.world.WorldCommon;
 import nullengine.world.WorldCreationSetting;
 import nullengine.world.gen.FlatChunkGenerator;
 import nullengine.world.impl.FlatWorldCreationSetting;
-import nullengine.world.storage.WorldCommonLoader;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -17,7 +16,7 @@ public class FlatWorldProvider extends BaseWorldProvider {
     @Override
     public World create(@Nonnull Game game, @Nonnull Path storagePath, @Nonnull String name, @Nonnull WorldCreationSetting creationSetting) {
         FlatWorldCreationSetting setting = (FlatWorldCreationSetting) creationSetting;
-        return new WorldCommon(game, this, storagePath, creationSetting, new WorldCommonLoader(storagePath.resolve(name)), new FlatChunkGenerator(setting.getLayers()));
+        return new WorldCommon(game, this, storagePath, creationSetting, new FlatChunkGenerator(setting.getLayers()));
     }
 
     @Nonnull
