@@ -170,7 +170,7 @@ public class WorldClient implements World, Runnable {
 
     @Override
     public Collection<Chunk> getLoadedChunks() {
-        return chunkManager.getChunks();
+        return chunkManager.getLoadedChunks();
     }
 
     @Nonnull

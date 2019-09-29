@@ -9,8 +9,10 @@ import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 import javax.annotation.Nonnull;
+import java.io.DataInput;
+import java.io.DataOutput;
 
-public class ChunkImpl implements Chunk {
+public class CubicChunk implements Chunk {
 
     private final World world;
     private final int chunkX;
@@ -23,7 +25,7 @@ public class ChunkImpl implements Chunk {
     private BlockStorage blockStorage;
     private int nonAirBlockCount = 0;
 
-    public ChunkImpl(World world, int chunkX, int chunkY, int chunkZ) {
+    public CubicChunk(World world, int chunkX, int chunkY, int chunkZ) {
         this.world = world;
         this.chunkX = chunkX;
         this.chunkY = chunkY;
@@ -84,7 +86,7 @@ public class ChunkImpl implements Chunk {
     }
 
     @Override
-    public Block setBlock(BlockPos pos, Block block, BlockChangeCause cause) {
+    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
         return setBlock(pos.x(), pos.y(), pos.z(), block);
     }
 
@@ -105,5 +107,13 @@ public class ChunkImpl implements Chunk {
     @Override
     public boolean isAirChunk() {
         return nonAirBlockCount == 0;
+    }
+
+    public void write(DataOutput output) {
+
+    }
+
+    public void read(DataInput input) {
+
     }
 }

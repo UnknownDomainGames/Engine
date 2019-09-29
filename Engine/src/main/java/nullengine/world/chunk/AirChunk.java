@@ -10,7 +10,7 @@ import org.joml.Vector3fc;
 
 import javax.annotation.Nonnull;
 
-public class BlankChunk implements Chunk {
+public class AirChunk implements Chunk {
 
     private final World world;
     private final int chunkX;
@@ -20,7 +20,7 @@ public class BlankChunk implements Chunk {
     private final Vector3fc min;
     private final Vector3fc max;
 
-    public BlankChunk(World world, int chunkX, int chunkY, int chunkZ) {
+    public AirChunk(World world, int chunkX, int chunkY, int chunkZ) {
         this.world = world;
         this.chunkX = chunkX;
         this.chunkY = chunkY;

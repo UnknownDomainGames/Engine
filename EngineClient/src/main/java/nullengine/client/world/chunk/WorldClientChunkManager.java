@@ -54,7 +54,7 @@ public class WorldClientChunkManager implements ChunkManager {
     }
 
     @Override
-    public Collection<Chunk> getChunks() {
+    public Collection<Chunk> getLoadedChunks() {
         return chunkMap.values();
     }
 }

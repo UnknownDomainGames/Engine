@@ -25,8 +25,8 @@ public class RegionFile implements AutoCloseable {
         Arrays.fill(chunkStartSectors, -1);
 
         if (this.file.length() < REGION_SIZE * Integer.BYTES) { // Initialize empty region file
-            for (int i = 0; i < REGION_SIZE * Integer.BYTES; i++) {
-                this.file.write(-1);
+            for (int i = 0; i < REGION_SIZE; i++) {
+                this.file.writeInt(-1);
             }
             usedSectors = new ArrayList<>();
             return;
