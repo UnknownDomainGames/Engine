@@ -17,7 +17,7 @@ public interface ChunkConstants {
     int BITS_Z = 4;
 
     static long getChunkIndex(int chunkX, int chunkY, int chunkZ) {
-        return (abs(chunkX) << 42) | (abs(chunkY) << 21) | abs(chunkZ);
+        return (toUnsigned(chunkX) << 42) | (toUnsigned(chunkY) << 21) | toUnsigned(chunkZ);
     }
 
     static long getChunkIndex(Chunk chunk) {
@@ -32,9 +32,7 @@ public interface ChunkConstants {
         return BlockPos.of(absPos.x() >> BITS_X, absPos.y() >> BITS_Y, absPos.z() >> BITS_Z);
     }
 
-    long MAX_POSITIVE_CHUNK_POS = (1 << 20) - 1;
-
-    private static long abs(long value) {
-        return value >= 0 ? value : MAX_POSITIVE_CHUNK_POS - value;
+    private static long toUnsigned(int value) {
+        return value & 0x1fffff;
     }
 }

@@ -5,17 +5,15 @@ import io.netty.util.collection.LongObjectMap;
 import nullengine.client.world.WorldClient;
 import nullengine.event.world.chunk.ChunkUnloadEvent;
 import nullengine.player.Player;
-import nullengine.server.network.packet.PacketChunkData;
-import nullengine.world.chunk.BlankChunk;
+import nullengine.world.chunk.AirChunk;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
 import nullengine.world.chunk.ChunkManager;
-import nullengine.world.chunk.storage.ChunkStorer;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 
-public class WorldClientChunkManager implements ChunkManager<WorldClient> {
+public class WorldClientChunkManager implements ChunkManager {
 
     private final WeakReference<WorldClient> world;
     private final LongObjectMap<Chunk> chunkMap;
@@ -24,7 +22,7 @@ public class WorldClientChunkManager implements ChunkManager<WorldClient> {
     public WorldClientChunkManager(WorldClient world) {
         this.world = new WeakReference<>(world);
         this.chunkMap = new LongObjectHashMap<>();
-        blank = new BlankChunk(world,0,0,0);
+        blank = new AirChunk(world, 0, 0, 0);
     }
 
     @Override
@@ -53,11 +51,6 @@ public class WorldClientChunkManager implements ChunkManager<WorldClient> {
             var chunk = chunkMap.remove(chunkIndex);
             world.get().getGame().getEventBus().post(new ChunkUnloadEvent(chunk));
         }
-    }
-
-    @Override
-    public WorldClient getWorld() {
-        return world.get();
     }
 
     @Override
