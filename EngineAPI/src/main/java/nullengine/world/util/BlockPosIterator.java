@@ -16,8 +16,8 @@ public class BlockPosIterator implements Iterator<BlockPos> {
     }
 
     public static BlockPosIterator createFromChunk(Chunk chunk) {
-        return new BlockPosIterator(chunk.getChunkX() << 4, chunk.getChunkY() << 4, chunk.getChunkZ() << 4,
-                (chunk.getChunkX() << 4) + 15, (chunk.getChunkY() << 4) + 15, (chunk.getChunkZ() << 4) + 15);
+        return new BlockPosIterator(chunk.getX() << 4, chunk.getY() << 4, chunk.getZ() << 4,
+                (chunk.getX() << 4) + 15, (chunk.getY() << 4) + 15, (chunk.getZ() << 4) + 15);
     }
 
     private final int fromX, fromY, fromZ, toX, toY, toZ;

@@ -12,6 +12,7 @@ import nullengine.world.chunk.ChunkManager;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
+import java.util.Optional;
 
 public class WorldClientChunkManager implements ChunkManager {
 
@@ -31,8 +32,8 @@ public class WorldClientChunkManager implements ChunkManager {
     }
 
     @Override
-    public Chunk getChunk(int x, int y, int z) {
-        return null;
+    public Optional<Chunk> getChunk(int x, int y, int z) {
+        return Optional.empty();
     }
 
     @Override
@@ -40,7 +41,6 @@ public class WorldClientChunkManager implements ChunkManager {
         return null;
     }
 
-    @Override
     public Chunk loadChunk(int x, int y, int z) {
         long chunkIndex = ChunkConstants.getChunkIndex(x, y, z);
         if(!chunkMap.containsKey(chunkIndex)){
@@ -55,17 +55,12 @@ public class WorldClientChunkManager implements ChunkManager {
 //    }
 
     @Override
-    public void unloadChunk(int x, int y, int z) {
-        long chunkIndex = ChunkConstants.getChunkIndex(x, y, z);
-        if(chunkMap.containsKey(chunkIndex)){
-            var chunk = chunkMap.remove(chunkIndex);
+    public void unloadChunk(Chunk chunk) {
+        long index = ChunkConstants.getChunkIndex(chunk);
+        if (chunkMap.containsKey(index)) {
+            chunkMap.remove(index);
             world.get().getGame().getEventBus().post(new ChunkUnloadEvent(chunk));
         }
-    }
-
-    @Override
-    public void unloadChunk(Chunk chunk) {
-
     }
 
     @Override

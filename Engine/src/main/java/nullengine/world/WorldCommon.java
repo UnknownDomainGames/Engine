@@ -242,7 +242,7 @@ public class WorldCommon implements World {
             post = new BlockReplaceEvent.Post(this, pos, oldBlock, block, cause);
         }
         if (!getGame().getEventBus().post(pre)) {
-            chunkManager.loadChunk(pos.x() >> ChunkConstants.BITS_X, pos.y() >> ChunkConstants.BITS_Y, pos.z() >> ChunkConstants.BITS_Z)
+            chunkManager.getOrLoadChunk(pos.x() >> ChunkConstants.BITS_X, pos.y() >> ChunkConstants.BITS_Y, pos.z() >> ChunkConstants.BITS_Z)
                     .setBlock(pos, block, cause);
 
             oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
@@ -271,7 +271,7 @@ public class WorldCommon implements World {
 
     @Override
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
-        return chunkManager.loadChunk(chunkX, chunkY, chunkZ);
+        return chunkManager.getOrLoadChunk(chunkX, chunkY, chunkZ);
     }
 
     @Override

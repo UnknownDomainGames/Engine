@@ -13,11 +13,13 @@ public interface Chunk {
     @Nonnull
     World getWorld();
 
-    int getChunkX();
+    ChunkPos getPos();
 
-    int getChunkY();
+    int getX();
 
-    int getChunkZ();
+    int getY();
+
+    int getZ();
 
     @Nonnull
     Vector3fc getMin();

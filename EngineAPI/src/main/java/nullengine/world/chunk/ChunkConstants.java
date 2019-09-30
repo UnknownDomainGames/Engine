@@ -21,15 +21,11 @@ public interface ChunkConstants {
     }
 
     static long getChunkIndex(Chunk chunk) {
-        return getChunkIndex(chunk.getChunkX(), chunk.getChunkY(), chunk.getChunkZ());
+        return getChunkIndex(chunk.getX(), chunk.getY(), chunk.getZ());
     }
 
     static long getChunkIndex(BlockPos blockPos) {
         return getChunkIndex(blockPos.x() >> BITS_X, blockPos.y() >> BITS_Y, blockPos.z() >> BITS_Z);
-    }
-
-    static BlockPos toChunkPos(BlockPos absPos) {
-        return BlockPos.of(absPos.x() >> BITS_X, absPos.y() >> BITS_Y, absPos.z() >> BITS_Z);
     }
 
     private static long toUnsigned(int value) {

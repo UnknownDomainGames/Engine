@@ -51,7 +51,7 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
     }
 
     private ChunkCache createChunkCache(World world, Chunk chunk) {
-        return ChunkCache.create(world, chunk.getChunkX() - 1, chunk.getChunkY() - 1, chunk.getChunkZ() - 1, chunk.getChunkX() + 1, chunk.getChunkY() + 1, chunk.getChunkZ() + 1);
+        return ChunkCache.create(world, chunk.getX() - 1, chunk.getY() - 1, chunk.getZ() - 1, chunk.getX() + 1, chunk.getY() + 1, chunk.getZ() + 1);
     }
 
     @Override

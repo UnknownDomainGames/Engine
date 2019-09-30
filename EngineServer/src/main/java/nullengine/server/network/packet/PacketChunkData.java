@@ -14,9 +14,9 @@ public class PacketChunkData implements Packet {
     public PacketChunkData(){}
 
     public PacketChunkData(Chunk chunk){
-        this.chunkX = chunk.getChunkX();
-        this.chunkY = chunk.getChunkY();
-        this.chunkZ = chunk.getChunkZ();
+        this.chunkX = chunk.getX();
+        this.chunkY = chunk.getY();
+        this.chunkZ = chunk.getZ();
 
     }
 

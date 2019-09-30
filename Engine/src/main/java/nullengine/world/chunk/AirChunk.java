@@ -13,18 +13,14 @@ import javax.annotation.Nonnull;
 public class AirChunk implements Chunk {
 
     private final World world;
-    private final int chunkX;
-    private final int chunkY;
-    private final int chunkZ;
+    private final ChunkPos pos;
 
     private final Vector3fc min;
     private final Vector3fc max;
 
     public AirChunk(World world, int chunkX, int chunkY, int chunkZ) {
         this.world = world;
-        this.chunkX = chunkX;
-        this.chunkY = chunkY;
-        this.chunkZ = chunkZ;
+        this.pos = ChunkPos.of(chunkX, chunkY, chunkZ);
         this.min = new Vector3f(chunkX << ChunkConstants.BITS_X, chunkY << ChunkConstants.BITS_Y, chunkZ << ChunkConstants.BITS_Z);
         this.max = min.add(16, 16, 16, new Vector3f());
     }
@@ -36,18 +32,23 @@ public class AirChunk implements Chunk {
     }
 
     @Override
-    public int getChunkX() {
-        return chunkX;
+    public ChunkPos getPos() {
+        return null;
     }
 
     @Override
-    public int getChunkY() {
-        return chunkY;
+    public int getX() {
+        return pos.x();
     }
 
     @Override
-    public int getChunkZ() {
-        return chunkZ;
+    public int getY() {
+        return pos.y();
+    }
+
+    @Override
+    public int getZ() {
+        return pos.z();
     }
 
     @Nonnull

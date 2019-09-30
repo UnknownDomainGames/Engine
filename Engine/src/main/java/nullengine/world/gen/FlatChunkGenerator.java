@@ -16,9 +16,9 @@ public class FlatChunkGenerator implements ChunkGenerator {
 
     @Override
     public void generate(Chunk chunk) {
-        int cx = chunk.getChunkX();
-        int cy = chunk.getChunkY();
-        int cz = chunk.getChunkZ();
+        int cx = chunk.getX();
+        int cy = chunk.getY();
+        int cz = chunk.getZ();
         if (cy < 0) //not making negative-Y chunks
             return;
         for (int j = 0; j < ChunkConstants.SIZE_Y; j++) {
