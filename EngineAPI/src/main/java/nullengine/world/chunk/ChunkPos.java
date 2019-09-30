@@ -15,7 +15,7 @@ public abstract class ChunkPos extends Vector3iBase {
     }
 
     public static ChunkPos fromBlock(int x, int y, int z) {
-        return of(x >> BITS_X, y >> BITS_Y, z >> BITS_Z);
+        return of(x >> CHUNK_X_BITS, y >> CHUNK_Y_BITS, z >> CHUNK_Z_BITS);
     }
 
     public static ChunkPos fromWorldPos(Vector3f vector3f) {

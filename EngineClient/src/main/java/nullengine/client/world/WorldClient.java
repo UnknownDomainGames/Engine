@@ -189,7 +189,7 @@ public class WorldClient implements World, Runnable {
     @Nonnull
     @Override
     public Block getBlock(int x, int y, int z) {
-        Chunk chunk = chunkManager.loadChunk(x >> ChunkConstants.BITS_X, y >> ChunkConstants.BITS_Y, z >> ChunkConstants.BITS_Z);
+        Chunk chunk = chunkManager.loadChunk(x >> ChunkConstants.CHUNK_X_BITS, y >> ChunkConstants.CHUNK_Y_BITS, z >> ChunkConstants.CHUNK_Z_BITS);
         return chunk != null ? chunk.getBlock(x, y, z) : Registries.getBlockRegistry().air();
     }
 

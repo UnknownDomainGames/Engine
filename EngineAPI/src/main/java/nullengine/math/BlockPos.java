@@ -23,7 +23,7 @@ public abstract class BlockPos extends Vector3iBase {
     }
 
     public static boolean inSameChunk(BlockPos a, BlockPos b) {
-        return ((a.x() >> ChunkConstants.BITS_X) == (b.x() >> ChunkConstants.BITS_X)) && ((a.y() >> ChunkConstants.BITS_Y) == (b.y() >> ChunkConstants.BITS_Y)) && ((a.z() >> ChunkConstants.BITS_Z) == (b.z() >> ChunkConstants.BITS_Z));
+        return ((a.x() >> ChunkConstants.CHUNK_X_BITS) == (b.x() >> ChunkConstants.CHUNK_X_BITS)) && ((a.y() >> ChunkConstants.CHUNK_Y_BITS) == (b.y() >> ChunkConstants.CHUNK_Y_BITS)) && ((a.z() >> ChunkConstants.CHUNK_Z_BITS) == (b.z() >> ChunkConstants.CHUNK_Z_BITS));
     }
 
     public abstract BlockPos toImmutable();

@@ -21,13 +21,13 @@ public class FlatChunkGenerator implements ChunkGenerator {
         int cz = chunk.getZ();
         if (cy < 0) //not making negative-Y chunks
             return;
-        for (int j = 0; j < ChunkConstants.SIZE_Y; j++) {
-            if (j + cy * ChunkConstants.SIZE_Y >= layers.length) {
+        for (int j = 0; j < ChunkConstants.CHUNK_Y_SIZE; j++) {
+            if (j + cy * ChunkConstants.CHUNK_Y_SIZE >= layers.length) {
                 break;
             }
-            for (int i = 0; i < ChunkConstants.SIZE_X; i++) {
-                for (int k = 0; k < ChunkConstants.SIZE_Z; k++) {
-                    chunk.setBlock(BlockPos.of(i, j, k), layers[j + cy * ChunkConstants.SIZE_Y], new BlockChangeCause.WorldGenCause());
+            for (int i = 0; i < ChunkConstants.CHUNK_X_SIZE; i++) {
+                for (int k = 0; k < ChunkConstants.CHUNK_Z_SIZE; k++) {
+                    chunk.setBlock(BlockPos.of(i, j, k), layers[j + cy * ChunkConstants.CHUNK_Y_SIZE], new BlockChangeCause.WorldGenCause());
                 }
             }
         }

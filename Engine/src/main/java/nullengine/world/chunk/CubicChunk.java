@@ -14,6 +14,8 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
+import static nullengine.world.chunk.ChunkConstants.*;
+
 public class CubicChunk implements Chunk {
 
     private final WeakReference<World> world;
@@ -28,7 +30,7 @@ public class CubicChunk implements Chunk {
     public CubicChunk(World world, int chunkX, int chunkY, int chunkZ) {
         this.world = new WeakReference<>(world);
         this.pos = ChunkPos.of(chunkX, chunkY, chunkZ);
-        this.min = new Vector3f(chunkX << ChunkConstants.BITS_X, chunkY << ChunkConstants.BITS_Y, chunkZ << ChunkConstants.BITS_Z);
+        this.min = new Vector3f(chunkX << CHUNK_X_BITS, chunkY << CHUNK_Y_BITS, chunkZ << CHUNK_Z_BITS);
         this.max = min.add(16, 16, 16, new Vector3f());
     }
 

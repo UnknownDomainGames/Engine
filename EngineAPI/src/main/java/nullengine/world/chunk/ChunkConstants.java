@@ -4,17 +4,19 @@ import nullengine.math.BlockPos;
 
 public interface ChunkConstants {
 
-    int SIZE_X = 16;
-    int SIZE_Y = 16;
-    int SIZE_Z = 16;
+    int CHUNK_X_BITS = 4;
+    int CHUNK_Y_BITS = 4;
+    int CHUNK_Z_BITS = 4;
 
-    int MAX_BLOCK_POS_X = SIZE_X - 1;
-    int MAX_BLOCK_POS_Y = SIZE_Y - 1;
-    int MAX_BLOCK_POS_Z = SIZE_Z - 1;
+    int CHUNK_X_SIZE = 1 << CHUNK_X_BITS;
+    int CHUNK_Y_SIZE = 1 << CHUNK_Y_BITS;
+    int CHUNK_Z_SIZE = 1 << CHUNK_Z_BITS;
 
-    int BITS_X = 4;
-    int BITS_Y = 4;
-    int BITS_Z = 4;
+    int CHUNK_MAX_X = CHUNK_X_SIZE - 1;
+    int CHUNK_MAX_Y = CHUNK_Y_SIZE - 1;
+    int CHUNK_MAX_Z = CHUNK_Z_SIZE - 1;
+
+    int BLOCK_COUNT = CHUNK_X_SIZE * CHUNK_Y_SIZE * CHUNK_Z_SIZE;
 
     static long getChunkIndex(int chunkX, int chunkY, int chunkZ) {
         return (toUnsigned(chunkX) << 42) | (toUnsigned(chunkY) << 21) | toUnsigned(chunkZ);
@@ -25,7 +27,7 @@ public interface ChunkConstants {
     }
 
     static long getChunkIndex(BlockPos blockPos) {
-        return getChunkIndex(blockPos.x() >> BITS_X, blockPos.y() >> BITS_Y, blockPos.z() >> BITS_Z);
+        return getChunkIndex(blockPos.x() >> CHUNK_X_BITS, blockPos.y() >> CHUNK_Y_BITS, blockPos.z() >> CHUNK_Z_BITS);
     }
 
     private static long toUnsigned(int value) {

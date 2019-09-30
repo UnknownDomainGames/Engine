@@ -8,12 +8,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static nullengine.world.chunk.ChunkConstants.*;
 import static nullengine.world.chunk.storage.RegionConstants.REGION_SIZE;
 
 @ThreadSafe
 public class RegionFile implements AutoCloseable {
 
-    private static final int SECTOR_SIZE = 0x1000;
+    private static final int SECTOR_SIZE_BITS = 12;
+    private static final int SECTOR_SIZE = 1 << SECTOR_SIZE_BITS;
+    private static final int SECTOR_MAX_INDEX = SECTOR_SIZE - 1;
     private static final int REGION_HEADER_SIZE = REGION_SIZE * Integer.BYTES;
     private static final int CHUNK_HEADER_SIZE = Integer.BYTES;
 
@@ -114,7 +117,7 @@ public class RegionFile implements AutoCloseable {
     }
 
     private int getSectorCount(long length) {
-        return (int) ((length & 0xfff) == 0 ? length >> 12 : (length >> 12) + 1);
+        return (int) ((length & SECTOR_MAX_INDEX) == 0 ? length >> SECTOR_SIZE_BITS : (length >> SECTOR_SIZE_BITS) + 1);
     }
 
     private int getSectorPosition(int sector) {
@@ -122,7 +125,7 @@ public class RegionFile implements AutoCloseable {
     }
 
     private int getChunkIndex(int chunkX, int chunkY, int chunkZ) {
-        return (chunkX & 0xf) | ((chunkY & 0xf) << 4) | ((chunkZ & 0xf) << 8);
+        return (chunkX & CHUNK_MAX_X) | ((chunkY & CHUNK_MAX_Y) << 4) | ((chunkZ & CHUNK_MAX_Z) << 8);
     }
 
     private void useSectors(int start, int end) {

@@ -21,7 +21,7 @@ public class AirChunk implements Chunk {
     public AirChunk(World world, int chunkX, int chunkY, int chunkZ) {
         this.world = world;
         this.pos = ChunkPos.of(chunkX, chunkY, chunkZ);
-        this.min = new Vector3f(chunkX << ChunkConstants.BITS_X, chunkY << ChunkConstants.BITS_Y, chunkZ << ChunkConstants.BITS_Z);
+        this.min = new Vector3f(chunkX << ChunkConstants.CHUNK_X_BITS, chunkY << ChunkConstants.CHUNK_Y_BITS, chunkZ << ChunkConstants.CHUNK_Z_BITS);
         this.max = min.add(16, 16, 16, new Vector3f());
     }
 

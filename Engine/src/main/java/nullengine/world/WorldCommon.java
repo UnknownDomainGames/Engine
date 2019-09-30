@@ -231,14 +231,14 @@ public class WorldCommon implements World {
     @Nonnull
     @Override
     public Block getBlock(int x, int y, int z) {
-        Chunk chunk = chunkManager.getOrLoadChunk(x >> ChunkConstants.BITS_X, y >> ChunkConstants.BITS_Y, z >> ChunkConstants.BITS_Z);
+        Chunk chunk = chunkManager.getOrLoadChunk(x >> ChunkConstants.CHUNK_X_BITS, y >> ChunkConstants.CHUNK_Y_BITS, z >> ChunkConstants.CHUNK_Z_BITS);
         return chunk == null ? Registries.getBlockRegistry().air() : chunk.getBlock(x, y, z);
     }
 
     @Nonnull
     @Override
     public int getBlockId(int x, int y, int z) {
-        Chunk chunk = chunkManager.getOrLoadChunk(x >> ChunkConstants.BITS_X, y >> ChunkConstants.BITS_Y, z >> ChunkConstants.BITS_Z);
+        Chunk chunk = chunkManager.getOrLoadChunk(x >> ChunkConstants.CHUNK_X_BITS, y >> ChunkConstants.CHUNK_Y_BITS, z >> ChunkConstants.CHUNK_Z_BITS);
         return chunk == null ? Registries.getBlockRegistry().air().getId() : chunk.getBlockId(x, y, z);
     }
 
@@ -263,7 +263,7 @@ public class WorldCommon implements World {
             post = new BlockReplaceEvent.Post(this, pos, oldBlock, block, cause);
         }
         if (!getGame().getEventBus().post(pre)) {
-            chunkManager.getOrLoadChunk(pos.x() >> ChunkConstants.BITS_X, pos.y() >> ChunkConstants.BITS_Y, pos.z() >> ChunkConstants.BITS_Z)
+            chunkManager.getOrLoadChunk(pos.x() >> ChunkConstants.CHUNK_X_BITS, pos.y() >> ChunkConstants.CHUNK_Y_BITS, pos.z() >> ChunkConstants.CHUNK_Z_BITS)
                     .setBlock(pos, block, cause);
 
             oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));

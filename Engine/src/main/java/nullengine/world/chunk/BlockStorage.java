@@ -4,6 +4,8 @@ import nullengine.block.Block;
 import nullengine.registry.Registries;
 import nullengine.util.NibbleArray;
 
+import static nullengine.world.chunk.ChunkConstants.BLOCK_COUNT;
+
 public class BlockStorage {
 
     private final Chunk chunk;
@@ -11,7 +13,7 @@ public class BlockStorage {
 
     public BlockStorage(Chunk chunk) {
         this.chunk = chunk;
-        this.data = new NibbleArray(8, 4096);
+        this.data = new NibbleArray(8, BLOCK_COUNT);
     }
 
     public Block getBlock(int x, int y, int z) {

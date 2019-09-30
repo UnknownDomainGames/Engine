@@ -177,33 +177,33 @@ public class ChunkRenderer {
     @Listener
     public void onBlockChange(BlockChangeEvent.Post event) {
         BlockPos pos = event.getPos().toImmutable();
-        int chunkX = pos.x() >> BITS_X,
-                chunkY = pos.y() >> BITS_Y,
-                chunkZ = pos.z() >> BITS_Z;
+        int chunkX = pos.x() >> CHUNK_X_BITS,
+                chunkY = pos.y() >> CHUNK_Y_BITS,
+                chunkZ = pos.z() >> CHUNK_Z_BITS;
         markChunkDirty(getChunkIndex(event.getPos()));
 
         // Mark neighbor chunk dirty.
-        int chunkW = pos.x() + 1 >> BITS_X;
+        int chunkW = pos.x() + 1 >> CHUNK_X_BITS;
         if (chunkW != chunkX) {
             markChunkDirty(getChunkIndex(chunkW, chunkY, chunkZ));
         }
-        chunkW = pos.x() - 1 >> BITS_X;
+        chunkW = pos.x() - 1 >> CHUNK_X_BITS;
         if (chunkW != chunkX) {
             markChunkDirty(getChunkIndex(chunkW, chunkY, chunkZ));
         }
-        chunkW = pos.y() + 1 >> BITS_Y;
+        chunkW = pos.y() + 1 >> CHUNK_Y_BITS;
         if (chunkW != chunkY) {
             markChunkDirty(getChunkIndex(chunkX, chunkW, chunkZ));
         }
-        chunkW = pos.y() - 1 >> BITS_Y;
+        chunkW = pos.y() - 1 >> CHUNK_Y_BITS;
         if (chunkW != chunkY) {
             markChunkDirty(getChunkIndex(chunkX, chunkW, chunkZ));
         }
-        chunkW = pos.z() + 1 >> BITS_Z;
+        chunkW = pos.z() + 1 >> CHUNK_Z_BITS;
         if (chunkW != chunkZ) {
             markChunkDirty(getChunkIndex(chunkX, chunkY, chunkW));
         }
-        chunkW = pos.z() - 1 >> BITS_Z;
+        chunkW = pos.z() - 1 >> CHUNK_Z_BITS;
         if (chunkW != chunkZ) {
             markChunkDirty(getChunkIndex(chunkX, chunkY, chunkW));
         }
