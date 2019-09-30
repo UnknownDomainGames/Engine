@@ -15,4 +15,14 @@ public interface RegionConstants {
     int REGION_MAX_Z = REGION_Z_SIZE - 1;
 
     int REGION_SIZE = REGION_X_SIZE * REGION_Y_SIZE * REGION_Z_SIZE;
+
+    static long getRegionIndex(int chunkX, int chunkY, int chunkZ) {
+        return (toUnsigned(chunkX >> REGION_X_BITS) << 42) |
+                (toUnsigned(chunkY >> REGION_Y_BITS) << 21) |
+                toUnsigned(chunkZ >> REGION_Z_BITS);
+    }
+
+    private static long toUnsigned(int value) {
+        return value & 0x1fffff;
+    }
 }
