@@ -1,6 +1,7 @@
 package nullengine.world;
 
 import nullengine.block.Block;
+import nullengine.component.GameObject;
 import nullengine.game.Game;
 import nullengine.math.BlockPos;
 import nullengine.world.chunk.Chunk;
@@ -16,7 +17,7 @@ import java.util.Set;
 /**
  * World instance, should spawn by {@link Game}
  */
-public interface World extends BlockGetter, BlockSetter, EntityManager {
+public interface World extends BlockGetter, BlockSetter, EntityManager, GameObject<World> {
 
     Game getGame();
 

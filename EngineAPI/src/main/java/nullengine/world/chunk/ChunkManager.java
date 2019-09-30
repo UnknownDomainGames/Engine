@@ -1,13 +1,9 @@
 package nullengine.world.chunk;
 
-import nullengine.player.Player;
-
 import java.util.Collection;
 import java.util.Optional;
 
 public interface ChunkManager {
-    boolean shouldChunkUnload(Chunk chunk, Player player);
-
     Collection<Chunk> getLoadedChunks();
 
     default Optional<Chunk> getChunk(ChunkPos pos) {

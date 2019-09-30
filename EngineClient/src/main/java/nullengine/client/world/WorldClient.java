@@ -2,6 +2,7 @@ package nullengine.client.world;
 
 import nullengine.block.Block;
 import nullengine.client.world.chunk.WorldClientChunkManager;
+import nullengine.component.Component;
 import nullengine.entity.Entity;
 import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.game.Game;
@@ -22,9 +23,11 @@ import org.joml.Vector3dc;
 import org.joml.Vector3fc;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -210,5 +213,31 @@ public class WorldClient implements World, Runnable {
     @Override
     public Block destroyBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
         return getBlock(pos.x(), pos.y(), pos.z());
+    }
+
+    @Override
+    public <C extends Component> Optional<C> getComponent(@Nonnull Class<C> type) {
+        return Optional.empty();
+    }
+
+    @Override
+    public <C extends Component> boolean hasComponent(@Nonnull Class<C> type) {
+        return false;
+    }
+
+    @Override
+    public <C extends Component> World setComponent(@Nonnull Class<C> type, @Nullable C value) {
+        return null;
+    }
+
+    @Override
+    public <C extends Component> World removeComponent(@Nonnull Class<C> type) {
+        return null;
+    }
+
+    @Nonnull
+    @Override
+    public Set<Class<?>> getComponents() {
+        return null;
     }
 }

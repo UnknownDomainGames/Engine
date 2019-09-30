@@ -4,7 +4,6 @@ import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import nullengine.client.world.WorldClient;
 import nullengine.event.world.chunk.ChunkUnloadEvent;
-import nullengine.player.Player;
 import nullengine.world.chunk.AirChunk;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkConstants;
@@ -24,11 +23,6 @@ public class WorldClientChunkManager implements ChunkManager {
         this.world = new WeakReference<>(world);
         this.chunkMap = new LongObjectHashMap<>();
         blank = new AirChunk(world, 0, 0, 0);
-    }
-
-    @Override
-    public boolean shouldChunkUnload(Chunk chunk, Player player) {
-        return false;
     }
 
     @Override

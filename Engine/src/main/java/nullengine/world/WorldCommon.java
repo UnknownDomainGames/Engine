@@ -5,6 +5,8 @@ import nullengine.block.Block;
 import nullengine.block.component.DestroyBehavior;
 import nullengine.block.component.NeighborChangeListener;
 import nullengine.block.component.PlaceBehavior;
+import nullengine.component.Component;
+import nullengine.component.ComponentAgent;
 import nullengine.entity.Entity;
 import nullengine.event.block.BlockChangeEvent;
 import nullengine.event.block.BlockDestroyEvent;
@@ -27,11 +29,12 @@ import nullengine.world.hit.HitResult;
 import org.joml.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.Math;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -42,13 +45,13 @@ public class WorldCommon implements World {
     private final Path storagePath;
     private final WorldCreationSetting creationSetting;
 
+    private final ComponentAgent componentAgent = new ComponentAgent();
+
     private final PhysicsSystem physicsSystem = new PhysicsSystem(); // prepare for split
     private final CollisionManager collisionManager;
     private final DefaultEntityManager entityManager;
 
-    //private final ChunkStorage chunkStorage;
     private WorldCommonChunkManager chunkManager;
-    private final List<Long> criticalChunks;
 
     //    private final Ticker ticker;
     private long gameTick;
@@ -64,7 +67,6 @@ public class WorldCommon implements World {
 //        this.ticker = new Ticker(this::tick, Ticker.LOGIC_TICK); // TODO: make tps configurable
         this.collisionManager = new DefaultCollisionManager(this);
         this.entityManager = new DefaultEntityManager(this);
-        criticalChunks = new ArrayList<>();
     }
 
     @Override
@@ -90,6 +92,34 @@ public class WorldCommon implements World {
     @Override
     public WorldSetting getSetting() {
         return null;
+    }
+
+    @Override
+    public <C extends Component> Optional<C> getComponent(@Nonnull Class<C> type) {
+        return componentAgent.getComponent(type);
+    }
+
+    @Override
+    public <C extends Component> boolean hasComponent(@Nonnull Class<C> type) {
+        return componentAgent.hasComponent(type);
+    }
+
+    @Override
+    public <C extends Component> World setComponent(@Nonnull Class<C> type, @Nullable C value) {
+        componentAgent.setComponent(type, value);
+        return this;
+    }
+
+    @Override
+    public <T extends Component> World removeComponent(@Nonnull Class<T> type) {
+        componentAgent.removeComponent(type);
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public Set<Class<?>> getComponents() {
+        return componentAgent.getComponents();
     }
 
     @Override
@@ -119,15 +149,6 @@ public class WorldCommon implements World {
 
     public EntityHitResult raycastEntity(Vector3fc from, Vector3fc dir, float distance) {
         return entityManager.raycastEntity(from, dir, distance);
-    }
-
-    /**
-     * Get the list of chunkpos which the corresponding chunk should be force loaded
-     *
-     * @return
-     */
-    public List<Long> getCriticalChunks() {
-        return criticalChunks;
     }
 
     @Override
