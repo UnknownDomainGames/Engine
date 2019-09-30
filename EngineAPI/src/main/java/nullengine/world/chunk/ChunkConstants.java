@@ -4,9 +4,9 @@ import nullengine.math.BlockPos;
 
 public interface ChunkConstants {
 
-    int CHUNK_X_BITS = 4;
-    int CHUNK_Y_BITS = 4;
-    int CHUNK_Z_BITS = 4;
+    int CHUNK_X_BITS = 5;
+    int CHUNK_Y_BITS = 5;
+    int CHUNK_Z_BITS = 5;
 
     int CHUNK_X_SIZE = 1 << CHUNK_X_BITS;
     int CHUNK_Y_SIZE = 1 << CHUNK_Y_BITS;

@@ -13,6 +13,7 @@ import org.joml.Vector3d;
 import org.joml.Vector3fc;
 
 import static java.lang.String.format;
+import static nullengine.world.chunk.ChunkConstants.*;
 
 public class HUDGameDebug extends VBox implements GuiTickable {
 
@@ -57,7 +58,7 @@ public class HUDGameDebug extends VBox implements GuiTickable {
         playerPosition.text().setValue(format("Player Position: %.2f, %.2f, %.2f", player.getPosition().x, player.getPosition().y, player.getPosition().z));
         playerMotion.text().setValue(format("Player Motion: %.2f, %.2f, %.2f", player.getMotion().x, player.getMotion().y, player.getMotion().z));
         playerDirection.text().setValue(format("Player Direction (yaw, pitch, roll): %.2f, %.2f, %.2f (%s)", player.getRotation().x, player.getRotation().y, player.getRotation().z, getDirection(player.getRotation().x)));
-        playerChunkPos.text().setValue(format("Player At Chunk: %d, %d, %d", (int) player.getPosition().x >> 4, (int) player.getPosition().y >> 4, (int) player.getPosition().z >> 4));
+        playerChunkPos.text().setValue(format("Player At Chunk: %d, %d, %d", (int) player.getPosition().x >> CHUNK_X_BITS, (int) player.getPosition().y >> CHUNK_Y_BITS, (int) player.getPosition().z >> CHUNK_Z_BITS));
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
         long maxMemory = runtime.maxMemory();
