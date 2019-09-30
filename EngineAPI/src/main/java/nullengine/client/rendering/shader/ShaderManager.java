@@ -96,7 +96,7 @@ public class ShaderManager {
         if (loadedShaders.containsKey(name)) {
             bindShader(loadedShaders.get(name).getValue());
         } else {
-            Platform.getLogger().warn("Shader Program %s cannot be found at Shader Manager!", name);
+            Platform.getLogger().warn("Shader Program {} cannot be found at Shader Manager!", name);
         }
     }
 
