@@ -2,12 +2,14 @@ package nullengine.world.util;
 
 import nullengine.math.BlockPos;
 import nullengine.world.chunk.Chunk;
+import org.joml.Vector3ic;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static nullengine.world.chunk.ChunkConstants.*;
 
 public class BlockPosIterator implements Iterator<BlockPos> {
 
@@ -16,8 +18,9 @@ public class BlockPosIterator implements Iterator<BlockPos> {
     }
 
     public static BlockPosIterator createFromChunk(Chunk chunk) {
-        return new BlockPosIterator(chunk.getX() << 4, chunk.getY() << 4, chunk.getZ() << 4,
-                (chunk.getX() << 4) + 15, (chunk.getY() << 4) + 15, (chunk.getZ() << 4) + 15);
+        Vector3ic min = chunk.getMin();
+        return new BlockPosIterator(min.x(), min.y(), min.z(),
+                min.x() + CHUNK_MAX_X, min.y() + CHUNK_MAX_Y, min.z() + CHUNK_MAX_Z);
     }
 
     private final int fromX, fromY, fromZ, toX, toY, toZ;

@@ -8,6 +8,8 @@ import nullengine.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
 
+import static nullengine.world.chunk.ChunkConstants.*;
+
 public class ChunkCache implements BlockGetter {
 
     public static ChunkCache create(World world, int fromX, int fromY, int fromZ, int toX, int toY, int toZ) {
@@ -46,18 +48,23 @@ public class ChunkCache implements BlockGetter {
 
     @Nonnull
     public Block getBlock(int x, int y, int z) {
-        int chunkX = (x >> 4) - this.chunkX, chunkY = (y >> 4) - this.chunkY, chunkZ = (z >> 4) - this.chunkZ;
-        if (chunkX >= 0 && chunkX < chunks.length && chunkY >= 0 && chunkY < chunks[chunkX].length && chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {
+        int chunkX = (x >> CHUNK_X_BITS) - this.chunkX;
+        int chunkY = (y >> CHUNK_Y_BITS) - this.chunkY;
+        int chunkZ = (z >> CHUNK_Z_BITS) - this.chunkZ;
+        if (chunkX >= 0 && chunkX < chunks.length &&
+                chunkY >= 0 && chunkY < chunks[chunkX].length &&
+                chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {
             Chunk chunk = chunks[chunkX][chunkY][chunkZ];
             return chunk == null ? Registries.getBlockRegistry().air() : chunk.getBlock(x, y, z); // FIXME:
         }
         return world.getBlock(x, y, z);
     }
 
-    @Nonnull
     @Override
     public int getBlockId(int x, int y, int z) {
-        int chunkX = (x >> 4) - this.chunkX, chunkY = (y >> 4) - this.chunkY, chunkZ = (z >> 4) - this.chunkZ;
+        int chunkX = (x >> CHUNK_X_BITS) - this.chunkX;
+        int chunkY = (y >> CHUNK_Y_BITS) - this.chunkY;
+        int chunkZ = (z >> CHUNK_Z_BITS) - this.chunkZ;
         if (chunkX >= 0 && chunkX < chunks.length && chunkY >= 0 && chunkY < chunks[chunkX].length && chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {
             Chunk chunk = chunks[chunkX][chunkY][chunkZ];
             return chunk == null ? Registries.getBlockRegistry().air().getId() : chunk.getBlockId(x, y, z); // FIXME:

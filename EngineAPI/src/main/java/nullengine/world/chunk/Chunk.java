@@ -4,7 +4,7 @@ import nullengine.block.Block;
 import nullengine.event.block.cause.BlockChangeCause;
 import nullengine.math.BlockPos;
 import nullengine.world.World;
-import org.joml.Vector3fc;
+import org.joml.Vector3ic;
 
 import javax.annotation.Nonnull;
 
@@ -22,10 +22,13 @@ public interface Chunk {
     int getZ();
 
     @Nonnull
-    Vector3fc getMin();
+    Vector3ic getMin();
 
     @Nonnull
-    Vector3fc getMax();
+    Vector3ic getMax();
+
+    @Nonnull
+    Vector3ic getCenter();
 
     /**
      * Get block in a specific path

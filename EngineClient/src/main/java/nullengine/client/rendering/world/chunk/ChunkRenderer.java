@@ -23,6 +23,7 @@ import nullengine.world.World;
 import nullengine.world.chunk.Chunk;
 import org.joml.Matrix4f;
 import org.joml.Vector3fc;
+import org.joml.Vector3ic;
 import org.lwjgl.opengl.GL11;
 
 import java.util.concurrent.*;
@@ -98,7 +99,9 @@ public class ChunkRenderer {
     }
 
     private boolean shouldRenderChunk(ChunkMesh mesh) {
-        return context.getFrustumIntersection().testAab(mesh.getChunk().getMin(), mesh.getChunk().getMax());
+        Vector3ic min = mesh.getChunk().getMin();
+        Vector3ic max = mesh.getChunk().getMax();
+        return context.getFrustumIntersection().testAab(min.x(), min.y(), min.z(), max.x(), max.y(), max.z());
     }
 
     private void preRender() {
@@ -261,9 +264,7 @@ public class ChunkRenderer {
         }
 
         Vector3fc position = context.getCamera().getPosition();
-        double x = chunk.getMin().x() + 8 - position.x();
-        double y = chunk.getMin().y() + 8 - position.y();
-        double z = chunk.getMin().z() + 8 - position.z();
-        return x * x + y * y + z * z;
+        Vector3ic center = chunk.getCenter();
+        return position.distanceSquared(center.x(), center.y(), center.z());
     }
 }

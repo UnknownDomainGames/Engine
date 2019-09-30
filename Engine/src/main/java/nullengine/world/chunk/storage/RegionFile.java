@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static nullengine.world.chunk.ChunkConstants.*;
-import static nullengine.world.chunk.storage.RegionConstants.REGION_SIZE;
+import static nullengine.world.chunk.storage.RegionConstants.*;
 
 @ThreadSafe
 public class RegionFile implements AutoCloseable {
@@ -125,7 +124,7 @@ public class RegionFile implements AutoCloseable {
     }
 
     private int getChunkIndex(int chunkX, int chunkY, int chunkZ) {
-        return (chunkX & CHUNK_MAX_X) | ((chunkY & CHUNK_MAX_Y) << 4) | ((chunkZ & CHUNK_MAX_Z) << 8);
+        return (chunkX & REGION_MAX_X) | ((chunkY & REGION_MAX_Y) << REGION_X_BITS) | ((chunkZ & REGION_MAX_Z) << (REGION_X_BITS + REGION_Y_BITS));
     }
 
     private void useSectors(int start, int end) {
