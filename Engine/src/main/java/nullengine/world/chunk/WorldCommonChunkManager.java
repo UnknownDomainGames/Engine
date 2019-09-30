@@ -9,13 +9,11 @@ import nullengine.world.WorldCommon;
 import nullengine.world.chunk.storage.RegionBasedChunkStorage;
 import nullengine.world.gen.ChunkGenerator;
 import org.apache.commons.lang3.Validate;
-import org.joml.Vector3d;
-import org.joml.Vector3dc;
 
 import java.util.Collection;
 import java.util.Optional;
 
-import static nullengine.world.chunk.ChunkConstants.*;
+import static nullengine.world.chunk.ChunkConstants.getChunkIndex;
 
 public class WorldCommonChunkManager implements ChunkManager, Tickable {
 
@@ -64,12 +62,12 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
         return chunkMap.computeIfAbsent(index, key -> loadChunk(index, x, y, z));
     }
 
-    private boolean shouldChunkOnline(int x, int y, int z, Vector3dc pos) {
-        return pos.distanceSquared(new Vector3d((x << BITS_X) + SIZE_X / 2, (y << BITS_Y) + SIZE_Y / 2, (z << BITS_Z) + SIZE_Z / 2)) <= viewDistanceSquared;
+    private boolean shouldChunkOnline(int x, int y, int z, ChunkPos pos) {
+        return pos.distanceSquared(x, 0, z) <= viewDistanceSquared;
     }
 
     private synchronized Chunk loadChunk(long index, int x, int y, int z) {
-        if (!shouldChunkOnline(x, y, z, new Vector3d(0, 5, 0))) {
+        if (!shouldChunkOnline(x, y, z, ChunkPos.of(0, 0, 0))) {
             Chunk chunk = new AirChunk(world, x, y, z);
             chunkMap.put(index, chunk);
             return chunk;
