@@ -113,24 +113,25 @@ public class CubicChunk implements Chunk {
     }
 
     public void write(DataOutput output) throws IOException {
-        if (blockStorage == null) {
-            blockStorage = new BlockStorage(this);
-        }
+        output.writeShort(nonAirBlockCount);
 
-        long[] data = blockStorage.getData().getBackingArray();
-        for (int i = 0; i < data.length; i++) {
-            output.writeLong(data[i]);
+        if (nonAirBlockCount != 0) {
+            long[] data = blockStorage.getData().getBackingArray();
+            for (int i = 0; i < data.length; i++) {
+                output.writeLong(data[i]);
+            }
         }
     }
 
     public void read(DataInput input) throws IOException {
-        if (blockStorage == null) {
-            blockStorage = new BlockStorage(this);
-        }
+        nonAirBlockCount = input.readShort();
 
-        long[] data = blockStorage.getData().getBackingArray();
-        for (int i = 0; i < data.length; i++) {
-            data[i] = input.readLong();
+        if (nonAirBlockCount != 0) {
+            blockStorage = new BlockStorage(this);
+            long[] data = blockStorage.getData().getBackingArray();
+            for (int i = 0; i < data.length; i++) {
+                data[i] = input.readLong();
+            }
         }
     }
 }
