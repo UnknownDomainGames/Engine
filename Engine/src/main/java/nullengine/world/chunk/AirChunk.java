@@ -70,7 +70,7 @@ public class AirChunk implements Chunk {
 
     @Override
     public int getBlockId(int x, int y, int z) {
-        return 0;
+        return AirBlock.AIR.getId();
     }
 
     @Override
