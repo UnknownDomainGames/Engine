@@ -22,7 +22,7 @@ import nullengine.client.rendering.util.GLInfoImpl;
 import nullengine.client.rendering.util.GPUMemoryInfo;
 import nullengine.client.rendering.util.NVXGPUMemoryInfo;
 import nullengine.component.Component;
-import nullengine.component.ComponentContainer;
+import nullengine.component.ComponentAgent;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -50,7 +50,7 @@ public class EngineRenderManager implements RenderManager {
 
     private final List<Renderer> renderers = new LinkedList<>();
 
-    private final ComponentContainer components = new ComponentContainer();
+    private final ComponentAgent components = new ComponentAgent();
 
     private final EngineRenderScheduler scheduler = new EngineRenderScheduler();
 

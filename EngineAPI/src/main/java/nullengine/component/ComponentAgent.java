@@ -7,15 +7,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-public class ComponentContainer implements GameObject<ComponentContainer> {
+public class ComponentAgent implements GameObject<ComponentAgent> {
 
     private final Map<Class<?>, Optional<Component>> components;
 
-    public ComponentContainer() {
+    public ComponentAgent() {
         this(new HashMap<>());
     }
 
-    public ComponentContainer(Map<Class<?>, Optional<Component>> components) {
+    public ComponentAgent(Map<Class<?>, Optional<Component>> components) {
         this.components = components;
     }
 
@@ -30,7 +30,7 @@ public class ComponentContainer implements GameObject<ComponentContainer> {
     }
 
     @Override
-    public <C extends Component> ComponentContainer setComponent(@Nonnull Class<C> type, @Nullable C value) {
+    public <C extends Component> ComponentAgent setComponent(@Nonnull Class<C> type, @Nullable C value) {
         if (value == null) {
             removeComponent(type);
         } else {
@@ -40,7 +40,7 @@ public class ComponentContainer implements GameObject<ComponentContainer> {
     }
 
     @Override
-    public <T extends Component> ComponentContainer removeComponent(@Nonnull Class<T> type) {
+    public <T extends Component> ComponentAgent removeComponent(@Nonnull Class<T> type) {
         components.remove(type);
         return this;
     }

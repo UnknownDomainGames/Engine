@@ -1,7 +1,7 @@
 package nullengine.entity;
 
 import nullengine.component.Component;
-import nullengine.component.ComponentContainer;
+import nullengine.component.ComponentAgent;
 import nullengine.world.World;
 import org.joml.AABBd;
 import org.joml.Vector3d;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 public abstract class BaseEntity implements Entity {
 
-    private final ComponentContainer components;
+    private final ComponentAgent components;
 
     protected final EntityProvider provider;
 
@@ -34,7 +34,7 @@ public abstract class BaseEntity implements Entity {
         this.uniqueId = UUID.randomUUID();
         this.id = id;
         this.world = new WeakReference<>(world);
-        this.components = new ComponentContainer();
+        this.components = new ComponentAgent();
         this.position.set(x, y, z);
     }
 

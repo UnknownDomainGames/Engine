@@ -1,7 +1,7 @@
 package nullengine.block;
 
 import nullengine.component.Component;
-import nullengine.component.ComponentContainer;
+import nullengine.component.ComponentAgent;
 import nullengine.registry.Registrable;
 
 import javax.annotation.Nonnull;
@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class BaseBlock extends Registrable.Impl<Block> implements Block {
 
-    private final ComponentContainer components = new ComponentContainer();
+    private final ComponentAgent components = new ComponentAgent();
 
     private BlockShape shape = BlockShape.NORMAL_CUBE;
 
