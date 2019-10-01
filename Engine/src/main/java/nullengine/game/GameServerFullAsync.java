@@ -2,6 +2,7 @@ package nullengine.game;
 
 import nullengine.Engine;
 import nullengine.event.world.WorldCreateEvent;
+import nullengine.event.world.WorldLoadEvent;
 import nullengine.registry.Registries;
 import nullengine.world.World;
 import nullengine.world.WorldCreationSetting;
@@ -45,11 +46,12 @@ public class GameServerFullAsync extends GameBase {
         }
 
         var world = provider.create(this, storagePath.resolve("world").resolve(name), name, creationConfig);
+        getEventBus().post(new WorldCreateEvent(world));
+
         this.worlds.put(name, world);
         this.data.getWorlds().put(name, providerName);
         this.data.save();
-
-        getEventBus().post(new WorldCreateEvent(world));
+        getEventBus().post(new WorldLoadEvent(world));
 
 //        Thread thread = new Thread((Runnable) world);
 //        thread.setName("World Thread - " + name);
@@ -71,6 +73,7 @@ public class GameServerFullAsync extends GameBase {
 
         World world = provider.load(this, storagePath.resolve("world").resolve(name));
         this.worlds.put(name, world);
+        getEventBus().post(new WorldLoadEvent(world));
         return world;
     }
 
