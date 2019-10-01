@@ -4,15 +4,13 @@ import nullengine.block.Block;
 import nullengine.registry.Registries;
 import nullengine.util.NibbleArray;
 
-import static nullengine.world.chunk.ChunkConstants.BLOCK_COUNT;
+import static nullengine.world.chunk.ChunkConstants.*;
 
 public class BlockStorage {
 
-    private final Chunk chunk;
     private final NibbleArray data;
 
-    public BlockStorage(Chunk chunk) {
-        this.chunk = chunk;
+    public BlockStorage() {
         this.data = new NibbleArray(8, BLOCK_COUNT);
     }
 
@@ -29,7 +27,7 @@ public class BlockStorage {
     }
 
     private int getPosIndex(int x, int y, int z) {
-        return ((x & 0xF) << 8) | ((y & 0xF) << 4) | z & 0xF;
+        return (x & CHUNK_MAX_X) | ((y & CHUNK_MAX_Y) << CHUNK_X_BITS) | ((z & CHUNK_MAX_Z) << CHUNK_X_BITS + CHUNK_Y_BITS);
     }
 
     public NibbleArray getData() {

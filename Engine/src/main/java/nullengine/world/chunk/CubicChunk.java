@@ -105,7 +105,7 @@ public class CubicChunk implements Chunk {
 
     protected Block setBlock(int x, int y, int z, Block block) {
         if (blockStorage == null) {
-            blockStorage = new BlockStorage(this);
+            blockStorage = new BlockStorage();
         }
 
         if (block != Registries.getBlockRegistry().air()) {
@@ -137,7 +137,7 @@ public class CubicChunk implements Chunk {
         nonAirBlockCount = input.readShort();
 
         if (nonAirBlockCount != 0) {
-            blockStorage = new BlockStorage(this);
+            blockStorage = new BlockStorage();
             long[] data = blockStorage.getData().getBackingArray();
             for (int i = 0; i < data.length; i++) {
                 data[i] = input.readLong();

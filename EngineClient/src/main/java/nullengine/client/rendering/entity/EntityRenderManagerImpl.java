@@ -47,6 +47,6 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
     }
 
     public void dispose() {
-        renderers.entrySet().forEach(entry -> entry.getValue().dispose());
+        renderers.forEach((key, value) -> value.dispose());
     }
 }
