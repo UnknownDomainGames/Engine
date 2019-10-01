@@ -15,10 +15,12 @@ import nullengine.client.i18n.I18n;
 import nullengine.client.i18n.LocaleManager;
 import nullengine.client.rendering.font.Font;
 import nullengine.enginemod.client.gui.GuiSettings;
+import nullengine.game.GameData;
 import nullengine.player.PlayerImpl;
 import nullengine.player.Profile;
 import nullengine.util.Color;
 
+import java.nio.file.Path;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -44,7 +46,8 @@ public class GUIGameCreation extends BorderPane {
             var engine = Platform.getEngineClient();
             var player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
             engine.getRenderManager().getGuiManager().closeScreen();
-            engine.startGame(new GameClientStandalone(engine, engine.getRunPath().resolve("game"), player));
+            Path gameBasePath = engine.getRunPath().resolve("game");
+            engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default"), player));
         });
         vBox.getChildren().add(buttonCreate);
 

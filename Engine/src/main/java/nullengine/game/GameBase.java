@@ -18,6 +18,8 @@ public abstract class GameBase implements Game {
 
     protected final Path storagePath;
 
+    protected final GameData data;
+
     protected final Logger logger;
     protected final Marker marker = MarkerFactory.getMarker("Game");
 
@@ -26,11 +28,12 @@ public abstract class GameBase implements Game {
     protected boolean markedTermination = false;
     protected boolean terminated = false;
 
-    public GameBase(Engine engine, Path storagePath) {
+    public GameBase(Engine engine, Path storagePath, GameData data) {
         this.engine = engine;
         this.logger = engine.getLogger();
         this.eventBus = engine.getEventBus();
         this.storagePath = storagePath;
+        this.data = data;
     }
 
     /**
@@ -43,7 +46,6 @@ public abstract class GameBase implements Game {
      * let mod and resource related module load resources.
      */
     protected void resourceStage() {
-
     }
 
     /**
@@ -66,6 +68,12 @@ public abstract class GameBase implements Game {
 
     @Nonnull
     @Override
+    public GameData getData() {
+        return data;
+    }
+
+    @Nonnull
+    @Override
     public EventBus getEventBus() {
         return eventBus;
     }
@@ -78,18 +86,38 @@ public abstract class GameBase implements Game {
     @Override
     public void init() {
         logger.info(marker, "Initializing Game.");
-        eventBus.post(new GameCreateEvent.Pre(this));
+
+        doCreatePreInit();
         eventBus.post(new GameStartEvent.Pre(this));
+
         constructStage();
         resourceStage();
         finishStage();
-        eventBus.post(new GameCreateEvent.Post(this));
+
+        doCreatePostInit();
         eventBus.post(new GameStartEvent.Post(this));
         // TODO: loop to check if we need to gc the world
 
         // for (WorldCommon worldCommon : internalWorlds) {
         // worldCommon.stop();
         // }
+    }
+
+    protected void doCreatePreInit() {
+        if (data.isCreated()) {
+            return;
+        }
+        logger.info(marker, "First Initialize Game.");
+        eventBus.post(new GameCreateEvent.Pre(this));
+    }
+
+    protected void doCreatePostInit() {
+        if (data.isCreated()) {
+            return;
+        }
+        data.setCreated();
+        data.save();
+        eventBus.post(new GameCreateEvent.Post(this));
     }
 
     @Override

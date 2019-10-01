@@ -4,6 +4,7 @@ import nullengine.client.EngineClient;
 import nullengine.client.input.controller.EntityController;
 import nullengine.client.rendering.display.Window;
 import nullengine.event.game.GameTerminationEvent;
+import nullengine.game.GameData;
 import nullengine.game.GameServerFullAsync;
 import nullengine.player.Player;
 import nullengine.world.World;
@@ -20,8 +21,8 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     private EntityController entityController;
     private Window.CursorCallback cursorCallback;
 
-    public GameClientStandalone(EngineClient engineClient, Path storagePath, Player player) {
-        super(engineClient, storagePath);
+    public GameClientStandalone(EngineClient engineClient, Path storagePath, GameData data, Player player) {
+        super(engineClient, storagePath, data);
         this.engineClient = engineClient;
         this.player = player;
     }

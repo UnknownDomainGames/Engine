@@ -31,8 +31,12 @@ public interface Game {
     Engine getEngine();
 
     @Nonnull
+    GameData getData();
+
+    @Nonnull
     Path getStoragePath();
 
+    @Nonnull
     World createWorld(@Nonnull String providerName, @Nonnull String name, @Nonnull WorldCreationSetting config);
 
     void init();

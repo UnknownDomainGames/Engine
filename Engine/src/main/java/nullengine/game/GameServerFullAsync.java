@@ -24,10 +24,11 @@ public class GameServerFullAsync extends GameBase {
     protected Map<String, World> worlds;
 //    protected List<Thread> worldThreads;
 
-    public GameServerFullAsync(Engine engine, Path storagePath) {
-        super(engine, storagePath);
+    public GameServerFullAsync(Engine engine, Path storagePath, GameData data) {
+        super(engine, storagePath, data);
     }
 
+    @Nonnull
     @Override
     public World createWorld(@Nonnull String providerName, @Nonnull String name, @Nonnull WorldCreationSetting creationConfig) {
         Validate.notEmpty(providerName);
@@ -67,9 +68,9 @@ public class GameServerFullAsync extends GameBase {
 
     @Override
     protected void constructStage() {
+        super.constructStage();
         this.worlds = Maps.newTreeMap();
 //        this.worldThreads = Lists.newArrayList();
-        super.constructStage();
     }
 
     @Override

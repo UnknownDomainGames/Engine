@@ -6,6 +6,7 @@ import nullengine.enginemod.EngineModListeners;
 import nullengine.enginemod.ServerHandlingListeners;
 import nullengine.event.engine.EngineEvent;
 import nullengine.game.Game;
+import nullengine.game.GameData;
 import nullengine.game.GameServerFullAsync;
 import nullengine.logic.Ticker;
 import nullengine.server.network.NetworkServer;
@@ -97,7 +98,8 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
             return;
         }
         logger.info("Starting game for world");
-        startGame(new GameServerFullAsync(this, this.getRunPath().resolve("game")));
+        Path gameBasePath = this.getRunPath().resolve("game");
+        startGame(new GameServerFullAsync(this, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default")));
         ticker.run();
     }
 
