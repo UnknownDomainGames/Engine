@@ -16,6 +16,7 @@ import nullengine.client.rendering.util.FrameBuffer;
 import nullengine.client.rendering.util.FrameBufferMultiSampled;
 import nullengine.client.rendering.util.FrameBufferShadow;
 import nullengine.client.rendering.world.chunk.ChunkRenderer;
+import nullengine.world.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -47,10 +48,10 @@ public class WorldRenderer {
 
     private RenderManager context;
 
-    public void init(RenderManager context) {
+    public void init(RenderManager context, World world) {
         this.context = context;
 
-        chunkRenderer.init(context, this);
+        chunkRenderer.init(context, this, world);
         blockSelectionRenderer.init(context);
         entityRenderManager.init(context);
         skyboxRenderer.init(context);
@@ -177,7 +178,7 @@ public class WorldRenderer {
         ShaderManager.instance().setUniform("u_ShadowMap", 8);
         lightManager.bind(context.getCamera());
         material.bind("material");
-        context.getEngine().getCurrentGame().getWorld().getEntities().forEach(entity ->
+        context.getEngine().getCurrentGame().getClientWorld().getEntities().forEach(entity ->
                 entityRenderManager.render(entity, partial));
     }
 

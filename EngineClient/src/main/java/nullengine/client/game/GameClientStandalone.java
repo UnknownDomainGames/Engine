@@ -47,7 +47,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
      */
     @Nonnull
     @Override
-    public World getWorld() {
+    public World getClientWorld() {
         if (player != null && player.getControlledEntity() != null) {
             return player.getControlledEntity().getWorld();
         }
@@ -95,7 +95,9 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
             tryTerminate();
         }
 
-        ((WorldCommon) getWorld()).tick();
+        if (player.isControllingEntity()) {
+            ((WorldCommon) getClientWorld()).tick();
+        }
         // TODO upload particle physics here
     }
 

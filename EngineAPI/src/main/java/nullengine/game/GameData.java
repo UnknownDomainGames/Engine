@@ -18,6 +18,7 @@ public class GameData {
 
     private final Map<String, String> dependencies = new HashMap<>();
     private final Map<String, Map<String, Integer>> registries = new HashMap<>();
+    private final Map<String, String> worlds = new HashMap<>();
 
     public static GameData createFromCurrentEnvironment(Path gameBasePath, String name) {
         GameData gameData = new GameData(gameBasePath, new Config());
@@ -68,10 +69,16 @@ public class GameData {
         return registries;
     }
 
+    public Map<String, String> getWorlds() {
+        return worlds;
+    }
+
     public void save() {
         gameData.set("Name", name);
         gameData.set("Created", created);
+        gameData.set("World", worlds);
         gameData.set("Dependencies", dependencies);
+        gameData.set("Registries", registries);
         ConfigParsers.save(gameBasePath.resolve("game.json"), gameData);
     }
 }

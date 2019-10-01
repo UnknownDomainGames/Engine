@@ -16,7 +16,6 @@ import nullengine.client.rendering.util.buffer.GLBufferPool;
 import nullengine.client.rendering.world.WorldRenderer;
 import nullengine.event.Listener;
 import nullengine.event.block.BlockChangeEvent;
-import nullengine.event.player.PlayerControlEntityEvent;
 import nullengine.event.world.chunk.ChunkLoadEvent;
 import nullengine.math.BlockPos;
 import nullengine.world.World;
@@ -50,8 +49,7 @@ public class ChunkRenderer {
 
     private ThreadPoolExecutor chunkBakeExecutor;
 
-
-    public void init(RenderManager context, WorldRenderer worldRenderer) {
+    public void init(RenderManager context, WorldRenderer worldRenderer, World world) {
         this.context = context;
         this.game = context.getEngine().getCurrentGame();
         game.getEventBus().register(this);
@@ -78,7 +76,7 @@ public class ChunkRenderer {
         });
 
         context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).reload();
-        initWorld(context.getEngine().getCurrentGame().getPlayer().getWorld());
+        initWorld(world);
     }
 
     public void render() {
@@ -170,11 +168,6 @@ public class ChunkRenderer {
         }
 
         initChunk(event.getChunk());
-    }
-
-    @Listener
-    public void onPlayerControlEntity(PlayerControlEntityEvent.Post event) {
-        initWorld(event.getNewEntity().getWorld());
     }
 
     @Listener

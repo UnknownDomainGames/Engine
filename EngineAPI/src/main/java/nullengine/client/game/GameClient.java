@@ -18,7 +18,7 @@ public interface GameClient extends Game {
     Player getPlayer();
 
     @Nonnull
-    World getWorld();
+    World getClientWorld();
 
     EntityController getEntityController();
 

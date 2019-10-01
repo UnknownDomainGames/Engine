@@ -8,8 +8,10 @@ import nullengine.client.rendering.item.ItemRenderManager;
 import nullengine.client.rendering.item.ItemRenderManagerImpl;
 import nullengine.client.rendering.world.WorldRenderer;
 import nullengine.event.Listener;
-import nullengine.event.game.GameStartEvent;
+import nullengine.event.Order;
 import nullengine.event.game.GameTerminationEvent;
+import nullengine.event.player.PlayerControlEntityEvent;
+import nullengine.world.World;
 
 public class Game3DRenderer implements Renderer {
 
@@ -17,6 +19,8 @@ public class Game3DRenderer implements Renderer {
 
     private ItemRenderManagerImpl itemRenderManager;
     private BlockRenderManagerImpl blockRenderManager;
+
+    private World world;
 
     private WorldRenderer worldRenderer;
 
@@ -56,8 +60,15 @@ public class Game3DRenderer implements Renderer {
         worldRenderer = null;
     }
 
-    @Listener
-    public void onGameStart(GameStartEvent.Post event) {
+    @Listener(order = Order.LAST)
+    public void onControlEntity(PlayerControlEntityEvent.Post event) {
+        if (world == event.getNewEntity().getWorld()) {
+            return;
+        }
+
+        disposeGameRender();
+        this.world = event.getNewEntity().getWorld();
+
         blockRenderManager = new BlockRenderManagerImpl();
         blockRenderManager.init();
         BlockRenderManager.Internal.setInstance(blockRenderManager);
@@ -67,7 +78,7 @@ public class Game3DRenderer implements Renderer {
         ItemRenderManager.Internal.setInstance(itemRenderManager);
 
         worldRenderer = new WorldRenderer();
-        worldRenderer.init(context);
+        worldRenderer.init(context, world);
 
         context.getEngine().getAssetManager().reload();
     }

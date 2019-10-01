@@ -7,6 +7,7 @@ import nullengine.world.WorldCreationSetting;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
+import java.util.Optional;
 
 /**
  * The game shares the same set of mod and resources pack manifest.
@@ -38,6 +39,8 @@ public interface Game {
 
     @Nonnull
     World createWorld(@Nonnull String providerName, @Nonnull String name, @Nonnull WorldCreationSetting config);
+
+    Optional<World> getWorld(@Nonnull String name);
 
     void init();
 

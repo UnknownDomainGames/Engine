@@ -76,7 +76,7 @@ public class HUDGameDebug extends VBox implements GuiTickable {
 //        }
 
         Camera camera = context.getCamera();
-        EntityHitResult entityHit = context.getEngine().getCurrentGame().getWorld().raycastEntity(camera.getPosition(), camera.getFrontVector(), 10);
+        EntityHitResult entityHit = context.getEngine().getCurrentGame().getClientWorld().raycastEntity(camera.getPosition(), camera.getFrontVector(), 10);
         if (entityHit.isSuccess()) {
             blockHitInfo.visible().set(true);
             Entity entity = entityHit.getEntity();

@@ -12,7 +12,6 @@ import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.i18n.I18n;
-import nullengine.client.i18n.LocaleManager;
 import nullengine.client.rendering.font.Font;
 import nullengine.enginemod.client.gui.GuiSettings;
 import nullengine.game.GameData;
@@ -21,7 +20,6 @@ import nullengine.player.Profile;
 import nullengine.util.Color;
 
 import java.nio.file.Path;
-import java.util.Locale;
 import java.util.UUID;
 
 public class GUIGameCreation extends BorderPane {
@@ -41,7 +39,6 @@ public class GUIGameCreation extends BorderPane {
 
         Button buttonCreate = new Button("New World");
         buttonCreate.border().setValue(new Border(Color.WHITE));
-
         buttonCreate.setOnClick(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
             var player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
@@ -51,26 +48,27 @@ public class GUIGameCreation extends BorderPane {
         });
         vBox.getChildren().add(buttonCreate);
 
+        Button buttonLoad = new Button("Load Game");
+        buttonLoad.border().setValue(new Border(Color.WHITE));
+        buttonLoad.setOnClick(mouseClickEvent -> {
+            var engine = Platform.getEngineClient();
+            var player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
+            engine.getRenderManager().getGuiManager().closeScreen();
+            Path gameBasePath = engine.getRunPath().resolve("game");
+            engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromGame(gameBasePath), player));
+        });
+        vBox.getChildren().add(buttonLoad);
+
         var buttonSettings = new Button("Settings");
         buttonSettings.setOnClick(mouseClickEvent -> {
             Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiSettings()));
         });
         vBox.getChildren().add(buttonSettings);
 
-        Button buttonExit = new Button("exit");
+        Button buttonExit = new Button("Exit");
         buttonExit.setOnClick(mouseClickEvent -> Platform.getEngine().terminate());
         vBox.getChildren().add(buttonExit);
 
-        Button buttonLocale = new Button("Lang: " + I18n.translate("engine.gui.lang.text.name"));
-        buttonLocale.setOnClick(onClick -> {
-            if (LocaleManager.INSTANCE.getLocale() == Locale.US) {
-                LocaleManager.INSTANCE.setLocale(Locale.CHINA);
-            } else if (LocaleManager.INSTANCE.getLocale() == Locale.CHINA) {
-                LocaleManager.INSTANCE.setLocale(Locale.US);
-            }
-            buttonLocale.text().setValue("Lang: " + I18n.translate("engine.gui.lang.text.name"));
-        });
-        vBox.getChildren().add(buttonLocale);
         var butCS = new Button("Multiplayer");
         butCS.setOnClick(e->{
             Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiDirectConnectServer()));
