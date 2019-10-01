@@ -46,7 +46,7 @@ public class CrashHandlerImpl implements CrashHandler {
     }
 
     @Override
-    public void crash(@Nonnull Thread thread, @Nonnull Throwable cause, @Nonnull Map<String, Consumer<StringBuilder>> details) {
+    public synchronized void crash(@Nonnull Thread thread, @Nonnull Throwable cause, @Nonnull Map<String, Consumer<StringBuilder>> details) {
         engine.getLogger().error("/////////////// CRASH ///////////////");
         engine.getLogger().error("Thread: {}", thread.getName());
         engine.getLogger().error(cause.getMessage(), cause);
