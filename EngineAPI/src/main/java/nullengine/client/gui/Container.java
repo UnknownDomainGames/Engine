@@ -60,7 +60,7 @@ public abstract class Container extends Component {
         float minX = 0, maxX = 0;
         for (Component child : getChildren()) {
             float childMinX = child.x().get();
-            float childMaxX = childMinX + Utils.prefWidth(child);
+            float childMaxX = childMinX + Math.max(Utils.prefWidth(child), child.width().get());
             if (minX > childMinX) {
                 minX = childMinX;
             }
@@ -76,7 +76,7 @@ public abstract class Container extends Component {
         float minY = 0, maxY = 0;
         for (Component child : getChildren()) {
             float childMinY = child.y().get();
-            float childMaxY = childMinY + Utils.prefHeight(child);
+            float childMaxY = childMinY + Math.max(Utils.prefHeight(child), child.height().get());
             if (minY > childMinY) {
                 minY = childMinY;
             }
@@ -137,7 +137,7 @@ public abstract class Container extends Component {
 
     protected void layoutChildren() {
         for (Component component : getChildren()) {
-            layoutInArea(component, component.x().get(), component.y().get(), component.prefWidth(), component.prefHeight());
+            layoutInArea(component, component.x().get(), component.y().get(), Utils.prefWidth(component), Utils.prefHeight(component));
         }
     }
 

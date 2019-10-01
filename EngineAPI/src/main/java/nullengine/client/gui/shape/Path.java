@@ -1,35 +1,47 @@
 package nullengine.client.gui.shape;
 
-import java.util.Arrays;
+import nullengine.client.gui.rendering.ComponentRenderer;
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Path extends Shape {
 
-    private float[] points;
-    private int length;
+    public static abstract class Point{}
 
-    public float[] getPoints() {
+    public static class LinearPoint extends Point{
+        private Vector2fc coord;
+
+        public LinearPoint(float x, float y){
+            coord = new Vector2f(x,y);
+        }
+
+        public Vector2fc getCoordinate() {
+            return coord;
+        }
+    }
+
+
+
+    private List<Point> points = new ArrayList<>();
+
+    public List<Point> getPoints() {
         return points;
     }
 
     public int getLength() {
-        return length;
+        return points.size();
     }
 
     public void moveTo(float x, float y) {
-        points = new float[10];
-        points[0] = x;
-        points[1] = y;
-        length = 1;
+        points.clear();
+        points.add(new LinearPoint(x,y));
     }
 
     public void lineTo(float x, float y) {
-        if (points.length <= length * 2) {
-            float[] np = Arrays.copyOf(points, points.length + 10);
-            points = np;
-        }
-        points[length * 2] = x;
-        points[length * 2 + 1] = y;
-        length++;
+        points.add(new LinearPoint(x,y));
     }
 
     //TODO: we should store the following commands for GraphicsImpl, except close()!
@@ -47,12 +59,21 @@ public class Path extends Shape {
     }
 
     public void close() {
-        if (points.length <= length * 2) {
-            float[] np = Arrays.copyOf(points, points.length + 10);
-            points = np;
-        }
-        points[length * 2] = points[0];
-        points[length * 2 + 1] = points[1];
-        length++;
+        points.add(points.get(0));
+    }
+
+    @Override
+    public float prefWidth() {
+        return 0;
+    }
+
+    @Override
+    public float prefHeight() {
+        return 0;
+    }
+
+    @Override
+    protected ComponentRenderer createDefaultRenderer() {
+        return null;
     }
 }

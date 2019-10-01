@@ -52,8 +52,8 @@ public class VBox extends Pane {
         Insets padding = padding().getValue();
         float x, y = padding.getTop(), spacing = spacing().get(), w = width().get() - padding.getLeft() - padding.getRight();
         for (Component component : getChildren()) {
-            float prefWidth = component.prefWidth();
-            float prefHeight = component.prefHeight();
+            float prefWidth = Utils.prefWidth(component);
+            float prefHeight = Utils.prefHeight(component);
             x = alignment.getValue() == Pos.HPos.RIGHT ? w - prefWidth : alignment.getValue() == Pos.HPos.CENTER ? (w - prefWidth) / 2 : 0;
             x += padding.getLeft();
             layoutInArea(component, snap(x, true), snap(y, true), prefWidth, prefHeight);
