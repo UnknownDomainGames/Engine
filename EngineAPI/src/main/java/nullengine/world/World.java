@@ -27,6 +27,8 @@ public interface World extends BlockGetter, BlockSetter, EntityManager, GameObje
 
     Path getStoragePath();
 
+    String getName();
+
     WorldCreationSetting getCreationSetting();
 
     WorldSetting getSetting();

@@ -23,19 +23,21 @@ public class FlatWorldProvider extends BaseWorldProvider {
     public World create(@Nonnull Game game, @Nonnull Path storagePath, @Nonnull String name, @Nonnull WorldCreationSetting creationSetting) {
         FlatWorldCreationSetting setting = (FlatWorldCreationSetting) creationSetting;
         Config config = new Config();
+        config.set("name", name);
         List<String> layers = new ArrayList<>();
         for (Block block : setting.getLayers()) {
             layers.add(block.getName().getUniqueName());
         }
         config.set("layers", layers);
         ConfigParsers.save(storagePath.resolve("world.json"), config);
-        return new WorldCommon(game, this, storagePath, creationSetting, new FlatChunkGenerator(setting.getLayers()));
+        return new WorldCommon(game, this, storagePath, name, creationSetting, new FlatChunkGenerator(setting.getLayers()));
     }
 
     @Nonnull
     @Override
     public World load(@Nonnull Game game, @Nonnull Path storagePath) {
         Config config = ConfigParsers.load(storagePath.resolve("world.json"));
+        String name = config.getString("name");
         List<Object> layers = config.getList("layers", List.of());
         Block[] blocks = new Block[layers.size()];
         for (int i = 0; i < layers.size(); i++) {
@@ -43,6 +45,6 @@ public class FlatWorldProvider extends BaseWorldProvider {
         }
         FlatWorldCreationSetting creationSetting = new FlatWorldCreationSetting();
         creationSetting.layers(blocks);
-        return new WorldCommon(game, this, storagePath, creationSetting, new FlatChunkGenerator(blocks));
+        return new WorldCommon(game, this, storagePath, name, creationSetting, new FlatChunkGenerator(blocks));
     }
 }

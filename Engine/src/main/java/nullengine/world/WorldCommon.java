@@ -44,6 +44,7 @@ public class WorldCommon implements World {
     private final Game game;
     private final WorldProvider provider;
     private final Path storagePath;
+    private final String name;
     private final WorldCreationSetting creationSetting;
 
     private final ComponentAgent componentAgent = new ComponentAgent();
@@ -58,12 +59,12 @@ public class WorldCommon implements World {
     private long gameTick;
 //    private ExecutorService service;
 
-    public WorldCommon(Game game, WorldProvider provider, Path storagePath, WorldCreationSetting creationSetting, ChunkGenerator chunkGenerator) {
+    public WorldCommon(Game game, WorldProvider provider, Path storagePath, String name, WorldCreationSetting creationSetting, ChunkGenerator chunkGenerator) {
         this.game = game;
         this.provider = provider;
         this.storagePath = storagePath;
+        this.name = name;
         this.creationSetting = creationSetting;
-        //this.chunkStorage = new ChunkStorage(this);
         this.chunkManager = new WorldCommonChunkManager(this, chunkGenerator);
 //        this.ticker = new Ticker(this::tick, Ticker.LOGIC_TICK); // TODO: make tps configurable
         this.collisionManager = new DefaultCollisionManager(this);
@@ -83,6 +84,11 @@ public class WorldCommon implements World {
     @Override
     public Path getStoragePath() {
         return storagePath;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

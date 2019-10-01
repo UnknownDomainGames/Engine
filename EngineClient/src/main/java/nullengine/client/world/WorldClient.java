@@ -77,6 +77,11 @@ public class WorldClient implements World, Runnable {
     }
 
     @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
     public WorldCreationSetting getCreationSetting() {
         return null;
     }
