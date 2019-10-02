@@ -1,9 +1,12 @@
 package nullengine.game;
 
 import nullengine.Engine;
+import nullengine.entity.Entity;
 import nullengine.event.EventBus;
 import nullengine.world.World;
 import nullengine.world.WorldCreationSetting;
+import nullengine.world.exception.WorldLoadException;
+import nullengine.world.exception.WorldNotExistsException;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -40,6 +43,11 @@ public interface Game {
     @Nonnull
     World createWorld(@Nonnull String providerName, @Nonnull String name, @Nonnull WorldCreationSetting config);
 
+    @Nonnull
+    World loadWorld(@Nonnull String name) throws WorldLoadException, WorldNotExistsException;
+
+    void unloadWorld(@Nonnull String name);
+
     Optional<World> getWorld(@Nonnull String name);
 
     void init();
@@ -52,4 +60,8 @@ public interface Game {
 
     @Nonnull
     EventBus getEventBus();
+
+    // ########## Internal Methods ##########
+
+    void doUnloadWorld(World world);
 }

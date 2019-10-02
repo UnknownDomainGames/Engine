@@ -1,22 +1,22 @@
 package nullengine.game;
 
+import com.google.common.base.Strings;
 import nullengine.Engine;
+import nullengine.entity.Entity;
 import nullengine.event.world.WorldCreateEvent;
 import nullengine.event.world.WorldLoadEvent;
 import nullengine.registry.Registries;
 import nullengine.world.World;
 import nullengine.world.WorldCreationSetting;
 import nullengine.world.exception.WorldAlreadyLoadedException;
+import nullengine.world.exception.WorldLoadException;
+import nullengine.world.exception.WorldNotExistsException;
 import nullengine.world.exception.WorldProviderNotFoundException;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Each world host in an independent thread.
@@ -60,6 +60,26 @@ public class GameServerFullAsync extends GameBase {
         return world;
     }
 
+    @Nonnull
+    @Override
+    public World loadWorld(@Nonnull String name) throws WorldLoadException, WorldNotExistsException {
+        if (worlds.containsKey(name)) {
+            throw new WorldAlreadyLoadedException(name);
+        }
+
+        String providerName = data.getWorlds().get(name);
+        if (Strings.isNullOrEmpty(providerName)) {
+            throw new WorldNotExistsException(name);
+        }
+
+        return loadWorld(name, providerName);
+    }
+
+    @Override
+    public void unloadWorld(@Nonnull String name) {
+        getWorld(name).ifPresent(World::unload);
+    }
+
     private World loadWorld(@Nonnull String name, @Nonnull String providerName) {
         Validate.notEmpty(name);
         if (worlds.containsKey(name)) {
@@ -82,7 +102,6 @@ public class GameServerFullAsync extends GameBase {
         return worlds.values();
     }
 
-    @Nullable
     @Override
     public Optional<World> getWorld(@Nonnull String name) {
         return Optional.ofNullable(worlds.get(name));
@@ -114,11 +133,20 @@ public class GameServerFullAsync extends GameBase {
     }
 
     @Override
+    public void doUnloadWorld(World world) {
+        if (!world.isUnloaded()) {
+            throw new IllegalStateException("World is not unloaded");
+        }
+
+        worlds.remove(world.getName());
+    }
+
+    @Override
     protected void tryTerminate() {
 //        for (World worldCommon : worlds.values()) {
 //            ((WorldCommon) worldCommon).stop();
 //        }
-        worlds.values().forEach(World::unload);
+        List.copyOf(worlds.values()).forEach(World::unload);
         // TODO: unload mod/resource here
         super.tryTerminate();
     }

@@ -59,6 +59,8 @@ public class WorldCommon implements World {
     private long gameTick;
 //    private ExecutorService service;
 
+    private boolean unloaded = false;
+
     public WorldCommon(Game game, WorldProvider provider, Path storagePath, String name, WorldCreationSetting creationSetting, ChunkGenerator chunkGenerator) {
         this.game = game;
         this.provider = provider;
@@ -307,8 +309,18 @@ public class WorldCommon implements World {
     }
 
     @Override
-    public void unload() {
+    public synchronized void unload() {
+        if (unloaded) {
+            return;
+        }
+        unloaded = true;
         chunkManager.unloadAll();
+        game.doUnloadWorld(this);
+    }
+
+    @Override
+    public boolean isUnloaded() {
+        return unloaded;
     }
 
     @Override

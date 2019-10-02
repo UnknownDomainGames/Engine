@@ -187,6 +187,11 @@ public class WorldClient implements World, Runnable {
     }
 
     @Override
+    public boolean isUnloaded() {
+        return false;
+    }
+
+    @Override
     public void save() {
 
     }
