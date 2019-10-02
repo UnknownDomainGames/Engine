@@ -39,6 +39,7 @@ public class GameData {
         this.name = gameData.getString("Name");
         this.created = gameData.getBoolean("Created", false);
         gameData.getMap("Dependencies", Map.of()).forEach((key, value) -> dependencies.put(key, (String) value));
+        gameData.getMap("Worlds", Map.of()).forEach((key, value) -> worlds.put(key, (String) value));
     }
 
     public Path getGameBasePath() {
@@ -76,7 +77,7 @@ public class GameData {
     public void save() {
         gameData.set("Name", name);
         gameData.set("Created", created);
-        gameData.set("World", worlds);
+        gameData.set("Worlds", worlds);
         gameData.set("Dependencies", dependencies);
         gameData.set("Registries", registries);
         ConfigParsers.save(gameBasePath.resolve("game.json"), gameData);
