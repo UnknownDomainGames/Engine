@@ -48,6 +48,9 @@ public class HSlider extends Region {
             if(newValue == 0){
                 step.set(oldValue);
             }
+            else{
+                resizeSlider(sliderLength.get() * (float)(step.get() / (max.get() - min.get())), sliderThickness.get());
+            }
         });
         sliderLength.addChangeListener((observable, oldValue, newValue) -> {
             resizeBack(newValue, sliderThickness.get());
@@ -113,9 +116,9 @@ public class HSlider extends Region {
         super.handleEvent(event);
         if (event instanceof MouseEvent.MouseMoveEvent && select) {
             var event1 = (MouseEvent.MouseMoveEvent) event;
-            if ((event1.getNewPosX() - x().get() - slider.x().get()) / width().get() > step.get() * 0.9) {
+            if ((event1.getNewPosX() - x().get() - slider.x().get()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() + step.get());
-            } else if ((slider.x().get() - event1.getNewPosX() + x().get()) / width().get() > step.get() * 0.9) {
+            } else if ((slider.x().get() - event1.getNewPosX() + x().get()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() - step.get());
             }
         } else if (event instanceof MouseEvent.MouseReleasedEvent) {
@@ -124,9 +127,9 @@ public class HSlider extends Region {
             //select = false;
         } else if (event instanceof MouseEvent.MouseHoldEvent) {
             var event1 = (MouseEvent.MouseHoldEvent) event;
-            if ((event1.getPosX() - x().get() - slider.x().get()) / width().get() > step.get() * 0.9) {
+            if ((event1.getPosX() - x().get() - slider.x().get()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() + step.get());
-            } else if ((slider.x().get() - event1.getPosX() + x().get()) / width().get() > step.get() * 0.9) {
+            } else if ((slider.x().get() - event1.getPosX() + x().get()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() - step.get());
             }
         }

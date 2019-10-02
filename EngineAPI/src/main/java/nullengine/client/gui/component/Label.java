@@ -14,6 +14,11 @@ public class Label extends Control {
         this.getChildren().addAll(text);
     }
 
+    public Label(String text){
+        this();
+        text().setValue(text);
+    }
+
     public final MutableValue<Font> font() {
         return text.font();
     }

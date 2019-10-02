@@ -36,7 +36,7 @@ public abstract class Container extends Component {
         });
     }
 
-    protected ObservableList<Component> getChildren() {
+    public ObservableList<Component> getChildren() {
         return children;
     }
 

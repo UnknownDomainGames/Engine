@@ -53,6 +53,9 @@ public class VSlider extends Region {
             if(newValue == 0){
                 step.set(oldValue);
             }
+            else{
+                resizeSlider(sliderThickness.get(), sliderLength.get() * (float)(step.get() / (max.get() - min.get())));
+            }
         });
         sliderLength.addChangeListener((observable, oldValue, newValue) -> {
             resizeBack(sliderThickness.get(), newValue);
@@ -122,9 +125,10 @@ public class VSlider extends Region {
         super.handleEvent(event);
         if (event instanceof MouseEvent.MouseMoveEvent && select) {
             var event1 = (MouseEvent.MouseMoveEvent) event;
-            if ((event1.getNewPosY() - y().get() - slider.y().get()) / height().get() > step.get() * 0.9) {
+            var ry = relativePos((float) event1.getNewPosX(),(float) event1.getNewPosY()).getRight();
+            if ((ry - slider.y().get()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
-            } else if ((slider.y().get() - event1.getNewPosY() + y().get()) / height().get() > step.get() * 0.9) {
+            } else if ((slider.y().get() - ry) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
             }
         } else if (event instanceof MouseEvent.MouseReleasedEvent) {
@@ -133,9 +137,9 @@ public class VSlider extends Region {
             //select = false;
         } else if (event instanceof MouseEvent.MouseHoldEvent) {
             var event1 = (MouseEvent.MouseHoldEvent) event;
-            if ((event1.getPosY() - y().get() - slider.y().get()) / height().get() > step.get() * 0.9) {
+            if ((event1.getPosY() - y().get() - slider.y().get()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
-            } else if ((slider.y().get() - event1.getPosY() + y().get()) / height().get() > step.get() * 0.9) {
+            } else if ((slider.y().get() - event1.getPosY() + y().get()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
             }
         }
