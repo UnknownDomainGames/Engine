@@ -1,8 +1,22 @@
 package nullengine.client.rendering.entity;
 
-import nullengine.component.Component;
 import nullengine.entity.Entity;
+import nullengine.exception.UninitializationException;
 
-public interface EntityRenderManager extends Component {
-    <T extends Entity> void register(Class<T> entityType, EntityRenderer<T> renderer);
+import java.util.function.Supplier;
+
+public interface EntityRenderManager {
+    void render(Entity entity, float partial);
+
+    static EntityRenderManager instance() {
+        return EntityRenderManager.Internal.instance.get();
+    }
+
+    class Internal {
+        private static Supplier<EntityRenderManager> instance = UninitializationException.supplier("EntityRenderManager is uninitialized");
+
+        public static void setInstance(EntityRenderManager instance) {
+            EntityRenderManager.Internal.instance = () -> instance;
+        }
+    }
 }

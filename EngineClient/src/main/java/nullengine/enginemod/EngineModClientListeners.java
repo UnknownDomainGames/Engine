@@ -5,7 +5,7 @@ import nullengine.block.AirBlock;
 import nullengine.block.Block;
 import nullengine.block.component.ActivateBehavior;
 import nullengine.block.component.ClickBehavior;
-import nullengine.client.event.rendering.EntityRendererRegistrationEvent;
+import nullengine.client.event.rendering.RegisterEntityRendererEvent;
 import nullengine.client.game.GameClient;
 import nullengine.client.gui.Scene;
 import nullengine.client.input.controller.MotionType;
@@ -232,7 +232,7 @@ public final class EngineModClientListeners {
     }
 
     @Listener
-    public static void registerEntityRenderer(EntityRendererRegistrationEvent event) {
+    public static void registerEntityRenderer(RegisterEntityRendererEvent event) {
         event.register(ItemEntity.class, new EntityItemRenderer());
     }
 

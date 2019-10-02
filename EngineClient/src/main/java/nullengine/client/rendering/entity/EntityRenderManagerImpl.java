@@ -1,6 +1,6 @@
 package nullengine.client.rendering.entity;
 
-import nullengine.client.event.rendering.EntityRendererRegistrationEvent;
+import nullengine.client.event.rendering.RegisterEntityRendererEvent;
 import nullengine.client.rendering.RenderManager;
 import nullengine.entity.Entity;
 
@@ -11,24 +11,20 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
 
     private final Map<Class<? extends Entity>, EntityRenderer<?>> renderers = new HashMap<>();
 
-    private RenderManager context;
+    public void init(RenderManager context) {
+        EntityRenderManagerImpl.Internal.setInstance(this);
+        context.getEngine().getCurrentGame().getEventBus().post(new RegisterEntityRendererEvent(this::register));
+        renderers.values().forEach(entityRenderer -> entityRenderer.init(context));
+    }
 
-    @Override
-    public <T extends Entity> void register(Class<T> entityType, EntityRenderer<T> renderer) {
+    private <T extends Entity> void register(Class<T> entityType, EntityRenderer<T> renderer) {
         if (renderers.containsKey(entityType))
             throw new IllegalArgumentException();
 
         renderers.put(entityType, renderer);
     }
 
-    public void init(RenderManager context) {
-        this.context = context;
-
-        context.getEngine().getCurrentGame().getEventBus().post(new EntityRendererRegistrationEvent(this));
-
-        renderers.values().forEach(entityRenderer -> entityRenderer.init(context));
-    }
-
+    @Override
     public void render(Entity entity, float partial) {
         EntityRenderer renderer = renderers.get(entity.getClass());
         if (renderer == null)
