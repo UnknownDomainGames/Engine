@@ -34,7 +34,7 @@ public class BorderPane extends Pane {
     }
 
     // convenience for handling null margins
-    private static Insets getNodeMargin(Component child) {
+    protected static Insets getNodeMargin(Component child) {
         Insets margin = getMargin(child);
         return margin != null ? margin : Insets.EMPTY;
     }

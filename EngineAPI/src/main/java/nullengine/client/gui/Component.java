@@ -23,6 +23,8 @@ public abstract class Component {
 
     private final MutableFloatValue x = new SimpleMutableFloatValue();
     private final MutableFloatValue y = new SimpleMutableFloatValue();
+
+    public static final float FOLLOW_PARENT = -1;
     final MutableFloatValue width = new SimpleMutableFloatValue();
     final MutableFloatValue height = new SimpleMutableFloatValue();
 

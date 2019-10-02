@@ -215,15 +215,6 @@ public class GraphicsImpl implements Graphics {
             Vector4fc parent = clipRect.peek();
             float newX = parent.x() + x, newY = parent.y() + y;
             float newZ = newX + width, newW = newY + height;
-//            unrestricted range
-            Math2.clamp(newX, parent.x(), parent.z());
-            Math2.clamp(newY, parent.y(), parent.w());
-            Math2.clamp(newZ, parent.x(), parent.z());
-            Math2.clamp(newW, parent.y(), parent.w());
-//            inclusiveBetween(parent.x(), parent.z(), newX);
-//            inclusiveBetween(parent.y(), parent.w(), newY);
-//            inclusiveBetween(parent.x(), parent.z(), newZ);
-//            inclusiveBetween(parent.y(), parent.w(), newW);
             clipRect.push(new Vector4f(newX, newY, newZ, newW));
             updateClipRect();
         }
@@ -236,9 +227,16 @@ public class GraphicsImpl implements Graphics {
     }
 
     private void updateClipRect() {
-        if (!clipRect.isEmpty()) {
-            guiRenderer.setClipRect(clipRect.peek());
-        }
+        clipRect.stream().reduce((parent, child) -> {
+            var newX = Math2.clamp(child.x(), parent.x(), parent.z());
+            var newY = Math2.clamp(child.y(), parent.y(), parent.w());
+            var newZ = Math2.clamp(child.z(), parent.x(), parent.z());
+            var newW = Math2.clamp(child.w(), parent.y(), parent.w());
+            return new Vector4f(newX,newY,newZ,newW);
+        }).ifPresent(guiRenderer::setClipRect);
+//        if (!clipRect.isEmpty()) {
+//            guiRenderer.setClipRect(clipRect.peek());
+//        }
     }
 
     private void pointTo(GLBuffer buffer, float x, float y) {
