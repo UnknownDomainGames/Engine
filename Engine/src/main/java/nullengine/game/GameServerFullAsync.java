@@ -5,6 +5,9 @@ import nullengine.Engine;
 import nullengine.entity.Entity;
 import nullengine.event.world.WorldCreateEvent;
 import nullengine.event.world.WorldLoadEvent;
+import nullengine.event.world.WorldUnloadEvent;
+import nullengine.player.Player;
+import nullengine.player.Profile;
 import nullengine.registry.Registries;
 import nullengine.world.World;
 import nullengine.world.WorldCreationSetting;
@@ -28,6 +31,12 @@ public class GameServerFullAsync extends GameBase {
 
     public GameServerFullAsync(Engine engine, Path storagePath, GameData data) {
         super(engine, storagePath, data);
+    }
+
+    @Nonnull
+    @Override
+    public Player joinGame(Profile profile, Entity controlledEntity) {
+        return null;
     }
 
     @Nonnull
@@ -139,6 +148,7 @@ public class GameServerFullAsync extends GameBase {
         }
 
         worlds.remove(world.getName());
+        getEventBus().post(new WorldUnloadEvent(world));
     }
 
     @Override
