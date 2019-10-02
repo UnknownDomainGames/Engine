@@ -1,8 +1,6 @@
 package nullengine.client.gui.component;
 
-import com.github.mouse0w0.observable.value.MutableDoubleValue;
-import com.github.mouse0w0.observable.value.MutableValue;
-import com.github.mouse0w0.observable.value.SimpleMutableDoubleValue;
+import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.Region;
 import nullengine.client.gui.event.MouseEvent;
 import nullengine.client.gui.misc.Background;
@@ -17,14 +15,53 @@ public class VSlider extends Region {
 
     private Rect back = new Rect();
 
+    private MutableDoubleValue min = new SimpleMutableDoubleValue(0);
+    private MutableDoubleValue max = new SimpleMutableDoubleValue(1);
     private MutableDoubleValue value = new SimpleMutableDoubleValue(0);
 
-    private double preMove = 0;
+    private final MutableFloatValue sliderLength = new SimpleMutableFloatValue();
+    private final MutableFloatValue sliderThickness = new SimpleMutableFloatValue();
+    private final MutableFloatValue step = new SimpleMutableFloatValue(0.01f);
+    /**
+     * VSlider is designed to be up-to-down as default. this variable defines as if this slider uses down-to-up as min to max or not
+     */
+    private final MutableBooleanValue flip = new SimpleMutableBooleanValue();
 
     private boolean select = false;
 
     public VSlider() {
         value.addChangeListener((ob, o, n) -> rebuild());
+        min.addChangeListener((observable, oldValue, newValue) -> {
+            if(newValue > max.get()){
+                min.set(oldValue);
+            }
+            else{
+                resizeSlider(sliderThickness.get(), sliderLength.get() * (float)(step.get() / (max.get() - min.get())));
+                rebuild();
+            }
+        });
+        max.addChangeListener((observable, oldValue, newValue) -> {
+            if(newValue < min.get()){
+                max.set(oldValue);
+            }
+            else{
+                resizeSlider(sliderThickness.get(), sliderLength.get() * (float)(step.get() / (max.get() - min.get())));
+                rebuild();
+            }
+        });
+        step.addChangeListener((observable, oldValue, newValue) -> {
+            if(newValue == 0){
+                step.set(oldValue);
+            }
+        });
+        sliderLength.addChangeListener((observable, oldValue, newValue) -> {
+            resizeBack(sliderThickness.get(), newValue);
+            resizeSlider(sliderThickness.get(), newValue * (float)(step.get() / (max.get() - min.get())));
+        });
+        sliderThickness.addChangeListener((observable, oldValue, newValue) -> {
+            resizeBack(newValue, sliderLength.get());
+            resizeSlider(newValue, sliderLength.get() * (float)(step.get() / (max.get() - min.get())));
+        });
         this.getChildren().addAll(back, slider);
         backBg().setValue(Color.BLUE);
         sliderBg().setValue(Color.WHITE);
@@ -34,27 +71,47 @@ public class VSlider extends Region {
         return value;
     }
 
-    public void setPreMove(double preMove) {
-        this.preMove = preMove;
+    public MutableDoubleValue max() {
+        return max;
+    }
+
+    public MutableDoubleValue min() {
+        return min;
+    }
+
+    public MutableFloatValue sliderThickness() {
+        return sliderThickness;
+    }
+
+    public MutableFloatValue sliderLength() {
+        return sliderLength;
+    }
+
+    public MutableFloatValue step() {
+        return step;
+    }
+
+    public MutableBooleanValue flip() {
+        return flip;
     }
 
     public void rebuild() {
-        if (value.get() > 1) {
-            value.set(1);
-        } else if (value.get() < 0) {
-            value.set(0);
+        if (value.get() > max.get()) {
+            value.set(max.get());
+        } else if (value.get() < min.get()) {
+            value.set(min.get());
         }
         slider.x().set(back.x().get());
-        slider.y().set((float) (((back.height().get() - slider.height().get()) * value.get())));
+        slider.y().set((float) (((back.height().get() - slider.height().get()) * (flip.get() ? 1 - (value.get() / (max.get() - min.get())) : (value.get() / (max.get() - min.get()))) )));
     }
 
     @Override
     public void onClick(MouseEvent.MouseClickEvent e) {
         super.onClick(e);
-        if (e.getPosY() > slider.y().get() + slider.prefWidth()) {
-            value.set(value.getValue() + preMove);
+        if (e.getPosY() > slider.y().get() + slider.width().get()) {
+            value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
         } else if (e.getPosY() < slider.y().get()) {
-            value.set(value.getValue() - preMove);
+            value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
         }
         if (slider.contains(e.getPosX(), e.getPosY()))
             select = true;
@@ -64,17 +121,23 @@ public class VSlider extends Region {
     public void handleEvent(Event event) {
         super.handleEvent(event);
         if (event instanceof MouseEvent.MouseMoveEvent && select) {
-            if ((((MouseEvent.MouseMoveEvent) event).getNewPosY() - y().get() - slider.y().get()) / prefWidth() > preMove * 0.9) {
-                value.set(value.getValue() + preMove);
-            } else if ((slider.y().get() - ((MouseEvent.MouseMoveEvent) event).getNewPosY() + y().get()) / prefWidth() > preMove * 0.9) {
-                value.set(value.getValue() - preMove);
+            var event1 = (MouseEvent.MouseMoveEvent) event;
+            if ((event1.getNewPosY() - y().get() - slider.y().get()) / height().get() > step.get() * 0.9) {
+                value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
+            } else if ((slider.y().get() - event1.getNewPosY() + y().get()) / height().get() > step.get() * 0.9) {
+                value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
             }
         } else if (event instanceof MouseEvent.MouseReleasedEvent) {
             select = false;
         } else if (event instanceof MouseEvent.MouseLeaveEvent) {
             //select = false;
         } else if (event instanceof MouseEvent.MouseHoldEvent) {
-
+            var event1 = (MouseEvent.MouseHoldEvent) event;
+            if ((event1.getPosY() - y().get() - slider.y().get()) / height().get() > step.get() * 0.9) {
+                value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
+            } else if ((slider.y().get() - event1.getPosY() + y().get()) / height().get() > step.get() * 0.9) {
+                value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
+            }
         }
     }
 
