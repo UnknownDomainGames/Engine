@@ -52,7 +52,7 @@ public class HUDGameDebug extends VBox implements GuiTickable {
     }
 
     public void update(RenderManager context) {
-        Entity player = context.getEngine().getCurrentGame().getPlayer().getControlledEntity();
+        Entity player = context.getEngine().getCurrentGame().getClientPlayer().getControlledEntity();
 
         fps.text().setValue("FPS: " + context.getFPS());
         playerPosition.text().setValue(format("Player Position: %.2f, %.2f, %.2f", player.getPosition().x, player.getPosition().y, player.getPosition().z));

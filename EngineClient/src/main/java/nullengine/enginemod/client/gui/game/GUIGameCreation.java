@@ -15,12 +15,9 @@ import nullengine.client.i18n.I18n;
 import nullengine.client.rendering.font.Font;
 import nullengine.enginemod.client.gui.GuiSettings;
 import nullengine.game.GameData;
-import nullengine.player.PlayerImpl;
-import nullengine.player.Profile;
 import nullengine.util.Color;
 
 import java.nio.file.Path;
-import java.util.UUID;
 
 public class GUIGameCreation extends BorderPane {
 
@@ -41,10 +38,9 @@ public class GUIGameCreation extends BorderPane {
         buttonCreate.border().setValue(new Border(Color.WHITE));
         buttonCreate.setOnClick(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
-            var player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
             engine.getRenderManager().getGuiManager().closeScreen();
             Path gameBasePath = engine.getRunPath().resolve("game");
-            engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default"), player));
+            engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default")));
         });
         vBox.getChildren().add(buttonCreate);
 
@@ -52,10 +48,9 @@ public class GUIGameCreation extends BorderPane {
         buttonLoad.border().setValue(new Border(Color.WHITE));
         buttonLoad.setOnClick(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
-            var player = new PlayerImpl(new Profile(UUID.randomUUID(), 12));
             engine.getRenderManager().getGuiManager().closeScreen();
             Path gameBasePath = engine.getRunPath().resolve("game");
-            engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromGame(gameBasePath), player));
+            engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromGame(gameBasePath)));
         });
         vBox.getChildren().add(buttonLoad);
 
@@ -70,7 +65,7 @@ public class GUIGameCreation extends BorderPane {
         vBox.getChildren().add(buttonExit);
 
         var butCS = new Button("Multiplayer");
-        butCS.setOnClick(e->{
+        butCS.setOnClick(e -> {
             Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiDirectConnectServer()));
         });
         vBox.getChildren().add(butCS);

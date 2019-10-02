@@ -6,6 +6,7 @@ import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.rendering.RenderManager;
 import nullengine.entity.Entity;
 import nullengine.entity.component.TwoHands;
+import nullengine.player.Player;
 
 public class HUDGame extends AnchorPane implements GuiTickable {
 
@@ -20,7 +21,11 @@ public class HUDGame extends AnchorPane implements GuiTickable {
     }
 
     public void update(RenderManager context) {
-        Entity player = context.getEngine().getCurrentGame().getPlayer().getControlledEntity();
-        player.getComponent(TwoHands.class).ifPresent(twoHands -> mainhandItem.item().setValue(twoHands.getMainHand()));
+        Player player = context.getEngine().getCurrentGame().getClientPlayer();
+        if (player != null) {
+            Entity entity = player.getControlledEntity();
+            entity.getComponent(TwoHands.class).ifPresent(twoHands ->
+                    mainhandItem.item().setValue(twoHands.getMainHand()));
+        }
     }
 }

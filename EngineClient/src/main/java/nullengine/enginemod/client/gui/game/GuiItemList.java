@@ -32,7 +32,7 @@ public class GuiItemList extends AnchorPane {
             ItemView view = new ItemView(new ItemStack(entry.getValue())) {
                 @Override
                 public void onClick(MouseEvent.MouseClickEvent event) {
-                    context.getEngine().getCurrentGame().getPlayer().getControlledEntity()
+                    context.getEngine().getCurrentGame().getClientPlayer().getControlledEntity()
                             .getComponent(TwoHands.class)
                             .ifPresent(twoHands -> twoHands.setMainHand(item().getValue()));
                 }

@@ -3,6 +3,8 @@ package nullengine.game;
 import nullengine.Engine;
 import nullengine.entity.Entity;
 import nullengine.event.EventBus;
+import nullengine.player.Player;
+import nullengine.player.Profile;
 import nullengine.world.World;
 import nullengine.world.WorldCreationSetting;
 import nullengine.world.exception.WorldLoadException;
@@ -10,6 +12,7 @@ import nullengine.world.exception.WorldNotExistsException;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -39,6 +42,12 @@ public interface Game {
 
     @Nonnull
     Path getStoragePath();
+
+    @Nonnull
+    Player joinPlayer(Profile profile, Entity controlledEntity);
+
+    @Nonnull
+    Collection<Player> getPlayers();
 
     @Nonnull
     World createWorld(@Nonnull String providerName, @Nonnull String name, @Nonnull WorldCreationSetting config);

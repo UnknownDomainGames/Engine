@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
  * Track the chunk, other entity and send message to client/server
  */
 public interface Player {
+
     @Nonnull
     Profile getProfile();
 

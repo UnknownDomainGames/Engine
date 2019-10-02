@@ -4,11 +4,19 @@ import java.util.UUID;
 
 public class Profile {
 
-    public final UUID uuid;
-    public final int trackingChunkRadius;
+    private final UUID uuid;
+    private final String name;
 
-    public Profile(UUID uuid, int trackingChunkRadius) {
+    public Profile(UUID uuid, String name) {
         this.uuid = uuid;
-        this.trackingChunkRadius = trackingChunkRadius;
+        this.name = name;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public String getName() {
+        return name;
     }
 }

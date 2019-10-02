@@ -113,7 +113,7 @@ public final class EngineModClientListeners {
                 .key(Key.MOUSE_BUTTON_LEFT)
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
-                    Player player = game.getPlayer();
+                    Player player = game.getClientPlayer();
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
                     BlockHitResult blockHit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
@@ -144,7 +144,7 @@ public final class EngineModClientListeners {
                 .key(Key.MOUSE_BUTTON_RIGHT)
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
-                    Player player = game.getPlayer();
+                    Player player = game.getClientPlayer();
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
                     BlockHitResult blockHit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
@@ -173,7 +173,7 @@ public final class EngineModClientListeners {
                 .key(Key.MOUSE_BUTTON_3)
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
-                    Player player = game.getPlayer();
+                    Player player = game.getClientPlayer();
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
                     player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->

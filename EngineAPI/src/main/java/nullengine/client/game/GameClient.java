@@ -15,7 +15,7 @@ public interface GameClient extends Game {
     EngineClient getEngine();
 
     @Nonnull
-    Player getPlayer();
+    Player getClientPlayer();
 
     @Nonnull
     World getClientWorld();

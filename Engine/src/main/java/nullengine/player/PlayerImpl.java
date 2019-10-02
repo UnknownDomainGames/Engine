@@ -5,7 +5,7 @@ import nullengine.entity.Entity;
 import nullengine.event.player.PlayerControlEntityEvent;
 import nullengine.server.network.NetworkHandler;
 import nullengine.world.World;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 
@@ -17,13 +17,15 @@ public class PlayerImpl implements Player {
 
     private NetworkHandler handler;
 
-    public PlayerImpl(Profile profile) {
+    public PlayerImpl(Profile profile, Entity controlledEntity) {
         this.profile = profile;
+        controlEntity(controlledEntity);
     }
 
-    public PlayerImpl(Profile profile, NetworkHandler handler) {
+    public PlayerImpl(Profile profile, NetworkHandler handler, Entity controlledEntity) {
         this.profile = profile;
         this.handler = handler;
+        controlEntity(controlledEntity);
     }
 
 //    public void enter(ChunkStorage chunkStore) {
@@ -43,15 +45,16 @@ public class PlayerImpl implements Player {
 //        }
 //    }
 
-    @NonNull
+    @Nonnull
     @Override
     public Entity getControlledEntity() {
         return controlledEntity;
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public Entity controlEntity(@Nonnull Entity entity) {
+        Validate.notNull(entity);
         if (controlledEntity == entity) {
             return controlledEntity;
         }
@@ -77,7 +80,7 @@ public class PlayerImpl implements Player {
         return profile;
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public World getWorld() {
         return controlledEntity.getWorld();

@@ -21,7 +21,7 @@ public class BlockSelectionRenderer {
         Tessellator tessellator = Tessellator.getInstance();
         GLBuffer buffer = tessellator.getBuffer();
 
-        var player = context.getEngine().getCurrentGame().getPlayer();
+        var player = context.getEngine().getCurrentGame().getClientPlayer();
         var camera = context.getCamera();
         BlockHitResult hit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
         if (hit.isSuccess()) {

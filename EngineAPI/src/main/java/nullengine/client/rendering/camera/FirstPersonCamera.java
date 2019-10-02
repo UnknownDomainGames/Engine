@@ -2,8 +2,10 @@ package nullengine.client.rendering.camera;
 
 import nullengine.entity.Entity;
 import nullengine.player.Player;
+import org.apache.commons.lang3.Validate;
 import org.joml.*;
 
+import javax.annotation.Nonnull;
 import java.lang.Math;
 
 public class FirstPersonCamera implements Camera {
@@ -15,8 +17,8 @@ public class FirstPersonCamera implements Camera {
     private final Vector3f frontVector = new Vector3f();
     private final Matrix4f viewMatrix = new Matrix4f();
 
-    public FirstPersonCamera(Player player) {
-        this.player = player;
+    public FirstPersonCamera(@Nonnull Player player) {
+        this.player = Validate.notNull(player);
     }
 
     public Player getPlayer() {
@@ -25,7 +27,7 @@ public class FirstPersonCamera implements Camera {
 
     @Override
     public void update(float partial) {
-        Entity entity = getPlayer().getControlledEntity();
+        Entity entity = player.getControlledEntity();
         Vector3d position = entity.getPosition();
         Vector3f motion = entity.getMotion();
         Vector3f rotation = entity.getRotation();

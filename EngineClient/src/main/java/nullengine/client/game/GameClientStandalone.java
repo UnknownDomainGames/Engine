@@ -3,10 +3,12 @@ package nullengine.client.game;
 import nullengine.client.EngineClient;
 import nullengine.client.input.controller.EntityController;
 import nullengine.client.rendering.display.Window;
+import nullengine.entity.Entity;
 import nullengine.event.game.GameTerminationEvent;
 import nullengine.game.GameData;
 import nullengine.game.GameServerFullAsync;
 import nullengine.player.Player;
+import nullengine.player.Profile;
 import nullengine.world.World;
 import nullengine.world.WorldCommon;
 
@@ -16,15 +18,14 @@ import java.nio.file.Path;
 public class GameClientStandalone extends GameServerFullAsync implements GameClient {
 
     private final EngineClient engineClient;
-    private final Player player;
 
+    private Player clientPlayer;
     private EntityController entityController;
     private Window.CursorCallback cursorCallback;
 
-    public GameClientStandalone(EngineClient engineClient, Path storagePath, GameData data, Player player) {
+    public GameClientStandalone(EngineClient engineClient, Path storagePath, GameData data) {
         super(engineClient, storagePath, data);
         this.engineClient = engineClient;
-        this.player = player;
     }
 
     @Nonnull
@@ -33,13 +34,26 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         return engineClient;
     }
 
+    @Nonnull
+    @Override
+    public Player joinPlayer(Profile profile, Entity controlledEntity) {
+        if (clientPlayer != null) {
+            throw new IllegalStateException("Cannot join player twice on client game");
+        }
+        clientPlayer = super.joinPlayer(profile, controlledEntity);
+        return clientPlayer;
+    }
+
     /**
      * Get player client
      */
     @Nonnull
     @Override
-    public Player getPlayer() {
-        return player;
+    public Player getClientPlayer() {
+        if (clientPlayer != null) {
+            return clientPlayer;
+        }
+        throw new IllegalStateException("The player hasn't initialize");
     }
 
     /**
@@ -48,8 +62,8 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     @Nonnull
     @Override
     public World getClientWorld() {
-        if (player != null && player.getControlledEntity() != null) {
-            return player.getControlledEntity().getWorld();
+        if (clientPlayer != null) {
+            return clientPlayer.getWorld();
         }
         throw new IllegalStateException("The world hasn't initialize");
     }
@@ -95,9 +109,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
             tryTerminate();
         }
 
-        if (player.isControllingEntity()) {
-            ((WorldCommon) getClientWorld()).tick();
-        }
+        getWorlds().forEach(world -> ((WorldCommon) world).tick());
         // TODO upload particle physics here
     }
 

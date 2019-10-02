@@ -7,6 +7,7 @@ import nullengine.event.world.WorldCreateEvent;
 import nullengine.event.world.WorldLoadEvent;
 import nullengine.event.world.WorldUnloadEvent;
 import nullengine.player.Player;
+import nullengine.player.PlayerImpl;
 import nullengine.player.Profile;
 import nullengine.registry.Registries;
 import nullengine.world.World;
@@ -26,6 +27,7 @@ import java.util.*;
  */
 public class GameServerFullAsync extends GameBase {
 
+    protected final Set<Player> players = new HashSet<>();
     protected final Map<String, World> worlds = new HashMap<>();
 //    protected List<Thread> worldThreads;
 
@@ -35,8 +37,16 @@ public class GameServerFullAsync extends GameBase {
 
     @Nonnull
     @Override
-    public Player joinGame(Profile profile, Entity controlledEntity) {
-        return null;
+    public Player joinPlayer(Profile profile, Entity controlledEntity) {
+        Player player = new PlayerImpl(profile, controlledEntity);
+        players.add(player);
+        return player;
+    }
+
+    @Nonnull
+    @Override
+    public Collection<Player> getPlayers() {
+        return List.copyOf(players);
     }
 
     @Nonnull
