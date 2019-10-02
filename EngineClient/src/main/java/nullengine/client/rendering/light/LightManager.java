@@ -44,4 +44,10 @@ public class LightManager {
             spotLights.get(i).bind("spotLights[" + i + "]");
         }
     }
+
+    public void clear() {
+        directionalLights.clear();
+        pointLights.clear();
+        spotLights.clear();
+    }
 }

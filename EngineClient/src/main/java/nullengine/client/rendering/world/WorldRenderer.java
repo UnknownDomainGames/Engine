@@ -4,8 +4,8 @@ import com.github.mouse0w0.observable.value.ObservableValue;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.entity.EntityRenderManagerImpl;
+import nullengine.client.rendering.game3d.Scene;
 import nullengine.client.rendering.light.DirectionalLight;
-import nullengine.client.rendering.light.LightManager;
 import nullengine.client.rendering.material.Material;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgram;
@@ -16,7 +16,6 @@ import nullengine.client.rendering.util.FrameBuffer;
 import nullengine.client.rendering.util.FrameBufferMultiSampled;
 import nullengine.client.rendering.util.FrameBufferShadow;
 import nullengine.client.rendering.world.chunk.ChunkRenderer;
-import nullengine.world.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -34,8 +33,7 @@ public class WorldRenderer {
 
     private final EntityRenderManagerImpl entityRenderManager = new EntityRenderManagerImpl();
 
-    private LightManager lightManager;
-    private Material material;
+    private Scene scene;
 
     private ObservableValue<ShaderProgram> worldShader;
     private ObservableValue<ShaderProgram> entityShader;
@@ -48,24 +46,23 @@ public class WorldRenderer {
 
     private RenderManager context;
 
-    public void init(RenderManager context, World world) {
+    public void init(RenderManager context, Scene scene) {
         this.context = context;
+        this.scene = scene;
 
-        chunkRenderer.init(context, this, world);
+        chunkRenderer.init(context, scene);
         blockSelectionRenderer.init(context);
         entityRenderManager.init(context);
         skyboxRenderer.init(context);
 
-        lightManager = new LightManager();
-        lightManager.getDirectionalLights().add(new DirectionalLight()
+        scene.getLightManager().getDirectionalLights().add(new DirectionalLight()
                 .setDirection(new Vector3f(-0.15f, -1f, -0.35f))
                 .setAmbient(new Vector3f(0.4f))
                 .setDiffuse(new Vector3f(1f))
                 .setSpecular(new Vector3f(1f)));
-
-        material = new Material().setAmbientColor(new Vector3f(0.5f))
+        scene.setMaterial(new Material().setAmbientColor(new Vector3f(0.5f))
                 .setDiffuseColor(new Vector3f(1.0f))
-                .setSpecularColor(new Vector3f(1.0f)).setShininess(32f);
+                .setSpecularColor(new Vector3f(1.0f)).setShininess(32f));
 
         worldShader = ShaderManager.instance().registerShader("world_shader", new ShaderProgramBuilder()
                 .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/world.vert"))
@@ -176,8 +173,8 @@ public class WorldRenderer {
         ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         ShaderManager.instance().setUniform("u_LightSpace", lightSpaceMat);
         ShaderManager.instance().setUniform("u_ShadowMap", 8);
-        lightManager.bind(context.getCamera());
-        material.bind("material");
+        scene.getLightManager().bind(context.getCamera());
+        scene.getMaterial().bind("material");
         context.getEngine().getCurrentGame().getClientWorld().getEntities().forEach(entity ->
                 entityRenderManager.render(entity, partial));
     }
@@ -196,13 +193,5 @@ public class WorldRenderer {
         ShaderManager.instance().unregisterShader("entity_shader");
         ShaderManager.instance().unregisterShader("frame_buffer_shader");
         ShaderManager.instance().unregisterShader("shadow_shader");
-    }
-
-    public LightManager getLightManager() {
-        return lightManager;
-    }
-
-    public Material getMaterial() {
-        return material;
     }
 }

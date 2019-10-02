@@ -6,6 +6,7 @@ import io.netty.util.collection.LongObjectMap;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.game.GameClient;
 import nullengine.client.rendering.RenderManager;
+import nullengine.client.rendering.game3d.Scene;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgram;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
@@ -13,7 +14,6 @@ import nullengine.client.rendering.shader.ShaderType;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferPool;
-import nullengine.client.rendering.world.WorldRenderer;
 import nullengine.event.Listener;
 import nullengine.event.block.BlockChangeEvent;
 import nullengine.event.world.chunk.ChunkLoadEvent;
@@ -38,22 +38,20 @@ public class ChunkRenderer {
 
     private final GLBufferPool bufferPool = GLBufferPool.createDirectBufferPool(0x200000, 64);
 
-    private World world;
-
     private ObservableValue<ShaderProgram> chunkSolidShader;
     private ObservableValue<ShaderProgram> assimpShader;
 
     private RenderManager context;
     private GameClient game;
-    private WorldRenderer worldRenderer;
+    private Scene scene;
 
     private ThreadPoolExecutor chunkBakeExecutor;
 
-    public void init(RenderManager context, WorldRenderer worldRenderer, World world) {
+    public void init(RenderManager context, Scene scene) {
         this.context = context;
         this.game = context.getEngine().getCurrentGame();
+        this.scene = scene;
         game.getEventBus().register(this);
-        this.worldRenderer = worldRenderer;
 
         chunkSolidShader = ShaderManager.instance().registerShader("chunk_solid", new ShaderProgramBuilder()
                 .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/chunk_solid.vert"))
@@ -76,7 +74,7 @@ public class ChunkRenderer {
         });
 
         context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).reload();
-        initWorld(world);
+        initWorld(scene.getWorld());
     }
 
     public void render() {
@@ -121,8 +119,8 @@ public class ChunkRenderer {
 
         context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).bind();
         chunkSolidShader.setUniform("useDirectUV", true);
-        worldRenderer.getLightManager().bind(context.getCamera());
-        worldRenderer.getMaterial().bind("material");
+        scene.getLightManager().bind(context.getCamera());
+        scene.getMaterial().bind("material");
     }
 
     private void postRender() {
@@ -163,11 +161,9 @@ public class ChunkRenderer {
 
     @Listener
     public void onChunkLoad(ChunkLoadEvent event) {
-        if (event.getChunk().getWorld() != world) {
-            return;
+        if (scene.isEqualsWorld(event.getChunk().getWorld())) {
+            initChunk(event.getChunk());
         }
-
-        initChunk(event.getChunk());
     }
 
     @Listener
@@ -214,17 +210,6 @@ public class ChunkRenderer {
     }
 
     private void initWorld(World world) {
-        if (this.world == world) {
-            return;
-        }
-
-        clearChunkMeshes();
-
-        this.world = world;
-        if (world == null) {
-            return;
-        }
-
         world.getLoadedChunks().forEach(this::initChunk);
     }
 
