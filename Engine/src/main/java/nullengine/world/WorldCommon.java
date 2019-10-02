@@ -178,8 +178,8 @@ public class WorldCommon implements World {
         return entityManager.spawnEntity(providerName, position);
     }
 
-    public void destroyEntity(Entity entity) {
-        entityManager.destroyEntity(entity);
+    public void doDestroyEntity(Entity entity) {
+        entityManager.doDestroyEntity(entity);
     }
 
     @Override

@@ -55,7 +55,7 @@ public class DefaultEntityManager implements EntityManager, Tickable {
     }
 
     @Override
-    public void destroyEntity(Entity entity) {
+    public void doDestroyEntity(Entity entity) {
         if (!world.equals(entity.getWorld())) {
             throw new IllegalStateException("Cannot destroy entity which is not belonged to this world");
         }

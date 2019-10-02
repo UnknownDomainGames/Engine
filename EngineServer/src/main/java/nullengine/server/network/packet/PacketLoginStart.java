@@ -4,8 +4,9 @@ import nullengine.player.Profile;
 import nullengine.server.network.PacketBuf;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class PacketLoginStart implements Packet {
 
@@ -13,15 +14,16 @@ public class PacketLoginStart implements Packet {
 
     @Override
     public void write(PacketBuf buf) throws IOException {
-        var s = profile.uuid.toString();
-        buf.writeVarInt(s.length());
-        buf.writeCharSequence(s, StandardCharsets.UTF_8);
-        buf.writeVarInt(profile.trackingChunkRadius);
+        var uuid = profile.getUuid();
+        buf.writeLong(uuid.getMostSignificantBits());
+        buf.writeLong(uuid.getLeastSignificantBits());
+        String name = profile.getName();
+        buf.writeVarInt(name.length());
+        buf.writeCharSequence(name, UTF_8);
     }
 
     @Override
     public void read(PacketBuf buf) throws IOException {
-        var length = buf.readVarInt();
-        profile = new Profile(UUID.fromString(buf.readCharSequence(length, StandardCharsets.UTF_8).toString()),buf.readVarInt());
+        profile = new Profile(new UUID(buf.readLong(), buf.readLong()), buf.readCharSequence(buf.readVarInt(), UTF_8).toString());
     }
 }

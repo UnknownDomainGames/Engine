@@ -96,7 +96,7 @@ public abstract class BaseEntity implements Entity {
         }
         destroyed = true;
         doDestroy();
-        getWorld().destroyEntity(this);
+        getWorld().doDestroyEntity(this);
     }
 
     protected void doDestroy() {

@@ -19,8 +19,6 @@ public interface EntityManager {
 
     Entity spawnEntity(String providerName, Vector3dc position);
 
-    void destroyEntity(Entity entity);
-
     List<Entity> getEntities();
 
     List<Entity> getEntities(Predicate<Entity> predicate);
@@ -34,4 +32,6 @@ public interface EntityManager {
     List<Entity> getEntitiesWithSphere(double centerX, double centerY, double centerZ, double radius);
 
     EntityHitResult raycastEntity(Vector3fc from, Vector3fc dir, float distance);
+
+    void doDestroyEntity(Entity entity);
 }

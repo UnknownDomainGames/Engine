@@ -112,7 +112,7 @@ public class WorldClient implements World, Runnable {
     }
 
     @Override
-    public void destroyEntity(Entity entity) {
+    public void doDestroyEntity(Entity entity) {
 
     }
 
