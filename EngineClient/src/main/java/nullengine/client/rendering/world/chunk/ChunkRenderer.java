@@ -35,11 +35,9 @@ public class ChunkRenderer {
 
     private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
-
     private final GLBufferPool bufferPool = GLBufferPool.createDirectBufferPool(0x200000, 64);
 
     private ObservableValue<ShaderProgram> chunkSolidShader;
-    private ObservableValue<ShaderProgram> assimpShader;
 
     private RenderManager context;
     private GameClient game;
@@ -55,9 +53,6 @@ public class ChunkRenderer {
 
         chunkSolidShader = ShaderManager.instance().registerShader("chunk_solid", new ShaderProgramBuilder()
                 .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/chunk_solid.vert"))
-                .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/chunk_solid.frag")));
-        assimpShader = ShaderManager.instance().registerShader("assimp_model", new ShaderProgramBuilder()
-                .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/assimp_model.vert"))
                 .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/chunk_solid.frag")));
 
         // TODO: Configurable and manage
@@ -136,7 +131,6 @@ public class ChunkRenderer {
         chunkBakeExecutor.shutdownNow();
 
         ShaderManager.instance().unregisterShader("chunk_solid");
-        ShaderManager.instance().unregisterShader("assimp_model");
 
         game.getEventBus().unregister(this);
     }
