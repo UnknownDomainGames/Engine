@@ -1,5 +1,6 @@
 package nullengine.enginemod.client.gui.hud;
 
+import nullengine.block.Block;
 import nullengine.client.gui.GuiTickable;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Insets;
@@ -8,7 +9,10 @@ import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.util.GPUMemoryInfo;
 import nullengine.entity.Entity;
+import nullengine.math.BlockPos;
+import nullengine.world.hit.BlockHitResult;
 import nullengine.world.hit.EntityHitResult;
+import nullengine.world.hit.HitResult;
 import org.joml.Vector3d;
 import org.joml.Vector3fc;
 
@@ -25,9 +29,9 @@ public class HUDGameDebug extends VBox implements GuiTickable {
     private final Text memory;
     private final Text gpuMemory;
 
-    private final VBox blockHitInfo;
-    private final Text lookingBlock;
-    private final Text lookingBlockPos;
+    private final VBox hitResult;
+    private final Text hitBlockOrEntity;
+    private final Text hitBlockOrEntityPos;
     private final Text hitPos;
 
     public HUDGameDebug() {
@@ -38,17 +42,17 @@ public class HUDGameDebug extends VBox implements GuiTickable {
         playerChunkPos = new Text();
         memory = new Text();
         gpuMemory = new Text();
-        blockHitInfo = new VBox();
+        hitResult = new VBox();
 
-        getChildren().addAll(fps, playerPosition, playerMotion, playerDirection, playerChunkPos, memory, gpuMemory, blockHitInfo);
+        getChildren().addAll(fps, playerPosition, playerMotion, playerDirection, playerChunkPos, memory, gpuMemory, hitResult);
         spacing().set(5);
         padding().setValue(new Insets(5));
 
-        lookingBlock = new Text();
-        lookingBlockPos = new Text();
+        hitBlockOrEntity = new Text();
+        hitBlockOrEntityPos = new Text();
         hitPos = new Text();
-        blockHitInfo.getChildren().addAll(lookingBlock, lookingBlockPos, hitPos);
-        blockHitInfo.spacing().set(5);
+        hitResult.getChildren().addAll(hitBlockOrEntity, hitBlockOrEntityPos, hitPos);
+        hitResult.spacing().set(5);
     }
 
     public void update(RenderManager context) {
@@ -76,17 +80,25 @@ public class HUDGameDebug extends VBox implements GuiTickable {
 //        }
 
         Camera camera = context.getCamera();
-        EntityHitResult entityHit = context.getEngine().getCurrentGame().getClientWorld().raycastEntity(camera.getPosition(), camera.getFrontVector(), 10);
-        if (entityHit.isSuccess()) {
-            blockHitInfo.visible().set(true);
-            Entity entity = entityHit.getEntity();
-            lookingBlock.text().setValue(String.format("Looking Entity: %s@%s", entity.getClass().getSimpleName(), Integer.toHexString(entity.hashCode())));
+        HitResult hitResult = context.getEngine().getCurrentGame().getClientWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
+        if (hitResult.isFailure()) {
+            this.hitResult.visible().set(false);
+        } else if (hitResult instanceof EntityHitResult) {
+            this.hitResult.visible().set(true);
+            Entity entity = ((EntityHitResult) hitResult).getEntity();
+            hitBlockOrEntity.text().setValue(String.format("Hit Entity: %s@%s", entity.getProvider().getName(), Integer.toHexString(entity.hashCode())));
             Vector3d position = entity.getPosition();
-            lookingBlockPos.text().setValue(String.format("Looking Entity Position: %.2f, %.2f, %.2f", position.x, position.y, position.z));
-            Vector3fc hitPoint = entityHit.getHitPoint();
-            hitPos.text().setValue(String.format("Looking Entity Hit: %.2f, %.2f, %.2f", hitPoint.x(), hitPoint.y(), hitPoint.z()));
-        } else {
-            blockHitInfo.visible().set(false);
+            hitBlockOrEntityPos.text().setValue(String.format("Hit Entity Position: %.2f, %.2f, %.2f", position.x, position.y, position.z));
+            Vector3fc hitPoint = ((EntityHitResult) hitResult).getHitPoint();
+            hitPos.text().setValue(String.format("Hit Entity Point: %.2f, %.2f, %.2f", hitPoint.x(), hitPoint.y(), hitPoint.z()));
+        } else if (hitResult instanceof BlockHitResult) {
+            this.hitResult.visible().set(true);
+            Block block = ((BlockHitResult) hitResult).getBlock();
+            hitBlockOrEntity.text().setValue(String.format("Hit Block: %s", block.getName()));
+            BlockPos pos = ((BlockHitResult) hitResult).getPos();
+            hitBlockOrEntityPos.text().setValue(String.format("Hit Block Position: %d, %d, %d", pos.x(), pos.y(), pos.z()));
+            Vector3fc hitPoint = ((BlockHitResult) hitResult).getHitPoint();
+            hitPos.text().setValue(String.format("Hit Block Point: %.2f, %.2f, %.2f", hitPoint.x(), hitPoint.y(), hitPoint.z()));
         }
     }
 
