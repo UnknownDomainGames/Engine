@@ -1,10 +1,10 @@
 package nullengine.client.game;
 
 import nullengine.client.EngineClient;
-import nullengine.client.input.controller.EntityController;
+import nullengine.client.player.ClientPlayer;
 import nullengine.game.Game;
-import nullengine.player.Player;
 import nullengine.world.World;
+import nullengine.world.hit.HitResult;
 
 import javax.annotation.Nonnull;
 
@@ -15,14 +15,12 @@ public interface GameClient extends Game {
     EngineClient getEngine();
 
     @Nonnull
-    Player getClientPlayer();
+    ClientPlayer getClientPlayer();
 
     @Nonnull
     World getClientWorld();
 
-    EntityController getEntityController();
-
-    void setEntityController(EntityController controller);
+    HitResult getHitResult();
 
     void clientTick();
 }

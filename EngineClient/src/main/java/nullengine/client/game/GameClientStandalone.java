@@ -1,16 +1,16 @@
 package nullengine.client.game;
 
 import nullengine.client.EngineClient;
-import nullengine.client.input.controller.EntityController;
-import nullengine.client.rendering.display.Window;
+import nullengine.client.player.ClientPlayer;
+import nullengine.client.player.ClientPlayerImpl;
 import nullengine.entity.Entity;
 import nullengine.event.game.GameTerminationEvent;
 import nullengine.game.GameData;
 import nullengine.game.GameServerFullAsync;
-import nullengine.player.Player;
 import nullengine.player.Profile;
 import nullengine.world.World;
 import nullengine.world.WorldCommon;
+import nullengine.world.hit.HitResult;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -19,9 +19,8 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
     private final EngineClient engineClient;
 
-    private Player clientPlayer;
-    private EntityController entityController;
-    private Window.CursorCallback cursorCallback;
+    private ClientPlayer clientPlayer;
+
 
     public GameClientStandalone(EngineClient engineClient, Path storagePath, GameData data) {
         super(engineClient, storagePath, data);
@@ -36,11 +35,12 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
     @Nonnull
     @Override
-    public Player joinPlayer(Profile profile, Entity controlledEntity) {
+    public ClientPlayer joinPlayer(Profile profile, Entity controlledEntity) {
         if (clientPlayer != null) {
             throw new IllegalStateException("Cannot join player twice on client game");
         }
-        clientPlayer = super.joinPlayer(profile, controlledEntity);
+        clientPlayer = new ClientPlayerImpl(profile, controlledEntity);
+        players.add(clientPlayer);
         return clientPlayer;
     }
 
@@ -49,7 +49,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
      */
     @Nonnull
     @Override
-    public Player getClientPlayer() {
+    public ClientPlayer getClientPlayer() {
         if (clientPlayer != null) {
             return clientPlayer;
         }
@@ -69,19 +69,8 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     }
 
     @Override
-    public EntityController getEntityController() {
-        return entityController;
-    }
-
-    @Override
-    public void setEntityController(EntityController controller) {
-        if (entityController == controller) {
-            return;
-        }
-        entityController = controller;
-        getEngine().getRenderManager().getWindow().removeCursorCallback(cursorCallback);
-        cursorCallback = (window, xpos, ypos) -> entityController.handleCursorMove(xpos, ypos);
-        getEngine().getRenderManager().getWindow().addCursorCallback(cursorCallback);
+    public HitResult getHitResult() {
+        return null;
     }
 
     @Override
