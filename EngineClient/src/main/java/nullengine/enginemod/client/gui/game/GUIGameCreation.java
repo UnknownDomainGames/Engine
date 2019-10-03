@@ -34,7 +34,7 @@ public class GUIGameCreation extends BorderPane {
         text.font().setValue(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
-        Button buttonCreate = new Button("New World");
+        Button buttonCreate = new Button("New Game");
         buttonCreate.border().setValue(new Border(Color.WHITE));
         buttonCreate.setOnClick(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
@@ -64,7 +64,7 @@ public class GUIGameCreation extends BorderPane {
         buttonExit.setOnClick(mouseClickEvent -> Platform.getEngine().terminate());
         vBox.getChildren().add(buttonExit);
 
-        var butCS = new Button("Multiplayer");
+        var butCS = new Button("MultiPlayer");
         butCS.setOnClick(e -> {
             Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiDirectConnectServer()));
         });
