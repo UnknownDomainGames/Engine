@@ -1,14 +1,10 @@
 package nullengine.item.component;
 
 import nullengine.component.Component;
-import nullengine.entity.Entity;
-import nullengine.item.Item;
-import nullengine.player.Player;
+import nullengine.event.entity.cause.EntityInteractCause;
+import nullengine.item.ItemStack;
+import nullengine.world.hit.EntityHitResult;
 
 public interface ClickEntityBehavior extends Component {
-    void onStart(Player player, Item item, Entity entity);
-
-    boolean onKeep(Player player, Item item, Entity entity, int tickElapsed);
-
-    void onStart(Player player, Item item, Entity entity, int tickElapsed);
+    void onClicked(ItemStack itemStack, EntityHitResult hit, EntityInteractCause cause);
 }
