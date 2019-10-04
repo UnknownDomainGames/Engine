@@ -21,6 +21,8 @@ public class RegionBasedChunkStorage implements ChunkStorage {
 
     private final Cache<Long, RegionFile> regionFileCache;
 
+    private boolean closed = false;
+
     public RegionBasedChunkStorage(World world, Path storagePath) {
         this.world = world;
         this.storagePath = storagePath;
@@ -41,6 +43,10 @@ public class RegionBasedChunkStorage implements ChunkStorage {
 
     @Override
     public Chunk load(int chunkX, int chunkY, int chunkZ) {
+        if (closed) {
+            throw new IllegalStateException("Chunk storage has been closed");
+        }
+
         long regionIndex = getRegionIndex(chunkX, chunkY, chunkZ);
         try {
             byte[] data = regionFileCache.get(regionIndex, () -> {
@@ -57,6 +63,8 @@ public class RegionBasedChunkStorage implements ChunkStorage {
             CubicChunk cubicChunk = new CubicChunk(world, chunkX, chunkY, chunkZ);
             cubicChunk.read(new DataInputStream(new ByteArrayInputStream(data)));
             return cubicChunk;
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -64,6 +72,10 @@ public class RegionBasedChunkStorage implements ChunkStorage {
 
     @Override
     public void save(Chunk chunk) {
+        if (closed) {
+            throw new IllegalStateException("Chunk storage has been closed");
+        }
+
         if (!(chunk instanceof CubicChunk)) {
             return;
         }
@@ -79,8 +91,25 @@ public class RegionBasedChunkStorage implements ChunkStorage {
                 }
                 return new RegionFile(regionFile.toFile());
             }).write(chunk.getX(), chunk.getY(), chunk.getZ(), byteArrayOutputStream.toByteArray(), byteArrayOutputStream.size());
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void close() {
+        if (closed) {
+            return;
+        }
+
+        closed = true;
+        regionFileCache.asMap().forEach((key, value) -> {
+            try {
+                value.close();
+            } catch (IOException ignored) {
+            }
+        });
     }
 }

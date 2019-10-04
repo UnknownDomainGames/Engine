@@ -102,6 +102,7 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     public void unloadAll() {
         chunkMap.forEach(this::unloadChunk);
         chunkMap.clear();
+        chunkStorage.close();
     }
 
     @Override
