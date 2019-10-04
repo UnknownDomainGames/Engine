@@ -16,6 +16,7 @@ import nullengine.client.rendering.font.Font;
 import nullengine.enginemod.client.gui.GuiSettings;
 import nullengine.game.GameData;
 import nullengine.util.Color;
+import nullengine.util.Files2;
 
 import java.nio.file.Path;
 
@@ -40,6 +41,7 @@ public class GUIGameCreation extends BorderPane {
             var engine = Platform.getEngineClient();
             engine.getRenderManager().getGuiManager().closeScreen();
             Path gameBasePath = engine.getRunPath().resolve("game");
+            Files2.deleteDirectoryIfPresent(gameBasePath);
             engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default")));
         });
         vBox.getChildren().add(buttonCreate);

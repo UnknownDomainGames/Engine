@@ -2,6 +2,7 @@ package nullengine.world.chunk.storage;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import nullengine.util.Files2;
 import nullengine.world.World;
 import nullengine.world.chunk.Chunk;
 import nullengine.world.chunk.ChunkStorage;
@@ -23,14 +24,7 @@ public class RegionBasedChunkStorage implements ChunkStorage {
     public RegionBasedChunkStorage(World world, Path storagePath) {
         this.world = world;
         this.storagePath = storagePath;
-        if (!Files.exists(storagePath)) {
-            try {
-                Files.createDirectories(storagePath);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
+        Files2.createDirectories(storagePath);
         regionFileCache = CacheBuilder.newBuilder().maximumSize(256).concurrencyLevel(8)
                 .removalListener(notification -> {
                     try {
