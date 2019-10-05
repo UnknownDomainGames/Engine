@@ -40,7 +40,7 @@ public class LightManager {
         }
 
         spotLights.sort(Comparator.comparingInt(light -> (int) light.position.distanceSquared(position)));
-        for (int i = 0; i < spotLights.size(); i++) {
+        for (int i = 0; i < spotLights.size() && i < MAX_SPOT_LIGHT_COUNT; i++) {
             spotLights.get(i).bind("spotLights[" + i + "]");
         }
     }
