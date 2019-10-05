@@ -12,7 +12,6 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class GLFWWindow implements Window {
@@ -36,6 +35,8 @@ public class GLFWWindow implements Window {
 
     private boolean closed = false;
     private boolean visible = false;
+    private boolean decorated = true;
+    private boolean resizable = true;
     private DisplayMode displayMode = DisplayMode.WINDOWED;
 
     private Cursor cursor;
@@ -220,12 +221,7 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public void beginRender() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    @Override
-    public void endRender() {
+    public void swapBufferAndPollEvents() {
         glfwSwapBuffers(pointer);
 
         if (resized) {
@@ -274,6 +270,34 @@ public class GLFWWindow implements Window {
     }
 
     @Override
+    public boolean isDecorated() {
+        return decorated;
+    }
+
+    @Override
+    public void setDecorated(boolean decorated) {
+        if (this.decorated == decorated) {
+            return;
+        }
+        this.decorated = decorated;
+        glfwSetWindowAttrib(pointer, GLFW_DECORATED, decorated ? GLFW_TRUE : GLFW_FALSE);
+    }
+
+    @Override
+    public boolean isResizable() {
+        return resizable;
+    }
+
+    @Override
+    public void setResizable(boolean resizable) {
+        if (this.resizable == resizable) {
+            return;
+        }
+        this.resizable = resizable;
+        glfwSetWindowAttrib(pointer, GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
+    }
+
+    @Override
     public void dispose() {
         hide();
 
@@ -312,7 +336,7 @@ public class GLFWWindow implements Window {
     public void setDisplayMode(DisplayMode displayMode, int newWidth, int newHeight, int frameRate) {
         if (this.displayMode == displayMode && newWidth == -1 && newHeight == -1) return;
         var nw = newWidth != -1 ? newWidth : monitor.getVideoMode().getWidth();
-        var nh = newHeight != -1 ? newHeight :monitor.getVideoMode().getHeight();
+        var nh = newHeight != -1 ? newHeight : monitor.getVideoMode().getHeight();
         switch (displayMode) {
             case FULLSCREEN:
                 if (this.displayMode == DisplayMode.WINDOWED) {
@@ -330,11 +354,11 @@ public class GLFWWindow implements Window {
                     lastWidth = windowWidth;
                     lastHeight = windowHeight;
                 }
-                glfwSetWindowAttrib(pointer, GLFW_DECORATED, GL_FALSE);
+                setDecorated(false);
                 glfwSetWindowMonitor(pointer, NULL, 0, 0, monitor.getVideoMode().getWidth(), monitor.getVideoMode().getHeight(), monitor.getVideoMode().getRefreshRate());
                 break;
             case WINDOWED:
-                glfwSetWindowAttrib(pointer, GLFW_DECORATED, GL_TRUE);
+                setDecorated(true);
                 glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, newWidth != -1 ? newWidth : lastWidth, newHeight != -1 ? newHeight : lastHeight, monitor.getVideoMode().getRefreshRate());
         }
         this.displayMode = displayMode;
@@ -364,14 +388,12 @@ public class GLFWWindow implements Window {
 
     private void initWindowHint() {
         glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-        glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL_TRUE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+        glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
         if (Platform.getEngineClient().getRuntimeEnvironment() != RuntimeEnvironment.DEPLOYMENT) {
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         }

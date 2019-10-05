@@ -40,6 +40,7 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.opengl.GL11.*;
 
 public class EngineRenderManager implements RenderManager {
 
@@ -166,11 +167,11 @@ public class EngineRenderManager implements RenderManager {
         camera.update(partial);
         frustumIntersection.set(window.projection().mul(camera.getViewMatrix(), new Matrix4f()));
 
-        window.beginRender();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         for (Renderer renderer : renderers) {
             renderer.render(partial);
         }
-        window.endRender();
+        window.swapBufferAndPollEvents();
         updateFPS();
     }
 
