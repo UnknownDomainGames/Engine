@@ -24,6 +24,7 @@ import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBTruetype.*;
@@ -86,11 +87,21 @@ public final class WindowsFontHelper implements FontHelper {
     }
 
     private void initLocalFonts() {
-        for (Path fontFile : LocalFontUtils.findLocalTTFonts()) {
+        for (Path fontFile : findLocalTTFonts()) {
             try {
                 loadNativeFontInfo(fontFile);
             } catch (IOException | IllegalStateException ignored) {
             }
+        }
+    }
+
+    private List<Path> findLocalTTFonts() {
+        try {
+            return Files.walk(Path.of("C:\\Windows\\Fonts").toAbsolutePath())
+                    .filter(path -> path.getFileName().toString().endsWith(".ttf"))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            return List.of();
         }
     }
 
