@@ -37,6 +37,10 @@ public abstract class Component {
 
     private ComponentRenderer renderer;
 
+    public Component() {
+        visible.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
+    }
+
     public ObservableValue<Scene> scene() {
         return scene;
     }
