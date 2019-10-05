@@ -13,7 +13,7 @@ import nullengine.client.rendering.display.GLFWWindow;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
-import nullengine.client.rendering.font.TTFontHelper;
+import nullengine.client.rendering.font.WindowsFontHelper;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.GLTexture;
 import nullengine.client.rendering.texture.TextureManager;
@@ -232,7 +232,7 @@ public class EngineRenderManager implements RenderManager {
     }
 
     private void initFont() {
-        var fontHelper = new TTFontHelper();
+        var fontHelper = new WindowsFontHelper();
         FontHelper.Internal.setInstance(fontHelper);
         Font defaultFont = new Font("Arial", "Regular", 16);
         fontHelper.setDefaultFont(defaultFont);

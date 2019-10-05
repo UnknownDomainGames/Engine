@@ -9,57 +9,31 @@ import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.lwjgl.stb.STBTruetype.*;
-import static org.lwjgl.system.MemoryUtil.memUTF8;
+import static org.lwjgl.stb.STBTruetype.stbtt_GetFontNameString;
+import static org.lwjgl.stb.STBTruetype.stbtt_InitFont;
 
 public class NativeTTFontInfo {
 
-    private final Path fontFile;
+    private Path fontFile;
     private ByteBuffer fontData;
 
     private STBTTFontinfo fontInfo;
-    private final Font font;
+    private Font font;
 
-    private final String family;
-    private final String style;
+    private int platformId;
+    private int encodingId;
+    private int languageId;
 
-    private final double ascent;
-    private final double descent;
-    private final double lineGap;
-    private final float contentScaleX;
-    private final float contentScaleY;
+    private String family;
+    private String style;
 
-    private final int[] boundingBox;
+    private double ascent;
+    private double descent;
+    private double lineGap;
+    private float contentScaleX;
+    private float contentScaleY;
 
-    public NativeTTFontInfo(Path fontFile, String family, String style, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY, int[] boundingBox) {
-        this.fontFile = fontFile;
-        this.boundingBox = boundingBox;
-        this.fontInfo = null;
-        this.fontData = null;
-        this.family = family;
-        this.style = style;
-        this.font = new Font(family, style, 1);
-        this.ascent = ascent;
-        this.descent = descent;
-        this.lineGap = lineGap;
-        this.contentScaleX = contentScaleX;
-        this.contentScaleY = contentScaleY;
-    }
-
-    public NativeTTFontInfo(ByteBuffer fontData, STBTTFontinfo fontInfo, String family, String style, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY, int[] boundingBox) {
-        this.boundingBox = boundingBox;
-        this.fontFile = null;
-        this.fontInfo = fontInfo;
-        this.fontData = fontData;
-        this.family = family;
-        this.style = style;
-        this.font = new Font(family, style, 1);
-        this.ascent = ascent;
-        this.descent = descent;
-        this.lineGap = lineGap;
-        this.contentScaleX = contentScaleX;
-        this.contentScaleY = contentScaleY;
-    }
+    private int[] boundingBox;
 
     public STBTTFontinfo getFontInfo() {
         return fontInfo;
@@ -118,11 +92,130 @@ public class NativeTTFontInfo {
     }
 
     public String getFontName(int nameID) {
-        ByteBuffer buffer = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, nameID);
+        ByteBuffer buffer = stbtt_GetFontNameString(fontInfo, platformId, encodingId, languageId, nameID);
         if (buffer == null) {
             return null;
         }
-        return memUTF8(buffer.order(ByteOrder.BIG_ENDIAN));
+        return buffer.order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private Path fontFile;
+        private ByteBuffer fontData;
+        private STBTTFontinfo fontInfo;
+        private Font font;
+        private int platformId;
+        private int encodingId;
+        private int languageId;
+        private String family;
+        private String style;
+        private double ascent;
+        private double descent;
+        private double lineGap;
+        private float contentScaleX;
+        private float contentScaleY;
+        private int[] boundingBox;
+
+        private Builder() {
+        }
+
+        public Builder fontFile(Path fontFile) {
+            this.fontFile = fontFile;
+            return this;
+        }
+
+        public Builder fontData(ByteBuffer fontData) {
+            this.fontData = fontData;
+            return this;
+        }
+
+        public Builder fontInfo(STBTTFontinfo fontInfo) {
+            this.fontInfo = fontInfo;
+            return this;
+        }
+
+        public Builder font(Font font) {
+            this.font = font;
+            return this;
+        }
+
+        public Builder platformId(int platformId) {
+            this.platformId = platformId;
+            return this;
+        }
+
+        public Builder encodingId(int encodingId) {
+            this.encodingId = encodingId;
+            return this;
+        }
+
+        public Builder languageId(int languageId) {
+            this.languageId = languageId;
+            return this;
+        }
+
+        public Builder family(String family) {
+            this.family = family;
+            return this;
+        }
+
+        public Builder style(String style) {
+            this.style = style;
+            return this;
+        }
+
+        public Builder ascent(double ascent) {
+            this.ascent = ascent;
+            return this;
+        }
+
+        public Builder descent(double descent) {
+            this.descent = descent;
+            return this;
+        }
+
+        public Builder lineGap(double lineGap) {
+            this.lineGap = lineGap;
+            return this;
+        }
+
+        public Builder contentScaleX(float contentScaleX) {
+            this.contentScaleX = contentScaleX;
+            return this;
+        }
+
+        public Builder contentScaleY(float contentScaleY) {
+            this.contentScaleY = contentScaleY;
+            return this;
+        }
+
+        public Builder boundingBox(int[] boundingBox) {
+            this.boundingBox = boundingBox;
+            return this;
+        }
+
+        public NativeTTFontInfo build() {
+            NativeTTFontInfo nativeTTFontInfo = new NativeTTFontInfo();
+            nativeTTFontInfo.contentScaleX = this.contentScaleX;
+            nativeTTFontInfo.fontData = this.fontData;
+            nativeTTFontInfo.contentScaleY = this.contentScaleY;
+            nativeTTFontInfo.fontInfo = this.fontInfo;
+            nativeTTFontInfo.languageId = this.languageId;
+            nativeTTFontInfo.descent = this.descent;
+            nativeTTFontInfo.encodingId = this.encodingId;
+            nativeTTFontInfo.lineGap = this.lineGap;
+            nativeTTFontInfo.family = this.family;
+            nativeTTFontInfo.fontFile = this.fontFile;
+            nativeTTFontInfo.font = this.font;
+            nativeTTFontInfo.style = this.style;
+            nativeTTFontInfo.ascent = this.ascent;
+            nativeTTFontInfo.platformId = this.platformId;
+            nativeTTFontInfo.boundingBox = this.boundingBox;
+            return nativeTTFontInfo;
+        }
+    }
 }
