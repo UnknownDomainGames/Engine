@@ -6,7 +6,7 @@ import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.shader.ShaderManager;
-import nullengine.client.rendering.texture.GLTexture;
+import nullengine.client.rendering.texture.Texture;
 import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.client.rendering.util.buffer.GLBufferFormats;
 import nullengine.client.rendering.util.buffer.GLBufferMode;
@@ -189,12 +189,12 @@ public class GraphicsImpl implements Graphics {
     }
 
     @Override
-    public void drawTexture(GLTexture texture, float x, float y, float width, float height) {
+    public void drawTexture(Texture texture, float x, float y, float width, float height) {
         drawTexture(texture, x, y, width, height, 0, 0, 1, 1);
     }
 
     @Override
-    public void drawTexture(GLTexture texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
+    public void drawTexture(Texture texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
         GLBuffer buffer = tessellator.getBuffer();
         buffer.begin(GLBufferMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_COLOR_TEXTURE);
         float x2 = x + width, y2 = y + height;

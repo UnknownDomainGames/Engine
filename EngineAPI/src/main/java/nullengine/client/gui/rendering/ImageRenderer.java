@@ -1,7 +1,7 @@
 package nullengine.client.gui.rendering;
 
 import nullengine.client.gui.Component;
-import nullengine.client.gui.component.TextureImg;
+import nullengine.client.gui.component.ImageView;
 import nullengine.client.rendering.RenderManager;
 
 public class ImageRenderer implements ComponentRenderer {
@@ -10,7 +10,7 @@ public class ImageRenderer implements ComponentRenderer {
 
     @Override
     public void render(Component component, Graphics graphics, RenderManager context) {
-        TextureImg img = (TextureImg) component;
+        ImageView img = (ImageView) component;
         if (img.getCachedTexture() != null)
             graphics.drawTexture(img.getCachedTexture(), 0, 0, img.prefWidth(), img.prefHeight());
     }
