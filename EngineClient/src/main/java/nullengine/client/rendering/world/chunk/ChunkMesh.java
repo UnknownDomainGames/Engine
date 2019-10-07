@@ -25,7 +25,7 @@ public class ChunkMesh implements Disposable {
 
     public void upload(GLBuffer buffer) {
         if (chunkSolidVbo == null) {
-            chunkSolidVbo = new VertexBufferObject();
+            chunkSolidVbo = new VertexBufferObject(VertexBufferObject.Usage.DYNAMIC_DRAW);
         }
         chunkSolidVbo.uploadData(buffer.getBackingBuffer(), buffer.getVertexCount());
     }
