@@ -46,6 +46,14 @@ public interface Window {
 
     boolean isVisible();
 
+    boolean isDecorated();
+
+    void setDecorated(boolean decorated);
+
+    boolean isResizable();
+
+    void setResizable(boolean resizable);
+
     void dispose();
 
     void addKeyCallback(KeyCallback callback);
@@ -76,9 +84,7 @@ public interface Window {
 
     void removeCursorEnterCallback(CursorEnterCallback callback);
 
-    void beginRender();
-
-    void endRender();
+    void swapBufferAndPollEvents();
 
     DisplayMode getDisplayMode();
 

@@ -13,7 +13,7 @@ import nullengine.client.rendering.display.GLFWWindow;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
-import nullengine.client.rendering.font.TTFontHelper;
+import nullengine.client.rendering.font.WindowsFontHelper;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.GLTexture;
 import nullengine.client.rendering.texture.TextureManager;
@@ -40,6 +40,7 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.opengl.GL11.*;
 
 public class EngineRenderManager implements RenderManager {
 
@@ -166,11 +167,11 @@ public class EngineRenderManager implements RenderManager {
         camera.update(partial);
         frustumIntersection.set(window.projection().mul(camera.getViewMatrix(), new Matrix4f()));
 
-        window.beginRender();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         for (Renderer renderer : renderers) {
             renderer.render(partial);
         }
-        window.endRender();
+        window.swapBufferAndPollEvents();
         updateFPS();
     }
 
@@ -232,7 +233,7 @@ public class EngineRenderManager implements RenderManager {
     }
 
     private void initFont() {
-        var fontHelper = new TTFontHelper();
+        var fontHelper = new WindowsFontHelper();
         FontHelper.Internal.setInstance(fontHelper);
         Font defaultFont = new Font("Arial", "Regular", 16);
         fontHelper.setDefaultFont(defaultFont);

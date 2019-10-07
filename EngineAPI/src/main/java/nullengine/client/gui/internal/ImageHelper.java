@@ -1,9 +1,9 @@
 package nullengine.client.gui.internal;
 
 import nullengine.client.asset.AssetURL;
-import nullengine.client.rendering.texture.GLTexture;
+import nullengine.client.rendering.texture.Texture;
 
 public interface ImageHelper {
 
-    GLTexture getTexture(AssetURL path);
+    Texture getTexture(AssetURL path);
 }

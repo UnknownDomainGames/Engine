@@ -5,39 +5,39 @@ import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.asset.AssetURL;
 
 public class Image extends Control {
-    private TextureImg textureImg = new TextureImg();
+    private ImageView imageView = new ImageView();
 
     public Image() {
-        this.getChildren().addAll(textureImg);
+        this.getChildren().addAll(imageView);
     }
 
     public SimpleMutableFloatValue imageX() {
-        return textureImg.imageX();
+        return imageView.imageX();
     }
 
     public SimpleMutableFloatValue imageY() {
-        return textureImg.imageY();
+        return imageView.imageY();
     }
 
     public SimpleMutableFloatValue imageWidth() {
-        return textureImg.imageWidth();
+        return imageView.imageWidth();
     }
 
     public SimpleMutableFloatValue imageHeight() {
-        return textureImg.imageHeight();
+        return imageView.imageHeight();
     }
 
     public SimpleMutableObjectValue<AssetURL> path() {
-        return textureImg.path();
+        return imageView.image();
     }
 
     @Override
     public float prefWidth() {
-        return textureImg.prefWidth();
+        return imageView.prefWidth();
     }
 
     @Override
     public float prefHeight() {
-        return textureImg.prefHeight();
+        return imageView.prefHeight();
     }
 }
