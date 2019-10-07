@@ -267,39 +267,46 @@ public final class TTFontHelper implements FontHelper {
     private NativeTTFontInfo loadNativeFontInfo(Path path) throws IOException {
         byte[] bytes = Files.readAllBytes(path);
         ByteBuffer fontData = ByteBuffer.allocateDirect(bytes.length).put(bytes).flip();
-        STBTTFontinfo fontInfo = STBTTFontinfo.create();
-        if (!stbtt_InitFont(fontInfo, fontData)) {
-            throw new IllegalStateException("Failed in initializing ttf font info");
+        var fontCount = stbtt_GetNumberOfFonts(fontData);
+        if(fontCount == -1){
+            throw new IllegalArgumentException(String.format("Cannot determine the number of fonts in the font file. File: %s", path));
         }
+        NativeTTFontInfo parent = null;
+        for (int i = 0; i < fontCount; i++) {
+            STBTTFontinfo fontInfo = STBTTFontinfo.create();
+            if (!stbtt_InitFont(fontInfo, fontData, stbtt_GetFontOffsetForIndex(fontData, i))) {
+                throw new IllegalStateException(String.format("Failed in initializing ttf font info. File: %s", path));
+            }
 
-        String family = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 1)
-                .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
-        String style = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 2)
-                .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
+            String family = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 1)
+                    .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
+            String style = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 2)
+                    .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
 
-        try (MemoryStack stack = stackPush()) {
-            IntBuffer pAscent = stack.mallocInt(1);
-            IntBuffer pDescent = stack.mallocInt(1);
-            IntBuffer pLineGap = stack.mallocInt(1);
+            try (MemoryStack stack = stackPush()) {
+                IntBuffer pAscent = stack.mallocInt(1);
+                IntBuffer pDescent = stack.mallocInt(1);
+                IntBuffer pLineGap = stack.mallocInt(1);
 
-            stbtt_GetFontVMetrics(fontInfo, pAscent, pDescent, pLineGap);
+                stbtt_GetFontVMetrics(fontInfo, pAscent, pDescent, pLineGap);
 
-            FloatBuffer p1 = stack.mallocFloat(1);
-            FloatBuffer p2 = stack.mallocFloat(1);
+                FloatBuffer p1 = stack.mallocFloat(1);
+                FloatBuffer p2 = stack.mallocFloat(1);
 
-            GLFW.glfwGetMonitorContentScale(GLFW.glfwGetPrimaryMonitor(), p1, p2);
+                GLFW.glfwGetMonitorContentScale(GLFW.glfwGetPrimaryMonitor(), p1, p2);
 
-            IntBuffer x0 = stack.mallocInt(1);
-            IntBuffer y0 = stack.mallocInt(1);
-            IntBuffer x1 = stack.mallocInt(1);
-            IntBuffer y1 = stack.mallocInt(1);
-            stbtt_GetFontBoundingBox(fontInfo, x0, y0, x1, y1);
+                IntBuffer x0 = stack.mallocInt(1);
+                IntBuffer y0 = stack.mallocInt(1);
+                IntBuffer x1 = stack.mallocInt(1);
+                IntBuffer y1 = stack.mallocInt(1);
+                stbtt_GetFontBoundingBox(fontInfo, x0, y0, x1, y1);
 
-            NativeTTFontInfo parent = new NativeTTFontInfo(path, family, style, pAscent.get(0), pDescent.get(0), pLineGap.get(0), p1.get(0), p2.get(0), new int[]{x0.get(), y0.get(), x1.get(), y1.get()});
-            loadedFontInfos.put(family, style, parent);
-            availableFonts.add(parent.getFont());
-            return parent;
+                parent = new NativeTTFontInfo(path, family, style, i, pAscent.get(0), pDescent.get(0), pLineGap.get(0), p1.get(0), p2.get(0), new int[]{x0.get(), y0.get(), x1.get(), y1.get()});
+                loadedFontInfos.put(family, style, parent);
+                availableFonts.add(parent.getFont());
+            }
         }
+        return parent;
     }
 
     private NativeTTFontInfo loadNativeFontInfo(InputStream input) throws IOException {
@@ -308,37 +315,44 @@ public final class TTFontHelper implements FontHelper {
     }
 
     private NativeTTFontInfo loadNativeFontInfo(ByteBuffer buffer) {
-        STBTTFontinfo fontInfo = STBTTFontinfo.create();
-        if (!stbtt_InitFont(fontInfo, buffer)) {
-            throw new IllegalStateException("Failed in initializing ttf font info");
+        var fontCount = stbtt_GetNumberOfFonts(buffer);
+        if(fontCount == -1){
+            throw new IllegalArgumentException("Cannot determine the number of fonts in the font buffer.");
         }
+        NativeTTFontInfo parent = null;
+        for (int i = 0; i < fontCount; i++) {
+            STBTTFontinfo fontInfo = STBTTFontinfo.create();
+            if (!stbtt_InitFont(fontInfo, buffer)) {
+                throw new IllegalStateException("Failed in initializing ttf font info");
+            }
 
-        String family = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 1).asCharBuffer().toString();
-        String style = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 2).asCharBuffer().toString();
+            String family = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 1).asCharBuffer().toString();
+            String style = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, STBTT_MS_EID_UNICODE_BMP, STBTT_MS_LANG_ENGLISH, 2).asCharBuffer().toString();
 
-        try (MemoryStack stack = stackPush()) {
-            IntBuffer pAscent = stack.mallocInt(1);
-            IntBuffer pDescent = stack.mallocInt(1);
-            IntBuffer pLineGap = stack.mallocInt(1);
+            try (MemoryStack stack = stackPush()) {
+                IntBuffer pAscent = stack.mallocInt(1);
+                IntBuffer pDescent = stack.mallocInt(1);
+                IntBuffer pLineGap = stack.mallocInt(1);
 
-            stbtt_GetFontVMetrics(fontInfo, pAscent, pDescent, pLineGap);
+                stbtt_GetFontVMetrics(fontInfo, pAscent, pDescent, pLineGap);
 
-            FloatBuffer p1 = stack.mallocFloat(1);
-            FloatBuffer p2 = stack.mallocFloat(1);
+                FloatBuffer p1 = stack.mallocFloat(1);
+                FloatBuffer p2 = stack.mallocFloat(1);
 
-            GLFW.glfwGetMonitorContentScale(GLFW.glfwGetPrimaryMonitor(), p1, p2);
+                GLFW.glfwGetMonitorContentScale(GLFW.glfwGetPrimaryMonitor(), p1, p2);
 
-            IntBuffer x0 = stack.mallocInt(1);
-            IntBuffer y0 = stack.mallocInt(1);
-            IntBuffer x1 = stack.mallocInt(1);
-            IntBuffer y1 = stack.mallocInt(1);
-            stbtt_GetFontBoundingBox(fontInfo, x0, y0, x1, y1);
+                IntBuffer x0 = stack.mallocInt(1);
+                IntBuffer y0 = stack.mallocInt(1);
+                IntBuffer x1 = stack.mallocInt(1);
+                IntBuffer y1 = stack.mallocInt(1);
+                stbtt_GetFontBoundingBox(fontInfo, x0, y0, x1, y1);
 
-            NativeTTFontInfo parent = new NativeTTFontInfo(buffer, fontInfo, family, style, pAscent.get(0), pDescent.get(0), pLineGap.get(0), p1.get(0), p2.get(0), new int[]{x0.get(), y0.get(), x1.get(), y1.get()});
-            loadedFontInfos.put(family, style, parent);
-            availableFonts.add(parent.getFont());
-            return parent;
+                parent = new NativeTTFontInfo(buffer, fontInfo, family, style, i, pAscent.get(0), pDescent.get(0), pLineGap.get(0), p1.get(0), p2.get(0), new int[]{x0.get(), y0.get(), x1.get(), y1.get()});
+                loadedFontInfos.put(family, style, parent);
+                availableFonts.add(parent.getFont());
+            }
         }
+        return parent;
     }
 
     private int getBitmapSize(float size, int countOfChar) {

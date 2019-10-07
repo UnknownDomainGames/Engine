@@ -13,7 +13,7 @@ public class LocalFontUtils {
     public static List<Path> findLocalTTFonts() {
         try {
             return Files.walk(getLocalFontStoragePath())
-                    .filter(path -> path.getFileName().toString().endsWith(".ttf"))
+                    .filter(path -> path.getFileName().toString().endsWith(".ttf") || path.getFileName().toString().endsWith(".ttc"))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             return List.of();

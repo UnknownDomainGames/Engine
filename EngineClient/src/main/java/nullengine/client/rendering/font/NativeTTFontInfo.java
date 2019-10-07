@@ -22,6 +22,7 @@ public class NativeTTFontInfo {
 
     private final String family;
     private final String style;
+    private int offsetIndex;
 
     private final double ascent;
     private final double descent;
@@ -32,12 +33,17 @@ public class NativeTTFontInfo {
     private final int[] boundingBox;
 
     public NativeTTFontInfo(Path fontFile, String family, String style, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY, int[] boundingBox) {
+        this(fontFile, family, style, 0, ascent, descent, lineGap, contentScaleX, contentScaleY, boundingBox);
+    }
+
+    public NativeTTFontInfo(Path fontFile, String family, String style, int offsetIndex, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY, int[] boundingBox) {
         this.fontFile = fontFile;
         this.boundingBox = boundingBox;
         this.fontInfo = null;
         this.fontData = null;
         this.family = family;
         this.style = style;
+        this.offsetIndex = offsetIndex;
         this.font = new Font(family, style, 1);
         this.ascent = ascent;
         this.descent = descent;
@@ -47,12 +53,17 @@ public class NativeTTFontInfo {
     }
 
     public NativeTTFontInfo(ByteBuffer fontData, STBTTFontinfo fontInfo, String family, String style, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY, int[] boundingBox) {
+        this(fontData, fontInfo, family, style, 0, ascent, descent, lineGap, contentScaleX, contentScaleY, boundingBox);
+    }
+
+    public NativeTTFontInfo(ByteBuffer fontData, STBTTFontinfo fontInfo, String family, String style, int offsetIndex, double ascent, double descent, double lineGap, float contentScaleX, float contentScaleY, int[] boundingBox) {
         this.boundingBox = boundingBox;
         this.fontFile = null;
         this.fontInfo = fontInfo;
         this.fontData = fontData;
         this.family = family;
         this.style = style;
+        this.offsetIndex = offsetIndex;
         this.font = new Font(family, style, 1);
         this.ascent = ascent;
         this.descent = descent;
@@ -71,7 +82,7 @@ public class NativeTTFontInfo {
                 byte[] bytes = Files.readAllBytes(fontFile);
                 fontData = ByteBuffer.allocateDirect(bytes.length).put(bytes).flip();
                 fontInfo = STBTTFontinfo.create();
-                if (!stbtt_InitFont(fontInfo, fontData)) {
+                if (!stbtt_InitFont(fontInfo, fontData, stbtt_GetFontOffsetForIndex(fontData, offsetIndex))) {
                     throw new IllegalStateException("Failed in initializing ttf font info");
                 }
             } catch (IOException e) {
