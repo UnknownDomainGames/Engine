@@ -24,6 +24,8 @@ public interface Window {
 
     void setSize(int width, int height);
 
+    // TODO: Remove it
+    @Deprecated
     Matrix4fc projection();
 
     boolean isResized();

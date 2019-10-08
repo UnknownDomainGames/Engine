@@ -123,9 +123,8 @@ public class GLFWWindow implements Window {
 
     @Override
     public Matrix4fc projection() {
-        if (resized || projection == null) {
-            projection = new Matrix4f().perspective((float) (Math.toRadians(Math.max(1.0, Math.min(90.0, 60.0f)))), windowWidth / (float) windowHeight, 0.01f, 1000f);
-        }
+        if (resized || projection == null)
+            projection = new Matrix4f().perspective((float) Math.toRadians(60), (float) fboWidth / fboHeight, 0.01f, 1000f);
         return projection;
     }
 
