@@ -425,7 +425,7 @@ public final class WindowsFontHelper implements FontHelper {
                         .fontData(buffer)
                         .fontInfo(fontInfo)
                         .platformId(STBTT_PLATFORM_ID_MICROSOFT)
-                        .encodingId(STBTT_MS_EID_UNICODE_BMP)
+                        .encodingId(encodingId)
                         .languageId(STBTT_MS_LANG_ENGLISH)
                         .family(family).style(style).offsetIndex(i)
                         .ascent(pAscent.get(0)).descent(pDescent.get(0)).lineGap(pLineGap.get(0))
