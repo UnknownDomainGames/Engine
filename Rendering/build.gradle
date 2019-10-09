@@ -28,6 +28,11 @@ repositories {
 }
 
 dependencies {
+    compile 'com.google.guava:guava:27.0.1-jre'
+    compile 'org.apache.commons:commons-lang3:3.8.1'
+
+    compile 'org.joml:joml:1.9.12'
+
     compile "org.lwjgl:lwjgl:$lwjglVersion"
     compile "org.lwjgl:lwjgl-assimp:$lwjglVersion"
     compile "org.lwjgl:lwjgl-glfw:$lwjglVersion"
