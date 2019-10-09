@@ -1,16 +1,16 @@
 package nullengine.client.rendering;
 
-import nullengine.client.rendering.gl.VertexBufferObject;
+import nullengine.client.rendering.gl.SingleBufferVAO;
 import nullengine.client.rendering.gl.buffer.GLBuffer;
 
 public class Tessellator {
 
     private static final Tessellator INSTANCE = new Tessellator(1048576);
     private GLBuffer buffer;
-    private VertexBufferObject vbo;
+    private SingleBufferVAO vao;
 
     private Tessellator(int bufferSize) {
-        vbo = new VertexBufferObject();
+        vao = new SingleBufferVAO();
         buffer = GLBuffer.createDirectBuffer(bufferSize);
 
 //        vertexStatusBufId = GL15.glGenBuffers();
@@ -34,10 +34,10 @@ public class Tessellator {
 //        ByteBuffer bb = ByteBuffer.wrap(new byte[]{(byte) (buffer.isPosEnabled() ? 1 : 0), (byte) (buffer.isColorEnabled() ? 1 : 0), (byte) (buffer.isTexEnabled() ? 1 : 0), (byte) (buffer.isNormalEnabled() ? 1 : 0)});
 //        GL15.glBufferSubData(GL31.GL_UNIFORM_BUFFER, 0, bb);
 //        GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, 0);
-        vbo.uploadData(buffer);
-        vbo.bind();
+        vao.uploadData(buffer);
+        vao.bind();
         buffer.getFormat().bind();
-        vbo.drawArrays(buffer.getDrawMode().getOpenGlMode());
-        vbo.unbind();
+        vao.drawArrays(buffer.getDrawMode().getOpenGlMode());
+        vao.unbind();
     }
 }

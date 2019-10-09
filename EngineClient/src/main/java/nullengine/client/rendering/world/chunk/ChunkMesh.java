@@ -1,6 +1,6 @@
 package nullengine.client.rendering.world.chunk;
 
-import nullengine.client.rendering.gl.VertexBufferObject;
+import nullengine.client.rendering.gl.SingleBufferVAO;
 import nullengine.client.rendering.gl.buffer.GLBuffer;
 import nullengine.client.rendering.shader.ShaderProgram;
 import nullengine.util.disposer.Disposable;
@@ -13,7 +13,7 @@ public class ChunkMesh implements Disposable {
 
     private AtomicInteger dirtyCount = new AtomicInteger(0);
 
-    private VertexBufferObject chunkSolidVbo;
+    private SingleBufferVAO chunkSolidVAO;
 
     private final Chunk chunk;
 
@@ -24,10 +24,10 @@ public class ChunkMesh implements Disposable {
     }
 
     public void upload(GLBuffer buffer) {
-        if (chunkSolidVbo == null) {
-            chunkSolidVbo = new VertexBufferObject(VertexBufferObject.Usage.DYNAMIC_DRAW);
+        if (chunkSolidVAO == null) {
+            chunkSolidVAO = new SingleBufferVAO();
         }
-        chunkSolidVbo.uploadData(buffer.getBackingBuffer(), buffer.getVertexCount());
+        chunkSolidVAO.uploadData(buffer);
     }
 
     public void render() {
@@ -35,11 +35,11 @@ public class ChunkMesh implements Disposable {
             return;
         }
 
-        if (chunkSolidVbo == null) {
+        if (chunkSolidVAO == null) {
             return;
         }
 
-        chunkSolidVbo.bind();
+        chunkSolidVAO.bind();
         ShaderProgram.pointVertexAttribute(0, 3, 36 + 12, 0);
         ShaderProgram.enableVertexAttrib(0);
         ShaderProgram.pointVertexAttribute(1, 4, 36 + 12, 12);
@@ -48,8 +48,8 @@ public class ChunkMesh implements Disposable {
         ShaderProgram.enableVertexAttrib(2);
         ShaderProgram.pointVertexAttribute(3, 3, 36 + 12, 28 + 8);
         ShaderProgram.enableVertexAttrib(3);
-        chunkSolidVbo.drawArrays(GL11.GL_TRIANGLES);
-        chunkSolidVbo.unbind();
+        chunkSolidVAO.drawArrays(GL11.GL_TRIANGLES);
+        chunkSolidVAO.unbind();
     }
 
     public Chunk getChunk() {
@@ -76,8 +76,8 @@ public class ChunkMesh implements Disposable {
 
         disposed = true;
 
-        if (chunkSolidVbo != null) {
-            chunkSolidVbo.dispose();
+        if (chunkSolidVAO != null) {
+            chunkSolidVAO.dispose();
         }
     }
 
