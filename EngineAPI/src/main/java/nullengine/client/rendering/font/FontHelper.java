@@ -1,6 +1,6 @@
 package nullengine.client.rendering.font;
 
-import nullengine.client.rendering.gl.buffer.GLBuffer;
+import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.exception.UninitializationException;
 
 import java.io.IOException;

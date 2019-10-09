@@ -18,10 +18,6 @@ public class VertexBufferObject {
         id = GL15.glGenBuffers();
     }
 
-    public int getId() {
-        return id;
-    }
-
     public GLBufferType getType() {
         return type;
     }

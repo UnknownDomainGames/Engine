@@ -1,7 +1,7 @@
 package nullengine.client.rendering.model.voxel.item;
 
 import nullengine.client.asset.AssetURL;
-import nullengine.client.rendering.gl.buffer.GLBuffer;
+import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.model.DisplayType;
 import nullengine.client.rendering.model.voxel.Model;
 import nullengine.client.rendering.texture.TextureAtlasPart;

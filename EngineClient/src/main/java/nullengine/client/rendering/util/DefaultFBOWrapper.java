@@ -1,9 +1,9 @@
 package nullengine.client.rendering.util;
 
 import nullengine.client.rendering.Tessellator;
+import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
-import nullengine.client.rendering.gl.buffer.GLBuffer;
-import nullengine.client.rendering.gl.buffer.GLBufferFormats;
+import nullengine.client.rendering.gl.GLVertexFormats;
 import org.joml.Vector4ic;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -40,7 +40,7 @@ public final class DefaultFBOWrapper extends FrameBuffer {
         glBindTexture(GL_TEXTURE_2D, frameBuffer.getTexPointer());
         Tessellator t = Tessellator.getInstance();
         GLBuffer bb = t.getBuffer();
-        bb.begin(GLDrawMode.CONTINUOUS_TRIANGLES, GLBufferFormats.POSITION_TEXTURE);
+        bb.begin(GLDrawMode.CONTINUOUS_TRIANGLES, GLVertexFormats.POSITION_TEXTURE);
         bb.pos(-1.0f, 1.0f, 0).uv(0, 1.0f).endVertex();
         bb.pos(-1.0f, -1.0f, 0).uv(0, 0).endVertex();
         bb.pos(1.0f, 1.0f, 0).uv(1.0f, 1.0f).endVertex();

@@ -1,6 +1,6 @@
 package nullengine.client.rendering.world.chunk.layer;
 
-import nullengine.client.rendering.gl.buffer.GLBuffer;
+import nullengine.client.rendering.gl.GLBuffer;
 
 public interface ChunkLayerRenderer {
 

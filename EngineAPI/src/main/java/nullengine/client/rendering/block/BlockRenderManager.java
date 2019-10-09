@@ -1,7 +1,7 @@
 package nullengine.client.rendering.block;
 
 import nullengine.block.Block;
-import nullengine.client.rendering.gl.buffer.GLBuffer;
+import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.exception.UninitializationException;
 import nullengine.math.BlockPos;
 import nullengine.util.Direction;

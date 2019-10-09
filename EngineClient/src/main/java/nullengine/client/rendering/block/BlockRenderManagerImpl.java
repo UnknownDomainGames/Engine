@@ -4,7 +4,7 @@ import nullengine.Platform;
 import nullengine.block.Block;
 import nullengine.client.asset.Asset;
 import nullengine.client.asset.AssetTypes;
-import nullengine.client.rendering.gl.buffer.GLBuffer;
+import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.model.BakedModel;
 import nullengine.math.BlockPos;
 import nullengine.registry.Registries;

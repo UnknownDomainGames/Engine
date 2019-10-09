@@ -1,17 +1,16 @@
-package nullengine.client.rendering.gl.buffer;
+package nullengine.client.rendering.gl;
 
 import org.lwjgl.opengl.GL20;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
 
-public class GLBufferFormat {
+public class GLVertexFormat {
 
-    public static GLBufferFormat of(GLBufferElement... elements) {
-        return new GLBufferFormat(elements);
+    public static GLVertexFormat of(GLVertexElement... elements) {
+        return new GLVertexFormat(elements);
     }
 
-    private final GLBufferElement[] elements;
+    private final GLVertexElement[] elements;
     private final int stride;
 
     private final int positionElement;
@@ -19,7 +18,7 @@ public class GLBufferFormat {
     private final int uvElement;
     private final int normalElement;
 
-    public GLBufferFormat(GLBufferElement[] elements) {
+    public GLVertexFormat(GLVertexElement... elements) {
         this.elements = elements;
         int stride = 0;
         int positionElement = -1;
@@ -27,7 +26,7 @@ public class GLBufferFormat {
         int uvElement = -1;
         int normalElement = -1;
         for (int i = 0; i < elements.length; i++) {
-            GLBufferElement element = elements[i];
+            GLVertexElement element = elements[i];
             stride += element.getBytes();
             switch (element.getUsage()) {
                 case POSITION:
@@ -51,12 +50,8 @@ public class GLBufferFormat {
         this.normalElement = normalElement;
     }
 
-    public GLBufferElement[] getElements() {
+    public GLVertexElement[] getElements() {
         return elements;
-    }
-
-    public Stream<GLBufferElement> getElementsQueriable() {
-        return Stream.of(elements);
     }
 
     public int getStride() {
@@ -79,17 +74,36 @@ public class GLBufferFormat {
         return normalElement != -1;
     }
 
-    public void bind() {
+    public GLVertexElement getColorElement() {
+        return elements[colorElement];
+    }
+
+    public void apply() {
         int offset = 0;
         for (int i = 0; i < elements.length; i++) {
-            GLBufferElement element = elements[i];
+            GLVertexElement element = elements[i];
+            GL20.glVertexAttribPointer(i, element.getSize(), element.getType().glId, false, stride, offset);
+            offset += element.getBytes();
+        }
+    }
+
+    public void enable() {
+        for (int i = 0; i < elements.length; i++) {
+            GL20.glEnableVertexAttribArray(i);
+        }
+    }
+
+    public void applyAndEnable() {
+        int offset = 0;
+        for (int i = 0; i < elements.length; i++) {
+            GLVertexElement element = elements[i];
             GL20.glVertexAttribPointer(i, element.getSize(), element.getType().glId, false, stride, offset);
             GL20.glEnableVertexAttribArray(i);
             offset += element.getBytes();
         }
     }
 
-    public void unbind() {
+    public void disable() {
         for (int i = 0; i < elements.length; i++) {
             GL20.glDisableVertexAttribArray(i);
         }

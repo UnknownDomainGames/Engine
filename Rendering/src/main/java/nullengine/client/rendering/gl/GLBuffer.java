@@ -1,6 +1,5 @@
-package nullengine.client.rendering.gl.buffer;
+package nullengine.client.rendering.gl;
 
-import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.util.Color;
 import nullengine.client.rendering.util.Math2;
 import org.apache.commons.lang3.Validate;
@@ -29,7 +28,7 @@ public abstract class GLBuffer {
 
     private boolean drawing;
     private GLDrawMode drawMode;
-    private GLBufferFormat format;
+    private GLVertexFormat vertexFormat;
 
     private int vertexCount;
 
@@ -59,22 +58,22 @@ public abstract class GLBuffer {
         return drawMode;
     }
 
-    public GLBufferFormat getFormat() {
-        return format;
+    public GLVertexFormat getVertexFormat() {
+        return vertexFormat;
     }
 
     public int getVertexCount() {
         return vertexCount;
     }
 
-    public void begin(@Nonnull GLDrawMode mode, @Nonnull GLBufferFormat format) {
+    public void begin(@Nonnull GLDrawMode mode, @Nonnull GLVertexFormat format) {
         if (drawing) {
             throw new IllegalStateException("Already drawing!");
         } else {
             drawing = true;
             reset();
             drawMode = Validate.notNull(mode);
-            this.format = Validate.notNull(format);
+            this.vertexFormat = Validate.notNull(format);
             backingBuffer.limit(backingBuffer.capacity());
         }
     }
@@ -103,13 +102,13 @@ public abstract class GLBuffer {
             }*/
             drawing = false;
             backingBuffer.position(0);
-            backingBuffer.limit(vertexCount * format.getStride());
+            backingBuffer.limit(vertexCount * vertexFormat.getStride());
         }
     }
 
     public void reset() {
         drawMode = null;
-        format = null;
+        vertexFormat = null;
         vertexCount = 0;
         posOffset(0, 0, 0);
         backingBuffer.clear();
@@ -142,12 +141,12 @@ public abstract class GLBuffer {
     }
 
     public void endVertex() {
-        if (puttedByteCount != format.getStride()) {
+        if (puttedByteCount != vertexFormat.getStride()) {
             throw new IllegalStateException("Mismatch vertex data.");
         }
         puttedByteCount = 0;
         vertexCount++;
-        grow(format.getStride());
+        grow(vertexFormat.getStride());
     }
 
     public GLBuffer put(byte value) {
@@ -177,12 +176,12 @@ public abstract class GLBuffer {
     public GLBuffer put(byte... bytes) {
         int bits = bytes.length * Byte.BYTES;
         if (puttedByteCount == 0) {
-            if (bits % format.getStride() != 0) {
+            if (bits % vertexFormat.getStride() != 0) {
                 throw new IllegalArgumentException();
             }
             grow(bits);
             backingBuffer.put(bytes);
-            vertexCount += bits / format.getStride();
+            vertexCount += bits / vertexFormat.getStride();
         } else {
             putByteCount(bits);
             backingBuffer.put(bytes);
@@ -193,14 +192,14 @@ public abstract class GLBuffer {
     public GLBuffer put(int... ints) {
         int bits = ints.length * Integer.BYTES;
         if (puttedByteCount == 0) {
-            if (bits % format.getStride() != 0) {
+            if (bits % vertexFormat.getStride() != 0) {
                 throw new IllegalArgumentException();
             }
             grow(bits);
             for (int i = 0; i < ints.length; i++) {
                 backingBuffer.putInt(ints[i]);
             }
-            vertexCount += bits / format.getStride();
+            vertexCount += bits / vertexFormat.getStride();
         } else {
             putByteCount(bits);
             for (int i = 0; i < ints.length; i++) {
@@ -213,14 +212,14 @@ public abstract class GLBuffer {
     public GLBuffer put(float... floats) {
         int bits = floats.length * Float.BYTES;
         if (puttedByteCount == 0) {
-            if (bits % format.getStride() != 0) {
+            if (bits % vertexFormat.getStride() != 0) {
                 throw new IllegalArgumentException();
             }
             grow(bits);
             for (int i = 0; i < floats.length; i++) {
                 backingBuffer.putFloat(floats[i]);
             }
-            vertexCount += bits / format.getStride();
+            vertexCount += bits / vertexFormat.getStride();
         } else {
             putByteCount(bits);
             for (int i = 0; i < floats.length; i++) {
@@ -238,7 +237,7 @@ public abstract class GLBuffer {
     }
 
     public GLBuffer pos(float x, float y, float z) {
-        if (format.isUsingPosition()) {
+        if (vertexFormat.isUsingPosition()) {
             putByteCount(Float.BYTES * 3);
             backingBuffer.putFloat(x + posOffsetX);
             backingBuffer.putFloat(y + posOffsetY);
@@ -260,15 +259,15 @@ public abstract class GLBuffer {
     }
 
     public GLBuffer color(int color) {
-        if (format.isUsingColor()) {
+        if (vertexFormat.isUsingColor()) {
             float a = ((color >> 24) & 255) / 255f;
             float r = ((color >> 16) & 255) / 255f;
             float g = ((color >> 8) & 255) / 255f;
             float b = (color & 255) / 255f;
-            if (format.getElementsQueriable().filter(e -> e.getUsage() == GLBufferElement.Usage.COLOR).findFirst().get().getSize() == 3) {
+            if (vertexFormat.getColorElement().getSize() == 3) {
                 return color(r, g, b);
             }
-            if (format.getElementsQueriable().filter(e -> e.getUsage() == GLBufferElement.Usage.COLOR).findFirst().get().getSize() == 4) {
+            if (vertexFormat.getColorElement().getSize() == 4) {
                 if (a == 0F) {
                     return color(r, g, b, 1);
                 } else {
@@ -280,8 +279,8 @@ public abstract class GLBuffer {
     }
 
     public GLBuffer color(float r, float g, float b) {
-        if (format.isUsingColor()) {
-            if (format.getElementsQueriable().filter(e -> e.getUsage() == GLBufferElement.Usage.COLOR).findFirst().get().getSize() == 4) {
+        if (vertexFormat.isUsingColor()) {
+            if (vertexFormat.getColorElement().getSize() == 4) {
                 return color(r, g, b, 1);
             }
             putByteCount(Float.BYTES * 3);
@@ -293,8 +292,8 @@ public abstract class GLBuffer {
     }
 
     public GLBuffer color(float r, float g, float b, float a) {
-        if (format.isUsingColor()) {
-            if (format.getElementsQueriable().filter(e -> e.getUsage() == GLBufferElement.Usage.COLOR).findFirst().get().getSize() == 3) {
+        if (vertexFormat.isUsingColor()) {
+            if (vertexFormat.getColorElement().getSize() == 3) {
                 return color(r, g, b);
             }
             putByteCount(Float.BYTES * 4);
@@ -319,7 +318,7 @@ public abstract class GLBuffer {
     }
 
     public GLBuffer uv(float u, float v) {
-        if (format.isUsingTextureUV()) {
+        if (vertexFormat.isUsingTextureUV()) {
             putByteCount(Float.BYTES * 2);
             backingBuffer.putFloat(u);
             backingBuffer.putFloat(v);
@@ -336,7 +335,7 @@ public abstract class GLBuffer {
     }
 
     public GLBuffer normal(float nx, float ny, float nz) {
-        if (format.isUsingNormal()) {
+        if (vertexFormat.isUsingNormal()) {
             putByteCount(Float.BYTES * 3);
             backingBuffer.putFloat(nx);
             backingBuffer.putFloat(ny);

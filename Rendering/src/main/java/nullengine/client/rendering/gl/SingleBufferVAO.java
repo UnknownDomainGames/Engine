@@ -1,6 +1,5 @@
 package nullengine.client.rendering.gl;
 
-import nullengine.client.rendering.gl.buffer.GLBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
@@ -11,16 +10,28 @@ public class SingleBufferVAO {
 
     private int id;
     private VertexBufferObject vbo;
+    private GLVertexFormat vertexFormat;
 
     private int vertexCount;
 
     public SingleBufferVAO() {
-        this(GLBufferUsage.DYNAMIC_DRAW);
+        this(GLBufferUsage.STATIC_DRAW);
     }
 
     public SingleBufferVAO(GLBufferUsage usage) {
         vbo = new VertexBufferObject(GLBufferType.ARRAY_BUFFER, usage);
         id = GL30.glGenVertexArrays();
+    }
+
+    public void setVertexFormat(GLVertexFormat vertexFormat) {
+        this.vertexFormat = vertexFormat;
+        bind();
+        vertexFormat.apply();
+        unbind();
+    }
+
+    public GLVertexFormat getVertexFormat() {
+        return vertexFormat;
     }
 
     public void bind() {
@@ -29,9 +40,15 @@ public class SingleBufferVAO {
         }
         GL30.glBindVertexArray(id);
         vbo.bind();
+        if (vertexFormat != null) {
+            vertexFormat.enable();
+        }
     }
 
     public void unbind() {
+        if (vertexFormat != null) {
+            vertexFormat.disable();
+        }
         vbo.unbind();
         GL30.glBindVertexArray(0);
     }
@@ -57,9 +74,7 @@ public class SingleBufferVAO {
     }
 
     public void drawArrays(GLDrawMode mode) {
-        bind();
-        GL11.glDrawArrays(mode.gl, 0, this.vertexCount);
-        unbind();
+        drawArrays(mode.gl);
     }
 
     public void dispose() {

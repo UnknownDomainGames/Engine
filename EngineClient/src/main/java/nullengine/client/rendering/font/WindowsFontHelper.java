@@ -2,9 +2,9 @@ package nullengine.client.rendering.font;
 
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
-import nullengine.client.rendering.gl.buffer.GLBuffer;
-import nullengine.client.rendering.gl.buffer.GLBufferFormats;
+import nullengine.client.rendering.gl.GLVertexFormats;
 import nullengine.client.rendering.texture.TextureManager;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.BufferUtils;
@@ -259,7 +259,7 @@ public final class WindowsFontHelper implements FontHelper {
             int bitmapWidth = nativeTTFont.getBitmapWidth();
             int bitmapHeight = nativeTTFont.getBitmapHeight();
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
-            buffer.begin(GLDrawMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE);
+            buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE);
             for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, charPointBuffer);
 

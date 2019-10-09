@@ -1,4 +1,4 @@
-package nullengine.client.rendering.gl.buffer;
+package nullengine.client.rendering.gl;
 
 import com.google.common.collect.Sets;
 

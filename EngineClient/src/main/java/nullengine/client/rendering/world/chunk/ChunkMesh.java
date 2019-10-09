@@ -1,11 +1,11 @@
 package nullengine.client.rendering.world.chunk;
 
+import nullengine.client.rendering.gl.GLBuffer;
+import nullengine.client.rendering.gl.GLDrawMode;
+import nullengine.client.rendering.gl.GLVertexFormats;
 import nullengine.client.rendering.gl.SingleBufferVAO;
-import nullengine.client.rendering.gl.buffer.GLBuffer;
-import nullengine.client.rendering.shader.ShaderProgram;
 import nullengine.util.disposer.Disposable;
 import nullengine.world.chunk.Chunk;
-import org.lwjgl.opengl.GL11;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,6 +26,7 @@ public class ChunkMesh implements Disposable {
     public void upload(GLBuffer buffer) {
         if (chunkSolidVAO == null) {
             chunkSolidVAO = new SingleBufferVAO();
+            chunkSolidVAO.setVertexFormat(GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
         }
         chunkSolidVAO.uploadData(buffer);
     }
@@ -40,15 +41,7 @@ public class ChunkMesh implements Disposable {
         }
 
         chunkSolidVAO.bind();
-        ShaderProgram.pointVertexAttribute(0, 3, 36 + 12, 0);
-        ShaderProgram.enableVertexAttrib(0);
-        ShaderProgram.pointVertexAttribute(1, 4, 36 + 12, 12);
-        ShaderProgram.enableVertexAttrib(1);
-        ShaderProgram.pointVertexAttribute(2, 2, 36 + 12, 28);
-        ShaderProgram.enableVertexAttrib(2);
-        ShaderProgram.pointVertexAttribute(3, 3, 36 + 12, 28 + 8);
-        ShaderProgram.enableVertexAttrib(3);
-        chunkSolidVAO.drawArrays(GL11.GL_TRIANGLES);
+        chunkSolidVAO.drawArrays(GLDrawMode.TRIANGLES);
         chunkSolidVAO.unbind();
     }
 

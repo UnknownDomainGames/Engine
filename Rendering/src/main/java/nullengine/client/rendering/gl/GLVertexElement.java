@@ -1,22 +1,20 @@
-package nullengine.client.rendering.gl.buffer;
-
-import nullengine.client.rendering.gl.GLDataType;
+package nullengine.client.rendering.gl;
 
 import javax.annotation.Nonnull;
 
 import static java.util.Objects.requireNonNull;
 
-public class GLBufferElement {
+public class GLVertexElement {
     private final GLDataType type;
     private final Usage usage;
     private final int size;
     private final int bytes;
 
-    public GLBufferElement(@Nonnull GLDataType type, int size) {
+    public GLVertexElement(@Nonnull GLDataType type, int size) {
         this(type, Usage.CUSTOM, size);
     }
 
-    public GLBufferElement(@Nonnull GLDataType type, Usage usage, int size) {
+    public GLVertexElement(@Nonnull GLDataType type, Usage usage, int size) {
         this.type = requireNonNull(type);
         this.usage = requireNonNull(usage);
         this.size = size;
