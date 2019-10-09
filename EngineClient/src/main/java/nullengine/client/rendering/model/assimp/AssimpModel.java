@@ -1,8 +1,8 @@
 package nullengine.client.rendering.model.assimp;
 
 import nullengine.client.asset.AssetURL;
+import nullengine.client.rendering.gl.GLDataType;
 import nullengine.client.rendering.shader.ShaderManager;
-import nullengine.client.rendering.util.GLDataType;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.AIMaterial;
 import org.lwjgl.assimp.AIMesh;

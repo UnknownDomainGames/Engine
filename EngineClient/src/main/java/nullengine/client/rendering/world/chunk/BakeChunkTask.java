@@ -2,9 +2,9 @@ package nullengine.client.rendering.world.chunk;
 
 import nullengine.block.Block;
 import nullengine.client.rendering.block.BlockRenderManager;
-import nullengine.client.rendering.util.buffer.GLBuffer;
-import nullengine.client.rendering.util.buffer.GLBufferFormats;
-import nullengine.client.rendering.util.buffer.GLBufferMode;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
+import nullengine.client.rendering.gl.buffer.GLBufferFormats;
+import nullengine.client.rendering.gl.buffer.GLBufferMode;
 import nullengine.math.BlockPos;
 import nullengine.world.World;
 import nullengine.world.chunk.Chunk;

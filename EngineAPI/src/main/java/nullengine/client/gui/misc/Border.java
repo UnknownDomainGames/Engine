@@ -2,7 +2,7 @@ package nullengine.client.gui.misc;
 
 import nullengine.client.gui.Component;
 import nullengine.client.gui.rendering.Graphics;
-import nullengine.util.Color;
+import nullengine.client.rendering.util.Color;
 
 public class Border {
 

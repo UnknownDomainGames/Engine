@@ -1,7 +1,7 @@
 package nullengine.client.rendering;
 
-import nullengine.client.rendering.util.VertexBufferObject;
-import nullengine.client.rendering.util.buffer.GLBuffer;
+import nullengine.client.rendering.gl.VertexBufferObject;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
 
 public class Tessellator {
 

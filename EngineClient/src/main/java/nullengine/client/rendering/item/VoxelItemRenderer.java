@@ -6,10 +6,10 @@ import nullengine.client.asset.AssetTypes;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Tessellator;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
+import nullengine.client.rendering.gl.buffer.GLBufferFormats;
+import nullengine.client.rendering.gl.buffer.GLBufferMode;
 import nullengine.client.rendering.model.BakedModel;
-import nullengine.client.rendering.util.buffer.GLBuffer;
-import nullengine.client.rendering.util.buffer.GLBufferFormats;
-import nullengine.client.rendering.util.buffer.GLBufferMode;
 import nullengine.item.ItemStack;
 
 public class VoxelItemRenderer implements ItemRenderer {

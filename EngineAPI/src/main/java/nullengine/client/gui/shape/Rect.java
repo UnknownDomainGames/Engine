@@ -5,7 +5,7 @@ import com.github.mouse0w0.observable.value.MutableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.rendering.ComponentRenderer;
-import nullengine.util.Color;
+import nullengine.client.rendering.util.Color;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 

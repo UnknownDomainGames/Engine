@@ -1,4 +1,4 @@
-package nullengine.client.rendering.util;
+package nullengine.client.rendering.gl;
 
 import org.lwjgl.opengl.GL11;
 

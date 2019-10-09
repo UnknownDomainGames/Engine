@@ -10,7 +10,7 @@ import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.rendering.CheckBoxRenderer;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.text.Text;
-import nullengine.util.Color;
+import nullengine.client.rendering.util.Color;
 
 public class CheckBox extends Button {
     private MutableValue<Boolean> state = new SimpleMutableObjectValue<>(false);

@@ -13,13 +13,13 @@ import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.rendering.RenderManager;
+import nullengine.client.rendering.util.Color;
 import nullengine.server.event.NetworkDisconnectedEvent;
 import nullengine.server.event.PacketReceivedEvent;
 import nullengine.server.network.ConnectionStatus;
 import nullengine.server.network.NetworkClient;
 import nullengine.server.network.packet.PacketDisconnect;
 import nullengine.server.network.packet.PacketHandshake;
-import nullengine.util.Color;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

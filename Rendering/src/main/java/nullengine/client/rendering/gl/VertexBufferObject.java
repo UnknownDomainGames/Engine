@@ -1,7 +1,6 @@
-package nullengine.client.rendering.util;
+package nullengine.client.rendering.gl;
 
-import nullengine.client.rendering.util.buffer.GLBuffer;
-import nullengine.util.disposer.Disposable;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
@@ -10,7 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-public class VertexBufferObject implements Disposable {
+public class VertexBufferObject {
     public static final int UNALLOCATED_ID = 0;
 
     private int vaoId = UNALLOCATED_ID;
@@ -116,7 +115,6 @@ public class VertexBufferObject implements Disposable {
         unbind();
     }
 
-    @Override
     public void dispose() {
         if (id != UNALLOCATED_ID) {
             GL15.glDeleteBuffers(id);
@@ -132,7 +130,6 @@ public class VertexBufferObject implements Disposable {
         }
     }
 
-    @Override
     public boolean isDisposed() {
         return id == UNALLOCATED_ID;
     }

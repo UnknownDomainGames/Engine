@@ -1,11 +1,11 @@
 package nullengine.client.rendering.model.voxel.block;
 
 import nullengine.client.asset.AssetURL;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
 import nullengine.client.rendering.model.DisplayType;
 import nullengine.client.rendering.model.ModelUtils;
 import nullengine.client.rendering.model.voxel.Model;
 import nullengine.client.rendering.texture.TextureAtlasPart;
-import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.math.Math2;
 import nullengine.math.Transform;
 import nullengine.util.Direction;

@@ -1,17 +1,16 @@
-package nullengine.client.rendering.util.buffer;
+package nullengine.client.rendering.gl.buffer;
 
-import nullengine.math.Math2;
-import nullengine.util.Color;
-import nullengine.util.disposer.Disposable;
+import nullengine.client.rendering.util.Color;
+import nullengine.client.rendering.util.Math2;
+import org.apache.commons.lang3.Validate;
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.lwjgl.system.MemoryUtil;
 
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
-import java.util.Objects;
 
-public abstract class GLBuffer implements Disposable {
+public abstract class GLBuffer {
 
     public static GLBuffer createDirectBuffer(int size) {
         return new GLDirectBuffer(size);
@@ -73,8 +72,8 @@ public abstract class GLBuffer implements Disposable {
         } else {
             drawing = true;
             reset();
-            drawMode = Objects.requireNonNull(mode);
-            this.format = Objects.requireNonNull(format);
+            drawMode = Validate.notNull(mode);
+            this.format = Validate.notNull(format);
             backingBuffer.limit(backingBuffer.capacity());
         }
     }
@@ -132,13 +131,11 @@ public abstract class GLBuffer implements Disposable {
 
     protected abstract int computeNewSize(int oldSize, int needLength);
 
-    @Override
     public void dispose() {
         freeBuffer(backingBuffer);
         backingBuffer = null;
     }
 
-    @Override
     public boolean isDisposed() {
         return backingBuffer == null;
     }

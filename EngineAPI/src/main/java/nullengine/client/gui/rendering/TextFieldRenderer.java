@@ -4,7 +4,7 @@ import nullengine.client.gui.component.TextField;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
-import nullengine.util.Color;
+import nullengine.client.rendering.util.Color;
 
 public class TextFieldRenderer extends RegionRenderer<TextField> {
 

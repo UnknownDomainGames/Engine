@@ -1,4 +1,4 @@
-package nullengine.client.rendering.util.buffer;
+package nullengine.client.rendering.gl.buffer;
 
 import org.lwjgl.opengl.GL20;
 

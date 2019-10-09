@@ -1,8 +1,8 @@
 package nullengine.client.rendering.world.chunk;
 
+import nullengine.client.rendering.gl.VertexBufferObject;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
 import nullengine.client.rendering.shader.ShaderProgram;
-import nullengine.client.rendering.util.VertexBufferObject;
-import nullengine.client.rendering.util.buffer.GLBuffer;
 import nullengine.util.disposer.Disposable;
 import nullengine.world.chunk.Chunk;
 import org.lwjgl.opengl.GL11;

@@ -8,11 +8,11 @@ import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.text.Text;
 import nullengine.client.rendering.RenderManager;
+import nullengine.client.rendering.util.Color;
 import nullengine.entity.component.TwoHands;
 import nullengine.item.Item;
 import nullengine.item.ItemStack;
 import nullengine.registry.Registries;
-import nullengine.util.Color;
 
 import java.util.Map;
 

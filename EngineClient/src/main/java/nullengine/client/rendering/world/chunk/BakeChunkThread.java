@@ -1,6 +1,6 @@
 package nullengine.client.rendering.world.chunk;
 
-import nullengine.client.rendering.util.buffer.GLBuffer;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
 
 public class BakeChunkThread extends Thread {
 

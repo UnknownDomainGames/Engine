@@ -7,15 +7,13 @@ import nullengine.client.gui.component.Button;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.layout.HBox;
 import nullengine.client.gui.layout.VBox;
-import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.text.Text;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.rendering.display.DisplayMode;
-import nullengine.client.rendering.display.Monitor;
 import nullengine.client.rendering.font.Font;
+import nullengine.client.rendering.util.Color;
 import nullengine.client.settings.EngineSettings;
-import nullengine.util.Color;
 
 public class GuiSettings extends AnchorPane {
     private int videoModeIndex;

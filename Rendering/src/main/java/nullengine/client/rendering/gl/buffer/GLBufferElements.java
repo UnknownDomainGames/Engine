@@ -1,6 +1,6 @@
-package nullengine.client.rendering.util.buffer;
+package nullengine.client.rendering.gl.buffer;
 
-import static nullengine.client.rendering.util.GLDataType.FLOAT;
+import static nullengine.client.rendering.gl.GLDataType.FLOAT;
 
 public final class GLBufferElements {
 

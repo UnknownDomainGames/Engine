@@ -1,6 +1,6 @@
 package nullengine.client.rendering.model;
 
-import nullengine.client.rendering.util.buffer.GLBuffer;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
 import nullengine.math.Transform;
 import nullengine.util.Direction;
 

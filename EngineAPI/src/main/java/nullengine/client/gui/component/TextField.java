@@ -14,9 +14,9 @@ import nullengine.client.input.Clipboard;
 import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
+import nullengine.client.rendering.util.Color;
 import nullengine.event.Event;
 import nullengine.math.Math2;
-import nullengine.util.Color;
 
 import java.text.BreakIterator;
 

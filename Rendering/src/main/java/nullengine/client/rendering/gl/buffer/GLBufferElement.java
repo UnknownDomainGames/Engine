@@ -1,6 +1,6 @@
-package nullengine.client.rendering.util.buffer;
+package nullengine.client.rendering.gl.buffer;
 
-import nullengine.client.rendering.util.GLDataType;
+import nullengine.client.rendering.gl.GLDataType;
 
 import javax.annotation.Nonnull;
 

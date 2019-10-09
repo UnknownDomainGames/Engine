@@ -3,10 +3,9 @@ package nullengine.client.gui.component;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.Region;
 import nullengine.client.gui.event.MouseEvent;
-import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.shape.Rect;
+import nullengine.client.rendering.util.Color;
 import nullengine.event.Event;
-import nullengine.util.Color;
 import org.joml.Vector2f;
 
 public class VSlider extends Region {

@@ -13,9 +13,9 @@ import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.i18n.I18n;
 import nullengine.client.rendering.font.Font;
+import nullengine.client.rendering.util.Color;
 import nullengine.enginemod.client.gui.GuiSettings;
 import nullengine.game.GameData;
-import nullengine.util.Color;
 import nullengine.util.Files2;
 
 import java.nio.file.Path;

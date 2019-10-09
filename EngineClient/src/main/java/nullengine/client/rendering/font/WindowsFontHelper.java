@@ -2,10 +2,10 @@ package nullengine.client.rendering.font;
 
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
+import nullengine.client.rendering.gl.buffer.GLBufferFormats;
+import nullengine.client.rendering.gl.buffer.GLBufferMode;
 import nullengine.client.rendering.texture.TextureManager;
-import nullengine.client.rendering.util.buffer.GLBuffer;
-import nullengine.client.rendering.util.buffer.GLBufferFormats;
-import nullengine.client.rendering.util.buffer.GLBufferMode;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;

@@ -1,6 +1,6 @@
 package nullengine.client.rendering.world.chunk;
 
-import nullengine.client.rendering.util.buffer.GLBuffer;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
 
 public class ChunkMeshBuffers {
     private final GLBuffer[] buffers;

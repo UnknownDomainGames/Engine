@@ -2,7 +2,7 @@ package nullengine.client.gui.rendering;
 
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.texture.Texture;
-import nullengine.util.Color;
+import nullengine.client.rendering.util.Color;
 import org.joml.Vector2fc;
 
 public interface Graphics {

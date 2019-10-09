@@ -1,5 +1,6 @@
 package nullengine.client.rendering.util;
 
+import nullengine.client.rendering.gl.GLDataType;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.ByteBuffer;

@@ -1,9 +1,9 @@
 package nullengine.client.rendering.util;
 
 import nullengine.client.rendering.Tessellator;
-import nullengine.client.rendering.util.buffer.GLBuffer;
-import nullengine.client.rendering.util.buffer.GLBufferFormats;
-import nullengine.client.rendering.util.buffer.GLBufferMode;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
+import nullengine.client.rendering.gl.buffer.GLBufferFormats;
+import nullengine.client.rendering.gl.buffer.GLBufferMode;
 import org.joml.Vector4ic;
 
 import static org.lwjgl.opengl.GL11.*;

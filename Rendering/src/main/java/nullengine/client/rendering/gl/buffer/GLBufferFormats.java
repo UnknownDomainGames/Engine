@@ -1,4 +1,4 @@
-package nullengine.client.rendering.util.buffer;
+package nullengine.client.rendering.gl.buffer;
 
 public class GLBufferFormats {
     public static final GLBufferFormat POSITION = GLBufferFormat.of(GLBufferElements.POSITION);

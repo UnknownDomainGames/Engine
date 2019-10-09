@@ -4,9 +4,9 @@ import nullengine.block.Block;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.block.BlockRenderManager;
-import nullengine.client.rendering.util.buffer.GLBuffer;
-import nullengine.client.rendering.util.buffer.GLBufferFormats;
-import nullengine.client.rendering.util.buffer.GLBufferMode;
+import nullengine.client.rendering.gl.buffer.GLBuffer;
+import nullengine.client.rendering.gl.buffer.GLBufferFormats;
+import nullengine.client.rendering.gl.buffer.GLBufferMode;
 import nullengine.item.BlockItem;
 import nullengine.item.ItemStack;
 

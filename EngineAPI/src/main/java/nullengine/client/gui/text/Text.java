@@ -8,7 +8,7 @@ import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.TextRenderer;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
-import nullengine.util.Color;
+import nullengine.client.rendering.util.Color;
 
 public class Text extends Component {
 
