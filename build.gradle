@@ -1,8 +1,6 @@
-import org.gradle.internal.os.OperatingSystem
-
 project.ext.lwjglVersion = "3.2.1"
 
-switch (OperatingSystem.current()) {
+switch (OperatingSystem.current) {
     case OperatingSystem.WINDOWS:
         project.ext.lwjglNatives = "natives-windows"
         break
