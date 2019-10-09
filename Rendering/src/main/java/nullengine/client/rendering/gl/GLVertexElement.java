@@ -9,16 +9,22 @@ public class GLVertexElement {
     private final Usage usage;
     private final int size;
     private final int bytes;
+    private final boolean normalized;
 
     public GLVertexElement(@Nonnull GLDataType type, int size) {
-        this(type, Usage.CUSTOM, size);
+        this(type, Usage.CUSTOM, size, false);
     }
 
     public GLVertexElement(@Nonnull GLDataType type, Usage usage, int size) {
+        this(type, usage, size, false);
+    }
+
+    public GLVertexElement(@Nonnull GLDataType type, Usage usage, int size, boolean normalized) {
         this.type = requireNonNull(type);
         this.usage = requireNonNull(usage);
         this.size = size;
         this.bytes = size * type.bytes;
+        this.normalized = normalized;
     }
 
     public GLDataType getType() {
@@ -35,6 +41,10 @@ public class GLVertexElement {
 
     public int getBytes() {
         return bytes;
+    }
+
+    public boolean isNormalized() {
+        return normalized;
     }
 
     @Override
