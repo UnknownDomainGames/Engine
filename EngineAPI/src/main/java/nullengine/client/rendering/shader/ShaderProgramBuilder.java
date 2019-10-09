@@ -2,6 +2,7 @@ package nullengine.client.rendering.shader;
 
 import nullengine.Platform;
 import nullengine.client.asset.AssetURL;
+import nullengine.client.rendering.gl.shader.ShaderType;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;

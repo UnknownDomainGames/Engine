@@ -1,6 +1,7 @@
 package nullengine.client.rendering.shader;
 
 import nullengine.Platform;
+import nullengine.client.rendering.gl.shader.ShaderType;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class Shader {
     }
 
     public static Shader create(String content, ShaderType type) {
-        int shaderId = glCreateShader(type.getGlEnum());
+        int shaderId = glCreateShader(type.gl);
         glShaderSource(shaderId, content);
 
         glCompileShader(shaderId);
