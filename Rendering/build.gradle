@@ -1,0 +1,44 @@
+apply plugin: 'java'
+
+roject.ext.lwjglVersion = "3.2.1"
+
+switch (OperatingSystem.current) {
+    case OperatingSystem.WINDOWS:
+        project.ext.lwjglNatives = "natives-windows"
+        break
+    case OperatingSystem.LINUX:
+        project.ext.lwjglNatives = "natives-linux"
+        break
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = "natives-macos"
+        break
+}
+
+sourceCompatibility = targetCompatibility = 11
+
+repositories {
+    jcenter()
+    mavenCentral()
+    maven {
+        url 'https://jitpack.io'
+    }
+    mavenLocal()
+}
+
+dependencies {
+    compile "org.lwjgl:lwjgl:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-assimp:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-openal:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-opengl:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-stb:$lwjglVersion"
+    compile "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
+    compile "org.lwjgl:lwjgl-assimp:$lwjglVersion:$lwjglNatives"
+    compile "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"
+    compile "org.lwjgl:lwjgl-openal:$lwjglVersion:$lwjglNatives"
+    compile "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives"
+    compile "org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNatives"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.5.0'
+}
