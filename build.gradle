@@ -1,19 +1,8 @@
 project.ext.lwjglVersion = "3.2.1"
 
-switch (OperatingSystem.current) {
-    case OperatingSystem.WINDOWS:
-        project.ext.lwjglNatives = "natives-windows"
-        break
-    case OperatingSystem.LINUX:
-        project.ext.lwjglNatives = "natives-linux"
-        break
-    case OperatingSystem.MAC_OS:
-        project.ext.lwjglNatives = "natives-macos"
-        break
-}
-
 buildscript {
     repositories {
+        jcenter()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
@@ -49,10 +38,6 @@ subprojects {
         maven {
             url "https://oss.sonatype.org/content/repositories/releases/"
         }
-    }
-
-    test {
-        useJUnitPlatform()
     }
 
     dependencies {
