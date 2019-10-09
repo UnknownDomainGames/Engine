@@ -117,8 +117,8 @@ public class GLFWWindow implements Window {
         resized = true;
         fboWidth = width;
         fboHeight = height;
-        windowWidth = Math.round(width * getContentScaleX());
-        windowHeight = Math.round(height * getContentScaleY());
+        windowWidth = Math.round(width / getContentScaleX());
+        windowHeight = Math.round(height / getContentScaleY());
     }
 
     @Override
@@ -341,8 +341,8 @@ public class GLFWWindow implements Window {
                 if (this.displayMode == DisplayMode.WINDOWED) {
                     lastPosX = posX;
                     lastPosY = posY;
-                    lastWidth = windowWidth;
-                    lastHeight = windowHeight;
+                    lastWidth = fboWidth;
+                    lastHeight = fboHeight;
                 }
                 glfwSetWindowMonitor(pointer, monitor.getPointer(), 0, 0, nw, nh, frameRate > 0 ? frameRate : monitor.getVideoMode().getRefreshRate());
                 break;
@@ -350,8 +350,8 @@ public class GLFWWindow implements Window {
                 if (this.displayMode == DisplayMode.WINDOWED) {
                     lastPosX = posX;
                     lastPosY = posY;
-                    lastWidth = windowWidth;
-                    lastHeight = windowHeight;
+                    lastWidth = fboWidth;
+                    lastHeight = fboHeight;
                 }
                 setDecorated(false);
                 glfwSetWindowMonitor(pointer, NULL, 0, 0, monitor.getVideoMode().getWidth(), monitor.getVideoMode().getHeight(), monitor.getVideoMode().getRefreshRate());
