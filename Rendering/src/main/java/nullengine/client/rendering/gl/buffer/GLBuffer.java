@@ -1,5 +1,6 @@
 package nullengine.client.rendering.gl.buffer;
 
+import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.util.Color;
 import nullengine.client.rendering.util.Math2;
 import org.apache.commons.lang3.Validate;
@@ -27,7 +28,7 @@ public abstract class GLBuffer {
     private float posOffsetZ;
 
     private boolean drawing;
-    private GLBufferMode drawMode;
+    private GLDrawMode drawMode;
     private GLBufferFormat format;
 
     private int vertexCount;
@@ -54,7 +55,7 @@ public abstract class GLBuffer {
         return drawing;
     }
 
-    public GLBufferMode getDrawMode() {
+    public GLDrawMode getDrawMode() {
         return drawMode;
     }
 
@@ -66,7 +67,7 @@ public abstract class GLBuffer {
         return vertexCount;
     }
 
-    public void begin(@Nonnull GLBufferMode mode, @Nonnull GLBufferFormat format) {
+    public void begin(@Nonnull GLDrawMode mode, @Nonnull GLBufferFormat format) {
         if (drawing) {
             throw new IllegalStateException("Already drawing!");
         } else {

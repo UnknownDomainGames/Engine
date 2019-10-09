@@ -6,9 +6,9 @@ import nullengine.client.asset.AssetTypes;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Tessellator;
+import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.buffer.GLBuffer;
 import nullengine.client.rendering.gl.buffer.GLBufferFormats;
-import nullengine.client.rendering.gl.buffer.GLBufferMode;
 import nullengine.client.rendering.model.BakedModel;
 import nullengine.item.ItemStack;
 
@@ -28,7 +28,7 @@ public class VoxelItemRenderer implements ItemRenderer {
     public void render(ItemStack itemStack, float partial) {
         Tessellator tessellator = Tessellator.getInstance();
         GLBuffer buffer = tessellator.getBuffer();
-        buffer.begin(GLBufferMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
+        buffer.begin(GLDrawMode.TRIANGLES, GLBufferFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
         model.get().putVertexes(buffer, 0);
         tessellator.draw();
     }

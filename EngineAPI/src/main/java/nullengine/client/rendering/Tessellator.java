@@ -37,7 +37,7 @@ public class Tessellator {
         vao.uploadData(buffer);
         vao.bind();
         buffer.getFormat().bind();
-        vao.drawArrays(buffer.getDrawMode().getOpenGlMode());
+        vao.drawArrays(buffer.getDrawMode().gl);
         vao.unbind();
     }
 }

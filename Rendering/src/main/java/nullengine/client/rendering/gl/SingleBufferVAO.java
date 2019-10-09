@@ -56,6 +56,12 @@ public class SingleBufferVAO {
         unbind();
     }
 
+    public void drawArrays(GLDrawMode mode) {
+        bind();
+        GL11.glDrawArrays(mode.gl, 0, this.vertexCount);
+        unbind();
+    }
+
     public void dispose() {
         if (id != 0) {
             vbo.dispose();
