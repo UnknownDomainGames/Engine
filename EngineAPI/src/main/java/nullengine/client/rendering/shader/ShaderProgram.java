@@ -3,7 +3,6 @@ package nullengine.client.rendering.shader;
 import nullengine.Platform;
 import nullengine.util.disposer.Disposable;
 import org.joml.*;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
@@ -13,9 +12,9 @@ import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
 import static org.lwjgl.opengl.GL20.GL_VALIDATE_STATUS;
 
-public class ShaderProgram implements Disposable {
+public final class ShaderProgram implements Disposable {
 
-    protected int programId = -1;
+    private int programId = -1;
 
     private static void setUniform(int location, int value) {
         GL20.glUniform1i(location, value);
@@ -80,20 +79,6 @@ public class ShaderProgram implements Disposable {
         }
     }
 
-    @Deprecated
-    public static void enableVertexAttrib(int location) {
-        GL20.glEnableVertexAttribArray(location);
-    }
-
-    public static void disableVertexAttrib(int location) {
-        GL20.glDisableVertexAttribArray(location);
-    }
-
-    @Deprecated
-    public static void pointVertexAttribute(int location, int size, int stride, int offset) {
-        GL20.glVertexAttribPointer(location, size, GL11.GL_FLOAT, false, stride, offset);
-    }
-
     void init(Shader... shaders) {
         programId = GL20.glCreateProgram();
 
@@ -123,7 +108,6 @@ public class ShaderProgram implements Disposable {
         GL20.glUseProgram(programId);
     }
 
-    @Deprecated
     public void unuse() {
         GL20.glUseProgram(0);
     }
