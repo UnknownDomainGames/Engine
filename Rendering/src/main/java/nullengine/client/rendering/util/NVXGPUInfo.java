@@ -1,5 +1,6 @@
 package nullengine.client.rendering.util;
 
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;
 
@@ -10,8 +11,20 @@ import static org.lwjgl.opengl.NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_TOTAL_AVAILAB
 
 public class NVXGPUInfo implements GPUInfo {
 
+    private String name;
+    private String vendor;
     private int totalMemory = -1;
     private int freeMemory = -1;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getVendor() {
+        return vendor;
+    }
 
     @Override
     public int getTotalMemory() {
@@ -29,6 +42,8 @@ public class NVXGPUInfo implements GPUInfo {
             GL20.glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, buffer);
             totalMemory = buffer.get();
         }
+        this.name = GL11.glGetString(GL11.GL_RENDERER);
+        this.vendor = GL11.glGetString(GL11.GL_VENDOR);
         update();
     }
 
