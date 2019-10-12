@@ -1,5 +1,6 @@
-package nullengine.client.rendering.util;
+package nullengine.client.rendering.gl.util;
 
+import nullengine.client.rendering.util.GLInfo;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
