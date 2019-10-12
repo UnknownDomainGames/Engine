@@ -1,27 +1,41 @@
 package nullengine.client.rendering.gl;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
-import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.Validate.notNull;
 
 public class GLVertexElement {
+
     private final GLDataType type;
     private final Usage usage;
     private final int size;
     private final int bytes;
     private final boolean normalized;
 
+    public enum Usage {
+        POSITION,
+        COLOR,
+        TEXTURE_UV,
+        NORMAL,
+        CUSTOM
+    }
+
     public GLVertexElement(@Nonnull GLDataType type, int size) {
         this(type, Usage.CUSTOM, size, false);
     }
 
-    public GLVertexElement(@Nonnull GLDataType type, Usage usage, int size) {
+    public GLVertexElement(@Nonnull GLDataType type, int size, boolean normalized) {
+        this(type, Usage.CUSTOM, size, normalized);
+    }
+
+    public GLVertexElement(@Nonnull GLDataType type, @Nonnull Usage usage, int size) {
         this(type, usage, size, false);
     }
 
-    public GLVertexElement(@Nonnull GLDataType type, Usage usage, int size, boolean normalized) {
-        this.type = requireNonNull(type);
-        this.usage = requireNonNull(usage);
+    public GLVertexElement(@Nonnull GLDataType type, @Nonnull Usage usage, int size, boolean normalized) {
+        this.type = notNull(type);
+        this.usage = notNull(usage);
         this.size = size;
         this.bytes = size * type.bytes;
         this.normalized = normalized;
@@ -55,11 +69,20 @@ public class GLVertexElement {
                 '}';
     }
 
-    public static enum Usage {
-        POSITION,
-        COLOR,
-        TEXTURE_UV,
-        NORMAL,
-        CUSTOM
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GLVertexElement that = (GLVertexElement) o;
+        return size == that.size &&
+                bytes == that.bytes &&
+                normalized == that.normalized &&
+                type == that.type &&
+                usage == that.usage;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, usage, size, bytes, normalized);
     }
 }

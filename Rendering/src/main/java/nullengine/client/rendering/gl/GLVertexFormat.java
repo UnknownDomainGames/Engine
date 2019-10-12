@@ -115,4 +115,17 @@ public class GLVertexFormat {
                 "elements=" + Arrays.toString(elements) +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GLVertexFormat that = (GLVertexFormat) o;
+        return Arrays.equals(elements, that.elements);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(elements);
+    }
 }
