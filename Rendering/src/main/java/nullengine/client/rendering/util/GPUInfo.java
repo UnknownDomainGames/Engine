@@ -1,6 +1,6 @@
 package nullengine.client.rendering.util;
 
-public interface GPUMemoryInfo {
+public interface GPUInfo {
 
     int getTotalMemory();
 

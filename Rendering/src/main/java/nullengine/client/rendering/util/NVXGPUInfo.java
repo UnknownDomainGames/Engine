@@ -8,7 +8,7 @@ import java.nio.IntBuffer;
 import static org.lwjgl.opengl.NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX;
 import static org.lwjgl.opengl.NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX;
 
-public class NVXGPUMemoryInfo implements GPUMemoryInfo {
+public class NVXGPUInfo implements GPUInfo {
 
     private int totalMemory = -1;
     private int freeMemory = -1;
