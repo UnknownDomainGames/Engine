@@ -1,7 +1,7 @@
 package nullengine.client.rendering.model;
 
 import nullengine.client.rendering.gl.GLBuffer;
-import nullengine.math.Transform;
+import nullengine.client.rendering.math.Transform;
 import nullengine.util.Direction;
 
 public interface BakedModel {

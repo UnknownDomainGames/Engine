@@ -1,4 +1,4 @@
-package nullengine.math;
+package nullengine.client.rendering.math;
 
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
@@ -10,7 +10,7 @@ public class Transform {
     public static final Transform DEFAULT = new Transform(new Vector3f(), new Vector3f(), new Vector3f(1));
 
     private final Vector3f translate = new Vector3f();
-    private final Vector3f rotate = new Rotation();
+    private final Vector3f rotate = new Vector3f();
     private final Vector3f scale = new Vector3f();
     private final Matrix4f matrix = new Matrix4f();
 

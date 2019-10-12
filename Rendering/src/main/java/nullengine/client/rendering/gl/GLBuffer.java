@@ -1,7 +1,7 @@
 package nullengine.client.rendering.gl;
 
+import nullengine.client.rendering.math.Math2;
 import nullengine.client.rendering.util.Color;
-import nullengine.client.rendering.util.Math2;
 import org.apache.commons.lang3.Validate;
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;

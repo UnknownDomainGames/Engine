@@ -1,6 +1,6 @@
 package nullengine.client.rendering.model.voxel;
 
-import nullengine.math.Transform;
+import nullengine.client.rendering.math.Transform;
 
 public class ModelLoadUtils {
 

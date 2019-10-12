@@ -1,4 +1,4 @@
-package nullengine.client.rendering.util;
+package nullengine.client.rendering.math;
 
 public class Math2 {
 
