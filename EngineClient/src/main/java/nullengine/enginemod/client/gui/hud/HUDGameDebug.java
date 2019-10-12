@@ -7,7 +7,7 @@ import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.text.Text;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.camera.Camera;
-import nullengine.client.rendering.util.GPUMemoryInfo;
+import nullengine.client.rendering.util.GPUInfo;
 import nullengine.entity.Entity;
 import nullengine.math.BlockPos;
 import nullengine.world.hit.BlockHitResult;
@@ -68,8 +68,8 @@ public class HUDGameDebug extends VBox implements GuiTickable {
         long maxMemory = runtime.maxMemory();
         long freeMemory = runtime.freeMemory();
         memory.text().setValue(format("Memory: %d MB / %d MB (Max: %d MB)", (totalMemory - freeMemory) / 1024 / 1024, totalMemory / 1024 / 1024, maxMemory / 1024 / 1024));
-        GPUMemoryInfo gpuMemoryInfo = context.getGPUMemoryInfo();
-        gpuMemory.text().setValue(format("GPU Memory: %d MB / %d MB", (gpuMemoryInfo.getTotalMemory() - gpuMemoryInfo.getFreeMemory()) / 1024, gpuMemoryInfo.getTotalMemory() / 1024));
+        GPUInfo gpuInfo = context.getGPUMemoryInfo();
+        gpuMemory.text().setValue(format("GPU Memory: %d MB / %d MB", (gpuInfo.getTotalMemory() - gpuInfo.getFreeMemory()) / 1024, gpuInfo.getTotalMemory() / 1024));
 //
 //        blockHitInfo.visible().set(context.getHit() != null);
 //        if (context.getHit() != null) {

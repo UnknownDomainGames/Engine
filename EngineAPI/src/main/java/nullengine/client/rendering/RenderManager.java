@@ -7,7 +7,7 @@ import nullengine.client.rendering.display.DisplayInfo;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GLInfo;
-import nullengine.client.rendering.util.GPUMemoryInfo;
+import nullengine.client.rendering.util.GPUInfo;
 import nullengine.component.GameObject;
 import nullengine.exception.UninitializationException;
 import org.joml.FrustumIntersection;
@@ -42,7 +42,7 @@ public interface RenderManager extends GameObject<RenderManager> {
 
     GLInfo getGLInfo();
 
-    GPUMemoryInfo getGPUMemoryInfo();
+    GPUInfo getGPUMemoryInfo();
 
     int getFPS();
 

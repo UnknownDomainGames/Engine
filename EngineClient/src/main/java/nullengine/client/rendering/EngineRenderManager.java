@@ -19,8 +19,8 @@ import nullengine.client.rendering.texture.GLTexture;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GLInfo;
 import nullengine.client.rendering.util.GLInfoImpl;
-import nullengine.client.rendering.util.GPUMemoryInfo;
-import nullengine.client.rendering.util.NVXGPUMemoryInfo;
+import nullengine.client.rendering.util.GPUInfo;
+import nullengine.client.rendering.util.NVXGPUInfo;
 import nullengine.component.Component;
 import nullengine.component.ComponentAgent;
 import org.joml.FrustumIntersection;
@@ -61,7 +61,7 @@ public class EngineRenderManager implements RenderManager {
     private GuiManager guiManager;
     private DisplayInfo displayInfo;
     private GLInfo glInfo;
-    private GPUMemoryInfo gpuMemoryInfo;
+    private GPUInfo gpuInfo;
 
     private Camera camera;
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
@@ -117,8 +117,8 @@ public class EngineRenderManager implements RenderManager {
     }
 
     @Override
-    public GPUMemoryInfo getGPUMemoryInfo() {
-        return gpuMemoryInfo;
+    public GPUInfo getGPUMemoryInfo() {
+        return gpuInfo;
     }
 
     private long lastUpdateFps = System.currentTimeMillis();
@@ -218,10 +218,10 @@ public class EngineRenderManager implements RenderManager {
         logger.info("\tGL_SHADING_LANGUAGE_VERSION: {}", glInfo.getShadingLanguageVersion());
         logger.info("------------------------------");
 
-        NVXGPUMemoryInfo nvxgpuMemoryInfo = new NVXGPUMemoryInfo();
+        NVXGPUInfo nvxgpuMemoryInfo = new NVXGPUInfo();
         nvxgpuMemoryInfo.init();
         scheduler.runTaskEveryFrame(nvxgpuMemoryInfo::update);
-        gpuMemoryInfo = nvxgpuMemoryInfo;
+        gpuInfo = nvxgpuMemoryInfo;
 
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     }
