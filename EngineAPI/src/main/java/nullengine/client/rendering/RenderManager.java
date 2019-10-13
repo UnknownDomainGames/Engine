@@ -42,7 +42,7 @@ public interface RenderManager extends GameObject<RenderManager> {
 
     GLInfo getGLInfo();
 
-    GPUInfo getGPUMemoryInfo();
+    GPUInfo getGPUInfo();
 
     int getFPS();
 

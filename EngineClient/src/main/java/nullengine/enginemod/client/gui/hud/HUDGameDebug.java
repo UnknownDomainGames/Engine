@@ -68,7 +68,7 @@ public class HUDGameDebug extends VBox implements GuiTickable {
         long maxMemory = runtime.maxMemory();
         long freeMemory = runtime.freeMemory();
         memory.text().setValue(format("Memory: %d MB / %d MB (Max: %d MB)", (totalMemory - freeMemory) / 1024 / 1024, totalMemory / 1024 / 1024, maxMemory / 1024 / 1024));
-        GPUInfo gpuInfo = context.getGPUMemoryInfo();
+        GPUInfo gpuInfo = context.getGPUInfo();
         gpuMemory.text().setValue(format("GPU Memory: %d MB / %d MB", (gpuInfo.getTotalMemory() - gpuInfo.getFreeMemory()) / 1024, gpuInfo.getTotalMemory() / 1024));
 //
 //        blockHitInfo.visible().set(context.getHit() != null);

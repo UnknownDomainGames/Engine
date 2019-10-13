@@ -117,7 +117,7 @@ public class EngineRenderManager implements RenderManager {
     }
 
     @Override
-    public GPUInfo getGPUMemoryInfo() {
+    public GPUInfo getGPUInfo() {
         return gpuInfo;
     }
 
