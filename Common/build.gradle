@@ -1,0 +1,7 @@
+dependencies {
+    compile 'com.google.guava:guava:27.0.1-jre'
+    compile 'org.apache.commons:commons-lang3:3.8.1'
+    compile 'com.google.code.gson:gson:2.8.5'
+    compile 'commons-io:commons-io:2.6'
+    compile 'org.ow2.asm:asm-commons:7.0'
+}
