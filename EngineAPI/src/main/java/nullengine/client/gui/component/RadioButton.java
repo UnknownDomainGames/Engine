@@ -12,7 +12,7 @@ import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.RadioButtonRenderer;
 import nullengine.client.gui.text.Text;
-import nullengine.client.rendering.util.Color;
+import nullengine.util.Color;
 
 public class RadioButton extends ToggleButton {
 

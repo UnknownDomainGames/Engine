@@ -11,7 +11,7 @@ import nullengine.client.gui.layout.HBox;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Pos;
-import nullengine.client.rendering.util.Color;
+import nullengine.util.Color;
 
 public class GuiDirectConnectServer extends BorderPane {
     public GuiDirectConnectServer(){

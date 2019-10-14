@@ -1,6 +1,6 @@
 package nullengine.client.rendering.texture;
 
-import nullengine.client.rendering.util.Color;
+import nullengine.util.Color;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 

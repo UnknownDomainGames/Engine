@@ -6,7 +6,7 @@ import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.GLVertexFormats;
 import nullengine.client.rendering.texture.TextureManager;
-import nullengine.client.rendering.util.Color;
+import nullengine.util.Color;
 import nullengine.world.hit.BlockHitResult;
 
 public class BlockSelectionRenderer {

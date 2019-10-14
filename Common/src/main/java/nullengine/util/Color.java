@@ -1,4 +1,4 @@
-package nullengine.client.rendering.util;
+package nullengine.util;
 
 import java.util.Objects;
 

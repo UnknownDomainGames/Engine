@@ -5,7 +5,7 @@ import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.event.MouseEvent;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Insets;
-import nullengine.client.rendering.util.Color;
+import nullengine.util.Color;
 
 import java.util.function.Consumer;
 

@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
 import nullengine.client.gui.event.MouseEvent;
 import nullengine.client.gui.misc.Border;
-import nullengine.client.rendering.util.Color;
+import nullengine.util.Color;
 
 public class ToggleButton extends Button {
     private MutableBooleanValue selected = new SimpleMutableBooleanValue(false);

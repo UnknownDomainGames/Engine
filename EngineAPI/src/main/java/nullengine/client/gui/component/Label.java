@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.value.MutableValue;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.text.Text;
 import nullengine.client.rendering.font.Font;
-import nullengine.client.rendering.util.Color;
+import nullengine.util.Color;
 
 public class Label extends Control {
 

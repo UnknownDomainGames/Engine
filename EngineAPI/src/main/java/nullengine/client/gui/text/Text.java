@@ -10,7 +10,7 @@ import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.TextRenderer;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
-import nullengine.client.rendering.util.Color;
+import nullengine.util.Color;
 
 import java.util.stream.Collectors;
 

@@ -11,7 +11,7 @@ import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.rendering.font.Font;
-import nullengine.client.rendering.util.Color;
+import nullengine.util.Color;
 
 public class GuiIngameMenu extends BorderPane {
     public GuiIngameMenu(){
