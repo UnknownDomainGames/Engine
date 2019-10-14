@@ -1,7 +1,5 @@
 import org.gradle.internal.os.OperatingSystem
 
-apply plugin: 'java'
-
 project.ext.lwjglVersion = "3.2.1"
 
 switch (OperatingSystem.current()) {
@@ -16,20 +14,8 @@ switch (OperatingSystem.current()) {
         break
 }
 
-sourceCompatibility = targetCompatibility = 11
-
-repositories {
-    jcenter()
-    mavenCentral()
-    maven {
-        url 'https://jitpack.io'
-    }
-    mavenLocal()
-}
-
 dependencies {
-    compile 'com.google.guava:guava:27.0.1-jre'
-    compile 'org.apache.commons:commons-lang3:3.8.1'
+    compile project(':Common')
 
     compile 'org.joml:joml:1.9.12'
 
@@ -45,7 +31,4 @@ dependencies {
     compile "org.lwjgl:lwjgl-openal:$lwjglVersion:$lwjglNatives"
     compile "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives"
     compile "org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNatives"
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.5.0'
 }
