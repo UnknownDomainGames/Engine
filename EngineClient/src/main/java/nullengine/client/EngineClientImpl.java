@@ -134,7 +134,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         initRenderCrashReportDetails();
         renderManager.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         addShutdownListener(renderManager::dispose);
-        assetManager.getReloadManager().addListener(new AssetReloadListener().name("Shader").runnable(ShaderManager.instance()::reload));
+        assetManager.getReloadManager().addListener(AssetReloadListener.builder().name("Shader").runnable(ShaderManager.instance()::reload).build());
 
         assetManager.register(AssetType.builder(BakedModel.class).name("VoxelModel").provider(new ModelManager()).parentLocation("model").extensionName(".json").build());
 
@@ -142,16 +142,16 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         soundManager = new EngineSoundManager();
         soundManager.init();
         addShutdownListener(soundManager::dispose);
-        assetManager.getReloadManager().addListener(new AssetReloadListener().name("Sound").runnable(soundManager::reload));
+        assetManager.getReloadManager().addListener(AssetReloadListener.builder().name("Sound").runnable(soundManager::reload).build());
 
         logger.info("Initializing internalization!");
         localeManager = LocaleManager.INSTANCE;
-        assetManager.getReloadManager().addListener(new AssetReloadListener().name("I18n").runnable(() -> {
+        assetManager.getReloadManager().addListener(AssetReloadListener.builder().name("I18n").runnable(() -> {
             localeManager.reset();
             for (ModContainer mod : EngineClientImpl.this.getModManager().getLoadedMods()) {
                 localeManager.register(mod);
             }
-        }));
+        }).build());
 
         assetManager.reload();
     }

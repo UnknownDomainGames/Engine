@@ -45,8 +45,8 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
     @Override
     public void init(AssetManager manager, AssetType<GLTexture> type) {
         sourceManager = manager.getSourceManager();
-        manager.getReloadManager().addListener(new AssetReloadListener().name("Texture").befores("CleanTextureCache").runnable(this::reload));
-        manager.getReloadManager().addListener(new AssetReloadListener().name("CleanTextureCache").runnable(this::cleanCache));
+        manager.getReloadManager().addListener(AssetReloadListener.builder().name("Texture").before("CleanTextureCache").runnable(this::reload).build());
+        manager.getReloadManager().addListener(AssetReloadListener.builder().name("CleanTextureCache").runnable(this::cleanCache).build());
     }
 
     @Override

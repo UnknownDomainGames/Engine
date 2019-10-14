@@ -1,36 +1,27 @@
 package nullengine.client.asset.reloading;
 
+import nullengine.util.KeyComparable;
+
 import java.util.Set;
 
-public final class AssetReloadListener implements Comparable<AssetReloadListener> {
+import static org.apache.commons.lang3.Validate.notNull;
 
-    private String name;
-    private Runnable runnable;
-    private Set<String> befores = Set.of();
-    private Set<String> afters = Set.of();
+public final class AssetReloadListener implements KeyComparable<String, AssetReloadListener> {
 
-    public AssetReloadListener name(String name) {
-        this.name = name;
-        return this;
+    private final String name;
+    private final Runnable runnable;
+    private final Set<String> before;
+    private final Set<String> after;
+
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public AssetReloadListener runnable(Runnable runnable) {
-        this.runnable = runnable;
-        return this;
-    }
-
-    public AssetReloadListener befores(String... befores) {
-        this.befores = Set.of(befores);
-        return this;
-    }
-
-    public AssetReloadListener afters(String... afters) {
-        this.afters = Set.of(afters);
-        return this;
-    }
-
-    public String getName() {
-        return name;
+    private AssetReloadListener(String name, Runnable runnable, Set<String> before, Set<String> after) {
+        this.name = notNull(name);
+        this.runnable = notNull(runnable);
+        this.before = before;
+        this.after = after;
     }
 
     public void onReload() {
@@ -38,15 +29,51 @@ public final class AssetReloadListener implements Comparable<AssetReloadListener
     }
 
     @Override
-    public int compareTo(AssetReloadListener o) {
-        if (afters.contains(o.name) || o.befores.contains(name))
-            return 1;
-
-        if (befores.contains(o.name) || o.afters.contains(name))
-            return -1;
-
-        return 0;
+    public String key() {
+        return name;
     }
 
+    @Override
+    public Set<String> beforeThis() {
+        return before;
+    }
 
+    @Override
+    public Set<String> afterThis() {
+        return after;
+    }
+
+    public static final class Builder {
+        private String name;
+        private Runnable runnable;
+        private Set<String> before = Set.of();
+        private Set<String> after = Set.of();
+
+        private Builder() {
+        }
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder runnable(Runnable runnable) {
+            this.runnable = runnable;
+            return this;
+        }
+
+        public Builder before(String... before) {
+            this.before = Set.of(before);
+            return this;
+        }
+
+        public Builder after(String... after) {
+            this.after = Set.of(after);
+            return this;
+        }
+
+        public AssetReloadListener build() {
+            return new AssetReloadListener(name, runnable, before, after);
+        }
+    }
 }

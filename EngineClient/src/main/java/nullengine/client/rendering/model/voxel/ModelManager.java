@@ -39,9 +39,9 @@ public class ModelManager implements AssetProvider<BakedModel> {
         this.type = type;
         this.textureAtlas = TextureManager.instance().getTextureAtlas(StandardTextureAtlas.DEFAULT);
         manager.getReloadManager().addListener(
-                new AssetReloadListener().name("ReloadVoxelModel").befores("Texture").runnable(this::reloadModels));
+                AssetReloadListener.builder().name("ReloadVoxelModel").before("Texture").runnable(this::reloadModels).build());
         manager.getReloadManager().addListener(
-                new AssetReloadListener().name("BakeVoxelModel").befores("CleanTextureCache").afters("Texture").runnable(this::bakeModels));
+                AssetReloadListener.builder().name("BakeVoxelModel").before("CleanTextureCache").after("Texture").runnable(this::bakeModels).build());
     }
 
     @Override
