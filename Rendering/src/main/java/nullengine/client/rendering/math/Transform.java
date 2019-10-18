@@ -4,37 +4,45 @@ import org.joml.*;
 
 public class Transform {
 
-    public static final Transform DEFAULT = new Transform(new Vector3f(), new Vector3f(), new Vector3f(1));
+    public static final Transform DEFAULT = new Transform(Vectors.VEC3F_ZERO, Vectors.VEC3F_ZERO, Vectors.VEC3F_ONE);
 
-    private final Vector3f translate = new Vector3f();
-    private final Vector3f rotate = new Vector3f();
+    private final Vector3f translation = new Vector3f();
+    private final Quaternionf rotation = new Quaternionf();
     private final Vector3f scale = new Vector3f();
-    private final Matrix4f transformationMatrix = new Matrix4f();
 
-    public Vector3fc getTranslate() {
-        return translate;
+    public Transform(Vector3fc translation, Vector3fc rotation, Vector3fc scale) {
+        this.translation.set(translation);
+        this.rotation.rotateXYZ(rotation.x(), rotation.y(), rotation.z());
+        this.scale.set(scale);
     }
 
-    public Vector3fc getRotate() {
-        return rotate;
+    public Transform(Vector3fc translation, Quaternionfc rotation, Vector3fc scale) {
+        this.translation.set(translation);
+        this.rotation.set(rotation);
+        this.scale.set(scale);
     }
 
-    public Vector3fc getScale() {
+    public Vector3f getTranslation() {
+        return translation;
+    }
+
+    public Quaternionf getRotation() {
+        return rotation;
+    }
+
+    public Vector3f getScale() {
         return scale;
     }
 
-    public Transform(Vector3fc translate, Vector3fc rotate, Vector3fc scale) {
-        this.translate.set(translate);
-        this.rotate.set(rotate);
-        this.scale.set(scale);
-        this.transformationMatrix.scale(this.scale).rotateXYZ(this.rotate).translate(this.translate);
+    public Vector3f transform(Vector3fc vec) {
+        return transform(vec, new Vector3f());
     }
 
-    public Vector4f transform(Vector4f v) {
-        return transformationMatrix.transform(v);
+    public Vector3f transform(Vector3fc vec, Vector3f dest) {
+        return rotation.transform(vec.mul(scale, dest), dest).add(translation);
     }
 
-    public Vector4f transform(Vector4fc v, Vector4f dest) {
-        return transformationMatrix.transform(v, dest);
+    public Matrix4f toTransformMatrix() {
+        return new Matrix4f().scale(this.scale).rotate(rotation).translate(this.translation);
     }
 }
