@@ -1,6 +1,6 @@
 package nullengine.client.rendering.font;
 
-import org.lwjgl.stb.STBTTBakedChar;
+import org.lwjgl.stb.STBTTPackedchar;
 
 public class NativeTTFont {
 
@@ -8,13 +8,13 @@ public class NativeTTFont {
     private final Font font;
 
     private final int textureId;
-    private final STBTTBakedChar.Buffer charBuffer;
+    private final STBTTPackedchar.Buffer charBuffer;
     private final int bitmapWidth;
     private final int bitmapHeight;
 
     private final float scaleForPixelHeight;
 
-    public NativeTTFont(NativeTTFontInfo parent, Font font, int textureId, STBTTBakedChar.Buffer charBuffer, int bitmapWidth, int bitmapHeight, float scaleForPixelHeight) {
+    public NativeTTFont(NativeTTFontInfo parent, Font font, int textureId, STBTTPackedchar.Buffer charBuffer, int bitmapWidth, int bitmapHeight, float scaleForPixelHeight) {
         this.parent = parent;
         this.textureId = textureId;
         this.charBuffer = charBuffer;
@@ -36,7 +36,7 @@ public class NativeTTFont {
         return textureId;
     }
 
-    public STBTTBakedChar.Buffer getCharBuffer() {
+    public STBTTPackedchar.Buffer getCharBuffer() {
         return charBuffer;
     }
 

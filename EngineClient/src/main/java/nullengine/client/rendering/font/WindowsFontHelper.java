@@ -10,9 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.stb.STBTTAlignedQuad;
-import org.lwjgl.stb.STBTTBakedChar;
-import org.lwjgl.stb.STBTTFontinfo;
+import org.lwjgl.stb.*;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
@@ -24,6 +22,7 @@ import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -97,9 +96,16 @@ public final class WindowsFontHelper implements FontHelper {
 
     private List<Path> findLocalTTFonts() {
         try {
-            return Files.walk(Path.of("C:\\Windows\\Fonts").toAbsolutePath())
-                    .filter(path -> path.getFileName().toString().endsWith(".ttf") || path.getFileName().toString().endsWith(".ttc"))
+            Predicate<Path> typefaceFilter = path -> path.getFileName().toString().endsWith(".ttf") || path.getFileName().toString().endsWith(".ttc");
+            var fonts = Files.walk(Path.of("C:\\Windows\\Fonts").toAbsolutePath())
+                    .filter(typefaceFilter)
                     .collect(Collectors.toList());
+            var userFontDir = Path.of(System.getProperty("user.home"), "Appdata","Local","Microsoft", "Windows", "Fonts");
+            if(userFontDir.toFile().exists()){
+                var userFont = Files.walk(userFontDir).filter(typefaceFilter).collect(Collectors.toList());
+                fonts.addAll(userFont);
+            }
+            return fonts;
         } catch (IOException e) {
             return List.of();
         }
@@ -185,16 +191,11 @@ public final class WindowsFontHelper implements FontHelper {
         }
 
         var nativeTTFont = getNativeFont(font);
-        STBTTBakedChar.Buffer cdata = nativeTTFont.getCharBuffer();
+        var cdata = nativeTTFont.getCharBuffer();
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer charPointBuffer = stack.mallocInt(1);
             FloatBuffer posX = stack.floats(0);
             FloatBuffer posY = stack.floats(0 + font.getSize());
-
-            float factorX = 1.0f / nativeTTFont.getInfo().getContentScaleX();
-            float factorY = 1.0f / nativeTTFont.getInfo().getContentScaleY();
-
-            float centerY = 0 + font.getSize();
 
             int bitmapWidth = nativeTTFont.getBitmapWidth();
             int bitmapHeight = nativeTTFont.getBitmapHeight();
@@ -206,7 +207,7 @@ public final class WindowsFontHelper implements FontHelper {
                 int charPoint = charPointBuffer.get(0);
 
                 float centerX = posX.get(0);
-                stbtt_GetBakedQuad(cdata, bitmapWidth, bitmapHeight, charPoint, posX, posY, stbQuad, true);
+                stbtt_GetPackedQuad(cdata, bitmapWidth, bitmapHeight, charPoint, posX, posY, stbQuad, false);
                 float diff = /*Math.abs(stbQuad.y0() - stbQuad.y1())*/ stbQuad.y1();
                 if (maxY < diff) {
                     maxY = diff;
@@ -238,14 +239,14 @@ public final class WindowsFontHelper implements FontHelper {
         float fontHeight = nativeTTFont.getFont().getSize();
         float scale = nativeTTFont.getScaleForPixelHeight();
 
-        STBTTBakedChar.Buffer cdata = nativeTTFont.getCharBuffer();
+        var cdata = nativeTTFont.getCharBuffer();
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer charPointBuffer = stack.mallocInt(1);
             FloatBuffer posX = stack.floats(0);
             FloatBuffer posY = stack.floats(0 + fontHeight);
 
-            float factorX = 1.0f / nativeTTFont.getInfo().getContentScaleX();
-            float factorY = 1.0f / nativeTTFont.getInfo().getContentScaleY();
+            float factorX = 1.0f * nativeTTFont.getInfo().getContentScaleX();
+            float factorY = 1.0f * nativeTTFont.getInfo().getContentScaleY();
             factorX = 1.0f;
             factorY = 1.0f;
 
@@ -260,13 +261,13 @@ public final class WindowsFontHelper implements FontHelper {
             int bitmapHeight = nativeTTFont.getBitmapHeight();
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
             buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE);
-            for (int i = 0; i < text.length(); ) {
+            for (int i = 0; i < text.length();) {
                 i += getCodePoint(text, i, charPointBuffer);
 
                 int charPoint = charPointBuffer.get(0);
 
                 float centerX = posX.get(0);
-                stbtt_GetBakedQuad(cdata, bitmapWidth, bitmapHeight, charPoint, posX, posY, stbQuad, true);
+                stbtt_GetPackedQuad(cdata,bitmapWidth,bitmapHeight, charPoint, posX, posY, stbQuad, false);
                 posX.put(0, scale(centerX, posX.get(0), factorX));
                 if (i < text.length()) {
                     getCodePoint(text, i, charPointBuffer);
@@ -301,20 +302,24 @@ public final class WindowsFontHelper implements FontHelper {
     private NativeTTFont loadNativeFont(NativeTTFontInfo info, Font font) {
         ByteBuffer fontData = info.getFontData();
         float scale = stbtt_ScaleForPixelHeight(info.getFontInfo(), font.getSize());
+        try(var context = STBTTPackContext.malloc()) {
+            int textureId = GL11.glGenTextures();
+            var charBuffer = STBTTPackedchar.malloc(SUPPORTED_CHARACTER_COUNT);
+            int bitmapSize = getBitmapSize(font.getSize(), SUPPORTED_CHARACTER_COUNT);
+            ByteBuffer bitmap = BufferUtils.createByteBuffer(bitmapSize * bitmapSize);
 
-        int textureId = GL11.glGenTextures();
-        STBTTBakedChar.Buffer charBuffer = STBTTBakedChar.malloc(SUPPORTED_CHARACTER_COUNT);
-        int bitmapSize = getBitmapSize(font.getSize(), SUPPORTED_CHARACTER_COUNT);
-        ByteBuffer bitmap = BufferUtils.createByteBuffer(bitmapSize * bitmapSize);
-        stbtt_BakeFontBitmap(fontData, font.getSize(), bitmap, bitmapSize, bitmapSize, 0, charBuffer);
+            stbtt_PackBegin(context, bitmap, bitmapSize, bitmapSize, 0, 1);
+            stbtt_PackFontRange(context, fontData, info.getOffsetIndex(), font.getSize(), 0, charBuffer);
+            stbtt_PackEnd(context);
 
-        glBindTexture(GL_TEXTURE_2D, textureId);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, bitmapSize, bitmapSize, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
-        glBindTexture(GL_TEXTURE_2D, 0);
+            glBindTexture(GL_TEXTURE_2D, textureId);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, bitmapSize, bitmapSize, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
+            glBindTexture(GL_TEXTURE_2D, 0);
 
-        return new NativeTTFont(info, font, textureId, charBuffer, bitmapSize, bitmapSize, scale);
+            return new NativeTTFont(info, font, textureId, charBuffer, bitmapSize, bitmapSize, scale);
+        }
     }
 
     private NativeTTFontInfo loadNativeFontInfo(Path path) throws IOException {
@@ -467,5 +472,12 @@ public final class WindowsFontHelper implements FontHelper {
         }
         cpOut.put(0, c1);
         return 1;
+    }
+
+    private boolean isSupportedCharacter(NativeTTFont font, char character){
+        if(character == '\u001A' || character == '\uFFFD') return true;
+        var counter = stbtt_FindGlyphIndex(font.getInfo().getFontInfo(), 0x1A);
+        var ci = stbtt_FindGlyphIndex(font.getInfo().getFontInfo(), character);
+        return counter != ci;
     }
 }

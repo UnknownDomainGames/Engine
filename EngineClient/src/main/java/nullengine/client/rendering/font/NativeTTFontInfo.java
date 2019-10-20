@@ -63,6 +63,10 @@ public class NativeTTFontInfo {
         return style;
     }
 
+    public int getOffsetIndex() {
+        return offsetIndex;
+    }
+
     public double getAscent() {
         return ascent;
     }
