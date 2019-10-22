@@ -1,7 +1,7 @@
 package nullengine.client.settings;
 
 import configuration.Config;
-import configuration.parser.ConfigParsers;
+import configuration.io.ConfigIOUtils;
 
 import java.nio.file.Path;
 
@@ -24,7 +24,7 @@ public class EngineSettings {
     }
 
     public void load(Path path){
-        var config = ConfigParsers.load(path.toAbsolutePath());
+        var config = ConfigIOUtils.load(path.toAbsolutePath());
         displaySettings = new DisplaySettings();
         displaySettings.load(config.getConfig("display"));
         lastPath = path;
@@ -37,7 +37,7 @@ public class EngineSettings {
     public void save(Path path){
         var config = new Config();
         config.set("display", displaySettings.save());
-        ConfigParsers.save(path.toAbsolutePath(), config);
+        config.save(path.toAbsolutePath());
         lastPath = path;
     }
 

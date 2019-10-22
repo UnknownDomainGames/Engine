@@ -1,7 +1,7 @@
 package nullengine.game;
 
 import configuration.Config;
-import configuration.parser.ConfigParsers;
+import configuration.io.ConfigIOUtils;
 import nullengine.Platform;
 
 import java.nio.file.Path;
@@ -29,7 +29,7 @@ public class GameData {
     }
 
     public static GameData createFromGame(Path gameBasePath) {
-        Config config = ConfigParsers.load(gameBasePath.resolve("game.json"));
+        Config config = ConfigIOUtils.load(gameBasePath.resolve("game.json"));
         return new GameData(gameBasePath, config);
     }
 
@@ -80,6 +80,6 @@ public class GameData {
         gameData.set("Worlds", worlds);
         gameData.set("Dependencies", dependencies);
         gameData.set("Registries", registries);
-        ConfigParsers.save(gameBasePath.resolve("game.json"), gameData);
+        gameData.save(gameBasePath.resolve("game.json"));
     }
 }

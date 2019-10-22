@@ -1,7 +1,7 @@
 package nullengine.world.provider;
 
 import configuration.Config;
-import configuration.parser.ConfigParsers;
+import configuration.io.ConfigIOUtils;
 import nullengine.block.Block;
 import nullengine.game.Game;
 import nullengine.registry.Registries;
@@ -29,14 +29,14 @@ public class FlatWorldProvider extends BaseWorldProvider {
             layers.add(block.getName().getUniqueName());
         }
         config.set("layers", layers);
-        ConfigParsers.save(storagePath.resolve("world.json"), config);
+        config.save(storagePath.resolve("world.json"));
         return new WorldCommon(game, this, storagePath, name, creationSetting, new FlatChunkGenerator(setting.getLayers()));
     }
 
     @Nonnull
     @Override
     public World load(@Nonnull Game game, @Nonnull Path storagePath) {
-        Config config = ConfigParsers.load(storagePath.resolve("world.json"));
+        Config config = ConfigIOUtils.load(storagePath.resolve("world.json"));
         String name = config.getString("name");
         List<Object> layers = config.getList("layers", List.of());
         Block[] blocks = new Block[layers.size()];

@@ -1,7 +1,7 @@
 package nullengine.server;
 
 import configuration.Config;
-import configuration.parser.ConfigParsers;
+import configuration.io.ConfigIOUtils;
 
 import java.nio.file.Path;
 
@@ -26,7 +26,7 @@ public class ServerConfig {
     }
 
     public void load(){
-        var config = ConfigParsers.load(configPath.toAbsolutePath());
+        var config = ConfigIOUtils.load(configPath.toAbsolutePath());
         serverIp = config.getString("server-ip", "");
         serverPort = config.getInt("server-port", 18104);
     }
@@ -35,7 +35,7 @@ public class ServerConfig {
         var config = new Config();
         config.set("server-ip", serverIp);
         config.set("server-port", serverPort);
-        ConfigParsers.save(configPath.toAbsolutePath(), config);
+        config.save(configPath.toAbsolutePath());
     }
 
     public String getServerIp() {
