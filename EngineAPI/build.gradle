@@ -1,9 +1,9 @@
 dependencies {
-    compile 'io.netty:netty-all:4.1.33.Final'
-
-    compile 'com.github.Mouse0w0.Configuration:configuration-api:1.2.0'
-
     compile project(':Rendering')
+
+    compile 'com.google.inject:guice:4.2.2'
+    compile 'com.github.Mouse0w0.Configuration:configuration-api:1.2.0'
+    compile 'io.netty:netty-all:4.1.33.Final'
 }
 
 //jar {
