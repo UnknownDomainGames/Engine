@@ -4,4 +4,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.5'
     compile 'commons-io:commons-io:2.6'
     compile 'org.ow2.asm:asm-commons:7.0'
+    compile 'net.jodah:typetools:0.6.1'
+    compile 'org.slf4j:slf4j-api:1.7.25'
 }

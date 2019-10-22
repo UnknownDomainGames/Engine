@@ -1,19 +1,7 @@
 dependencies {
-    // ============COMMON============
-    compile 'com.google.guava:guava:27.0.1-jre'
-    compile 'org.apache.commons:commons-lang3:3.8.1'
-	compile 'commons-io:commons-io:2.6'
-    compile 'com.google.inject:guice:4.2.2'
-
-	compile 'org.ow2.asm:asm-commons:7.0'
-
     compile 'io.netty:netty-all:4.1.33.Final'
-    compile 'com.google.code.gson:gson:2.8.5'
-    compile 'org.slf4j:slf4j-api:1.7.25'
 
-    compile 'com.github.Mouse0w0:Observable:1.0.2'
     compile 'com.github.Mouse0w0.Configuration:configuration-api:1.1.0'
-    compile 'net.jodah:typetools:0.6.1'
 
     compile project(':Rendering')
 }
