@@ -1,4 +1,4 @@
-package nullengine.util.disposer;
+package nullengine.util;
 
 public interface Disposable {
 

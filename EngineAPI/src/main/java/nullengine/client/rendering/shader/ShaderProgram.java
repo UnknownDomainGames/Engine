@@ -1,7 +1,7 @@
 package nullengine.client.rendering.shader;
 
 import nullengine.Platform;
-import nullengine.util.disposer.Disposable;
+import nullengine.util.Disposable;
 import org.joml.*;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.system.MemoryStack;

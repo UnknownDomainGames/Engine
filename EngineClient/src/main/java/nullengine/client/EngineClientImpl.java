@@ -33,8 +33,6 @@ import nullengine.mod.ModContainer;
 import nullengine.util.ClassPathUtils;
 import nullengine.util.RuntimeEnvironment;
 import nullengine.util.Side;
-import nullengine.util.disposer.Disposer;
-import nullengine.util.disposer.DisposerImpl;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -54,7 +52,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     private LocaleManager localeManager;
 
     private Ticker ticker;
-    private Disposer disposer;
 
     private GameClient game;
 
@@ -77,7 +74,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
         logger.info("Initializing client engine!");
         clientThread = Thread.currentThread();
-        disposer = new DisposerImpl();
 
         settings = new EngineSettings();
         try {
@@ -270,11 +266,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     @Override
     public RenderManager getRenderManager() {
         return renderManager;
-    }
-
-    @Override
-    public Disposer getDisposer() {
-        return disposer;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package nullengine.client.sound;
 
 import nullengine.Platform;
-import nullengine.util.disposer.Disposable;
+import nullengine.util.Disposable;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;

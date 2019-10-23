@@ -1,6 +1,6 @@
 package nullengine.client.sound;
 
-import nullengine.util.disposer.Disposable;
+import nullengine.util.Disposable;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 

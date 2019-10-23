@@ -7,7 +7,6 @@ import nullengine.client.game.GameClient;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.settings.EngineSettings;
 import nullengine.client.sound.ALSoundManager;
-import nullengine.util.disposer.Disposer;
 
 public interface EngineClient extends Engine {
 
@@ -22,8 +21,6 @@ public interface EngineClient extends Engine {
     RenderManager getRenderManager();
 
     ALSoundManager getSoundManager();
-
-    Disposer getDisposer();
 
     @Override
     GameClient getCurrentGame();

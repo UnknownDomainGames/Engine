@@ -4,7 +4,7 @@ import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.GLVertexFormats;
 import nullengine.client.rendering.gl.SingleBufferVAO;
-import nullengine.util.disposer.Disposable;
+import nullengine.util.Disposable;
 import nullengine.world.chunk.Chunk;
 
 import java.util.concurrent.atomic.AtomicInteger;
