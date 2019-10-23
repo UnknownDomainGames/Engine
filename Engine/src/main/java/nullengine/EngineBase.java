@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryUsage;
 import java.lang.management.RuntimeMXBean;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -153,13 +154,20 @@ public abstract class EngineBase implements Engine {
                 builder -> builder.append(format("%s (%s), %s", JAVA_VERSION, JAVA_VM_VERSION, JAVA_VERSION)));
         crashHandler.addReportDetail("JVM Information",
                 builder -> builder.append(format("%s (%s), %s", JAVA_VM_NAME, JAVA_VM_INFO, JAVA_VM_VENDOR)));
-        crashHandler.addReportDetail("Memory",
+        crashHandler.addReportDetail("Heap Memory Usage",
                 builder -> {
-                    Runtime runtime = Runtime.getRuntime();
-                    long usedMemory = (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024;
-                    long totalMemory = runtime.totalMemory() / 1024 / 1024;
-                    long maxMemory = runtime.maxMemory() / 1024 / 1024;
+                    MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+                    long usedMemory = heapMemoryUsage.getUsed() >> 20;
+                    long totalMemory = heapMemoryUsage.getCommitted() >> 20;
+                    long maxMemory = heapMemoryUsage.getMax() >> 20;
                     builder.append(format("%d MB / %d MB (Max: %d MB)", usedMemory, totalMemory, maxMemory));
+                });
+        crashHandler.addReportDetail("Non Heap Memory Usage",
+                builder -> {
+                    MemoryUsage nonHeapMemoryUsage = ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage();
+                    long usedMemory = nonHeapMemoryUsage.getUsed() >> 20;
+                    long maxMemory = nonHeapMemoryUsage.getMax() >> 20;
+                    builder.append(format("%d MB / %d MB", usedMemory, maxMemory));
                 });
         crashHandler.addReportDetail("JVM Flags",
                 builder -> {
