@@ -2,8 +2,12 @@ package nullengine.client.rendering.queue;
 
 import nullengine.client.rendering.scene.Geometry;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Stream;
+
+import static org.apache.commons.lang3.Validate.noNullElements;
+import static org.apache.commons.lang3.Validate.notNull;
 
 public class GeometryList implements Iterable<Geometry> {
 
@@ -17,7 +21,8 @@ public class GeometryList implements Iterable<Geometry> {
         return geometries.contains(o);
     }
 
-    public boolean add(Geometry geometry) {
+    public boolean add(@Nonnull Geometry geometry) {
+        notNull(geometry);
         return geometries.add(geometry);
     }
 
@@ -25,7 +30,8 @@ public class GeometryList implements Iterable<Geometry> {
         return geometries.remove(o);
     }
 
-    public boolean addAll(Collection<? extends Geometry> c) {
+    public boolean addAll(@Nonnull Collection<? extends Geometry> c) {
+        noNullElements(c);
         return geometries.addAll(c);
     }
 

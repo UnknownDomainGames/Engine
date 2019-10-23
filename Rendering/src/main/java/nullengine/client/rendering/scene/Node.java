@@ -1,5 +1,8 @@
 package nullengine.client.rendering.scene;
 
+import com.github.mouse0w0.observable.value.MutableObjectValue;
+import com.github.mouse0w0.observable.value.ObservableObjectValue;
+import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.rendering.math.Transform;
 import org.apache.commons.lang3.Validate;
 import org.joml.Quaternionfc;
@@ -9,17 +12,56 @@ import java.util.*;
 
 public class Node {
 
+    private final MutableObjectValue<Node> parent = new SimpleMutableObjectValue<>();
+
+    final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
+
     private final List<Node> children = new ArrayList<>();
     private final List<Node> unmodifiableChildren = Collections.unmodifiableList(children);
-
-    private Node parent;
 
     private Transform transform = new Transform();
     private Transform worldTransform = new Transform();
 
     private Map<Object, Object> properties;
 
-    public List<Node> getChildren() {
+    public Node() {
+        parent.addChangeListener((observable, oldValue, newValue) -> refreshTransform());
+    }
+
+    public final ObservableObjectValue<Scene> scene() {
+        return scene.toImmutable();
+    }
+
+    public final ObservableObjectValue<Node> parent() {
+        return parent.toImmutable();
+    }
+
+    public final Scene getScene() {
+        return scene.getValue();
+    }
+
+    public final Node getParent() {
+        return parent.getValue();
+    }
+
+    private void setParent(Node parent) {
+        Node oldParent = getParent();
+        if (oldParent == parent) {
+            return;
+        }
+        if (oldParent != null) {
+            scene.unbindBidirectional(oldParent.scene);
+            oldParent.children.remove(this);
+        }
+        this.parent.set(parent);
+        if (parent != null) {
+            scene.bindBidirectional(parent.scene);
+        } else {
+            scene.set(null);
+        }
+    }
+
+    public final List<Node> getChildren() {
         return unmodifiableChildren;
     }
 
@@ -30,18 +72,7 @@ public class Node {
     }
 
     public void removeChild(Node node) {
-        if (children.remove(node)) {
-            node.setParent(null);
-        }
-    }
-
-    public Node getParent() {
-        return parent;
-    }
-
-    private void setParent(Node parent) {
-        this.parent = parent;
-        refreshTransform();
+        node.setParent(null);
     }
 
     public Transform getTransform() {
@@ -109,8 +140,9 @@ public class Node {
         return worldTransform.getScale();
     }
 
-    public void refreshTransform() {
+    protected void refreshTransform() {
         worldTransform.set(transform);
+        Node parent = getParent();
         if (parent != null) {
             worldTransform.applyParent(parent.worldTransform);
         }
