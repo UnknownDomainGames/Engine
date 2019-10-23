@@ -203,11 +203,8 @@ public abstract class EngineBase implements Engine {
         logger.info("\tOperating System: {} ({}) version {}", OS_NAME, OS_ARCH, OS_VERSION);
         logger.info("\tJava Version: {} ({}), {}", JAVA_VERSION, JAVA_VM_VERSION, JAVA_VENDOR);
         logger.info("\tJVM Information: {} ({}), {}", JAVA_VM_NAME, JAVA_VM_INFO, JAVA_VM_VENDOR);
-        Runtime runtime = Runtime.getRuntime();
-        long totalMemory = runtime.totalMemory();
-        long maxMemory = runtime.maxMemory();
-        logger.info("\tMax Memory: {} bytes ({} MB)", maxMemory, maxMemory / 1024L / 1024L);
-        logger.info("\tTotal Memory: {} bytes ({} MB)", totalMemory, totalMemory / 1024L / 1024L);
+        long maxMemory = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax();
+        logger.info("\tMax Heap Memory: {} bytes ({} MB)", maxMemory, maxMemory >> 20);
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         List<String> jvmFlags = runtimeMXBean.getInputArguments();
         logger.info("\tJVM Flags ({} totals): {}", jvmFlags.size(), String.join(" ", jvmFlags));
