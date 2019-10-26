@@ -1,5 +1,6 @@
 package nullengine.client;
 
+import configuration.io.ConfigLoadException;
 import configuration.parser.ConfigParseException;
 import nullengine.EngineBase;
 import nullengine.Platform;
@@ -78,8 +79,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         settings = new EngineSettings();
         try {
             settings.load(getRunPath().resolve("config/engine.json"));
-        }catch (ConfigParseException e){
-            logger.warn("Cannot parse engine config! Try creating new one", e);
+        } catch (ConfigParseException | ConfigLoadException e) {
+            logger.debug("Cannot load or not found engine configuration file! Try to create new one!", e);
             settings = new EngineSettings();
             settings.save(getRunPath().resolve("config/engine.json"));
         }
