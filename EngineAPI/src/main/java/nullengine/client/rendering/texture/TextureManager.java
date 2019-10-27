@@ -1,16 +1,17 @@
 package nullengine.client.rendering.texture;
 
+import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.exception.UninitializationException;
 
 import java.util.function.Supplier;
 
 public interface TextureManager {
 
-    GLTexture getWhiteTexture();
+    GLTexture2D getWhiteTexture();
 
-    GLTexture getTextureDirect(TextureBuffer buffer);
+    GLTexture2D getTextureDirect(Texture2DBuffer buffer);
 
-    TextureAtlas getTextureAtlas(TextureAtlasName type);
+    Texture2DAtlas getTextureAtlas(TextureAtlasName type);
 
     static TextureManager instance() {
         return Internal.instance.get();

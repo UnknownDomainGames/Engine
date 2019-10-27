@@ -1,15 +1,16 @@
 package nullengine.client.rendering.texture;
 
 import nullengine.client.asset.AssetURL;
+import nullengine.client.rendering.gl.texture.GLTexture2D;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class TextureAtlasImpl implements TextureAtlas {
+public class Texture2DAtlasImpl implements Texture2DAtlas {
 
     private final Map<AssetURL, TextureAtlasPartImpl> textures = new HashMap<>();
 
-    private GLTexture bakedTextureAtlas;
+    private GLTexture2D bakedTextureAtlas;
 
     @Override
     public TextureAtlasPart getTexture(AssetURL url) {
@@ -33,11 +34,11 @@ public class TextureAtlasImpl implements TextureAtlas {
                 maxHeight = data.getHeight();
         }
 
-        TextureBuffer textureBuffer = new TextureBuffer(sumWidth, maxHeight);
+        Texture2DBuffer texture2DBuffer = new Texture2DBuffer(sumWidth, maxHeight);
         int offsetX = 0;
         for (var part : textures.values()) {
             var data = part.getData();
-            textureBuffer.setTexture(offsetX, 0, data);
+            texture2DBuffer.setTexture(offsetX, 0, data);
             part.init(sumWidth, maxHeight, offsetX, 0, data.getWidth(), data.getHeight());
             offsetX += data.getWidth();
         }
@@ -45,7 +46,7 @@ public class TextureAtlasImpl implements TextureAtlas {
         if (bakedTextureAtlas != null) {
             bakedTextureAtlas.dispose();
         }
-        bakedTextureAtlas = GLTexture.of(sumWidth, maxHeight, textureBuffer.getBuffer());
+        bakedTextureAtlas = GLTexture2D.of(texture2DBuffer.getBuffer(), sumWidth, maxHeight);
     }
 
     public void cleanCache() {

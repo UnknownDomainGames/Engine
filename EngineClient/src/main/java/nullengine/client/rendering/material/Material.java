@@ -1,7 +1,7 @@
 package nullengine.client.rendering.material;
 
+import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.shader.ShaderManager;
-import nullengine.client.rendering.texture.GLTexture;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -12,10 +12,10 @@ public class Material {
     private Vector3f diffuse = new Vector3f(1f);
     private Vector3f specular = new Vector3f(1f);
     private float shininess;
-    private GLTexture diffuseUV = GLTexture.EMPTY;
-    private GLTexture specularUV = GLTexture.EMPTY;
-    private GLTexture normalUV = GLTexture.EMPTY;
-    private GLTexture alphaUV = GLTexture.EMPTY;
+    private GLTexture2D diffuseUV = GLTexture2D.EMPTY;
+    private GLTexture2D specularUV = GLTexture2D.EMPTY;
+    private GLTexture2D normalUV = GLTexture2D.EMPTY;
+    private GLTexture2D alphaUV = GLTexture2D.EMPTY;
 
     public void bind(String fieldName) {
         ShaderManager shaderManager = ShaderManager.instance();
@@ -27,7 +27,7 @@ public class Material {
         shaderManager.setUniform(fieldName + ".normalUV", 3);
         shaderManager.setUniform(fieldName + ".alphaUV", 4);
         shaderManager.setUniform(fieldName + ".shininess", shininess);
-        if (diffuseUV != GLTexture.EMPTY) {
+        if (diffuseUV != GLTexture2D.EMPTY) {
             shaderManager.setUniform(fieldName + ".diffuseUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE1);
             diffuseUV.bind();
@@ -35,7 +35,7 @@ public class Material {
         } else {
             shaderManager.setUniform(fieldName + ".diffuseUseUV", false);
         }
-        if (specularUV != GLTexture.EMPTY) {
+        if (specularUV != GLTexture2D.EMPTY) {
             shaderManager.setUniform(fieldName + ".specularUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE2);
             specularUV.bind();
@@ -43,7 +43,7 @@ public class Material {
         } else {
             shaderManager.setUniform(fieldName + ".specularUseUV", false);
         }
-        if (normalUV != GLTexture.EMPTY) {
+        if (normalUV != GLTexture2D.EMPTY) {
             shaderManager.setUniform(fieldName + ".normalUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE3);
             normalUV.bind();
@@ -51,7 +51,7 @@ public class Material {
         } else {
             shaderManager.setUniform(fieldName + ".normalUseUV", false);
         }
-        if (alphaUV != GLTexture.EMPTY) {
+        if (alphaUV != GLTexture2D.EMPTY) {
             shaderManager.setUniform(fieldName + ".alphaUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE4);
             alphaUV.bind();
@@ -71,22 +71,22 @@ public class Material {
         return this;
     }
 
-    public Material setDiffuseUV(GLTexture diffuseUV) {
+    public Material setDiffuseUV(GLTexture2D diffuseUV) {
         this.diffuseUV = diffuseUV;
         return this;
     }
 
-    public Material setSpecularUV(GLTexture specularUV) {
+    public Material setSpecularUV(GLTexture2D specularUV) {
         this.specularUV = specularUV;
         return this;
     }
 
-    public Material setNormalUV(GLTexture normalUV) {
+    public Material setNormalUV(GLTexture2D normalUV) {
         this.normalUV = normalUV;
         return this;
     }
 
-    public Material setAlphaUV(GLTexture alphaUV) {
+    public Material setAlphaUV(GLTexture2D alphaUV) {
         this.alphaUV = alphaUV;
         return this;
     }

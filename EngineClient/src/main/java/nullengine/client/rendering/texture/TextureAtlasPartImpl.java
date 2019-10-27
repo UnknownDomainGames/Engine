@@ -14,7 +14,7 @@ public class TextureAtlasPartImpl implements TextureAtlasPart {
 
     private final AssetURL url;
 
-    private TextureBuffer data;
+    private Texture2DBuffer data;
     private float minU, minV, maxU, maxV;
 
     public TextureAtlasPartImpl(AssetURL url) {
@@ -45,7 +45,7 @@ public class TextureAtlasPartImpl implements TextureAtlasPart {
             var bytes = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
             channel.read(bytes);
             bytes.flip();
-            data = TextureBuffer.create(bytes);
+            data = Texture2DBuffer.create(bytes);
         } catch (IOException e) {
             throw new AssetLoadException("Cannot load texture because of catching exception. Path: " + url.toFileLocation("texture", ".png"));
         }
@@ -61,7 +61,7 @@ public class TextureAtlasPartImpl implements TextureAtlasPart {
     }
 
     @Override
-    public TextureBuffer getData() {
+    public Texture2DBuffer getData() {
         return data;
     }
 

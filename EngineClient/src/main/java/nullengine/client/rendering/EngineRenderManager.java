@@ -14,10 +14,10 @@ import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.font.WindowsFontHelper;
+import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.gl.util.GLInfoImpl;
 import nullengine.client.rendering.gl.util.NVXGPUInfo;
 import nullengine.client.rendering.texture.EngineTextureManager;
-import nullengine.client.rendering.texture.GLTexture;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GLInfo;
 import nullengine.client.rendering.util.GPUInfo;
@@ -229,7 +229,7 @@ public class EngineRenderManager implements RenderManager {
     private void initTexture() {
         textureManager = new EngineTextureManager();
         TextureManager.Internal.setInstance(textureManager);
-        getEngine().getAssetManager().register(AssetType.builder(GLTexture.class).name("Texture").provider(textureManager).parentLocation("texture").extensionName(".png").build());
+        getEngine().getAssetManager().register(AssetType.builder(GLTexture2D.class).name("Texture").provider(textureManager).parentLocation("texture").extensionName(".png").build());
     }
 
     private void initFont() {

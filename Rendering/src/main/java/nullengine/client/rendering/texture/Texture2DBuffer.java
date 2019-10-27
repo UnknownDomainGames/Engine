@@ -8,9 +8,13 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-public class TextureBuffer {
+public class Texture2DBuffer {
 
-    public static TextureBuffer create(ByteBuffer buffer) throws IOException {
+    private int width, height;
+    private int stride;
+    private ByteBuffer backingBuffer;
+
+    public static Texture2DBuffer create(ByteBuffer buffer) throws IOException {
         if (!buffer.isDirect()) {
             ByteBuffer direct = ByteBuffer.allocateDirect(buffer.capacity());
             direct.put(buffer);
@@ -27,7 +31,7 @@ public class TextureBuffer {
             if (bitmapBuffer == null) {
                 throw new IOException("File buffer cannot be load as pixel buffer by STBImage");
             }
-            var tex = new TextureBuffer(width, height);
+            var tex = new Texture2DBuffer(width, height);
             tex.getBuffer().put(bitmapBuffer);
             tex.getBuffer().flip();
             bitmapBuffer.clear();
@@ -35,24 +39,20 @@ public class TextureBuffer {
         }
     }
 
-    private int width, height;
-    private int stride;
-    private ByteBuffer backingBuffer;
-
-    public TextureBuffer(int width, int height) {
+    public Texture2DBuffer(int width, int height) {
         this.width = width;
         this.height = height;
         initBuffer();
     }
 
-    public TextureBuffer(int width, int height, int initColor) {
+    public Texture2DBuffer(int width, int height, int initColor) {
         this.width = width;
         this.height = height;
         initBuffer();
         fill(initColor);
     }
 
-    public TextureBuffer(int width, int height, ByteBuffer buffer) {
+    public Texture2DBuffer(int width, int height, ByteBuffer buffer) {
         this.width = width;
         this.height = height;
         this.backingBuffer = buffer;
@@ -75,13 +75,13 @@ public class TextureBuffer {
         return backingBuffer;
     }
 
-    public void setTexture(int x, int y, ByteBuffer buffer, int bufferWidth, int bufferHeight, int u, int v, int regionWidth, int regionHeight) {
-        int bufferStride = bufferWidth * Integer.BYTES;
-        for (int i = 0; i < regionHeight; i++) {
+    public void setTexture(int x, int y, ByteBuffer texture, int textureWidth, int textureHeight, int u, int v, int width, int height) {
+        int bufferStride = textureWidth * Integer.BYTES;
+        for (int i = 0; i < height; i++) {
             backingBuffer.position((y + i) * this.stride + x * Integer.BYTES);
-            buffer.position((u + i) * bufferStride + v * Integer.BYTES);
-            for (int j = 0; j < regionWidth; j++) {
-                backingBuffer.putInt(buffer.getInt());
+            texture.position((u + i) * bufferStride + v * Integer.BYTES);
+            for (int j = 0; j < width; j++) {
+                backingBuffer.putInt(texture.getInt());
             }
         }
         backingBuffer.clear();
@@ -91,12 +91,12 @@ public class TextureBuffer {
         setTexture(x, y, buffer, width, height, 0, 0, width, height);
     }
 
-    public void setTexture(int x, int y, TextureBuffer texture) {
+    public void setTexture(int x, int y, Texture2DBuffer texture) {
         setTexture(x, y, texture.getBuffer(), texture.getWidth(), texture.getHeight());
     }
 
-    public void setTexture(int x, int y, TextureBuffer texture, int u, int v, int regionWidth, int regionHeight) {
-        setTexture(x, y, texture.getBuffer(), texture.getWidth(), texture.getHeight(), u, v, regionWidth, regionHeight);
+    public void setTexture(int x, int y, Texture2DBuffer texture, int u, int v, int width, int height) {
+        setTexture(x, y, texture.getBuffer(), texture.getWidth(), texture.getHeight(), u, v, width, height);
     }
 
     public void setPixel(int x, int y, int color) {

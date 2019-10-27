@@ -1,6 +1,10 @@
 package nullengine.client.rendering.texture;
 
-public interface Texture {
+public interface Texture2D {
+
+    void bind();
+
+    void dispose();
 
     int getWidth();
 
@@ -13,8 +17,4 @@ public interface Texture {
     float getMaxU();
 
     float getMaxV();
-
-    void bind();
-
-    void dispose();
 }

@@ -6,7 +6,7 @@ public interface TextureAtlasPart {
 
     AssetURL getUrl();
 
-    TextureBuffer getData();
+    Texture2DBuffer getData();
 
     float getMinU();
 

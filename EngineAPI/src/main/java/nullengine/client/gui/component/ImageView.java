@@ -7,7 +7,7 @@ import nullengine.client.gui.Component;
 import nullengine.client.gui.internal.Internal;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.ImageRenderer;
-import nullengine.client.rendering.texture.Texture;
+import nullengine.client.rendering.texture.Texture2D;
 
 public class ImageView extends Component {
     private final SimpleMutableObjectValue<AssetURL> image = new SimpleMutableObjectValue<>();
@@ -15,7 +15,7 @@ public class ImageView extends Component {
     private final SimpleMutableFloatValue imageY = new SimpleMutableFloatValue();
     private final SimpleMutableFloatValue imageWidth = new SimpleMutableFloatValue();
     private final SimpleMutableFloatValue imageHeight = new SimpleMutableFloatValue();
-    private Texture cachedTexture;
+    private Texture2D cachedTexture;
 
     public ImageView() {
         image.addChangeListener((ob, o, n) -> {
@@ -56,7 +56,7 @@ public class ImageView extends Component {
         return ImageRenderer.INSTANCE;
     }
 
-    public Texture getCachedTexture() {
+    public Texture2D getCachedTexture() {
         return cachedTexture;
     }
 

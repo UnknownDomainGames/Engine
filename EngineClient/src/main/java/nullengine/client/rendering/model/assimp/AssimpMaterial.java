@@ -3,8 +3,8 @@ package nullengine.client.rendering.model.assimp;
 import nullengine.Platform;
 import nullengine.client.asset.AssetTypes;
 import nullengine.client.asset.AssetURL;
+import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.material.Material;
-import nullengine.client.rendering.texture.GLTexture;
 import org.apache.commons.io.FilenameUtils;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -31,10 +31,10 @@ public class AssimpMaterial {
         mMaterial = material;
 
 
-        GLTexture diffuseTexture = loadTexture(aiTextureType_DIFFUSE, url);
-        GLTexture specularTexture = loadTexture(aiTextureType_SPECULAR, url);
-        GLTexture normalTexture = loadTexture(aiTextureType_NORMALS, url);
-        GLTexture alphaTexture = loadTexture(aiTextureType_OPACITY, url);
+        GLTexture2D diffuseTexture = loadTexture(aiTextureType_DIFFUSE, url);
+        GLTexture2D specularTexture = loadTexture(aiTextureType_SPECULAR, url);
+        GLTexture2D normalTexture = loadTexture(aiTextureType_NORMALS, url);
+        GLTexture2D alphaTexture = loadTexture(aiTextureType_OPACITY, url);
         AIString mName = AIString.create();
         aiGetMaterialString(mMaterial, AI_MATKEY_NAME, aiTextureType_NONE, 0, mName);
         name = mName.dataString();
@@ -69,7 +69,7 @@ public class AssimpMaterial {
         referenceMat.setAlphaUV(alphaTexture);
     }
 
-    private GLTexture loadTexture(int textureType, AssetURL url) {
+    private GLTexture2D loadTexture(int textureType, AssetURL url) {
         AIString path = AIString.calloc();
         aiGetMaterialTexture(mMaterial, textureType, 0, path, null, null, null, null, null, (IntBuffer) null);
         String s = path.dataString();
@@ -88,14 +88,14 @@ public class AssimpMaterial {
                     buf.free();
                     texture.free();
                     textures.free();
-                    return GLTexture.of(texture.mWidth(), texture.mHeight(), buf1);
+                    return GLTexture2D.of(buf1, texture.mWidth(), texture.mHeight());
                 }
             } else {
                 //Promise: Loader now only search in texture/model/[FILENAME] folder
                 return Platform.getEngineClient().getAssetManager().loadDirect(AssetTypes.TEXTURE, AssetURL.of(url.getDomain(), "texture/model/" + FilenameUtils.getBaseName(url.getLocation()) + "/" + s));
             }
         }
-        return GLTexture.EMPTY;
+        return GLTexture2D.EMPTY;
     }
 
     Material getEngineMaterial() {

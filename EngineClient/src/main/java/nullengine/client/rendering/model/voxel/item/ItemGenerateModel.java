@@ -5,8 +5,8 @@ import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.math.Transform;
 import nullengine.client.rendering.model.DisplayType;
 import nullengine.client.rendering.model.voxel.Model;
+import nullengine.client.rendering.texture.Texture2DBuffer;
 import nullengine.client.rendering.texture.TextureAtlasPart;
-import nullengine.client.rendering.texture.TextureBuffer;
 import nullengine.math.Math2;
 import nullengine.util.Direction;
 
@@ -71,7 +71,7 @@ public class ItemGenerateModel implements Model {
         return new BakedModel(vertexes, transforms);
     }
 
-    private int getAlpha(TextureBuffer buffer, int pixelX, int pixelY) {
+    private int getAlpha(Texture2DBuffer buffer, int pixelX, int pixelY) {
         if (pixelX < 0 || pixelX >= buffer.getWidth()) return 0;
         if (pixelY < 0 || pixelY >= buffer.getHeight()) return 0;
         return buffer.getPixel(pixelX, pixelY) & 0xff;

@@ -3,16 +3,16 @@ package nullengine.client.rendering.world;
 import nullengine.client.asset.Asset;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderManager;
+import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.mesh.GLMesh;
 import nullengine.client.rendering.mesh.Mesh;
-import nullengine.client.rendering.texture.GLTexture;
 import org.lwjgl.opengl.GL11;
 
 import static nullengine.client.asset.AssetTypes.TEXTURE;
 
 public class SkyboxRenderer {
 
-    private Asset<GLTexture> skybox;
+    private Asset<GLTexture2D> skybox;
     private GLMesh skyboxMesh;
 
     public void init(RenderManager context) {

@@ -9,7 +9,7 @@ import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.GLVertexFormats;
 import nullengine.client.rendering.shader.ShaderManager;
-import nullengine.client.rendering.texture.Texture;
+import nullengine.client.rendering.texture.Texture2D;
 import nullengine.math.Math2;
 import nullengine.util.Color;
 import org.joml.Vector2fc;
@@ -189,12 +189,12 @@ public class GraphicsImpl implements Graphics {
     }
 
     @Override
-    public void drawTexture(Texture texture, float x, float y, float width, float height) {
+    public void drawTexture(Texture2D texture, float x, float y, float width, float height) {
         drawTexture(texture, x, y, width, height, 0, 0, 1, 1);
     }
 
     @Override
-    public void drawTexture(Texture texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
+    public void drawTexture(Texture2D texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
         GLBuffer buffer = tessellator.getBuffer();
         buffer.begin(GLDrawMode.CONTINUOUS_TRIANGLES, GLVertexFormats.POSITION_COLOR_TEXTURE);
         float x2 = x + width, y2 = y + height;

@@ -9,7 +9,7 @@ import nullengine.client.rendering.model.BakedModel;
 import nullengine.client.rendering.model.voxel.block.BlockModelLoader;
 import nullengine.client.rendering.model.voxel.item.ItemGenerateModelLoader;
 import nullengine.client.rendering.texture.StandardTextureAtlas;
-import nullengine.client.rendering.texture.TextureAtlas;
+import nullengine.client.rendering.texture.Texture2DAtlas;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.util.JsonUtils;
 
@@ -27,7 +27,7 @@ public class ModelManager implements AssetProvider<BakedModel> {
 
     private AssetSourceManager source;
     private AssetType<BakedModel> type;
-    private TextureAtlas textureAtlas;
+    private Texture2DAtlas textureAtlas;
 
     public ModelManager() {
         loaders = List.of(new ItemGenerateModelLoader(), new BlockModelLoader());
