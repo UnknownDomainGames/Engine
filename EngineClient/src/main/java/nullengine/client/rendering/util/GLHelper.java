@@ -6,10 +6,8 @@ import org.lwjgl.stb.STBImageWrite;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -24,21 +22,6 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
 
 public class GLHelper {
-
-    @Deprecated
-    public static String readText(String path) {
-        StringBuilder sb = new StringBuilder();
-        try (InputStream a = GLHelper.class.getResourceAsStream(path);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(a))) {
-            String str;
-            while ((str = reader.readLine()) != null) {
-                sb.append(str).append('\n');
-            }
-        } catch (IOException e) {
-
-        }
-        return sb.toString();
-    }
 
     private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
         ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);

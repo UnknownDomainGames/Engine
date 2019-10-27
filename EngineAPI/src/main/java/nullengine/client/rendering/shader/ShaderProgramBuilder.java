@@ -2,6 +2,8 @@ package nullengine.client.rendering.shader;
 
 import nullengine.Platform;
 import nullengine.client.asset.AssetURL;
+import nullengine.client.rendering.gl.shader.Shader;
+import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.shader.ShaderType;
 
 import javax.annotation.Nonnull;
@@ -29,15 +31,13 @@ public class ShaderProgramBuilder {
             var shaderPath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(entry.getValue().toFileLocation());
             if (shaderPath.isPresent()) {
                 try {
-                    loadedShaders[i] = Shader.create(Files.readAllBytes(shaderPath.get()), entry.getKey());
+                    loadedShaders[i] = Shader.complie(entry.getKey(), Files.readString(shaderPath.get()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             i++;
         }
-        ShaderProgram shaderProgram = new ShaderProgram();
-        shaderProgram.init(loadedShaders);
-        return shaderProgram;
+        return new ShaderProgram(loadedShaders);
     }
 }

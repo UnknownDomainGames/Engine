@@ -4,6 +4,7 @@ import com.github.mouse0w0.observable.value.MutableValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.Platform;
+import nullengine.client.rendering.gl.shader.ShaderProgram;
 import org.joml.*;
 import org.lwjgl.opengl.GL30;
 
