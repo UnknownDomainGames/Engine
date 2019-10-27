@@ -93,9 +93,9 @@ public class GLTexture2D implements Texture2D {
     public void glTexImage2D(ByteBuffer texture, int width, int height) {
         this.width = width;
         this.height = height;
-        GL11.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         GL11.glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture);
-        GL11.glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
 
     public void upload(int offsetX, int offsetY, Texture2DBuffer buffer) {
@@ -104,9 +104,9 @@ public class GLTexture2D implements Texture2D {
     }
 
     public void glTexSubImage2D(int offsetX, int offsetY, Texture2DBuffer buffer) {
-        GL11.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         GL11.glTexSubImage2D(GL_TEXTURE_2D, level, offsetX, offsetY, buffer.getWidth(), buffer.getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, buffer.getBuffer());
-        GL11.glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
 
     @Override
