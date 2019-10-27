@@ -25,9 +25,23 @@ public interface FontHelper {
 
     Font loadFont(InputStream input, float size) throws IOException;
 
-    float computeTextWidth(CharSequence text, Font font) throws UnavailableFontException;
+    default float computeTextWidth(String text, Font font) throws UnavailableFontException {
+        return computeTextWidth(text, font, -1);
+    }
 
-    float computeTextHeight(CharSequence text, Font font) throws UnavailableFontException;
+    List<String> wrapText(String text, float width, Font font);
+
+    float computeTextWidth(String text, Font font, float ceilingWidth) throws UnavailableFontException;
+
+    default float computeTextHeight(String text, Font font) throws UnavailableFontException {
+        return computeTextHeight(text, font, -1);
+    }
+
+    default float computeTextHeight(String text, Font font, float ceilingWidth) throws UnavailableFontException {
+        return computeTextHeight(text, font, ceilingWidth, 1.0f);
+    }
+
+    float computeTextHeight(String text, Font font, float ceilingWidth, float leading) throws UnavailableFontException;
 
     void renderText(GLBuffer buffer, CharSequence text, Font font, int color, Runnable renderer) throws UnavailableFontException;
 

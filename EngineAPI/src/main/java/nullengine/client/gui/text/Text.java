@@ -56,18 +56,12 @@ public class Text extends Component {
 
     @Override
     public float prefWidth() {
-        var max = -1.0f;
-        for (String s : text.getValue().lines().collect(Collectors.toList())) {
-            max = Math.max(max, FontHelper.instance().computeTextWidth(s, font().getValue()));
-        }
-        return (int) max;
+        return FontHelper.instance().computeTextWidth(text.getValue(), font().getValue());
     }
 
     @Override
     public float prefHeight() {
-//        return font().getValue().getSize();
-        var lines = text().getValue().split("\n").length;
-        return FontHelper.instance().computeTextHeight(text().getValue(), font().getValue()) * leading.getFloat() * lines;
+        return FontHelper.instance().computeTextHeight(text().getValue(), font().getValue(), -1, leading.getFloat());
     }
 
     @Override

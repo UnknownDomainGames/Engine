@@ -1,5 +1,6 @@
 package nullengine.client.gui.component;
 
+import com.github.mouse0w0.observable.value.MutableDoubleValue;
 import com.github.mouse0w0.observable.value.MutableValue;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.text.Text;
@@ -33,6 +34,10 @@ public class Label extends Control {
 
     public MutableValue<Pos> textAlignment() {
         return text.textAlignment();
+    }
+
+    public MutableDoubleValue leading(){
+        return text.leading();
     }
 
     @Override

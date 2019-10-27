@@ -1,5 +1,6 @@
 package nullengine.client.rendering.font;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import nullengine.client.rendering.gl.GLBuffer;
@@ -24,6 +25,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBTruetype.*;
@@ -152,9 +154,41 @@ public final class WindowsFontHelper implements FontHelper {
     }
 
     @Override
-    public float computeTextWidth(CharSequence text, Font font) {
+    public List<String> wrapText(String text, float width, Font font){
+        if(FontHelper.instance().computeTextWidth(text, font) <= width || width == 0){
+            return Lists.newArrayList(text);
+        }else{
+            int l = 0, h = text.length() - 1;
+            while (l < h){
+                int m = (l + h) / 2;
+                if(FontHelper.instance().computeTextWidth(text.substring(0, m), font) <= width){
+                    l = m + 1;
+                }
+                else{
+                    h = m - 1;
+                }
+            }
+            return Stream.concat(Stream.of(text.substring(0, l + 1)), wrapText(text.substring(l + 1), width, font).stream()).collect(Collectors.toList());
+        }
+    }
+
+    @Override
+    public float computeTextWidth(String text, Font font, float ceilingWidth) {
         if (text == null || text.length() == 0) {
             return 0;
+        }
+        List<String> trial;
+        if(ceilingWidth != -1){
+            trial = text.lines().flatMap(str->wrapText(str, ceilingWidth, font).stream()).collect(Collectors.toList());
+        }else{
+            trial = text.lines().collect(Collectors.toList());
+        }
+        if(trial.size() > 1){
+            var max = -1.0f;
+            for (String s : trial) {
+                max = Math.max(max, computeTextWidth(s, font));
+            }
+            return max;
         }
 
         NativeTTFont nativeFont = getNativeFont(font);
@@ -185,9 +219,22 @@ public final class WindowsFontHelper implements FontHelper {
     }
 
     @Override
-    public float computeTextHeight(CharSequence text, Font font) {
+    public float computeTextHeight(String text, Font font, float ceilingWidth, float leading) {
         if (text == null || text.length() == 0) {
             return 0;
+        }
+        List<String> trial;
+        if(ceilingWidth != -1){
+            trial = text.lines().flatMap(str->wrapText(str, ceilingWidth, font).stream()).collect(Collectors.toList());
+        }else{
+            trial = text.lines().collect(Collectors.toList());
+        }
+        if(trial.size() > 1){
+            var max = -1.0f;
+            for (String s : trial) {
+                max = Math.max(max, computeTextHeight(s, font, -1, leading));
+            }
+            return max * trial.size();
         }
 
         var nativeTTFont = getNativeFont(font);
@@ -213,7 +260,7 @@ public final class WindowsFontHelper implements FontHelper {
                     maxY = diff;
                 }
             }
-            return maxY;
+            return maxY * leading;
         }
     }
 
