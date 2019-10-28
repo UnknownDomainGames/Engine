@@ -22,6 +22,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.BreakIterator;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -155,20 +156,22 @@ public final class WindowsFontHelper implements FontHelper {
 
     @Override
     public List<String> wrapText(String text, float width, Font font){
-        if(FontHelper.instance().computeTextWidth(text, font) <= width || width == 0){
+        if(computeTextWidth(text, font) <= width || width == 0){
             return Lists.newArrayList(text);
         }else{
             int l = 0, h = text.length() - 1;
+            var breaker = BreakIterator.getLineInstance();
+            breaker.setText(text);
             while (l < h){
                 int m = (l + h) / 2;
-                if(FontHelper.instance().computeTextWidth(text.substring(0, m), font) <= width){
+                if(computeTextWidth(text.substring(0, breaker.following(m)), font) <= width){
                     l = m + 1;
                 }
                 else{
                     h = m - 1;
                 }
             }
-            return Stream.concat(Stream.of(text.substring(0, l + 1)), wrapText(text.substring(l + 1), width, font).stream()).collect(Collectors.toList());
+            return Stream.concat(Stream.of(text.substring(0, breaker.following(l))), wrapText(text.substring(breaker.following(l)), width, font).stream()).collect(Collectors.toList());
         }
     }
 
@@ -254,7 +257,7 @@ public final class WindowsFontHelper implements FontHelper {
                 int charPoint = charPointBuffer.get(0);
 
                 float centerX = posX.get(0);
-                stbtt_GetPackedQuad(cdata, bitmapWidth, bitmapHeight, charPoint, posX, posY, stbQuad, false);
+                stbtt_GetPackedQuad(cdata, bitmapWidth, bitmapHeight, charPoint, posX, posY, stbQuad, true);
                 float diff = /*Math.abs(stbQuad.y0() - stbQuad.y1())*/ stbQuad.y1();
                 if (maxY < diff) {
                     maxY = diff;
@@ -314,7 +317,7 @@ public final class WindowsFontHelper implements FontHelper {
                 int charPoint = charPointBuffer.get(0);
 
                 float centerX = posX.get(0);
-                stbtt_GetPackedQuad(cdata,bitmapWidth,bitmapHeight, charPoint, posX, posY, stbQuad, false);
+                stbtt_GetPackedQuad(cdata,bitmapWidth,bitmapHeight, charPoint, posX, posY, stbQuad, true);
                 posX.put(0, scale(centerX, posX.get(0), factorX));
                 if (i < text.length()) {
                     getCodePoint(text, i, charPointBuffer);
