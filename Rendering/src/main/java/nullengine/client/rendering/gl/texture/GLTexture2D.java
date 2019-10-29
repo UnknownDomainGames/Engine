@@ -54,6 +54,10 @@ public class GLTexture2D implements Texture2D {
         return of(pixels, width, height);
     }
 
+    public static GLTexture2D of(Texture2DBuffer pixels) {
+        return of(pixels.getBuffer(), pixels.getWidth(), pixels.getHeight());
+    }
+
     public static GLTexture2D of(ByteBuffer pixels, int width, int height) {
         if (!pixels.isDirect()) {
             ByteBuffer direct = ByteBuffer.allocateDirect(pixels.capacity());

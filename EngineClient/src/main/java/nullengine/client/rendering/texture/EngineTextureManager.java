@@ -25,17 +25,12 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
     private AssetSourceManager sourceManager;
 
     public EngineTextureManager() {
-        this.whiteTexture = getTextureDirect(new Texture2DBuffer(2, 2, 0xffffffff));
+        this.whiteTexture = GLTexture2D.of(new Texture2DBuffer(2, 2, 0xffffffff));
     }
 
     @Override
     public GLTexture2D getWhiteTexture() {
         return whiteTexture;
-    }
-
-    @Override
-    public GLTexture2D getTextureDirect(Texture2DBuffer buffer) {
-        return GLTexture2D.of(buffer.getBuffer(), buffer.getWidth(), buffer.getHeight());
     }
 
     @Override
@@ -91,7 +86,7 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
             var buffer = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
             channel.read(buffer);
             buffer.flip();
-            return getTextureDirect(Texture2DBuffer.create(buffer));
+            return GLTexture2D.of(Texture2DBuffer.create(buffer));
         } catch (IOException e) {
             throw new AssetLoadException("Cannot load texture because catch exception. Path: " + url.toFileLocation("texture", ".png"), e);
         }

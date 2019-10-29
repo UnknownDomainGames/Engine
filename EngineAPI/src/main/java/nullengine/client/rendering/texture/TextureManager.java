@@ -9,8 +9,6 @@ public interface TextureManager {
 
     GLTexture2D getWhiteTexture();
 
-    GLTexture2D getTextureDirect(Texture2DBuffer buffer);
-
     Texture2DAtlas getTextureAtlas(TextureAtlasName type);
 
     static TextureManager instance() {
