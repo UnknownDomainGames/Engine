@@ -75,8 +75,8 @@ public class Texture2DBuffer {
         return backingBuffer;
     }
 
-    public void setTexture(int x, int y, ByteBuffer texture, int textureWidth, int textureHeight, int u, int v, int width, int height) {
-        int bufferStride = textureWidth * Integer.BYTES;
+    public void setTexture(int x, int y, ByteBuffer texture, int u, int v, int width, int height) {
+        int bufferStride = width * Integer.BYTES;
         for (int i = 0; i < height; i++) {
             backingBuffer.position((y + i) * this.stride + x * Integer.BYTES);
             texture.position((u + i) * bufferStride + v * Integer.BYTES);
@@ -88,15 +88,15 @@ public class Texture2DBuffer {
     }
 
     public void setTexture(int x, int y, ByteBuffer buffer, int width, int height) {
-        setTexture(x, y, buffer, width, height, 0, 0, width, height);
+        setTexture(x, y, buffer, 0, 0, width, height);
     }
 
     public void setTexture(int x, int y, Texture2DBuffer texture) {
         setTexture(x, y, texture.getBuffer(), texture.getWidth(), texture.getHeight());
     }
 
-    public void setTexture(int x, int y, Texture2DBuffer texture, int u, int v, int width, int height) {
-        setTexture(x, y, texture.getBuffer(), texture.getWidth(), texture.getHeight(), u, v, width, height);
+    public void setTexture(int x, int y, Texture2DBuffer texture, int u, int v) {
+        setTexture(x, y, texture.getBuffer(), u, v, texture.getWidth(), texture.getHeight());
     }
 
     public void setPixel(int x, int y, int color) {
