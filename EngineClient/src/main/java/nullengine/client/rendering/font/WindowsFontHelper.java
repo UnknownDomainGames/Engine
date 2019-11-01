@@ -241,24 +241,26 @@ public final class WindowsFontHelper implements FontHelper {
         }
 
         var nativeTTFont = getNativeFont(font);
-        var cdata = nativeTTFont.getCharBuffer();
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer charPointBuffer = stack.mallocInt(1);
             FloatBuffer posX = stack.floats(0);
             FloatBuffer posY = stack.floats(0 + font.getSize());
 
-            int bitmapWidth = nativeTTFont.getBitmapWidth();
-            int bitmapHeight = nativeTTFont.getBitmapHeight();
-            STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
             float maxY = (float) (nativeTTFont.getInfo().getAscent() - nativeTTFont.getInfo().getDescent()) * stbtt_ScaleForPixelHeight(nativeTTFont.getInfo().getFontInfo(), font.getSize());
+            var plane = nativeTTFont.getPlaneTextures().get(0);
             for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, charPointBuffer);
 
                 int charPoint = charPointBuffer.get(0);
-
-                float centerX = posX.get(0);
-                stbtt_GetPackedQuad(cdata, bitmapWidth, bitmapHeight, charPoint, posX, posY, stbQuad, true);
-                float diff = /*Math.abs(stbQuad.y0() - stbQuad.y1())*/ stbQuad.y1();
+                if(!isSupportedCharacter(nativeTTFont, charPoint)) {
+                    continue;
+                }
+                if(!nativeTTFont.isBlockLoaded((char) charPoint)){
+                    plane.putBlock(Character.UnicodeBlock.of(charPoint));
+                }
+                var quad = plane.getQuad((char) charPoint);
+                if(quad == null) continue;
+                float diff = /*Math.abs(stbQuad.y0() - stbQuad.y1())*/ quad.getPos().w();
                 if (maxY < diff) {
                     maxY = diff;
                 }
@@ -268,7 +270,7 @@ public final class WindowsFontHelper implements FontHelper {
     }
 
     private void bindTexture(NativeTTFont nativeTTFont) {
-        glBindTexture(GL_TEXTURE_2D, nativeTTFont.getTextureId());
+        nativeTTFont.getPlaneTextures().get(0).bind();
     }
 
     @Override
@@ -289,7 +291,6 @@ public final class WindowsFontHelper implements FontHelper {
         float fontHeight = nativeTTFont.getFont().getSize();
         float scale = nativeTTFont.getScaleForPixelHeight();
 
-        var cdata = nativeTTFont.getCharBuffer();
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer charPointBuffer = stack.mallocInt(1);
             FloatBuffer posX = stack.floats(0);
@@ -307,32 +308,51 @@ public final class WindowsFontHelper implements FontHelper {
 
             float centerY = 0 + fontHeight;
 
-            int bitmapWidth = nativeTTFont.getBitmapWidth();
-            int bitmapHeight = nativeTTFont.getBitmapHeight();
-            STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
+            var fontPlaneTexture = nativeTTFont.getPlaneTextures().get(0);
+            for (int i = 0; i < text.length();) {
+                i += getCodePoint(text, i, charPointBuffer);
+                int charPoint = charPointBuffer.get(0);
+                if(!isSupportedCharacter(nativeTTFont, charPoint)) {
+                    continue;
+                }
+                if(!nativeTTFont.isBlockLoaded((char) charPoint)){
+                    fontPlaneTexture.putBlock(Character.UnicodeBlock.of(charPoint));
+                }
+                if(fontPlaneTexture.isWaitingForReloading()){
+                    fontPlaneTexture.bakeTexture(nativeTTFont.getFont(), nativeTTFont.getInfo());
+                    fontPlaneTexture.bind();
+                }
+            }
             buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE);
             for (int i = 0; i < text.length();) {
                 i += getCodePoint(text, i, charPointBuffer);
 
                 int charPoint = charPointBuffer.get(0);
 
+                if(!isSupportedCharacter(nativeTTFont, charPoint)) {
+                    continue;
+                }
+
                 float centerX = posX.get(0);
-                stbtt_GetPackedQuad(cdata,bitmapWidth,bitmapHeight, charPoint, posX, posY, stbQuad, true);
-                posX.put(0, scale(centerX, posX.get(0), factorX));
+                var quads = fontPlaneTexture.getQuad((char) charPoint);
+                if(quads == null) continue;
+                posX.put(0, scale(centerX, posX.get(0) + quads.getXOffset(), factorX));
                 if (i < text.length()) {
                     getCodePoint(text, i, charPointBuffer);
                     posX.put(0, posX.get(0)
                             + stbtt_GetCodepointKernAdvance(fontInfo, charPoint, charPointBuffer.get(0)) * scale);
                 }
-                float x0 = scale(centerX, stbQuad.x0(), factorX), x1 = scale(centerX, stbQuad.x1(), factorX),
-                        y0 = scale(centerY, stbQuad.y0(), factorY), y1 = scale(centerY, stbQuad.y1(), factorY); // FIXME: Incorrect y0
-                buffer.pos(x0, y0, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t0()).endVertex();
-                buffer.pos(x0, y1, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t1()).endVertex();
-                buffer.pos(x1, y0, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t0()).endVertex();
+                float x0 = (float)Math.floor(scale(centerX, centerX + quads.getPos().x(), factorX) + 0.5),
+                        x1 = (float)Math.floor(scale(centerX, centerX + quads.getPos().z(), factorX) + 0.5),
+                        y0 = (float)Math.floor(scale(centerY, quads.getPos().y(), factorY) + 0.5),
+                        y1 = (float)Math.floor(scale(centerY, quads.getPos().w(), factorY) + 0.5); // FIXME: Incorrect y0
+                buffer.pos(x0, y0, 0).color(r, g, b, a).uv(quads.getTexCoord().x(), quads.getTexCoord().y()).endVertex();
+                buffer.pos(x0, y1, 0).color(r, g, b, a).uv(quads.getTexCoord().x(), quads.getTexCoord().w()).endVertex();
+                buffer.pos(x1, y0, 0).color(r, g, b, a).uv(quads.getTexCoord().z(), quads.getTexCoord().y()).endVertex();
 
-                buffer.pos(x1, y0, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t0()).endVertex();
-                buffer.pos(x0, y1, 0).color(r, g, b, a).uv(stbQuad.s0(), stbQuad.t1()).endVertex();
-                buffer.pos(x1, y1, 0).color(r, g, b, a).uv(stbQuad.s1(), stbQuad.t1()).endVertex();
+                buffer.pos(x1, y0, 0).color(r, g, b, a).uv(quads.getTexCoord().z(), quads.getTexCoord().y()).endVertex();
+                buffer.pos(x0, y1, 0).color(r, g, b, a).uv(quads.getTexCoord().x(), quads.getTexCoord().w()).endVertex();
+                buffer.pos(x1, y1, 0).color(r, g, b, a).uv(quads.getTexCoord().z(), quads.getTexCoord().w()).endVertex();
             }
         }
     }
@@ -352,24 +372,10 @@ public final class WindowsFontHelper implements FontHelper {
     private NativeTTFont loadNativeFont(NativeTTFontInfo info, Font font) {
         ByteBuffer fontData = info.getFontData();
         float scale = stbtt_ScaleForPixelHeight(info.getFontInfo(), font.getSize());
-        try(var context = STBTTPackContext.malloc()) {
-            int textureId = GL11.glGenTextures();
-            var charBuffer = STBTTPackedchar.malloc(SUPPORTED_CHARACTER_COUNT);
-            int bitmapSize = getBitmapSize(font.getSize(), SUPPORTED_CHARACTER_COUNT);
-            ByteBuffer bitmap = BufferUtils.createByteBuffer(bitmapSize * bitmapSize);
-
-            stbtt_PackBegin(context, bitmap, bitmapSize, bitmapSize, 0, 1);
-            stbtt_PackFontRange(context, fontData, info.getOffsetIndex(), font.getSize(), 0, charBuffer);
-            stbtt_PackEnd(context);
-
-            glBindTexture(GL_TEXTURE_2D, textureId);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, bitmapSize, bitmapSize, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
-            glBindTexture(GL_TEXTURE_2D, 0);
-
-            return new NativeTTFont(info, font, textureId, charBuffer, bitmapSize, bitmapSize, scale);
-        }
+        var plane = new FontPlaneTexture();
+        plane.putBlock(Character.UnicodeBlock.BASIC_LATIN);
+        plane.bakeTexture(font, info);
+        return new NativeTTFont(info, font, scale, plane);
     }
 
     private NativeTTFontInfo loadNativeFontInfo(Path path) throws IOException {
@@ -504,7 +510,7 @@ public final class WindowsFontHelper implements FontHelper {
     }
 
     private int getBitmapSize(float size, int countOfChar) {
-        return (int) Math.ceil((size + 2 * size / 16.0f) * Math.sqrt(countOfChar));
+        return (int) Math.ceil((size + 8 * size / 16.0f) * Math.sqrt(countOfChar));
     }
 
     private float scale(float center, float offset, float factor) {
@@ -524,7 +530,7 @@ public final class WindowsFontHelper implements FontHelper {
         return 1;
     }
 
-    private boolean isSupportedCharacter(NativeTTFont font, char character){
+    private boolean isSupportedCharacter(NativeTTFont font, int character){
         if(character == '\u001A' || character == '\uFFFD') return true;
         var counter = stbtt_FindGlyphIndex(font.getInfo().getFontInfo(), 0x1A);
         var ci = stbtt_FindGlyphIndex(font.getInfo().getFontInfo(), character);
