@@ -15,7 +15,7 @@ public class HBox extends Pane {
     }
 
     @Override
-    public float prefWidth() {
+    public float computeWidth() {
         float width = 0, spacing = spacing().get();
         for (Component component : getChildren()) {
             width += Math.max(component.width().get(), Utils.prefWidth(component));
@@ -25,7 +25,7 @@ public class HBox extends Pane {
     }
 
     @Override
-    public float prefHeight() {
+    public float computeHeight() {
         float height = 0;
         for (Component component : getChildren()) {
             height = Math.max(Math.max(height, component.height().get()),Utils.prefHeight(component));

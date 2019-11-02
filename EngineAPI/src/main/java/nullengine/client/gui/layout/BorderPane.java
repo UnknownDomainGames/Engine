@@ -114,7 +114,7 @@ public class BorderPane extends Pane {
     }
 
     @Override
-    public float prefWidth() {
+    public float computeWidth() {
         var padding = padding().getValue();
         float width = 0f;
         if (padding != null) {
@@ -133,7 +133,7 @@ public class BorderPane extends Pane {
     }
 
     @Override
-    public float prefHeight() {
+    public float computeHeight() {
         var padding = padding().getValue();
         float height = 0f;
         if (padding != null) {

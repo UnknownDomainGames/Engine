@@ -18,8 +18,6 @@ import java.util.function.Supplier;
 
 public class ListView<T> extends Control {
     private final ScrollPane scrollPane;
-    private final MutableFloatValue listWidth;
-    private final MutableFloatValue listHeight;
 
     private Container container;
 
@@ -34,8 +32,8 @@ public class ListView<T> extends Control {
     public ListView(){
         scrollPane = new ScrollPane();
         getChildren().add(scrollPane);
-        listWidth = scrollPane.paneWidth();
-        listHeight = scrollPane.paneHeight();
+        this.getSize().prefWidth().bindBidirectional(scrollPane.getSize().prefWidth());
+        this.getSize().prefHeight().bindBidirectional(scrollPane.getSize().prefHeight());
         items.addChangeListener(change -> update());
         containerFactory.addChangeListener((observable, oldValue, newValue) -> {
             container = null;
@@ -58,21 +56,13 @@ public class ListView<T> extends Control {
     }
 
     @Override
-    public float prefWidth() {
-        return scrollPane.prefWidth();
+    public float computeWidth() {
+        return scrollPane.computeWidth();
     }
 
     @Override
-    public float prefHeight() {
-        return scrollPane.prefHeight();
-    }
-
-    public MutableFloatValue listWidth() {
-        return listWidth;
-    }
-
-    public MutableFloatValue listHeight() {
-        return listHeight;
+    public float computeHeight() {
+        return scrollPane.computeHeight();
     }
 
     public ObservableList<T> items() {

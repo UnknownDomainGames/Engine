@@ -13,9 +13,6 @@ public class ScrollPane extends BorderPane {
 
     private final MutableValue<Component> content = new SimpleMutableObjectValue<>();
 
-    private MutableFloatValue paneWidth = new SimpleMutableFloatValue(FOLLOW_PARENT);
-    private MutableFloatValue paneHeight = new SimpleMutableFloatValue(FOLLOW_PARENT);
-
     public ScrollPane(){
         super();
         vScroll = new VSlider();
@@ -78,23 +75,6 @@ public class ScrollPane extends BorderPane {
             vScroll.disabled().set(true);
             vScroll.max().set(1);
         }
-    }
-
-    @Override
-    public float prefWidth() {
-        return paneWidth.get() == FOLLOW_PARENT ? (parent().isPresent() ? parent().getValue().width().get() : 0) : paneWidth.get();
-    }
-    @Override
-    public float prefHeight() {
-        return paneHeight.get() == FOLLOW_PARENT ? (parent().isPresent() ? parent().getValue().height().get() : 0) : paneHeight.get();
-    }
-
-    public MutableFloatValue paneWidth() {
-        return paneWidth;
-    }
-
-    public MutableFloatValue paneHeight() {
-        return paneHeight;
     }
 
     public void setContent(Component content) {

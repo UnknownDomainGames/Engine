@@ -28,7 +28,7 @@ public class VBox extends Pane {
     }
 
     @Override
-    public float prefWidth() {
+    public float computeWidth() {
         float width = 0;
         for (Component component : getChildren()) {
             width = Math.max(Math.max(width, component.width().get()), Utils.prefWidth(component));
@@ -38,7 +38,7 @@ public class VBox extends Pane {
     }
 
     @Override
-    public float prefHeight() {
+    public float computeHeight() {
         float height = 0, spacing = spacing().get();
         for (Component component : getChildren()) {
             height += Math.max(component.height().get(), Utils.prefHeight(component));

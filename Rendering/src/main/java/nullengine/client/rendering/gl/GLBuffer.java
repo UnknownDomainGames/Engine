@@ -82,24 +82,6 @@ public abstract class GLBuffer {
         if (!drawing) {
             throw new IllegalStateException("Not yet drawn!");
         } else {
-/*            if (drawMode == GLBufferMode.QUADS || drawMode == GLBufferMode.CONTINUOUS_QUADS) {
-                if (vertexCount % 4 != 0)
-                    throw new IllegalArgumentException(String.format("Not enough vertexes! Expected: %d, Found: %d", (vertexCount / 4 + 1) * 4, vertexCount));
-                byte[] bytes = new byte[format.getStride() * 4];
-                ByteBuffer tempBuffer = BufferPool.getDefaultHeapBufferPool().get(backingBuffer.capacity());
-                backingBuffer.rewind();
-                tempBuffer.put(backingBuffer);
-                backingBuffer.clear();
-                tempBuffer.flip();
-                for (int i = 0; i < vertexCount / 4; i++) {
-                    tempBuffer.get(bytes, 0, format.getStride() * 4);
-                    backingBuffer.put(bytes, 0, format.getStride() * 3);
-                    backingBuffer.put(bytes, format.getStride() * 2, format.getStride() * 2);
-                    backingBuffer.put(bytes, 0, format.getStride());
-                }
-                vertexCount = vertexCount / 4 * 6;
-                drawMode = drawMode == GLBufferMode.CONTINUOUS_QUADS ? GLBufferMode.CONTINUOUS_TRIANGLES : GLBufferMode.TRIANGLES;
-            }*/
             drawing = false;
             backingBuffer.position(0);
             backingBuffer.limit(vertexCount * vertexFormat.getStride());

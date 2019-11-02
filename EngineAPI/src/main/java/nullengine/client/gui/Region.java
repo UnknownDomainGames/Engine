@@ -117,15 +117,35 @@ public class Region extends Container {
     }
 
     @Override
-    public float prefWidth() {
+    public final float prefWidth() {
         float width = getSize().prefWidth().get();
-        return width != 0 ? width : super.prefWidth();
+        if(width == Size.USE_COMPUTE_VALUE){
+            return computeWidth();
+        }
+        else if(width == Size.USE_PARENT_VALUE){
+             return (parent().isPresent() ? parent().getValue().width().get() : 0);
+        }
+        return width;
+    }
+
+    public float computeWidth(){
+        return super.prefWidth();
     }
 
     @Override
-    public float prefHeight() {
+    public final float prefHeight() {
         float height = getSize().prefHeight().get();
-        return height != 0 ? height : super.prefHeight();
+        if(height == Size.USE_COMPUTE_VALUE){
+            return computeHeight();
+        }
+        else if(height == Size.USE_PARENT_VALUE){
+            return (parent().isPresent() ? parent().getValue().height().get() : 0);
+        }
+        return height;
+    }
+
+    public float computeHeight(){
+        return super.prefHeight();
     }
 
     @Override

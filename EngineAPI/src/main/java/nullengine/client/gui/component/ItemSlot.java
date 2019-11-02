@@ -29,12 +29,12 @@ public class ItemSlot extends Button {
     }
 
     @Override
-    public float prefHeight() {
+    public float computeHeight() {
         return slotLength().get();
     }
 
     @Override
-    public float prefWidth() {
+    public float computeWidth() {
         return slotLength().get();
     }
 }

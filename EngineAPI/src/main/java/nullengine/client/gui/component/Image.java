@@ -32,12 +32,12 @@ public class Image extends Control {
     }
 
     @Override
-    public float prefWidth() {
+    public float computeWidth() {
         return imageView.prefWidth();
     }
 
     @Override
-    public float prefHeight() {
+    public float computeHeight() {
         return imageView.prefHeight();
     }
 }

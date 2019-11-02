@@ -2,9 +2,12 @@ package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.MutableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
+import nullengine.client.gui.Component;
 import nullengine.client.gui.event.MouseEvent;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Insets;
+import nullengine.client.gui.text.Text;
+import nullengine.client.gui.util.Utils;
 import nullengine.util.Color;
 
 import java.util.function.Consumer;
@@ -73,6 +76,49 @@ public class Button extends Label {
             super.background().setValue(hoverBackground().getValue());
         } else {
             super.background().setValue(buttonBackground().getValue());
+        }
+    }
+
+    @Override
+    protected void layoutChildren() {
+        for (Component child : getChildren()) {
+            if(child instanceof Text){
+                var align = ((Text) child).textAlignment().getValue();
+                var aw = this.prefWidth() - padding().getValue().getLeft() - padding().getValue().getRight();
+                var ah = this.prefHeight() - padding().getValue().getTop() - padding().getValue().getBottom();
+                float x = 0,y = 0;
+                switch (align.getHpos()) {
+                    case LEFT:
+                        x = 0;
+                        break;
+                    case CENTER:
+                        x = (aw - child.prefWidth()) / 2;
+                        break;
+                    case RIGHT:
+                        x = aw - child.prefWidth();
+                        break;
+                }
+                switch (align.getVpos()) {
+                    case TOP:
+                        y = 0;
+                        break;
+                    case CENTER:
+                        y = (ah - child.prefHeight()) / 2;
+                        break;
+                    case BOTTOM:
+                        y = ah - child.prefHeight();
+                        break;
+                    case BASELINE:
+                        y = (ah - ((Text) child).font().getValue().getSize()) / 2;
+                        break;
+                }
+                x = (float) Math.floor(x + 0.5f);
+                y = (float) Math.floor(y + 0.5f);
+                layoutInArea(child, padding().getValue().getLeft() + x, padding().getValue().getTop() + y, Utils.prefWidth(child), Utils.prefHeight(child));
+            }
+            else{ //Although we only have Text inside, we still layout others in case acting as a child
+                layoutInArea(child, child.x().get(), child.y().get(), Utils.prefWidth(child), Utils.prefHeight(child));
+            }
         }
     }
 }

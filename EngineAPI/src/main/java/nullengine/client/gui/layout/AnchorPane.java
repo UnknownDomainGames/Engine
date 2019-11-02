@@ -43,12 +43,12 @@ public class AnchorPane extends Pane {
     }
 
     @Override
-    public float prefWidth() {
+    public float computeWidth() {
         return computeWidth(false);
     }
 
     @Override
-    public float prefHeight() {
+    public float computeHeight() {
         return computeHeight(false);
     }
 
