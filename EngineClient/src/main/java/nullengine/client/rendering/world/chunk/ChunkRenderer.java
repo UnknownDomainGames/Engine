@@ -13,7 +13,6 @@ import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.shader.ShaderType;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
-import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.event.Listener;
 import nullengine.event.block.BlockChangeEvent;
 import nullengine.event.world.chunk.ChunkLoadEvent;
@@ -68,7 +67,7 @@ public class ChunkRenderer {
             }
         });
 
-        context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).reload();
+        context.getTextureManager().getDefaultAtlas().reload();
         initWorld(scene.getWorld());
     }
 
@@ -112,7 +111,7 @@ public class ChunkRenderer {
         ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
         ShaderManager.instance().setUniform("u_viewPos", context.getCamera().getPosition());
 
-        context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).bind();
+        context.getTextureManager().getDefaultAtlas().bind();
         chunkSolidShader.setUniform("useDirectUV", true);
         scene.getLightManager().bind(context.getCamera());
         scene.getMaterial().bind("material");

@@ -8,7 +8,6 @@ import nullengine.client.asset.source.AssetSourceManager;
 import nullengine.client.rendering.model.BakedModel;
 import nullengine.client.rendering.model.voxel.block.BlockModelLoader;
 import nullengine.client.rendering.model.voxel.item.ItemGenerateModelLoader;
-import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.client.rendering.texture.TextureAtlas;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.util.JsonUtils;
@@ -37,7 +36,7 @@ public class ModelManager implements AssetProvider<BakedModel> {
     public void init(AssetManager manager, AssetType<BakedModel> type) {
         this.source = manager.getSourceManager();
         this.type = type;
-        this.textureAtlas = TextureManager.instance().getTextureAtlas(StandardTextureAtlas.DEFAULT);
+        this.textureAtlas = TextureManager.instance().getDefaultAtlas();
         manager.getReloadManager().addListener(
                 AssetReloadListener.builder().name("ReloadVoxelModel").before("Texture").runnable(this::reloadModels).build());
         manager.getReloadManager().addListener(

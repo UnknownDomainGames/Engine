@@ -1,7 +1,6 @@
 package nullengine.client.rendering.item;
 
 import nullengine.client.rendering.RenderManager;
-import nullengine.client.rendering.texture.StandardTextureAtlas;
 import nullengine.item.BlockItem;
 import nullengine.item.Item;
 import nullengine.item.ItemStack;
@@ -55,7 +54,7 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
     }
 
     private void preRender() {
-        context.getTextureManager().getTextureAtlas(StandardTextureAtlas.DEFAULT).bind();
+        context.getTextureManager().getDefaultAtlas().bind();
     }
 
     private void postRender() {

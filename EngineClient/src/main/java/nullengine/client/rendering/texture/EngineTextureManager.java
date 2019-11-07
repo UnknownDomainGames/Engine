@@ -11,21 +11,20 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class EngineTextureManager implements TextureManager, AssetProvider<GLTexture2D> {
 
     private final List<Asset<GLTexture2D>> assets = new ArrayList<>();
-    private final Map<TextureAtlasName, TextureAtlasImpl> texturesAtlases = new HashMap<>();
 
     private final GLTexture2D whiteTexture;
+    private final TextureAtlasImpl defaultAtlas;
 
     private AssetSourceManager sourceManager;
 
     public EngineTextureManager() {
         this.whiteTexture = GLTexture2D.of(new Texture2DBuffer(2, 2, 0xffffffff));
+        this.defaultAtlas = new TextureAtlasImpl();
     }
 
     @Override
@@ -34,8 +33,8 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
     }
 
     @Override
-    public TextureAtlas getTextureAtlas(TextureAtlasName type) {
-        return texturesAtlases.computeIfAbsent(type, key -> new TextureAtlasImpl());
+    public TextureAtlas getDefaultAtlas() {
+        return defaultAtlas;
     }
 
     @Override
@@ -67,11 +66,11 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
             }
             asset.reload();
         });
-        texturesAtlases.values().forEach(TextureAtlas::reload);
+        defaultAtlas.reload();
     }
 
     private void cleanCache() {
-        texturesAtlases.values().forEach(TextureAtlasImpl::cleanCache);
+        defaultAtlas.cleanCache();
     }
 
     @Nonnull
@@ -100,5 +99,6 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
                 glTexture.dispose();
             }
         });
+        defaultAtlas.dispose();
     }
 }
