@@ -15,24 +15,14 @@ public class TextureAtlasPartImpl implements TextureAtlasPart {
     private final AssetURL url;
 
     private Texture2DBuffer data;
-    private float minU, minV, maxU, maxV;
+    private TextureMap.UVResult uv;
 
     public TextureAtlasPartImpl(AssetURL url) {
         this.url = url;
     }
 
-    public void init(float minU, float minV, float maxU, float maxV) {
-        this.minU = minU;
-        this.minV = minV;
-        this.maxU = maxU;
-        this.maxV = maxV;
-    }
-
-    public void init(int textureMapWidth, int textureMapHeight, int offsetX, int offsetY, int width, int height) {
-        init((float) offsetX / textureMapWidth,
-                (float) offsetY / textureMapHeight,
-                (float) (offsetX + width) / textureMapWidth,
-                (float) (offsetY + height) / textureMapHeight);
+    public void setUv(TextureMap.UVResult uv) {
+        this.uv = uv;
     }
 
     public void reload() {
@@ -67,21 +57,21 @@ public class TextureAtlasPartImpl implements TextureAtlasPart {
 
     @Override
     public float getMinU() {
-        return minU;
+        return uv.getMinU();
     }
 
     @Override
     public float getMinV() {
-        return minV;
+        return uv.getMinV();
     }
 
     @Override
     public float getMaxU() {
-        return maxU;
+        return uv.getMaxU();
     }
 
     @Override
     public float getMaxV() {
-        return maxV;
+        return uv.getMaxV();
     }
 }

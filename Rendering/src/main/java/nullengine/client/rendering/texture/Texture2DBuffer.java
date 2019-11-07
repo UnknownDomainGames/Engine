@@ -39,6 +39,10 @@ public class Texture2DBuffer {
         }
     }
 
+    public Texture2DBuffer(int size) {
+        this(size, size);
+    }
+
     public Texture2DBuffer(int width, int height) {
         this.width = width;
         this.height = height;
@@ -46,9 +50,7 @@ public class Texture2DBuffer {
     }
 
     public Texture2DBuffer(int width, int height, int initColor) {
-        this.width = width;
-        this.height = height;
-        initBuffer();
+        this(width, height);
         fill(initColor);
     }
 

@@ -59,6 +59,7 @@ public class Scene {
     public void setRoot(Container root) {
         this.root = Objects.requireNonNull(root);
         root.scene.setValue(this);
+        // FIXME:
         root.getChildrenRecursive().forEach(component -> component.scene.setValue(this));
         updateRoot();
     }

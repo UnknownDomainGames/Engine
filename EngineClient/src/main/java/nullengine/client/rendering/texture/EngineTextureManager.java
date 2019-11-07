@@ -18,7 +18,7 @@ import java.util.Map;
 public class EngineTextureManager implements TextureManager, AssetProvider<GLTexture2D> {
 
     private final List<Asset<GLTexture2D>> assets = new ArrayList<>();
-    private final Map<TextureAtlasName, Texture2DAtlasImpl> texturesAtlases = new HashMap<>();
+    private final Map<TextureAtlasName, TextureAtlasImpl> texturesAtlases = new HashMap<>();
 
     private final GLTexture2D whiteTexture;
 
@@ -34,8 +34,8 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
     }
 
     @Override
-    public Texture2DAtlas getTextureAtlas(TextureAtlasName type) {
-        return texturesAtlases.computeIfAbsent(type, key -> new Texture2DAtlasImpl());
+    public TextureAtlas getTextureAtlas(TextureAtlasName type) {
+        return texturesAtlases.computeIfAbsent(type, key -> new TextureAtlasImpl());
     }
 
     @Override
@@ -67,11 +67,11 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
             }
             asset.reload();
         });
-        texturesAtlases.values().forEach(Texture2DAtlas::reload);
+        texturesAtlases.values().forEach(TextureAtlas::reload);
     }
 
     private void cleanCache() {
-        texturesAtlases.values().forEach(Texture2DAtlasImpl::cleanCache);
+        texturesAtlases.values().forEach(TextureAtlasImpl::cleanCache);
     }
 
     @Nonnull

@@ -9,7 +9,7 @@ public interface TextureManager {
 
     GLTexture2D getWhiteTexture();
 
-    Texture2DAtlas getTextureAtlas(TextureAtlasName type);
+    TextureAtlas getTextureAtlas(TextureAtlasName type);
 
     static TextureManager instance() {
         return Internal.instance.get();

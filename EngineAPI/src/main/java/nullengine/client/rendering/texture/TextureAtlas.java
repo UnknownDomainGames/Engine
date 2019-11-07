@@ -2,7 +2,7 @@ package nullengine.client.rendering.texture;
 
 import nullengine.client.asset.AssetURL;
 
-public interface Texture2DAtlas extends Texture2D {
+public interface TextureAtlas extends Texture2D {
 
     TextureAtlasPart getTexture(AssetURL url);
 

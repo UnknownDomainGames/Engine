@@ -6,7 +6,7 @@ import nullengine.client.rendering.gl.texture.GLTexture2D;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Texture2DAtlasImpl implements Texture2DAtlas {
+public class TextureAtlasImpl implements TextureAtlas {
 
     private final Map<AssetURL, TextureAtlasPartImpl> textures = new HashMap<>();
 
@@ -24,29 +24,16 @@ public class Texture2DAtlasImpl implements Texture2DAtlas {
 
     @Override
     public void reload() {
-        int sumWidth = 0;
-        int maxHeight = 0;
+        TextureMap textureMap = new TextureMap();
         for (var part : textures.values()) {
             part.reload();
-            var data = part.getData();
-            sumWidth += data.getWidth();
-            if (data.getHeight() > maxHeight)
-                maxHeight = data.getHeight();
+            part.setUv(textureMap.add(part.getData()));
         }
 
-        Texture2DBuffer texture2DBuffer = new Texture2DBuffer(sumWidth, maxHeight);
-        int offsetX = 0;
-        for (var part : textures.values()) {
-            var data = part.getData();
-            texture2DBuffer.setTexture(offsetX, 0, data);
-            part.init(sumWidth, maxHeight, offsetX, 0, data.getWidth(), data.getHeight());
-            offsetX += data.getWidth();
-        }
-
-        if (bakedTextureAtlas != null) {
-            bakedTextureAtlas.dispose();
-        }
-        bakedTextureAtlas = GLTexture2D.of(texture2DBuffer.getBuffer(), sumWidth, maxHeight);
+        textureMap.finish();
+        if (bakedTextureAtlas != null) bakedTextureAtlas.dispose();
+        bakedTextureAtlas = GLTexture2D.of(textureMap.getTexture());
+        textureMap.dispose();
     }
 
     public void cleanCache() {
@@ -85,15 +72,11 @@ public class Texture2DAtlasImpl implements Texture2DAtlas {
 
     @Override
     public void bind() {
-        if (bakedTextureAtlas != null) {
-            bakedTextureAtlas.bind();
-        }
+        if (bakedTextureAtlas != null) bakedTextureAtlas.bind();
     }
 
     @Override
     public void dispose() {
-        if (bakedTextureAtlas != null) {
-            bakedTextureAtlas.dispose();
-        }
+        if (bakedTextureAtlas != null) bakedTextureAtlas.dispose();
     }
 }
