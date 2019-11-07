@@ -15,13 +15,13 @@ public class TextureAtlasPartImpl implements TextureAtlasPart {
     private final AssetURL url;
 
     private Texture2DBuffer data;
-    private TextureMap.UVResult uv;
+    private TextureAtlasBuilder.UVResult uv;
 
     public TextureAtlasPartImpl(AssetURL url) {
         this.url = url;
     }
 
-    public void setUv(TextureMap.UVResult uv) {
+    public void setUv(TextureAtlasBuilder.UVResult uv) {
         this.uv = uv;
     }
 

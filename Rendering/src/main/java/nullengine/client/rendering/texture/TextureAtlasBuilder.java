@@ -2,18 +2,18 @@ package nullengine.client.rendering.texture;
 
 import nullengine.client.rendering.math.Math2;
 
-public class TextureMap {
+public class TextureAtlasBuilder {
 
     private Texture2DBuffer texture;
     private int size;
 
     private Node root;
 
-    public TextureMap() {
+    public TextureAtlasBuilder() {
         this(512);
     }
 
-    public TextureMap(int size) {
+    public TextureAtlasBuilder(int size) {
         this.size = size;
         this.texture = new Texture2DBuffer(size);
         this.root = new Node(size);
@@ -140,9 +140,8 @@ public class TextureMap {
         }
 
         private void notifyChildUsed() {
-            for (Node child : children) {
+            for (var child : children)
                 if (child == null || !child.isUsed()) return;
-            }
             used = true;
         }
 
@@ -178,36 +177,29 @@ public class TextureMap {
             if (children == null) children = new Node[4];
 
             for (int i = 0; i < children.length; i++) {
-                Node child = getChild(i);
+                var child = getChild(i);
                 if (child.isUsed()) continue;
 
-                Node node = child.requestNode(texture, requestSize);
+                var node = child.requestNode(texture, requestSize);
                 if (node != null) return node;
             }
             return null;
         }
 
         private Node getChild(int index) {
-            Node child = children[index];
+            var child = children[index];
             if (child != null) return child;
 
-            int childSize = size / 2;
-            switch (index) {
-                case TOP_LEFT:
-                    child = new Node(this, x, y, childSize);
-                    break;
-                case TOP_RIGHT:
-                    child = new Node(this, x + childSize, y, childSize);
-                    break;
-                case BOTTOM_LEFT:
-                    child = new Node(this, x, y + childSize, childSize);
-                    break;
-                case BOTTOM_RIGHT:
-                    child = new Node(this, x + childSize, y + childSize, childSize);
-                    break;
-            }
-            children[index] = child;
-            return child;
+            var childSize = size / 2;
+            if (index == TOP_LEFT)
+                child = new Node(this, x, y, childSize);
+            else if (index == TOP_RIGHT)
+                child = new Node(this, x + childSize, y, childSize);
+            else if (index == BOTTOM_LEFT)
+                child = new Node(this, x, y + childSize, childSize);
+            else if (index == BOTTOM_RIGHT)
+                child = new Node(this, x + childSize, y + childSize, childSize);
+            return children[index] = child;
         }
 
         private void setChild(int index, Node child) {

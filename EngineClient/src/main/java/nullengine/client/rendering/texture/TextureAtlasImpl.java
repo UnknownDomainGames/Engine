@@ -24,7 +24,7 @@ public class TextureAtlasImpl implements TextureAtlas {
 
     @Override
     public void reload() {
-        TextureMap textureMap = new TextureMap();
+        var textureMap = new TextureAtlasBuilder();
         for (var part : textures.values()) {
             part.reload();
             part.setUv(textureMap.add(part.getData()));
