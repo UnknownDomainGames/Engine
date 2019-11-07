@@ -6,7 +6,7 @@ import nullengine.client.rendering.math.Transform;
 import nullengine.client.rendering.model.DisplayType;
 import nullengine.client.rendering.model.voxel.Model;
 import nullengine.client.rendering.texture.Texture2DBuffer;
-import nullengine.client.rendering.texture.TextureAtlasPart;
+import nullengine.client.rendering.texture.TextureAtlasRegion;
 import nullengine.math.Math2;
 import nullengine.util.Direction;
 
@@ -27,7 +27,7 @@ public class ItemGenerateModel implements Model {
     Transform[] transforms;
 
     @Override
-    public BakedModel bake(Function<AssetURL, TextureAtlasPart> textureGetter) {
+    public BakedModel bake(Function<AssetURL, TextureAtlasRegion> textureGetter) {
         var texture = textureGetter.apply(this.texture);
         var textureBuffer = texture.getData();
         var u = texture.getMaxU() - texture.getMinU();
@@ -77,7 +77,7 @@ public class ItemGenerateModel implements Model {
         return buffer.getPixel(pixelX, pixelY) & 0xff;
     }
 
-    private void bakeNorth(List<float[]> vertexes, TextureAtlasPart texture) {
+    private void bakeNorth(List<float[]> vertexes, TextureAtlasRegion texture) {
         bakeQuad(vertexes, new float[]{
                         .5f, -.5f, negativePixel,
                         -.5f, -.5f, negativePixel,
@@ -86,7 +86,7 @@ public class ItemGenerateModel implements Model {
                 texture.getMinU(), texture.getMinV(), texture.getMaxU(), texture.getMaxV());
     }
 
-    private void bakeSouth(List<float[]> vertexes, TextureAtlasPart texture) {
+    private void bakeSouth(List<float[]> vertexes, TextureAtlasRegion texture) {
         bakeQuad(vertexes, new float[]{
                         -.5f, -.5f, positivePixel,
                         .5f, -.5f, positivePixel,

@@ -10,14 +10,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
-public class TextureAtlasPartImpl implements TextureAtlasPart {
+public class TextureAtlasRegionImpl implements TextureAtlasRegion {
 
     private final AssetURL url;
 
     private Texture2DBuffer data;
     private TextureAtlasBuilder.UVResult uv;
 
-    public TextureAtlasPartImpl(AssetURL url) {
+    public TextureAtlasRegionImpl(AssetURL url) {
         this.url = url;
     }
 

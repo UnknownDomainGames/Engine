@@ -6,7 +6,7 @@ import nullengine.client.rendering.math.Transform;
 import nullengine.client.rendering.model.DisplayType;
 import nullengine.client.rendering.model.ModelUtils;
 import nullengine.client.rendering.model.voxel.Model;
-import nullengine.client.rendering.texture.TextureAtlasPart;
+import nullengine.client.rendering.texture.TextureAtlasRegion;
 import nullengine.math.Math2;
 import nullengine.util.Direction;
 import org.joml.Vector2f;
@@ -32,7 +32,7 @@ public final class BlockModel implements Model {
     Transform[] transforms;
 
     @Override
-    public nullengine.client.rendering.model.BakedModel bake(Function<AssetURL, TextureAtlasPart> textureGetter) {
+    public nullengine.client.rendering.model.BakedModel bake(Function<AssetURL, TextureAtlasRegion> textureGetter) {
         Map<Integer, List<float[]>> vertexes = new HashMap<>();
         bakeModel(this, vertexes, textureGetter);
         fillTransformationArray(transforms);
@@ -44,7 +44,7 @@ public final class BlockModel implements Model {
         return requestTextures.stream().filter(BlockModelLoader::isResolvedTexture).collect(Collectors.toList());
     }
 
-    private void bakeModel(BlockModel data, Map<Integer, List<float[]>> vertexes, Function<AssetURL, TextureAtlasPart> textureGetter) {
+    private void bakeModel(BlockModel data, Map<Integer, List<float[]>> vertexes, Function<AssetURL, TextureAtlasRegion> textureGetter) {
         if (data.resolvedParent != null) {
             bakeParentModel(data, data.resolvedParent, vertexes, textureGetter);
         }
@@ -61,7 +61,7 @@ public final class BlockModel implements Model {
         }
     }
 
-    private void bakeParentModel(BlockModel bakingModel, BlockModel parent, Map<Integer, List<float[]>> vertexes, Function<AssetURL, TextureAtlasPart> textureGetter) {
+    private void bakeParentModel(BlockModel bakingModel, BlockModel parent, Map<Integer, List<float[]>> vertexes, Function<AssetURL, TextureAtlasRegion> textureGetter) {
         if (parent.resolvedParent != null) {
             bakeParentModel(bakingModel, parent.resolvedParent, vertexes, textureGetter);
         }
@@ -78,7 +78,7 @@ public final class BlockModel implements Model {
         }
     }
 
-    private void bakeFace(BlockModel bakingModel, Cube cube, Face face, Direction direction, List<float[]> mesh, Function<AssetURL, TextureAtlasPart> textureGetter) {
+    private void bakeFace(BlockModel bakingModel, Cube cube, Face face, Direction direction, List<float[]> mesh, Function<AssetURL, TextureAtlasRegion> textureGetter) {
         var textureAtlasPart = textureGetter.apply(resolveTexture(face.texture.name, bakingModel.textures));
         var uv = face.texture.uv;
         var width = textureAtlasPart.getMaxU() - textureAtlasPart.getMinU();

@@ -8,18 +8,18 @@ import java.util.Map;
 
 public class TextureAtlasImpl implements TextureAtlas {
 
-    private final Map<AssetURL, TextureAtlasPartImpl> textures = new HashMap<>();
+    private final Map<AssetURL, TextureAtlasRegionImpl> textures = new HashMap<>();
 
     private GLTexture2D bakedTextureAtlas;
 
     @Override
-    public TextureAtlasPart getTexture(AssetURL url) {
+    public TextureAtlasRegion getTexture(AssetURL url) {
         return textures.get(url);
     }
 
     @Override
-    public TextureAtlasPart addTexture(AssetURL url) {
-        return textures.computeIfAbsent(url, key -> new TextureAtlasPartImpl(url));
+    public TextureAtlasRegion addTexture(AssetURL url) {
+        return textures.computeIfAbsent(url, key -> new TextureAtlasRegionImpl(url));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class TextureAtlasImpl implements TextureAtlas {
     }
 
     public void cleanCache() {
-        textures.values().forEach(TextureAtlasPartImpl::cleanCache);
+        textures.values().forEach(TextureAtlasRegionImpl::cleanCache);
     }
 
     @Override
