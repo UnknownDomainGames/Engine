@@ -310,7 +310,7 @@ public class GLFWWindow implements Window {
         initWindowHint();
         pointer = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
         if (!checkCreated()) {
-            throw new RuntimeException("Failed to parse the GLFW window");
+            throw new RuntimeException("Failed to create the GLFW window");
         }
         initCallbacks();
         setWindowPosCenter();

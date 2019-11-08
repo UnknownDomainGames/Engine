@@ -1,6 +1,6 @@
 package nullengine.client.rendering.display;
 
-public interface Window {
+public interface Window extends WindowAttributes {
 
     int getX();
 
@@ -42,18 +42,6 @@ public interface Window {
 
     void hide();
 
-    void setVisible(boolean visible);
-
-    boolean isVisible();
-
-    boolean isDecorated();
-
-    void setDecorated(boolean decorated);
-
-    boolean isResizable();
-
-    void setResizable(boolean resizable);
-
     void dispose();
 
     void addKeyCallback(KeyCallback callback);
@@ -88,7 +76,7 @@ public interface Window {
 
     DisplayMode getDisplayMode();
 
-    default void setDisplayMode(DisplayMode mode){
+    default void setDisplayMode(DisplayMode mode) {
         setDisplayMode(mode, -1, -1, -1);
     }
 

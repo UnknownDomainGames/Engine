@@ -192,10 +192,9 @@ public class EngineRenderManager implements RenderManager {
 
         logger.info("Initializing window!");
         initGLFW();
-        window = new GLFWWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "");
+        window = new GLFWWindow(854, 480, "");
         window.init();
         window.setDisplayMode(Platform.getEngineClient().getSettings().getDisplaySettings().getDisplayMode(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionWidth(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionHeight(), Platform.getEngineClient().getSettings().getDisplaySettings().getFrameRate());
-        engine.addShutdownListener(window::dispose);
 
         initGL();
 
@@ -265,6 +264,8 @@ public class EngineRenderManager implements RenderManager {
 
     public void dispose() {
         renderers.forEach(Renderer::dispose);
+
+        if (window != null) window.dispose();
     }
 
     @Override
