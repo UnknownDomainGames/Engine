@@ -16,8 +16,8 @@ public class Node {
 
     final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
 
-    private final List<Node> children = new ArrayList<>();
-    private final List<Node> unmodifiableChildren = Collections.unmodifiableList(children);
+    private List<Node> children;
+    private List<Node> unmodifiableChildren;
 
     private Transform transform = new Transform();
     private Transform worldTransform = new Transform();
@@ -61,17 +61,26 @@ public class Node {
         }
     }
 
-    public final List<Node> getChildren() {
-        return unmodifiableChildren;
+    public final List<Node> getUnmodifiableChildren() {
+        return unmodifiableChildren == null ? List.of() : unmodifiableChildren;
+    }
+
+    private List<Node> getChildren() {
+        if (children == null) {
+            children = new ArrayList<>();
+            unmodifiableChildren = Collections.unmodifiableList(children);
+        }
+        return children;
     }
 
     public void addChild(Node node) {
         Validate.notNull(node);
-        children.add(node);
+        getChildren().add(node);
         node.setParent(this);
     }
 
     public void removeChild(Node node) {
+        getChildren().remove(node);
         node.setParent(null);
     }
 
@@ -146,7 +155,7 @@ public class Node {
         if (parent != null) {
             worldTransform.applyParent(parent.worldTransform);
         }
-        getChildren().forEach(node -> refreshTransform());
+        getUnmodifiableChildren().forEach(node -> refreshTransform());
     }
 
     public Map<Object, Object> getProperties() {
