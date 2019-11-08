@@ -1,5 +1,6 @@
 package nullengine.client.rendering;
 
+import nullengine.Platform;
 import nullengine.client.EngineClient;
 import nullengine.client.asset.AssetType;
 import nullengine.client.event.rendering.CameraChangeEvent;
@@ -8,8 +9,6 @@ import nullengine.client.gui.GuiManager;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.camera.FixedCamera;
 import nullengine.client.rendering.display.DisplayInfo;
-import nullengine.client.rendering.display.GLFWDisplayInfo;
-import nullengine.client.rendering.display.GLFWWindow;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
@@ -17,6 +16,8 @@ import nullengine.client.rendering.font.WindowsFontHelper;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.gl.util.GLInfoImpl;
 import nullengine.client.rendering.gl.util.NVXGPUInfo;
+import nullengine.client.rendering.glfw.GLFWDisplayInfo;
+import nullengine.client.rendering.glfw.GLFWWindow;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GLInfo;
@@ -182,6 +183,7 @@ public class EngineRenderManager implements RenderManager {
         initGLFW();
         window = new GLFWWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "");
         window.init();
+        window.setDisplayMode(Platform.getEngineClient().getSettings().getDisplaySettings().getDisplayMode(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionWidth(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionHeight(), Platform.getEngineClient().getSettings().getDisplaySettings().getFrameRate());
         engine.addShutdownListener(window::dispose);
 
         initGL();
@@ -203,6 +205,7 @@ public class EngineRenderManager implements RenderManager {
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
         displayInfo = new GLFWDisplayInfo();
+        DisplayInfo.Internal.setInstance(displayInfo);
     }
 
     private void initGL() {

@@ -1,8 +1,6 @@
-package nullengine.client.rendering.display;
+package nullengine.client.rendering.glfw;
 
-import nullengine.Platform;
-import nullengine.client.rendering.RenderManager;
-import nullengine.util.RuntimeEnvironment;
+import nullengine.client.rendering.display.*;
 import org.apache.commons.lang3.SystemUtils;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
@@ -308,7 +306,7 @@ public class GLFWWindow implements Window {
     }
 
     public void init() {
-        setMonitor(RenderManager.instance().getDisplayInfo().getPrimaryMonitor());
+        setMonitor(DisplayInfo.instance().getPrimaryMonitor());
         initWindowHint();
         pointer = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
         if (!checkCreated()) {
@@ -320,7 +318,6 @@ public class GLFWWindow implements Window {
         enableVSync();
         cursor = new GLFWCursor(pointer);
         setupInput();
-        setDisplayMode(Platform.getEngineClient().getSettings().getDisplaySettings().getDisplayMode(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionWidth(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionHeight(), Platform.getEngineClient().getSettings().getDisplaySettings().getFrameRate());
         resize();
     }
 
@@ -393,7 +390,7 @@ public class GLFWWindow implements Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
-        if (Platform.getEngineClient().getRuntimeEnvironment() != RuntimeEnvironment.DEPLOYMENT) {
+        if (Boolean.parseBoolean(System.getProperty("glfw.debug", "false"))) {
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         }
         if (SystemUtils.IS_OS_MAC) {

@@ -1,4 +1,8 @@
-package nullengine.client.rendering.display;
+package nullengine.client.rendering.glfw;
+
+import nullengine.client.rendering.display.Cursor;
+import nullengine.client.rendering.display.CursorShape;
+import nullengine.client.rendering.display.CursorState;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;

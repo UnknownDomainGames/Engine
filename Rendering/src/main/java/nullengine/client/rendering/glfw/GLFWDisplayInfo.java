@@ -1,5 +1,8 @@
-package nullengine.client.rendering.display;
+package nullengine.client.rendering.glfw;
 
+import nullengine.client.rendering.display.DisplayInfo;
+import nullengine.client.rendering.display.Monitor;
+import nullengine.client.rendering.display.VideoMode;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
