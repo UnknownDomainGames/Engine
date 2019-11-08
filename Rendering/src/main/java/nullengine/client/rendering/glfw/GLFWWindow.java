@@ -2,8 +2,6 @@ package nullengine.client.rendering.glfw;
 
 import nullengine.client.rendering.display.*;
 import org.apache.commons.lang3.SystemUtils;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +25,6 @@ public class GLFWWindow implements Window {
     private Monitor monitor;
 
     private boolean resized = false;
-    private Matrix4f projection;
 
     private String title;
 
@@ -72,11 +69,21 @@ public class GLFWWindow implements Window {
 
     @Override
     public int getWidth() {
-        return fboWidth;
+        return windowWidth;
     }
 
     @Override
     public int getHeight() {
+        return windowHeight;
+    }
+
+    @Override
+    public int getFrameBufferWidth() {
+        return fboWidth;
+    }
+
+    @Override
+    public int getFrameBufferHeight() {
         return fboHeight;
     }
 
@@ -117,13 +124,6 @@ public class GLFWWindow implements Window {
         fboHeight = height;
         windowWidth = Math.round(width / getContentScaleX());
         windowHeight = Math.round(height / getContentScaleY());
-    }
-
-    @Override
-    public Matrix4fc projection() {
-        if (resized || projection == null)
-            projection = new Matrix4f().perspective((float) Math.toRadians(60), (float) fboWidth / fboHeight, 0.01f, 1000f);
-        return projection;
     }
 
     @Override

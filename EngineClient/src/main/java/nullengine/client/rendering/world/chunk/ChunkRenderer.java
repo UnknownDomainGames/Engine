@@ -106,7 +106,7 @@ public class ChunkRenderer {
         glEnable(GL11.GL_TEXTURE_2D);
         glEnable(GL11.GL_DEPTH_TEST);
 
-        ShaderManager.instance().setUniform("u_ProjMatrix", context.getWindow().projection());
+        ShaderManager.instance().setUniform("u_ProjMatrix", context.getProjectionMatrix());
         ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
         ShaderManager.instance().setUniform("u_viewPos", context.getCamera().getPosition());

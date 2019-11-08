@@ -11,6 +11,7 @@ import nullengine.client.rendering.util.GPUInfo;
 import nullengine.component.GameObject;
 import nullengine.exception.UninitializationException;
 import org.joml.FrustumIntersection;
+import org.joml.Matrix4fc;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
@@ -24,6 +25,8 @@ public interface RenderManager extends GameObject<RenderManager> {
     boolean isRenderThread();
 
     Window getWindow();
+
+    Matrix4fc getProjectionMatrix();
 
     @Nonnull
     Camera getCamera();

@@ -1,7 +1,5 @@
 package nullengine.client.rendering.display;
 
-import org.joml.Matrix4fc;
-
 public interface Window {
 
     int getX();
@@ -14,6 +12,10 @@ public interface Window {
 
     int getHeight();
 
+    int getFrameBufferWidth();
+
+    int getFrameBufferHeight();
+
     Monitor getMonitor();
 
     void setMonitor(Monitor monitor);
@@ -23,10 +25,6 @@ public interface Window {
     float getContentScaleY();
 
     void setSize(int width, int height);
-
-    // TODO: Remove it
-    @Deprecated
-    Matrix4fc projection();
 
     boolean isResized();
 

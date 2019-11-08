@@ -26,6 +26,7 @@ import nullengine.component.Component;
 import nullengine.component.ComponentAgent;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
@@ -58,6 +59,7 @@ public class EngineRenderManager implements RenderManager {
 
     private Thread renderThread;
     private GLFWWindow window;
+    private Matrix4f projection = new Matrix4f();
     private EngineTextureManager textureManager;
     private GuiManager guiManager;
     private DisplayInfo displayInfo;
@@ -90,6 +92,11 @@ public class EngineRenderManager implements RenderManager {
     @Override
     public Window getWindow() {
         return window;
+    }
+
+    @Override
+    public Matrix4fc getProjectionMatrix() {
+        return projection;
     }
 
     @Override
@@ -165,8 +172,12 @@ public class EngineRenderManager implements RenderManager {
     public void render(float partial) {
         scheduler.run();
 
+        if (window.isResized()) {
+            projection.identity().perspective((float) Math.toRadians(60),
+                    (float) window.getFrameBufferWidth() / window.getFrameBufferHeight(), 0.01f, 1000f);
+        }
         camera.update(partial);
-        frustumIntersection.set(window.projection().mul(camera.getViewMatrix(), new Matrix4f()));
+        frustumIntersection.set(projection.mul(camera.getViewMatrix(), new Matrix4f()));
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         for (Renderer renderer : renderers) {

@@ -135,7 +135,7 @@ public class WorldRenderer {
 
         // render world
         ShaderManager.instance().bindShader(worldShader.getValue());
-        ShaderManager.instance().setUniform("u_ProjMatrix", context.getWindow().projection());
+        ShaderManager.instance().setUniform("u_ProjMatrix", context.getProjectionMatrix());
         ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
         glEnable(GL_CULL_FACE);
@@ -169,7 +169,7 @@ public class WorldRenderer {
 
     private void renderEntity(Matrix4f lightSpaceMat, float partial) {
         ShaderManager.instance().bindShader(entityShader.getValue());
-        ShaderManager.instance().setUniform("u_ProjMatrix", context.getWindow().projection());
+        ShaderManager.instance().setUniform("u_ProjMatrix", context.getProjectionMatrix());
         ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         ShaderManager.instance().setUniform("u_LightSpace", lightSpaceMat);
         ShaderManager.instance().setUniform("u_ShadowMap", 8);
