@@ -1,18 +1,21 @@
-package nullengine.client.rendering.light;
+package nullengine.client.rendering.scene.light;
 
-import nullengine.client.rendering.shader.ShaderManager;
 import org.joml.Vector3f;
 
 public class DirectionalLight extends Light {
-    Vector3f direction;
+    private Vector3f direction;
 
     @Override
     public void bind(String fieldName) {
-        ShaderManager.instance().setUniform(fieldName + ".filled", true);
-        ShaderManager.instance().setUniform(fieldName + ".direction", direction);
-        ShaderManager.instance().setUniform(fieldName + ".light.ambient", ambient);
-        ShaderManager.instance().setUniform(fieldName + ".light.diffuse", diffuse);
-        ShaderManager.instance().setUniform(fieldName + ".light.specular", specular);
+//        ShaderManager.instance().setUniform(fieldName + ".filled", true);
+//        ShaderManager.instance().setUniform(fieldName + ".direction", direction);
+//        ShaderManager.instance().setUniform(fieldName + ".light.ambient", ambient);
+//        ShaderManager.instance().setUniform(fieldName + ".light.diffuse", diffuse);
+//        ShaderManager.instance().setUniform(fieldName + ".light.specular", specular);
+    }
+
+    public Vector3f getDirection() {
+        return direction;
     }
 
     public DirectionalLight setDirection(Vector3f direction) {
