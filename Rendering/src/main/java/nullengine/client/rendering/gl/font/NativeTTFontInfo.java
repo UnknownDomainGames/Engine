@@ -1,6 +1,6 @@
-package nullengine.client.rendering.font;
+package nullengine.client.rendering.gl.font;
 
-import nullengine.Platform;
+import nullengine.client.rendering.font.Font;
 import org.lwjgl.stb.STBTTFontinfo;
 
 import java.io.IOException;
@@ -80,11 +80,11 @@ public class NativeTTFontInfo {
     }
 
     public float getContentScaleX() {
-        return Platform.isClient() ? Platform.getEngineClient().getRenderManager().getWindow().getContentScaleX() : contentScaleX;
+        return contentScaleX;
     }
 
     public float getContentScaleY() {
-        return Platform.isClient() ? Platform.getEngineClient().getRenderManager().getWindow().getContentScaleY() : contentScaleY;
+        return contentScaleY;
     }
 
     public int[] getBoundingBox() {

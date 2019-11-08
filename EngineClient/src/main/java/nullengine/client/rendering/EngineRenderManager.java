@@ -12,7 +12,7 @@ import nullengine.client.rendering.display.DisplayInfo;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
-import nullengine.client.rendering.font.WindowsFontHelper;
+import nullengine.client.rendering.gl.font.WindowsFontHelper;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.gl.util.GLInfoImpl;
 import nullengine.client.rendering.gl.util.NVXGPUInfo;

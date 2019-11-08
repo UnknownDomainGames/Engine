@@ -1,4 +1,6 @@
-package nullengine.client.rendering.font;
+package nullengine.client.rendering.gl.font;
+
+import nullengine.client.rendering.font.Font;
 
 import java.util.ArrayList;
 import java.util.Arrays;

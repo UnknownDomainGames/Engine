@@ -1,8 +1,7 @@
-package nullengine.client.rendering.font;
+package nullengine.client.rendering.gl.font;
 
 import com.google.common.collect.Range;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 

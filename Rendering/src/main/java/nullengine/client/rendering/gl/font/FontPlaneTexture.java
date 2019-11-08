@@ -1,6 +1,7 @@
-package nullengine.client.rendering.font;
+package nullengine.client.rendering.gl.font;
 
-import nullengine.math.Math2;
+import nullengine.client.rendering.font.Font;
+import nullengine.client.rendering.math.Math2;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -13,7 +14,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;

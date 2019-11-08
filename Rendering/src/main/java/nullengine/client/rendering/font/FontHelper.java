@@ -1,7 +1,6 @@
 package nullengine.client.rendering.font;
 
 import nullengine.client.rendering.gl.GLBuffer;
-import nullengine.exception.UninitializationException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,7 +49,9 @@ public interface FontHelper {
     }
 
     class Internal {
-        private static Supplier<FontHelper> instance = UninitializationException.supplier("FontHelper is uninitialized");
+        private static Supplier<FontHelper> instance = () -> {
+            throw new IllegalStateException("FontHelper is not initialized");
+        };
 
         public static void setInstance(FontHelper instance) {
             Internal.instance = () -> instance;

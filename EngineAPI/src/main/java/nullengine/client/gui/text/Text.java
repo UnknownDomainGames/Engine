@@ -12,8 +12,6 @@ import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.util.Color;
 
-import java.util.stream.Collectors;
-
 public class Text extends Component {
 
     private final MutableValue<String> text = new SimpleMutableObjectValue<>();

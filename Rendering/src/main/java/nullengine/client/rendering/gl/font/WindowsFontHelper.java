@@ -1,17 +1,18 @@
-package nullengine.client.rendering.font;
+package nullengine.client.rendering.gl.font;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import nullengine.client.rendering.font.Font;
+import nullengine.client.rendering.font.FontHelper;
+import nullengine.client.rendering.font.FontLoadException;
+import nullengine.client.rendering.font.UnavailableFontException;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.GLVertexFormats;
-import nullengine.client.rendering.texture.TextureManager;
 import org.apache.commons.io.IOUtils;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.stb.*;
+import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
@@ -283,7 +283,6 @@ public final class WindowsFontHelper implements FontHelper {
         bindTexture(nativeFont);
         generateMesh(buffer, text, nativeFont, color);
         renderer.run();
-        TextureManager.instance().getWhiteTexture().bind();
     }
 
     private void generateMesh(GLBuffer buffer, CharSequence text, NativeTTFont nativeTTFont, int color) {
