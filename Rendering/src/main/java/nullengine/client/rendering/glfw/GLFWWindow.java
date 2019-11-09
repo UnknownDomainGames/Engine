@@ -1,6 +1,9 @@
 package nullengine.client.rendering.glfw;
 
-import nullengine.client.rendering.display.*;
+import nullengine.client.rendering.display.Cursor;
+import nullengine.client.rendering.display.DisplayMode;
+import nullengine.client.rendering.display.Monitor;
+import nullengine.client.rendering.display.Window;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.util.LinkedList;
@@ -43,6 +46,14 @@ public class GLFWWindow implements Window {
     private final List<CharCallback> charCallbacks = new LinkedList<>();
     private final List<WindowCloseCallback> windowCloseCallbacks = new LinkedList<>();
     private final List<CursorEnterCallback> cursorEnterCallbacks = new LinkedList<>();
+
+    public GLFWWindow() {
+        this(null);
+    }
+
+    public GLFWWindow(String title) {
+        this(854, 480, title);
+    }
 
     public GLFWWindow(int width, int height, String title) {
         this.title = title;
@@ -309,7 +320,7 @@ public class GLFWWindow implements Window {
     }
 
     public void init() {
-        setMonitor(DisplayInfo.instance().getPrimaryMonitor());
+        setMonitor(GLFWContext.getPrimaryMonitor());
         initWindowHint();
         pointer = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
         if (!checkCreated()) {

@@ -3,7 +3,6 @@ package nullengine.client.rendering;
 import nullengine.client.EngineClient;
 import nullengine.client.gui.GuiManager;
 import nullengine.client.rendering.camera.Camera;
-import nullengine.client.rendering.display.DisplayInfo;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GLInfo;
@@ -40,8 +39,6 @@ public interface RenderManager extends GameObject<RenderManager> {
     GuiManager getGuiManager();
 
     RenderScheduler getScheduler();
-
-    DisplayInfo getDisplayInfo();
 
     GLInfo getGLInfo();
 

@@ -8,7 +8,6 @@ import nullengine.client.gui.EngineGuiManager;
 import nullengine.client.gui.GuiManager;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.camera.FixedCamera;
-import nullengine.client.rendering.display.DisplayInfo;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
@@ -16,7 +15,7 @@ import nullengine.client.rendering.gl.font.WindowsFontHelper;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.gl.util.GLInfoImpl;
 import nullengine.client.rendering.gl.util.NVXGPUInfo;
-import nullengine.client.rendering.glfw.GLFWDisplayInfo;
+import nullengine.client.rendering.glfw.GLFWContext;
 import nullengine.client.rendering.glfw.GLFWWindow;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.TextureManager;
@@ -28,7 +27,6 @@ import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.slf4j.Logger;
@@ -41,12 +39,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.opengl.GL11.*;
 
 public class EngineRenderManager implements RenderManager {
-
-    public static final int WINDOW_WIDTH = 854, WINDOW_HEIGHT = 480;
 
     private final EngineClient engine;
     private final Logger logger;
@@ -62,7 +57,6 @@ public class EngineRenderManager implements RenderManager {
     private Matrix4f projection = new Matrix4f();
     private EngineTextureManager textureManager;
     private GuiManager guiManager;
-    private DisplayInfo displayInfo;
     private GLInfo glInfo;
     private GPUInfo gpuInfo;
 
@@ -112,11 +106,6 @@ public class EngineRenderManager implements RenderManager {
     @Override
     public RenderScheduler getScheduler() {
         return scheduler;
-    }
-
-    @Override
-    public DisplayInfo getDisplayInfo() {
-        return displayInfo;
     }
 
     @Override
@@ -191,7 +180,7 @@ public class EngineRenderManager implements RenderManager {
         this.renderThread = renderThread;
 
         logger.info("Initializing window!");
-        initGLFW();
+        GLFWContext.initialize();
         window = new GLFWWindow(854, 480, "");
         window.init();
         window.setDisplayMode(Platform.getEngineClient().getSettings().getDisplaySettings().getDisplayMode(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionWidth(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionHeight(), Platform.getEngineClient().getSettings().getDisplaySettings().getFrameRate());
@@ -207,15 +196,6 @@ public class EngineRenderManager implements RenderManager {
         initRenderer();
 
         window.show();
-    }
-
-    private void initGLFW() {
-        logger.info("Initializing GLFW context!");
-        GLFWErrorCallback.createPrint(System.err).set();
-        if (!glfwInit())
-            throw new IllegalStateException("Unable to initialize GLFW");
-        displayInfo = new GLFWDisplayInfo();
-        DisplayInfo.Internal.setInstance(displayInfo);
     }
 
     private void initGL() {
