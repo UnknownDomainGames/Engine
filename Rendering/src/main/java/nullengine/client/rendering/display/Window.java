@@ -42,6 +42,8 @@ public interface Window extends WindowAttributes {
 
     void hide();
 
+    boolean isShowing();
+
     void dispose();
 
     void addKeyCallback(KeyCallback callback);

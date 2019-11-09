@@ -29,7 +29,7 @@ public class GLFWWindow implements Window {
     private String title;
 
     private boolean closed = false;
-    private boolean visible = false;
+    private boolean showing = false;
     private boolean decorated = true;
     private boolean resizable = true;
     private DisplayMode displayMode = DisplayMode.WINDOWED;
@@ -242,28 +242,27 @@ public class GLFWWindow implements Window {
 
     @Override
     public void show() {
-        setVisible(true);
+        setShowing(true);
     }
 
     @Override
     public void hide() {
-        setVisible(false);
+        setShowing(false);
     }
 
-    @Override
-    public void setVisible(boolean visible) {
-        if (this.visible == visible)
+    private void setShowing(boolean showing) {
+        if (this.showing == showing)
             return;
-        this.visible = visible;
-        if (visible)
+        this.showing = showing;
+        if (showing)
             glfwShowWindow(pointer);
         else
             glfwHideWindow(pointer);
     }
 
     @Override
-    public boolean isVisible() {
-        return visible;
+    public boolean isShowing() {
+        return showing;
     }
 
     @Override
