@@ -6,7 +6,9 @@ import nullengine.client.rendering.queue.RenderQueue;
 import nullengine.client.rendering.scene.light.LightManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Scene {
 
@@ -14,6 +16,8 @@ public class Scene {
 
     private final RenderQueue renderQueue = new RenderQueue();
     private final LightManager lightManager = new LightManager();
+
+    final Map<String, Node> idToNode = new HashMap<>();
 
     public Scene() {
         children.addChangeListener(change -> {
@@ -26,8 +30,8 @@ public class Scene {
         return children;
     }
 
-    public Node getNode(String id) {
-        return null;
+    public Node getNodeById(String id) {
+        return idToNode.get(id);
     }
 
     public RenderQueue getRenderQueue() {
@@ -37,6 +41,4 @@ public class Scene {
     public LightManager getLightManager() {
         return lightManager;
     }
-
-
 }

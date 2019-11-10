@@ -1,8 +1,6 @@
 package nullengine.client.rendering.scene;
 
-import com.github.mouse0w0.observable.value.MutableObjectValue;
-import com.github.mouse0w0.observable.value.ObservableObjectValue;
-import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
+import com.github.mouse0w0.observable.value.*;
 import nullengine.client.rendering.math.Transform;
 import org.apache.commons.lang3.Validate;
 import org.joml.Quaternionfc;
@@ -15,6 +13,8 @@ public class Node {
     private final MutableObjectValue<Node> parent = new SimpleMutableObjectValue<>();
 
     final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
+
+    private MutableStringValue id;
 
     private List<Node> children;
     private List<Node> unmodifiableChildren;
@@ -59,6 +59,48 @@ public class Node {
         } else {
             scene.set(null);
         }
+    }
+
+    public final MutableStringValue id() {
+        if (id == null) {
+            id = new SimpleMutableStringValue();
+            id.addChangeListener((observable, oldValue, newValue) -> {
+                if (oldValue != null) {
+                    scene.ifPresent($ -> $.idToNode.remove(oldValue, this));
+                }
+                if (newValue != null) {
+                    scene.ifPresent($ -> {
+                        if ($.idToNode.containsKey(newValue)) {
+                            throw new IllegalArgumentException("Id \"" + newValue + "has been exists");
+                        }
+                        $.idToNode.put(newValue, this);
+                    });
+                }
+            });
+            scene.addChangeListener((observable, oldValue, newValue) -> {
+                if (oldValue != null && id != null) {
+                    id.ifPresent($ -> oldValue.idToNode.remove($, this));
+                }
+
+                if (newValue != null && id != null) {
+                    id.ifPresent($ -> {
+                        if (newValue.idToNode.containsKey($)) {
+                            throw new IllegalArgumentException("Id \"" + $ + "has been exists");
+                        }
+                        newValue.idToNode.put($, this);
+                    });
+                }
+            });
+        }
+        return id;
+    }
+
+    public final String getId() {
+        return id == null ? null : id.get();
+    }
+
+    public final void setId(String id) {
+        id().set(id);
     }
 
     public final List<Node> getUnmodifiableChildren() {
