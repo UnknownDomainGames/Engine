@@ -1,6 +1,6 @@
 package nullengine.client.rendering.scene.light;
 
-import nullengine.client.rendering.camera.Camera;
+import org.joml.Vector3fc;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -46,18 +46,17 @@ public class LightManager {
             spotLights.remove(light);
     }
 
-    public void bind(Camera camera) {
+    public void bind(Vector3fc center) {
         for (int i = 0; i < directionalLights.size() && i < MAX_DIRECTIONAL_LIGHT_COUNT; i++) {
             directionalLights.get(i).bind("dirLights[" + i + "]");
         }
 
-        var position = camera.getPosition();
-        pointLights.sort(Comparator.comparingInt(light -> (int) light.getPosition().distanceSquared(position)));
+        pointLights.sort(Comparator.comparingInt(light -> (int) light.getPosition().distanceSquared(center)));
         for (int i = 0; i < pointLights.size() && i < MAX_POINT_LIGHT_COUNT; i++) {
             pointLights.get(i).bind("pointLights[" + i + "]");
         }
 
-        spotLights.sort(Comparator.comparingInt(light -> (int) light.getDirection().distanceSquared(position)));
+        spotLights.sort(Comparator.comparingInt(light -> (int) light.getDirection().distanceSquared(center)));
         for (int i = 0; i < spotLights.size() && i < MAX_SPOT_LIGHT_COUNT; i++) {
             spotLights.get(i).bind("spotLights[" + i + "]");
         }
