@@ -113,7 +113,7 @@ public class ChunkRenderer {
 
         context.getTextureManager().getDefaultAtlas().bind();
         chunkSolidShader.setUniform("useDirectUV", true);
-        scene.getLightManager().bind(context.getCamera().getPosition());
+        scene.getLightManager().bind(context.getCamera());
         scene.getMaterial().bind("material");
     }
 
