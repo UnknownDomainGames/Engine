@@ -5,7 +5,6 @@ import nullengine.client.gui.GuiManager;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.TextureManager;
-import nullengine.client.rendering.util.GLInfo;
 import nullengine.client.rendering.util.GPUInfo;
 import nullengine.component.GameObject;
 import nullengine.exception.UninitializationException;
@@ -39,8 +38,6 @@ public interface RenderManager extends GameObject<RenderManager> {
     GuiManager getGuiManager();
 
     RenderScheduler getScheduler();
-
-    GLInfo getGLInfo();
 
     GPUInfo getGPUInfo();
 

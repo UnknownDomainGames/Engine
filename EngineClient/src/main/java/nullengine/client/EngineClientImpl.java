@@ -18,6 +18,7 @@ import nullengine.client.input.keybinding.KeyBindingManager;
 import nullengine.client.rendering.EngineRenderManager;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.game3d.Game3DRenderer;
+import nullengine.client.rendering.gl.util.GLContextUtils;
 import nullengine.client.rendering.gui.GuiRenderer;
 import nullengine.client.rendering.model.BakedModel;
 import nullengine.client.rendering.model.voxel.ModelManager;
@@ -154,11 +155,11 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     private void initRenderCrashReportDetails() {
-        crashHandler.addReportDetail("GL Vendor", builder -> builder.append(renderManager.getGLInfo().getVendor()));
-        crashHandler.addReportDetail("GL Renderer", builder -> builder.append(renderManager.getGLInfo().getRenderer()));
-        crashHandler.addReportDetail("GL Version", builder -> builder.append(renderManager.getGLInfo().getVersion()));
-        crashHandler.addReportDetail("GL Extensions", builder -> builder.append(renderManager.getGLInfo().getExtensions()));
-        crashHandler.addReportDetail("GL Shading Language Version", builder -> builder.append(renderManager.getGLInfo().getShadingLanguageVersion()));
+        crashHandler.addReportDetail("GL Vendor", builder -> builder.append(GLContextUtils.getVendor()));
+        crashHandler.addReportDetail("GL Renderer", builder -> builder.append(GLContextUtils.getRenderer()));
+        crashHandler.addReportDetail("GL Version", builder -> builder.append(GLContextUtils.getVersion()));
+        crashHandler.addReportDetail("GL Extensions", builder -> builder.append(GLContextUtils.getExtensions()));
+        crashHandler.addReportDetail("GL Shading Language Version", builder -> builder.append(GLContextUtils.getShadingLanguageVersion()));
         crashHandler.addReportDetail("GPU Memory Usage", builder -> {
             var gpuMemoryInfo = renderManager.getGPUInfo();
             var usedMemory = (gpuMemoryInfo.getTotalMemory() - gpuMemoryInfo.getFreeMemory()) / 1024;

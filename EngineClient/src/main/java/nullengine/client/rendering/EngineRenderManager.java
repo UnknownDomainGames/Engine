@@ -13,13 +13,11 @@ import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.gl.font.WindowsFontHelper;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
-import nullengine.client.rendering.gl.util.GLInfoImpl;
 import nullengine.client.rendering.gl.util.NVXGPUInfo;
 import nullengine.client.rendering.glfw.GLFWContext;
 import nullengine.client.rendering.glfw.GLFWWindow;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.TextureManager;
-import nullengine.client.rendering.util.GLInfo;
 import nullengine.client.rendering.util.GPUInfo;
 import nullengine.component.Component;
 import nullengine.component.ComponentAgent;
@@ -38,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static nullengine.client.rendering.gl.util.GLContextUtils.*;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -57,7 +56,6 @@ public class EngineRenderManager implements RenderManager {
     private Matrix4f projection = new Matrix4f();
     private EngineTextureManager textureManager;
     private GuiManager guiManager;
-    private GLInfo glInfo;
     private GPUInfo gpuInfo;
 
     private Camera camera;
@@ -106,11 +104,6 @@ public class EngineRenderManager implements RenderManager {
     @Override
     public RenderScheduler getScheduler() {
         return scheduler;
-    }
-
-    @Override
-    public GLInfo getGLInfo() {
-        return glInfo;
     }
 
     @Override
@@ -202,14 +195,7 @@ public class EngineRenderManager implements RenderManager {
         logger.info("Initializing OpenGL context!");
 
         GL.createCapabilities();
-        glInfo = new GLInfoImpl();
-        logger.info("----- OpenGL Information -----");
-        logger.info("\tGL_VENDOR: {}", glInfo.getVendor());
-        logger.info("\tGL_RENDERER: {}", glInfo.getRenderer());
-        logger.info("\tGL_VERSION: {}", glInfo.getVersion());
-        logger.info("\tGL_EXTENSIONS: {}", glInfo.getExtensions());
-        logger.info("\tGL_SHADING_LANGUAGE_VERSION: {}", glInfo.getShadingLanguageVersion());
-        logger.info("------------------------------");
+        printGLInfo();
 
         NVXGPUInfo nvxgpuMemoryInfo = new NVXGPUInfo();
         nvxgpuMemoryInfo.init();
@@ -217,6 +203,16 @@ public class EngineRenderManager implements RenderManager {
         gpuInfo = nvxgpuMemoryInfo;
 
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+
+    private void printGLInfo() {
+        logger.info("----- OpenGL Information -----");
+        logger.info("\tGL_VENDOR: {}", getVendor());
+        logger.info("\tGL_RENDERER: {}", getRenderer());
+        logger.info("\tGL_VERSION: {}", getVersion());
+        logger.info("\tGL_EXTENSIONS: {}", getExtensions());
+        logger.info("\tGL_SHADING_LANGUAGE_VERSION: {}", getShadingLanguageVersion());
+        logger.info("------------------------------");
     }
 
     private void initTexture() {
