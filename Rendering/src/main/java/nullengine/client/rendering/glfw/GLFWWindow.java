@@ -243,7 +243,7 @@ public class GLFWWindow implements Window {
     public void close() {
         if (closed) return;
         closed = true;
-        glfwDestroyWindow(pointer);
+        dispose();
     }
 
     @Override
