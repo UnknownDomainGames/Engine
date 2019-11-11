@@ -4,7 +4,7 @@
 ![](https://img.shields.io/github/license/UnknownDomainGame/UnknownDomain.svg)
 [![](https://api.codeclimate.com/v1/badges/811191d64c6508954327/maintainability)](https://codeclimate.com/github/UnknownDomainGame/NullEngine/maintainability)
 [![](https://api.codacy.com/project/badge/Grade/cd2c9f15a88a42b886a59f6410f0ca05)](https://app.codacy.com/app/Mouse0w0/NullEngine?utm_source=github.com&utm_medium=referral&utm_content=UnknownDomainGame/NullEngine&utm_campaign=Badge_Grade_Dashboard)
-[![Discord](https://img.shields.io/discord/556150394057916426)](http://discord.gg/KRGMBw3)
+[![Join Discord](https://img.shields.io/discord/556150394057916426)](http://discord.gg/KRGMBw3)
 
 基于Java的体素沙盒游戏引擎。**等你为它赋值。**
 
@@ -27,6 +27,8 @@ Please read our contribution guide: [English(en_US)](https://github.com/UnknownD
 You can learn about what we are doing in [Projects](https://github.com/UnknownDomainGame/NullEngine/projects).
 
 ## 相关链接（Links）
+- [Wiki](https://github.com/UnknownDomainGame/NullEngine/wiki)
 - [项目简介（Introducing Project）](https://github.com/UnknownDomainGame/NullEngine/wiki/%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D%EF%BC%88Introducing-Project%EF%BC%89)
 - [示例模组（Example Mod）](https://github.com/UnknownDomainGame/ExampleMod)
-- 外部交流QQ群（QQ group for communication）：[965101316](https://jq.qq.com/?_wv=1027&k=5exnX2o)
+- 交流QQ群（QQ group for communication）：[965101316](https://jq.qq.com/?_wv=1027&k=5exnX2o)
+- Discord：http://discord.gg/KRGMBw3
