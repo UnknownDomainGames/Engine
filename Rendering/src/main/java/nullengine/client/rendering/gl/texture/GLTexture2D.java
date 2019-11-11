@@ -24,6 +24,8 @@ public class GLTexture2D implements Texture2D {
 
     private int level;
     private int internalFormat;
+    private int format;
+    private int type;
 
     private int width;
     private int height;
@@ -97,9 +99,9 @@ public class GLTexture2D implements Texture2D {
     public void glTexImage2D(ByteBuffer texture, int width, int height) {
         this.width = width;
         this.height = height;
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        GL11.glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+//        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        GL11.glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, 0, format, type, texture);
+//        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
 
     public void upload(int offsetX, int offsetY, Texture2DBuffer buffer) {
@@ -108,9 +110,9 @@ public class GLTexture2D implements Texture2D {
     }
 
     public void glTexSubImage2D(int offsetX, int offsetY, Texture2DBuffer buffer) {
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        GL11.glTexSubImage2D(GL_TEXTURE_2D, level, offsetX, offsetY, buffer.getWidth(), buffer.getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, buffer.getBuffer());
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+//        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        GL11.glTexSubImage2D(GL_TEXTURE_2D, level, offsetX, offsetY, buffer.getWidth(), buffer.getHeight(), format, type, buffer.getBuffer());
+//        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
 
     @Override
@@ -155,6 +157,8 @@ public class GLTexture2D implements Texture2D {
         private boolean mipmap = false;
         private int level = 0;
         private int internalFormat = GL_SRGB_ALPHA;
+        private int format = GL_RGBA;
+        private int type = GL_UNSIGNED_BYTE;
         private final Map<Integer, Integer> parameterMap = new HashMap<>();
 
         private Builder() {
@@ -199,6 +203,16 @@ public class GLTexture2D implements Texture2D {
             return this;
         }
 
+        public Builder format(int format) {
+            this.format = format;
+            return this;
+        }
+
+        public Builder type(int type) {
+            this.type = type;
+            return this;
+        }
+
         public GLTexture2D build() {
             return build(null, 0, 0);
         }
@@ -211,6 +225,8 @@ public class GLTexture2D implements Texture2D {
             GLTexture2D glTexture2D = new GLTexture2D(glGenTextures());
             glTexture2D.level = level;
             glTexture2D.internalFormat = internalFormat;
+            glTexture2D.format = format;
+            glTexture2D.type = type;
             glTexture2D.bind();
 
             parameterMap.forEach((key, value) -> glTexParameteri(GL_TEXTURE_2D, key, value));
