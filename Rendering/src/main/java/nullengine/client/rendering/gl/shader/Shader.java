@@ -12,7 +12,7 @@ public class Shader {
     private int id;
     private final ShaderType type;
 
-    public static Shader complie(ShaderType type, String source) {
+    public static Shader compile(ShaderType type, String source) {
         int id = glCreateShader(type.gl);
         glShaderSource(id, source);
         glCompileShader(id);

@@ -31,7 +31,7 @@ public class ShaderProgramBuilder {
             var shaderPath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(entry.getValue().toFileLocation());
             if (shaderPath.isPresent()) {
                 try {
-                    loadedShaders[i] = Shader.complie(entry.getKey(), Files.readString(shaderPath.get()));
+                    loadedShaders[i] = Shader.compile(entry.getKey(), Files.readString(shaderPath.get()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
