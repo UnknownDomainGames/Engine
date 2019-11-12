@@ -16,7 +16,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
-public class GLTexture2D implements Texture2D {
+public final class GLTexture2D implements Texture2D {
 
     public static final GLTexture2D EMPTY = new GLTexture2D(0);
 
@@ -133,6 +133,22 @@ public class GLTexture2D implements Texture2D {
         return height;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public int getInternalFormat() {
+        return internalFormat;
+    }
+
+    public int getFormat() {
+        return format;
+    }
+
+    public int getType() {
+        return type;
+    }
+
     @Override
     public float getMinU() {
         return 0;
@@ -219,6 +235,10 @@ public class GLTexture2D implements Texture2D {
 
         public GLTexture2D build(Texture2DBuffer texture) {
             return build(texture.getBuffer(), texture.getWidth(), texture.getHeight());
+        }
+
+        public GLTexture2D build(int width, int height) {
+            return build(null, width, height);
         }
 
         public GLTexture2D build(ByteBuffer texture, int width, int height) {
