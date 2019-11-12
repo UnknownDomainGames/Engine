@@ -16,7 +16,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
-public final class GLTexture2D implements Texture2D {
+public final class GLTexture2D implements Texture2D, GLTexture {
 
     public static final GLTexture2D EMPTY = new GLTexture2D(0);
 
@@ -29,6 +29,8 @@ public final class GLTexture2D implements Texture2D {
 
     private int width;
     private int height;
+
+    private boolean mipmap;
 
     public static GLTexture2D of(ByteBuffer fileBuffer) throws IOException {
         if (!fileBuffer.isDirect()) {
@@ -77,8 +79,14 @@ public final class GLTexture2D implements Texture2D {
         this.id = id;
     }
 
+    @Override
     public int getId() {
         return id;
+    }
+
+    @Override
+    public int getTarget() {
+        return GL_TEXTURE_2D;
     }
 
     @Override
@@ -101,6 +109,7 @@ public final class GLTexture2D implements Texture2D {
         this.height = height;
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         GL11.glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, 0, format, type, texture);
+        if (mipmap) glGenerateMipmap(GL_TEXTURE_2D);
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
 
@@ -112,6 +121,7 @@ public final class GLTexture2D implements Texture2D {
     public void glTexSubImage2D(int offsetX, int offsetY, Texture2DBuffer buffer) {
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         GL11.glTexSubImage2D(GL_TEXTURE_2D, level, offsetX, offsetY, buffer.getWidth(), buffer.getHeight(), format, type, buffer.getBuffer());
+        if (mipmap) glGenerateMipmap(GL_TEXTURE_2D);
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
 
@@ -247,17 +257,12 @@ public final class GLTexture2D implements Texture2D {
             glTexture2D.internalFormat = internalFormat;
             glTexture2D.format = format;
             glTexture2D.type = type;
+            glTexture2D.mipmap = mipmap;
             glTexture2D.bind();
 
             parameterMap.forEach((key, value) -> glTexParameteri(GL_TEXTURE_2D, key, value));
 
-            if (mipmap) {
-                glGenerateMipmap(GL_TEXTURE_2D);
-            }
-
-            if (texture != null) {
-                glTexture2D.glTexImage2D(texture, width, height);
-            }
+            glTexture2D.glTexImage2D(texture, width, height);
             return glTexture2D;
         }
     }
