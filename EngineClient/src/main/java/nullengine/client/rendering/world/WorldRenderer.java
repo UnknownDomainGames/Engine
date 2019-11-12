@@ -3,18 +3,19 @@ package nullengine.client.rendering.world;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderManager;
+import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.entity.EntityRenderManagerImpl;
 import nullengine.client.rendering.game3d.Scene;
+import nullengine.client.rendering.gl.GLBuffer;
+import nullengine.client.rendering.gl.GLDrawMode;
+import nullengine.client.rendering.gl.GLVertexFormats;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.shader.ShaderType;
+import nullengine.client.rendering.gl.texture.GLFrameBuffer;
 import nullengine.client.rendering.material.Material;
 import nullengine.client.rendering.scene.light.DirectionalLight;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
-import nullengine.client.rendering.util.DefaultFBOWrapper;
-import nullengine.client.rendering.util.FrameBuffer;
-import nullengine.client.rendering.util.FrameBufferMultiSampled;
-import nullengine.client.rendering.util.FrameBufferShadow;
 import nullengine.client.rendering.world.chunk.ChunkRenderer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -24,8 +25,14 @@ import org.lwjgl.opengl.GL15;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
+import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
+import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
 
 public class WorldRenderer {
+
+    // TODO: adjustable width and height
+    public static final int SHADOW_WIDTH = 2048;
+    public static final int SHADOW_HEIGHT = 2048;
 
     private final ChunkRenderer chunkRenderer = new ChunkRenderer();
     private final BlockSelectionRenderer blockSelectionRenderer = new BlockSelectionRenderer();
@@ -37,11 +44,10 @@ public class WorldRenderer {
 
     private ObservableValue<ShaderProgram> worldShader;
     private ObservableValue<ShaderProgram> entityShader;
-    private FrameBuffer frameBuffer;
-    private FrameBuffer frameBufferMultisampled;
-    private final DefaultFBOWrapper defaultFBO = new DefaultFBOWrapper();
+    private GLFrameBuffer frameBuffer;
+    private GLFrameBuffer frameBufferMultiSample;
     private ObservableValue<ShaderProgram> frameBufferSP;
-    private FrameBufferShadow frameBufferShadow; //TODO: move to 3D Renderer!!!
+    private GLFrameBuffer frameBufferShadow; //TODO: move to 3D Renderer!!!
     private ObservableValue<ShaderProgram> shadowShader;
 
     private RenderManager context;
@@ -71,30 +77,28 @@ public class WorldRenderer {
                 .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/entity.vert"))
                 .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/entity.frag")));
 
-        frameBuffer = new FrameBuffer();
-        frameBuffer.createFrameBuffer();
-        frameBuffer.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
-        frameBufferMultisampled = new FrameBufferMultiSampled();
-        frameBufferMultisampled.createFrameBuffer();
-        frameBufferMultisampled.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
-        frameBuffer.check();
-        frameBufferMultisampled.check();
+        frameBuffer = GLFrameBuffer.createRGB16FDepth24Stencil8FrameBuffer(context.getWindow().getWidth(), context.getWindow().getHeight());
+        frameBufferMultiSample = GLFrameBuffer.createMultiSampleRGB16FDepth24Stencil8FrameBuffer(context.getWindow().getWidth(), context.getWindow().getHeight(), 1);
         frameBufferSP = ShaderManager.instance().registerShader("frame_buffer_shader",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/framebuffer.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/framebuffer.frag")));
         //TODO init Client shader in a formal way
-        frameBufferShadow = new FrameBufferShadow();
-        frameBufferShadow.createFrameBuffer();
+        frameBufferShadow = GLFrameBuffer.createDepthFrameBuffer(SHADOW_WIDTH, SHADOW_HEIGHT);
         shadowShader = ShaderManager.instance().registerShader("shadow_shader",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/shadow.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/shadow.frag")));
     }
 
     public void render(float partial) {
+        if (context.getWindow().isResized()) {
+            frameBuffer.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
+            frameBufferMultiSample.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
+        }
+
         // shadow
         glDisable(GL_MULTISAMPLE);
         frameBufferShadow.bind();
-        GL11.glViewport(0, 0, FrameBufferShadow.SHADOW_WIDTH, FrameBufferShadow.SHADOW_HEIGHT);
+        GL11.glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
         ShaderProgram shadowShader = this.shadowShader.getValue();
         ShaderManager.instance().bindShaderOverriding(shadowShader);
@@ -112,12 +116,11 @@ public class WorldRenderer {
         glCullFace(GL_BACK);
 
         ShaderManager.instance().unbindOverriding();
-        frameBufferShadow.unbind();
 
         // render chunk
         GL11.glViewport(0, 0, context.getWindow().getWidth(), context.getWindow().getHeight());
 
-        frameBufferMultisampled.bind();
+        frameBufferMultiSample.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
 
@@ -129,7 +132,7 @@ public class WorldRenderer {
             ShaderManager.instance().setUniform("u_ShadowMap", 8);
         }
         GL15.glActiveTexture(GL13.GL_TEXTURE8);
-        GL11.glBindTexture(GL_TEXTURE_2D, frameBufferShadow.getDstexPointer());
+        frameBufferShadow.getTexture(GL_DEPTH_ATTACHMENT).bind();
         GL15.glActiveTexture(GL13.GL_TEXTURE0);
         chunkRenderer.render();
 
@@ -151,20 +154,28 @@ public class WorldRenderer {
 
         // multi sample
         frameBuffer.bind();
-        frameBuffer.blitFrom(frameBufferMultisampled);
-        defaultFBO.bind();
+        frameBuffer.blitFrom(frameBufferMultiSample);
+        GLFrameBuffer.bindScreenFrameBuffer();
         glClear(GL_COLOR_BUFFER_BIT);
         ShaderManager.instance().bindShader(frameBufferSP.getValue());
         glDisable(GL_DEPTH_TEST);
-        defaultFBO.drawFrameBuffer(frameBuffer);
+        drawFrameBufferToScreen(frameBuffer);
 
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_BLEND);
         glEnable(GL_MULTISAMPLE);
-        if (context.getWindow().isResized()) {
-            frameBuffer.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
-            frameBufferMultisampled.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
-        }
+    }
+
+    private void drawFrameBufferToScreen(GLFrameBuffer frameBuffer) {
+        frameBuffer.getTexture(GL_COLOR_ATTACHMENT0).bind();
+        Tessellator t = Tessellator.getInstance();
+        GLBuffer bb = t.getBuffer();
+        bb.begin(GLDrawMode.CONTINUOUS_TRIANGLES, GLVertexFormats.POSITION_TEXTURE);
+        bb.pos(-1.0f, 1.0f, 0).uv(0, 1.0f).endVertex();
+        bb.pos(-1.0f, -1.0f, 0).uv(0, 0).endVertex();
+        bb.pos(1.0f, 1.0f, 0).uv(1.0f, 1.0f).endVertex();
+        bb.pos(1.0f, -1.0f, 0).uv(1.0f, 0).endVertex();
+        t.draw();
     }
 
     private void renderEntity(Matrix4f lightSpaceMat, float partial) {
@@ -185,9 +196,8 @@ public class WorldRenderer {
         entityRenderManager.dispose();
 
         frameBuffer.dispose();
-        frameBufferMultisampled.dispose();
+        frameBufferMultiSample.dispose();
         frameBufferShadow.dispose();
-        defaultFBO.dispose();
 
         ShaderManager.instance().unregisterShader("world_shader");
         ShaderManager.instance().unregisterShader("entity_shader");

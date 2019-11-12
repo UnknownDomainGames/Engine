@@ -1,21 +1,25 @@
 package nullengine.client.rendering.gl.texture;
 
+import org.joml.Vector4i;
+import org.joml.Vector4ic;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL30.*;
 
 public class GLFrameBuffer {
 
-    private final Map<Integer, GLTexture2D.Builder> attachments;
+    private final Map<Integer, TextureFactory> attachments;
 
     private int id;
     private int width;
     private int height;
 
-    private final Map<Integer, GLTexture2D> attachedTextures;
+    private final Map<Integer, GLTexture> attachedTextures;
 
     public static Builder builder() {
         return new Builder();
@@ -32,7 +36,31 @@ public class GLFrameBuffer {
                 .build();
     }
 
-    private GLFrameBuffer(Map<Integer, GLTexture2D.Builder> attachments, int width, int height) {
+    public static GLFrameBuffer createMultiSampleRGB16FDepth24Stencil8FrameBuffer(int width, int height, int sample) {
+        return builder()
+                .width(width)
+                .height(height)
+                .attachments(GL_COLOR_ATTACHMENT0, GLTexture2DMultiSample.builder().internalFormat(GL_RGB16F).sample(sample))
+                .attachments(GL_DEPTH_STENCIL_ATTACHMENT, GLTexture2DMultiSample.builder().internalFormat(GL_DEPTH24_STENCIL8).sample(sample))
+                .build();
+    }
+
+    public static GLFrameBuffer createDepthFrameBuffer(int width, int height) {
+        return builder()
+                .width(width)
+                .height(height)
+                .attachments(GL_DEPTH_ATTACHMENT, GLTexture2D.builder()
+                        .internalFormat(GL_DEPTH_COMPONENT).format(GL_DEPTH_COMPONENT).type(GL_FLOAT))
+                .build();
+    }
+
+    public static void bindScreenFrameBuffer() {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    }
+
+    private GLFrameBuffer(Map<Integer, TextureFactory> attachments, int width, int height) {
         this.attachments = notNull(attachments);
         this.attachedTextures = new HashMap<>();
         this.id = glGenFramebuffers();
@@ -43,7 +71,7 @@ public class GLFrameBuffer {
         return id;
     }
 
-    public GLTexture2D getTexture(int attachment) {
+    public GLTexture getTexture(int attachment) {
         return attachedTextures.get(attachment);
     }
 
@@ -62,9 +90,9 @@ public class GLFrameBuffer {
         disposeAttachedTextures();
         bind();
         attachments.forEach((key, value) -> {
-            GLTexture2D texture = value.build(width, height);
+            GLTexture texture = value.create(width, height);
             attachedTextures.put(key, texture);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, key, GL_TEXTURE_2D, texture.getId(), texture.getLevel());
+            glFramebufferTexture2D(GL_FRAMEBUFFER, key, texture.getTarget(), texture.getId(), 0);
         });
     }
 
@@ -84,6 +112,16 @@ public class GLFrameBuffer {
         glBindFramebuffer(target, id);
     }
 
+    public void blitFrom(GLFrameBuffer source) {
+        blitFrom(source, new Vector4i(0, 0, source.width, source.height), new Vector4i(0, 0, width, height));
+    }
+
+    public void blitFrom(GLFrameBuffer source, Vector4ic sourceRect, Vector4ic destRect) {
+        source.bindReadOnly();
+        bindDrawOnly();
+        glBlitFramebuffer(sourceRect.x(), sourceRect.y(), sourceRect.z(), sourceRect.w(), destRect.x(), destRect.y(), destRect.z(), destRect.w(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
+
     public void dispose() {
         if (id == 0) return;
         glDeleteFramebuffers(id);
@@ -98,7 +136,7 @@ public class GLFrameBuffer {
     }
 
     public static final class Builder {
-        private Map<Integer, GLTexture2D.Builder> attachments = new HashMap<>();
+        private Map<Integer, TextureFactory> attachments = new HashMap<>();
         private int width;
         private int height;
 
@@ -106,7 +144,15 @@ public class GLFrameBuffer {
         }
 
         public Builder attachments(int attachment, GLTexture2D.Builder builder) {
-            this.attachments.put(attachment, builder);
+            return attachments(attachment, builder::build);
+        }
+
+        public Builder attachments(int attachment, GLTexture2DMultiSample.Builder builder) {
+            return attachments(attachment, builder::build);
+        }
+
+        public Builder attachments(int attachment, TextureFactory factory) {
+            this.attachments.put(attachment, factory);
             return this;
         }
 
@@ -123,5 +169,10 @@ public class GLFrameBuffer {
         public GLFrameBuffer build() {
             return new GLFrameBuffer(Map.copyOf(attachments), width, height);
         }
+    }
+
+    @FunctionalInterface
+    public interface TextureFactory {
+        GLTexture create(int width, int height);
     }
 }

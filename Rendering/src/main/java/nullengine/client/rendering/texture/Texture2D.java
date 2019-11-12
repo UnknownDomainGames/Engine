@@ -1,10 +1,6 @@
 package nullengine.client.rendering.texture;
 
-public interface Texture2D {
-
-    void bind();
-
-    void dispose();
+public interface Texture2D extends Texture {
 
     int getWidth();
 

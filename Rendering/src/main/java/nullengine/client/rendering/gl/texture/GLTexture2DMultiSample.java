@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 
-public final class GLTexture2DMultiSample implements Texture2D {
+public final class GLTexture2DMultiSample implements GLTexture, Texture2D {
 
     public static final GLTexture2DMultiSample EMPTY = new GLTexture2DMultiSample(0);
 
@@ -33,6 +33,11 @@ public final class GLTexture2DMultiSample implements Texture2D {
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public int getTarget() {
+        return GL_TEXTURE_2D_MULTISAMPLE;
     }
 
     @Override
