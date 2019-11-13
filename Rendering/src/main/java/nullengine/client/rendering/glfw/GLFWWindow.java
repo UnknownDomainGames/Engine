@@ -382,6 +382,10 @@ public class GLFWWindow implements Window {
         glfwSetCharCallback(pointer, (window, codepoint) -> charCallbacks.forEach(callback -> callback.invoke(this, (char) codepoint)));
         glfwSetWindowCloseCallback(pointer, window -> windowCloseCallbacks.forEach(callback -> callback.invoke(this)));
         glfwSetCursorEnterCallback(pointer, (window, entered) -> cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
+        glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> {
+            posX = xpos;
+            posY = ypos;
+        });
     }
 
     private boolean checkCreated() {
