@@ -12,8 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
 
@@ -22,14 +21,18 @@ public final class GLFWContext {
     public static final Logger LOGGER = LoggerFactory.getLogger("GLFW");
 
     private static Monitor primaryMonitor;
-    private static List<Monitor> monitors;
+    private static Map<Long, Monitor> monitors;
 
     public static Monitor getPrimaryMonitor() {
         return primaryMonitor;
     }
 
-    public static List<Monitor> getMonitors() {
-        return monitors;
+    public static Collection<Monitor> getMonitors() {
+        return monitors.values();
+    }
+
+    public static Monitor getMonitor(long pointer) {
+        return monitors.get(pointer);
     }
 
     public static void initialize() {
@@ -42,14 +45,13 @@ public final class GLFWContext {
 
     private static void initMonitor() {
         PointerBuffer pointerBuffer = GLFW.glfwGetMonitors();
-        List<Monitor> monitors = new ArrayList<>();
+        Map<Long, Monitor> monitors = new HashMap<>();
         for (int i = 0; i < pointerBuffer.capacity(); i++) {
-            monitors.add(createMonitor(pointerBuffer.get()));
+            long pointer = pointerBuffer.get();
+            monitors.put(pointer, createMonitor(pointer));
         }
-        GLFWContext.monitors = List.copyOf(monitors);
-
-        long primaryMonitor = GLFW.glfwGetPrimaryMonitor();
-        GLFWContext.primaryMonitor = monitors.stream().filter(monitor -> monitor.getPointer() == primaryMonitor).findAny().orElseThrow();
+        GLFWContext.monitors = Map.copyOf(monitors);
+        GLFWContext.primaryMonitor = getMonitor(GLFW.glfwGetPrimaryMonitor());
     }
 
     private static Monitor createMonitor(long pointer) {
