@@ -185,6 +185,7 @@ public class GraphicsImpl implements Graphics {
             ShaderManager.instance().setUniform("u_RenderText", true);
             tessellator.draw();
             ShaderManager.instance().setUniform("u_RenderText", false);
+            context.getTextureManager().getWhiteTexture().bind();
         });
     }
 

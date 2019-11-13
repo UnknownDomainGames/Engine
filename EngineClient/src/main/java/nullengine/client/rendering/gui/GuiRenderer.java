@@ -81,14 +81,14 @@ public class GuiRenderer implements Renderer {
 
     private void startRender() {
         if (window.isResized()) {
-            glViewport(0, 0, window.getWidth(), window.getHeight());
+            glViewport(0, 0, window.getFrameBufferWidth(), window.getFrameBufferHeight());
         }
 
         ShaderManager.instance().bindShader(shader.getValue());
 
         startRenderFlag();
 
-        int width = window.getWidth(), height = window.getHeight();
+        int width = window.getFrameBufferWidth(), height = window.getFrameBufferHeight();
         ShaderManager.instance().setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
         ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
         ShaderManager.instance().setUniform("u_WindowSize", new Vector2f(width, height));
@@ -119,8 +119,8 @@ public class GuiRenderer implements Renderer {
     }
 
     private void renderScene(Scene scene) {
-        if (window.isResized() || window.getWidth() != scene.getWidth() || window.getHeight() != scene.getHeight()) {
-            scene.setSize(window.getWidth(), window.getHeight());
+        if (window.isResized() || window.getFrameBufferWidth() != scene.getWidth() || window.getFrameBufferHeight() != scene.getHeight()) {
+            scene.setSize(window.getFrameBufferWidth(), window.getFrameBufferHeight());
         }
 
         scene.update();
