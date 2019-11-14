@@ -45,6 +45,7 @@ public class GLFWWindow implements Window {
     private final List<ScrollCallback> scrollCallbacks = new LinkedList<>();
     private final List<CharCallback> charCallbacks = new LinkedList<>();
     private final List<WindowCloseCallback> windowCloseCallbacks = new LinkedList<>();
+    private final List<WindowFocusCallback> windowFocusCallbacks = new LinkedList<>();
     private final List<CursorEnterCallback> cursorEnterCallbacks = new LinkedList<>();
 
     public GLFWWindow() {
@@ -219,6 +220,16 @@ public class GLFWWindow implements Window {
     }
 
     @Override
+    public void addWindowFocusCallback(WindowFocusCallback callback) {
+        windowFocusCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeWindowFocusCallback(WindowFocusCallback callback) {
+        windowFocusCallbacks.remove(callback);
+    }
+
+    @Override
     public void addCursorEnterCallback(CursorEnterCallback callback) {
         cursorEnterCallbacks.add(callback);
     }
@@ -381,6 +392,7 @@ public class GLFWWindow implements Window {
         glfwSetScrollCallback(pointer, (window, xoffset, yoffset) -> scrollCallbacks.forEach(callback -> callback.invoke(this, xoffset, yoffset)));
         glfwSetCharCallback(pointer, (window, codepoint) -> charCallbacks.forEach(callback -> callback.invoke(this, (char) codepoint)));
         glfwSetWindowCloseCallback(pointer, window -> windowCloseCallbacks.forEach(callback -> callback.invoke(this)));
+        glfwSetWindowFocusCallback(pointer, (window, focused) -> windowFocusCallbacks.forEach(callback -> callback.invoke(this, focused)));
         glfwSetCursorEnterCallback(pointer, (window, entered) -> cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
     }
 

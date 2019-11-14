@@ -70,6 +70,10 @@ public interface Window extends WindowAttributes {
 
     void removeWindowCloseCallback(WindowCloseCallback callback);
 
+    void addWindowFocusCallback(WindowFocusCallback callback);
+
+    void removeWindowFocusCallback(WindowFocusCallback callback);
+
     void addCursorEnterCallback(CursorEnterCallback callback);
 
     void removeCursorEnterCallback(CursorEnterCallback callback);
@@ -112,6 +116,11 @@ public interface Window extends WindowAttributes {
     @FunctionalInterface
     interface WindowCloseCallback {
         void invoke(Window window);
+    }
+
+    @FunctionalInterface
+    interface WindowFocusCallback {
+        void invoke(Window window, boolean focused);
     }
 
     @FunctionalInterface
