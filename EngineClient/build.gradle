@@ -5,20 +5,20 @@ mainClassName = 'nullengine.client.launch.Bootstrap'
 dependencies {
     compile project(':EngineAPI')
     compile project(':EngineServer')
-    
+
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
 }
 
-//configurations {
-//    embed
-//    compile.extendsFrom(embed)
-//}
-
 jar {
-    manifest {
-        attributes 'Main-Class': mainClassName
-    }
-//    from configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
+    String gitVersion = 'git rev-parse --short HEAD'.execute().text.trim();
+    manifest.attributes([
+            "Main-Class"            : mainClassName,
+            "Implementation-Title"  : rootProject.name,
+            "Implementation-Version": "git-${rootProject.name}-${project.version}-${gitVersion}",
+            "Git-Version"           : gitVersion,
+            "Engine-Version"        : project.version,
+            "Build-Time"            : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+    ])
 }
 
 
