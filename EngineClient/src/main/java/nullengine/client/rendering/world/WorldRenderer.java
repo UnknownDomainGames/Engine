@@ -184,7 +184,7 @@ public class WorldRenderer {
         ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
         ShaderManager.instance().setUniform("u_LightSpace", lightSpaceMat);
         ShaderManager.instance().setUniform("u_ShadowMap", 8);
-        scene.getLightManager().bind(context.getCamera());
+        scene.getLightManager().bind(context.getCamera(), ShaderManager.instance().getUsingShader());
         scene.getMaterial().bind("material");
         context.getEngine().getCurrentGame().getClientWorld().getEntities().forEach(entity ->
                 entityRenderManager.render(entity, partial));

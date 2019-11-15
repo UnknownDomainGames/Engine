@@ -1,5 +1,6 @@
 package nullengine.client.rendering.gl.shader;
 
+import nullengine.client.rendering.scene.BindingProxy;
 import org.joml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
 
-public class ShaderProgram {
+public class ShaderProgram implements BindingProxy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShaderProgram.class);
 
@@ -59,38 +60,47 @@ public class ShaderProgram {
         return glGetUniformLocation(id, name);
     }
 
+    @Override
     public void setUniform(String location, int value) {
         Uniform.setUniform(getUniformLocation(location), value);
     }
 
+    @Override
     public void setUniform(String location, float value) {
         Uniform.setUniform(getUniformLocation(location), value);
     }
 
+    @Override
     public void setUniform(String location, boolean value) {
         Uniform.setUniform(getUniformLocation(location), value);
     }
 
+    @Override
     public void setUniform(String location, Vector2fc value) {
         Uniform.setUniform(getUniformLocation(location), value);
     }
 
+    @Override
     public void setUniform(String location, Vector3fc value) {
         Uniform.setUniform(getUniformLocation(location), value);
     }
 
+    @Override
     public void setUniform(String location, Vector4fc value) {
         Uniform.setUniform(getUniformLocation(location), value);
     }
 
+    @Override
     public void setUniform(String location, Matrix3fc value) {
         Uniform.setUniform(getUniformLocation(location), value);
     }
 
+    @Override
     public void setUniform(String location, Matrix4fc value) {
         Uniform.setUniform(getUniformLocation(location), value);
     }
 
+    @Override
     public void setUniform(String location, Matrix4fc[] values) {
         Uniform.setUniform(getUniformLocation(location), values);
     }

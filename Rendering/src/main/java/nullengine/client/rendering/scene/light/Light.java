@@ -1,12 +1,13 @@
 package nullengine.client.rendering.scene.light;
 
+import nullengine.client.rendering.scene.BindingProxy;
 import nullengine.client.rendering.scene.Node;
 import org.joml.Vector3f;
 
 public abstract class Light extends Node {
-    private Vector3f ambient = new Vector3f(0.1f);
-    private Vector3f diffuse = new Vector3f(1f);
-    private Vector3f specular = new Vector3f(1f);
+    protected Vector3f ambient = new Vector3f(0.1f);
+    protected Vector3f diffuse = new Vector3f(1f);
+    protected Vector3f specular = new Vector3f(1f);
 
     public Light() {
         scene().addChangeListener((observable, oldValue, newValue) -> {
@@ -19,7 +20,7 @@ public abstract class Light extends Node {
         });
     }
 
-    public abstract void bind(String fieldName);
+    public abstract void bind(BindingProxy proxy, String fieldName);
 
     public Vector3f getAmbient() {
         return ambient;

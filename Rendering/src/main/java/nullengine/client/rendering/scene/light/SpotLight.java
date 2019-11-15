@@ -1,5 +1,6 @@
 package nullengine.client.rendering.scene.light;
 
+import nullengine.client.rendering.scene.BindingProxy;
 import org.joml.Vector3f;
 
 public class SpotLight extends Light {
@@ -14,11 +15,19 @@ public class SpotLight extends Light {
     private float outerCutoffAngle; // in Radian
 
     @Override
-    public void bind(String fieldName) {
-//        super.bind(fieldName);
-//        ShaderManager.instance().setUniform(fieldName + ".direction", direction);
-//        ShaderManager.instance().setUniform(fieldName + ".cutoffCosine", (float) Math.cos(cutoffAngle));
-//        ShaderManager.instance().setUniform(fieldName + ".direction", (float) Math.cos(outerCutoffAngle));
+    public void bind(BindingProxy proxy, String fieldName) {
+        proxy.setUniform(fieldName + ".filled", true);
+        proxy.setUniform(fieldName + ".position", position);
+        proxy.setUniform(fieldName + ".constant", kconstant);
+        proxy.setUniform(fieldName + ".linear", klinear);
+        proxy.setUniform(fieldName + ".quadratic", kquadratic);
+        proxy.setUniform(fieldName + ".direction", direction);
+        proxy.setUniform(fieldName + ".cutoffCosine", (float) Math.cos(cutoffAngle));
+        proxy.setUniform(fieldName + ".direction", (float) Math.cos(outerCutoffAngle));
+
+        proxy.setUniform(fieldName + ".light.ambient", ambient);
+        proxy.setUniform(fieldName + ".light.diffuse", diffuse);
+        proxy.setUniform(fieldName + ".light.specular", specular);
     }
 
     public Vector3f getPosition() {
