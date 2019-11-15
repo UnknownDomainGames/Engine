@@ -15,10 +15,14 @@ import java.nio.IntBuffer;
 import java.util.*;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 public final class GLFWContext {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("GLFW");
+
+    private static boolean initialized;
+    private static boolean terminated;
 
     private static Monitor primaryMonitor;
     private static Map<Long, Monitor> monitors;
@@ -35,12 +39,21 @@ public final class GLFWContext {
         return monitors.get(pointer);
     }
 
-    public static void initialize() {
+    public static synchronized void initialize() {
+        if (initialized) return;
+        initialized = true;
         LOGGER.info("Initializing GLFW context!");
         GLFWErrorCallback.createPrint(System.err).set();
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
         initMonitor();
+    }
+
+    public static synchronized void terminate() {
+        if (terminated) return;
+        terminated = true;
+
+        glfwTerminate();
     }
 
     private static void initMonitor() {

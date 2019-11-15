@@ -242,6 +242,8 @@ public class EngineRenderManager implements RenderManager {
         renderers.forEach(Renderer::dispose);
 
         if (window != null) window.dispose();
+
+        GLFWContext.terminate();
     }
 
     @Override
