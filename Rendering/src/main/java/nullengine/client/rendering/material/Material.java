@@ -1,7 +1,8 @@
 package nullengine.client.rendering.material;
 
 import nullengine.client.rendering.gl.texture.GLTexture2D;
-import nullengine.client.rendering.shader.ShaderManager;
+import nullengine.client.rendering.scene.BindingProxy;
+import nullengine.client.rendering.texture.Texture2D;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
@@ -12,52 +13,51 @@ public class Material {
     private Vector3f diffuse = new Vector3f(1f);
     private Vector3f specular = new Vector3f(1f);
     private float shininess;
-    private GLTexture2D diffuseUV = GLTexture2D.EMPTY;
-    private GLTexture2D specularUV = GLTexture2D.EMPTY;
-    private GLTexture2D normalUV = GLTexture2D.EMPTY;
-    private GLTexture2D alphaUV = GLTexture2D.EMPTY;
+    private Texture2D diffuseUV;
+    private Texture2D specularUV;
+    private Texture2D normalUV;
+    private Texture2D alphaUV;
 
-    public void bind(String fieldName) {
-        ShaderManager shaderManager = ShaderManager.instance();
-        shaderManager.setUniform(fieldName + ".ambient", ambient);
-        shaderManager.setUniform(fieldName + ".diffuseColor", diffuse);
-        shaderManager.setUniform(fieldName + ".specularColor", specular);
-        shaderManager.setUniform(fieldName + ".diffuse", 1);
-        shaderManager.setUniform(fieldName + ".specular", 2);
-        shaderManager.setUniform(fieldName + ".normalUV", 3);
-        shaderManager.setUniform(fieldName + ".alphaUV", 4);
-        shaderManager.setUniform(fieldName + ".shininess", shininess);
-        if (diffuseUV != GLTexture2D.EMPTY) {
-            shaderManager.setUniform(fieldName + ".diffuseUseUV", true);
+    public void bind(BindingProxy proxy, String fieldName) {
+        proxy.setUniform(fieldName + ".ambient", ambient);
+        proxy.setUniform(fieldName + ".diffuseColor", diffuse);
+        proxy.setUniform(fieldName + ".specularColor", specular);
+        proxy.setUniform(fieldName + ".diffuse", 1);
+        proxy.setUniform(fieldName + ".specular", 2);
+        proxy.setUniform(fieldName + ".normalUV", 3);
+        proxy.setUniform(fieldName + ".alphaUV", 4);
+        proxy.setUniform(fieldName + ".shininess", shininess);
+        if (diffuseUV != null) {
+            proxy.setUniform(fieldName + ".diffuseUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE1);
             diffuseUV.bind();
             GL15.glActiveTexture(GL13.GL_TEXTURE0);
         } else {
-            shaderManager.setUniform(fieldName + ".diffuseUseUV", false);
+            proxy.setUniform(fieldName + ".diffuseUseUV", false);
         }
-        if (specularUV != GLTexture2D.EMPTY) {
-            shaderManager.setUniform(fieldName + ".specularUseUV", true);
+        if (specularUV != null) {
+            proxy.setUniform(fieldName + ".specularUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE2);
             specularUV.bind();
             GL15.glActiveTexture(GL13.GL_TEXTURE0);
         } else {
-            shaderManager.setUniform(fieldName + ".specularUseUV", false);
+            proxy.setUniform(fieldName + ".specularUseUV", false);
         }
-        if (normalUV != GLTexture2D.EMPTY) {
-            shaderManager.setUniform(fieldName + ".normalUseUV", true);
+        if (normalUV != null) {
+            proxy.setUniform(fieldName + ".normalUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE3);
             normalUV.bind();
             GL15.glActiveTexture(GL13.GL_TEXTURE0);
         } else {
-            shaderManager.setUniform(fieldName + ".normalUseUV", false);
+            proxy.setUniform(fieldName + ".normalUseUV", false);
         }
-        if (alphaUV != GLTexture2D.EMPTY) {
-            shaderManager.setUniform(fieldName + ".alphaUseUV", true);
+        if (alphaUV != null) {
+            proxy.setUniform(fieldName + ".alphaUseUV", true);
             GL15.glActiveTexture(GL15.GL_TEXTURE4);
             alphaUV.bind();
             GL15.glActiveTexture(GL13.GL_TEXTURE0);
         } else {
-            shaderManager.setUniform(fieldName + ".alphaUseUV", false);
+            proxy.setUniform(fieldName + ".alphaUseUV", false);
         }
     }
 

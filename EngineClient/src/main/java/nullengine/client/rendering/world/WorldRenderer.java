@@ -179,13 +179,14 @@ public class WorldRenderer {
     }
 
     private void renderEntity(Matrix4f lightSpaceMat, float partial) {
-        ShaderManager.instance().bindShader(entityShader.getValue());
-        ShaderManager.instance().setUniform("u_ProjMatrix", context.getProjectionMatrix());
-        ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
-        ShaderManager.instance().setUniform("u_LightSpace", lightSpaceMat);
-        ShaderManager.instance().setUniform("u_ShadowMap", 8);
-        scene.getLightManager().bind(context.getCamera(), ShaderManager.instance().getUsingShader());
-        scene.getMaterial().bind("material");
+        ShaderProgram shader = entityShader.getValue();
+        ShaderManager.instance().bindShader(shader);
+        shader.setUniform("u_ProjMatrix", context.getProjectionMatrix());
+        shader.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
+        shader.setUniform("u_LightSpace", lightSpaceMat);
+        shader.setUniform("u_ShadowMap", 8);
+        scene.getLightManager().bind(context.getCamera(), shader);
+        scene.getMaterial().bind(shader, "material");
         context.getEngine().getCurrentGame().getClientWorld().getEntities().forEach(entity ->
                 entityRenderManager.render(entity, partial));
     }

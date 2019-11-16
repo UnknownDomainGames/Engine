@@ -95,8 +95,8 @@ public class ChunkRenderer {
     }
 
     private void preRender() {
-        ShaderProgram chunkSolidShader = this.chunkSolidShader.getValue();
-        ShaderManager.instance().bindShader(chunkSolidShader);
+        ShaderProgram shader = this.chunkSolidShader.getValue();
+        ShaderManager.instance().bindShader(shader);
 
         glEnable(GL11.GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -106,15 +106,15 @@ public class ChunkRenderer {
         glEnable(GL11.GL_TEXTURE_2D);
         glEnable(GL11.GL_DEPTH_TEST);
 
-        ShaderManager.instance().setUniform("u_ProjMatrix", context.getProjectionMatrix());
-        ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
-        ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
-        ShaderManager.instance().setUniform("u_viewPos", context.getCamera().getPosition());
+        shader.setUniform("u_ProjMatrix", context.getProjectionMatrix());
+        shader.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
+        shader.setUniform("u_ModelMatrix", new Matrix4f());
+        shader.setUniform("u_viewPos", context.getCamera().getPosition());
 
         context.getTextureManager().getDefaultAtlas().bind();
-        chunkSolidShader.setUniform("useDirectUV", true);
-        scene.getLightManager().bind(context.getCamera(), ShaderManager.instance().getUsingShader());
-        scene.getMaterial().bind("material");
+        shader.setUniform("useDirectUV", true);
+        scene.getLightManager().bind(context.getCamera(), shader);
+        scene.getMaterial().bind(shader, "material");
     }
 
     private void postRender() {

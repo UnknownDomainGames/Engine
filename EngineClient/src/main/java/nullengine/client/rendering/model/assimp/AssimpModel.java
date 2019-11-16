@@ -130,7 +130,7 @@ public class AssimpModel {
 
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             var mat = materials.get(mesh.getMaterialName());
-            mat.getEngineMaterial().bind("material");
+            mat.getEngineMaterial().bind(ShaderManager.instance().getUsingShader(), "material");
 
             ShaderManager.instance().setUniform("u_Bones", currentAnimation.getCurrentFrame().getJointMatrices());
 
