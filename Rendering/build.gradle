@@ -1,7 +1,5 @@
 import org.gradle.internal.os.OperatingSystem
 
-project.ext.lwjglVersion = "3.2.1"
-
 switch (OperatingSystem.current()) {
     case OperatingSystem.WINDOWS:
         project.ext.lwjglNatives = "natives-windows"
@@ -27,6 +25,7 @@ dependencies {
     compile "org.lwjgl:lwjgl-openal:$lwjglVersion"
     compile "org.lwjgl:lwjgl-opengl:$lwjglVersion"
     compile "org.lwjgl:lwjgl-stb:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-vulkan:$lwjglVersion"
     compile "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
     compile "org.lwjgl:lwjgl-assimp:$lwjglVersion:$lwjglNatives"
     compile "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"

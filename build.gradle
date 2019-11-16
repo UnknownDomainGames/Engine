@@ -17,7 +17,7 @@ subprojects {
     apply plugin: 'maven'
 
     group 'com.github.unknowndomaingame'
-    version '0.1.1-alpha'
+    version engineVersion
 
     sourceCompatibility = targetCompatibility = 11
 
