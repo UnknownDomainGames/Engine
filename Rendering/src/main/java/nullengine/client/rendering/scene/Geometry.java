@@ -2,13 +2,15 @@ package nullengine.client.rendering.scene;
 
 import nullengine.client.rendering.gl.SingleBufferVAO;
 import nullengine.client.rendering.layer.RenderLayer;
+import nullengine.client.rendering.math.BoundingVolume;
 import nullengine.client.rendering.queue.RenderQueue;
 
 public class Geometry extends Node {
 
-    protected SingleBufferVAO vao;
+    private SingleBufferVAO vao;
+    private RenderLayer renderLayer;
 
-    protected RenderLayer renderLayer;
+    private BoundingVolume boundingVolume = new BoundingVolume();
 
     public Geometry(SingleBufferVAO vao) {
         this.vao = vao;
@@ -41,5 +43,9 @@ public class Geometry extends Node {
             renderQueue.add(this, renderLayer);
         });
         this.renderLayer = renderLayer;
+    }
+
+    public BoundingVolume getBoundingVolume() {
+        return boundingVolume;
     }
 }
