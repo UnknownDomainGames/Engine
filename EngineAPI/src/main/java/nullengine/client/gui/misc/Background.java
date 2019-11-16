@@ -3,6 +3,7 @@ package nullengine.client.gui.misc;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
+import nullengine.client.rendering.texture.Texture2D;
 import nullengine.util.Color;
 
 import java.util.Objects;
@@ -16,7 +17,7 @@ public class Background {
 
     private final Color color;
 
-    private final GLTexture2D image;
+    private final Texture2D image;
 
     private boolean repeat;
 
@@ -25,13 +26,25 @@ public class Background {
         this.image = null;
     }
 
-    public Background(GLTexture2D image) {
+    public Background(Texture2D image) {
         this.image = image;
         this.color = Color.TRANSPARENT;
     }
 
-    public void setRepeat(boolean flag) {
-        repeat = flag;
+    public Color getColor() {
+        return color;
+    }
+
+    public Texture2D getImage() {
+        return image;
+    }
+
+    public boolean isRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(boolean repeat) {
+        this.repeat = repeat;
     }
 
     public void render(Component component, Graphics graphics) {

@@ -8,8 +8,8 @@ import org.joml.Vector2f;
 public class CheckBoxRenderer implements ComponentRenderer<CheckBox> {
     @Override
     public void render(CheckBox component, Graphics graphics, RenderManager context) {
-        component.background().getValue().render(component, graphics);
-        component.border().getValue().render(component, graphics);
+        graphics.drawBackground(component.background().getValue(), component);
+        graphics.drawBorder(component.border().getValue(), component);
         if (component.state().getValue() == null || component.state().getValue()) {
             Insets insets = component.padding().getValue();
             float width;

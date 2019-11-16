@@ -7,8 +7,8 @@ import nullengine.client.rendering.RenderManager;
 public class RadioButtonRenderer implements ComponentRenderer<RadioButton> {
     @Override
     public void render(RadioButton component, Graphics graphics, RenderManager context) {
-        component.background().getValue().render(component, graphics);
-        component.border().getValue().render(component, graphics);
+        graphics.drawBackground(component.background().getValue(), component);
+        graphics.drawBorder(component.border().getValue(), component);
         if (component.selected().get()) {
             Insets insets = component.padding().getValue();
             float width = component.width().get() - insets.getRight() - insets.getLeft();

@@ -1,5 +1,8 @@
 package nullengine.client.rendering.gui;
 
+import nullengine.client.gui.Component;
+import nullengine.client.gui.misc.Background;
+import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Tessellator;
@@ -10,6 +13,7 @@ import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.GLVertexFormats;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.texture.Texture2D;
+import nullengine.client.rendering.texture.TextureManager;
 import nullengine.math.Math2;
 import nullengine.util.Color;
 import org.joml.Vector2fc;
@@ -18,11 +22,16 @@ import org.joml.Vector4fc;
 
 import java.util.Stack;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
+
 public class GraphicsImpl implements Graphics {
 
     private final RenderManager context;
     private final Tessellator tessellator = Tessellator.getInstance();
     private final GuiRenderer guiRenderer;
+
+    private final Texture2D whiteTexture;
 
     private Color color;
     private Font font;
@@ -32,6 +41,7 @@ public class GraphicsImpl implements Graphics {
     public GraphicsImpl(RenderManager context, GuiRenderer guiRenderer) {
         this.context = context;
         this.guiRenderer = guiRenderer;
+        this.whiteTexture = TextureManager.instance().getWhiteTexture();
         setColor(Color.WHITE);
     }
 
@@ -208,6 +218,61 @@ public class GraphicsImpl implements Graphics {
     }
 
     @Override
+    public void drawBorder(Border border, Component component) {
+        drawBorder(border, 0, 0, component.width().get(), component.height().get());
+    }
+
+    @Override
+    public void drawBorder(Border border, float x, float y, float width, float height) {
+        if (border == null) {
+            return;
+        }
+
+        setColor(border.getColor());
+        if (border.getInsets().getTop() != 0) {
+            fillRect(x, y, x + width, y + border.getInsets().getTop());
+        }
+        if (border.getInsets().getBottom() != 0) {
+            fillRect(x, y + height - border.getInsets().getBottom(), x + width, y + height);
+        }
+        if (border.getInsets().getLeft() != 0) {
+            fillRect(x, y, x + border.getInsets().getLeft(), y + height);
+        }
+        if (border.getInsets().getRight() != 0) {
+            fillRect(x + width - border.getInsets().getRight(), y, x + width, y + height);
+        }
+    }
+
+    @Override
+    public void drawBackground(Background background, Component component) {
+        drawBackground(background, 0, 0, component.width().get(), component.height().get());
+    }
+
+    @Override
+    public void drawBackground(Background background, float x, float y, float width, float height) {
+        if (background == null) {
+            return;
+        }
+
+        Texture2D image = background.getImage();
+        if (image != null) {
+            image.bind();
+            if (background.isRepeat()) {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            } else {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            }
+            drawTexture(image, x, y, x + width, y + height);
+            whiteTexture.bind();
+        } else {
+            setColor(background.getColor());
+            fillRect(x, y, x + width, y + height);
+        }
+    }
+
+    @Override
     public void pushClipRect(float x, float y, float width, float height) {
         if (clipRect.isEmpty()) {
             clipRect.push(new Vector4f(x, y, x + width, y + height));
@@ -233,7 +298,7 @@ public class GraphicsImpl implements Graphics {
             var newY = Math2.clamp(child.y(), parent.y(), parent.w());
             var newZ = Math2.clamp(child.z(), parent.x(), parent.z());
             var newW = Math2.clamp(child.w(), parent.y(), parent.w());
-            return new Vector4f(newX,newY,newZ,newW);
+            return new Vector4f(newX, newY, newZ, newW);
         }).ifPresent(guiRenderer::setClipRect);
 //        if (!clipRect.isEmpty()) {
 //            guiRenderer.setClipRect(clipRect.peek());

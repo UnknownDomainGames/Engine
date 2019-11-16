@@ -2,7 +2,6 @@ package nullengine.client.gui.rendering;
 
 import nullengine.client.gui.Component;
 import nullengine.client.gui.Region;
-import nullengine.client.gui.misc.Border;
 import nullengine.client.rendering.RenderManager;
 
 public class RegionRenderer<E extends Region> implements ComponentRenderer<E> {
@@ -11,11 +10,8 @@ public class RegionRenderer<E extends Region> implements ComponentRenderer<E> {
 
     @Override
     public void render(E region, Graphics graphics, RenderManager context) {
-        region.background().ifPresent(background -> background.render(region,graphics));
-        if (region.border().isPresent()) {
-            Border border = region.border().getValue();
-            border.render(region, graphics);
-        }
+        graphics.drawBackground(region.background().getValue(), region);
+        graphics.drawBorder(region.border().getValue(), region);
         for (Component child : region.getUnmodifiableChildren()) {
             if (!child.visible().get()) {
                 continue;

@@ -1,5 +1,8 @@
 package nullengine.client.gui.rendering;
 
+import nullengine.client.gui.Component;
+import nullengine.client.gui.misc.Background;
+import nullengine.client.gui.misc.Border;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.texture.Texture2D;
 import nullengine.util.Color;
@@ -53,6 +56,14 @@ public interface Graphics {
     void drawTexture(Texture2D texture, float x, float y, float width, float height);
 
     void drawTexture(Texture2D texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV);
+
+    void drawBorder(Border border, Component component);
+
+    void drawBorder(Border border, float x, float y, float width, float height);
+
+    void drawBackground(Background background, Component component);
+
+    void drawBackground(Background background, float x, float y, float width, float height);
 
     void pushClipRect(float x, float y, float width, float height);
 
