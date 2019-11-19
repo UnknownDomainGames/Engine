@@ -1,6 +1,6 @@
 package nullengine.client.gui.component;
 
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.event.MouseEvent;
@@ -16,7 +16,7 @@ import nullengine.util.Color;
 
 public class RadioButton extends ToggleButton {
 
-    private MutableValue<Color> contentColor = new SimpleMutableObjectValue<>(Color.BLACK);
+    private MutableObjectValue<Color> contentColor = new SimpleMutableObjectValue<>(Color.BLACK);
 
 
     public RadioButton() {
@@ -35,7 +35,7 @@ public class RadioButton extends ToggleButton {
         resize(24f, 24f);
     }
 
-    public MutableValue<Color> contentColor() {
+    public MutableObjectValue<Color> contentColor() {
         return contentColor;
     }
 
@@ -57,9 +57,9 @@ public class RadioButton extends ToggleButton {
     }
 
     public static class Texted extends BorderPane {
-        protected MutableValue<Text> text = new SimpleMutableObjectValue<>();
-        protected MutableValue<RadioButton> radioButton = new SimpleMutableObjectValue<>();
-        private MutableValue<Pos> contentPos = new SimpleMutableObjectValue<>(Pos.CENTER_RIGHT);
+        protected MutableObjectValue<Text> text = new SimpleMutableObjectValue<>();
+        protected MutableObjectValue<RadioButton> radioButton = new SimpleMutableObjectValue<>();
+        private MutableObjectValue<Pos> contentPos = new SimpleMutableObjectValue<>(Pos.CENTER_RIGHT);
 
         public Texted() {
             this("");
@@ -82,7 +82,7 @@ public class RadioButton extends ToggleButton {
             return radioButton.toImmutable();
         }
 
-        public MutableValue<Pos> contentPos() {
+        public MutableObjectValue<Pos> contentPos() {
             return contentPos;
         }
 

@@ -1,6 +1,6 @@
 package nullengine.client.gui;
 
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.misc.*;
 import nullengine.client.gui.rendering.ComponentRenderer;
@@ -15,20 +15,20 @@ public class Region extends Container {
         return size;
     }
 
-    private final MutableValue<Background> background = new SimpleMutableObjectValue<>(Background.NOTHING);
-    private final MutableValue<Border> border = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Background> background = new SimpleMutableObjectValue<>(Background.NOTHING);
+    private final MutableObjectValue<Border> border = new SimpleMutableObjectValue<>();
 
-    public MutableValue<Background> background() {
+    public MutableObjectValue<Background> background() {
         return background;
     }
 
-    public MutableValue<Border> border() {
+    public MutableObjectValue<Border> border() {
         return border;
     }
 
-    private final MutableValue<Insets> padding = new SimpleMutableObjectValue<>(Insets.EMPTY);
+    private final MutableObjectValue<Insets> padding = new SimpleMutableObjectValue<>(Insets.EMPTY);
 
-    public final MutableValue<Insets> padding() {
+    public final MutableObjectValue<Insets> padding() {
         return padding;
     }
 

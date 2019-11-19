@@ -1,7 +1,7 @@
 package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.MutableFloatValue;
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.gui.event.MouseEvent;
@@ -9,10 +9,10 @@ import nullengine.client.gui.event.MouseEvent;
 import java.util.function.Consumer;
 
 public class ImageButton extends Image {
-    private final MutableValue<AssetURL> background = new SimpleMutableObjectValue<>();
-    private final MutableValue<AssetURL> hoveredBg = new SimpleMutableObjectValue<>();
-    private final MutableValue<AssetURL> pressedBg = new SimpleMutableObjectValue<>();
-    private final MutableValue<AssetURL> disableBg = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<AssetURL> background = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<AssetURL> hoveredBg = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<AssetURL> pressedBg = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<AssetURL> disableBg = new SimpleMutableObjectValue<>();
 
     public ImageButton(AssetURL path) {
         this();
@@ -30,19 +30,19 @@ public class ImageButton extends Image {
         handleBackground();
     }
 
-    public MutableValue<AssetURL> hoverBackground() {
+    public MutableObjectValue<AssetURL> hoverBackground() {
         return hoveredBg;
     }
 
-    public MutableValue<AssetURL> pressBackground() {
+    public MutableObjectValue<AssetURL> pressBackground() {
         return pressedBg;
     }
 
-    public MutableValue<AssetURL> disabledBackground() {
+    public MutableObjectValue<AssetURL> disabledBackground() {
         return disableBg;
     }
 
-    public MutableValue<AssetURL> buttonBackground() {
+    public MutableObjectValue<AssetURL> buttonBackground() {
         return background;
     }
 

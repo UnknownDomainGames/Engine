@@ -1,12 +1,12 @@
 package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.MutableFloatValue;
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.item.ItemStack;
 
 public class ItemSlot extends Button {
-    private final MutableValue<ItemStack> itemstack = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<ItemStack> itemstack = new SimpleMutableObjectValue<>();
     private ItemView itemView;
 
     public ItemSlot() {
@@ -20,7 +20,7 @@ public class ItemSlot extends Button {
         itemstack.setValue(stack);
     }
 
-    public MutableValue<ItemStack> itemStack() {
+    public MutableObjectValue<ItemStack> itemStack() {
         return itemstack;
     }
 

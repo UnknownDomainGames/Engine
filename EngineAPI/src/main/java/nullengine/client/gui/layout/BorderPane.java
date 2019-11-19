@@ -1,6 +1,6 @@
 package nullengine.client.gui.layout;
 
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.misc.Insets;
@@ -39,29 +39,29 @@ public class BorderPane extends Pane {
         return margin != null ? margin : Insets.EMPTY;
     }
 
-    private final MutableValue<Component> center = new SimpleMutableObjectValue<>();
-    private final MutableValue<Component> top = new SimpleMutableObjectValue<>();
-    private final MutableValue<Component> bottom = new SimpleMutableObjectValue<>();
-    private final MutableValue<Component> left = new SimpleMutableObjectValue<>();
-    private final MutableValue<Component> right = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Component> center = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Component> top = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Component> bottom = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Component> left = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Component> right = new SimpleMutableObjectValue<>();
 
-    public MutableValue<Component> center() {
+    public MutableObjectValue<Component> center() {
         return center;
     }
 
-    public MutableValue<Component> top() {
+    public MutableObjectValue<Component> top() {
         return top;
     }
 
-    public MutableValue<Component> bottom() {
+    public MutableObjectValue<Component> bottom() {
         return bottom;
     }
 
-    public MutableValue<Component> left() {
+    public MutableObjectValue<Component> left() {
         return left;
     }
 
-    public MutableValue<Component> right() {
+    public MutableObjectValue<Component> right() {
         return right;
     }
 

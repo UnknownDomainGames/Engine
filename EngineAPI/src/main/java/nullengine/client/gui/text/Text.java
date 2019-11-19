@@ -1,9 +1,6 @@
 package nullengine.client.gui.text;
 
-import com.github.mouse0w0.observable.value.MutableDoubleValue;
-import com.github.mouse0w0.observable.value.MutableValue;
-import com.github.mouse0w0.observable.value.SimpleMutableDoubleValue;
-import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
+import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.rendering.ComponentRenderer;
@@ -14,10 +11,10 @@ import nullengine.util.Color;
 
 public class Text extends Component {
 
-    private final MutableValue<String> text = new SimpleMutableObjectValue<>();
-    private final MutableValue<Font> font = new SimpleMutableObjectValue<>(Font.getDefaultFont());
-    private final MutableValue<Color> color = new SimpleMutableObjectValue<>(Color.WHITE);
-    private final MutableValue<Pos> textAlignment = new SimpleMutableObjectValue<>(Pos.CENTER);
+    private final MutableStringValue text = new SimpleMutableStringValue();
+    private final MutableObjectValue<Font> font = new SimpleMutableObjectValue<>(Font.getDefaultFont());
+    private final MutableObjectValue<Color> color = new SimpleMutableObjectValue<>(Color.WHITE);
+    private final MutableObjectValue<Pos> textAlignment = new SimpleMutableObjectValue<>(Pos.CENTER);
     private final MutableDoubleValue leading = new SimpleMutableDoubleValue(1.0);
 
     public Text() {
@@ -32,19 +29,19 @@ public class Text extends Component {
         text().setValue(text);
     }
 
-    public final MutableValue<String> text() {
+    public final MutableStringValue text() {
         return text;
     }
 
-    public final MutableValue<Font> font() {
+    public final MutableObjectValue<Font> font() {
         return font;
     }
 
-    public MutableValue<Color> color() {
+    public MutableObjectValue<Color> color() {
         return color;
     }
 
-    public MutableValue<Pos> textAlignment() {
+    public MutableObjectValue<Pos> textAlignment() {
         return textAlignment;
     }
 

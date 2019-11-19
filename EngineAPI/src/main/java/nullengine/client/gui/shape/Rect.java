@@ -1,7 +1,7 @@
 package nullengine.client.gui.shape;
 
 import com.github.mouse0w0.observable.value.MutableFloatValue;
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.rendering.ComponentRenderer;
@@ -11,10 +11,10 @@ import org.joml.Vector2fc;
 
 public class Rect extends Shape {
 
-    private final MutableValue<Vector2fc> size = new SimpleMutableObjectValue<>(new Vector2f(0));
+    private final MutableObjectValue<Vector2fc> size = new SimpleMutableObjectValue<>(new Vector2f(0));
     private final MutableFloatValue strokeSize = new SimpleMutableFloatValue();
-    private final MutableValue<Color> strokeColor = new SimpleMutableObjectValue<>(Color.BLACK);
-    private final MutableValue<Color> fillColor = new SimpleMutableObjectValue<>(Color.WHITE);
+    private final MutableObjectValue<Color> strokeColor = new SimpleMutableObjectValue<>(Color.BLACK);
+    private final MutableObjectValue<Color> fillColor = new SimpleMutableObjectValue<>(Color.WHITE);
 
     public Rect(){}
 
@@ -22,7 +22,7 @@ public class Rect extends Shape {
         this.size.setValue(size);
     }
 
-    public MutableValue<Vector2fc> rectSize() {
+    public MutableObjectValue<Vector2fc> rectSize() {
         return size;
     }
 
@@ -30,11 +30,11 @@ public class Rect extends Shape {
         return strokeSize;
     }
 
-    public MutableValue<Color> fillColor() {
+    public MutableObjectValue<Color> fillColor() {
         return fillColor;
     }
 
-    public MutableValue<Color> strokeColor() {
+    public MutableObjectValue<Color> strokeColor() {
         return strokeColor;
     }
 

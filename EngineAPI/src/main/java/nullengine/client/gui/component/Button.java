@@ -1,6 +1,6 @@
 package nullengine.client.gui.component;
 
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.event.MouseEvent;
@@ -14,10 +14,10 @@ import java.util.function.Consumer;
 
 public class Button extends Label {
 
-    private final MutableValue<Background> background = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLACK));
-    private final MutableValue<Background> hoveredBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLUE));
-    private final MutableValue<Background> pressedBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.fromRGB(0x507fff)));
-    private final MutableValue<Background> disableBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.fromRGB(0x7f7f7f)));
+    private final MutableObjectValue<Background> background = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLACK));
+    private final MutableObjectValue<Background> hoveredBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLUE));
+    private final MutableObjectValue<Background> pressedBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.fromRGB(0x507fff)));
+    private final MutableObjectValue<Background> disableBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.fromRGB(0x7f7f7f)));
 
     public Button() {
         super();
@@ -39,15 +39,15 @@ public class Button extends Label {
     }
 
 
-    public MutableValue<Background> hoverBackground() {
+    public MutableObjectValue<Background> hoverBackground() {
         return hoveredBg;
     }
 
-    public MutableValue<Background> pressBackground() {
+    public MutableObjectValue<Background> pressBackground() {
         return pressedBg;
     }
 
-    public MutableValue<Background> disabledBackground() {
+    public MutableObjectValue<Background> disabledBackground() {
         return disableBg;
     }
 
@@ -63,7 +63,7 @@ public class Button extends Label {
         this.onClick = onClick;
     }
 
-    public MutableValue<Background> buttonBackground() {
+    public MutableObjectValue<Background> buttonBackground() {
         return background;
     }
 

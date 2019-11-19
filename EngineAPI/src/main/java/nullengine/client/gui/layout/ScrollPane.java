@@ -1,6 +1,8 @@
 package nullengine.client.gui.layout;
 
-import com.github.mouse0w0.observable.value.*;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
+import com.github.mouse0w0.observable.value.ObservableValue;
+import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Component;
 import nullengine.client.gui.component.HSlider;
 import nullengine.client.gui.component.VSlider;
@@ -11,7 +13,7 @@ public class ScrollPane extends BorderPane {
     private final VSlider vScroll;
     private final HSlider hScroll;
 
-    private final MutableValue<Component> content = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Component> content = new SimpleMutableObjectValue<>();
 
     public ScrollPane(){
         super();

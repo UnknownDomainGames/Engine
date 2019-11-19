@@ -1,12 +1,11 @@
 package nullengine.client.gui.layout;
 
 import com.github.mouse0w0.observable.value.MutableFloatValue;
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
-import nullengine.client.gui.misc.Size;
 import nullengine.client.gui.util.Utils;
 
 public class FlowPane extends Pane {
@@ -15,8 +14,8 @@ public class FlowPane extends Pane {
         HORIZONTAL, VERTICAL
     }
 
-    private final MutableValue<Pos> anchor = new SimpleMutableObjectValue<>(Pos.TOP_LEFT);
-    private final MutableValue<Direction> direction = new SimpleMutableObjectValue<>(Direction.HORIZONTAL);
+    private final MutableObjectValue<Pos> anchor = new SimpleMutableObjectValue<>(Pos.TOP_LEFT);
+    private final MutableObjectValue<Direction> direction = new SimpleMutableObjectValue<>(Direction.HORIZONTAL);
     private final MutableFloatValue spacing = new SimpleMutableFloatValue();
 
     public FlowPane(){
@@ -24,11 +23,11 @@ public class FlowPane extends Pane {
         direction.addChangeListener((observable, oldValue, newValue) -> this.needsLayout());
     }
 
-    public MutableValue<Pos> anchor() {
+    public MutableObjectValue<Pos> anchor() {
         return anchor;
     }
 
-    public MutableValue<Direction> direction() {
+    public MutableObjectValue<Direction> direction() {
         return direction;
     }
 

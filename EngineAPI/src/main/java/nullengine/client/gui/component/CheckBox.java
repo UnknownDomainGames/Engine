@@ -13,10 +13,10 @@ import nullengine.client.gui.text.Text;
 import nullengine.util.Color;
 
 public class CheckBox extends Button {
-    private MutableValue<Boolean> state = new SimpleMutableObjectValue<>(false);
+    private MutableObjectValue<Boolean> state = new SimpleMutableObjectValue<>(false);
     private MutableBooleanValue allowIntermediate = new SimpleMutableBooleanValue(false);
 
-    private MutableValue<Color> contentColor = new SimpleMutableObjectValue<>(Color.BLACK);
+    private MutableObjectValue<Color> contentColor = new SimpleMutableObjectValue<>(Color.BLACK);
 
     public CheckBox() {
         background().setValue(Background.fromColor(Color.WHITE));
@@ -57,7 +57,7 @@ public class CheckBox extends Button {
         return new CheckBoxRenderer();
     }
 
-    public MutableValue<Boolean> state() {
+    public MutableObjectValue<Boolean> state() {
         return state;
     }
 
@@ -65,14 +65,14 @@ public class CheckBox extends Button {
         return allowIntermediate;
     }
 
-    public MutableValue<Color> contentColor() {
+    public MutableObjectValue<Color> contentColor() {
         return contentColor;
     }
 
     public static class Texted extends BorderPane {
-        protected MutableValue<Text> text = new SimpleMutableObjectValue<>();
-        protected MutableValue<CheckBox> checkBox = new SimpleMutableObjectValue<>();
-        private MutableValue<Pos> contentPos = new SimpleMutableObjectValue<>(Pos.CENTER_RIGHT);
+        protected MutableObjectValue<Text> text = new SimpleMutableObjectValue<>();
+        protected MutableObjectValue<CheckBox> checkBox = new SimpleMutableObjectValue<>();
+        private MutableObjectValue<Pos> contentPos = new SimpleMutableObjectValue<>(Pos.CENTER_RIGHT);
 
         public Texted() {
             this("");
@@ -95,7 +95,7 @@ public class CheckBox extends Button {
             return checkBox.toImmutable();
         }
 
-        public MutableValue<Pos> contentPos() {
+        public MutableObjectValue<Pos> contentPos() {
             return contentPos;
         }
 

@@ -21,13 +21,13 @@ import nullengine.util.Color;
 import java.text.BreakIterator;
 
 public class TextField extends Control {
-    private MutableValue<Color> fontcolor = new SimpleMutableObjectValue<>(Color.WHITE);
-    private MutableValue<Font> font = new SimpleMutableObjectValue<>(Font.getDefaultFont());
+    private MutableObjectValue<Color> fontcolor = new SimpleMutableObjectValue<>(Color.WHITE);
+    private MutableObjectValue<Font> font = new SimpleMutableObjectValue<>(Font.getDefaultFont());
 
-    private MutableValue<String> text = new SimpleMutableObjectValue<>("");
-    private MutableValue<String> promptText = new SimpleMutableObjectValue<>("");
+    private MutableStringValue text = new SimpleMutableStringValue("");
+    private MutableStringValue promptText = new SimpleMutableStringValue("");
 
-    private MutableValue<IndexRange> selection = new SimpleMutableObjectValue<>();
+    private MutableObjectValue<IndexRange> selection = new SimpleMutableObjectValue<>();
 
     private MutableBooleanValue editable = new SimpleMutableBooleanValue(true);
     private MutableBooleanValue undoable = new SimpleMutableBooleanValue(false);
@@ -53,19 +53,19 @@ public class TextField extends Control {
         caret().addChangeListener((observable, oldValue, newValue) -> updatePointer());
     }
 
-    public MutableValue<Font> font() {
+    public MutableObjectValue<Font> font() {
         return font;
     }
 
-    public MutableValue<Color> fontcolor() {
+    public MutableObjectValue<Color> fontcolor() {
         return fontcolor;
     }
 
-    public MutableValue<String> text() {
+    public MutableStringValue text() {
         return text;
     }
 
-    public MutableValue<String> promptText() {
+    public MutableStringValue promptText() {
         return promptText;
     }
 
@@ -212,7 +212,7 @@ public class TextField extends Control {
         }
     }
 
-    public MutableValue<IndexRange> selection() {
+    public MutableObjectValue<IndexRange> selection() {
         return selection;
     }
 

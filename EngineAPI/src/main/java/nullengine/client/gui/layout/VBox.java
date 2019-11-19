@@ -1,7 +1,7 @@
 package nullengine.client.gui.layout;
 
 import com.github.mouse0w0.observable.value.MutableFloatValue;
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Component;
@@ -12,13 +12,13 @@ import nullengine.client.gui.util.Utils;
 public class VBox extends Pane {
 
     private final MutableFloatValue spacing = new SimpleMutableFloatValue();
-    private final MutableValue<Pos.HPos> alignment = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Pos.HPos> alignment = new SimpleMutableObjectValue<>();
 
     public final MutableFloatValue spacing() {
         return spacing;
     }
 
-    public final MutableValue<Pos.HPos> alignment(){
+    public final MutableObjectValue<Pos.HPos> alignment() {
         return alignment;
     }
 

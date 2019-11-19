@@ -2,14 +2,12 @@ package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
-import com.github.mouse0w0.observable.value.MutableFloatValue;
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
+import nullengine.client.gui.Component;
 import nullengine.client.gui.Container;
 import nullengine.client.gui.layout.ScrollPane;
 import nullengine.client.gui.layout.VBox;
-import nullengine.client.gui.Component;
-import nullengine.client.gui.misc.Insets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +22,8 @@ public class ListView<T> extends Control {
     public static final Supplier<? extends Container> DEFAULT_CONTAINER_FACTORY = VBox::new;
 
     private final Function<T, Component> defaultContentFactory = (obj) -> new Label(obj.toString());
-    private MutableValue<Supplier<? extends Container>> containerFactory = new SimpleMutableObjectValue<>(DEFAULT_CONTAINER_FACTORY);
-    private MutableValue<Function<T, ? extends Component>> contentFactory = new SimpleMutableObjectValue<>(defaultContentFactory);
+    private MutableObjectValue<Supplier<? extends Container>> containerFactory = new SimpleMutableObjectValue<>(DEFAULT_CONTAINER_FACTORY);
+    private MutableObjectValue<Function<T, ? extends Component>> contentFactory = new SimpleMutableObjectValue<>(defaultContentFactory);
 
     private ObservableList<T> items = ObservableCollections.observableList(new ArrayList<>());
 

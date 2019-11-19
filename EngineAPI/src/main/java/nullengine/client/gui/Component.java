@@ -18,8 +18,8 @@ import java.util.function.Consumer;
 
 public abstract class Component {
 
-    final MutableValue<Scene> scene = new SimpleMutableObjectValue<>();
-    final MutableValue<Container> parent = new SimpleMutableObjectValue<>();
+    final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
+    final MutableObjectValue<Container> parent = new SimpleMutableObjectValue<>();
 
     private final MutableFloatValue x = new SimpleMutableFloatValue();
     private final MutableFloatValue y = new SimpleMutableFloatValue();
@@ -41,11 +41,11 @@ public abstract class Component {
         visible.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
     }
 
-    public ObservableValue<Scene> scene() {
+    public ObservableObjectValue<Scene> scene() {
         return scene;
     }
 
-    public final ObservableValue<Container> parent() {
+    public final ObservableObjectValue<Container> parent() {
         return parent.toImmutable();
     }
 
