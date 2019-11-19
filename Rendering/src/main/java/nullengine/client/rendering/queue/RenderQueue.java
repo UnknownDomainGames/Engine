@@ -1,8 +1,8 @@
 package nullengine.client.rendering.queue;
 
-import nullengine.client.rendering.RenderManagerImpl;
-import nullengine.client.rendering.layer.RenderLayer;
-import nullengine.client.rendering.layer.RenderLayerHandler;
+import nullengine.client.rendering.graphics.RenderType;
+import nullengine.client.rendering.graphics.RenderTypeHandler;
+import nullengine.client.rendering.management.RenderContext;
 import nullengine.client.rendering.scene.Geometry;
 
 import javax.annotation.Nonnull;
@@ -11,14 +11,14 @@ import java.util.Map;
 
 public class RenderQueue {
 
-    private final Map<RenderLayer, GeometryList> queue = new HashMap<>();
+    private final Map<RenderType, GeometryList> queue = new HashMap<>();
 
-    public void add(@Nonnull Geometry geometry, RenderLayer layer) {
+    public void add(@Nonnull Geometry geometry, RenderType layer) {
         if (layer == null) return;
         queue.computeIfAbsent(layer, key -> new GeometryList()).add(geometry);
     }
 
-    public void remove(Geometry geometry, RenderLayer layer) {
+    public void remove(Geometry geometry, RenderType layer) {
         if (layer == null) return;
         queue.computeIfAbsent(layer, key -> new GeometryList()).remove(geometry);
     }
@@ -27,9 +27,9 @@ public class RenderQueue {
         queue.clear();
     }
 
-    public void render(RenderManagerImpl renderManager, RenderLayer layer, RenderLayerHandler handler) {
+    public void render(RenderContext manager, RenderType layer, RenderTypeHandler handler) {
         GeometryList geometries = queue.get(layer);
         if (geometries == null) return;
-        handler.render(renderManager, geometries);
+        handler.render(manager, geometries);
     }
 }

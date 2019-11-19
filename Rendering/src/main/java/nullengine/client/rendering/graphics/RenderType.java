@@ -1,4 +1,4 @@
-package nullengine.client.rendering.layer;
+package nullengine.client.rendering.graphics;
 
 import nullengine.util.KeyComparable;
 
@@ -6,13 +6,13 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-public final class RenderLayer implements KeyComparable<String, RenderLayer> {
+public final class RenderType implements KeyComparable<String, RenderType> {
 
     private final String name;
     private final Set<String> before;
     private final Set<String> after;
 
-    private RenderLayer(String name, Set<String> before, Set<String> after) {
+    private RenderType(String name, Set<String> before, Set<String> after) {
         this.name = notNull(name);
         this.before = before;
         this.after = after;
@@ -64,8 +64,8 @@ public final class RenderLayer implements KeyComparable<String, RenderLayer> {
             return this;
         }
 
-        public RenderLayer build() {
-            return new RenderLayer(name, before, after);
+        public RenderType build() {
+            return new RenderType(name, before, after);
         }
     }
 }

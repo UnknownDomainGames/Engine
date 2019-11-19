@@ -1,14 +1,14 @@
 package nullengine.client.rendering.scene;
 
 import nullengine.client.rendering.gl.SingleBufferVAO;
-import nullengine.client.rendering.layer.RenderLayer;
+import nullengine.client.rendering.graphics.RenderType;
 import nullengine.client.rendering.math.BoundingVolume;
 import nullengine.client.rendering.queue.RenderQueue;
 
 public class Geometry extends Node {
 
     private SingleBufferVAO vao;
-    private RenderLayer renderLayer;
+    private RenderType renderType;
 
     private BoundingVolume boundingVolume = new BoundingVolume();
 
@@ -16,10 +16,10 @@ public class Geometry extends Node {
         this.vao = vao;
         scene().addChangeListener((observable, oldValue, newValue) -> {
             if (oldValue != null) {
-                oldValue.getRenderQueue().remove(this, renderLayer);
+                oldValue.getRenderQueue().remove(this, renderType);
             }
             if (newValue != null) {
-                newValue.getRenderQueue().add(this, renderLayer);
+                newValue.getRenderQueue().add(this, renderType);
             }
         });
     }
@@ -32,17 +32,17 @@ public class Geometry extends Node {
         this.vao = vao;
     }
 
-    public RenderLayer getRenderLayer() {
-        return renderLayer;
+    public RenderType getRenderType() {
+        return renderType;
     }
 
-    public void setRenderLayer(RenderLayer renderLayer) {
+    public void setRenderType(RenderType renderType) {
         scene.ifPresent(scene -> {
             RenderQueue renderQueue = scene.getRenderQueue();
-            renderQueue.remove(this, this.renderLayer);
-            renderQueue.add(this, renderLayer);
+            renderQueue.remove(this, this.renderType);
+            renderQueue.add(this, renderType);
         });
-        this.renderLayer = renderLayer;
+        this.renderType = renderType;
     }
 
     public BoundingVolume getBoundingVolume() {
