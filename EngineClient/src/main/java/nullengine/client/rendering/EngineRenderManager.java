@@ -195,12 +195,8 @@ public class EngineRenderManager implements RenderManager {
         logger.info("Initializing OpenGL context!");
 
         GL.createCapabilities();
+        gpuInfo = new NVXGPUInfo();
         printGLInfo();
-
-        NVXGPUInfo nvxgpuMemoryInfo = new NVXGPUInfo();
-        nvxgpuMemoryInfo.init();
-        scheduler.runTaskEveryFrame(nvxgpuMemoryInfo::update);
-        gpuInfo = nvxgpuMemoryInfo;
 
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     }
@@ -212,6 +208,7 @@ public class EngineRenderManager implements RenderManager {
         logger.info("\tGL_VERSION: {}", getVersion());
         logger.info("\tGL_EXTENSIONS: {}", getExtensions());
         logger.info("\tGL_SHADING_LANGUAGE_VERSION: {}", getShadingLanguageVersion());
+        logger.info("\tGPU_TOTAL_MEMORY: {} MB", (gpuInfo.getTotalMemory()) >> 10);
         logger.info("------------------------------");
     }
 
