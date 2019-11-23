@@ -1,7 +1,7 @@
 package nullengine.client.rendering.material;
 
 import nullengine.client.rendering.gl.texture.GLTexture2D;
-import nullengine.client.rendering.scene.BindingProxy;
+import nullengine.client.rendering.management.BindingProxy;
 import nullengine.client.rendering.texture.Texture2D;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL13;

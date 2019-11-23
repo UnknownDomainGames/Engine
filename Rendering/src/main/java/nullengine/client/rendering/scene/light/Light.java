@@ -1,6 +1,6 @@
 package nullengine.client.rendering.scene.light;
 
-import nullengine.client.rendering.scene.BindingProxy;
+import nullengine.client.rendering.management.BindingProxy;
 import nullengine.client.rendering.scene.Node;
 import org.joml.Vector3f;
 

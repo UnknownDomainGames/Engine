@@ -1,6 +1,6 @@
 package nullengine.client.rendering.gl.shader;
 
-import nullengine.client.rendering.scene.BindingProxy;
+import nullengine.client.rendering.management.BindingProxy;
 import org.joml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

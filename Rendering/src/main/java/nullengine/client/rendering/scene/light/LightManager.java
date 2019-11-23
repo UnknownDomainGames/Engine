@@ -1,7 +1,7 @@
 package nullengine.client.rendering.scene.light;
 
 import nullengine.client.rendering.camera.Camera;
-import nullengine.client.rendering.scene.BindingProxy;
+import nullengine.client.rendering.management.BindingProxy;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -1,4 +1,4 @@
-package nullengine.client.rendering.scene;
+package nullengine.client.rendering.management;
 
 import org.joml.*;
 
