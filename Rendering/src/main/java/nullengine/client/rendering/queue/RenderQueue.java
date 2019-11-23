@@ -1,7 +1,5 @@
 package nullengine.client.rendering.queue;
 
-import nullengine.client.rendering.graphics.RenderType;
-import nullengine.client.rendering.graphics.RenderTypeHandler;
 import nullengine.client.rendering.management.RenderContext;
 import nullengine.client.rendering.scene.Geometry;
 

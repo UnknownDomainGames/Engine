@@ -1,9 +1,9 @@
 package nullengine.client.rendering.scene;
 
 import nullengine.client.rendering.gl.SingleBufferVAO;
-import nullengine.client.rendering.graphics.RenderType;
 import nullengine.client.rendering.math.BoundingVolume;
 import nullengine.client.rendering.queue.RenderQueue;
+import nullengine.client.rendering.queue.RenderType;
 
 public class Geometry extends Node {
 

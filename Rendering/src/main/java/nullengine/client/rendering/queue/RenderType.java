@@ -1,4 +1,4 @@
-package nullengine.client.rendering.graphics;
+package nullengine.client.rendering.queue;
 
 import nullengine.util.KeyComparable;
 

@@ -1,7 +1,6 @@
-package nullengine.client.rendering.graphics;
+package nullengine.client.rendering.queue;
 
 import nullengine.client.rendering.management.RenderContext;
-import nullengine.client.rendering.queue.GeometryList;
 
 public interface RenderTypeHandler {
 
