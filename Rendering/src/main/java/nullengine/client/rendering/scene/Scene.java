@@ -51,4 +51,8 @@ public class Scene {
     public void setPrimaryCamera(CameraNode camera) {
         this.primaryCamera = camera;
     }
+
+    public void doUpdate(float partial) {
+        children.forEach(child -> child.doUpdate(partial));
+    }
 }

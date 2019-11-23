@@ -22,6 +22,8 @@ public class Node {
     private Transform transform = new Transform();
     private Transform worldTransform = new Transform();
 
+    private Controller controller;
+
     private Map<Object, Object> properties;
 
     public Node() {
@@ -198,6 +200,24 @@ public class Node {
             worldTransform.applyParent(parent.worldTransform);
         }
         getUnmodifiableChildren().forEach(node -> refreshTransform());
+    }
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    void doUpdate(float partial) {
+        if (controller != null) {
+            controller.update(this, partial);
+        }
+
+        if (!children.isEmpty()) {
+            children.forEach(child -> child.doUpdate(partial));
+        }
     }
 
     public Map<Object, Object> getProperties() {
