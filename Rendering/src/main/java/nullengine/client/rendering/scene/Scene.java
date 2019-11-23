@@ -17,6 +17,8 @@ public class Scene {
     private final RenderQueue renderQueue = new RenderQueue();
     private final LightManager lightManager = new LightManager();
 
+    private CameraNode primaryCamera;
+
     final Map<String, Node> idToNode = new HashMap<>();
 
     public Scene() {
@@ -40,5 +42,13 @@ public class Scene {
 
     public LightManager getLightManager() {
         return lightManager;
+    }
+
+    public CameraNode getPrimaryCamera() {
+        return primaryCamera;
+    }
+
+    public void setPrimaryCamera(CameraNode camera) {
+        this.primaryCamera = camera;
     }
 }
