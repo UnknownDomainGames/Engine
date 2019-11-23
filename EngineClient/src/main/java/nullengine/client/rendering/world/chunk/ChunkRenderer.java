@@ -161,7 +161,7 @@ public class ChunkRenderer {
 
     @Listener
     public void onBlockChange(BlockChangeEvent.Post event) {
-        BlockPos pos = event.getPos().toImmutable();
+        BlockPos pos = event.getPos().toUnmodifiable();
         int chunkX = pos.x() >> CHUNK_X_BITS,
                 chunkY = pos.y() >> CHUNK_Y_BITS,
                 chunkZ = pos.z() >> CHUNK_Z_BITS;

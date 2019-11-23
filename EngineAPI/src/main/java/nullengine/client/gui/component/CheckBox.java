@@ -88,11 +88,11 @@ public class CheckBox extends Button {
         }
 
         public ObservableValue<Text> text() {
-            return text.toImmutable();
+            return text.toUnmodifiable();
         }
 
         public ObservableValue<CheckBox> checkBox() {
-            return checkBox.toImmutable();
+            return checkBox.toUnmodifiable();
         }
 
         public MutableObjectValue<Pos> contentPos() {

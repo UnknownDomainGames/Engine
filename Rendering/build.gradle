@@ -17,7 +17,7 @@ dependencies {
 
     compile 'org.joml:joml:1.9.12'
 
-    compile 'com.github.Mouse0w0:Observable:1.1.4'
+    compile 'com.github.Mouse0w0:Observable:1.2.0'
 
     compile "org.lwjgl:lwjgl:$lwjglVersion"
     compile "org.lwjgl:lwjgl-assimp:$lwjglVersion"

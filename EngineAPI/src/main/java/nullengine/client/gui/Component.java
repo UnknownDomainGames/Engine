@@ -46,7 +46,7 @@ public abstract class Component {
     }
 
     public final ObservableObjectValue<Container> parent() {
-        return parent.toImmutable();
+        return parent.toUnmodifiable();
     }
 
     public final MutableFloatValue x() {
@@ -58,11 +58,11 @@ public abstract class Component {
     }
 
     public final ObservableFloatValue width() {
-        return width.toImmutable();
+        return width.toUnmodifiable();
     }
 
     public final ObservableFloatValue height() {
-        return height.toImmutable();
+        return height.toUnmodifiable();
     }
 
     public final MutableBooleanValue visible() {
@@ -74,15 +74,15 @@ public abstract class Component {
     }
 
     public final ObservableBooleanValue focused() {
-        return focused.toImmutable();
+        return focused.toUnmodifiable();
     }
 
     public final ObservableBooleanValue hover() {
-        return hover.toImmutable();
+        return hover.toUnmodifiable();
     }
 
     public final ObservableBooleanValue pressed() {
-        return pressed.toImmutable();
+        return pressed.toUnmodifiable();
     }
 
     public final void requestParentLayout() {

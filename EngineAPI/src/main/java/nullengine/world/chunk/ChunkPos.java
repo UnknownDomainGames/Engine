@@ -26,7 +26,7 @@ public abstract class ChunkPos extends Vector3iBase {
         return fromBlock((int) Math.floor(vector3d.x), (int) Math.floor(vector3d.y), (int) Math.floor(vector3d.z));
     }
 
-    public abstract ChunkPos toImmutable();
+    public abstract ChunkPos toUnmodifiable();
 
     public abstract ChunkPos add(int x, int y, int z);
 
@@ -125,7 +125,7 @@ public abstract class ChunkPos extends Vector3iBase {
         }
 
         @Override
-        public ChunkPos toImmutable() {
+        public ChunkPos toUnmodifiable() {
             return this;
         }
 
@@ -171,7 +171,7 @@ public abstract class ChunkPos extends Vector3iBase {
         }
 
         @Override
-        public ChunkPos toImmutable() {
+        public ChunkPos toUnmodifiable() {
             if (immutable == null) {
                 immutable = ChunkPos.of(x, y, z);
             }

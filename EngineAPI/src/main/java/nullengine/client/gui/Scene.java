@@ -31,7 +31,7 @@ public class Scene {
     }
 
     public ObservableIntValue width() {
-        return width.toImmutable();
+        return width.toUnmodifiable();
     }
 
     public int getWidth() {
@@ -39,7 +39,7 @@ public class Scene {
     }
 
     public ObservableIntValue height() {
-        return height.toImmutable();
+        return height.toUnmodifiable();
     }
 
     public int getHeight() {

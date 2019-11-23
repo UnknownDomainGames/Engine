@@ -29,11 +29,11 @@ public class Node {
     }
 
     public final ObservableObjectValue<Scene> scene() {
-        return scene.toImmutable();
+        return scene.toUnmodifiable();
     }
 
     public final ObservableObjectValue<Node> parent() {
-        return parent.toImmutable();
+        return parent.toUnmodifiable();
     }
 
     public final Scene getScene() {

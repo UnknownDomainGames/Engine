@@ -85,7 +85,7 @@ public class ScrollPane extends BorderPane {
     }
 
     public ObservableValue<Component> content() {
-        return content.toImmutable();
+        return content.toUnmodifiable();
     }
 
     @Override

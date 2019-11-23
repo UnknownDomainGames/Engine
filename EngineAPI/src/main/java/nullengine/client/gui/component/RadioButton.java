@@ -75,11 +75,11 @@ public class RadioButton extends ToggleButton {
         }
 
         public ObservableValue<Text> text() {
-            return text.toImmutable();
+            return text.toUnmodifiable();
         }
 
         public ObservableValue<RadioButton> radioButton() {
-            return radioButton.toImmutable();
+            return radioButton.toUnmodifiable();
         }
 
         public MutableObjectValue<Pos> contentPos() {

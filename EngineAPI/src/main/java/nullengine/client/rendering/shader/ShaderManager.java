@@ -63,7 +63,7 @@ public class ShaderManager {
         registeredShaders.put(name, builder);
         MutableValue<ShaderProgram> value = new SimpleMutableObjectValue<>();
         loadedShaders.put(name, value);
-        return value.toImmutable();
+        return value.toUnmodifiable();
     }
 
     public void unregisterShader(String name) {
@@ -102,7 +102,7 @@ public class ShaderManager {
     }
 
     public ObservableValue<ShaderProgram> getShader(String name) {
-        return loadedShaders.get(name).toImmutable();
+        return loadedShaders.get(name).toUnmodifiable();
     }
 
     private void bindShaderInternal(ShaderProgram sp) {
