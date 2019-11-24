@@ -1,6 +1,7 @@
 package nullengine.client.rendering.gl.vertex;
 
 import nullengine.client.rendering.gl.GLDataType;
+import org.lwjgl.opengl.GL20;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -61,6 +62,10 @@ public class GLVertexElement {
 
     public boolean isNormalized() {
         return normalized;
+    }
+
+    public void apply(int index, int stride, long offset) {
+        GL20.glVertexAttribPointer(index, size, type.glId, normalized, stride, offset);
     }
 
     @Override

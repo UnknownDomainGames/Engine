@@ -82,7 +82,7 @@ public class GLVertexFormat {
         int offset = 0;
         for (int i = 0; i < elements.length; i++) {
             GLVertexElement element = elements[i];
-            GL20.glVertexAttribPointer(i, element.getSize(), element.getType().glId, element.isNormalized(), stride, offset);
+            element.apply(i, stride, offset);
             offset += element.getBytes();
         }
     }
@@ -97,7 +97,7 @@ public class GLVertexFormat {
         int offset = 0;
         for (int i = 0; i < elements.length; i++) {
             GLVertexElement element = elements[i];
-            GL20.glVertexAttribPointer(i, element.getSize(), element.getType().glId, element.isNormalized(), stride, offset);
+            element.apply(i, stride, offset);
             GL20.glEnableVertexAttribArray(i);
             offset += element.getBytes();
         }
