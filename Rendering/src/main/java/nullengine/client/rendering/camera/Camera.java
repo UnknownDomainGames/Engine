@@ -8,13 +8,24 @@ public interface Camera {
 
     Vector3fc UP_VECTOR = new Vector3f(0, 1, 0);
 
-    void update(float partial);
+    @Deprecated
+    default void update(float partial) {
+    }
 
     Vector3fc getPosition();
 
     Vector3fc getLookAt();
 
-    Vector3fc getFrontVector();
+    Vector3fc getFront();
 
     Matrix4fc getViewMatrix();
+
+    ChangeListener getChangeListener();
+
+    void setChangeListener(ChangeListener listener);
+
+    @FunctionalInterface
+    interface ChangeListener {
+        void onChanged(Camera camera);
+    }
 }

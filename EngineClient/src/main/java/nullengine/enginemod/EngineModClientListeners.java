@@ -122,7 +122,7 @@ public final class EngineModClientListeners {
                     Player player = game.getClientPlayer();
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
-                    HitResult hitResult = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
+                    HitResult hitResult = player.getWorld().raycast(camera.getPosition(), camera.getFront(), 10);
                     if (hitResult.isFailure()) {
                         var cause = new ItemInteractCause.PlayerCause(player);
                         entity.getComponent(TwoHands.class).ifPresent(twoHands ->
@@ -164,7 +164,7 @@ public final class EngineModClientListeners {
                     Player player = game.getClientPlayer();
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
-                    HitResult hitResult = player.getWorld().raycast(camera.getPosition(), camera.getFrontVector(), 10);
+                    HitResult hitResult = player.getWorld().raycast(camera.getPosition(), camera.getFront(), 10);
                     if (hitResult.isFailure()) {
                         var cause = new ItemInteractCause.PlayerCause(player);
                         entity.getComponent(TwoHands.class).ifPresent(twoHands ->
@@ -204,7 +204,7 @@ public final class EngineModClientListeners {
                     Player player = game.getClientPlayer();
                     Camera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
-                    player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10).ifSuccess(hit ->
+                    player.getWorld().raycastBlock(camera.getPosition(), camera.getFront(), 10).ifSuccess(hit ->
                             entity.getComponent(TwoHands.class).ifPresent(twoHands ->
                                     Registries.getItemRegistry().getBlockItem(hit.getBlock()).ifPresent(item ->
                                             twoHands.setMainHand(new ItemStack(item)))));

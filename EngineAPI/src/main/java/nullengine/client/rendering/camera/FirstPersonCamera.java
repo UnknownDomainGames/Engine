@@ -49,13 +49,23 @@ public class FirstPersonCamera implements Camera {
     }
 
     @Override
-    public Vector3fc getFrontVector() {
+    public Vector3fc getFront() {
         return frontVector;
     }
 
     @Override
     public Matrix4fc getViewMatrix() {
         return viewMatrix;
+    }
+
+    @Override
+    public ChangeListener getChangeListener() {
+        return null;
+    }
+
+    @Override
+    public void setChangeListener(ChangeListener listener) {
+
     }
 
 }

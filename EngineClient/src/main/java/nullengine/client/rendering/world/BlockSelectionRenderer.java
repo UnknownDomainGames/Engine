@@ -23,7 +23,7 @@ public class BlockSelectionRenderer {
 
         var player = context.getEngine().getCurrentGame().getClientPlayer();
         var camera = context.getCamera();
-        BlockHitResult hit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFrontVector(), 10);
+        BlockHitResult hit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFront(), 10);
         if (hit.isSuccess()) {
             float minX = hit.getPos().x() - 0.001f, maxX = hit.getPos().x() + 1.001f,
                     minY = hit.getPos().y() - 0.001f, maxY = hit.getPos().y() + 1.001f,
