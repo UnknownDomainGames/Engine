@@ -12,16 +12,26 @@ public class SingleBufferVAO {
     private int id;
     private VertexBufferObject vbo;
     private GLVertexFormat vertexFormat;
+    private GLDrawMode drawMode;
 
     private int vertexCount;
 
     public SingleBufferVAO() {
-        this(GLBufferUsage.STATIC_DRAW);
+        this(GLBufferUsage.STATIC_DRAW, GLDrawMode.TRIANGLES);
+    }
+
+    public SingleBufferVAO(GLDrawMode drawMode) {
+        this(GLBufferUsage.STATIC_DRAW, drawMode);
     }
 
     public SingleBufferVAO(GLBufferUsage usage) {
+        this(usage, GLDrawMode.TRIANGLES);
+    }
+
+    public SingleBufferVAO(GLBufferUsage usage, GLDrawMode drawMode) {
         vbo = new VertexBufferObject(GLBufferType.ARRAY_BUFFER, usage);
         id = GL30.glGenVertexArrays();
+        this.drawMode = drawMode;
     }
 
     public void setVertexFormat(GLVertexFormat vertexFormat) {
@@ -33,6 +43,14 @@ public class SingleBufferVAO {
 
     public GLVertexFormat getVertexFormat() {
         return vertexFormat;
+    }
+
+    public GLDrawMode getDrawMode() {
+        return drawMode;
+    }
+
+    public void setDrawMode(GLDrawMode drawMode) {
+        this.drawMode = drawMode;
     }
 
     public void bind() {
@@ -68,14 +86,10 @@ public class SingleBufferVAO {
         this.vertexCount = vertexCount;
     }
 
-    public void drawArrays(int glMode) {
+    public void drawArrays() {
         bind();
-        GL11.glDrawArrays(glMode, 0, this.vertexCount);
+        GL11.glDrawArrays(drawMode.gl, 0, this.vertexCount);
         unbind();
-    }
-
-    public void drawArrays(GLDrawMode mode) {
-        drawArrays(mode.gl);
     }
 
     public void dispose() {

@@ -2,6 +2,7 @@ package nullengine.client.rendering;
 
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLBufferUsage;
+import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.SingleBufferVAO;
 
 public class Tessellator {
@@ -11,7 +12,7 @@ public class Tessellator {
     private SingleBufferVAO vao;
 
     private Tessellator(int bufferSize) {
-        vao = new SingleBufferVAO(GLBufferUsage.DYNAMIC_DRAW);
+        vao = new SingleBufferVAO(GLBufferUsage.DYNAMIC_DRAW, GLDrawMode.TRIANGLES);
         buffer = GLBuffer.createDirectBuffer(bufferSize);
     }
 
@@ -28,7 +29,8 @@ public class Tessellator {
         vao.uploadData(buffer);
         vao.bind();
         buffer.getVertexFormat().applyAndEnable();
-        vao.drawArrays(buffer.getDrawMode().gl);
+        vao.setDrawMode(buffer.getDrawMode());
+        vao.drawArrays();
         vao.unbind();
     }
 }

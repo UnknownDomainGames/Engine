@@ -1,7 +1,6 @@
 package nullengine.client.rendering.world.chunk;
 
 import nullengine.client.rendering.gl.GLBuffer;
-import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.SingleBufferVAO;
 import nullengine.client.rendering.gl.vertex.GLVertexFormats;
 import nullengine.util.Disposable;
@@ -41,7 +40,7 @@ public class ChunkMesh implements Disposable {
         }
 
         chunkSolidVAO.bind();
-        chunkSolidVAO.drawArrays(GLDrawMode.TRIANGLES);
+        chunkSolidVAO.drawArrays();
         chunkSolidVAO.unbind();
     }
 
