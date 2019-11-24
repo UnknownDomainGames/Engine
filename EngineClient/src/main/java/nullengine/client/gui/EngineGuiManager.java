@@ -6,9 +6,7 @@ import nullengine.client.input.keybinding.Key;
 import nullengine.client.rendering.RenderManager;
 import nullengine.util.UndoHistory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class EngineGuiManager implements GuiManager {
@@ -22,6 +20,8 @@ public class EngineGuiManager implements GuiManager {
     private final Map<String, Scene> displayingHuds = new HashMap<>();
     private final Map<String, Scene> unmodifiableDisplayingHuds = Collections.unmodifiableMap(displayingHuds);
 
+    private final List<GuiTickable> tickables = new ArrayList<>();
+
     private Scene displayingScreen;
     private UndoHistory<Scene> sceneHistory;
     private Consumer<KeyEvent.KeyDownEvent> escCloseHandler;
@@ -34,6 +34,10 @@ public class EngineGuiManager implements GuiManager {
     }
 
     private boolean incognito = false;
+
+    public void doTick() {
+        tickables.forEach(tickable -> tickable.update(context));
+    }
 
     @Override
     public void showScreen(Scene scene) {
@@ -50,7 +54,7 @@ public class EngineGuiManager implements GuiManager {
             }
         };
         displayingScreen = scene;
-        if(scene == null){
+        if (scene == null) {
             return;
         }
         scene.getRoot().addEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
@@ -140,7 +144,7 @@ public class EngineGuiManager implements GuiManager {
             huds.put(id, hud);
             displayingHuds.put(id, hud);
             if (hud.getRoot() instanceof GuiTickable) {
-                context.getScheduler().runTaskEveryFrame(() -> ((GuiTickable) hud.getRoot()).update(context));
+                tickables.add((GuiTickable) hud.getRoot());
             }
         }
     }
@@ -163,7 +167,7 @@ public class EngineGuiManager implements GuiManager {
         hideHud(id);
         Scene hud = huds.remove(id);
         if (hud.getRoot() instanceof GuiTickable) {
-            context.getScheduler().cancelTask(() -> ((GuiTickable) hud.getRoot()).update(context));
+            tickables.remove(hud.getRoot());
         }
     }
 
@@ -171,7 +175,7 @@ public class EngineGuiManager implements GuiManager {
     public void clearHuds() {
         for (Scene hud : huds.values()) {
             if (hud.getRoot() instanceof GuiTickable) {
-                context.getScheduler().cancelTask(() -> ((GuiTickable) hud.getRoot()).update(context));
+                tickables.remove(hud.getRoot());
             }
         }
         huds.clear();

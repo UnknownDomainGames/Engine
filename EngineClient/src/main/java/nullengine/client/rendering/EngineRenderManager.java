@@ -55,7 +55,7 @@ public class EngineRenderManager implements RenderManager {
     private GLFWWindow window;
     private Matrix4f projection = new Matrix4f();
     private EngineTextureManager textureManager;
-    private GuiManager guiManager;
+    private EngineGuiManager guiManager;
     private GPUInfo gpuInfo;
 
     private Camera camera;
@@ -153,6 +153,7 @@ public class EngineRenderManager implements RenderManager {
 
     public void render(float partial) {
         scheduler.run();
+        guiManager.doTick();
 
         if (window.isResized()) {
             projection.identity().perspective((float) Math.toRadians(60),
