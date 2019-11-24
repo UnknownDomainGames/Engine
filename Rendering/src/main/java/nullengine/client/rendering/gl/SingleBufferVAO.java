@@ -1,13 +1,14 @@
 package nullengine.client.rendering.gl;
 
 import nullengine.client.rendering.gl.vertex.GLVertexFormat;
+import nullengine.client.rendering.scene.Renderable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-public class SingleBufferVAO {
+public class SingleBufferVAO implements Renderable {
 
     private int id;
     private VertexBufferObject vbo;
@@ -102,5 +103,10 @@ public class SingleBufferVAO {
 
     public boolean isDisposed() {
         return id == 0;
+    }
+
+    @Override
+    public void render() {
+        drawArrays();
     }
 }
