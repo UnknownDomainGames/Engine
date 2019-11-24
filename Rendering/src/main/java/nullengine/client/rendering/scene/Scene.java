@@ -2,6 +2,8 @@ package nullengine.client.rendering.scene;
 
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
+import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.rendering.queue.RenderQueue;
 import nullengine.client.rendering.scene.light.LightManager;
 
@@ -17,7 +19,7 @@ public class Scene {
     private final RenderQueue renderQueue = new RenderQueue();
     private final LightManager lightManager = new LightManager();
 
-    private CameraNode primaryCamera;
+    private final MutableObjectValue<CameraNode> primaryCamera = new SimpleMutableObjectValue<>();
 
     final Map<String, Node> idToNode = new HashMap<>();
 
@@ -44,12 +46,16 @@ public class Scene {
         return lightManager;
     }
 
-    public CameraNode getPrimaryCamera() {
+    public MutableObjectValue<CameraNode> primaryCamera() {
         return primaryCamera;
     }
 
+    public CameraNode getPrimaryCamera() {
+        return primaryCamera.get();
+    }
+
     public void setPrimaryCamera(CameraNode camera) {
-        this.primaryCamera = camera;
+        this.primaryCamera.set(camera);
     }
 
     public void doUpdate(float partial) {

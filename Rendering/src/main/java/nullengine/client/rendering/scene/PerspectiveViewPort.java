@@ -10,10 +10,10 @@ public class PerspectiveViewPort implements ViewPort {
     private int width;
     private int height;
 
-    private float fovyAngle = 60;
+    private float fovAngle = 60;
     private float aspect;
     private float zNear = 0.01f;
-    private float zFar = 1000f;
+    private float zFar = Float.MAX_VALUE;
 
     private Camera camera;
 
@@ -27,22 +27,15 @@ public class PerspectiveViewPort implements ViewPort {
         return width;
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
     @Override
     public int getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
+    @Override
     public void setSize(int width, int height) {
-        setWidth(width);
-        setHeight(height);
+        this.width = width;
+        this.height = height;
         onFrameSizeChanged();
     }
 
@@ -52,12 +45,12 @@ public class PerspectiveViewPort implements ViewPort {
     }
 
     private void onProjectionChanged() {
-        projectionMatrix.setPerspective((float) Math.toRadians(fovyAngle),
+        projectionMatrix.setPerspective((float) Math.toRadians(fovAngle),
                 aspect, zNear, zFar);
-        onCameraChanged();
+        onProjectionViewChanged();
     }
 
-    private void onCameraChanged() {
+    private void onProjectionViewChanged() {
         projectionViewMatrix.set(projectionMatrix).mul(camera.getViewMatrix());
         frustum.set(projectionViewMatrix);
     }
@@ -67,14 +60,15 @@ public class PerspectiveViewPort implements ViewPort {
         return camera;
     }
 
+    @Override
     public void setCamera(Camera camera) {
         if (this.camera != null) {
             this.camera.setChangeListener(null);
         }
         this.camera = camera;
         if (camera != null) {
-            camera.setChangeListener($ -> onCameraChanged());
-            onCameraChanged();
+            camera.setChangeListener($ -> onProjectionViewChanged());
+            onProjectionViewChanged();
         }
     }
 
@@ -98,12 +92,12 @@ public class PerspectiveViewPort implements ViewPort {
         return frustum;
     }
 
-    public float getFovyAngle() {
-        return fovyAngle;
+    public float getFovAngle() {
+        return fovAngle;
     }
 
-    public void setFovyAngle(float fovyAngle) {
-        this.fovyAngle = fovyAngle;
+    public void setFovAngle(float fovAngle) {
+        this.fovAngle = fovAngle;
         onProjectionChanged();
     }
 

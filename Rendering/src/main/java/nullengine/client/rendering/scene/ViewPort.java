@@ -10,7 +10,11 @@ public interface ViewPort {
 
     int getHeight();
 
+    void setSize(int width, int height);
+
     Camera getCamera();
+
+    void setCamera(Camera camera);
 
     Matrix4fc getProjectionMatrix();
 
