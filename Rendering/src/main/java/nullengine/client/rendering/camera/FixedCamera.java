@@ -12,6 +12,8 @@ public class FixedCamera implements Camera {
     private Vector3fc frontVector;
     private Matrix4fc viewMatrix;
 
+    private ChangeListener changeListener;
+
     public FixedCamera() {
     }
 
@@ -24,6 +26,7 @@ public class FixedCamera implements Camera {
         this.frontVector = frontVector;
         this.lookAt = position.add(frontVector, new Vector3f());
         this.viewMatrix = new Matrix4f().lookAt(this.position, this.lookAt, UP_VECTOR);
+        if (changeListener != null) changeListener.onChanged(this);
     }
 
     public void lookAt(Vector3fc position, Vector3fc lookAt) {
@@ -31,6 +34,7 @@ public class FixedCamera implements Camera {
         this.frontVector = lookAt.sub(position, new Vector3f());
         this.lookAt = lookAt;
         this.viewMatrix = new Matrix4f().lookAt(this.position, this.lookAt, UP_VECTOR);
+        if (changeListener != null) changeListener.onChanged(this);
     }
 
     @Override
@@ -55,11 +59,11 @@ public class FixedCamera implements Camera {
 
     @Override
     public ChangeListener getChangeListener() {
-        return null;
+        return changeListener;
     }
 
     @Override
     public void setChangeListener(ChangeListener listener) {
-
+        this.changeListener = listener;
     }
 }
