@@ -9,7 +9,7 @@ import nullengine.client.rendering.font.FontLoadException;
 import nullengine.client.rendering.font.UnavailableFontException;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
-import nullengine.client.rendering.gl.GLVertexFormats;
+import nullengine.client.rendering.gl.vertex.GLVertexFormats;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.stb.STBTTFontinfo;

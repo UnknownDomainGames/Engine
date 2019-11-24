@@ -1,4 +1,4 @@
-package nullengine.client.rendering.gl;
+package nullengine.client.rendering.gl.vertex;
 
 import org.lwjgl.opengl.GL20;
 

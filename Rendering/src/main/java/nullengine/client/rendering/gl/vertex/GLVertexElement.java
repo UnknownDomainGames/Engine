@@ -1,4 +1,6 @@
-package nullengine.client.rendering.gl;
+package nullengine.client.rendering.gl.vertex;
+
+import nullengine.client.rendering.gl.GLDataType;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;

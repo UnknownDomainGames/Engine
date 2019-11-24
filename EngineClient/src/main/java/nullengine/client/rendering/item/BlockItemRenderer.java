@@ -6,7 +6,7 @@ import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.block.BlockRenderManager;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
-import nullengine.client.rendering.gl.GLVertexFormats;
+import nullengine.client.rendering.gl.vertex.GLVertexFormats;
 import nullengine.item.BlockItem;
 import nullengine.item.ItemStack;
 

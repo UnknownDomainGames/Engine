@@ -1,4 +1,4 @@
-package nullengine.client.rendering.gl;
+package nullengine.client.rendering.gl.vertex;
 
 public class GLVertexFormats {
     public static final GLVertexFormat POSITION = GLVertexFormat.of(GLVertexElements.POSITION);

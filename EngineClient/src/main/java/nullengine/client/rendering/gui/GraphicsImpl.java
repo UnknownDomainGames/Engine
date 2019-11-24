@@ -10,7 +10,7 @@ import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
-import nullengine.client.rendering.gl.GLVertexFormats;
+import nullengine.client.rendering.gl.vertex.GLVertexFormats;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.texture.Texture2D;
 import nullengine.client.rendering.texture.TextureManager;

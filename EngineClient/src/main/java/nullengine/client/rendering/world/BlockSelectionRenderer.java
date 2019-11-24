@@ -4,7 +4,7 @@ import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
-import nullengine.client.rendering.gl.GLVertexFormats;
+import nullengine.client.rendering.gl.vertex.GLVertexFormats;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.util.Color;
 import nullengine.world.hit.BlockHitResult;

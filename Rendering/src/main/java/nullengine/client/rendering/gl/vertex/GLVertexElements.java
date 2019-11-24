@@ -1,4 +1,4 @@
-package nullengine.client.rendering.gl;
+package nullengine.client.rendering.gl.vertex;
 
 import static nullengine.client.rendering.gl.GLDataType.FLOAT;
 
