@@ -4,11 +4,11 @@ import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.scene.Scene;
 import nullengine.client.rendering.util.GPUInfo;
 
-public interface RenderContext {
+public interface RenderingContext {
 
-    Thread getRenderThread();
+    Thread getRenderingThread();
 
-    boolean isRenderThread();
+    boolean isRenderingThread();
 
     GPUInfo getGPUInfo();
 

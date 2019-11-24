@@ -1,6 +1,6 @@
 package nullengine.client.rendering.queue;
 
-import nullengine.client.rendering.management.RenderContext;
+import nullengine.client.rendering.management.RenderingContext;
 import nullengine.client.rendering.scene.Geometry;
 
 import javax.annotation.Nonnull;
@@ -25,7 +25,7 @@ public class RenderQueue {
         queue.clear();
     }
 
-    public void render(RenderContext manager, RenderType layer, RenderTypeHandler handler) {
+    public void render(RenderingContext manager, RenderType layer, RenderTypeHandler handler) {
         GeometryList geometries = queue.get(layer);
         if (geometries == null) return;
         handler.render(manager, geometries);

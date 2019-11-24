@@ -1,8 +1,8 @@
 package nullengine.client.rendering.queue;
 
-import nullengine.client.rendering.management.RenderContext;
+import nullengine.client.rendering.management.RenderingContext;
 
 public interface RenderTypeHandler {
 
-    void render(RenderContext manager, GeometryList geometries);
+    void render(RenderingContext manager, GeometryList geometries);
 }
