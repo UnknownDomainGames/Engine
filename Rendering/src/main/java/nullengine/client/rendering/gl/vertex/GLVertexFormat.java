@@ -97,8 +97,8 @@ public class GLVertexFormat {
         int offset = 0;
         for (int i = 0; i < elements.length; i++) {
             GLVertexElement element = elements[i];
-            element.apply(i, stride, offset);
             GL20.glEnableVertexAttribArray(i);
+            element.apply(i, stride, offset);
             offset += element.getBytes();
         }
     }

@@ -35,15 +35,15 @@ public class SingleBufferVAO implements Renderable {
         this.drawMode = drawMode;
     }
 
+    public GLVertexFormat getVertexFormat() {
+        return vertexFormat;
+    }
+
     public void setVertexFormat(GLVertexFormat vertexFormat) {
         this.vertexFormat = vertexFormat;
         bind();
-        vertexFormat.apply();
+        vertexFormat.applyAndEnable();
         unbind();
-    }
-
-    public GLVertexFormat getVertexFormat() {
-        return vertexFormat;
     }
 
     public GLDrawMode getDrawMode() {
@@ -60,16 +60,9 @@ public class SingleBufferVAO implements Renderable {
         }
         GL30.glBindVertexArray(id);
         vbo.bind();
-        if (vertexFormat != null) {
-            vertexFormat.enable();
-        }
     }
 
     public void unbind() {
-        if (vertexFormat != null) {
-            vertexFormat.disable();
-        }
-        vbo.unbind();
         GL30.glBindVertexArray(0);
     }
 
