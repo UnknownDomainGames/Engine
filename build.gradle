@@ -49,4 +49,8 @@ subprojects {
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
     }
+
+    jar {
+        from rootProject.file('LICENSE')
+    }
 }
