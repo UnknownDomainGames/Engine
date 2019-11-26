@@ -1,6 +1,7 @@
 package nullengine.client.rendering.scene;
 
 import nullengine.client.rendering.camera.Camera;
+import nullengine.util.Color;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
@@ -9,6 +10,13 @@ public class PerspectiveViewPort implements ViewPort {
 
     private int width;
     private int height;
+
+    private Scene scene;
+
+    private Color clearColor = new Color(0f, 0f, 0f, 1f);
+    private boolean isClearColor;
+    private boolean isClearDepth;
+    private boolean isClearStencil;
 
     private float fovAngle = 60;
     private float aspect;
@@ -37,6 +45,56 @@ public class PerspectiveViewPort implements ViewPort {
         this.width = width;
         this.height = height;
         onFrameSizeChanged();
+    }
+
+    @Override
+    public Scene getScene() {
+        return scene;
+    }
+
+    @Override
+    public void setScene(Scene scene) {
+        this.scene = scene;
+    }
+
+    @Override
+    public Color getClearColor() {
+        return clearColor;
+    }
+
+    @Override
+    public void setClearColor(Color clearColor) {
+        this.clearColor = clearColor;
+    }
+
+    @Override
+    public boolean isClearColor() {
+        return isClearColor;
+    }
+
+    @Override
+    public void setClearColor(boolean clearColor) {
+        isClearColor = clearColor;
+    }
+
+    @Override
+    public boolean isClearDepth() {
+        return isClearDepth;
+    }
+
+    @Override
+    public void setClearDepth(boolean clearDepth) {
+        isClearDepth = clearDepth;
+    }
+
+    @Override
+    public boolean isClearStencil() {
+        return isClearStencil;
+    }
+
+    @Override
+    public void setClearStencil(boolean clearStencil) {
+        isClearStencil = clearStencil;
     }
 
     private void onFrameSizeChanged() {

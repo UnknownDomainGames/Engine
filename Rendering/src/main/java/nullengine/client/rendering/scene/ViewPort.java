@@ -1,6 +1,7 @@
 package nullengine.client.rendering.scene;
 
 import nullengine.client.rendering.camera.Camera;
+import nullengine.util.Color;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4fc;
 
@@ -11,6 +12,26 @@ public interface ViewPort {
     int getHeight();
 
     void setSize(int width, int height);
+
+    Scene getScene();
+
+    void setScene(Scene scene);
+
+    Color getClearColor();
+
+    void setClearColor(Color color);
+
+    boolean isClearColor();
+
+    void setClearColor(boolean clearColor);
+
+    boolean isClearDepth();
+
+    void setClearDepth(boolean clearDepth);
+
+    boolean isClearStencil();
+
+    void setClearStencil(boolean clearStencil);
 
     Camera getCamera();
 

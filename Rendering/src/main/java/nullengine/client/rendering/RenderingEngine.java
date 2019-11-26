@@ -1,6 +1,7 @@
 package nullengine.client.rendering;
 
 import nullengine.client.rendering.gl.GLRenderingContext;
+import nullengine.client.rendering.management.RenderingContext;
 import nullengine.client.rendering.management.RenderingListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,10 @@ public final class RenderingEngine {
 
     // TODO: delegate render context creation
     private static GLRenderingContext context;
+
+    public static RenderingContext getContext() {
+        return context;
+    }
 
     public static void start(RenderingListener listener) {
         start(new RunOptions(), listener);
