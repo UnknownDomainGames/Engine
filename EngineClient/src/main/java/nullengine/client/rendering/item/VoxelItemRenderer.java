@@ -5,7 +5,7 @@ import nullengine.client.asset.Asset;
 import nullengine.client.asset.AssetTypes;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderManager;
-import nullengine.client.rendering.Tessellator;
+import nullengine.client.rendering.gl.DirectRenderer;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.vertex.GLVertexFormats;
@@ -26,11 +26,11 @@ public class VoxelItemRenderer implements ItemRenderer {
 
     @Override
     public void render(ItemStack itemStack, float partial) {
-        Tessellator tessellator = Tessellator.getInstance();
-        GLBuffer buffer = tessellator.getBuffer();
+        DirectRenderer directRenderer = DirectRenderer.getInstance();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
         model.get().putVertexes(buffer, 0);
-        tessellator.draw();
+        directRenderer.draw();
     }
 
     @Override

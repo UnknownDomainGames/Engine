@@ -1,7 +1,7 @@
 package nullengine.client.rendering.world;
 
 import nullengine.client.rendering.RenderManager;
-import nullengine.client.rendering.Tessellator;
+import nullengine.client.rendering.gl.DirectRenderer;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.vertex.GLVertexFormats;
@@ -18,8 +18,8 @@ public class BlockSelectionRenderer {
     }
 
     public void render(float partial) {
-        Tessellator tessellator = Tessellator.getInstance();
-        GLBuffer buffer = tessellator.getBuffer();
+        DirectRenderer directRenderer = DirectRenderer.getInstance();
+        GLBuffer buffer = directRenderer.getBuffer();
 
         var player = context.getEngine().getCurrentGame().getClientPlayer();
         var camera = context.getCamera();
@@ -57,7 +57,7 @@ public class BlockSelectionRenderer {
             buffer.pos(maxX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
             buffer.pos(maxX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
             TextureManager.instance().getWhiteTexture().bind();
-            tessellator.draw();
+            directRenderer.draw();
         }
     }
 

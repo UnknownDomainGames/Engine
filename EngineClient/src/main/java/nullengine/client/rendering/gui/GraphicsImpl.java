@@ -5,9 +5,9 @@ import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.RenderManager;
-import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
+import nullengine.client.rendering.gl.DirectRenderer;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.vertex.GLVertexFormats;
@@ -28,7 +28,7 @@ import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 public class GraphicsImpl implements Graphics {
 
     private final RenderManager context;
-    private final Tessellator tessellator = Tessellator.getInstance();
+    private final DirectRenderer directRenderer = DirectRenderer.getInstance();
     private final GuiRenderer guiRenderer;
 
     private final Texture2D whiteTexture;
@@ -67,48 +67,48 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawLine(float x1, float y1, float x2, float y2) {
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.begin(GLDrawMode.LINES, GLVertexFormats.POSITION_COLOR_ALPHA);
         line(buffer, x1, y1, x2, y2);
-        tessellator.draw();
+        directRenderer.draw();
     }
 
     @Override
     public void drawRect(float x, float y, float width, float height) {
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.begin(GLDrawMode.LINES_CLOSED, GLVertexFormats.POSITION_COLOR_ALPHA);
         rect(buffer, x, y, width, height);
-        tessellator.draw();
+        directRenderer.draw();
     }
 
     @Override
     public void fillRect(float x, float y, float width, float height) {
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.begin(GLDrawMode.CONTINUOUS_TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA);
         rect2(buffer, x, y, width, height);
-        tessellator.draw();
+        directRenderer.draw();
     }
 
     @Override
     public void drawQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4) {
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.begin(GLDrawMode.LINES_CLOSED, GLVertexFormats.POSITION_COLOR_ALPHA);
         quads(buffer, new float[]{p1.x(), p2.x(), p3.x(), p4.x()}, new float[]{p1.y(), p2.y(), p3.y(), p4.y()});
-        tessellator.draw();
+        directRenderer.draw();
     }
 
     @Override
     public void fillQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4) {
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.begin(GLDrawMode.CONTINUOUS_TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA);
         quads(buffer, new float[]{p1.x(), p4.x(), p2.x(), p3.x()}, new float[]{p1.y(), p4.y(), p2.y(), p3.y()});
-        tessellator.draw();
+        directRenderer.draw();
     }
 
     @Override
     public void drawRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight) {
         float x2 = x + width, y2 = y + height;
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.begin(GLDrawMode.LINES_CLOSED, GLVertexFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, x2 - arcWidth, y);
         quadCurveTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
@@ -118,19 +118,19 @@ public class GraphicsImpl implements Graphics {
         quadCurveTo(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
         pointTo(buffer, x, y + arcHeight);
         quadCurveTo(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
-        tessellator.draw();
+        directRenderer.draw();
     }
 
     @Override
     public void fillRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight) {
         float x2 = x + width, y2 = y + height;
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
 
         buffer.begin(GLDrawMode.TRIANGLE_FANS, GLVertexFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, x + arcWidth, y + arcHeight);
         pointTo(buffer, x + arcWidth, y);
         quadCurveTo(buffer, x + arcWidth, y, x, y + arcHeight, x, y);
-        tessellator.draw();
+        directRenderer.draw();
 
         fillRect(x, y + arcHeight, arcWidth, height - arcHeight * 2);
 
@@ -138,7 +138,7 @@ public class GraphicsImpl implements Graphics {
         pointTo(buffer, x + arcWidth, y2 - arcHeight);
         pointTo(buffer, x, y2 - arcHeight);
         quadCurveTo(buffer, x, y2 - arcHeight, x + arcWidth, y2, x, y2);
-        tessellator.draw();
+        directRenderer.draw();
 
         fillRect(x + arcWidth, y2 - arcHeight, width - arcWidth * 2, arcHeight);
 
@@ -146,7 +146,7 @@ public class GraphicsImpl implements Graphics {
         pointTo(buffer, x2 - arcWidth, y2 - arcHeight);
         pointTo(buffer, x2 - arcWidth, y2);
         quadCurveTo(buffer, x2 - arcWidth, y2, x2, y2 - arcHeight, x2, y2);
-        tessellator.draw();
+        directRenderer.draw();
 
         fillRect(x2 - arcWidth, y + arcHeight, arcWidth, height - arcHeight * 2);
 
@@ -154,7 +154,7 @@ public class GraphicsImpl implements Graphics {
         pointTo(buffer, x2 - arcWidth, y + arcHeight);
         pointTo(buffer, x2, y + arcHeight);
         quadCurveTo(buffer, x2, y + arcHeight, x2 - arcWidth, y, x2, y);
-        tessellator.draw();
+        directRenderer.draw();
 
         fillRect(x + arcWidth, y, width - arcWidth * 2, height - arcHeight);
 
@@ -162,38 +162,38 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.begin(GLDrawMode.CONTINUOUS_LINES, GLVertexFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, startX, startY);
         curveTo(buffer, startX, startY, endX, endY, px1, py1, px2, py2);
-        tessellator.draw();
+        directRenderer.draw();
     }
 
     @Override
     public void drawQuadCurve(float startX, float startY, float endX, float endY, float px, float py) {
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.begin(GLDrawMode.CONTINUOUS_LINES, GLVertexFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, startX, startY);
         quadCurveTo(buffer, startX, startY, endX, endY, px, py);
-        tessellator.draw();
+        directRenderer.draw();
     }
 
     @Override
     public void drawArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.begin(GLDrawMode.CONTINUOUS_LINES, GLVertexFormats.POSITION_COLOR_ALPHA);
         pointTo(buffer, startX, startY);
         arcTo(buffer, startX, startY, endX, endY, radiusX, radiusY, xAxisRotation, largeArcFlag, sweepFlag);
-        tessellator.draw();
+        directRenderer.draw();
     }
 
     @Override
     public void drawText(CharSequence text, float x, float y) {
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.posOffset(x, y, 0);
         FontHelper.instance().renderText(buffer, text, font, color.toRGBA(), () -> {
             ShaderManager.instance().setUniform("u_RenderText", true);
-            tessellator.draw();
+            directRenderer.draw();
             ShaderManager.instance().setUniform("u_RenderText", false);
             context.getTextureManager().getWhiteTexture().bind();
         });
@@ -206,7 +206,7 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawTexture(Texture2D texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
-        GLBuffer buffer = tessellator.getBuffer();
+        GLBuffer buffer = directRenderer.getBuffer();
         buffer.begin(GLDrawMode.CONTINUOUS_TRIANGLES, GLVertexFormats.POSITION_COLOR_TEXTURE);
         float x2 = x + width, y2 = y + height;
         buffer.pos(x, y, 0).color(1, 1, 1, 1).uv(minU, minV).endVertex();
@@ -214,7 +214,7 @@ public class GraphicsImpl implements Graphics {
         buffer.pos(x2, y, 0).color(1, 1, 1, 1).uv(maxU, minV).endVertex();
         buffer.pos(x2, y2, 0).color(1, 1, 1, 1).uv(maxU, maxV).endVertex();
         texture.bind();
-        tessellator.draw();
+        directRenderer.draw();
     }
 
     @Override

@@ -3,9 +3,9 @@ package nullengine.client.rendering.world;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderManager;
-import nullengine.client.rendering.Tessellator;
 import nullengine.client.rendering.entity.EntityRenderManagerImpl;
 import nullengine.client.rendering.game3d.Scene;
+import nullengine.client.rendering.gl.DirectRenderer;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
@@ -168,7 +168,7 @@ public class WorldRenderer {
 
     private void drawFrameBufferToScreen(GLFrameBuffer frameBuffer) {
         frameBuffer.getTexture(GL_COLOR_ATTACHMENT0).bind();
-        Tessellator t = Tessellator.getInstance();
+        DirectRenderer t = DirectRenderer.getInstance();
         GLBuffer bb = t.getBuffer();
         bb.begin(GLDrawMode.CONTINUOUS_TRIANGLES, GLVertexFormats.POSITION_TEXTURE);
         bb.pos(-1.0f, 1.0f, 0).uv(0, 1.0f).endVertex();

@@ -1,22 +1,17 @@
-package nullengine.client.rendering;
+package nullengine.client.rendering.gl;
 
-import nullengine.client.rendering.gl.GLBuffer;
-import nullengine.client.rendering.gl.GLBufferUsage;
-import nullengine.client.rendering.gl.GLDrawMode;
-import nullengine.client.rendering.gl.SingleBufferVAO;
+public class DirectRenderer {
 
-public class Tessellator {
-
-    private static final Tessellator INSTANCE = new Tessellator(0x100000);
+    private static final DirectRenderer INSTANCE = new DirectRenderer(0x100000);
     private GLBuffer buffer;
     private SingleBufferVAO vao;
 
-    private Tessellator(int bufferSize) {
+    private DirectRenderer(int bufferSize) {
         vao = new SingleBufferVAO(GLBufferUsage.DYNAMIC_DRAW, GLDrawMode.TRIANGLES);
         buffer = GLBuffer.createDirectBuffer(bufferSize);
     }
 
-    public static Tessellator getInstance() {
+    public static DirectRenderer getInstance() {
         return INSTANCE;
     }
 
