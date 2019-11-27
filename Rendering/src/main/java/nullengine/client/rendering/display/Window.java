@@ -1,5 +1,7 @@
 package nullengine.client.rendering.display;
 
+import nullengine.client.rendering.display.callback.*;
+
 public interface Window extends WindowAttributes {
 
     int getX();
@@ -87,44 +89,4 @@ public interface Window extends WindowAttributes {
     }
 
     void setDisplayMode(DisplayMode mode, int newWidth, int newHeight, int frameRate);
-
-    @FunctionalInterface
-    interface KeyCallback {
-        void invoke(Window window, int key, int scancode, int action, int mods);
-    }
-
-    @FunctionalInterface
-    interface MouseCallback {
-        void invoke(Window window, int button, int action, int mods);
-    }
-
-    @FunctionalInterface
-    interface CursorCallback {
-        void invoke(Window window, double xpos, double ypos);
-    }
-
-    @FunctionalInterface
-    interface ScrollCallback {
-        void invoke(Window window, double xoffset, double yoffset);
-    }
-
-    @FunctionalInterface
-    interface CharCallback {
-        void invoke(Window window, char c);
-    }
-
-    @FunctionalInterface
-    interface WindowCloseCallback {
-        void invoke(Window window);
-    }
-
-    @FunctionalInterface
-    interface WindowFocusCallback {
-        void invoke(Window window, boolean focused);
-    }
-
-    @FunctionalInterface
-    interface CursorEnterCallback {
-        void invoke(Window window, boolean entered);
-    }
 }

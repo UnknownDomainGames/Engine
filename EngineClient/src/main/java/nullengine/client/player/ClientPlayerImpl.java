@@ -2,7 +2,7 @@ package nullengine.client.player;
 
 import nullengine.Platform;
 import nullengine.client.input.controller.EntityController;
-import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.display.callback.CursorCallback;
 import nullengine.entity.Entity;
 import nullengine.player.PlayerImpl;
 import nullengine.player.Profile;
@@ -14,7 +14,7 @@ public class ClientPlayerImpl extends PlayerImpl implements ClientPlayer {
 
     private EntityController entityController;
 
-    private Window.CursorCallback cursorCallback;
+    private CursorCallback cursorCallback;
 
     public ClientPlayerImpl(Profile profile, Entity controlledEntity) {
         super(profile, controlledEntity);

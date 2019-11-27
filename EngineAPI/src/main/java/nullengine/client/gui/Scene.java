@@ -11,7 +11,7 @@ import nullengine.client.gui.event.MouseEvent;
 import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyModifier;
-import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.display.callback.*;
 import nullengine.event.Event;
 import org.lwjgl.glfw.GLFW;
 
@@ -90,7 +90,7 @@ public class Scene {
     private double lastPosX = Double.NaN;
     private double lastPosY = Double.NaN;
 
-    public final Window.CursorCallback cursorCallback = (window, xPos, yPos) -> {
+    public final CursorCallback cursorCallback = (window, xPos, yPos) -> {
         if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
             var old = root.getPointingComponents((float) lastPosX, (float) lastPosY);
             var n = root.getPointingComponents((float) xPos, (float) yPos);
@@ -106,7 +106,7 @@ public class Scene {
         lastPosY = yPos;
     };
 
-    public final Window.MouseCallback mouseCallback = (window, button, action, modifiers) -> {
+    public final MouseCallback mouseCallback = (window, button, action, modifiers) -> {
         if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
             var list = root.getPointingComponents((float) lastPosX, (float) lastPosY);
             if (action == GLFW.GLFW_PRESS) {
@@ -127,11 +127,11 @@ public class Scene {
         }
     };
 
-    public final Window.ScrollCallback scrollCallback = (window, xOffset, yOffset) -> {
+    public final ScrollCallback scrollCallback = (window, xOffset, yOffset) -> {
 
     };
 
-    public final Window.KeyCallback keyCallback = (window, key, scanCode, action, mods) -> {
+    public final KeyCallback keyCallback = (window, key, scanCode, action, mods) -> {
         var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
         a.add(root);
         for (Component component : a) {
@@ -145,7 +145,7 @@ public class Scene {
         }
     };
 
-    public final Window.CharCallback charCallback = (window, c) -> {
+    public final CharCallback charCallback = (window, c) -> {
         root.getChildrenRecursive().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(component, c)));
     };
 }
