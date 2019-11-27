@@ -48,6 +48,8 @@ public class GLFWWindow implements Window {
     private final List<WindowCloseCallback> windowCloseCallbacks = new LinkedList<>();
     private final List<WindowFocusCallback> windowFocusCallbacks = new LinkedList<>();
     private final List<CursorEnterCallback> cursorEnterCallbacks = new LinkedList<>();
+    private final List<FramebufferSizeCallback> framebufferSizeCallbacks = new LinkedList<>();
+    private final List<WindowPosCallback> windowPosCallbacks = new LinkedList<>();
 
     public GLFWWindow() {
         this(null);
@@ -241,6 +243,26 @@ public class GLFWWindow implements Window {
     }
 
     @Override
+    public void addFramebufferSizeCallback(FramebufferSizeCallback callback) {
+        framebufferSizeCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeFramebufferSizeCallback(FramebufferSizeCallback callback) {
+        framebufferSizeCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addWindowPosCallback(WindowPosCallback callback) {
+        windowPosCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeWindowPosCallback(WindowPosCallback callback) {
+        windowPosCallbacks.remove(callback);
+    }
+
+    @Override
     public void swapBufferAndPollEvents() {
         glfwSwapBuffers(pointer);
 
@@ -343,7 +365,6 @@ public class GLFWWindow implements Window {
         glfwMakeContextCurrent(pointer);
         enableVSync();
         cursor = new GLFWCursor(pointer);
-        setupInput();
         resize();
     }
 
@@ -386,7 +407,11 @@ public class GLFWWindow implements Window {
         this.displayMode = displayMode;
     }
 
-    private void setupInput() {
+    private boolean checkCreated() {
+        return pointer != NULL;
+    }
+
+    private void initCallbacks() {
         glfwSetKeyCallback(pointer, (window, key, scancode, action, mods) -> keyCallbacks.forEach(callback -> callback.invoke(this, key, scancode, action, mods)));
         glfwSetMouseButtonCallback(pointer, (window, button, action, mods) -> mouseCallbacks.forEach(callback -> callback.invoke(this, button, action, mods)));
         glfwSetCursorPosCallback(pointer, (window, xpos, ypos) -> cursorCallbacks.forEach(callback -> callback.invoke(this, xpos, ypos)));
@@ -395,18 +420,23 @@ public class GLFWWindow implements Window {
         glfwSetWindowCloseCallback(pointer, window -> windowCloseCallbacks.forEach(callback -> callback.invoke(this)));
         glfwSetWindowFocusCallback(pointer, (window, focused) -> windowFocusCallbacks.forEach(callback -> callback.invoke(this, focused)));
         glfwSetCursorEnterCallback(pointer, (window, entered) -> cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
-    }
-
-    private boolean checkCreated() {
-        return pointer != NULL;
-    }
-
-    private void initCallbacks() {
         glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> {
             posX = xpos;
             posY = ypos;
+            windowPosCallbacks.forEach(callback -> callback.invoke(this, xpos, ypos));
         });
-        glfwSetFramebufferSizeCallback(pointer, (window, width, height) -> resize(width, height));
+        glfwSetFramebufferSizeCallback(pointer, (window, width, height) -> {
+            resize(width, height);
+            framebufferSizeCallbacks.forEach(callback -> callback.invoke(this, width, height));
+        });
+        // TODO: callbacks
+//        glfwSetCharModsCallback()
+//        glfwSetDropCallback()
+//        glfwSetWindowSizeCallback()
+//        glfwSetWindowIconifyCallback()
+//        glfwSetWindowMaximizeCallback()
+//        glfwSetWindowRefreshCallback()
+//        glfwSetWindowContentScaleCallback()
     }
 
     private void initWindowHint() {

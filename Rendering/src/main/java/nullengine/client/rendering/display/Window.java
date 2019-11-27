@@ -80,6 +80,14 @@ public interface Window extends WindowAttributes {
 
     void removeCursorEnterCallback(CursorEnterCallback callback);
 
+    void addFramebufferSizeCallback(FramebufferSizeCallback callback);
+
+    void removeFramebufferSizeCallback(FramebufferSizeCallback callback);
+
+    void addWindowPosCallback(WindowPosCallback callback);
+
+    void removeWindowPosCallback(WindowPosCallback callback);
+
     void swapBufferAndPollEvents();
 
     DisplayMode getDisplayMode();
