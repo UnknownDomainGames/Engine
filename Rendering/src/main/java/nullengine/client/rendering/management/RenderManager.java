@@ -3,7 +3,7 @@ package nullengine.client.rendering.management;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.util.GPUInfo;
 
-public interface RenderingContext {
+public interface RenderManager {
 
     Thread getRenderingThread();
 

@@ -1,46 +1,46 @@
 package nullengine.client.rendering;
 
-import nullengine.client.rendering.gl.GLRenderingContext;
-import nullengine.client.rendering.management.RenderingContext;
-import nullengine.client.rendering.management.RenderingListener;
+import nullengine.client.rendering.gl.GLRenderManager;
+import nullengine.client.rendering.management.RenderListener;
+import nullengine.client.rendering.management.RenderManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class RenderingEngine {
+public final class RenderEngine {
     public static final Logger LOGGER = LoggerFactory.getLogger("Rendering");
 
     private static RunOptions runOptions;
 
     // TODO: delegate render context creation
-    private static GLRenderingContext context;
+    private static GLRenderManager manager;
 
-    public static RenderingContext getContext() {
-        return context;
+    public static RenderManager getManager() {
+        return manager;
     }
 
-    public static void start(RenderingListener listener) {
+    public static void start(RenderListener listener) {
         start(new RunOptions(), listener);
     }
 
-    public static void start(RunOptions runOptions, RenderingListener listener) {
-        if (context != null) {
+    public static void start(RunOptions runOptions, RenderListener listener) {
+        if (manager != null) {
             throw new IllegalArgumentException("Rendering engine has been started.");
         }
-        RenderingEngine.runOptions = runOptions;
-        context = new GLRenderingContext(listener);
-        context.init();
+        RenderEngine.runOptions = runOptions;
+        manager = new GLRenderManager(listener);
+        manager.init();
     }
 
     public static void doRender(float partial) {
-        context.render(partial);
+        manager.render(partial);
     }
 
     public static void stop() {
-        if (context == null) {
+        if (manager == null) {
             return;
         }
-        context.dispose();
-        context = null;
+        manager.dispose();
+        manager = null;
     }
 
     public static class RunOptions {
@@ -56,6 +56,6 @@ public final class RenderingEngine {
         }
     }
 
-    private RenderingEngine() {
+    private RenderEngine() {
     }
 }
