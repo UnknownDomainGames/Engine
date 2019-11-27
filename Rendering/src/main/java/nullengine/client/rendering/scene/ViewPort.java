@@ -1,6 +1,7 @@
 package nullengine.client.rendering.scene;
 
 import nullengine.client.rendering.camera.Camera;
+import nullengine.client.rendering.display.Window;
 import nullengine.util.Color;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4fc;
@@ -44,4 +45,8 @@ public interface ViewPort {
     Matrix4fc getProjectionViewMatrix();
 
     FrustumIntersection getFrustum();
+
+    void bindWindow(Window window);
+
+    void unbindWindow();
 }

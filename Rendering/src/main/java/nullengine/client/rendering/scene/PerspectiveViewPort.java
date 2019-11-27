@@ -1,6 +1,8 @@
 package nullengine.client.rendering.scene;
 
 import nullengine.client.rendering.camera.Camera;
+import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.display.callback.FramebufferSizeCallback;
 import nullengine.util.Color;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
@@ -179,5 +181,26 @@ public class PerspectiveViewPort implements ViewPort {
     public void setZFar(float zFar) {
         this.zFar = zFar;
         onProjectionChanged();
+    }
+
+    private Window window;
+    private FramebufferSizeCallback framebufferSizeCallback;
+
+    @Override
+    public void bindWindow(Window window) {
+        if (this.window != null) this.window.removeFramebufferSizeCallback(framebufferSizeCallback);
+        if (window != null) {
+            if (framebufferSizeCallback == null) {
+                framebufferSizeCallback = (_window, width, height) -> setSize(width, height);
+            }
+            setSize(window.getFrameBufferWidth(), window.getFrameBufferHeight());
+            window.addFramebufferSizeCallback(framebufferSizeCallback);
+        }
+        this.window = window;
+    }
+
+    @Override
+    public void unbindWindow() {
+        bindWindow(null);
     }
 }
