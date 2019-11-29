@@ -93,7 +93,7 @@ public class GLVertexFormat {
         }
     }
 
-    public void applyAndEnable() {
+    public void enableAndApply() {
         int offset = 0;
         for (int i = 0; i < elements.length; i++) {
             GLVertexElement element = elements[i];

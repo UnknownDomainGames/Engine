@@ -37,25 +37,21 @@ public class VertexBufferObject {
     public void uploadData(ByteBuffer buffer) {
         bind();
         GL15.glBufferData(type.gl, buffer, usage.gl);
-        unbind();
     }
 
     public void uploadData(FloatBuffer buffer) {
         bind();
         GL15.glBufferData(type.gl, buffer, usage.gl);
-        unbind();
     }
 
     public void uploadSubData(ByteBuffer buffer, long offset) {
         bind();
         GL15.glBufferSubData(type.gl, offset, buffer);
-        unbind();
     }
 
     public void uploadSubData(FloatBuffer buffer, long offset) {
         bind();
         GL15.glBufferSubData(type.gl, offset, buffer);
-        unbind();
     }
 
     public void dispose() {

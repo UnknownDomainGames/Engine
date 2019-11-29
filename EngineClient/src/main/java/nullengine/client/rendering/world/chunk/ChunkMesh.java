@@ -39,9 +39,7 @@ public class ChunkMesh implements Disposable {
             return;
         }
 
-        chunkSolidVAO.bind();
-        chunkSolidVAO.drawArrays();
-        chunkSolidVAO.unbind();
+        chunkSolidVAO.draw();
     }
 
     public Chunk getChunk() {

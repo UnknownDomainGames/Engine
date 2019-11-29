@@ -22,10 +22,8 @@ public class DirectRenderer {
     public void draw() {
         buffer.finish();
         vao.uploadData(buffer);
-        vao.bind();
-        buffer.getVertexFormat().applyAndEnable();
+        vao.setVertexFormat(buffer.getVertexFormat());
         vao.setDrawMode(buffer.getDrawMode());
-        vao.drawArrays();
-        vao.unbind();
+        vao.draw();
     }
 }

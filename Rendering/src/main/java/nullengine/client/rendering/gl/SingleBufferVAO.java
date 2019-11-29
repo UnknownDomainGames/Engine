@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 
 public class SingleBufferVAO implements Renderable {
 
@@ -35,6 +34,10 @@ public class SingleBufferVAO implements Renderable {
         this.drawMode = drawMode;
     }
 
+    public VertexBufferObject getVbo() {
+        return vbo;
+    }
+
     public GLVertexFormat getVertexFormat() {
         return vertexFormat;
     }
@@ -42,8 +45,8 @@ public class SingleBufferVAO implements Renderable {
     public void setVertexFormat(GLVertexFormat vertexFormat) {
         this.vertexFormat = vertexFormat;
         bind();
-        vertexFormat.applyAndEnable();
-        unbind();
+        vbo.bind();
+        vertexFormat.enableAndApply();
     }
 
     public GLDrawMode getDrawMode() {
@@ -59,7 +62,6 @@ public class SingleBufferVAO implements Renderable {
             throw new IllegalStateException("Object has been disposed");
         }
         GL30.glBindVertexArray(id);
-        vbo.bind();
     }
 
     public void unbind() {
@@ -75,15 +77,13 @@ public class SingleBufferVAO implements Renderable {
         this.vertexCount = vertexCount;
     }
 
-    public void uploadData(FloatBuffer buffer, int vertexCount) {
-        vbo.uploadData(buffer);
-        this.vertexCount = vertexCount;
+    public void draw() {
+        bind();
+        drawArrays();
     }
 
     public void drawArrays() {
-        bind();
         GL11.glDrawArrays(drawMode.gl, 0, this.vertexCount);
-        unbind();
     }
 
     public void dispose() {
@@ -100,6 +100,6 @@ public class SingleBufferVAO implements Renderable {
 
     @Override
     public void render() {
-        drawArrays();
+        draw();
     }
 }
