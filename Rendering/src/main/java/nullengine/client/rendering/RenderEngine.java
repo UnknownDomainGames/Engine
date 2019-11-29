@@ -12,7 +12,7 @@ public final class RenderEngine {
     private static RunOptions runOptions;
 
     // TODO: delegate render context creation
-    private static GLRenderManager manager;
+    private static RenderManager manager;
 
     public static RenderManager getManager() {
         return manager;
