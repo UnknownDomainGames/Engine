@@ -14,6 +14,8 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,11 +36,13 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 public final class WindowsFontHelper implements FontHelper {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger("Font");
+
     public static final int SUPPORTED_CHARACTER_COUNT = 0x10000;
 
+    private static final int[] PLATFORMs = {STBTT_PLATFORM_ID_MICROSOFT, STBTT_PLATFORM_ID_UNICODE, STBTT_PLATFORM_ID_MAC, STBTT_PLATFORM_ID_ISO};
     private static final int[] EIDs = {STBTT_MS_EID_UNICODE_BMP, STBTT_MS_EID_SHIFTJIS, STBTT_MS_EID_UNICODE_FULL, STBTT_MS_EID_SYMBOL};
     private static final int[] LANGs = {
-            STBTT_MS_LANG_ENGLISH,
             STBTT_MS_LANG_CHINESE,
             STBTT_MS_LANG_DUTCH,
             STBTT_MS_LANG_FRENCH,
@@ -49,7 +53,8 @@ public final class WindowsFontHelper implements FontHelper {
             STBTT_MS_LANG_KOREAN,
             STBTT_MS_LANG_RUSSIAN,
             STBTT_MS_LANG_SPANISH,
-            STBTT_MS_LANG_SWEDISH};
+            STBTT_MS_LANG_SWEDISH,
+            STBTT_MS_LANG_ENGLISH};
 
     private final List<Font> availableFonts = new ArrayList<>();
     private final Table<String, String, NativeTTFontInfo> loadedFontInfos = Tables.newCustomTable(new HashMap<>(), HashMap::new);
@@ -92,7 +97,8 @@ public final class WindowsFontHelper implements FontHelper {
         for (Path fontFile : findLocalTTFonts()) {
             try {
                 loadNativeFontInfo(fontFile);
-            } catch (IOException | IllegalStateException ignored) {
+            } catch (Exception e) {
+                LOGGER.debug("Cannot load local font.", e);
             }
         }
     }
@@ -103,8 +109,8 @@ public final class WindowsFontHelper implements FontHelper {
             var fonts = Files.walk(Path.of("C:\\Windows\\Fonts").toAbsolutePath())
                     .filter(typefaceFilter)
                     .collect(Collectors.toList());
-            var userFontDir = Path.of(System.getProperty("user.home"), "Appdata","Local","Microsoft", "Windows", "Fonts");
-            if(userFontDir.toFile().exists()){
+            var userFontDir = Path.of(System.getProperty("user.home"), "Appdata", "Local", "Microsoft", "Windows", "Fonts");
+            if (userFontDir.toFile().exists()) {
                 var userFont = Files.walk(userFontDir).filter(typefaceFilter).collect(Collectors.toList());
                 fonts.addAll(userFont);
             }
@@ -155,19 +161,18 @@ public final class WindowsFontHelper implements FontHelper {
     }
 
     @Override
-    public List<String> wrapText(String text, float width, Font font){
-        if(computeTextWidth(text, font) <= width || width == 0){
+    public List<String> wrapText(String text, float width, Font font) {
+        if (computeTextWidth(text, font) <= width || width == 0) {
             return Lists.newArrayList(text);
-        }else{
+        } else {
             int l = 0, h = text.length() - 1;
             var breaker = BreakIterator.getLineInstance();
             breaker.setText(text);
-            while (l < h){
+            while (l < h) {
                 int m = (l + h) / 2;
-                if(computeTextWidth(text.substring(0, breaker.following(m)), font) <= width){
+                if (computeTextWidth(text.substring(0, breaker.following(m)), font) <= width) {
                     l = m + 1;
-                }
-                else{
+                } else {
                     h = m - 1;
                 }
             }
@@ -181,12 +186,12 @@ public final class WindowsFontHelper implements FontHelper {
             return 0;
         }
         List<String> trial;
-        if(ceilingWidth != -1){
-            trial = text.lines().flatMap(str->wrapText(str, ceilingWidth, font).stream()).collect(Collectors.toList());
-        }else{
+        if (ceilingWidth != -1) {
+            trial = text.lines().flatMap(str -> wrapText(str, ceilingWidth, font).stream()).collect(Collectors.toList());
+        } else {
             trial = text.lines().collect(Collectors.toList());
         }
-        if(trial.size() > 1){
+        if (trial.size() > 1) {
             var max = -1.0f;
             for (String s : trial) {
                 max = Math.max(max, computeTextWidth(s, font));
@@ -227,12 +232,12 @@ public final class WindowsFontHelper implements FontHelper {
             return 0;
         }
         List<String> trial;
-        if(ceilingWidth != -1){
-            trial = text.lines().flatMap(str->wrapText(str, ceilingWidth, font).stream()).collect(Collectors.toList());
-        }else{
+        if (ceilingWidth != -1) {
+            trial = text.lines().flatMap(str -> wrapText(str, ceilingWidth, font).stream()).collect(Collectors.toList());
+        } else {
             trial = text.lines().collect(Collectors.toList());
         }
-        if(trial.size() > 1){
+        if (trial.size() > 1) {
             var max = -1.0f;
             for (String s : trial) {
                 max = Math.max(max, computeTextHeight(s, font, -1, leading));
@@ -252,14 +257,14 @@ public final class WindowsFontHelper implements FontHelper {
                 i += getCodePoint(text, i, charPointBuffer);
 
                 int charPoint = charPointBuffer.get(0);
-                if(!isSupportedCharacter(nativeTTFont, charPoint)) {
+                if (!isSupportedCharacter(nativeTTFont, charPoint)) {
                     continue;
                 }
-                if(!nativeTTFont.isBlockLoaded((char) charPoint)){
+                if (!nativeTTFont.isBlockLoaded((char) charPoint)) {
                     plane.putBlock(Character.UnicodeBlock.of(charPoint));
                 }
                 var quad = plane.getQuad((char) charPoint);
-                if(quad == null) continue;
+                if (quad == null) continue;
                 float diff = /*Math.abs(stbQuad.y0() - stbQuad.y1())*/ quad.getPos().w();
                 if (maxY < diff) {
                     maxY = diff;
@@ -308,43 +313,43 @@ public final class WindowsFontHelper implements FontHelper {
             float centerY = 0 + fontHeight;
 
             var fontPlaneTexture = nativeTTFont.getPlaneTextures().get(0);
-            for (int i = 0; i < text.length();) {
+            for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, charPointBuffer);
                 int charPoint = charPointBuffer.get(0);
-                if(!isSupportedCharacter(nativeTTFont, charPoint)) {
+                if (!isSupportedCharacter(nativeTTFont, charPoint)) {
                     continue;
                 }
-                if(!nativeTTFont.isBlockLoaded((char) charPoint)){
+                if (!nativeTTFont.isBlockLoaded((char) charPoint)) {
                     fontPlaneTexture.putBlock(Character.UnicodeBlock.of(charPoint));
                 }
-                if(fontPlaneTexture.isWaitingForReloading()){
+                if (fontPlaneTexture.isWaitingForReloading()) {
                     fontPlaneTexture.bakeTexture(nativeTTFont.getFont(), nativeTTFont.getInfo());
                     fontPlaneTexture.bind();
                 }
             }
             buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE);
-            for (int i = 0; i < text.length();) {
+            for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, charPointBuffer);
 
                 int charPoint = charPointBuffer.get(0);
 
-                if(!isSupportedCharacter(nativeTTFont, charPoint)) {
+                if (!isSupportedCharacter(nativeTTFont, charPoint)) {
                     continue;
                 }
 
                 float centerX = posX.get(0);
                 var quads = fontPlaneTexture.getQuad((char) charPoint);
-                if(quads == null) continue;
+                if (quads == null) continue;
                 posX.put(0, scale(centerX, posX.get(0) + quads.getXOffset(), factorX));
                 if (i < text.length()) {
                     getCodePoint(text, i, charPointBuffer);
                     posX.put(0, posX.get(0)
                             + stbtt_GetCodepointKernAdvance(fontInfo, charPoint, charPointBuffer.get(0)) * scale);
                 }
-                float x0 = (float)Math.floor(scale(centerX, centerX + quads.getPos().x(), factorX) + 0.5),
-                        x1 = (float)Math.floor(scale(centerX, centerX + quads.getPos().z(), factorX) + 0.5),
-                        y0 = (float)Math.floor(scale(centerY, quads.getPos().y(), factorY) + 0.5),
-                        y1 = (float)Math.floor(scale(centerY, quads.getPos().w(), factorY) + 0.5); // FIXME: Incorrect y0
+                float x0 = (float) Math.floor(scale(centerX, centerX + quads.getPos().x(), factorX) + 0.5),
+                        x1 = (float) Math.floor(scale(centerX, centerX + quads.getPos().z(), factorX) + 0.5),
+                        y0 = (float) Math.floor(scale(centerY, quads.getPos().y(), factorY) + 0.5),
+                        y1 = (float) Math.floor(scale(centerY, quads.getPos().w(), factorY) + 0.5); // FIXME: Incorrect y0
                 buffer.pos(x0, y0, 0).color(r, g, b, a).uv(quads.getTexCoord().x(), quads.getTexCoord().y()).endVertex();
                 buffer.pos(x0, y1, 0).color(r, g, b, a).uv(quads.getTexCoord().x(), quads.getTexCoord().w()).endVertex();
                 buffer.pos(x1, y0, 0).color(r, g, b, a).uv(quads.getTexCoord().z(), quads.getTexCoord().y()).endVertex();
@@ -381,7 +386,7 @@ public final class WindowsFontHelper implements FontHelper {
         byte[] bytes = Files.readAllBytes(path);
         ByteBuffer fontData = ByteBuffer.allocateDirect(bytes.length).put(bytes).flip();
         var fontCount = stbtt_GetNumberOfFonts(fontData);
-        if(fontCount == -1){
+        if (fontCount == -1) {
             throw new IllegalArgumentException(String.format("Cannot determine the number of fonts in the font file. File: %s", path));
         }
         NativeTTFontInfo parent = null;
@@ -391,14 +396,14 @@ public final class WindowsFontHelper implements FontHelper {
                 throw new IllegalStateException(String.format("Failed in initializing ttf font info. File: %s", path));
             }
 
-            int encodingId = findEncodingId(fontInfo);
-            if (encodingId == -1) {
+            FontDataFormat format = findDataFormat(fontInfo);
+            if (format == null) {
                 throw new FontLoadException("Cannot load font because of not found encoding id. Path: " + path);
             }
 
-            String family = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, encodingId, STBTT_MS_LANG_ENGLISH, 1)
+            String family = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, format.encodingId, format.languageId, 1)
                     .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
-            String style = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, encodingId, STBTT_MS_LANG_ENGLISH, 2)
+            String style = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, format.encodingId, format.languageId, 2)
                     .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
 
             try (MemoryStack stack = stackPush()) {
@@ -419,18 +424,18 @@ public final class WindowsFontHelper implements FontHelper {
                 IntBuffer y1 = stack.mallocInt(1);
                 stbtt_GetFontBoundingBox(fontInfo, x0, y0, x1, y1);
 
-            parent = NativeTTFontInfo.builder()
-                    .fontFile(path)
-                    .platformId(STBTT_PLATFORM_ID_MICROSOFT)
-                    .encodingId(encodingId)
-                    .languageId(STBTT_MS_LANG_ENGLISH)
-                    .family(family).style(style).offsetIndex(i)
-                    .ascent(pAscent.get(0)).descent(pDescent.get(0)).lineGap(pLineGap.get(0))
-                    .contentScaleX(p1.get(0)).contentScaleY(p2.get(0))
-                    .boundingBox(new int[]{x0.get(), y0.get(), x1.get(), y1.get()})
-                    .build();
-            loadedFontInfos.put(family, style, parent);
-            availableFonts.add(parent.getFont());
+                parent = NativeTTFontInfo.builder()
+                        .fontFile(path)
+                        .platformId(STBTT_PLATFORM_ID_MICROSOFT)
+                        .encodingId(format.encodingId)
+                        .languageId(format.languageId)
+                        .family(family).style(style).offsetIndex(i)
+                        .ascent(pAscent.get(0)).descent(pDescent.get(0)).lineGap(pLineGap.get(0))
+                        .contentScaleX(p1.get(0)).contentScaleY(p2.get(0))
+                        .boundingBox(new int[]{x0.get(), y0.get(), x1.get(), y1.get()})
+                        .build();
+                loadedFontInfos.put(family, style, parent);
+                availableFonts.add(parent.getFont());
             }
         }
         return parent;
@@ -443,7 +448,7 @@ public final class WindowsFontHelper implements FontHelper {
 
     private NativeTTFontInfo loadNativeFontInfo(ByteBuffer buffer) {
         var fontCount = stbtt_GetNumberOfFonts(buffer);
-        if(fontCount == -1){
+        if (fontCount == -1) {
             throw new IllegalArgumentException("Cannot determine the number of fonts in the font buffer.");
         }
         NativeTTFontInfo parent = null;
@@ -453,14 +458,14 @@ public final class WindowsFontHelper implements FontHelper {
                 throw new IllegalStateException("Failed in initializing ttf font info");
             }
 
-            int encodingId = findEncodingId(fontInfo);
-            if (encodingId == -1) {
+            FontDataFormat format = findDataFormat(fontInfo);
+            if (format == null) {
                 throw new FontLoadException("Cannot load font because of not found encoding id.");
             }
 
-            String family = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, encodingId, STBTT_MS_LANG_ENGLISH, 1)
+            String family = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, format.encodingId, format.languageId, 1)
                     .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
-            String style = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, encodingId, STBTT_MS_LANG_ENGLISH, 2)
+            String style = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, format.encodingId, format.languageId, 2)
                     .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
 
             try (MemoryStack stack = stackPush()) {
@@ -485,8 +490,8 @@ public final class WindowsFontHelper implements FontHelper {
                         .fontData(buffer)
                         .fontInfo(fontInfo)
                         .platformId(STBTT_PLATFORM_ID_MICROSOFT)
-                        .encodingId(encodingId)
-                        .languageId(STBTT_MS_LANG_ENGLISH)
+                        .encodingId(format.encodingId)
+                        .languageId(format.languageId)
                         .family(family).style(style).offsetIndex(i)
                         .ascent(pAscent.get(0)).descent(pDescent.get(0)).lineGap(pLineGap.get(0))
                         .contentScaleX(p1.get(0)).contentScaleY(p2.get(0))
@@ -499,13 +504,25 @@ public final class WindowsFontHelper implements FontHelper {
         return parent;
     }
 
-    private int findEncodingId(STBTTFontinfo fontInfo) {
-        for (int i = 0; i < EIDs.length; i++) {
-            if (stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, EIDs[i], STBTT_MS_LANG_ENGLISH, 1) != null) {
-                return EIDs[i];
+    private static final class FontDataFormat {
+        private int encodingId;
+        private int languageId;
+
+        private FontDataFormat(int encodingId, int languageId) {
+            this.encodingId = encodingId;
+            this.languageId = languageId;
+        }
+    }
+
+    private FontDataFormat findDataFormat(STBTTFontinfo fontInfo) {
+        for (int eid : EIDs) {
+            for (int lang : LANGs) {
+                if (stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, eid, lang, 1) != null) {
+                    return new FontDataFormat(eid, lang);
+                }
             }
         }
-        return -1;
+        return null;
     }
 
     private int getBitmapSize(float size, int countOfChar) {
@@ -529,8 +546,8 @@ public final class WindowsFontHelper implements FontHelper {
         return 1;
     }
 
-    private boolean isSupportedCharacter(NativeTTFont font, int character){
-        if(character == '\u001A' || character == '\uFFFD') return true;
+    private boolean isSupportedCharacter(NativeTTFont font, int character) {
+        if (character == '\u001A' || character == '\uFFFD') return true;
         var counter = stbtt_FindGlyphIndex(font.getInfo().getFontInfo(), 0x1A);
         var ci = stbtt_FindGlyphIndex(font.getInfo().getFontInfo(), character);
         return counter != ci;

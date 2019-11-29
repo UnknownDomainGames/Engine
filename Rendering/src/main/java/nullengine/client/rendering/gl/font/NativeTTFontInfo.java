@@ -220,7 +220,7 @@ public class NativeTTFontInfo {
             nativeTTFontInfo.lineGap = this.lineGap;
             nativeTTFontInfo.family = this.family;
             nativeTTFontInfo.fontFile = this.fontFile;
-            nativeTTFontInfo.font = this.font;
+            nativeTTFontInfo.font = new Font(family, style, 1);
             nativeTTFontInfo.style = this.style;
             nativeTTFontInfo.offsetIndex = this.offsetIndex;
             nativeTTFontInfo.ascent = this.ascent;
