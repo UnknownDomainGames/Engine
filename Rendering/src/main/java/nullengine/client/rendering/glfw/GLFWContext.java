@@ -1,17 +1,12 @@
 package nullengine.client.rendering.glfw;
 
 import nullengine.client.rendering.display.Monitor;
-import nullengine.client.rendering.display.VideoMode;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.system.MemoryStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.*;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -26,6 +21,8 @@ public final class GLFWContext {
 
     private static Monitor primaryMonitor;
     private static Map<Long, Monitor> monitors;
+
+    private static Set<GLFWWindow> windows = new HashSet<>();
 
     public static Monitor getPrimaryMonitor() {
         return primaryMonitor;
@@ -52,6 +49,8 @@ public final class GLFWContext {
     public static synchronized void terminate() {
         if (terminated) return;
         terminated = true;
+
+        windows.forEach(GLFWWindow::disposeInternal);
 
         glfwTerminate();
     }
@@ -87,6 +86,14 @@ public final class GLFWContext {
         var monitor = new Monitor(pointer);
         monitor.refreshMonitor();
         return monitor;
+    }
+
+    static void onInitializedWindow(GLFWWindow window) {
+        windows.add(window);
+    }
+
+    static void onDisposedWindow(GLFWWindow window) {
+        windows.remove(window);
     }
 
 //    private static List<VideoMode> createVideoModes(GLFWVidMode.Buffer vidModes) {

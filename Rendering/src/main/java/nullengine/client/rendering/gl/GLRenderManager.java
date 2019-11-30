@@ -132,7 +132,6 @@ public class GLRenderManager implements RenderManager {
 
     @Override
     public void dispose() {
-        if (primaryWindow != null) primaryWindow.dispose();
         GLFWContext.terminate();
     }
 }

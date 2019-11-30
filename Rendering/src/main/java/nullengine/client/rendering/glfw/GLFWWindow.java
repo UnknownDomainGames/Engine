@@ -326,6 +326,11 @@ public class GLFWWindow implements Window {
 
     @Override
     public void dispose() {
+        disposeInternal();
+        GLFWContext.onDisposedWindow(this);
+    }
+
+    void disposeInternal() {
         if (pointer == NULL) return;
 
         hide();
@@ -352,6 +357,7 @@ public class GLFWWindow implements Window {
         enableVSync();
         cursor = new GLFWCursor(pointer);
         resize();
+        GLFWContext.onInitializedWindow(this);
     }
 
     @Override
@@ -403,7 +409,10 @@ public class GLFWWindow implements Window {
         glfwSetCursorPosCallback(pointer, (window, xpos, ypos) -> cursorCallbacks.forEach(callback -> callback.invoke(this, xpos, ypos)));
         glfwSetScrollCallback(pointer, (window, xoffset, yoffset) -> scrollCallbacks.forEach(callback -> callback.invoke(this, xoffset, yoffset)));
         glfwSetCharCallback(pointer, (window, codepoint) -> charCallbacks.forEach(callback -> callback.invoke(this, (char) codepoint)));
-        glfwSetWindowCloseCallback(pointer, window -> windowCloseCallbacks.forEach(callback -> callback.invoke(this)));
+        glfwSetWindowCloseCallback(pointer, window -> {
+            dispose();
+            windowCloseCallbacks.forEach(callback -> callback.invoke(this));
+        });
         glfwSetWindowFocusCallback(pointer, (window, focused) -> windowFocusCallbacks.forEach(callback -> callback.invoke(this, focused)));
         glfwSetCursorEnterCallback(pointer, (window, entered) -> cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
         glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> {
