@@ -50,7 +50,7 @@ public class GLFWWindow implements Window {
     private final List<WindowPosCallback> windowPosCallbacks = new LinkedList<>();
 
     public GLFWWindow() {
-        this(null);
+        this("");
     }
 
     public GLFWWindow(String title) {
