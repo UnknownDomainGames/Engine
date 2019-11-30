@@ -263,14 +263,12 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public void swapBufferAndPollEvents() {
+    public void swapBuffers() {
         glfwSwapBuffers(pointer);
 
         if (resized) {
             resized = false;
         }
-
-        glfwPollEvents();
     }
 
     @Override

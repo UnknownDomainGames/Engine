@@ -88,7 +88,7 @@ public interface Window extends WindowAttributes {
 
     void removeWindowPosCallback(WindowPosCallback callback);
 
-    void swapBufferAndPollEvents();
+    void swapBuffers();
 
     DisplayMode getDisplayMode();
 

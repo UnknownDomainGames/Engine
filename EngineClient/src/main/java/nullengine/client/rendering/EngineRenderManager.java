@@ -38,6 +38,7 @@ import java.util.Set;
 
 import static nullengine.client.rendering.gl.util.GLContextUtils.*;
 import static org.apache.commons.lang3.Validate.notNull;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.opengl.GL11.*;
 
 public class EngineRenderManager implements RenderManager {
@@ -166,7 +167,8 @@ public class EngineRenderManager implements RenderManager {
         for (Renderer renderer : renderers) {
             renderer.render(partial);
         }
-        window.swapBufferAndPollEvents();
+        window.swapBuffers();
+        glfwPollEvents();
         updateFPS();
     }
 
