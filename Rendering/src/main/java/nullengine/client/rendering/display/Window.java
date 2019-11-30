@@ -14,10 +14,6 @@ public interface Window extends WindowAttributes {
 
     int getHeight();
 
-    int getFrameBufferWidth();
-
-    int getFrameBufferHeight();
-
     Monitor getMonitor();
 
     void setMonitor(Monitor monitor);

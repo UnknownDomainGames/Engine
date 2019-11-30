@@ -193,7 +193,7 @@ public class PerspectiveViewPort implements ViewPort {
             if (framebufferSizeCallback == null) {
                 framebufferSizeCallback = (_window, width, height) -> setSize(width, height);
             }
-            setSize(window.getFrameBufferWidth(), window.getFrameBufferHeight());
+            setSize(window.getWidth(), window.getHeight());
             window.addFramebufferSizeCallback(framebufferSizeCallback);
         }
         this.window = window;

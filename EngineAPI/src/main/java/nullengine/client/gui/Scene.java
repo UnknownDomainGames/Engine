@@ -1,8 +1,6 @@
 package nullengine.client.gui;
 
-import com.github.mouse0w0.observable.value.MutableIntValue;
-import com.github.mouse0w0.observable.value.ObservableIntValue;
-import com.github.mouse0w0.observable.value.SimpleMutableIntValue;
+import com.github.mouse0w0.observable.value.*;
 import nullengine.Platform;
 import nullengine.client.gui.event.CharEvent;
 import nullengine.client.gui.event.FocusEvent;
@@ -21,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class Scene {
 
-    private final MutableIntValue width = new SimpleMutableIntValue();
-    private final MutableIntValue height = new SimpleMutableIntValue();
+    private final MutableFloatValue width = new SimpleMutableFloatValue();
+    private final MutableFloatValue height = new SimpleMutableFloatValue();
 
     private Container root;
 
@@ -30,23 +28,23 @@ public class Scene {
         setRoot(root);
     }
 
-    public ObservableIntValue width() {
+    public ObservableFloatValue width() {
         return width.toUnmodifiable();
     }
 
-    public int getWidth() {
+    public float getWidth() {
         return width.get();
     }
 
-    public ObservableIntValue height() {
+    public ObservableFloatValue height() {
         return height.toUnmodifiable();
     }
 
-    public int getHeight() {
+    public float getHeight() {
         return height.get();
     }
 
-    public void setSize(int width, int height) {
+    public void setSize(float width, float height) {
         this.width.set(width);
         this.height.set(height);
         updateRoot();
@@ -91,19 +89,21 @@ public class Scene {
     private double lastPosY = Double.NaN;
 
     public final CursorCallback cursorCallback = (window, xPos, yPos) -> {
+        var xCorr = xPos / window.getContentScaleX();
+        var yCorr = yPos / window.getContentScaleY();
         if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
             var old = root.getPointingComponents((float) lastPosX, (float) lastPosY);
-            var n = root.getPointingComponents((float) xPos, (float) yPos);
+            var n = root.getPointingComponents((float) xCorr, (float) yCorr);
             List<Component> moveEvent = old.stream().filter(n::contains).collect(Collectors.toList());
             List<Component> leaveEvent = old.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
             List<Component> enterEvent = n.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
             moveEvent.addAll(root.getChildrenRecursive().stream().filter(c -> c.focused.get()).collect(Collectors.toList()));
-            moveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component, lastPosX, lastPosY, xPos, yPos)));
-            enterEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component, lastPosX, lastPosY, xPos, yPos)));
-            leaveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(component, lastPosX, lastPosY, xPos, yPos)));
+            moveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
+            enterEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
+            leaveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
         }
-        lastPosX = xPos;
-        lastPosY = yPos;
+        lastPosX = xCorr;
+        lastPosY = yCorr;
     };
 
     public final MouseCallback mouseCallback = (window, button, action, modifiers) -> {

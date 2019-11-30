@@ -68,35 +68,38 @@ public final class GLFWContext {
     }
 
     private static Monitor createMonitor(long pointer) {
-        String name = GLFW.glfwGetMonitorName(pointer);
-        try (MemoryStack memoryStack = MemoryStack.stackPush()) {
-            IntBuffer width = memoryStack.mallocInt(1);
-            IntBuffer height = memoryStack.mallocInt(1);
-            GLFW.glfwGetMonitorPhysicalSize(pointer, width, height);
-            FloatBuffer xScale = memoryStack.mallocFloat(1);
-            FloatBuffer yScale = memoryStack.mallocFloat(1);
-            GLFW.glfwGetMonitorContentScale(pointer, xScale, yScale);
-            IntBuffer xPos = memoryStack.mallocInt(1);
-            IntBuffer yPos = memoryStack.mallocInt(1);
-            GLFW.glfwGetMonitorPos(pointer, xPos, yPos);
-            GLFWVidMode vidMode = GLFW.glfwGetVideoMode(pointer);
-            GLFWVidMode.Buffer vidModes = GLFW.glfwGetVideoModes(pointer);
-            return new Monitor(pointer, name, width.get(), height.get(), xScale.get(), yScale.get(), xPos.get(), yPos.get(),
-                    createVideoMode(vidMode), createVideoModes(vidModes));
-        }
+//        String name = GLFW.glfwGetMonitorName(pointer);
+//        try (MemoryStack memoryStack = MemoryStack.stackPush()) {
+//            IntBuffer width = memoryStack.mallocInt(1);
+//            IntBuffer height = memoryStack.mallocInt(1);
+//            GLFW.glfwGetMonitorPhysicalSize(pointer, width, height);
+//            FloatBuffer xScale = memoryStack.mallocFloat(1);
+//            FloatBuffer yScale = memoryStack.mallocFloat(1);
+//            GLFW.glfwGetMonitorContentScale(pointer, xScale, yScale);
+//            IntBuffer xPos = memoryStack.mallocInt(1);
+//            IntBuffer yPos = memoryStack.mallocInt(1);
+//            GLFW.glfwGetMonitorPos(pointer, xPos, yPos);
+//            GLFWVidMode vidMode = GLFW.glfwGetVideoMode(pointer);
+//            GLFWVidMode.Buffer vidModes = GLFW.glfwGetVideoModes(pointer);
+//            return new Monitor(pointer, name, width.get(), height.get(), xScale.get(), yScale.get(), xPos.get(), yPos.get(),
+//                    createVideoMode(vidMode), createVideoModes(vidModes));
+//        }
+        var monitor = new Monitor(pointer);
+        monitor.refreshMonitor();
+        return monitor;
     }
 
-    private static List<VideoMode> createVideoModes(GLFWVidMode.Buffer vidModes) {
-        List<VideoMode> videoModes = new ArrayList<>();
-        for (int i = 0; i < vidModes.limit(); i++) {
-            videoModes.add(createVideoMode(vidModes.get()));
-        }
-        return List.copyOf(videoModes);
-    }
-
-    private static VideoMode createVideoMode(GLFWVidMode vidMode) {
-        return new VideoMode(vidMode.width(), vidMode.height(), vidMode.redBits(), vidMode.greenBits(), vidMode.blueBits(), vidMode.refreshRate());
-    }
+//    private static List<VideoMode> createVideoModes(GLFWVidMode.Buffer vidModes) {
+//        List<VideoMode> videoModes = new ArrayList<>();
+//        for (int i = 0; i < vidModes.limit(); i++) {
+//            videoModes.add(createVideoMode(vidModes.get()));
+//        }
+//        return List.copyOf(videoModes);
+//    }
+//
+//    private static VideoMode createVideoMode(GLFWVidMode vidMode) {
+//        return new VideoMode(vidMode.width(), vidMode.height(), vidMode.redBits(), vidMode.greenBits(), vidMode.blueBits(), vidMode.refreshRate());
+//    }
 
     private GLFWContext() {
     }

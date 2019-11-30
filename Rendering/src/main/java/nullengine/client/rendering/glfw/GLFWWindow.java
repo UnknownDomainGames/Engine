@@ -23,8 +23,6 @@ public class GLFWWindow implements Window {
 
     private int windowWidth;
     private int windowHeight;
-    private int fboWidth;
-    private int fboHeight;
 
     private Monitor monitor;
 
@@ -61,8 +59,8 @@ public class GLFWWindow implements Window {
 
     public GLFWWindow(int width, int height, String title) {
         this.title = title;
-        this.fboWidth = width;
-        this.fboHeight = height;
+        this.windowWidth = width;
+        this.windowHeight = height;
     }
 
     @Override
@@ -93,16 +91,6 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public int getFrameBufferWidth() {
-        return fboWidth;
-    }
-
-    @Override
-    public int getFrameBufferHeight() {
-        return fboHeight;
-    }
-
-    @Override
     public Monitor getMonitor() {
         return monitor;
     }
@@ -111,7 +99,7 @@ public class GLFWWindow implements Window {
     public void setMonitor(Monitor monitor) {
         if (this.monitor == monitor) return;
         this.monitor = monitor;
-        resize(fboWidth, fboHeight);
+        resize();
     }
 
     @Override
@@ -130,15 +118,13 @@ public class GLFWWindow implements Window {
     }
 
     protected void resize() {
-        resize(fboWidth, fboHeight);
+        resize(windowWidth, windowHeight);
     }
 
     protected void resize(int width, int height) {
         resized = true;
-        fboWidth = width;
-        fboHeight = height;
-        windowWidth = Math.round(width / getContentScaleX());
-        windowHeight = Math.round(height / getContentScaleY());
+        windowWidth = width;
+        windowHeight = height;
     }
 
     @Override
@@ -358,6 +344,8 @@ public class GLFWWindow implements Window {
         if (!checkCreated()) {
             throw new RuntimeException("Failed to create the GLFW window");
         }
+        windowWidth *= getContentScaleX();
+        windowHeight *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
         initCallbacks();
         setWindowPosCenter();
         glfwMakeContextCurrent(pointer);
@@ -383,8 +371,8 @@ public class GLFWWindow implements Window {
                 if (this.displayMode == DisplayMode.WINDOWED) {
                     lastPosX = posX;
                     lastPosY = posY;
-                    lastWidth = fboWidth;
-                    lastHeight = fboHeight;
+                    lastWidth = windowWidth;
+                    lastHeight = windowHeight;
                 }
                 glfwSetWindowMonitor(pointer, monitor.getPointer(), 0, 0, nw, nh, frameRate > 0 ? frameRate : monitor.getVideoMode().getRefreshRate());
                 break;
@@ -392,8 +380,8 @@ public class GLFWWindow implements Window {
                 if (this.displayMode == DisplayMode.WINDOWED) {
                     lastPosX = posX;
                     lastPosY = posY;
-                    lastWidth = fboWidth;
-                    lastHeight = fboHeight;
+                    lastWidth = windowWidth;
+                    lastHeight = windowHeight;
                 }
                 setDecorated(false);
                 glfwSetWindowMonitor(pointer, NULL, 0, 0, monitor.getVideoMode().getWidth(), monitor.getVideoMode().getHeight(), monitor.getVideoMode().getRefreshRate());
@@ -427,6 +415,9 @@ public class GLFWWindow implements Window {
             resize(width, height);
             framebufferSizeCallbacks.forEach(callback -> callback.invoke(this, width, height));
         });
+        glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> {
+            monitor.refreshMonitor();
+        }));
         // TODO: callbacks
 //        glfwSetCharModsCallback()
 //        glfwSetDropCallback()

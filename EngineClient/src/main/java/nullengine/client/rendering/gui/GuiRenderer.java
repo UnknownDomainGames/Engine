@@ -81,18 +81,18 @@ public class GuiRenderer implements Renderer {
 
     private void startRender() {
         if (window.isResized()) {
-            glViewport(0, 0, window.getFrameBufferWidth(), window.getFrameBufferHeight());
+            glViewport(0, 0, window.getWidth(), window.getHeight());
         }
 
         ShaderManager.instance().bindShader(shader.getValue());
 
         startRenderFlag();
 
-        int width = window.getFrameBufferWidth(), height = window.getFrameBufferHeight();
+        int width = window.getWidth(), height = window.getHeight();
         ShaderManager.instance().setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
         ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
         ShaderManager.instance().setUniform("u_WindowSize", new Vector2f(width, height));
-        ShaderManager.instance().setUniform("u_ClipRect", new Vector4f(0, 0, width, height));
+        ShaderManager.instance().setUniform("u_ClipRect", new Vector4f(0, 0, width / window.getContentScaleX(), height / window.getContentScaleY())); // Shader will scale this back
 
         context.getTextureManager().getWhiteTexture().bind();
     }
@@ -119,8 +119,10 @@ public class GuiRenderer implements Renderer {
     }
 
     private void renderScene(Scene scene) {
-        if (window.isResized() || window.getFrameBufferWidth() != scene.getWidth() || window.getFrameBufferHeight() != scene.getHeight()) {
-            scene.setSize(window.getFrameBufferWidth(), window.getFrameBufferHeight());
+        var widthScaleless = window.getWidth() / window.getContentScaleX();
+        var heightScaleless = window.getHeight() / window.getContentScaleY();
+        if (window.isResized() || widthScaleless != scene.getWidth() || heightScaleless != scene.getHeight()) {
+            scene.setSize(widthScaleless, heightScaleless);
         }
 
         scene.update();
@@ -129,10 +131,11 @@ public class GuiRenderer implements Renderer {
         if (!root.visible().get()) {
             return;
         }
-
+        shader.getValue().setUniform("u_ModelMatrix", new Matrix4f().scale(window.getContentScaleX(), window.getContentScaleY(), 1));
         graphics.pushClipRect(0, 0, scene.width().get(), scene.height().get());
         root.getRenderer().render(root, graphics, context);
         graphics.popClipRect();
+        shader.getValue().setUniform("u_ModelMatrix", new Matrix4f());
     }
 
 //    private void debug(RenderContext context) {

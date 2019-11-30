@@ -3,6 +3,7 @@
 uniform sampler2D u_Texture;
 uniform bool u_RenderText;
 uniform bool u_EnableGamma;
+uniform mat4 u_ModelMatrix;
 
 uniform vec2 u_WindowSize;
 uniform vec4 u_ClipRect;
@@ -15,7 +16,8 @@ const float gamma = 2.2;
 
 void main()
 {
-    if(gl_FragCoord.x < u_ClipRect.x || gl_FragCoord.x > u_ClipRect.z || gl_FragCoord.y > (u_WindowSize.y - u_ClipRect.y) || gl_FragCoord.y < (u_WindowSize.y - u_ClipRect.w)) {
+    vec4 clipRect = vec4((u_ModelMatrix * vec4(u_ClipRect.xy,0,1)).xy,(u_ModelMatrix * vec4(u_ClipRect.zw,0,1)).xy);
+    if(gl_FragCoord.x < clipRect.x || gl_FragCoord.x > clipRect.z || gl_FragCoord.y > (u_WindowSize.y - clipRect.y) || gl_FragCoord.y < (u_WindowSize.y - clipRect.w)) {
         discard;
     }
     if(u_RenderText) {

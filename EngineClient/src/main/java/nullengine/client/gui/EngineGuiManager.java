@@ -58,7 +58,9 @@ public class EngineGuiManager implements GuiManager {
             return;
         }
         scene.getRoot().addEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
-        displayingScreen.setSize(context.getWindow().getFrameBufferWidth(), context.getWindow().getFrameBufferHeight());
+        var widthScaleless = context.getWindow().getWidth() / context.getWindow().getContentScaleX();
+        var heightScaleless = context.getWindow().getHeight() / context.getWindow().getContentScaleY();
+        displayingScreen.setSize(widthScaleless, heightScaleless);
         displayingScreen.update();
         if (scene.getRoot() instanceof GuiTickable) {
             context.getScheduler().runTaskEveryFrame(() -> ((GuiTickable) scene.getRoot()).update(context));
@@ -139,7 +141,7 @@ public class EngineGuiManager implements GuiManager {
             Platform.getLogger().debug("Conflicted HUD id {}", id);
             currentHud.getRoot().visible().set(true);
         } else {
-            hud.setSize(context.getWindow().getFrameBufferWidth(), context.getWindow().getFrameBufferHeight());
+            hud.setSize(context.getWindow().getWidth(), context.getWindow().getHeight());
             hud.update();
             huds.put(id, hud);
             displayingHuds.put(id, hud);

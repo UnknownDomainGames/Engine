@@ -158,7 +158,7 @@ public class EngineRenderManager implements RenderManager {
 
         if (window.isResized()) {
             projection.identity().perspective((float) Math.toRadians(60),
-                    (float) window.getFrameBufferWidth() / window.getFrameBufferHeight(), 0.01f, 1000f);
+                    (float) window.getWidth() / window.getHeight(), 0.01f, 1000f);
         }
         camera.update(partial);
         frustumIntersection.set(projection.mul(camera.getViewMatrix(), new Matrix4f()));
