@@ -3,7 +3,7 @@ package nullengine.client.gui;
 import nullengine.Platform;
 import nullengine.client.gui.event.KeyEvent;
 import nullengine.client.input.keybinding.Key;
-import nullengine.client.rendering.RenderManager;
+import nullengine.client.rendering.display.Window;
 import nullengine.util.UndoHistory;
 
 import java.util.*;
@@ -13,7 +13,7 @@ public class EngineGuiManager implements GuiManager {
 
     //TODO: review on availability of customizing limit of history
     public static final int MAX_SCENE_HISTORY = 20;
-    private final RenderManager context;
+    private final Window window;
 
     private final Map<String, Scene> huds = new HashMap<>();
     private final Map<String, Scene> unmodifiableHuds = Collections.unmodifiableMap(huds);
@@ -28,15 +28,15 @@ public class EngineGuiManager implements GuiManager {
 
     private boolean hudVisible = true;
 
-    public EngineGuiManager(RenderManager context) {
-        this.context = context;
+    public EngineGuiManager(Window window) {
+        this.window = window;
         sceneHistory = new UndoHistory<>(MAX_SCENE_HISTORY);
     }
 
     private boolean incognito = false;
 
     public void doTick() {
-        tickables.forEach(tickable -> tickable.update(context));
+        tickables.forEach(GuiTickable::update);
     }
 
     @Override
@@ -58,19 +58,19 @@ public class EngineGuiManager implements GuiManager {
             return;
         }
         scene.getRoot().addEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
-        var widthScaleless = context.getWindow().getWidth() / context.getWindow().getContentScaleX();
-        var heightScaleless = context.getWindow().getHeight() / context.getWindow().getContentScaleY();
+        var widthScaleless = window.getWidth() / window.getContentScaleX();
+        var heightScaleless = window.getHeight() / window.getContentScaleY();
         displayingScreen.setSize(widthScaleless, heightScaleless);
         displayingScreen.update();
         if (scene.getRoot() instanceof GuiTickable) {
-            context.getScheduler().runTaskEveryFrame(() -> ((GuiTickable) scene.getRoot()).update(context));
+            tickables.add((GuiTickable) scene.getRoot());
         }
-        context.getWindow().addCharCallback(displayingScreen.charCallback);
-        context.getWindow().addCursorCallback(displayingScreen.cursorCallback);
-        context.getWindow().addKeyCallback(displayingScreen.keyCallback);
-        context.getWindow().addMouseCallback(displayingScreen.mouseCallback);
-        context.getWindow().addScrollCallback(displayingScreen.scrollCallback);
-        context.getWindow().getCursor().showCursor();
+        window.addCharCallback(displayingScreen.charCallback);
+        window.addCursorCallback(displayingScreen.cursorCallback);
+        window.addKeyCallback(displayingScreen.keyCallback);
+        window.addMouseCallback(displayingScreen.mouseCallback);
+        window.addScrollCallback(displayingScreen.scrollCallback);
+        window.getCursor().showCursor();
     }
 
     private void pushToHistory() {
@@ -80,13 +80,13 @@ public class EngineGuiManager implements GuiManager {
             }
             displayingScreen.getRoot().removeEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
             if (displayingScreen.getRoot() instanceof GuiTickable) {
-                context.getScheduler().cancelTask(() -> ((GuiTickable) displayingScreen.getRoot()).update(context));
+                tickables.remove(displayingScreen.getRoot());
             }
-            context.getWindow().removeCharCallback(displayingScreen.charCallback);
-            context.getWindow().removeCursorCallback(displayingScreen.cursorCallback);
-            context.getWindow().removeKeyCallback(displayingScreen.keyCallback);
-            context.getWindow().removeMouseCallback(displayingScreen.mouseCallback);
-            context.getWindow().removeScrollCallback(displayingScreen.scrollCallback);
+            window.removeCharCallback(displayingScreen.charCallback);
+            window.removeCursorCallback(displayingScreen.cursorCallback);
+            window.removeKeyCallback(displayingScreen.keyCallback);
+            window.removeMouseCallback(displayingScreen.mouseCallback);
+            window.removeScrollCallback(displayingScreen.scrollCallback);
         }
     }
 
@@ -106,7 +106,7 @@ public class EngineGuiManager implements GuiManager {
     public void closeScreen() {
         pushToHistory();
         displayingScreen = null;
-        context.getWindow().getCursor().disableCursor();
+        window.getCursor().disableCursor();
     }
 
     @Override
@@ -141,7 +141,7 @@ public class EngineGuiManager implements GuiManager {
             Platform.getLogger().debug("Conflicted HUD id {}", id);
             currentHud.getRoot().visible().set(true);
         } else {
-            hud.setSize(context.getWindow().getWidth(), context.getWindow().getHeight());
+            hud.setSize(window.getWidth(), window.getHeight());
             hud.update();
             huds.put(id, hud);
             displayingHuds.put(id, hud);

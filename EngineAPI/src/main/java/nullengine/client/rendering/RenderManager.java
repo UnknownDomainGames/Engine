@@ -6,7 +6,6 @@ import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GPUInfo;
-import nullengine.component.GameObject;
 import nullengine.exception.UninitializationException;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4fc;
@@ -14,7 +13,7 @@ import org.joml.Matrix4fc;
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
-public interface RenderManager extends GameObject<RenderManager> {
+public interface RenderManager {
 
     EngineClient getEngine();
 

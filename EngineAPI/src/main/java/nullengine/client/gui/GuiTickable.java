@@ -1,7 +1,6 @@
 package nullengine.client.gui;
 
-import nullengine.client.rendering.RenderManager;
-
+@FunctionalInterface
 public interface GuiTickable {
-    void update(RenderManager context);
+    void update();
 }
