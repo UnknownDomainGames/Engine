@@ -17,16 +17,16 @@ public final class RenderEngine {
     }
 
     public static boolean isDebug() {
-        return settings.isDebug();
+        return settings.debug;
     }
 
-    public static void start(Settings settings, SwapBuffersListener listener) {
+    public static void start(Settings settings) {
         if (manager != null) {
             throw new IllegalArgumentException("Rendering engine has been started.");
         }
         RenderEngine.settings = settings;
         // TODO: delegate render context creation
-        manager = new GLRenderManager(listener);
+        manager = new GLRenderManager(settings.swapBuffersListener);
         manager.init();
     }
 
@@ -44,13 +44,15 @@ public final class RenderEngine {
 
     public static class Settings {
         private boolean debug = Boolean.parseBoolean(System.getProperty("rendering.debug", "false"));
+        private SwapBuffersListener swapBuffersListener;
 
-        public boolean isDebug() {
-            return debug;
+        public Settings debug(boolean debug) {
+            this.debug = debug;
+            return this;
         }
 
-        public Settings setDebug(boolean debug) {
-            this.debug = debug;
+        public Settings swapBuffersListener(SwapBuffersListener swapBuffersListener) {
+            this.swapBuffersListener = swapBuffersListener;
             return this;
         }
     }
