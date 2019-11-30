@@ -1,7 +1,6 @@
 package nullengine.client.gui.rendering;
 
 import nullengine.client.gui.component.ItemView;
-import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.item.ItemRenderManager;
 import nullengine.client.rendering.shader.ShaderManager;
 import org.joml.AxisAngle4f;
@@ -14,7 +13,7 @@ public class ItemViewRenderer implements ComponentRenderer<ItemView> {
     public static final ItemViewRenderer INSTANCE = new ItemViewRenderer();
 
     @Override
-    public void render(ItemView component, Graphics graphics, RenderManager context) {
+    public void render(ItemView component, Graphics graphics) {
             ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f().translationRotateScale(
                     new Vector3f(component.viewSize().get() * 0.5f, component.viewSize().get() * 0.5f, 0),
                     new Quaternionf(new AxisAngle4f()).rotateAxis((float) -(Math.PI / 4), 0, 1, 0).rotateAxis((float) -Math.PI / 6f, 1, 0, -1),

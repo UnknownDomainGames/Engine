@@ -3,7 +3,6 @@ package nullengine.client.gui.rendering;
 import com.google.common.base.Strings;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.text.WrapText;
-import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.font.FontHelper;
 
 import java.util.stream.Collectors;
@@ -13,7 +12,7 @@ public class WrapTextRenderer implements ComponentRenderer<WrapText> {
     public static final WrapTextRenderer INSTANCE = new WrapTextRenderer();
 
     @Override
-    public void render(WrapText text, Graphics graphics, RenderManager context) {
+    public void render(WrapText text, Graphics graphics) {
         if(Strings.isNullOrEmpty(text.text().getValue()))
             return;
         graphics.setColor(text.color().getValue());

@@ -50,7 +50,7 @@ public class Rect extends Shape {
 
     @Override
     protected ComponentRenderer createDefaultRenderer() {
-        return (ComponentRenderer<Rect>) (component, graphics, context) -> {
+        return (ComponentRenderer<Rect>) (component, graphics) -> {
             if(strokeSize.get() > 0) {
                 graphics.popClipRect();
                 graphics.pushClipRect(component.x().get() - component.strokeSize.get(), component.y().get() - component.strokeSize.get(), component.width().get() + component.strokeSize.get() * 2, component.height().get() + component.strokeSize.get() * 2);

@@ -3,7 +3,6 @@ package nullengine.client.gui.rendering;
 import com.google.common.base.Strings;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.text.Text;
-import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.font.FontHelper;
 
 import java.util.stream.Collectors;
@@ -13,7 +12,7 @@ public class TextRenderer implements ComponentRenderer<Text> {
     public static final TextRenderer INSTANCE = new TextRenderer();
 
     @Override
-    public void render(Text text, Graphics graphics, RenderManager context) {
+    public void render(Text text, Graphics graphics) {
         if(Strings.isNullOrEmpty(text.text().getValue()))
             return;
         graphics.setColor(text.color().getValue());

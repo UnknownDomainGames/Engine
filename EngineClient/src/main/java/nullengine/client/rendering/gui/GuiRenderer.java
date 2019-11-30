@@ -133,7 +133,7 @@ public class GuiRenderer implements Renderer {
         }
         shader.getValue().setUniform("u_ModelMatrix", new Matrix4f().scale(window.getContentScaleX(), window.getContentScaleY(), 1));
         graphics.pushClipRect(0, 0, scene.width().get(), scene.height().get());
-        root.getRenderer().render(root, graphics, context);
+        root.getRenderer().render(root, graphics);
         graphics.popClipRect();
         shader.getValue().setUniform("u_ModelMatrix", new Matrix4f());
     }

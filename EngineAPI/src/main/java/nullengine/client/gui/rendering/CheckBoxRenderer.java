@@ -2,12 +2,11 @@ package nullengine.client.gui.rendering;
 
 import nullengine.client.gui.component.CheckBox;
 import nullengine.client.gui.misc.Insets;
-import nullengine.client.rendering.RenderManager;
 import org.joml.Vector2f;
 
 public class CheckBoxRenderer implements ComponentRenderer<CheckBox> {
     @Override
-    public void render(CheckBox component, Graphics graphics, RenderManager context) {
+    public void render(CheckBox component, Graphics graphics) {
         graphics.drawBackground(component.background().getValue(), component);
         graphics.drawBorder(component.border().getValue(), component);
         if (component.state().getValue() == null || component.state().getValue()) {
