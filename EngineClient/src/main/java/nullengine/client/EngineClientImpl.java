@@ -17,9 +17,7 @@ import nullengine.client.input.keybinding.KeyBinding;
 import nullengine.client.input.keybinding.KeyBindingManager;
 import nullengine.client.rendering.EngineRenderManager;
 import nullengine.client.rendering.RenderManager;
-import nullengine.client.rendering.game3d.Game3DRenderer;
 import nullengine.client.rendering.gl.util.GLContextUtils;
-import nullengine.client.rendering.gui.GuiRenderer;
 import nullengine.client.rendering.model.BakedModel;
 import nullengine.client.rendering.model.voxel.ModelManager;
 import nullengine.client.rendering.shader.ShaderManager;
@@ -126,8 +124,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         logger.info("Initializing render context!");
         renderManager = new EngineRenderManager(this);
         RenderManager.Internal.setInstance(renderManager);
-        renderManager.getRenderers().add(new Game3DRenderer());
-        renderManager.getRenderers().add(new GuiRenderer());
         renderManager.init(clientThread);
         initRenderCrashReportDetails();
         renderManager.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());

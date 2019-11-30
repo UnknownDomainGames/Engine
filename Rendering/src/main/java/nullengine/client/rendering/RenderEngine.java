@@ -1,8 +1,8 @@
 package nullengine.client.rendering;
 
 import nullengine.client.rendering.gl.GLRenderManager;
-import nullengine.client.rendering.management.RenderListener;
 import nullengine.client.rendering.management.RenderManager;
+import nullengine.client.rendering.management.SwapBuffersListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public final class RenderEngine {
         return settings.isDebug();
     }
 
-    public static void start(Settings settings, RenderListener listener) {
+    public static void start(Settings settings, SwapBuffersListener listener) {
         if (manager != null) {
             throw new IllegalArgumentException("Rendering engine has been started.");
         }

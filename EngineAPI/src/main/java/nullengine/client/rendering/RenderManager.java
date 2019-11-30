@@ -36,8 +36,6 @@ public interface RenderManager {
 
     GuiManager getGuiManager();
 
-    RenderScheduler getScheduler();
-
     GPUInfo getGPUInfo();
 
     int getFPS();

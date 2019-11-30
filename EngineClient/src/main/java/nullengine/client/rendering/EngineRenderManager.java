@@ -9,62 +9,39 @@ import nullengine.client.gui.GuiManager;
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.camera.FixedCamera;
 import nullengine.client.rendering.display.Window;
-import nullengine.client.rendering.font.Font;
-import nullengine.client.rendering.font.FontHelper;
-import nullengine.client.rendering.gl.font.WindowsFontHelper;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
-import nullengine.client.rendering.gl.util.NVXGPUInfo;
-import nullengine.client.rendering.glfw.GLFWContext;
-import nullengine.client.rendering.glfw.GLFWWindow;
+import nullengine.client.rendering.gui.GuiRenderer;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GPUInfo;
-import nullengine.component.Component;
-import nullengine.component.ComponentAgent;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
-import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
-import static nullengine.client.rendering.gl.util.GLContextUtils.*;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
 
 public class EngineRenderManager implements RenderManager {
 
     private final EngineClient engine;
-    private final Logger logger;
-
-    private final List<Renderer> renderers = new LinkedList<>();
-
-    private final ComponentAgent components = new ComponentAgent();
-
-    private final EngineRenderScheduler scheduler = new EngineRenderScheduler();
 
     private Thread renderThread;
-    private GLFWWindow window;
+    private Window window;
     private Matrix4f projection = new Matrix4f();
     private EngineTextureManager textureManager;
     private EngineGuiManager guiManager;
-    private GPUInfo gpuInfo;
+    private GuiRenderer guiRenderer;
 
     private Camera camera;
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
 
     public EngineRenderManager(EngineClient engine) {
         this.engine = engine;
-        this.logger = engine.getLogger();
     }
 
     @Override
@@ -103,13 +80,8 @@ public class EngineRenderManager implements RenderManager {
     }
 
     @Override
-    public RenderScheduler getScheduler() {
-        return scheduler;
-    }
-
-    @Override
     public GPUInfo getGPUInfo() {
-        return gpuInfo;
+        return RenderEngine.getManager().getGPUInfo();
     }
 
     private long lastUpdateFps = System.currentTimeMillis();
@@ -153,7 +125,6 @@ public class EngineRenderManager implements RenderManager {
     }
 
     public void render(float partial) {
-        scheduler.run();
         guiManager.doTick();
 
         if (window.isResized()) {
@@ -163,11 +134,8 @@ public class EngineRenderManager implements RenderManager {
         camera.update(partial);
         frustumIntersection.set(projection.mul(camera.getViewMatrix(), new Matrix4f()));
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        for (Renderer renderer : renderers) {
-            renderer.render(partial);
-        }
-        window.swapBuffers();
+        glClear(GL_COLOR_BUFFER_BIT);
+        RenderEngine.doRender(partial);
         glfwPollEvents();
         updateFPS();
     }
@@ -175,44 +143,23 @@ public class EngineRenderManager implements RenderManager {
     public void init(Thread renderThread) {
         this.renderThread = renderThread;
 
-        logger.info("Initializing window!");
-        GLFWContext.initialize();
-        window = new GLFWWindow(854, 480, "");
-        window.init();
+        RenderEngine.start(new RenderEngine.Settings(), (manager1, partial) -> {
+            guiRenderer.render(partial);
+        });
+
+        nullengine.client.rendering.management.RenderManager manager = RenderEngine.getManager();
+        window = manager.getPrimaryWindow();
         window.setDisplayMode(Platform.getEngineClient().getSettings().getDisplaySettings().getDisplayMode(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionWidth(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionHeight(), Platform.getEngineClient().getSettings().getDisplaySettings().getFrameRate());
 
-        initGL();
-
-        initFont();
         initTexture();
-        guiManager = new EngineGuiManager(this);
+        guiManager = new EngineGuiManager(getWindow());
 
         camera = new FixedCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
 
-        initRenderer();
+        guiRenderer = new GuiRenderer();
+        guiRenderer.init(this);
 
         window.show();
-    }
-
-    private void initGL() {
-        logger.info("Initializing OpenGL context!");
-
-        GL.createCapabilities();
-        gpuInfo = new NVXGPUInfo();
-        printGLInfo();
-
-        GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    }
-
-    private void printGLInfo() {
-        logger.info("----- OpenGL Information -----");
-        logger.info("\tGL_VENDOR: {}", getVendor());
-        logger.info("\tGL_RENDERER: {}", getRenderer());
-        logger.info("\tGL_VERSION: {}", getVersion());
-        logger.info("\tGL_EXTENSIONS: {}", getExtensions());
-        logger.info("\tGL_SHADING_LANGUAGE_VERSION: {}", getShadingLanguageVersion());
-        logger.info("\tGPU_TOTAL_MEMORY: {} MB", (gpuInfo.getTotalMemory()) >> 10);
-        logger.info("------------------------------");
     }
 
     private void initTexture() {
@@ -221,56 +168,8 @@ public class EngineRenderManager implements RenderManager {
         getEngine().getAssetManager().register(AssetType.builder(GLTexture2D.class).name("Texture").provider(textureManager).parentLocation("texture").extensionName(".png").build());
     }
 
-    private void initFont() {
-        var fontHelper = new WindowsFontHelper();
-        FontHelper.Internal.setInstance(fontHelper);
-        Font defaultFont = new Font("Arial", "Regular", 16);
-        fontHelper.setDefaultFont(defaultFont);
-    }
-
-    public void initRenderer() {
-        for (Renderer renderer : renderers) {
-            renderer.init(this);
-        }
-    }
-
-    public List<Renderer> getRenderers() {
-        return renderers;
-    }
-
     public void dispose() {
-        renderers.forEach(Renderer::dispose);
-
-        if (window != null) window.dispose();
-
-        GLFWContext.terminate();
-    }
-
-    @Override
-    public <C extends Component> Optional<C> getComponent(@Nonnull Class<C> type) {
-        return components.getComponent(type);
-    }
-
-    @Override
-    public <C extends Component> boolean hasComponent(@Nonnull Class<C> type) {
-        return components.hasComponent(type);
-    }
-
-    @Override
-    public <C extends Component> RenderManager setComponent(@Nonnull Class<C> type, @Nullable C value) {
-        components.setComponent(type, value);
-        return this;
-    }
-
-    @Override
-    public <C extends Component> RenderManager removeComponent(@Nonnull Class<C> type) {
-        components.removeComponent(type);
-        return this;
-    }
-
-    @Override
-    @Nonnull
-    public Set<Class<?>> getComponents() {
-        return components.getComponents();
+        guiRenderer.dispose();
+        RenderEngine.stop();
     }
 }

@@ -8,8 +8,8 @@ import nullengine.client.rendering.gl.pipeline.ForwardPipeline;
 import nullengine.client.rendering.gl.util.NVXGPUInfo;
 import nullengine.client.rendering.glfw.GLFWContext;
 import nullengine.client.rendering.glfw.GLFWWindow;
-import nullengine.client.rendering.management.RenderListener;
 import nullengine.client.rendering.management.RenderManager;
+import nullengine.client.rendering.management.SwapBuffersListener;
 import nullengine.client.rendering.scene.ViewPort;
 import nullengine.client.rendering.util.GPUInfo;
 import org.lwjgl.opengl.ARBDebugOutput;
@@ -25,7 +25,7 @@ public class GLRenderManager implements RenderManager {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("Rendering");
 
-    private final RenderListener listener;
+    private final SwapBuffersListener listener;
 
     private Thread renderingThread;
     private GLFWWindow primaryWindow;
@@ -36,7 +36,7 @@ public class GLRenderManager implements RenderManager {
 
     private ForwardPipeline forwardPipeline;
 
-    public GLRenderManager(RenderListener listener) {
+    public GLRenderManager(SwapBuffersListener listener) {
         this.listener = listener;
     }
 
@@ -72,11 +72,9 @@ public class GLRenderManager implements RenderManager {
 
     @Override
     public void render(float partial) {
-        listener.onPreRender(this);
-        forwardPipeline.render(this, primaryViewPort, partial);
-        listener.onPreSwapBuffers(this);
+//        forwardPipeline.render(this, primaryViewPort, partial);
+        listener.onPreSwapBuffers(this, partial);
         primaryWindow.swapBuffers();
-        listener.onPostRender(this);
     }
 
     @Override
@@ -129,7 +127,7 @@ public class GLRenderManager implements RenderManager {
     }
 
     private void initRenderPipeline() {
-        forwardPipeline = new ForwardPipeline();
+//        forwardPipeline = new ForwardPipeline();
     }
 
     @Override
