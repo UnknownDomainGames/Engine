@@ -9,24 +9,23 @@ import org.slf4j.LoggerFactory;
 public final class RenderEngine {
     public static final Logger LOGGER = LoggerFactory.getLogger("Rendering");
 
-    private static RunOptions runOptions;
-
-    // TODO: delegate render context creation
+    private static Settings settings;
     private static RenderManager manager;
 
     public static RenderManager getManager() {
         return manager;
     }
 
-    public static void start(RenderListener listener) {
-        start(new RunOptions(), listener);
+    public static boolean isDebug() {
+        return settings.isDebug();
     }
 
-    public static void start(RunOptions runOptions, RenderListener listener) {
+    public static void start(Settings settings, RenderListener listener) {
         if (manager != null) {
             throw new IllegalArgumentException("Rendering engine has been started.");
         }
-        RenderEngine.runOptions = runOptions;
+        RenderEngine.settings = settings;
+        // TODO: delegate render context creation
         manager = new GLRenderManager(listener);
         manager.init();
     }
@@ -43,14 +42,14 @@ public final class RenderEngine {
         manager = null;
     }
 
-    public static class RunOptions {
+    public static class Settings {
         private boolean debug = Boolean.parseBoolean(System.getProperty("rendering.debug", "false"));
 
         public boolean isDebug() {
             return debug;
         }
 
-        public RunOptions setDebug(boolean debug) {
+        public Settings setDebug(boolean debug) {
             this.debug = debug;
             return this;
         }

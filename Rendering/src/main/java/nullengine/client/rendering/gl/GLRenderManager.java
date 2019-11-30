@@ -10,8 +10,6 @@ import nullengine.client.rendering.glfw.GLFWContext;
 import nullengine.client.rendering.glfw.GLFWWindow;
 import nullengine.client.rendering.management.RenderListener;
 import nullengine.client.rendering.management.RenderManager;
-import nullengine.client.rendering.scene.PerspectiveViewPort;
-import nullengine.client.rendering.scene.Scene;
 import nullengine.client.rendering.scene.ViewPort;
 import nullengine.client.rendering.util.GPUInfo;
 import org.lwjgl.opengl.ARBDebugOutput;
@@ -29,11 +27,10 @@ public class GLRenderManager implements RenderManager {
 
     private final RenderListener listener;
 
-    private Thread renderThread;
+    private Thread renderingThread;
     private GLFWWindow primaryWindow;
 
     private ViewPort primaryViewPort;
-    private Scene scene;
 
     private GPUInfo gpuInfo;
 
@@ -46,12 +43,12 @@ public class GLRenderManager implements RenderManager {
     @Nonnull
     @Override
     public Thread getRenderingThread() {
-        return renderThread;
+        return renderingThread;
     }
 
     @Override
     public boolean isRenderingThread() {
-        return Thread.currentThread() == renderThread;
+        return Thread.currentThread() == renderingThread;
     }
 
     @Nonnull
@@ -75,24 +72,16 @@ public class GLRenderManager implements RenderManager {
 
     @Override
     public void render(float partial) {
-        if (listener != null) listener.onPreRender(this);
-
-        if (scene != null) {
-            scene.doUpdate(partial);
-        }
-
-        forwardPipeline.render(this, new PerspectiveViewPort());
-
-        primaryWindow.swapBufferAndPollEvents();
-
-        if (listener != null) listener.onPostRender(this);
+        listener.onPreRender(this);
+        forwardPipeline.render(this, primaryViewPort, partial);
+        listener.onPreSwapBuffers(this);
+        primaryWindow.swapBuffers();
+        listener.onPostRender(this);
     }
 
     @Override
     public void init() {
-        if (listener != null) listener.onPreInitialize();
-
-        this.renderThread = Thread.currentThread();
+        this.renderingThread = Thread.currentThread();
 
         LOGGER.info("Initializing window!");
         GLFWContext.initialize();
@@ -106,9 +95,7 @@ public class GLRenderManager implements RenderManager {
 //        initTexture();
 //        guiManager = new EngineGuiManager(this);
 
-        primaryWindow.show();
-
-        if (listener != null) listener.onInitialized(this);
+//        primaryWindow.show();
     }
 
     private void initGL() {
@@ -148,9 +135,6 @@ public class GLRenderManager implements RenderManager {
     @Override
     public void dispose() {
         if (primaryWindow != null) primaryWindow.dispose();
-
-        if (listener != null) listener.onDisposed(this);
-
         GLFWContext.terminate();
     }
 }

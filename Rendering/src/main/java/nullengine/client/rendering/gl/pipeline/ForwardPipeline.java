@@ -31,12 +31,24 @@ public class ForwardPipeline implements RenderPipeline {
     }
 
     @Override
-    public void render(RenderManager manager, ViewPort viewPort) {
+    public void render(RenderManager manager, ViewPort viewPort, float partial) {
+        var scene = viewPort.getScene();
+        if (scene == null) return;
+
+        scene.doUpdate(partial);
+
+        ShaderProgram shader = this.shader.get();
+        shader.use();
+        setupViewPort(viewPort);
+        scene.getLightManager().bind(viewPort.getCamera(), shader);
+        material.bind(shader, "material");
+
+        RenderQueue renderQueue = scene.getRenderQueue();
+    }
+
+    private void setupViewPort(ViewPort viewPort) {
         int width = viewPort.getWidth();
         int height = viewPort.getHeight();
-        ShaderProgram shader = this.shader.get();
-
-        shader.use();
 
         if (width != frameBuffer.getWidth() || height != frameBuffer.getHeight()) {
             frameBuffer.resize(width, height);
@@ -47,13 +59,6 @@ public class ForwardPipeline implements RenderPipeline {
         Color clearColor = viewPort.getClearColor();
         GL11.glClearColor(clearColor.getRed(), clearColor.getGreen(), clearColor.getBlue(), clearColor.getAlpha());
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
-        var scene = viewPort.getScene();
-        scene.getLightManager().bind(viewPort.getCamera(), shader);
-        material.bind(shader, "material");
-
-        RenderQueue renderQueue = scene.getRenderQueue();
-
     }
 
     public GLFrameBuffer getFrameBuffer() {

@@ -8,5 +8,5 @@ public interface RenderPipeline {
 
     GLFrameBuffer getFrameBuffer();
 
-    void render(RenderManager manager, ViewPort viewPort);
+    void render(RenderManager manager, ViewPort viewPort, float partial);
 }
