@@ -81,19 +81,13 @@ public class GLRenderManager implements RenderManager {
     public void init() {
         this.renderingThread = Thread.currentThread();
 
-        LOGGER.info("Initializing window!");
         GLFWContext.initialize();
         primaryWindow = new GLFWWindow();
         primaryWindow.init();
-//        window.setDisplayMode(Platform.getEngineClient().getSettings().getDisplaySettings().getDisplayMode(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionWidth(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionHeight(), Platform.getEngineClient().getSettings().getDisplaySettings().getFrameRate());
 
         initGL();
         initFont();
         initRenderPipeline();
-//        initTexture();
-//        guiManager = new EngineGuiManager(this);
-
-//        primaryWindow.show();
     }
 
     private void initGL() {

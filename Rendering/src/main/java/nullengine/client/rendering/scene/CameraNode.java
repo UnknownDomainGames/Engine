@@ -6,7 +6,6 @@ import org.joml.Vector3fc;
 
 public class CameraNode extends Node {
 
-    private static final Vector3fc UP_VECTOR = new Vector3f(0, 1, 0);
     private static final Vector3fc FRONT_VECTOR = new Vector3f(0, 0, -1);
 
     private final FixedCamera camera;
