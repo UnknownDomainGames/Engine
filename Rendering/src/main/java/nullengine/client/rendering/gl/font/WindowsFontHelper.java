@@ -98,7 +98,7 @@ public final class WindowsFontHelper implements FontHelper {
             try {
                 loadNativeFontInfo(fontFile);
             } catch (Exception e) {
-                LOGGER.debug("Cannot load local font.", e);
+                LOGGER.debug("Cannot load local font. Path: " + fontFile, e);
             }
         }
     }
