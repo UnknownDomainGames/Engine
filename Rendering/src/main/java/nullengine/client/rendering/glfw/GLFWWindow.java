@@ -6,6 +6,8 @@ import nullengine.client.rendering.display.Monitor;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.*;
 import org.apache.commons.lang3.SystemUtils;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.MemoryUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -48,6 +50,7 @@ public class GLFWWindow implements Window {
     private final List<CursorEnterCallback> cursorEnterCallbacks = new LinkedList<>();
     private final List<FramebufferSizeCallback> framebufferSizeCallbacks = new LinkedList<>();
     private final List<WindowPosCallback> windowPosCallbacks = new LinkedList<>();
+    private final List<DropCallback> dropCallbacks = new LinkedList<>();
 
     public GLFWWindow() {
         this("");
@@ -255,6 +258,16 @@ public class GLFWWindow implements Window {
     }
 
     @Override
+    public void addDropCallback(DropCallback callback) {
+        dropCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeDropCallback(DropCallback callback) {
+        dropCallbacks.remove(callback);
+    }
+
+    @Override
     public void swapBuffers() {
         glfwSwapBuffers(pointer);
 
@@ -428,6 +441,14 @@ public class GLFWWindow implements Window {
         glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> {
             monitor.refreshMonitor();
         }));
+        glfwSetDropCallback(pointer, (window, count, names) -> {
+            String[] files = new String[count];
+            PointerBuffer buffer = MemoryUtil.memPointerBuffer(names, count);
+            for (int i = 0; i < count; i++) {
+                files[i] = MemoryUtil.memUTF8(buffer.get());
+            }
+            dropCallbacks.forEach(callback -> callback.invoke(this, files));
+        });
         // TODO: callbacks
 //        glfwSetCharModsCallback()
 //        glfwSetDropCallback()
