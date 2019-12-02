@@ -75,9 +75,14 @@ public class GLFWWindow implements Window {
 
     @Override
     public void setPos(int x, int y) {
+        glfwSetWindowPos(pointer, x, y);
+        setPotInternal(x, y);
+    }
+
+    private void setPotInternal(int x, int y) {
         posX = x;
         posY = y;
-        glfwSetWindowPos(pointer, x, y);
+        windowPosCallbacks.forEach(callback -> callback.invoke(this, x, y));
     }
 
     @Override
@@ -114,10 +119,10 @@ public class GLFWWindow implements Window {
 
     @Override
     public void setSize(int width, int height) {
-        resize();
+        resize(width, height);
     }
 
-    protected void resize() {
+    private void resize() {
         resize(windowWidth, windowHeight);
     }
 
@@ -125,6 +130,7 @@ public class GLFWWindow implements Window {
         resized = true;
         windowWidth = width;
         windowHeight = height;
+        framebufferSizeCallbacks.forEach(callback -> callback.invoke(this, width, height));
     }
 
     @Override
@@ -416,14 +422,9 @@ public class GLFWWindow implements Window {
         glfwSetWindowFocusCallback(pointer, (window, focused) -> windowFocusCallbacks.forEach(callback -> callback.invoke(this, focused)));
         glfwSetCursorEnterCallback(pointer, (window, entered) -> cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
         glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> {
-            posX = xpos;
-            posY = ypos;
-            windowPosCallbacks.forEach(callback -> callback.invoke(this, xpos, ypos));
+            setPotInternal(xpos, ypos);
         });
-        glfwSetFramebufferSizeCallback(pointer, (window, width, height) -> {
-            resize(width, height);
-            framebufferSizeCallbacks.forEach(callback -> callback.invoke(this, width, height));
-        });
+        glfwSetFramebufferSizeCallback(pointer, (window, width, height) -> resize(width, height));
         glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> {
             monitor.refreshMonitor();
         }));
@@ -433,7 +434,7 @@ public class GLFWWindow implements Window {
 //        glfwSetWindowSizeCallback()
 //        glfwSetWindowIconifyCallback()
 //        glfwSetWindowMaximizeCallback()
-//        glfwSetWindowRefreshCallback()
+//        glfwSetWindowRefreshCallback();
 //        glfwSetWindowContentScaleCallback()
     }
 
