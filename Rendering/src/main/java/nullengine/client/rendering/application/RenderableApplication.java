@@ -1,8 +1,11 @@
 package nullengine.client.rendering.application;
 
 import nullengine.client.rendering.RenderEngine;
+import nullengine.client.rendering.util.FrameTicker;
 
 public abstract class RenderableApplication {
+
+    protected FrameTicker ticker = new FrameTicker(this::doRender);
 
     public static void launch(String[] args) {
         StackTraceElement[] stackElements = Thread.currentThread().getStackTrace();
@@ -20,17 +23,18 @@ public abstract class RenderableApplication {
     }
 
     public static void launch(Class<? extends RenderableApplication> clazz, String[] args) {
+        RenderableApplication application;
         try {
-            RenderableApplication application = clazz.getConstructor().newInstance();
-            RenderEngine.start(new RenderEngine.Settings());
-            application.onStarted();
+            application = clazz.getConstructor().newInstance();
+            RenderEngine.start(new RenderEngine.Settings().swapBuffersListener((manager, partial) -> application.onPreSwapBuffers()));
         } catch (Exception e) {
             throw new RuntimeException("Cannot launch renderable application " + clazz, e);
         }
+        application.onInitialized();
+        application.ticker.run();
     }
 
-    protected void onStarted() {
-
+    protected void onInitialized() {
     }
 
     protected void onStopping() {
@@ -41,11 +45,25 @@ public abstract class RenderableApplication {
 
     }
 
+    protected void onPreRender() {
+    }
+
+    protected void onPreSwapBuffers() {
+    }
+
+    protected void onPostRender() {
+    }
+
+    protected final void doRender() {
+        onPreRender();
+        RenderEngine.doRender(ticker.getTpf());
+        onPostRender();
+    }
+
     public synchronized final void stop() {
         onStopping();
-
+        ticker.stop();
         RenderEngine.stop();
-
         onStopped();
     }
 }
