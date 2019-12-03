@@ -72,6 +72,10 @@ public class SingleBufferVAO implements Renderable {
         uploadData(buffer.getBackingBuffer(), buffer.getVertexCount());
     }
 
+    public void uploadData(ByteBuffer buffer) {
+        uploadData(buffer, buffer.limit() / vertexFormat.getStride());
+    }
+
     public void uploadData(ByteBuffer buffer, int vertexCount) {
         vbo.uploadData(buffer);
         this.vertexCount = vertexCount;
