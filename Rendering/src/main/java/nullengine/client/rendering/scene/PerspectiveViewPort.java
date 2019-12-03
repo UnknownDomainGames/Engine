@@ -100,6 +100,13 @@ public class PerspectiveViewPort implements ViewPort {
         isClearStencil = clearStencil;
     }
 
+    @Override
+    public void setClearMask(boolean color, boolean depth, boolean stencil) {
+        setClearColor(color);
+        setClearDepth(depth);
+        setClearStencil(stencil);
+    }
+
     private void onFrameSizeChanged() {
         aspect = (float) width / height;
         onProjectionChanged();

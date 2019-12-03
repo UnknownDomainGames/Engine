@@ -34,6 +34,8 @@ public interface ViewPort {
 
     void setClearStencil(boolean clearStencil);
 
+    void setClearMask(boolean color, boolean depth, boolean stencil);
+
     Camera getCamera();
 
     void setCamera(Camera camera);
