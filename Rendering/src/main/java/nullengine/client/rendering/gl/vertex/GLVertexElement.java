@@ -64,6 +64,10 @@ public class GLVertexElement {
         return normalized;
     }
 
+    public void apply(int index) {
+        apply(index, 0, 0);
+    }
+
     public void apply(int index, int stride, long offset) {
         GL20.glVertexAttribPointer(index, size, type.glId, normalized, stride, offset);
     }
