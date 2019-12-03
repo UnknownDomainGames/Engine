@@ -1,6 +1,7 @@
 package nullengine.client.rendering.scene;
 
 import nullengine.client.rendering.camera.Camera;
+import nullengine.client.rendering.camera.FixedCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.FramebufferSizeCallback;
 import nullengine.util.Color;
@@ -25,7 +26,7 @@ public class PerspectiveViewPort implements ViewPort {
     private float zNear = 0.01f;
     private float zFar = Float.MAX_VALUE;
 
-    private Camera camera;
+    private Camera camera = new FixedCamera();
 
     private Matrix4f projectionMatrix = new Matrix4f();
     private Matrix4f projectionViewMatrix = new Matrix4f();
