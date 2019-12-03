@@ -57,10 +57,12 @@ public class GLRenderManager implements RenderManager {
         return primaryWindow;
     }
 
+    @Override
     public ViewPort getPrimaryViewPort() {
         return primaryViewPort;
     }
 
+    @Override
     public void setPrimaryViewPort(ViewPort viewPort) {
         this.primaryViewPort = viewPort;
     }
@@ -72,22 +74,29 @@ public class GLRenderManager implements RenderManager {
 
     @Override
     public void render(float partial) {
-//        forwardPipeline.render(this, primaryViewPort, partial);
+        renderViewPort(primaryViewPort, partial);
         listener.onPreSwapBuffers(this, partial);
         primaryWindow.swapBuffers();
+    }
+
+    private void renderViewPort(ViewPort viewPort, float partial) {
+        if (viewPort == null) return;
+        forwardPipeline.render(this, viewPort, partial);
     }
 
     @Override
     public void init() {
         this.renderingThread = Thread.currentThread();
+        initWindow();
+        initGL();
+        initRenderPipeline();
+        initFont();
+    }
 
+    private void initWindow() {
         GLFWContext.initialize();
         primaryWindow = new GLFWWindow();
         primaryWindow.init();
-
-        initGL();
-        initFont();
-        initRenderPipeline();
     }
 
     private void initGL() {
@@ -113,15 +122,15 @@ public class GLRenderManager implements RenderManager {
         LOGGER.info("------------------------------");
     }
 
+    private void initRenderPipeline() {
+//        forwardPipeline = new ForwardPipeline();
+    }
+
     private void initFont() {
         var fontHelper = new WindowsFontHelper();
         FontHelper.Internal.setInstance(fontHelper);
         Font defaultFont = new Font("Arial", "Regular", 16);
         fontHelper.setDefaultFont(defaultFont);
-    }
-
-    private void initRenderPipeline() {
-//        forwardPipeline = new ForwardPipeline();
     }
 
     @Override
