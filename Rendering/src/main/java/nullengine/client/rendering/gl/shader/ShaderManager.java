@@ -19,12 +19,14 @@ public class ShaderManager {
     private static final Map<String, MutableObjectValue<ShaderProgram>> registeredShader = new HashMap<>();
     private static final JsonParser JSON_PARSER = new JsonParser();
 
+    private static final ShaderResourceLoader loader = new ClassPathShaderResourceLoader();
+
     public static ObservableObjectValue<ShaderProgram> register(String name) {
         return registeredShader.computeIfAbsent(name, key -> new SimpleMutableObjectValue<>(load(name))).toUnmodifiable();
     }
 
     private static ShaderProgram load(String name) {
-        var input = ShaderProgram.class.getResourceAsStream("/shader/" + name + ".json");
+        var input = loader.openStream(name + ".json");
         if (input == null) {
             throw new RuntimeException();
         }
