@@ -215,7 +215,7 @@ public class Node {
             controller.update(this, partial);
         }
 
-        if (!children.isEmpty()) {
+        if (children != null && !children.isEmpty()) {
             children.forEach(child -> child.doUpdate(partial));
         }
     }
