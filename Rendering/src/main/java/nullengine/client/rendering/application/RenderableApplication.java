@@ -1,11 +1,19 @@
 package nullengine.client.rendering.application;
 
 import nullengine.client.rendering.RenderEngine;
+import nullengine.client.rendering.management.RenderManager;
+import nullengine.client.rendering.scene.PerspectiveViewPort;
+import nullengine.client.rendering.scene.Scene;
 import nullengine.client.rendering.util.FrameTicker;
 
 public abstract class RenderableApplication {
 
-    protected FrameTicker ticker = new FrameTicker(this::doRender);
+    protected final FrameTicker ticker = new FrameTicker(this::doRender);
+
+    protected RenderManager manager;
+
+    protected PerspectiveViewPort mainViewPort;
+    protected Scene mainScene;
 
     public static void launch(String[] args) {
         StackTraceElement[] stackElements = Thread.currentThread().getStackTrace();
@@ -26,23 +34,19 @@ public abstract class RenderableApplication {
         RenderableApplication application;
         try {
             application = clazz.getConstructor().newInstance();
-            RenderEngine.start(new RenderEngine.Settings().swapBuffersListener((manager, partial) -> application.onPreSwapBuffers()));
         } catch (Exception e) {
             throw new RuntimeException("Cannot launch renderable application " + clazz, e);
         }
-        application.onInitialized();
-        application.ticker.run();
+        application.doInitialize();
     }
 
     protected void onInitialized() {
     }
 
     protected void onStopping() {
-
     }
 
     protected void onStopped() {
-
     }
 
     protected void onPreRender() {
@@ -54,7 +58,20 @@ public abstract class RenderableApplication {
     protected void onPostRender() {
     }
 
-    protected final void doRender() {
+    private void doInitialize() {
+        RenderEngine.start(new RenderEngine.Settings().swapBuffersListener((manager, partial) -> onPreSwapBuffers()));
+        manager = RenderEngine.getManager();
+        mainViewPort = new PerspectiveViewPort();
+        mainViewPort.setClearMask(true, true, true);
+        mainViewPort.bindWindow(manager.getPrimaryWindow());
+        mainScene = new Scene();
+        mainViewPort.setScene(mainScene);
+        manager.setPrimaryViewPort(mainViewPort);
+        onInitialized();
+        ticker.run();
+    }
+
+    private void doRender() {
         onPreRender();
         RenderEngine.doRender(ticker.getTpf());
         onPostRender();
