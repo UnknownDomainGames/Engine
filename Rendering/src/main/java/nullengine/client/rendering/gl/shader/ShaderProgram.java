@@ -62,46 +62,46 @@ public class ShaderProgram implements BindingProxy {
 
     @Override
     public void setUniform(String location, int value) {
-        Uniform.setUniform(getUniformLocation(location), value);
+        Uniforms.setUniform(getUniformLocation(location), value);
     }
 
     @Override
     public void setUniform(String location, float value) {
-        Uniform.setUniform(getUniformLocation(location), value);
+        Uniforms.setUniform(getUniformLocation(location), value);
     }
 
     @Override
     public void setUniform(String location, boolean value) {
-        Uniform.setUniform(getUniformLocation(location), value);
+        Uniforms.setUniform(getUniformLocation(location), value);
     }
 
     @Override
     public void setUniform(String location, Vector2fc value) {
-        Uniform.setUniform(getUniformLocation(location), value);
+        Uniforms.setUniform(getUniformLocation(location), value);
     }
 
     @Override
     public void setUniform(String location, Vector3fc value) {
-        Uniform.setUniform(getUniformLocation(location), value);
+        Uniforms.setUniform(getUniformLocation(location), value);
     }
 
     @Override
     public void setUniform(String location, Vector4fc value) {
-        Uniform.setUniform(getUniformLocation(location), value);
+        Uniforms.setUniform(getUniformLocation(location), value);
     }
 
     @Override
     public void setUniform(String location, Matrix3fc value) {
-        Uniform.setUniform(getUniformLocation(location), value);
+        Uniforms.setUniform(getUniformLocation(location), value);
     }
 
     @Override
     public void setUniform(String location, Matrix4fc value) {
-        Uniform.setUniform(getUniformLocation(location), value);
+        Uniforms.setUniform(getUniformLocation(location), value);
     }
 
     @Override
     public void setUniform(String location, Matrix4fc[] values) {
-        Uniform.setUniform(getUniformLocation(location), values);
+        Uniforms.setUniform(getUniformLocation(location), values);
     }
 }

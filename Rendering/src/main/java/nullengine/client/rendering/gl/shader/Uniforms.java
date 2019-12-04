@@ -7,7 +7,7 @@ import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class Uniform {
+public class Uniforms {
 
     public static void setUniform(int location, int value) {
         glUniform1i(location, value);
