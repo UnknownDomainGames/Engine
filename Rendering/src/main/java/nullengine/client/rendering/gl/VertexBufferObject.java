@@ -17,6 +17,11 @@ public class VertexBufferObject {
         id = GL15.glGenBuffers();
     }
 
+    public VertexBufferObject(GLBufferType type, GLBufferUsage usage, ByteBuffer buffer) {
+        this(type, usage);
+        uploadData(buffer);
+    }
+
     public GLBufferType getType() {
         return type;
     }
