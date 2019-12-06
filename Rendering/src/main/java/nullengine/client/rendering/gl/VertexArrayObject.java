@@ -11,8 +11,6 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-
 public class VertexArrayObject {
 
     private int id;
@@ -104,12 +102,13 @@ public class VertexArrayObject {
     public static final class VertexAttribute {
         private GLVertexElement element;
         private Object value;
+        private VertexAttributeType type;
 
         private boolean needUpdate = false;
 
         public VertexAttribute(GLVertexElement element, Object value) {
             this.element = element;
-            this.value = value;
+            setValue(value);
         }
 
         public GLVertexElement getElement() {
@@ -125,18 +124,26 @@ public class VertexArrayObject {
         }
 
         public void setValue(Object value) {
+            Object oldValue = this.value;
             this.value = value;
             needUpdate = true;
+
+            if (oldValue.getClass() == value.getClass()) return;
+
+            for (var type : VertexAttributeType.values()) {
+                if (!type.is(value.getClass())) continue;
+                this.type = type;
+                return;
+            }
         }
 
         public void apply(int index) {
             if (!needUpdate) return;
             needUpdate = false;
-            if (value instanceof VertexBufferObject) {
-                ((VertexBufferObject) value).bind();
-                glEnableVertexAttribArray(index);
-                element.apply(index);
-            }
+            if (value != null)
+                type.apply(index, element, value);
+            else
+                type.applyDefault(index, element);
         }
 
         public void dispose() {
