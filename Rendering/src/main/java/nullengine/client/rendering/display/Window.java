@@ -30,6 +30,8 @@ public interface Window extends WindowAttributes {
 
     void setTitle(String title);
 
+    void setWindowIcon(WindowIcons icons);
+
     Cursor getCursor();
 
     void close();

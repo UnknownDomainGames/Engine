@@ -1,9 +1,6 @@
 package nullengine.client.rendering.glfw;
 
-import nullengine.client.rendering.display.Cursor;
-import nullengine.client.rendering.display.DisplayMode;
-import nullengine.client.rendering.display.Monitor;
-import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.display.*;
 import nullengine.client.rendering.display.callback.*;
 import org.apache.commons.lang3.SystemUtils;
 import org.lwjgl.PointerBuffer;
@@ -150,6 +147,11 @@ public class GLFWWindow implements Window {
     public void setTitle(String title) {
         this.title = title;
         glfwSetWindowTitle(pointer, title);
+    }
+
+    @Override
+    public void setWindowIcon(WindowIcons icons){
+        glfwSetWindowIcon(pointer, icons.getIcons());
     }
 
     @Override
