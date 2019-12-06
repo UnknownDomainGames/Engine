@@ -2,8 +2,7 @@ package nullengine.client.rendering.gl;
 
 import org.lwjgl.opengl.GL15;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
+import java.nio.*;
 
 public class VertexBufferObject {
 
@@ -39,7 +38,27 @@ public class VertexBufferObject {
         GL15.glBufferData(type.gl, buffer, usage.gl);
     }
 
+    public void uploadData(ShortBuffer buffer) {
+        bind();
+        GL15.glBufferData(type.gl, buffer, usage.gl);
+    }
+
+    public void uploadData(IntBuffer buffer) {
+        bind();
+        GL15.glBufferData(type.gl, buffer, usage.gl);
+    }
+
+    public void uploadData(LongBuffer buffer) {
+        bind();
+        GL15.glBufferData(type.gl, buffer, usage.gl);
+    }
+
     public void uploadData(FloatBuffer buffer) {
+        bind();
+        GL15.glBufferData(type.gl, buffer, usage.gl);
+    }
+
+    public void uploadData(DoubleBuffer buffer) {
         bind();
         GL15.glBufferData(type.gl, buffer, usage.gl);
     }
@@ -49,7 +68,27 @@ public class VertexBufferObject {
         GL15.glBufferSubData(type.gl, offset, buffer);
     }
 
+    public void uploadSubData(ShortBuffer buffer, long offset) {
+        bind();
+        GL15.glBufferSubData(type.gl, offset, buffer);
+    }
+
+    public void uploadSubData(IntBuffer buffer, long offset) {
+        bind();
+        GL15.glBufferSubData(type.gl, offset, buffer);
+    }
+
+    public void uploadSubData(LongBuffer buffer, long offset) {
+        bind();
+        GL15.glBufferSubData(type.gl, offset, buffer);
+    }
+
     public void uploadSubData(FloatBuffer buffer, long offset) {
+        bind();
+        GL15.glBufferSubData(type.gl, offset, buffer);
+    }
+
+    public void uploadSubData(DoubleBuffer buffer, long offset) {
         bind();
         GL15.glBufferSubData(type.gl, offset, buffer);
     }
