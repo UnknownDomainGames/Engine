@@ -63,6 +63,31 @@ public class VertexBufferObject {
         GL15.glBufferData(type.gl, buffer, usage.gl);
     }
 
+    public void uploadData(short[] data) {
+        bind();
+        GL15.glBufferData(type.gl, data, usage.gl);
+    }
+
+    public void uploadData(int[] data) {
+        bind();
+        GL15.glBufferData(type.gl, data, usage.gl);
+    }
+
+    public void uploadData(long[] data) {
+        bind();
+        GL15.glBufferData(type.gl, data, usage.gl);
+    }
+
+    public void uploadData(float[] data) {
+        bind();
+        GL15.glBufferData(type.gl, data, usage.gl);
+    }
+
+    public void uploadData(double[] data) {
+        bind();
+        GL15.glBufferData(type.gl, data, usage.gl);
+    }
+
     public void uploadSubData(ByteBuffer buffer, long offset) {
         bind();
         GL15.glBufferSubData(type.gl, offset, buffer);
@@ -91,6 +116,31 @@ public class VertexBufferObject {
     public void uploadSubData(DoubleBuffer buffer, long offset) {
         bind();
         GL15.glBufferSubData(type.gl, offset, buffer);
+    }
+
+    public void uploadSubData(short[] data, long offset) {
+        bind();
+        GL15.glBufferSubData(type.gl, offset, data);
+    }
+
+    public void uploadSubData(int[] data, long offset) {
+        bind();
+        GL15.glBufferSubData(type.gl, offset, data);
+    }
+
+    public void uploadSubData(long[] data, long offset) {
+        bind();
+        GL15.glBufferSubData(type.gl, offset, data);
+    }
+
+    public void uploadSubData(float[] data, long offset) {
+        bind();
+        GL15.glBufferSubData(type.gl, offset, data);
+    }
+
+    public void uploadSubData(double[] data, long offset) {
+        bind();
+        GL15.glBufferSubData(type.gl, offset, data);
     }
 
     public void dispose() {
