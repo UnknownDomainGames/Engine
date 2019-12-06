@@ -31,7 +31,7 @@ public class ShaderManager {
             throw new RuntimeException();
         }
 
-        List<Shader> shaders = new ArrayList<>();
+        List<CompiledShader> shaders = new ArrayList<>();
         try (var reader = new InputStreamReader(input)) {
             var jsonShader = JSON_PARSER.parse(reader).getAsJsonObject();
             if (jsonShader.has("Vertex")) {
@@ -44,16 +44,16 @@ public class ShaderManager {
             throw new RuntimeException(e);
         }
 
-        return new ShaderProgram(shaders.toArray(new Shader[0]));
+        return new ShaderProgram(shaders.toArray(new CompiledShader[0]));
     }
 
-    private static Shader loadShader(ShaderType type, String name) {
+    private static CompiledShader loadShader(ShaderType type, String name) {
         var input = ShaderProgram.class.getResourceAsStream("/shader/" + name);
         if (input == null) {
             throw new RuntimeException();
         }
         try (input) {
-            return Shader.compile(type, IOUtils.toString(input, StandardCharsets.UTF_8));
+            return CompiledShader.compile(type, IOUtils.toString(input, StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

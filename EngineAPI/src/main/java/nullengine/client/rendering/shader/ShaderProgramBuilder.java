@@ -2,7 +2,7 @@ package nullengine.client.rendering.shader;
 
 import nullengine.Platform;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.rendering.gl.shader.Shader;
+import nullengine.client.rendering.gl.shader.CompiledShader;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.shader.ShaderType;
 
@@ -25,13 +25,13 @@ public class ShaderProgramBuilder {
     }
 
     public ShaderProgram build() {
-        Shader[] loadedShaders = new Shader[shaders.size()];
+        CompiledShader[] loadedShaders = new CompiledShader[shaders.size()];
         int i = 0;
         for (Map.Entry<ShaderType, AssetURL> entry : shaders.entrySet()) {
             var shaderPath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(entry.getValue().toFileLocation());
             if (shaderPath.isPresent()) {
                 try {
-                    loadedShaders[i] = Shader.compile(entry.getKey(), Files.readString(shaderPath.get()));
+                    loadedShaders[i] = CompiledShader.compile(entry.getKey(), Files.readString(shaderPath.get()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

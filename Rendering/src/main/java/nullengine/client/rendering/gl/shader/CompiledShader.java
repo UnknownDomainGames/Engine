@@ -5,24 +5,24 @@ import org.slf4j.LoggerFactory;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class Shader {
+public class CompiledShader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Shader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CompiledShader.class);
 
     private int id;
     private final ShaderType type;
 
-    public static Shader compile(ShaderType type, String source) {
+    public static CompiledShader compile(ShaderType type, String source) {
         int id = glCreateShader(type.gl);
         glShaderSource(id, source);
         glCompileShader(id);
         if (glGetShaderi(id, GL_COMPILE_STATUS) == 0) {
             LOGGER.warn("Error compiling shader code for {}, log: {}", source, glGetShaderInfoLog(id));
         }
-        return new Shader(id, type);
+        return new CompiledShader(id, type);
     }
 
-    private Shader(int id, ShaderType type) {
+    private CompiledShader(int id, ShaderType type) {
         this.id = id;
         this.type = type;
     }

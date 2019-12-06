@@ -14,10 +14,10 @@ public class ShaderProgram implements BindingProxy {
 
     private int id;
 
-    public ShaderProgram(Shader... shaders) {
+    public ShaderProgram(CompiledShader... shaders) {
         this.id = glCreateProgram();
 
-        for (Shader shader : shaders) {
+        for (CompiledShader shader : shaders) {
             glAttachShader(this.id, shader.getId());
         }
 
@@ -33,7 +33,7 @@ public class ShaderProgram implements BindingProxy {
         }
         glUseProgram(0);
 
-        for (Shader shader : shaders) {
+        for (CompiledShader shader : shaders) {
             shader.dispose();
         }
     }
