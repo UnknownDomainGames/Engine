@@ -59,6 +59,9 @@ public class VertexArrayObject {
         for (int i = 0; i < attributes.length; i++) {
             attributes[i].apply(i);
         }
+        if(indices != null) {
+            indices.bind();
+        }
     }
 
     public void bind() {
