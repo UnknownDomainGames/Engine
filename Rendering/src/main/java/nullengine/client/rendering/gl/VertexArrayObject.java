@@ -128,7 +128,7 @@ public class VertexArrayObject {
             this.value = value;
             needUpdate = true;
 
-            if (oldValue.getClass() == value.getClass()) return;
+            if (oldValue != null && oldValue.getClass() == value.getClass()) return;
 
             for (var type : VertexAttributeType.values()) {
                 if (!type.is(value.getClass())) continue;
@@ -140,10 +140,11 @@ public class VertexArrayObject {
         public void apply(int index) {
             if (!needUpdate) return;
             needUpdate = false;
-            if (value != null)
+            if (value != null) {
                 type.apply(index, element, value);
-            else
+            } else {
                 type.applyDefault(index, element);
+            }
         }
 
         public void dispose() {
@@ -177,7 +178,7 @@ public class VertexArrayObject {
 
         public Builder newBufferAttribute(GLVertexElement element, GLBufferUsage usage, ByteBuffer buffer) {
             attributes.add(new VertexAttribute(element, new VertexBufferObject(GLBufferType.ARRAY_BUFFER, usage, buffer)));
-            if (element.getUsage() == GLVertexElement.Usage.POSITION && indices != null) {
+            if (element.getUsage() == GLVertexElement.Usage.POSITION && indices == null) {
                 vertexCount = buffer.limit() / element.getBytes();
             }
             return this;
