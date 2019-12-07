@@ -16,6 +16,10 @@ public class Geometry extends Node {
         this(null, StandardRenderTypes.OPAQUE);
     }
 
+    public Geometry(Renderable renderable) {
+        this(renderable, StandardRenderTypes.OPAQUE);
+    }
+
     public Geometry(Renderable renderable, RenderType renderType) {
         this.renderable = renderable;
         this.renderType = renderType;

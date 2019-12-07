@@ -81,7 +81,7 @@ public class GLRenderManager implements RenderManager {
 
     private void renderViewPort(ViewPort viewPort, float partial) {
         if (viewPort == null) return;
-//        forwardPipeline.render(this, viewPort, partial);
+        forwardPipeline.render(this, viewPort, partial);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class GLRenderManager implements RenderManager {
     }
 
     private void initRenderPipeline() {
-//        forwardPipeline = new ForwardPipeline();
+        forwardPipeline = new ForwardPipeline();
     }
 
     private void initFont() {

@@ -18,13 +18,13 @@ import org.lwjgl.opengl.GL11;
 public class ForwardPipeline implements RenderPipeline {
 
     private final ObservableObjectValue<ShaderProgram> shader;
-    private final GLFrameBuffer frameBuffer;
+//    private final GLFrameBuffer frameBuffer;
 
     private final Material material;
 
     public ForwardPipeline() {
         shader = ShaderManager.register("forward");
-        frameBuffer = GLFrameBuffer.createRGB16FDepth24Stencil8FrameBuffer(1, 1);
+//        frameBuffer = GLFrameBuffer.createRGB16FDepth24Stencil8FrameBuffer(1, 1);
 
         material = new Material()
                 .setAmbientColor(new Vector3f(0.5f))
@@ -46,18 +46,26 @@ public class ForwardPipeline implements RenderPipeline {
         scene.getLightManager().bind(viewPort.getCamera(), shader);
         material.bind(shader, "material");
 
+        shader.setUniform("u_ProjMatrix", viewPort.getProjectionMatrix());
+        shader.setUniform("u_ViewMatrix", viewPort.getViewMatrix());
+
         RenderQueue renderQueue = scene.getRenderQueue();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glCullFace(GL11.GL_BACK);
+//        GL11.glEnable(GL11.GL_CULL_FACE);
+//        GL11.glCullFace(GL11.GL_BACK);
+
         renderQueue.render(manager, StandardRenderTypes.OPAQUE, new RenderTypeHandler() {
             @Override
             public void render(RenderManager manager, GeometryList geometries) {
-                geometries.forEach(geometry -> geometry.getRenderable().render());
+                geometries.forEach(geometry -> {
+                    shader.setUniform("u_ModelMatrix", geometry.getWorldTransform().toTransformMatrix());
+                    geometry.getRenderable().render();
+                });
             }
         });
+
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDisable(GL11.GL_CULL_FACE);
+//        GL11.glDisable(GL11.GL_CULL_FACE);
     }
 
     private void setupViewPort(ViewPort viewPort) {
@@ -86,7 +94,7 @@ public class ForwardPipeline implements RenderPipeline {
         GL11.glClear(clearMask);
     }
 
-    public GLFrameBuffer getFrameBuffer() {
-        return frameBuffer;
-    }
+//    public GLFrameBuffer getFrameBuffer() {
+//        return frameBuffer;
+//    }
 }
