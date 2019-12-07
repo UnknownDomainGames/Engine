@@ -1,6 +1,6 @@
 package nullengine.client.rendering.scene;
 
-import nullengine.client.rendering.camera.FixedCamera;
+import nullengine.client.rendering.camera.FreeCamera;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -8,14 +8,14 @@ public class CameraNode extends Node {
 
     private static final Vector3fc FRONT_VECTOR = new Vector3f(0, 0, -1);
 
-    private final FixedCamera camera;
+    private final FreeCamera camera;
     private final Vector3f lookAt = new Vector3f();
 
-    public CameraNode(FixedCamera camera) {
+    public CameraNode(FreeCamera camera) {
         this.camera = camera;
     }
 
-    public FixedCamera getCamera() {
+    public FreeCamera getCamera() {
         return camera;
     }
 
