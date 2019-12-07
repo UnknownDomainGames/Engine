@@ -127,8 +127,6 @@ public class AssimpModel {
                 GL30.glEnableVertexAttribArray(6);
             }
 
-
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
             var mat = materials.get(mesh.getMaterialName());
             mat.getEngineMaterial().bind(ShaderManager.instance().getUsingShader(), "material");
 

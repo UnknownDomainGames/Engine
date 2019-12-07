@@ -103,7 +103,6 @@ public class ChunkRenderer {
         glEnable(GL11.GL_CULL_FACE);
 //        GL11.glCullFace(GL11.GL_BACK);
 //        glFrontFace(GL_CCW);
-        glEnable(GL11.GL_TEXTURE_2D);
         glEnable(GL11.GL_DEPTH_TEST);
 
         shader.setUniform("u_ProjMatrix", context.getProjectionMatrix());
@@ -118,9 +117,7 @@ public class ChunkRenderer {
     }
 
     private void postRender() {
-        glBindTexture(GL_TEXTURE_2D, 0);
         glDisable(GL11.GL_CULL_FACE);
-        glDisable(GL11.GL_TEXTURE_2D);
         glDisable(GL11.GL_DEPTH_TEST);
         glDisable(GL11.GL_BLEND);
     }

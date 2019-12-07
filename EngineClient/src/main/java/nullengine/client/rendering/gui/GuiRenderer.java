@@ -101,7 +101,6 @@ public class GuiRenderer implements Renderer {
     }
 
     private void startRenderFlag() {
-        glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_LINE_SMOOTH);
@@ -114,7 +113,6 @@ public class GuiRenderer implements Renderer {
     }
 
     private void endRender() {
-        glDisable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);
         glDisable(GL_LINE_SMOOTH);
         glDisable(GL_POINT_SMOOTH);
