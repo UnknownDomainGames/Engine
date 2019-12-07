@@ -24,7 +24,7 @@ public class PerspectiveViewPort implements ViewPort {
     private float fovAngle = 60;
     private float aspect;
     private float zNear = 0.01f;
-    private float zFar = Float.MAX_VALUE;
+    private float zFar = 1000f;
 
     private Camera camera = new FixedCamera();
 
