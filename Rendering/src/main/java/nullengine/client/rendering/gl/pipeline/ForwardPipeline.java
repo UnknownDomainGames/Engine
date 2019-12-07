@@ -5,14 +5,12 @@ import nullengine.client.rendering.gl.shader.ShaderManager;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.texture.GLFrameBuffer;
 import nullengine.client.rendering.management.RenderManager;
-import nullengine.client.rendering.material.Material;
 import nullengine.client.rendering.queue.GeometryList;
 import nullengine.client.rendering.queue.RenderQueue;
 import nullengine.client.rendering.queue.RenderTypeHandler;
 import nullengine.client.rendering.queue.StandardRenderTypes;
 import nullengine.client.rendering.scene.ViewPort;
 import nullengine.util.Color;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
 public class ForwardPipeline implements RenderPipeline {
@@ -20,17 +18,17 @@ public class ForwardPipeline implements RenderPipeline {
     private final ObservableObjectValue<ShaderProgram> shader;
 //    private final GLFrameBuffer frameBuffer;
 
-    private final Material material;
+//    private final Material material;
 
     public ForwardPipeline() {
-        shader = ShaderManager.register("forward");
+        shader = ShaderManager.register("example");
 //        frameBuffer = GLFrameBuffer.createRGB16FDepth24Stencil8FrameBuffer(1, 1);
 
-        material = new Material()
-                .setAmbientColor(new Vector3f(0.5f))
-                .setDiffuseColor(new Vector3f(1.0f))
-                .setSpecularColor(new Vector3f(1.0f))
-                .setShininess(32f);
+//        material = new Material()
+//                .setAmbientColor(new Vector3f(0.5f))
+//                .setDiffuseColor(new Vector3f(1.0f))
+//                .setSpecularColor(new Vector3f(1.0f))
+//                .setShininess(32f);
     }
 
     @Override
@@ -43,8 +41,8 @@ public class ForwardPipeline implements RenderPipeline {
         if (scene == null) return;
 
         scene.doUpdate(partial);
-        scene.getLightManager().bind(viewPort.getCamera(), shader);
-        material.bind(shader, "material");
+//        scene.getLightManager().bind(viewPort.getCamera(), shader);
+//        material.bind(shader, "material");
 
         shader.setUniform("u_ProjMatrix", viewPort.getProjectionMatrix());
         shader.setUniform("u_ViewMatrix", viewPort.getViewMatrix());

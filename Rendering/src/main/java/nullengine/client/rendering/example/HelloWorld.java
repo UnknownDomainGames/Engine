@@ -23,8 +23,7 @@ public class HelloWorld extends RenderableApplication {
             if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) stop();
         });
 
-//        mainViewPort.setClearColor(Color.RED);
-        Geometry geometry = new Geometry(new Line(new Vector3f(100, 100, -1), new Vector3f(-100, 100, -1), Color.WHITE));
+        Geometry geometry = new Geometry(new Line(new Vector3f(1, 0.5f, -10), new Vector3f(-1, -0.5f, -10), Color.WHITE));
         mainScene.getChildren().add(geometry);
         System.out.println("Ready!");
     }
