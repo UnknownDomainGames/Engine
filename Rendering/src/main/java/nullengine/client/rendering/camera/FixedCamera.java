@@ -15,6 +15,7 @@ public class FixedCamera implements Camera {
     private ChangeListener changeListener;
 
     public FixedCamera() {
+        this(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
     }
 
     public FixedCamera(Vector3fc position, Vector3fc frontVector) {
