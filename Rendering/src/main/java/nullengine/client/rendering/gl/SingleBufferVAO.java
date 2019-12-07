@@ -90,6 +90,7 @@ public class SingleBufferVAO implements Renderable {
         GL11.glDrawArrays(drawMode.gl, 0, this.vertexCount);
     }
 
+    @Override
     public void dispose() {
         if (id != 0) {
             vbo.dispose();
