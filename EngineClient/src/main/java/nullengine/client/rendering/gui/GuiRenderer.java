@@ -14,6 +14,7 @@ import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.shader.ShaderType;
+import nullengine.client.rendering.gl.texture.GLFrameBuffer;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
 import org.joml.Matrix4f;
@@ -80,6 +81,8 @@ public class GuiRenderer implements Renderer {
     }
 
     private void startRender() {
+        GLFrameBuffer.bindScreenFrameBuffer();
+
         if (window.isResized()) {
             glViewport(0, 0, window.getWidth(), window.getHeight());
         }
