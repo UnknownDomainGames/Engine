@@ -5,11 +5,11 @@ import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
-public class FreeCamera  implements Camera {
+public class FreeCamera implements Camera {
 
-    private Vector3fc position;
-    private Vector3fc lookAt;
-    private Vector3fc frontVector;
+    private final Vector3f position = new Vector3f();
+    private final Vector3f lookAt = new Vector3f();
+    private final Vector3f frontVector = new Vector3f();
     private final Matrix4f viewMatrix = new Matrix4f();
 
     private ChangeListener changeListener;
@@ -23,24 +23,29 @@ public class FreeCamera  implements Camera {
     }
 
     public void look(Vector3fc position, Vector3fc frontVector) {
-        this.position = position;
-        this.frontVector = frontVector;
-        this.lookAt = position.add(frontVector, new Vector3f());
+        this.position.set(position);
+        this.frontVector.set(frontVector);
+        this.lookAt.set(position).add(frontVector);
         this.viewMatrix.setLookAt(this.position, this.lookAt, UP_VECTOR);
         if (changeListener != null) changeListener.onChanged(this);
     }
 
     public void lookAt(Vector3fc position, Vector3fc lookAt) {
-        this.position = position;
-        this.frontVector = lookAt.sub(position, new Vector3f());
-        this.lookAt = lookAt;
+        this.position.set(position);
+        this.frontVector.set(lookAt).sub(position);
+        this.lookAt.set(lookAt);
         this.viewMatrix.setLookAt(this.position, this.lookAt, UP_VECTOR);
         if (changeListener != null) changeListener.onChanged(this);
     }
 
-    public void moveAt(Vector3fc vector){
-        lookAt(this.position.add(vector,new Vector3f()),this.lookAt);
+    public void move(Vector3fc offset) {
+        lookAt(this.position.add(offset), this.lookAt);
     }
+
+    public void moveTo(Vector3fc position) {
+        lookAt(position, this.lookAt);
+    }
+
     @Override
     public Vector3fc getPosition() {
         return position;

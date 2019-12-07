@@ -27,22 +27,22 @@ public class HelloWorld extends RenderableApplication {
             if (camera instanceof FreeCamera) {
                 switch (key) {
                     case GLFW.GLFW_KEY_S:
-                        ((FreeCamera) camera).moveAt(new Vector3f(0, 0, 0.02f));
+                        ((FreeCamera) camera).move(new Vector3f(0, 0, 0.02f));
                         break;
                     case GLFW.GLFW_KEY_W:
-                        ((FreeCamera) camera).moveAt(new Vector3f(0, 0, -0.02f));
+                        ((FreeCamera) camera).move(new Vector3f(0, 0, -0.02f));
                         break;
                     case GLFW.GLFW_KEY_A:
-                        ((FreeCamera) camera).moveAt(new Vector3f( -0.02f,0, 0));
+                        ((FreeCamera) camera).move(new Vector3f(-0.02f, 0, 0));
                         break;
                     case GLFW.GLFW_KEY_D:
-                        ((FreeCamera) camera).moveAt(new Vector3f( 0.02f,0, 0));
+                        ((FreeCamera) camera).move(new Vector3f(0.02f, 0, 0));
                         break;
                     case GLFW.GLFW_KEY_SPACE:
-                        ((FreeCamera) camera).moveAt(new Vector3f(0, 0.02f,0));
+                        ((FreeCamera) camera).move(new Vector3f(0, 0.02f, 0));
                         break;
                     case GLFW.GLFW_KEY_LEFT_SHIFT:
-                        ((FreeCamera) camera).moveAt(new Vector3f(0, -0.02f, 0));
+                        ((FreeCamera) camera).move(new Vector3f(0, -0.02f, 0));
                         break;
 
                 }
