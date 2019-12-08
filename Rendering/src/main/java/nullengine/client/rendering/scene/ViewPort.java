@@ -1,6 +1,6 @@
 package nullengine.client.rendering.scene;
 
-import nullengine.client.rendering.camera.Camera;
+import nullengine.client.rendering.camera.FreeCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.util.Color;
 import org.joml.FrustumIntersection;
@@ -36,9 +36,9 @@ public interface ViewPort {
 
     void setClearMask(boolean color, boolean depth, boolean stencil);
 
-    Camera getCamera();
+    FreeCamera getCamera();
 
-    void setCamera(Camera camera);
+    void setCamera(FreeCamera camera);
 
     Matrix4fc getProjectionMatrix();
 
