@@ -10,9 +10,6 @@ import org.joml.Vector3fc;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-
 public class Box implements Renderable {
 
     private Vector3fc from;
@@ -20,6 +17,16 @@ public class Box implements Renderable {
     private Color color;
 
     private VertexArrayObject mesh;
+
+    public Box(Vector3fc center, float size, Color color) {
+        this(center, size, size, size, color);
+    }
+
+    public Box(Vector3fc center, float xLength, float yLength, float zLength, Color color) {
+        this(new Vector3f(center).sub(xLength / 2, yLength / 2, zLength / 2),
+                new Vector3f(center).add(xLength / 2, yLength / 2, zLength / 2),
+                color);
+    }
 
     public Box(Vector3fc from, Vector3fc to, Color color) {
         this.from = from;
@@ -31,34 +38,34 @@ public class Box implements Renderable {
     public void refreshMesh() {
         var min = new Vector3f();
         var max = new Vector3f();
-        from.min(to,min);
-        from.max(to,max);
+        from.min(to, min);
+        from.max(to, max);
         DirectRenderer instance = DirectRenderer.getInstance();
         GLBuffer buffer = instance.getBuffer();
         buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION);
         buffer.pos(min).endVertex();
-        buffer.pos(min.x,min.y,max.z).endVertex();
-        buffer.pos(min.x,max.y,min.z).endVertex();
-        buffer.pos(min.x,max.y,max.z).endVertex();
-        buffer.pos(max.x,min.y,min.z).endVertex();
-        buffer.pos(max.x,min.y,max.z).endVertex();
-        buffer.pos(max.x,max.y,min.z).endVertex();
+        buffer.pos(min.x, min.y, max.z).endVertex();
+        buffer.pos(min.x, max.y, min.z).endVertex();
+        buffer.pos(min.x, max.y, max.z).endVertex();
+        buffer.pos(max.x, min.y, min.z).endVertex();
+        buffer.pos(max.x, min.y, max.z).endVertex();
+        buffer.pos(max.x, max.y, min.z).endVertex();
         buffer.pos(max).endVertex();
         buffer.finish();
         var indices = BufferUtils.createIntBuffer(36);
         indices.put(new int[]{
-                0,1,2,
-                2,1,3,
-                1,3,7,
-                7,5,1,
-                1,5,0,
-                0,5,4,
-                4,5,6,
-                6,5,7,
-                3,2,6,
-                6,7,3,
-                2,0,4,
-                4,6,2
+                0, 1, 2,
+                2, 1, 3,
+                1, 3, 7,
+                7, 5, 1,
+                1, 5, 0,
+                0, 5, 4,
+                4, 5, 6,
+                6, 5, 7,
+                3, 2, 6,
+                6, 7, 3,
+                2, 0, 4,
+                4, 6, 2
         });
         indices.flip();
         mesh = VertexArrayObject.builder().drawMode(GLDrawMode.TRIANGLES)
