@@ -11,7 +11,7 @@ import java.lang.management.ManagementFactory;
 
 public class HelloWorld extends RenderableApplication {
 
-    FlyCameraInput cameraInput;
+    private FlyCameraInput cameraInput;
 
     public static void main(String[] args) {
         System.out.println(ManagementFactory.getRuntimeMXBean().getPid());
