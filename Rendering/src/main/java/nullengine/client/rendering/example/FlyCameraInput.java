@@ -4,19 +4,19 @@ import nullengine.client.rendering.camera.FreeCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.CursorCallback;
 import nullengine.client.rendering.display.callback.KeyCallback;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 public class FlyCameraInput {
 
-    private FreeCamera camera;
+    private final FreeCamera camera;
 
     private float moveSpeed = 1f;
     private float mouseSensitivity = 0.001f;
 
     private Vector3f motion = new Vector3f();
-    private Quaternionf rotation = new Quaternionf();
+    private float yaw;
+    private float pitch;
 
     private Window window;
     private final KeyCallback keyCallback = (window, key, scancode, action, mods) -> onKeyInput(key, action);
@@ -47,8 +47,10 @@ public class FlyCameraInput {
             this.window.removeCursorCallback(cursorCallback);
         }
         this.window = window;
-        window.addKeyCallback(keyCallback);
-        window.addCursorCallback(cursorCallback);
+        if (window != null) {
+            window.addKeyCallback(keyCallback);
+            window.addCursorCallback(cursorCallback);
+        }
     }
 
     public void setMoveSpeed(float moveSpeed) {
@@ -64,10 +66,10 @@ public class FlyCameraInput {
         if (motion.lengthSquared() == 0) {
             position = new Vector3f(camera.getPosition());
         } else {
-            position = motion.normalize(new Vector3f()).mul(moveSpeed * tpf).rotate(rotation).add(camera.getPosition());
+            position = motion.normalize(new Vector3f()).mul(moveSpeed * tpf).rotateY(yaw).add(camera.getPosition());
         }
 
-        camera.look(position, new Vector3f(0, 0, -1).rotate(rotation));
+        camera.look(position, new Vector3f(0, 0, -1).rotateX(pitch).rotateY(yaw));
     }
 
     private void onKeyInput(int key, int action) {
@@ -114,10 +116,11 @@ public class FlyCameraInput {
     private double lastCursorY;
 
     private void onCursorInput(double x, double y) {
-        double deltaCursorX = x - lastCursorX;
-        double deltaCursorY = y - lastCursorY;
+        float deltaCursorX = (float) (lastCursorX - x); // Not x - lastCursorX
+        float deltaCursorY = (float) (lastCursorY - y);
         lastCursorX = x;
         lastCursorY = y;
-        rotation.rotateY((float) (deltaCursorX * mouseSensitivity));
+        pitch = Math.min(89.9f, Math.max(-89.9f, pitch + deltaCursorY * mouseSensitivity));
+        yaw += deltaCursorX * mouseSensitivity;
     }
 }
