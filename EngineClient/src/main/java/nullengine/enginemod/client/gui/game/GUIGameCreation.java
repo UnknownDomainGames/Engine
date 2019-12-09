@@ -5,11 +5,10 @@ import nullengine.client.game.GameClientStandalone;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.component.Button;
 import nullengine.client.gui.component.Label;
-import nullengine.client.gui.layout.BorderPane;
+import nullengine.client.gui.layout.FlowPane;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
-import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.i18n.I18n;
 import nullengine.client.rendering.font.Font;
@@ -20,15 +19,16 @@ import nullengine.util.Files2;
 
 import java.nio.file.Path;
 
-public class GUIGameCreation extends BorderPane {
+public class GUIGameCreation extends FlowPane {
 
     public GUIGameCreation() {
+        anchor().set(Pos.CENTER);
+
         VBox vBox = new VBox();
         vBox.spacing().set(5);
         vBox.alignment().setValue(Pos.HPos.CENTER);
-        center().setValue(vBox);
+        getChildren().add(vBox);
         this.background().setValue(new Background(Color.fromRGB(0xAAAAAA)));
-        vBox.padding().setValue(new Insets(100, 0, 0, 0));
 
         Label text = new Label();
         text.text().setValue(I18n.translate("engine.gui.game_creation.text.name"));
