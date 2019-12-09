@@ -3,6 +3,7 @@ package nullengine.client.rendering.texture;
 import nullengine.Platform;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.asset.exception.AssetLoadException;
+import nullengine.client.rendering.image.BufferedImage;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -14,7 +15,7 @@ public class TextureAtlasRegionImpl implements TextureAtlasRegion {
 
     private final AssetURL url;
 
-    private Texture2DBuffer data;
+    private BufferedImage data;
     private TextureAtlasBuilder.UVResult uv;
 
     public TextureAtlasRegionImpl(AssetURL url) {
@@ -35,7 +36,7 @@ public class TextureAtlasRegionImpl implements TextureAtlasRegion {
             var bytes = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
             channel.read(bytes);
             bytes.flip();
-            data = Texture2DBuffer.create(bytes);
+            data = BufferedImage.create(bytes);
         } catch (IOException e) {
             throw new AssetLoadException("Cannot load texture because of catching exception. Path: " + url.toFileLocation("texture", ".png"));
         }
@@ -51,7 +52,7 @@ public class TextureAtlasRegionImpl implements TextureAtlasRegion {
     }
 
     @Override
-    public Texture2DBuffer getData() {
+    public BufferedImage getData() {
         return data;
     }
 

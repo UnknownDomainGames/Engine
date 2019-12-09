@@ -1,12 +1,13 @@
 package nullengine.client.rendering.texture;
 
 import nullengine.client.asset.AssetURL;
+import nullengine.client.rendering.image.BufferedImage;
 
 public interface TextureAtlasRegion {
 
     AssetURL getUrl();
 
-    Texture2DBuffer getData();
+    BufferedImage getData();
 
     float getMinU();
 
