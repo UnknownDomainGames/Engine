@@ -1,4 +1,4 @@
-package nullengine.client.rendering.texture;
+package nullengine.client.rendering.image;
 
 import nullengine.util.Color;
 import org.lwjgl.stb.STBImage;
@@ -10,13 +10,13 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.system.MemoryUtil.*;
 
-public class Texture2DBuffer {
+public class BufferedImage {
 
     private int width, height;
     private int stride;
     private ByteBuffer backingBuffer;
 
-    public static Texture2DBuffer create(ByteBuffer buffer) throws IOException {
+    public static BufferedImage create(ByteBuffer buffer) throws IOException {
         if (!buffer.isDirect()) {
             ByteBuffer direct = ByteBuffer.allocateDirect(buffer.capacity());
             direct.put(buffer);
@@ -33,7 +33,7 @@ public class Texture2DBuffer {
             if (bitmapBuffer == null) {
                 throw new IOException("File buffer cannot be load as pixel buffer by STBImage");
             }
-            var tex = new Texture2DBuffer(width, height);
+            var tex = new BufferedImage(width, height);
             tex.getBuffer().put(bitmapBuffer);
             tex.getBuffer().flip();
             bitmapBuffer.clear();
@@ -41,22 +41,22 @@ public class Texture2DBuffer {
         }
     }
 
-    public Texture2DBuffer(int size) {
+    public BufferedImage(int size) {
         this(size, size);
     }
 
-    public Texture2DBuffer(int width, int height) {
+    public BufferedImage(int width, int height) {
         this.width = width;
         this.height = height;
         initBuffer();
     }
 
-    public Texture2DBuffer(int width, int height, int initColor) {
+    public BufferedImage(int width, int height, int initColor) {
         this(width, height);
         fill(initColor);
     }
 
-    public Texture2DBuffer(int width, int height, ByteBuffer buffer) {
+    public BufferedImage(int width, int height, ByteBuffer buffer) {
         this.width = width;
         this.height = height;
         this.backingBuffer = buffer;
@@ -95,11 +95,11 @@ public class Texture2DBuffer {
         setTexture(x, y, buffer, 0, 0, width, height);
     }
 
-    public void setTexture(int x, int y, Texture2DBuffer texture) {
+    public void setTexture(int x, int y, BufferedImage texture) {
         setTexture(x, y, texture.getBuffer(), texture.getWidth(), texture.getHeight());
     }
 
-    public void setTexture(int x, int y, Texture2DBuffer texture, int u, int v) {
+    public void setTexture(int x, int y, BufferedImage texture, int u, int v) {
         setTexture(x, y, texture.getBuffer(), u, v, texture.getWidth(), texture.getHeight());
     }
 

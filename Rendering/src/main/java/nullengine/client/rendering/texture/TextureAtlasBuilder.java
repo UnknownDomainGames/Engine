@@ -1,10 +1,11 @@
 package nullengine.client.rendering.texture;
 
+import nullengine.client.rendering.image.BufferedImage;
 import nullengine.client.rendering.math.Math2;
 
 public class TextureAtlasBuilder {
 
-    private Texture2DBuffer texture;
+    private BufferedImage texture;
     private int size;
 
     private Node root;
@@ -15,11 +16,11 @@ public class TextureAtlasBuilder {
 
     public TextureAtlasBuilder(int size) {
         this.size = size;
-        this.texture = new Texture2DBuffer(size);
+        this.texture = new BufferedImage(size);
         this.root = new Node(size);
     }
 
-    public Texture2DBuffer getTexture() {
+    public BufferedImage getTexture() {
         return texture;
     }
 
@@ -27,7 +28,7 @@ public class TextureAtlasBuilder {
         return size;
     }
 
-    public UVResult add(Texture2DBuffer texture) {
+    public UVResult add(BufferedImage texture) {
         // TODO: support texture size isn't power of two.
         var regionSize = Math2.ceilPowerOfTwo(Math.max(texture.getWidth(), texture.getHeight()));
         var node = root.requestNode(texture, regionSize);
@@ -47,7 +48,7 @@ public class TextureAtlasBuilder {
             newRoot.setChild(Node.TOP_LEFT, root);
             root = newRoot;
         }
-        var newTexture = new Texture2DBuffer(size);
+        var newTexture = new BufferedImage(size);
         newTexture.setTexture(0, 0, texture);
         texture = newTexture;
     }
@@ -167,7 +168,7 @@ public class TextureAtlasBuilder {
             child.resizeUv(minU, minV, maxU, maxV);
         }
 
-        private Node requestNode(Texture2DBuffer texture, int requestSize) {
+        private Node requestNode(BufferedImage texture, int requestSize) {
             if (this.size == requestSize && !hasChildren()) {
                 return this;
             }

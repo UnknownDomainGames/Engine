@@ -1,7 +1,7 @@
 package nullengine.client.rendering.gl.texture;
 
+import nullengine.client.rendering.image.BufferedImage;
 import nullengine.client.rendering.texture.Texture2D;
-import nullengine.client.rendering.texture.Texture2DBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
@@ -58,7 +58,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
         return of(pixels, width, height);
     }
 
-    public static GLTexture2D of(Texture2DBuffer pixels) {
+    public static GLTexture2D of(BufferedImage pixels) {
         return of(pixels.getBuffer(), pixels.getWidth(), pixels.getHeight());
     }
 
@@ -94,7 +94,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
         glBindTexture(GL_TEXTURE_2D, id);
     }
 
-    public void upload(Texture2DBuffer texture) {
+    public void upload(BufferedImage texture) {
         bind();
         glTexImage2D(texture.getBuffer(), texture.getWidth(), texture.getHeight());
     }
@@ -113,12 +113,12 @@ public final class GLTexture2D implements Texture2D, GLTexture {
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
 
-    public void upload(int offsetX, int offsetY, Texture2DBuffer buffer) {
+    public void upload(int offsetX, int offsetY, BufferedImage buffer) {
         bind();
         glTexSubImage2D(offsetX, offsetY, buffer);
     }
 
-    public void glTexSubImage2D(int offsetX, int offsetY, Texture2DBuffer buffer) {
+    public void glTexSubImage2D(int offsetX, int offsetY, BufferedImage buffer) {
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         GL11.glTexSubImage2D(GL_TEXTURE_2D, level, offsetX, offsetY, buffer.getWidth(), buffer.getHeight(), format, type, buffer.getBuffer());
         if (mipmap) glGenerateMipmap(GL_TEXTURE_2D);
@@ -243,7 +243,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
             return build(null, 0, 0);
         }
 
-        public GLTexture2D build(Texture2DBuffer texture) {
+        public GLTexture2D build(BufferedImage texture) {
             return build(texture.getBuffer(), texture.getWidth(), texture.getHeight());
         }
 

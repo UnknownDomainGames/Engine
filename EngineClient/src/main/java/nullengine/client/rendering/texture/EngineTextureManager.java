@@ -5,6 +5,7 @@ import nullengine.client.asset.exception.AssetLoadException;
 import nullengine.client.asset.reloading.AssetReloadListener;
 import nullengine.client.asset.source.AssetSourceManager;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
+import nullengine.client.rendering.image.BufferedImage;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
     private AssetSourceManager sourceManager;
 
     public EngineTextureManager() {
-        this.whiteTexture = GLTexture2D.of(new Texture2DBuffer(2, 2, 0xffffffff));
+        this.whiteTexture = GLTexture2D.of(new BufferedImage(2, 2, 0xffffffff));
         this.defaultAtlas = new TextureAtlasImpl();
     }
 
@@ -85,7 +86,7 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
             var buffer = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
             channel.read(buffer);
             buffer.flip();
-            return GLTexture2D.of(Texture2DBuffer.create(buffer));
+            return GLTexture2D.of(BufferedImage.create(buffer));
         } catch (IOException e) {
             throw new AssetLoadException("Cannot load texture because catch exception. Path: " + url.toFileLocation("texture", ".png"), e);
         }
