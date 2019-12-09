@@ -22,7 +22,7 @@ import java.nio.file.Path;
 public class GUIGameCreation extends FlowPane {
 
     public GUIGameCreation() {
-        anchor().set(Pos.CENTER);
+        alignment().set(Pos.CENTER);
 
         VBox vBox = new VBox();
         vBox.spacing().set(5);

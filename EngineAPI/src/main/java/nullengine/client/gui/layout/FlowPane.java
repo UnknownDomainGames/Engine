@@ -4,31 +4,37 @@ import com.github.mouse0w0.observable.value.MutableFloatValue;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.util.Utils;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FlowPane extends Pane {
 
-    public enum Direction{
+    public enum Orientation {
         HORIZONTAL, VERTICAL
     }
 
-    private final MutableObjectValue<Pos> anchor = new SimpleMutableObjectValue<>(Pos.TOP_LEFT);
-    private final MutableObjectValue<Direction> direction = new SimpleMutableObjectValue<>(Direction.HORIZONTAL);
+    private final MutableObjectValue<Pos> alignment = new SimpleMutableObjectValue<>(Pos.TOP_LEFT);
+    private final MutableObjectValue<Orientation> orientation = new SimpleMutableObjectValue<>(Orientation.HORIZONTAL);
     private final MutableFloatValue spacing = new SimpleMutableFloatValue();
 
     public FlowPane(){
-        anchor.addChangeListener((observable, oldValue, newValue) -> this.needsLayout());
-        direction.addChangeListener((observable, oldValue, newValue) -> this.needsLayout());
+        alignment.addChangeListener((observable, oldValue, newValue) -> this.needsLayout());
+        orientation.addChangeListener((observable, oldValue, newValue) -> this.needsLayout());
     }
 
-    public MutableObjectValue<Pos> anchor() {
-        return anchor;
+    public MutableObjectValue<Pos> alignment() {
+        return alignment;
     }
 
-    public MutableObjectValue<Direction> direction() {
-        return direction;
+    public MutableObjectValue<Orientation> orientation() {
+        return orientation;
     }
 
     public MutableFloatValue spacing() {
@@ -39,40 +45,127 @@ public class FlowPane extends Pane {
     protected void layoutChildren() {
         Insets padding = padding().getValue();
         float spacing = spacing().get();
-        float x = anchor.getValue().getHpos() == Pos.HPos.RIGHT ? width().get() - padding.getRight() : padding.getLeft();
-        float y = anchor.getValue().getVpos() == Pos.VPos.BOTTOM ? height().get() - padding.getBottom() :padding.getTop();
-        float lineW = 0;
-        float lineH = 0;
+        List<Pair<List<Node>,Float>> groups = new ArrayList<>();
+        var max = 0f;
+        var tmpsize = 0f;
+        var tmpgroup = new MutablePair<List<Node>,Float>(new ArrayList<>(), 0f);
         for (var child : getChildren()) {
             float pw = Utils.prefWidth(child);
             float ph = Utils.prefHeight(child);
-            float x1 = anchor.getValue().getHpos() == Pos.HPos.RIGHT ? x - pw : x;
-            float y1 = anchor.getValue().getVpos() == Pos.VPos.BOTTOM ? y - ph : y;
-            if(direction.getValue() == Direction.HORIZONTAL){
-                lineH = Math.max(lineH, ph);
-                if(x1 < 0 || x1 + pw > width().get() - padding.getRight()){
-                    y += lineH + spacing;
-                    x = anchor.getValue().getHpos() == Pos.HPos.RIGHT ? width().get() - padding.getRight() : padding.getLeft();
-                    x1 = anchor.getValue().getHpos() == Pos.HPos.RIGHT ? x - pw : x;
-                    y1 = anchor.getValue().getVpos() == Pos.VPos.BOTTOM ? y - ph : y;
-                    lineH = ph;
+            if(orientation.get() == Orientation.VERTICAL){
+                if(tmpsize + ph > height().get()){
+                    tmpsize = ph + spacing;
+                    tmpgroup.setRight(max);
+                    groups.add(tmpgroup);
+                    max = pw;
+                    tmpgroup = new MutablePair<>(new ArrayList<>(), 0f);
                 }
-            }else{
-                lineW = Math.max(lineW, pw);
-                if(y1 < 0 || y1 + ph > height().get() - padding.getBottom()){
-                    x += lineW + spacing;
-                    y = anchor.getValue().getVpos() == Pos.VPos.BOTTOM ? height().get() - padding.getBottom() : padding.getTop();
-                    x1 = anchor.getValue().getHpos() == Pos.HPos.RIGHT ? x - pw : x;
-                    y1 = anchor.getValue().getVpos() == Pos.VPos.BOTTOM ? y - ph : y;
-                    lineW = pw;
+                else{
+                    max = Math.max(max, pw);
+                    tmpsize += ph + spacing;
                 }
-            }
-            layoutInArea(child, x1, y1, pw, ph);
-            if(direction.getValue() == Direction.HORIZONTAL) {
-                x = x1 + (anchor.getValue().getHpos() == Pos.HPos.RIGHT ? -spacing : spacing + pw);
             }
             else{
-                y = y1 + (anchor.getValue().getVpos() == Pos.VPos.BOTTOM ? -spacing : spacing + ph);
+                if(tmpsize + pw > width().get()){
+                    tmpsize = pw + spacing;
+                    tmpgroup.setRight(max);
+                    groups.add(tmpgroup);
+                    max = ph;
+                    tmpgroup = new MutablePair<>(new ArrayList<>(), 0f);
+                }
+                else{
+                    max = Math.max(max, ph);
+                    tmpsize += pw + spacing;
+                }
+            }
+            tmpgroup.left.add(child);
+        }
+        tmpgroup.setRight(max);
+        groups.add(tmpgroup);
+        var size = Math.min(orientation.get() == Orientation.VERTICAL ? width().get() : height().get(), groups.stream().mapToDouble(Pair::getRight).reduce(0, Double::sum));
+        float x;
+        float y;
+        switch (alignment.getValue().getHpos()) {
+            case RIGHT:
+                x = width().get() - padding.getRight();
+                break;
+            case CENTER:
+                if(orientation.get() == Orientation.VERTICAL) {
+                    x = (float) (Math.max((width().get() - padding.getLeft() - padding.getRight()) - size, 0) / 2 + padding.getLeft());
+                }
+                else {
+                    x = 0; // Handle x in groups
+                }
+                break;
+            default:
+                x = padding.getLeft();
+                break;
+        }
+        switch (alignment.getValue().getVpos()) {
+            case BOTTOM:
+                y = height().get() - padding.getBottom();
+                break;
+            case CENTER:
+                if(orientation.get() == Orientation.HORIZONTAL) {
+                    y = (float) (Math.max(height().get() - padding.getTop() - padding.getBottom() - size, 0) / 2 + padding.getTop());
+                }
+                else {
+                    y = 0; // Handle y in groups
+                }
+                break;
+            default:
+                y = padding.getTop();
+                break;
+        }
+        float lineW = 0;
+        float lineH = 0;
+        for (Pair<List<Node>, Float> group : groups) {
+            if(orientation.get() == Orientation.VERTICAL){
+                y = (float) (Math.max(height().get() - padding.getTop() - padding.getBottom() - group.getLeft().stream().mapToDouble(Node::prefHeight).reduce(0,Double::sum) - spacing * (group.getLeft().size() - 1), 0) / 2 + padding.getTop());
+            } else {
+                x = (float) (Math.max(width().get() - padding.getLeft() - padding.getRight() - group.getLeft().stream().mapToDouble(Node::prefWidth).reduce(0,Double::sum) - spacing * (group.getLeft().size() - 1), 0) / 2 + padding.getLeft());
+            }
+            for (var child : group.getLeft()) {
+                float pw = Utils.prefWidth(child);
+                float ph = Utils.prefHeight(child);
+                float x1;
+                if (alignment.getValue().getHpos() == Pos.HPos.RIGHT) {
+                    x1 = x - pw;
+                } else if(alignment.get().getHpos() == Pos.HPos.CENTER) {
+                    if(orientation.get() == Orientation.HORIZONTAL){
+                        x1 = x;
+                    }
+                    else{
+                        x1 = x + (group.getRight() - pw) / 2;
+                    }
+                } else {
+                    x1 = x;
+                }
+                float y1;
+                if (alignment.getValue().getVpos() == Pos.VPos.BOTTOM) {
+                    y1 = y - ph;
+                } else if(alignment.get().getVpos() == Pos.VPos.CENTER) {
+                    if(orientation.get() == Orientation.VERTICAL){
+                        y1 = y;
+                    }
+                    else{
+                        y1 = y + (group.getRight() - ph) / 2;
+                    }
+                } else {
+                    y1 = y;
+                }
+                layoutInArea(child, x1, y1, pw, ph);
+                if(orientation.getValue() == Orientation.HORIZONTAL) {
+                    x = x1 + (alignment.getValue().getHpos() == Pos.HPos.RIGHT ? -spacing : spacing + pw);
+                }
+                else{
+                    y = y1 + (alignment.getValue().getVpos() == Pos.VPos.BOTTOM ? -spacing : spacing + ph);
+                }
+            }
+            if(orientation.get() == Orientation.VERTICAL){
+                x += group.getRight();
+            } else {
+                y += group.getRight();
             }
         }
     }
