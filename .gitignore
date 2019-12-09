@@ -454,3 +454,6 @@ manifest.mf
 
 # null engine run path
 run/
+
+# log
+*.log

@@ -106,13 +106,20 @@ public final class WindowsFontHelper implements FontHelper {
     private List<Path> findLocalTTFonts() {
         try {
             Predicate<Path> typefaceFilter = path -> path.getFileName().toString().endsWith(".ttf") || path.getFileName().toString().endsWith(".ttc");
-            var fonts = Files.walk(Path.of("C:\\Windows\\Fonts").toAbsolutePath())
-                    .filter(typefaceFilter)
-                    .collect(Collectors.toList());
-            var userFontDir = Path.of(System.getProperty("user.home"), "Appdata", "Local", "Microsoft", "Windows", "Fonts");
-            if (userFontDir.toFile().exists()) {
-                var userFont = Files.walk(userFontDir).filter(typefaceFilter).collect(Collectors.toList());
-                fonts.addAll(userFont);
+            List<Path> fonts;
+            if (System.getProperty("os.name").toLowerCase().equals("linux")) {
+                fonts = Files.walk(Path.of("/usr/share/fonts/WindowsFonts").toAbsolutePath())
+                        .filter(typefaceFilter)
+                        .collect(Collectors.toList());
+            } else {
+                fonts = Files.walk(Path.of("C:\\Windows\\Fonts").toAbsolutePath())
+                        .filter(typefaceFilter)
+                        .collect(Collectors.toList());
+                var userFontDir = Path.of(System.getProperty("user.home"), "Appdata", "Local", "Microsoft", "Windows", "Fonts");
+                if (userFontDir.toFile().exists()) {
+                    var userFont = Files.walk(userFontDir).filter(typefaceFilter).collect(Collectors.toList());
+                    fonts.addAll(userFont);
+                }
             }
             return fonts;
         } catch (IOException e) {
