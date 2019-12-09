@@ -13,24 +13,31 @@ import java.util.List;
 
 public abstract class Container extends Component {
 
-    private final List<Component> childrenBackingList = new LinkedList<>();
-    private final ObservableList<Component> children = ObservableCollections.observableList(childrenBackingList);
+    private final ObservableList<Component> children = ObservableCollections.observableList(new LinkedList<>());
     private final ObservableList<Component> unmodifiableChildren = ObservableCollections.unmodifiableObservableList(children);
 
     public Container() {
         children.addChangeListener(change -> {
             for (Component component : change.getAdded()) {
+                Container oldParent = component.parent.get();
+                if (oldParent != null) {
+                    component.scene.unbindBidirectional(oldParent.scene);
+                }
                 component.parent.setValue(this);
+                component.scene.bindBidirectional(Container.this.scene);
                 component.parent.addChangeListener(new ValueChangeListener<>() {
                     @Override
                     public void onChanged(ObservableValue<? extends Container> observable, Container oldValue, Container newValue) {
-                        childrenBackingList.remove(component);
+                        children.remove(component);
                         observable.removeChangeListener(this);
                     }
                 });
             }
             for (Component component : change.getRemoved()) {
-                component.parent.setValue(null);
+                if (component.parent.get() == this) {
+                    component.scene.unbindBidirectional(Container.this.scene);
+                    component.parent.set(null);
+                }
             }
             needsLayout();
         });
@@ -93,7 +100,7 @@ public abstract class Container extends Component {
     public void needsLayout() {
         layoutState = LayoutState.NEED_LAYOUT;
         for (Component child : children) {
-            if(child instanceof Container) {
+            if (child instanceof Container) {
                 ((Container) child).needsLayout();
             }
         }
@@ -177,7 +184,7 @@ public abstract class Container extends Component {
         closeRequired = true;
     }
 
-    public void doClosing(GuiManager manager){
+    public void doClosing(GuiManager manager) {
         manager.closeScreen();
     }
 }

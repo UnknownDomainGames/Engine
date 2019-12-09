@@ -11,10 +11,10 @@ import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.client.rendering.display.callback.*;
 import nullengine.event.Event;
+import org.apache.commons.lang3.Validate;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Scene {
@@ -22,7 +22,7 @@ public class Scene {
     private final MutableFloatValue width = new SimpleMutableFloatValue();
     private final MutableFloatValue height = new SimpleMutableFloatValue();
 
-    private Container root;
+    private final MutableObjectValue<Container> root = new SimpleMutableObjectValue<>();
 
     public Scene(Container root) {
         setRoot(root);
@@ -50,39 +50,48 @@ public class Scene {
         updateRoot();
     }
 
+    public ObservableObjectValue<Container> root() {
+        return root.toUnmodifiable();
+    }
+
     public Container getRoot() {
-        return root;
+        return root.get();
     }
 
     public void setRoot(Container root) {
-        this.root = Objects.requireNonNull(root);
+        Validate.notNull(root);
+        if (root.parent().get() != null) {
+            throw new IllegalStateException(root + " is already inside a container and cannot be set as root");
+        }
+
+        this.root.set(root);
         root.scene.setValue(this);
-        // FIXME:
-        root.getChildrenRecursive().forEach(component -> component.scene.setValue(this));
         updateRoot();
     }
 
     private void updateRoot() {
-        this.root.width.set(getWidth() - root.x().get());
-        this.root.height.set(getHeight() - root.y().get());
-        this.root.needsLayout();
+        Container root = this.root.get();
+        root.width.set(getWidth() - root.x().get());
+        root.height.set(getHeight() - root.y().get());
+        root.needsLayout();
     }
 
-    public void hookToEventBus(){
+    public void hookToEventBus() {
         Platform.getEngine().getEventBus().addListener(this::eventBusHook);
     }
 
-    public void unhookFromEventBus(){
+    public void unhookFromEventBus() {
 //        Platform.getEngine().getEventBus().
     }
 
-    private void eventBusHook(Event event){
+    private void eventBusHook(Event event) {
+        var root = this.root.get();
         root.handleEvent(event);
         root.getChildrenRecursive().forEach(component -> component.handleEvent(event));
     }
 
     public void update() {
-        root.layout();
+        root.get().layout();
     }
 
     private double lastPosX = Double.NaN;
@@ -92,6 +101,7 @@ public class Scene {
         var xCorr = xPos / window.getContentScaleX();
         var yCorr = yPos / window.getContentScaleY();
         if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
+            var root = this.root.get();
             var old = root.getPointingComponents((float) lastPosX, (float) lastPosY);
             var n = root.getPointingComponents((float) xCorr, (float) yCorr);
             List<Component> moveEvent = old.stream().filter(n::contains).collect(Collectors.toList());
@@ -108,6 +118,7 @@ public class Scene {
 
     public final MouseCallback mouseCallback = (window, button, action, modifiers) -> {
         if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
+            var root = this.root.get();
             var list = root.getPointingComponents((float) lastPosX, (float) lastPosY);
             if (action == GLFW.GLFW_PRESS) {
                 root.getUnmodifiableChildren().stream().filter(c -> c.focused.get()).forEach(component -> component.handleEvent(new FocusEvent.FocusLostEvent(component)));
@@ -132,6 +143,7 @@ public class Scene {
     };
 
     public final KeyCallback keyCallback = (window, key, scanCode, action, mods) -> {
+        var root = this.root.get();
         var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
         a.add(root);
         for (Component component : a) {
@@ -146,6 +158,6 @@ public class Scene {
     };
 
     public final CharCallback charCallback = (window, c) -> {
-        root.getChildrenRecursive().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(component, c)));
+        root.get().getChildrenRecursive().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(component, c)));
     };
 }
