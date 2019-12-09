@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import static org.lwjgl.system.MemoryUtil.*;
+
 public class Texture2DBuffer {
 
     private int width, height;
@@ -79,12 +81,12 @@ public class Texture2DBuffer {
 
     public void setTexture(int x, int y, ByteBuffer texture, int u, int v, int width, int height) {
         int bufferStride = width * Integer.BYTES;
+        long textureAddress = memAddress(texture, 0);
+        long address = memAddress(backingBuffer, 0);
         for (int i = 0; i < height; i++) {
-            backingBuffer.position((y + i) * this.stride + x * Integer.BYTES);
-            texture.position((u + i) * bufferStride + v * Integer.BYTES);
-            for (int j = 0; j < width; j++) {
-                backingBuffer.putInt(texture.getInt());
-            }
+            memCopy(textureAddress + (y + i) * this.stride + x * Integer.BYTES,
+                    address + (u + i) * bufferStride + v * Integer.BYTES,
+                    width * Integer.BYTES);
         }
         backingBuffer.clear();
     }
@@ -113,11 +115,13 @@ public class Texture2DBuffer {
         return backingBuffer.getInt(y * stride + x * Integer.BYTES);
     }
 
+    public void fill(Color color) {
+        fill(color.toRGBA());
+    }
+
     public void fill(int color) {
         backingBuffer.position(0);
-        for (int i = 0; i < width * height; i++) {
-            backingBuffer.putInt(color);
-        }
+        memSet(backingBuffer.asIntBuffer(), color);
         backingBuffer.clear();
     }
 }
