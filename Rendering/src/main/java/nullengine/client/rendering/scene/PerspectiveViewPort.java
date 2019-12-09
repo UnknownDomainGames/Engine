@@ -13,7 +13,7 @@ public class PerspectiveViewPort implements ViewPort {
     private int width;
     private int height;
 
-    private Scene scene;
+    private Scene3D scene;
 
     private Color clearColor = new Color(0f, 0f, 0f, 1f);
     private boolean isClearColor;
@@ -50,12 +50,12 @@ public class PerspectiveViewPort implements ViewPort {
     }
 
     @Override
-    public Scene getScene() {
+    public Scene3D getScene() {
         return scene;
     }
 
     @Override
-    public void setScene(Scene scene) {
+    public void setScene(Scene3D scene) {
         this.scene = scene;
     }
 

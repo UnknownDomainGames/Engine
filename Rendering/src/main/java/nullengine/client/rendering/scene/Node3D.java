@@ -8,16 +8,16 @@ import org.joml.Vector3fc;
 
 import java.util.*;
 
-public class Node {
+public class Node3D {
 
-    private final MutableObjectValue<Node> parent = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Node3D> parent = new SimpleMutableObjectValue<>();
 
-    final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
+    final MutableObjectValue<Scene3D> scene = new SimpleMutableObjectValue<>();
 
     private MutableStringValue id;
 
-    private List<Node> children;
-    private List<Node> unmodifiableChildren;
+    private List<Node3D> children;
+    private List<Node3D> unmodifiableChildren;
 
     private Transform transform = new Transform();
     private Transform worldTransform = new Transform();
@@ -26,28 +26,28 @@ public class Node {
 
     private Map<Object, Object> properties;
 
-    public Node() {
+    public Node3D() {
         parent.addChangeListener((observable, oldValue, newValue) -> refreshTransform());
     }
 
-    public final ObservableObjectValue<Scene> scene() {
+    public final ObservableObjectValue<Scene3D> scene() {
         return scene.toUnmodifiable();
     }
 
-    public final ObservableObjectValue<Node> parent() {
+    public final ObservableObjectValue<Node3D> parent() {
         return parent.toUnmodifiable();
     }
 
-    public final Scene getScene() {
+    public final Scene3D getScene() {
         return scene.getValue();
     }
 
-    public final Node getParent() {
+    public final Node3D getParent() {
         return parent.getValue();
     }
 
-    private void setParent(Node parent) {
-        Node oldParent = getParent();
+    private void setParent(Node3D parent) {
+        Node3D oldParent = getParent();
         if (oldParent == parent) {
             return;
         }
@@ -105,11 +105,11 @@ public class Node {
         id().set(id);
     }
 
-    public final List<Node> getUnmodifiableChildren() {
+    public final List<Node3D> getUnmodifiableChildren() {
         return unmodifiableChildren == null ? List.of() : unmodifiableChildren;
     }
 
-    private List<Node> getChildren() {
+    private List<Node3D> getChildren() {
         if (children == null) {
             children = new ArrayList<>();
             unmodifiableChildren = Collections.unmodifiableList(children);
@@ -117,13 +117,13 @@ public class Node {
         return children;
     }
 
-    public void addChild(Node node) {
+    public void addChild(Node3D node) {
         Validate.notNull(node);
         getChildren().add(node);
         node.setParent(this);
     }
 
-    public void removeChild(Node node) {
+    public void removeChild(Node3D node) {
         getChildren().remove(node);
         node.setParent(null);
     }
@@ -195,7 +195,7 @@ public class Node {
 
     protected void refreshTransform() {
         worldTransform.set(transform);
-        Node parent = getParent();
+        Node3D parent = getParent();
         if (parent != null) {
             worldTransform.applyParent(parent.worldTransform);
         }

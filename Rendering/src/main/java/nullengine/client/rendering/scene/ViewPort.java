@@ -14,9 +14,9 @@ public interface ViewPort {
 
     void setSize(int width, int height);
 
-    Scene getScene();
+    Scene3D getScene();
 
-    void setScene(Scene scene);
+    void setScene(Scene3D scene);
 
     Color getClearColor();
 

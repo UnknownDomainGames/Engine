@@ -5,7 +5,7 @@ import nullengine.client.rendering.queue.RenderQueue;
 import nullengine.client.rendering.queue.RenderType;
 import nullengine.client.rendering.queue.StandardRenderTypes;
 
-public class Geometry extends Node {
+public class Geometry extends Node3D {
 
     private Renderable renderable;
     private RenderType renderType;

@@ -4,7 +4,7 @@ import nullengine.client.rendering.camera.FreeCamera;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
-public class CameraNode extends Node {
+public class CameraNode extends Node3D {
 
     private static final Vector3fc FRONT_VECTOR = new Vector3f(0, 0, -1);
 

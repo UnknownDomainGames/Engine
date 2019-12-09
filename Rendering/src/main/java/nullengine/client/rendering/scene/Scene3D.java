@@ -12,29 +12,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Scene {
+public class Scene3D {
 
-    private final ObservableList<Node> children = ObservableCollections.observableList(new ArrayList<>());
+    private final ObservableList<Node3D> children = ObservableCollections.observableList(new ArrayList<>());
 
     private final RenderQueue renderQueue = new RenderQueue();
     private final LightManager lightManager = new LightManager();
 
     private final MutableObjectValue<CameraNode> primaryCamera = new SimpleMutableObjectValue<>();
 
-    final Map<String, Node> idToNode = new HashMap<>();
+    final Map<String, Node3D> idToNode = new HashMap<>();
 
-    public Scene() {
+    public Scene3D() {
         children.addChangeListener(change -> {
-            for (Node node : change.getAdded()) node.scene.set(Scene.this);
-            for (Node node : change.getRemoved()) node.scene.set(null);
+            for (Node3D node : change.getAdded()) node.scene.set(Scene3D.this);
+            for (Node3D node : change.getRemoved()) node.scene.set(null);
         });
     }
 
-    public List<Node> getChildren() {
+    public List<Node3D> getChildren() {
         return children;
     }
 
-    public Node getNodeById(String id) {
+    public Node3D getNodeById(String id) {
         return idToNode.get(id);
     }
 

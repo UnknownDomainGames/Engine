@@ -3,7 +3,7 @@ package nullengine.client.rendering.application;
 import nullengine.client.rendering.RenderEngine;
 import nullengine.client.rendering.management.RenderManager;
 import nullengine.client.rendering.scene.PerspectiveViewPort;
-import nullengine.client.rendering.scene.Scene;
+import nullengine.client.rendering.scene.Scene3D;
 import nullengine.client.rendering.util.FrameTicker;
 
 public abstract class RenderableApplication {
@@ -13,7 +13,7 @@ public abstract class RenderableApplication {
     protected RenderManager manager;
 
     protected PerspectiveViewPort mainViewPort;
-    protected Scene mainScene;
+    protected Scene3D mainScene;
 
     public static void launch(String[] args) {
         StackTraceElement[] stackElements = Thread.currentThread().getStackTrace();
@@ -64,7 +64,7 @@ public abstract class RenderableApplication {
         mainViewPort = new PerspectiveViewPort();
         mainViewPort.setClearMask(true, true, true);
         mainViewPort.bindWindow(manager.getPrimaryWindow());
-        mainScene = new Scene();
+        mainScene = new Scene3D();
         mainViewPort.setScene(mainScene);
         manager.setPrimaryViewPort(mainViewPort);
         onInitialized();
