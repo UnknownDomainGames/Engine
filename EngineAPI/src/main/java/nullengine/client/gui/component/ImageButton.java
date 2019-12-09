@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.value.MutableFloatValue;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.gui.event.MouseEvent;
+import nullengine.client.gui.event.old.MouseEvent_;
 
 import java.util.function.Consumer;
 
@@ -46,15 +46,15 @@ public class ImageButton extends Image {
         return background;
     }
 
-    private Consumer<MouseEvent.MouseClickEvent> onClick;
+    private Consumer<MouseEvent_.MouseClickEvent> onClick;
 
     @Override
-    public void onClick(MouseEvent.MouseClickEvent event) {
+    public void onClick(MouseEvent_.MouseClickEvent event) {
         if (onClick != null)
             onClick.accept(event);
     }
 
-    public void setOnClick(Consumer<MouseEvent.MouseClickEvent> onClick) {
+    public void setOnClick(Consumer<MouseEvent_.MouseClickEvent> onClick) {
         this.onClick = onClick;
     }
 

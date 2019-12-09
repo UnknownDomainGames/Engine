@@ -119,32 +119,30 @@ public class Region extends Parent {
     @Override
     public final float prefWidth() {
         float width = getSize().prefWidth().get();
-        if(width == Size.USE_COMPUTE_VALUE){
+        if (width == Size.USE_COMPUTE_VALUE) {
             return computeWidth();
-        }
-        else if(width == Size.USE_PARENT_VALUE){
-             return (parent().isPresent() ? parent().getValue().width().get() : 0);
+        } else if (width == Size.USE_PARENT_VALUE) {
+            return (parent().isPresent() ? parent().getValue().width().get() : 0);
         }
         return width;
     }
 
-    public float computeWidth(){
+    public float computeWidth() {
         return super.prefWidth();
     }
 
     @Override
     public final float prefHeight() {
         float height = getSize().prefHeight().get();
-        if(height == Size.USE_COMPUTE_VALUE){
+        if (height == Size.USE_COMPUTE_VALUE) {
             return computeHeight();
-        }
-        else if(height == Size.USE_PARENT_VALUE){
+        } else if (height == Size.USE_PARENT_VALUE) {
             return (parent().isPresent() ? parent().getValue().height().get() : 0);
         }
         return height;
     }
 
-    public float computeHeight(){
+    public float computeHeight() {
         return super.prefHeight();
     }
 

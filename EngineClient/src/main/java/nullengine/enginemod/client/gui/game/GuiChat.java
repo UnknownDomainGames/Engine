@@ -1,7 +1,7 @@
 package nullengine.enginemod.client.gui.game;
 
 import nullengine.client.gui.component.TextField;
-import nullengine.client.gui.event.KeyEvent;
+import nullengine.client.gui.event.old.KeyEvent;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;

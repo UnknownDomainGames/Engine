@@ -1,7 +1,8 @@
-package nullengine.client.gui.event;
+package nullengine.client.gui.event.old;
 
 import nullengine.client.gui.Node;
 
+@Deprecated
 public class FocusEvent extends ComponentEvent {
     protected FocusEvent(Node node) {
         super(node);

@@ -16,9 +16,10 @@ public class Rect extends Shape {
     private final MutableObjectValue<Color> strokeColor = new SimpleMutableObjectValue<>(Color.BLACK);
     private final MutableObjectValue<Color> fillColor = new SimpleMutableObjectValue<>(Color.WHITE);
 
-    public Rect(){}
+    public Rect() {
+    }
 
-    public Rect(Vector2f size){
+    public Rect(Vector2f size) {
         this.size.setValue(size);
     }
 
@@ -51,7 +52,7 @@ public class Rect extends Shape {
     @Override
     protected ComponentRenderer createDefaultRenderer() {
         return (ComponentRenderer<Rect>) (component, graphics) -> {
-            if(strokeSize.get() > 0) {
+            if (strokeSize.get() > 0) {
                 graphics.popClipRect();
                 graphics.pushClipRect(component.x().get() - component.strokeSize.get(), component.y().get() - component.strokeSize.get(), component.width().get() + component.strokeSize.get() * 2, component.height().get() + component.strokeSize.get() * 2);
                 graphics.setColor(component.strokeColor.getValue());

@@ -13,7 +13,7 @@ public class TextRenderer implements ComponentRenderer<Text> {
 
     @Override
     public void render(Text text, Graphics graphics) {
-        if(Strings.isNullOrEmpty(text.text().getValue()))
+        if (Strings.isNullOrEmpty(text.text().getValue()))
             return;
         graphics.setColor(text.color().getValue());
         graphics.setFont(text.font().getValue());

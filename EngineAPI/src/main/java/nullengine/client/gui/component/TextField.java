@@ -1,9 +1,9 @@
 package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.*;
-import nullengine.client.gui.event.CharEvent;
-import nullengine.client.gui.event.KeyEvent;
-import nullengine.client.gui.event.MouseEvent;
+import nullengine.client.gui.event.old.CharEvent;
+import nullengine.client.gui.event.old.KeyEvent;
+import nullengine.client.gui.event.old.MouseEvent_;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.misc.IndexRange;
@@ -94,8 +94,8 @@ public class TextField extends Control {
             insertText(Math.max(caret.get(), 0), String.valueOf(c));
             //positionCaret(caret.get() + 1);
         }
-        if (event instanceof MouseEvent.MouseMoveEvent) {
-            onMouseMove((MouseEvent.MouseMoveEvent) event);
+        if (event instanceof MouseEvent_.MouseMoveEvent) {
+            onMouseMove((MouseEvent_.MouseMoveEvent) event);
         }
     }
 
@@ -170,7 +170,7 @@ public class TextField extends Control {
     }
 
     @Override
-    public void onClick(MouseEvent.MouseClickEvent event) {
+    public void onClick(MouseEvent_.MouseClickEvent event) {
         super.onClick(event);
         positionCaret(getNearestMousePos(event.getPosX()));
     }
@@ -188,7 +188,7 @@ public class TextField extends Control {
         return posExclusive - 1;
     }
 
-    public void onMouseMove(MouseEvent.MouseMoveEvent event) {
+    public void onMouseMove(MouseEvent_.MouseMoveEvent event) {
         if (pressed.get()) {
             selectPositionCaret(getNearestMousePos(relativePos(((float) event.getNewPosX()), ((float) event.getNewPosY())).getLeft()));
         }

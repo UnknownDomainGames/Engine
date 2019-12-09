@@ -1,19 +1,15 @@
 package nullengine.client.gui.event;
 
 import nullengine.client.gui.Node;
-import nullengine.event.Event;
 
-public class ComponentEvent implements Event {
-    private Node node;
+public class ComponentEvent extends Event {
+    public static final EventType<ComponentEvent> TYPE = new EventType<>("ComponentEvent");
 
-    private ComponentEvent() {
+    public ComponentEvent(Node source) {
+        super(TYPE, source);
     }
 
-    public ComponentEvent(Node node) {
-        this.node = node;
-    }
-
-    public Node getNode() {
-        return node;
+    public ComponentEvent(EventType<? extends ComponentEvent> type, Node source) {
+        super(type, source);
     }
 }

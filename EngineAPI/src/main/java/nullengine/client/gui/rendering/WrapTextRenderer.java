@@ -13,7 +13,7 @@ public class WrapTextRenderer implements ComponentRenderer<WrapText> {
 
     @Override
     public void render(WrapText text, Graphics graphics) {
-        if(Strings.isNullOrEmpty(text.text().getValue()))
+        if (Strings.isNullOrEmpty(text.text().getValue()))
             return;
         graphics.setColor(text.color().getValue());
         graphics.setFont(text.font().getValue());
@@ -21,7 +21,7 @@ public class WrapTextRenderer implements ComponentRenderer<WrapText> {
         Pos alignment = text.textAlignment().getValue();
 
         float x = 0, y = 0;
-        var lines = text.text().getValue().lines().flatMap(str->FontHelper.instance().wrapText(str, text.textWidth().get(), text.font().getValue()).stream()).collect(Collectors.toList());
+        var lines = text.text().getValue().lines().flatMap(str -> FontHelper.instance().wrapText(str, text.textWidth().get(), text.font().getValue()).stream()).collect(Collectors.toList());
         var lineHeight = FontHelper.instance().computeTextHeight(text.text().getValue(), text.font().getValue(), text.textWidth().get()) / lines.size();
         for (String line : lines) {
             var lineWidth = FontHelper.instance().computeTextWidth(line, text.font().getValue());

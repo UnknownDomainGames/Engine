@@ -15,7 +15,7 @@ public class ScrollPane extends BorderPane {
 
     private final MutableObjectValue<Node> content = new SimpleMutableObjectValue<>();
 
-    public ScrollPane(){
+    public ScrollPane() {
         super();
         vScroll = new VSlider();
         hScroll = new HSlider();
@@ -27,7 +27,7 @@ public class ScrollPane extends BorderPane {
         right().setValue(vScroll);
         content.addChangeListener((observable, oldValue, newValue) -> {
             update();
-            if(newValue != null){
+            if (newValue != null) {
                 newValue.width().addChangeListener((observable1, oldValue1, newValue1) -> update());
                 newValue.height().addChangeListener((observable1, oldValue1, newValue1) -> update());
             }
@@ -42,36 +42,33 @@ public class ScrollPane extends BorderPane {
         });
     }
 
-    private void update(){
-        if(content.isPresent()){
-            if(content.getValue().width().get() > width().get()){
+    private void update() {
+        if (content.isPresent()) {
+            if (content.getValue().width().get() > width().get()) {
                 hScroll.disabled().set(false);
                 vScroll.visible().set(true);
                 var delta = content.getValue().width().get() - width().get();
                 hScroll.max().set(delta);
                 hScroll.step().set(delta / 10.0f);
                 hScroll.value().addChangeListener((observable, oldValue, newValue) -> content.getValue().relocate(-hScroll.value().getFloat(), content.getValue().y().get()));
-            }
-            else{
+            } else {
                 hScroll.disabled().set(true);
                 hScroll.visible().set(false);
                 hScroll.max().set(1);
             }
-            if(content.getValue().height().get() > height().get()){
+            if (content.getValue().height().get() > height().get()) {
                 vScroll.disabled().set(false);
                 vScroll.visible().set(true);
                 var delta = content.getValue().height().get() - height().get();
                 vScroll.max().set(delta);
                 vScroll.step().set(delta / 10.0f);
                 vScroll.value().addChangeListener((observable, oldValue, newValue) -> content.getValue().relocate(content.getValue().x().get(), -vScroll.value().getFloat()));
-            }
-            else{
+            } else {
                 vScroll.disabled().set(true);
                 vScroll.visible().set(false);
                 vScroll.max().set(1);
             }
-        }
-        else{
+        } else {
             hScroll.disabled().set(true);
             hScroll.max().set(1);
             vScroll.disabled().set(true);
@@ -91,7 +88,7 @@ public class ScrollPane extends BorderPane {
     @Override
     protected void layoutChildren() {
         super.layoutChildren();
-        if(content.isPresent()){
+        if (content.isPresent()) {
             var c = content.getValue();
             layoutInArea(c, hScroll.disabled().get() ? 0 : hScroll.value().getFloat(), vScroll.disabled().get() ? 0 : vScroll.value().getFloat(),
                     Utils.prefWidth(c),

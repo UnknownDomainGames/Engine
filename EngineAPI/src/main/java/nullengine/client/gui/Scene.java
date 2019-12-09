@@ -2,10 +2,11 @@ package nullengine.client.gui;
 
 import com.github.mouse0w0.observable.value.*;
 import nullengine.Platform;
-import nullengine.client.gui.event.CharEvent;
-import nullengine.client.gui.event.FocusEvent;
-import nullengine.client.gui.event.KeyEvent;
 import nullengine.client.gui.event.MouseEvent;
+import nullengine.client.gui.event.old.CharEvent;
+import nullengine.client.gui.event.old.FocusEvent;
+import nullengine.client.gui.event.old.KeyEvent;
+import nullengine.client.gui.event.old.MouseEvent_;
 import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyModifier;
@@ -108,9 +109,9 @@ public class Scene {
             List<Node> leaveEvent = old.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
             List<Node> enterEvent = n.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
             moveEvent.addAll(root.getChildrenRecursive().stream().filter(c -> c.focused.get()).collect(Collectors.toList()));
-            moveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
-            enterEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
-            leaveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseLeaveEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
+            moveEvent.forEach(component -> component.handleEvent(new MouseEvent_.MouseMoveEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
+            enterEvent.forEach(component -> component.handleEvent(new MouseEvent_.MouseEnterEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
+            leaveEvent.forEach(component -> component.handleEvent(new MouseEvent_.MouseLeaveEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
         }
         lastPosX = xCorr;
         lastPosY = yCorr;
@@ -125,15 +126,22 @@ public class Scene {
                 list.forEach(component -> {
                     component.handleEvent(new FocusEvent.FocusGainEvent(component));
                     var pair = component.relativePos(((float) lastPosX), ((float) lastPosY));
-                    component.handleEvent(new MouseEvent.MouseClickEvent(component, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)));
+                    component.handleEvent(new MouseEvent_.MouseClickEvent(component, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)));
                 });
+                if (list.size() != 0) {
+                    var node = list.get(list.size() - 1);
+                    System.out.println(node);
+                    var pair = node.relativePos(((float) lastPosX), ((float) lastPosY));
+                    var event = new MouseEvent.MouseClickEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button));
+                    event.fireEvent(node);
+                }
             }
             if (action == GLFW.GLFW_RELEASE) {
                 list.addAll(root.getChildrenRecursive().stream().filter(c -> c.focused.get()).collect(Collectors.toList()));
-                list.forEach(component -> component.handleEvent(new MouseEvent.MouseReleasedEvent(component, (float) lastPosX, (float) lastPosY, Key.valueOf(400 + button))));
+                list.forEach(component -> component.handleEvent(new MouseEvent_.MouseReleasedEvent(component, (float) lastPosX, (float) lastPosY, Key.valueOf(400 + button))));
             }
             if (action == GLFW.GLFW_REPEAT) {
-                list.forEach(component -> component.handleEvent(new MouseEvent.MouseHoldEvent(component, (float) lastPosX, (float) lastPosY, Key.valueOf(400 + button))));
+                list.forEach(component -> component.handleEvent(new MouseEvent_.MouseHoldEvent(component, (float) lastPosX, (float) lastPosY, Key.valueOf(400 + button))));
             }
         }
     };

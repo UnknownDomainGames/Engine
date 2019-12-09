@@ -3,7 +3,6 @@ package nullengine.client.gui.shape;
 import nullengine.client.gui.rendering.ComponentRenderer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Polygon extends Shape {

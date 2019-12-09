@@ -1,10 +1,11 @@
-package nullengine.client.gui.event;
+package nullengine.client.gui.event.old;
 
 import nullengine.client.gui.Node;
 import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyModifier;
 
+@Deprecated
 public class KeyEvent extends ComponentEvent {
     private Key key;
     private ActionMode mode;

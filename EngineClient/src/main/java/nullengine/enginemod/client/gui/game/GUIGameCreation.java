@@ -5,6 +5,7 @@ import nullengine.client.game.GameClientStandalone;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.component.Button;
 import nullengine.client.gui.component.Label;
+import nullengine.client.gui.event.MouseEvent;
 import nullengine.client.gui.layout.FlowPane;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Background;
@@ -17,6 +18,7 @@ import nullengine.game.GameData;
 import nullengine.util.Color;
 import nullengine.util.Files2;
 
+import java.io.Console;
 import java.nio.file.Path;
 
 public class GUIGameCreation extends FlowPane {
@@ -57,6 +59,12 @@ public class GUIGameCreation extends FlowPane {
         vBox.getChildren().add(buttonLoad);
 
         var buttonSettings = new Button("Settings");
+        vBox.addEventHandler(MouseEvent.MouseClickEvent.TYPE,(i)->{
+            System.out.println(1111111);
+        });
+        buttonSettings.addEventHandler(MouseEvent.MouseClickEvent.TYPE,(i)->{
+            System.out.println(22222);
+        });
         buttonSettings.setOnClick(mouseClickEvent -> {
             Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiSettings()));
         });

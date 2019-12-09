@@ -9,20 +9,20 @@ import java.util.List;
 
 public class Path extends Shape {
 
-    public static abstract class Point{}
+    public static abstract class Point {
+    }
 
-    public static class LinearPoint extends Point{
+    public static class LinearPoint extends Point {
         private Vector2fc coord;
 
-        public LinearPoint(float x, float y){
-            coord = new Vector2f(x,y);
+        public LinearPoint(float x, float y) {
+            coord = new Vector2f(x, y);
         }
 
         public Vector2fc getCoordinate() {
             return coord;
         }
     }
-
 
 
     private List<Point> points = new ArrayList<>();
@@ -37,11 +37,11 @@ public class Path extends Shape {
 
     public void moveTo(float x, float y) {
         points.clear();
-        points.add(new LinearPoint(x,y));
+        points.add(new LinearPoint(x, y));
     }
 
     public void lineTo(float x, float y) {
-        points.add(new LinearPoint(x,y));
+        points.add(new LinearPoint(x, y));
     }
 
     //TODO: we should store the following commands for GraphicsImpl, except close()!

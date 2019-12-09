@@ -2,7 +2,7 @@ package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.Region;
-import nullengine.client.gui.event.MouseEvent;
+import nullengine.client.gui.event.old.MouseEvent_;
 import nullengine.client.gui.shape.Rect;
 import nullengine.event.Event;
 import nullengine.util.Color;
@@ -31,38 +31,35 @@ public class VSlider extends Region {
     public VSlider() {
         value.addChangeListener((ob, o, n) -> rebuild());
         min.addChangeListener((observable, oldValue, newValue) -> {
-            if(newValue > max.get()){
+            if (newValue > max.get()) {
                 min.set(oldValue);
-            }
-            else{
-                resizeSlider(sliderThickness.get(), sliderLength.get() * (float)(step.get() / (max.get() - min.get())));
+            } else {
+                resizeSlider(sliderThickness.get(), sliderLength.get() * (float) (step.get() / (max.get() - min.get())));
                 rebuild();
             }
         });
         max.addChangeListener((observable, oldValue, newValue) -> {
-            if(newValue < min.get()){
+            if (newValue < min.get()) {
                 max.set(oldValue);
-            }
-            else{
-                resizeSlider(sliderThickness.get(), sliderLength.get() * (float)(step.get() / (max.get() - min.get())));
+            } else {
+                resizeSlider(sliderThickness.get(), sliderLength.get() * (float) (step.get() / (max.get() - min.get())));
                 rebuild();
             }
         });
         step.addChangeListener((observable, oldValue, newValue) -> {
-            if(newValue == 0){
+            if (newValue == 0) {
                 step.set(oldValue);
-            }
-            else{
-                resizeSlider(sliderThickness.get(), sliderLength.get() * (float)(step.get() / (max.get() - min.get())));
+            } else {
+                resizeSlider(sliderThickness.get(), sliderLength.get() * (float) (step.get() / (max.get() - min.get())));
             }
         });
         sliderLength.addChangeListener((observable, oldValue, newValue) -> {
             resizeBack(sliderThickness.get(), newValue);
-            resizeSlider(sliderThickness.get(), newValue * (float)(step.get() / (max.get() - min.get())));
+            resizeSlider(sliderThickness.get(), newValue * (float) (step.get() / (max.get() - min.get())));
         });
         sliderThickness.addChangeListener((observable, oldValue, newValue) -> {
             resizeBack(newValue, sliderLength.get());
-            resizeSlider(newValue, sliderLength.get() * (float)(step.get() / (max.get() - min.get())));
+            resizeSlider(newValue, sliderLength.get() * (float) (step.get() / (max.get() - min.get())));
         });
         this.getChildren().addAll(back, slider);
         backBg().setValue(Color.BLUE);
@@ -104,11 +101,11 @@ public class VSlider extends Region {
             value.set(min.get());
         }
         slider.x().set(back.x().get());
-        slider.y().set((float) (((back.height().get() - slider.height().get()) * (flip.get() ? 1 - (value.get() / (max.get() - min.get())) : (value.get() / (max.get() - min.get()))) )));
+        slider.y().set((float) (((back.height().get() - slider.height().get()) * (flip.get() ? 1 - (value.get() / (max.get() - min.get())) : (value.get() / (max.get() - min.get()))))));
     }
 
     @Override
-    public void onClick(MouseEvent.MouseClickEvent e) {
+    public void onClick(MouseEvent_.MouseClickEvent e) {
         super.onClick(e);
         if (e.getPosY() > slider.y().get() + slider.width().get()) {
             value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
@@ -122,20 +119,20 @@ public class VSlider extends Region {
     @Override
     public void handleEvent(Event event) {
         super.handleEvent(event);
-        if (event instanceof MouseEvent.MouseMoveEvent && select) {
-            var event1 = (MouseEvent.MouseMoveEvent) event;
-            var ry = relativePos((float) event1.getNewPosX(),(float) event1.getNewPosY()).getRight();
+        if (event instanceof MouseEvent_.MouseMoveEvent && select) {
+            var event1 = (MouseEvent_.MouseMoveEvent) event;
+            var ry = relativePos((float) event1.getNewPosX(), (float) event1.getNewPosY()).getRight();
             if ((ry - slider.y().get()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
             } else if ((slider.y().get() - ry) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
             }
-        } else if (event instanceof MouseEvent.MouseReleasedEvent) {
+        } else if (event instanceof MouseEvent_.MouseReleasedEvent) {
             select = false;
-        } else if (event instanceof MouseEvent.MouseLeaveEvent) {
+        } else if (event instanceof MouseEvent_.MouseLeaveEvent) {
             //select = false;
-        } else if (event instanceof MouseEvent.MouseHoldEvent) {
-            var event1 = (MouseEvent.MouseHoldEvent) event;
+        } else if (event instanceof MouseEvent_.MouseHoldEvent) {
+            var event1 = (MouseEvent_.MouseHoldEvent) event;
             if ((event1.getPosY() - y().get() - slider.y().get()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
             } else if ((slider.y().get() - event1.getPosY() + y().get()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {

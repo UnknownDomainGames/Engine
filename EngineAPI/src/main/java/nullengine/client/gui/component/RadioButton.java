@@ -3,7 +3,7 @@ package nullengine.client.gui.component;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.gui.event.MouseEvent;
+import nullengine.client.gui.event.old.MouseEvent_;
 import nullengine.client.gui.layout.BorderPane;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
@@ -40,7 +40,7 @@ public class RadioButton extends ToggleButton {
     }
 
     @Override
-    public void onClick(MouseEvent.MouseClickEvent event) {
+    public void onClick(MouseEvent_.MouseClickEvent event) {
         super.onClick(event);
         //TODO check radiobuttongroup
         selected().set(true);

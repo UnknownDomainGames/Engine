@@ -3,7 +3,7 @@ package nullengine.client.gui.component;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Node;
-import nullengine.client.gui.event.MouseEvent;
+import nullengine.client.gui.event.old.MouseEvent_;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.text.Text;
@@ -51,15 +51,15 @@ public class Button extends Label {
         return disableBg;
     }
 
-    private Consumer<MouseEvent.MouseClickEvent> onClick;
+    private Consumer<MouseEvent_.MouseClickEvent> onClick;
 
     @Override
-    public void onClick(MouseEvent.MouseClickEvent event) {
+    public void onClick(MouseEvent_.MouseClickEvent event) {
         if (onClick != null)
             onClick.accept(event);
     }
 
-    public void setOnClick(Consumer<MouseEvent.MouseClickEvent> onClick) {
+    public void setOnClick(Consumer<MouseEvent_.MouseClickEvent> onClick) {
         this.onClick = onClick;
     }
 
@@ -82,11 +82,11 @@ public class Button extends Label {
     @Override
     protected void layoutChildren() {
         for (Node child : getChildren()) {
-            if(child instanceof Text){
+            if (child instanceof Text) {
                 var align = ((Text) child).textAlignment().getValue();
                 var aw = this.prefWidth() - padding().getValue().getLeft() - padding().getValue().getRight();
                 var ah = this.prefHeight() - padding().getValue().getTop() - padding().getValue().getBottom();
-                float x = 0,y = 0;
+                float x = 0, y = 0;
                 switch (align.getHpos()) {
                     case LEFT:
                         x = 0;
@@ -115,8 +115,7 @@ public class Button extends Label {
                 x = (float) Math.floor(x + 0.5f);
                 y = (float) Math.floor(y + 0.5f);
                 layoutInArea(child, padding().getValue().getLeft() + x, padding().getValue().getTop() + y, Utils.prefWidth(child), Utils.prefHeight(child));
-            }
-            else{ //Although we only have Text inside, we still layout others in case acting as a child
+            } else { //Although we only have Text inside, we still layout others in case acting as a child
                 layoutInArea(child, child.x().get(), child.y().get(), Utils.prefWidth(child), Utils.prefHeight(child));
             }
         }

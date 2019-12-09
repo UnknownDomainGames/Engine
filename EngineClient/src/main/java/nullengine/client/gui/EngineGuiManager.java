@@ -1,7 +1,7 @@
 package nullengine.client.gui;
 
 import nullengine.Platform;
-import nullengine.client.gui.event.KeyEvent;
+import nullengine.client.gui.event.old.KeyEvent;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.rendering.display.Window;
 import nullengine.util.UndoHistory;

@@ -3,8 +3,9 @@ package nullengine.client.gui;
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
-import nullengine.client.gui.event.FocusEvent;
-import nullengine.client.gui.event.MouseEvent;
+import nullengine.client.gui.event.*;
+import nullengine.client.gui.event.old.FocusEvent;
+import nullengine.client.gui.event.old.MouseEvent_;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.input.keybinding.Key;
 import nullengine.event.Event;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class Node {
+public abstract class Node implements EventTarget {
 
     final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
     final MutableObjectValue<Parent> parent = new SimpleMutableObjectValue<>();
@@ -36,6 +37,12 @@ public abstract class Node {
     protected final MutableBooleanValue pressed = new SimpleMutableBooleanValue(false);
 
     private ComponentRenderer renderer;
+
+    private EventHandlerManager eventHandlerManager = new EventHandlerManager();
+
+    public EventHandlerManager getEventHandlerManager() {
+        return eventHandlerManager;
+    }
 
     public Node() {
         visible.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
@@ -160,19 +167,19 @@ public abstract class Node {
 
     public void handleEvent(Event event) {
         if (!disabled.get()) {
-            if (event instanceof MouseEvent.MouseEnterEvent) {
+            if (event instanceof MouseEvent_.MouseEnterEvent) {
                 hover.set(true);
-            } else if (event instanceof MouseEvent.MouseLeaveEvent) {
+            } else if (event instanceof MouseEvent_.MouseLeaveEvent) {
                 hover.set(false);
                 pressed.set(false);
-            } else if (event instanceof MouseEvent.MouseClickEvent) {
-                var click = (MouseEvent.MouseClickEvent) event;
+            } else if (event instanceof MouseEvent_.MouseClickEvent) {
+                var click = (MouseEvent_.MouseClickEvent) event;
                 if (click.getKey() == Key.MOUSE_BUTTON_LEFT) {
                     pressed.set(true);
                     onClick(click);
                 }
-            } else if (event instanceof MouseEvent.MouseReleasedEvent) {
-                var release = (MouseEvent.MouseReleasedEvent) event;
+            } else if (event instanceof MouseEvent_.MouseReleasedEvent) {
+                var release = (MouseEvent_.MouseReleasedEvent) event;
                 if (release.getKey() == Key.MOUSE_BUTTON_LEFT) {
                     pressed.set(false);
                     onRelease(release);
@@ -195,11 +202,11 @@ public abstract class Node {
 //            this.parent().getValue().handleEvent(event);
     }
 
-    public void onRelease(MouseEvent.MouseReleasedEvent event) {
+    public void onRelease(MouseEvent_.MouseReleasedEvent event) {
 
     }
 
-    public void onClick(MouseEvent.MouseClickEvent event) {
+    public void onClick(MouseEvent_.MouseClickEvent event) {
     }
 
     public void forceFocus() {
@@ -214,8 +221,10 @@ public abstract class Node {
         }
     }
 
+    @Deprecated
     private Map<Class<? extends Event>, List<Consumer>> handlers = new HashMap<>();
 
+    @Deprecated
     public <T extends Event> void addEventHandler(Class<T> clazz, Consumer<T> handler) {
         if (!handlers.containsKey(clazz)) {
             handlers.put(clazz, new ArrayList<>());
@@ -223,10 +232,30 @@ public abstract class Node {
         handlers.get(clazz).add(handler);
     }
 
+    @Deprecated
     public <T extends Event> void removeEventHandler(Class<T> clazz, Consumer<T> handler) {
         if (handlers.containsKey(clazz)) {
             handlers.get(clazz).remove(handler);
         }
     }
 
+    public EventDispatchChain buildEventDispatchChain(EventDispatchChain tail) {
+        return appendEventDispatchChain(tail, this);
+    }
+
+
+    public <T extends nullengine.client.gui.event.Event> void addEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
+        eventHandlerManager.addEventHandler(eventType, eventHandler);
+    }
+
+    public <T extends nullengine.client.gui.event.Event> void removeEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
+        eventHandlerManager.removeEventHandler(eventType, eventHandler);
+    }
+
+    private EventDispatchChain appendEventDispatchChain(EventDispatchChain tail, Node node) {
+        var parent = node.parent();
+        tail.append(node.getEventHandlerManager());
+        if (parent.isEmpty()) return tail;
+        return appendEventDispatchChain(tail, parent.get());
+    }
 }

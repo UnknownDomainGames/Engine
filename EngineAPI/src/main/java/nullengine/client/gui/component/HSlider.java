@@ -2,7 +2,7 @@ package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.Region;
-import nullengine.client.gui.event.MouseEvent;
+import nullengine.client.gui.event.old.MouseEvent_;
 import nullengine.client.gui.shape.Rect;
 import nullengine.event.Event;
 import nullengine.util.Color;
@@ -27,38 +27,35 @@ public class HSlider extends Region {
     public HSlider() {
         value.addChangeListener((ob, o, n) -> rebuild());
         min.addChangeListener((observable, oldValue, newValue) -> {
-            if(newValue > max.get()){
+            if (newValue > max.get()) {
                 min.set(oldValue);
-            }
-            else{
-                resizeSlider(sliderLength.get() * (float)(step.get() / (max.get() - min.get())), sliderThickness.get());
+            } else {
+                resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
                 rebuild();
             }
         });
         max.addChangeListener((observable, oldValue, newValue) -> {
-            if(newValue < min.get()){
+            if (newValue < min.get()) {
                 max.set(oldValue);
-            }
-            else{
-                resizeSlider(sliderLength.get() * (float)(step.get() / (max.get() - min.get())), sliderThickness.get());
+            } else {
+                resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
                 rebuild();
             }
         });
         step.addChangeListener((observable, oldValue, newValue) -> {
-            if(newValue == 0){
+            if (newValue == 0) {
                 step.set(oldValue);
-            }
-            else{
-                resizeSlider(sliderLength.get() * (float)(step.get() / (max.get() - min.get())), sliderThickness.get());
+            } else {
+                resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
             }
         });
         sliderLength.addChangeListener((observable, oldValue, newValue) -> {
             resizeBack(newValue, sliderThickness.get());
-            resizeSlider(newValue * (float)(step.get() / (max.get() - min.get())), sliderThickness.get());
+            resizeSlider(newValue * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
         });
         sliderThickness.addChangeListener((observable, oldValue, newValue) -> {
             resizeBack(sliderLength.get(), newValue);
-            resizeSlider(sliderLength.get() * (float)(step.get() / (max.get() - min.get())), newValue);
+            resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), newValue);
         });
         this.getChildren().addAll(back, slider);
         backBg().setValue(Color.BLUE);
@@ -100,7 +97,7 @@ public class HSlider extends Region {
     }
 
     @Override
-    public void onClick(MouseEvent.MouseClickEvent e) {
+    public void onClick(MouseEvent_.MouseClickEvent e) {
         super.onClick(e);
         if (e.getPosX() > slider.x().get() + slider.width().get()) {
             value.set(value.getValue() + step.get());
@@ -114,19 +111,19 @@ public class HSlider extends Region {
     @Override
     public void handleEvent(Event event) {
         super.handleEvent(event);
-        if (event instanceof MouseEvent.MouseMoveEvent && select) {
-            var event1 = (MouseEvent.MouseMoveEvent) event;
+        if (event instanceof MouseEvent_.MouseMoveEvent && select) {
+            var event1 = (MouseEvent_.MouseMoveEvent) event;
             if ((event1.getNewPosX() - x().get() - slider.x().get()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() + step.get());
             } else if ((slider.x().get() - event1.getNewPosX() + x().get()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() - step.get());
             }
-        } else if (event instanceof MouseEvent.MouseReleasedEvent) {
+        } else if (event instanceof MouseEvent_.MouseReleasedEvent) {
             select = false;
-        } else if (event instanceof MouseEvent.MouseLeaveEvent) {
+        } else if (event instanceof MouseEvent_.MouseLeaveEvent) {
             //select = false;
-        } else if (event instanceof MouseEvent.MouseHoldEvent) {
-            var event1 = (MouseEvent.MouseHoldEvent) event;
+        } else if (event instanceof MouseEvent_.MouseHoldEvent) {
+            var event1 = (MouseEvent_.MouseHoldEvent) event;
             if ((event1.getPosX() - x().get() - slider.x().get()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
                 value.set(value.getValue() + step.get());
             } else if ((slider.x().get() - event1.getPosX() + x().get()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
@@ -136,7 +133,7 @@ public class HSlider extends Region {
     }
 
     public void resizeBack(float width, float height) {
-        back.rectSize().setValue(new Vector2f(width,height));
+        back.rectSize().setValue(new Vector2f(width, height));
         rebuild();
     }
 

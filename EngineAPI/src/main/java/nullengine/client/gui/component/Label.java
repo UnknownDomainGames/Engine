@@ -15,7 +15,7 @@ public class Label extends Control {
         this.getChildren().addAll(text);
     }
 
-    public Label(String text){
+    public Label(String text) {
         this();
         text().setValue(text);
     }
@@ -36,7 +36,7 @@ public class Label extends Control {
         return text.textAlignment();
     }
 
-    public MutableDoubleValue leading(){
+    public MutableDoubleValue leading() {
         return text.leading();
     }
 

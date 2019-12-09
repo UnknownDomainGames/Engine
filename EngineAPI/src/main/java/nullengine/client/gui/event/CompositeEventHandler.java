@@ -13,9 +13,11 @@ public class CompositeEventHandler<T extends Event> implements EventHandler<T> {
 
     @Override
     public void onEvent(T event) {
+        System.out.println(event);
         for (EventHandler<T> eventHandler : eventHandlers) {
             eventHandler.onEvent(event);
             if (event.isConsumed()) return;
+
         }
     }
 

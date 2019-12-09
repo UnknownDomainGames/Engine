@@ -27,7 +27,7 @@ public class ListView<T> extends Control {
 
     private ObservableList<T> items = ObservableCollections.observableList(new ArrayList<>());
 
-    public ListView(){
+    public ListView() {
         scrollPane = new ScrollPane();
         getChildren().add(scrollPane);
         this.getSize().prefWidth().bindBidirectional(scrollPane.getSize().prefWidth());
@@ -41,7 +41,7 @@ public class ListView<T> extends Control {
         border().addChangeListener((observable, oldValue, newValue) -> padding().setValue(newValue.getInsets()));
     }
 
-    private void update(){
+    private void update() {
         if (parent == null) {
             parent = containerFactory.getValue().get();
             scrollPane.setContent(parent);

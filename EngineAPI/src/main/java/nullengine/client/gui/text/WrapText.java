@@ -6,16 +6,16 @@ import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.WrapTextRenderer;
 import nullengine.client.rendering.font.FontHelper;
 
-public class WrapText extends Text{
+public class WrapText extends Text {
 
     private final MutableFloatValue textWidth = new SimpleMutableFloatValue(-1);
 
-    public WrapText(){
+    public WrapText() {
         super();
         textWidth.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
     }
 
-    public WrapText(String text){
+    public WrapText(String text) {
         this();
         this.text().setValue(text);
     }
@@ -28,7 +28,7 @@ public class WrapText extends Text{
     public float prefWidth() {
         var max = FontHelper.instance().computeTextWidth(text().getValue(), font().getValue(), textWidth.get());
 
-        return  max;
+        return max;
     }
 
     @Override

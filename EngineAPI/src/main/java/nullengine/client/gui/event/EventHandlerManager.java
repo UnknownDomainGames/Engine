@@ -30,7 +30,9 @@ public class EventHandlerManager implements EventDispatcher {
 
     @Override
     public Event dispatchEvent(Event event, EventDispatchChain eventDispatchChain) {
-        eventHandlers.get(event.getEventType()).onRawEvent(event);
+        var eventType = eventHandlers.get(event.getEventType());
+        if (eventType != null)
+            eventType.onRawEvent(event);
         return event;
     }
 }
