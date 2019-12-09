@@ -19,8 +19,7 @@ public class BufferedImage {
     public static BufferedImage create(ByteBuffer buffer) throws IOException {
         if (!buffer.isDirect()) {
             ByteBuffer direct = ByteBuffer.allocateDirect(buffer.capacity());
-            direct.put(buffer);
-            direct.flip();
+            direct.put(buffer).flip();
             buffer = direct;
         }
         try (var stack = MemoryStack.stackPush()) {
@@ -33,11 +32,7 @@ public class BufferedImage {
             if (pixelBuffer == null) {
                 throw new IOException("File buffer cannot be load as pixel buffer by STBImage");
             }
-            var tex = new BufferedImage(width, height);
-            tex.getPixelBuffer().put(pixelBuffer);
-            tex.getPixelBuffer().flip();
-            pixelBuffer.clear();
-            return tex;
+            return new BufferedImage(width, height, pixelBuffer);
         }
     }
 
@@ -59,7 +54,12 @@ public class BufferedImage {
     public BufferedImage(int width, int height, ByteBuffer buffer) {
         this.width = width;
         this.height = height;
-        this.pixelBuffer = buffer;
+        if (!buffer.isDirect()) {
+            pixelBuffer = ByteBuffer.allocateDirect(buffer.capacity());
+            pixelBuffer.put(buffer).flip();
+        } else {
+            pixelBuffer = buffer;
+        }
     }
 
     protected void initPixelBuffer() {
