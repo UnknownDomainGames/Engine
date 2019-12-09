@@ -10,7 +10,7 @@ public class WindowIcons {
     public WindowIcons(BufferedImage... icons) {
         this.icons = GLFWImage.create(icons.length);
         for (int i = 0; i < icons.length; i++) {
-            this.icons.get(i).set(icons[i].getWidth(),icons[i].getHeight(), icons[i].getBuffer());
+            this.icons.get(i).set(icons[i].getWidth(), icons[i].getHeight(), icons[i].getPixelBuffer());
         }
     }
 

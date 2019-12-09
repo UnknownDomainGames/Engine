@@ -59,7 +59,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
     }
 
     public static GLTexture2D of(BufferedImage pixels) {
-        return of(pixels.getBuffer(), pixels.getWidth(), pixels.getHeight());
+        return of(pixels.getPixelBuffer(), pixels.getWidth(), pixels.getHeight());
     }
 
     public static GLTexture2D of(ByteBuffer pixels, int width, int height) {
@@ -96,7 +96,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
 
     public void upload(BufferedImage texture) {
         bind();
-        glTexImage2D(texture.getBuffer(), texture.getWidth(), texture.getHeight());
+        glTexImage2D(texture.getPixelBuffer(), texture.getWidth(), texture.getHeight());
     }
 
     public void upload(ByteBuffer texture, int width, int height) {
@@ -120,7 +120,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
 
     public void glTexSubImage2D(int offsetX, int offsetY, BufferedImage buffer) {
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        GL11.glTexSubImage2D(GL_TEXTURE_2D, level, offsetX, offsetY, buffer.getWidth(), buffer.getHeight(), format, type, buffer.getBuffer());
+        GL11.glTexSubImage2D(GL_TEXTURE_2D, level, offsetX, offsetY, buffer.getWidth(), buffer.getHeight(), format, type, buffer.getPixelBuffer());
         if (mipmap) glGenerateMipmap(GL_TEXTURE_2D);
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
@@ -244,7 +244,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
         }
 
         public GLTexture2D build(BufferedImage texture) {
-            return build(texture.getBuffer(), texture.getWidth(), texture.getHeight());
+            return build(texture.getPixelBuffer(), texture.getWidth(), texture.getHeight());
         }
 
         public GLTexture2D build(int width, int height) {

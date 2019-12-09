@@ -14,7 +14,7 @@ public class BufferedImage {
 
     private int width, height;
     private int stride;
-    private ByteBuffer backingBuffer;
+    private ByteBuffer pixelBuffer;
 
     public static BufferedImage create(ByteBuffer buffer) throws IOException {
         if (!buffer.isDirect()) {
@@ -27,16 +27,16 @@ public class BufferedImage {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer c = stack.mallocInt(1);
-            ByteBuffer bitmapBuffer = STBImage.stbi_load_from_memory(buffer, w, h, c, 4);
+            ByteBuffer pixelBuffer = STBImage.stbi_load_from_memory(buffer, w, h, c, 4);
             int width = w.get(0);
             int height = h.get(0);
-            if (bitmapBuffer == null) {
+            if (pixelBuffer == null) {
                 throw new IOException("File buffer cannot be load as pixel buffer by STBImage");
             }
             var tex = new BufferedImage(width, height);
-            tex.getBuffer().put(bitmapBuffer);
-            tex.getBuffer().flip();
-            bitmapBuffer.clear();
+            tex.getPixelBuffer().put(pixelBuffer);
+            tex.getPixelBuffer().flip();
+            pixelBuffer.clear();
             return tex;
         }
     }
@@ -48,7 +48,7 @@ public class BufferedImage {
     public BufferedImage(int width, int height) {
         this.width = width;
         this.height = height;
-        initBuffer();
+        initPixelBuffer();
     }
 
     public BufferedImage(int width, int height, int initColor) {
@@ -59,12 +59,12 @@ public class BufferedImage {
     public BufferedImage(int width, int height, ByteBuffer buffer) {
         this.width = width;
         this.height = height;
-        this.backingBuffer = buffer;
+        this.pixelBuffer = buffer;
     }
 
-    protected void initBuffer() {
+    protected void initPixelBuffer() {
         stride = Integer.BYTES * width;
-        backingBuffer = ByteBuffer.allocateDirect(stride * height);
+        pixelBuffer = ByteBuffer.allocateDirect(stride * height);
     }
 
     public int getWidth() {
@@ -75,36 +75,36 @@ public class BufferedImage {
         return height;
     }
 
-    public ByteBuffer getBuffer() {
-        return backingBuffer;
+    public ByteBuffer getPixelBuffer() {
+        return pixelBuffer;
     }
 
-    public void setTexture(int x, int y, ByteBuffer texture, int u, int v, int width, int height) {
+    public void setTexture(int x, int y, ByteBuffer pixelBuffer, int u, int v, int width, int height) {
         int bufferStride = width * Integer.BYTES;
-        long textureAddress = memAddress(texture, 0);
-        long address = memAddress(backingBuffer, 0);
+        long srcAddress = memAddress(pixelBuffer, 0);
+        long dstAddress = memAddress(this.pixelBuffer, 0);
         for (int i = 0; i < height; i++) {
-            memCopy(textureAddress + (y + i) * this.stride + x * Integer.BYTES,
-                    address + (u + i) * bufferStride + v * Integer.BYTES,
+            memCopy(srcAddress + (y + i) * this.stride + x * Integer.BYTES,
+                    dstAddress + (u + i) * bufferStride + v * Integer.BYTES,
                     width * Integer.BYTES);
         }
-        backingBuffer.clear();
+        this.pixelBuffer.clear();
     }
 
     public void setTexture(int x, int y, ByteBuffer buffer, int width, int height) {
         setTexture(x, y, buffer, 0, 0, width, height);
     }
 
-    public void setTexture(int x, int y, BufferedImage texture) {
-        setTexture(x, y, texture.getBuffer(), texture.getWidth(), texture.getHeight());
+    public void setTexture(int x, int y, BufferedImage image) {
+        setTexture(x, y, image.getPixelBuffer(), image.getWidth(), image.getHeight());
     }
 
-    public void setTexture(int x, int y, BufferedImage texture, int u, int v) {
-        setTexture(x, y, texture.getBuffer(), u, v, texture.getWidth(), texture.getHeight());
+    public void setTexture(int x, int y, BufferedImage image, int u, int v) {
+        setTexture(x, y, image.getPixelBuffer(), u, v, image.getWidth(), image.getHeight());
     }
 
     public void setPixel(int x, int y, int color) {
-        backingBuffer.putInt(color, y * stride + x * Integer.BYTES);
+        pixelBuffer.putInt(color, y * stride + x * Integer.BYTES);
     }
 
     public void setPixel(int x, int y, Color color) {
@@ -112,7 +112,7 @@ public class BufferedImage {
     }
 
     public int getPixel(int x, int y) {
-        return backingBuffer.getInt(y * stride + x * Integer.BYTES);
+        return pixelBuffer.getInt(y * stride + x * Integer.BYTES);
     }
 
     public void fill(Color color) {
@@ -120,8 +120,8 @@ public class BufferedImage {
     }
 
     public void fill(int color) {
-        backingBuffer.position(0);
-        memSet(backingBuffer.asIntBuffer(), color);
-        backingBuffer.clear();
+        pixelBuffer.position(0);
+        memSet(pixelBuffer.asIntBuffer(), color);
+        pixelBuffer.clear();
     }
 }
