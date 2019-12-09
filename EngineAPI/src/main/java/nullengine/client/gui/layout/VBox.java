@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.value.MutableFloatValue;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.util.Utils;
@@ -30,8 +30,8 @@ public class VBox extends Pane {
     @Override
     public float computeWidth() {
         float width = 0;
-        for (Component component : getChildren()) {
-            width = Math.max(Math.max(width, component.width().get()), Utils.prefWidth(component));
+        for (Node node : getChildren()) {
+            width = Math.max(Math.max(width, node.width().get()), Utils.prefWidth(node));
         }
         Insets padding = padding().getValue();
         return padding.getLeft() + width + padding.getRight();
@@ -40,8 +40,8 @@ public class VBox extends Pane {
     @Override
     public float computeHeight() {
         float height = 0, spacing = spacing().get();
-        for (Component component : getChildren()) {
-            height += Math.max(component.height().get(), Utils.prefHeight(component));
+        for (Node node : getChildren()) {
+            height += Math.max(node.height().get(), Utils.prefHeight(node));
         }
         Insets padding = padding().getValue();
         return padding.getTop() + height + ((getChildren().size() == 0) ? 0 : spacing * (getChildren().size() - 1)) + padding.getBottom();
@@ -51,12 +51,12 @@ public class VBox extends Pane {
     protected void layoutChildren() {
         Insets padding = padding().getValue();
         float x, y = padding.getTop(), spacing = spacing().get(), w = width().get() - padding.getLeft() - padding.getRight();
-        for (Component component : getChildren()) {
-            float prefWidth = Utils.prefWidth(component);
-            float prefHeight = Utils.prefHeight(component);
+        for (Node node : getChildren()) {
+            float prefWidth = Utils.prefWidth(node);
+            float prefHeight = Utils.prefHeight(node);
             x = alignment.getValue() == Pos.HPos.RIGHT ? w - prefWidth : alignment.getValue() == Pos.HPos.CENTER ? (w - prefWidth) / 2 : 0;
             x += padding.getLeft();
-            layoutInArea(component, snap(x, true), snap(y, true), prefWidth, prefHeight);
+            layoutInArea(node, snap(x, true), snap(y, true), prefWidth, prefHeight);
             y += prefHeight + spacing;
         }
     }

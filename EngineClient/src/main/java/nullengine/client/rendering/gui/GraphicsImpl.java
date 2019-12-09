@@ -1,6 +1,6 @@
 package nullengine.client.rendering.gui;
 
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.rendering.Graphics;
@@ -218,8 +218,8 @@ public class GraphicsImpl implements Graphics {
     }
 
     @Override
-    public void drawBorder(Border border, Component component) {
-        drawBorder(border, 0, 0, component.width().get(), component.height().get());
+    public void drawBorder(Border border, Node node) {
+        drawBorder(border, 0, 0, node.width().get(), node.height().get());
     }
 
     @Override
@@ -244,8 +244,8 @@ public class GraphicsImpl implements Graphics {
     }
 
     @Override
-    public void drawBackground(Background background, Component component) {
-        drawBackground(background, 0, 0, component.width().get(), component.height().get());
+    public void drawBackground(Background background, Node node) {
+        drawBackground(background, 0, 0, node.width().get(), node.height().get());
     }
 
     @Override

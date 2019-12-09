@@ -1,6 +1,6 @@
 package nullengine.client.gui.rendering;
 
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.Region;
 
 public class RegionRenderer<E extends Region> implements ComponentRenderer<E> {
@@ -11,7 +11,7 @@ public class RegionRenderer<E extends Region> implements ComponentRenderer<E> {
     public void render(E region, Graphics graphics) {
         graphics.drawBackground(region.background().getValue(), region);
         graphics.drawBorder(region.border().getValue(), region);
-        for (Component child : region.getUnmodifiableChildren()) {
+        for (Node child : region.getUnmodifiableChildren()) {
             if (!child.visible().get()) {
                 continue;
             }

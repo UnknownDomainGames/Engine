@@ -2,7 +2,7 @@ package nullengine.client.gui.layout;
 
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
 
@@ -11,15 +11,15 @@ public class BorderPane extends Pane {
     private static final String MARGIN = "borderpane-margin";
     private static final String ALIGNMENT = "borderpane-alignment";
 
-    public static void setAlignment(Component component, Pos pos) {
-        Pane.setProperty(component, ALIGNMENT, pos);
+    public static void setAlignment(Node node, Pos pos) {
+        Pane.setProperty(node, ALIGNMENT, pos);
     }
 
-    public static Pos getAlignment(Component component) {
-        return (Pos) getProperty(component, ALIGNMENT);
+    public static Pos getAlignment(Node node) {
+        return (Pos) getProperty(node, ALIGNMENT);
     }
 
-    public static void setMargin(Component child, Insets value) {
+    public static void setMargin(Node child, Insets value) {
         setProperty(child, MARGIN, value);
     }
 
@@ -29,39 +29,39 @@ public class BorderPane extends Pane {
      * @param child the child node of a border pane
      * @return the margin for the child or null if no margin was set
      */
-    public static Insets getMargin(Component child) {
+    public static Insets getMargin(Node child) {
         return (Insets) getProperty(child, MARGIN);
     }
 
     // convenience for handling null margins
-    protected static Insets getNodeMargin(Component child) {
+    protected static Insets getNodeMargin(Node child) {
         Insets margin = getMargin(child);
         return margin != null ? margin : Insets.EMPTY;
     }
 
-    private final MutableObjectValue<Component> center = new SimpleMutableObjectValue<>();
-    private final MutableObjectValue<Component> top = new SimpleMutableObjectValue<>();
-    private final MutableObjectValue<Component> bottom = new SimpleMutableObjectValue<>();
-    private final MutableObjectValue<Component> left = new SimpleMutableObjectValue<>();
-    private final MutableObjectValue<Component> right = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Node> center = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Node> top = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Node> bottom = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Node> left = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Node> right = new SimpleMutableObjectValue<>();
 
-    public MutableObjectValue<Component> center() {
+    public MutableObjectValue<Node> center() {
         return center;
     }
 
-    public MutableObjectValue<Component> top() {
+    public MutableObjectValue<Node> top() {
         return top;
     }
 
-    public MutableObjectValue<Component> bottom() {
+    public MutableObjectValue<Node> bottom() {
         return bottom;
     }
 
-    public MutableObjectValue<Component> left() {
+    public MutableObjectValue<Node> left() {
         return left;
     }
 
-    public MutableObjectValue<Component> right() {
+    public MutableObjectValue<Node> right() {
         return right;
     }
 
@@ -164,11 +164,11 @@ public class BorderPane extends Pane {
         final float insideY = padding.getTop();
         final float insideWidth = width - insideX - padding.getRight();
         final float insideHeight = height - insideY - padding.getBottom();
-        final Component c = center().getValue();
-        final Component r = right().getValue();
-        final Component b = bottom().getValue();
-        final Component l = left().getValue();
-        final Component t = top().getValue();
+        final Node c = center().getValue();
+        final Node r = right().getValue();
+        final Node b = bottom().getValue();
+        final Node l = left().getValue();
+        final Node t = top().getValue();
         float topHeight = 0;
         if (t != null) {
             Insets topMargin = getNodeMargin(t);

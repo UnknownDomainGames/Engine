@@ -4,8 +4,8 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.gui.Component;
-import nullengine.client.gui.Container;
+import nullengine.client.gui.Node;
+import nullengine.client.gui.Parent;
 import nullengine.client.gui.layout.ScrollPane;
 import nullengine.client.gui.layout.VBox;
 
@@ -17,13 +17,13 @@ import java.util.function.Supplier;
 public class ListView<T> extends Control {
     private final ScrollPane scrollPane;
 
-    private Container container;
+    private Parent parent;
 
-    public static final Supplier<? extends Container> DEFAULT_CONTAINER_FACTORY = VBox::new;
+    public static final Supplier<? extends Parent> DEFAULT_CONTAINER_FACTORY = VBox::new;
 
-    private final Function<T, Component> defaultContentFactory = (obj) -> new Label(obj.toString());
-    private MutableObjectValue<Supplier<? extends Container>> containerFactory = new SimpleMutableObjectValue<>(DEFAULT_CONTAINER_FACTORY);
-    private MutableObjectValue<Function<T, ? extends Component>> contentFactory = new SimpleMutableObjectValue<>(defaultContentFactory);
+    private final Function<T, Node> defaultContentFactory = (obj) -> new Label(obj.toString());
+    private MutableObjectValue<Supplier<? extends Parent>> containerFactory = new SimpleMutableObjectValue<>(DEFAULT_CONTAINER_FACTORY);
+    private MutableObjectValue<Function<T, ? extends Node>> contentFactory = new SimpleMutableObjectValue<>(defaultContentFactory);
 
     private ObservableList<T> items = ObservableCollections.observableList(new ArrayList<>());
 
@@ -34,7 +34,7 @@ public class ListView<T> extends Control {
         this.getSize().prefHeight().bindBidirectional(scrollPane.getSize().prefHeight());
         items.addChangeListener(change -> update());
         containerFactory.addChangeListener((observable, oldValue, newValue) -> {
-            container = null;
+            parent = null;
             update();
         });
 //        padding().addChangeListener((observable, oldValue, newValue) -> layoutInArea(scrollPane));
@@ -42,14 +42,14 @@ public class ListView<T> extends Control {
     }
 
     private void update(){
-        if(container == null){
-            container = containerFactory.getValue().get();
-            scrollPane.setContent(container);
+        if (parent == null) {
+            parent = containerFactory.getValue().get();
+            scrollPane.setContent(parent);
         }
-        container.getChildren().clear();
+        parent.getChildren().clear();
         for (T item : items) {
             var c = contentFactory.getValue().apply(item);
-            container.getChildren().add(c);
+            parent.getChildren().add(c);
         }
     }
 
@@ -69,19 +69,19 @@ public class ListView<T> extends Control {
 
     //restoring Container's definition
     @Override
-    public List<Component> getPointingComponents(float posX, float posY) {
-        var list = new ArrayList<Component>();
-        for (Component component : getChildren()) {
-            if (component.contains(posX, posY)) {
-                if (component instanceof Container) {
-                    var container = (Container) component;
-                    if (!(component instanceof Control)) {
+    public List<Node> getPointingComponents(float posX, float posY) {
+        var list = new ArrayList<Node>();
+        for (Node node : getChildren()) {
+            if (node.contains(posX, posY)) {
+                if (node instanceof Parent) {
+                    var container = (Parent) node;
+                    if (!(node instanceof Control)) {
                         list.add(container);
                     }
                     list.addAll(container.getPointingComponents(posX - container.x().get(), posY - container.y().get()));
 
                 } else {
-                    list.add(component);
+                    list.add(node);
                 }
             }
         }

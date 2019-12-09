@@ -1,6 +1,6 @@
 package nullengine.client.gui.rendering;
 
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.rendering.font.Font;
@@ -57,11 +57,11 @@ public interface Graphics {
 
     void drawTexture(Texture2D texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV);
 
-    void drawBorder(Border border, Component component);
+    void drawBorder(Border border, Node node);
 
     void drawBorder(Border border, float x, float y, float width, float height);
 
-    void drawBackground(Background background, Component component);
+    void drawBackground(Background background, Node node);
 
     void drawBackground(Background background, float x, float y, float width, float height);
 

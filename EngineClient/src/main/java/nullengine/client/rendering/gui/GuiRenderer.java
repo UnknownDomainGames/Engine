@@ -3,8 +3,8 @@ package nullengine.client.rendering.gui;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import nullengine.client.asset.AssetTypes;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.gui.Container;
 import nullengine.client.gui.GuiManager;
+import nullengine.client.gui.Parent;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.internal.Internal;
 import nullengine.client.gui.rendering.Graphics;
@@ -128,7 +128,7 @@ public class GuiRenderer implements Renderer {
 
         scene.update();
 
-        Container root = scene.getRoot();
+        Parent root = scene.getRoot();
         if (!root.visible().get()) {
             return;
         }

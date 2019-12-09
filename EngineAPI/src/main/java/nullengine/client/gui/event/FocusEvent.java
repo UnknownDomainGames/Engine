@@ -1,21 +1,21 @@
 package nullengine.client.gui.event;
 
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 
 public class FocusEvent extends ComponentEvent {
-    protected FocusEvent(Component component) {
-        super(component);
+    protected FocusEvent(Node node) {
+        super(node);
     }
 
     public static class FocusGainEvent extends FocusEvent {
-        public FocusGainEvent(Component component) {
-            super(component);
+        public FocusGainEvent(Node node) {
+            super(node);
         }
     }
 
     public static class FocusLostEvent extends FocusEvent {
-        public FocusLostEvent(Component component) {
-            super(component);
+        public FocusLostEvent(Node node) {
+            super(node);
         }
     }
 }

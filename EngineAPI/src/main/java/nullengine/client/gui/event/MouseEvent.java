@@ -1,13 +1,13 @@
 package nullengine.client.gui.event;
 
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 
 public class MouseEvent extends ComponentEvent {
 
-    protected MouseEvent(Component component) {
-        super(component);
+    protected MouseEvent(Node node) {
+        super(node);
     }
 
     public static class MousePositionEvent extends MouseEvent {
@@ -17,8 +17,8 @@ public class MouseEvent extends ComponentEvent {
         private double newPosX;
         private double newPosY;
 
-        public MousePositionEvent(Component component, double oldPosX, double oldPosY, double newPosX, double newPosY) {
-            super(component);
+        public MousePositionEvent(Node node, double oldPosX, double oldPosY, double newPosX, double newPosY) {
+            super(node);
             this.oldPosX = oldPosX;
             this.oldPosY = oldPosY;
 
@@ -45,22 +45,22 @@ public class MouseEvent extends ComponentEvent {
 
     public static class MouseMoveEvent extends MousePositionEvent {
 
-        public MouseMoveEvent(Component component, double oldPosX, double oldPosY, double newPosX, double newPosY) {
-            super(component, oldPosX, oldPosY, newPosX, newPosY);
+        public MouseMoveEvent(Node node, double oldPosX, double oldPosY, double newPosX, double newPosY) {
+            super(node, oldPosX, oldPosY, newPosX, newPosY);
         }
     }
 
     public static class MouseEnterEvent extends MousePositionEvent {
 
-        public MouseEnterEvent(Component component, double oldPosX, double oldPosY, double newPosX, double newPosY) {
-            super(component, oldPosX, oldPosY, newPosX, newPosY);
+        public MouseEnterEvent(Node node, double oldPosX, double oldPosY, double newPosX, double newPosY) {
+            super(node, oldPosX, oldPosY, newPosX, newPosY);
         }
     }
 
     public static class MouseLeaveEvent extends MousePositionEvent {
 
-        public MouseLeaveEvent(Component component, double oldPosX, double oldPosY, double newPosX, double newPosY) {
-            super(component, oldPosX, oldPosY, newPosX, newPosY);
+        public MouseLeaveEvent(Node node, double oldPosX, double oldPosY, double newPosX, double newPosY) {
+            super(node, oldPosX, oldPosY, newPosX, newPosY);
         }
     }
 
@@ -71,8 +71,8 @@ public class MouseEvent extends ComponentEvent {
         private float posX;
         private float posY;
 
-        public MouseButtonEvent(Component component, float posX, float posY, Key key, ActionMode mode) {
-            super(component);
+        public MouseButtonEvent(Node node, float posX, float posY, Key key, ActionMode mode) {
+            super(node);
             this.key = key;
             this.mode = mode;
             this.posX = posX;
@@ -98,22 +98,22 @@ public class MouseEvent extends ComponentEvent {
 
     public static class MouseClickEvent extends MouseButtonEvent {
 
-        public MouseClickEvent(Component component, float posX, float posY, Key key) {
-            super(component, posX, posY, key, ActionMode.PRESS);
+        public MouseClickEvent(Node node, float posX, float posY, Key key) {
+            super(node, posX, posY, key, ActionMode.PRESS);
         }
     }
 
     public static class MouseReleasedEvent extends MouseButtonEvent {
 
-        public MouseReleasedEvent(Component component, float posX, float posY, Key key) {
-            super(component, posX, posY, key, ActionMode.PRESS);
+        public MouseReleasedEvent(Node node, float posX, float posY, Key key) {
+            super(node, posX, posY, key, ActionMode.PRESS);
         }
     }
 
     public static class MouseHoldEvent extends MouseButtonEvent {
 
-        public MouseHoldEvent(Component component, float posX, float posY, Key key) {
-            super(component, posX, posY, key, ActionMode.PRESS);
+        public MouseHoldEvent(Node node, float posX, float posY, Key key) {
+            super(node, posX, posY, key, ActionMode.PRESS);
         }
     }
 
@@ -121,8 +121,8 @@ public class MouseEvent extends ComponentEvent {
         double xOffset;
         double yOffset;
 
-        public MouseWheelEvent(Component component, double xOffset, double yOffset) {
-            super(component);
+        public MouseWheelEvent(Node node, double xOffset, double yOffset) {
+            super(node);
             this.xOffset = xOffset;
             this.yOffset = yOffset;
         }

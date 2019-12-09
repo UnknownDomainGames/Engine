@@ -22,9 +22,9 @@ public class Scene {
     private final MutableFloatValue width = new SimpleMutableFloatValue();
     private final MutableFloatValue height = new SimpleMutableFloatValue();
 
-    private final MutableObjectValue<Container> root = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Parent> root = new SimpleMutableObjectValue<>();
 
-    public Scene(Container root) {
+    public Scene(Parent root) {
         setRoot(root);
     }
 
@@ -50,15 +50,15 @@ public class Scene {
         updateRoot();
     }
 
-    public ObservableObjectValue<Container> root() {
+    public ObservableObjectValue<Parent> root() {
         return root.toUnmodifiable();
     }
 
-    public Container getRoot() {
+    public Parent getRoot() {
         return root.get();
     }
 
-    public void setRoot(Container root) {
+    public void setRoot(Parent root) {
         Validate.notNull(root);
         if (root.parent().get() != null) {
             throw new IllegalStateException(root + " is already inside a container and cannot be set as root");
@@ -70,7 +70,7 @@ public class Scene {
     }
 
     private void updateRoot() {
-        Container root = this.root.get();
+        Parent root = this.root.get();
         root.width.set(getWidth() - root.x().get());
         root.height.set(getHeight() - root.y().get());
         root.needsLayout();
@@ -104,9 +104,9 @@ public class Scene {
             var root = this.root.get();
             var old = root.getPointingComponents((float) lastPosX, (float) lastPosY);
             var n = root.getPointingComponents((float) xCorr, (float) yCorr);
-            List<Component> moveEvent = old.stream().filter(n::contains).collect(Collectors.toList());
-            List<Component> leaveEvent = old.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
-            List<Component> enterEvent = n.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
+            List<Node> moveEvent = old.stream().filter(n::contains).collect(Collectors.toList());
+            List<Node> leaveEvent = old.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
+            List<Node> enterEvent = n.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
             moveEvent.addAll(root.getChildrenRecursive().stream().filter(c -> c.focused.get()).collect(Collectors.toList()));
             moveEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseMoveEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
             enterEvent.forEach(component -> component.handleEvent(new MouseEvent.MouseEnterEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
@@ -146,13 +146,13 @@ public class Scene {
         var root = this.root.get();
         var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
         a.add(root);
-        for (Component component : a) {
+        for (Node node : a) {
             if (action == GLFW.GLFW_PRESS) {
-                component.handleEvent(new KeyEvent.KeyDownEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
+                node.handleEvent(new KeyEvent.KeyDownEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
             } else if (action == GLFW.GLFW_REPEAT) {
-                component.handleEvent(new KeyEvent.KeyHoldEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
+                node.handleEvent(new KeyEvent.KeyHoldEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
             } else if (action == GLFW.GLFW_RELEASE) {
-                component.handleEvent(new KeyEvent.KeyUpEvent(component, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
+                node.handleEvent(new KeyEvent.KeyUpEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
             }
         }
     };

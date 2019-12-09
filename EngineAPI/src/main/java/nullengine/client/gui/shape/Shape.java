@@ -1,6 +1,6 @@
 package nullengine.client.gui.shape;
 
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 
-public abstract class Shape extends Component {
+public abstract class Shape extends Node {
 }

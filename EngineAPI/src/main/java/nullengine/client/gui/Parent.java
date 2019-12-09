@@ -11,51 +11,51 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class Container extends Component {
+public abstract class Parent extends Node {
 
-    private final ObservableList<Component> children = ObservableCollections.observableList(new LinkedList<>());
-    private final ObservableList<Component> unmodifiableChildren = ObservableCollections.unmodifiableObservableList(children);
+    private final ObservableList<Node> children = ObservableCollections.observableList(new LinkedList<>());
+    private final ObservableList<Node> unmodifiableChildren = ObservableCollections.unmodifiableObservableList(children);
 
-    public Container() {
+    public Parent() {
         children.addChangeListener(change -> {
-            for (Component component : change.getAdded()) {
-                Container oldParent = component.parent.get();
+            for (Node node : change.getAdded()) {
+                Parent oldParent = node.parent.get();
                 if (oldParent != null) {
-                    component.scene.unbindBidirectional(oldParent.scene);
+                    node.scene.unbindBidirectional(oldParent.scene);
                 }
-                component.parent.setValue(this);
-                component.scene.bindBidirectional(Container.this.scene);
-                component.parent.addChangeListener(new ValueChangeListener<>() {
+                node.parent.setValue(this);
+                node.scene.bindBidirectional(Parent.this.scene);
+                node.parent.addChangeListener(new ValueChangeListener<>() {
                     @Override
-                    public void onChanged(ObservableValue<? extends Container> observable, Container oldValue, Container newValue) {
-                        children.remove(component);
+                    public void onChanged(ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) {
+                        children.remove(node);
                         observable.removeChangeListener(this);
                     }
                 });
             }
-            for (Component component : change.getRemoved()) {
-                if (component.parent.get() == this) {
-                    component.scene.unbindBidirectional(Container.this.scene);
-                    component.parent.set(null);
+            for (Node node : change.getRemoved()) {
+                if (node.parent.get() == this) {
+                    node.scene.unbindBidirectional(Parent.this.scene);
+                    node.parent.set(null);
                 }
             }
             needsLayout();
         });
     }
 
-    public ObservableList<Component> getChildren() {
+    public ObservableList<Node> getChildren() {
         return children;
     }
 
-    public final ObservableList<Component> getUnmodifiableChildren() {
+    public final ObservableList<Node> getUnmodifiableChildren() {
         return unmodifiableChildren;
     }
 
-    public final List<Component> getChildrenRecursive() {
-        var list = new ArrayList<Component>();
-        for (Component child : children) {
-            if (child instanceof Container) {
-                list.addAll(((Container) child).getChildrenRecursive());
+    public final List<Node> getChildrenRecursive() {
+        var list = new ArrayList<Node>();
+        for (Node child : children) {
+            if (child instanceof Parent) {
+                list.addAll(((Parent) child).getChildrenRecursive());
             }
             list.add(child);
         }
@@ -65,7 +65,7 @@ public abstract class Container extends Component {
     @Override
     public float prefWidth() {
         float minX = 0, maxX = 0;
-        for (Component child : getChildren()) {
+        for (Node child : getChildren()) {
             float childMinX = child.x().get();
             float childMaxX = childMinX + Math.max(Utils.prefWidth(child), child.width().get());
             if (minX > childMinX) {
@@ -81,7 +81,7 @@ public abstract class Container extends Component {
     @Override
     public float prefHeight() {
         float minY = 0, maxY = 0;
-        for (Component child : getChildren()) {
+        for (Node child : getChildren()) {
             float childMinY = child.y().get();
             float childMaxY = childMinY + Math.max(Utils.prefHeight(child), child.height().get());
             if (minY > childMinY) {
@@ -99,12 +99,12 @@ public abstract class Container extends Component {
 
     public void needsLayout() {
         layoutState = LayoutState.NEED_LAYOUT;
-        for (Component child : children) {
-            if (child instanceof Container) {
-                ((Container) child).needsLayout();
+        for (Node child : children) {
+            if (child instanceof Parent) {
+                ((Parent) child).needsLayout();
             }
         }
-        Container parent = parent().getValue();
+        Parent parent = parent().getValue();
         while (parent != null && parent.layoutState == LayoutState.CLEAN) {
             parent.layoutState = LayoutState.DIRTY_BRANCH;
             parent = parent.parent().getValue();
@@ -131,9 +131,9 @@ public abstract class Container extends Component {
                 layoutChildren();
                 // Intended fall-through
             case DIRTY_BRANCH:
-                for (Component component : getChildren()) {
-                    if (component instanceof Container) {
-                        ((Container) component).layout();
+                for (Node node : getChildren()) {
+                    if (node instanceof Parent) {
+                        ((Parent) node).layout();
                     }
                 }
                 layoutState = LayoutState.CLEAN;
@@ -143,31 +143,31 @@ public abstract class Container extends Component {
     }
 
     protected void layoutChildren() {
-        for (Component component : getChildren()) {
-            layoutInArea(component, component.x().get(), component.y().get(), Utils.prefWidth(component), Utils.prefHeight(component));
+        for (Node node : getChildren()) {
+            layoutInArea(node, node.x().get(), node.y().get(), Utils.prefWidth(node), Utils.prefHeight(node));
         }
     }
 
-    protected final void layoutInArea(Component component, float x, float y, float width, float height) {
-        component.x().set(x);
-        component.y().set(y);
-        component.width.set(width);
-        component.height.set(height);
+    protected final void layoutInArea(Node node, float x, float y, float width, float height) {
+        node.x().set(x);
+        node.y().set(y);
+        node.width.set(width);
+        node.height.set(height);
     }
 
-    public List<Component> getPointingComponents(float posX, float posY) {
-        var list = new ArrayList<Component>();
-        for (Component component : getChildren()) {
-            if (component.contains(posX, posY)) {
-                if (component instanceof Container) {
-                    var container = (Container) component;
-                    if (!(component instanceof Control)) {
+    public List<Node> getPointingComponents(float posX, float posY) {
+        var list = new ArrayList<Node>();
+        for (Node node : getChildren()) {
+            if (node.contains(posX, posY)) {
+                if (node instanceof Parent) {
+                    var container = (Parent) node;
+                    if (!(node instanceof Control)) {
                         list.add(container);
                     }
                     list.addAll(container.getPointingComponents(posX - container.x().get(), posY - container.y().get()));
 
                 } else {
-                    list.add(component);
+                    list.add(node);
                 }
             }
         }

@@ -1,6 +1,6 @@
 package nullengine.client.gui.layout;
 
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.util.Utils;
 
@@ -10,35 +10,35 @@ public class AnchorPane extends Pane {
     public static final String LEFT_ANCHOR = "anchor-left";
     public static final String RIGHT_ANCHOR = "anchor-right";
 
-    public static void setTopAnchor(Component child, Float value) {
+    public static void setTopAnchor(Node child, Float value) {
         setProperty(child, TOP_ANCHOR, value);
     }
 
-    public static void setBottomAnchor(Component child, Float value) {
+    public static void setBottomAnchor(Node child, Float value) {
         setProperty(child, BOTTOM_ANCHOR, value);
     }
 
-    public static void setLeftAnchor(Component child, Float value) {
+    public static void setLeftAnchor(Node child, Float value) {
         setProperty(child, LEFT_ANCHOR, value);
     }
 
-    public static void setRightAnchor(Component child, Float value) {
+    public static void setRightAnchor(Node child, Float value) {
         setProperty(child, RIGHT_ANCHOR, value);
     }
 
-    public static Float getTopAnchor(Component child) {
+    public static Float getTopAnchor(Node child) {
         return (Float) getProperty(child, TOP_ANCHOR);
     }
 
-    public static Float getBottomAnchor(Component child) {
+    public static Float getBottomAnchor(Node child) {
         return (Float) getProperty(child, BOTTOM_ANCHOR);
     }
 
-    public static Float getLeftAnchor(Component child) {
+    public static Float getLeftAnchor(Node child) {
         return (Float) getProperty(child, LEFT_ANCHOR);
     }
 
-    public static Float getRightAnchor(Component child) {
+    public static Float getRightAnchor(Node child) {
         return (Float) getProperty(child, RIGHT_ANCHOR);
     }
 
@@ -54,7 +54,7 @@ public class AnchorPane extends Pane {
 
     private float computeWidth(final boolean minimum) {
         float max = 0;
-        for (Component child : getChildren()) {
+        for (Node child : getChildren()) {
             var leftA = getLeftAnchor(child);
             var rightA = getRightAnchor(child);
             float left = leftA != null ? leftA : (0);
@@ -68,7 +68,7 @@ public class AnchorPane extends Pane {
 
     private float computeHeight(final boolean minimum) {
         float max = 0;
-        for (Component child : getChildren()) {
+        for (Node child : getChildren()) {
             var topA = getTopAnchor(child);
             var bottomA = getBottomAnchor(child);
             float top = topA != null ? topA : (0);
@@ -80,24 +80,24 @@ public class AnchorPane extends Pane {
         return padding.getTop() + max + padding.getBottom();
     }
 
-    private float computeChildWidth(Component component, Float left, Float right, float areaWidth) {
+    private float computeChildWidth(Node node, Float left, Float right, float areaWidth) {
         if (left != null && right != null) {
             return areaWidth - left - right;
         }
-        return Utils.prefWidth(component);
+        return Utils.prefWidth(node);
     }
 
-    private float computeChildHeight(Component component, Float top, Float bottom, float areaHeight) {
+    private float computeChildHeight(Node node, Float top, Float bottom, float areaHeight) {
         if (top != null && bottom != null) {
             return areaHeight - top - bottom;
         }
-        return Utils.prefHeight(component);
+        return Utils.prefHeight(node);
     }
 
     @Override
     protected void layoutChildren() {
         final var children = getChildren();
-        for (Component child : children) {
+        for (Node child : children) {
             var top = getTopAnchor(child);
             var bottom = getBottomAnchor(child);
             var left = getLeftAnchor(child);

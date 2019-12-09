@@ -1,6 +1,6 @@
 package nullengine.client.gui.util;
 
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 
 public final class Utils {
 
@@ -11,11 +11,11 @@ public final class Utils {
         return Math.min(Math.max(arg0, arg1), Math.max(arg1, arg2));
     }
 
-    public static float prefWidth(Component component) {
-        return middleValue(component.prefWidth(), component.minWidth(), component.maxWidth());
+    public static float prefWidth(Node node) {
+        return middleValue(node.prefWidth(), node.minWidth(), node.maxWidth());
     }
 
-    public static float prefHeight(Component component) {
-        return middleValue(component.prefHeight(), component.minHeight(), component.maxHeight());
+    public static float prefHeight(Node node) {
+        return middleValue(node.prefHeight(), node.minHeight(), node.maxHeight());
     }
 }

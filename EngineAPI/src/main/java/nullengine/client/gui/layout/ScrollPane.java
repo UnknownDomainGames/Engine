@@ -3,7 +3,7 @@ package nullengine.client.gui.layout;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.component.HSlider;
 import nullengine.client.gui.component.VSlider;
 import nullengine.client.gui.misc.Pos;
@@ -13,7 +13,7 @@ public class ScrollPane extends BorderPane {
     private final VSlider vScroll;
     private final HSlider hScroll;
 
-    private final MutableObjectValue<Component> content = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Node> content = new SimpleMutableObjectValue<>();
 
     public ScrollPane(){
         super();
@@ -79,12 +79,12 @@ public class ScrollPane extends BorderPane {
         }
     }
 
-    public void setContent(Component content) {
+    public void setContent(Node content) {
         this.content.setValue(content);
         center().setValue(content);
     }
 
-    public ObservableValue<Component> content() {
+    public ObservableValue<Node> content() {
         return content.toUnmodifiable();
     }
 

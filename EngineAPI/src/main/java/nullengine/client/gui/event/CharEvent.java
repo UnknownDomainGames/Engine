@@ -1,12 +1,12 @@
 package nullengine.client.gui.event;
 
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 
 public class CharEvent extends ComponentEvent {
     private char c;
 
-    public CharEvent(Component component, char c) {
-        super(component);
+    public CharEvent(Node node, char c) {
+        super(node);
         this.c = c;
     }
 

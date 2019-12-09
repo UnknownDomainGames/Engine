@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public abstract class Component {
+public abstract class Node {
 
     final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
-    final MutableObjectValue<Container> parent = new SimpleMutableObjectValue<>();
+    final MutableObjectValue<Parent> parent = new SimpleMutableObjectValue<>();
 
     private final MutableFloatValue x = new SimpleMutableFloatValue();
     private final MutableFloatValue y = new SimpleMutableFloatValue();
@@ -37,7 +37,7 @@ public abstract class Component {
 
     private ComponentRenderer renderer;
 
-    public Component() {
+    public Node() {
         visible.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
     }
 
@@ -45,7 +45,7 @@ public abstract class Component {
         return scene;
     }
 
-    public final ObservableObjectValue<Container> parent() {
+    public final ObservableObjectValue<Parent> parent() {
         return parent.toUnmodifiable();
     }
 
@@ -86,9 +86,9 @@ public abstract class Component {
     }
 
     public final void requestParentLayout() {
-        Container container = parent().getValue();
-        if (container != null && !container.isNeedsLayout()) {
-            container.needsLayout();
+        Parent parent = parent().getValue();
+        if (parent != null && !parent.isNeedsLayout()) {
+            parent.needsLayout();
         }
     }
 

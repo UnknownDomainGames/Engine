@@ -1,7 +1,7 @@
 package nullengine.client.gui.text;
 
 import com.github.mouse0w0.observable.value.*;
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.TextRenderer;
@@ -9,7 +9,7 @@ import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.util.Color;
 
-public class Text extends Component {
+public class Text extends Node {
 
     private final MutableStringValue text = new SimpleMutableStringValue();
     private final MutableObjectValue<Font> font = new SimpleMutableObjectValue<>(Font.getDefaultFont());

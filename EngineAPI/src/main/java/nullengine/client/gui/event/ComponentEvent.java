@@ -1,19 +1,19 @@
 package nullengine.client.gui.event;
 
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.event.Event;
 
 public class ComponentEvent implements Event {
-    private Component component;
+    private Node node;
 
     private ComponentEvent() {
     }
 
-    public ComponentEvent(Component component) {
-        this.component = component;
+    public ComponentEvent(Node node) {
+        this.node = node;
     }
 
-    public Component getComponent() {
-        return component;
+    public Node getNode() {
+        return node;
     }
 }

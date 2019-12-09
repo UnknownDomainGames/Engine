@@ -3,13 +3,13 @@ package nullengine.client.gui.component;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.internal.Internal;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.ImageRenderer;
 import nullengine.client.rendering.texture.Texture2D;
 
-public class ImageView extends Component {
+public class ImageView extends Node {
     private final SimpleMutableObjectValue<AssetURL> image = new SimpleMutableObjectValue<>();
     private final SimpleMutableFloatValue imageX = new SimpleMutableFloatValue();
     private final SimpleMutableFloatValue imageY = new SimpleMutableFloatValue();

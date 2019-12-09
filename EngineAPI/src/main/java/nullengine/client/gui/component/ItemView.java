@@ -2,12 +2,12 @@ package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.ItemViewRenderer;
 import nullengine.item.ItemStack;
 
-public class ItemView extends Component {
+public class ItemView extends Node {
     private final SimpleMutableObjectValue<ItemStack> item = new SimpleMutableObjectValue<>();
     private final SimpleMutableFloatValue viewSize = new SimpleMutableFloatValue(80);
 

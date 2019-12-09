@@ -165,7 +165,7 @@ public class TextField extends Control {
                 //No need to repeat
                 break;
             default:
-                onKeyDown(new KeyEvent.KeyDownEvent(event.getComponent(), event.getKey(), event.getMode(), event.getModifier()));
+                onKeyDown(new KeyEvent.KeyDownEvent(event.getNode(), event.getKey(), event.getMode(), event.getModifier()));
         }
     }
 

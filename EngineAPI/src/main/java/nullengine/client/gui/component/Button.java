@@ -2,7 +2,7 @@ package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.event.MouseEvent;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Insets;
@@ -81,7 +81,7 @@ public class Button extends Label {
 
     @Override
     protected void layoutChildren() {
-        for (Component child : getChildren()) {
+        for (Node child : getChildren()) {
             if(child instanceof Text){
                 var align = ((Text) child).textAlignment().getValue();
                 var aw = this.prefWidth() - padding().getValue().getLeft() - padding().getValue().getRight();

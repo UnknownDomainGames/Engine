@@ -1,6 +1,6 @@
 package nullengine.client.gui.misc;
 
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.texture.Texture2D;
@@ -47,7 +47,7 @@ public class Background {
         this.repeat = repeat;
     }
 
-    public void render(Component component, Graphics graphics) {
+    public void render(Node node, Graphics graphics) {
         if (image != null) {
             image.bind();
             if (repeat) {
@@ -57,10 +57,10 @@ public class Background {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             }
-            graphics.drawTexture(image, 0, 0, component.width().get(), component.height().get());
+            graphics.drawTexture(image, 0, 0, node.width().get(), node.height().get());
         } else {
             graphics.setColor(color);
-            graphics.fillRect(0, 0, component.width().get(), component.height().get());
+            graphics.fillRect(0, 0, node.width().get(), node.height().get());
         }
     }
 

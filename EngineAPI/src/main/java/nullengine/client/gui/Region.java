@@ -7,7 +7,7 @@ import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.RegionRenderer;
 import nullengine.math.Math2;
 
-public class Region extends Container {
+public class Region extends Parent {
 
     private final Size size = new Size();
 
@@ -37,7 +37,7 @@ public class Region extends Container {
         return getSize().minWidth().get();
     }
 
-    public static void positionInArea(Component child, float areaX, float areaY, float areaWidth, float areaHeight,
+    public static void positionInArea(Node child, float areaX, float areaY, float areaWidth, float areaHeight,
                                       float areaBaselineOffset, Insets margin, Pos.HPos halignment, Pos.VPos valignment, boolean isSnapToPixel) {
         Insets childMargin = margin != null ? margin : Insets.EMPTY;
 
@@ -53,7 +53,7 @@ public class Region extends Container {
         return snapToPixel ? Math.round(value) : value;
     }
 
-    private static void position(Component child, float areaX, float areaY, float areaWidth, float areaHeight,
+    private static void position(Node child, float areaX, float areaY, float areaWidth, float areaHeight,
                                  float areaBaselineOffset,
                                  float topMargin, float rightMargin, float bottomMargin, float leftMargin,
                                  Pos.HPos hpos, Pos.VPos vpos, boolean isSnapToPixel) {
@@ -163,7 +163,7 @@ public class Region extends Container {
         return RegionRenderer.INSTANCE;
     }
 
-    protected void layoutInArea(Component c, float areaX, float areaY, float areaWidth, float areaHeight, int areaBaselineOffset, Insets margin, Pos.HPos hAlign, Pos.VPos vAlign) {
+    protected void layoutInArea(Node c, float areaX, float areaY, float areaWidth, float areaHeight, int areaBaselineOffset, Insets margin, Pos.HPos hAlign, Pos.VPos vAlign) {
         Insets childMargin = margin != null ? margin : Insets.EMPTY;
 
         float top = childMargin.getTop();
@@ -196,7 +196,7 @@ public class Region extends Container {
                 top, right, bottom, left, hAlign, vAlign, true);
     }
 
-    protected float computeChildPrefAreaWidth(Component child, float baselineComplement, Insets margin, float height, boolean fillHeight) {
+    protected float computeChildPrefAreaWidth(Node child, float baselineComplement, Insets margin, float height, boolean fillHeight) {
         float left = margin != null ? margin.getLeft() : 0;
         float right = margin != null ? margin.getRight() : 0;
         float alt = -1;
@@ -206,7 +206,7 @@ public class Region extends Container {
         return left + Math2.clamp(child.minWidth(), child.prefWidth(), child.maxWidth()) + right;
     }
 
-    protected float computeChildPrefAreaHeight(Component child, float baselineComplement, Insets margin, float width) {
+    protected float computeChildPrefAreaHeight(Node child, float baselineComplement, Insets margin, float width) {
         float top = margin != null ? margin.getTop() : 0;
         float bottom = margin != null ? margin.getBottom() : 0;
         float alt = -1;

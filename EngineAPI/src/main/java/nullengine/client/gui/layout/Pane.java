@@ -1,31 +1,31 @@
 package nullengine.client.gui.layout;
 
 import com.github.mouse0w0.observable.collection.ObservableList;
-import nullengine.client.gui.Component;
+import nullengine.client.gui.Node;
 import nullengine.client.gui.Region;
 
 public class Pane extends Region {
 
-    public static void setProperty(Component component, Object key, Object value) {
+    public static void setProperty(Node node, Object key, Object value) {
         if (value == null) {
-            component.getProperties().remove(key);
+            node.getProperties().remove(key);
         } else {
-            component.getProperties().put(key, value);
+            node.getProperties().put(key, value);
         }
-        if (component.parent().getValue() != null) {
-            component.requestParentLayout();
+        if (node.parent().getValue() != null) {
+            node.requestParentLayout();
         }
     }
 
-    public static Object getProperty(Component component, Object key) {
-        if (component.hasProperties()) {
-            return component.getProperties().get(key);
+    public static Object getProperty(Node node, Object key) {
+        if (node.hasProperties()) {
+            return node.getProperties().get(key);
         }
         return null;
     }
 
     @Override
-    public final ObservableList<Component> getChildren() {
+    public final ObservableList<Node> getChildren() {
         return super.getChildren();
     }
 }
