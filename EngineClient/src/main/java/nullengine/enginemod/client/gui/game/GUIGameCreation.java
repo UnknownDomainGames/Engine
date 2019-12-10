@@ -36,6 +36,12 @@ public class GUIGameCreation extends FlowPane {
         text.font().setValue(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
+        Label tip = new Label();
+        tip.text().setValue("event system refactor.\nCon't use.");
+        tip.font().setValue(new Font(Font.getDefaultFont(), 20));
+        vBox.getChildren().add(tip);
+
+
         Button buttonCreate = new Button("New Game");
         buttonCreate.border().setValue(new Border(Color.WHITE));
         buttonCreate.setOnClick(mouseClickEvent -> {

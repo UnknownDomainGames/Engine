@@ -3,7 +3,9 @@ package nullengine.client.gui.component;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Node;
+import nullengine.client.gui.event.EventHandler;
 import nullengine.client.gui.event.old.MouseEvent_;
+import nullengine.client.gui.event.type.MouseEvent;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.text.Text;
@@ -54,13 +56,14 @@ public class Button extends Label {
     private Consumer<MouseEvent_.MouseClickEvent> onClick;
 
     @Override
+    @Deprecated
     public void onClick_(MouseEvent_.MouseClickEvent event) {
         if (onClick != null)
             onClick.accept(event);
     }
 
-    public void setOnClick(Consumer<MouseEvent_.MouseClickEvent> onClick) {
-        this.onClick = onClick;
+    public void setOnClick(EventHandler<MouseEvent.MouseClickEvent> onClick) {
+        this.addEventHandler(MouseEvent.MouseClickEvent.TYPE,onClick);
     }
 
     public MutableObjectValue<Background> buttonBackground() {
