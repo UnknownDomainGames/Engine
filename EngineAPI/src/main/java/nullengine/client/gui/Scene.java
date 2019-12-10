@@ -103,15 +103,20 @@ public class Scene {
         var yCorr = yPos / window.getContentScaleY();
         if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
             var root = this.root.get();
-            var old = root.getPointingComponents((float) lastPosX, (float) lastPosY);
-            var n = root.getPointingComponents((float) xCorr, (float) yCorr);
-            List<Node> moveEvent = old.stream().filter(n::contains).collect(Collectors.toList());
-            List<Node> leaveEvent = old.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
-            List<Node> enterEvent = n.stream().filter(o -> !moveEvent.contains(o)).collect(Collectors.toList());
-            moveEvent.addAll(root.getChildrenRecursive().stream().filter(c -> c.focused.get()).collect(Collectors.toList()));
-            moveEvent.forEach(component -> component.handleEvent(new MouseEvent_.MouseMoveEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
-            enterEvent.forEach(component -> component.handleEvent(new MouseEvent_.MouseEnterEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
-            leaveEvent.forEach(component -> component.handleEvent(new MouseEvent_.MouseLeaveEvent(component, lastPosX, lastPosY, xCorr, yCorr)));
+            var olds = root.getPointingComponents((float) lastPosX, (float) lastPosY);
+            var news = root.getPointingComponents((float) xCorr, (float) yCorr);
+            Node old = olds.size() != 0? olds.get(olds.size() - 1):null;
+            Node n = news.size() != 0? news.get(news.size() - 1):null;
+            if (n!=old){
+                if (old!=null)
+                    new MouseEvent.MouseLeaveEvent(old,lastPosX,lastPosY,xCorr,yCorr).fireEvent(old);
+                if (n!=null)
+                    new MouseEvent.MouseEnterEvent(n,lastPosX,lastPosY,xCorr,yCorr).fireEvent(n);
+            }
+            if (n!=null)
+                new MouseEvent.MouseMoveEvent(n,lastPosX,lastPosY,xCorr,yCorr).fireEvent(n);
+            if (old!=null)
+                new MouseEvent.MouseMoveEvent(old,lastPosX,lastPosY,xCorr,yCorr).fireEvent(old);
         }
         lastPosX = xCorr;
         lastPosY = yCorr;
@@ -130,7 +135,6 @@ public class Scene {
                 });
                 if (list.size() != 0) {
                     var node = list.get(list.size() - 1);
-                    System.out.println(node);
                     var pair = node.relativePos(((float) lastPosX), ((float) lastPosY));
                     var event = new MouseEvent.MouseClickEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button));
                     event.fireEvent(node);

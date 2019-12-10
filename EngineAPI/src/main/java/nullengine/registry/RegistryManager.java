@@ -33,6 +33,7 @@ public interface RegistryManager {
      * @param <T>
      * @deprecated Provide for {@link nullengine.event.mod.ModRegistrationEvent.Construction}. Waiting to remove.
      */
+    @Deprecated
     <T extends Registrable<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier);
 
     /**

@@ -65,6 +65,15 @@ public class GUIGameCreation extends FlowPane {
         buttonSettings.addEventHandler(MouseEvent.MouseClickEvent.TYPE,(i)->{
             System.out.println(22222);
         });
+        buttonSettings.addEventHandler(MouseEvent.MouseLeaveEvent.TYPE,(i)->{
+            System.out.println("leave");
+        });
+        buttonSettings.addEventHandler(MouseEvent.MouseMoveEvent.TYPE,(i)->{
+            System.out.println("move");
+        });
+        buttonSettings.addEventHandler(MouseEvent.MouseEnterEvent.TYPE,(i)->{
+            System.out.println("enter");
+        });
         buttonSettings.setOnClick(mouseClickEvent -> {
             Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiSettings()));
         });
