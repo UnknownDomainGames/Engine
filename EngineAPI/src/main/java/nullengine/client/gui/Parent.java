@@ -174,6 +174,17 @@ public abstract class Parent extends Node {
         return list;
     }
 
+    public List<Node> getPointingLastChildComponents(float posX, float posY) {
+        var list = getPointingComponents(posX,posY);
+        var toRemove = new ArrayList<Node>();
+        for (var i:list){
+            if (!i.parent().isEmpty())
+                toRemove.add(i.parent().get());
+        }
+        list.removeAll(toRemove);
+        return list;
+    }
+
     private boolean closeRequired = false;
 
     public boolean closeRequired() {
