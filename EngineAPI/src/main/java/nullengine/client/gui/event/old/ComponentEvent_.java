@@ -4,13 +4,13 @@ import nullengine.client.gui.Node;
 import nullengine.event.Event;
 
 @Deprecated
-public class ComponentEvent implements Event {
+public class ComponentEvent_ implements Event {
     private Node node;
 
-    private ComponentEvent() {
+    private ComponentEvent_() {
     }
 
-    public ComponentEvent(Node node) {
+    public ComponentEvent_(Node node) {
         this.node = node;
     }
 

@@ -105,8 +105,8 @@ public class VSlider extends Region {
     }
 
     @Override
-    public void onClick(MouseEvent_.MouseClickEvent e) {
-        super.onClick(e);
+    public void onClick_(MouseEvent_.MouseClickEvent e) {
+        super.onClick_(e);
         if (e.getPosY() > slider.y().get() + slider.width().get()) {
             value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
         } else if (e.getPosY() < slider.y().get()) {

@@ -49,7 +49,7 @@ public class ImageButton extends Image {
     private Consumer<MouseEvent_.MouseClickEvent> onClick;
 
     @Override
-    public void onClick(MouseEvent_.MouseClickEvent event) {
+    public void onClick_(MouseEvent_.MouseClickEvent event) {
         if (onClick != null)
             onClick.accept(event);
     }

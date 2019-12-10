@@ -5,7 +5,7 @@ import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 
 @Deprecated
-public class MouseEvent_ extends ComponentEvent {
+public class MouseEvent_ extends ComponentEvent_ {
 
     protected MouseEvent_(Node node) {
         super(node);

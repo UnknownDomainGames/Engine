@@ -2,10 +2,10 @@ package nullengine.client.gui;
 
 import com.github.mouse0w0.observable.value.*;
 import nullengine.Platform;
-import nullengine.client.gui.event.MouseEvent;
-import nullengine.client.gui.event.old.CharEvent;
-import nullengine.client.gui.event.old.FocusEvent;
-import nullengine.client.gui.event.old.KeyEvent;
+import nullengine.client.gui.event.type.MouseEvent;
+import nullengine.client.gui.event.old.CharEvent_;
+import nullengine.client.gui.event.old.FocusEvent_;
+import nullengine.client.gui.event.old.KeyEvent_;
 import nullengine.client.gui.event.old.MouseEvent_;
 import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
@@ -15,7 +15,6 @@ import nullengine.event.Event;
 import org.apache.commons.lang3.Validate;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class Scene {
@@ -127,12 +126,7 @@ public class Scene {
             var root = this.root.get();
             var list = root.getPointingComponents((float) lastPosX, (float) lastPosY);
             if (action == GLFW.GLFW_PRESS) {
-                root.getUnmodifiableChildren().stream().filter(c -> c.focused.get()).forEach(component -> component.handleEvent(new FocusEvent.FocusLostEvent(component)));
-                list.forEach(component -> {
-                    component.handleEvent(new FocusEvent.FocusGainEvent(component));
-                    var pair = component.relativePos(((float) lastPosX), ((float) lastPosY));
-                    component.handleEvent(new MouseEvent_.MouseClickEvent(component, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)));
-                });
+                root.getUnmodifiableChildren().stream().filter(c -> c.focused.get()).forEach(component -> component.handleEvent(new FocusEvent_.FocusLostEvent(component)));
                 if (list.size() != 0) {
                     var node = list.get(list.size() - 1);
                     var pair = node.relativePos(((float) lastPosX), ((float) lastPosY));
@@ -160,16 +154,16 @@ public class Scene {
         a.add(root);
         for (Node node : a) {
             if (action == GLFW.GLFW_PRESS) {
-                node.handleEvent(new KeyEvent.KeyDownEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
+                node.handleEvent(new KeyEvent_.KeyDownEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
             } else if (action == GLFW.GLFW_REPEAT) {
-                node.handleEvent(new KeyEvent.KeyHoldEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
+                node.handleEvent(new KeyEvent_.KeyHoldEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
             } else if (action == GLFW.GLFW_RELEASE) {
-                node.handleEvent(new KeyEvent.KeyUpEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
+                node.handleEvent(new KeyEvent_.KeyUpEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
             }
         }
     };
 
     public final CharCallback charCallback = (window, c) -> {
-        root.get().getChildrenRecursive().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent(component, c)));
+        root.get().getChildrenRecursive().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent_(component, c)));
     };
 }

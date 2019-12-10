@@ -1,7 +1,7 @@
 package nullengine.client.gui;
 
 import nullengine.Platform;
-import nullengine.client.gui.event.old.KeyEvent;
+import nullengine.client.gui.event.old.KeyEvent_;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.rendering.display.Window;
 import nullengine.util.UndoHistory;
@@ -24,7 +24,7 @@ public class EngineGuiManager implements GuiManager {
 
     private Scene displayingScreen;
     private UndoHistory<Scene> sceneHistory;
-    private Consumer<KeyEvent.KeyDownEvent> escCloseHandler;
+    private Consumer<KeyEvent_.KeyDownEvent> escCloseHandler;
 
     private boolean hudVisible = true;
 
@@ -57,7 +57,7 @@ public class EngineGuiManager implements GuiManager {
         if (scene == null) {
             return;
         }
-        scene.getRoot().addEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
+        scene.getRoot().addEventHandler(KeyEvent_.KeyDownEvent.class, escCloseHandler);
         var widthScaleless = window.getWidth() / window.getContentScaleX();
         var heightScaleless = window.getHeight() / window.getContentScaleY();
         displayingScreen.setSize(widthScaleless, heightScaleless);
@@ -78,7 +78,7 @@ public class EngineGuiManager implements GuiManager {
             if (!incognito) {
                 sceneHistory.pushHistory(displayingScreen);
             }
-            displayingScreen.getRoot().removeEventHandler(KeyEvent.KeyDownEvent.class, escCloseHandler);
+            displayingScreen.getRoot().removeEventHandler(KeyEvent_.KeyDownEvent.class, escCloseHandler);
             if (displayingScreen.getRoot() instanceof GuiTickable) {
                 tickables.remove(displayingScreen.getRoot());
             }

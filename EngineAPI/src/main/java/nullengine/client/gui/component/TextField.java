@@ -1,8 +1,8 @@
 package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.*;
-import nullengine.client.gui.event.old.CharEvent;
-import nullengine.client.gui.event.old.KeyEvent;
+import nullengine.client.gui.event.old.CharEvent_;
+import nullengine.client.gui.event.old.KeyEvent_;
 import nullengine.client.gui.event.old.MouseEvent_;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
@@ -76,17 +76,17 @@ public class TextField extends Control {
     @Override
     public void handleEvent(Event event) {
         super.handleEvent(event);
-        if (event instanceof KeyEvent) {
-            if (event instanceof KeyEvent.KeyDownEvent) {
-                onKeyDown((KeyEvent.KeyDownEvent) event);
-            } else if (event instanceof KeyEvent.KeyHoldEvent) {
-                onKeyHold((KeyEvent.KeyHoldEvent) event);
-            } else if (event instanceof KeyEvent.KeyUpEvent) {
-                onKeyUp(((KeyEvent.KeyUpEvent) event));
+        if (event instanceof KeyEvent_) {
+            if (event instanceof KeyEvent_.KeyDownEvent) {
+                onKeyDown((KeyEvent_.KeyDownEvent) event);
+            } else if (event instanceof KeyEvent_.KeyHoldEvent) {
+                onKeyHold((KeyEvent_.KeyHoldEvent) event);
+            } else if (event instanceof KeyEvent_.KeyUpEvent) {
+                onKeyUp(((KeyEvent_.KeyUpEvent) event));
             }
         }
-        if (event instanceof CharEvent) {
-            char c = ((CharEvent) event).getCharacter();
+        if (event instanceof CharEvent_) {
+            char c = ((CharEvent_) event).getCharacter();
             if (caret.get() != anchor.get()) {
                 replaceSelection("");
                 deselect();
@@ -99,7 +99,7 @@ public class TextField extends Control {
         }
     }
 
-    public void onKeyDown(KeyEvent.KeyDownEvent event) {
+    public void onKeyDown(KeyEvent_.KeyDownEvent event) {
         switch (event.getKey()) {
             case KEY_LEFT:
                 if (event.getModifier().isShift()) {
@@ -154,10 +154,10 @@ public class TextField extends Control {
         }
     }
 
-    public void onKeyUp(KeyEvent.KeyUpEvent event) {
+    public void onKeyUp(KeyEvent_.KeyUpEvent event) {
     }
 
-    public void onKeyHold(KeyEvent.KeyHoldEvent event) {
+    public void onKeyHold(KeyEvent_.KeyHoldEvent event) {
         switch (event.getKey()) {
             case KEY_X:
             case KEY_C:
@@ -165,13 +165,13 @@ public class TextField extends Control {
                 //No need to repeat
                 break;
             default:
-                onKeyDown(new KeyEvent.KeyDownEvent(event.getNode(), event.getKey(), event.getMode(), event.getModifier()));
+                onKeyDown(new KeyEvent_.KeyDownEvent(event.getNode(), event.getKey(), event.getMode(), event.getModifier()));
         }
     }
 
     @Override
-    public void onClick(MouseEvent_.MouseClickEvent event) {
-        super.onClick(event);
+    public void onClick_(MouseEvent_.MouseClickEvent event) {
+        super.onClick_(event);
         positionCaret(getNearestMousePos(event.getPosX()));
     }
 

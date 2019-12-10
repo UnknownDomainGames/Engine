@@ -6,12 +6,12 @@ import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyModifier;
 
 @Deprecated
-public class KeyEvent extends ComponentEvent {
+public class KeyEvent_ extends ComponentEvent_ {
     private Key key;
     private ActionMode mode;
     private KeyModifier modifiers;
 
-    public KeyEvent(Node node, Key key, ActionMode mode, KeyModifier modifier) {
+    public KeyEvent_(Node node, Key key, ActionMode mode, KeyModifier modifier) {
         super(node);
         this.key = key;
         this.mode = mode;
@@ -30,21 +30,21 @@ public class KeyEvent extends ComponentEvent {
         return modifiers;
     }
 
-    public static class KeyDownEvent extends KeyEvent {
+    public static class KeyDownEvent extends KeyEvent_ {
 
         public KeyDownEvent(Node node, Key key, ActionMode mode, KeyModifier modifier) {
             super(node, key, mode, modifier);
         }
     }
 
-    public static class KeyHoldEvent extends KeyEvent {
+    public static class KeyHoldEvent extends KeyEvent_ {
 
         public KeyHoldEvent(Node node, Key key, ActionMode mode, KeyModifier modifier) {
             super(node, key, mode, modifier);
         }
     }
 
-    public static class KeyUpEvent extends KeyEvent {
+    public static class KeyUpEvent extends KeyEvent_ {
 
         public KeyUpEvent(Node node, Key key, ActionMode mode, KeyModifier modifier) {
             super(node, key, mode, modifier);

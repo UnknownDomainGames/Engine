@@ -97,8 +97,8 @@ public class HSlider extends Region {
     }
 
     @Override
-    public void onClick(MouseEvent_.MouseClickEvent e) {
-        super.onClick(e);
+    public void onClick_(MouseEvent_.MouseClickEvent e) {
+        super.onClick_(e);
         if (e.getPosX() > slider.x().get() + slider.width().get()) {
             value.set(value.getValue() + step.get());
         } else if (e.getPosX() < slider.x().get()) {

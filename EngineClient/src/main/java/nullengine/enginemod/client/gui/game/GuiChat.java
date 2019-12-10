@@ -1,7 +1,7 @@
 package nullengine.enginemod.client.gui.game;
 
 import nullengine.client.gui.component.TextField;
-import nullengine.client.gui.event.old.KeyEvent;
+import nullengine.client.gui.event.old.KeyEvent_;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
@@ -25,7 +25,7 @@ public class GuiChat extends AnchorPane {
         textField.getSize().prefHeight().set(23.0f);
         this.getChildren().add(textField);
         this.background().setValue(Background.NOTHING);
-        this.addEventHandler(KeyEvent.KeyDownEvent.class, event -> {
+        this.addEventHandler(KeyEvent_.KeyDownEvent.class, event -> {
             if (event.getKey() == Key.KEY_ENTER) {
                 String text = textField.text().getValue();
                 if (text.startsWith("/")) { //command

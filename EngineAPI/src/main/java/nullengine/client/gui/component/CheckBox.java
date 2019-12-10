@@ -32,8 +32,8 @@ public class CheckBox extends Button {
     }
 
     @Override
-    public void onClick(MouseEvent_.MouseClickEvent event) {
-        super.onClick(event);
+    public void onClick_(MouseEvent_.MouseClickEvent event) {
+        super.onClick_(event);
         switchState();
     }
 
