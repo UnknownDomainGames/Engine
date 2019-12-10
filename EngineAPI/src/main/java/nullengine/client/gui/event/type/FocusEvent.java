@@ -1,7 +1,6 @@
 package nullengine.client.gui.event.type;
 
 import nullengine.client.gui.Node;
-import nullengine.client.gui.event.ComponentEvent;
 import nullengine.client.gui.event.EventType;
 
 public class FocusEvent extends ComponentEvent {
