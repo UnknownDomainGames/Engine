@@ -64,12 +64,6 @@ public class GUIGameCreation extends FlowPane {
         vBox.getChildren().add(buttonLoad);
 
         var buttonSettings = new Button("Settings");
-        vBox.addEventHandler(MouseEvent.MouseClickEvent.TYPE,(i)->{
-            System.out.println(1111111);
-        });
-        buttonSettings.addEventHandler(MouseEvent.MouseClickEvent.TYPE,(i)->{
-            System.out.println(22222);
-        });
         buttonSettings.addEventHandler(MouseEvent.MouseLeaveEvent.TYPE,(i)->{
             System.out.println("leave");
         });

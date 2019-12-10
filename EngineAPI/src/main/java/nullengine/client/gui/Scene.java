@@ -13,8 +13,11 @@ import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.client.rendering.display.callback.*;
 import nullengine.event.Event;
 import org.apache.commons.lang3.Validate;
+import org.checkerframework.common.value.qual.ArrayLen;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class Scene {
@@ -102,20 +105,22 @@ public class Scene {
         var yCorr = yPos / window.getContentScaleY();
         if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
             var root = this.root.get();
-            var olds = root.getPointingComponents((float) lastPosX, (float) lastPosY);
-            var news = root.getPointingComponents((float) xCorr, (float) yCorr);
-            Node old = olds.size() != 0? olds.get(olds.size() - 1):null;
-            Node n = news.size() != 0? news.get(news.size() - 1):null;
-            if (n!=old){
-                if (old!=null)
-                    new MouseEvent.MouseLeaveEvent(old,lastPosX,lastPosY,xCorr,yCorr).fireEvent(old);
-                if (n!=null)
-                    new MouseEvent.MouseEnterEvent(n,lastPosX,lastPosY,xCorr,yCorr).fireEvent(n);
+            var olds = root.getPointingLastChildComponents((float) lastPosX, (float) lastPosY);
+            var news = root.getPointingLastChildComponents((float) xCorr, (float) yCorr);
+            var toRemove = new ArrayList<Node>();
+            for (var i : news){
+                if (olds.contains(i)){
+                    new MouseEvent.MouseMoveEvent(i,lastPosX,lastPosY,xCorr,yCorr).fireEvent(i);
+                    toRemove.add(i);
+                }
+                else {
+                    new MouseEvent.MouseEnterEvent(i,lastPosX,lastPosY,xCorr,yCorr).fireEvent(i);
+                }
             }
-            if (n!=null)
-                new MouseEvent.MouseMoveEvent(n,lastPosX,lastPosY,xCorr,yCorr).fireEvent(n);
-            if (old!=null)
-                new MouseEvent.MouseMoveEvent(old,lastPosX,lastPosY,xCorr,yCorr).fireEvent(old);
+            olds.removeAll(toRemove);
+            for (var i : olds){
+                new MouseEvent.MouseLeaveEvent(i,lastPosX,lastPosY,xCorr,yCorr).fireEvent(i);
+            }
         }
         lastPosX = xCorr;
         lastPosY = yCorr;
