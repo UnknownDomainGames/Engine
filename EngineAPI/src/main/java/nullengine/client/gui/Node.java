@@ -50,10 +50,10 @@ public abstract class Node implements EventTarget {
         });
         this.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
             if (!disabled.get()) {
-                hover.set(false);
+                hover.set(true);
             }
         });
-        this.addEventHandler(MouseActionEvent.MOUSE_CLICKED, (e) -> {
+        this.addEventHandler(MouseActionEvent.MOUSE_PRESSED, (e) -> {
             if (!disabled.get() && e.getButton() == MouseButton.MOUSE_BUTTON_PRIMARY) {
                 pressed.set(true);
             }
@@ -214,7 +214,7 @@ public abstract class Node implements EventTarget {
             removeEventHandler(MouseActionEvent.MOUSE_CLICKED, getValue());
             super.setValue(value);
             if (value != null) {
-                removeEventHandler(MouseActionEvent.MOUSE_CLICKED, getValue());
+                addEventHandler(MouseActionEvent.MOUSE_CLICKED, getValue());
             }
         }
     };
@@ -233,7 +233,7 @@ public abstract class Node implements EventTarget {
             removeEventHandler(KeyEvent.KEY_PRESSED, getValue());
             super.setValue(value);
             if (value != null) {
-                removeEventHandler(KeyEvent.KEY_PRESSED, getValue());
+                addEventHandler(KeyEvent.KEY_PRESSED, getValue());
             }
         }
     };
