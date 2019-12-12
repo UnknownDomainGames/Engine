@@ -2,8 +2,8 @@ package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.Region;
-import nullengine.client.gui.event.type.MouseActionEvent;
-import nullengine.client.gui.event.type.MouseEvent;
+import nullengine.client.gui.input.MouseActionEvent;
+import nullengine.client.gui.input.MouseEvent;
 import nullengine.client.gui.shape.Rect;
 import nullengine.util.Color;
 import org.joml.Vector2f;

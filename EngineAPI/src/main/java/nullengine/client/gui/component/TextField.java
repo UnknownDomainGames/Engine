@@ -1,9 +1,9 @@
 package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.*;
-import nullengine.client.gui.event.type.KeyEvent;
-import nullengine.client.gui.event.type.MouseActionEvent;
-import nullengine.client.gui.event.type.MouseEvent;
+import nullengine.client.gui.input.KeyEvent;
+import nullengine.client.gui.input.MouseActionEvent;
+import nullengine.client.gui.input.MouseEvent;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.misc.IndexRange;

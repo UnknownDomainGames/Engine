@@ -1,4 +1,4 @@
-package nullengine.client.gui.event.type;
+package nullengine.client.gui.input;
 
 import nullengine.client.gui.event.Event;
 import nullengine.client.gui.event.EventTarget;

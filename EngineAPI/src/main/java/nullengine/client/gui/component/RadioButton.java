@@ -3,7 +3,7 @@ package nullengine.client.gui.component;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.gui.event.type.MouseActionEvent;
+import nullengine.client.gui.input.MouseActionEvent;
 import nullengine.client.gui.layout.BorderPane;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;

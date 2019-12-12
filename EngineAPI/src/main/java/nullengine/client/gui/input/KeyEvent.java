@@ -1,9 +1,8 @@
-package nullengine.client.gui.event.type;
+package nullengine.client.gui.input;
 
 import nullengine.client.gui.event.Event;
 import nullengine.client.gui.event.EventTarget;
 import nullengine.client.gui.event.EventType;
-import nullengine.client.gui.input.KeyCode;
 import nullengine.client.input.keybinding.KeyModifier;
 
 public class KeyEvent extends Event {

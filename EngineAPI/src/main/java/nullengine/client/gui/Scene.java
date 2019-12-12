@@ -1,12 +1,7 @@
 package nullengine.client.gui;
 
 import com.github.mouse0w0.observable.value.*;
-import nullengine.client.gui.event.type.KeyEvent;
-import nullengine.client.gui.event.type.MouseActionEvent;
-import nullengine.client.gui.event.type.MouseEvent;
-import nullengine.client.gui.event.type.ScrollEvent;
-import nullengine.client.gui.input.KeyCode;
-import nullengine.client.gui.input.MouseButton;
+import nullengine.client.gui.input.*;
 import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.client.rendering.display.callback.*;
 import org.apache.commons.lang3.Validate;
@@ -102,8 +97,8 @@ public class Scene {
             }
             olds.removeAll(toRemove);
             for (var i : olds) {
-                var pair = i.relativePos(lastScreenX, lastScreenY);
-                new MouseEvent(MouseEvent.MOUSE_EXITED, i, i, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY).fireEvent();
+                var pair = i.relativePos(screenX, screenY);
+                new MouseEvent(MouseEvent.MOUSE_EXITED, i, i, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
             }
         }
     };

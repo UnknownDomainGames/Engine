@@ -37,7 +37,7 @@ public class GUIGameCreation extends FlowPane {
 
         Button buttonCreate = new Button("New Game");
         buttonCreate.border().setValue(new Border(Color.WHITE));
-        buttonCreate.setOnClick(mouseClickEvent -> {
+        buttonCreate.setOnClick(event -> {
             var engine = Platform.getEngineClient();
             engine.getRenderManager().getGuiManager().closeScreen();
             Path gameBasePath = engine.getRunPath().resolve("game");
@@ -48,7 +48,7 @@ public class GUIGameCreation extends FlowPane {
 
         Button buttonLoad = new Button("Load Game");
         buttonLoad.border().setValue(new Border(Color.WHITE));
-        buttonLoad.setOnClick(mouseClickEvent -> {
+        buttonLoad.setOnClick(event -> {
             var engine = Platform.getEngineClient();
             engine.getRenderManager().getGuiManager().closeScreen();
             Path gameBasePath = engine.getRunPath().resolve("game");
@@ -57,12 +57,12 @@ public class GUIGameCreation extends FlowPane {
         vBox.getChildren().add(buttonLoad);
 
         var buttonSettings = new Button("Settings");
-        buttonSettings.setOnClick(mouseClickEvent ->
+        buttonSettings.setOnClick(event ->
                 Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiSettings())));
         vBox.getChildren().add(buttonSettings);
 
         Button buttonExit = new Button("Exit");
-        buttonExit.setOnClick(mouseClickEvent -> Platform.getEngine().terminate());
+        buttonExit.setOnClick(event -> Platform.getEngine().terminate());
         vBox.getChildren().add(buttonExit);
 
         var butCS = new Button("MultiPlayer");

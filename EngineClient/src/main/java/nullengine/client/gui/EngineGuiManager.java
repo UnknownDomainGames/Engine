@@ -2,8 +2,8 @@ package nullengine.client.gui;
 
 import nullengine.Platform;
 import nullengine.client.gui.event.EventHandler;
-import nullengine.client.gui.event.type.KeyEvent;
 import nullengine.client.gui.input.KeyCode;
+import nullengine.client.gui.input.KeyEvent;
 import nullengine.client.rendering.display.Window;
 import nullengine.util.UndoHistory;
 
