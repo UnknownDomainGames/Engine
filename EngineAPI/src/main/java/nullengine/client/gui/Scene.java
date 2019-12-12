@@ -1,9 +1,6 @@
 package nullengine.client.gui;
 
 import com.github.mouse0w0.observable.value.*;
-import nullengine.Platform;
-import nullengine.client.gui.event.old.CharEvent_;
-import nullengine.client.gui.event.old.KeyEvent_;
 import nullengine.client.gui.event.type.CharEvent;
 import nullengine.client.gui.event.type.FocusEvent;
 import nullengine.client.gui.event.type.KeyEvent;
@@ -12,7 +9,6 @@ import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.client.rendering.display.callback.*;
-import nullengine.event.Event;
 import org.apache.commons.lang3.Validate;
 import org.lwjgl.glfw.GLFW;
 
@@ -77,20 +73,6 @@ public class Scene {
         root.width.set(getWidth() - root.x().get());
         root.height.set(getHeight() - root.y().get());
         root.needsLayout();
-    }
-
-    public void hookToEventBus() {
-        Platform.getEngine().getEventBus().addListener(this::eventBusHook);
-    }
-
-    public void unhookFromEventBus() {
-//        Platform.getEngine().getEventBus().
-    }
-
-    private void eventBusHook(Event event) {
-        var root = this.root.get();
-        root.handleEvent(event);
-        root.getChildrenRecursive().forEach(component -> component.handleEvent(event));
     }
 
     public void update() {

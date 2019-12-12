@@ -4,7 +4,6 @@ import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
 import nullengine.Platform;
 import nullengine.client.gui.GuiManager;
-import nullengine.client.gui.Scene;
 import nullengine.client.gui.component.Button;
 import nullengine.client.gui.component.Label;
 import nullengine.client.gui.layout.BorderPane;
@@ -13,11 +12,8 @@ import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.rendering.RenderManager;
-import nullengine.server.event.NetworkDisconnectedEvent;
-import nullengine.server.event.PacketReceivedEvent;
 import nullengine.server.network.ConnectionStatus;
 import nullengine.server.network.NetworkClient;
-import nullengine.server.network.packet.PacketDisconnect;
 import nullengine.server.network.packet.PacketHandshake;
 import nullengine.util.Color;
 
@@ -65,23 +61,20 @@ public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
         background().setValue(Background.fromColor(Color.fromRGB(0x7f7f7f)));
         setAlignment(vbox, Pos.CENTER);
         center().setValue(vbox);
-        addEventHandler(PacketReceivedEvent.class, event -> {
-            if(event.getPacket() instanceof PacketDisconnect){
-                Platform.getLogger().warn("Disconnected from server");
-                lblStatus.text().setValue("Disconnected");
-                lblReason.text().setValue(((PacketDisconnect) event.getPacket()).getReason());
-                isFailed.set(true);
-            }
-        });
-        addEventHandler(NetworkDisconnectedEvent.class, event ->{
-            Platform.getLogger().warn("Disconnected from server: {}", event.getReason());
-            lblStatus.text().setValue("Disconnected");
-            lblReason.text().setValue(event.getReason());
-            isFailed.set(true);
-        });
-        scene().ifPresentOrElse(Scene::hookToEventBus, ()-> scene().addChangeListener((observable, oldValue, newValue) -> {
-                newValue.hookToEventBus();
-        }));
+//        addEventHandler(PacketReceivedEvent.class, event -> {
+//            if(event.getPacket() instanceof PacketDisconnect){
+//                Platform.getLogger().warn("Disconnected from server");
+//                lblStatus.text().setValue("Disconnected");
+//                lblReason.text().setValue(((PacketDisconnect) event.getPacket()).getReason());
+//                isFailed.set(true);
+//            }
+//        });
+//        addEventHandler(NetworkDisconnectedEvent.class, event ->{
+//            Platform.getLogger().warn("Disconnected from server: {}", event.getReason());
+//            lblStatus.text().setValue("Disconnected");
+//            lblReason.text().setValue(event.getReason());
+//            isFailed.set(true);
+//        });
         connect(ip, port);
     }
 
