@@ -4,6 +4,7 @@ import com.github.mouse0w0.observable.value.*;
 import nullengine.Platform;
 import nullengine.client.gui.event.old.CharEvent_;
 import nullengine.client.gui.event.old.KeyEvent_;
+import nullengine.client.gui.event.type.CharEvent;
 import nullengine.client.gui.event.type.FocusEvent;
 import nullengine.client.gui.event.type.KeyEvent;
 import nullengine.client.gui.event.type.MouseEvent;
@@ -184,7 +185,12 @@ public class Scene {
     };
 
     public final CharCallback charCallback = (window, c) -> {
-        root.get().getChildrenRecursive().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent_(component, c)));
+        var root = this.root.get();
+        var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
+        var lastA = getLastChildNodeFromList(a);
+        for (Node node : lastA) {
+            new CharEvent(node,c).fireEvent(node);
+        }
     };
 
     private List<Node> getLastChildNodeFromList(List<Node> nodes) {
