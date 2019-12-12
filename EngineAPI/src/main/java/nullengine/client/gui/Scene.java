@@ -79,36 +79,39 @@ public class Scene {
         root.get().layout();
     }
 
-    private double lastScreenX = Double.NaN;
-    private double lastScreenY = Double.NaN;
+    private float lastScreenX = Float.NaN;
+    private float lastScreenY = Float.NaN;
 
     public final CursorCallback cursorCallback = (window, xPos, yPos) -> {
-        if (!Double.isNaN(lastScreenX) && !Double.isNaN(lastScreenY)) {
+        if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
             var root = this.root.get();
-            var olds = root.getPointingLastChildComponents((float) lastScreenX, (float) lastScreenY);
-            var news = root.getPointingLastChildComponents((float) xPos, (float) yPos);
+            var olds = root.getPointingLastChildComponents(lastScreenX, lastScreenY);
+            lastScreenX = (float) xPos;
+            lastScreenY = (float) yPos;
+            var news = root.getPointingLastChildComponents(lastScreenX, lastScreenY);
             var toRemove = new ArrayList<Node>();
             for (var i : news) {
                 if (olds.contains(i)) {
-                    new MouseEvent(MouseEvent.MOUSE_MOVED, i, i, xPos, yPos).fireEvent();
+                    var pair = i.relativePos(lastScreenX, lastScreenY);
+                    new MouseEvent(MouseEvent.MOUSE_MOVED, i, i, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY).fireEvent();
                     toRemove.add(i);
                 } else {
-                    new MouseEvent(MouseEvent.MOUSE_ENTERED, i, i, xPos, yPos).fireEvent();
+                    var pair = i.relativePos(lastScreenX, lastScreenY);
+                    new MouseEvent(MouseEvent.MOUSE_ENTERED, i, i, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY).fireEvent();
                 }
             }
             olds.removeAll(toRemove);
             for (var i : olds) {
-                new MouseEvent(MouseEvent.MOUSE_EXITED, i, i, xPos, yPos).fireEvent();
+                var pair = i.relativePos(lastScreenX, lastScreenY);
+                new MouseEvent(MouseEvent.MOUSE_EXITED, i, i, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY).fireEvent();
             }
         }
-        lastScreenX = xPos;
-        lastScreenY = yPos;
     };
 
     public final MouseCallback mouseCallback = (window, button, action, modifiers) -> {
-        if (!Double.isNaN(lastScreenX) && !Double.isNaN(lastScreenY)) {
+        if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
             var root = this.root.get();
-            var targets = root.getPointingLastChildComponents((float) lastScreenX, (float) lastScreenY);
+            var targets = root.getPointingLastChildComponents(lastScreenX, lastScreenY);
             if (action == GLFW.GLFW_PRESS) {
                 for (var target : targets) {
                     if (target.disabled.get()) continue;
@@ -123,11 +126,11 @@ public class Scene {
             }
             for (var target : targets) {
                 if (action == GLFW.GLFW_PRESS) {
-                    var pair = target.relativePos(((float) lastScreenX), ((float) lastScreenY));
-                    new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, target, target, pair.getLeft(), pair.getRight(), MouseButton.valueOf(button)).fireEvent(target);
+                    var pair = target.relativePos(lastScreenX, lastScreenY);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button)).fireEvent(target);
                 } else if (action == GLFW.GLFW_RELEASE) {
-                    var pair = target.relativePos(((float) lastScreenX), ((float) lastScreenY));
-                    new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, target, target, pair.getLeft(), pair.getRight(), MouseButton.valueOf(button)).fireEvent(target);
+                    var pair = target.relativePos(lastScreenX, lastScreenY);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button)).fireEvent(target);
                 }
             }
 
@@ -138,7 +141,8 @@ public class Scene {
         var root = this.root.get();
         var targets = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
         for (var target : targets) {
-            new ScrollEvent(ScrollEvent.ANY, target, target, lastScreenX, lastScreenY, xOffset, yOffset).fireEvent();
+            var pair = target.relativePos(lastScreenX, lastScreenY);
+            new ScrollEvent(ScrollEvent.ANY, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, xOffset, yOffset).fireEvent();
         }
     };
 

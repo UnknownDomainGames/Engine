@@ -230,6 +230,10 @@ public abstract class Node implements EventTarget {
         eventHandlerManager.removeEventHandler(eventType, eventHandler);
     }
 
+    public void setOnClick(EventHandler<MouseActionEvent> onClick) {
+        addEventHandler(MouseActionEvent.MOUSE_CLICKED, onClick);
+    }
+
     private EventDispatchChain appendEventDispatchChain(EventDispatchChain tail, Node node) {
         var parent = node.parent();
         tail.append(node.getEventHandlerManager());

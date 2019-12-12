@@ -13,20 +13,32 @@ public class MouseEvent extends Event {
 
     public static final EventType<MouseEvent> MOUSE_MOVED = new EventType<>("MOUSE_MOVED", ANY);
 
-    private final double x;
-    private final double y;
+    private final float screenX;
+    private final float screenY;
+    private final float x;
+    private final float y;
 
-    public MouseEvent(EventType<? extends Event> eventType, Object source, EventTarget target, double x, double y) {
+    public MouseEvent(EventType<? extends Event> eventType, Object source, EventTarget target, float screenX, float screenY, float x, float y) {
         super(eventType, source, target);
+        this.screenX = screenX;
+        this.screenY = screenY;
         this.x = x;
         this.y = y;
     }
 
-    public double getX() {
+    public float getScreenX() {
+        return screenX;
+    }
+
+    public float getScreenY() {
+        return screenY;
+    }
+
+    public float getX() {
         return x;
     }
 
-    public double getY() {
+    public float getY() {
         return y;
     }
 }
