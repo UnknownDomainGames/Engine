@@ -23,6 +23,10 @@ public interface WindowCallbacks {
 
     void removeCharCallback(CharCallback callback);
 
+    void addCharModsCallback(CharModsCallback callback);
+
+    void removeCharModsCallback(CharModsCallback callback);
+
     void addWindowCloseCallback(WindowCloseCallback callback);
 
     void removeWindowCloseCallback(WindowCloseCallback callback);
