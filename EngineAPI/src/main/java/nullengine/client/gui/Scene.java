@@ -81,18 +81,18 @@ public class Scene {
         if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
             var root = this.root.get();
             var olds = root.getPointingLastChildComponents(lastScreenX, lastScreenY);
-            lastScreenX = (float) xPos;
-            lastScreenY = (float) yPos;
-            var news = root.getPointingLastChildComponents(lastScreenX, lastScreenY);
+            var screenX = (float) xPos;
+            var screenY = (float) yPos;
+            var news = root.getPointingLastChildComponents(screenX, screenY);
             var toRemove = new ArrayList<Node>();
-            for (var i : news) {
-                if (olds.contains(i)) {
-                    var pair = i.relativePos(lastScreenX, lastScreenY);
-                    new MouseEvent(MouseEvent.MOUSE_MOVED, i, i, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY).fireEvent();
-                    toRemove.add(i);
+            for (var target : news) {
+                if (olds.contains(target)) {
+                    var pair = target.relativePos(screenX, screenY);
+                    new MouseEvent(MouseEvent.MOUSE_MOVED, target, target, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
+                    toRemove.add(target);
                 } else {
-                    var pair = i.relativePos(lastScreenX, lastScreenY);
-                    new MouseEvent(MouseEvent.MOUSE_ENTERED, i, i, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY).fireEvent();
+                    var pair = target.relativePos(screenX, screenY);
+                    new MouseEvent(MouseEvent.MOUSE_ENTERED, target, target, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
                 }
             }
             olds.removeAll(toRemove);
@@ -101,6 +101,8 @@ public class Scene {
                 new MouseEvent(MouseEvent.MOUSE_EXITED, i, i, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
             }
         }
+        lastScreenX = (float) xPos;
+        lastScreenY = (float) yPos;
     };
 
     public final MouseCallback mouseCallback = (window, button, action, modifiers) -> {
