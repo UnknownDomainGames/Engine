@@ -1,6 +1,7 @@
 package nullengine.client.rendering;
 
 import nullengine.client.rendering.gl.GLRenderManager;
+import nullengine.client.rendering.lwjgl.STBImageHelper;
 import nullengine.client.rendering.management.RenderManager;
 import nullengine.client.rendering.management.SwapBuffersListener;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ public final class RenderEngine {
         }
         RenderEngine.settings = settings;
         // TODO: delegate render context creation
+        STBImageHelper.init();
         manager = new GLRenderManager(settings.swapBuffersListener);
         manager.init();
     }

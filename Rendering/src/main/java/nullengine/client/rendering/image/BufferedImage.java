@@ -1,12 +1,10 @@
 package nullengine.client.rendering.image;
 
 import nullengine.util.Color;
-import org.lwjgl.stb.STBImage;
-import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -16,24 +14,16 @@ public class BufferedImage {
     private int stride;
     private ByteBuffer pixelBuffer;
 
-    public static BufferedImage create(ByteBuffer buffer) throws IOException {
-        if (!buffer.isDirect()) {
-            ByteBuffer direct = ByteBuffer.allocateDirect(buffer.capacity());
-            direct.put(buffer).flip();
-            buffer = direct;
-        }
-        try (var stack = MemoryStack.stackPush()) {
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
-            IntBuffer c = stack.mallocInt(1);
-            ByteBuffer pixelBuffer = STBImage.stbi_load_from_memory(buffer, w, h, c, 4);
-            int width = w.get(0);
-            int height = h.get(0);
-            if (pixelBuffer == null) {
-                throw new IOException("File buffer cannot be load as pixel buffer by STBImage");
-            }
-            return new BufferedImage(width, height, pixelBuffer);
-        }
+    public static BufferedImage create(String url) throws IOException {
+        return new BufferedImage(ImageHelper.instance().loadImage(url));
+    }
+
+    public static BufferedImage create(InputStream input) throws IOException {
+        return new BufferedImage(ImageHelper.instance().loadImage(input));
+    }
+
+    public static BufferedImage create(ByteBuffer bytes) throws IOException {
+        return new BufferedImage(ImageHelper.instance().loadImage(bytes));
     }
 
     public BufferedImage(int size) {
@@ -60,6 +50,10 @@ public class BufferedImage {
         } else {
             pixelBuffer = buffer;
         }
+    }
+
+    private BufferedImage(LoadedImage image) {
+        this(image.getWidth(), image.getHeight(), image.getPixelBuffer());
     }
 
     protected void initPixelBuffer() {
