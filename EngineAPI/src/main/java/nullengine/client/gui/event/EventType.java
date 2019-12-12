@@ -1,12 +1,13 @@
 package nullengine.client.gui.event;
 
+import org.apache.commons.lang3.Validate;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class EventType<T extends Event> {
 
-    public static final EventType<Event> ROOT = new EventType<>();
+    public static final EventType<Event> ROOT = new EventType<>(null, "EVENT");
 
     private final String name;
     private final EventType<? super T> superType;
@@ -24,8 +25,13 @@ public class EventType<T extends Event> {
 
     public EventType(String name, EventType<? super T> superType) {
         this.name = name;
-        this.superType = Objects.requireNonNull(superType, "SuperType cannot be null.");
+        this.superType = Validate.notNull(superType, "Super type cannot be null");
         this.superType.addChildType(this);
+    }
+
+    private EventType(EventType<? super T> superType, String name) {
+        this.name = name;
+        this.superType = superType;
     }
 
     public EventType<? super T> getSuperType() {

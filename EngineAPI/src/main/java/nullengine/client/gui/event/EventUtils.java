@@ -9,12 +9,4 @@ public class EventUtils {
         eventDispatchChain.reset();
         return eventTarget.buildEventDispatchChain(eventDispatchChain).dispatchEvent(event);
     }
-
-    public static Event fireEvent(Event event, EventTarget... eventTargets) {
-        EventDispatchChainImpl eventDispatchChain = EventUtils.eventDispatchChain.get();
-        eventDispatchChain.reset();
-        for (EventTarget eventTarget : eventTargets)
-            eventTarget.buildEventDispatchChain(eventDispatchChain);
-        return eventDispatchChain.dispatchEvent(event);
-    }
 }
