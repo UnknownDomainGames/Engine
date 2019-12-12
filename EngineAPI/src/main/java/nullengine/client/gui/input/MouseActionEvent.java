@@ -3,6 +3,7 @@ package nullengine.client.gui.input;
 import nullengine.client.gui.event.Event;
 import nullengine.client.gui.event.EventTarget;
 import nullengine.client.gui.event.EventType;
+import nullengine.client.input.keybinding.KeyModifier;
 
 public class MouseActionEvent extends MouseEvent {
     public static final EventType<MouseActionEvent> ANY = new EventType<>("MOUSE_ACTION", MouseEvent.ANY);
@@ -14,13 +15,19 @@ public class MouseActionEvent extends MouseEvent {
     public static final EventType<MouseActionEvent> MOUSE_CLICKED = new EventType<>("MOUSE_CLICKED", ANY);
 
     private final MouseButton button;
+    private final KeyModifier modifier;
 
-    public MouseActionEvent(EventType<? extends Event> eventType, Object source, EventTarget target, float screenX, float screenY, float x, float y, MouseButton button) {
+    public MouseActionEvent(EventType<? extends Event> eventType, Object source, EventTarget target, float screenX, float screenY, float x, float y, MouseButton button, KeyModifier modifier) {
         super(eventType, source, target, screenX, screenY, x, y);
         this.button = button;
+        this.modifier = modifier;
     }
 
     public MouseButton getButton() {
         return button;
+    }
+
+    public KeyModifier getModifier() {
+        return modifier;
     }
 }

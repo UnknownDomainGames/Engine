@@ -8,8 +8,9 @@ import org.apache.commons.lang3.Validate;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 public class Scene {
 
@@ -105,7 +106,9 @@ public class Scene {
         lastScreenY = (float) yPos;
     };
 
-    public final MouseCallback mouseCallback = (window, button, action, modifiers) -> {
+    private final Set<Node> focused = new HashSet<>();
+
+    public final MouseCallback mouseCallback = (window, button, action, mods) -> {
         if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
             var root = this.root.get();
             var targets = root.getPointingComponents(lastScreenX, lastScreenY);
@@ -124,55 +127,29 @@ public class Scene {
             for (var target : targets) {
                 if (action == GLFW.GLFW_PRESS) {
                     var pair = target.relativePos(lastScreenX, lastScreenY);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button)).fireEvent(target);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button), KeyModifier.of(mods)).fireEvent(target);
                 } else if (action == GLFW.GLFW_RELEASE) {
                     var pair = target.relativePos(lastScreenX, lastScreenY);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button)).fireEvent(target);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button)).fireEvent(target);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button), KeyModifier.of(mods)).fireEvent(target);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button), KeyModifier.of(mods)).fireEvent(target);
                 }
             }
         }
     };
 
-    public final ScrollCallback scrollCallback = (window, xOffset, yOffset) -> {
-        var root = this.root.get();
-        var targets = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
-        for (var target : targets) {
-            var pair = target.relativePos(lastScreenX, lastScreenY);
-            new ScrollEvent(ScrollEvent.ANY, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, xOffset, yOffset).fireEvent();
-        }
-    };
+    public final ScrollCallback scrollCallback = (window, xOffset, yOffset) -> focused.forEach(node -> {
+        var pair = node.relativePos(lastScreenX, lastScreenY);
+        new ScrollEvent(ScrollEvent.ANY, node, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, xOffset, yOffset).fireEvent();
+    });
 
-    public final KeyCallback keyCallback = (window, key, scanCode, action, mods) -> {
-        var root = this.root.get();
-        var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
-        var targets = getLastChildNodeFromList(a);
-        for (Node target : targets) {
-            if (action == GLFW.GLFW_PRESS) {
-                new KeyEvent(KeyEvent.KEY_PRESSED, target, KeyCode.valueOf(key), KeyModifier.of(mods), true).fireEvent();
-            } else if (action == GLFW.GLFW_RELEASE) {
-                new KeyEvent(KeyEvent.KEY_RELEASED, target, KeyCode.valueOf(key), KeyModifier.of(mods), false).fireEvent();
-            }
+    public final KeyCallback keyCallback = (window, key, scanCode, action, mods) -> focused.forEach(node -> {
+        if (action == GLFW.GLFW_PRESS) {
+            new KeyEvent(KeyEvent.KEY_PRESSED, node, KeyCode.valueOf(key), KeyModifier.of(mods), true).fireEvent();
+        } else if (action == GLFW.GLFW_RELEASE) {
+            new KeyEvent(KeyEvent.KEY_RELEASED, node, KeyCode.valueOf(key), KeyModifier.of(mods), false).fireEvent();
         }
-    };
+    });
 
-    public final CharModsCallback charModsCallback = (window, codepoint, mods) -> {
-        var root = this.root.get();
-        var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
-        var targets = getLastChildNodeFromList(a);
-        for (Node target : targets) {
-            new KeyEvent(KeyEvent.KEY_TYPED, target, KeyCode.KEY_UNDEFINED, String.valueOf((char) codepoint), KeyModifier.of(mods), true).fireEvent();
-        }
-    };
-
-    private List<Node> getLastChildNodeFromList(List<Node> nodes) {
-        var list = new ArrayList<>(nodes);
-        var toRemove = new ArrayList<Node>();
-        for (var i : list) {
-            if (!i.parent().isEmpty())
-                toRemove.add(i.parent().get());
-        }
-        list.removeAll(toRemove);
-        return list;
-    }
+    public final CharModsCallback charModsCallback = (window, codepoint, mods) -> focused.forEach(node ->
+            new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.KEY_UNDEFINED, String.valueOf((char) codepoint), KeyModifier.of(mods), true).fireEvent());
 }
