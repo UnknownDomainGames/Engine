@@ -79,31 +79,29 @@ public class Scene {
     private float lastScreenY = Float.NaN;
 
     public final CursorCallback cursorCallback = (window, xPos, yPos) -> {
+        var screenX = (float) xPos;
+        var screenY = (float) yPos;
         if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
             var root = this.root.get();
-            var olds = root.getPointingComponents(lastScreenX, lastScreenY);
-            var screenX = (float) xPos;
-            var screenY = (float) yPos;
-            var news = root.getPointingComponents(screenX, screenY);
-            var toRemove = new ArrayList<Node>();
-            for (var target : news) {
-                if (olds.contains(target)) {
+            var lastNodes = root.getPointingComponents(lastScreenX, lastScreenY);
+            var currentNodes = root.getPointingComponents(screenX, screenY);
+            for (var target : currentNodes) {
+                if (lastNodes.contains(target)) {
                     var pair = target.relativePos(screenX, screenY);
                     new MouseEvent(MouseEvent.MOUSE_MOVED, target, target, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
-                    toRemove.add(target);
                 } else {
                     var pair = target.relativePos(screenX, screenY);
                     new MouseEvent(MouseEvent.MOUSE_ENTERED, target, target, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
                 }
             }
-            olds.removeAll(toRemove);
-            for (var i : olds) {
+            lastNodes.removeAll(currentNodes);
+            for (var i : lastNodes) {
                 var pair = i.relativePos(screenX, screenY);
                 new MouseEvent(MouseEvent.MOUSE_EXITED, i, i, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
             }
         }
-        lastScreenX = (float) xPos;
-        lastScreenY = (float) yPos;
+        lastScreenX = screenX;
+        lastScreenY = screenY;
     };
 
     private final Set<Node> focused = new HashSet<>();
