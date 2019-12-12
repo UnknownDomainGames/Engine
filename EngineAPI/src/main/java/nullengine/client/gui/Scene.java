@@ -80,10 +80,10 @@ public class Scene {
     public final CursorCallback cursorCallback = (window, xPos, yPos) -> {
         if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
             var root = this.root.get();
-            var olds = root.getPointingLastChildComponents(lastScreenX, lastScreenY);
+            var olds = root.getPointingComponents(lastScreenX, lastScreenY);
             var screenX = (float) xPos;
             var screenY = (float) yPos;
-            var news = root.getPointingLastChildComponents(screenX, screenY);
+            var news = root.getPointingComponents(screenX, screenY);
             var toRemove = new ArrayList<Node>();
             for (var target : news) {
                 if (olds.contains(target)) {
@@ -108,7 +108,7 @@ public class Scene {
     public final MouseCallback mouseCallback = (window, button, action, modifiers) -> {
         if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
             var root = this.root.get();
-            var targets = root.getPointingLastChildComponents(lastScreenX, lastScreenY);
+            var targets = root.getPointingComponents(lastScreenX, lastScreenY);
             if (action == GLFW.GLFW_PRESS) {
                 for (var target : targets) {
                     if (target.disabled.get()) continue;
@@ -130,7 +130,6 @@ public class Scene {
                     new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button)).fireEvent(target);
                 }
             }
-
         }
     };
 
