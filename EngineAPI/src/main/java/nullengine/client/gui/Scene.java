@@ -2,6 +2,7 @@ package nullengine.client.gui;
 
 import com.github.mouse0w0.observable.value.*;
 import nullengine.Platform;
+import nullengine.client.gui.event.type.FocusEvent;
 import nullengine.client.gui.event.type.MouseEvent;
 import nullengine.client.gui.event.old.CharEvent_;
 import nullengine.client.gui.event.old.FocusEvent_;
@@ -18,6 +19,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Scene {
@@ -129,27 +131,38 @@ public class Scene {
     public final MouseCallback mouseCallback = (window, button, action, modifiers) -> {
         if (!Double.isNaN(lastPosX) && !Double.isNaN(lastPosY)) {
             var root = this.root.get();
-            var list = root.getPointingComponents((float) lastPosX, (float) lastPosY);
+            var lastList = root.getPointingLastChildComponents((float) lastPosX, (float) lastPosY);
             if (action == GLFW.GLFW_PRESS) {
-                root.getUnmodifiableChildren().stream().filter(c -> c.focused.get()).forEach(component -> component.handleEvent(new FocusEvent_.FocusLostEvent(component)));
-                if (list.size() != 0) {
-                    var node = list.get(list.size() - 1);
-                    var pair = node.relativePos(((float) lastPosX), ((float) lastPosY));
-                    var event = new MouseEvent.MouseClickEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button));
-                    event.fireEvent(node);
+                for(var node : lastList){
+                    new FocusEvent.FocusGainEvent(node).fireEvent(node);
+                }
+                var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
+                var lastA = this.getLastChildNodeFromList(a);
+                for (var node : lastA){
+                    new FocusEvent.FocusLostEvent(node).fireEvent(node);
                 }
             }
-            if (action == GLFW.GLFW_RELEASE) {
-                list.addAll(root.getChildrenRecursive().stream().filter(c -> c.focused.get()).collect(Collectors.toList()));
-                list.forEach(component -> component.handleEvent(new MouseEvent_.MouseReleasedEvent(component, (float) lastPosX, (float) lastPosY, Key.valueOf(400 + button))));
+            for (var node:lastList){
+                 if (action == GLFW.GLFW_PRESS) {
+                        var pair = node.relativePos(((float) lastPosX), ((float) lastPosY));
+                        new MouseEvent.MouseClickEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)).fireEvent(node);;
+                }
+                if (action == GLFW.GLFW_RELEASE) {
+                    var pair = node.relativePos(((float) lastPosX), ((float) lastPosY));
+                    new MouseEvent.MouseReleasedEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)).fireEvent(node);;
+                }
+                if (action == GLFW.GLFW_REPEAT) {
+                    var pair = node.relativePos(((float) lastPosX), ((float) lastPosY));
+                    new MouseEvent.MouseHoldEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)).fireEvent(node);;
+                }
             }
-            if (action == GLFW.GLFW_REPEAT) {
-                list.forEach(component -> component.handleEvent(new MouseEvent_.MouseHoldEvent(component, (float) lastPosX, (float) lastPosY, Key.valueOf(400 + button))));
-            }
+
         }
     };
 
     public final ScrollCallback scrollCallback = (window, xOffset, yOffset) -> {
+        //TODO:get focused node
+//        new MouseEvent.MouseWheelEvent(node, xOffset,yOffset).fireEvent(node);;
 
     };
 
@@ -171,4 +184,15 @@ public class Scene {
     public final CharCallback charCallback = (window, c) -> {
         root.get().getChildrenRecursive().stream().filter(component -> component.focused().get()).forEach(component -> component.handleEvent(new CharEvent_(component, c)));
     };
+
+    private List<Node> getLastChildNodeFromList(List<Node> nodes) {
+        var list = new ArrayList<>(nodes);
+        var toRemove = new ArrayList<Node>();
+        for (var i:list){
+            if (!i.parent().isEmpty())
+                toRemove.add(i.parent().get());
+        }
+        list.removeAll(toRemove);
+        return list;
+    }
 }
