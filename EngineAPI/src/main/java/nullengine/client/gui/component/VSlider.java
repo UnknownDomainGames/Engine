@@ -2,9 +2,9 @@ package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.Region;
-import nullengine.client.gui.event.old.MouseEvent_;
+import nullengine.client.gui.event.type.MouseActionEvent;
+import nullengine.client.gui.event.type.MouseEvent;
 import nullengine.client.gui.shape.Rect;
-import nullengine.event.Event;
 import nullengine.util.Color;
 import org.joml.Vector2f;
 
@@ -64,6 +64,9 @@ public class VSlider extends Region {
         this.getChildren().addAll(back, slider);
         backBg().setValue(Color.BLUE);
         sliderBg().setValue(Color.WHITE);
+        addEventHandler(MouseActionEvent.MOUSE_PRESSED, this::onPressed);
+        addEventHandler(MouseActionEvent.MOUSE_RELEASED, this::onReleased);
+        addEventHandler(MouseEvent.MOUSE_MOVED, this::onMoved);
     }
 
     public MutableDoubleValue value() {
@@ -104,43 +107,28 @@ public class VSlider extends Region {
         slider.y().set((float) (((back.height().get() - slider.height().get()) * (flip.get() ? 1 - (value.get() / (max.get() - min.get())) : (value.get() / (max.get() - min.get()))))));
     }
 
-    @Override
-    public void onClick_(MouseEvent_.MouseClickEvent e) {
-        super.onClick_(e);
-        if (e.getPosY() > slider.y().get() + slider.width().get()) {
+    private void onPressed(MouseActionEvent e) {
+        if (e.getY() > slider.y().get() + slider.width().get()) {
             value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
-        } else if (e.getPosY() < slider.y().get()) {
+        } else if (e.getY() < slider.y().get()) {
             value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
         }
-        if (slider.contains(e.getPosX(), e.getPosY()))
+        if (slider.contains(e.getX(), e.getY()))
             select = true;
     }
 
-    @Override
-    public void handleEvent(Event event) {
-        super.handleEvent(event);
-        if (event instanceof MouseEvent_.MouseMoveEvent && select) {
-            var event1 = (MouseEvent_.MouseMoveEvent) event;
-            var ry = relativePos((float) event1.getNewPosX(), (float) event1.getNewPosY()).getRight();
-            if ((ry - slider.y().get()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
-                value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
-            } else if ((slider.y().get() - ry) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
-                value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
-            }
-        } else if (event instanceof MouseEvent_.MouseReleasedEvent) {
-            select = false;
-        } else if (event instanceof MouseEvent_.MouseLeaveEvent) {
-            //select = false;
-        } else if (event instanceof MouseEvent_.MouseHoldEvent) {
-            var event1 = (MouseEvent_.MouseHoldEvent) event;
-            if ((event1.getPosY() - y().get() - slider.y().get()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
-                value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
-            } else if ((slider.y().get() - event1.getPosY() + y().get()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
-                value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
-            }
+    private void onMoved(MouseEvent e) {
+        var ry = relativePos(e.getX(), e.getY()).getRight();
+        if ((ry - slider.y().get()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
+            value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
+        } else if ((slider.y().get() - ry) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
+            value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
         }
     }
 
+    private void onReleased(MouseActionEvent e) {
+        select = false;
+    }
 
     public void resizeBack(float width, float height) {
         back.rectSize().setValue(new Vector2f(width, height));

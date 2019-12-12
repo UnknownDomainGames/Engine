@@ -1,7 +1,7 @@
 package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.*;
-import nullengine.client.gui.event.old.MouseEvent_;
+import nullengine.client.gui.event.type.MouseActionEvent;
 import nullengine.client.gui.layout.BorderPane;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
@@ -24,17 +24,12 @@ public class CheckBox extends Button {
         padding().setValue(new Insets(2));
         resize(24f, 24f);
         text().setValue("");
+        addEventHandler(MouseActionEvent.MOUSE_CLICKED, event -> switchState());
     }
 
     public CheckBox(Boolean state) {
         this();
         this.state.setValue(state);
-    }
-
-    @Override
-    public void onClick_(MouseEvent_.MouseClickEvent event) {
-        super.onClick_(event);
-        switchState();
     }
 
     private void switchState() {

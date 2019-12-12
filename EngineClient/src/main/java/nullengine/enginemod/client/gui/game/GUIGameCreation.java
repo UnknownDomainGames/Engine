@@ -5,7 +5,6 @@ import nullengine.client.game.GameClientStandalone;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.component.Button;
 import nullengine.client.gui.component.Label;
-import nullengine.client.gui.event.type.MouseEvent;
 import nullengine.client.gui.layout.FlowPane;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Background;
@@ -36,12 +35,6 @@ public class GUIGameCreation extends FlowPane {
         text.font().setValue(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
-        Label tip = new Label();
-        tip.text().setValue("event system refactor.\nCon't use.");
-        tip.font().setValue(new Font(Font.getDefaultFont(), 20));
-        vBox.getChildren().add(tip);
-
-
         Button buttonCreate = new Button("New Game");
         buttonCreate.border().setValue(new Border(Color.WHITE));
         buttonCreate.setOnClick(mouseClickEvent -> {
@@ -64,18 +57,8 @@ public class GUIGameCreation extends FlowPane {
         vBox.getChildren().add(buttonLoad);
 
         var buttonSettings = new Button("Settings");
-        buttonSettings.addEventHandler(MouseEvent.MouseLeaveEvent.TYPE,(i)->{
-            System.out.println("leave");
-        });
-        buttonSettings.addEventHandler(MouseEvent.MouseMoveEvent.TYPE,(i)->{
-            System.out.println("move");
-        });
-        buttonSettings.addEventHandler(MouseEvent.MouseEnterEvent.TYPE,(i)->{
-            System.out.println("enter");
-        });
-        buttonSettings.setOnClick(mouseClickEvent -> {
-            Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiSettings()));
-        });
+        buttonSettings.setOnClick(mouseClickEvent ->
+                Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiSettings())));
         vBox.getChildren().add(buttonSettings);
 
         Button buttonExit = new Button("Exit");

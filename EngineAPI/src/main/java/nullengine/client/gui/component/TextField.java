@@ -1,9 +1,9 @@
 package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.*;
-import nullengine.client.gui.event.old.CharEvent_;
-import nullengine.client.gui.event.old.KeyEvent_;
-import nullengine.client.gui.event.old.MouseEvent_;
+import nullengine.client.gui.event.type.KeyEvent;
+import nullengine.client.gui.event.type.MouseActionEvent;
+import nullengine.client.gui.event.type.MouseEvent;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.misc.IndexRange;
@@ -14,7 +14,6 @@ import nullengine.client.input.Clipboard;
 import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
-import nullengine.event.Event;
 import nullengine.math.Math2;
 import nullengine.util.Color;
 
@@ -51,6 +50,11 @@ public class TextField extends Control {
         border().setValue(new Border(Color.WHITE, 2));
         padding().setValue(new Insets(3f));
         caret().addChangeListener((observable, oldValue, newValue) -> updatePointer());
+
+        addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+        addEventHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
+        addEventHandler(MouseActionEvent.MOUSE_CLICKED, this::onClicked);
+        addEventHandler(MouseEvent.MOUSE_MOVED, this::onMouseMove);
     }
 
     public MutableObjectValue<Font> font() {
@@ -73,33 +77,16 @@ public class TextField extends Control {
         return editable;
     }
 
-    @Override
-    public void handleEvent(Event event) {
-        super.handleEvent(event);
-        if (event instanceof KeyEvent_) {
-            if (event instanceof KeyEvent_.KeyDownEvent) {
-                onKeyDown((KeyEvent_.KeyDownEvent) event);
-            } else if (event instanceof KeyEvent_.KeyHoldEvent) {
-                onKeyHold((KeyEvent_.KeyHoldEvent) event);
-            } else if (event instanceof KeyEvent_.KeyUpEvent) {
-                onKeyUp(((KeyEvent_.KeyUpEvent) event));
-            }
+    private void onKeyTyped(KeyEvent event) {
+        String character = event.getCharacter();
+        if (caret.get() != anchor.get()) {
+            replaceSelection("");
+            deselect();
         }
-        if (event instanceof CharEvent_) {
-            char c = ((CharEvent_) event).getCharacter();
-            if (caret.get() != anchor.get()) {
-                replaceSelection("");
-                deselect();
-            }
-            insertText(Math.max(caret.get(), 0), String.valueOf(c));
-            //positionCaret(caret.get() + 1);
-        }
-        if (event instanceof MouseEvent_.MouseMoveEvent) {
-            onMouseMove((MouseEvent_.MouseMoveEvent) event);
-        }
+        insertText(Math.max(caret.get(), 0), character);
     }
 
-    public void onKeyDown(KeyEvent_.KeyDownEvent event) {
+    private void onKeyPressed(KeyEvent event) {
         switch (event.getKey()) {
             case KEY_LEFT:
                 if (event.getModifier().isShift()) {
@@ -154,25 +141,20 @@ public class TextField extends Control {
         }
     }
 
-    public void onKeyUp(KeyEvent_.KeyUpEvent event) {
-    }
+//    public void onKeyHold(KeyEvent event) {
+//        switch (event.getKey()) {
+//            case KEY_X:
+//            case KEY_C:
+//            case KEY_A:
+//                //No need to repeat
+//                break;
+//            default:
+//                onKeyDown(new KeyEvent_.KeyDownEvent(event.getNode(), event.getKey(), event.getMode(), event.getModifier()));
+//        }
+//    }
 
-    public void onKeyHold(KeyEvent_.KeyHoldEvent event) {
-        switch (event.getKey()) {
-            case KEY_X:
-            case KEY_C:
-            case KEY_A:
-                //No need to repeat
-                break;
-            default:
-                onKeyDown(new KeyEvent_.KeyDownEvent(event.getNode(), event.getKey(), event.getMode(), event.getModifier()));
-        }
-    }
-
-    @Override
-    public void onClick_(MouseEvent_.MouseClickEvent event) {
-        super.onClick_(event);
-        positionCaret(getNearestMousePos(event.getPosX()));
+    private void onClicked(MouseActionEvent event) {
+        positionCaret(getNearestMousePos(event.getX()));
     }
 
     private int getNearestMousePos(float posX) {
@@ -188,9 +170,9 @@ public class TextField extends Control {
         return posExclusive - 1;
     }
 
-    public void onMouseMove(MouseEvent_.MouseMoveEvent event) {
+    private void onMouseMove(MouseEvent event) {
         if (pressed.get()) {
-            selectPositionCaret(getNearestMousePos(relativePos(((float) event.getNewPosX()), ((float) event.getNewPosY())).getLeft()));
+            selectPositionCaret(getNearestMousePos(relativePos(event.getX(), event.getY()).getLeft()));
         }
     }
 

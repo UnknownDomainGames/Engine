@@ -4,18 +4,14 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.*;
+import nullengine.client.gui.event.type.KeyEvent;
 import nullengine.client.gui.event.type.MouseActionEvent;
 import nullengine.client.gui.event.type.MouseEvent;
 import nullengine.client.gui.input.MouseButton;
 import nullengine.client.gui.rendering.ComponentRenderer;
-import nullengine.event.Event;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 
 public abstract class Node implements EventTarget {
 
@@ -199,39 +195,55 @@ public abstract class Node implements EventTarget {
         }
     }
 
-    @Deprecated
-    private Map<Class<? extends Event>, List<Consumer>> handlers = new HashMap<>();
-
-    @Deprecated
-    public <T extends Event> void addEventHandler(Class<T> clazz, Consumer<T> handler) {
-        if (!handlers.containsKey(clazz)) {
-            handlers.put(clazz, new ArrayList<>());
-        }
-        handlers.get(clazz).add(handler);
-    }
-
-    @Deprecated
-    public <T extends Event> void removeEventHandler(Class<T> clazz, Consumer<T> handler) {
-        if (handlers.containsKey(clazz)) {
-            handlers.get(clazz).remove(handler);
-        }
-    }
-
     public EventDispatchChain buildEventDispatchChain(EventDispatchChain tail) {
         return appendEventDispatchChain(tail, this);
     }
 
 
-    public <T extends nullengine.client.gui.event.Event> void addEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
+    public <T extends Event> void addEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
         eventHandlerManager.addEventHandler(eventType, eventHandler);
     }
 
-    public <T extends nullengine.client.gui.event.Event> void removeEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
+    public <T extends Event> void removeEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
         eventHandlerManager.removeEventHandler(eventType, eventHandler);
     }
 
+    private final MutableObjectValue<EventHandler<MouseActionEvent>> onClick = new SimpleMutableObjectValue<>() {
+        @Override
+        public void setValue(EventHandler<MouseActionEvent> value) {
+            removeEventHandler(MouseActionEvent.MOUSE_CLICKED, getValue());
+            super.setValue(value);
+            if (value != null) {
+                removeEventHandler(MouseActionEvent.MOUSE_CLICKED, getValue());
+            }
+        }
+    };
+
+    public EventHandler<MouseActionEvent> getOnClick() {
+        return onClick.get();
+    }
+
     public void setOnClick(EventHandler<MouseActionEvent> onClick) {
-        addEventHandler(MouseActionEvent.MOUSE_CLICKED, onClick);
+        this.onClick.set(onClick);
+    }
+
+    private final MutableObjectValue<EventHandler<KeyEvent>> onKeyPressed = new SimpleMutableObjectValue<>() {
+        @Override
+        public void setValue(EventHandler<KeyEvent> value) {
+            removeEventHandler(KeyEvent.KEY_PRESSED, getValue());
+            super.setValue(value);
+            if (value != null) {
+                removeEventHandler(KeyEvent.KEY_PRESSED, getValue());
+            }
+        }
+    };
+
+    public EventHandler<KeyEvent> getOnKeyPressed() {
+        return onKeyPressed.get();
+    }
+
+    public void setOnKeyPressed(EventHandler<KeyEvent> onKeyPressed) {
+        this.onKeyPressed.set(onKeyPressed);
     }
 
     private EventDispatchChain appendEventDispatchChain(EventDispatchChain tail, Node node) {

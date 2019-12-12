@@ -4,12 +4,12 @@ import com.github.mouse0w0.observable.value.ValueChangeListener;
 import nullengine.Platform;
 import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.component.Button;
+import nullengine.client.gui.input.MouseButton;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.layout.HBox;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.text.Text;
-import nullengine.client.input.keybinding.Key;
 import nullengine.client.rendering.display.DisplayMode;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.settings.EngineSettings;
@@ -49,7 +49,7 @@ public class GuiSettings extends AnchorPane {
         var butDisplayMode = new Button();
         butDisplayMode.text().setValue(settings.getDisplaySettings().getDisplayMode().name());
         butDisplayMode.setOnClick(event -> {
-            if(event.getKey() == Key.MOUSE_BUTTON_LEFT){
+            if (event.getButton() == MouseButton.MOUSE_BUTTON_PRIMARY) {
                 settings.getDisplaySettings().setDisplayMode(DisplayMode.values()[(settings.getDisplaySettings().getDisplayMode().ordinal() + 1) % DisplayMode.values().length]);
                 butDisplayMode.text().setValue(settings.getDisplaySettings().getDisplayMode().name());
                 if(settings.getDisplaySettings().getDisplayMode() == DisplayMode.FULLSCREEN){

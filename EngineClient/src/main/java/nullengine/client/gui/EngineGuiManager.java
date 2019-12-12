@@ -1,13 +1,13 @@
 package nullengine.client.gui;
 
 import nullengine.Platform;
-import nullengine.client.gui.event.old.KeyEvent_;
-import nullengine.client.input.keybinding.Key;
+import nullengine.client.gui.event.EventHandler;
+import nullengine.client.gui.event.type.KeyEvent;
+import nullengine.client.gui.input.KeyCode;
 import nullengine.client.rendering.display.Window;
 import nullengine.util.UndoHistory;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public class EngineGuiManager implements GuiManager {
 
@@ -24,7 +24,7 @@ public class EngineGuiManager implements GuiManager {
 
     private Scene displayingScreen;
     private UndoHistory<Scene> sceneHistory;
-    private Consumer<KeyEvent_.KeyDownEvent> escCloseHandler;
+    private EventHandler<KeyEvent> escCloseHandler;
 
     private boolean hudVisible = true;
 
@@ -48,8 +48,8 @@ public class EngineGuiManager implements GuiManager {
     private void showScreenInternal(Scene scene) {
         pushToHistory();
         // TODO: Remove it
-        escCloseHandler = keyDownEvent -> {
-            if (keyDownEvent.getKey() == Key.KEY_ESCAPE) {
+        escCloseHandler = event -> {
+            if (event.getKey() == KeyCode.KEY_ESCAPE) {
                 scene.getRoot().requireClose();
             }
         };
@@ -57,7 +57,7 @@ public class EngineGuiManager implements GuiManager {
         if (scene == null) {
             return;
         }
-        scene.getRoot().addEventHandler(KeyEvent_.KeyDownEvent.class, escCloseHandler);
+        scene.getRoot().addEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
         var widthScaleless = window.getWidth() / window.getContentScaleX();
         var heightScaleless = window.getHeight() / window.getContentScaleY();
         displayingScreen.setSize(widthScaleless, heightScaleless);
@@ -78,7 +78,7 @@ public class EngineGuiManager implements GuiManager {
             if (!incognito) {
                 sceneHistory.pushHistory(displayingScreen);
             }
-            displayingScreen.getRoot().removeEventHandler(KeyEvent_.KeyDownEvent.class, escCloseHandler);
+            displayingScreen.getRoot().removeEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
             if (displayingScreen.getRoot() instanceof GuiTickable) {
                 tickables.remove(displayingScreen.getRoot());
             }

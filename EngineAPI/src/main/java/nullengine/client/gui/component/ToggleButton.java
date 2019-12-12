@@ -2,7 +2,7 @@ package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
-import nullengine.client.gui.event.old.MouseEvent_;
+import nullengine.client.gui.event.type.MouseActionEvent;
 import nullengine.client.gui.misc.Border;
 import nullengine.util.Color;
 
@@ -30,6 +30,7 @@ public class ToggleButton extends Button {
         this.selected.addChangeListener((ob, o, n) -> border().setValue(n ? onColor : offColor));
         this.selected.set(selected);
         this.text().setValue(text);
+        addEventHandler(MouseActionEvent.MOUSE_CLICKED, this::onClicked);
     }
 
     public Border getOnColor() {
@@ -48,9 +49,7 @@ public class ToggleButton extends Button {
         this.offColor = offColor;
     }
 
-    @Override
-    public void onClick_(MouseEvent_.MouseClickEvent event) {
-        super.onClick_(event);
+    public void onClicked(MouseActionEvent event) {
         selected.set(!selected.getValue());
     }
 

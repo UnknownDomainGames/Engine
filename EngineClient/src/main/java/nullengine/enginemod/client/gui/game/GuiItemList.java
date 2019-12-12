@@ -1,7 +1,6 @@
 package nullengine.enginemod.client.gui.game;
 
 import nullengine.client.gui.component.ItemView;
-import nullengine.client.gui.event.old.MouseEvent_;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.layout.HBox;
 import nullengine.client.gui.layout.VBox;
@@ -29,16 +28,12 @@ public class GuiItemList extends AnchorPane {
         vBox.getChildren().add(text);
         var hBox = new HBox();
         for (Map.Entry<String, Item> entry : Registries.getItemRegistry().getEntries()) {
-            ItemView view = new ItemView(new ItemStack(entry.getValue())) {
-                @Override
-                public void onClick_(MouseEvent_.MouseClickEvent event) {
-                    context.getEngine().getCurrentGame().getClientPlayer().getControlledEntity()
-                            .getComponent(TwoHands.class)
-                            .ifPresent(twoHands -> twoHands.setMainHand(item().getValue()));
-                }
-            };
-            view.viewSize().set(40);
-            hBox.getChildren().add(view);
+            ItemView itemView = new ItemView(new ItemStack(entry.getValue()));
+            itemView.setOnClick(event -> context.getEngine().getCurrentGame().getClientPlayer().getControlledEntity()
+                    .getComponent(TwoHands.class)
+                    .ifPresent(twoHands -> twoHands.setMainHand(itemView.item().getValue())));
+            itemView.viewSize().set(40);
+            hBox.getChildren().add(itemView);
         }
         vBox.getChildren().add(hBox);
         this.getChildren().add(vBox);

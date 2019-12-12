@@ -3,7 +3,7 @@ package nullengine.client.gui.component;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.gui.event.old.MouseEvent_;
+import nullengine.client.gui.event.type.MouseActionEvent;
 import nullengine.client.gui.layout.BorderPane;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
@@ -17,7 +17,6 @@ import nullengine.util.Color;
 public class RadioButton extends ToggleButton {
 
     private MutableObjectValue<Color> contentColor = new SimpleMutableObjectValue<>(Color.BLACK);
-
 
     public RadioButton() {
         this(false);
@@ -33,18 +32,17 @@ public class RadioButton extends ToggleButton {
         border().setValue(new Border(Color.BLACK, 3));
         padding().setValue(new Insets(5));
         resize(24f, 24f);
+        addEventHandler(MouseActionEvent.MOUSE_CLICKED, this::onClicked);
     }
 
     public MutableObjectValue<Color> contentColor() {
         return contentColor;
     }
 
-    @Override
-    public void onClick_(MouseEvent_.MouseClickEvent event) {
-        super.onClick_(event);
-        //TODO check radiobuttongroup
-        selected().set(true);
-    }
+//    private void onClicked(MouseActionEvent event) {
+//        //TODO check radio button group
+//        selected().set(true);
+//    }
 
     @Override
     protected ComponentRenderer createDefaultRenderer() {
