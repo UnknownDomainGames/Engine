@@ -128,6 +128,7 @@ public class Scene {
                 } else if (action == GLFW.GLFW_RELEASE) {
                     var pair = target.relativePos(lastScreenX, lastScreenY);
                     new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button)).fireEvent(target);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button)).fireEvent(target);
                 }
             }
         }
