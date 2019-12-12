@@ -4,5 +4,5 @@ import nullengine.client.rendering.display.Window;
 
 @FunctionalInterface
 public interface CharCallback {
-    void invoke(Window window, char c);
+    void invoke(Window window, int codepoint);
 }

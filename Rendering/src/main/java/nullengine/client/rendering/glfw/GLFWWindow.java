@@ -445,7 +445,7 @@ public class GLFWWindow implements Window {
         glfwSetScrollCallback(pointer, (window, xoffset, yoffset) ->
                 scrollCallbacks.forEach(callback -> callback.invoke(this, xoffset, yoffset)));
         glfwSetCharCallback(pointer, (window, codepoint) ->
-                charCallbacks.forEach(callback -> callback.invoke(this, (char) codepoint)));
+                charCallbacks.forEach(callback -> callback.invoke(this, codepoint)));
         glfwSetCharModsCallback(pointer, (window, codepoint, mods) ->
                 charModsCallbacks.forEach(callback -> callback.invoke(this, codepoint, mods)));
         glfwSetWindowCloseCallback(pointer, window -> {
