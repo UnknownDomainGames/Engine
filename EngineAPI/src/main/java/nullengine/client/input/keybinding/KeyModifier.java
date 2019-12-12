@@ -4,10 +4,10 @@ import static nullengine.client.input.keybinding.KeyModifier.Modifier.*;
 
 public class KeyModifier {
 
-    private static final KeyModifier[] KEY_MODIFIERS = new KeyModifier[8];
+    private static final KeyModifier[] KEY_MODIFIERS = new KeyModifier[0x0f];
 
     static {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 0x0f; i++) {
             KEY_MODIFIERS[i] = new KeyModifier(i);
         }
     }
@@ -19,49 +19,54 @@ public class KeyModifier {
     public static KeyModifier of(Modifier... modifiers) {
         int mods = 0;
         for (var mod : modifiers) {
-            mods |= mod.internalCode;
+            mods |= mod.code;
         }
         return KEY_MODIFIERS[mods];
     }
 
     public static KeyModifier of(int mods) {
-        return KEY_MODIFIERS[mods & 0x07];
+        return KEY_MODIFIERS[mods & 0x0f];
     }
 
     public enum Modifier {
         SHIFT(0x01),
         CONTROL(0x02),
-        ALT(0x04);
+        ALT(0x04),
+        META(0x08);
 
-        private final int internalCode;
+        private final int code;
 
-        Modifier(int internalCode) {
-            this.internalCode = internalCode;
+        Modifier(int code) {
+            this.code = code;
         }
     }
 
     private final int mods;
 
     private KeyModifier(int mods) {
-        this.mods = mods & 0x07;
+        this.mods = mods & 0x0f;
     }
 
     public boolean isShift() {
-        return (mods & SHIFT.internalCode) != 0;
+        return (mods & SHIFT.code) != 0;
     }
 
     public boolean isControl() {
-        return (mods & CONTROL.internalCode) != 0;
+        return (mods & CONTROL.code) != 0;
     }
 
     public boolean isAlt() {
-        return (mods & ALT.internalCode) != 0;
+        return (mods & ALT.code) != 0;
+    }
+
+    public boolean isMeta() {
+        return (mods & META.code) != 0;
     }
 
     public boolean is(Modifier... modifiers) {
         int mods = 0;
         for (var mod : modifiers) {
-            mods |= mod.internalCode;
+            mods |= mod.code;
         }
         return this.mods == mods;
     }
@@ -89,6 +94,7 @@ public class KeyModifier {
                 "shift=" + isShift() +
                 ", control=" + isControl() +
                 ", alt=" + isAlt() +
+                ", meta=" + isMeta() +
                 '}';
     }
 }
