@@ -2,22 +2,19 @@ package nullengine.client.gui;
 
 import com.github.mouse0w0.observable.value.*;
 import nullengine.Platform;
-import nullengine.client.gui.event.type.FocusEvent;
-import nullengine.client.gui.event.type.MouseEvent;
 import nullengine.client.gui.event.old.CharEvent_;
-import nullengine.client.gui.event.old.FocusEvent_;
 import nullengine.client.gui.event.old.KeyEvent_;
-import nullengine.client.gui.event.old.MouseEvent_;
+import nullengine.client.gui.event.type.FocusEvent;
+import nullengine.client.gui.event.type.KeyEvent;
+import nullengine.client.gui.event.type.MouseEvent;
 import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.client.rendering.display.callback.*;
 import nullengine.event.Event;
 import org.apache.commons.lang3.Validate;
-import org.checkerframework.common.value.qual.ArrayLen;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -110,18 +107,17 @@ public class Scene {
             var olds = root.getPointingLastChildComponents((float) lastPosX, (float) lastPosY);
             var news = root.getPointingLastChildComponents((float) xCorr, (float) yCorr);
             var toRemove = new ArrayList<Node>();
-            for (var i : news){
-                if (olds.contains(i)){
-                    new MouseEvent.MouseMoveEvent(i,lastPosX,lastPosY,xCorr,yCorr).fireEvent(i);
+            for (var i : news) {
+                if (olds.contains(i)) {
+                    new MouseEvent.MouseMoveEvent(i, lastPosX, lastPosY, xCorr, yCorr).fireEvent(i);
                     toRemove.add(i);
-                }
-                else {
-                    new MouseEvent.MouseEnterEvent(i,lastPosX,lastPosY,xCorr,yCorr).fireEvent(i);
+                } else {
+                    new MouseEvent.MouseEnterEvent(i, lastPosX, lastPosY, xCorr, yCorr).fireEvent(i);
                 }
             }
             olds.removeAll(toRemove);
-            for (var i : olds){
-                new MouseEvent.MouseLeaveEvent(i,lastPosX,lastPosY,xCorr,yCorr).fireEvent(i);
+            for (var i : olds) {
+                new MouseEvent.MouseLeaveEvent(i, lastPosX, lastPosY, xCorr, yCorr).fireEvent(i);
             }
         }
         lastPosX = xCorr;
@@ -133,27 +129,30 @@ public class Scene {
             var root = this.root.get();
             var lastList = root.getPointingLastChildComponents((float) lastPosX, (float) lastPosY);
             if (action == GLFW.GLFW_PRESS) {
-                for(var node : lastList){
+                for (var node : lastList) {
                     new FocusEvent.FocusGainEvent(node).fireEvent(node);
                 }
                 var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
                 var lastA = this.getLastChildNodeFromList(a);
-                for (var node : lastA){
+                for (var node : lastA) {
                     new FocusEvent.FocusLostEvent(node).fireEvent(node);
                 }
             }
-            for (var node:lastList){
-                 if (action == GLFW.GLFW_PRESS) {
-                        var pair = node.relativePos(((float) lastPosX), ((float) lastPosY));
-                        new MouseEvent.MouseClickEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)).fireEvent(node);;
+            for (var node : lastList) {
+                if (action == GLFW.GLFW_PRESS) {
+                    var pair = node.relativePos(((float) lastPosX), ((float) lastPosY));
+                    new MouseEvent.MouseClickEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)).fireEvent(node);
+                    ;
                 }
                 if (action == GLFW.GLFW_RELEASE) {
                     var pair = node.relativePos(((float) lastPosX), ((float) lastPosY));
-                    new MouseEvent.MouseReleasedEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)).fireEvent(node);;
+                    new MouseEvent.MouseReleasedEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)).fireEvent(node);
+                    ;
                 }
                 if (action == GLFW.GLFW_REPEAT) {
                     var pair = node.relativePos(((float) lastPosX), ((float) lastPosY));
-                    new MouseEvent.MouseHoldEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)).fireEvent(node);;
+                    new MouseEvent.MouseHoldEvent(node, pair.getLeft(), pair.getRight(), Key.valueOf(400 + button)).fireEvent(node);
+                    ;
                 }
             }
 
@@ -161,22 +160,25 @@ public class Scene {
     };
 
     public final ScrollCallback scrollCallback = (window, xOffset, yOffset) -> {
-        //TODO:get focused node
-//        new MouseEvent.MouseWheelEvent(node, xOffset,yOffset).fireEvent(node);;
+        var root = this.root.get();
+        var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
+        for (var node : a) {
+            new MouseEvent.MouseWheelEvent(node, xOffset, yOffset).fireEvent(node);
+        }
 
     };
 
     public final KeyCallback keyCallback = (window, key, scanCode, action, mods) -> {
         var root = this.root.get();
         var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
-        a.add(root);
-        for (Node node : a) {
+        var lastA = getLastChildNodeFromList(a);
+        for (Node node : lastA) {
             if (action == GLFW.GLFW_PRESS) {
-                node.handleEvent(new KeyEvent_.KeyDownEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
+                new KeyEvent.KeyDownEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)).fireEvent(node);
             } else if (action == GLFW.GLFW_REPEAT) {
-                node.handleEvent(new KeyEvent_.KeyHoldEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
+                new KeyEvent.KeyHoldEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)).fireEvent(node);
             } else if (action == GLFW.GLFW_RELEASE) {
-                node.handleEvent(new KeyEvent_.KeyUpEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)));
+                new KeyEvent.KeyUpEvent(node, Key.valueOf(key), ActionMode.PRESS, KeyModifier.of(mods)).fireEvent(node);
             }
         }
     };
@@ -188,7 +190,7 @@ public class Scene {
     private List<Node> getLastChildNodeFromList(List<Node> nodes) {
         var list = new ArrayList<>(nodes);
         var toRemove = new ArrayList<Node>();
-        for (var i:list){
+        for (var i : list) {
             if (!i.parent().isEmpty())
                 toRemove.add(i.parent().get());
         }
