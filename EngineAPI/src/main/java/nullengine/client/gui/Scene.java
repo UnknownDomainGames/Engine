@@ -111,20 +111,19 @@ public class Scene {
     public final MouseCallback mouseCallback = (window, button, action, mods) -> {
         if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
             var root = this.root.get();
-            var targets = root.getPointingComponents(lastScreenX, lastScreenY);
+            var nodes = root.getPointingComponents(lastScreenX, lastScreenY);
             if (action == GLFW.GLFW_PRESS) {
-                for (var target : targets) {
-                    if (target.disabled.get()) continue;
-                    target.focused.set(true);
+                for (var node : nodes) {
+                    if (node.disabled.get()) continue;
+                    if (focused.contains(node)) continue;
+                    node.focused.set(true);
                 }
-                var a = root.getChildrenRecursive().stream().filter(component -> component.focused().get()).collect(Collectors.toList());
-                var lastA = this.getLastChildNodeFromList(a);
-                for (var target : lastA) {
-                    if (target.disabled.get()) continue;
-                    target.focused.set(false);
-                }
+                List<Node> focusedList = new ArrayList<>(focused);
+                focusedList.removeAll(nodes);
+                focused.removeAll(focusedList);
+                focusedList.forEach(node -> node.focused.set(false));
             }
-            for (var target : targets) {
+            for (var target : nodes) {
                 if (action == GLFW.GLFW_PRESS) {
                     var pair = target.relativePos(lastScreenX, lastScreenY);
                     new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button), KeyModifier.of(mods)).fireEvent(target);
