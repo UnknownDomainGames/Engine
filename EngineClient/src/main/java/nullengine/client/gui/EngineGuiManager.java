@@ -65,7 +65,7 @@ public class EngineGuiManager implements GuiManager {
         if (scene.getRoot() instanceof GuiTickable) {
             tickables.add((GuiTickable) scene.getRoot());
         }
-        window.addCharCallback(displayingScreen.charCallback);
+        window.addCharModsCallback(displayingScreen.charModsCallback);
         window.addCursorCallback(displayingScreen.cursorCallback);
         window.addKeyCallback(displayingScreen.keyCallback);
         window.addMouseCallback(displayingScreen.mouseCallback);
@@ -82,7 +82,7 @@ public class EngineGuiManager implements GuiManager {
             if (displayingScreen.getRoot() instanceof GuiTickable) {
                 tickables.remove(displayingScreen.getRoot());
             }
-            window.removeCharCallback(displayingScreen.charCallback);
+            window.removeCharModsCallback(displayingScreen.charModsCallback);
             window.removeCursorCallback(displayingScreen.cursorCallback);
             window.removeKeyCallback(displayingScreen.keyCallback);
             window.removeMouseCallback(displayingScreen.mouseCallback);

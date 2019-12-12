@@ -4,11 +4,10 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.*;
-import nullengine.client.gui.event.old.MouseEvent_;
-import nullengine.client.gui.event.type.FocusEvent;
+import nullengine.client.gui.event.type.MouseActionEvent;
 import nullengine.client.gui.event.type.MouseEvent;
+import nullengine.client.gui.input.MouseButton;
 import nullengine.client.gui.rendering.ComponentRenderer;
-import nullengine.client.input.keybinding.Key;
 import nullengine.event.Event;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -47,46 +46,28 @@ public abstract class Node implements EventTarget {
 
     public Node() {
         visible.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
-        this.addEventHandler(MouseEvent.MouseLeaveEvent.TYPE, (e) -> {
+        this.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
             if (!disabled.get()) {
                 hover.set(false);
                 pressed.set(false);
             }
         });
-        this.addEventHandler(MouseEvent.MouseEnterEvent.TYPE, (e) -> {
+        this.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
             if (!disabled.get()) {
                 hover.set(false);
             }
         });
-        this.addEventHandler(MouseEvent.MouseClickEvent.TYPE, (e) -> {
-            if (!disabled.get()) {
-                if (e.getKey() == Key.MOUSE_BUTTON_LEFT) {
-                    pressed.set(true);
-                    onClick(e);
-                }
+        this.addEventHandler(MouseActionEvent.MOUSE_CLICKED, (e) -> {
+            if (!disabled.get() && e.getButton() == MouseButton.MOUSE_BUTTON_PRIMARY) {
+                pressed.set(true);
             }
         });
-        this.addEventHandler(MouseEvent.MouseReleasedEvent.TYPE, (e) -> {
-            if (!disabled.get()) {
-                if (e.getKey() == Key.MOUSE_BUTTON_LEFT) {
-                    pressed.set(false);
-                    onRelease(e);
-                }
-            }
-        });
+        this.addEventHandler(MouseActionEvent.MOUSE_RELEASED, (e) -> {
+            if (!disabled.get() && e.getButton() == MouseButton.MOUSE_BUTTON_PRIMARY) {
+                pressed.set(false);
 
-        this.addEventHandler(FocusEvent.FocusGainEvent.TYPE, (e) -> {
-            if (!disabled.get()) {
-                focused.set(true);
             }
         });
-
-        this.addEventHandler(FocusEvent.FocusLostEvent.TYPE, (e) -> {
-            if (!disabled.get()) {
-                focused.set(false);
-            }
-        });
-
     }
 
     public ObservableObjectValue<Scene> scene() {
@@ -204,27 +185,6 @@ public abstract class Node implements EventTarget {
 
     public boolean hasProperties() {
         return properties != null && !properties.isEmpty();
-    }
-
-    @Deprecated
-    public void handleEvent(Event event) {
-
-    }
-
-    @Deprecated
-    public void onRelease_(MouseEvent_.MouseReleasedEvent event) {
-
-    }
-
-    public void onRelease(MouseEvent.MouseReleasedEvent event) {
-
-    }
-
-    @Deprecated
-    public void onClick_(MouseEvent_.MouseClickEvent event) {
-    }
-
-    public void onClick(MouseEvent.MouseClickEvent event) {
     }
 
     public void forceFocus() {

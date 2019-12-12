@@ -1,62 +1,50 @@
 package nullengine.client.gui.event.type;
 
-import nullengine.client.gui.Node;
+import nullengine.client.gui.event.Event;
+import nullengine.client.gui.event.EventTarget;
 import nullengine.client.gui.event.EventType;
-import nullengine.client.input.keybinding.ActionMode;
-import nullengine.client.input.keybinding.Key;
+import nullengine.client.gui.input.KeyCode;
 import nullengine.client.input.keybinding.KeyModifier;
 
-public class KeyEvent extends ComponentEvent {
-    public static final EventType<KeyEvent> TYPE = new EventType<>("KeyEvent", ComponentEvent.TYPE);
+public class KeyEvent extends Event {
+    public static final EventType<KeyEvent> ANY = new EventType<>("KEY");
 
-    private Key key;
-    private ActionMode mode;
-    private KeyModifier modifiers;
+    public static final EventType<KeyEvent> KEY_PRESSED = new EventType<>("KEY_PRESSED", ANY);
 
-    public KeyEvent(Node node, Key key, ActionMode mode, KeyModifier modifier) {
-        this(TYPE, node, key, mode, modifier);
+    public static final EventType<KeyEvent> KEY_RELEASED = new EventType<>("KEY_RELEASED", ANY);
+
+    public static final EventType<KeyEvent> KEY_TYPED = new EventType<>("KEY_TYPED", ANY);
+
+    private final KeyCode key;
+    private final String character;
+    private final KeyModifier modifier;
+    private final boolean pressed;
+
+    public KeyEvent(EventType<? extends Event> eventType, EventTarget target, KeyCode key, KeyModifier modifier, boolean pressed) {
+        this(eventType, target, key, key.getCharacter(), modifier, pressed);
     }
 
-    public KeyEvent(EventType<? extends KeyEvent> type, Node node, Key key, ActionMode mode, KeyModifier modifier) {
-        super(type, node);
+    public KeyEvent(EventType<? extends Event> eventType, EventTarget target, KeyCode key, String character, KeyModifier modifier, boolean pressed) {
+        super(eventType, target);
         this.key = key;
-        this.mode = mode;
-        this.modifiers = modifier;
+        this.character = character;
+        this.modifier = modifier;
+        this.pressed = pressed;
     }
 
-    public Key getKey() {
+    public KeyCode getKey() {
         return key;
     }
 
-    public ActionMode getMode() {
-        return mode;
-    }
-
     public KeyModifier getModifier() {
-        return modifiers;
+        return modifier;
     }
 
-    public static class KeyDownEvent extends KeyEvent {
-        public static final EventType<KeyDownEvent> TYPE = new EventType<>("KeyDownEvent", KeyEvent.TYPE);
-
-        public KeyDownEvent(Node node, Key key, ActionMode mode, KeyModifier modifier) {
-            super(TYPE, node, key, mode, modifier);
-        }
+    public String getCharacter() {
+        return character;
     }
 
-    public static class KeyHoldEvent extends KeyEvent {
-        public static final EventType<KeyHoldEvent> TYPE = new EventType<>("KeyHoldEvent", KeyEvent.TYPE);
-
-        public KeyHoldEvent(Node node, Key key, ActionMode mode, KeyModifier modifier) {
-            super(TYPE, node, key, mode, modifier);
-        }
-    }
-
-    public static class KeyUpEvent extends KeyEvent {
-        public static final EventType<KeyUpEvent> TYPE = new EventType<>("KeyUpEvent", KeyEvent.TYPE);
-
-        public KeyUpEvent(Node node, Key key, ActionMode mode, KeyModifier modifier) {
-            super(TYPE, node, key, mode, modifier);
-        }
+    public boolean isPressed() {
+        return pressed;
     }
 }
