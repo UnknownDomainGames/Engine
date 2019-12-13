@@ -1,9 +1,14 @@
 package nullengine.client.rendering.glfw;
 
-import nullengine.client.rendering.display.*;
+import nullengine.client.rendering.display.Cursor;
+import nullengine.client.rendering.display.DisplayMode;
+import nullengine.client.rendering.display.Monitor;
+import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.*;
+import nullengine.client.rendering.image.BufferedImage;
 import org.apache.commons.lang3.SystemUtils;
 import org.lwjgl.PointerBuffer;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.system.MemoryUtil;
 
 import java.util.LinkedList;
@@ -151,8 +156,12 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public void setWindowIcon(WindowIcons icons) {
-        glfwSetWindowIcon(pointer, icons.getIcons());
+    public void setIcon(BufferedImage... icons) {
+        var glfwImages = GLFWImage.create(icons.length);
+        for (int i = 0; i < icons.length; i++) {
+            glfwImages.get(i).set(icons[i].getWidth(), icons[i].getHeight(), icons[i].getPixelBuffer());
+        }
+        glfwSetWindowIcon(pointer, glfwImages);
     }
 
     @Override
