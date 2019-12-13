@@ -36,6 +36,8 @@ public class GLRenderManager implements RenderManager {
 
     private ForwardPipeline forwardPipeline;
 
+    private boolean autoSwapBuffers = true;
+
     public GLRenderManager(SwapBuffersListener listener) {
         this.listener = listener;
     }
@@ -73,10 +75,22 @@ public class GLRenderManager implements RenderManager {
     }
 
     @Override
+    public boolean isAutoSwapBuffers() {
+        return autoSwapBuffers;
+    }
+
+    @Override
+    public void setAutoSwapBuffers(boolean autoSwapBuffers) {
+        this.autoSwapBuffers = autoSwapBuffers;
+    }
+
+    @Override
     public void render(float partial) {
         renderViewPort(primaryViewPort, partial);
         listener.onPreSwapBuffers(this, partial);
-        primaryWindow.swapBuffers();
+        if (autoSwapBuffers) {
+            primaryWindow.swapBuffers();
+        }
     }
 
     private void renderViewPort(ViewPort viewPort, float partial) {

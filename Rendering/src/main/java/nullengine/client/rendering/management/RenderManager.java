@@ -18,6 +18,10 @@ public interface RenderManager {
 
     Window getPrimaryWindow();
 
+    boolean isAutoSwapBuffers();
+
+    void setAutoSwapBuffers(boolean autoSwapBuffers);
+
     void render(float partial);
 
     void init();
