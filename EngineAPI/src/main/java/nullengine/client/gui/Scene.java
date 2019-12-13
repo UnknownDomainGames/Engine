@@ -3,9 +3,7 @@ package nullengine.client.gui;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.input.*;
 import nullengine.client.input.keybinding.KeyModifier;
-import nullengine.client.rendering.display.callback.*;
 import org.apache.commons.lang3.Validate;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -78,7 +76,7 @@ public class Scene {
     private float lastScreenX = Float.NaN;
     private float lastScreenY = Float.NaN;
 
-    public final CursorCallback cursorCallback = (window, xPos, yPos) -> {
+    public void processCursor(double xPos, double yPos) {
         var screenX = (float) xPos;
         var screenY = (float) yPos;
         if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
@@ -102,15 +100,15 @@ public class Scene {
         }
         lastScreenX = screenX;
         lastScreenY = screenY;
-    };
+    }
 
     private final Set<Node> focused = new HashSet<>();
 
-    public final MouseCallback mouseCallback = (window, button, action, mods) -> {
+    public void processMouse(MouseButton button, KeyModifier modifier, boolean pressed) {
         if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
             var root = this.root.get();
             var nodes = root.getPointingComponents(lastScreenX, lastScreenY);
-            if (action == GLFW.GLFW_PRESS) {
+            if (pressed) {
                 for (var node : nodes) {
                     if (node.disabled.get()) continue;
                     if (focused.contains(node)) continue;
@@ -122,31 +120,32 @@ public class Scene {
                 focusedList.forEach(node -> node.focused.set(false));
             }
             for (var target : nodes) {
-                if (action == GLFW.GLFW_PRESS) {
+                if (pressed) {
                     var pair = target.relativePos(lastScreenX, lastScreenY);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button), KeyModifier.of(mods)).fireEvent(target);
-                } else if (action == GLFW.GLFW_RELEASE) {
+                    new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(target);
+                } else {
                     var pair = target.relativePos(lastScreenX, lastScreenY);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button), KeyModifier.of(mods)).fireEvent(target);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, MouseButton.valueOf(button), KeyModifier.of(mods)).fireEvent(target);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(target);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(target);
                 }
             }
         }
-    };
+    }
 
-    public final ScrollCallback scrollCallback = (window, xOffset, yOffset) -> focused.forEach(node -> {
-        var pair = node.relativePos(lastScreenX, lastScreenY);
-        new ScrollEvent(ScrollEvent.ANY, node, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, xOffset, yOffset).fireEvent();
-    });
+    public void processScroll(double xOffset, double yOffset) {
+        focused.forEach(node -> {
+            var pair = node.relativePos(lastScreenX, lastScreenY);
+            new ScrollEvent(ScrollEvent.ANY, node, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, xOffset, yOffset).fireEvent();
+        });
+    }
 
-    public final KeyCallback keyCallback = (window, key, scanCode, action, mods) -> focused.forEach(node -> {
-        if (action == GLFW.GLFW_PRESS) {
-            new KeyEvent(KeyEvent.KEY_PRESSED, node, KeyCode.valueOf(key), KeyModifier.of(mods), true).fireEvent();
-        } else if (action == GLFW.GLFW_RELEASE) {
-            new KeyEvent(KeyEvent.KEY_RELEASED, node, KeyCode.valueOf(key), KeyModifier.of(mods), false).fireEvent();
-        }
-    });
+    public void processKey(KeyCode key, KeyModifier modifier, boolean pressed) {
+        focused.forEach(node ->
+                new KeyEvent(pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED, node, key, modifier, pressed).fireEvent());
+    }
 
-    public final CharModsCallback charModsCallback = (window, codepoint, mods) -> focused.forEach(node ->
-            new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.KEY_UNDEFINED, String.valueOf((char) codepoint), KeyModifier.of(mods), true).fireEvent());
+    public void processCharMods(char codePoint, KeyModifier modifier) {
+        focused.forEach(node ->
+                new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.KEY_UNDEFINED, String.valueOf(codePoint), modifier, true).fireEvent());
+    }
 }

@@ -4,8 +4,12 @@ import nullengine.Platform;
 import nullengine.client.gui.event.EventHandler;
 import nullengine.client.gui.input.KeyCode;
 import nullengine.client.gui.input.KeyEvent;
+import nullengine.client.gui.input.MouseButton;
+import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.display.callback.*;
 import nullengine.util.UndoHistory;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 
@@ -28,8 +32,39 @@ public class EngineGuiManager implements GuiManager {
 
     private boolean hudVisible = true;
 
+    private final CursorCallback cursorCallback = (window1, xpos, ypos) -> {
+        if (displayingScreen != null) {
+            displayingScreen.processCursor(xpos, ypos);
+        }
+    };
+    private final MouseCallback mouseCallback = (window1, button, action, mods) -> {
+        if (displayingScreen != null && action != GLFW.GLFW_REPEAT) {
+            displayingScreen.processMouse(MouseButton.valueOf(button), KeyModifier.of(mods), action == GLFW.GLFW_PRESS);
+        }
+    };
+    private final KeyCallback keyCallback = (window1, key, scancode, action, mods) -> {
+        if (displayingScreen != null && action != GLFW.GLFW_REPEAT) {
+            displayingScreen.processKey(KeyCode.valueOf(key), KeyModifier.of(mods), action == GLFW.GLFW_PRESS);
+        }
+    };
+    private final ScrollCallback scrollCallback = (window1, xoffset, yoffset) -> {
+        if (displayingScreen != null) {
+            displayingScreen.processScroll(xoffset, yoffset);
+        }
+    };
+    private final CharModsCallback charModsCallback = (window1, codepoint, mods) -> {
+        if (displayingScreen != null) {
+            displayingScreen.processCharMods((char) codepoint, KeyModifier.of(mods));
+        }
+    };
+
     public EngineGuiManager(Window window) {
         this.window = window;
+        window.addCursorCallback(cursorCallback);
+        window.addMouseCallback(mouseCallback);
+        window.addKeyCallback(keyCallback);
+        window.addScrollCallback(scrollCallback);
+        window.addCharModsCallback(charModsCallback);
         sceneHistory = new UndoHistory<>(MAX_SCENE_HISTORY);
     }
 
@@ -65,28 +100,17 @@ public class EngineGuiManager implements GuiManager {
         if (scene.getRoot() instanceof GuiTickable) {
             tickables.add((GuiTickable) scene.getRoot());
         }
-        window.addCharModsCallback(displayingScreen.charModsCallback);
-        window.addCursorCallback(displayingScreen.cursorCallback);
-        window.addKeyCallback(displayingScreen.keyCallback);
-        window.addMouseCallback(displayingScreen.mouseCallback);
-        window.addScrollCallback(displayingScreen.scrollCallback);
         window.getCursor().showCursor();
     }
 
     private void pushToHistory() {
-        if (displayingScreen != null) {
-            if (!incognito) {
-                sceneHistory.pushHistory(displayingScreen);
-            }
-            displayingScreen.getRoot().removeEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
-            if (displayingScreen.getRoot() instanceof GuiTickable) {
-                tickables.remove(displayingScreen.getRoot());
-            }
-            window.removeCharModsCallback(displayingScreen.charModsCallback);
-            window.removeCursorCallback(displayingScreen.cursorCallback);
-            window.removeKeyCallback(displayingScreen.keyCallback);
-            window.removeMouseCallback(displayingScreen.mouseCallback);
-            window.removeScrollCallback(displayingScreen.scrollCallback);
+        if (displayingScreen == null) return;
+        if (!incognito) {
+            sceneHistory.pushHistory(displayingScreen);
+        }
+        displayingScreen.getRoot().removeEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
+        if (displayingScreen.getRoot() instanceof GuiTickable) {
+            tickables.remove(displayingScreen.getRoot());
         }
     }
 
