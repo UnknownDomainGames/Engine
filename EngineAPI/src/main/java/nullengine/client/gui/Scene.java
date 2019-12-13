@@ -112,6 +112,7 @@ public class Scene {
                 for (var node : nodes) {
                     if (node.disabled.get()) continue;
                     if (focused.contains(node)) continue;
+                    focused.add(node);
                     node.focused.set(true);
                 }
                 List<Node> focusedList = new ArrayList<>(focused);
