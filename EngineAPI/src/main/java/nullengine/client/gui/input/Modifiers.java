@@ -1,22 +1,22 @@
-package nullengine.client.input.keybinding;
+package nullengine.client.gui.input;
 
-import static nullengine.client.input.keybinding.KeyModifier.Modifier.*;
+import static nullengine.client.gui.input.Modifiers.Modifier.*;
 
-public class KeyModifier {
+public class Modifiers {
 
-    private static final KeyModifier[] KEY_MODIFIERS = new KeyModifier[0x0f];
+    private static final Modifiers[] KEY_MODIFIERS = new Modifiers[0x0f];
 
     static {
         for (int i = 0; i < 0x0f; i++) {
-            KEY_MODIFIERS[i] = new KeyModifier(i);
+            KEY_MODIFIERS[i] = new Modifiers(i);
         }
     }
 
-    public static KeyModifier of() {
+    public static Modifiers of() {
         return KEY_MODIFIERS[0];
     }
 
-    public static KeyModifier of(Modifier... modifiers) {
+    public static Modifiers of(Modifier... modifiers) {
         int mods = 0;
         for (var mod : modifiers) {
             mods |= mod.code;
@@ -24,7 +24,7 @@ public class KeyModifier {
         return KEY_MODIFIERS[mods];
     }
 
-    public static KeyModifier of(int mods) {
+    public static Modifiers of(int mods) {
         return KEY_MODIFIERS[mods & 0x0f];
     }
 
@@ -43,7 +43,7 @@ public class KeyModifier {
 
     private final int mods;
 
-    private KeyModifier(int mods) {
+    private Modifiers(int mods) {
         this.mods = mods & 0x0f;
     }
 
@@ -79,7 +79,7 @@ public class KeyModifier {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        KeyModifier that = (KeyModifier) o;
+        Modifiers that = (Modifiers) o;
         return mods == that.mods;
     }
 

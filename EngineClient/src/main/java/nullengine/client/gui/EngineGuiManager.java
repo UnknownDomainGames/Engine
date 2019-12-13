@@ -4,8 +4,8 @@ import nullengine.Platform;
 import nullengine.client.gui.event.EventHandler;
 import nullengine.client.gui.input.KeyCode;
 import nullengine.client.gui.input.KeyEvent;
+import nullengine.client.gui.input.Modifiers;
 import nullengine.client.gui.input.MouseButton;
-import nullengine.client.input.keybinding.KeyModifier;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.*;
 import nullengine.util.UndoHistory;
@@ -39,12 +39,12 @@ public class EngineGuiManager implements GuiManager {
     };
     private final MouseCallback mouseCallback = (window1, button, action, mods) -> {
         if (displayingScreen != null && action != GLFW.GLFW_REPEAT) {
-            displayingScreen.processMouse(MouseButton.valueOf(button), KeyModifier.of(mods), action == GLFW.GLFW_PRESS);
+            displayingScreen.processMouse(MouseButton.valueOf(button), Modifiers.of(mods), action == GLFW.GLFW_PRESS);
         }
     };
     private final KeyCallback keyCallback = (window1, key, scancode, action, mods) -> {
         if (displayingScreen != null && action != GLFW.GLFW_REPEAT) {
-            displayingScreen.processKey(KeyCode.valueOf(key), KeyModifier.of(mods), action == GLFW.GLFW_PRESS);
+            displayingScreen.processKey(KeyCode.valueOf(key), Modifiers.of(mods), action == GLFW.GLFW_PRESS);
         }
     };
     private final ScrollCallback scrollCallback = (window1, xoffset, yoffset) -> {
@@ -54,7 +54,7 @@ public class EngineGuiManager implements GuiManager {
     };
     private final CharModsCallback charModsCallback = (window1, codepoint, mods) -> {
         if (displayingScreen != null) {
-            displayingScreen.processCharMods((char) codepoint, KeyModifier.of(mods));
+            displayingScreen.processCharMods((char) codepoint, Modifiers.of(mods));
         }
     };
 

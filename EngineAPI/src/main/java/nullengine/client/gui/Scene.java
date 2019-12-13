@@ -2,7 +2,6 @@ package nullengine.client.gui;
 
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.input.*;
-import nullengine.client.input.keybinding.KeyModifier;
 import org.apache.commons.lang3.Validate;
 
 import java.util.ArrayList;
@@ -104,7 +103,7 @@ public class Scene {
 
     private final Set<Node> focused = new HashSet<>();
 
-    public void processMouse(MouseButton button, KeyModifier modifier, boolean pressed) {
+    public void processMouse(MouseButton button, Modifiers modifier, boolean pressed) {
         if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
             var root = this.root.get();
             var nodes = root.getPointingComponents(lastScreenX, lastScreenY);
@@ -140,12 +139,12 @@ public class Scene {
         });
     }
 
-    public void processKey(KeyCode key, KeyModifier modifier, boolean pressed) {
+    public void processKey(KeyCode key, Modifiers modifier, boolean pressed) {
         focused.forEach(node ->
                 new KeyEvent(pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED, node, key, modifier, pressed).fireEvent());
     }
 
-    public void processCharMods(char codePoint, KeyModifier modifier) {
+    public void processCharMods(char codePoint, Modifiers modifier) {
         focused.forEach(node ->
                 new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.KEY_UNDEFINED, String.valueOf(codePoint), modifier, true).fireEvent());
     }

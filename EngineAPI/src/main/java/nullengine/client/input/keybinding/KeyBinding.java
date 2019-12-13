@@ -1,6 +1,7 @@
 package nullengine.client.input.keybinding;
 
 import nullengine.client.EngineClient;
+import nullengine.client.gui.input.Modifiers;
 import nullengine.registry.Registrable;
 
 import java.util.function.BiConsumer;
@@ -14,7 +15,7 @@ import java.util.function.Consumer;
 public class KeyBinding extends Registrable.Impl<KeyBinding> {
 
     private final Key defaultKey;
-    private final KeyModifier defaultModifier;
+    private final Modifiers defaultModifier;
     private final ActionMode defaultActionMode;
     private final boolean allowChangeActionMode;
     private final boolean allowInScreen;
@@ -33,7 +34,7 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
     private final BiConsumer<EngineClient, Integer> endHandler;
 
     private Key key;
-    private KeyModifier modifier;
+    private Modifiers modifier;
     private ActionMode actionMode;
 
     private boolean active = false;
@@ -45,7 +46,7 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
      */
     private int timeElapsed;
 
-    protected KeyBinding(Key defaultKey, KeyModifier defaultModifier, ActionMode defaultActionMode, boolean allowChangeActionMode, boolean allowInScreen, Consumer<EngineClient> startHandler, BiConsumer<EngineClient, Integer> keepHandler, BiConsumer<EngineClient, Integer> endHandler) {
+    protected KeyBinding(Key defaultKey, Modifiers defaultModifier, ActionMode defaultActionMode, boolean allowChangeActionMode, boolean allowInScreen, Consumer<EngineClient> startHandler, BiConsumer<EngineClient, Integer> keepHandler, BiConsumer<EngineClient, Integer> endHandler) {
         this.defaultKey = defaultKey;
         this.defaultModifier = defaultModifier;
         this.defaultActionMode = defaultActionMode;
@@ -63,7 +64,7 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
         return this.defaultKey;
     }
 
-    public KeyModifier getDefaultModifier() {
+    public Modifiers getDefaultModifier() {
         return defaultModifier;
     }
 
@@ -87,12 +88,12 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
         this.key = key == null ? Key.KEY_UNKNOWN : key;
     }
 
-    public KeyModifier getModifier() {
+    public Modifiers getModifier() {
         return modifier;
     }
 
-    public void setModifier(KeyModifier modifier) {
-        this.modifier = modifier == null ? KeyModifier.of() : modifier;
+    public void setModifier(Modifiers modifier) {
+        this.modifier = modifier == null ? Modifiers.of() : modifier;
     }
 
     public ActionMode getActionMode() {
@@ -155,7 +156,7 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
 
     public static final class Builder {
         private Key defaultKey = Key.KEY_UNKNOWN;
-        private KeyModifier defaultModifier = KeyModifier.of();
+        private Modifiers defaultModifier = Modifiers.of();
         private ActionMode defaultActionMode = ActionMode.PRESS;
         private boolean allowChangeActionMode = false;
         private boolean allowInScreen = false;
@@ -169,8 +170,8 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
             return this;
         }
 
-        public Builder modifier(KeyModifier defaultModifier) {
-            this.defaultModifier = defaultModifier == null ? KeyModifier.of() : defaultModifier;
+        public Builder modifier(Modifiers defaultModifier) {
+            this.defaultModifier = defaultModifier == null ? Modifiers.of() : defaultModifier;
             return this;
         }
 
