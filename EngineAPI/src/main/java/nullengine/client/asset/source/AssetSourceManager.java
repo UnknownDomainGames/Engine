@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public interface AssetSourceManager {
 
@@ -17,4 +18,18 @@ public interface AssetSourceManager {
     List<AssetSource> getSources(@Nonnull String url);
 
     LinkedList<AssetSource> getSources();
+
+    static AssetSourceManager instance() {
+        return Internal.instance.get();
+    }
+
+    class Internal {
+        private static Supplier<AssetSourceManager> instance = () -> {
+            throw new IllegalStateException("AssetSourceManager is not initialized");
+        };
+
+        public static void setInstance(AssetSourceManager instance) {
+            Internal.instance = () -> instance;
+        }
+    }
 }

@@ -16,6 +16,11 @@ public class EngineAssetManager implements AssetManager {
     private final AssetSourceManager sourceManager = new AssetSourceManagerImpl();
     private final AssetReloadManagerImpl reloadManager = new AssetReloadManagerImpl();
 
+    public EngineAssetManager() {
+        AssetSourceManager.Internal.setInstance(sourceManager);
+        AssetURLStreamHandler.initialize();
+    }
+
     @Override
     public <T> AssetType<T> register(@Nonnull AssetType<T> type) {
         if (registeredTypes.containsKey(type.getName())) {
