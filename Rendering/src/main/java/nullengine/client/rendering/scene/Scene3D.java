@@ -34,6 +34,14 @@ public class Scene3D {
         return children;
     }
 
+    public void addNode(Node3D node) {
+        children.add(node);
+    }
+
+    public void addNode(Node3D... nodes) {
+        children.addAll(nodes);
+    }
+
     public Node3D getNodeById(String id) {
         return idToNode.get(id);
     }
