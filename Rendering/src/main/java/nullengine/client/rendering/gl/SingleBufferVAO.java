@@ -107,4 +107,47 @@ public class SingleBufferVAO implements Renderable {
     public void render() {
         draw();
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private GLBufferUsage bufferUsage = GLBufferUsage.STATIC_DRAW;
+        private GLVertexFormat vertexFormat;
+        private GLDrawMode drawMode = GLDrawMode.TRIANGLES;
+
+        private Builder() {
+        }
+
+        public Builder bufferUsage(GLBufferUsage bufferUsage) {
+            this.bufferUsage = bufferUsage;
+            return this;
+        }
+
+        public Builder vertexFormat(GLVertexFormat vertexFormat) {
+            this.vertexFormat = vertexFormat;
+            return this;
+        }
+
+        public Builder drawMode(GLDrawMode drawMode) {
+            this.drawMode = drawMode;
+            return this;
+        }
+
+        public SingleBufferVAO build() {
+            SingleBufferVAO singleBufferVAO = new SingleBufferVAO(bufferUsage);
+            singleBufferVAO.setVertexFormat(vertexFormat);
+            singleBufferVAO.setDrawMode(drawMode);
+            return singleBufferVAO;
+        }
+
+        public SingleBufferVAO build(GLBuffer buffer) {
+            SingleBufferVAO singleBufferVAO = new SingleBufferVAO(bufferUsage);
+            singleBufferVAO.setVertexFormat(vertexFormat);
+            singleBufferVAO.setDrawMode(drawMode);
+            singleBufferVAO.uploadData(buffer);
+            return singleBufferVAO;
+        }
+    }
 }
