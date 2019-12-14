@@ -18,6 +18,7 @@ public class VertexArrayObject {
     private int vertexCount;
 
     private VertexAttribute[] attributes;
+    private boolean applyBeforeRendering;
 
     private VertexBufferObject indices;
     private GLDataType indexType;
@@ -56,11 +57,26 @@ public class VertexArrayObject {
 
     public void refreshAttribute() {
         bind();
+        applyBeforeRendering = false;
         for (int i = 0; i < attributes.length; i++) {
-            attributes[i].apply(i);
+            VertexAttribute attribute = attributes[i];
+            if (attribute.type.isApplyBeforeRendering())
+                applyBeforeRendering = true;
+            else
+                attribute.apply(i);
         }
-        if(indices != null) {
+        if (indices != null) {
             indices.bind();
+        }
+    }
+
+    public void prepareRender() {
+        if (!applyBeforeRendering) return;
+        for (int i = 0; i < attributes.length; i++) {
+            VertexAttribute attribute = attributes[i];
+            if (attribute.type.isApplyBeforeRendering()) {
+                attribute.apply(i);
+            }
         }
     }
 
@@ -85,6 +101,7 @@ public class VertexArrayObject {
 
     public void draw() {
         bind();
+        prepareRender();
         if (indices == null) {
             drawArrays();
         } else {
@@ -107,8 +124,6 @@ public class VertexArrayObject {
         private Object value;
         private VertexAttributeType type;
 
-        private boolean needUpdate = false;
-
         public VertexAttribute(GLVertexElement element, Object value) {
             this.element = element;
             setValue(value);
@@ -129,7 +144,6 @@ public class VertexArrayObject {
         public void setValue(Object value) {
             Object oldValue = this.value;
             this.value = value;
-            needUpdate = true;
 
             if (oldValue != null && oldValue.getClass() == value.getClass()) return;
 
@@ -141,8 +155,6 @@ public class VertexArrayObject {
         }
 
         public void apply(int index) {
-            if (!needUpdate) return;
-            needUpdate = false;
             if (value != null) {
                 type.apply(index, element, value);
             } else {

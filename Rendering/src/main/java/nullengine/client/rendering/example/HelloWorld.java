@@ -32,9 +32,11 @@ public class HelloWorld extends RenderableApplication {
         var lineX = new Geometry(new Line(new Vector3f(0, 0, 0), new Vector3f(128, 0, 0), Color.RED));
         var lineY = new Geometry(new Line(new Vector3f(0, 0, 0), new Vector3f(0, 128, 0), Color.GREEN));
         var lineZ = new Geometry(new Line(new Vector3f(0, 0, 0), new Vector3f(0, 0, 128), Color.BLUE));
-        var box = new Geometry(new Box(new Vector3f(0, 0, 0), 1, Color.WHITE));
+        var box = new Geometry(new Box(new Vector3f(0, 0, 0), 1, Color.BLUE));
         box.setTranslation(0, 0, -5);
-        mainScene.addNode(lineX, lineY, lineZ, box);
+        var box2 = new Geometry(new Box(new Vector3f(0, 0, 0), 1, Color.WHITE));
+        box2.setTranslation(.5f, .5f, .5f);
+        mainScene.addNode(lineX, lineY, lineZ, box, box2);
 
         manager.getPrimaryWindow().getCursor().disableCursor();
         System.out.println("Hello World!");
