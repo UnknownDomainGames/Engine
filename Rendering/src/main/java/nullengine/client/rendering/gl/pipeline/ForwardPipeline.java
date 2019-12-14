@@ -49,9 +49,9 @@ public class ForwardPipeline implements RenderPipeline {
 
         RenderQueue renderQueue = scene.getRenderQueue();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-//        GL11.glEnable(GL11.GL_CULL_FACE);
-//        GL11.glCullFace(GL11.GL_BACK);
-
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glFrontFace(GL11.GL_CCW);
+        GL11.glCullFace(GL11.GL_BACK);
         renderQueue.render(manager, StandardRenderTypes.OPAQUE, new RenderTypeHandler() {
             @Override
             public void render(RenderManager manager, GeometryList geometries) {
@@ -63,7 +63,7 @@ public class ForwardPipeline implements RenderPipeline {
         });
 
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-//        GL11.glDisable(GL11.GL_CULL_FACE);
+        GL11.glDisable(GL11.GL_CULL_FACE);
     }
 
     private void setupViewPort(ViewPort viewPort) {
