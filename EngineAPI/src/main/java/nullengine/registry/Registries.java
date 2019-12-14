@@ -2,7 +2,6 @@ package nullengine.registry;
 
 import nullengine.block.Block;
 import nullengine.entity.EntityProvider;
-import nullengine.exception.UninitializationException;
 import nullengine.item.Item;
 import nullengine.registry.game.BlockRegistry;
 import nullengine.registry.game.EntityRegistry;
@@ -14,11 +13,21 @@ import java.util.function.Supplier;
 
 public final class Registries {
 
-    private static Supplier<RegistryManager> registryManager = UninitializationException.supplier("Registry manager is uninitialized");
-    private static Supplier<Registry<WorldProvider>> worldProviderRegistry = UninitializationException.supplier("WorldProvider registry is uninitialized");
-    private static Supplier<BlockRegistry> blockRegistry = UninitializationException.supplier("Block registry is uninitialized");
-    private static Supplier<ItemRegistry> itemRegistry = UninitializationException.supplier("Item registry is uninitialized");
-    private static Supplier<EntityRegistry> entityRegistry = UninitializationException.supplier("Entity registry is uninitialized");
+    private static Supplier<RegistryManager> registryManager = () -> {
+        throw new IllegalStateException("RegistryManager is uninitialized");
+    };
+    private static Supplier<Registry<WorldProvider>> worldProviderRegistry = () -> {
+        throw new IllegalStateException("WorldProvider registry is uninitialized");
+    };
+    private static Supplier<BlockRegistry> blockRegistry = () -> {
+        throw new IllegalStateException("Block registry is uninitialized");
+    };
+    private static Supplier<ItemRegistry> itemRegistry = () -> {
+        throw new IllegalStateException("Item registry is uninitialized");
+    };
+    private static Supplier<EntityRegistry> entityRegistry = () -> {
+        throw new IllegalStateException("Entity registry is uninitialized");
+    };
 
     public static RegistryManager getRegistryManager() {
         return registryManager.get();

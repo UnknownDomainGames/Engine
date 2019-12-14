@@ -6,7 +6,6 @@ import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GPUInfo;
-import nullengine.exception.UninitializationException;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4fc;
 
@@ -45,7 +44,9 @@ public interface RenderManager {
     }
 
     class Internal {
-        private static Supplier<RenderManager> instance = UninitializationException.supplier("TextureManager is uninitialized");
+        private static Supplier<RenderManager> instance = () -> {
+            throw new IllegalStateException("TextureManager is uninitialized");
+        };
 
         public static void setInstance(RenderManager instance) {
             RenderManager.Internal.instance = () -> instance;

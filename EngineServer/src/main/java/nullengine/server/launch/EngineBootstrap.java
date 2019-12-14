@@ -1,10 +1,8 @@
 package nullengine.server.launch;
 
 import joptsimple.OptionParser;
-import joptsimple.OptionSet;
 import nullengine.Engine;
 import nullengine.Platform;
-import nullengine.exception.UninitializationException;
 import nullengine.server.EngineServerImpl;
 
 import java.io.BufferedReader;
@@ -50,7 +48,7 @@ public class EngineBootstrap {
             engineField.setAccessible(true);
             engineField.set(null, engine);
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new UninitializationException("Cannot initialize engine");
+            throw new IllegalStateException("Cannot initialize engine");
         }
     }
 }

@@ -1,12 +1,12 @@
 package nullengine.client.gui.internal;
 
-import nullengine.exception.UninitializationException;
-
 import java.util.function.Supplier;
 
 public final class Internal {
 
-    private static Supplier<Context> context = UninitializationException.supplier("Context is uninitialized");
+    private static Supplier<Context> context = () -> {
+        throw new IllegalStateException("Context is uninitialized");
+    };
 
     public static Context getContext() {
         return context.get();

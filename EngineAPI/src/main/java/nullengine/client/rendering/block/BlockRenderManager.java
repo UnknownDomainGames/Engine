@@ -2,7 +2,6 @@ package nullengine.client.rendering.block;
 
 import nullengine.block.Block;
 import nullengine.client.rendering.gl.GLBuffer;
-import nullengine.exception.UninitializationException;
 import nullengine.math.BlockPos;
 import nullengine.util.Direction;
 import nullengine.world.BlockGetter;
@@ -24,7 +23,9 @@ public interface BlockRenderManager {
     }
 
     class Internal {
-        private static Supplier<BlockRenderManager> instance = UninitializationException.supplier("BlockRenderManager is uninitialized");
+        private static Supplier<BlockRenderManager> instance = () -> {
+            throw new IllegalStateException("BlockRenderManager is uninitialized");
+        };
 
         public static void setInstance(BlockRenderManager instance) {
             BlockRenderManager.Internal.instance = () -> instance;

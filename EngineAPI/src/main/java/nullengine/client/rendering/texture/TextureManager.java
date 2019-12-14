@@ -1,7 +1,6 @@
 package nullengine.client.rendering.texture;
 
 import nullengine.client.rendering.gl.texture.GLTexture2D;
-import nullengine.exception.UninitializationException;
 
 import java.util.function.Supplier;
 
@@ -16,7 +15,9 @@ public interface TextureManager {
     }
 
     class Internal {
-        private static Supplier<TextureManager> instance = UninitializationException.supplier("TextureManager is uninitialized");
+        private static Supplier<TextureManager> instance = () -> {
+            throw new IllegalStateException("TextureManager is uninitialized");
+        };
 
         public static void setInstance(TextureManager instance) {
             Internal.instance = () -> instance;
