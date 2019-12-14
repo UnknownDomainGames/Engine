@@ -14,23 +14,23 @@ public class Box implements Renderable {
 
     private static final byte[] indices = new byte[]{
             // facing +x
-            6, 4, 5,
-            5, 7, 6,
+            5, 4, 6,
+            6, 7, 5,
             // facing -x
-            1, 0, 2,
-            2, 3, 1,
+            2, 0, 1,
+            1, 3, 2,
             // facing +y
-            2, 6, 7,
-            7, 3, 2,
+            7, 6, 2,
+            2, 3, 7,
             // facing -y
-            5, 4, 0,
-            0, 1, 5,
+            0, 4, 5,
+            5, 1, 0,
             // facing +z
-            7, 5, 1,
-            1, 3, 7,
+            1, 5, 7,
+            7, 3, 1,
             // facing -z
-            0, 4, 6,
-            6, 2, 0
+            6, 4, 0,
+            0, 2, 6
     };
 
     private Vector3fc from;
