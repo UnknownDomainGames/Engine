@@ -4,13 +4,21 @@ import java.util.Objects;
 
 public class Color {
 
-    public static final Color WHITE = Color.fromRGB(0xffffff);
+    public static final Color BLACK = Color.fromRGB(0x000000);
     public static final Color RED = Color.fromRGB(0xff0000);
     public static final Color GREEN = Color.fromRGB(0x00ff00);
     public static final Color BLUE = Color.fromRGB(0x0000ff);
-    public static final Color BLACK = Color.fromRGB(0x000000);
+    public static final Color WHITE = Color.fromRGB(0xffffff);
 
     public static final Color TRANSPARENT = new Color(0f, 0f, 0f, 0f);
+
+    public static Color fromGray(int gray) {
+        return new Color(gray, gray, gray);
+    }
+
+    public static Color fromGray(float gray) {
+        return new Color(gray, gray, gray);
+    }
 
     public static Color fromRGB(String rgb) {
         return fromRGB(Integer.parseInt(rgb, 16));
@@ -28,7 +36,18 @@ public class Color {
         return new Color((argb >> 16) & 255, (argb >> 8) & 255, argb & 255, (argb >> 24) & 255);
     }
 
-    private final float red, green, blue, alpha;
+    public static Color fromRGBA(String argb) {
+        return fromRGBA(Integer.parseInt(argb, 16));
+    }
+
+    public static Color fromRGBA(int argb) {
+        return new Color((argb >> 24) & 255, (argb >> 16) & 255, (argb >> 8) & 255, argb & 255);
+    }
+
+    private final float red;
+    private final float green;
+    private final float blue;
+    private final float alpha;
 
     public Color(int red, int green, int blue) {
         this(red / 255f, green / 255f, blue / 255f, 1f);
@@ -85,8 +104,12 @@ public class Color {
         return (getRedAsInt() << 16) | (getGreenAsInt() << 8) | getBlueAsInt();
     }
 
-    public int toRGBA() {
+    public int toARGB() {
         return (getAlphaAsInt() << 24) | toRGB();
+    }
+
+    public int toRGBA() {
+        return (toRGB() << 8) | getAlphaAsInt();
     }
 
     public Color invert() {

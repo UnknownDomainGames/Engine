@@ -191,7 +191,7 @@ public class GraphicsImpl implements Graphics {
     public void drawText(CharSequence text, float x, float y) {
         GLBuffer buffer = directRenderer.getBuffer();
         buffer.posOffset(x, y, 0);
-        FontHelper.instance().renderText(buffer, text, font, color.toRGBA(), () -> {
+        FontHelper.instance().renderText(buffer, text, font, color.toARGB(), () -> {
             ShaderManager.instance().setUniform("u_RenderText", true);
             directRenderer.draw();
             ShaderManager.instance().setUniform("u_RenderText", false);
