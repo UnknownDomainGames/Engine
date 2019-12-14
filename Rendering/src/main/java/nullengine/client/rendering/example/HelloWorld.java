@@ -2,6 +2,7 @@ package nullengine.client.rendering.example;
 
 import nullengine.client.rendering.application.RenderableApplication;
 import nullengine.client.rendering.gl.shape.Box;
+import nullengine.client.rendering.gl.shape.Line;
 import nullengine.client.rendering.scene.Geometry;
 import nullengine.util.Color;
 import org.joml.Vector3f;
@@ -28,10 +29,12 @@ public class HelloWorld extends RenderableApplication {
         cameraInput = new FlyCameraInput(mainViewPort.getCamera());
         cameraInput.bindWindow(manager.getPrimaryWindow());
 
-        Box box = new Box(new Vector3f(0, 0, 0), 1, Color.WHITE);
-        Geometry geometry = new Geometry(box);
-        geometry.setTranslation(0, 0, -5);
-        mainScene.getChildren().add(geometry);
+        var lineX = new Geometry(new Line(new Vector3f(0, 0, 0), new Vector3f(128, 0, 0), Color.RED));
+        var lineY = new Geometry(new Line(new Vector3f(0, 0, 0), new Vector3f(0, 128, 0), Color.GREEN));
+        var lineZ = new Geometry(new Line(new Vector3f(0, 0, 0), new Vector3f(0, 0, 128), Color.BLUE));
+        var box = new Geometry(new Box(new Vector3f(0, 0, 0), 1, Color.WHITE));
+        box.setTranslation(0, 0, -5);
+        mainScene.addNode(lineX, lineY, lineZ, box);
 
         manager.getPrimaryWindow().getCursor().disableCursor();
         System.out.println("Hello World!");
