@@ -4,12 +4,10 @@ import java.io.InputStream;
 
 public class ClassPathShaderResourceLoader implements ShaderResourceLoader {
 
+    public static final ShaderResourceLoader DEFAULT = new ClassPathShaderResourceLoader("shader/");
+
     private final ClassLoader classLoader;
     private final String parent;
-
-    public ClassPathShaderResourceLoader() {
-        this("shader/");
-    }
 
     public ClassPathShaderResourceLoader(String parent) {
         this.classLoader = getClass().getClassLoader();

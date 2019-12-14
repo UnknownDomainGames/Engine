@@ -19,13 +19,17 @@ public class ShaderManager {
     private static final Map<String, MutableObjectValue<ShaderProgram>> registeredShader = new HashMap<>();
     private static final JsonParser JSON_PARSER = new JsonParser();
 
-    private static final ShaderResourceLoader loader = new ClassPathShaderResourceLoader();
+    private static final ShaderResourceLoader loader = ClassPathShaderResourceLoader.DEFAULT;
 
     public static ObservableObjectValue<ShaderProgram> register(String name) {
         return registeredShader.computeIfAbsent(name, key -> new SimpleMutableObjectValue<>(load(name))).toUnmodifiable();
     }
 
-    private static ShaderProgram load(String name) {
+    public static ShaderProgram load(String name) {
+        return load(name, loader);
+    }
+
+    public static ShaderProgram load(String name, ShaderResourceLoader loader) {
         var input = loader.openStream(name + ".json");
         if (input == null) {
             throw new RuntimeException();
@@ -35,10 +39,10 @@ public class ShaderManager {
         try (var reader = new InputStreamReader(input)) {
             var jsonShader = JSON_PARSER.parse(reader).getAsJsonObject();
             if (jsonShader.has("Vertex")) {
-                shaders.add(loadShader(ShaderType.VERTEX_SHADER, jsonShader.get("Vertex").getAsString()));
+                shaders.add(loadShader(ShaderType.VERTEX_SHADER, jsonShader.get("Vertex").getAsString(), loader));
             }
             if (jsonShader.has("Fragment")) {
-                shaders.add(loadShader(ShaderType.FRAGMENT_SHADER, jsonShader.get("Fragment").getAsString()));
+                shaders.add(loadShader(ShaderType.FRAGMENT_SHADER, jsonShader.get("Fragment").getAsString(), loader));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -47,8 +51,8 @@ public class ShaderManager {
         return new ShaderProgram(shaders.toArray(new CompiledShader[0]));
     }
 
-    private static CompiledShader loadShader(ShaderType type, String name) {
-        var input = ShaderProgram.class.getResourceAsStream("/shader/" + name);
+    private static CompiledShader loadShader(ShaderType type, String name, ShaderResourceLoader loader) {
+        var input = loader.openStream(name);
         if (input == null) {
             throw new RuntimeException();
         }
