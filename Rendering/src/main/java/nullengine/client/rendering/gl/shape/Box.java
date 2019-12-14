@@ -12,6 +12,27 @@ import org.lwjgl.BufferUtils;
 
 public class Box implements Renderable {
 
+    private static final byte[] indices = new byte[]{
+            // facing +x
+            6, 4, 5,
+            5, 7, 6,
+            // facing -x
+            1, 0, 2,
+            2, 3, 1,
+            // facing +y
+            2, 6, 7,
+            7, 3, 2,
+            // facing -y
+            5, 4, 0,
+            0, 1, 5,
+            // facing +z
+            7, 5, 1,
+            1, 3, 7,
+            // facing -z
+            0, 4, 6,
+            6, 2, 0
+    };
+
     private Vector3fc from;
     private Vector3fc to;
     private Color color;
@@ -52,25 +73,10 @@ public class Box implements Renderable {
         buffer.pos(max.x, max.y, min.z).endVertex();
         buffer.pos(max).endVertex();
         buffer.finish();
-        var indices = BufferUtils.createIntBuffer(36);
-        indices.put(new int[]{
-                0, 1, 2,
-                2, 1, 3,
-                1, 3, 7,
-                7, 5, 1,
-                1, 5, 0,
-                0, 5, 4,
-                4, 5, 6,
-                6, 5, 7,
-                3, 2, 6,
-                6, 7, 3,
-                2, 0, 4,
-                4, 6, 2
-        });
-        indices.flip();
+        var indicesBuffer = BufferUtils.createByteBuffer(36).put(indices).flip();
         mesh = VertexArrayObject.builder().drawMode(GLDrawMode.TRIANGLES)
                 .newBufferAttribute(GLVertexElements.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getBackingBuffer())
-                .newIndicesBuffer(GLBufferUsage.STATIC_DRAW, GLDataType.UNSIGNED_INT, indices)
+                .newIndicesBuffer(GLBufferUsage.STATIC_DRAW, GLDataType.UNSIGNED_BYTE, indicesBuffer)
                 .newValueAttribute(GLVertexElements.COLOR_RGBA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))
                 .build();
     }
