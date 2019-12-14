@@ -9,4 +9,10 @@ public class Suppliers {
         WeakReference<T> reference = new WeakReference<>(value);
         return reference::get;
     }
+
+    public static <T> Supplier<T> throwRuntimeException(Supplier<RuntimeException> supplier) {
+        return () -> {
+            throw supplier.get();
+        };
+    }
 }
