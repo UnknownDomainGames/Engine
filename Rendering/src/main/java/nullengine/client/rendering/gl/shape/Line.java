@@ -1,12 +1,13 @@
 package nullengine.client.rendering.gl.shape;
 
-import nullengine.client.rendering.gl.*;
-import nullengine.client.rendering.gl.vertex.GLVertexElements;
+import nullengine.client.rendering.gl.DirectRenderer;
+import nullengine.client.rendering.gl.GLBuffer;
+import nullengine.client.rendering.gl.GLDrawMode;
+import nullengine.client.rendering.gl.SingleBufferVAO;
 import nullengine.client.rendering.gl.vertex.GLVertexFormats;
 import nullengine.client.rendering.scene.Renderable;
 import nullengine.util.Color;
 import org.joml.Vector3fc;
-import org.joml.Vector4f;
 
 public class Line implements Renderable {
 
@@ -14,7 +15,7 @@ public class Line implements Renderable {
     private Vector3fc to;
     private Color color;
 
-    private VertexArrayObject mesh;
+    private SingleBufferVAO mesh;
 
     public Line(Vector3fc from, Vector3fc to, Color color) {
         this.from = from;
@@ -26,14 +27,13 @@ public class Line implements Renderable {
     public void refreshMesh() {
         DirectRenderer instance = DirectRenderer.getInstance();
         GLBuffer buffer = instance.getBuffer();
-        buffer.begin(GLDrawMode.LINES, GLVertexFormats.POSITION);
-        buffer.pos(from).endVertex();
-        buffer.pos(to).endVertex();
+        buffer.begin(GLDrawMode.LINES, GLVertexFormats.POSITION_COLOR_ALPHA);
+        buffer.pos(from).color(color).endVertex();
+        buffer.pos(to).color(color).endVertex();
         buffer.finish();
-        mesh = VertexArrayObject.builder().drawMode(GLDrawMode.LINES)
-                .newBufferAttribute(GLVertexElements.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getBackingBuffer())
-                .newValueAttribute(GLVertexElements.COLOR_RGBA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))
-                .build();
+        mesh = SingleBufferVAO.builder().drawMode(GLDrawMode.LINES)
+                .vertexFormat(GLVertexFormats.POSITION_COLOR_ALPHA)
+                .build(buffer);
     }
 
     @Override
