@@ -31,9 +31,7 @@ public class BufferedImage {
     }
 
     public BufferedImage(int width, int height) {
-        this.width = width;
-        this.height = height;
-        initPixelBuffer();
+        this(width, height, ByteBuffer.allocateDirect(Integer.BYTES * width * height));
     }
 
     public BufferedImage(int width, int height, int initColor) {
@@ -41,24 +39,26 @@ public class BufferedImage {
         fill(initColor);
     }
 
-    public BufferedImage(int width, int height, ByteBuffer buffer) {
+    public BufferedImage(int width, int height, ByteBuffer pixelBuffer) {
         this.width = width;
         this.height = height;
-        if (!buffer.isDirect()) {
-            pixelBuffer = ByteBuffer.allocateDirect(buffer.capacity());
-            pixelBuffer.put(buffer).flip();
+        this.stride = Integer.BYTES * width;
+        if (!pixelBuffer.isDirect()) {
+            this.pixelBuffer = ByteBuffer.allocateDirect(pixelBuffer.capacity()).put(pixelBuffer).flip();
         } else {
-            pixelBuffer = buffer;
+            this.pixelBuffer = pixelBuffer;
         }
+    }
+
+    public BufferedImage(BufferedImage image) {
+        this.width = image.width;
+        this.height = image.height;
+        this.stride = image.stride;
+        this.pixelBuffer = ByteBuffer.allocateDirect(image.pixelBuffer.capacity()).put(image.pixelBuffer).flip();
     }
 
     private BufferedImage(LoadedImage image) {
         this(image.getWidth(), image.getHeight(), image.getPixelBuffer());
-    }
-
-    protected void initPixelBuffer() {
-        stride = Integer.BYTES * width;
-        pixelBuffer = ByteBuffer.allocateDirect(stride * height);
     }
 
     public int getWidth() {
