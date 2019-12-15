@@ -14,7 +14,7 @@ public enum ShaderType {
     FRAGMENT_SHADER(GL20.GL_FRAGMENT_SHADER),
     COMPUTE_SHADER(GL43.GL_COMPUTE_SHADER);
 
-    public int gl;
+    public final int gl;
 
     ShaderType(int gl) {
         this.gl = gl;
