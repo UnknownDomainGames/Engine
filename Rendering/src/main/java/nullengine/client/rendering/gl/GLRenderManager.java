@@ -5,6 +5,7 @@ import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.gl.font.WindowsFontHelper;
 import nullengine.client.rendering.gl.pipeline.ForwardPipeline;
+import nullengine.client.rendering.gl.util.DebugMessageCallback;
 import nullengine.client.rendering.gl.util.NVXGPUInfo;
 import nullengine.client.rendering.glfw.GLFWContext;
 import nullengine.client.rendering.glfw.GLFWWindow;
@@ -14,6 +15,8 @@ import nullengine.client.rendering.scene.ViewPort;
 import nullengine.client.rendering.util.GPUInfo;
 import org.lwjgl.opengl.ARBDebugOutput;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL43;
+import org.lwjgl.opengl.GLCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,13 +33,14 @@ public class GLRenderManager implements RenderManager {
     private Thread renderingThread;
     private GLFWWindow primaryWindow;
 
-    private ViewPort primaryViewPort;
-
     private GPUInfo gpuInfo;
+    private GLCapabilities capabilities;
 
     private ForwardPipeline forwardPipeline;
 
     private boolean autoSwapBuffers = true;
+
+    private ViewPort primaryViewPort;
 
     public GLRenderManager(SwapBuffersListener listener) {
         this.listener = listener;
@@ -116,13 +120,32 @@ public class GLRenderManager implements RenderManager {
     private void initGL() {
         LOGGER.info("Initializing OpenGL context!");
 
-        GL.createCapabilities();
+        capabilities = GL.createCapabilities(true);
         gpuInfo = new NVXGPUInfo();
         printGLInfo();
 
-        ARBDebugOutput.glDebugMessageCallbackARB((source, type, id, severity, length, message, userParam) -> {
+        initDebugMessageCallback();
+    }
 
-        }, 0);
+    private void initDebugMessageCallback() {
+        DebugMessageCallback callback = new DebugMessageCallback() {
+            @Override
+            public void invoke(Source source, Type type, int id, Severity severity, String message, long userParam) {
+                LOGGER.debug("OpenGL Debug Message:\n" +
+                        "\tSource: " + source + "\n" +
+                        "\tType: " + type + "\n" +
+                        "\tId: " + id + "\n" +
+                        "\tSeverity: " + severity + "\n" +
+                        "\tMessage: " + message);
+            }
+        };
+        if (capabilities.OpenGL43) {
+            GL43.glDebugMessageCallback(callback::invoke, 0);
+        } else if (capabilities.GL_ARB_debug_output) {
+            ARBDebugOutput.glDebugMessageCallbackARB(callback::invoke, 0);
+        } else {
+            LOGGER.warn("Unsupported debug message callback.");
+        }
     }
 
     private void printGLInfo() {
