@@ -2,12 +2,12 @@ package nullengine.client.rendering.model.voxel.block;
 
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.gl.GLBuffer;
+import nullengine.client.rendering.math.RenderingMath;
 import nullengine.client.rendering.math.Transform;
 import nullengine.client.rendering.model.DisplayType;
 import nullengine.client.rendering.model.ModelUtils;
 import nullengine.client.rendering.model.voxel.Model;
 import nullengine.client.rendering.texture.TextureAtlasRegion;
-import nullengine.math.Math2;
 import nullengine.util.Direction;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -92,8 +92,8 @@ public final class BlockModel implements Model {
     }
 
     private void bakeQuad(List<float[]> vertexes, Vector3fc v1, Vector3fc v2, Vector3fc v3, Vector3fc v4, Vector2fc minUv, Vector2fc maxUv) {
-        var normal = Math2.calcNormalByVertices(v1, v2, v3);
-        var normal1 = Math2.calcNormalByVertices(v1, v3, v4);
+        var normal = RenderingMath.calcNormalByVertices(v1, v2, v3);
+        var normal1 = RenderingMath.calcNormalByVertices(v1, v3, v4);
 
         vertexes.add(new float[]{v1.x(), v1.y(), v1.z(), minUv.x(), maxUv.y(), normal.x(), normal.y(), normal.z()}); // 1
         vertexes.add(new float[]{v2.x(), v2.y(), v2.z(), maxUv.x(), maxUv.y(), normal.x(), normal.y(), normal.z()}); // 2

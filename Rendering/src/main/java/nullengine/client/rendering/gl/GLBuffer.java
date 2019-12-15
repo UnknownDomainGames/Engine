@@ -1,7 +1,7 @@
 package nullengine.client.rendering.gl;
 
 import nullengine.client.rendering.gl.vertex.GLVertexFormat;
-import nullengine.client.rendering.math.Math2;
+import nullengine.math.Math2;
 import nullengine.util.Color;
 import org.apache.commons.lang3.Validate;
 import org.joml.Vector2fc;

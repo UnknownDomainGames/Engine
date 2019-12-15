@@ -1,7 +1,7 @@
 package nullengine.client.rendering.texture;
 
 import nullengine.client.rendering.image.BufferedImage;
-import nullengine.client.rendering.math.Math2;
+import nullengine.math.Math2;
 
 public class TextureAtlasBuilder {
 

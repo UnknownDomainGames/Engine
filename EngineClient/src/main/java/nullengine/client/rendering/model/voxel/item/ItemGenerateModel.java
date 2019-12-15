@@ -3,11 +3,11 @@ package nullengine.client.rendering.model.voxel.item;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.image.BufferedImage;
+import nullengine.client.rendering.math.RenderingMath;
 import nullengine.client.rendering.math.Transform;
 import nullengine.client.rendering.model.DisplayType;
 import nullengine.client.rendering.model.voxel.Model;
 import nullengine.client.rendering.texture.TextureAtlasRegion;
-import nullengine.math.Math2;
 import nullengine.util.Direction;
 
 import java.util.ArrayList;
@@ -132,8 +132,8 @@ public class ItemGenerateModel implements Model {
     }
 
     private void bakeQuad(List<float[]> vertexes, float[] positions, float minU, float minV, float maxU, float maxV) {
-        var normal = Math2.calcNormalByVertices(positions);
-        var normal1 = Math2.calcNormalByVertices(positions);
+        var normal = RenderingMath.calcNormalByVertices(positions);
+        var normal1 = RenderingMath.calcNormalByVertices(positions);
 
         vertexes.add(new float[]{positions[0], positions[1], positions[2], minU, maxV, normal.x(), normal.y(), normal.z()}); // 1
         vertexes.add(new float[]{positions[3], positions[4], positions[5], maxU, maxV, normal.x(), normal.y(), normal.z()}); // 2

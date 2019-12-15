@@ -1,7 +1,7 @@
 package nullengine.client.rendering.gl.font;
 
 import nullengine.client.rendering.font.Font;
-import nullengine.client.rendering.math.Math2;
+import nullengine.math.Math2;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
