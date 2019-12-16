@@ -6,9 +6,7 @@ import nullengine.client.rendering.gl.vertex.GLVertexFormats;
 import nullengine.client.rendering.scene.Renderable;
 import nullengine.util.Color;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.lwjgl.BufferUtils;
 
 public class Pane implements Renderable {
     private Vector2f from;

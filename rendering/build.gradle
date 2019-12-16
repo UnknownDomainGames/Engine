@@ -13,7 +13,7 @@ switch (OperatingSystem.current()) {
 }
 
 dependencies {
-    compile project(':Common')
+    compile project(':common')
 
     compile 'org.joml:joml:1.9.12'
 

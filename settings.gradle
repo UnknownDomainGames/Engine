@@ -1,7 +1,9 @@
 rootProject.name = 'NullEngine'
 
-include 'EngineAPI','Engine','EngineClient','EngineServer'
-include 'Rendering'
-include 'Common'
+include 'common'
+include 'rendering'
 include 'gui'
-
+include 'EngineAPI'
+include 'Engine'
+include 'EngineClient'
+include 'EngineServer'
