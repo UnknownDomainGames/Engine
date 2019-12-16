@@ -38,7 +38,7 @@ public class GuiSettings extends AnchorPane {
                 .findFirst().ifPresentOrElse(videoMode -> videoModeIndex = monitor.getVideoModes().indexOf(videoMode),
                 () -> videoModeIndex = monitor.getVideoModes().indexOf(monitor.getVideoMode()));
         butRes.text().setValue(String.format("%dx%d, %dHz", Platform.getEngineClient().getRenderManager().getWindow().getWidth(), Platform.getEngineClient().getRenderManager().getWindow().getHeight(), settings.getDisplaySettings().getDisplayMode() != DisplayMode.FULLSCREEN ? 60 : monitor.getVideoMode().getRefreshRate()));
-        butRes.setOnClick(event ->{
+        butRes.setOnMouseClicked(event -> {
             videoModeIndex = (GuiSettings.this.videoModeIndex + 1) % monitor.getVideoModes().size();
             settings.getDisplaySettings().setResolutionWidth(monitor.getVideoModes().get(videoModeIndex).getWidth());
             settings.getDisplaySettings().setResolutionHeight(monitor.getVideoModes().get(videoModeIndex).getHeight());
@@ -48,13 +48,13 @@ public class GuiSettings extends AnchorPane {
         butRes.disabled().set(settings.getDisplaySettings().getDisplayMode() != DisplayMode.FULLSCREEN);
         var butDisplayMode = new Button();
         butDisplayMode.text().setValue(settings.getDisplaySettings().getDisplayMode().name());
-        butDisplayMode.setOnClick(event -> {
+        butDisplayMode.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.MOUSE_BUTTON_PRIMARY) {
                 settings.getDisplaySettings().setDisplayMode(DisplayMode.values()[(settings.getDisplaySettings().getDisplayMode().ordinal() + 1) % DisplayMode.values().length]);
                 butDisplayMode.text().setValue(settings.getDisplaySettings().getDisplayMode().name());
-                if(settings.getDisplaySettings().getDisplayMode() == DisplayMode.FULLSCREEN){
+                if (settings.getDisplaySettings().getDisplayMode() == DisplayMode.FULLSCREEN) {
                     butRes.disabled().set(false);
-                    if(settings.getDisplaySettings().getResolutionWidth() == -1 || settings.getDisplaySettings().getResolutionHeight() == -1 || settings.getDisplaySettings().getFrameRate() == -1){
+                    if (settings.getDisplaySettings().getResolutionWidth() == -1 || settings.getDisplaySettings().getResolutionHeight() == -1 || settings.getDisplaySettings().getFrameRate() == -1) {
                         settings.getDisplaySettings().setResolutionWidth(monitor.getVideoMode().getWidth());
                         settings.getDisplaySettings().setResolutionHeight(monitor.getVideoMode().getHeight());
                         settings.getDisplaySettings().setFrameRate(monitor.getVideoMode().getRefreshRate());
@@ -88,13 +88,13 @@ public class GuiSettings extends AnchorPane {
         var butSave = new Button("Save and Return");
         butBack.getSize().minHeight().set(25);
         butSave.getSize().minHeight().set(25);
-        butBack.setOnClick(event -> {
+        butBack.setOnMouseClicked(event -> {
             settings.getDisplaySettings().setDisplayMode(baksettings.getDisplaySettings().getDisplayMode());
             settings.getDisplaySettings().setResolutionHeight(baksettings.getDisplaySettings().getResolutionHeight());
             settings.getDisplaySettings().setResolutionWidth(baksettings.getDisplaySettings().getResolutionWidth());
             requireClose();
         });
-        butSave.setOnClick(event -> {
+        butSave.setOnMouseClicked(event -> {
             settings.apply();
             settings.save();
             requireClose();

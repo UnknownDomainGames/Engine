@@ -4,10 +4,7 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.*;
-import nullengine.client.gui.input.KeyEvent;
-import nullengine.client.gui.input.MouseActionEvent;
-import nullengine.client.gui.input.MouseButton;
-import nullengine.client.gui.input.MouseEvent;
+import nullengine.client.gui.input.*;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -199,6 +196,12 @@ public abstract class Node implements EventTarget {
         return appendEventDispatchChain(tail, this);
     }
 
+    private EventDispatchChain appendEventDispatchChain(EventDispatchChain tail, Node node) {
+        var parent = node.parent();
+        tail.append(node.getEventHandlerManager());
+        if (parent.isEmpty()) return tail;
+        return appendEventDispatchChain(tail, parent.get());
+    }
 
     public <T extends Event> void addEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
         eventHandlerManager.addEventHandler(eventType, eventHandler);
@@ -208,35 +211,68 @@ public abstract class Node implements EventTarget {
         eventHandlerManager.removeEventHandler(eventType, eventHandler);
     }
 
-    private final MutableObjectValue<EventHandler<MouseActionEvent>> onClick = new SimpleMutableObjectValue<>() {
-        @Override
-        public void setValue(EventHandler<MouseActionEvent> value) {
-            removeEventHandler(MouseActionEvent.MOUSE_CLICKED, getValue());
-            super.setValue(value);
-            if (value != null) {
-                addEventHandler(MouseActionEvent.MOUSE_CLICKED, getValue());
-            }
-        }
-    };
+    // ===== Event handlers =====
+    private final MutableObjectValue<EventHandler<MouseEvent>> onMouseEntered = new EventHandlerValue<>(MouseEvent.MOUSE_ENTERED);
 
-    public EventHandler<MouseActionEvent> getOnClick() {
-        return onClick.get();
+    public EventHandler<MouseEvent> getOnMouseEntered() {
+        return onMouseEntered.get();
     }
 
-    public void setOnClick(EventHandler<MouseActionEvent> onClick) {
-        this.onClick.set(onClick);
+    public void setOnMouseEntered(EventHandler<MouseEvent> onMouseEntered) {
+        this.onMouseEntered.set(onMouseEntered);
     }
 
-    private final MutableObjectValue<EventHandler<KeyEvent>> onKeyPressed = new SimpleMutableObjectValue<>() {
-        @Override
-        public void setValue(EventHandler<KeyEvent> value) {
-            removeEventHandler(KeyEvent.KEY_PRESSED, getValue());
-            super.setValue(value);
-            if (value != null) {
-                addEventHandler(KeyEvent.KEY_PRESSED, getValue());
-            }
-        }
-    };
+    private final MutableObjectValue<EventHandler<MouseEvent>> onMouseExited = new EventHandlerValue<>(MouseEvent.MOUSE_EXITED);
+
+    public EventHandler<MouseEvent> getOnMouseExited() {
+        return onMouseExited.get();
+    }
+
+    public void setOnMouseExited(EventHandler<MouseEvent> onMouseExited) {
+        this.onMouseExited.set(onMouseExited);
+    }
+
+    private final MutableObjectValue<EventHandler<MouseEvent>> onMouseMoved = new EventHandlerValue<>(MouseEvent.MOUSE_MOVED);
+
+    public EventHandler<MouseEvent> getOnMouseMoved() {
+        return onMouseMoved.get();
+    }
+
+    public void setOnMouseMoved(EventHandler<MouseEvent> onMouseMoved) {
+        this.onMouseMoved.set(onMouseMoved);
+    }
+
+    private final MutableObjectValue<EventHandler<MouseActionEvent>> onMousePressed = new EventHandlerValue<>(MouseActionEvent.MOUSE_PRESSED);
+
+    public EventHandler<MouseActionEvent> getOnMousePressed() {
+        return onMousePressed.get();
+    }
+
+    public void setOnMousePressed(EventHandler<MouseActionEvent> onMousePressed) {
+        this.onMousePressed.set(onMousePressed);
+    }
+
+    private final MutableObjectValue<EventHandler<MouseActionEvent>> onMouseReleased = new EventHandlerValue<>(MouseActionEvent.MOUSE_CLICKED);
+
+    public EventHandler<MouseActionEvent> getOnMouseReleased() {
+        return onMouseReleased.get();
+    }
+
+    public void setOnMouseReleased(EventHandler<MouseActionEvent> onMouseReleased) {
+        this.onMouseReleased.set(onMouseReleased);
+    }
+
+    private final MutableObjectValue<EventHandler<MouseActionEvent>> onMouseClicked = new EventHandlerValue<>(MouseActionEvent.MOUSE_CLICKED);
+
+    public EventHandler<MouseActionEvent> getOnMouseClicked() {
+        return onMouseClicked.get();
+    }
+
+    public void setOnMouseClicked(EventHandler<MouseActionEvent> onMouseClicked) {
+        this.onMouseClicked.set(onMouseClicked);
+    }
+
+    private final MutableObjectValue<EventHandler<KeyEvent>> onKeyPressed = new EventHandlerValue<>(KeyEvent.KEY_PRESSED);
 
     public EventHandler<KeyEvent> getOnKeyPressed() {
         return onKeyPressed.get();
@@ -246,10 +282,43 @@ public abstract class Node implements EventTarget {
         this.onKeyPressed.set(onKeyPressed);
     }
 
-    private EventDispatchChain appendEventDispatchChain(EventDispatchChain tail, Node node) {
-        var parent = node.parent();
-        tail.append(node.getEventHandlerManager());
-        if (parent.isEmpty()) return tail;
-        return appendEventDispatchChain(tail, parent.get());
+    private final MutableObjectValue<EventHandler<KeyEvent>> onKeyReleased = new EventHandlerValue<>(KeyEvent.KEY_RELEASED);
+
+    public EventHandler<KeyEvent> getOnKeyReleased() {
+        return onKeyReleased.get();
+    }
+
+    public void setOnKeyReleased(EventHandler<KeyEvent> onKeyReleased) {
+        this.onKeyReleased.set(onKeyReleased);
+    }
+
+    private final MutableObjectValue<EventHandler<KeyEvent>> onKeyTyped = new EventHandlerValue<>(KeyEvent.KEY_TYPED);
+
+    public EventHandler<KeyEvent> getOnKeyTyped() {
+        return onKeyTyped.get();
+    }
+
+    public void setOnKeyTyped(EventHandler<KeyEvent> onKeyTyped) {
+        this.onKeyTyped.set(onKeyTyped);
+    }
+
+    private final MutableObjectValue<EventHandler<ScrollEvent>> onScroll = new EventHandlerValue<>(ScrollEvent.ANY);
+
+    public EventHandler<ScrollEvent> getOnScroll() {
+        return onScroll.get();
+    }
+
+    public void setOnScroll(EventHandler<ScrollEvent> onScroll) {
+        this.onScroll.set(onScroll);
+    }
+
+    private class EventHandlerValue<ET extends Event, T extends EventHandler<ET>> extends SimpleMutableObjectValue<T> {
+
+        public EventHandlerValue(EventType<ET> eventType) {
+            addChangeListener((observable, oldValue, newValue) -> {
+                if (oldValue != null) removeEventHandler(eventType, oldValue);
+                if (newValue != null) addEventHandler(eventType, newValue);
+            });
+        }
     }
 }

@@ -29,7 +29,7 @@ public class GuiItemList extends AnchorPane {
         var hBox = new HBox();
         for (Map.Entry<String, Item> entry : Registries.getItemRegistry().getEntries()) {
             ItemView itemView = new ItemView(new ItemStack(entry.getValue()));
-            itemView.setOnClick(event -> context.getEngine().getCurrentGame().getClientPlayer().getControlledEntity()
+            itemView.setOnMouseClicked(event -> context.getEngine().getCurrentGame().getClientPlayer().getControlledEntity()
                     .getComponent(TwoHands.class)
                     .ifPresent(twoHands -> twoHands.setMainHand(itemView.item().getValue())));
             itemView.viewSize().set(40);

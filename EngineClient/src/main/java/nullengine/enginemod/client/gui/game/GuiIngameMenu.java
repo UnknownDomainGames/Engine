@@ -28,7 +28,7 @@ public class GuiIngameMenu extends BorderPane {
         vBox.getChildren().add(text);
 
         Button terminateGame = new Button("Terminate");
-        terminateGame.setOnClick(mouseClickEvent -> {
+        terminateGame.setOnMouseClicked(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
             engine.getCurrentGame().terminate();
             GuiManager guiManager = engine.getRenderManager().getGuiManager();

@@ -6,6 +6,7 @@ import nullengine.client.gui.event.EventType;
 
 public class ScrollEvent extends MouseEvent {
     public static final EventType<ScrollEvent> ANY = new EventType<>("SCROLL", MouseEvent.ANY);
+    public static final EventType<ScrollEvent> SCROLL = ANY;
 
     private final double xScroll;
     private final double yScroll;

@@ -7,6 +7,8 @@ import nullengine.client.gui.event.EventType;
 public class KeyEvent extends Event {
     public static final EventType<KeyEvent> ANY = new EventType<>("KEY");
 
+    public static final EventType<KeyEvent> KEY = ANY;
+
     public static final EventType<KeyEvent> KEY_PRESSED = new EventType<>("KEY_PRESSED", ANY);
 
     public static final EventType<KeyEvent> KEY_RELEASED = new EventType<>("KEY_RELEASED", ANY);

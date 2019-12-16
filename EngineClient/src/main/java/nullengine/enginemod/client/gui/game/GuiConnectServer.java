@@ -41,9 +41,9 @@ public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
         lblReason = new Label();
         vbox.getChildren().add(lblStatus);
         button = new Button("disconnect");
-        button.setOnClick(e->{
+        button.setOnMouseClicked(e -> {
             isCancelled = true;
-            if(networkClient != null){
+            if (networkClient != null) {
                 networkClient.close();
             }
             super.requireClose();

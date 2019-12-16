@@ -7,6 +7,8 @@ import nullengine.client.gui.event.EventType;
 public class MouseEvent extends Event {
     public static final EventType<MouseEvent> ANY = new EventType<>("MOUSE", EventType.ROOT);
 
+    public static final EventType<MouseEvent> MOUSE = ANY;
+
     public static final EventType<MouseEvent> MOUSE_ENTERED = new EventType<>("MOUSE_ENTERED", ANY);
 
     public static final EventType<MouseEvent> MOUSE_EXITED = new EventType<>("MOUSE_EXITED", ANY);

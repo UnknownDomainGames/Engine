@@ -31,15 +31,14 @@ public class GuiDirectConnectServer extends BorderPane {
         var hbox = new HBox();
         hbox.spacing().set(10f);
         var butConnect = new Button("Connect");
-        butConnect.setOnClick(e->{
+        butConnect.setOnMouseClicked(e -> {
             var fullAddress = txtboxAddress.text().getValue();
             var port = 18104;
             var colonIndex = fullAddress.lastIndexOf(":");
-            if(colonIndex != -1) {
+            if (colonIndex != -1) {
                 try {
                     port = Integer.parseInt(fullAddress.substring(colonIndex + 1));
-                }
-                catch (NumberFormatException ex){
+                } catch (NumberFormatException ex) {
 
                 }
                 fullAddress = fullAddress.substring(0,colonIndex);
@@ -47,7 +46,7 @@ public class GuiDirectConnectServer extends BorderPane {
             Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiConnectServer(fullAddress, port)));
         });
         var butBack = new Button("Back");
-        butBack.setOnClick(e->requireClose());
+        butBack.setOnMouseClicked(e -> requireClose());
         hbox.getChildren().addAll(butConnect, butBack);
         vbox.getChildren().addAll(label1,lblAddress,txtboxAddress, hbox);
         background().setValue(Background.fromColor(Color.fromRGB(0x7f7f7f)));
