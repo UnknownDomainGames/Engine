@@ -32,7 +32,7 @@ public class ShaderManager {
     public static ShaderProgram load(String name, ShaderResourceLoader loader) {
         var input = loader.openStream(name + ".json");
         if (input == null) {
-            throw new RuntimeException();
+            throw new RuntimeException("Cannot load shader " + name);
         }
 
         List<CompiledShader> shaders = new ArrayList<>();
