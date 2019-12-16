@@ -1,12 +1,10 @@
 package nullengine.client.rendering.gui;
 
 import com.github.mouse0w0.observable.value.ObservableValue;
-import nullengine.client.asset.AssetTypes;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.Parent;
 import nullengine.client.gui.Scene;
-import nullengine.client.gui.internal.Internal;
 import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.Renderer;
@@ -50,8 +48,8 @@ public class GuiRenderer implements Renderer {
         this.graphics = new GraphicsImpl(context, this);
         graphics.setFont(FontHelper.instance().getDefaultFont());
 
-        var assetManager = context.getEngine().getAssetManager();
-        Internal.setContext(() -> path -> assetManager.loadDirect(AssetTypes.TEXTURE, path));
+//        var assetManager = context.getEngine().getAssetManager();
+//        Internal.setContext(() -> path -> assetManager.loadDirect(AssetTypes.TEXTURE, path));
     }
 
     @Override

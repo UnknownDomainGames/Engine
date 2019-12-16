@@ -1,17 +1,13 @@
 package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.*;
-import nullengine.client.gui.input.KeyEvent;
-import nullengine.client.gui.input.Modifiers;
-import nullengine.client.gui.input.MouseActionEvent;
-import nullengine.client.gui.input.MouseEvent;
+import nullengine.client.gui.input.*;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.misc.IndexRange;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.TextFieldRenderer;
-import nullengine.client.input.Clipboard;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.math.Math2;

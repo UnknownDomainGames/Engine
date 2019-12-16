@@ -1,4 +1,4 @@
-package nullengine.client.input;
+package nullengine.client.gui.input;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryUtil;
