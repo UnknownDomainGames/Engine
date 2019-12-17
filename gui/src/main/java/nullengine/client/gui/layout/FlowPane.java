@@ -147,7 +147,7 @@ public class FlowPane extends Pane {
                 } else {
                     y1 = y;
                 }
-                layoutInArea(child, x1, y1, pw, ph);
+                layoutInArea(child, snap(x1,true), snap(y1, true), snap(pw, true), snap(ph, true));
                 if (orientation.getValue() == Orientation.HORIZONTAL) {
                     x = x1 + (alignment.getValue().getHpos() == Pos.HPos.RIGHT ? -spacing : spacing + pw);
                 } else {
