@@ -14,6 +14,9 @@ public class Scene {
     private final MutableFloatValue width = new SimpleMutableFloatValue();
     private final MutableFloatValue height = new SimpleMutableFloatValue();
 
+    private final MutableFloatValue scaleX = new SimpleMutableFloatValue(1);
+    private final MutableFloatValue scaleY = new SimpleMutableFloatValue(1);
+
     private final MutableObjectValue<Parent> root = new SimpleMutableObjectValue<>();
 
     public Scene(Parent root) {
@@ -40,6 +43,12 @@ public class Scene {
         this.width.set(width);
         this.height.set(height);
         updateRoot();
+    }
+
+    public void setContentScale(float x, float y){
+        if(x == 0 || y == 0) return;
+        this.scaleX.set(x);
+        this.scaleY.set(y);
     }
 
     public ObservableObjectValue<Parent> root() {
@@ -76,8 +85,8 @@ public class Scene {
     private float lastScreenY = Float.NaN;
 
     public void processCursor(double xPos, double yPos) {
-        var screenX = (float) xPos;
-        var screenY = (float) yPos;
+        var screenX = (float) xPos / scaleX.get();
+        var screenY = (float) yPos / scaleY.get();
         if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
             var root = this.root.get();
             var lastNodes = root.getPointingComponents(lastScreenX, lastScreenY);

@@ -96,6 +96,7 @@ public class EngineGuiManager implements GuiManager {
         var widthScaleless = window.getWidth() / window.getContentScaleX();
         var heightScaleless = window.getHeight() / window.getContentScaleY();
         displayingScreen.setSize(widthScaleless, heightScaleless);
+        displayingScreen.setContentScale(window.getContentScaleX(), window.getContentScaleY());
         displayingScreen.update();
         if (scene.getRoot() instanceof GuiTickable) {
             tickables.add((GuiTickable) scene.getRoot());
