@@ -23,7 +23,7 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
     public void init(RenderManager context) {
         this.context = context;
         Registries.getItemRegistry().getValues().forEach(this::registerItemRenderer);
-        itemRendererMap.values().forEach(itemRenderer -> itemRenderer.init(context));
+        itemRendererMap.values().forEach(ItemRenderer::init);
     }
 
     private void registerItemRenderer(Item item) {

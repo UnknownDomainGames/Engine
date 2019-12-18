@@ -4,7 +4,6 @@ import nullengine.Platform;
 import nullengine.client.asset.Asset;
 import nullengine.client.asset.AssetTypes;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.gl.DirectRenderer;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
@@ -21,7 +20,7 @@ public class VoxelItemRenderer implements ItemRenderer {
     }
 
     @Override
-    public void init(RenderManager context) {
+    public void init() {
     }
 
     @Override
