@@ -32,8 +32,8 @@ public final class RenderEngine {
         manager.init();
     }
 
-    public static void doRender(float partial) {
-        manager.render(partial);
+    public static void doRender(float tpf) {
+        manager.render(tpf);
     }
 
     public static void stop() {

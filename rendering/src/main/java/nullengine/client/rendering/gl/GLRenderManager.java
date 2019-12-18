@@ -90,10 +90,10 @@ public class GLRenderManager implements RenderManager {
     }
 
     @Override
-    public void render(float partial) {
+    public void render(float tpf) {
         GLCleaner.clean();
-        renderViewPort(primaryViewPort, partial);
-        listener.onPreSwapBuffers(this, partial);
+        renderViewPort(primaryViewPort, tpf);
+        listener.onPreSwapBuffers(this, tpf);
         if (autoSwapBuffers) {
             primaryWindow.swapBuffers();
         }

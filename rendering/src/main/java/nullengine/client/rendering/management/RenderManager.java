@@ -22,7 +22,7 @@ public interface RenderManager {
 
     void setAutoSwapBuffers(boolean autoSwapBuffers);
 
-    void render(float partial);
+    void render(float tpf);
 
     void init();
 
