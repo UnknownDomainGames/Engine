@@ -10,9 +10,10 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class BufferedImage {
 
-    private int width, height;
-    private int stride;
-    private ByteBuffer pixelBuffer;
+    private final int width;
+    private final int height;
+    private final int stride;
+    private final ByteBuffer pixelBuffer;
 
     public static BufferedImage create(String url) throws IOException {
         return new BufferedImage(ImageHelper.instance().loadImage(url));
@@ -31,7 +32,7 @@ public class BufferedImage {
     }
 
     public BufferedImage(int width, int height) {
-        this(width, height, ByteBuffer.allocateDirect(Integer.BYTES * width * height));
+        this(ByteBuffer.allocateDirect(Integer.BYTES * width * height), width, height);
     }
 
     public BufferedImage(int width, int height, int initColor) {
@@ -39,7 +40,7 @@ public class BufferedImage {
         fill(initColor);
     }
 
-    public BufferedImage(int width, int height, ByteBuffer pixelBuffer) {
+    public BufferedImage(ByteBuffer pixelBuffer, int width, int height) {
         this.width = width;
         this.height = height;
         this.stride = Integer.BYTES * width;
@@ -57,8 +58,8 @@ public class BufferedImage {
         this.pixelBuffer = ByteBuffer.allocateDirect(image.pixelBuffer.capacity()).put(image.pixelBuffer).flip();
     }
 
-    private BufferedImage(LoadedImage image) {
-        this(image.getWidth(), image.getHeight(), image.getPixelBuffer());
+    public BufferedImage(LoadedImage image) {
+        this(image.getPixelBuffer(), image.getWidth(), image.getHeight());
     }
 
     public int getWidth() {

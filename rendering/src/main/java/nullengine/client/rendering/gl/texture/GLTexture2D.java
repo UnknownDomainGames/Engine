@@ -2,14 +2,13 @@ package nullengine.client.rendering.gl.texture;
 
 import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.image.BufferedImage;
+import nullengine.client.rendering.image.ImageHelper;
+import nullengine.client.rendering.image.LoadedImage;
 import nullengine.client.rendering.texture.Texture2D;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.stb.STBImage;
-import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,42 +34,21 @@ public final class GLTexture2D implements Texture2D, GLTexture {
     private boolean mipmap;
 
     public static GLTexture2D of(ByteBuffer fileBuffer) throws IOException {
-        if (!fileBuffer.isDirect()) {
-            ByteBuffer direct = ByteBuffer.allocateDirect(fileBuffer.capacity());
-            direct.put(fileBuffer);
-            direct.flip();
-            fileBuffer = direct;
-        }
-        ByteBuffer pixels;
-        int width;
-        int height;
-        try (var stack = MemoryStack.stackPush()) {
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
-            IntBuffer c = stack.mallocInt(1);
-            pixels = STBImage.stbi_load_from_memory(fileBuffer, w, h, c, 4);
-            width = w.get(0);
-            height = h.get(0);
-        }
-
-        if (pixels == null) {
-            throw new IOException("File buffer cannot be load as pixel buffer by STBImage");
-        }
-        pixels.flip();
-        return of(pixels, width, height);
+        LoadedImage image = ImageHelper.instance().loadImage(fileBuffer);
+        return of(image.getPixelBuffer(), image.getWidth(), image.getHeight());
     }
 
-    public static GLTexture2D of(BufferedImage pixels) {
-        return of(pixels.getPixelBuffer(), pixels.getWidth(), pixels.getHeight());
+    public static GLTexture2D of(BufferedImage image) {
+        return of(image.getPixelBuffer(), image.getWidth(), image.getHeight());
     }
 
-    public static GLTexture2D of(ByteBuffer pixels, int width, int height) {
-        if (!pixels.isDirect()) {
-            ByteBuffer direct = ByteBuffer.allocateDirect(pixels.capacity());
-            direct.put(pixels);
-            pixels = direct;
+    public static GLTexture2D of(ByteBuffer pixelBuffer, int width, int height) {
+        if (!pixelBuffer.isDirect()) {
+            ByteBuffer direct = ByteBuffer.allocateDirect(pixelBuffer.capacity());
+            direct.put(pixelBuffer);
+            pixelBuffer = direct;
         }
-        return builder().build(pixels, width, height);
+        return builder().build(pixelBuffer, width, height);
     }
 
     public static Builder builder() {
@@ -254,7 +232,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
             return build(null, width, height);
         }
 
-        public GLTexture2D build(ByteBuffer texture, int width, int height) {
+        public GLTexture2D build(ByteBuffer pixelBuffer, int width, int height) {
             GLTexture2D glTexture2D = new GLTexture2D(glGenTextures());
             glTexture2D.level = level;
             glTexture2D.internalFormat = internalFormat;
@@ -265,7 +243,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
 
             parameterMap.forEach((key, value) -> glTexParameteri(GL_TEXTURE_2D, key, value));
 
-            glTexture2D.glTexImage2D(texture, width, height);
+            glTexture2D.glTexImage2D(pixelBuffer, width, height);
             return glTexture2D;
         }
     }
