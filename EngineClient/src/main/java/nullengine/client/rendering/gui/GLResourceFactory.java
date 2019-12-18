@@ -1,6 +1,7 @@
 package nullengine.client.rendering.gui;
 
 import nullengine.client.gui.image.Image;
+import nullengine.client.rendering.gl.texture.FilterMode;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.image.LoadedImage;
 import nullengine.client.rendering.texture.Texture2D;
@@ -20,7 +21,12 @@ public class GLResourceFactory {
         LoadedImage loadedImage = image.getLoadedImage();
         if (loadedImage == null) return null;
 
-        texture = GLTexture2D.of(loadedImage.getPixelBuffer(), loadedImage.getWidth(), loadedImage.getHeight());
+        GLTexture2D.Builder builder = GLTexture2D.builder();
+        if (image.isSmooth()) {
+            builder.magFilter(FilterMode.LINEAR);
+            builder.minFilter(FilterMode.LINEAR);
+        }
+        texture = builder.build(loadedImage.getPixelBuffer(), loadedImage.getWidth(), loadedImage.getHeight());
         textures.put(image, texture);
         return texture;
     }
