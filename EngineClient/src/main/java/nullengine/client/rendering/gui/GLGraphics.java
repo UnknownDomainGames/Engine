@@ -5,7 +5,6 @@ import nullengine.client.gui.image.Image;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.rendering.Graphics;
-import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.gl.DirectRenderer;
@@ -28,7 +27,6 @@ import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 
 public class GLGraphics implements Graphics {
 
-    private final RenderManager context;
     private final DirectRenderer directRenderer = DirectRenderer.getInstance();
     private final GuiRenderer guiRenderer;
     private final GLResourceFactory resourceFactory = new GLResourceFactory();
@@ -40,8 +38,7 @@ public class GLGraphics implements Graphics {
 
     private final Stack<Vector4fc> clipRect = new Stack<>();
 
-    public GLGraphics(RenderManager context, GuiRenderer guiRenderer) {
-        this.context = context;
+    public GLGraphics(GuiRenderer guiRenderer) {
         this.guiRenderer = guiRenderer;
         this.whiteTexture = TextureManager.instance().getWhiteTexture();
         setColor(Color.WHITE);
@@ -197,7 +194,7 @@ public class GLGraphics implements Graphics {
             ShaderManager.instance().setUniform("u_RenderText", true);
             directRenderer.draw();
             ShaderManager.instance().setUniform("u_RenderText", false);
-            context.getTextureManager().getWhiteTexture().bind();
+            whiteTexture.bind();
         });
     }
 

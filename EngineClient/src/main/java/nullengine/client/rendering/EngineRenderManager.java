@@ -151,12 +151,10 @@ public class EngineRenderManager implements RenderManager {
         window.setDisplayMode(Platform.getEngineClient().getSettings().getDisplaySettings().getDisplayMode(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionWidth(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionHeight(), Platform.getEngineClient().getSettings().getDisplaySettings().getFrameRate());
 
         initTexture();
-        guiManager = new EngineGuiManager(getWindow());
+        guiManager = new EngineGuiManager(window);
+        guiRenderer = new GuiRenderer(window, guiManager);
 
         camera = new FixedCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
-
-        guiRenderer = new GuiRenderer();
-        guiRenderer.init(this);
 
         window.show();
     }

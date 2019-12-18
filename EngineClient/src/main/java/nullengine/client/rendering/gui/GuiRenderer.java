@@ -6,8 +6,6 @@ import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.Parent;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.rendering.Graphics;
-import nullengine.client.rendering.RenderManager;
-import nullengine.client.rendering.Renderer;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
@@ -15,6 +13,7 @@ import nullengine.client.rendering.gl.shader.ShaderType;
 import nullengine.client.rendering.gl.texture.GLFrameBuffer;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
+import nullengine.client.rendering.texture.TextureManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -25,9 +24,8 @@ import static org.lwjgl.opengl.GL11.*;
 /**
  * render for any gui
  */
-public class GuiRenderer implements Renderer {
+public class GuiRenderer {
 
-    private RenderManager context;
     private Window window;
     private GuiManager guiManager;
 
@@ -35,24 +33,18 @@ public class GuiRenderer implements Renderer {
 
     private Graphics graphics;
 
-    @Override
-    public void init(RenderManager context) {
-        this.context = context;
-        this.guiManager = context.getGuiManager();
-        this.window = context.getWindow();
+    public GuiRenderer(Window window, GuiManager guiManager) {
+        this.guiManager = guiManager;
+        this.window = window;
 
         shader = ShaderManager.instance().registerShader("gui_shader",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/gui.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/gui.frag")));
 
-        this.graphics = new GLGraphics(context, this);
+        this.graphics = new GLGraphics(this);
         graphics.setFont(FontHelper.instance().getDefaultFont());
-
-//        var assetManager = context.getEngine().getAssetManager();
-//        Internal.setContext(() -> path -> assetManager.loadDirect(AssetTypes.TEXTURE, path));
     }
 
-    @Override
     public void render(float partial) {
         startRender();
 
@@ -85,17 +77,18 @@ public class GuiRenderer implements Renderer {
             glViewport(0, 0, window.getWidth(), window.getHeight());
         }
 
-        ShaderManager.instance().bindShader(shader.getValue());
+        ShaderProgram shader = this.shader.getValue();
+        ShaderManager.instance().bindShader(shader);
 
         startRenderFlag();
 
         int width = window.getWidth(), height = window.getHeight();
-        ShaderManager.instance().setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
-        ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
-        ShaderManager.instance().setUniform("u_WindowSize", new Vector2f(width, height));
-        ShaderManager.instance().setUniform("u_ClipRect", new Vector4f(0, 0, width / window.getContentScaleX(), height / window.getContentScaleY())); // Shader will scale this back
+        shader.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
+        shader.setUniform("u_ModelMatrix", new Matrix4f());
+        shader.setUniform("u_WindowSize", new Vector2f(width, height));
+        shader.setUniform("u_ClipRect", new Vector4f(0, 0, width / window.getContentScaleX(), height / window.getContentScaleY())); // Shader will scale this back
 
-        context.getTextureManager().getWhiteTexture().bind();
+        TextureManager.instance().getWhiteTexture();
     }
 
     private void startRenderFlag() {
@@ -146,7 +139,6 @@ public class GuiRenderer implements Renderer {
 //        graphics.drawLine(middleX - 10, middleY, middleX + 10, middleY);
 //    }
 
-    @Override
     public void dispose() {
         ShaderManager.instance().unregisterShader("gui_shader");
     }
