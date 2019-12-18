@@ -6,6 +6,7 @@ import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.gl.font.WindowsFontHelper;
 import nullengine.client.rendering.gl.pipeline.ForwardPipeline;
 import nullengine.client.rendering.gl.util.DebugMessageCallback;
+import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.gl.util.NVXGPUInfo;
 import nullengine.client.rendering.glfw.GLFWContext;
 import nullengine.client.rendering.glfw.GLFWWindow;
@@ -90,6 +91,7 @@ public class GLRenderManager implements RenderManager {
 
     @Override
     public void render(float partial) {
+        GLCleaner.clean();
         renderViewPort(primaryViewPort, partial);
         listener.onPreSwapBuffers(this, partial);
         if (autoSwapBuffers) {

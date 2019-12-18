@@ -1,5 +1,6 @@
 package nullengine.client.rendering.gl.texture;
 
+import nullengine.client.rendering.gl.util.GLCleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
 
@@ -16,6 +17,7 @@ public class GLFrameBuffer {
     private final Map<Integer, TextureFactory> attachments;
 
     private int id;
+    private GLCleaner.Disposable disposable;
     private int width;
     private int height;
 
@@ -63,7 +65,9 @@ public class GLFrameBuffer {
     private GLFrameBuffer(Map<Integer, TextureFactory> attachments, int width, int height) {
         this.attachments = notNull(attachments);
         this.attachedTextures = new HashMap<>();
-        this.id = glGenFramebuffers();
+        var id = glGenFramebuffers();
+        this.id = id;
+        this.disposable = GLCleaner.register(this, () -> glDeleteFramebuffers(id));
         resize(width, height);
     }
 

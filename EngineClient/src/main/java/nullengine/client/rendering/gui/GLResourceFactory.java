@@ -11,7 +11,6 @@ import java.util.WeakHashMap;
 
 public class GLResourceFactory {
 
-    // FIXME: gl memory leak
     private final Map<Image, Texture2D> textures = new WeakHashMap<>();
 
     public Texture2D getTexture(Image image) {

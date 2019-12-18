@@ -1,5 +1,6 @@
 package nullengine.client.rendering.gl;
 
+import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.gl.vertex.GLVertexElement;
 import org.apache.commons.lang3.Validate;
 import org.lwjgl.opengl.GL11;
@@ -11,9 +12,13 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+
 public class VertexArrayObject {
 
     private int id;
+    private GLCleaner.Disposable disposable;
 
     private int vertexCount;
 
@@ -24,7 +29,9 @@ public class VertexArrayObject {
     private GLDataType indexType;
     private GLDrawMode drawMode;
 
-    private VertexArrayObject() {
+    private VertexArrayObject(int id) {
+        this.id = id;
+        this.disposable = GLCleaner.register(this, () -> glDeleteVertexArrays(id));
     }
 
     public VertexAttribute getAttribute(int index) {
@@ -114,7 +121,7 @@ public class VertexArrayObject {
             for (VertexAttribute attribute : attributes) {
                 attribute.dispose();
             }
-            GL30.glDeleteVertexArrays(id);
+            disposable.dispose();
             id = 0;
         }
     }
@@ -239,8 +246,7 @@ public class VertexArrayObject {
         }
 
         public VertexArrayObject build() {
-            VertexArrayObject vao = new VertexArrayObject();
-            vao.id = GL30.glGenVertexArrays();
+            VertexArrayObject vao = new VertexArrayObject(glGenVertexArrays());
             vao.attributes = attributes.toArray(VertexAttribute[]::new);
             vao.drawMode = Validate.notNull(drawMode, "Draw mode cannot be null");
             vao.indices = indices;

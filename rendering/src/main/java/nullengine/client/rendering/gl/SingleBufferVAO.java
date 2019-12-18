@@ -1,5 +1,6 @@
 package nullengine.client.rendering.gl;
 
+import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.gl.vertex.GLVertexFormat;
 import nullengine.client.rendering.scene.Renderable;
 import org.lwjgl.opengl.GL11;
@@ -7,9 +8,12 @@ import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
 
+import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
+
 public class SingleBufferVAO implements Renderable {
 
     private int id;
+    private GLCleaner.Disposable disposable;
     private VertexBufferObject vbo;
     private GLVertexFormat vertexFormat;
     private GLDrawMode drawMode;
@@ -29,8 +33,10 @@ public class SingleBufferVAO implements Renderable {
     }
 
     public SingleBufferVAO(GLBufferUsage usage, GLDrawMode drawMode) {
-        vbo = new VertexBufferObject(GLBufferType.ARRAY_BUFFER, usage);
-        id = GL30.glGenVertexArrays();
+        this.vbo = new VertexBufferObject(GLBufferType.ARRAY_BUFFER, usage);
+        var id = GL30.glGenVertexArrays();
+        this.id = id;
+        this.disposable = GLCleaner.register(this, () -> glDeleteVertexArrays(id));
         this.drawMode = drawMode;
     }
 
@@ -92,11 +98,10 @@ public class SingleBufferVAO implements Renderable {
 
     @Override
     public void dispose() {
-        if (id != 0) {
-            vbo.dispose();
-            GL30.glDeleteVertexArrays(id);
-            id = 0;
-        }
+        if (id == 0) return;
+        vbo.dispose();
+        disposable.dispose();
+        id = 0;
     }
 
     public boolean isDisposed() {

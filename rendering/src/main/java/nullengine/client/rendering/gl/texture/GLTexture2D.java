@@ -1,5 +1,6 @@
 package nullengine.client.rendering.gl.texture;
 
+import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.image.BufferedImage;
 import nullengine.client.rendering.texture.Texture2D;
 import org.lwjgl.opengl.GL11;
@@ -21,6 +22,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
     public static final GLTexture2D EMPTY = new GLTexture2D(0);
 
     private int id;
+    private GLCleaner.Disposable disposable;
 
     private int level;
     private int internalFormat;
@@ -77,6 +79,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
 
     private GLTexture2D(int id) {
         this.id = id;
+        this.disposable = GLCleaner.register(this, () -> glDeleteTextures(id));
     }
 
     @Override
@@ -129,7 +132,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
     public void dispose() {
         if (id == 0) return;
 
-        glDeleteTextures(id);
+        disposable.dispose();
         id = 0;
     }
 

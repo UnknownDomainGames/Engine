@@ -1,5 +1,6 @@
 package nullengine.client.rendering.gl.texture;
 
+import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.texture.Texture2D;
 import org.lwjgl.opengl.GL40;
 
@@ -15,6 +16,7 @@ public final class GLTexture2DMultiSample implements GLTexture, Texture2D {
     public static final GLTexture2DMultiSample EMPTY = new GLTexture2DMultiSample(0);
 
     private int id;
+    private GLCleaner.Disposable disposable;
 
     private int internalFormat;
     private int sample;
@@ -29,6 +31,7 @@ public final class GLTexture2DMultiSample implements GLTexture, Texture2D {
 
     private GLTexture2DMultiSample(int id) {
         this.id = id;
+        this.disposable = GLCleaner.register(this, () -> glDeleteTextures(id));
     }
 
     public int getId() {
@@ -57,7 +60,7 @@ public final class GLTexture2DMultiSample implements GLTexture, Texture2D {
     public void dispose() {
         if (id == 0) return;
 
-        glDeleteTextures(id);
+        disposable.dispose();
         id = 0;
     }
 

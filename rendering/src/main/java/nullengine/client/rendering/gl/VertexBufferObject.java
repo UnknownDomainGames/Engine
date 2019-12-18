@@ -1,8 +1,12 @@
 package nullengine.client.rendering.gl;
 
+import nullengine.client.rendering.gl.util.GLCleaner;
 import org.lwjgl.opengl.GL15;
 
 import java.nio.*;
+
+import static org.lwjgl.opengl.GL15.glDeleteBuffers;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
 
 public class VertexBufferObject {
 
@@ -10,11 +14,14 @@ public class VertexBufferObject {
     private final GLBufferUsage usage;
 
     private int id;
+    private GLCleaner.Disposable disposable;
 
     public VertexBufferObject(GLBufferType type, GLBufferUsage usage) {
         this.type = type;
         this.usage = usage;
-        id = GL15.glGenBuffers();
+        var id = glGenBuffers();
+        this.id = id;
+        this.disposable = GLCleaner.register(this, () -> glDeleteBuffers(id));
     }
 
     public VertexBufferObject(GLBufferType type, GLBufferUsage usage, ByteBuffer buffer) {
@@ -149,10 +156,11 @@ public class VertexBufferObject {
     }
 
     public void dispose() {
-        if (id != 0) {
-            GL15.glDeleteBuffers(id);
-            id = 0;
+        if (id == 0) {
+            return;
         }
+        disposable.dispose();
+        id = 0;
     }
 
     public boolean isDisposed() {
