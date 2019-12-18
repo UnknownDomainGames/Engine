@@ -26,7 +26,7 @@ import java.util.Stack;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 
-public class GraphicsImpl implements Graphics {
+public class GLGraphics implements Graphics {
 
     private final RenderManager context;
     private final DirectRenderer directRenderer = DirectRenderer.getInstance();
@@ -40,7 +40,7 @@ public class GraphicsImpl implements Graphics {
 
     private final Stack<Vector4fc> clipRect = new Stack<>();
 
-    public GraphicsImpl(RenderManager context, GuiRenderer guiRenderer) {
+    public GLGraphics(RenderManager context, GuiRenderer guiRenderer) {
         this.context = context;
         this.guiRenderer = guiRenderer;
         this.whiteTexture = TextureManager.instance().getWhiteTexture();

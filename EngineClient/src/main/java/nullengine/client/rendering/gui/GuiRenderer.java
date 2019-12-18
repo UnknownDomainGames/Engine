@@ -45,7 +45,7 @@ public class GuiRenderer implements Renderer {
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/gui.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/gui.frag")));
 
-        this.graphics = new GraphicsImpl(context, this);
+        this.graphics = new GLGraphics(context, this);
         graphics.setFont(FontHelper.instance().getDefaultFont());
 
 //        var assetManager = context.getEngine().getAssetManager();
