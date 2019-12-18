@@ -79,7 +79,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
 
     private GLTexture2D(int id) {
         this.id = id;
-        this.disposable = GLCleaner.register(this, () -> glDeleteTextures(id));
+        this.disposable = GLCleaner.registerTexture(this, id);
     }
 
     @Override

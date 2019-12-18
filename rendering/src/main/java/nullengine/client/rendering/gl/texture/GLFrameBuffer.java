@@ -65,9 +65,8 @@ public class GLFrameBuffer {
     private GLFrameBuffer(Map<Integer, TextureFactory> attachments, int width, int height) {
         this.attachments = notNull(attachments);
         this.attachedTextures = new HashMap<>();
-        var id = glGenFramebuffers();
-        this.id = id;
-        this.disposable = GLCleaner.register(this, () -> glDeleteFramebuffers(id));
+        this.id = glGenFramebuffers();
+        this.disposable = GLCleaner.registerFrameBuffer(this, id);
         resize(width, height);
     }
 

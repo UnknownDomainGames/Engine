@@ -8,8 +8,6 @@ import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
 
-import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
-
 public class SingleBufferVAO implements Renderable {
 
     private int id;
@@ -34,9 +32,8 @@ public class SingleBufferVAO implements Renderable {
 
     public SingleBufferVAO(GLBufferUsage usage, GLDrawMode drawMode) {
         this.vbo = new VertexBufferObject(GLBufferType.ARRAY_BUFFER, usage);
-        var id = GL30.glGenVertexArrays();
-        this.id = id;
-        this.disposable = GLCleaner.register(this, () -> glDeleteVertexArrays(id));
+        id = GL30.glGenVertexArrays();
+        disposable = GLCleaner.registerArray(this, id);
         this.drawMode = drawMode;
     }
 

@@ -5,7 +5,6 @@ import org.lwjgl.opengl.GL15;
 
 import java.nio.*;
 
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 
 public class VertexBufferObject {
@@ -19,9 +18,8 @@ public class VertexBufferObject {
     public VertexBufferObject(GLBufferType type, GLBufferUsage usage) {
         this.type = type;
         this.usage = usage;
-        var id = glGenBuffers();
-        this.id = id;
-        this.disposable = GLCleaner.register(this, () -> glDeleteBuffers(id));
+        this.id = glGenBuffers();
+        this.disposable = GLCleaner.registerBuffer(this, id);
     }
 
     public VertexBufferObject(GLBufferType type, GLBufferUsage usage, ByteBuffer buffer) {

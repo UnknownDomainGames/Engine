@@ -31,7 +31,7 @@ public final class GLTexture2DMultiSample implements GLTexture, Texture2D {
 
     private GLTexture2DMultiSample(int id) {
         this.id = id;
-        this.disposable = GLCleaner.register(this, () -> glDeleteTextures(id));
+        this.disposable = GLCleaner.registerTexture(this, id);
     }
 
     public int getId() {

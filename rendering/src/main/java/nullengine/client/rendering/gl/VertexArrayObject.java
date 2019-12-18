@@ -12,7 +12,6 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class VertexArrayObject {
@@ -31,7 +30,7 @@ public class VertexArrayObject {
 
     private VertexArrayObject(int id) {
         this.id = id;
-        this.disposable = GLCleaner.register(this, () -> glDeleteVertexArrays(id));
+        this.disposable = GLCleaner.registerArray(this, id);
     }
 
     public VertexAttribute getAttribute(int index) {

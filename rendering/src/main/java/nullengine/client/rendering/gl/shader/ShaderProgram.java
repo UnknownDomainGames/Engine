@@ -17,9 +17,8 @@ public class ShaderProgram implements BindingProxy {
     private GLCleaner.Disposable disposable;
 
     public ShaderProgram(CompiledShader... shaders) {
-        var id = glCreateProgram();
-        this.id = id;
-        this.disposable = GLCleaner.register(this, () -> glDeleteProgram(id));
+        id = glCreateProgram();
+        disposable = GLCleaner.registerProgram(this, id);
 
         for (CompiledShader shader : shaders) {
             glAttachShader(this.id, shader.getId());
