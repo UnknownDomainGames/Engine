@@ -1,6 +1,7 @@
 package nullengine.client.rendering.gui;
 
 import nullengine.client.gui.Node;
+import nullengine.client.gui.image.Image;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.rendering.Graphics;
@@ -30,6 +31,7 @@ public class GraphicsImpl implements Graphics {
     private final RenderManager context;
     private final DirectRenderer directRenderer = DirectRenderer.getInstance();
     private final GuiRenderer guiRenderer;
+    private final GLResourceFactory resourceFactory = new GLResourceFactory();
 
     private final Texture2D whiteTexture;
 
@@ -201,7 +203,7 @@ public class GraphicsImpl implements Graphics {
 
     @Override
     public void drawTexture(Texture2D texture, float x, float y, float width, float height) {
-        drawTexture(texture, x, y, width, height, 0, 0, 1, 1);
+        drawTexture(texture, x, y, width, height, 0f, 0f, 1f, 1f);
     }
 
     @Override
@@ -215,6 +217,24 @@ public class GraphicsImpl implements Graphics {
         buffer.pos(x2, y2, 0).color(1, 1, 1, 1).uv(maxU, maxV).endVertex();
         texture.bind();
         directRenderer.draw();
+    }
+
+    @Override
+    public void drawImage(Image image, float x, float y, float width, float height) {
+        Texture2D texture = resourceFactory.getTexture(image);
+        if (texture == null) {
+            return;
+        }
+        drawTexture(texture, x, y, width, height);
+    }
+
+    @Override
+    public void drawImage(Image image, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
+        Texture2D texture = resourceFactory.getTexture(image);
+        if (texture == null) {
+            return;
+        }
+        drawTexture(texture, x, y, width, height, minU, minV, maxU, maxV);
     }
 
     @Override
