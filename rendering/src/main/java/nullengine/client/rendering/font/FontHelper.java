@@ -1,6 +1,7 @@
 package nullengine.client.rendering.font;
 
 import nullengine.client.rendering.gl.GLBuffer;
+import nullengine.util.Color;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +43,7 @@ public interface FontHelper {
 
     float computeTextHeight(String text, Font font, float ceilingWidth, float leading) throws UnavailableFontException;
 
-    void renderText(GLBuffer buffer, CharSequence text, Font font, int color, Runnable renderer) throws UnavailableFontException;
+    void renderText(GLBuffer buffer, CharSequence text, Font font, Color color, Runnable renderer) throws UnavailableFontException;
 
     static FontHelper instance() {
         return Internal.instance.get();

@@ -295,7 +295,7 @@ public final class WindowsFontHelper implements FontHelper {
     }
 
     @Override
-    public void renderText(GLBuffer buffer, CharSequence text, Font font, int color, Runnable renderer) throws UnavailableFontException {
+    public void renderText(GLBuffer buffer, CharSequence text, Font font, Color color, Runnable renderer) throws UnavailableFontException {
         if (text == null || text.length() == 0) {
             return;
         }
@@ -306,7 +306,7 @@ public final class WindowsFontHelper implements FontHelper {
         renderer.run();
     }
 
-    private void generateMesh(GLBuffer buffer, CharSequence text, NativeTTFont nativeTTFont, int color) {
+    private void generateMesh(GLBuffer buffer, CharSequence text, NativeTTFont nativeTTFont, Color color) {
         STBTTFontinfo fontInfo = nativeTTFont.getInfo().getFontInfo();
         float fontHeight = nativeTTFont.getFont().getSize();
         float scale = nativeTTFont.getScaleForPixelHeight();
@@ -316,15 +316,10 @@ public final class WindowsFontHelper implements FontHelper {
             FloatBuffer posX = stack.floats(0);
             FloatBuffer posY = stack.floats(0 + fontHeight);
 
-            float factorX = 1.0f * nativeTTFont.getInfo().getContentScaleX();
-            float factorY = 1.0f * nativeTTFont.getInfo().getContentScaleY();
-            factorX = 1.0f;
-            factorY = 1.0f;
-
-            float r = ((color >> 16) & 255) / 255f;
-            float g = ((color >> 8) & 255) / 255f;
-            float b = (color & 255) / 255f;
-            float a = ((color >> 24) & 255) / 255f;
+//            float factorX = 1.0f * nativeTTFont.getInfo().getContentScaleX();
+//            float factorY = 1.0f * nativeTTFont.getInfo().getContentScaleY();
+            float factorX = 1.0f;
+            float factorY = 1.0f;
 
             float centerY = 0 + fontHeight;
 
@@ -368,13 +363,13 @@ public final class WindowsFontHelper implements FontHelper {
                         x1 = (float) Math.floor(scale(centerX, centerX + quads.getPos().z(), factorX) + 0.5),
                         y0 = (float) Math.floor(scale(centerY, quads.getPos().y(), factorY) + 0.5),
                         y1 = (float) Math.floor(scale(centerY, quads.getPos().w(), factorY) + 0.5); // FIXME: Incorrect y0
-                buffer.pos(x0, y0, 0).color(r, g, b, a).uv(quads.getTexCoord().x(), quads.getTexCoord().y()).endVertex();
-                buffer.pos(x0, y1, 0).color(r, g, b, a).uv(quads.getTexCoord().x(), quads.getTexCoord().w()).endVertex();
-                buffer.pos(x1, y0, 0).color(r, g, b, a).uv(quads.getTexCoord().z(), quads.getTexCoord().y()).endVertex();
+                buffer.pos(x0, y0, 0).color(color).uv(quads.getTexCoord().x(), quads.getTexCoord().y()).endVertex();
+                buffer.pos(x0, y1, 0).color(color).uv(quads.getTexCoord().x(), quads.getTexCoord().w()).endVertex();
+                buffer.pos(x1, y0, 0).color(color).uv(quads.getTexCoord().z(), quads.getTexCoord().y()).endVertex();
 
-                buffer.pos(x1, y0, 0).color(r, g, b, a).uv(quads.getTexCoord().z(), quads.getTexCoord().y()).endVertex();
-                buffer.pos(x0, y1, 0).color(r, g, b, a).uv(quads.getTexCoord().x(), quads.getTexCoord().w()).endVertex();
-                buffer.pos(x1, y1, 0).color(r, g, b, a).uv(quads.getTexCoord().z(), quads.getTexCoord().w()).endVertex();
+                buffer.pos(x1, y0, 0).color(color).uv(quads.getTexCoord().z(), quads.getTexCoord().y()).endVertex();
+                buffer.pos(x0, y1, 0).color(color).uv(quads.getTexCoord().x(), quads.getTexCoord().w()).endVertex();
+                buffer.pos(x1, y1, 0).color(color).uv(quads.getTexCoord().z(), quads.getTexCoord().w()).endVertex();
             }
         }
     }
