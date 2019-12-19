@@ -30,8 +30,6 @@ public class NativeTTFontInfo {
     private double ascent;
     private double descent;
     private double lineGap;
-    private float contentScaleX;
-    private float contentScaleY;
 
     private int[] boundingBox;
 
@@ -77,14 +75,6 @@ public class NativeTTFontInfo {
 
     public double getLineGap() {
         return lineGap;
-    }
-
-    public float getContentScaleX() {
-        return contentScaleX;
-    }
-
-    public float getContentScaleY() {
-        return contentScaleY;
     }
 
     public int[] getBoundingBox() {
@@ -210,9 +200,7 @@ public class NativeTTFontInfo {
 
         public NativeTTFontInfo build() {
             NativeTTFontInfo nativeTTFontInfo = new NativeTTFontInfo();
-            nativeTTFontInfo.contentScaleX = this.contentScaleX;
             nativeTTFontInfo.fontData = this.fontData;
-            nativeTTFontInfo.contentScaleY = this.contentScaleY;
             nativeTTFontInfo.fontInfo = this.fontInfo;
             nativeTTFontInfo.languageId = this.languageId;
             nativeTTFontInfo.descent = this.descent;

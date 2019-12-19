@@ -10,8 +10,8 @@ import nullengine.client.rendering.font.UnavailableFontException;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.vertex.GLVertexFormats;
+import nullengine.util.Color;
 import org.apache.commons.io.IOUtils;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
 import org.slf4j.Logger;
@@ -41,9 +41,7 @@ public final class WindowsFontHelper implements FontHelper {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("Font");
 
-    public static final int SUPPORTED_CHARACTER_COUNT = 0x10000;
-
-    private static final int[] PLATFORMs = {STBTT_PLATFORM_ID_MICROSOFT, STBTT_PLATFORM_ID_UNICODE, STBTT_PLATFORM_ID_MAC, STBTT_PLATFORM_ID_ISO};
+    //    private static final int[] PLATFORMs = {STBTT_PLATFORM_ID_MICROSOFT, STBTT_PLATFORM_ID_UNICODE, STBTT_PLATFORM_ID_MAC, STBTT_PLATFORM_ID_ISO};
     private static final int[] EIDs = {STBTT_MS_EID_UNICODE_BMP, STBTT_MS_EID_SHIFTJIS, STBTT_MS_EID_UNICODE_FULL, STBTT_MS_EID_SYMBOL};
     private static final int[] LANGs = {
             STBTT_MS_LANG_CHINESE,
@@ -100,16 +98,24 @@ public final class WindowsFontHelper implements FontHelper {
 
     private void initLocalFonts() {
         var tasks = new ArrayList<CompletableFuture>();
-        for (Path fontFile : findLocalTTFonts()) {
-            tasks.add(CompletableFuture.runAsync(()->{
+        List<NativeTTFontInfo> loadedFonts = Collections.synchronizedList(new ArrayList<>());
+        for (var fontFile : findLocalTTFonts()) {
+            tasks.add(CompletableFuture.runAsync(() -> {
                 try {
-                    loadNativeFontInfo(fontFile);
+                    Collections.addAll(loadedFonts, loadFontInfo(fontFile, true, false));
                 } catch (Exception e) {
                     LOGGER.debug("Cannot load local font. Path: " + fontFile, e);
                 }
             }));
         }
-        CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).thenRun(() -> allLocalFontsInitialized = true);
+        CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0]))
+                .thenRun(() -> {
+                    loadedFonts.forEach(info -> {
+                        availableFonts.add(info.getFont());
+                        loadedFontInfos.put(info.getFamily(), info.getStyle(), info);
+                    });
+                    allLocalFontsInitialized = true;
+                });
     }
 
     private List<Path> findLocalTTFonts() {
@@ -157,23 +163,23 @@ public final class WindowsFontHelper implements FontHelper {
 
     @Override
     public Font loadFont(Path path) throws IOException {
-        return loadNativeFontInfo(path).getFont();
+        return loadFontInfo(path, true, true)[0].getFont();
     }
 
     @Override
     public Font loadFont(Path path, float size) throws IOException {
-        NativeTTFontInfo nativeTTFontInfo = loadNativeFontInfo(path);
+        NativeTTFontInfo nativeTTFontInfo = loadFontInfo(path, true, true)[0];
         return new Font(nativeTTFontInfo.getFont(), size);
     }
 
     @Override
     public Font loadFont(InputStream input) throws IOException {
-        return new Font(loadNativeFontInfo(input).getFont(), 1);
+        return new Font(loadFontInfo(input)[0].getFont(), 1);
     }
 
     @Override
     public Font loadFont(InputStream input, float size) throws IOException {
-        return new Font(loadNativeFontInfo(input).getFont(), size);
+        return new Font(loadFontInfo(input)[0].getFont(), size);
     }
 
     @Override
@@ -387,7 +393,6 @@ public final class WindowsFontHelper implements FontHelper {
     }
 
     private NativeTTFont loadNativeFont(NativeTTFontInfo info, Font font) {
-        ByteBuffer fontData = info.getFontData();
         float scale = stbtt_ScaleForPixelHeight(info.getFontInfo(), font.getSize());
         var plane = new FontPlaneTexture();
         plane.putBlock(Character.UnicodeBlock.BASIC_LATIN);
@@ -395,82 +400,31 @@ public final class WindowsFontHelper implements FontHelper {
         return new NativeTTFont(info, font, scale, plane);
     }
 
-    private NativeTTFontInfo loadNativeFontInfo(Path path) throws IOException {
-        try(var fileChannel = FileChannel.open(path)) {
-            ByteBuffer fontData = ByteBuffer.allocateDirect((int)fileChannel.size());
+    private NativeTTFontInfo[] loadFontInfo(InputStream input) throws IOException {
+        byte[] bytes = IOUtils.toByteArray(input);
+        return loadFontInfo(null, ByteBuffer.allocateDirect(bytes.length).put(bytes).flip(), false, true);
+    }
+
+    private NativeTTFontInfo[] loadFontInfo(Path fontFile, boolean delayLoading, boolean enable) throws IOException {
+        ByteBuffer fontData;
+        try (var fileChannel = FileChannel.open(fontFile)) {
+            fontData = ByteBuffer.allocateDirect((int) fileChannel.size());
             fileChannel.read(fontData);
             fontData.flip();
-            var fontCount = stbtt_GetNumberOfFonts(fontData);
-            if (fontCount == -1) {
-                throw new IllegalArgumentException(String.format("Cannot determine the number of fonts in the font file. File: %s", path));
-            }
-            NativeTTFontInfo parent = null;
-            for (int i = 0; i < fontCount; i++) {
-                STBTTFontinfo fontInfo = STBTTFontinfo.create();
-                if (!stbtt_InitFont(fontInfo, fontData, stbtt_GetFontOffsetForIndex(fontData, i))) {
-                    throw new IllegalStateException(String.format("Failed in initializing ttf font info. File: %s", path));
-                }
-
-                FontDataFormat format = findDataFormat(fontInfo);
-                if (format == null) {
-                    throw new FontLoadException("Cannot load font because of not found encoding id. Path: " + path);
-                }
-
-                String family = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, format.encodingId, format.languageId, 1)
-                        .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
-                String style = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, format.encodingId, format.languageId, 2)
-                        .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
-
-                try (MemoryStack stack = stackPush()) {
-                    IntBuffer pAscent = stack.mallocInt(1);
-                    IntBuffer pDescent = stack.mallocInt(1);
-                    IntBuffer pLineGap = stack.mallocInt(1);
-
-                    stbtt_GetFontVMetrics(fontInfo, pAscent, pDescent, pLineGap);
-
-                    FloatBuffer p1 = stack.mallocFloat(1);
-                    FloatBuffer p2 = stack.mallocFloat(1);
-
-                    GLFW.glfwGetMonitorContentScale(GLFW.glfwGetPrimaryMonitor(), p1, p2);
-
-                    IntBuffer x0 = stack.mallocInt(1);
-                    IntBuffer y0 = stack.mallocInt(1);
-                    IntBuffer x1 = stack.mallocInt(1);
-                    IntBuffer y1 = stack.mallocInt(1);
-                    stbtt_GetFontBoundingBox(fontInfo, x0, y0, x1, y1);
-
-                    parent = NativeTTFontInfo.builder()
-                            .fontFile(path)
-                            .platformId(STBTT_PLATFORM_ID_MICROSOFT)
-                            .encodingId(format.encodingId)
-                            .languageId(format.languageId)
-                            .family(family).style(style).offsetIndex(i)
-                            .ascent(pAscent.get(0)).descent(pDescent.get(0)).lineGap(pLineGap.get(0))
-                            .contentScaleX(p1.get(0)).contentScaleY(p2.get(0))
-                            .boundingBox(new int[]{x0.get(), y0.get(), x1.get(), y1.get()})
-                            .build();
-                    loadedFontInfos.put(family, style, parent);
-                    availableFonts.add(parent.getFont());
-                }
-            }
-            return parent;
         }
+        return loadFontInfo(fontFile, fontData, delayLoading, enable);
     }
 
-    private NativeTTFontInfo loadNativeFontInfo(InputStream input) throws IOException {
-        byte[] bytes = IOUtils.toByteArray(input);
-        return loadNativeFontInfo(ByteBuffer.allocateDirect(bytes.length).put(bytes).flip());
-    }
-
-    private NativeTTFontInfo loadNativeFontInfo(ByteBuffer buffer) {
-        var fontCount = stbtt_GetNumberOfFonts(buffer);
+    private NativeTTFontInfo[] loadFontInfo(Path fontFile, ByteBuffer fontData, boolean delayLoading, boolean enable) {
+        var fontCount = stbtt_GetNumberOfFonts(fontData);
         if (fontCount == -1) {
             throw new IllegalArgumentException("Cannot determine the number of fonts in the font buffer.");
         }
-        NativeTTFontInfo parent = null;
+        NativeTTFontInfo[] results = new NativeTTFontInfo[fontCount];
+
         for (int i = 0; i < fontCount; i++) {
             STBTTFontinfo fontInfo = STBTTFontinfo.create();
-            if (!stbtt_InitFont(fontInfo, buffer)) {
+            if (!stbtt_InitFont(fontInfo, fontData)) {
                 throw new IllegalStateException("Failed in initializing ttf font info");
             }
 
@@ -488,13 +442,7 @@ public final class WindowsFontHelper implements FontHelper {
                 IntBuffer pAscent = stack.mallocInt(1);
                 IntBuffer pDescent = stack.mallocInt(1);
                 IntBuffer pLineGap = stack.mallocInt(1);
-
                 stbtt_GetFontVMetrics(fontInfo, pAscent, pDescent, pLineGap);
-
-                FloatBuffer p1 = stack.mallocFloat(1);
-                FloatBuffer p2 = stack.mallocFloat(1);
-
-                GLFW.glfwGetMonitorContentScale(GLFW.glfwGetPrimaryMonitor(), p1, p2);
 
                 IntBuffer x0 = stack.mallocInt(1);
                 IntBuffer y0 = stack.mallocInt(1);
@@ -502,22 +450,28 @@ public final class WindowsFontHelper implements FontHelper {
                 IntBuffer y1 = stack.mallocInt(1);
                 stbtt_GetFontBoundingBox(fontInfo, x0, y0, x1, y1);
 
-                parent = NativeTTFontInfo.builder()
-                        .fontData(buffer)
+                var builder = NativeTTFontInfo.builder()
                         .fontInfo(fontInfo)
                         .platformId(STBTT_PLATFORM_ID_MICROSOFT)
                         .encodingId(format.encodingId)
                         .languageId(format.languageId)
                         .family(family).style(style).offsetIndex(i)
                         .ascent(pAscent.get(0)).descent(pDescent.get(0)).lineGap(pLineGap.get(0))
-                        .contentScaleX(p1.get(0)).contentScaleY(p2.get(0))
-                        .boundingBox(new int[]{x0.get(), y0.get(), x1.get(), y1.get()})
-                        .build();
-                loadedFontInfos.put(family, style, parent);
-                availableFonts.add(parent.getFont());
+                        .boundingBox(new int[]{x0.get(), y0.get(), x1.get(), y1.get()});
+                if (delayLoading) {
+                    builder.fontFile(fontFile);
+                } else {
+                    builder.fontData(fontData);
+                }
+                var result = builder.build();
+                if (enable) {
+                    loadedFontInfos.put(family, style, result);
+                    availableFonts.add(result.getFont());
+                }
+                results[i] = result;
             }
         }
-        return parent;
+        return results;
     }
 
     private static final class FontDataFormat {
