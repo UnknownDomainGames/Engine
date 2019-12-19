@@ -271,9 +271,14 @@ public class GLGraphics implements Graphics {
             return;
         }
 
-        Texture2D image = background.getImage();
+        Image image = background.getImage();
         if (image != null) {
-            image.bind();
+            Texture2D texture = resourceFactory.getTexture(image);
+            if (texture == null) {
+                return;
+            }
+            texture.bind();
+
             if (background.isRepeat()) {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -281,7 +286,8 @@ public class GLGraphics implements Graphics {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             }
-            drawTexture(image, x, y, x + width, y + height);
+
+            drawTexture(texture, x, y, x + width, y + height);
             whiteTexture.bind();
         } else {
             setColor(background.getColor());

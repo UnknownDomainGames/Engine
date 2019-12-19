@@ -1,23 +1,16 @@
 package nullengine.client.gui.misc;
 
-import nullengine.client.gui.Node;
-import nullengine.client.gui.rendering.Graphics;
-import nullengine.client.rendering.gl.texture.GLTexture2D;
-import nullengine.client.rendering.texture.Texture2D;
+import nullengine.client.gui.image.Image;
 import nullengine.util.Color;
 
 import java.util.Objects;
-
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 
 public class Background {
 
     public static final Background NOTHING = Background.fromColor(Color.TRANSPARENT);
 
     private final Color color;
-
-    private final Texture2D image;
+    private final Image image;
 
     private boolean repeat;
 
@@ -26,7 +19,7 @@ public class Background {
         this.image = null;
     }
 
-    public Background(Texture2D image) {
+    public Background(Image image) {
         this.image = image;
         this.color = Color.TRANSPARENT;
     }
@@ -35,7 +28,7 @@ public class Background {
         return color;
     }
 
-    public Texture2D getImage() {
+    public Image getImage() {
         return image;
     }
 
@@ -45,23 +38,6 @@ public class Background {
 
     public void setRepeat(boolean repeat) {
         this.repeat = repeat;
-    }
-
-    public void render(Node node, Graphics graphics) {
-        if (image != null) {
-            image.bind();
-            if (repeat) {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            } else {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            }
-            graphics.drawTexture(image, 0, 0, node.width().get(), node.height().get());
-        } else {
-            graphics.setColor(color);
-            graphics.fillRect(0, 0, node.width().get(), node.height().get());
-        }
     }
 
     @Override
@@ -85,7 +61,7 @@ public class Background {
         return new Background(color);
     }
 
-    public static Background fromImage(GLTexture2D image) {
+    public static Background fromImage(Image image) {
         return new Background(image);
     }
 }
