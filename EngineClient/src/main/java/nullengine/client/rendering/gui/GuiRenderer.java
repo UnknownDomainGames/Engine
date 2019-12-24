@@ -51,13 +51,11 @@ public class GuiRenderer {
         // render scene
         if (guiManager.isHudVisible() && !guiManager.isDisplayingScreen()) {
             for (Scene scene : guiManager.getDisplayingHuds().values()) {
-                startRenderFlag();
                 renderScene(scene);
             }
         }
 
         if (guiManager.isDisplayingScreen()) {
-            startRenderFlag();
             renderScene(guiManager.getDisplayingScreen());
         }
 
@@ -75,21 +73,6 @@ public class GuiRenderer {
             glViewport(0, 0, window.getWidth(), window.getHeight());
         }
 
-        ShaderProgram shader = this.shader.getValue();
-        ShaderManager.instance().bindShader(shader);
-
-        startRenderFlag();
-
-        int width = window.getWidth(), height = window.getHeight();
-        shader.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
-        shader.setUniform("u_ModelMatrix", new Matrix4f());
-        shader.setUniform("u_WindowSize", new Vector2f(width, height));
-        shader.setUniform("u_ClipRect", new Vector4f(0, 0, width / window.getContentScaleX(), height / window.getContentScaleY())); // Shader will scale this back
-
-        TextureManager.instance().getWhiteTexture();
-    }
-
-    private void startRenderFlag() {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_LINE_SMOOTH);
@@ -99,6 +82,17 @@ public class GuiRenderer {
         // GL_POLYGON_SMOOTH will cause transparent lines on objects
 //        glEnable(GL_POLYGON_SMOOTH);
 //        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
+        ShaderProgram shader = this.shader.getValue();
+        ShaderManager.instance().bindShader(shader);
+
+        int width = window.getWidth(), height = window.getHeight();
+        shader.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, width, height, 0, 1000, -1000));
+        shader.setUniform("u_ModelMatrix", new Matrix4f());
+        shader.setUniform("u_WindowSize", new Vector2f(width, height));
+        shader.setUniform("u_ClipRect", new Vector4f(0, 0, width / window.getContentScaleX(), height / window.getContentScaleY())); // Shader will scale this back
+
+        TextureManager.instance().getWhiteTexture();
     }
 
     private void endRender() {
