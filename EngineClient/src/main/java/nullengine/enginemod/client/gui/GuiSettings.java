@@ -2,7 +2,6 @@ package nullengine.enginemod.client.gui;
 
 import com.github.mouse0w0.observable.value.ValueChangeListener;
 import nullengine.Platform;
-import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.component.Button;
 import nullengine.client.gui.input.MouseButton;
 import nullengine.client.gui.layout.AnchorPane;
@@ -17,7 +16,8 @@ import nullengine.util.Color;
 
 public class GuiSettings extends AnchorPane {
     private int videoModeIndex;
-    public GuiSettings(){
+
+    public GuiSettings() {
         var settings = Platform.getEngineClient().getSettings();
         var baksettings = new EngineSettings();
         baksettings.getDisplaySettings().setDisplayMode(settings.getDisplaySettings().getDisplayMode());
@@ -33,8 +33,8 @@ public class GuiSettings extends AnchorPane {
         var monitor = Platform.getEngineClient().getRenderManager().getWindow().getMonitor();
         monitor.
                 getVideoModes().stream().filter(mode -> mode.getWidth() == (settings.getDisplaySettings().getResolutionWidth() == -1 ? monitor.getVideoMode().getWidth() : settings.getDisplaySettings().getResolutionWidth())
-        && mode.getHeight() == (settings.getDisplaySettings().getResolutionHeight() == -1 ? monitor.getVideoMode().getHeight() : settings.getDisplaySettings().getResolutionHeight())
-        && mode.getRefreshRate() == (settings.getDisplaySettings().getFrameRate() == -1 ? monitor.getVideoMode().getRefreshRate() : settings.getDisplaySettings().getFrameRate()))
+                && mode.getHeight() == (settings.getDisplaySettings().getResolutionHeight() == -1 ? monitor.getVideoMode().getHeight() : settings.getDisplaySettings().getResolutionHeight())
+                && mode.getRefreshRate() == (settings.getDisplaySettings().getFrameRate() == -1 ? monitor.getVideoMode().getRefreshRate() : settings.getDisplaySettings().getFrameRate()))
                 .findFirst().ifPresentOrElse(videoMode -> videoModeIndex = monitor.getVideoModes().indexOf(videoMode),
                 () -> videoModeIndex = monitor.getVideoModes().indexOf(monitor.getVideoMode()));
         butRes.text().setValue(String.format("%dx%d, %dHz", Platform.getEngineClient().getRenderManager().getWindow().getWidth(), Platform.getEngineClient().getRenderManager().getWindow().getHeight(), settings.getDisplaySettings().getDisplayMode() != DisplayMode.FULLSCREEN ? 60 : monitor.getVideoMode().getRefreshRate()));
@@ -60,8 +60,7 @@ public class GuiSettings extends AnchorPane {
                         settings.getDisplaySettings().setFrameRate(monitor.getVideoMode().getRefreshRate());
                     }
                     butRes.text().setValue(String.format("%dx%d, %dHz", settings.getDisplaySettings().getResolutionWidth(), settings.getDisplaySettings().getResolutionHeight(), settings.getDisplaySettings().getFrameRate()));
-                }
-                else{
+                } else {
                     butRes.disabled().set(true);
                     settings.getDisplaySettings().setResolutionWidth(settings.getDisplaySettings().getDisplayMode() == DisplayMode.WINDOWED ? -1 : monitor.getVideoMode().getWidth());
                     settings.getDisplaySettings().setResolutionHeight(settings.getDisplaySettings().getDisplayMode() == DisplayMode.WINDOWED ? -1 : monitor.getVideoMode().getHeight());
@@ -77,7 +76,7 @@ public class GuiSettings extends AnchorPane {
         hb2.spacing().set(10f);
         hb2.getChildren().addAll(lblRes, butRes);
         var vb = new VBox();
-        vb.getChildren().addAll(hb1,hb2);
+        vb.getChildren().addAll(hb1, hb2);
 
         //All
         setTopAnchor(title, 10f);
@@ -92,12 +91,14 @@ public class GuiSettings extends AnchorPane {
             settings.getDisplaySettings().setDisplayMode(baksettings.getDisplaySettings().getDisplayMode());
             settings.getDisplaySettings().setResolutionHeight(baksettings.getDisplaySettings().getResolutionHeight());
             settings.getDisplaySettings().setResolutionWidth(baksettings.getDisplaySettings().getResolutionWidth());
-            requireClose();
+            var guiManager = Platform.getEngineClient().getRenderManager().getGuiManager();
+            guiManager.showLastScreen();
         });
         butSave.setOnMouseClicked(event -> {
             settings.apply();
             settings.save();
-            requireClose();
+            var guiManager = Platform.getEngineClient().getRenderManager().getGuiManager();
+            guiManager.showLastScreen();
         });
         butSave.border().setValue(new Border(Color.WHITE, 2));
         butBack.border().setValue(new Border(Color.WHITE, 2));
@@ -119,10 +120,5 @@ public class GuiSettings extends AnchorPane {
         };
         width().addChangeListener(sizeChangeListener);
         height().addChangeListener(sizeChangeListener);
-    }
-
-    @Override
-    public void doClosing(GuiManager manager) {
-        manager.showLastScreen();
     }
 }

@@ -1,7 +1,6 @@
 package nullengine.enginemod.client.gui.game;
 
 import nullengine.Platform;
-import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.component.Button;
 import nullengine.client.gui.component.Label;
@@ -41,19 +40,17 @@ public class GuiDirectConnectServer extends BorderPane {
                 } catch (NumberFormatException ex) {
 
                 }
-                fullAddress = fullAddress.substring(0,colonIndex);
+                fullAddress = fullAddress.substring(0, colonIndex);
             }
             Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiConnectServer(fullAddress, port)));
         });
         var butBack = new Button("Back");
-        butBack.setOnMouseClicked(e -> requireClose());
+        butBack.setOnMouseClicked(e -> {
+            var guiManager = Platform.getEngineClient().getRenderManager().getGuiManager();
+            guiManager.showLastScreen();
+        });
         hbox.getChildren().addAll(butConnect, butBack);
-        vbox.getChildren().addAll(label1,lblAddress,txtboxAddress, hbox);
+        vbox.getChildren().addAll(label1, lblAddress, txtboxAddress, hbox);
         background().setValue(Background.fromColor(Color.fromRGB(0x7f7f7f)));
-    }
-
-    @Override
-    public void doClosing(GuiManager manager) {
-        manager.showLastScreen();
     }
 }

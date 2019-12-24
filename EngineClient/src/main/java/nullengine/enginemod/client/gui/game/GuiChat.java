@@ -1,5 +1,6 @@
 package nullengine.enginemod.client.gui.game;
 
+import nullengine.Platform;
 import nullengine.client.gui.component.TextField;
 import nullengine.client.gui.input.KeyCode;
 import nullengine.client.gui.layout.AnchorPane;
@@ -34,7 +35,7 @@ public class GuiChat extends AnchorPane {
                     // TODO go to server
 
                 }
-                requireClose();
+                Platform.getEngineClient().getRenderManager().getGuiManager().closeScreen();
             }
         });
     }

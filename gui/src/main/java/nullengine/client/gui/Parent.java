@@ -173,18 +173,4 @@ public abstract class Parent extends Node {
         }
         return list;
     }
-
-    private boolean closeRequired = false;
-
-    public boolean closeRequired() {
-        return closeRequired;
-    }
-
-    public void requireClose() {
-        closeRequired = true;
-    }
-
-    public void doClosing(GuiManager manager) {
-        manager.closeScreen();
-    }
 }

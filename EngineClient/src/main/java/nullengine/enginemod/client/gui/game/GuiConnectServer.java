@@ -3,7 +3,6 @@ package nullengine.enginemod.client.gui.game;
 import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
 import nullengine.Platform;
-import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.component.Button;
 import nullengine.client.gui.component.Label;
 import nullengine.client.gui.layout.BorderPane;
@@ -46,7 +45,8 @@ public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
             if (networkClient != null) {
                 networkClient.close();
             }
-            super.requireClose();
+            var guiManager = Platform.getEngineClient().getRenderManager().getGuiManager();
+            guiManager.showLastScreen();
         });
         lblStatus.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         lblReason.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
@@ -105,16 +105,6 @@ public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
 
         });
         connector.start();
-    }
-
-    @Override
-    public void requireClose() {
-        // require close by Esc may cause unintended result
-    }
-
-    @Override
-    public void doClosing(GuiManager manager) {
-        manager.showLastScreen();
     }
 
     public void update(RenderManager context) {

@@ -55,9 +55,7 @@ public class GuiRenderer {
                 renderScene(scene);
             }
         }
-        if (guiManager.isDisplayingScreen() && guiManager.getDisplayingScreen().getRoot().closeRequired()) {
-            guiManager.getDisplayingScreen().getRoot().doClosing(guiManager);
-        }
+
         if (guiManager.isDisplayingScreen()) {
             startRenderFlag();
             renderScene(guiManager.getDisplayingScreen());

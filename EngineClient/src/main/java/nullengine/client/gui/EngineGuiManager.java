@@ -1,9 +1,7 @@
 package nullengine.client.gui;
 
 import nullengine.Platform;
-import nullengine.client.gui.event.EventHandler;
 import nullengine.client.gui.input.KeyCode;
-import nullengine.client.gui.input.KeyEvent;
 import nullengine.client.gui.input.Modifiers;
 import nullengine.client.gui.input.MouseButton;
 import nullengine.client.rendering.display.Window;
@@ -28,7 +26,7 @@ public class EngineGuiManager implements GuiManager {
 
     private Scene displayingScreen;
     private UndoHistory<Scene> sceneHistory;
-    private EventHandler<KeyEvent> escCloseHandler;
+//    private EventHandler<KeyEvent> escCloseHandler;
 
     private boolean hudVisible = true;
 
@@ -79,16 +77,16 @@ public class EngineGuiManager implements GuiManager {
     private void showScreenInternal(Scene scene) {
         pushToHistory();
         // TODO: Remove it
-        escCloseHandler = event -> {
-            if (event.getKey() == KeyCode.KEY_ESCAPE) {
-                scene.getRoot().requireClose();
-            }
-        };
+//        escCloseHandler = event -> {
+//            if (event.getKey() == KeyCode.KEY_ESCAPE) {
+//                scene.getRoot().requireClose();
+//            }
+//        };
         displayingScreen = scene;
         if (scene == null) {
             return;
         }
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
+//        scene.addEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
         var widthScaleless = window.getWidth() / window.getContentScaleX();
         var heightScaleless = window.getHeight() / window.getContentScaleY();
         displayingScreen.setSize(widthScaleless, heightScaleless);
@@ -102,7 +100,7 @@ public class EngineGuiManager implements GuiManager {
         if (!incognito) {
             sceneHistory.pushHistory(displayingScreen);
         }
-        displayingScreen.removeEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
+//        displayingScreen.removeEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
     }
 
     public void showIncognitoScreen(Scene scene) {

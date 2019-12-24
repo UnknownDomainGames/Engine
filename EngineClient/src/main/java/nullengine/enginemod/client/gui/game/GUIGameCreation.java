@@ -71,10 +71,4 @@ public class GUIGameCreation extends FlowPane {
         });
         vBox.getChildren().add(butCS);
     }
-
-
-    @Override
-    public void requireClose() {
-        // Main Menu should not be required close
-    }
 }
