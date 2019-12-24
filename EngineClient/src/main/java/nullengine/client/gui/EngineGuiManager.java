@@ -88,7 +88,7 @@ public class EngineGuiManager implements GuiManager {
         if (scene == null) {
             return;
         }
-        scene.getRoot().addEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
         var widthScaleless = window.getWidth() / window.getContentScaleX();
         var heightScaleless = window.getHeight() / window.getContentScaleY();
         displayingScreen.setSize(widthScaleless, heightScaleless);
@@ -102,7 +102,7 @@ public class EngineGuiManager implements GuiManager {
         if (!incognito) {
             sceneHistory.pushHistory(displayingScreen);
         }
-        displayingScreen.getRoot().removeEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
+        displayingScreen.removeEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
     }
 
     public void showIncognitoScreen(Scene scene) {
