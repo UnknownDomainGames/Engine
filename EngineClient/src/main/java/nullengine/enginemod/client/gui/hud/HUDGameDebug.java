@@ -1,13 +1,14 @@
 package nullengine.enginemod.client.gui.hud;
 
-import nullengine.client.gui.GuiTickable;
+import nullengine.client.event.rendering.RenderEvent;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.text.Text;
+import nullengine.event.Listener;
 
 import static java.lang.String.format;
 
-public class HUDGameDebug extends VBox implements GuiTickable {
+public class HUDGameDebug extends VBox {
 
     private final Text fps;
     private final Text playerPosition;
@@ -43,8 +44,8 @@ public class HUDGameDebug extends VBox implements GuiTickable {
         hitResult.spacing().set(5);
     }
 
-    @Override
-    public void update() {
+    @Listener
+    public void update(RenderEvent.Pre event) {
 //        Entity player = Platform.getEngineClient().getCurrentGame().getClientPlayer().getControlledEntity();
 //
 //        fps.text().setValue("FPS: " + context.getFPS());

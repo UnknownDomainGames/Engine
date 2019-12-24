@@ -11,7 +11,9 @@ import nullengine.client.rendering.display.callback.*;
 import nullengine.util.UndoHistory;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EngineGuiManager implements GuiManager {
 
@@ -23,8 +25,6 @@ public class EngineGuiManager implements GuiManager {
     private final Map<String, Scene> unmodifiableHuds = Collections.unmodifiableMap(huds);
     private final Map<String, Scene> displayingHuds = new HashMap<>();
     private final Map<String, Scene> unmodifiableDisplayingHuds = Collections.unmodifiableMap(displayingHuds);
-
-    private final List<GuiTickable> tickables = new ArrayList<>();
 
     private Scene displayingScreen;
     private UndoHistory<Scene> sceneHistory;
@@ -70,10 +70,6 @@ public class EngineGuiManager implements GuiManager {
 
     private boolean incognito = false;
 
-    public void doTick() {
-        tickables.forEach(GuiTickable::update);
-    }
-
     @Override
     public void showScreen(Scene scene) {
         showScreenInternal(scene);
@@ -98,9 +94,6 @@ public class EngineGuiManager implements GuiManager {
         displayingScreen.setSize(widthScaleless, heightScaleless);
         displayingScreen.setContentScale(window.getContentScaleX(), window.getContentScaleY());
         displayingScreen.update();
-        if (scene.getRoot() instanceof GuiTickable) {
-            tickables.add((GuiTickable) scene.getRoot());
-        }
         window.getCursor().showCursor();
     }
 
@@ -110,9 +103,6 @@ public class EngineGuiManager implements GuiManager {
             sceneHistory.pushHistory(displayingScreen);
         }
         displayingScreen.getRoot().removeEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
-        if (displayingScreen.getRoot() instanceof GuiTickable) {
-            tickables.remove(displayingScreen.getRoot());
-        }
     }
 
     public void showIncognitoScreen(Scene scene) {
@@ -170,9 +160,6 @@ public class EngineGuiManager implements GuiManager {
             hud.update();
             huds.put(id, hud);
             displayingHuds.put(id, hud);
-            if (hud.getRoot() instanceof GuiTickable) {
-                tickables.add((GuiTickable) hud.getRoot());
-            }
         }
     }
 
@@ -193,18 +180,10 @@ public class EngineGuiManager implements GuiManager {
     public void removeHud(String id) {
         hideHud(id);
         Scene hud = huds.remove(id);
-        if (hud.getRoot() instanceof GuiTickable) {
-            tickables.remove(hud.getRoot());
-        }
     }
 
     @Override
     public void clearHuds() {
-        for (Scene hud : huds.values()) {
-            if (hud.getRoot() instanceof GuiTickable) {
-                tickables.remove(hud.getRoot());
-            }
-        }
         huds.clear();
     }
 
