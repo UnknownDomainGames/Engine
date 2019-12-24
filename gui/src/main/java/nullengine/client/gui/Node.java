@@ -4,10 +4,7 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.*;
-import nullengine.client.gui.input.KeyEvent;
-import nullengine.client.gui.input.MouseActionEvent;
-import nullengine.client.gui.input.MouseEvent;
-import nullengine.client.gui.input.ScrollEvent;
+import nullengine.client.gui.input.*;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -38,21 +35,6 @@ public abstract class Node implements EventTarget {
 
     public Node() {
         visible.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
-        this.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-            if (disabled.get()) return;
-            hover.set(true);
-        });
-        this.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-            hover.set(false);
-            pressed.set(false);
-        });
-        this.addEventHandler(MouseActionEvent.MOUSE_PRESSED, (e) -> {
-            if (disabled.get()) return;
-            pressed.set(true);
-        });
-        this.addEventHandler(MouseActionEvent.MOUSE_RELEASED, (e) -> {
-            pressed.set(false);
-        });
     }
 
     public final ObservableObjectValue<Scene> scene() {
@@ -193,6 +175,14 @@ public abstract class Node implements EventTarget {
     }
 
     public final EventDispatchChain buildEventDispatchChain(EventDispatchChain tail) {
+        if (preprocessEventHandler == null) {
+            preprocessEventHandler = (event, eventDispatchChain) -> {
+                preprocessEvent(event);
+                return event;
+            };
+        }
+        tail.append(preprocessEventHandler);
+
         var node = this;
         while (node != null) {
             tail = tail.append(node.eventHandlerManager);
@@ -204,6 +194,37 @@ public abstract class Node implements EventTarget {
             tail = scene.buildEventDispatchChain(tail);
         }
         return tail;
+    }
+
+    private EventDispatcher preprocessEventHandler;
+
+    private void preprocessEvent(Event event) {
+        if (!(event instanceof MouseEvent)) return;
+
+        EventType<? extends Event> eventType = event.getEventType();
+        if (eventType == MouseActionEvent.MOUSE_PRESSED) {
+            if (((MouseActionEvent) event).getButton() != MouseButton.MOUSE_BUTTON_PRIMARY) return;
+            for (var node = this; node != null; node = node.getParent()) {
+                node.pressed.set(true);
+            }
+            return;
+        }
+
+        if (eventType == MouseActionEvent.MOUSE_RELEASED) {
+            if (((MouseActionEvent) event).getButton() != MouseButton.MOUSE_BUTTON_PRIMARY) return;
+            for (var node = this; node != null; node = node.getParent()) {
+                node.pressed.set(false);
+            }
+            return;
+        }
+
+        if (event.getTarget() == this) {
+            if (eventType == MouseEvent.MOUSE_ENTERED) {
+                hover.set(true);
+            } else if (eventType == MouseEvent.MOUSE_EXITED) {
+                hover.set(false);
+            }
+        }
     }
 
     public <T extends Event> void addEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
