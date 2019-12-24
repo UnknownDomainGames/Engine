@@ -3,7 +3,7 @@ package nullengine.client.gui.event;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EventHandlerManager implements EventDispatcher {
+public class BasicEventHandlerManager implements EventDispatcher {
 
     private final Map<EventType<?>, CompositeEventHandler<?>> eventHandlers = new HashMap<>();
 

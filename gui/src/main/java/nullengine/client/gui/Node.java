@@ -36,10 +36,6 @@ public abstract class Node implements EventTarget {
 
     private EventHandlerManager eventHandlerManager = new EventHandlerManager();
 
-    public EventHandlerManager getEventHandlerManager() {
-        return eventHandlerManager;
-    }
-
     public Node() {
         visible.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         this.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
@@ -59,12 +55,20 @@ public abstract class Node implements EventTarget {
         });
     }
 
-    public ObservableObjectValue<Scene> scene() {
+    public final ObservableObjectValue<Scene> scene() {
         return scene;
+    }
+
+    public final Scene getScene() {
+        return scene.get();
     }
 
     public final ObservableObjectValue<Parent> parent() {
         return parent.toUnmodifiable();
+    }
+
+    public final Parent getParent() {
+        return parent.get();
     }
 
     public final MutableFloatValue x() {
@@ -191,8 +195,13 @@ public abstract class Node implements EventTarget {
     public final EventDispatchChain buildEventDispatchChain(EventDispatchChain tail) {
         var node = this;
         while (node != null) {
-            tail.append(node.eventHandlerManager);
+            tail = tail.append(node.eventHandlerManager);
             node = node.parent.get();
+        }
+
+        Scene scene = getScene();
+        if (scene != null) {
+            tail = scene.buildEventDispatchChain(tail);
         }
         return tail;
     }
@@ -206,113 +215,83 @@ public abstract class Node implements EventTarget {
     }
 
     // ===== Event handlers =====
-    private final MutableObjectValue<EventHandler<MouseEvent>> onMouseEntered = new EventHandlerValue<>(MouseEvent.MOUSE_ENTERED);
-
     public EventHandler<MouseEvent> getOnMouseEntered() {
-        return onMouseEntered.get();
+        return eventHandlerManager.getOnMouseEntered();
     }
 
     public void setOnMouseEntered(EventHandler<MouseEvent> onMouseEntered) {
-        this.onMouseEntered.set(onMouseEntered);
+        eventHandlerManager.setOnMouseEntered(onMouseEntered);
     }
 
-    private final MutableObjectValue<EventHandler<MouseEvent>> onMouseExited = new EventHandlerValue<>(MouseEvent.MOUSE_EXITED);
-
     public EventHandler<MouseEvent> getOnMouseExited() {
-        return onMouseExited.get();
+        return eventHandlerManager.getOnMouseExited();
     }
 
     public void setOnMouseExited(EventHandler<MouseEvent> onMouseExited) {
-        this.onMouseExited.set(onMouseExited);
+        eventHandlerManager.setOnMouseExited(onMouseExited);
     }
 
-    private final MutableObjectValue<EventHandler<MouseEvent>> onMouseMoved = new EventHandlerValue<>(MouseEvent.MOUSE_MOVED);
-
     public EventHandler<MouseEvent> getOnMouseMoved() {
-        return onMouseMoved.get();
+        return eventHandlerManager.getOnMouseMoved();
     }
 
     public void setOnMouseMoved(EventHandler<MouseEvent> onMouseMoved) {
-        this.onMouseMoved.set(onMouseMoved);
+        eventHandlerManager.setOnMouseMoved(onMouseMoved);
     }
 
-    private final MutableObjectValue<EventHandler<MouseActionEvent>> onMousePressed = new EventHandlerValue<>(MouseActionEvent.MOUSE_PRESSED);
-
     public EventHandler<MouseActionEvent> getOnMousePressed() {
-        return onMousePressed.get();
+        return eventHandlerManager.getOnMousePressed();
     }
 
     public void setOnMousePressed(EventHandler<MouseActionEvent> onMousePressed) {
-        this.onMousePressed.set(onMousePressed);
+        eventHandlerManager.setOnMousePressed(onMousePressed);
     }
 
-    private final MutableObjectValue<EventHandler<MouseActionEvent>> onMouseReleased = new EventHandlerValue<>(MouseActionEvent.MOUSE_CLICKED);
-
     public EventHandler<MouseActionEvent> getOnMouseReleased() {
-        return onMouseReleased.get();
+        return eventHandlerManager.getOnMouseReleased();
     }
 
     public void setOnMouseReleased(EventHandler<MouseActionEvent> onMouseReleased) {
-        this.onMouseReleased.set(onMouseReleased);
+        eventHandlerManager.setOnMouseReleased(onMouseReleased);
     }
 
-    private final MutableObjectValue<EventHandler<MouseActionEvent>> onMouseClicked = new EventHandlerValue<>(MouseActionEvent.MOUSE_CLICKED);
-
     public EventHandler<MouseActionEvent> getOnMouseClicked() {
-        return onMouseClicked.get();
+        return eventHandlerManager.getOnMouseClicked();
     }
 
     public void setOnMouseClicked(EventHandler<MouseActionEvent> onMouseClicked) {
-        this.onMouseClicked.set(onMouseClicked);
+        eventHandlerManager.setOnMouseClicked(onMouseClicked);
     }
 
-    private final MutableObjectValue<EventHandler<KeyEvent>> onKeyPressed = new EventHandlerValue<>(KeyEvent.KEY_PRESSED);
-
     public EventHandler<KeyEvent> getOnKeyPressed() {
-        return onKeyPressed.get();
+        return eventHandlerManager.getOnKeyPressed();
     }
 
     public void setOnKeyPressed(EventHandler<KeyEvent> onKeyPressed) {
-        this.onKeyPressed.set(onKeyPressed);
+        eventHandlerManager.setOnKeyPressed(onKeyPressed);
     }
 
-    private final MutableObjectValue<EventHandler<KeyEvent>> onKeyReleased = new EventHandlerValue<>(KeyEvent.KEY_RELEASED);
-
     public EventHandler<KeyEvent> getOnKeyReleased() {
-        return onKeyReleased.get();
+        return eventHandlerManager.getOnKeyReleased();
     }
 
     public void setOnKeyReleased(EventHandler<KeyEvent> onKeyReleased) {
-        this.onKeyReleased.set(onKeyReleased);
+        eventHandlerManager.setOnKeyReleased(onKeyReleased);
     }
 
-    private final MutableObjectValue<EventHandler<KeyEvent>> onKeyTyped = new EventHandlerValue<>(KeyEvent.KEY_TYPED);
-
     public EventHandler<KeyEvent> getOnKeyTyped() {
-        return onKeyTyped.get();
+        return eventHandlerManager.getOnKeyTyped();
     }
 
     public void setOnKeyTyped(EventHandler<KeyEvent> onKeyTyped) {
-        this.onKeyTyped.set(onKeyTyped);
+        eventHandlerManager.setOnKeyTyped(onKeyTyped);
     }
 
-    private final MutableObjectValue<EventHandler<ScrollEvent>> onScroll = new EventHandlerValue<>(ScrollEvent.ANY);
-
     public EventHandler<ScrollEvent> getOnScroll() {
-        return onScroll.get();
+        return eventHandlerManager.getOnScroll();
     }
 
     public void setOnScroll(EventHandler<ScrollEvent> onScroll) {
-        this.onScroll.set(onScroll);
-    }
-
-    private class EventHandlerValue<ET extends Event, T extends EventHandler<ET>> extends SimpleMutableObjectValue<T> {
-
-        public EventHandlerValue(EventType<ET> eventType) {
-            addChangeListener((observable, oldValue, newValue) -> {
-                if (oldValue != null) removeEventHandler(eventType, oldValue);
-                if (newValue != null) addEventHandler(eventType, newValue);
-            });
-        }
+        eventHandlerManager.setOnScroll(onScroll);
     }
 }
