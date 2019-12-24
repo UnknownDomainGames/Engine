@@ -20,8 +20,8 @@ public class MouseEvent extends Event {
     private final float x;
     private final float y;
 
-    public MouseEvent(EventType<? extends Event> eventType, Object source, EventTarget target, float screenX, float screenY, float x, float y) {
-        super(eventType, source, target);
+    public MouseEvent(EventType<? extends Event> eventType, EventTarget target, float screenX, float screenY, float x, float y) {
+        super(eventType, target);
         this.screenX = screenX;
         this.screenY = screenY;
         this.x = x;

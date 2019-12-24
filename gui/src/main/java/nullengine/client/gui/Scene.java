@@ -99,19 +99,19 @@ public class Scene implements EventTarget {
             var root = this.root.get();
             var lastNodes = root.getPointingComponents(lastScreenX, lastScreenY);
             var currentNodes = root.getPointingComponents(screenX, screenY);
-            for (var target : currentNodes) {
-                if (lastNodes.contains(target)) {
-                    var pair = target.relativePos(screenX, screenY);
-                    new MouseEvent(MouseEvent.MOUSE_MOVED, target, target, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
+            for (var node : currentNodes) {
+                if (lastNodes.contains(node)) {
+                    var pair = node.relativePos(screenX, screenY);
+                    new MouseEvent(MouseEvent.MOUSE_MOVED, node, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
                 } else {
-                    var pair = target.relativePos(screenX, screenY);
-                    new MouseEvent(MouseEvent.MOUSE_ENTERED, target, target, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
+                    var pair = node.relativePos(screenX, screenY);
+                    new MouseEvent(MouseEvent.MOUSE_ENTERED, node, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
                 }
             }
             lastNodes.removeAll(currentNodes);
-            for (var i : lastNodes) {
-                var pair = i.relativePos(screenX, screenY);
-                new MouseEvent(MouseEvent.MOUSE_EXITED, i, i, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
+            for (var node : lastNodes) {
+                var pair = node.relativePos(screenX, screenY);
+                new MouseEvent(MouseEvent.MOUSE_EXITED, node, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
             }
         }
         lastScreenX = screenX;
@@ -136,14 +136,14 @@ public class Scene implements EventTarget {
                 focused.removeAll(focusedList);
                 focusedList.forEach(node -> node.focused.set(false));
             }
-            for (var target : nodes) {
+            for (var node : nodes) {
                 if (pressed) {
-                    var pair = target.relativePos(lastScreenX, lastScreenY);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(target);
+                    var pair = node.relativePos(lastScreenX, lastScreenY);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
                 } else {
-                    var pair = target.relativePos(lastScreenX, lastScreenY);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(target);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, target, target, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(target);
+                    var pair = node.relativePos(lastScreenX, lastScreenY);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
                 }
             }
         }
@@ -152,7 +152,7 @@ public class Scene implements EventTarget {
     public void processScroll(double xOffset, double yOffset) {
         focused.forEach(node -> {
             var pair = node.relativePos(lastScreenX, lastScreenY);
-            new ScrollEvent(ScrollEvent.ANY, node, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, xOffset, yOffset).fireEvent();
+            new ScrollEvent(ScrollEvent.ANY, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, xOffset, yOffset).fireEvent();
         });
     }
 
