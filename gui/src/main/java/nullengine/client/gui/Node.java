@@ -4,7 +4,10 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.*;
-import nullengine.client.gui.input.*;
+import nullengine.client.gui.input.KeyEvent;
+import nullengine.client.gui.input.MouseActionEvent;
+import nullengine.client.gui.input.MouseEvent;
+import nullengine.client.gui.input.ScrollEvent;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -39,27 +42,20 @@ public abstract class Node implements EventTarget {
 
     public Node() {
         visible.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
-        this.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
-            if (!disabled.get()) {
-                hover.set(false);
-                pressed.set(false);
-            }
-        });
         this.addEventHandler(MouseEvent.MOUSE_ENTERED, (e) -> {
-            if (!disabled.get()) {
-                hover.set(true);
-            }
+            if (disabled.get()) return;
+            hover.set(true);
+        });
+        this.addEventHandler(MouseEvent.MOUSE_EXITED, (e) -> {
+            hover.set(false);
+            pressed.set(false);
         });
         this.addEventHandler(MouseActionEvent.MOUSE_PRESSED, (e) -> {
-            if (!disabled.get() && e.getButton() == MouseButton.MOUSE_BUTTON_PRIMARY) {
-                pressed.set(true);
-            }
+            if (disabled.get()) return;
+            pressed.set(true);
         });
         this.addEventHandler(MouseActionEvent.MOUSE_RELEASED, (e) -> {
-            if (!disabled.get() && e.getButton() == MouseButton.MOUSE_BUTTON_PRIMARY) {
-                pressed.set(false);
-
-            }
+            pressed.set(false);
         });
     }
 
@@ -192,15 +188,13 @@ public abstract class Node implements EventTarget {
         }
     }
 
-    public EventDispatchChain buildEventDispatchChain(EventDispatchChain tail) {
-        return appendEventDispatchChain(tail, this);
-    }
-
-    private EventDispatchChain appendEventDispatchChain(EventDispatchChain tail, Node node) {
-        var parent = node.parent();
-        tail.append(node.getEventHandlerManager());
-        if (parent.isEmpty()) return tail;
-        return appendEventDispatchChain(tail, parent.get());
+    public final EventDispatchChain buildEventDispatchChain(EventDispatchChain tail) {
+        var node = this;
+        while (node != null) {
+            tail.append(node.eventHandlerManager);
+            node = node.parent.get();
+        }
+        return tail;
     }
 
     public <T extends Event> void addEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
