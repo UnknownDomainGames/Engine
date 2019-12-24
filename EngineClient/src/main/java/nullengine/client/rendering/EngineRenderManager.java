@@ -4,6 +4,7 @@ import nullengine.Platform;
 import nullengine.client.EngineClient;
 import nullengine.client.asset.AssetType;
 import nullengine.client.event.rendering.CameraChangeEvent;
+import nullengine.client.event.rendering.RenderEvent;
 import nullengine.client.gui.EngineGuiManager;
 import nullengine.client.gui.GuiManager;
 import nullengine.client.rendering.camera.Camera;
@@ -125,7 +126,7 @@ public class EngineRenderManager implements RenderManager {
     }
 
     public void render(float partial) {
-        guiManager.doTick();
+        engine.getEventBus().post(new RenderEvent.Pre());
 
         if (window.isResized()) {
             projection.identity().perspective((float) Math.toRadians(60),
@@ -138,6 +139,8 @@ public class EngineRenderManager implements RenderManager {
         RenderEngine.doRender(partial);
         glfwPollEvents();
         updateFPS();
+
+        engine.getEventBus().post(new RenderEvent.Post());
     }
 
     public void init(Thread renderThread) {
