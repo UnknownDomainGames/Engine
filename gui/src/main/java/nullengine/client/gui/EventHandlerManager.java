@@ -11,7 +11,7 @@ import nullengine.client.gui.input.MouseActionEvent;
 import nullengine.client.gui.input.MouseEvent;
 import nullengine.client.gui.input.ScrollEvent;
 
-class EventHandlerManager extends BasicEventHandlerManager {
+final class EventHandlerManager extends BasicEventHandlerManager {
 
     private final MutableObjectValue<EventHandler<MouseEvent>> onMouseEntered = new EventHandlerValue<>(MouseEvent.MOUSE_ENTERED);
 
