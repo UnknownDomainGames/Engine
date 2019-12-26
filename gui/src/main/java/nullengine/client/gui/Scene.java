@@ -48,8 +48,16 @@ public class Scene implements EventTarget {
         updateRoot();
     }
 
-    public void setContentScale(float x, float y){
-        if(x == 0 || y == 0) return;
+    public float getContentScaleX() {
+        return scaleX.get();
+    }
+
+    public float getContentScaleY() {
+        return scaleY.get();
+    }
+
+    public void setContentScale(float x, float y) {
+        if (x == 0 || y == 0) return;
         this.scaleX.set(x);
         this.scaleY.set(y);
     }

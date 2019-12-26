@@ -1,4 +1,4 @@
-package nullengine.client.rendering.gui;
+package nullengine.client.gui.gl;
 
 import nullengine.client.gui.image.Image;
 import nullengine.client.rendering.gl.texture.FilterMode;

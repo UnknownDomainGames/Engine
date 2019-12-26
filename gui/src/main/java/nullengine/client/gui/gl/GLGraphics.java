@@ -1,4 +1,4 @@
-package nullengine.client.rendering.gui;
+package nullengine.client.gui.gl;
 
 import nullengine.client.gui.Node;
 import nullengine.client.gui.image.Image;
@@ -11,9 +11,7 @@ import nullengine.client.rendering.gl.DirectRenderer;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.vertex.GLVertexFormats;
-import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.texture.Texture2D;
-import nullengine.client.rendering.texture.TextureManager;
 import nullengine.math.Math2;
 import nullengine.util.Color;
 import org.joml.Vector2fc;
@@ -28,20 +26,19 @@ import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 public class GLGraphics implements Graphics {
 
     private final DirectRenderer directRenderer = DirectRenderer.getInstance();
-    private final GuiRenderer guiRenderer;
     private final GLResourceFactory resourceFactory = new GLResourceFactory();
 
-    private final Texture2D whiteTexture;
+    private final Stack<Vector4fc> clipRect = new Stack<>();
+
+    private final GLGUIRenderer renderer;
 
     private Color color;
     private Font font;
 
-    private final Stack<Vector4fc> clipRect = new Stack<>();
-
-    public GLGraphics(GuiRenderer guiRenderer) {
-        this.guiRenderer = guiRenderer;
-        this.whiteTexture = TextureManager.instance().getWhiteTexture();
+    public GLGraphics(GLGUIRenderer renderer) {
+        this.renderer = renderer;
         setColor(Color.WHITE);
+        setFont(Font.getDefaultFont());
     }
 
     @Override
@@ -191,10 +188,10 @@ public class GLGraphics implements Graphics {
         GLBuffer buffer = directRenderer.getBuffer();
         buffer.posOffset(x, y, 0);
         FontHelper.instance().renderText(buffer, text, font, color, () -> {
-            ShaderManager.instance().setUniform("u_RenderText", true);
+            renderer.startRenderText();
             directRenderer.draw();
-            ShaderManager.instance().setUniform("u_RenderText", false);
-            whiteTexture.bind();
+            renderer.endRenderText();
+            renderer.bindWhiteTexture();
         });
     }
 
@@ -288,7 +285,7 @@ public class GLGraphics implements Graphics {
             }
 
             drawTexture(texture, x, y, x + width, y + height);
-            whiteTexture.bind();
+            renderer.bindWhiteTexture();
         } else {
             setColor(background.getColor());
             fillRect(x, y, x + width, y + height);
@@ -322,7 +319,7 @@ public class GLGraphics implements Graphics {
             var newZ = Math2.clamp(child.z(), parent.x(), parent.z());
             var newW = Math2.clamp(child.w(), parent.y(), parent.w());
             return new Vector4f(newX, newY, newZ, newW);
-        }).ifPresent(guiRenderer::setClipRect);
+        }).ifPresent(renderer::setClipRect);
 //        if (!clipRect.isEmpty()) {
 //            guiRenderer.setClipRect(clipRect.peek());
 //        }

@@ -11,7 +11,7 @@ import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.camera.FixedCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
-import nullengine.client.rendering.gui.GuiRenderer;
+import nullengine.client.rendering.gui.GuiRenderHelper;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GPUInfo;
@@ -36,7 +36,7 @@ public class EngineRenderManager implements RenderManager {
     private Matrix4f projection = new Matrix4f();
     private EngineTextureManager textureManager;
     private EngineGuiManager guiManager;
-    private GuiRenderer guiRenderer;
+    private GuiRenderHelper guiRenderHelper;
 
     private Camera camera;
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
@@ -147,7 +147,7 @@ public class EngineRenderManager implements RenderManager {
         this.renderThread = renderThread;
 
         RenderEngine.start(new RenderEngine.Settings()
-                .swapBuffersListener((manager1, partial) -> guiRenderer.render(partial)));
+                .swapBuffersListener((manager1, partial) -> guiRenderHelper.render()));
 
         nullengine.client.rendering.management.RenderManager manager = RenderEngine.getManager();
         window = manager.getPrimaryWindow();
@@ -155,7 +155,7 @@ public class EngineRenderManager implements RenderManager {
 
         initTexture();
         guiManager = new EngineGuiManager(window);
-        guiRenderer = new GuiRenderer(window, guiManager);
+        guiRenderHelper = new GuiRenderHelper(guiManager);
 
         camera = new FixedCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
 
@@ -169,7 +169,7 @@ public class EngineRenderManager implements RenderManager {
     }
 
     public void dispose() {
-        guiRenderer.dispose();
+        guiRenderHelper.dispose();
         RenderEngine.stop();
     }
 }
