@@ -83,13 +83,9 @@ public class EngineGuiManager implements GuiManager {
 //            }
 //        };
         displayingScreen = scene;
-        if (scene == null) {
-            return;
-        }
+        if (scene == null) return;
 //        scene.addEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
-        var widthScaleless = window.getWidth() / window.getContentScaleX();
-        var heightScaleless = window.getHeight() / window.getContentScaleY();
-        displayingScreen.setSize(widthScaleless, heightScaleless);
+        displayingScreen.setSize(window.getWidth() / window.getContentScaleX(), window.getHeight() / window.getContentScaleY());
         displayingScreen.setContentScale(window.getContentScaleX(), window.getContentScaleY());
         displayingScreen.update();
         window.getCursor().showCursor();
@@ -154,7 +150,8 @@ public class EngineGuiManager implements GuiManager {
             Platform.getLogger().debug("Conflicted HUD id {}", id);
             currentHud.getRoot().visible().set(true);
         } else {
-            hud.setSize(window.getWidth(), window.getHeight());
+            hud.setSize(window.getWidth() / window.getContentScaleX(), window.getHeight() / window.getContentScaleY());
+            hud.setContentScale(window.getContentScaleX(), window.getContentScaleY());
             hud.update();
             huds.put(id, hud);
             displayingHuds.put(id, hud);
