@@ -1,4 +1,4 @@
-package nullengine.client.rendering.queue;
+package nullengine.client.rendering.scene.queue;
 
 public interface StandardRenderTypes {
 

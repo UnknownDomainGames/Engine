@@ -5,11 +5,11 @@ import nullengine.client.rendering.gl.shader.ShaderManager;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.texture.GLFrameBuffer;
 import nullengine.client.rendering.management.RenderManager;
-import nullengine.client.rendering.queue.GeometryList;
-import nullengine.client.rendering.queue.RenderQueue;
-import nullengine.client.rendering.queue.RenderTypeHandler;
-import nullengine.client.rendering.queue.StandardRenderTypes;
 import nullengine.client.rendering.scene.ViewPort;
+import nullengine.client.rendering.scene.queue.GeometryList;
+import nullengine.client.rendering.scene.queue.RenderQueue;
+import nullengine.client.rendering.scene.queue.RenderTypeHandler;
+import nullengine.client.rendering.scene.queue.StandardRenderTypes;
 import nullengine.util.Color;
 import org.lwjgl.opengl.GL11;
 

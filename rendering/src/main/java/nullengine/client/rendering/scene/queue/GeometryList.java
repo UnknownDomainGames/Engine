@@ -1,4 +1,4 @@
-package nullengine.client.rendering.queue;
+package nullengine.client.rendering.scene.queue;
 
 import nullengine.client.rendering.scene.Geometry;
 
