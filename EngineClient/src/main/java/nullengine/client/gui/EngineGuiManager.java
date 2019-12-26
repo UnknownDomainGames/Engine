@@ -41,8 +41,8 @@ public class EngineGuiManager implements GuiManager {
         }
     };
     private final KeyCallback keyCallback = (window1, key, scancode, action, mods) -> {
-        if (displayingScreen != null && action != GLFW.GLFW_REPEAT) {
-            displayingScreen.processKey(KeyCode.valueOf(key), Modifiers.of(mods), action == GLFW.GLFW_PRESS);
+        if (displayingScreen != null) {
+            displayingScreen.processKey(KeyCode.valueOf(key), Modifiers.of(mods), action != GLFW.GLFW_RELEASE);
         }
     };
     private final ScrollCallback scrollCallback = (window1, xoffset, yoffset) -> {
