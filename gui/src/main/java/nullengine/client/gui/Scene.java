@@ -166,13 +166,29 @@ public class Scene implements EventTarget {
                 new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.KEY_UNDEFINED, String.valueOf(codePoint), modifier, true).fireEvent());
     }
 
+    public <T extends Event> void addEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
+        eventHandlerManager.addEventHandler(eventType, eventHandler);
+    }
+
+    public <T extends Event> void removeEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
+        eventHandlerManager.removeEventHandler(eventType, eventHandler);
+    }
+
     // ===== Event handlers =====
+    public MutableObjectValue<EventHandler<MouseEvent>> onMouseEntered() {
+        return eventHandlerManager.onMouseEntered();
+    }
+
     public EventHandler<MouseEvent> getOnMouseEntered() {
         return eventHandlerManager.getOnMouseEntered();
     }
 
     public void setOnMouseEntered(EventHandler<MouseEvent> onMouseEntered) {
         eventHandlerManager.setOnMouseEntered(onMouseEntered);
+    }
+
+    public MutableObjectValue<EventHandler<MouseEvent>> onMouseExited() {
+        return eventHandlerManager.onMouseExited();
     }
 
     public EventHandler<MouseEvent> getOnMouseExited() {
@@ -183,12 +199,20 @@ public class Scene implements EventTarget {
         eventHandlerManager.setOnMouseExited(onMouseExited);
     }
 
+    public MutableObjectValue<EventHandler<MouseEvent>> onMouseMoved() {
+        return eventHandlerManager.onMouseMoved();
+    }
+
     public EventHandler<MouseEvent> getOnMouseMoved() {
         return eventHandlerManager.getOnMouseMoved();
     }
 
     public void setOnMouseMoved(EventHandler<MouseEvent> onMouseMoved) {
         eventHandlerManager.setOnMouseMoved(onMouseMoved);
+    }
+
+    public MutableObjectValue<EventHandler<MouseActionEvent>> onMousePressed() {
+        return eventHandlerManager.onMousePressed();
     }
 
     public EventHandler<MouseActionEvent> getOnMousePressed() {
@@ -199,12 +223,20 @@ public class Scene implements EventTarget {
         eventHandlerManager.setOnMousePressed(onMousePressed);
     }
 
+    public MutableObjectValue<EventHandler<MouseActionEvent>> onMouseReleased() {
+        return eventHandlerManager.onMouseReleased();
+    }
+
     public EventHandler<MouseActionEvent> getOnMouseReleased() {
         return eventHandlerManager.getOnMouseReleased();
     }
 
     public void setOnMouseReleased(EventHandler<MouseActionEvent> onMouseReleased) {
         eventHandlerManager.setOnMouseReleased(onMouseReleased);
+    }
+
+    public MutableObjectValue<EventHandler<MouseActionEvent>> onMouseClicked() {
+        return eventHandlerManager.onMouseClicked();
     }
 
     public EventHandler<MouseActionEvent> getOnMouseClicked() {
@@ -215,12 +247,20 @@ public class Scene implements EventTarget {
         eventHandlerManager.setOnMouseClicked(onMouseClicked);
     }
 
+    public MutableObjectValue<EventHandler<KeyEvent>> onKeyPressed() {
+        return eventHandlerManager.onKeyPressed();
+    }
+
     public EventHandler<KeyEvent> getOnKeyPressed() {
         return eventHandlerManager.getOnKeyPressed();
     }
 
     public void setOnKeyPressed(EventHandler<KeyEvent> onKeyPressed) {
         eventHandlerManager.setOnKeyPressed(onKeyPressed);
+    }
+
+    public MutableObjectValue<EventHandler<KeyEvent>> onKeyReleased() {
+        return eventHandlerManager.onKeyReleased();
     }
 
     public EventHandler<KeyEvent> getOnKeyReleased() {
@@ -231,6 +271,10 @@ public class Scene implements EventTarget {
         eventHandlerManager.setOnKeyReleased(onKeyReleased);
     }
 
+    public MutableObjectValue<EventHandler<KeyEvent>> onKeyTyped() {
+        return eventHandlerManager.onKeyTyped();
+    }
+
     public EventHandler<KeyEvent> getOnKeyTyped() {
         return eventHandlerManager.getOnKeyTyped();
     }
@@ -239,19 +283,15 @@ public class Scene implements EventTarget {
         eventHandlerManager.setOnKeyTyped(onKeyTyped);
     }
 
+    public MutableObjectValue<EventHandler<ScrollEvent>> onScroll() {
+        return eventHandlerManager.onScroll();
+    }
+
     public EventHandler<ScrollEvent> getOnScroll() {
         return eventHandlerManager.getOnScroll();
     }
 
     public void setOnScroll(EventHandler<ScrollEvent> onScroll) {
         eventHandlerManager.setOnScroll(onScroll);
-    }
-
-    public <T extends Event> void addEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
-        eventHandlerManager.addEventHandler(eventType, eventHandler);
-    }
-
-    public <T extends Event> void removeEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
-        eventHandlerManager.removeEventHandler(eventType, eventHandler);
     }
 }

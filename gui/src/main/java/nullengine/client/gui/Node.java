@@ -236,12 +236,20 @@ public abstract class Node implements EventTarget {
     }
 
     // ===== Event handlers =====
+    public MutableObjectValue<EventHandler<MouseEvent>> onMouseEntered() {
+        return eventHandlerManager.onMouseEntered();
+    }
+
     public EventHandler<MouseEvent> getOnMouseEntered() {
         return eventHandlerManager.getOnMouseEntered();
     }
 
     public void setOnMouseEntered(EventHandler<MouseEvent> onMouseEntered) {
         eventHandlerManager.setOnMouseEntered(onMouseEntered);
+    }
+
+    public MutableObjectValue<EventHandler<MouseEvent>> onMouseExited() {
+        return eventHandlerManager.onMouseExited();
     }
 
     public EventHandler<MouseEvent> getOnMouseExited() {
@@ -252,12 +260,20 @@ public abstract class Node implements EventTarget {
         eventHandlerManager.setOnMouseExited(onMouseExited);
     }
 
+    public MutableObjectValue<EventHandler<MouseEvent>> onMouseMoved() {
+        return eventHandlerManager.onMouseMoved();
+    }
+
     public EventHandler<MouseEvent> getOnMouseMoved() {
         return eventHandlerManager.getOnMouseMoved();
     }
 
     public void setOnMouseMoved(EventHandler<MouseEvent> onMouseMoved) {
         eventHandlerManager.setOnMouseMoved(onMouseMoved);
+    }
+
+    public MutableObjectValue<EventHandler<MouseActionEvent>> onMousePressed() {
+        return eventHandlerManager.onMousePressed();
     }
 
     public EventHandler<MouseActionEvent> getOnMousePressed() {
@@ -268,12 +284,20 @@ public abstract class Node implements EventTarget {
         eventHandlerManager.setOnMousePressed(onMousePressed);
     }
 
+    public MutableObjectValue<EventHandler<MouseActionEvent>> onMouseReleased() {
+        return eventHandlerManager.onMouseReleased();
+    }
+
     public EventHandler<MouseActionEvent> getOnMouseReleased() {
         return eventHandlerManager.getOnMouseReleased();
     }
 
     public void setOnMouseReleased(EventHandler<MouseActionEvent> onMouseReleased) {
         eventHandlerManager.setOnMouseReleased(onMouseReleased);
+    }
+
+    public MutableObjectValue<EventHandler<MouseActionEvent>> onMouseClicked() {
+        return eventHandlerManager.onMouseClicked();
     }
 
     public EventHandler<MouseActionEvent> getOnMouseClicked() {
@@ -284,12 +308,20 @@ public abstract class Node implements EventTarget {
         eventHandlerManager.setOnMouseClicked(onMouseClicked);
     }
 
+    public MutableObjectValue<EventHandler<KeyEvent>> onKeyPressed() {
+        return eventHandlerManager.onKeyPressed();
+    }
+
     public EventHandler<KeyEvent> getOnKeyPressed() {
         return eventHandlerManager.getOnKeyPressed();
     }
 
     public void setOnKeyPressed(EventHandler<KeyEvent> onKeyPressed) {
         eventHandlerManager.setOnKeyPressed(onKeyPressed);
+    }
+
+    public MutableObjectValue<EventHandler<KeyEvent>> onKeyReleased() {
+        return eventHandlerManager.onKeyReleased();
     }
 
     public EventHandler<KeyEvent> getOnKeyReleased() {
@@ -300,12 +332,20 @@ public abstract class Node implements EventTarget {
         eventHandlerManager.setOnKeyReleased(onKeyReleased);
     }
 
+    public MutableObjectValue<EventHandler<KeyEvent>> onKeyTyped() {
+        return eventHandlerManager.onKeyTyped();
+    }
+
     public EventHandler<KeyEvent> getOnKeyTyped() {
         return eventHandlerManager.getOnKeyTyped();
     }
 
     public void setOnKeyTyped(EventHandler<KeyEvent> onKeyTyped) {
         eventHandlerManager.setOnKeyTyped(onKeyTyped);
+    }
+
+    public MutableObjectValue<EventHandler<ScrollEvent>> onScroll() {
+        return eventHandlerManager.onScroll();
     }
 
     public EventHandler<ScrollEvent> getOnScroll() {

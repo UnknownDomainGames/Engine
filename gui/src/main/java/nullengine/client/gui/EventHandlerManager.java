@@ -13,104 +13,174 @@ import nullengine.client.gui.input.ScrollEvent;
 
 final class EventHandlerManager extends BasicEventHandlerManager {
 
-    private final MutableObjectValue<EventHandler<MouseEvent>> onMouseEntered = new EventHandlerValue<>(MouseEvent.MOUSE_ENTERED);
+    private MutableObjectValue<EventHandler<MouseEvent>> onMouseEntered;
+
+    public MutableObjectValue<EventHandler<MouseEvent>> onMouseEntered() {
+        if (onMouseEntered == null) {
+            onMouseEntered = new EventHandlerValue<>(MouseEvent.MOUSE_ENTERED);
+        }
+        return onMouseEntered;
+    }
 
     public EventHandler<MouseEvent> getOnMouseEntered() {
-        return onMouseEntered.get();
+        return onMouseEntered == null ? null : onMouseEntered.get();
     }
 
     public void setOnMouseEntered(EventHandler<MouseEvent> onMouseEntered) {
-        this.onMouseEntered.set(onMouseEntered);
+        onMouseEntered().set(onMouseEntered);
     }
 
-    private final MutableObjectValue<EventHandler<MouseEvent>> onMouseExited = new EventHandlerValue<>(MouseEvent.MOUSE_EXITED);
+    private MutableObjectValue<EventHandler<MouseEvent>> onMouseExited;
+
+    public MutableObjectValue<EventHandler<MouseEvent>> onMouseExited() {
+        if (onMouseExited == null) {
+            onMouseExited = new EventHandlerValue<>(MouseEvent.MOUSE_EXITED);
+        }
+        return onMouseExited;
+    }
 
     public EventHandler<MouseEvent> getOnMouseExited() {
-        return onMouseExited.get();
+        return onMouseExited == null ? null : onMouseExited.get();
     }
 
     public void setOnMouseExited(EventHandler<MouseEvent> onMouseExited) {
-        this.onMouseExited.set(onMouseExited);
+        onMouseExited().set(onMouseExited);
     }
 
-    private final MutableObjectValue<EventHandler<MouseEvent>> onMouseMoved = new EventHandlerValue<>(MouseEvent.MOUSE_MOVED);
+    private MutableObjectValue<EventHandler<MouseEvent>> onMouseMoved;
+
+    public MutableObjectValue<EventHandler<MouseEvent>> onMouseMoved() {
+        if (onMouseMoved == null) {
+            onMouseMoved = new EventHandlerValue<>(MouseEvent.MOUSE_MOVED);
+        }
+        return onMouseMoved;
+    }
 
     public EventHandler<MouseEvent> getOnMouseMoved() {
-        return onMouseMoved.get();
+        return onMouseMoved == null ? null : onMouseMoved.get();
     }
 
     public void setOnMouseMoved(EventHandler<MouseEvent> onMouseMoved) {
-        this.onMouseMoved.set(onMouseMoved);
+        onMouseMoved().set(onMouseMoved);
     }
 
-    private final MutableObjectValue<EventHandler<MouseActionEvent>> onMousePressed = new EventHandlerValue<>(MouseActionEvent.MOUSE_PRESSED);
+    private MutableObjectValue<EventHandler<MouseActionEvent>> onMousePressed;
+
+    public MutableObjectValue<EventHandler<MouseActionEvent>> onMousePressed() {
+        if (onMousePressed == null) {
+            onMousePressed = new EventHandlerValue<>(MouseActionEvent.MOUSE_PRESSED);
+        }
+        return onMousePressed;
+    }
 
     public EventHandler<MouseActionEvent> getOnMousePressed() {
-        return onMousePressed.get();
+        return onMousePressed == null ? null : onMousePressed.get();
     }
 
     public void setOnMousePressed(EventHandler<MouseActionEvent> onMousePressed) {
-        this.onMousePressed.set(onMousePressed);
+        onMousePressed().set(onMousePressed);
     }
 
-    private final MutableObjectValue<EventHandler<MouseActionEvent>> onMouseReleased = new EventHandlerValue<>(MouseActionEvent.MOUSE_CLICKED);
+    private MutableObjectValue<EventHandler<MouseActionEvent>> onMouseReleased;
+
+    public MutableObjectValue<EventHandler<MouseActionEvent>> onMouseReleased() {
+        if (onMouseReleased == null) {
+            onMouseReleased = new EventHandlerValue<>(MouseActionEvent.MOUSE_RELEASED);
+        }
+        return onMouseReleased;
+    }
 
     public EventHandler<MouseActionEvent> getOnMouseReleased() {
-        return onMouseReleased.get();
+        return onMouseReleased == null ? null : onMouseReleased.get();
     }
 
     public void setOnMouseReleased(EventHandler<MouseActionEvent> onMouseReleased) {
-        this.onMouseReleased.set(onMouseReleased);
+        onMouseReleased().set(onMouseReleased);
     }
 
-    private final MutableObjectValue<EventHandler<MouseActionEvent>> onMouseClicked = new EventHandlerValue<>(MouseActionEvent.MOUSE_CLICKED);
+    private MutableObjectValue<EventHandler<MouseActionEvent>> onMouseClicked;
+
+    public MutableObjectValue<EventHandler<MouseActionEvent>> onMouseClicked() {
+        if (onMouseClicked == null) {
+            onMouseClicked = new EventHandlerValue<>(MouseActionEvent.MOUSE_CLICKED);
+        }
+        return onMouseClicked;
+    }
 
     public EventHandler<MouseActionEvent> getOnMouseClicked() {
-        return onMouseClicked.get();
+        return onMouseClicked == null ? null : onMouseClicked.get();
     }
 
     public void setOnMouseClicked(EventHandler<MouseActionEvent> onMouseClicked) {
-        this.onMouseClicked.set(onMouseClicked);
+        onMouseClicked().set(onMouseClicked);
     }
 
-    private final MutableObjectValue<EventHandler<KeyEvent>> onKeyPressed = new EventHandlerValue<>(KeyEvent.KEY_PRESSED);
+    private MutableObjectValue<EventHandler<KeyEvent>> onKeyPressed;
+
+    public MutableObjectValue<EventHandler<KeyEvent>> onKeyPressed() {
+        if (onKeyPressed == null) {
+            onKeyPressed = new EventHandlerValue<>(KeyEvent.KEY_PRESSED);
+        }
+        return onKeyPressed;
+    }
 
     public EventHandler<KeyEvent> getOnKeyPressed() {
-        return onKeyPressed.get();
+        return onKeyPressed == null ? null : onKeyPressed.get();
     }
 
     public void setOnKeyPressed(EventHandler<KeyEvent> onKeyPressed) {
-        this.onKeyPressed.set(onKeyPressed);
+        onKeyPressed().set(onKeyPressed);
     }
 
-    private final MutableObjectValue<EventHandler<KeyEvent>> onKeyReleased = new EventHandlerValue<>(KeyEvent.KEY_RELEASED);
+    private MutableObjectValue<EventHandler<KeyEvent>> onKeyReleased;
+
+    public MutableObjectValue<EventHandler<KeyEvent>> onKeyReleased() {
+        if (onKeyReleased == null) {
+            onKeyReleased = new EventHandlerValue<>(KeyEvent.KEY_RELEASED);
+        }
+        return onKeyReleased;
+    }
 
     public EventHandler<KeyEvent> getOnKeyReleased() {
-        return onKeyReleased.get();
+        return onKeyReleased == null ? null : onKeyReleased.get();
     }
 
     public void setOnKeyReleased(EventHandler<KeyEvent> onKeyReleased) {
-        this.onKeyReleased.set(onKeyReleased);
+        onKeyReleased().set(onKeyReleased);
     }
 
-    private final MutableObjectValue<EventHandler<KeyEvent>> onKeyTyped = new EventHandlerValue<>(KeyEvent.KEY_TYPED);
+    private MutableObjectValue<EventHandler<KeyEvent>> onKeyTyped;
+
+    public MutableObjectValue<EventHandler<KeyEvent>> onKeyTyped() {
+        if (onKeyTyped == null) {
+            onKeyTyped = new EventHandlerValue<>(KeyEvent.KEY_TYPED);
+        }
+        return onKeyTyped;
+    }
 
     public EventHandler<KeyEvent> getOnKeyTyped() {
-        return onKeyTyped.get();
+        return onKeyTyped == null ? null : onKeyTyped.get();
     }
 
     public void setOnKeyTyped(EventHandler<KeyEvent> onKeyTyped) {
-        this.onKeyTyped.set(onKeyTyped);
+        onKeyTyped().set(onKeyTyped);
     }
 
-    private final MutableObjectValue<EventHandler<ScrollEvent>> onScroll = new EventHandlerValue<>(ScrollEvent.ANY);
+    private MutableObjectValue<EventHandler<ScrollEvent>> onScroll;
+
+    public MutableObjectValue<EventHandler<ScrollEvent>> onScroll() {
+        if (onScroll == null) {
+            onScroll = new EventHandlerValue<>(ScrollEvent.SCROLL);
+        }
+        return onScroll;
+    }
 
     public EventHandler<ScrollEvent> getOnScroll() {
-        return onScroll.get();
+        return onScroll == null ? null : onScroll.get();
     }
 
     public void setOnScroll(EventHandler<ScrollEvent> onScroll) {
-        this.onScroll.set(onScroll);
+        onScroll().set(onScroll);
     }
 
     private class EventHandlerValue<ET extends Event, T extends EventHandler<ET>> extends SimpleMutableObjectValue<T> {
