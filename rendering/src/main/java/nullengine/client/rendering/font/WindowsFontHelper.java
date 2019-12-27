@@ -1,14 +1,14 @@
-package nullengine.client.rendering.gl.font;
+package nullengine.client.rendering.font;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import nullengine.client.rendering.font.Font;
-import nullengine.client.rendering.font.FontHelper;
-import nullengine.client.rendering.font.FontLoadException;
-import nullengine.client.rendering.font.UnavailableFontException;
+import nullengine.client.rendering.font.*;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
+import nullengine.client.rendering.gl.font.FontPlaneTexture;
+import nullengine.client.rendering.gl.font.NativeTTFont;
+import nullengine.client.rendering.gl.font.NativeTTFontInfo;
 import nullengine.client.rendering.gl.vertex.GLVertexFormats;
 import nullengine.util.Color;
 import org.apache.commons.io.IOUtils;
@@ -308,26 +308,19 @@ public final class WindowsFontHelper implements FontHelper {
 
         NativeTTFont nativeFont = getNativeFont(font);
         bindTexture(nativeFont);
-        generateMesh(buffer, text, nativeFont, color);
+        buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE);
+        bakeMesh(text, font, color).putVertices(buffer); // TODO: baked mesh should be stored
         renderer.run();
     }
 
-    private void generateMesh(GLBuffer buffer, CharSequence text, NativeTTFont nativeTTFont, Color color) {
+    public BakedTextMesh bakeMesh(CharSequence text, Font font, Color color) {
+        NativeTTFont nativeTTFont = getNativeFont(font);
         STBTTFontinfo fontInfo = nativeTTFont.getInfo().getFontInfo();
-        float fontHeight = nativeTTFont.getFont().getSize();
         float scale = nativeTTFont.getScaleForPixelHeight();
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer charPointBuffer = stack.mallocInt(1);
             FloatBuffer posX = stack.floats(0);
-            FloatBuffer posY = stack.floats(0 + fontHeight);
-
-//            float factorX = 1.0f * nativeTTFont.getInfo().getContentScaleX();
-//            float factorY = 1.0f * nativeTTFont.getInfo().getContentScaleY();
-            float factorX = 1.0f;
-            float factorY = 1.0f;
-
-            float centerY = 0 + fontHeight;
 
             var fontPlaneTexture = nativeTTFont.getPlaneTextures().get(0);
             for (int i = 0; i < text.length(); ) {
@@ -341,17 +334,15 @@ public final class WindowsFontHelper implements FontHelper {
                 }
                 if (fontPlaneTexture.isWaitingForReloading()) {
                     fontPlaneTexture.bakeTexture(nativeTTFont.getFont(), nativeTTFont.getInfo());
-                    fontPlaneTexture.bind();
                 }
             }
-            buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE);
+            var vertices = new ArrayList<float[]>();
             for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, charPointBuffer);
 
                 int charPoint = charPointBuffer.get(0);
 
                 if (!isSupportedCharacter(nativeTTFont, charPoint)) {
-//                    continue;
                     charPoint = '\u001A';
                     charPointBuffer.put(0, charPoint);
                 }
@@ -359,24 +350,25 @@ public final class WindowsFontHelper implements FontHelper {
                 float centerX = posX.get(0);
                 var quads = fontPlaneTexture.getQuad((char) charPoint);
                 if (quads == null) continue;
-                posX.put(0, scale(centerX, posX.get(0) + quads.getXOffset(), factorX));
+                posX.put(0,posX.get(0) + quads.getXOffset());
                 if (i < text.length()) {
                     getCodePoint(text, i, charPointBuffer);
                     posX.put(0, posX.get(0)
                             + stbtt_GetCodepointKernAdvance(fontInfo, charPoint, charPointBuffer.get(0)) * scale);
                 }
-                float x0 = (float) Math.floor(scale(centerX, centerX + quads.getPos().x(), factorX) + 0.5),
-                        x1 = (float) Math.floor(scale(centerX, centerX + quads.getPos().z(), factorX) + 0.5),
-                        y0 = (float) Math.floor(scale(centerY, quads.getPos().y(), factorY) + 0.5),
-                        y1 = (float) Math.floor(scale(centerY, quads.getPos().w(), factorY) + 0.5); // FIXME: Incorrect y0
-                buffer.pos(x0, y0, 0).color(color).uv(quads.getTexCoord().x(), quads.getTexCoord().y()).endVertex();
-                buffer.pos(x0, y1, 0).color(color).uv(quads.getTexCoord().x(), quads.getTexCoord().w()).endVertex();
-                buffer.pos(x1, y0, 0).color(color).uv(quads.getTexCoord().z(), quads.getTexCoord().y()).endVertex();
+                float x0 = (float) Math.floor(centerX + quads.getPos().x() + 0.5),
+                        x1 = (float) Math.floor(centerX + quads.getPos().z() + 0.5),
+                        y0 = (float) Math.floor(quads.getPos().y() + 0.5),
+                        y1 = (float) Math.floor(quads.getPos().w()+ 0.5);
+                vertices.add(new float[]{x0, y0, 0, quads.getTexCoord().x(), quads.getTexCoord().y()});
+                vertices.add(new float[]{x0, y1, 0,quads.getTexCoord().x(), quads.getTexCoord().w()});
+                vertices.add(new float[]{x1, y0, 0,quads.getTexCoord().z(), quads.getTexCoord().y()});
 
-                buffer.pos(x1, y0, 0).color(color).uv(quads.getTexCoord().z(), quads.getTexCoord().y()).endVertex();
-                buffer.pos(x0, y1, 0).color(color).uv(quads.getTexCoord().x(), quads.getTexCoord().w()).endVertex();
-                buffer.pos(x1, y1, 0).color(color).uv(quads.getTexCoord().z(), quads.getTexCoord().w()).endVertex();
+                vertices.add(new float[]{x1, y0, 0,quads.getTexCoord().z(), quads.getTexCoord().y()});
+                vertices.add(new float[]{x0, y1, 0,quads.getTexCoord().x(), quads.getTexCoord().w()});
+                vertices.add(new float[]{x1, y1, 0,quads.getTexCoord().z(), quads.getTexCoord().w()});
             }
+            return new BakedTextMesh(vertices, text, font, color, fontPlaneTexture);
         }
     }
 

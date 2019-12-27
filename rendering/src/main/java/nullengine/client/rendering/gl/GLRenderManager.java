@@ -3,7 +3,7 @@ package nullengine.client.rendering.gl;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
-import nullengine.client.rendering.gl.font.WindowsFontHelper;
+import nullengine.client.rendering.font.WindowsFontHelper;
 import nullengine.client.rendering.gl.pipeline.ForwardPipeline;
 import nullengine.client.rendering.gl.util.DebugMessageCallback;
 import nullengine.client.rendering.gl.util.GLCleaner;

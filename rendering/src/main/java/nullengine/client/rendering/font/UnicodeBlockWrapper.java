@@ -1,4 +1,4 @@
-package nullengine.client.rendering.gl.font;
+package nullengine.client.rendering.font;
 
 import com.google.common.collect.Range;
 import org.slf4j.Logger;

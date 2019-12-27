@@ -1,6 +1,9 @@
 package nullengine.client.rendering.gl.font;
 
 import nullengine.client.rendering.font.Font;
+import nullengine.client.rendering.font.UnicodeBlockWrapper;
+import nullengine.client.rendering.gl.texture.FilterMode;
+import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.math.Math2;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -20,8 +23,8 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBTruetype.*;
 
 public class FontPlaneTexture {
-    private int textureId = -1;
 //    private List<Integer> abandonedTexIds;
+    private GLTexture2D glTexture;
     private Font font;
     private int bitmapWidth;
     private int bitmapHeight;
@@ -38,7 +41,9 @@ public class FontPlaneTexture {
     }
 
     public void bind(){
-        GL11.glBindTexture(GL_TEXTURE_2D, textureId);
+        if(glTexture != null){
+            glTexture.bind();
+        }
     }
 
     public void putBlock(Character.UnicodeBlock block){
@@ -65,12 +70,9 @@ public class FontPlaneTexture {
     }
 
     public void bakeTexture(Font font, NativeTTFontInfo fontInfo){
-        GL11.glBindTexture(GL_TEXTURE_2D,0);
-        if(textureId != -1){
-//            abandonedTexIds.add(textureId);
-            GL11.glDeleteTextures(textureId);
+        if(glTexture != null){
+            glTexture.dispose();
         }
-        textureId = GL11.glGenTextures();
         this.font = font;
         this.fontInfo = fontInfo;
         charQuads.clear();
@@ -93,11 +95,7 @@ public class FontPlaneTexture {
             stbtt_PackFontRanges(context, fontInfo.getFontData(),fontInfo.getOffsetIndex(), ranges);
             stbtt_PackEnd(context);
 
-            glBindTexture(GL_TEXTURE_2D, textureId);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, bitmapSize, bitmapSize, 0, GL_RED, GL_UNSIGNED_BYTE, bitmap);
-            glBindTexture(GL_TEXTURE_2D, 0);
+            glTexture = GLTexture2D.builder().format(GL_RED).internalFormat(GL_RED).type(GL_UNSIGNED_BYTE).magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR).level(0).build(bitmap, bitmapSize,bitmapSize);
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack();
             for (int i = 0; i < blocks.size(); i++) {
                 FloatBuffer posX = BufferUtils.createFloatBuffer(1);
