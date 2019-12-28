@@ -109,17 +109,17 @@ public class Scene implements EventTarget {
             var currentNodes = root.getPointingComponents(screenX, screenY);
             for (var node : currentNodes) {
                 if (lastNodes.contains(node)) {
-                    var pair = node.relativePos(screenX, screenY);
-                    new MouseEvent(MouseEvent.MOUSE_MOVED, node, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
+                    var pos = node.relativePos(screenX, screenY);
+                    new MouseEvent(MouseEvent.MOUSE_MOVED, node, pos.getX(), pos.getY(), screenX, screenY).fireEvent();
                 } else {
-                    var pair = node.relativePos(screenX, screenY);
-                    new MouseEvent(MouseEvent.MOUSE_ENTERED, node, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
+                    var pos = node.relativePos(screenX, screenY);
+                    new MouseEvent(MouseEvent.MOUSE_ENTERED, node, pos.getX(), pos.getY(), screenX, screenY).fireEvent();
                 }
             }
             lastNodes.removeAll(currentNodes);
             for (var node : lastNodes) {
-                var pair = node.relativePos(screenX, screenY);
-                new MouseEvent(MouseEvent.MOUSE_EXITED, node, pair.getLeft(), pair.getRight(), screenX, screenY).fireEvent();
+                var pos = node.relativePos(screenX, screenY);
+                new MouseEvent(MouseEvent.MOUSE_EXITED, node, pos.getX(), pos.getY(), screenX, screenY).fireEvent();
             }
         }
         lastScreenX = screenX;
@@ -146,12 +146,12 @@ public class Scene implements EventTarget {
             }
             for (var node : nodes) {
                 if (pressed) {
-                    var pair = node.relativePos(lastScreenX, lastScreenY);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
+                    var pos = node.relativePos(lastScreenX, lastScreenY);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, node, pos.getX(), pos.getY(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
                 } else {
-                    var pair = node.relativePos(lastScreenX, lastScreenY);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
+                    var pos = node.relativePos(lastScreenX, lastScreenY);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, node, pos.getX(), pos.getY(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
+                    new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, node, pos.getX(), pos.getY(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
                 }
             }
         }
@@ -159,8 +159,8 @@ public class Scene implements EventTarget {
 
     public void processScroll(double xOffset, double yOffset) {
         focused.forEach(node -> {
-            var pair = node.relativePos(lastScreenX, lastScreenY);
-            new ScrollEvent(ScrollEvent.ANY, node, pair.getLeft(), pair.getRight(), lastScreenX, lastScreenY, xOffset, yOffset).fireEvent();
+            var pos = node.relativePos(lastScreenX, lastScreenY);
+            new ScrollEvent(ScrollEvent.ANY, node, pos.getX(), pos.getY(), lastScreenX, lastScreenY, xOffset, yOffset).fireEvent();
         });
     }
 
