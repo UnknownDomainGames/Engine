@@ -168,7 +168,7 @@ public class TextField extends Control {
 
     private void onMouseMove(MouseEvent event) {
         if (pressed.get()) {
-            selectPositionCaret(getNearestMousePos(relativePos(event.getX(), event.getY()).getLeft()));
+            selectPositionCaret(getNearestMousePos(relativePos(event.getX(), event.getY()).getX()));
         }
     }
 

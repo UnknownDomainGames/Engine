@@ -118,7 +118,7 @@ public class VSlider extends Region {
     }
 
     private void onMoved(MouseEvent e) {
-        var ry = relativePos(e.getX(), e.getY()).getRight();
+        var ry = relativePos(e.getX(), e.getY()).getY();
         if ((ry - slider.y().get()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
             value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
         } else if ((slider.y().get() - ry) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
