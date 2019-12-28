@@ -31,9 +31,10 @@ public class FrameTicker {
         long lastTime = System.nanoTime();
         while (!stopped) {
             runnable.run();
-            tpf = (System.nanoTime() - lastTime) / 1e9f;
+            long nowTime = System.nanoTime();
+            tpf = (nowTime - lastTime) / 1e9f;
             fps = 1f / tpf;
-            lastTime = System.nanoTime();
+            lastTime = nowTime;
         }
     }
 
