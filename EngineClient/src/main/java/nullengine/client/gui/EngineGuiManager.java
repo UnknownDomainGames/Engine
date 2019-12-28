@@ -55,7 +55,7 @@ public class EngineGuiManager implements GuiManager {
             displayingScreen.processCharMods((char) codepoint, Modifiers.of(mods));
         }
     };
-    private final FramebufferSizeCallback framebufferSizeCallback = (window1, width, height) -> {
+    private final WindowSizeCallback windowSizeCallback = (window1, width, height) -> {
         float scaleX = window1.getContentScaleX();
         float scaleY = window1.getContentScaleY();
         if (displayingScreen != null) {
@@ -78,7 +78,7 @@ public class EngineGuiManager implements GuiManager {
         window.addKeyCallback(keyCallback);
         window.addScrollCallback(scrollCallback);
         window.addCharModsCallback(charModsCallback);
-        window.addFramebufferSizeCallback(framebufferSizeCallback);
+        window.addWindowSizeCallback(windowSizeCallback);
         sceneHistory = new UndoHistory<>(MAX_SCENE_HISTORY);
     }
 

@@ -39,9 +39,9 @@ public interface WindowCallbacks {
 
     void removeCursorEnterCallback(CursorEnterCallback callback);
 
-    void addFramebufferSizeCallback(FramebufferSizeCallback callback);
+    void addWindowSizeCallback(WindowSizeCallback callback);
 
-    void removeFramebufferSizeCallback(FramebufferSizeCallback callback);
+    void removeWindowSizeCallback(WindowSizeCallback callback);
 
     void addWindowPosCallback(WindowPosCallback callback);
 

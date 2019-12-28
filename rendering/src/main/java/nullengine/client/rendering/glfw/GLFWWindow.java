@@ -22,11 +22,11 @@ public class GLFWWindow implements Window {
 
     private long pointer;
 
-    private int posX;
-    private int posY;
+    private int x;
+    private int y;
 
-    private int windowWidth;
-    private int windowHeight;
+    private int width;
+    private int height;
 
     private Monitor monitor;
 
@@ -51,7 +51,7 @@ public class GLFWWindow implements Window {
     private final List<WindowCloseCallback> windowCloseCallbacks = new LinkedList<>();
     private final List<WindowFocusCallback> windowFocusCallbacks = new LinkedList<>();
     private final List<CursorEnterCallback> cursorEnterCallbacks = new LinkedList<>();
-    private final List<FramebufferSizeCallback> framebufferSizeCallbacks = new LinkedList<>();
+    private final List<WindowSizeCallback> windowSizeCallbacks = new LinkedList<>();
     private final List<WindowPosCallback> windowPosCallbacks = new LinkedList<>();
     private final List<DropCallback> dropCallbacks = new LinkedList<>();
 
@@ -65,18 +65,18 @@ public class GLFWWindow implements Window {
 
     public GLFWWindow(int width, int height, String title) {
         this.title = title;
-        this.windowWidth = width;
-        this.windowHeight = height;
+        this.width = width;
+        this.height = height;
     }
 
     @Override
     public int getX() {
-        return posX;
+        return x;
     }
 
     @Override
     public int getY() {
-        return posY;
+        return y;
     }
 
     @Override
@@ -86,19 +86,19 @@ public class GLFWWindow implements Window {
     }
 
     private void setPotInternal(int x, int y) {
-        posX = x;
-        posY = y;
+        this.x = x;
+        this.y = y;
         windowPosCallbacks.forEach(callback -> callback.invoke(this, x, y));
     }
 
     @Override
     public int getWidth() {
-        return windowWidth;
+        return width;
     }
 
     @Override
     public int getHeight() {
-        return windowHeight;
+        return height;
     }
 
     @Override
@@ -129,14 +129,14 @@ public class GLFWWindow implements Window {
     }
 
     private void resize() {
-        resize(windowWidth, windowHeight);
+        resize(width, height);
     }
 
     protected void resize(int width, int height) {
         resized = true;
-        windowWidth = width;
-        windowHeight = height;
-        framebufferSizeCallbacks.forEach(callback -> callback.invoke(this, width, height));
+        this.width = width;
+        this.height = height;
+        windowSizeCallbacks.forEach(callback -> callback.invoke(this, width, height));
     }
 
     @Override
@@ -260,13 +260,13 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public void addFramebufferSizeCallback(FramebufferSizeCallback callback) {
-        framebufferSizeCallbacks.add(callback);
+    public void addWindowSizeCallback(WindowSizeCallback callback) {
+        windowSizeCallbacks.add(callback);
     }
 
     @Override
-    public void removeFramebufferSizeCallback(FramebufferSizeCallback callback) {
-        framebufferSizeCallbacks.remove(callback);
+    public void removeWindowSizeCallback(WindowSizeCallback callback) {
+        windowSizeCallbacks.remove(callback);
     }
 
     @Override
@@ -386,12 +386,12 @@ public class GLFWWindow implements Window {
     public void init() {
         setMonitor(GLFWContext.getPrimaryMonitor());
         initWindowHint();
-        pointer = glfwCreateWindow(windowWidth, windowHeight, title, NULL, NULL);
+        pointer = glfwCreateWindow(width, height, title, NULL, NULL);
         if (!checkCreated()) {
             throw new RuntimeException("Failed to create the GLFW window");
         }
-        windowWidth *= getContentScaleX();
-        windowHeight *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
+        width *= getContentScaleX();
+        height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
         initCallbacks();
         setWindowPosCenter();
         glfwMakeContextCurrent(pointer);
@@ -416,19 +416,19 @@ public class GLFWWindow implements Window {
         switch (displayMode) {
             case FULLSCREEN:
                 if (this.displayMode == DisplayMode.WINDOWED) {
-                    lastPosX = posX;
-                    lastPosY = posY;
-                    lastWidth = windowWidth;
-                    lastHeight = windowHeight;
+                    lastPosX = x;
+                    lastPosY = y;
+                    lastWidth = width;
+                    lastHeight = height;
                 }
                 glfwSetWindowMonitor(pointer, monitor.getPointer(), 0, 0, nw, nh, frameRate > 0 ? frameRate : monitor.getVideoMode().getRefreshRate());
                 break;
             case WINDOWED_FULLSCREEN:
                 if (this.displayMode == DisplayMode.WINDOWED) {
-                    lastPosX = posX;
-                    lastPosY = posY;
-                    lastWidth = windowWidth;
-                    lastHeight = windowHeight;
+                    lastPosX = x;
+                    lastPosY = y;
+                    lastWidth = width;
+                    lastHeight = height;
                 }
                 setDecorated(false);
                 glfwSetWindowMonitor(pointer, NULL, 0, 0, monitor.getVideoMode().getWidth(), monitor.getVideoMode().getHeight(), monitor.getVideoMode().getRefreshRate());
@@ -468,7 +468,7 @@ public class GLFWWindow implements Window {
         glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> {
             setPotInternal(xpos, ypos);
         });
-        glfwSetFramebufferSizeCallback(pointer, (window, width, height) -> resize(width, height));
+        glfwSetWindowSizeCallback(pointer, (window, width, height) -> resize(width, height));
         glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> {
             monitor.refreshMonitor();
         }));
@@ -482,7 +482,6 @@ public class GLFWWindow implements Window {
         });
 
         // TODO: callbacks
-//        glfwSetDropCallback()
 //        glfwSetWindowSizeCallback()
 //        glfwSetWindowIconifyCallback()
 //        glfwSetWindowMaximizeCallback()
@@ -503,7 +502,7 @@ public class GLFWWindow implements Window {
     }
 
     private void setWindowPosCenter() {
-        setPos((monitor.getVideoMode().getWidth() - windowWidth) / 2, (monitor.getVideoMode().getHeight() - windowHeight) / 2);
+        setPos((monitor.getVideoMode().getWidth() - width) / 2, (monitor.getVideoMode().getHeight() - height) / 2);
     }
 
     private void enableVSync() {

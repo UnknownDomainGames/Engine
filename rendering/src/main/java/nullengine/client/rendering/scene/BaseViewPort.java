@@ -2,7 +2,7 @@ package nullengine.client.rendering.scene;
 
 import nullengine.client.rendering.camera.FreeCamera;
 import nullengine.client.rendering.display.Window;
-import nullengine.client.rendering.display.callback.FramebufferSizeCallback;
+import nullengine.client.rendering.display.callback.WindowSizeCallback;
 import nullengine.util.Color;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
@@ -28,7 +28,7 @@ public abstract class BaseViewPort implements ViewPort {
     protected final FrustumIntersection frustum = new FrustumIntersection();
 
     private Window window;
-    private FramebufferSizeCallback framebufferSizeCallback;
+    private WindowSizeCallback windowSizeCallback;
 
     @Override
     public int getWidth() {
@@ -149,13 +149,13 @@ public abstract class BaseViewPort implements ViewPort {
 
     @Override
     public void bindWindow(Window window) {
-        if (this.window != null) this.window.removeFramebufferSizeCallback(framebufferSizeCallback);
+        if (this.window != null) this.window.removeWindowSizeCallback(windowSizeCallback);
         if (window != null) {
-            if (framebufferSizeCallback == null) {
-                framebufferSizeCallback = (_window, width, height) -> setSize(width, height);
+            if (windowSizeCallback == null) {
+                windowSizeCallback = (_window, width, height) -> setSize(width, height);
             }
             setSize(window.getWidth(), window.getHeight());
-            window.addFramebufferSizeCallback(framebufferSizeCallback);
+            window.addWindowSizeCallback(windowSizeCallback);
         }
         this.window = window;
     }
