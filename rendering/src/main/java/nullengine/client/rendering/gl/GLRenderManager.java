@@ -14,6 +14,7 @@ import nullengine.client.rendering.management.RenderManager;
 import nullengine.client.rendering.management.SwapBuffersListener;
 import nullengine.client.rendering.scene.ViewPort;
 import nullengine.client.rendering.util.GPUInfo;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.ARBDebugOutput;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL43;
@@ -97,6 +98,7 @@ public class GLRenderManager implements RenderManager {
         if (autoSwapBuffers) {
             primaryWindow.swapBuffers();
         }
+        GLFW.glfwPollEvents();
     }
 
     private void renderViewPort(ViewPort viewPort, float partial) {

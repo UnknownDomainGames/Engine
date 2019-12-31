@@ -46,9 +46,4 @@ public class HelloWorld extends RenderableApplication {
     protected void onPreRender() {
         cameraInput.update(ticker.getTpf());
     }
-
-    @Override
-    protected void onPostRender() {
-        GLFW.glfwPollEvents();
-    }
 }

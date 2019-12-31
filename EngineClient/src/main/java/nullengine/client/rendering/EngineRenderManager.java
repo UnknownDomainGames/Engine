@@ -23,7 +23,6 @@ import org.joml.Vector3f;
 import javax.annotation.Nonnull;
 
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 
@@ -137,7 +136,6 @@ public class EngineRenderManager implements RenderManager {
 
         glClear(GL_COLOR_BUFFER_BIT);
         RenderEngine.doRender(partial);
-        glfwPollEvents();
         updateFPS();
 
         engine.getEventBus().post(new RenderEvent.Post());
