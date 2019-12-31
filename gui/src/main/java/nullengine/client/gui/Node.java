@@ -5,7 +5,7 @@ import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.*;
 import nullengine.client.gui.input.*;
-import nullengine.client.gui.misc.Point2f;
+import nullengine.client.gui.misc.Point;
 import nullengine.client.gui.rendering.ComponentRenderer;
 
 import java.util.HashMap;
@@ -166,9 +166,9 @@ public abstract class Node implements EventTarget {
         focused.set(true);
     }
 
-    public Point2f relativePos(float x, float y) {
+    public Point relativePos(float x, float y) {
         if (parent().isEmpty()) {
-            return new Point2f(x, y);
+            return new Point(x, y);
         } else {
             return parent().getValue().relativePos(x - x().get(), y - y().get());
         }
