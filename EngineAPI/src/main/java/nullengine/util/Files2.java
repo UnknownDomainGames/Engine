@@ -9,7 +9,7 @@ public final class Files2 {
 
     /**
      * This method is for fixing a bug JDK-8029608.
-     * {@link Files#createDirectories(Path, FileAttribute[])} throws AccessDeniedException after {@link Files#delete(Path)}
+     * Call {@link Files#createDirectories(Path, FileAttribute[])} throws AccessDeniedException after called {@link Files#delete(Path)}
      */
     public static boolean createDirectories(Path path) {
         return createDirectories(path.toFile());
