@@ -16,7 +16,7 @@ public class Region extends Parent {
     }
 
     private final MutableObjectValue<Background> background = new SimpleMutableObjectValue<>(Background.NOTHING);
-    private final MutableObjectValue<Border> border = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Border> border = new SimpleMutableObjectValue<>(Border.NO_BORDER);
 
     public MutableObjectValue<Background> background() {
         return background;

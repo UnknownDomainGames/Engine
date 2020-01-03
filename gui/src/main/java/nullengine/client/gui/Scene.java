@@ -1,14 +1,19 @@
 package nullengine.client.gui;
 
+import com.github.mouse0w0.observable.collection.ObservableCollections;
+import com.github.mouse0w0.observable.collection.ObservableList;
+import com.github.mouse0w0.observable.collection.ObservableListWrapper;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.*;
 import nullengine.client.gui.input.*;
+import nullengine.client.gui.misc.Pos;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public class Scene implements EventTarget {
 
@@ -90,6 +95,9 @@ public class Scene implements EventTarget {
 
     public void update() {
         root.get().layout();
+        for (Popup popup : popups) {
+            popup.layout();
+        }
     }
 
     @Override
@@ -120,6 +128,9 @@ public class Scene implements EventTarget {
             for (var node : lastNodes) {
                 var pos = node.relativePos(screenX, screenY);
                 new MouseEvent(MouseEvent.MOUSE_EXITED, node, pos.getX(), pos.getY(), screenX, screenY).fireEvent();
+            }
+            if (lastNodes.isEmpty() && currentNodes.isEmpty()) {
+                new MouseEvent(MouseEvent.MOUSE_MOVED, this, screenX,screenY,screenX,screenY).fireEvent();
             }
         }
         lastScreenX = screenX;
@@ -180,6 +191,56 @@ public class Scene implements EventTarget {
 
     public <T extends Event> void removeEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
         eventHandlerManager.removeEventHandler(eventType, eventHandler);
+    }
+
+    private ObservableList<Popup> popups = ObservableCollections.observableList(new LinkedList<>());
+    private ObservableList<Popup> unmodifiablePopups = ObservableCollections.unmodifiableObservableList(popups);
+
+    public ObservableList<Popup> getPopups() {
+        return unmodifiablePopups;
+    }
+
+    public void showPopup(@Nonnull Popup popup, boolean shouldFollowCursor, Pos location){
+        if(shouldFollowCursor){
+            EventHandler<MouseEvent> handler = event -> {
+                float x = 0,y = 0;
+                switch (location.getHpos()){
+                    case LEFT:
+                        x = event.getScreenX();
+                        break;
+                    case CENTER:
+                        x = event.getScreenX() - popup.prefWidth() / 2;
+                        break;
+                    case RIGHT:
+                        x = event.getScreenX() - popup.prefWidth();
+                        break;
+                }
+                switch (location.getVpos()){
+                    case TOP:
+                    case BASELINE:
+                        y = event.getScreenY();
+                        break;
+                    case CENTER:
+                        y = event.getScreenY() - popup.prefHeight() / 2;
+                        break;
+                    case BOTTOM:
+                        y = event.getScreenY() - popup.prefHeight();
+                        break;
+                }
+                popup.relocate(x, y);
+            };
+            addEventHandler(MouseEvent.MOUSE_MOVED, handler);
+            popup.getInsertedHandlers().add(new ImmutablePair<>(MouseEvent.MOUSE_MOVED, handler));
+            popup.relocate(lastScreenX,lastScreenY);
+        }
+        popups.add(popup);
+    }
+
+    public void closePopup(Popup popup){
+        for (Pair<EventType, EventHandler> insertedHandler : popup.getInsertedHandlers()) {
+            removeEventHandler(insertedHandler.getKey(), insertedHandler.getValue());
+        }
+        popups.remove(popup);
     }
 
     // ===== Event handlers =====

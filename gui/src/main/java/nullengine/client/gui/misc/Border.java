@@ -4,6 +4,8 @@ import nullengine.util.Color;
 
 public class Border {
 
+    public static final Border NO_BORDER = new Border(Color.BLACK, Insets.EMPTY, Insets.EMPTY);
+
     private Insets insets;
 
     private Insets outsets;

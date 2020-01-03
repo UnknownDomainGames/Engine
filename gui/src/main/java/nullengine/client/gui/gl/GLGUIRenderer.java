@@ -1,6 +1,7 @@
 package nullengine.client.gui.gl;
 
 import nullengine.client.gui.Parent;
+import nullengine.client.gui.Popup;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.gl.shader.ShaderManager;
@@ -47,11 +48,15 @@ public class GLGUIRenderer {
     }
 
     private void render0(Scene scene) {
+        scene.update();
         Parent root = scene.getRoot();
         if (!root.visible().get()) return; // Invisible root, don't need render it.
 
         startRender(scene);
         root.getRenderer().render(root, graphics);
+        for (Popup popup : scene.getPopups()) {
+            popup.getRenderer().render(popup, graphics);
+        }
         endRender();
     }
 
