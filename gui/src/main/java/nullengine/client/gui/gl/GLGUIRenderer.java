@@ -80,7 +80,7 @@ public class GLGUIRenderer {
         shader.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, viewportWidth, viewportHeight, 0, 1000, -1000));
         shader.setUniform("u_ModelMatrix", new Matrix4f().scale(scaleX, scaleY, 1));
         shader.setUniform("u_ViewPortSize", new Vector2f(viewportWidth, viewportHeight));
-        graphics.pushClipRect(0, 0, viewportWidth, viewportHeight);
+        graphics.pushClipRect(0, 0, width, height);
 
         bindWhiteTexture();
     }

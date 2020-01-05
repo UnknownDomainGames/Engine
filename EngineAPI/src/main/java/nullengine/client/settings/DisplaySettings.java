@@ -16,6 +16,8 @@ public final class DisplaySettings {
     private int frameRate = 60;
     private float brightness = 1;
     private boolean vSync = false;
+    private int uiScale = 100;
+    private int hudScale = 100;
 
     public DisplayMode getDisplayMode() {
         return displayMode;
@@ -49,6 +51,30 @@ public final class DisplaySettings {
         this.frameRate = frameRate;
     }
 
+    public int getUiScale() {
+        return uiScale;
+    }
+
+    public float getUiScalePercentage(){
+        return uiScale / 100f;
+    }
+
+    public int getHudScale() {
+        return hudScale;
+    }
+
+    public float getHudScalePercentage(){
+        return  hudScale / 100f;
+    }
+
+    public void setUiScale(int uiScale) {
+        this.uiScale = uiScale;
+    }
+
+    public void setHudScale(int hudScale) {
+        this.hudScale = hudScale;
+    }
+
     public void load(Config config){
         try {
             displayMode = DisplayMode.valueOf(config.getString("display_mode", "windowed").toUpperCase());
@@ -59,6 +85,8 @@ public final class DisplaySettings {
         resolutionWidth = config.getInt("res_width");
         resolutionHeight = config.getInt("res_height");
         frameRate = config.getInt("frame_rate", 60);
+        uiScale = config.getInt("ui_scale", 100);
+        hudScale = config.getInt("hud_scale", 100);
     }
 
     public Map<String, Object> save(){
@@ -67,6 +95,8 @@ public final class DisplaySettings {
         config.set("res_width", resolutionWidth);
         config.set("res_height", resolutionHeight);
         config.set("frame_rate", frameRate);
+        config.set("ui_scale", uiScale);
+        config.set("hud_scale", hudScale);
         return config.getRoot();
     }
 

@@ -3,6 +3,8 @@ package nullengine.enginemod.client.gui;
 import com.github.mouse0w0.observable.value.ValueChangeListener;
 import nullengine.Platform;
 import nullengine.client.gui.component.Button;
+import nullengine.client.gui.component.HSlider;
+import nullengine.client.gui.component.VSlider;
 import nullengine.client.gui.input.MouseButton;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.layout.HBox;
@@ -23,7 +25,8 @@ public class GuiSettings extends AnchorPane {
         baksettings.getDisplaySettings().setDisplayMode(settings.getDisplaySettings().getDisplayMode());
         baksettings.getDisplaySettings().setResolutionHeight(settings.getDisplaySettings().getResolutionHeight());
         baksettings.getDisplaySettings().setResolutionWidth(settings.getDisplaySettings().getResolutionWidth());
-
+        baksettings.getDisplaySettings().setUiScale(settings.getDisplaySettings().getUiScale());
+        baksettings.getDisplaySettings().setHudScale(settings.getDisplaySettings().getHudScale());
         var title = new Text("Engine Settings");
         title.font().setValue(new Font(Font.getDefaultFont(), 20.0f));
         //Display settings
@@ -69,14 +72,46 @@ public class GuiSettings extends AnchorPane {
                 }
             }
         });
+        var lblUiScale = new Text("UI Scale");
+        var sliderUiScale = new HSlider();
+        sliderUiScale.max().set(200);
+        sliderUiScale.min().set(50);
+        sliderUiScale.step().set(1.0f);
+        sliderUiScale.sliderLength().set(250);
+        sliderUiScale.value().set(settings.getDisplaySettings().getUiScale());
+        var lblUiScaleVal = new Text(String.valueOf(settings.getDisplaySettings().getUiScale()));
+        sliderUiScale.value().addChangeListener((observable, oldValue, newValue) -> {
+            var i = (int) Math.round(sliderUiScale.value().get());
+            lblUiScaleVal.text().set(String.valueOf(i));
+            settings.getDisplaySettings().setUiScale(i);
+        });
+        var lblHudScale = new Text("HUD Scale");
+        var sliderHudScale = new HSlider();
+        sliderHudScale.max().set(200);
+        sliderHudScale.min().set(50);
+        sliderHudScale.step().set(1.0f);
+        sliderHudScale.sliderLength().set(250);
+        sliderHudScale.value().set(settings.getDisplaySettings().getHudScale());
+        var lblHudScaleVal = new Text(String.valueOf(settings.getDisplaySettings().getHudScale()));
+        sliderHudScale.value().addChangeListener((observable, oldValue, newValue) -> {
+            var i = (int) Math.round(sliderHudScale.value().get());
+            lblHudScaleVal.text().set(String.valueOf(i));
+            settings.getDisplaySettings().setHudScale(i);
+        });
         var hb1 = new HBox();
         hb1.spacing().set(10f);
         hb1.getChildren().addAll(lblDisplayMode, butDisplayMode);
         var hb2 = new HBox();
         hb2.spacing().set(10f);
         hb2.getChildren().addAll(lblRes, butRes);
+        var hb3 = new HBox();
+        hb3.spacing().set(10f);
+        hb3.getChildren().addAll(lblUiScale,sliderUiScale, lblUiScaleVal);
+        var hb4 = new HBox();
+        hb4.spacing().set(10f);
+        hb4.getChildren().addAll(lblHudScale,sliderHudScale, lblHudScaleVal);
         var vb = new VBox();
-        vb.getChildren().addAll(hb1, hb2);
+        vb.getChildren().addAll(hb1, hb2, hb3, hb4);
 
         //All
         setTopAnchor(title, 10f);
@@ -91,6 +126,8 @@ public class GuiSettings extends AnchorPane {
             settings.getDisplaySettings().setDisplayMode(baksettings.getDisplaySettings().getDisplayMode());
             settings.getDisplaySettings().setResolutionHeight(baksettings.getDisplaySettings().getResolutionHeight());
             settings.getDisplaySettings().setResolutionWidth(baksettings.getDisplaySettings().getResolutionWidth());
+            settings.getDisplaySettings().setUiScale(baksettings.getDisplaySettings().getUiScale());
+            settings.getDisplaySettings().setHudScale(baksettings.getDisplaySettings().getHudScale());
             var guiManager = Platform.getEngineClient().getRenderManager().getGuiManager();
             guiManager.showLastScreen();
         });
@@ -102,20 +139,20 @@ public class GuiSettings extends AnchorPane {
         });
         butSave.border().setValue(new Border(Color.WHITE, 2));
         butBack.border().setValue(new Border(Color.WHITE, 2));
-        var hb3 = new HBox();
-        hb3.getChildren().addAll(butSave, butBack);
-        setBottomAnchor(hb3, 10f);
-        setBottomAnchor(vb, hb3.height().get() + 20f);
-        setRightAnchor(hb3, 10f);
-        this.getChildren().addAll(title, vb, hb3);
+        var hb5 = new HBox();
+        hb5.getChildren().addAll(butSave, butBack);
+        setBottomAnchor(hb5, 10f);
+        setBottomAnchor(vb, hb5.height().get() + 20f);
+        setRightAnchor(hb5, 10f);
+        this.getChildren().addAll(title, vb, hb5);
         ValueChangeListener<Float> sizeChangeListener = (observable, oldValue, newValue) -> {
             setTopAnchor(title, 10f);
             setLeftAnchor(title, (this.width().get() - title.width().get()) / 2);
             setTopAnchor(vb, title.height().get() + 20f);
             setLeftAnchor(vb, (this.width().get() - vb.width().get()) / 2);
-            setBottomAnchor(hb3, 10f);
-            setBottomAnchor(vb, hb3.height().get() + 20f);
-            setRightAnchor(hb3, 10f);
+            setBottomAnchor(hb5, 10f);
+            setBottomAnchor(vb, hb5.height().get() + 20f);
+            setRightAnchor(hb5, 10f);
             layoutChildren();
         };
         width().addChangeListener(sizeChangeListener);

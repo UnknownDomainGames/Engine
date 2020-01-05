@@ -56,17 +56,17 @@ public class EngineGuiManager implements GuiManager {
         }
     };
     private final WindowSizeCallback windowSizeCallback = (window1, width, height) -> {
-        float scaleX = window1.getContentScaleX();
-        float scaleY = window1.getContentScaleY();
+        float uiScale = Platform.getEngineClient().getSettings().getDisplaySettings().getUiScalePercentage();
         if (displayingScreen != null) {
-            displayingScreen.setSize(width / scaleX, height / scaleY);
-            displayingScreen.setContentScale(scaleX, scaleY);
+            displayingScreen.setSize(width / uiScale, height / uiScale);
+            displayingScreen.setContentScale(uiScale, uiScale);
             displayingScreen.update();
         }
 
+        float hudScale = Platform.getEngineClient().getSettings().getDisplaySettings().getHudScalePercentage();
         huds.values().forEach(scene -> {
-            scene.setSize(width / scaleX, height / scaleY);
-            scene.setContentScale(scaleX, scaleY);
+            scene.setSize(width / hudScale, height / hudScale);
+            scene.setContentScale(hudScale, hudScale);
             scene.update();
         });
     };
@@ -101,8 +101,9 @@ public class EngineGuiManager implements GuiManager {
         displayingScreen = scene;
         if (scene == null) return;
 //        scene.addEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
-        displayingScreen.setSize(window.getWidth() / window.getContentScaleX(), window.getHeight() / window.getContentScaleY());
-        displayingScreen.setContentScale(window.getContentScaleX(), window.getContentScaleY());
+        var uiScale = Platform.getEngineClient().getSettings().getDisplaySettings().getUiScalePercentage();
+        displayingScreen.setSize(window.getWidth() / uiScale, window.getHeight() / uiScale);
+        displayingScreen.setContentScale(uiScale, uiScale);
         displayingScreen.update();
         window.getCursor().showCursor();
     }
@@ -166,8 +167,9 @@ public class EngineGuiManager implements GuiManager {
             Platform.getLogger().debug("Conflicted HUD id {}", id);
             currentHud.getRoot().visible().set(true);
         } else {
-            hud.setSize(window.getWidth() / window.getContentScaleX(), window.getHeight() / window.getContentScaleY());
-            hud.setContentScale(window.getContentScaleX(), window.getContentScaleY());
+            var scale = Platform.getEngineClient().getSettings().getDisplaySettings().getHudScalePercentage();
+            hud.setSize(window.getWidth() / scale, window.getHeight() / scale);
+            hud.setContentScale(scale, scale);
             hud.update();
             huds.put(id, hud);
             displayingHuds.put(id, hud);

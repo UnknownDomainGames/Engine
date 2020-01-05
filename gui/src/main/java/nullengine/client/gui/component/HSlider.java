@@ -18,8 +18,8 @@ public class HSlider extends Region {
     private MutableDoubleValue max = new SimpleMutableDoubleValue(1);
     private MutableDoubleValue value = new SimpleMutableDoubleValue(0);
 
-    private final MutableFloatValue sliderLength = new SimpleMutableFloatValue();
-    private final MutableFloatValue sliderThickness = new SimpleMutableFloatValue();
+    private final MutableFloatValue sliderLength = new SimpleMutableFloatValue(150);
+    private final MutableFloatValue sliderThickness = new SimpleMutableFloatValue(15);
     private final MutableFloatValue step = new SimpleMutableFloatValue(0.01f);
 
     private boolean select = false;
@@ -30,7 +30,6 @@ public class HSlider extends Region {
             if (newValue > max.get()) {
                 min.set(oldValue);
             } else {
-                resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
                 rebuild();
             }
         });
@@ -38,7 +37,6 @@ public class HSlider extends Region {
             if (newValue < min.get()) {
                 max.set(oldValue);
             } else {
-                resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
                 rebuild();
             }
         });
@@ -49,14 +47,8 @@ public class HSlider extends Region {
                 resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
             }
         });
-        sliderLength.addChangeListener((observable, oldValue, newValue) -> {
-            resizeBack(newValue, sliderThickness.get());
-            resizeSlider(newValue * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
-        });
-        sliderThickness.addChangeListener((observable, oldValue, newValue) -> {
-            resizeBack(sliderLength.get(), newValue);
-            resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), newValue);
-        });
+        sliderLength.addChangeListener((observable, oldValue, newValue) -> rebuild());
+        sliderThickness.addChangeListener((observable, oldValue, newValue) -> rebuild());
         this.getChildren().addAll(back, slider);
         backBg().setValue(Color.BLUE);
         sliderBg().setValue(Color.WHITE);
@@ -96,7 +88,9 @@ public class HSlider extends Region {
         } else if (value.get() < min.get()) {
             value.set(min.get());
         }
-        slider.x().set((float) ((back.width().get() - slider.width().get()) * (value.get() / (max.get() - min.get()))));
+        resizeBack(sliderLength.get(), sliderThickness.get());
+        resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
+        slider.x().set((float) ((back.rectSize().get().x() - slider.rectSize().get().x()) * ((value.get() - min.get()) / (max.get() - min.get()))));
         slider.y().set(back.y().get());
     }
 
@@ -112,9 +106,9 @@ public class HSlider extends Region {
 
     private void onMouseMove(MouseEvent event) {
         if (!select) return;
-        if ((event.getX() - x().get() - slider.x().get()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
+        if ((event.getX() - slider.x().get() - slider.rectSize().get().x()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
             value.set(value.getValue() + step.get());
-        } else if ((slider.x().get() - event.getX() + x().get()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
+        } else if ((slider.x().get() - event.getX()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
             value.set(value.getValue() - step.get());
         }
     }
@@ -123,14 +117,12 @@ public class HSlider extends Region {
         select = false;
     }
 
-    public void resizeBack(float width, float height) {
+    private void resizeBack(float width, float height) {
         back.rectSize().setValue(new Vector2f(width, height));
-        rebuild();
     }
 
-    public void resizeSlider(float width, float height) {
+    private void resizeSlider(float width, float height) {
         slider.rectSize().setValue(new Vector2f(width, height));
-        rebuild();
     }
 
     public MutableValue<Color> backBg() {
