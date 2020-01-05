@@ -36,9 +36,16 @@ public class GLFWWindow implements Window {
 
     private boolean closed = false;
     private boolean showing = false;
+
+    private DisplayMode displayMode = DisplayMode.WINDOWED;
+
+    // Window attributes
+//    private boolean iconified = true;
     private boolean decorated = true;
     private boolean resizable = true;
-    private DisplayMode displayMode = DisplayMode.WINDOWED;
+    private boolean floating = false;
+    //    private boolean maximized = false;
+    private boolean transparent = false;
 
     private Cursor cursor;
 
@@ -337,6 +344,7 @@ public class GLFWWindow implements Window {
         return showing;
     }
 
+    // ================= Window Attributes Start =================
     @Override
     public boolean isDecorated() {
         return decorated;
@@ -364,6 +372,36 @@ public class GLFWWindow implements Window {
         this.resizable = resizable;
         glfwSetWindowAttrib(pointer, GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
     }
+
+    @Override
+    public boolean isFloating() {
+        return floating;
+    }
+
+    @Override
+    public void setFloating(boolean floating) {
+        if (this.floating == floating) {
+            return;
+        }
+        this.floating = floating;
+        glfwSetWindowAttrib(pointer, GLFW_FLOATING, floating ? GLFW_TRUE : GLFW_FALSE);
+    }
+
+    @Override
+    public boolean isTransparent() {
+        return transparent;
+    }
+
+    @Override
+    public void setTransparent(boolean transparent) {
+        if (this.transparent == transparent) {
+            return;
+        }
+        this.transparent = transparent;
+        glfwSetWindowAttrib(pointer, GLFW_TRANSPARENT_FRAMEBUFFER, transparent ? GLFW_TRUE : GLFW_FALSE);
+    }
+
+    // ================= Window Attributes End =================
 
     @Override
     public void dispose() {
@@ -465,13 +503,9 @@ public class GLFWWindow implements Window {
                 windowFocusCallbacks.forEach(callback -> callback.invoke(this, focused)));
         glfwSetCursorEnterCallback(pointer, (window, entered) ->
                 cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
-        glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> {
-            setPotInternal(xpos, ypos);
-        });
+        glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> setPotInternal(xpos, ypos));
         glfwSetWindowSizeCallback(pointer, (window, width, height) -> resize(width, height));
-        glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> {
-            monitor.refreshMonitor();
-        }));
+        glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> monitor.refreshMonitor()));
         glfwSetDropCallback(pointer, (window, count, names) -> {
             String[] files = new String[count];
             PointerBuffer buffer = MemoryUtil.memPointerBuffer(names, count);
@@ -482,10 +516,9 @@ public class GLFWWindow implements Window {
         });
 
         // TODO: callbacks
-//        glfwSetWindowSizeCallback()
 //        glfwSetWindowIconifyCallback()
 //        glfwSetWindowMaximizeCallback()
-//        glfwSetWindowRefreshCallback();
+//        glfwSetWindowRefreshCallback()
 //        glfwSetWindowContentScaleCallback()
     }
 

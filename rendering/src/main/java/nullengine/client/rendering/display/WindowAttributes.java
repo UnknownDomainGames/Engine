@@ -8,4 +8,12 @@ public interface WindowAttributes {
     boolean isResizable();
 
     void setResizable(boolean resizable);
+
+    boolean isFloating();
+
+    void setFloating(boolean floating);
+
+    boolean isTransparent();
+
+    void setTransparent(boolean transparent);
 }
