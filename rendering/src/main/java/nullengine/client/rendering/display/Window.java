@@ -2,7 +2,7 @@ package nullengine.client.rendering.display;
 
 import nullengine.client.rendering.image.BufferedImage;
 
-public interface Window extends WindowAttributes, WindowCallbacks {
+public interface Window extends WindowCallbacks {
 
     int getX();
 
@@ -26,6 +26,14 @@ public interface Window extends WindowAttributes, WindowCallbacks {
 
     boolean isResized();
 
+    DisplayMode getDisplayMode();
+
+    default void setDisplayMode(DisplayMode mode) {
+        setDisplayMode(mode, -1, -1, -1);
+    }
+
+    void setDisplayMode(DisplayMode mode, int newWidth, int newHeight, int frameRate);
+
     String getTitle();
 
     void setTitle(String title);
@@ -44,15 +52,33 @@ public interface Window extends WindowAttributes, WindowCallbacks {
 
     boolean isShowing();
 
-    void dispose();
+    boolean isDecorated();
+
+    void setDecorated(boolean decorated);
+
+    boolean isResizable();
+
+    void setResizable(boolean resizable);
+
+    boolean isFloating();
+
+    void setFloating(boolean floating);
+
+    boolean isTransparent();
+
+    void setTransparent(boolean transparent);
+
+    boolean isIconified();
+
+    boolean isMaximized();
+
+    void iconify();
+
+    void maximize();
+
+    void restore();
 
     void swapBuffers();
 
-    DisplayMode getDisplayMode();
-
-    default void setDisplayMode(DisplayMode mode) {
-        setDisplayMode(mode, -1, -1, -1);
-    }
-
-    void setDisplayMode(DisplayMode mode, int newWidth, int newHeight, int frameRate);
+    void dispose();
 }

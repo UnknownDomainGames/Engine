@@ -40,12 +40,12 @@ public class GLFWWindow implements Window {
     private DisplayMode displayMode = DisplayMode.WINDOWED;
 
     // Window attributes
-//    private boolean iconified = true;
     private boolean decorated = true;
     private boolean resizable = true;
     private boolean floating = false;
-    //    private boolean maximized = false;
     private boolean transparent = false;
+    private boolean iconified = false;
+    private boolean maximized = false;
 
     private Cursor cursor;
 
@@ -345,6 +345,7 @@ public class GLFWWindow implements Window {
     }
 
     // ================= Window Attributes Start =================
+
     @Override
     public boolean isDecorated() {
         return decorated;
@@ -399,6 +400,31 @@ public class GLFWWindow implements Window {
         }
         this.transparent = transparent;
         glfwSetWindowAttrib(pointer, GLFW_TRANSPARENT_FRAMEBUFFER, transparent ? GLFW_TRUE : GLFW_FALSE);
+    }
+
+    @Override
+    public boolean isIconified() {
+        return iconified;
+    }
+
+    @Override
+    public boolean isMaximized() {
+        return maximized;
+    }
+
+    @Override
+    public void iconify() {
+        glfwIconifyWindow(pointer);
+    }
+
+    @Override
+    public void maximize() {
+        glfwMaximizeWindow(pointer);
+    }
+
+    @Override
+    public void restore() {
+        glfwRestoreWindow(pointer);
     }
 
     // ================= Window Attributes End =================
@@ -514,6 +540,8 @@ public class GLFWWindow implements Window {
             }
             dropCallbacks.forEach(callback -> callback.invoke(this, files));
         });
+        glfwSetWindowIconifyCallback(pointer, (window, iconified) -> this.iconified = iconified);
+        glfwSetWindowMaximizeCallback(pointer, (window, maximized) -> this.maximized = maximized);
 
         // TODO: callbacks
 //        glfwSetWindowIconifyCallback()
