@@ -10,6 +10,8 @@ public interface RenderManager {
 
     boolean isRenderingThread();
 
+    ResourceFactory getResourceFactory();
+
     ViewPort getPrimaryViewPort();
 
     void setPrimaryViewPort(ViewPort viewPort);

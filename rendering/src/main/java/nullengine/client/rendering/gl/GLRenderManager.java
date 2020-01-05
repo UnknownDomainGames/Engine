@@ -11,6 +11,7 @@ import nullengine.client.rendering.gl.util.NVXGPUInfo;
 import nullengine.client.rendering.glfw.GLFWContext;
 import nullengine.client.rendering.glfw.GLFWWindow;
 import nullengine.client.rendering.management.RenderManager;
+import nullengine.client.rendering.management.ResourceFactory;
 import nullengine.client.rendering.management.SwapBuffersListener;
 import nullengine.client.rendering.scene.ViewPort;
 import nullengine.client.rendering.util.GPUInfo;
@@ -35,8 +36,9 @@ public class GLRenderManager implements RenderManager {
     private Thread renderingThread;
     private GLFWWindow primaryWindow;
 
-    private GPUInfo gpuInfo;
     private GLCapabilities capabilities;
+    private GPUInfo gpuInfo;
+    private GLResourceFactory resourceFactory;
 
     private ForwardPipeline forwardPipeline;
 
@@ -63,6 +65,11 @@ public class GLRenderManager implements RenderManager {
     @Override
     public Window getPrimaryWindow() {
         return primaryWindow;
+    }
+
+    @Override
+    public ResourceFactory getResourceFactory() {
+        return resourceFactory;
     }
 
     @Override
@@ -129,6 +136,8 @@ public class GLRenderManager implements RenderManager {
         printGLInfo();
 
         initDebugMessageCallback();
+
+        resourceFactory = new GLResourceFactory(renderingThread);
     }
 
     private void initDebugMessageCallback() {
