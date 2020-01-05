@@ -7,3 +7,5 @@ include 'EngineAPI'
 include 'Engine'
 include 'EngineClient'
 include 'EngineServer'
+include 'examples'
+
