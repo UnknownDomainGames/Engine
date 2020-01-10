@@ -9,9 +9,11 @@ import nullengine.client.gui.internal.GUIPlatform;
 import nullengine.client.gui.internal.SceneHelper;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.display.callback.*;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -126,6 +128,16 @@ public class Scene implements EventTarget {
     public EventDispatchChain buildEventDispatchChain(EventDispatchChain tail) {
         return tail.append(eventHandlerManager);
     }
+
+    private final CursorCallback cursorCallback = (window, xpos, ypos) -> processCursor(xpos, ypos);
+    private final MouseCallback mouseCallback = (window, button, action, mods) ->
+            processMouse(MouseButton.valueOf(button), Modifiers.of(mods), action == GLFW.GLFW_PRESS);
+    private final KeyCallback keyCallback = (window, key, scancode, action, mods) ->
+            processKey(KeyCode.valueOf(key), Modifiers.of(mods), action != GLFW.GLFW_RELEASE);
+    private final ScrollCallback scrollCallback = (window, xoffset, yoffset) -> processScroll(xoffset, yoffset);
+    private final CharModsCallback charModsCallback = (window, codepoint, mods) ->
+            processCharMods((char) codepoint, Modifiers.of(mods));
+    private final WindowCloseCallback windowCloseCallback = window -> unbindWindow();
 
     private float lastScreenX = Float.NaN;
     private float lastScreenY = Float.NaN;
@@ -293,10 +305,23 @@ public class Scene implements EventTarget {
 
     public void bindWindow(Window window) {
         GUIPlatform.getInstance().getSceneHelper().bindWindow(this, window);
+        window.addCursorCallback(cursorCallback);
+        window.addMouseCallback(mouseCallback);
+        window.addKeyCallback(keyCallback);
+        window.addScrollCallback(scrollCallback);
+        window.addCharModsCallback(charModsCallback);
+        window.addWindowCloseCallback(windowCloseCallback);
     }
 
-    public void unbindWindow(Window window) {
+    public void unbindWindow() {
+        Window window = getWindow();
         GUIPlatform.getInstance().getSceneHelper().unbindWindow(this, window);
+        window.removeCursorCallback(cursorCallback);
+        window.removeMouseCallback(mouseCallback);
+        window.removeKeyCallback(keyCallback);
+        window.removeScrollCallback(scrollCallback);
+        window.removeCharModsCallback(charModsCallback);
+        window.removeWindowCloseCallback(windowCloseCallback);
     }
 
     // ===== Event handlers =====

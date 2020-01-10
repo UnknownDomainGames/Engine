@@ -15,9 +15,7 @@ public final class SceneHelperImpl extends SceneHelper {
     public void bindWindow(Scene scene, Window window) {
         boundWindows.put(window, scene);
         getSceneAccessor().getMutableWindowProperty(scene).set(window);
-
         scene.setViewport(window.getWidth(), window.getHeight(), window.getContentScaleX(), window.getContentScaleY());
-        scene.update();
     }
 
     @Override

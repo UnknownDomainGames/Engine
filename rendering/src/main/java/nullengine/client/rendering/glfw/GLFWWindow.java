@@ -522,8 +522,8 @@ public class GLFWWindow implements Window {
         glfwSetCharModsCallback(pointer, (window, codepoint, mods) ->
                 charModsCallbacks.forEach(callback -> callback.invoke(this, codepoint, mods)));
         glfwSetWindowCloseCallback(pointer, window -> {
-            dispose();
             windowCloseCallbacks.forEach(callback -> callback.invoke(this));
+            dispose();
         });
         glfwSetWindowFocusCallback(pointer, (window, focused) ->
                 windowFocusCallbacks.forEach(callback -> callback.invoke(this, focused)));

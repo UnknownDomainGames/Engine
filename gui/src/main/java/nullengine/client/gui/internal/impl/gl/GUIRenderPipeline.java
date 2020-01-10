@@ -31,8 +31,8 @@ public class GUIRenderPipeline implements RenderPipeline {
             Scene scene = entry.getValue();
             if (window.isResized()) {
                 scene.setViewport(window.getWidth(), window.getHeight(), window.getContentScaleX(), window.getContentScaleY());
-                scene.update();
             }
+            scene.update();
             renderer.render(scene);
             window.swapBuffers();
         }
