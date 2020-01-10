@@ -8,5 +8,9 @@ public abstract class GUIPlatform {
         return PLATFORM;
     }
 
+    protected static void setInstance(GUIPlatform platform) {
+        PLATFORM = platform;
+    }
+
     public abstract SceneHelper getSceneHelper();
 }

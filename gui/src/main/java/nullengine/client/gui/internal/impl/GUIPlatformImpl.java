@@ -16,6 +16,7 @@ public final class GUIPlatformImpl extends GUIPlatform {
 
     public static void launch(Class<? extends UIApplication> clazz, String[] args) throws Exception {
         GUIPlatformImpl platform = new GUIPlatformImpl();
+        setInstance(platform);
         RenderEngine.start(new RenderEngine.Settings());
         RenderManager renderManager = RenderEngine.getManager();
         renderManager.attachPipeline(new GUIRenderPipeline(platform.sceneHelper.boundWindows));
