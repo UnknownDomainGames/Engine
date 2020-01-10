@@ -19,6 +19,6 @@ public class HelloWorld extends GUIApplication {
         Text text = new Text("Hello World");
         flowPane.getChildren().add(text);
         Scene scene = new Scene(flowPane);
-        scene.bindWindow(primaryWindow);
+        scene.showToWindow(primaryWindow);
     }
 }

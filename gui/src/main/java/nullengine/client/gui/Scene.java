@@ -137,7 +137,7 @@ public class Scene implements EventTarget {
     private final ScrollCallback scrollCallback = (window, xoffset, yoffset) -> processScroll(xoffset, yoffset);
     private final CharModsCallback charModsCallback = (window, codepoint, mods) ->
             processCharMods((char) codepoint, Modifiers.of(mods));
-    private final WindowCloseCallback windowCloseCallback = window -> unbindWindow();
+    private final WindowCloseCallback windowCloseCallback = window -> hide();
 
     private float lastScreenX = Float.NaN;
     private float lastScreenY = Float.NaN;
@@ -303,7 +303,11 @@ public class Scene implements EventTarget {
         return window == null ? null : window.get();
     }
 
-    public void bindWindow(Window window) {
+    public boolean isShowing() {
+        return window != null && window.get() != null;
+    }
+
+    public void showToWindow(Window window) {
         GUIPlatform.getInstance().getSceneHelper().bindWindow(this, window);
         window.addCursorCallback(cursorCallback);
         window.addMouseCallback(mouseCallback);
@@ -313,7 +317,7 @@ public class Scene implements EventTarget {
         window.addWindowCloseCallback(windowCloseCallback);
     }
 
-    public void unbindWindow() {
+    public void hide() {
         Window window = getWindow();
         GUIPlatform.getInstance().getSceneHelper().unbindWindow(this, window);
         window.removeCursorCallback(cursorCallback);
