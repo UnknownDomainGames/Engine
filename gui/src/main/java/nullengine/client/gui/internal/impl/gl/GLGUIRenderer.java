@@ -1,4 +1,4 @@
-package nullengine.client.gui.gl;
+package nullengine.client.gui.internal.impl.gl;
 
 import nullengine.client.gui.Parent;
 import nullengine.client.gui.Popup;

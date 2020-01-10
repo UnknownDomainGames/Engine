@@ -2,7 +2,7 @@ package nullengine.client.rendering.gui;
 
 import nullengine.client.gui.GuiManager;
 import nullengine.client.gui.Scene;
-import nullengine.client.gui.gl.GLGUIRenderer;
+import nullengine.client.gui.internal.impl.gl.GLGUIRenderer;
 
 /**
  * render for any gui

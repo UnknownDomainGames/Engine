@@ -2,17 +2,18 @@ package nullengine.client.gui;
 
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
-import com.github.mouse0w0.observable.collection.ObservableListWrapper;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.*;
 import nullengine.client.gui.input.*;
+import nullengine.client.gui.internal.GUIPlatform;
+import nullengine.client.gui.internal.SceneHelper;
 import nullengine.client.gui.misc.Pos;
+import nullengine.client.rendering.display.Window;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class Scene implements EventTarget {
@@ -130,7 +131,7 @@ public class Scene implements EventTarget {
                 new MouseEvent(MouseEvent.MOUSE_EXITED, node, pos.getX(), pos.getY(), screenX, screenY).fireEvent();
             }
             if (lastNodes.isEmpty() && currentNodes.isEmpty()) {
-                new MouseEvent(MouseEvent.MOUSE_MOVED, this, screenX,screenY,screenX,screenY).fireEvent();
+                new MouseEvent(MouseEvent.MOUSE_MOVED, this, screenX, screenY, screenX, screenY).fireEvent();
             }
         }
         lastScreenX = screenX;
@@ -200,11 +201,11 @@ public class Scene implements EventTarget {
         return unmodifiablePopups;
     }
 
-    public void showPopup(@Nonnull Popup popup, boolean shouldFollowCursor, Pos location){
-        if(shouldFollowCursor){
+    public void showPopup(@Nonnull Popup popup, boolean shouldFollowCursor, Pos location) {
+        if (shouldFollowCursor) {
             EventHandler<MouseEvent> handler = event -> {
-                float x = 0,y = 0;
-                switch (location.getHpos()){
+                float x = 0, y = 0;
+                switch (location.getHpos()) {
                     case LEFT:
                         x = event.getScreenX();
                         break;
@@ -215,7 +216,7 @@ public class Scene implements EventTarget {
                         x = event.getScreenX() - popup.prefWidth();
                         break;
                 }
-                switch (location.getVpos()){
+                switch (location.getVpos()) {
                     case TOP:
                     case BASELINE:
                         y = event.getScreenY();
@@ -231,16 +232,50 @@ public class Scene implements EventTarget {
             };
             addEventHandler(MouseEvent.MOUSE_MOVED, handler);
             popup.getInsertedHandlers().add(new ImmutablePair<>(MouseEvent.MOUSE_MOVED, handler));
-            popup.relocate(lastScreenX,lastScreenY);
+            popup.relocate(lastScreenX, lastScreenY);
         }
         popups.add(popup);
     }
 
-    public void closePopup(Popup popup){
+    public void closePopup(Popup popup) {
         for (Pair<EventType, EventHandler> insertedHandler : popup.getInsertedHandlers()) {
             removeEventHandler(insertedHandler.getKey(), insertedHandler.getValue());
         }
         popups.remove(popup);
+    }
+
+    private MutableObjectValue<Window> window;
+
+    static {
+        SceneHelper.setSceneAccessor(new SceneHelper.SceneAccessor() {
+            @Override
+            public MutableObjectValue<Window> getMutableWindowProperty(Scene scene) {
+                return scene.windowInternal();
+            }
+        });
+    }
+
+    private MutableObjectValue<Window> windowInternal() {
+        if (window == null) {
+            window = new SimpleMutableObjectValue<>();
+        }
+        return window;
+    }
+
+    public ObservableObjectValue<Window> window() {
+        return windowInternal().toUnmodifiable();
+    }
+
+    public Window getWindow() {
+        return window == null ? null : window.get();
+    }
+
+    public void bindWindow(Window window) {
+        GUIPlatform.getInstance().getSceneHelper().bindWindow(this, window);
+    }
+
+    public void unbindWindow(Window window) {
+        GUIPlatform.getInstance().getSceneHelper().unbindWindow(this, window);
     }
 
     // ===== Event handlers =====

@@ -1,4 +1,4 @@
-package nullengine.client.gui.gl;
+package nullengine.client.gui.internal.impl.gl;
 
 import nullengine.client.gui.Node;
 import nullengine.client.gui.image.Image;
