@@ -88,7 +88,7 @@ public class GLRenderManager implements RenderManager {
 
     @Override
     public void attachPipeline(RenderPipeline pipeline) {
-        if (this.pipeline == null) {
+        if (this.pipeline != null) {
             throw new IllegalStateException("Cannot attach render pipeline twice");
         }
         this.pipeline = pipeline;
