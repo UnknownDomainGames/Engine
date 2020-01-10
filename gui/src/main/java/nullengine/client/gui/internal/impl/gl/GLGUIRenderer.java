@@ -48,6 +48,9 @@ public class GLGUIRenderer {
     }
 
     private void render0(Scene scene) {
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
         Parent root = scene.getRoot();
         if (!root.visible().get()) return; // Invisible root, don't need render it.
 
