@@ -1,6 +1,7 @@
 package nullengine.client.rendering.gl;
 
 import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.display.WindowHelper;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.font.WindowsFontHelper;
@@ -34,10 +35,10 @@ public class GLRenderManager implements RenderManager {
     private final SwapBuffersListener listener;
 
     private Thread renderingThread;
-    private GLFWWindow primaryWindow;
-
     private GLCapabilities capabilities;
     private GPUInfo gpuInfo;
+    private WindowHelper windowHelper;
+    private GLFWWindow primaryWindow;
     private GLResourceFactory resourceFactory;
 
     private ForwardPipeline forwardPipeline;
@@ -88,6 +89,11 @@ public class GLRenderManager implements RenderManager {
     }
 
     @Override
+    public WindowHelper getWindowHelper() {
+        return windowHelper;
+    }
+
+    @Override
     public boolean isAutoSwapBuffers() {
         return autoSwapBuffers;
     }
@@ -116,14 +122,15 @@ public class GLRenderManager implements RenderManager {
     @Override
     public void init() {
         this.renderingThread = Thread.currentThread();
-        initWindow();
+        initGLFW();
         initGL();
         initRenderPipeline();
         initFont();
     }
 
-    private void initWindow() {
+    private void initGLFW() {
         GLFWContext.initialize();
+        windowHelper = new GLWindowHelper();
         primaryWindow = new GLFWWindow();
         primaryWindow.init();
     }

@@ -1,7 +1,7 @@
 package nullengine.client.rendering.management;
 
 import nullengine.client.rendering.display.Window;
-import nullengine.client.rendering.scene.ViewPort;
+import nullengine.client.rendering.display.WindowHelper;
 import nullengine.client.rendering.util.GPUInfo;
 
 public interface RenderManager {
@@ -17,6 +17,8 @@ public interface RenderManager {
     void setPrimaryViewPort(ViewPort viewPort);
 
     GPUInfo getGPUInfo();
+
+    WindowHelper getWindowHelper();
 
     Window getPrimaryWindow();
 
