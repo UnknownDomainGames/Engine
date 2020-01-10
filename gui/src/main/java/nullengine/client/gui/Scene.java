@@ -18,6 +18,9 @@ import java.util.*;
 
 public class Scene implements EventTarget {
 
+    private final MutableIntValue viewportWidth = new SimpleMutableIntValue();
+    private final MutableIntValue viewportHeight = new SimpleMutableIntValue();
+
     private final MutableFloatValue width = new SimpleMutableFloatValue();
     private final MutableFloatValue height = new SimpleMutableFloatValue();
 
@@ -30,6 +33,22 @@ public class Scene implements EventTarget {
 
     public Scene(Parent root) {
         setRoot(root);
+    }
+
+    public ObservableIntValue viewportWidth() {
+        return viewportWidth.toUnmodifiable();
+    }
+
+    public int getViewportWidth() {
+        return viewportWidth.get();
+    }
+
+    public ObservableIntValue viewportHeight() {
+        return viewportHeight.toUnmodifiable();
+    }
+
+    public int getViewportHeight() {
+        return viewportHeight.get();
     }
 
     public ObservableFloatValue width() {
@@ -48,24 +67,26 @@ public class Scene implements EventTarget {
         return height.get();
     }
 
-    public void setSize(float width, float height) {
-        this.width.set(width);
-        this.height.set(height);
+    public void setViewport(int width, int height) {
+        setViewport(width, height, 1f, 1f);
+    }
+
+    public void setViewport(int width, int height, float scaleX, float scaleY) {
+        this.viewportWidth.set(width);
+        this.viewportHeight.set(height);
+        this.scaleX.set(scaleX);
+        this.scaleY.set(scaleY);
+        this.width.set(width / scaleX);
+        this.height.set(height / scaleY);
         updateRoot();
     }
 
-    public float getContentScaleX() {
+    public float getScaleX() {
         return scaleX.get();
     }
 
-    public float getContentScaleY() {
+    public float getScaleY() {
         return scaleY.get();
-    }
-
-    public void setContentScale(float x, float y) {
-        if (x == 0 || y == 0) return;
-        this.scaleX.set(x);
-        this.scaleY.set(y);
     }
 
     public ObservableObjectValue<Parent> root() {

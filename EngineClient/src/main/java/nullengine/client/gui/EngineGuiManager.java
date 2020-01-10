@@ -58,15 +58,13 @@ public class EngineGuiManager implements GuiManager {
     private final WindowSizeCallback windowSizeCallback = (window1, width, height) -> {
         float uiScale = Platform.getEngineClient().getSettings().getDisplaySettings().getUiScalePercentage();
         if (displayingScreen != null) {
-            displayingScreen.setSize(width / uiScale, height / uiScale);
-            displayingScreen.setContentScale(uiScale, uiScale);
+            displayingScreen.setViewport(width, height, uiScale, uiScale);
             displayingScreen.update();
         }
 
         float hudScale = Platform.getEngineClient().getSettings().getDisplaySettings().getHudScalePercentage();
         huds.values().forEach(scene -> {
-            scene.setSize(width / hudScale, height / hudScale);
-            scene.setContentScale(hudScale, hudScale);
+            scene.setViewport(width, height, hudScale, hudScale);
             scene.update();
         });
     };
@@ -102,8 +100,7 @@ public class EngineGuiManager implements GuiManager {
         if (scene == null) return;
 //        scene.addEventHandler(KeyEvent.KEY_PRESSED, escCloseHandler);
         var uiScale = Platform.getEngineClient().getSettings().getDisplaySettings().getUiScalePercentage();
-        displayingScreen.setSize(window.getWidth() / uiScale, window.getHeight() / uiScale);
-        displayingScreen.setContentScale(uiScale, uiScale);
+        displayingScreen.setViewport(window.getWidth(), window.getHeight(), uiScale, uiScale);
         displayingScreen.update();
         window.getCursor().showCursor();
     }
@@ -168,8 +165,7 @@ public class EngineGuiManager implements GuiManager {
             currentHud.getRoot().visible().set(true);
         } else {
             var scale = Platform.getEngineClient().getSettings().getDisplaySettings().getHudScalePercentage();
-            hud.setSize(window.getWidth() / scale, window.getHeight() / scale);
-            hud.setContentScale(scale, scale);
+            hud.setViewport(window.getWidth(), window.getHeight(), scale, scale);
             hud.update();
             huds.put(id, hud);
             displayingHuds.put(id, hud);

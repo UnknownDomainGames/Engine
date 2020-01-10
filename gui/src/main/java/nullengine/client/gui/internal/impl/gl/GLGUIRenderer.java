@@ -48,7 +48,6 @@ public class GLGUIRenderer {
     }
 
     private void render0(Scene scene) {
-        scene.update();
         Parent root = scene.getRoot();
         if (!root.visible().get()) return; // Invisible root, don't need render it.
 
@@ -61,10 +60,10 @@ public class GLGUIRenderer {
     }
 
     private void startRender(Scene scene) {
+        int viewportWidth = scene.getViewportWidth(), viewportHeight = scene.getViewportHeight();
         float width = scene.getWidth(), height = scene.getHeight();
-        float scaleX = scene.getContentScaleX(), scaleY = scene.getContentScaleY();
-        float viewportWidth = width * scaleX, viewportHeight = height * scaleY;
-        glViewport(0, 0, (int) viewportWidth, (int) viewportHeight);
+        float scaleX = scene.getScaleX(), scaleY = scene.getScaleY();
+        glViewport(0, 0, viewportWidth, viewportHeight);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -77,9 +76,9 @@ public class GLGUIRenderer {
 //        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
         shader.use();
-        shader.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, viewportWidth, viewportHeight, 0, 1000, -1000));
+        shader.setUniform("u_ProjMatrix", new Matrix4f().setOrtho2D(0, viewportWidth, viewportHeight, 0));
         shader.setUniform("u_ModelMatrix", new Matrix4f().scale(scaleX, scaleY, 1));
-        shader.setUniform("u_ViewPortSize", new Vector2f(viewportWidth, viewportHeight));
+        shader.setUniform("u_ViewportSize", new Vector2f(viewportWidth, viewportHeight));
         graphics.pushClipRect(0, 0, width, height);
 
         bindWhiteTexture();

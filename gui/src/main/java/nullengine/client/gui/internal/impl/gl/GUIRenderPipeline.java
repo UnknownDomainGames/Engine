@@ -27,8 +27,14 @@ public class GUIRenderPipeline implements RenderPipeline {
     @Override
     public void render(float tpf) {
         for (var entry : boundWindows.entrySet()) {
-            renderer.render(entry.getValue());
-            entry.getKey().swapBuffers();
+            Window window = entry.getKey();
+            Scene scene = entry.getValue();
+            if (window.isResized()) {
+                scene.setViewport(window.getWidth(), window.getHeight(), window.getContentScaleX(), window.getContentScaleY());
+                scene.update();
+            }
+            renderer.render(scene);
+            window.swapBuffers();
         }
     }
 }
