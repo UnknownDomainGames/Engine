@@ -3,7 +3,6 @@ package nullengine.client.rendering;
 import nullengine.client.rendering.gl.GLRenderManager;
 import nullengine.client.rendering.lwjgl.STBImageHelper;
 import nullengine.client.rendering.management.RenderManager;
-import nullengine.client.rendering.management.SwapBuffersListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,7 @@ public final class RenderEngine {
         RenderEngine.settings = settings;
         // TODO: delegate render context creation
         STBImageHelper.init();
-        manager = new GLRenderManager(settings.swapBuffersListener);
+        manager = new GLRenderManager();
         manager.init();
     }
 
@@ -46,15 +45,9 @@ public final class RenderEngine {
 
     public static class Settings {
         private boolean debug = Boolean.parseBoolean(System.getProperty("rendering.debug", "false"));
-        private SwapBuffersListener swapBuffersListener;
 
         public Settings debug(boolean debug) {
             this.debug = debug;
-            return this;
-        }
-
-        public Settings swapBuffersListener(SwapBuffersListener swapBuffersListener) {
-            this.swapBuffersListener = swapBuffersListener;
             return this;
         }
     }

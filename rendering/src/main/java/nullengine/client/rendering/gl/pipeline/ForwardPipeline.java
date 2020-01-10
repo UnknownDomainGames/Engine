@@ -13,7 +13,7 @@ import nullengine.client.rendering.scene.queue.StandardRenderTypes;
 import nullengine.util.Color;
 import org.lwjgl.opengl.GL11;
 
-public class ForwardPipeline implements RenderPipeline {
+public class ForwardPipeline {
 
     private final ObservableObjectValue<ShaderProgram> shader;
 //    private final GLFrameBuffer frameBuffer;
@@ -31,7 +31,6 @@ public class ForwardPipeline implements RenderPipeline {
 //                .setShininess(32f);
     }
 
-    @Override
     public void render(RenderManager manager, ViewPort viewPort, float partial) {
         ShaderProgram shader = this.shader.get();
         shader.use();

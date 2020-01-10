@@ -10,21 +10,19 @@ public interface RenderManager {
 
     boolean isRenderingThread();
 
-    ResourceFactory getResourceFactory();
-
-    ViewPort getPrimaryViewPort();
-
-    void setPrimaryViewPort(ViewPort viewPort);
-
     GPUInfo getGPUInfo();
 
     WindowHelper getWindowHelper();
 
     Window getPrimaryWindow();
 
+    ResourceFactory getResourceFactory();
+
     boolean isAutoSwapBuffers();
 
     void setAutoSwapBuffers(boolean autoSwapBuffers);
+
+    void attachPipeline(RenderPipeline pipeline);
 
     void render(float tpf);
 

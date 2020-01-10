@@ -28,19 +28,20 @@ public abstract class RenderableApplication {
             } catch (ClassNotFoundException ignored) {
             }
         }
+        throw new RuntimeException("Cannot launch application, application class not found.");
     }
 
     public static void launch(Class<? extends RenderableApplication> clazz, String[] args) {
-        RenderableApplication application;
         try {
-            application = clazz.getConstructor().newInstance();
+            RenderableApplication application = clazz.getConstructor().newInstance();
+            application.doInitialize();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot launch renderable application " + clazz, e);
+            throw new RuntimeException("Cannot launch application " + clazz, e);
         }
-        application.doInitialize();
+
     }
 
-    protected void onInitialized() {
+    protected void onInitialized() throws Exception {
     }
 
     protected void onStopping() {
@@ -52,21 +53,18 @@ public abstract class RenderableApplication {
     protected void onPreRender() {
     }
 
-    protected void onPreSwapBuffers() {
-    }
-
     protected void onPostRender() {
     }
 
-    private void doInitialize() {
-        RenderEngine.start(new RenderEngine.Settings().swapBuffersListener((manager, partial) -> onPreSwapBuffers()));
+    private void doInitialize() throws Exception {
+        RenderEngine.start(new RenderEngine.Settings());
         manager = RenderEngine.getManager();
         mainViewPort = new PerspectiveViewPort();
         mainViewPort.setClearMask(true, true, true);
         mainViewPort.bindWindow(manager.getPrimaryWindow());
         mainScene = new Scene3D();
         mainViewPort.setScene(mainScene);
-        manager.setPrimaryViewPort(mainViewPort);
+//        manager.setPrimaryViewPort(mainViewPort);
         onInitialized();
         ticker.run();
     }

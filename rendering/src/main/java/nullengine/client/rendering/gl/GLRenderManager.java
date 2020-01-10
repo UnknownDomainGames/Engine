@@ -5,16 +5,14 @@ import nullengine.client.rendering.display.WindowHelper;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.font.WindowsFontHelper;
-import nullengine.client.rendering.gl.pipeline.ForwardPipeline;
 import nullengine.client.rendering.gl.util.DebugMessageCallback;
 import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.gl.util.NVXGPUInfo;
 import nullengine.client.rendering.glfw.GLFWContext;
 import nullengine.client.rendering.glfw.GLFWWindow;
 import nullengine.client.rendering.management.RenderManager;
+import nullengine.client.rendering.management.RenderPipeline;
 import nullengine.client.rendering.management.ResourceFactory;
-import nullengine.client.rendering.management.SwapBuffersListener;
-import nullengine.client.rendering.scene.ViewPort;
 import nullengine.client.rendering.util.GPUInfo;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.ARBDebugOutput;
@@ -32,8 +30,6 @@ public class GLRenderManager implements RenderManager {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("Rendering");
 
-    private final SwapBuffersListener listener;
-
     private Thread renderingThread;
     private GLCapabilities capabilities;
     private GPUInfo gpuInfo;
@@ -41,14 +37,11 @@ public class GLRenderManager implements RenderManager {
     private GLFWWindow primaryWindow;
     private GLResourceFactory resourceFactory;
 
-    private ForwardPipeline forwardPipeline;
+    private RenderPipeline pipeline;
 
     private boolean autoSwapBuffers = true;
 
-    private ViewPort primaryViewPort;
-
-    public GLRenderManager(SwapBuffersListener listener) {
-        this.listener = listener;
+    public GLRenderManager() {
     }
 
     @Nonnull
@@ -74,16 +67,6 @@ public class GLRenderManager implements RenderManager {
     }
 
     @Override
-    public ViewPort getPrimaryViewPort() {
-        return primaryViewPort;
-    }
-
-    @Override
-    public void setPrimaryViewPort(ViewPort viewPort) {
-        this.primaryViewPort = viewPort;
-    }
-
-    @Override
     public GPUInfo getGPUInfo() {
         return gpuInfo;
     }
@@ -104,19 +87,19 @@ public class GLRenderManager implements RenderManager {
     }
 
     @Override
-    public void render(float tpf) {
-        GLCleaner.clean();
-        renderViewPort(primaryViewPort, tpf);
-        listener.onPreSwapBuffers(this, tpf);
-        if (autoSwapBuffers) {
-            primaryWindow.swapBuffers();
+    public void attachPipeline(RenderPipeline pipeline) {
+        if (this.pipeline == null) {
+            throw new IllegalStateException("Cannot attach render pipeline twice");
         }
-        GLFW.glfwPollEvents();
+        this.pipeline = pipeline;
+        pipeline.init(this);
     }
 
-    private void renderViewPort(ViewPort viewPort, float partial) {
-        if (viewPort == null) return;
-        forwardPipeline.render(this, viewPort, partial);
+    @Override
+    public void render(float tpf) {
+        GLCleaner.clean();
+        pipeline.render(tpf);
+        GLFW.glfwPollEvents();
     }
 
     @Override
@@ -124,7 +107,6 @@ public class GLRenderManager implements RenderManager {
         this.renderingThread = Thread.currentThread();
         initGLFW();
         initGL();
-        initRenderPipeline();
         initFont();
     }
 
@@ -177,10 +159,6 @@ public class GLRenderManager implements RenderManager {
         LOGGER.info("\tGL_SHADING_LANGUAGE_VERSION: {}", getShadingLanguageVersion());
         LOGGER.info("\tGPU_TOTAL_MEMORY: {} MB", (gpuInfo.getTotalMemory()) >> 10);
         LOGGER.info("------------------------------");
-    }
-
-    private void initRenderPipeline() {
-        forwardPipeline = new ForwardPipeline();
     }
 
     private void initFont() {

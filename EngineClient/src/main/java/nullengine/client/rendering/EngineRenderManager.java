@@ -144,8 +144,7 @@ public class EngineRenderManager implements RenderManager {
     public void init(Thread renderThread) {
         this.renderThread = renderThread;
 
-        RenderEngine.start(new RenderEngine.Settings()
-                .swapBuffersListener((manager1, partial) -> guiRenderHelper.render()));
+        RenderEngine.start(new RenderEngine.Settings());
 
         nullengine.client.rendering.management.RenderManager manager = RenderEngine.getManager();
         window = manager.getPrimaryWindow();
