@@ -3,7 +3,7 @@ package nullengine.client.gui.application;
 import nullengine.client.gui.internal.impl.GUIPlatformImpl;
 import nullengine.client.rendering.display.Window;
 
-public abstract class UIApplication {
+public abstract class GUIApplication {
 
     public static void launch(String[] args) {
         StackTraceElement[] stackElements = Thread.currentThread().getStackTrace();
@@ -11,8 +11,8 @@ public abstract class UIApplication {
             StackTraceElement element = stackElements[i];
             try {
                 Class<?> clazz = Class.forName(element.getClassName());
-                if (UIApplication.class.isAssignableFrom(clazz)) {
-                    launch((Class<? extends UIApplication>) clazz, args);
+                if (GUIApplication.class.isAssignableFrom(clazz)) {
+                    launch((Class<? extends GUIApplication>) clazz, args);
                     return;
                 }
             } catch (ClassNotFoundException ignored) {
@@ -21,7 +21,7 @@ public abstract class UIApplication {
         throw new RuntimeException("Cannot launch application, application class not found.");
     }
 
-    public static void launch(Class<? extends UIApplication> clazz, String[] args) {
+    public static void launch(Class<? extends GUIApplication> clazz, String[] args) {
         try {
             GUIPlatformImpl.launch(clazz, args);
         } catch (Exception e) {
