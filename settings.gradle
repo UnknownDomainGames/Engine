@@ -1,4 +1,4 @@
-rootProject.name = 'NullEngine'
+rootProject.name = 'PanguEngine'
 
 include 'common'
 include 'rendering'
