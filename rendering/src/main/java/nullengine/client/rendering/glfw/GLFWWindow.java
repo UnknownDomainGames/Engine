@@ -40,6 +40,7 @@ public class GLFWWindow implements Window {
     private DisplayMode displayMode = DisplayMode.WINDOWED;
 
     // Window attributes
+    private boolean focused = false;
     private boolean decorated = true;
     private boolean resizable = true;
     private boolean floating = false;
@@ -57,6 +58,8 @@ public class GLFWWindow implements Window {
     private final List<CharModsCallback> charModsCallbacks = new LinkedList<>();
     private final List<WindowCloseCallback> windowCloseCallbacks = new LinkedList<>();
     private final List<WindowFocusCallback> windowFocusCallbacks = new LinkedList<>();
+    private final List<WindowIconifyCallback> windowIconifyCallbacks = new LinkedList<>();
+    private final List<WindowMaximizeCallback> windowMaximizeCallbacks = new LinkedList<>();
     private final List<CursorEnterCallback> cursorEnterCallbacks = new LinkedList<>();
     private final List<WindowSizeCallback> windowSizeCallbacks = new LinkedList<>();
     private final List<WindowPosCallback> windowPosCallbacks = new LinkedList<>();
@@ -177,126 +180,6 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public void addKeyCallback(KeyCallback callback) {
-        keyCallbacks.add(requireNonNull(callback));
-    }
-
-    @Override
-    public void removeKeyCallback(KeyCallback callback) {
-        keyCallbacks.remove(callback);
-    }
-
-    @Override
-    public void addMouseCallback(MouseCallback callback) {
-        mouseCallbacks.add(requireNonNull(callback));
-    }
-
-    @Override
-    public void removeMouseCallback(MouseCallback callback) {
-        mouseCallbacks.remove(callback);
-    }
-
-    @Override
-    public void addCursorCallback(CursorCallback callback) {
-        cursorCallbacks.add(requireNonNull(callback));
-    }
-
-    @Override
-    public void removeCursorCallback(CursorCallback callback) {
-        cursorCallbacks.remove(callback);
-    }
-
-    @Override
-    public void addScrollCallback(ScrollCallback callback) {
-        scrollCallbacks.add(requireNonNull(callback));
-    }
-
-    @Override
-    public void removeScrollCallback(ScrollCallback callback) {
-        scrollCallbacks.remove(callback);
-    }
-
-    @Override
-    public void addCharCallback(CharCallback callback) {
-        charCallbacks.add(requireNonNull(callback));
-    }
-
-    @Override
-    public void removeCharCallback(CharCallback callback) {
-        charCallbacks.remove(callback);
-    }
-
-    @Override
-    public void addCharModsCallback(CharModsCallback callback) {
-        charModsCallbacks.add(callback);
-    }
-
-    @Override
-    public void removeCharModsCallback(CharModsCallback callback) {
-        charModsCallbacks.remove(callback);
-    }
-
-    @Override
-    public void addWindowCloseCallback(WindowCloseCallback callback) {
-        windowCloseCallbacks.add(callback);
-    }
-
-    @Override
-    public void removeWindowCloseCallback(WindowCloseCallback callback) {
-        windowCloseCallbacks.remove(callback);
-    }
-
-    @Override
-    public void addWindowFocusCallback(WindowFocusCallback callback) {
-        windowFocusCallbacks.add(callback);
-    }
-
-    @Override
-    public void removeWindowFocusCallback(WindowFocusCallback callback) {
-        windowFocusCallbacks.remove(callback);
-    }
-
-    @Override
-    public void addCursorEnterCallback(CursorEnterCallback callback) {
-        cursorEnterCallbacks.add(callback);
-    }
-
-    @Override
-    public void removeCursorEnterCallback(CursorEnterCallback callback) {
-        cursorEnterCallbacks.remove(callback);
-    }
-
-    @Override
-    public void addWindowSizeCallback(WindowSizeCallback callback) {
-        windowSizeCallbacks.add(callback);
-    }
-
-    @Override
-    public void removeWindowSizeCallback(WindowSizeCallback callback) {
-        windowSizeCallbacks.remove(callback);
-    }
-
-    @Override
-    public void addWindowPosCallback(WindowPosCallback callback) {
-        windowPosCallbacks.add(callback);
-    }
-
-    @Override
-    public void removeWindowPosCallback(WindowPosCallback callback) {
-        windowPosCallbacks.remove(callback);
-    }
-
-    @Override
-    public void addDropCallback(DropCallback callback) {
-        dropCallbacks.add(callback);
-    }
-
-    @Override
-    public void removeDropCallback(DropCallback callback) {
-        dropCallbacks.remove(callback);
-    }
-
-    @Override
     public void swapBuffers() {
         glfwSwapBuffers(pointer);
 
@@ -344,7 +227,115 @@ public class GLFWWindow implements Window {
         return showing;
     }
 
+    @Override
+    public void dispose() {
+        disposeInternal();
+        GLFWContext.onDisposedWindow(this);
+    }
+
+    void disposeInternal() {
+        if (pointer == NULL) return;
+
+        hide();
+        glfwDestroyWindow(pointer);
+        pointer = NULL;
+    }
+
+    @Override
+    public DisplayMode getDisplayMode() {
+        return displayMode;
+    }
+
+    private int lastPosX, lastPosY, lastWidth, lastHeight;
+
+    @Override
+    public void setDisplayMode(DisplayMode displayMode, int newWidth, int newHeight, int frameRate) {
+        if (this.displayMode == displayMode && newWidth == -1 && newHeight == -1) return;
+        var nw = newWidth != -1 ? newWidth : monitor.getVideoMode().getWidth();
+        var nh = newHeight != -1 ? newHeight : monitor.getVideoMode().getHeight();
+        switch (displayMode) {
+            case FULLSCREEN:
+                if (this.displayMode == DisplayMode.WINDOWED) {
+                    lastPosX = x;
+                    lastPosY = y;
+                    lastWidth = width;
+                    lastHeight = height;
+                }
+                glfwSetWindowMonitor(pointer, monitor.getPointer(), 0, 0, nw, nh, frameRate > 0 ? frameRate : monitor.getVideoMode().getRefreshRate());
+                break;
+            case WINDOWED_FULLSCREEN:
+                if (this.displayMode == DisplayMode.WINDOWED) {
+                    lastPosX = x;
+                    lastPosY = y;
+                    lastWidth = width;
+                    lastHeight = height;
+                }
+                setDecorated(false);
+                glfwSetWindowMonitor(pointer, NULL, 0, 0, monitor.getVideoMode().getWidth(), monitor.getVideoMode().getHeight(), monitor.getVideoMode().getRefreshRate());
+                break;
+            case WINDOWED:
+                setDecorated(true);
+                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, newWidth != -1 ? newWidth : lastWidth, newHeight != -1 ? newHeight : lastHeight, monitor.getVideoMode().getRefreshRate());
+        }
+        this.displayMode = displayMode;
+    }
+
+    public long getPointer() {
+        return pointer;
+    }
+
+    public void init() {
+        setMonitor(GLFWContext.getPrimaryMonitor());
+        initWindowHint();
+        pointer = glfwCreateWindow(width, height, title, NULL, NULL);
+        checkCreated();
+        width *= getContentScaleX();
+        height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
+        initCallbacks();
+        setWindowPosCenter();
+        glfwMakeContextCurrent(pointer);
+        enableVSync();
+        cursor = new GLFWCursor(pointer);
+        resize();
+        GLFWContext.onInitializedWindow(this);
+    }
+
+    private void checkCreated() {
+        if (pointer == NULL) {
+            throw new RuntimeException("Failed to create the GLFW window");
+        }
+    }
+
+    private void initWindowHint() {
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_SAMPLES, 4);
+        glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+        if (Boolean.parseBoolean(System.getProperty("rendering.debug", "false"))) {
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+        }
+        if (SystemUtils.IS_OS_MAC) {
+            glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
+        }
+    }
+
+    private void setWindowPosCenter() {
+        setPos((monitor.getVideoMode().getWidth() - width) / 2, (monitor.getVideoMode().getHeight() - height) / 2);
+    }
+
+    private void enableVSync() {
+        glfwSwapInterval(1);
+    }
+
     // ================= Window Attributes Start =================
+    @Override
+    public boolean isFocused() {
+        return focused;
+    }
+
+    @Override
+    public void focus() {
+        glfwFocusWindow(pointer);
+    }
 
     @Override
     public boolean isDecorated() {
@@ -429,83 +420,145 @@ public class GLFWWindow implements Window {
 
     // ================= Window Attributes End =================
 
+    // ================= Window Callbacks Start =================
     @Override
-    public void dispose() {
-        disposeInternal();
-        GLFWContext.onDisposedWindow(this);
-    }
-
-    void disposeInternal() {
-        if (pointer == NULL) return;
-
-        hide();
-        glfwDestroyWindow(pointer);
-        pointer = NULL;
-    }
-
-    public long getPointer() {
-        return pointer;
-    }
-
-    public void init() {
-        setMonitor(GLFWContext.getPrimaryMonitor());
-        initWindowHint();
-        pointer = glfwCreateWindow(width, height, title, NULL, NULL);
-        if (!checkCreated()) {
-            throw new RuntimeException("Failed to create the GLFW window");
-        }
-        width *= getContentScaleX();
-        height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
-        initCallbacks();
-        setWindowPosCenter();
-        glfwMakeContextCurrent(pointer);
-        enableVSync();
-        cursor = new GLFWCursor(pointer);
-        resize();
-        GLFWContext.onInitializedWindow(this);
+    public void addKeyCallback(KeyCallback callback) {
+        keyCallbacks.add(requireNonNull(callback));
     }
 
     @Override
-    public DisplayMode getDisplayMode() {
-        return displayMode;
+    public void removeKeyCallback(KeyCallback callback) {
+        keyCallbacks.remove(callback);
     }
-
-    private int lastPosX, lastPosY, lastWidth, lastHeight;
 
     @Override
-    public void setDisplayMode(DisplayMode displayMode, int newWidth, int newHeight, int frameRate) {
-        if (this.displayMode == displayMode && newWidth == -1 && newHeight == -1) return;
-        var nw = newWidth != -1 ? newWidth : monitor.getVideoMode().getWidth();
-        var nh = newHeight != -1 ? newHeight : monitor.getVideoMode().getHeight();
-        switch (displayMode) {
-            case FULLSCREEN:
-                if (this.displayMode == DisplayMode.WINDOWED) {
-                    lastPosX = x;
-                    lastPosY = y;
-                    lastWidth = width;
-                    lastHeight = height;
-                }
-                glfwSetWindowMonitor(pointer, monitor.getPointer(), 0, 0, nw, nh, frameRate > 0 ? frameRate : monitor.getVideoMode().getRefreshRate());
-                break;
-            case WINDOWED_FULLSCREEN:
-                if (this.displayMode == DisplayMode.WINDOWED) {
-                    lastPosX = x;
-                    lastPosY = y;
-                    lastWidth = width;
-                    lastHeight = height;
-                }
-                setDecorated(false);
-                glfwSetWindowMonitor(pointer, NULL, 0, 0, monitor.getVideoMode().getWidth(), monitor.getVideoMode().getHeight(), monitor.getVideoMode().getRefreshRate());
-                break;
-            case WINDOWED:
-                setDecorated(true);
-                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, newWidth != -1 ? newWidth : lastWidth, newHeight != -1 ? newHeight : lastHeight, monitor.getVideoMode().getRefreshRate());
-        }
-        this.displayMode = displayMode;
+    public void addMouseCallback(MouseCallback callback) {
+        mouseCallbacks.add(requireNonNull(callback));
     }
 
-    private boolean checkCreated() {
-        return pointer != NULL;
+    @Override
+    public void removeMouseCallback(MouseCallback callback) {
+        mouseCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addCursorCallback(CursorCallback callback) {
+        cursorCallbacks.add(requireNonNull(callback));
+    }
+
+    @Override
+    public void removeCursorCallback(CursorCallback callback) {
+        cursorCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addScrollCallback(ScrollCallback callback) {
+        scrollCallbacks.add(requireNonNull(callback));
+    }
+
+    @Override
+    public void removeScrollCallback(ScrollCallback callback) {
+        scrollCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addCharCallback(CharCallback callback) {
+        charCallbacks.add(requireNonNull(callback));
+    }
+
+    @Override
+    public void removeCharCallback(CharCallback callback) {
+        charCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addCharModsCallback(CharModsCallback callback) {
+        charModsCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeCharModsCallback(CharModsCallback callback) {
+        charModsCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addWindowCloseCallback(WindowCloseCallback callback) {
+        windowCloseCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeWindowCloseCallback(WindowCloseCallback callback) {
+        windowCloseCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addWindowFocusCallback(WindowFocusCallback callback) {
+        windowFocusCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeWindowFocusCallback(WindowFocusCallback callback) {
+        windowFocusCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addWindowIconifyCallback(WindowIconifyCallback callback) {
+        windowIconifyCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeWindowIconifyCallback(WindowIconifyCallback callback) {
+        windowIconifyCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addWindowMaximizeCallback(WindowMaximizeCallback callback) {
+        windowMaximizeCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeWindowMaximizeCallback(WindowMaximizeCallback callback) {
+        windowMaximizeCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addCursorEnterCallback(CursorEnterCallback callback) {
+        cursorEnterCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeCursorEnterCallback(CursorEnterCallback callback) {
+        cursorEnterCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addWindowSizeCallback(WindowSizeCallback callback) {
+        windowSizeCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeWindowSizeCallback(WindowSizeCallback callback) {
+        windowSizeCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addWindowPosCallback(WindowPosCallback callback) {
+        windowPosCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeWindowPosCallback(WindowPosCallback callback) {
+        windowPosCallbacks.remove(callback);
+    }
+
+    @Override
+    public void addDropCallback(DropCallback callback) {
+        dropCallbacks.add(callback);
+    }
+
+    @Override
+    public void removeDropCallback(DropCallback callback) {
+        dropCallbacks.remove(callback);
     }
 
     private void initCallbacks() {
@@ -525,8 +578,10 @@ public class GLFWWindow implements Window {
             windowCloseCallbacks.forEach(callback -> callback.invoke(this));
             dispose();
         });
-        glfwSetWindowFocusCallback(pointer, (window, focused) ->
-                windowFocusCallbacks.forEach(callback -> callback.invoke(this, focused)));
+        glfwSetWindowFocusCallback(pointer, (window, focused) -> {
+            this.focused = focused;
+            windowFocusCallbacks.forEach(callback -> callback.invoke(this, focused));
+        });
         glfwSetCursorEnterCallback(pointer, (window, entered) ->
                 cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
         glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> setPotInternal(xpos, ypos));
@@ -540,33 +595,18 @@ public class GLFWWindow implements Window {
             }
             dropCallbacks.forEach(callback -> callback.invoke(this, files));
         });
-        glfwSetWindowIconifyCallback(pointer, (window, iconified) -> this.iconified = iconified);
-        glfwSetWindowMaximizeCallback(pointer, (window, maximized) -> this.maximized = maximized);
+        glfwSetWindowIconifyCallback(pointer, (window, iconified) -> {
+            this.iconified = iconified;
+            windowIconifyCallbacks.forEach(callback -> callback.invoke(this, iconified));
+        });
+        glfwSetWindowMaximizeCallback(pointer, (window, maximized) -> {
+            this.maximized = maximized;
+            windowMaximizeCallbacks.forEach(callback -> callback.invoke(this, maximized));
+        });
 
         // TODO: callbacks
-//        glfwSetWindowIconifyCallback()
-//        glfwSetWindowMaximizeCallback()
 //        glfwSetWindowRefreshCallback()
 //        glfwSetWindowContentScaleCallback()
     }
-
-    private void initWindowHint() {
-        glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_SAMPLES, 4);
-        glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
-        if (Boolean.parseBoolean(System.getProperty("rendering.debug", "false"))) {
-            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-        }
-        if (SystemUtils.IS_OS_MAC) {
-            glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
-        }
-    }
-
-    private void setWindowPosCenter() {
-        setPos((monitor.getVideoMode().getWidth() - width) / 2, (monitor.getVideoMode().getHeight() - height) / 2);
-    }
-
-    private void enableVSync() {
-        glfwSwapInterval(1);
-    }
+    // ================= Window Callbacks End =================
 }

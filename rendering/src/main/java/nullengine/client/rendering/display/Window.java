@@ -52,6 +52,11 @@ public interface Window extends WindowCallbacks {
 
     boolean isShowing();
 
+    // ================= Window Attributes Start =================
+    boolean isFocused();
+
+    void focus();
+
     boolean isDecorated();
 
     void setDecorated(boolean decorated);

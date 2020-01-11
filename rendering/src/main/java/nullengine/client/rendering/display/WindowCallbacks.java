@@ -35,6 +35,14 @@ public interface WindowCallbacks {
 
     void removeWindowFocusCallback(WindowFocusCallback callback);
 
+    void addWindowIconifyCallback(WindowIconifyCallback callback);
+
+    void removeWindowIconifyCallback(WindowIconifyCallback callback);
+
+    void addWindowMaximizeCallback(WindowMaximizeCallback callback);
+
+    void removeWindowMaximizeCallback(WindowMaximizeCallback callback);
+
     void addCursorEnterCallback(CursorEnterCallback callback);
 
     void removeCursorEnterCallback(CursorEnterCallback callback);
