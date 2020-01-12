@@ -3,7 +3,7 @@ package nullengine.client.gui.internal.impl.gl;
 import nullengine.client.gui.image.Image;
 import nullengine.client.rendering.gl.texture.FilterMode;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
-import nullengine.client.rendering.image.LoadedImage;
+import nullengine.client.rendering.image.ReadOnlyImage;
 import nullengine.client.rendering.texture.Texture2D;
 
 import java.util.Map;
@@ -17,7 +17,7 @@ public class GLResourceFactory {
         Texture2D texture = textures.get(image);
         if (texture != null) return texture;
 
-        LoadedImage loadedImage = image.getLoadedImage();
+        ReadOnlyImage loadedImage = image.getLoadedImage();
         if (loadedImage == null) return null;
 
         GLTexture2D.Builder builder = GLTexture2D.builder();

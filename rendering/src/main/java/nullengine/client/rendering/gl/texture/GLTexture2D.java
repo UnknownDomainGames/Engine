@@ -3,7 +3,7 @@ package nullengine.client.rendering.gl.texture;
 import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.image.BufferedImage;
 import nullengine.client.rendering.image.ImageHelper;
-import nullengine.client.rendering.image.LoadedImage;
+import nullengine.client.rendering.image.ReadOnlyImage;
 import nullengine.client.rendering.texture.Texture2D;
 import org.lwjgl.opengl.GL11;
 
@@ -34,7 +34,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
     private boolean mipmap;
 
     public static GLTexture2D of(ByteBuffer fileBuffer) throws IOException {
-        LoadedImage image = ImageHelper.instance().loadImage(fileBuffer);
+        ReadOnlyImage image = ImageHelper.instance().loadImage(fileBuffer);
         return of(image.getPixelBuffer(), image.getWidth(), image.getHeight());
     }
 

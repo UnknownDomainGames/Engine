@@ -1,35 +1,66 @@
 package nullengine.client.rendering.lwjgl;
 
+import nullengine.client.rendering.image.BufferedImage;
 import nullengine.client.rendering.image.ImageHelper;
-import nullengine.client.rendering.image.LoadedImage;
+import nullengine.client.rendering.image.ReadOnlyImage;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-public class STBImageHelper implements ImageHelper {
+public final class STBImageHelper implements ImageHelper {
 
     public static void init() {
         Internal.setInstance(new STBImageHelper());
     }
 
     @Override
-    public LoadedImage loadImage(String url) throws IOException {
-        return loadImage(new URL(url));
+    public ReadOnlyImage loadImage(File file) throws IOException {
+        try {
+            return loadImage(new FileInputStream(file));
+        } catch (IOException e) {
+            throw new IOException("Cannot load image from file: " + file, e);
+        }
     }
 
     @Override
-    public LoadedImage loadImage(URL url) throws IOException {
-        return loadImage(url.openStream());
+    public ReadOnlyImage loadImage(Path path) throws IOException {
+        try {
+            return loadImage(Files.newInputStream(path));
+        } catch (IOException e) {
+            throw new IOException("Cannot load image from file: " + path, e);
+        }
     }
 
     @Override
-    public LoadedImage loadImage(InputStream input) throws IOException {
+    public ReadOnlyImage loadImage(String url) throws IOException {
+        try {
+            return loadImage(new URL(url).openStream());
+        } catch (IOException e) {
+            throw new IOException("Cannot load image from url: " + url, e);
+        }
+    }
+
+    @Override
+    public ReadOnlyImage loadImage(URL url) throws IOException {
+        try {
+            return loadImage(url.openStream());
+        } catch (IOException e) {
+            throw new IOException("Cannot load image from url: " + url, e);
+        }
+    }
+
+    @Override
+    public ReadOnlyImage loadImage(InputStream input) throws IOException {
         try (input) {
             byte[] bytes = IOUtils.toByteArray(input);
             ByteBuffer buffer = ByteBuffer.allocateDirect(bytes.length);
@@ -39,30 +70,88 @@ public class STBImageHelper implements ImageHelper {
     }
 
     @Override
-    public LoadedImage loadImage(ByteBuffer bytes) {
-        ByteBuffer directBytes;
-        if (!bytes.isDirect()) {
-            directBytes = ByteBuffer.allocateDirect(bytes.capacity());
-            directBytes.put(bytes).flip();
-        } else {
-            directBytes = bytes;
-        }
+    public ReadOnlyImage loadImage(ByteBuffer bytes) throws IOException {
+        ByteBuffer directBytes = bytes.isDirect() ? bytes : ByteBuffer.allocateDirect(bytes.capacity()).put(bytes).flip();
         try (var stack = MemoryStack.stackPush()) {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer c = stack.mallocInt(1);
             ByteBuffer pixelBuffer = STBImage.stbi_load_from_memory(directBytes, w, h, c, 4);
-            return new STBLoadedImage(pixelBuffer, w.get(0), h.get(0));
+            if (pixelBuffer == null) {
+                throw new IOException("Failed to load image");
+            }
+            return new ReadOnlyImageImpl(pixelBuffer.asReadOnlyBuffer(), w.get(0), h.get(0));
         }
     }
 
-    private static class STBLoadedImage implements LoadedImage {
+    @Override
+    public BufferedImage loadWritableImage(File file) throws IOException {
+        try {
+            return loadWritableImage(new FileInputStream(file));
+        } catch (IOException e) {
+            throw new IOException("Cannot load image from file: " + file, e);
+        }
+    }
+
+    @Override
+    public BufferedImage loadWritableImage(Path path) throws IOException {
+        try {
+            return loadWritableImage(Files.newInputStream(path));
+        } catch (IOException e) {
+            throw new IOException("Cannot load image from file: " + path, e);
+        }
+    }
+
+    @Override
+    public BufferedImage loadWritableImage(String url) throws IOException {
+        try {
+            return loadWritableImage(new URL(url).openStream());
+        } catch (IOException e) {
+            throw new IOException("Cannot load image from url: " + url, e);
+        }
+    }
+
+    @Override
+    public BufferedImage loadWritableImage(URL url) throws IOException {
+        try {
+            return loadWritableImage(url.openStream());
+        } catch (IOException e) {
+            throw new IOException("Cannot load image from url: " + url, e);
+        }
+    }
+
+    @Override
+    public BufferedImage loadWritableImage(InputStream input) throws IOException {
+        try (input) {
+            byte[] bytes = IOUtils.toByteArray(input);
+            ByteBuffer buffer = ByteBuffer.allocateDirect(bytes.length);
+            buffer.put(bytes).flip();
+            return loadWritableImage(buffer);
+        }
+    }
+
+    @Override
+    public BufferedImage loadWritableImage(ByteBuffer bytes) throws IOException {
+        ByteBuffer directBytes = bytes.isDirect() ? bytes : ByteBuffer.allocateDirect(bytes.capacity()).put(bytes).flip();
+        try (var stack = MemoryStack.stackPush()) {
+            IntBuffer w = stack.mallocInt(1);
+            IntBuffer h = stack.mallocInt(1);
+            IntBuffer c = stack.mallocInt(1);
+            ByteBuffer pixelBuffer = STBImage.stbi_load_from_memory(directBytes, w, h, c, 4);
+            if (pixelBuffer == null) {
+                throw new IOException("Failed to load image");
+            }
+            return new BufferedImage(pixelBuffer, w.get(0), h.get(0));
+        }
+    }
+
+    private static final class ReadOnlyImageImpl implements ReadOnlyImage {
 
         private final ByteBuffer pixelBuffer;
         private final int width;
         private final int height;
 
-        public STBLoadedImage(ByteBuffer pixelBuffer, int width, int height) {
+        public ReadOnlyImageImpl(ByteBuffer pixelBuffer, int width, int height) {
             this.pixelBuffer = pixelBuffer;
             this.width = width;
             this.height = height;

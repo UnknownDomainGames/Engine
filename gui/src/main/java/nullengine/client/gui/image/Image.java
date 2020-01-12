@@ -2,7 +2,7 @@ package nullengine.client.gui.image;
 
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.rendering.image.ImageHelper;
-import nullengine.client.rendering.image.LoadedImage;
+import nullengine.client.rendering.image.ReadOnlyImage;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -20,7 +20,7 @@ public final class Image {
     private MutableBooleanValue loaded;
     private MutableBooleanValue error;
     private MutableObjectValue<Exception> exception;
-    private LoadedImage loadedImage;
+    private ReadOnlyImage loadedImage;
 
     public Image(String url) {
         this(url, false, false);
@@ -53,7 +53,7 @@ public final class Image {
         }
     }
 
-    private void finishImage(LoadedImage image) {
+    private void finishImage(ReadOnlyImage image) {
         loadedImage = image;
         widthImpl().set(image.getWidth());
         heightImpl().set(image.getHeight());
@@ -150,7 +150,7 @@ public final class Image {
         return exception == null ? null : exception.get();
     }
 
-    public LoadedImage getLoadedImage() {
+    public ReadOnlyImage getLoadedImage() {
         return loadedImage;
     }
 }
