@@ -35,9 +35,9 @@ public class BufferedImage {
         this(ByteBuffer.allocateDirect(Integer.BYTES * width * height), width, height);
     }
 
-    public BufferedImage(int width, int height, int initColor) {
+    public BufferedImage(int width, int height, int rgba) {
         this(width, height);
-        fill(initColor);
+        fill(rgba);
     }
 
     public BufferedImage(ByteBuffer pixelBuffer, int width, int height) {
@@ -74,7 +74,7 @@ public class BufferedImage {
         return pixelBuffer;
     }
 
-    public void setTexture(int x, int y, ByteBuffer pixelBuffer, int u, int v, int width, int height) {
+    public void setImage(int x, int y, ByteBuffer pixelBuffer, int u, int v, int width, int height) {
         int bufferStride = width * Integer.BYTES;
         long srcAddress = memAddress(pixelBuffer, 0);
         long dstAddress = memAddress(this.pixelBuffer, 0);
@@ -86,24 +86,24 @@ public class BufferedImage {
         this.pixelBuffer.clear();
     }
 
-    public void setTexture(int x, int y, ByteBuffer buffer, int width, int height) {
-        setTexture(x, y, buffer, 0, 0, width, height);
+    public void setImage(int x, int y, ByteBuffer pixelBuffer, int width, int height) {
+        setImage(x, y, pixelBuffer, 0, 0, width, height);
     }
 
-    public void setTexture(int x, int y, BufferedImage image) {
-        setTexture(x, y, image.getPixelBuffer(), image.getWidth(), image.getHeight());
+    public void setImage(int x, int y, BufferedImage image) {
+        setImage(x, y, image.getPixelBuffer(), image.getWidth(), image.getHeight());
     }
 
-    public void setTexture(int x, int y, BufferedImage image, int u, int v) {
-        setTexture(x, y, image.getPixelBuffer(), u, v, image.getWidth(), image.getHeight());
-    }
-
-    public void setPixel(int x, int y, int color) {
-        pixelBuffer.putInt(color, y * stride + x * Integer.BYTES);
+    public void setImage(int x, int y, BufferedImage image, int u, int v) {
+        setImage(x, y, image.getPixelBuffer(), u, v, image.getWidth(), image.getHeight());
     }
 
     public void setPixel(int x, int y, Color color) {
         setPixel(x, y, color.toRGBA());
+    }
+
+    public void setPixel(int x, int y, int rgba) {
+        pixelBuffer.putInt(rgba, y * stride + x * Integer.BYTES);
     }
 
     public int getPixel(int x, int y) {
@@ -114,9 +114,9 @@ public class BufferedImage {
         fill(color.toRGBA());
     }
 
-    public void fill(int color) {
+    public void fill(int rgba) {
         pixelBuffer.position(0);
-        memSet(pixelBuffer.asIntBuffer(), color);
+        memSet(pixelBuffer.asIntBuffer(), rgba);
         pixelBuffer.clear();
     }
 }

@@ -36,7 +36,7 @@ public class TextureAtlasBuilder {
             resize(regionSize);
             node = root.requestNode(texture, regionSize);
         }
-        this.texture.setTexture(node.getX(), node.getY(), texture);
+        this.texture.setImage(node.getX(), node.getY(), texture);
         return node.getUv();
     }
 
@@ -49,7 +49,7 @@ public class TextureAtlasBuilder {
             root = newRoot;
         }
         var newTexture = new BufferedImage(size);
-        newTexture.setTexture(0, 0, texture);
+        newTexture.setImage(0, 0, texture);
         texture = newTexture;
     }
 
