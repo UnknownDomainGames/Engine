@@ -40,7 +40,7 @@ public final class GLFWContext {
         if (initialized) return;
         initialized = true;
         LOGGER.info("Initializing GLFW context!");
-        GLFWErrorCallback.createPrint(System.err).set();
+        GLFWErrorCallback.createThrow().set();
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
         initMonitor();
