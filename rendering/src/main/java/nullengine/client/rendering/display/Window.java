@@ -1,6 +1,6 @@
 package nullengine.client.rendering.display;
 
-import nullengine.client.rendering.image.BufferedImage;
+import nullengine.client.rendering.image.ReadOnlyImage;
 
 public interface Window extends WindowCallbacks {
 
@@ -38,7 +38,7 @@ public interface Window extends WindowCallbacks {
 
     void setTitle(String title);
 
-    void setIcon(BufferedImage... icons);
+    void setIcon(ReadOnlyImage... icons);
 
     Cursor getCursor();
 
