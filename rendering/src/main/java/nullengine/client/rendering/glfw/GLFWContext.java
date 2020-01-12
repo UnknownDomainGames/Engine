@@ -1,6 +1,9 @@
 package nullengine.client.rendering.glfw;
 
+import com.github.mouse0w0.observable.collection.ObservableCollections;
+import com.github.mouse0w0.observable.collection.ObservableList;
 import nullengine.client.rendering.display.Monitor;
+import nullengine.client.rendering.display.Window;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -22,7 +25,9 @@ public final class GLFWContext {
     private static Monitor primaryMonitor;
     private static Map<Long, Monitor> monitors;
 
-    private static Set<GLFWWindow> windows = new HashSet<>();
+    private static List<GLFWWindow> windows = new ArrayList<>();
+    private static ObservableList<Window> showingWindows = ObservableCollections.observableList(new ArrayList<>());
+    private static ObservableList<Window> unmodifiableShowingWindows = ObservableCollections.unmodifiableObservableList(showingWindows);
 
     public static Monitor getPrimaryMonitor() {
         return primaryMonitor;
@@ -94,6 +99,18 @@ public final class GLFWContext {
 
     static void onDisposedWindow(GLFWWindow window) {
         windows.remove(window);
+    }
+
+    public static ObservableList<Window> getShowingWindows() {
+        return unmodifiableShowingWindows;
+    }
+
+    static void onShowedWindow(GLFWWindow window) {
+        showingWindows.add(window);
+    }
+
+    static void onHidedWindow(GLFWWindow window) {
+        showingWindows.remove(window);
     }
 
 //    private static List<VideoMode> createVideoModes(GLFWVidMode.Buffer vidModes) {

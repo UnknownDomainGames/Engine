@@ -216,10 +216,13 @@ public class GLFWWindow implements Window {
         if (this.showing == showing)
             return;
         this.showing = showing;
-        if (showing)
+        if (showing) {
             glfwShowWindow(pointer);
-        else
+            GLFWContext.onShowedWindow(this);
+        } else {
             glfwHideWindow(pointer);
+            GLFWContext.onHidedWindow(this);
+        }
     }
 
     @Override
