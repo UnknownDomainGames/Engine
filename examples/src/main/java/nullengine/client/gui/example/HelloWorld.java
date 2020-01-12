@@ -29,7 +29,7 @@ public class HelloWorld extends GUIApplication {
 
         Button sayIt = new Button("Say it");
         sayIt.border().set(new Border(Color.WHITE));
-        sayIt.setOnMousePressed(event -> System.out.println("Hello World"));
+        sayIt.setOnAction(event -> System.out.println("Hello World"));
 
         vBox.getChildren().addAll(text, sayIt);
 

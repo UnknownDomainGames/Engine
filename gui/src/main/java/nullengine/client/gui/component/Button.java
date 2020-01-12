@@ -3,6 +3,9 @@ package nullengine.client.gui.component;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Node;
+import nullengine.client.gui.event.EventHandler;
+import nullengine.client.gui.input.ActionEvent;
+import nullengine.client.gui.input.MouseActionEvent;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.text.Text;
@@ -28,13 +31,13 @@ public class Button extends Label {
         text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         handleBackground();
         padding().setValue(new Insets(0, 5, 5, 5));
+        addEventHandler(MouseActionEvent.MOUSE_PRESSED, event -> new ActionEvent(ActionEvent.ACTION, Button.this).fireEvent());
     }
 
     public Button(String text) {
         this();
         this.text().setValue(text);
     }
-
 
     public MutableObjectValue<Background> hoverBackground() {
         return hoveredBg;
@@ -104,5 +107,26 @@ public class Button extends Label {
                 layoutInArea(child, child.x().get(), child.y().get(), Utils.prefWidth(child), Utils.prefHeight(child));
             }
         }
+    }
+
+    private MutableObjectValue<EventHandler<ActionEvent>> onAction;
+
+    public final MutableObjectValue<EventHandler<ActionEvent>> onAction() {
+        if (onAction == null) {
+            onAction = new SimpleMutableObjectValue<>();
+            onAction.addChangeListener((observable, oldValue, newValue) -> {
+                if (oldValue != null) removeEventHandler(ActionEvent.ACTION, oldValue);
+                if (newValue != null) addEventHandler(ActionEvent.ACTION, newValue);
+            });
+        }
+        return onAction;
+    }
+
+    public final EventHandler<ActionEvent> getOnAction() {
+        return onAction == null ? null : onAction.get();
+    }
+
+    public final void setOnAction(EventHandler<ActionEvent> onAction) {
+        onAction().set(onAction);
     }
 }
