@@ -189,18 +189,6 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public void close() {
-        if (closed) return;
-        closed = true;
-        dispose();
-    }
-
-    @Override
-    public boolean isClosed() {
-        return closed;
-    }
-
-    @Override
     public void show() {
         if (pointer == NULL) init();
 

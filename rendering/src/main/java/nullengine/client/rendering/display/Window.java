@@ -42,10 +42,6 @@ public interface Window extends WindowCallbacks {
 
     Cursor getCursor();
 
-    void close();
-
-    boolean isClosed();
-
     void show();
 
     void hide();
