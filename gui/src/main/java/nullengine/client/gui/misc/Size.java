@@ -22,6 +22,11 @@ public final class Size {
         return minHeight;
     }
 
+    public void setMinSize(float width, float height) {
+        minHeight.set(width);
+        minHeight.set(height);
+    }
+
     public MutableFloatValue prefWidth() {
         return prefWidth;
     }
@@ -30,11 +35,21 @@ public final class Size {
         return prefHeight;
     }
 
+    public void setPrefSize(float width, float height) {
+        prefWidth.set(width);
+        prefHeight.set(height);
+    }
+
     public MutableFloatValue maxWidth() {
         return maxWidth;
     }
 
     public MutableFloatValue maxHeight() {
         return maxHeight;
+    }
+
+    public void setMaxSize(float width, float height) {
+        maxWidth.set(width);
+        maxHeight.set(height);
     }
 }
