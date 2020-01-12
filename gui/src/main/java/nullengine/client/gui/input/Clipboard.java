@@ -1,14 +1,13 @@
 package nullengine.client.gui.input;
 
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.MemoryUtil;
+import nullengine.client.gui.internal.GUIPlatform;
 
 public class Clipboard {
     public static String getString() {
-        return GLFW.glfwGetClipboardString(MemoryUtil.NULL);
+        return GUIPlatform.getInstance().getClipboardHelper().getString();
     }
 
-    public static void setString(String s) {
-        GLFW.glfwSetClipboardString(MemoryUtil.NULL, s);
+    public static void setString(String value) {
+        GUIPlatform.getInstance().getClipboardHelper().setString(value);
     }
 }

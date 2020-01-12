@@ -6,6 +6,7 @@ import nullengine.client.gui.internal.GUIPlatform;
 import nullengine.client.gui.internal.SceneHelper;
 import nullengine.client.gui.internal.StageHelper;
 import nullengine.client.gui.internal.impl.gl.GUIRenderPipeline;
+import nullengine.client.gui.internal.impl.glfw.GLFWClipboardHelper;
 import nullengine.client.rendering.RenderEngine;
 import nullengine.client.rendering.management.RenderManager;
 import nullengine.client.rendering.util.FrameTicker;
@@ -13,7 +14,9 @@ import nullengine.client.rendering.util.FrameTicker;
 public final class GUIPlatformImpl extends GUIPlatform {
 
     private final StageHelperImpl stageHelper = new StageHelperImpl();
-    private final SceneHelperImpl sceneHelper = new SceneHelperImpl();
+    private final SceneHelper sceneHelper = new SceneHelperImpl();
+
+    private final ClipboardHelper clipboardHelper = new GLFWClipboardHelper();
 
     private final FrameTicker ticker = new FrameTicker(this::doRender);
 
@@ -42,6 +45,11 @@ public final class GUIPlatformImpl extends GUIPlatform {
     @Override
     public SceneHelper getSceneHelper() {
         return sceneHelper;
+    }
+
+    @Override
+    public ClipboardHelper getClipboardHelper() {
+        return clipboardHelper;
     }
 
     private void doRender() {
