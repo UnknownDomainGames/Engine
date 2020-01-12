@@ -12,5 +12,7 @@ public abstract class GUIPlatform {
         PLATFORM = platform;
     }
 
+    public abstract StageHelper getStageHelper();
+
     public abstract SceneHelper getSceneHelper();
 }

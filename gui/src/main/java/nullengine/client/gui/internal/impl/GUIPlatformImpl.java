@@ -1,8 +1,10 @@
 package nullengine.client.gui.internal.impl;
 
+import nullengine.client.gui.Stage;
 import nullengine.client.gui.application.GUIApplication;
 import nullengine.client.gui.internal.GUIPlatform;
 import nullengine.client.gui.internal.SceneHelper;
+import nullengine.client.gui.internal.StageHelper;
 import nullengine.client.gui.internal.impl.gl.GUIRenderPipeline;
 import nullengine.client.rendering.RenderEngine;
 import nullengine.client.rendering.management.RenderManager;
@@ -10,22 +12,31 @@ import nullengine.client.rendering.util.FrameTicker;
 
 public final class GUIPlatformImpl extends GUIPlatform {
 
+    private final StageHelperImpl stageHelper = new StageHelperImpl();
     private final SceneHelperImpl sceneHelper = new SceneHelperImpl();
 
     private final FrameTicker ticker = new FrameTicker(this::doRender);
 
     public static void launch(Class<? extends GUIApplication> clazz, String[] args) throws Exception {
+        RenderEngine.start(new RenderEngine.Settings());
         GUIPlatformImpl platform = new GUIPlatformImpl();
         setInstance(platform);
-        RenderEngine.start(new RenderEngine.Settings());
         RenderManager renderManager = RenderEngine.getManager();
-        renderManager.attachPipeline(new GUIRenderPipeline(platform.sceneHelper.boundWindows));
+        renderManager.attachPipeline(new GUIRenderPipeline());
+        Stage.getStages().addChangeListener(change -> {
+            if (change.getList().isEmpty()) platform.ticker.stop();
+        });
         GUIApplication application = clazz.getConstructor().newInstance();
-        application.start(renderManager.getPrimaryWindow());
+        application.start(platform.stageHelper.getPrimaryStage());
         platform.ticker.run();
     }
 
     private GUIPlatformImpl() {
+    }
+
+    @Override
+    public StageHelper getStageHelper() {
+        return stageHelper;
     }
 
     @Override

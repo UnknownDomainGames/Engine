@@ -5,15 +5,10 @@ import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.*;
 import nullengine.client.gui.input.*;
-import nullengine.client.gui.internal.GUIPlatform;
-import nullengine.client.gui.internal.SceneHelper;
 import nullengine.client.gui.misc.Pos;
-import nullengine.client.rendering.display.Window;
-import nullengine.client.rendering.display.callback.*;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -28,6 +23,8 @@ public class Scene implements EventTarget {
 
     private final MutableFloatValue scaleX = new SimpleMutableFloatValue(1);
     private final MutableFloatValue scaleY = new SimpleMutableFloatValue(1);
+
+    final MutableObjectValue<Stage> stage = new SimpleMutableObjectValue<>();
 
     private final MutableObjectValue<Parent> root = new SimpleMutableObjectValue<>();
 
@@ -91,6 +88,14 @@ public class Scene implements EventTarget {
         return scaleY.get();
     }
 
+    public ObservableObjectValue<Stage> stage() {
+        return stage.toUnmodifiable();
+    }
+
+    public Stage getStage() {
+        return stage.get();
+    }
+
     public ObservableObjectValue<Parent> root() {
         return root.toUnmodifiable();
     }
@@ -128,16 +133,6 @@ public class Scene implements EventTarget {
     public EventDispatchChain buildEventDispatchChain(EventDispatchChain tail) {
         return tail.append(eventHandlerManager);
     }
-
-    private final CursorCallback cursorCallback = (window, xpos, ypos) -> processCursor(xpos, ypos);
-    private final MouseCallback mouseCallback = (window, button, action, mods) ->
-            processMouse(MouseButton.valueOf(button), Modifiers.of(mods), action == GLFW.GLFW_PRESS);
-    private final KeyCallback keyCallback = (window, key, scancode, action, mods) ->
-            processKey(KeyCode.valueOf(key), Modifiers.of(mods), action != GLFW.GLFW_RELEASE);
-    private final ScrollCallback scrollCallback = (window, xoffset, yoffset) -> processScroll(xoffset, yoffset);
-    private final CharModsCallback charModsCallback = (window, codepoint, mods) ->
-            processCharMods((char) codepoint, Modifiers.of(mods));
-    private final WindowCloseCallback windowCloseCallback = window -> hide();
 
     private float lastScreenX = Float.NaN;
     private float lastScreenY = Float.NaN;
@@ -275,57 +270,6 @@ public class Scene implements EventTarget {
             removeEventHandler(insertedHandler.getKey(), insertedHandler.getValue());
         }
         popups.remove(popup);
-    }
-
-    private MutableObjectValue<Window> window;
-
-    static {
-        SceneHelper.setSceneAccessor(new SceneHelper.SceneAccessor() {
-            @Override
-            public MutableObjectValue<Window> getMutableWindowProperty(Scene scene) {
-                return scene.windowInternal();
-            }
-        });
-    }
-
-    private MutableObjectValue<Window> windowInternal() {
-        if (window == null) {
-            window = new SimpleMutableObjectValue<>();
-        }
-        return window;
-    }
-
-    public ObservableObjectValue<Window> window() {
-        return windowInternal().toUnmodifiable();
-    }
-
-    public Window getWindow() {
-        return window == null ? null : window.get();
-    }
-
-    public boolean isShowing() {
-        return window != null && window.get() != null;
-    }
-
-    public void showToWindow(Window window) {
-        GUIPlatform.getInstance().getSceneHelper().bindWindow(this, window);
-        window.addCursorCallback(cursorCallback);
-        window.addMouseCallback(mouseCallback);
-        window.addKeyCallback(keyCallback);
-        window.addScrollCallback(scrollCallback);
-        window.addCharModsCallback(charModsCallback);
-        window.addWindowCloseCallback(windowCloseCallback);
-    }
-
-    public void hide() {
-        Window window = getWindow();
-        GUIPlatform.getInstance().getSceneHelper().unbindWindow(this, window);
-        window.removeCursorCallback(cursorCallback);
-        window.removeMouseCallback(mouseCallback);
-        window.removeKeyCallback(keyCallback);
-        window.removeScrollCallback(scrollCallback);
-        window.removeCharModsCallback(charModsCallback);
-        window.removeWindowCloseCallback(windowCloseCallback);
     }
 
     // ===== Event handlers =====

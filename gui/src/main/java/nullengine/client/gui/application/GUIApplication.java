@@ -1,7 +1,7 @@
 package nullengine.client.gui.application;
 
+import nullengine.client.gui.Stage;
 import nullengine.client.gui.internal.impl.GUIPlatformImpl;
-import nullengine.client.rendering.display.Window;
 
 public abstract class GUIApplication {
 
@@ -29,5 +29,5 @@ public abstract class GUIApplication {
         }
     }
 
-    public abstract void start(Window primaryWindow) throws Exception;
+    public abstract void start(Stage primaryStage) throws Exception;
 }
