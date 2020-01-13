@@ -75,9 +75,9 @@ public final class GLTexture2D implements Texture2D, GLTexture {
         glBindTexture(GL_TEXTURE_2D, id);
     }
 
-    public void upload(BufferedImage texture) {
+    public void upload(ReadOnlyImage image) {
         bind();
-        glTexImage2D(texture.getPixelBuffer(), texture.getWidth(), texture.getHeight());
+        glTexImage2D(image.getPixelBuffer(), image.getWidth(), image.getHeight());
     }
 
     public void upload(ByteBuffer texture, int width, int height) {
@@ -224,8 +224,8 @@ public final class GLTexture2D implements Texture2D, GLTexture {
             return build(null, 0, 0);
         }
 
-        public GLTexture2D build(BufferedImage texture) {
-            return build(texture.getPixelBuffer(), texture.getWidth(), texture.getHeight());
+        public GLTexture2D build(ReadOnlyImage image) {
+            return build(image.getPixelBuffer(), image.getWidth(), image.getHeight());
         }
 
         public GLTexture2D build(int width, int height) {
