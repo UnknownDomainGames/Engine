@@ -2,6 +2,7 @@ package nullengine.client.rendering.gl.texture;
 
 import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.texture.Texture2D;
+import nullengine.client.rendering.util.Cleaner;
 import org.lwjgl.opengl.GL40;
 
 import java.util.HashMap;
@@ -16,7 +17,7 @@ public final class GLTexture2DMultiSample implements GLTexture, Texture2D {
     public static final GLTexture2DMultiSample EMPTY = new GLTexture2DMultiSample(0);
 
     private int id;
-    private GLCleaner.Disposable disposable;
+    private Cleaner.Disposable disposable;
 
     private int internalFormat;
     private int sample;

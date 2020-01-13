@@ -2,6 +2,7 @@ package nullengine.client.rendering.gl;
 
 import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.gl.vertex.GLVertexElement;
+import nullengine.client.rendering.util.Cleaner;
 import org.apache.commons.lang3.Validate;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -17,7 +18,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 public class VertexArrayObject {
 
     private int id;
-    private GLCleaner.Disposable disposable;
+    private Cleaner.Disposable disposable;
 
     private int vertexCount;
 
@@ -30,7 +31,7 @@ public class VertexArrayObject {
 
     private VertexArrayObject(int id) {
         this.id = id;
-        this.disposable = GLCleaner.registerArray(this, id);
+        this.disposable = GLCleaner.registerVertexArray(this, id);
     }
 
     public VertexAttribute getAttribute(int index) {

@@ -3,6 +3,7 @@ package nullengine.client.rendering.gl;
 import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.gl.vertex.GLVertexFormat;
 import nullengine.client.rendering.scene.Renderable;
+import nullengine.client.rendering.util.Cleaner;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
@@ -11,7 +12,7 @@ import java.nio.ByteBuffer;
 public class SingleBufferVAO implements Renderable {
 
     private int id;
-    private GLCleaner.Disposable disposable;
+    private Cleaner.Disposable disposable;
     private VertexBufferObject vbo;
     private GLVertexFormat vertexFormat;
     private GLDrawMode drawMode;
@@ -33,7 +34,7 @@ public class SingleBufferVAO implements Renderable {
     public SingleBufferVAO(GLBufferUsage usage, GLDrawMode drawMode) {
         this.vbo = new VertexBufferObject(GLBufferType.ARRAY_BUFFER, usage);
         id = GL30.glGenVertexArrays();
-        disposable = GLCleaner.registerArray(this, id);
+        disposable = GLCleaner.registerVertexArray(this, id);
         this.drawMode = drawMode;
     }
 

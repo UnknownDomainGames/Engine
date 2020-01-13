@@ -2,6 +2,7 @@ package nullengine.client.rendering.gl.shader;
 
 import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.management.BindingProxy;
+import nullengine.client.rendering.util.Cleaner;
 import org.joml.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ public class ShaderProgram implements BindingProxy {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShaderProgram.class);
 
     private int id;
-    private GLCleaner.Disposable disposable;
+    private Cleaner.Disposable disposable;
 
     public ShaderProgram(CompiledShader... shaders) {
         id = glCreateProgram();

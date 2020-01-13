@@ -1,6 +1,7 @@
 package nullengine.client.rendering.gl;
 
 import nullengine.client.rendering.gl.util.GLCleaner;
+import nullengine.client.rendering.util.Cleaner;
 import org.lwjgl.opengl.GL15;
 
 import java.nio.*;
@@ -13,7 +14,7 @@ public class VertexBufferObject {
     private final GLBufferUsage usage;
 
     private int id;
-    private GLCleaner.Disposable disposable;
+    private Cleaner.Disposable disposable;
 
     public VertexBufferObject(GLBufferType type, GLBufferUsage usage) {
         this.type = type;

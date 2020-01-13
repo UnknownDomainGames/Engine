@@ -6,13 +6,13 @@ import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.font.WindowsFontHelper;
 import nullengine.client.rendering.gl.util.DebugMessageCallback;
-import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.gl.util.NVXGPUInfo;
 import nullengine.client.rendering.glfw.GLFWContext;
 import nullengine.client.rendering.glfw.GLFWWindow;
 import nullengine.client.rendering.management.RenderManager;
 import nullengine.client.rendering.management.RenderPipeline;
 import nullengine.client.rendering.management.ResourceFactory;
+import nullengine.client.rendering.util.Cleaner;
 import nullengine.client.rendering.util.GPUInfo;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.ARBDebugOutput;
@@ -97,7 +97,7 @@ public class GLRenderManager implements RenderManager {
 
     @Override
     public void render(float tpf) {
-        GLCleaner.clean();
+        Cleaner.clean();
         pipeline.render(tpf);
         GLFW.glfwPollEvents();
     }

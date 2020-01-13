@@ -1,6 +1,7 @@
 package nullengine.client.rendering.gl.texture;
 
 import nullengine.client.rendering.gl.util.GLCleaner;
+import nullengine.client.rendering.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
 
@@ -17,7 +18,7 @@ public class GLFrameBuffer {
     private final Map<Integer, TextureFactory> attachments;
 
     private int id;
-    private GLCleaner.Disposable disposable;
+    private Cleaner.Disposable disposable;
     private int width;
     private int height;
 

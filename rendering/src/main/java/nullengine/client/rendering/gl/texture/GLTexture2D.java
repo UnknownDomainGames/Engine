@@ -5,6 +5,7 @@ import nullengine.client.rendering.image.BufferedImage;
 import nullengine.client.rendering.image.ImageHelper;
 import nullengine.client.rendering.image.ReadOnlyImage;
 import nullengine.client.rendering.texture.Texture2D;
+import nullengine.client.rendering.util.Cleaner;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ public final class GLTexture2D implements Texture2D, GLTexture {
     public static final GLTexture2D EMPTY = new GLTexture2D(0);
 
     private int id;
-    private GLCleaner.Disposable disposable;
+    private Cleaner.Disposable disposable;
 
     private int level;
     private int internalFormat;
