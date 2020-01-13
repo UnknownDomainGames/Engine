@@ -34,7 +34,6 @@ public class GLFWWindow implements Window {
 
     private String title;
 
-    private boolean closed = false;
     private boolean showing = false;
 
     private DisplayMode displayMode = DisplayMode.WINDOWED;
