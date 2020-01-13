@@ -5,6 +5,8 @@ import nullengine.util.Color;
 import java.nio.ByteBuffer;
 
 public interface WritableImage extends ReadOnlyImage {
+    ByteBuffer getWritablePixelBuffer();
+
     int getPixel(int x, int y);
 
     default void setPixel(int x, int y, Color color) {

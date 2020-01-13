@@ -45,7 +45,7 @@ public class BufferedImage implements WritableImage {
     }
 
     public BufferedImage(WritableImage image) {
-        this(image.getPixelBuffer(), image.getWidth(), image.getHeight(), true);
+        this(image.getWritablePixelBuffer(), image.getWidth(), image.getHeight(), true);
     }
 
     public BufferedImage(ByteBuffer pixelBuffer, int width, int height) {
@@ -72,6 +72,11 @@ public class BufferedImage implements WritableImage {
 
     @Override
     public ByteBuffer getPixelBuffer() {
+        return pixelBuffer.asReadOnlyBuffer();
+    }
+
+    @Override
+    public ByteBuffer getWritablePixelBuffer() {
         return pixelBuffer;
     }
 
