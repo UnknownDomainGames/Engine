@@ -10,6 +10,7 @@ import nullengine.client.gui.internal.GUIPlatform;
 import nullengine.client.gui.internal.StageHelper;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.*;
+import nullengine.client.rendering.image.ReadOnlyImage;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public class Stage {
     };
 
     private MutableStringValue title;
+
+    private ObservableList<ReadOnlyImage> icons;
 
     private MutableBooleanValue focused;
     private MutableBooleanValue iconified;
@@ -187,6 +190,18 @@ public class Stage {
 
     public final void setTitle(String title) {
         title().set(title);
+    }
+
+    public ObservableList<ReadOnlyImage> getIcons() {
+        if (icons == null) {
+            icons = ObservableCollections.observableList(new ArrayList<>());
+            icons.addChangeListener(change -> {
+                if (window != null) {
+                    window.setIcon(icons.toArray(ReadOnlyImage[]::new));
+                }
+            });
+        }
+        return icons;
     }
 
     private MutableBooleanValue focusedImpl() {
@@ -339,6 +354,9 @@ public class Stage {
     private void doVisibleChanged(boolean value) {
         if (value) {
             window.setTitle(getTitle());
+            if (icons != null) {
+                window.setIcon(icons.toArray(ReadOnlyImage[]::new));
+            }
             window.setResizable(isResizable());
             window.setFloating(isAlwaysOnTop());
             if (isIconified() || isMaximized()) {
