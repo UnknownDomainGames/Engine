@@ -15,12 +15,14 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class GLFrameBuffer {
 
-    private final Map<Integer, TextureFactory> attachments;
+    private static final GLFrameBuffer SCREEN_FRAME_BUFFER = new GLFrameBuffer();
 
     private int id;
     private Cleaner.Disposable disposable;
     private int width;
     private int height;
+
+    private final Map<Integer, TextureFactory> attachments;
 
     private final Map<Integer, GLTexture> attachedTextures;
 
@@ -57,10 +59,20 @@ public class GLFrameBuffer {
                 .build();
     }
 
+    public static GLFrameBuffer getScreenFrameBuffer() {
+        return SCREEN_FRAME_BUFFER;
+    }
+
     public static void bindScreenFrameBuffer() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    }
+
+    private GLFrameBuffer() {
+        this.id = 0;
+        this.attachments = Map.of();
+        this.attachedTextures = Map.of();
     }
 
     private GLFrameBuffer(Map<Integer, TextureFactory> attachments, int width, int height) {
