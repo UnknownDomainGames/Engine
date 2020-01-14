@@ -127,9 +127,9 @@ public class GLFrameBuffer {
     }
 
     public void dispose() {
-        if (id == 0) return;
-        glDeleteFramebuffers(id);
-        id = 0;
+        if (id == -1) return;
+        disposable.dispose();
+        id = -1;
 
         disposeAttachedTextures();
     }
