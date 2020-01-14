@@ -1,6 +1,7 @@
 package nullengine.client.rendering.gl.texture;
 
 import nullengine.client.rendering.gl.util.GLCleaner;
+import nullengine.client.rendering.texture.FrameBuffer;
 import nullengine.client.rendering.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
@@ -13,7 +14,7 @@ import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL30.*;
 
-public class GLFrameBuffer {
+public class GLFrameBuffer implements FrameBuffer {
 
     private static final GLFrameBuffer DEFAULT_FRAME_BUFFER = new GLFrameBuffer();
 
@@ -83,6 +84,7 @@ public class GLFrameBuffer {
         resize(width, height);
     }
 
+    @Override
     public int getId() {
         return id;
     }
@@ -91,14 +93,17 @@ public class GLFrameBuffer {
         return attachedTextures.get(attachment);
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
 
+    @Override
     public void resize(int width, int height) {
         if (id == 0) throw new IllegalStateException("Frame buffer has been disposed");
         this.width = width;
@@ -112,14 +117,17 @@ public class GLFrameBuffer {
         });
     }
 
+    @Override
     public void bind() {
         bind(GL_FRAMEBUFFER);
     }
 
+    @Override
     public void bindReadOnly() {
         bind(GL_READ_FRAMEBUFFER);
     }
 
+    @Override
     public void bindDrawOnly() {
         bind(GL_DRAW_FRAMEBUFFER);
     }
@@ -138,6 +146,7 @@ public class GLFrameBuffer {
         glBlitFramebuffer(sourceRect.x(), sourceRect.y(), sourceRect.z(), sourceRect.w(), destRect.x(), destRect.y(), destRect.z(), destRect.w(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
     }
 
+    @Override
     public void dispose() {
         if (id == -1) return;
         disposable.dispose();
