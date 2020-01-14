@@ -5,7 +5,7 @@ import nullengine.client.gui.application.GUIApplication;
 import nullengine.client.gui.internal.GUIPlatform;
 import nullengine.client.gui.internal.SceneHelper;
 import nullengine.client.gui.internal.StageHelper;
-import nullengine.client.gui.internal.impl.gl.GUIRenderPipeline;
+import nullengine.client.gui.internal.impl.gl.GUIRenderHandler;
 import nullengine.client.gui.internal.impl.glfw.GLFWClipboardHelper;
 import nullengine.client.rendering.RenderEngine;
 import nullengine.client.rendering.management.RenderManager;
@@ -25,7 +25,7 @@ public final class GUIPlatformImpl extends GUIPlatform {
         GUIPlatformImpl platform = new GUIPlatformImpl();
         setInstance(platform);
         RenderManager renderManager = RenderEngine.getManager();
-        renderManager.attachPipeline(new GUIRenderPipeline());
+        renderManager.attachHandler(new GUIRenderHandler());
         Stage.getStages().addChangeListener(change -> {
             if (change.getList().isEmpty()) platform.ticker.stop();
         });

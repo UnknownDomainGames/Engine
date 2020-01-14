@@ -18,11 +18,7 @@ public interface RenderManager {
 
     ResourceFactory getResourceFactory();
 
-    boolean isAutoSwapBuffers();
-
-    void setAutoSwapBuffers(boolean autoSwapBuffers);
-
-    void attachPipeline(RenderPipeline pipeline);
+    void attachHandler(RenderHandler handler);
 
     void render(float tpf);
 

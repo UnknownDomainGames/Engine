@@ -9,8 +9,8 @@ import nullengine.client.rendering.gl.util.DebugMessageCallback;
 import nullengine.client.rendering.gl.util.NVXGPUInfo;
 import nullengine.client.rendering.glfw.GLFWContext;
 import nullengine.client.rendering.glfw.GLFWWindow;
+import nullengine.client.rendering.management.RenderHandler;
 import nullengine.client.rendering.management.RenderManager;
-import nullengine.client.rendering.management.RenderPipeline;
 import nullengine.client.rendering.management.ResourceFactory;
 import nullengine.client.rendering.util.Cleaner;
 import nullengine.client.rendering.util.GPUInfo;
@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 import static nullengine.client.rendering.gl.util.GLContextUtils.*;
 
@@ -37,9 +39,7 @@ public class GLRenderManager implements RenderManager {
     private GLFWWindow primaryWindow;
     private GLResourceFactory resourceFactory;
 
-    private RenderPipeline pipeline;
-
-    private boolean autoSwapBuffers = true;
+    private final List<RenderHandler> handlers = new ArrayList<>();
 
     public GLRenderManager() {
     }
@@ -77,28 +77,17 @@ public class GLRenderManager implements RenderManager {
     }
 
     @Override
-    public boolean isAutoSwapBuffers() {
-        return autoSwapBuffers;
-    }
-
-    @Override
-    public void setAutoSwapBuffers(boolean autoSwapBuffers) {
-        this.autoSwapBuffers = autoSwapBuffers;
-    }
-
-    @Override
-    public void attachPipeline(RenderPipeline pipeline) {
-        if (this.pipeline != null) {
-            throw new IllegalStateException("Cannot attach render pipeline twice");
-        }
-        this.pipeline = pipeline;
-        pipeline.init(this);
+    public void attachHandler(RenderHandler handler) {
+        handler.init(this);
+        this.handlers.add(handler);
     }
 
     @Override
     public void render(float tpf) {
         Cleaner.clean();
-        pipeline.render(tpf);
+        for (RenderHandler handler : handlers) {
+            handler.render(tpf);
+        }
         GLFW.glfwPollEvents();
     }
 
@@ -170,6 +159,9 @@ public class GLRenderManager implements RenderManager {
 
     @Override
     public void dispose() {
+        for (RenderHandler handler : handlers) {
+            handler.dispose();
+        }
         GLFWContext.terminate();
     }
 }

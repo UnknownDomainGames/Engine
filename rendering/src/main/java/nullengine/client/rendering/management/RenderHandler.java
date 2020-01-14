@@ -1,8 +1,10 @@
 package nullengine.client.rendering.management;
 
-public interface RenderPipeline {
+public interface RenderHandler {
 
     void init(RenderManager manager);
 
     void render(float tpf);
+
+    void dispose();
 }

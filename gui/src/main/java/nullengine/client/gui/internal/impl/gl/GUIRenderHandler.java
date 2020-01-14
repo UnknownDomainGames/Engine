@@ -5,17 +5,17 @@ import nullengine.client.gui.Scene;
 import nullengine.client.gui.Stage;
 import nullengine.client.gui.internal.StageHelper;
 import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.management.RenderHandler;
 import nullengine.client.rendering.management.RenderManager;
-import nullengine.client.rendering.management.RenderPipeline;
 
-public class GUIRenderPipeline implements RenderPipeline {
+public class GUIRenderHandler implements RenderHandler {
 
     private final ObservableList<Stage> stages = Stage.getStages();
 
     private RenderManager manager;
     private GLGUIRenderer renderer;
 
-    public GUIRenderPipeline() {
+    public GUIRenderHandler() {
     }
 
     @Override
@@ -39,5 +39,9 @@ public class GUIRenderPipeline implements RenderPipeline {
             renderer.render(scene);
             window.swapBuffers();
         }
+    }
+
+    @Override
+    public void dispose() {
     }
 }
