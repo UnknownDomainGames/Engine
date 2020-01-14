@@ -38,7 +38,7 @@ public class GLGUIRenderer {
     }
 
     public void render(Scene scene) {
-        GLFrameBuffer.bindScreenFrameBuffer();
+        GLFrameBuffer.bindDefaultFrameBuffer();
         render0(scene);
     }
 

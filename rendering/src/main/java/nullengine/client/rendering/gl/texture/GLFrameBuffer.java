@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class GLFrameBuffer {
 
-    private static final GLFrameBuffer SCREEN_FRAME_BUFFER = new GLFrameBuffer();
+    private static final GLFrameBuffer DEFAULT_FRAME_BUFFER = new GLFrameBuffer();
 
     private int id;
     private Cleaner.Disposable disposable;
@@ -59,11 +59,11 @@ public class GLFrameBuffer {
                 .build();
     }
 
-    public static GLFrameBuffer getScreenFrameBuffer() {
-        return SCREEN_FRAME_BUFFER;
+    public static GLFrameBuffer getDefaultFrameBuffer() {
+        return DEFAULT_FRAME_BUFFER;
     }
 
-    public static void bindScreenFrameBuffer() {
+    public static void bindDefaultFrameBuffer() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

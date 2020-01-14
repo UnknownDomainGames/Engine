@@ -74,7 +74,7 @@ public class ForwardPipeline {
 //            frameBuffer.resize(width, height);
 //        }
 //        frameBuffer.bind();
-        GLFrameBuffer.bindScreenFrameBuffer();
+        GLFrameBuffer.bindDefaultFrameBuffer();
 
         GL11.glViewport(0, 0, width, height);
         Color clearColor = viewPort.getClearColor();

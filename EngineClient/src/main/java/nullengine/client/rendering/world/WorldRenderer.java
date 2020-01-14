@@ -155,7 +155,7 @@ public class WorldRenderer {
         // multi sample
         frameBuffer.bind();
         frameBuffer.blitFrom(frameBufferMultiSample);
-        GLFrameBuffer.bindScreenFrameBuffer();
+        GLFrameBuffer.bindDefaultFrameBuffer();
         glClear(GL_COLOR_BUFFER_BIT);
         ShaderManager.instance().bindShader(frameBufferSP.getValue());
         glDisable(GL_DEPTH_TEST);
