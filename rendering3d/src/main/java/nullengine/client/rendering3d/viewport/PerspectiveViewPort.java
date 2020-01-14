@@ -1,9 +1,24 @@
-package nullengine.client.rendering.scene;
+package nullengine.client.rendering3d.viewport;
 
-public final class OrthoViewPort extends BaseViewPort {
+public final class PerspectiveViewPort extends BaseViewPort {
 
+    private float fovAngle = 60;
+    private float aspect;
     private float zNear = 0.01f;
     private float zFar = 1000f;
+
+    public float getFovAngle() {
+        return fovAngle;
+    }
+
+    public void setFovAngle(float fovAngle) {
+        this.fovAngle = fovAngle;
+        updateProjectionMatrix();
+    }
+
+    public float getAspect() {
+        return aspect;
+    }
 
     public float getZNear() {
         return zNear;
@@ -24,11 +39,12 @@ public final class OrthoViewPort extends BaseViewPort {
     }
 
     protected void onFrameSizeChanged() {
+        aspect = (float) getWidth() / getHeight();
         updateProjectionMatrix();
     }
 
     protected void updateProjectionMatrix() {
-        projectionMatrix.setOrtho(0, getWidth(), getHeight(), 0, zNear, zFar);
+        projectionMatrix.setPerspective((float) Math.toRadians(fovAngle), aspect, zNear, zFar);
         updateProjectionViewMatrix();
     }
 

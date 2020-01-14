@@ -1,8 +1,9 @@
-package nullengine.client.rendering.scene;
+package nullengine.client.rendering3d.viewport;
 
 import nullengine.client.rendering.camera.FreeCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.WindowSizeCallback;
+import nullengine.client.rendering3d.Scene3D;
 import nullengine.util.Color;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;

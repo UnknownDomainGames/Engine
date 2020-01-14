@@ -1,4 +1,4 @@
-package nullengine.client.rendering.scene;
+package nullengine.client.rendering3d;
 
 import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.light.DirectionalLight;

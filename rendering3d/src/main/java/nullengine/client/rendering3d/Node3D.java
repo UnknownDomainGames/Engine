@@ -1,4 +1,4 @@
-package nullengine.client.rendering.scene;
+package nullengine.client.rendering3d;
 
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.rendering.math.Transform;

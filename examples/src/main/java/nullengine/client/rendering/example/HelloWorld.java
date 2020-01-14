@@ -1,16 +1,16 @@
 package nullengine.client.rendering.example;
 
-import nullengine.client.rendering.application.RenderableApplication;
 import nullengine.client.rendering.gl.shape.Box;
 import nullengine.client.rendering.gl.shape.Line;
-import nullengine.client.rendering.scene.Geometry;
+import nullengine.client.rendering3d.Geometry;
+import nullengine.client.rendering3d.application.Application3D;
 import nullengine.util.Color;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.lang.management.ManagementFactory;
 
-public class HelloWorld extends RenderableApplication {
+public class HelloWorld extends Application3D {
 
     private FlyCameraInput cameraInput;
 

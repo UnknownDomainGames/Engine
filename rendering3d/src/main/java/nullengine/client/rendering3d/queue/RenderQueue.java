@@ -1,7 +1,7 @@
-package nullengine.client.rendering.scene.queue;
+package nullengine.client.rendering3d.queue;
 
 import nullengine.client.rendering.management.RenderManager;
-import nullengine.client.rendering.scene.Geometry;
+import nullengine.client.rendering3d.Geometry;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;

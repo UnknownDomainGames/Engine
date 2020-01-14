@@ -1,9 +1,10 @@
-package nullengine.client.rendering.scene;
+package nullengine.client.rendering3d;
 
 import nullengine.client.rendering.math.BoundingVolume;
-import nullengine.client.rendering.scene.queue.RenderQueue;
-import nullengine.client.rendering.scene.queue.RenderType;
-import nullengine.client.rendering.scene.queue.StandardRenderTypes;
+import nullengine.client.rendering.scene.Renderable;
+import nullengine.client.rendering3d.queue.RenderQueue;
+import nullengine.client.rendering3d.queue.RenderType;
+import nullengine.client.rendering3d.queue.StandardRenderTypes;
 
 public class Geometry extends Node3D {
 

@@ -1,26 +1,29 @@
-package nullengine.client.rendering.gl.pipeline;
+package nullengine.client.rendering3d.gl;
 
 import com.github.mouse0w0.observable.value.ObservableObjectValue;
 import nullengine.client.rendering.gl.shader.ShaderManager;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.texture.GLFrameBuffer;
+import nullengine.client.rendering.management.RenderHandler;
 import nullengine.client.rendering.management.RenderManager;
-import nullengine.client.rendering.scene.ViewPort;
-import nullengine.client.rendering.scene.queue.GeometryList;
-import nullengine.client.rendering.scene.queue.RenderQueue;
-import nullengine.client.rendering.scene.queue.RenderTypeHandler;
-import nullengine.client.rendering.scene.queue.StandardRenderTypes;
+import nullengine.client.rendering3d.queue.GeometryList;
+import nullengine.client.rendering3d.queue.RenderQueue;
+import nullengine.client.rendering3d.queue.RenderTypeHandler;
+import nullengine.client.rendering3d.queue.StandardRenderTypes;
+import nullengine.client.rendering3d.viewport.ViewPort;
 import nullengine.util.Color;
 import org.lwjgl.opengl.GL11;
 
-public class ForwardPipeline {
+public class Scene3DRenderHandler implements RenderHandler {
+
+    private RenderManager manager;
 
     private final ObservableObjectValue<ShaderProgram> shader;
 //    private final GLFrameBuffer frameBuffer;
 
 //    private final Material material;
 
-    public ForwardPipeline() {
+    public Scene3DRenderHandler() {
         shader = ShaderManager.register("example");
 //        frameBuffer = GLFrameBuffer.createRGB16FDepth24Stencil8FrameBuffer(1, 1);
 
@@ -31,7 +34,22 @@ public class ForwardPipeline {
 //                .setShininess(32f);
     }
 
-    public void render(RenderManager manager, ViewPort viewPort, float partial) {
+    @Override
+    public void init(RenderManager manager) {
+        this.manager = manager;
+    }
+
+    @Override
+    public void render(float tpf) {
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+    public void render(RenderManager manager, ViewPort viewPort, float tpf) {
         ShaderProgram shader = this.shader.get();
         shader.use();
         setupViewPort(viewPort);
@@ -39,7 +57,7 @@ public class ForwardPipeline {
         var scene = viewPort.getScene();
         if (scene == null) return;
 
-        scene.doUpdate(partial);
+        scene.doUpdate(tpf);
 //        scene.getLightManager().bind(viewPort.getCamera(), shader);
 //        material.bind(shader, "material");
 
