@@ -1,4 +1,4 @@
-package nullengine.client.rendering.scene.light;
+package nullengine.client.rendering.light;
 
 import nullengine.client.rendering.management.BindingProxy;
 import org.joml.Vector3f;

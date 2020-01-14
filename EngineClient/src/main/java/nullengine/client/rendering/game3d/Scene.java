@@ -1,7 +1,7 @@
 package nullengine.client.rendering.game3d;
 
 import nullengine.client.rendering.material.Material;
-import nullengine.client.rendering.scene.light.LightManager;
+import nullengine.client.rendering.scene.LightManager;
 import nullengine.world.World;
 
 public class Scene {

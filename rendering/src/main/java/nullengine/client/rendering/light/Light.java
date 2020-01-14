@@ -1,23 +1,14 @@
-package nullengine.client.rendering.scene.light;
+package nullengine.client.rendering.light;
 
 import nullengine.client.rendering.management.BindingProxy;
-import nullengine.client.rendering.scene.Node3D;
 import org.joml.Vector3f;
 
-public abstract class Light extends Node3D {
+public abstract class Light {
     protected Vector3f ambient = new Vector3f(0.1f);
     protected Vector3f diffuse = new Vector3f(1f);
     protected Vector3f specular = new Vector3f(1f);
 
     public Light() {
-        scene().addChangeListener((observable, oldValue, newValue) -> {
-            if (oldValue != null) {
-                oldValue.getLightManager().remove(this);
-            }
-            if (newValue != null) {
-                newValue.getLightManager().add(this);
-            }
-        });
     }
 
     public abstract void bind(BindingProxy proxy, String fieldName);

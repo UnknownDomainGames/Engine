@@ -1,6 +1,10 @@
-package nullengine.client.rendering.scene.light;
+package nullengine.client.rendering.scene;
 
 import nullengine.client.rendering.camera.Camera;
+import nullengine.client.rendering.light.DirectionalLight;
+import nullengine.client.rendering.light.Light;
+import nullengine.client.rendering.light.PointLight;
+import nullengine.client.rendering.light.SpotLight;
 import nullengine.client.rendering.management.BindingProxy;
 
 import java.util.ArrayList;
@@ -29,7 +33,7 @@ public class LightManager {
         return spotLights;
     }
 
-    public void add(Light light) {
+    void add(Light light) {
         if (light instanceof DirectionalLight)
             directionalLights.add((DirectionalLight) light);
         else if (light instanceof PointLight)
@@ -38,7 +42,7 @@ public class LightManager {
             spotLights.add((SpotLight) light);
     }
 
-    public void remove(Light light) {
+    void remove(Light light) {
         if (light instanceof DirectionalLight)
             directionalLights.remove(light);
         else if (light instanceof PointLight)
@@ -64,6 +68,7 @@ public class LightManager {
         }
     }
 
+    @Deprecated
     public void clear() {
         directionalLights.clear();
         pointLights.clear();

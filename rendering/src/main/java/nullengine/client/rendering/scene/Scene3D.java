@@ -4,7 +4,6 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import nullengine.client.rendering.scene.light.LightManager;
 import nullengine.client.rendering.scene.queue.RenderQueue;
 
 import java.util.ArrayList;
