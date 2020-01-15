@@ -88,21 +88,21 @@ public class TextField extends Control {
 
     private void onKeyPressed(KeyEvent event) {
         switch (event.getKey()) {
-            case KEY_LEFT:
+            case LEFT:
                 if (event.getModifier().hasShift()) {
                     selectBackward();
                 } else {
                     backward();
                 }
                 break;
-            case KEY_RIGHT:
+            case RIGHT:
                 if (event.getModifier().hasShift()) {
                     selectForward();
                 } else {
                     forward();
                 }
                 break;
-            case KEY_BACKSPACE:
+            case BACKSPACE:
                 if (caret.get() != anchor.get()) {
                     replaceSelection("");
                     deselect();
@@ -110,7 +110,7 @@ public class TextField extends Control {
                     backspace();
                 }
                 break;
-            case KEY_DELETE:
+            case DELETE:
                 if (caret.get() != anchor.get()) {
                     replaceSelection("");
                     deselect();
@@ -118,22 +118,22 @@ public class TextField extends Control {
                     delete();
                 }
                 break;
-            case KEY_X:
+            case X:
                 if (event.getModifier().has(Modifiers.Modifier.CONTROL)) {
                     cut();
                 }
                 break;
-            case KEY_C:
+            case C:
                 if (event.getModifier().has(Modifiers.Modifier.CONTROL)) {
                     copy();
                 }
                 break;
-            case KEY_V:
+            case V:
                 if (event.getModifier().has(Modifiers.Modifier.CONTROL)) {
                     paste();
                 }
                 break;
-            case KEY_A:
+            case A:
                 if (event.getModifier().has(Modifiers.Modifier.CONTROL)) {
                     selectAll();
                 }

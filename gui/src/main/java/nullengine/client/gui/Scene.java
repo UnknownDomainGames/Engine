@@ -217,7 +217,7 @@ public class Scene implements EventTarget {
 
     public void processCharMods(char codePoint, Modifiers modifier) {
         focused.forEach(node ->
-                new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.KEY_UNDEFINED, String.valueOf(codePoint), modifier, true).fireEvent());
+                new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.NONE, String.valueOf(codePoint), modifier, true).fireEvent());
     }
 
     public <T extends Event> void addEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {

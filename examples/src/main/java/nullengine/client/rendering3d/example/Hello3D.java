@@ -24,7 +24,7 @@ public class Hello3D extends Application3D {
     protected void onInitialized() {
         manager.getPrimaryWindow().addWindowCloseCallback(window -> stop());
         manager.getPrimaryWindow().addKeyCallback((window, key, scancode, action, mods) -> {
-            if (key == KeyCode.KEY_ESCAPE && action == Action.PRESS) stop();
+            if (key == KeyCode.ESCAPE && action == Action.PRESS) stop();
         });
 
         cameraInput = new FlyCameraInput(mainViewPort.getCamera());

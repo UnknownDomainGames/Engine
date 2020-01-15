@@ -24,12 +24,12 @@ public class FlyCameraInput {
     private final CursorCallback cursorCallback = (window, xpos, ypos) -> onCursorInput(xpos, ypos);
 
     private enum MotionType {
-        FORWARD(KeyCode.KEY_W),
-        BACKWARD(KeyCode.KEY_S),
-        LEFT(KeyCode.KEY_A),
-        RIGHT(KeyCode.KEY_D),
-        UP(KeyCode.KEY_SPACE),
-        DOWN(KeyCode.KEY_LEFT_SHIFT);
+        FORWARD(KeyCode.W),
+        BACKWARD(KeyCode.S),
+        LEFT(KeyCode.A),
+        RIGHT(KeyCode.D),
+        UP(KeyCode.SPACE),
+        DOWN(KeyCode.LEFT_SHIFT);
 
         public final KeyCode key;
 
