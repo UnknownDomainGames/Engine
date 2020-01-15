@@ -2,9 +2,15 @@ package nullengine.client.rendering.util;
 
 public interface GPUInfo {
 
+    enum Vendor {
+        NVIDIA, AMD, INTER, UNKNOWN;
+    }
+
     String getName();
 
-    String getVendor();
+    Vendor getVendor();
+
+    String getVendorName();
 
     int getTotalMemory();
 

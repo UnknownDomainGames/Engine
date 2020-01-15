@@ -6,7 +6,7 @@ import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.font.WindowsFontHelper;
 import nullengine.client.rendering.gl.util.DebugMessageCallback;
-import nullengine.client.rendering.gl.util.NVXGPUInfo;
+import nullengine.client.rendering.gl.util.GPUInfoImpl;
 import nullengine.client.rendering.glfw.GLFWContext;
 import nullengine.client.rendering.glfw.GLFWWindow;
 import nullengine.client.rendering.management.RenderHandler;
@@ -110,7 +110,7 @@ public class GLRenderManager implements RenderManager {
         LOGGER.info("Initializing OpenGL context!");
 
         capabilities = GL.createCapabilities(true);
-        gpuInfo = new NVXGPUInfo();
+        gpuInfo = new GPUInfoImpl();
         printGLInfo();
 
         initDebugMessageCallback();
