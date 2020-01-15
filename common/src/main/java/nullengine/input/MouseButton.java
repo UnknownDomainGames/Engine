@@ -2,22 +2,16 @@ package nullengine.input;
 
 public enum MouseButton {
 
-    MOUSE_BUTTON_PRIMARY(0),
-    MOUSE_BUTTON_SECONDARY(1),
-    MOUSE_BUTTON_MIDDLE(2),
-    MOUSE_BUTTON_4(3),
-    MOUSE_BUTTON_5(4),
-    MOUSE_BUTTON_6(5),
-    MOUSE_BUTTON_7(6),
-    MOUSE_BUTTON_8(7);
-
-    private final int button;
+    MOUSE_BUTTON_PRIMARY,
+    MOUSE_BUTTON_SECONDARY,
+    MOUSE_BUTTON_MIDDLE,
+    MOUSE_BUTTON_4,
+    MOUSE_BUTTON_5,
+    MOUSE_BUTTON_6,
+    MOUSE_BUTTON_7,
+    MOUSE_BUTTON_8;
 
     public static MouseButton valueOf(int button) {
         return MouseButton.values()[button];
-    }
-
-    MouseButton(int button) {
-        this.button = button;
     }
 }
