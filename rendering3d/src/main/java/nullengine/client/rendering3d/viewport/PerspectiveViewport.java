@@ -1,6 +1,6 @@
 package nullengine.client.rendering3d.viewport;
 
-public final class PerspectiveViewPort extends BaseViewPort {
+public final class PerspectiveViewport extends BaseViewport {
 
     private float fovAngle = 60;
     private float aspect;

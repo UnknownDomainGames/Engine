@@ -1,4 +1,4 @@
-package nullengine.client.rendering.example;
+package nullengine.client.rendering3d.example;
 
 import nullengine.client.rendering.gl.shape.Box;
 import nullengine.client.rendering.gl.shape.Line;
@@ -10,7 +10,7 @@ import org.lwjgl.glfw.GLFW;
 
 import java.lang.management.ManagementFactory;
 
-public class HelloWorld extends Application3D {
+public class Hello3D extends Application3D {
 
     private FlyCameraInput cameraInput;
 

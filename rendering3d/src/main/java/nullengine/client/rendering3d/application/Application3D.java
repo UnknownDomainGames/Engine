@@ -4,8 +4,8 @@ import nullengine.client.rendering.RenderEngine;
 import nullengine.client.rendering.management.RenderManager;
 import nullengine.client.rendering.util.FrameTicker;
 import nullengine.client.rendering3d.Scene3D;
-import nullengine.client.rendering3d.gl.Scene3DRenderHandler;
-import nullengine.client.rendering3d.viewport.PerspectiveViewPort;
+import nullengine.client.rendering3d.internal.impl.gl.GLPlatform3D;
+import nullengine.client.rendering3d.viewport.PerspectiveViewport;
 
 public abstract class Application3D {
 
@@ -13,7 +13,7 @@ public abstract class Application3D {
 
     protected RenderManager manager;
 
-    protected PerspectiveViewPort mainViewPort;
+    protected PerspectiveViewport mainViewPort;
     protected Scene3D mainScene;
 
     public static void launch(String[] args) {
@@ -34,6 +34,7 @@ public abstract class Application3D {
 
     public static void launch(Class<? extends Application3D> clazz, String[] args) {
         try {
+            GLPlatform3D.launch(args);
             Application3D application = clazz.getConstructor().newInstance();
             application.doInitialize();
         } catch (Exception e) {
@@ -58,15 +59,12 @@ public abstract class Application3D {
     }
 
     private void doInitialize() throws Exception {
-        RenderEngine.start(new RenderEngine.Settings());
         manager = RenderEngine.getManager();
-        manager.attachHandler(new Scene3DRenderHandler());
-        mainViewPort = new PerspectiveViewPort();
-        mainViewPort.setClearMask(true, true, true);
-        mainViewPort.bindWindow(manager.getPrimaryWindow());
+        mainViewPort = new PerspectiveViewport();
         mainScene = new Scene3D();
         mainViewPort.setScene(mainScene);
-//        manager.setPrimaryViewPort(mainViewPort);
+        mainViewPort.setClearMask(true, true, true);
+        mainViewPort.show(manager.getPrimaryWindow());
         onInitialized();
         ticker.run();
     }

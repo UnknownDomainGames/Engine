@@ -1,4 +1,4 @@
-package nullengine.client.rendering.example;
+package nullengine.client.rendering3d.example;
 
 import nullengine.client.rendering.camera.FreeCamera;
 import nullengine.client.rendering.display.Window;

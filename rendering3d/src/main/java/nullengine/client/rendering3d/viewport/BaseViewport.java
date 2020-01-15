@@ -3,13 +3,17 @@ package nullengine.client.rendering3d.viewport;
 import nullengine.client.rendering.camera.FreeCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.WindowSizeCallback;
+import nullengine.client.rendering.texture.FrameBuffer;
 import nullengine.client.rendering3d.Scene3D;
+import nullengine.client.rendering3d.internal.Platform3D;
 import nullengine.util.Color;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 
-public abstract class BaseViewPort implements ViewPort {
+import static org.apache.commons.lang3.Validate.notNull;
+
+public abstract class BaseViewport implements Viewport {
 
     private int width;
     private int height;
@@ -27,6 +31,10 @@ public abstract class BaseViewPort implements ViewPort {
     protected final Matrix4f projectionViewMatrix = new Matrix4f();
 
     protected final FrustumIntersection frustum = new FrustumIntersection();
+
+    private boolean showing;
+
+    private FrameBuffer frameBuffer;
 
     private Window window;
     private WindowSizeCallback windowSizeCallback;
@@ -149,20 +157,53 @@ public abstract class BaseViewPort implements ViewPort {
     }
 
     @Override
-    public void bindWindow(Window window) {
-        if (this.window != null) this.window.removeWindowSizeCallback(windowSizeCallback);
-        if (window != null) {
-            if (windowSizeCallback == null) {
-                windowSizeCallback = (_window, width, height) -> setSize(width, height);
-            }
-            setSize(window.getWidth(), window.getHeight());
-            window.addWindowSizeCallback(windowSizeCallback);
-        }
-        this.window = window;
+    public FrameBuffer getFrameBuffer() {
+        return frameBuffer;
     }
 
     @Override
-    public void unbindWindow() {
-        bindWindow(null);
+    public Window getWindow() {
+        return this.window;
+    }
+
+    @Override
+    public boolean isShowing() {
+        return showing;
+    }
+
+    @Override
+    public void show(FrameBuffer frameBuffer) {
+        show(null, frameBuffer);
+    }
+
+    @Override
+    public void show(Window window) {
+        show(window, frameBuffer != null ? frameBuffer : Platform3D.getInstance().getDefaultFrameBuffer());
+    }
+
+    @Override
+    public void show(Window window, FrameBuffer frameBuffer) {
+        this.frameBuffer = notNull(frameBuffer, "framebuffer");
+        if (showing) hide();
+        if (window != null) {
+            setSize(window.getWidth(), window.getHeight());
+            if (windowSizeCallback == null) {
+                windowSizeCallback = (_window, width, height) -> setSize(width, height);
+            }
+            window.addWindowSizeCallback(windowSizeCallback);
+        }
+        this.window = window;
+        this.showing = true;
+        Platform3D.getInstance().getViewportHelper().show(this);
+    }
+
+    @Override
+    public void hide() {
+        Platform3D.getInstance().getViewportHelper().hide(this);
+        if (this.window != null) {
+            this.window.removeWindowSizeCallback(windowSizeCallback);
+        }
+        this.window = null;
+        this.showing = false;
     }
 }

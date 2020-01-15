@@ -2,12 +2,13 @@ package nullengine.client.rendering3d.viewport;
 
 import nullengine.client.rendering.camera.FreeCamera;
 import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.texture.FrameBuffer;
 import nullengine.client.rendering3d.Scene3D;
 import nullengine.util.Color;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4fc;
 
-public interface ViewPort {
+public interface Viewport {
 
     int getWidth();
 
@@ -49,7 +50,17 @@ public interface ViewPort {
 
     FrustumIntersection getFrustum();
 
-    void bindWindow(Window window);
+    FrameBuffer getFrameBuffer();
 
-    void unbindWindow();
+    Window getWindow();
+
+    boolean isShowing();
+
+    void show(FrameBuffer frameBuffer);
+
+    void show(Window window);
+
+    void show(Window window, FrameBuffer frameBuffer);
+
+    void hide();
 }

@@ -1,6 +1,6 @@
 package nullengine.client.rendering3d.viewport;
 
-public final class OrthoViewPort extends BaseViewPort {
+public final class OrthoViewport extends BaseViewport {
 
     private float zNear = 0.01f;
     private float zFar = 1000f;
