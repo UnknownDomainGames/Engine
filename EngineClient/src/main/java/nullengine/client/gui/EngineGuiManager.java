@@ -3,7 +3,7 @@ package nullengine.client.gui;
 import nullengine.Platform;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.*;
-import nullengine.client.rendering.display.input.Action;
+import nullengine.input.Action;
 import nullengine.util.UndoHistory;
 
 import java.util.Collections;

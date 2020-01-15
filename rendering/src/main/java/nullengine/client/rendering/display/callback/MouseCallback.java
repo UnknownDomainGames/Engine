@@ -1,9 +1,9 @@
 package nullengine.client.rendering.display.callback;
 
 import nullengine.client.rendering.display.Window;
-import nullengine.client.rendering.display.input.Action;
-import nullengine.client.rendering.display.input.Modifiers;
-import nullengine.client.rendering.display.input.MouseButton;
+import nullengine.input.Action;
+import nullengine.input.Modifiers;
+import nullengine.input.MouseButton;
 
 @FunctionalInterface
 public interface MouseCallback {

@@ -1,4 +1,4 @@
-package nullengine.client.rendering.display.input;
+package nullengine.input;
 
 import java.util.HashMap;
 import java.util.Map;

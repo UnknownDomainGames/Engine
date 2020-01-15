@@ -10,7 +10,7 @@ import nullengine.client.gui.input.MouseEvent;
 import nullengine.client.gui.input.ScrollEvent;
 import nullengine.client.gui.misc.Point;
 import nullengine.client.gui.rendering.ComponentRenderer;
-import nullengine.client.rendering.display.input.MouseButton;
+import nullengine.input.MouseButton;
 
 import java.util.HashMap;
 

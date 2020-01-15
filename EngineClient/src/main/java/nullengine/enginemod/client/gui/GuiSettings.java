@@ -10,9 +10,9 @@ import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.text.Text;
 import nullengine.client.rendering.display.DisplayMode;
-import nullengine.client.rendering.display.input.MouseButton;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.settings.EngineSettings;
+import nullengine.input.MouseButton;
 import nullengine.util.Color;
 
 public class GuiSettings extends AnchorPane {

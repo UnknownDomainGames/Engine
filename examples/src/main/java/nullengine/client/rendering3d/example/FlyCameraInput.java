@@ -4,8 +4,8 @@ import nullengine.client.rendering.camera.FreeCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.CursorCallback;
 import nullengine.client.rendering.display.callback.KeyCallback;
-import nullengine.client.rendering.display.input.Action;
-import nullengine.client.rendering.display.input.KeyCode;
+import nullengine.input.Action;
+import nullengine.input.KeyCode;
 import org.joml.Vector3f;
 
 public class FlyCameraInput {

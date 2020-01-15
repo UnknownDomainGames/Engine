@@ -7,8 +7,8 @@ import nullengine.client.gui.internal.GUIPlatform;
 import nullengine.client.gui.internal.StageHelper;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.*;
-import nullengine.client.rendering.display.input.Action;
 import nullengine.client.rendering.image.ReadOnlyImage;
+import nullengine.input.Action;
 
 import java.util.ArrayList;
 

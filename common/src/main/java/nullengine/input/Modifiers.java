@@ -1,6 +1,6 @@
-package nullengine.client.rendering.display.input;
+package nullengine.input;
 
-import static nullengine.client.rendering.display.input.Modifiers.Modifier.*;
+import static nullengine.input.Modifiers.Modifier.*;
 
 public class Modifiers {
 

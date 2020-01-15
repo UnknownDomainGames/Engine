@@ -5,10 +5,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import nullengine.client.EngineClient;
 import nullengine.client.rendering.display.Window;
-import nullengine.client.rendering.display.input.Action;
-import nullengine.client.rendering.display.input.KeyCode;
-import nullengine.client.rendering.display.input.Modifiers;
-import nullengine.client.rendering.display.input.MouseButton;
+import nullengine.input.Action;
+import nullengine.input.KeyCode;
+import nullengine.input.Modifiers;
+import nullengine.input.MouseButton;
 import nullengine.logic.Tickable;
 import nullengine.registry.Registry;
 

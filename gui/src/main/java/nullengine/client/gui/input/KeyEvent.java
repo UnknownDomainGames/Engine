@@ -3,8 +3,8 @@ package nullengine.client.gui.input;
 import nullengine.client.gui.event.Event;
 import nullengine.client.gui.event.EventTarget;
 import nullengine.client.gui.event.EventType;
-import nullengine.client.rendering.display.input.KeyCode;
-import nullengine.client.rendering.display.input.Modifiers;
+import nullengine.input.KeyCode;
+import nullengine.input.Modifiers;
 
 public class KeyEvent extends Event {
     public static final EventType<KeyEvent> ANY = new EventType<>("KEY");

@@ -5,8 +5,8 @@ import nullengine.client.gui.component.TextField;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
-import nullengine.client.rendering.display.input.KeyCode;
 import nullengine.game.Game;
+import nullengine.input.KeyCode;
 import nullengine.util.Color;
 
 public class GuiChat extends AnchorPane {

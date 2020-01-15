@@ -11,9 +11,9 @@ import nullengine.client.gui.misc.IndexRange;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.TextFieldRenderer;
-import nullengine.client.rendering.display.input.Modifiers;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
+import nullengine.input.Modifiers;
 import nullengine.math.Math2;
 import nullengine.util.Color;
 

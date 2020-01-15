@@ -1,11 +1,11 @@
 package nullengine.client.rendering3d.example;
 
-import nullengine.client.rendering.display.input.Action;
-import nullengine.client.rendering.display.input.KeyCode;
 import nullengine.client.rendering.gl.shape.Box;
 import nullengine.client.rendering.gl.shape.Line;
 import nullengine.client.rendering3d.Geometry;
 import nullengine.client.rendering3d.application.Application3D;
+import nullengine.input.Action;
+import nullengine.input.KeyCode;
 import nullengine.util.Color;
 import org.joml.Vector3f;
 

@@ -1,9 +1,9 @@
 package nullengine.client.rendering.display.callback;
 
 import nullengine.client.rendering.display.Window;
-import nullengine.client.rendering.display.input.Action;
-import nullengine.client.rendering.display.input.KeyCode;
-import nullengine.client.rendering.display.input.Modifiers;
+import nullengine.input.Action;
+import nullengine.input.KeyCode;
+import nullengine.input.Modifiers;
 
 @FunctionalInterface
 public interface KeyCallback {
