@@ -73,7 +73,7 @@ public class GLFrameBuffer implements FrameBuffer {
     private GLFrameBuffer() {
         this.id = 0;
         this.attachments = Map.of();
-        this.attachedTextures = Map.of();
+        this.attachedTextures = new HashMap<>();
     }
 
     private GLFrameBuffer(Map<Integer, TextureFactory> attachments, int width, int height) {
@@ -105,7 +105,7 @@ public class GLFrameBuffer implements FrameBuffer {
 
     @Override
     public void resize(int width, int height) {
-        if (id == 0) throw new IllegalStateException("Frame buffer has been disposed");
+        if (id == -1) throw new IllegalStateException("Frame buffer has been disposed");
         this.width = width;
         this.height = height;
         disposeAttachedTextures();
