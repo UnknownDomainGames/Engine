@@ -1,4 +1,4 @@
-package nullengine.client.gui.input;
+package nullengine.client.rendering.display.input;
 
 public enum MouseButton {
 

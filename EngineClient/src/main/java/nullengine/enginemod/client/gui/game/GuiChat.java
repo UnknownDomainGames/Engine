@@ -2,10 +2,10 @@ package nullengine.enginemod.client.gui.game;
 
 import nullengine.Platform;
 import nullengine.client.gui.component.TextField;
-import nullengine.client.gui.input.KeyCode;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
+import nullengine.client.rendering.display.input.KeyCode;
 import nullengine.game.Game;
 import nullengine.util.Color;
 

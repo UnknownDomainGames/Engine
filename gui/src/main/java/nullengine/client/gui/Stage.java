@@ -3,15 +3,12 @@ package nullengine.client.gui;
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.*;
-import nullengine.client.gui.input.KeyCode;
-import nullengine.client.gui.input.Modifiers;
-import nullengine.client.gui.input.MouseButton;
 import nullengine.client.gui.internal.GUIPlatform;
 import nullengine.client.gui.internal.StageHelper;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.*;
+import nullengine.client.rendering.display.input.Action;
 import nullengine.client.rendering.image.ReadOnlyImage;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 
@@ -394,14 +391,14 @@ public class Stage {
             if (mouseCallback == null) mouseCallback = (window, button, action, mods) -> {
                 Scene scene = getScene();
                 if (scene != null) {
-                    scene.processMouse(MouseButton.valueOf(button), Modifiers.of(mods), action == GLFW.GLFW_PRESS);
+                    scene.processMouse(button, mods, action == Action.PRESS);
                 }
             };
             window.addMouseCallback(mouseCallback);
             if (keyCallback == null) keyCallback = (window, key, scancode, action, mods) -> {
                 Scene scene = getScene();
                 if (scene != null) {
-                    scene.processKey(KeyCode.valueOf(key), Modifiers.of(mods), action != GLFW.GLFW_RELEASE);
+                    scene.processKey(key, mods, action != Action.RELEASE);
                 }
             };
             window.addKeyCallback(keyCallback);
@@ -412,10 +409,10 @@ public class Stage {
                 }
             };
             window.addCursorCallback(cursorCallback);
-            if (charModsCallback == null) charModsCallback = (window, codepoint, mods) -> {
+            if (charModsCallback == null) charModsCallback = (window, character, mods) -> {
                 Scene scene = getScene();
                 if (scene != null) {
-                    scene.processCharMods((char) codepoint, Modifiers.of(mods));
+                    scene.processCharMods(character, mods);
                 }
             };
             window.addCharModsCallback(charModsCallback);

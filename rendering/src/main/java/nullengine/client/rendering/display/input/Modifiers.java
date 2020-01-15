@@ -1,6 +1,6 @@
-package nullengine.client.gui.input;
+package nullengine.client.rendering.display.input;
 
-import static nullengine.client.gui.input.Modifiers.Modifier.*;
+import static nullengine.client.rendering.display.input.Modifiers.Modifier.*;
 
 public class Modifiers {
 
@@ -47,23 +47,23 @@ public class Modifiers {
         this.mods = mods & 0x0f;
     }
 
-    public boolean isShift() {
+    public boolean hasShift() {
         return (mods & SHIFT.code) != 0;
     }
 
-    public boolean isControl() {
+    public boolean hasControl() {
         return (mods & CONTROL.code) != 0;
     }
 
-    public boolean isAlt() {
+    public boolean hasAlt() {
         return (mods & ALT.code) != 0;
     }
 
-    public boolean isMeta() {
+    public boolean hasMeta() {
         return (mods & META.code) != 0;
     }
 
-    public boolean is(Modifier... modifiers) {
+    public boolean has(Modifier... modifiers) {
         int mods = 0;
         for (var mod : modifiers) {
             mods |= mod.code;
@@ -91,10 +91,10 @@ public class Modifiers {
     @Override
     public String toString() {
         return "KeyModifier{" +
-                "shift=" + isShift() +
-                ", control=" + isControl() +
-                ", alt=" + isAlt() +
-                ", meta=" + isMeta() +
+                "shift=" + hasShift() +
+                ", control=" + hasControl() +
+                ", alt=" + hasAlt() +
+                ", meta=" + hasMeta() +
                 '}';
     }
 }

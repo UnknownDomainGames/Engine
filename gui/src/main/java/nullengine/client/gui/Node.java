@@ -4,9 +4,13 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
 import nullengine.client.gui.event.*;
-import nullengine.client.gui.input.*;
+import nullengine.client.gui.input.KeyEvent;
+import nullengine.client.gui.input.MouseActionEvent;
+import nullengine.client.gui.input.MouseEvent;
+import nullengine.client.gui.input.ScrollEvent;
 import nullengine.client.gui.misc.Point;
 import nullengine.client.gui.rendering.ComponentRenderer;
+import nullengine.client.rendering.display.input.MouseButton;
 
 import java.util.HashMap;
 

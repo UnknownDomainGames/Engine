@@ -1,12 +1,13 @@
 package nullengine.client.rendering3d.example;
 
+import nullengine.client.rendering.display.input.Action;
+import nullengine.client.rendering.display.input.KeyCode;
 import nullengine.client.rendering.gl.shape.Box;
 import nullengine.client.rendering.gl.shape.Line;
 import nullengine.client.rendering3d.Geometry;
 import nullengine.client.rendering3d.application.Application3D;
 import nullengine.util.Color;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 
 import java.lang.management.ManagementFactory;
 
@@ -23,7 +24,7 @@ public class Hello3D extends Application3D {
     protected void onInitialized() {
         manager.getPrimaryWindow().addWindowCloseCallback(window -> stop());
         manager.getPrimaryWindow().addKeyCallback((window, key, scancode, action, mods) -> {
-            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_PRESS) stop();
+            if (key == KeyCode.KEY_ESCAPE && action == Action.PRESS) stop();
         });
 
         cameraInput = new FlyCameraInput(mainViewPort.getCamera());

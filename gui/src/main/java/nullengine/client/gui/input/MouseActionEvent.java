@@ -3,6 +3,8 @@ package nullengine.client.gui.input;
 import nullengine.client.gui.event.Event;
 import nullengine.client.gui.event.EventTarget;
 import nullengine.client.gui.event.EventType;
+import nullengine.client.rendering.display.input.Modifiers;
+import nullengine.client.rendering.display.input.MouseButton;
 
 public class MouseActionEvent extends MouseEvent {
     public static final EventType<MouseActionEvent> ANY = new EventType<>("MOUSE_ACTION", MouseEvent.ANY);

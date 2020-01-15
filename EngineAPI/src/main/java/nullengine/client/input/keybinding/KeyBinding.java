@@ -1,7 +1,7 @@
 package nullengine.client.input.keybinding;
 
 import nullengine.client.EngineClient;
-import nullengine.client.gui.input.Modifiers;
+import nullengine.client.rendering.display.input.Modifiers;
 import nullengine.registry.Registrable;
 
 import java.util.function.BiConsumer;

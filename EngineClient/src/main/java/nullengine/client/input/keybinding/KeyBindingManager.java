@@ -5,9 +5,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import nullengine.client.EngineClient;
 import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.display.input.Action;
+import nullengine.client.rendering.display.input.KeyCode;
+import nullengine.client.rendering.display.input.Modifiers;
+import nullengine.client.rendering.display.input.MouseButton;
 import nullengine.logic.Tickable;
 import nullengine.registry.Registry;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -110,26 +113,26 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         return modifiers + (code << 4);
     }
 
-    public void handleMouse(Window window, int button, int action, int modifiers) {
+    public void handleMouse(Window window, MouseButton button, Action action, Modifiers modifiers) {
         switch (action) {
-            case GLFW.GLFW_PRESS:
-                handlePress(button + 400, modifiers);
+            case PRESS:
+                handlePress(button.ordinal() + 400, modifiers.getInternalCode());
                 break;
-            case GLFW.GLFW_RELEASE:
-                handleRelease(button + 400, modifiers);
+            case RELEASE:
+                handleRelease(button.ordinal() + 400, modifiers.getInternalCode());
                 break;
             default:
                 break;
         }
     }
 
-    public void handleKey(Window window, int key, int scancode, int action, int modifiers) {
+    public void handleKey(Window window, KeyCode key, int scancode, Action action, Modifiers modifiers) {
         switch (action) {
-            case GLFW.GLFW_PRESS:
-                handlePress(key, modifiers);
+            case PRESS:
+                handlePress(key.getCode(), modifiers.getInternalCode());
                 break;
-            case GLFW.GLFW_RELEASE:
-                handleRelease(key, modifiers);
+            case RELEASE:
+                handleRelease(key.getCode(), modifiers.getInternalCode());
                 break;
             default:
                 break;

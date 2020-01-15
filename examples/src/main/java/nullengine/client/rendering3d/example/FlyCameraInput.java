@@ -4,8 +4,9 @@ import nullengine.client.rendering.camera.FreeCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.CursorCallback;
 import nullengine.client.rendering.display.callback.KeyCallback;
+import nullengine.client.rendering.display.input.Action;
+import nullengine.client.rendering.display.input.KeyCode;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 
 public class FlyCameraInput {
 
@@ -23,16 +24,16 @@ public class FlyCameraInput {
     private final CursorCallback cursorCallback = (window, xpos, ypos) -> onCursorInput(xpos, ypos);
 
     private enum MotionType {
-        FORWARD(GLFW.GLFW_KEY_W),
-        BACKWARD(GLFW.GLFW_KEY_S),
-        LEFT(GLFW.GLFW_KEY_A),
-        RIGHT(GLFW.GLFW_KEY_D),
-        UP(GLFW.GLFW_KEY_SPACE),
-        DOWN(GLFW.GLFW_KEY_LEFT_SHIFT);
+        FORWARD(KeyCode.KEY_W),
+        BACKWARD(KeyCode.KEY_S),
+        LEFT(KeyCode.KEY_A),
+        RIGHT(KeyCode.KEY_D),
+        UP(KeyCode.KEY_SPACE),
+        DOWN(KeyCode.KEY_LEFT_SHIFT);
 
-        public final int key;
+        public final KeyCode key;
 
-        MotionType(int key) {
+        MotionType(KeyCode key) {
             this.key = key;
         }
     }
@@ -72,12 +73,12 @@ public class FlyCameraInput {
         camera.look(position, new Vector3f(0, 0, -1).rotateX((float) Math.toRadians(pitch)).rotateY((float) Math.toRadians(yaw)));
     }
 
-    private void onKeyInput(int key, int action) {
-        if (action == GLFW.GLFW_REPEAT) return;
+    private void onKeyInput(KeyCode key, Action action) {
+        if (action == Action.REPEAT) return;
 
         for (MotionType type : MotionType.values()) {
             if (type.key == key) {
-                onMove(type, action == GLFW.GLFW_PRESS);
+                onMove(type, action == Action.PRESS);
                 return;
             }
         }

@@ -5,6 +5,10 @@ import nullengine.client.rendering.display.DisplayMode;
 import nullengine.client.rendering.display.Monitor;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.*;
+import nullengine.client.rendering.display.input.Action;
+import nullengine.client.rendering.display.input.KeyCode;
+import nullengine.client.rendering.display.input.Modifiers;
+import nullengine.client.rendering.display.input.MouseButton;
 import nullengine.client.rendering.image.ReadOnlyImage;
 import org.apache.commons.lang3.SystemUtils;
 import org.lwjgl.PointerBuffer;
@@ -53,7 +57,6 @@ public class GLFWWindow implements Window {
     private final List<MouseCallback> mouseCallbacks = new LinkedList<>();
     private final List<CursorCallback> cursorCallbacks = new LinkedList<>();
     private final List<ScrollCallback> scrollCallbacks = new LinkedList<>();
-    private final List<CharCallback> charCallbacks = new LinkedList<>();
     private final List<CharModsCallback> charModsCallbacks = new LinkedList<>();
     private final List<WindowCloseCallback> windowCloseCallbacks = new LinkedList<>();
     private final List<WindowFocusCallback> windowFocusCallbacks = new LinkedList<>();
@@ -452,16 +455,6 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public void addCharCallback(CharCallback callback) {
-        charCallbacks.add(requireNonNull(callback));
-    }
-
-    @Override
-    public void removeCharCallback(CharCallback callback) {
-        charCallbacks.remove(callback);
-    }
-
-    @Override
     public void addCharModsCallback(CharModsCallback callback) {
         charModsCallbacks.add(callback);
     }
@@ -552,18 +545,26 @@ public class GLFWWindow implements Window {
     }
 
     private void initCallbacks() {
-        glfwSetKeyCallback(pointer, (window, key, scancode, action, mods) ->
-                keyCallbacks.forEach(callback -> callback.invoke(this, key, scancode, action, mods)));
-        glfwSetMouseButtonCallback(pointer, (window, button, action, mods) ->
-                mouseCallbacks.forEach(callback -> callback.invoke(this, button, action, mods)));
+        glfwSetKeyCallback(pointer, (window, key, scancode, action, mods) -> {
+            KeyCode _key = KeyCode.valueOf(key);
+            Action _action = Action.values()[action];
+            Modifiers modifiers = Modifiers.of(mods);
+            keyCallbacks.forEach(callback -> callback.invoke(this, _key, scancode, _action, modifiers));
+        });
+        glfwSetMouseButtonCallback(pointer, (window, button, action, mods) -> {
+            MouseButton _button = MouseButton.valueOf(button);
+            Action _action = Action.values()[action];
+            Modifiers modifiers = Modifiers.of(mods);
+            mouseCallbacks.forEach(callback -> callback.invoke(this, _button, _action, modifiers));
+        });
         glfwSetCursorPosCallback(pointer, (window, xpos, ypos) ->
                 cursorCallbacks.forEach(callback -> callback.invoke(this, xpos, ypos)));
         glfwSetScrollCallback(pointer, (window, xoffset, yoffset) ->
                 scrollCallbacks.forEach(callback -> callback.invoke(this, xoffset, yoffset)));
-        glfwSetCharCallback(pointer, (window, codepoint) ->
-                charCallbacks.forEach(callback -> callback.invoke(this, codepoint)));
-        glfwSetCharModsCallback(pointer, (window, codepoint, mods) ->
-                charModsCallbacks.forEach(callback -> callback.invoke(this, codepoint, mods)));
+        glfwSetCharModsCallback(pointer, (window, codepoint, mods) -> {
+            Modifiers modifiers = Modifiers.of(mods);
+            charModsCallbacks.forEach(callback -> callback.invoke(this, (char) codepoint, modifiers));
+        });
         glfwSetWindowCloseCallback(pointer, window -> {
             windowCloseCallbacks.forEach(callback -> callback.invoke(this));
             dispose();

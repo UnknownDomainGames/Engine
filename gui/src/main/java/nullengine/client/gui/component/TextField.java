@@ -1,13 +1,17 @@
 package nullengine.client.gui.component;
 
 import com.github.mouse0w0.observable.value.*;
-import nullengine.client.gui.input.*;
+import nullengine.client.gui.input.Clipboard;
+import nullengine.client.gui.input.KeyEvent;
+import nullengine.client.gui.input.MouseActionEvent;
+import nullengine.client.gui.input.MouseEvent;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.misc.IndexRange;
 import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.TextFieldRenderer;
+import nullengine.client.rendering.display.input.Modifiers;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.math.Math2;
@@ -85,14 +89,14 @@ public class TextField extends Control {
     private void onKeyPressed(KeyEvent event) {
         switch (event.getKey()) {
             case KEY_LEFT:
-                if (event.getModifier().isShift()) {
+                if (event.getModifier().hasShift()) {
                     selectBackward();
                 } else {
                     backward();
                 }
                 break;
             case KEY_RIGHT:
-                if (event.getModifier().isShift()) {
+                if (event.getModifier().hasShift()) {
                     selectForward();
                 } else {
                     forward();
@@ -115,22 +119,22 @@ public class TextField extends Control {
                 }
                 break;
             case KEY_X:
-                if (event.getModifier().is(Modifiers.Modifier.CONTROL)) {
+                if (event.getModifier().has(Modifiers.Modifier.CONTROL)) {
                     cut();
                 }
                 break;
             case KEY_C:
-                if (event.getModifier().is(Modifiers.Modifier.CONTROL)) {
+                if (event.getModifier().has(Modifiers.Modifier.CONTROL)) {
                     copy();
                 }
                 break;
             case KEY_V:
-                if (event.getModifier().is(Modifiers.Modifier.CONTROL)) {
+                if (event.getModifier().has(Modifiers.Modifier.CONTROL)) {
                     paste();
                 }
                 break;
             case KEY_A:
-                if (event.getModifier().is(Modifiers.Modifier.CONTROL)) {
+                if (event.getModifier().has(Modifiers.Modifier.CONTROL)) {
                     selectAll();
                 }
                 break;

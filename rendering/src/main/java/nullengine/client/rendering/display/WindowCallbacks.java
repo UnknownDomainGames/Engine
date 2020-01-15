@@ -19,10 +19,6 @@ public interface WindowCallbacks {
 
     void removeScrollCallback(ScrollCallback callback);
 
-    void addCharCallback(CharCallback callback);
-
-    void removeCharCallback(CharCallback callback);
-
     void addCharModsCallback(CharModsCallback callback);
 
     void removeCharModsCallback(CharModsCallback callback);

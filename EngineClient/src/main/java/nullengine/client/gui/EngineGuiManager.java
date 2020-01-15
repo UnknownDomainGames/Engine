@@ -1,13 +1,10 @@
 package nullengine.client.gui;
 
 import nullengine.Platform;
-import nullengine.client.gui.input.KeyCode;
-import nullengine.client.gui.input.Modifiers;
-import nullengine.client.gui.input.MouseButton;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.*;
+import nullengine.client.rendering.display.input.Action;
 import nullengine.util.UndoHistory;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,13 +33,13 @@ public class EngineGuiManager implements GuiManager {
         }
     };
     private final MouseCallback mouseCallback = (window1, button, action, mods) -> {
-        if (displayingScreen != null && action != GLFW.GLFW_REPEAT) {
-            displayingScreen.processMouse(MouseButton.valueOf(button), Modifiers.of(mods), action == GLFW.GLFW_PRESS);
+        if (displayingScreen != null && action != Action.REPEAT) {
+            displayingScreen.processMouse(button, mods, action == Action.PRESS);
         }
     };
     private final KeyCallback keyCallback = (window1, key, scancode, action, mods) -> {
         if (displayingScreen != null) {
-            displayingScreen.processKey(KeyCode.valueOf(key), Modifiers.of(mods), action != GLFW.GLFW_RELEASE);
+            displayingScreen.processKey(key, mods, action != Action.RELEASE);
         }
     };
     private final ScrollCallback scrollCallback = (window1, xoffset, yoffset) -> {
@@ -50,9 +47,9 @@ public class EngineGuiManager implements GuiManager {
             displayingScreen.processScroll(xoffset, yoffset);
         }
     };
-    private final CharModsCallback charModsCallback = (window1, codepoint, mods) -> {
+    private final CharModsCallback charModsCallback = (window1, character, mods) -> {
         if (displayingScreen != null) {
-            displayingScreen.processCharMods((char) codepoint, Modifiers.of(mods));
+            displayingScreen.processCharMods(character, mods);
         }
     };
     private final WindowSizeCallback windowSizeCallback = (window1, width, height) -> {
