@@ -65,6 +65,7 @@ subprojects {
     }
 
     jar {
+        archiveBaseName.set("pangu-" + project.name)
         from rootProject.file('LICENSE')
     }
 }
