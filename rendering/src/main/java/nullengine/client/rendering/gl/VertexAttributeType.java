@@ -8,10 +8,10 @@ import org.joml.Vector4fc;
 import static org.lwjgl.opengl.GL20.*;
 
 enum VertexAttributeType {
-    BUFFER(VertexBufferObject.class, false) {
+    BUFFER(VertexBuffer.class, false) {
         @Override
         public void apply(int index, GLVertexElement element, Object value) {
-            ((VertexBufferObject) value).bind();
+            ((VertexBuffer) value).bind();
             glEnableVertexAttribArray(index);
             element.apply(index);
         }
