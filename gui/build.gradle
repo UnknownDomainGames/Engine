@@ -1,3 +1,6 @@
 dependencies {
     compile project(':rendering')
+
+    compile "org.lwjgl:lwjgl-nfd:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-nfd:$lwjglVersion:$lwjglNatives"
 }
