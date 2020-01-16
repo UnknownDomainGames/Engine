@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':gui')
-    compile project(':rendering3d')
-    compile 'org.slf4j:slf4j-simple:1.7.25'
+    implementation project(':gui')
+    implementation project(':rendering3d')
+    runtimeOnly 'org.slf4j:slf4j-simple:1.7.25'
 }

@@ -1,6 +1,6 @@
 dependencies {
     compile project(':rendering')
 
-    compile "org.lwjgl:lwjgl-tinyfd:$lwjglVersion"
-    compile "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:$lwjglNatives"
+    implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion"
+    runtimeOnly "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:$lwjglNatives"
 }

@@ -6,6 +6,6 @@ dependencies {
 
     implementation 'ch.qos.logback:logback-classic:1.2.3'
 
-    implementation 'com.github.Mouse0w0.Configuration:configuration-toml4j:1.2.0'
-    implementation 'com.github.Mouse0w0.Configuration:configuration-gson:1.2.0'
+    runtimeOnly 'com.github.Mouse0w0.Configuration:configuration-toml4j:1.2.0'
+    runtimeOnly 'com.github.Mouse0w0.Configuration:configuration-gson:1.2.0'
 }
