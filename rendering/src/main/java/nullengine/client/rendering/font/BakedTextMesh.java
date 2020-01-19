@@ -9,29 +9,29 @@ import java.util.List;
 public class BakedTextMesh {
 
     private List<float[]> vertices;
-    private CharSequence text;
-    private Font font;
-    private Color color;
+    private TextInfo textInfo;
     private FontPlaneTexture texture;
 
     BakedTextMesh(List<float[]> vertices, CharSequence text, Font font, Color color, FontPlaneTexture texture){
         this.vertices = vertices;
-        this.text = text;
-        this.font = font;
-        this.color = color;
+        this.textInfo = new TextInfo(text, font, color);
         this.texture = texture;
     }
 
+    public TextInfo getTextInfo(){
+        return textInfo;
+    }
+
     public CharSequence getText() {
-        return text;
+        return getTextInfo().getText();
     }
 
     public Font getFont() {
-        return font;
+        return getTextInfo().getFont();
     }
 
     public Color getColor() {
-        return color;
+        return getTextInfo().getColor();
     }
 
     public FontPlaneTexture getTexture() {
@@ -40,7 +40,7 @@ public class BakedTextMesh {
 
     public void putVertices(GLBuffer buffer){
         for (float[] vertex : vertices) {
-            buffer.pos(vertex, 0).color(color).uv(vertex, 3).endVertex();
+            buffer.pos(vertex, 0).color(getColor()).uv(vertex, 3).endVertex();
         }
     }
 }

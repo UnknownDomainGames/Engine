@@ -300,6 +300,8 @@ public final class WindowsFontHelper implements FontHelper {
         nativeTTFont.getPlaneTextures().get(0).bind();
     }
 
+    private final Map<TextInfo, BakedTextMesh> bakedTextMeshMap = new HashMap<>();
+
     @Override
     public void renderText(GLBuffer buffer, CharSequence text, Font font, Color color, Runnable renderer) throws UnavailableFontException {
         if (text == null || text.length() == 0) {
@@ -309,11 +311,14 @@ public final class WindowsFontHelper implements FontHelper {
         NativeTTFont nativeFont = getNativeFont(font);
         bindTexture(nativeFont);
         buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE);
-        bakeMesh(text, font, color).putVertices(buffer); // TODO: baked mesh should be stored
+        bakedTextMeshMap.computeIfAbsent(new TextInfo(text,font,color), this::bakeMesh).putVertices(buffer); // TODO: baked mesh should be stored
         renderer.run();
     }
 
-    public BakedTextMesh bakeMesh(CharSequence text, Font font, Color color) {
+    public BakedTextMesh bakeMesh(TextInfo info) {
+        CharSequence text = info.getText();
+        Font font = info.getFont();
+        Color color = info.getColor();
         NativeTTFont nativeTTFont = getNativeFont(font);
         STBTTFontinfo fontInfo = nativeTTFont.getInfo().getFontInfo();
         float scale = nativeTTFont.getScaleForPixelHeight();
