@@ -12,6 +12,7 @@ import nullengine.client.rendering.gl.font.NativeTTFontInfo;
 import nullengine.client.rendering.gl.vertex.GLVertexFormats;
 import nullengine.util.Color;
 import org.apache.commons.io.IOUtils;
+import org.joml.Vector3fc;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
 import org.slf4j.Logger;
@@ -184,7 +185,7 @@ public final class WindowsFontHelper implements FontHelper {
 
     @Override
     public List<String> wrapText(String text, float width, Font font) {
-        if (computeTextWidth(text, font) <= width || width == 0) {
+        if (computeTextWidth(text, font) <= width || width <= 0) {
             return Lists.newArrayList(text);
         } else {
             int l = 0, h = text.length() - 1;
@@ -202,6 +203,12 @@ public final class WindowsFontHelper implements FontHelper {
         }
     }
 
+    /**
+    compute the text width
+     @param text the text
+     @param font the font of the text
+     @param ceilingWidth the maximum width of the text. -1 if no limitation on it
+     */
     @Override
     public float computeTextWidth(String text, Font font, float ceilingWidth) {
         if (text == null || text.length() == 0) {
@@ -303,7 +310,7 @@ public final class WindowsFontHelper implements FontHelper {
     private final Map<TextInfo, BakedTextMesh> bakedTextMeshMap = new HashMap<>();
 
     @Override
-    public void renderText(GLBuffer buffer, CharSequence text, Font font, Color color, Runnable renderer) throws UnavailableFontException {
+    public void renderText(GLBuffer buffer, CharSequence text, Font font, Color color, Vector3fc pos, Runnable renderer) throws UnavailableFontException {
         if (text == null || text.length() == 0) {
             return;
         }
@@ -311,7 +318,8 @@ public final class WindowsFontHelper implements FontHelper {
         NativeTTFont nativeFont = getNativeFont(font);
         bindTexture(nativeFont);
         buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE);
-        bakedTextMeshMap.computeIfAbsent(new TextInfo(text,font,color), this::bakeMesh).putVertices(buffer); // TODO: baked mesh should be stored
+        buffer.posOffset(pos.x(), pos.y(), pos.z());
+        bakedTextMeshMap.computeIfAbsent(new TextInfo(text,font,color), this::bakeMesh).putVertices(buffer);
         renderer.run();
     }
 

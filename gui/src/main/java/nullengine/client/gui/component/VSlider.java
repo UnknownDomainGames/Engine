@@ -102,12 +102,15 @@ public class VSlider extends Region {
     }
 
     private void onPressed(MouseActionEvent e) {
-        if (e.getY() > slider.y().get() + slider.width().get()) {
-            value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
-        } else if (e.getY() < slider.y().get()) {
-            value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
+        if(e.getTarget().equals(back)) {
+            if (e.getY() > slider.y().get() + slider.height().get()) {
+                value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
+            } else if (e.getY() < slider.y().get()) {
+                value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
+            }
         }
-        if (slider.contains(e.getX(), e.getY()))
+//        if (slider.contains(e.getX(), e.getY()))
+        if(e.getTarget().equals(slider))
             select = true;
     }
 

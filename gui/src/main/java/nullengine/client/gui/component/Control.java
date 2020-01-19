@@ -13,8 +13,8 @@ public abstract class Control extends Region {
         return true;
     }
 
-    @Override
-    public List<Node> getPointingComponents(float posX, float posY) {
-        return Lists.newArrayList(this);
-    }
+//    @Override
+//    public List<Node> getPointingComponents(float posX, float posY) {
+//        return Lists.newArrayList(this);
+//    }
 }

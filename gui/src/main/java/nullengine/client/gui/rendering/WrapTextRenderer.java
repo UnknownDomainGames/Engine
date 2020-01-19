@@ -20,7 +20,7 @@ public class WrapTextRenderer implements ComponentRenderer<WrapText> {
 
         Pos alignment = text.textAlignment().getValue();
 
-        float x = 0, y = 0;
+        float x = text.x().get(), y = text.y().get();
         var lines = text.text().getValue().lines().flatMap(str -> FontHelper.instance().wrapText(str, text.textWidth().get(), text.font().getValue()).stream()).collect(Collectors.toList());
         var lineHeight = FontHelper.instance().computeTextHeight(text.text().getValue(), text.font().getValue(), text.textWidth().get()) / lines.size();
         for (String line : lines) {
@@ -37,9 +37,7 @@ public class WrapTextRenderer implements ComponentRenderer<WrapText> {
             }
             var y1 = y + (lineHeight * text.leading().getFloat() - lineHeight) / 2;
 
-            graphics.pushClipRect(x, y1, text.width().get(), text.height().get());
             graphics.drawText(line, x, y1);
-            graphics.popClipRect();
             y += lineHeight * text.leading().getFloat();
         }
     }

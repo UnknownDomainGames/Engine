@@ -15,6 +15,7 @@ import nullengine.client.rendering.texture.Texture2D;
 import nullengine.math.Math2;
 import nullengine.util.Color;
 import org.joml.Vector2fc;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
 
@@ -186,8 +187,7 @@ public class GLGraphics implements Graphics {
     @Override
     public void drawText(CharSequence text, float x, float y) {
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.posOffset(x, y, 0);
-        FontHelper.instance().renderText(buffer, text, font, color, () -> {
+        FontHelper.instance().renderText(buffer, text, font, color, new Vector3f(x,y,0), () -> {
             renderer.startRenderText();
             directRenderer.draw();
             renderer.endRenderText();

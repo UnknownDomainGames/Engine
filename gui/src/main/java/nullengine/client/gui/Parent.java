@@ -161,11 +161,12 @@ public abstract class Parent extends Node {
             if (node.contains(posX, posY)) {
                 if (node instanceof Parent) {
                     var container = (Parent) node;
-                    if (!(node instanceof Control)) {
-                        list.add(container);
+                    var pointingComponents = container.getPointingComponents(posX - container.x().get(), posY - container.y().get());
+                    if (!pointingComponents.isEmpty()) {
+                        list.addAll(pointingComponents);
+                    } else {
+                        list.add(node);
                     }
-                    list.addAll(container.getPointingComponents(posX - container.x().get(), posY - container.y().get()));
-
                 } else {
                     list.add(node);
                 }
