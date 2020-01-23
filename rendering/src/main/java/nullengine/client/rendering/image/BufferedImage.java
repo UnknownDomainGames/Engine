@@ -13,6 +13,7 @@ public class BufferedImage implements WritableImage {
     private final int height;
     private final int stride;
     private final ByteBuffer pixelBuffer;
+    private final ByteBuffer readOnlyBuffer;
     private final long address;
 
     public static BufferedImage create(String url) throws IOException {
@@ -57,6 +58,7 @@ public class BufferedImage implements WritableImage {
         this.height = height;
         this.stride = Integer.BYTES * width;
         this.pixelBuffer = copy ? allocateDirect(pixelBuffer.capacity()).put(pixelBuffer).flip() : pixelBuffer;
+        this.readOnlyBuffer = pixelBuffer.asReadOnlyBuffer();
         this.address = memAddress(this.pixelBuffer);
     }
 
@@ -72,7 +74,7 @@ public class BufferedImage implements WritableImage {
 
     @Override
     public ByteBuffer getPixelBuffer() {
-        return pixelBuffer.asReadOnlyBuffer();
+        return readOnlyBuffer;
     }
 
     @Override
