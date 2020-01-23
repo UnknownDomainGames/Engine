@@ -1,5 +1,7 @@
 package nullengine.client.rendering.image;
 
+import nullengine.util.Color;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -16,16 +18,24 @@ public class BufferedImage implements WritableImage {
     private final ByteBuffer readOnlyBuffer;
     private final long address;
 
-    public static BufferedImage create(String url) throws IOException {
+    public static BufferedImage load(String url) throws IOException {
         return ImageHelper.instance().loadWritableImage(url);
     }
 
-    public static BufferedImage create(InputStream input) throws IOException {
+    public static BufferedImage load(InputStream input) throws IOException {
         return ImageHelper.instance().loadWritableImage(input);
     }
 
-    public static BufferedImage create(ByteBuffer bytes) throws IOException {
+    public static BufferedImage load(ByteBuffer bytes) throws IOException {
         return ImageHelper.instance().loadWritableImage(bytes);
+    }
+
+    public static BufferedImage wrap(ByteBuffer pixelBuffer, int width, int height) {
+        return new BufferedImage(pixelBuffer, width, height, false);
+    }
+
+    public static BufferedImage wrapDirect(ByteBuffer pixelBuffer, int width, int height) {
+        return new BufferedImage(pixelBuffer, width, height, pixelBuffer.isReadOnly() || !pixelBuffer.isDirect());
     }
 
     public BufferedImage(int size) {
@@ -33,24 +43,25 @@ public class BufferedImage implements WritableImage {
     }
 
     public BufferedImage(int width, int height) {
-        this(allocateDirect(Integer.BYTES * width * height), width, height);
+        this(allocateDirect(Integer.BYTES * width * height), width, height, false);
     }
 
-    public BufferedImage(int width, int height, int rgba) {
+    public BufferedImage(int width, int height, Color fillColor) {
         this(width, height);
-        fill(rgba);
+        fill(fillColor);
+    }
+
+    public BufferedImage(int width, int height, int fillColorRGBA) {
+        this(width, height);
+        fill(fillColorRGBA);
     }
 
     public BufferedImage(ReadOnlyImage image) {
-        this(image.getPixelBuffer(), image.getWidth(), image.getHeight());
+        this(image.getPixelBuffer(), image.getWidth(), image.getHeight(), true);
     }
 
     public BufferedImage(WritableImage image) {
         this(image.getWritablePixelBuffer(), image.getWidth(), image.getHeight(), true);
-    }
-
-    public BufferedImage(ByteBuffer pixelBuffer, int width, int height) {
-        this(pixelBuffer, width, height, pixelBuffer.isReadOnly() || !pixelBuffer.isDirect());
     }
 
     private BufferedImage(ByteBuffer pixelBuffer, int width, int height, boolean copy) {

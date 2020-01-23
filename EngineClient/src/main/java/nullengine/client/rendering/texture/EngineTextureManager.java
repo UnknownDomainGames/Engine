@@ -86,7 +86,7 @@ public class EngineTextureManager implements TextureManager, AssetProvider<GLTex
             var buffer = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
             channel.read(buffer);
             buffer.flip();
-            return GLTexture2D.of(BufferedImage.create(buffer));
+            return GLTexture2D.of(BufferedImage.load(buffer));
         } catch (IOException e) {
             throw new AssetLoadException("Cannot load texture because catch exception. Path: " + url.toFileLocation("texture", ".png"), e);
         }

@@ -36,7 +36,7 @@ public class TextureAtlasRegionImpl implements TextureAtlasRegion {
             var bytes = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
             channel.read(bytes);
             bytes.flip();
-            data = BufferedImage.create(bytes);
+            data = BufferedImage.load(bytes);
         } catch (IOException e) {
             throw new AssetLoadException("Cannot load texture because of catching exception. Path: " + url.toFileLocation("texture", ".png"));
         }
