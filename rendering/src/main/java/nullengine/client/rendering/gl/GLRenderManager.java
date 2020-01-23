@@ -152,6 +152,7 @@ public class GLRenderManager implements RenderManager {
         LOGGER.info("Initializing OpenGL context!");
 
         capabilities = GL.createCapabilities(true);
+        setCapabilities(capabilities);
         gpuInfo = new GPUInfoImpl();
         printGLInfo();
 

@@ -2,8 +2,19 @@ package nullengine.client.rendering.gl.util;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GLCapabilities;
 
 public final class GLContextUtils {
+
+    private static GLCapabilities capabilities;
+
+    public static GLCapabilities getCapabilities() {
+        return capabilities;
+    }
+
+    public static void setCapabilities(GLCapabilities capabilities) {
+        GLContextUtils.capabilities = capabilities;
+    }
 
     public static String getVendor() {
         return GL11.glGetString(GL11.GL_VENDOR);
