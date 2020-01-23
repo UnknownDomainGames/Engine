@@ -27,7 +27,7 @@ import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 public class GLGraphics implements Graphics {
 
     private final DirectRenderer directRenderer = DirectRenderer.getInstance();
-    private final GLResourceFactory resourceFactory = new GLResourceFactory();
+    private final GUIResourceFactory resourceFactory = new GUIResourceFactory();
 
     private final Stack<Vector4fc> clipRect = new Stack<>();
 

@@ -1,16 +1,32 @@
 package nullengine.client.rendering.texture;
 
+import nullengine.client.rendering.RenderEngine;
+import nullengine.client.rendering.image.ReadOnlyImage;
+import nullengine.util.Color;
+
 public interface Texture2D extends Texture {
+
+    static Builder builder() {
+        return RenderEngine.getManager().getResourceFactory().createTexture2DBuilder();
+    }
 
     int getWidth();
 
     int getHeight();
 
-    float getMinU();
+    interface Builder {
+        Builder magFilter(FilterMode mode);
 
-    float getMinV();
+        Builder minFilter(FilterMode mode);
 
-    float getMaxU();
+        Builder wrapS(WrapMode mode);
 
-    float getMaxV();
+        Builder wrapT(WrapMode mode);
+
+        Builder generateMipmap();
+
+        Builder borderColor(Color color);
+
+        Texture2D build(ReadOnlyImage image);
+    }
 }

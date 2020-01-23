@@ -1,8 +1,8 @@
 package nullengine.client.rendering.gl.texture;
 
-import nullengine.client.rendering.gl.util.GLCleaner;
+import nullengine.client.rendering.texture.FilterMode;
 import nullengine.client.rendering.texture.Texture2D;
-import nullengine.client.rendering.util.Cleaner;
+import nullengine.client.rendering.texture.WrapMode;
 import org.lwjgl.opengl.GL40;
 
 import java.util.HashMap;
@@ -12,12 +12,9 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 
-public final class GLTexture2DMultiSample implements GLTexture, Texture2D {
+public final class GLTexture2DMultiSample extends GLTexture implements Texture2D {
 
     public static final GLTexture2DMultiSample EMPTY = new GLTexture2DMultiSample(0);
-
-    private int id;
-    private Cleaner.Disposable disposable;
 
     private int internalFormat;
     private int sample;
@@ -31,22 +28,12 @@ public final class GLTexture2DMultiSample implements GLTexture, Texture2D {
     }
 
     private GLTexture2DMultiSample(int id) {
-        this.id = id;
-        this.disposable = GLCleaner.registerTexture(this, id);
-    }
-
-    public int getId() {
-        return id;
+        super(id);
     }
 
     @Override
     public int getTarget() {
         return GL_TEXTURE_2D_MULTISAMPLE;
-    }
-
-    @Override
-    public void bind() {
-        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, id);
     }
 
     public void glTexImage2DMultisample(int width, int height) {
@@ -55,14 +42,6 @@ public final class GLTexture2DMultiSample implements GLTexture, Texture2D {
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         GL40.glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, sample, internalFormat, width, height, fixedSampleLocation);
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-    }
-
-    @Override
-    public void dispose() {
-        if (id == 0) return;
-
-        disposable.dispose();
-        id = 0;
     }
 
     @Override
@@ -87,26 +66,6 @@ public final class GLTexture2DMultiSample implements GLTexture, Texture2D {
         return fixedSampleLocation;
     }
 
-    @Override
-    public float getMinU() {
-        return 0;
-    }
-
-    @Override
-    public float getMinV() {
-        return 0;
-    }
-
-    @Override
-    public float getMaxU() {
-        return 1;
-    }
-
-    @Override
-    public float getMaxV() {
-        return 1;
-    }
-
     public static final class Builder {
         private int internalFormat = GL_SRGB_ALPHA;
         private int sample = 1;
@@ -121,22 +80,22 @@ public final class GLTexture2DMultiSample implements GLTexture, Texture2D {
         }
 
         public Builder magFilter(FilterMode mode) {
-            parameterMap.put(GL_TEXTURE_MAG_FILTER, mode.gl);
+            parameterMap.put(GL_TEXTURE_MAG_FILTER, toGLFilterMode(mode));
             return this;
         }
 
         public Builder minFilter(FilterMode mode) {
-            parameterMap.put(GL_TEXTURE_MIN_FILTER, mode.gl);
+            parameterMap.put(GL_TEXTURE_MIN_FILTER, toGLFilterMode(mode));
             return this;
         }
 
         public Builder wrapS(WrapMode mode) {
-            parameterMap.put(GL_TEXTURE_WRAP_S, mode.gl);
+            parameterMap.put(GL_TEXTURE_WRAP_S, toGLWrapMode(mode));
             return this;
         }
 
         public Builder wrapT(WrapMode mode) {
-            parameterMap.put(GL_TEXTURE_WRAP_T, mode.gl);
+            parameterMap.put(GL_TEXTURE_WRAP_T, toGLWrapMode(mode));
             return this;
         }
 

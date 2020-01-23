@@ -141,7 +141,7 @@ public final class STBImageHelper implements ImageHelper {
             if (pixelBuffer == null) {
                 throw new IOException("Failed to load image");
             }
-            return new BufferedImage(pixelBuffer, w.get(0), h.get(0));
+            return BufferedImage.wrapDirect(pixelBuffer, w.get(0), h.get(0));
         }
     }
 
