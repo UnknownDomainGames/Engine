@@ -25,6 +25,10 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RunnableFuture;
 
 import static nullengine.client.rendering.gl.util.GLContextUtils.*;
 
@@ -40,6 +44,7 @@ public class GLRenderManager implements RenderManager {
     private GLResourceFactory resourceFactory;
 
     private final List<RenderHandler> handlers = new ArrayList<>();
+    private final List<RunnableFuture<?>> pendingTasks = new ArrayList<>();
 
     public GLRenderManager() {
     }
@@ -83,12 +88,49 @@ public class GLRenderManager implements RenderManager {
     }
 
     @Override
+    public Future<Void> submitTask(Runnable runnable) {
+        FutureTask<Void> task = new FutureTask<>(runnable, null);
+        submitTask(task);
+        return task;
+    }
+
+    @Override
+    public <V> Future<V> submitTask(Callable<V> callable) {
+        FutureTask<V> task = new FutureTask<>(callable);
+        submitTask(task);
+        return task;
+    }
+
+    private void submitTask(RunnableFuture<?> task) {
+        if (Thread.currentThread() == renderingThread) {
+            task.run();
+            return;
+        }
+
+        synchronized (pendingTasks) {
+            pendingTasks.add(task);
+        }
+    }
+
+    @Override
     public void render(float tpf) {
         Cleaner.clean();
+        runPendingTasks();
         for (RenderHandler handler : handlers) {
             handler.render(tpf);
         }
         GLFW.glfwPollEvents();
+    }
+
+    private void runPendingTasks() {
+        synchronized (pendingTasks) {
+            if (pendingTasks.isEmpty()) return;
+            for (RunnableFuture<?> task : pendingTasks) {
+                if (task.isCancelled()) continue;
+                task.run();
+            }
+            pendingTasks.clear();
+        }
     }
 
     @Override
