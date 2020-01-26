@@ -25,7 +25,7 @@ public class VertexArrayObject {
     private VertexAttribute[] attributes;
     private boolean applyBeforeRendering;
 
-    private VertexBuffer indices;
+    private GLVertexBuffer indices;
     private GLDataType indexType;
     private GLDrawMode drawMode;
 
@@ -42,7 +42,7 @@ public class VertexArrayObject {
         return attributes.length;
     }
 
-    public VertexBuffer getIndices() {
+    public GLVertexBuffer getIndices() {
         return indices;
     }
 
@@ -144,8 +144,8 @@ public class VertexArrayObject {
             return value;
         }
 
-        public VertexBuffer getValueAsVBO() {
-            return (VertexBuffer) value;
+        public GLVertexBuffer getValueAsVBO() {
+            return (GLVertexBuffer) value;
         }
 
         public void setValue(Object value) {
@@ -170,8 +170,8 @@ public class VertexArrayObject {
         }
 
         public void dispose() {
-            if (value instanceof VertexBuffer) {
-                ((VertexBuffer) value).dispose();
+            if (value instanceof GLVertexBuffer) {
+                ((GLVertexBuffer) value).dispose();
             }
         }
     }
@@ -184,7 +184,7 @@ public class VertexArrayObject {
 
         private List<VertexAttribute> attributes = new ArrayList<>();
 
-        private VertexBuffer indices;
+        private GLVertexBuffer indices;
         private GLDataType indexType;
         private GLDrawMode drawMode = GLDrawMode.TRIANGLES;
 
@@ -194,12 +194,12 @@ public class VertexArrayObject {
         }
 
         public Builder newBufferAttribute(GLVertexElement element, GLBufferUsage usage) {
-            attributes.add(new VertexAttribute(element, new VertexBuffer(GLBufferType.ARRAY_BUFFER, usage)));
+            attributes.add(new VertexAttribute(element, new GLVertexBuffer(GLBufferType.ARRAY_BUFFER, usage)));
             return this;
         }
 
         public Builder newBufferAttribute(GLVertexElement element, GLBufferUsage usage, ByteBuffer buffer) {
-            attributes.add(new VertexAttribute(element, new VertexBuffer(GLBufferType.ARRAY_BUFFER, usage, buffer)));
+            attributes.add(new VertexAttribute(element, new GLVertexBuffer(GLBufferType.ARRAY_BUFFER, usage, buffer)));
             if (element.getUsage() == GLVertexElement.Usage.POSITION && indices == null) {
                 vertexCount = buffer.limit() / element.getBytes();
             }
@@ -212,20 +212,20 @@ public class VertexArrayObject {
         }
 
         public Builder newIndicesBuffer(GLBufferUsage usage, GLDataType indexType) {
-            indices = new VertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
+            indices = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
             this.indexType = indexType;
             return this;
         }
 
         public Builder newIndicesBuffer(GLBufferUsage usage, GLDataType indexType, ByteBuffer buffer) {
-            indices = new VertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage, buffer);
+            indices = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage, buffer);
             this.indexType = indexType;
             this.vertexCount = buffer.limit() / indexType.bytes;
             return this;
         }
 
         public Builder newIndicesBuffer(GLBufferUsage usage, GLDataType indexType, ShortBuffer buffer) {
-            indices = new VertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
+            indices = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
             indices.uploadData(buffer);
             this.indexType = indexType;
             this.vertexCount = buffer.limit() * Short.BYTES / indexType.bytes;
@@ -233,7 +233,7 @@ public class VertexArrayObject {
         }
 
         public Builder newIndicesBuffer(GLBufferUsage usage, GLDataType indexType, IntBuffer buffer) {
-            indices = new VertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
+            indices = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
             indices.uploadData(buffer);
             this.indexType = indexType;
             this.vertexCount = buffer.limit() * Integer.BYTES / indexType.bytes;

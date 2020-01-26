@@ -13,7 +13,7 @@ public class SingleBufferVAO implements Renderable {
 
     private int id;
     private Cleaner.Disposable disposable;
-    private VertexBuffer vbo;
+    private GLVertexBuffer vbo;
     private GLVertexFormat vertexFormat;
     private GLDrawMode drawMode;
 
@@ -32,13 +32,13 @@ public class SingleBufferVAO implements Renderable {
     }
 
     public SingleBufferVAO(GLBufferUsage usage, GLDrawMode drawMode) {
-        this.vbo = new VertexBuffer(GLBufferType.ARRAY_BUFFER, usage);
+        this.vbo = new GLVertexBuffer(GLBufferType.ARRAY_BUFFER, usage);
         id = GL30.glGenVertexArrays();
         disposable = GLCleaner.registerVertexArray(this, id);
         this.drawMode = drawMode;
     }
 
-    public VertexBuffer getVbo() {
+    public GLVertexBuffer getVbo() {
         return vbo;
     }
 

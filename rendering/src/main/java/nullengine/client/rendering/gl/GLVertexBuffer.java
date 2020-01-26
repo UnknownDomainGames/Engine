@@ -8,7 +8,7 @@ import java.nio.*;
 
 import static org.lwjgl.opengl.GL15.glGenBuffers;
 
-public class VertexBuffer {
+public class GLVertexBuffer {
 
     private final GLBufferType type;
     private final GLBufferUsage usage;
@@ -16,14 +16,14 @@ public class VertexBuffer {
     private int id;
     private Cleaner.Disposable disposable;
 
-    public VertexBuffer(GLBufferType type, GLBufferUsage usage) {
+    public GLVertexBuffer(GLBufferType type, GLBufferUsage usage) {
         this.type = type;
         this.usage = usage;
         this.id = glGenBuffers();
         this.disposable = GLCleaner.registerBuffer(this, id);
     }
 
-    public VertexBuffer(GLBufferType type, GLBufferUsage usage, ByteBuffer buffer) {
+    public GLVertexBuffer(GLBufferType type, GLBufferUsage usage, ByteBuffer buffer) {
         this(type, usage);
         uploadData(buffer);
     }
