@@ -21,6 +21,17 @@ enum VertexAttributeType {
             glDisableVertexAttribArray(index);
         }
     },
+    FLOAT(Float.class, true) {
+        @Override
+        public void apply(int index, GLVertexElement element, Object value) {
+            glVertexAttrib1f(index, (Float) value);
+        }
+
+        @Override
+        public void applyDefault(int index, GLVertexElement element) {
+            glVertexAttrib1f(index, 0);
+        }
+    },
     VEC2F(Vector2fc.class, true) {
         @Override
         public void apply(int index, GLVertexElement element, Object value) {
