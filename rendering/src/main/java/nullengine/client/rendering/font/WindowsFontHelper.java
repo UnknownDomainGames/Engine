@@ -319,14 +319,13 @@ public final class WindowsFontHelper implements FontHelper {
         bindTexture(nativeFont);
         buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE);
         buffer.posOffset(pos.x(), pos.y(), pos.z());
-        bakedTextMeshMap.computeIfAbsent(new TextInfo(text,font,color), this::bakeMesh).putVertices(buffer);
+        bakedTextMeshMap.computeIfAbsent(new TextInfo(text,font), this::bakeMesh).putVertices(buffer, color);
         renderer.run();
     }
 
     public BakedTextMesh bakeMesh(TextInfo info) {
         CharSequence text = info.getText();
         Font font = info.getFont();
-        Color color = info.getColor();
         NativeTTFont nativeTTFont = getNativeFont(font);
         STBTTFontinfo fontInfo = nativeTTFont.getInfo().getFontInfo();
         float scale = nativeTTFont.getScaleForPixelHeight();
@@ -381,7 +380,7 @@ public final class WindowsFontHelper implements FontHelper {
                 vertices.add(new float[]{x0, y1, 0,quads.getTexCoord().x(), quads.getTexCoord().w()});
                 vertices.add(new float[]{x1, y1, 0,quads.getTexCoord().z(), quads.getTexCoord().w()});
             }
-            return new BakedTextMesh(vertices, text, font, color, fontPlaneTexture);
+            return new BakedTextMesh(vertices, text, font, fontPlaneTexture);
         }
     }
 

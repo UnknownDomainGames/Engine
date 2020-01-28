@@ -12,9 +12,9 @@ public class BakedTextMesh {
     private TextInfo textInfo;
     private FontPlaneTexture texture;
 
-    BakedTextMesh(List<float[]> vertices, CharSequence text, Font font, Color color, FontPlaneTexture texture){
+    BakedTextMesh(List<float[]> vertices, CharSequence text, Font font, FontPlaneTexture texture){
         this.vertices = vertices;
-        this.textInfo = new TextInfo(text, font, color);
+        this.textInfo = new TextInfo(text, font);
         this.texture = texture;
     }
 
@@ -30,17 +30,13 @@ public class BakedTextMesh {
         return getTextInfo().getFont();
     }
 
-    public Color getColor() {
-        return getTextInfo().getColor();
-    }
-
     public FontPlaneTexture getTexture() {
         return texture;
     }
 
-    public void putVertices(GLBuffer buffer){
+    public void putVertices(GLBuffer buffer, Color color){
         for (float[] vertex : vertices) {
-            buffer.pos(vertex, 0).color(getColor()).uv(vertex, 3).endVertex();
+            buffer.pos(vertex, 0).color(color).uv(vertex, 3).endVertex();
         }
     }
 }
