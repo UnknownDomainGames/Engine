@@ -30,13 +30,13 @@ public class Pane implements Renderable {
         from.max(to,max);
         DirectRenderer instance = DirectRenderer.getInstance();
         GLBuffer buffer = instance.getBuffer();
-        buffer.begin(GLDrawMode.TRIANGLE_FANS, VertexFormat.POSITION);
+        buffer.begin(GLDrawMode.TRIANGLE_FAN, VertexFormat.POSITION);
         buffer.pos(min.x, max.y, -10).endVertex();
         buffer.pos(min.x,min.y,-10).endVertex();
         buffer.pos(max.x,min.y,-10).endVertex();
         buffer.pos(max.x,max.y,-10).endVertex();
         buffer.finish();
-        mesh = VertexArrayObject.builder().drawMode(GLDrawMode.TRIANGLE_FANS)
+        mesh = VertexArrayObject.builder().drawMode(GLDrawMode.TRIANGLE_FAN)
                 .newBufferAttribute(VertexElement.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getBackingBuffer())
                 .newValueAttribute(VertexElement.COLOR_RGBA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))
                 .build();
