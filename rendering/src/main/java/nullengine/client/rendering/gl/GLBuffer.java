@@ -1,6 +1,6 @@
 package nullengine.client.rendering.gl;
 
-import nullengine.client.rendering.gl.vertex.GLVertexFormat;
+import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.math.Math2;
 import nullengine.util.Color;
 import org.apache.commons.lang3.Validate;
@@ -29,7 +29,7 @@ public abstract class GLBuffer {
 
     private boolean drawing;
     private GLDrawMode drawMode;
-    private GLVertexFormat vertexFormat;
+    private VertexFormat vertexFormat;
 
     private int vertexCount;
 
@@ -59,7 +59,7 @@ public abstract class GLBuffer {
         return drawMode;
     }
 
-    public GLVertexFormat getVertexFormat() {
+    public VertexFormat getVertexFormat() {
         return vertexFormat;
     }
 
@@ -67,7 +67,7 @@ public abstract class GLBuffer {
         return vertexCount;
     }
 
-    public void begin(@Nonnull GLDrawMode mode, @Nonnull GLVertexFormat format) {
+    public void begin(@Nonnull GLDrawMode mode, @Nonnull VertexFormat format) {
         if (drawing) {
             throw new IllegalStateException("Already drawing!");
         } else {
@@ -247,15 +247,10 @@ public abstract class GLBuffer {
             float r = ((color >> 16) & 255) / 255f;
             float g = ((color >> 8) & 255) / 255f;
             float b = (color & 255) / 255f;
-            if (vertexFormat.getColorElement().getSize() == 3) {
+            if (!vertexFormat.isUsingAlpha()) {
                 return color(r, g, b);
-            }
-            if (vertexFormat.getColorElement().getSize() == 4) {
-                if (a == 0F) {
-                    return color(r, g, b, 1);
-                } else {
-                    return color(r, g, b, a);
-                }
+            } else {
+                return color(r, g, b, a);
             }
         }
         return this;
@@ -263,7 +258,7 @@ public abstract class GLBuffer {
 
     public GLBuffer color(float r, float g, float b) {
         if (vertexFormat.isUsingColor()) {
-            if (vertexFormat.getColorElement().getSize() == 4) {
+            if (vertexFormat.isUsingAlpha()) {
                 return color(r, g, b, 1);
             }
             putByteCount(Float.BYTES * 3);
@@ -276,7 +271,7 @@ public abstract class GLBuffer {
 
     public GLBuffer color(float r, float g, float b, float a) {
         if (vertexFormat.isUsingColor()) {
-            if (vertexFormat.getColorElement().getSize() == 3) {
+            if (!vertexFormat.isUsingAlpha()) {
                 return color(r, g, b);
             }
             putByteCount(Float.BYTES * 4);
@@ -301,7 +296,7 @@ public abstract class GLBuffer {
     }
 
     public GLBuffer uv(float u, float v) {
-        if (vertexFormat.isUsingTextureUV()) {
+        if (vertexFormat.isUsingTexCoord()) {
             putByteCount(Float.BYTES * 2);
             backingBuffer.putFloat(u);
             backingBuffer.putFloat(v);

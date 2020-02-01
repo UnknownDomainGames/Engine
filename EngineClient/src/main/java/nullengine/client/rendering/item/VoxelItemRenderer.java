@@ -7,8 +7,8 @@ import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.gl.DirectRenderer;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
-import nullengine.client.rendering.gl.vertex.GLVertexFormats;
 import nullengine.client.rendering.model.BakedModel;
+import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.item.ItemStack;
 
 public class VoxelItemRenderer implements ItemRenderer {
@@ -27,7 +27,7 @@ public class VoxelItemRenderer implements ItemRenderer {
     public void render(ItemStack itemStack, float partial) {
         DirectRenderer directRenderer = DirectRenderer.getInstance();
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE_NORMAL);
+        buffer.begin(GLDrawMode.TRIANGLES, VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
         model.get().putVertexes(buffer, 0);
         directRenderer.draw();
     }

@@ -4,8 +4,8 @@ import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.gl.DirectRenderer;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
-import nullengine.client.rendering.gl.vertex.GLVertexFormats;
 import nullengine.client.rendering.texture.TextureManager;
+import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.util.Color;
 import nullengine.world.hit.BlockHitResult;
 
@@ -28,7 +28,7 @@ public class BlockSelectionRenderer {
             float minX = hit.getPos().x() - 0.001f, maxX = hit.getPos().x() + 1.001f,
                     minY = hit.getPos().y() - 0.001f, maxY = hit.getPos().y() + 1.001f,
                     minZ = hit.getPos().z() - 0.001f, maxZ = hit.getPos().z() + 1.001f;
-            buffer.begin(GLDrawMode.LINES, GLVertexFormats.POSITION_COLOR);
+            buffer.begin(GLDrawMode.LINES, VertexFormat.POSITION_COLOR);
             buffer.pos(minX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
             buffer.pos(maxX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
             buffer.pos(minX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();

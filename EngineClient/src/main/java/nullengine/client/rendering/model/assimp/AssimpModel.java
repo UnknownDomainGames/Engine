@@ -1,7 +1,6 @@
 package nullengine.client.rendering.model.assimp;
 
 import nullengine.client.asset.AssetURL;
-import nullengine.client.rendering.gl.GLDataType;
 import nullengine.client.rendering.shader.ShaderManager;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.AIMaterial;
@@ -101,29 +100,29 @@ public class AssimpModel {
         ShaderManager.instance().setUniform("useDirectUV", false);
         for (AssimpMesh mesh : meshes.values()) {
             GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getVertexBufferId());
-            GL30.glVertexAttribPointer(0, 3, GLDataType.FLOAT.glId, false, 0, 0);
+            GL30.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
             GL30.glEnableVertexAttribArray(0);
             GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getTexCoordBufferId());
-            GL30.glVertexAttribPointer(1, 2, GLDataType.FLOAT.glId, false, 0, 0);
+            GL30.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, 0);
             GL30.glEnableVertexAttribArray(1);
             if (mesh.getNormalBufferId() != 0) {
                 GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getNormalBufferId());
-                GL30.glVertexAttribPointer(3, 3, GLDataType.FLOAT.glId, false, 0, 0);
+                GL30.glVertexAttribPointer(3, 3, GL11.GL_FLOAT, false, 0, 0);
                 GL30.glEnableVertexAttribArray(3);
             }
             if (mesh.getTangentBufferId() != 0) {
                 GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getTangentBufferId());
-                GL30.glVertexAttribPointer(4, 3, GLDataType.FLOAT.glId, false, 0, 0);
+                GL30.glVertexAttribPointer(4, 3, GL11.GL_FLOAT, false, 0, 0);
                 GL30.glEnableVertexAttribArray(4);
             }
             if (mesh.getBoneIdBufferId() != 0) {
                 GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getBoneIdBufferId());
-                GL30.glVertexAttribPointer(5, 4, GLDataType.INT.glId, false, 0, 0);
+                GL30.glVertexAttribPointer(5, 4, GL11.GL_INT, false, 0, 0);
                 GL30.glEnableVertexAttribArray(5);
             }
             if (mesh.getVertexWeightBufferId() != 0) {
                 GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, mesh.getVertexWeightBufferId());
-                GL30.glVertexAttribPointer(6, 4, GLDataType.FLOAT.glId, false, 0, 0);
+                GL30.glVertexAttribPointer(6, 4, GL11.GL_FLOAT, false, 0, 0);
                 GL30.glEnableVertexAttribArray(6);
             }
 
@@ -133,7 +132,7 @@ public class AssimpModel {
             ShaderManager.instance().setUniform("u_Bones", currentAnimation.getCurrentFrame().getJointMatrices());
 
             GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, mesh.getElementArrayBufferId());
-            GL30.glDrawElements(GL11.GL_TRIANGLES, mesh.getElementCount(), GLDataType.UNSIGNED_INT.glId, 0);
+            GL30.glDrawElements(GL11.GL_TRIANGLES, mesh.getElementCount(), GL11.GL_UNSIGNED_INT, 0);
 
         }
 

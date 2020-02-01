@@ -3,13 +3,12 @@ package nullengine.client.rendering.font;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import nullengine.client.rendering.font.*;
 import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.gl.font.FontPlaneTexture;
 import nullengine.client.rendering.gl.font.NativeTTFont;
 import nullengine.client.rendering.gl.font.NativeTTFontInfo;
-import nullengine.client.rendering.gl.vertex.GLVertexFormats;
+import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.util.Color;
 import org.apache.commons.io.IOUtils;
 import org.joml.Vector3fc;
@@ -317,7 +316,7 @@ public final class WindowsFontHelper implements FontHelper {
 
         NativeTTFont nativeFont = getNativeFont(font);
         bindTexture(nativeFont);
-        buffer.begin(GLDrawMode.TRIANGLES, GLVertexFormats.POSITION_COLOR_ALPHA_TEXTURE);
+        buffer.begin(GLDrawMode.TRIANGLES, VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
         buffer.posOffset(pos.x(), pos.y(), pos.z());
         bakedTextMeshMap.computeIfAbsent(new TextInfo(text,font), this::bakeMesh).putVertices(buffer, color);
         renderer.run();

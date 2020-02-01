@@ -1,8 +1,10 @@
 package nullengine.client.rendering.gl;
 
 import nullengine.client.rendering.gl.util.GLCleaner;
-import nullengine.client.rendering.gl.vertex.GLVertexElement;
+import nullengine.client.rendering.gl.util.GLHelper;
 import nullengine.client.rendering.util.Cleaner;
+import nullengine.client.rendering.util.DataType;
+import nullengine.client.rendering.vertex.VertexElement;
 import org.apache.commons.lang3.Validate;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -26,7 +28,7 @@ public class VertexArrayObject {
     private boolean applyBeforeRendering;
 
     private GLVertexBuffer indices;
-    private GLDataType indexType;
+    private DataType indexType;
     private GLDrawMode drawMode;
 
     private VertexArrayObject(int id) {
@@ -46,7 +48,7 @@ public class VertexArrayObject {
         return indices;
     }
 
-    public GLDataType getIndexType() {
+    public DataType getIndexType() {
         return indexType;
     }
 
@@ -103,7 +105,7 @@ public class VertexArrayObject {
     }
 
     public void drawElements() {
-        GL30.glDrawElements(drawMode.gl, vertexCount, indexType.glId, 0);
+        GL30.glDrawElements(drawMode.gl, vertexCount, GLHelper.toGLDataType(indexType), 0);
     }
 
     public void draw() {
@@ -127,16 +129,16 @@ public class VertexArrayObject {
     }
 
     public static final class VertexAttribute {
-        private GLVertexElement element;
+        private VertexElement element;
         private Object value;
         private VertexAttributeType type;
 
-        public VertexAttribute(GLVertexElement element, Object value) {
+        public VertexAttribute(VertexElement element, Object value) {
             this.element = element;
             setValue(value);
         }
 
-        public GLVertexElement getElement() {
+        public VertexElement getElement() {
             return element;
         }
 
@@ -185,7 +187,7 @@ public class VertexArrayObject {
         private List<VertexAttribute> attributes = new ArrayList<>();
 
         private GLVertexBuffer indices;
-        private GLDataType indexType;
+        private DataType indexType;
         private GLDrawMode drawMode = GLDrawMode.TRIANGLES;
 
         private int vertexCount;
@@ -193,50 +195,50 @@ public class VertexArrayObject {
         private Builder() {
         }
 
-        public Builder newBufferAttribute(GLVertexElement element, GLBufferUsage usage) {
+        public Builder newBufferAttribute(VertexElement element, GLBufferUsage usage) {
             attributes.add(new VertexAttribute(element, new GLVertexBuffer(GLBufferType.ARRAY_BUFFER, usage)));
             return this;
         }
 
-        public Builder newBufferAttribute(GLVertexElement element, GLBufferUsage usage, ByteBuffer buffer) {
+        public Builder newBufferAttribute(VertexElement element, GLBufferUsage usage, ByteBuffer buffer) {
             attributes.add(new VertexAttribute(element, new GLVertexBuffer(GLBufferType.ARRAY_BUFFER, usage, buffer)));
-            if (element.getUsage() == GLVertexElement.Usage.POSITION && indices == null) {
+            if (element.getName().equals(VertexElement.NAME_POSITION) && indices == null) {
                 vertexCount = buffer.limit() / element.getBytes();
             }
             return this;
         }
 
-        public Builder newValueAttribute(GLVertexElement element, Object value) {
+        public Builder newValueAttribute(VertexElement element, Object value) {
             attributes.add(new VertexAttribute(element, value));
             return this;
         }
 
-        public Builder newIndicesBuffer(GLBufferUsage usage, GLDataType indexType) {
+        public Builder newIndicesBuffer(GLBufferUsage usage, DataType indexType) {
             indices = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
             this.indexType = indexType;
             return this;
         }
 
-        public Builder newIndicesBuffer(GLBufferUsage usage, GLDataType indexType, ByteBuffer buffer) {
+        public Builder newIndicesBuffer(GLBufferUsage usage, DataType indexType, ByteBuffer buffer) {
             indices = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage, buffer);
             this.indexType = indexType;
-            this.vertexCount = buffer.limit() / indexType.bytes;
+            this.vertexCount = buffer.limit() / indexType.getBytes();
             return this;
         }
 
-        public Builder newIndicesBuffer(GLBufferUsage usage, GLDataType indexType, ShortBuffer buffer) {
+        public Builder newIndicesBuffer(GLBufferUsage usage, DataType indexType, ShortBuffer buffer) {
             indices = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
             indices.uploadData(buffer);
             this.indexType = indexType;
-            this.vertexCount = buffer.limit() * Short.BYTES / indexType.bytes;
+            this.vertexCount = buffer.limit() * Short.BYTES / indexType.getBytes();
             return this;
         }
 
-        public Builder newIndicesBuffer(GLBufferUsage usage, GLDataType indexType, IntBuffer buffer) {
+        public Builder newIndicesBuffer(GLBufferUsage usage, DataType indexType, IntBuffer buffer) {
             indices = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
             indices.uploadData(buffer);
             this.indexType = indexType;
-            this.vertexCount = buffer.limit() * Integer.BYTES / indexType.bytes;
+            this.vertexCount = buffer.limit() * Integer.BYTES / indexType.getBytes();
             return this;
         }
 

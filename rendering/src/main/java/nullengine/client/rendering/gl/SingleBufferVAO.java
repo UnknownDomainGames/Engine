@@ -1,20 +1,20 @@
 package nullengine.client.rendering.gl;
 
 import nullengine.client.rendering.gl.util.GLCleaner;
-import nullengine.client.rendering.gl.vertex.GLVertexFormat;
-import nullengine.client.rendering.scene.Renderable;
+import nullengine.client.rendering.gl.util.GLHelper;
 import nullengine.client.rendering.util.Cleaner;
+import nullengine.client.rendering.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
 
-public class SingleBufferVAO implements Renderable {
+public class SingleBufferVAO {
 
     private int id;
     private Cleaner.Disposable disposable;
     private GLVertexBuffer vbo;
-    private GLVertexFormat vertexFormat;
+    private VertexFormat vertexFormat;
     private GLDrawMode drawMode;
 
     private int vertexCount;
@@ -42,15 +42,15 @@ public class SingleBufferVAO implements Renderable {
         return vbo;
     }
 
-    public GLVertexFormat getVertexFormat() {
+    public VertexFormat getVertexFormat() {
         return vertexFormat;
     }
 
-    public void setVertexFormat(GLVertexFormat vertexFormat) {
+    public void setVertexFormat(VertexFormat vertexFormat) {
         this.vertexFormat = vertexFormat;
         bind();
         vbo.bind();
-        vertexFormat.enableAndApply();
+        GLHelper.enableVertexFormat(vertexFormat);
     }
 
     public GLDrawMode getDrawMode() {
@@ -94,7 +94,6 @@ public class SingleBufferVAO implements Renderable {
         GL11.glDrawArrays(drawMode.gl, 0, this.vertexCount);
     }
 
-    @Override
     public void dispose() {
         if (id == 0) return;
         vbo.dispose();
@@ -106,18 +105,13 @@ public class SingleBufferVAO implements Renderable {
         return id == 0;
     }
 
-    @Override
-    public void render() {
-        draw();
-    }
-
     public static Builder builder() {
         return new Builder();
     }
 
     public static final class Builder {
         private GLBufferUsage bufferUsage = GLBufferUsage.STATIC_DRAW;
-        private GLVertexFormat vertexFormat;
+        private VertexFormat vertexFormat;
         private GLDrawMode drawMode = GLDrawMode.TRIANGLES;
 
         private Builder() {
@@ -128,7 +122,7 @@ public class SingleBufferVAO implements Renderable {
             return this;
         }
 
-        public Builder vertexFormat(GLVertexFormat vertexFormat) {
+        public Builder vertexFormat(VertexFormat vertexFormat) {
             this.vertexFormat = vertexFormat;
             return this;
         }
