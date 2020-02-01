@@ -7,8 +7,8 @@ import nullengine.client.event.rendering.CameraChangeEvent;
 import nullengine.client.event.rendering.RenderEvent;
 import nullengine.client.gui.EngineGuiManager;
 import nullengine.client.gui.GuiManager;
-import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.camera.FixedCamera;
+import nullengine.client.rendering.camera.OldCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.gui.GuiRenderHelper;
@@ -37,7 +37,7 @@ public class EngineRenderManager implements RenderManager {
     private EngineGuiManager guiManager;
     private GuiRenderHelper guiRenderHelper;
 
-    private Camera camera;
+    private OldCamera camera;
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
 
     public EngineRenderManager(EngineClient engine) {
@@ -105,12 +105,12 @@ public class EngineRenderManager implements RenderManager {
 
     @Override
     @Nonnull
-    public Camera getCamera() {
+    public OldCamera getCamera() {
         return camera;
     }
 
     @Override
-    public void setCamera(@Nonnull Camera camera) {
+    public void setCamera(@Nonnull OldCamera camera) {
         if (this.camera == camera) {
             return;
         }

@@ -5,7 +5,7 @@ import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
-public class FixedCamera implements Camera {
+public class FixedCamera implements OldCamera {
 
     private Vector3fc position;
     private Vector3fc lookAt;

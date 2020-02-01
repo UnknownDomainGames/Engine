@@ -1,6 +1,6 @@
 package nullengine.client.rendering3d.example;
 
-import nullengine.client.rendering.camera.FreeCamera;
+import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.CursorCallback;
 import nullengine.client.rendering.display.callback.KeyCallback;
@@ -10,7 +10,7 @@ import org.joml.Vector3f;
 
 public class FlyCameraInput {
 
-    private final FreeCamera camera;
+    private final Camera camera;
 
     private float moveSpeed = 1f;
     private float mouseSensitivity = 0.05f;
@@ -38,7 +38,7 @@ public class FlyCameraInput {
         }
     }
 
-    public FlyCameraInput(FreeCamera camera) {
+    public FlyCameraInput(Camera camera) {
         this.camera = camera;
     }
 

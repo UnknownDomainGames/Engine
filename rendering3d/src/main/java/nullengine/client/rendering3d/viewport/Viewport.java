@@ -1,6 +1,6 @@
 package nullengine.client.rendering3d.viewport;
 
-import nullengine.client.rendering.camera.FreeCamera;
+import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.FrameBuffer;
 import nullengine.client.rendering3d.Scene3D;
@@ -38,9 +38,9 @@ public interface Viewport {
 
     void setClearMask(boolean color, boolean depth, boolean stencil);
 
-    FreeCamera getCamera();
+    Camera getCamera();
 
-    void setCamera(FreeCamera camera);
+    void setCamera(Camera camera);
 
     Matrix4fc getProjectionMatrix();
 

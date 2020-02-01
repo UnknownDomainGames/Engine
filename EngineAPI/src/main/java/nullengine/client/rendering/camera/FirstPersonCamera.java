@@ -8,7 +8,7 @@ import org.joml.*;
 import javax.annotation.Nonnull;
 import java.lang.Math;
 
-public class FirstPersonCamera implements Camera {
+public class FirstPersonCamera implements OldCamera {
 
     private final Player player;
 

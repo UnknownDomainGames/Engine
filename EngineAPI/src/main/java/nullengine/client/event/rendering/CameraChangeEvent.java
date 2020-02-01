@@ -1,17 +1,17 @@
 package nullengine.client.event.rendering;
 
-import nullengine.client.rendering.camera.Camera;
+import nullengine.client.rendering.camera.OldCamera;
 import nullengine.event.Event;
 
 public final class CameraChangeEvent implements Event {
 
-    private final Camera camera;
+    private final OldCamera camera;
 
-    public CameraChangeEvent(Camera camera) {
+    public CameraChangeEvent(OldCamera camera) {
         this.camera = camera;
     }
 
-    public Camera getCamera() {
+    public OldCamera getCamera() {
         return camera;
     }
 }

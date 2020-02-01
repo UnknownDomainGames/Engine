@@ -2,13 +2,13 @@ package nullengine.client.sound;
 
 import com.github.mouse0w0.observable.value.MutableValue;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.rendering.camera.Camera;
+import nullengine.client.rendering.camera.OldCamera;
 import nullengine.util.Disposable;
 
 public interface ALSoundManager extends Disposable {
     void init(String device) throws IllegalStateException;
 
-    void updateListener(Camera camera);
+    void updateListener(OldCamera camera);
 
     ALSoundSource createSoundSource(String name);
 

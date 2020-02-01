@@ -1,6 +1,6 @@
 package nullengine.client.rendering3d;
 
-import nullengine.client.rendering.camera.Camera;
+import nullengine.client.rendering.camera.OldCamera;
 import nullengine.client.rendering.light.DirectionalLight;
 import nullengine.client.rendering.light.Light;
 import nullengine.client.rendering.light.PointLight;
@@ -51,7 +51,7 @@ public class LightManager {
             spotLights.remove(light);
     }
 
-    public void bind(Camera camera, BindingProxy proxy) {
+    public void bind(OldCamera camera, BindingProxy proxy) {
         for (int i = 0; i < directionalLights.size() && i < MAX_DIRECTIONAL_LIGHT_COUNT; i++) {
             directionalLights.get(i).bind(proxy, "dirLights[" + i + "]");
         }

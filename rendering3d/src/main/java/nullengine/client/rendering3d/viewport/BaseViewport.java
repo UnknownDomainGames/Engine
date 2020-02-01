@@ -1,6 +1,6 @@
 package nullengine.client.rendering3d.viewport;
 
-import nullengine.client.rendering.camera.FreeCamera;
+import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.WindowSizeCallback;
 import nullengine.client.rendering.texture.FrameBuffer;
@@ -25,7 +25,7 @@ public abstract class BaseViewport implements Viewport {
     private boolean isClearDepth;
     private boolean isClearStencil;
 
-    private FreeCamera camera = new FreeCamera();
+    private Camera camera = new Camera();
 
     protected final Matrix4f projectionMatrix = new Matrix4f();
     protected final Matrix4f projectionViewMatrix = new Matrix4f();
@@ -120,12 +120,12 @@ public abstract class BaseViewport implements Viewport {
     protected abstract void updateProjectionViewMatrix();
 
     @Override
-    public FreeCamera getCamera() {
+    public Camera getCamera() {
         return camera;
     }
 
     @Override
-    public void setCamera(FreeCamera camera) {
+    public void setCamera(Camera camera) {
         if (this.camera != null) {
             this.camera.setChangeListener(null);
         }

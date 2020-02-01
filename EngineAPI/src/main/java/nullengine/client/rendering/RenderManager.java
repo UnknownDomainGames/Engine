@@ -2,7 +2,7 @@ package nullengine.client.rendering;
 
 import nullengine.client.EngineClient;
 import nullengine.client.gui.GuiManager;
-import nullengine.client.rendering.camera.Camera;
+import nullengine.client.rendering.camera.OldCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GPUInfo;
@@ -25,9 +25,9 @@ public interface RenderManager {
     Matrix4fc getProjectionMatrix();
 
     @Nonnull
-    Camera getCamera();
+    OldCamera getCamera();
 
-    void setCamera(@Nonnull Camera camera);
+    void setCamera(@Nonnull OldCamera camera);
 
     FrustumIntersection getFrustumIntersection();
 

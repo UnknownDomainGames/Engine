@@ -13,7 +13,7 @@ import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyBinding;
 import nullengine.client.rendering.block.BlockDisplay;
-import nullengine.client.rendering.camera.Camera;
+import nullengine.client.rendering.camera.OldCamera;
 import nullengine.client.rendering.entity.EntityItemRenderer;
 import nullengine.client.rendering.util.GLHelper;
 import nullengine.enginemod.client.gui.game.GUIGameCreation;
@@ -120,7 +120,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getClientPlayer();
-                    Camera camera = c.getRenderManager().getCamera();
+                    OldCamera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
                     HitResult hitResult = player.getWorld().raycast(camera.getPosition(), camera.getFront(), 10);
                     if (hitResult.isFailure()) {
@@ -162,7 +162,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getClientPlayer();
-                    Camera camera = c.getRenderManager().getCamera();
+                    OldCamera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
                     HitResult hitResult = player.getWorld().raycast(camera.getPosition(), camera.getFront(), 10);
                     if (hitResult.isFailure()) {
@@ -202,7 +202,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getClientPlayer();
-                    Camera camera = c.getRenderManager().getCamera();
+                    OldCamera camera = c.getRenderManager().getCamera();
                     Entity entity = player.getControlledEntity();
                     player.getWorld().raycastBlock(camera.getPosition(), camera.getFront(), 10).ifSuccess(hit ->
                             entity.getComponent(TwoHands.class).ifPresent(twoHands ->
