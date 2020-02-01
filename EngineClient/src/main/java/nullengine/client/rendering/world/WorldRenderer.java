@@ -170,7 +170,7 @@ public class WorldRenderer {
         frameBuffer.getTexture(GL_COLOR_ATTACHMENT0).bind();
         DirectRenderer t = DirectRenderer.getInstance();
         GLBuffer bb = t.getBuffer();
-        bb.begin(GLDrawMode.CONTINUOUS_TRIANGLES, VertexFormat.POSITION_TEX_COORD);
+        bb.begin(GLDrawMode.TRIANGLES_STRIP, VertexFormat.POSITION_TEX_COORD);
         bb.pos(-1.0f, 1.0f, 0).uv(0, 1.0f).endVertex();
         bb.pos(-1.0f, -1.0f, 0).uv(0, 0).endVertex();
         bb.pos(1.0f, 1.0f, 0).uv(1.0f, 1.0f).endVertex();
