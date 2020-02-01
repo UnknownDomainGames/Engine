@@ -9,7 +9,8 @@ public enum DataType {
     INT(Integer.BYTES),
     UNSIGNED_INT(Integer.BYTES),
     FLOAT(Float.BYTES),
-    DOUBLE(Double.BYTES);
+    DOUBLE(Double.BYTES),
+    HALF_FLOAT(2);
 
     private final int bytes;
 

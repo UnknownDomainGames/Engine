@@ -6,6 +6,7 @@ import nullengine.client.rendering.vertex.VertexFormat;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.GL_HALF_FLOAT;
 
 public final class GLHelper {
 
@@ -27,6 +28,8 @@ public final class GLHelper {
                 return GL_FLOAT;
             case DOUBLE:
                 return GL_DOUBLE;
+            case HALF_FLOAT:
+                return GL_HALF_FLOAT;
             default:
                 throw new IllegalArgumentException();
         }
