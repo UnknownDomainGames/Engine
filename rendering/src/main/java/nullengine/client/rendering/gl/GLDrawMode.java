@@ -3,6 +3,7 @@ package nullengine.client.rendering.gl;
 import nullengine.client.rendering.util.DrawMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
+import org.lwjgl.opengl.GL40;
 
 public enum GLDrawMode {
 
@@ -13,14 +14,11 @@ public enum GLDrawMode {
     TRIANGLES(DrawMode.TRIANGLES, GL11.GL_TRIANGLES),
     TRIANGLES_STRIP(DrawMode.TRIANGLES_STRIP, GL11.GL_TRIANGLE_STRIP),
     TRIANGLE_FAN(DrawMode.TRIANGLE_FAN, GL11.GL_TRIANGLE_FAN),
-    @Deprecated
-    QUADS(DrawMode.QUADS, GL11.GL_QUADS),
-    @Deprecated
-    QUAD_STRIP(DrawMode.QUAD_STRIP, GL11.GL_QUAD_STRIP),
     LINES_ADJACENCY(DrawMode.LINES_ADJACENCY, GL32.GL_LINES_ADJACENCY),
     LINE_STRIP_ADJACENCY(DrawMode.LINE_STRIP_ADJACENCY, GL32.GL_LINE_STRIP_ADJACENCY),
     TRIANGLES_ADJACENCY(DrawMode.TRIANGLES_ADJACENCY, GL32.GL_TRIANGLES_ADJACENCY),
-    TRIANGLE_STRIP_ADJACENCY(DrawMode.TRIANGLE_STRIP_ADJACENCY, GL32.GL_TRIANGLE_STRIP_ADJACENCY);
+    TRIANGLE_STRIP_ADJACENCY(DrawMode.TRIANGLE_STRIP_ADJACENCY, GL32.GL_TRIANGLE_STRIP_ADJACENCY),
+    PATCHES(DrawMode.PATCHES, GL40.GL_PATCHES);
 
     public final DrawMode peer;
     public final int gl;
