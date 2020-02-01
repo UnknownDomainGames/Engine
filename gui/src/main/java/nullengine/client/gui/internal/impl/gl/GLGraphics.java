@@ -9,8 +9,8 @@ import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.gl.DirectRenderer;
 import nullengine.client.rendering.gl.GLBuffer;
-import nullengine.client.rendering.gl.GLDrawMode;
 import nullengine.client.rendering.texture.Texture2D;
+import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.math.Math2;
 import nullengine.util.Color;
@@ -65,7 +65,7 @@ public class GLGraphics implements Graphics {
     @Override
     public void drawLine(float x1, float y1, float x2, float y2) {
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(GLDrawMode.LINES, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.LINES, VertexFormat.POSITION_COLOR_ALPHA);
         line(buffer, x1, y1, x2, y2);
         directRenderer.draw();
     }
@@ -73,7 +73,7 @@ public class GLGraphics implements Graphics {
     @Override
     public void drawRect(float x, float y, float width, float height) {
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(GLDrawMode.LINE_LOOP, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.LINE_LOOP, VertexFormat.POSITION_COLOR_ALPHA);
         rect(buffer, x, y, width, height);
         directRenderer.draw();
     }
@@ -81,7 +81,7 @@ public class GLGraphics implements Graphics {
     @Override
     public void fillRect(float x, float y, float width, float height) {
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(GLDrawMode.TRIANGLES_STRIP, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.TRIANGLES_STRIP, VertexFormat.POSITION_COLOR_ALPHA);
         rect2(buffer, x, y, width, height);
         directRenderer.draw();
     }
@@ -89,7 +89,7 @@ public class GLGraphics implements Graphics {
     @Override
     public void drawQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4) {
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(GLDrawMode.LINE_LOOP, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.LINE_LOOP, VertexFormat.POSITION_COLOR_ALPHA);
         quads(buffer, new float[]{p1.x(), p2.x(), p3.x(), p4.x()}, new float[]{p1.y(), p2.y(), p3.y(), p4.y()});
         directRenderer.draw();
     }
@@ -97,7 +97,7 @@ public class GLGraphics implements Graphics {
     @Override
     public void fillQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4) {
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(GLDrawMode.TRIANGLES_STRIP, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.TRIANGLES_STRIP, VertexFormat.POSITION_COLOR_ALPHA);
         quads(buffer, new float[]{p1.x(), p4.x(), p2.x(), p3.x()}, new float[]{p1.y(), p4.y(), p2.y(), p3.y()});
         directRenderer.draw();
     }
@@ -106,7 +106,7 @@ public class GLGraphics implements Graphics {
     public void drawRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight) {
         float x2 = x + width, y2 = y + height;
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(GLDrawMode.LINE_LOOP, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.LINE_LOOP, VertexFormat.POSITION_COLOR_ALPHA);
         pointTo(buffer, x2 - arcWidth, y);
         quadCurveTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
         pointTo(buffer, x2, y2 - arcHeight);
@@ -123,7 +123,7 @@ public class GLGraphics implements Graphics {
         float x2 = x + width, y2 = y + height;
         GLBuffer buffer = directRenderer.getBuffer();
 
-        buffer.begin(GLDrawMode.TRIANGLE_FAN, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.TRIANGLE_FAN, VertexFormat.POSITION_COLOR_ALPHA);
         pointTo(buffer, x + arcWidth, y + arcHeight);
         pointTo(buffer, x + arcWidth, y);
         quadCurveTo(buffer, x + arcWidth, y, x, y + arcHeight, x, y);
@@ -131,7 +131,7 @@ public class GLGraphics implements Graphics {
 
         fillRect(x, y + arcHeight, arcWidth, height - arcHeight * 2);
 
-        buffer.begin(GLDrawMode.TRIANGLE_FAN, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.TRIANGLE_FAN, VertexFormat.POSITION_COLOR_ALPHA);
         pointTo(buffer, x + arcWidth, y2 - arcHeight);
         pointTo(buffer, x, y2 - arcHeight);
         quadCurveTo(buffer, x, y2 - arcHeight, x + arcWidth, y2, x, y2);
@@ -139,7 +139,7 @@ public class GLGraphics implements Graphics {
 
         fillRect(x + arcWidth, y2 - arcHeight, width - arcWidth * 2, arcHeight);
 
-        buffer.begin(GLDrawMode.TRIANGLE_FAN, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.TRIANGLE_FAN, VertexFormat.POSITION_COLOR_ALPHA);
         pointTo(buffer, x2 - arcWidth, y2 - arcHeight);
         pointTo(buffer, x2 - arcWidth, y2);
         quadCurveTo(buffer, x2 - arcWidth, y2, x2, y2 - arcHeight, x2, y2);
@@ -147,7 +147,7 @@ public class GLGraphics implements Graphics {
 
         fillRect(x2 - arcWidth, y + arcHeight, arcWidth, height - arcHeight * 2);
 
-        buffer.begin(GLDrawMode.TRIANGLE_FAN, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.TRIANGLE_FAN, VertexFormat.POSITION_COLOR_ALPHA);
         pointTo(buffer, x2 - arcWidth, y + arcHeight);
         pointTo(buffer, x2, y + arcHeight);
         quadCurveTo(buffer, x2, y + arcHeight, x2 - arcWidth, y, x2, y);
@@ -160,7 +160,7 @@ public class GLGraphics implements Graphics {
     @Override
     public void drawCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(GLDrawMode.LINE_STRIP, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.LINE_STRIP, VertexFormat.POSITION_COLOR_ALPHA);
         pointTo(buffer, startX, startY);
         curveTo(buffer, startX, startY, endX, endY, px1, py1, px2, py2);
         directRenderer.draw();
@@ -169,7 +169,7 @@ public class GLGraphics implements Graphics {
     @Override
     public void drawQuadCurve(float startX, float startY, float endX, float endY, float px, float py) {
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(GLDrawMode.LINE_STRIP, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.LINE_STRIP, VertexFormat.POSITION_COLOR_ALPHA);
         pointTo(buffer, startX, startY);
         quadCurveTo(buffer, startX, startY, endX, endY, px, py);
         directRenderer.draw();
@@ -178,7 +178,7 @@ public class GLGraphics implements Graphics {
     @Override
     public void drawArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(GLDrawMode.LINE_STRIP, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(DrawMode.LINE_STRIP, VertexFormat.POSITION_COLOR_ALPHA);
         pointTo(buffer, startX, startY);
         arcTo(buffer, startX, startY, endX, endY, radiusX, radiusY, xAxisRotation, largeArcFlag, sweepFlag);
         directRenderer.draw();
@@ -203,7 +203,7 @@ public class GLGraphics implements Graphics {
     @Override
     public void drawTexture(Texture2D texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(GLDrawMode.TRIANGLES_STRIP, VertexFormat.POSITION_COLOR_TEX_COORD);
+        buffer.begin(DrawMode.TRIANGLES_STRIP, VertexFormat.POSITION_COLOR_TEX_COORD);
         float x2 = x + width, y2 = y + height;
         buffer.pos(x, y, 0).color(1, 1, 1, 1).uv(minU, minV).endVertex();
         buffer.pos(x, y2, 0).color(1, 1, 1, 1).uv(minU, maxV).endVertex();

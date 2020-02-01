@@ -1,7 +1,11 @@
 package nullengine.client.rendering.gl.shape;
 
-import nullengine.client.rendering.gl.*;
+import nullengine.client.rendering.gl.DirectRenderer;
+import nullengine.client.rendering.gl.GLBuffer;
+import nullengine.client.rendering.gl.GLBufferUsage;
+import nullengine.client.rendering.gl.VertexArrayObject;
 import nullengine.client.rendering.scene.Renderable;
+import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexElement;
 import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.util.Color;
@@ -30,13 +34,13 @@ public class Pane implements Renderable {
         from.max(to,max);
         DirectRenderer instance = DirectRenderer.getInstance();
         GLBuffer buffer = instance.getBuffer();
-        buffer.begin(GLDrawMode.TRIANGLE_FAN, VertexFormat.POSITION);
+        buffer.begin(DrawMode.TRIANGLE_FAN, VertexFormat.POSITION);
         buffer.pos(min.x, max.y, -10).endVertex();
         buffer.pos(min.x,min.y,-10).endVertex();
         buffer.pos(max.x,min.y,-10).endVertex();
         buffer.pos(max.x,max.y,-10).endVertex();
         buffer.finish();
-        mesh = VertexArrayObject.builder().drawMode(GLDrawMode.TRIANGLE_FAN)
+        mesh = VertexArrayObject.builder().drawMode(DrawMode.TRIANGLE_FAN)
                 .newBufferAttribute(VertexElement.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getBackingBuffer())
                 .newValueAttribute(VertexElement.COLOR_RGBA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))
                 .build();

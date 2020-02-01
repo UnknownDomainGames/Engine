@@ -3,6 +3,7 @@ package nullengine.client.rendering.gl;
 import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.gl.util.GLHelper;
 import nullengine.client.rendering.util.Cleaner;
+import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -23,8 +24,8 @@ public class SingleBufferVAO {
         this(GLBufferUsage.STATIC_DRAW, GLDrawMode.TRIANGLES);
     }
 
-    public SingleBufferVAO(GLDrawMode drawMode) {
-        this(GLBufferUsage.STATIC_DRAW, drawMode);
+    public SingleBufferVAO(DrawMode drawMode) {
+        this(GLBufferUsage.STATIC_DRAW, GLDrawMode.valueOf(drawMode));
     }
 
     public SingleBufferVAO(GLBufferUsage usage) {
@@ -53,12 +54,12 @@ public class SingleBufferVAO {
         GLHelper.enableVertexFormat(vertexFormat);
     }
 
-    public GLDrawMode getDrawMode() {
-        return drawMode;
+    public DrawMode getDrawMode() {
+        return drawMode.peer;
     }
 
-    public void setDrawMode(GLDrawMode drawMode) {
-        this.drawMode = drawMode;
+    public void setDrawMode(DrawMode drawMode) {
+        this.drawMode = GLDrawMode.valueOf(drawMode);
     }
 
     public void bind() {
@@ -112,7 +113,7 @@ public class SingleBufferVAO {
     public static final class Builder {
         private GLBufferUsage bufferUsage = GLBufferUsage.STATIC_DRAW;
         private VertexFormat vertexFormat;
-        private GLDrawMode drawMode = GLDrawMode.TRIANGLES;
+        private DrawMode drawMode = DrawMode.TRIANGLES;
 
         private Builder() {
         }
@@ -127,7 +128,7 @@ public class SingleBufferVAO {
             return this;
         }
 
-        public Builder drawMode(GLDrawMode drawMode) {
+        public Builder drawMode(DrawMode drawMode) {
             this.drawMode = drawMode;
             return this;
         }

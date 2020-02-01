@@ -1,8 +1,12 @@
 package nullengine.client.rendering.gl.shape;
 
-import nullengine.client.rendering.gl.*;
+import nullengine.client.rendering.gl.DirectRenderer;
+import nullengine.client.rendering.gl.GLBuffer;
+import nullengine.client.rendering.gl.GLBufferUsage;
+import nullengine.client.rendering.gl.VertexArrayObject;
 import nullengine.client.rendering.scene.Renderable;
 import nullengine.client.rendering.util.DataType;
+import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexElement;
 import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.util.Color;
@@ -64,7 +68,7 @@ public class Box implements Renderable {
         from.max(to, max);
         DirectRenderer instance = DirectRenderer.getInstance();
         GLBuffer buffer = instance.getBuffer();
-        buffer.begin(GLDrawMode.TRIANGLES, VertexFormat.POSITION);
+        buffer.begin(DrawMode.TRIANGLES, VertexFormat.POSITION);
         buffer.pos(min).endVertex();
         buffer.pos(min.x, min.y, max.z).endVertex();
         buffer.pos(min.x, max.y, min.z).endVertex();
@@ -75,7 +79,7 @@ public class Box implements Renderable {
         buffer.pos(max).endVertex();
         buffer.finish();
         var indicesBuffer = BufferUtils.createByteBuffer(36).put(indices).flip();
-        mesh = VertexArrayObject.builder().drawMode(GLDrawMode.TRIANGLES)
+        mesh = VertexArrayObject.builder().drawMode(DrawMode.TRIANGLES)
                 .newBufferAttribute(VertexElement.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getBackingBuffer())
                 .newIndicesBuffer(GLBufferUsage.STATIC_DRAW, DataType.UNSIGNED_BYTE, indicesBuffer)
                 .newValueAttribute(VertexElement.COLOR_RGBA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))

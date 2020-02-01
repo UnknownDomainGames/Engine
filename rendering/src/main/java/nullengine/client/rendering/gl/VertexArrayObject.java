@@ -4,8 +4,8 @@ import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.gl.util.GLHelper;
 import nullengine.client.rendering.util.Cleaner;
 import nullengine.client.rendering.util.DataType;
+import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexElement;
-import org.apache.commons.lang3.Validate;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
@@ -15,6 +15,7 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.Validate.notNull;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class VertexArrayObject {
@@ -52,7 +53,11 @@ public class VertexArrayObject {
         return indexType;
     }
 
-    public GLDrawMode getDrawMode() {
+    public DrawMode getDrawMode() {
+        return drawMode.peer;
+    }
+
+    public GLDrawMode getGLDrawMode() {
         return drawMode;
     }
 
@@ -188,7 +193,7 @@ public class VertexArrayObject {
 
         private GLVertexBuffer indices;
         private DataType indexType;
-        private GLDrawMode drawMode = GLDrawMode.TRIANGLES;
+        private DrawMode drawMode = DrawMode.TRIANGLES;
 
         private int vertexCount;
 
@@ -242,7 +247,7 @@ public class VertexArrayObject {
             return this;
         }
 
-        public Builder drawMode(GLDrawMode drawMode) {
+        public Builder drawMode(DrawMode drawMode) {
             this.drawMode = drawMode;
             return this;
         }
@@ -250,7 +255,7 @@ public class VertexArrayObject {
         public VertexArrayObject build() {
             VertexArrayObject vao = new VertexArrayObject(glGenVertexArrays());
             vao.attributes = attributes.toArray(VertexAttribute[]::new);
-            vao.drawMode = Validate.notNull(drawMode, "Draw mode cannot be null");
+            vao.drawMode = GLDrawMode.valueOf(notNull(drawMode, "Draw mode cannot be null"));
             vao.indices = indices;
             vao.indexType = indexType;
             vao.vertexCount = vertexCount;
