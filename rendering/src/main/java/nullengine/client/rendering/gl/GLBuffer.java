@@ -1,9 +1,7 @@
 package nullengine.client.rendering.gl;
 
 import nullengine.client.rendering.vertex.VertexFormat;
-import nullengine.math.Math2;
 import nullengine.util.Color;
-import org.apache.commons.lang3.Validate;
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.lwjgl.system.MemoryUtil;
@@ -11,14 +9,16 @@ import org.lwjgl.system.MemoryUtil;
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 
+import static org.apache.commons.lang3.Validate.notNull;
+
 public abstract class GLBuffer {
 
-    public static GLBuffer createDirectBuffer(int size) {
-        return new GLDirectBuffer(size);
+    public static GLBuffer createDirectBuffer(int initialCapacity) {
+        return new GLDirectBuffer(initialCapacity);
     }
 
-    public static GLBuffer createHeapBuffer(int size) {
-        return new GLHeapBuffer(size);
+    public static GLBuffer createHeapBuffer(int initialCapacity) {
+        return new GLHeapBuffer(initialCapacity);
     }
 
     private ByteBuffer backingBuffer;
@@ -27,7 +27,7 @@ public abstract class GLBuffer {
     private float translationY;
     private float translationZ;
 
-    private boolean drawing;
+    private boolean ready;
     private VertexFormat vertexFormat;
 
     private int vertexCount;
@@ -35,7 +35,7 @@ public abstract class GLBuffer {
     private int puttedByteCount;
 
     protected GLBuffer() {
-        this(256);
+        this(4096);
     }
 
     protected GLBuffer(int initialCapacity) {
@@ -50,8 +50,8 @@ public abstract class GLBuffer {
         return backingBuffer;
     }
 
-    public boolean isDrawing() {
-        return drawing;
+    public boolean isReady() {
+        return ready;
     }
 
     public VertexFormat getVertexFormat() {
@@ -63,49 +63,44 @@ public abstract class GLBuffer {
     }
 
     public void begin(@Nonnull VertexFormat format) {
-        if (drawing) {
-            throw new IllegalStateException("Already drawing!");
-        } else {
-            drawing = true;
-            reset();
-            this.vertexFormat = Validate.notNull(format);
-            backingBuffer.limit(backingBuffer.capacity());
+        if (!ready) {
+            throw new IllegalStateException("Buffer not ready!");
         }
-    }
-
-    public void finish() {
-        if (!drawing) {
-            throw new IllegalStateException("Not yet drawn!");
-        } else {
-            drawing = false;
-            backingBuffer.position(0);
-            backingBuffer.limit(vertexCount * vertexFormat.getStride());
-        }
-    }
-
-    public void reset() {
-        vertexFormat = null;
+        ready = false;
+        vertexFormat = notNull(format);
         vertexCount = 0;
         setTranslation(0, 0, 0);
         backingBuffer.clear();
     }
 
-    public void ensureRemaining(int minRemaining) {
-        if (minRemaining > backingBuffer.remaining()) {
-            int oldSize = this.backingBuffer.capacity();
-            int newSize = computeNewCapacity(oldSize, minRemaining);
-            int oldPosition = backingBuffer.position();
-            ByteBuffer newBuffer = createBuffer(newSize);
-            this.backingBuffer.position(0);
-            newBuffer.put(this.backingBuffer);
-            newBuffer.rewind();
-            freeBuffer(backingBuffer);
-            this.backingBuffer = newBuffer;
-            newBuffer.position(oldPosition);
+    public void finish() {
+        if (ready) {
+            throw new IllegalStateException("Buffer ready!");
+        }
+        ready = true;
+        backingBuffer.position(0);
+        backingBuffer.limit(vertexCount * vertexFormat.getStride());
+    }
+
+    public void ensureCapacity(int minCapacity) {
+        if (minCapacity > backingBuffer.capacity()) {
+            int newCapacity = backingBuffer.capacity() << 1;
+            grow(Math.max(newCapacity, minCapacity));
         }
     }
 
-    protected abstract int computeNewCapacity(int oldCapacity, int minRemaining);
+    public void ensureRemaining(int minRemaining) {
+        if (minRemaining > backingBuffer.remaining()) {
+            int newCapacity = backingBuffer.capacity() << 1;
+            grow(Math.max(newCapacity, minRemaining + backingBuffer.capacity()));
+        }
+    }
+
+    protected void grow(int newCapacity) {
+        ByteBuffer newBuffer = createBuffer(newCapacity).put(backingBuffer.flip());
+        freeBuffer(backingBuffer);
+        backingBuffer = newBuffer;
+    }
 
     public void dispose() {
         freeBuffer(backingBuffer);
@@ -149,7 +144,7 @@ public abstract class GLBuffer {
         return this;
     }
 
-    public GLBuffer put(byte... bytes) {
+    public GLBuffer put(byte[] bytes) {
         int bits = bytes.length * Byte.BYTES;
         if (puttedByteCount == 0) {
             if (bits % vertexFormat.getStride() != 0) {
@@ -165,7 +160,7 @@ public abstract class GLBuffer {
         return this;
     }
 
-    public GLBuffer put(int... ints) {
+    public GLBuffer put(int[] ints) {
         int bits = ints.length * Integer.BYTES;
         if (puttedByteCount == 0) {
             if (bits % vertexFormat.getStride() != 0) {
@@ -185,7 +180,7 @@ public abstract class GLBuffer {
         return this;
     }
 
-    public GLBuffer put(float... floats) {
+    public GLBuffer put(float[] floats) {
         int bits = floats.length * Float.BYTES;
         if (puttedByteCount == 0) {
             if (bits % vertexFormat.getStride() != 0) {
@@ -338,11 +333,6 @@ public abstract class GLBuffer {
         protected void freeBuffer(ByteBuffer buffer) {
             MemoryUtil.memFree(buffer);
         }
-
-        @Override
-        protected int computeNewCapacity(int oldCapacity, int minRemaining) {
-            return oldCapacity + Math2.ceil(minRemaining, 0x200000);
-        }
     }
 
     public static class GLHeapBuffer extends GLBuffer {
@@ -359,11 +349,6 @@ public abstract class GLBuffer {
         @Override
         protected void freeBuffer(ByteBuffer buffer) {
             // Don't need free heap buffer.
-        }
-
-        @Override
-        protected int computeNewCapacity(int oldCapacity, int minRemaining) {
-            return Math2.ceilPowerOfTwo(oldCapacity + minRemaining);
         }
     }
 }
