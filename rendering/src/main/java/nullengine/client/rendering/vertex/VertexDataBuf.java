@@ -40,6 +40,9 @@ public abstract class VertexDataBuf {
     protected abstract void freeBuffer(ByteBuffer buffer);
 
     public ByteBuffer getByteBuffer() {
+        if (!ready) {
+            throw new IllegalStateException("Buffer not ready");
+        }
         return byteBuffer;
     }
 

@@ -11,7 +11,7 @@ public class ChunkMesh implements Disposable {
 
     private AtomicInteger dirtyCount = new AtomicInteger(0);
 
-    private GLSingleBufferMesh chunkSolidVAO;
+    private GLSingleBufferMesh chunkSolidMesh;
 
     private final Chunk chunk;
 
@@ -22,10 +22,10 @@ public class ChunkMesh implements Disposable {
     }
 
     public void upload(VertexDataBuf buffer) {
-        if (chunkSolidVAO == null) {
-            chunkSolidVAO = GLSingleBufferMesh.builder().setDynamic().build();
+        if (chunkSolidMesh == null) {
+            chunkSolidMesh = GLSingleBufferMesh.builder().setDynamic().build();
         }
-        chunkSolidVAO.uploadData(buffer);
+        chunkSolidMesh.uploadData(buffer);
     }
 
     public void render() {
@@ -33,11 +33,11 @@ public class ChunkMesh implements Disposable {
             return;
         }
 
-        if (chunkSolidVAO == null) {
+        if (chunkSolidMesh == null) {
             return;
         }
 
-        chunkSolidVAO.draw();
+        chunkSolidMesh.draw();
     }
 
     public Chunk getChunk() {
@@ -64,8 +64,8 @@ public class ChunkMesh implements Disposable {
 
         disposed = true;
 
-        if (chunkSolidVAO != null) {
-            chunkSolidVAO.dispose();
+        if (chunkSolidMesh != null) {
+            chunkSolidMesh.dispose();
         }
     }
 
