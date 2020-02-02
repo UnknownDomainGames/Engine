@@ -80,7 +80,7 @@ public class Box implements Renderable {
         buffer.finish();
         var indicesBuffer = BufferUtils.createByteBuffer(36).put(indices).flip();
         mesh = VertexArrayObject.builder().drawMode(DrawMode.TRIANGLES)
-                .newBufferAttribute(VertexElement.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getBackingBuffer())
+                .newBufferAttribute(VertexElement.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getBuffer())
                 .newIndicesBuffer(GLBufferUsage.STATIC_DRAW, DataType.UNSIGNED_BYTE, indicesBuffer)
                 .newValueAttribute(VertexElement.COLOR_RGBA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))
                 .build();

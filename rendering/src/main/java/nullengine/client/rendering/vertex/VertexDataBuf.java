@@ -7,41 +7,40 @@ import org.joml.Vector3fc;
 import org.lwjgl.system.MemoryUtil;
 
 import javax.annotation.Nonnull;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
+import java.nio.*;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
 public abstract class VertexDataBuf {
 
-    public static VertexDataBuf create(int initialCapacity) {
-        return new Direct(initialCapacity);
-    }
+    protected ByteBuffer buffer;
+
+    protected float translationX;
+    protected float translationY;
+    protected float translationZ;
 
     private VertexFormat vertexFormat;
 
-    private ByteBuffer backingBuffer;
-
-    private float translationX;
-    private float translationY;
-    private float translationZ;
-
     private boolean ready;
+
+    public static VertexDataBuf create(int initialCapacity) {
+        return new Direct(initialCapacity);
+    }
 
     protected VertexDataBuf() {
         this(4096);
     }
 
     protected VertexDataBuf(int initialCapacity) {
-        backingBuffer = createBuffer(initialCapacity);
+        buffer = createBuffer(initialCapacity);
     }
 
     protected abstract ByteBuffer createBuffer(int capacity);
 
     protected abstract void freeBuffer(ByteBuffer buffer);
 
-    public ByteBuffer getBackingBuffer() {
-        return backingBuffer;
+    public ByteBuffer getBuffer() {
+        return buffer;
     }
 
     public boolean isReady() {
@@ -53,83 +52,169 @@ public abstract class VertexDataBuf {
     }
 
     public int getVertexCount() {
-        return backingBuffer.capacity() / vertexFormat.getBytes();
+        return buffer.capacity() / vertexFormat.getBytes();
     }
 
     public void begin(@Nonnull VertexFormat format) {
         if (!ready) {
             throw new IllegalStateException("Buffer not ready");
         }
-        ready = false;
+        if (isDisposed()) {
+            throw new IllegalStateException("Buffer has been disposed");
+        }
         vertexFormat = notNull(format);
+        buffer.clear();
         setTranslation(0, 0, 0);
-        backingBuffer.clear();
+        ensureRemaining(format.getBytes());
+        ready = false;
     }
 
     public void finish() {
         if (ready) {
             throw new IllegalStateException("Buffer ready");
         }
+        buffer.flip();
         validateVertexData();
         ready = true;
-        backingBuffer.flip();
     }
 
     protected void validateVertexData() {
-        if (backingBuffer.capacity() % vertexFormat.getBytes() != 0) {
+        if (buffer.limit() % vertexFormat.getBytes() != 0) {
             throw new IllegalStateException("Invalid vertex data");
         }
     }
 
     public void ensureCapacity(int minCapacity) {
-        if (minCapacity > backingBuffer.capacity()) {
-            int newCapacity = backingBuffer.capacity() << 1;
+        if (minCapacity > buffer.capacity()) {
+            int newCapacity = buffer.capacity() << 1;
             grow(Math2.ceil(Math.max(newCapacity, minCapacity), 4096));
         }
     }
 
     public void ensureRemaining(int minRemaining) {
-        if (minRemaining > backingBuffer.remaining()) {
-            int newCapacity = backingBuffer.capacity() << 1;
-            grow(Math2.ceil(Math.max(newCapacity, minRemaining + backingBuffer.capacity()), 4096));
+        if (minRemaining > buffer.remaining()) {
+            int newCapacity = buffer.capacity() << 1;
+            grow(Math2.ceil(Math.max(newCapacity, minRemaining + buffer.capacity()), 4096));
         }
     }
 
     protected void grow(int newCapacity) {
-        ByteBuffer newBuffer = createBuffer(newCapacity).put(backingBuffer.flip());
-        freeBuffer(backingBuffer);
-        backingBuffer = newBuffer;
+        ByteBuffer newBuffer = createBuffer(newCapacity).put(buffer.flip());
+        freeBuffer(buffer);
+        buffer = newBuffer;
     }
 
     public void dispose() {
-        freeBuffer(backingBuffer);
-        backingBuffer = null;
+        freeBuffer(buffer);
+        buffer = null;
     }
 
     public boolean isDisposed() {
-        return backingBuffer == null;
+        return buffer == null;
     }
 
-    public void endVertex() {
-        validateVertexData();
-        ensureRemaining(vertexFormat.getBytes());
+    public VertexDataBuf put(byte value) {
+        buffer.put(value);
+        return this;
+    }
+
+    public VertexDataBuf put(short value) {
+        buffer.putShort(value);
+        return this;
+    }
+
+    public VertexDataBuf put(int value) {
+        buffer.putInt(value);
+        return this;
     }
 
     public VertexDataBuf put(float value) {
-        backingBuffer.putFloat(value);
+        buffer.putFloat(value);
         return this;
     }
 
-    public VertexDataBuf put(float[] floats) {
-        int bits = floats.length * Float.BYTES;
-        ensureRemaining(bits);
-        backingBuffer.asFloatBuffer().put(floats);
+    public VertexDataBuf put(double value) {
+        buffer.putDouble(value);
         return this;
     }
 
-    public VertexDataBuf put(FloatBuffer buffer) {
-        ensureRemaining(buffer.limit());
-        backingBuffer.asFloatBuffer().put(buffer);
+    public VertexDataBuf put(byte[] src) {
+        return put(src, 0, src.length);
+    }
+
+    public VertexDataBuf put(short[] src) {
+        return put(src, 0, src.length);
+    }
+
+    public VertexDataBuf put(int[] src) {
+        return put(src, 0, src.length);
+    }
+
+    public VertexDataBuf put(float[] src) {
+        return put(src, 0, src.length);
+    }
+
+    public VertexDataBuf put(double[] src) {
+        return put(src, 0, src.length);
+    }
+
+    public VertexDataBuf put(byte[] src, int offset, int length) {
+        ensureRemaining(length);
+        buffer.put(src, offset, length);
+        return this;
+    }
+
+    public VertexDataBuf put(short[] src, int offset, int length) {
+        ensureRemaining(length * Short.BYTES);
+        buffer.asShortBuffer().put(src, offset, length);
+        return this;
+    }
+
+    public VertexDataBuf put(int[] src, int offset, int length) {
+        ensureRemaining(length * Integer.BYTES);
+        buffer.asIntBuffer().put(src, offset, length);
+        return this;
+    }
+
+    public VertexDataBuf put(float[] src, int offset, int length) {
+        ensureRemaining(length * Float.BYTES);
+        buffer.asFloatBuffer().put(src, offset, length);
+        return this;
+    }
+
+    public VertexDataBuf put(double[] src, int offset, int length) {
+        ensureRemaining(length * Double.BYTES);
+        buffer.asDoubleBuffer().put(src, offset, length);
+        return this;
+    }
+
+    public VertexDataBuf put(ByteBuffer src) {
+        ensureRemaining(src.limit());
+        buffer.put(src);
+        return this;
+    }
+
+    public VertexDataBuf put(ShortBuffer src) {
+        ensureRemaining(src.limit() * Short.BYTES);
+        buffer.asShortBuffer().put(src);
+        return this;
+    }
+
+    public VertexDataBuf put(IntBuffer src) {
+        ensureRemaining(src.limit() * Integer.BYTES);
+        buffer.asIntBuffer().put(src);
+        return this;
+    }
+
+    public VertexDataBuf put(FloatBuffer src) {
+        ensureRemaining(src.limit() * Float.BYTES);
+        buffer.asFloatBuffer().put(src);
+        return this;
+    }
+
+    public VertexDataBuf put(DoubleBuffer src) {
+        ensureRemaining(src.limit() * Double.BYTES);
+        buffer.asDoubleBuffer().put(src);
         return this;
     }
 
@@ -142,9 +227,9 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf pos(float x, float y, float z) {
         if (vertexFormat.isUsingPosition()) {
-            backingBuffer.putFloat(x + translationX);
-            backingBuffer.putFloat(y + translationY);
-            backingBuffer.putFloat(z + translationZ);
+            buffer.putFloat(x + translationX);
+            buffer.putFloat(y + translationY);
+            buffer.putFloat(z + translationZ);
         }
         return this;
     }
@@ -181,9 +266,9 @@ public abstract class VertexDataBuf {
             if (vertexFormat.isUsingAlpha()) {
                 return rgba(r, g, b, 1);
             }
-            backingBuffer.putFloat(r);
-            backingBuffer.putFloat(g);
-            backingBuffer.putFloat(b);
+            buffer.putFloat(r);
+            buffer.putFloat(g);
+            buffer.putFloat(b);
         }
         return this;
     }
@@ -193,10 +278,10 @@ public abstract class VertexDataBuf {
             if (!vertexFormat.isUsingAlpha()) {
                 return rgb(r, g, b);
             }
-            backingBuffer.putFloat(r);
-            backingBuffer.putFloat(g);
-            backingBuffer.putFloat(b);
-            backingBuffer.putFloat(a);
+            buffer.putFloat(r);
+            buffer.putFloat(g);
+            buffer.putFloat(b);
+            buffer.putFloat(a);
         }
         return this;
     }
@@ -215,8 +300,8 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf tex(float u, float v) {
         if (vertexFormat.isUsingTexCoord()) {
-            backingBuffer.putFloat(u);
-            backingBuffer.putFloat(v);
+            buffer.putFloat(u);
+            buffer.putFloat(v);
         }
         return this;
     }
@@ -231,9 +316,9 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf normal(float nx, float ny, float nz) {
         if (vertexFormat.isUsingNormal()) {
-            backingBuffer.putFloat(nx);
-            backingBuffer.putFloat(ny);
-            backingBuffer.putFloat(nz);
+            buffer.putFloat(nx);
+            buffer.putFloat(ny);
+            buffer.putFloat(nz);
         }
         return this;
     }
@@ -248,9 +333,9 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf tangent(float tx, float ty, float tz) {
         if (vertexFormat.isUsingTangent()) {
-            backingBuffer.putFloat(tx);
-            backingBuffer.putFloat(ty);
-            backingBuffer.putFloat(tz);
+            buffer.putFloat(tx);
+            buffer.putFloat(ty);
+            buffer.putFloat(tz);
         }
         return this;
     }
@@ -265,15 +350,21 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf bitangent(float bx, float by, float bz) {
         if (vertexFormat.isUsingBitangent()) {
-            backingBuffer.putFloat(bx);
-            backingBuffer.putFloat(by);
-            backingBuffer.putFloat(bz);
+            buffer.putFloat(bx);
+            buffer.putFloat(by);
+            buffer.putFloat(bz);
         }
         return this;
     }
 
     public VertexDataBuf bitangent(float[] array, int start) {
         return bitangent(array[start], array[start + 1], array[start + 2]);
+    }
+
+    public VertexDataBuf endVertex() {
+        validateVertexData();
+        ensureRemaining(vertexFormat.getBytes());
+        return this;
     }
 
     public static class Direct extends VertexDataBuf {

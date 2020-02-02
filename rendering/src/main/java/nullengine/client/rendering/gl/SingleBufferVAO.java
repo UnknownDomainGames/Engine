@@ -75,7 +75,7 @@ public class SingleBufferVAO {
     }
 
     public void uploadData(VertexDataBuf buffer) {
-        uploadData(buffer.getBackingBuffer(), buffer.getVertexCount());
+        uploadData(buffer.getBuffer(), buffer.getVertexCount());
     }
 
     public void uploadData(ByteBuffer buffer) {
