@@ -1,13 +1,13 @@
 package nullengine.client.rendering.model.voxel.item;
 
 import nullengine.client.asset.AssetURL;
-import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.image.BufferedImage;
 import nullengine.client.rendering.math.RenderingMath;
 import nullengine.client.rendering.math.Transform;
 import nullengine.client.rendering.model.DisplayType;
 import nullengine.client.rendering.model.voxel.Model;
 import nullengine.client.rendering.texture.TextureAtlasRegion;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.util.Direction;
 
 import java.util.ArrayList;
@@ -160,7 +160,7 @@ public class ItemGenerateModel implements Model {
         }
 
         @Override
-        public void putVertexes(GLBuffer buffer, int coveredFace) {
+        public void putVertexes(VertexDataBuf buffer, int coveredFace) {
             for (var vertex : this.vertexes) {
                 buffer.pos(vertex, 0).rgba(1, 1, 1, 1).tex(vertex, 3).normal(vertex, 5).endVertex();
             }

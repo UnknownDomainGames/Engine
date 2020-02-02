@@ -4,6 +4,7 @@ import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.gl.util.GLHelper;
 import nullengine.client.rendering.util.Cleaner;
 import nullengine.client.rendering.util.DrawMode;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.client.rendering.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -73,7 +74,7 @@ public class SingleBufferVAO {
         GL30.glBindVertexArray(0);
     }
 
-    public void uploadData(GLBuffer buffer) {
+    public void uploadData(VertexDataBuf buffer) {
         uploadData(buffer.getBackingBuffer(), buffer.getVertexCount());
     }
 
@@ -140,7 +141,7 @@ public class SingleBufferVAO {
             return singleBufferVAO;
         }
 
-        public SingleBufferVAO build(GLBuffer buffer) {
+        public SingleBufferVAO build(VertexDataBuf buffer) {
             SingleBufferVAO singleBufferVAO = new SingleBufferVAO(bufferUsage);
             singleBufferVAO.setVertexFormat(vertexFormat);
             singleBufferVAO.setDrawMode(drawMode);

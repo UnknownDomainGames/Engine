@@ -56,6 +56,7 @@ public class VertexFormat {
     private int texCoordElement = -1;
     private int normalElement = -1;
     private int tangentElement = -1;
+    private int bitangentElement = -1;
 
     private boolean usingAlpha;
 
@@ -81,6 +82,9 @@ public class VertexFormat {
                     break;
                 case NAME_TANGENT:
                     tangentElement = i;
+                    break;
+                case NAME_BITANGENT:
+                    bitangentElement = i;
                     break;
             }
         }
@@ -113,6 +117,14 @@ public class VertexFormat {
 
     public boolean isUsingNormal() {
         return normalElement != -1;
+    }
+
+    public boolean isUsingTangent() {
+        return tangentElement != -1;
+    }
+
+    public boolean isUsingBitangent() {
+        return bitangentElement != -1;
     }
 
     @Override

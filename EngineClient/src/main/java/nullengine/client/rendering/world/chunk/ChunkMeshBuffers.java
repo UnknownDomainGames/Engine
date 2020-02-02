@@ -1,11 +1,11 @@
 package nullengine.client.rendering.world.chunk;
 
-import nullengine.client.rendering.gl.GLBuffer;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 
 public class ChunkMeshBuffers {
-    private final GLBuffer[] buffers;
+    private final VertexDataBuf[] buffers;
 
     public ChunkMeshBuffers() {
-        this.buffers = new GLBuffer[0];
+        this.buffers = new VertexDataBuf[0];
     }
 }

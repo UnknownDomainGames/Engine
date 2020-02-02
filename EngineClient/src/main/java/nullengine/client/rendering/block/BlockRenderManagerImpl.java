@@ -4,8 +4,8 @@ import nullengine.Platform;
 import nullengine.block.Block;
 import nullengine.client.asset.Asset;
 import nullengine.client.asset.AssetTypes;
-import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.model.BakedModel;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.math.BlockPos;
 import nullengine.registry.Registries;
 import nullengine.util.Direction;
@@ -44,7 +44,7 @@ public class BlockRenderManagerImpl implements BlockRenderManager {
     }
 
     @Override
-    public void generateMesh(Block block, BlockGetter world, BlockPos pos, GLBuffer buffer) {
+    public void generateMesh(Block block, BlockGetter world, BlockPos pos, VertexDataBuf buffer) {
         Asset<BakedModel> model = blockModelMap.get(block);
         if (model == null) {
             return;
@@ -64,7 +64,7 @@ public class BlockRenderManagerImpl implements BlockRenderManager {
     }
 
     @Override
-    public void generateMesh(Block block, GLBuffer buffer) {
+    public void generateMesh(Block block, VertexDataBuf buffer) {
         Asset<BakedModel> model = blockModelMap.get(block);
         if (model == null) {
             return;

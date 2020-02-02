@@ -1,7 +1,7 @@
 package nullengine.client.rendering.world.chunk;
 
-import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.SingleBufferVAO;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.util.Disposable;
 import nullengine.world.chunk.Chunk;
@@ -22,7 +22,7 @@ public class ChunkMesh implements Disposable {
         this.chunk = chunk;
     }
 
-    public void upload(GLBuffer buffer) {
+    public void upload(VertexDataBuf buffer) {
         if (chunkSolidVAO == null) {
             chunkSolidVAO = new SingleBufferVAO();
             chunkSolidVAO.setVertexFormat(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);

@@ -1,23 +1,24 @@
 package nullengine.client.rendering.gl;
 
 import nullengine.client.rendering.util.DrawMode;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 
 public class DirectRenderer {
 
     private static final DirectRenderer INSTANCE = new DirectRenderer(0x100000);
-    private GLBuffer buffer;
+    private VertexDataBuf buffer;
     private SingleBufferVAO vao;
 
     private DirectRenderer(int bufferSize) {
         vao = new SingleBufferVAO(GLBufferUsage.DYNAMIC_DRAW, GLDrawMode.TRIANGLES);
-        buffer = GLBuffer.createDirectBuffer(bufferSize);
+        buffer = VertexDataBuf.create(bufferSize);
     }
 
     public static DirectRenderer getInstance() {
         return INSTANCE;
     }
 
-    public GLBuffer getBuffer() {
+    public VertexDataBuf getBuffer() {
         return buffer;
     }
 

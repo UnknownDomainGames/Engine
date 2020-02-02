@@ -2,9 +2,9 @@ package nullengine.client.rendering.world;
 
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.gl.DirectRenderer;
-import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.DrawMode;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.util.Color;
 import nullengine.world.hit.BlockHitResult;
@@ -19,7 +19,7 @@ public class BlockSelectionRenderer {
 
     public void render(float partial) {
         DirectRenderer directRenderer = DirectRenderer.getInstance();
-        GLBuffer buffer = directRenderer.getBuffer();
+        VertexDataBuf buffer = directRenderer.getBuffer();
 
         var player = context.getEngine().getCurrentGame().getClientPlayer();
         var camera = context.getCamera();

@@ -3,10 +3,10 @@ package nullengine.client.rendering.font;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.font.FontPlaneTexture;
 import nullengine.client.rendering.gl.font.NativeTTFont;
 import nullengine.client.rendering.gl.font.NativeTTFontInfo;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.util.Color;
 import org.apache.commons.io.IOUtils;
@@ -308,7 +308,7 @@ public final class WindowsFontHelper implements FontHelper {
     private final Map<TextInfo, BakedTextMesh> bakedTextMeshMap = new HashMap<>();
 
     @Override
-    public void renderText(GLBuffer buffer, CharSequence text, Font font, Color color, Vector3fc pos, Runnable renderer) throws UnavailableFontException {
+    public void renderText(VertexDataBuf buffer, CharSequence text, Font font, Color color, Vector3fc pos, Runnable renderer) throws UnavailableFontException {
         if (text == null || text.length() == 0) {
             return;
         }

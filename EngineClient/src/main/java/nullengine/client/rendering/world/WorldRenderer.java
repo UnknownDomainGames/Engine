@@ -6,7 +6,6 @@ import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.entity.EntityRenderManagerImpl;
 import nullengine.client.rendering.game3d.Scene;
 import nullengine.client.rendering.gl.DirectRenderer;
-import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.shader.ShaderType;
 import nullengine.client.rendering.gl.texture.GLFrameBuffer;
@@ -15,6 +14,7 @@ import nullengine.client.rendering.material.Material;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
 import nullengine.client.rendering.util.DrawMode;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.client.rendering.world.chunk.ChunkRenderer;
 import org.joml.Matrix4f;
@@ -169,7 +169,7 @@ public class WorldRenderer {
     private void drawFrameBufferToScreen(GLFrameBuffer frameBuffer) {
         frameBuffer.getTexture(GL_COLOR_ATTACHMENT0).bind();
         DirectRenderer t = DirectRenderer.getInstance();
-        GLBuffer bb = t.getBuffer();
+        VertexDataBuf bb = t.getBuffer();
         bb.begin(VertexFormat.POSITION_TEX_COORD);
         bb.pos(-1.0f, 1.0f, 0).tex(0, 1.0f).endVertex();
         bb.pos(-1.0f, -1.0f, 0).tex(0, 0).endVertex();

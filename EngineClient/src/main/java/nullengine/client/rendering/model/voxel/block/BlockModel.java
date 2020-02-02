@@ -1,13 +1,13 @@
 package nullengine.client.rendering.model.voxel.block;
 
 import nullengine.client.asset.AssetURL;
-import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.math.RenderingMath;
 import nullengine.client.rendering.math.Transform;
 import nullengine.client.rendering.model.DisplayType;
 import nullengine.client.rendering.model.ModelUtils;
 import nullengine.client.rendering.model.voxel.Model;
 import nullengine.client.rendering.texture.TextureAtlasRegion;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.util.Direction;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -117,7 +117,7 @@ public final class BlockModel implements Model {
         }
 
         @Override
-        public void putVertexes(GLBuffer buffer, int coveredFace) {
+        public void putVertexes(VertexDataBuf buffer, int coveredFace) {
             for (var vertexes : this.vertexes.entrySet()) {
                 if (ModelUtils.checkCullFace(coveredFace, vertexes.getKey())) {
                     continue;

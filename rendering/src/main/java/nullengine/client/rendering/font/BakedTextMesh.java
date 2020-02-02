@@ -1,7 +1,7 @@
 package nullengine.client.rendering.font;
 
-import nullengine.client.rendering.gl.GLBuffer;
 import nullengine.client.rendering.gl.font.FontPlaneTexture;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.util.Color;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class BakedTextMesh {
         return texture;
     }
 
-    public void putVertices(GLBuffer buffer, Color color){
+    public void putVertices(VertexDataBuf buffer, Color color) {
         for (float[] vertex : vertices) {
             buffer.pos(vertex, 0).color(color).tex(vertex, 3).endVertex();
         }

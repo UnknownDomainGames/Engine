@@ -7,12 +7,12 @@ import nullengine.client.asset.AssetURL;
 import nullengine.client.game.GameClient;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.game3d.Scene;
-import nullengine.client.rendering.gl.GLBuffer;
-import nullengine.client.rendering.gl.GLBufferPool;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.shader.ShaderType;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
+import nullengine.client.rendering.vertex.VertexDataBuf;
+import nullengine.client.rendering.vertex.VertexDataBufPool;
 import nullengine.event.Listener;
 import nullengine.event.block.BlockChangeEvent;
 import nullengine.event.world.chunk.ChunkLoadEvent;
@@ -34,7 +34,7 @@ public class ChunkRenderer {
 
     private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
-    private final GLBufferPool bufferPool = GLBufferPool.createDirectBufferPool(0x200000, 64);
+    private final VertexDataBufPool bufferPool = VertexDataBufPool.create(0x200000, 64);
 
     private ObservableValue<ShaderProgram> chunkSolidShader;
 
@@ -131,11 +131,11 @@ public class ChunkRenderer {
         game.getEventBus().unregister(this);
     }
 
-    public GLBufferPool getBufferPool() {
+    public VertexDataBufPool getBufferPool() {
         return bufferPool;
     }
 
-    public void uploadChunk(ChunkMesh chunkMesh, GLBuffer buffer) {
+    public void uploadChunk(ChunkMesh chunkMesh, VertexDataBuf buffer) {
         uploadTasks.add(() -> {
             chunkMesh.upload(buffer);
             bufferPool.free(buffer);

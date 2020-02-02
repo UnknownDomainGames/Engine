@@ -1,16 +1,16 @@
 package nullengine.client.rendering.world.chunk;
 
-import nullengine.client.rendering.gl.GLBuffer;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 
 public class BakeChunkThread extends Thread {
 
-    private final GLBuffer buffer = GLBuffer.createDirectBuffer(0x200000);
+    private final VertexDataBuf buffer = VertexDataBuf.create(0x200000);
 
     public BakeChunkThread(Runnable target, String name) {
         super(target, name);
     }
 
-    public GLBuffer getBuffer() {
+    public VertexDataBuf getBuffer() {
         return buffer;
     }
 }

@@ -1,7 +1,7 @@
 package nullengine.client.rendering.block;
 
 import nullengine.block.Block;
-import nullengine.client.rendering.gl.GLBuffer;
+import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.math.BlockPos;
 import nullengine.util.Direction;
 import nullengine.world.BlockGetter;
@@ -14,9 +14,9 @@ public interface BlockRenderManager {
 
     boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, Block block, Direction direction);
 
-    void generateMesh(Block block, BlockGetter world, BlockPos pos, GLBuffer buffer);
+    void generateMesh(Block block, BlockGetter world, BlockPos pos, VertexDataBuf buffer);
 
-    void generateMesh(Block block, GLBuffer buffer);
+    void generateMesh(Block block, VertexDataBuf buffer);
 
     static BlockRenderManager instance() {
         return BlockRenderManager.Internal.instance.get();
