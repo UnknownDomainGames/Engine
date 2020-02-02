@@ -49,7 +49,7 @@ public class VertexFormat {
     }
 
     private final VertexElement[] elements;
-    private final int stride;
+    private final int bytes;
 
     private int positionElement = -1;
     private int colorElement = -1;
@@ -62,10 +62,10 @@ public class VertexFormat {
 
     public VertexFormat(VertexElement... elements) {
         this.elements = elements;
-        int stride = 0;
+        int bytes = 0;
         for (int i = 0; i < elements.length; i++) {
             VertexElement element = elements[i];
-            stride += element.getBytes();
+            bytes += element.getBytes();
             switch (element.getName()) {
                 case NAME_POSITION:
                     positionElement = i;
@@ -88,15 +88,15 @@ public class VertexFormat {
                     break;
             }
         }
-        this.stride = stride;
+        this.bytes = bytes;
     }
 
     public VertexElement[] getElements() {
         return elements;
     }
 
-    public int getStride() {
-        return stride;
+    public int getBytes() {
+        return bytes;
     }
 
     public boolean isUsingPosition() {

@@ -46,7 +46,7 @@ public final class GLHelper {
 
     public static void enableVertexFormat(VertexFormat format) {
         VertexElement[] elements = format.getElements();
-        int stride = format.getStride();
+        int stride = format.getBytes();
         int offset = 0;
         for (int index = 0; index < elements.length; index++) {
             VertexElement element = elements[index];

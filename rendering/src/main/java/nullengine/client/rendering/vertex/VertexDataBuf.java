@@ -53,7 +53,7 @@ public abstract class VertexDataBuf {
     }
 
     public int getVertexCount() {
-        return backingBuffer.capacity() / vertexFormat.getStride();
+        return backingBuffer.capacity() / vertexFormat.getBytes();
     }
 
     public void begin(@Nonnull VertexFormat format) {
@@ -76,7 +76,7 @@ public abstract class VertexDataBuf {
     }
 
     protected void validateVertexData() {
-        if (backingBuffer.capacity() % vertexFormat.getStride() != 0) {
+        if (backingBuffer.capacity() % vertexFormat.getBytes() != 0) {
             throw new IllegalStateException("Invalid vertex data");
         }
     }
@@ -112,7 +112,7 @@ public abstract class VertexDataBuf {
 
     public void endVertex() {
         validateVertexData();
-        ensureRemaining(vertexFormat.getStride());
+        ensureRemaining(vertexFormat.getBytes());
     }
 
     public VertexDataBuf put(float value) {
