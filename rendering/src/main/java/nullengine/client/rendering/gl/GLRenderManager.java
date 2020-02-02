@@ -32,7 +32,7 @@ import java.util.concurrent.RunnableFuture;
 
 import static nullengine.client.rendering.gl.util.GLContextUtils.*;
 
-public class GLRenderManager implements RenderManager {
+public final class GLRenderManager implements RenderManager {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("Rendering");
 

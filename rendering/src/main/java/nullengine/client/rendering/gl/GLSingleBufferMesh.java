@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL30;
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 
-public class GLSingleBufferMesh {
+public final class GLSingleBufferMesh {
 
     private int id;
     private Cleaner.Disposable disposable;

@@ -4,7 +4,7 @@ import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.management.ResourceFactory;
 import nullengine.client.rendering.texture.Texture2D;
 
-public class GLResourceFactory implements ResourceFactory {
+public final class GLResourceFactory implements ResourceFactory {
     private final Thread renderingThread;
 
     public GLResourceFactory(Thread renderingThread) {
