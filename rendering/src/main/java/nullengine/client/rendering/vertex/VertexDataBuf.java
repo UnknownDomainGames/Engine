@@ -13,6 +13,8 @@ import static org.apache.commons.lang3.Validate.notNull;
 
 public abstract class VertexDataBuf {
 
+    private static final ThreadLocal<VertexDataBuf> threadLocalBuffer = ThreadLocal.withInitial(() -> create(4096));
+
     protected ByteBuffer byteBuffer;
 
     protected float translationX;
@@ -25,6 +27,10 @@ public abstract class VertexDataBuf {
 
     public static VertexDataBuf create(int initialCapacity) {
         return new Direct(initialCapacity);
+    }
+
+    public static VertexDataBuf currentThreadBuffer() {
+        return threadLocalBuffer.get();
     }
 
     protected VertexDataBuf() {

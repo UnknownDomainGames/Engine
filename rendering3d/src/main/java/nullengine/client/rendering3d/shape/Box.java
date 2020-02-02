@@ -1,14 +1,13 @@
-package nullengine.client.rendering.gl.shape;
+package nullengine.client.rendering3d.shape;
 
-import nullengine.client.rendering.gl.GLStreamedRenderer;
 import nullengine.client.rendering.gl.GLVertexArray;
 import nullengine.client.rendering.gl.buffer.GLBufferUsage;
-import nullengine.client.rendering.scene.Renderable;
 import nullengine.client.rendering.util.DataType;
 import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.client.rendering.vertex.VertexElement;
 import nullengine.client.rendering.vertex.VertexFormat;
+import nullengine.client.rendering3d.Renderable;
 import nullengine.util.Color;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -66,8 +65,7 @@ public class Box implements Renderable {
         var max = new Vector3f();
         from.min(to, min);
         from.max(to, max);
-        GLStreamedRenderer instance = GLStreamedRenderer.getInstance();
-        VertexDataBuf buffer = instance.getBuffer();
+        VertexDataBuf buffer = VertexDataBuf.currentThreadBuffer();
         buffer.begin(VertexFormat.POSITION);
         buffer.pos(min).endVertex();
         buffer.pos(min.x, min.y, max.z).endVertex();
