@@ -21,7 +21,7 @@ import java.util.List;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-public class VertexArrayObject {
+public class GLVertexArray {
 
     private int id;
     private Cleaner.Disposable disposable;
@@ -35,7 +35,7 @@ public class VertexArrayObject {
     private DataType indexType;
     private GLDrawMode drawMode;
 
-    private VertexArrayObject(int id) {
+    private GLVertexArray(int id) {
         this.id = id;
         this.disposable = GLCleaner.registerVertexArray(this, id);
     }
@@ -255,8 +255,8 @@ public class VertexArrayObject {
             return this;
         }
 
-        public VertexArrayObject build() {
-            VertexArrayObject vao = new VertexArrayObject(glGenVertexArrays());
+        public GLVertexArray build() {
+            GLVertexArray vao = new GLVertexArray(glGenVertexArrays());
             vao.attributes = attributes.toArray(VertexAttribute[]::new);
             vao.drawMode = GLDrawMode.valueOf(notNull(drawMode, "Draw mode cannot be null"));
             vao.indices = indices;

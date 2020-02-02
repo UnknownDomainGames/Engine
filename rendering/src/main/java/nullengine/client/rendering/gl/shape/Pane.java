@@ -1,7 +1,7 @@
 package nullengine.client.rendering.gl.shape;
 
 import nullengine.client.rendering.gl.GLStreamedRenderer;
-import nullengine.client.rendering.gl.VertexArrayObject;
+import nullengine.client.rendering.gl.GLVertexArray;
 import nullengine.client.rendering.gl.buffer.GLBufferUsage;
 import nullengine.client.rendering.scene.Renderable;
 import nullengine.client.rendering.util.DrawMode;
@@ -18,7 +18,7 @@ public class Pane implements Renderable {
 
     private Color color;
 
-    private VertexArrayObject mesh;
+    private GLVertexArray mesh;
 
     public Pane(Vector2f pointA,Vector2f pointB,Color color){
         this.color = color;
@@ -40,7 +40,7 @@ public class Pane implements Renderable {
         buffer.pos(max.x,min.y,-10).endVertex();
         buffer.pos(max.x,max.y,-10).endVertex();
         buffer.finish();
-        mesh = VertexArrayObject.builder().drawMode(DrawMode.TRIANGLE_FAN)
+        mesh = GLVertexArray.builder().drawMode(DrawMode.TRIANGLE_FAN)
                 .newBufferAttribute(VertexElement.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getByteBuffer())
                 .newValueAttribute(VertexElement.COLOR_RGBA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))
                 .build();

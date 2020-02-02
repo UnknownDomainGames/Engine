@@ -1,7 +1,7 @@
 package nullengine.client.rendering.gl.shape;
 
 import nullengine.client.rendering.gl.GLStreamedRenderer;
-import nullengine.client.rendering.gl.VertexArrayObject;
+import nullengine.client.rendering.gl.GLVertexArray;
 import nullengine.client.rendering.gl.buffer.GLBufferUsage;
 import nullengine.client.rendering.scene.Renderable;
 import nullengine.client.rendering.util.DataType;
@@ -42,7 +42,7 @@ public class Box implements Renderable {
     private Vector3fc to;
     private Color color;
 
-    private VertexArrayObject mesh;
+    private GLVertexArray mesh;
 
     public Box(Vector3fc center, float size, Color color) {
         this(center, size, size, size, color);
@@ -79,7 +79,7 @@ public class Box implements Renderable {
         buffer.pos(max).endVertex();
         buffer.finish();
         var indicesBuffer = BufferUtils.createByteBuffer(36).put(indices).flip();
-        mesh = VertexArrayObject.builder().drawMode(DrawMode.TRIANGLES)
+        mesh = GLVertexArray.builder().drawMode(DrawMode.TRIANGLES)
                 .newBufferAttribute(VertexElement.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getByteBuffer())
                 .newIndicesBuffer(GLBufferUsage.STATIC_DRAW, DataType.UNSIGNED_BYTE, indicesBuffer)
                 .newValueAttribute(VertexElement.COLOR_RGBA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))
