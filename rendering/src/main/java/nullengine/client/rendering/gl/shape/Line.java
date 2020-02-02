@@ -1,7 +1,7 @@
 package nullengine.client.rendering.gl.shape;
 
 import nullengine.client.rendering.gl.DirectRenderer;
-import nullengine.client.rendering.gl.SingleBufferVAO;
+import nullengine.client.rendering.gl.GLSingleBufferMesh;
 import nullengine.client.rendering.scene.Renderable;
 import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexDataBuf;
@@ -15,7 +15,7 @@ public class Line implements Renderable {
     private Vector3fc to;
     private Color color;
 
-    private SingleBufferVAO mesh;
+    private GLSingleBufferMesh mesh;
 
     public Line(Vector3fc from, Vector3fc to, Color color) {
         this.from = from;
@@ -31,9 +31,7 @@ public class Line implements Renderable {
         buffer.pos(from).color(color).endVertex();
         buffer.pos(to).color(color).endVertex();
         buffer.finish();
-        mesh = SingleBufferVAO.builder().drawMode(DrawMode.LINES)
-                .vertexFormat(VertexFormat.POSITION_COLOR_ALPHA)
-                .build(buffer);
+        mesh = GLSingleBufferMesh.builder().drawMode(DrawMode.LINES).build(buffer);
     }
 
     @Override

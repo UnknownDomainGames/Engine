@@ -45,12 +45,16 @@ public final class GLHelper {
     }
 
     public static void enableVertexFormat(VertexFormat format) {
+        enableVertexFormat(format, 0);
+    }
+
+    public static void enableVertexFormat(VertexFormat format, int firstIndex) {
         VertexElement[] elements = format.getElements();
         int stride = format.getBytes();
         int offset = 0;
         for (int index = 0; index < elements.length; index++) {
             VertexElement element = elements[index];
-            enableVertexElement(element, index, stride, offset);
+            enableVertexElement(element, firstIndex + index, stride, offset);
             offset += element.getBytes();
         }
     }

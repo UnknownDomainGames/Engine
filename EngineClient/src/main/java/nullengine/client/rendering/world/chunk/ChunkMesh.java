@@ -1,8 +1,7 @@
 package nullengine.client.rendering.world.chunk;
 
-import nullengine.client.rendering.gl.SingleBufferVAO;
+import nullengine.client.rendering.gl.GLSingleBufferMesh;
 import nullengine.client.rendering.vertex.VertexDataBuf;
-import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.util.Disposable;
 import nullengine.world.chunk.Chunk;
 
@@ -12,7 +11,7 @@ public class ChunkMesh implements Disposable {
 
     private AtomicInteger dirtyCount = new AtomicInteger(0);
 
-    private SingleBufferVAO chunkSolidVAO;
+    private GLSingleBufferMesh chunkSolidVAO;
 
     private final Chunk chunk;
 
@@ -24,8 +23,7 @@ public class ChunkMesh implements Disposable {
 
     public void upload(VertexDataBuf buffer) {
         if (chunkSolidVAO == null) {
-            chunkSolidVAO = new SingleBufferVAO();
-            chunkSolidVAO.setVertexFormat(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
+            chunkSolidVAO = GLSingleBufferMesh.builder().setDynamic().build();
         }
         chunkSolidVAO.uploadData(buffer);
     }

@@ -11,7 +11,8 @@ import static org.lwjgl.opengl.GL15.glGenBuffers;
 public class GLVertexBuffer {
 
     private final GLBufferType type;
-    private final GLBufferUsage usage;
+
+    private GLBufferUsage usage;
 
     private int id;
     private Cleaner.Disposable disposable;
@@ -34,6 +35,10 @@ public class GLVertexBuffer {
 
     public GLBufferUsage getUsage() {
         return usage;
+    }
+
+    public void setUsage(GLBufferUsage usage) {
+        this.usage = usage;
     }
 
     public void bind() {

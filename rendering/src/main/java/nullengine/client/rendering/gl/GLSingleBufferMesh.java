@@ -16,37 +16,21 @@ import org.lwjgl.opengl.GL30;
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 
-public class SingleBufferVAO {
+public class GLSingleBufferMesh {
 
     private int id;
     private Cleaner.Disposable disposable;
-    private GLVertexBuffer vbo;
+    private GLVertexBuffer vertexBuffer;
     private VertexFormat vertexFormat;
     private GLDrawMode drawMode;
 
     private int vertexCount;
 
-    public SingleBufferVAO() {
-        this(GLBufferUsage.STATIC_DRAW, GLDrawMode.TRIANGLES);
+    private GLSingleBufferMesh() {
     }
 
-    public SingleBufferVAO(DrawMode drawMode) {
-        this(GLBufferUsage.STATIC_DRAW, GLDrawMode.valueOf(drawMode));
-    }
-
-    public SingleBufferVAO(GLBufferUsage usage) {
-        this(usage, GLDrawMode.TRIANGLES);
-    }
-
-    public SingleBufferVAO(GLBufferUsage usage, GLDrawMode drawMode) {
-        this.vbo = new GLVertexBuffer(GLBufferType.ARRAY_BUFFER, usage);
-        id = GL30.glGenVertexArrays();
-        disposable = GLCleaner.registerVertexArray(this, id);
-        this.drawMode = drawMode;
-    }
-
-    public GLVertexBuffer getVbo() {
-        return vbo;
+    public GLVertexBuffer getVertexBuffer() {
+        return vertexBuffer;
     }
 
     public VertexFormat getVertexFormat() {
@@ -61,6 +45,18 @@ public class SingleBufferVAO {
         this.drawMode = GLDrawMode.valueOf(drawMode);
     }
 
+    public void setStatic() {
+        vertexBuffer.setUsage(GLBufferUsage.STATIC_DRAW);
+    }
+
+    public void setDynamic() {
+        vertexBuffer.setUsage(GLBufferUsage.DYNAMIC_DRAW);
+    }
+
+    public void setStreamed() {
+        vertexBuffer.setUsage(GLBufferUsage.STREAM_DRAW);
+    }
+
     public void uploadData(@Nonnull VertexDataBuf buffer) {
         uploadData(buffer.getByteBuffer(), buffer.getVertexFormat(), buffer.getVertexCount());
     }
@@ -71,14 +67,14 @@ public class SingleBufferVAO {
 
     private void uploadData(ByteBuffer buffer, @Nonnull VertexFormat format, int vertexCount) {
         setVertexFormat(Validate.notNull(format));
-        vbo.uploadData(buffer);
+        vertexBuffer.uploadData(buffer);
         this.vertexCount = vertexCount;
     }
 
     private void setVertexFormat(VertexFormat vertexFormat) {
         this.vertexFormat = vertexFormat;
         bind();
-        vbo.bind();
+        vertexBuffer.bind();
         GLHelper.enableVertexFormat(vertexFormat);
     }
 
@@ -103,14 +99,14 @@ public class SingleBufferVAO {
     }
 
     public void dispose() {
-        if (id == 0) return;
-        vbo.dispose();
+        if (id == -1) return;
+        vertexBuffer.dispose();
         disposable.dispose();
-        id = 0;
+        id = -1;
     }
 
     public boolean isDisposed() {
-        return id == 0;
+        return id == -1;
     }
 
     public static Builder builder() {
@@ -144,17 +140,20 @@ public class SingleBufferVAO {
             return this;
         }
 
-        public SingleBufferVAO build() {
-            SingleBufferVAO singleBufferVAO = new SingleBufferVAO(bufferUsage);
-            singleBufferVAO.setDrawMode(drawMode);
-            return singleBufferVAO;
+        public GLSingleBufferMesh build() {
+            return build(null);
         }
 
-        public SingleBufferVAO build(VertexDataBuf buffer) {
-            SingleBufferVAO singleBufferVAO = new SingleBufferVAO(bufferUsage);
-            singleBufferVAO.setDrawMode(drawMode);
-            singleBufferVAO.uploadData(buffer);
-            return singleBufferVAO;
+        public GLSingleBufferMesh build(VertexDataBuf buffer) {
+            GLSingleBufferMesh mesh = new GLSingleBufferMesh();
+            mesh.vertexBuffer = new GLVertexBuffer(GLBufferType.ARRAY_BUFFER, bufferUsage);
+            mesh.id = GL30.glGenVertexArrays();
+            mesh.disposable = GLCleaner.registerVertexArray(this, mesh.id);
+            mesh.setDrawMode(drawMode);
+            if (buffer != null) {
+                mesh.uploadData(buffer);
+            }
+            return mesh;
         }
     }
 }
