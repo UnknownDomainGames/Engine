@@ -1,5 +1,8 @@
 package nullengine.client.rendering.gl;
 
+import nullengine.client.rendering.gl.buffer.GLBufferType;
+import nullengine.client.rendering.gl.buffer.GLBufferUsage;
+import nullengine.client.rendering.gl.buffer.GLVertexBuffer;
 import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.gl.util.GLHelper;
 import nullengine.client.rendering.util.Cleaner;

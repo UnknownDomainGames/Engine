@@ -1,5 +1,6 @@
 package nullengine.client.rendering.gl;
 
+import nullengine.client.rendering.gl.buffer.GLBufferUsage;
 import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexDataBuf;
 

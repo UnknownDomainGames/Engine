@@ -1,4 +1,4 @@
-package nullengine.client.rendering.gl;
+package nullengine.client.rendering.gl.buffer;
 
 import nullengine.client.rendering.gl.util.GLCleaner;
 import nullengine.client.rendering.util.Cleaner;

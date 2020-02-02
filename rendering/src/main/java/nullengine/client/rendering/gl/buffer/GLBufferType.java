@@ -1,4 +1,4 @@
-package nullengine.client.rendering.gl;
+package nullengine.client.rendering.gl.buffer;
 
 import static org.lwjgl.opengl.GL40.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL40.GL_ELEMENT_ARRAY_BUFFER;

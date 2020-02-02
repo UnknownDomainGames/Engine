@@ -1,8 +1,8 @@
 package nullengine.client.rendering.gl.shape;
 
 import nullengine.client.rendering.gl.DirectRenderer;
-import nullengine.client.rendering.gl.GLBufferUsage;
 import nullengine.client.rendering.gl.VertexArrayObject;
+import nullengine.client.rendering.gl.buffer.GLBufferUsage;
 import nullengine.client.rendering.scene.Renderable;
 import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexDataBuf;

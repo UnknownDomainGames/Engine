@@ -1,5 +1,6 @@
 package nullengine.client.rendering.gl;
 
+import nullengine.client.rendering.gl.buffer.GLVertexBuffer;
 import nullengine.client.rendering.gl.util.GLHelper;
 import nullengine.client.rendering.vertex.VertexElement;
 import org.joml.Vector2fc;
