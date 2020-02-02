@@ -12,12 +12,12 @@ dependencies {
 jar {
     String gitVersion = 'git rev-parse --short HEAD'.execute().text.trim();
     manifest.attributes([
-            "Main-Class"            : mainClassName,
-            "Implementation-Title"  : rootProject.name,
-            "Implementation-Version": "git-${rootProject.name}-${project.version}-${gitVersion}",
-            "Git-Version"           : gitVersion,
-            "Engine-Version"        : project.version,
-            "Build-Time"            : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Main-Class"              : mainClassName,
+            "Implementation-Title"    : rootProject.name,
+            "Implementation-Version"  : "git-${rootProject.name}-${project.version}-${gitVersion}",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "Git-Version"             : gitVersion,
+            "Engine-Version"          : project.version
     ])
 }
 
