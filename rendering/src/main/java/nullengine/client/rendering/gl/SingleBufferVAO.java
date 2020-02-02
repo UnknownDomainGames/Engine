@@ -9,9 +9,11 @@ import nullengine.client.rendering.util.Cleaner;
 import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.client.rendering.vertex.VertexFormat;
+import org.apache.commons.lang3.Validate;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
+import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 
 public class SingleBufferVAO {
@@ -51,19 +53,33 @@ public class SingleBufferVAO {
         return vertexFormat;
     }
 
-    public void setVertexFormat(VertexFormat vertexFormat) {
-        this.vertexFormat = vertexFormat;
-        bind();
-        vbo.bind();
-        GLHelper.enableVertexFormat(vertexFormat);
-    }
-
     public DrawMode getDrawMode() {
         return drawMode.peer;
     }
 
     public void setDrawMode(DrawMode drawMode) {
         this.drawMode = GLDrawMode.valueOf(drawMode);
+    }
+
+    public void uploadData(@Nonnull VertexDataBuf buffer) {
+        uploadData(buffer.getByteBuffer(), buffer.getVertexFormat(), buffer.getVertexCount());
+    }
+
+    public void uploadData(ByteBuffer buffer, @Nonnull VertexFormat format) {
+        uploadData(buffer, format, buffer.limit() / format.getBytes());
+    }
+
+    private void uploadData(ByteBuffer buffer, @Nonnull VertexFormat format, int vertexCount) {
+        setVertexFormat(Validate.notNull(format));
+        vbo.uploadData(buffer);
+        this.vertexCount = vertexCount;
+    }
+
+    private void setVertexFormat(VertexFormat vertexFormat) {
+        this.vertexFormat = vertexFormat;
+        bind();
+        vbo.bind();
+        GLHelper.enableVertexFormat(vertexFormat);
     }
 
     public void bind() {
@@ -75,19 +91,6 @@ public class SingleBufferVAO {
 
     public void unbind() {
         GL30.glBindVertexArray(0);
-    }
-
-    public void uploadData(VertexDataBuf buffer) {
-        uploadData(buffer.getByteBuffer(), buffer.getVertexCount());
-    }
-
-    public void uploadData(ByteBuffer buffer) {
-        uploadData(buffer, buffer.limit() / vertexFormat.getBytes());
-    }
-
-    public void uploadData(ByteBuffer buffer, int vertexCount) {
-        vbo.uploadData(buffer);
-        this.vertexCount = vertexCount;
     }
 
     public void draw() {
@@ -116,19 +119,23 @@ public class SingleBufferVAO {
 
     public static final class Builder {
         private GLBufferUsage bufferUsage = GLBufferUsage.STATIC_DRAW;
-        private VertexFormat vertexFormat;
         private DrawMode drawMode = DrawMode.TRIANGLES;
 
         private Builder() {
         }
 
-        public Builder bufferUsage(GLBufferUsage bufferUsage) {
-            this.bufferUsage = bufferUsage;
+        public Builder setStatic() {
+            this.bufferUsage = GLBufferUsage.STATIC_DRAW;
             return this;
         }
 
-        public Builder vertexFormat(VertexFormat vertexFormat) {
-            this.vertexFormat = vertexFormat;
+        public Builder setDynamic() {
+            this.bufferUsage = GLBufferUsage.DYNAMIC_DRAW;
+            return this;
+        }
+
+        public Builder setStreamed() {
+            this.bufferUsage = GLBufferUsage.STREAM_DRAW;
             return this;
         }
 
@@ -139,14 +146,12 @@ public class SingleBufferVAO {
 
         public SingleBufferVAO build() {
             SingleBufferVAO singleBufferVAO = new SingleBufferVAO(bufferUsage);
-            singleBufferVAO.setVertexFormat(vertexFormat);
             singleBufferVAO.setDrawMode(drawMode);
             return singleBufferVAO;
         }
 
         public SingleBufferVAO build(VertexDataBuf buffer) {
             SingleBufferVAO singleBufferVAO = new SingleBufferVAO(bufferUsage);
-            singleBufferVAO.setVertexFormat(vertexFormat);
             singleBufferVAO.setDrawMode(drawMode);
             singleBufferVAO.uploadData(buffer);
             return singleBufferVAO;
