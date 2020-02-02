@@ -21,7 +21,7 @@ public abstract class VertexDataBuf {
 
     private VertexFormat vertexFormat;
 
-    private boolean ready;
+    private boolean ready = true;
 
     public static VertexDataBuf create(int initialCapacity) {
         return new Direct(initialCapacity);
@@ -74,14 +74,10 @@ public abstract class VertexDataBuf {
             throw new IllegalStateException("Buffer ready");
         }
         byteBuffer.flip();
-        validateVertexData();
-        ready = true;
-    }
-
-    protected void validateVertexData() {
         if (byteBuffer.limit() % vertexFormat.getBytes() != 0) {
             throw new IllegalStateException("Invalid vertex data");
         }
+        ready = true;
     }
 
     public void ensureCapacity(int minCapacity) {
@@ -362,7 +358,9 @@ public abstract class VertexDataBuf {
     }
 
     public VertexDataBuf endVertex() {
-        validateVertexData();
+        if (byteBuffer.position() % vertexFormat.getBytes() != 0) {
+            throw new IllegalStateException("Invalid vertex data");
+        }
         ensureRemaining(vertexFormat.getBytes());
         return this;
     }
