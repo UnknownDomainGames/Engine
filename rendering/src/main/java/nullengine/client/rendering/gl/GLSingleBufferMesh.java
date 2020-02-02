@@ -95,7 +95,7 @@ public final class GLSingleBufferMesh {
     }
 
     public void drawArrays() {
-        GL11.glDrawArrays(drawMode.gl, 0, this.vertexCount);
+        GL11.glDrawArrays(drawMode.gl, 0, vertexCount);
     }
 
     public void dispose() {
