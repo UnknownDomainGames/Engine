@@ -11,7 +11,7 @@ import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.text.Text;
 import nullengine.util.Color;
 
-public class HelloWorld extends GUIApplication {
+public class HelloGUI extends GUIApplication {
     public static void main(String[] args) {
         launch(args);
     }
