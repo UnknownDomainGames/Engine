@@ -170,12 +170,12 @@ public class WorldRenderer {
         frameBuffer.getTexture(GL_COLOR_ATTACHMENT0).bind();
         DirectRenderer t = DirectRenderer.getInstance();
         GLBuffer bb = t.getBuffer();
-        bb.begin(DrawMode.TRIANGLES_STRIP, VertexFormat.POSITION_TEX_COORD);
-        bb.pos(-1.0f, 1.0f, 0).uv(0, 1.0f).endVertex();
-        bb.pos(-1.0f, -1.0f, 0).uv(0, 0).endVertex();
-        bb.pos(1.0f, 1.0f, 0).uv(1.0f, 1.0f).endVertex();
-        bb.pos(1.0f, -1.0f, 0).uv(1.0f, 0).endVertex();
-        t.draw();
+        bb.begin(VertexFormat.POSITION_TEX_COORD);
+        bb.pos(-1.0f, 1.0f, 0).tex(0, 1.0f).endVertex();
+        bb.pos(-1.0f, -1.0f, 0).tex(0, 0).endVertex();
+        bb.pos(1.0f, 1.0f, 0).tex(1.0f, 1.0f).endVertex();
+        bb.pos(1.0f, -1.0f, 0).tex(1.0f, 0).endVertex();
+        t.draw(DrawMode.TRIANGLES_STRIP);
     }
 
     private void renderEntity(Matrix4f lightSpaceMat, float partial) {

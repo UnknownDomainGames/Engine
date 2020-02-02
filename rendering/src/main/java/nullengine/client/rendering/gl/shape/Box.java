@@ -68,7 +68,7 @@ public class Box implements Renderable {
         from.max(to, max);
         DirectRenderer instance = DirectRenderer.getInstance();
         GLBuffer buffer = instance.getBuffer();
-        buffer.begin(DrawMode.TRIANGLES, VertexFormat.POSITION);
+        buffer.begin(VertexFormat.POSITION);
         buffer.pos(min).endVertex();
         buffer.pos(min.x, min.y, max.z).endVertex();
         buffer.pos(min.x, max.y, min.z).endVertex();

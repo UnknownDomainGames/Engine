@@ -50,7 +50,7 @@ public class BlockRenderManagerImpl implements BlockRenderManager {
             return;
         }
 
-        buffer.posOffset(pos.x(), pos.y(), pos.z());
+        buffer.setTranslation(pos.x(), pos.y(), pos.z());
         var mutablePos = new BlockPos.Mutable(pos);
         byte coveredFace = 0;
         for (var direction : Direction.values()) {
@@ -69,7 +69,7 @@ public class BlockRenderManagerImpl implements BlockRenderManager {
         if (model == null) {
             return;
         }
-        buffer.posOffset(-0.5f, -0.5f, -0.5f);
+        buffer.setTranslation(-0.5f, -0.5f, -0.5f);
         model.get().putVertexes(buffer, 0);
     }
 

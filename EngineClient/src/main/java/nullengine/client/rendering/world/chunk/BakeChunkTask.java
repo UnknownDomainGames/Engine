@@ -3,7 +3,6 @@ package nullengine.client.rendering.world.chunk;
 import nullengine.block.Block;
 import nullengine.client.rendering.block.BlockRenderManager;
 import nullengine.client.rendering.gl.GLBuffer;
-import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.math.BlockPos;
 import nullengine.world.World;
@@ -38,7 +37,7 @@ public class BakeChunkTask implements Comparable<BakeChunkTask>, Runnable {
 
         try {
             GLBuffer buffer = chunkRenderer.getBufferPool().get();
-            buffer.begin(DrawMode.TRIANGLES, VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
+            buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
             while (blockPosIterator.hasNext()) {
                 BlockPos pos = blockPosIterator.next();
                 Block block = chunkCache.getBlock(pos);

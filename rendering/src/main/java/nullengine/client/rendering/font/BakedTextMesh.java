@@ -36,7 +36,7 @@ public class BakedTextMesh {
 
     public void putVertices(GLBuffer buffer, Color color){
         for (float[] vertex : vertices) {
-            buffer.pos(vertex, 0).color(color).uv(vertex, 3).endVertex();
+            buffer.pos(vertex, 0).color(color).tex(vertex, 3).endVertex();
         }
     }
 }

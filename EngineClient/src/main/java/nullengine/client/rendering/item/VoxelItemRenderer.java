@@ -27,9 +27,9 @@ public class VoxelItemRenderer implements ItemRenderer {
     public void render(ItemStack itemStack, float partial) {
         DirectRenderer directRenderer = DirectRenderer.getInstance();
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(DrawMode.TRIANGLES, VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
+        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
         model.get().putVertexes(buffer, 0);
-        directRenderer.draw();
+        directRenderer.draw(DrawMode.TRIANGLES);
     }
 
     @Override

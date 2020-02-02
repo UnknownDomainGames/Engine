@@ -28,36 +28,36 @@ public class BlockSelectionRenderer {
             float minX = hit.getPos().x() - 0.001f, maxX = hit.getPos().x() + 1.001f,
                     minY = hit.getPos().y() - 0.001f, maxY = hit.getPos().y() + 1.001f,
                     minZ = hit.getPos().z() - 0.001f, maxZ = hit.getPos().z() + 1.001f;
-            buffer.begin(DrawMode.LINES, VertexFormat.POSITION_COLOR);
-            buffer.pos(minX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(maxX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(minX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(minX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(minX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(minX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.begin(VertexFormat.POSITION_COLOR);
+            buffer.pos(minX, minY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(maxX, minY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(minX, minY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(minX, maxY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(minX, minY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(minX, minY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
 
-            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(minX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(minX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(minX, maxY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(minX, minY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(minX, maxY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
 
-            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(minX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(maxX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(minX, maxY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(maxX, minY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(maxX, maxY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
 
-            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(minX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).uv(0, 0).endVertex();
-            buffer.pos(maxX, minY, minZ).color(Color.WHITE).uv(0, 0).endVertex();
+            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(minX, minY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(maxX, maxY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(maxX, minY, maxZ).color(Color.WHITE).tex(0, 0).endVertex();
+            buffer.pos(maxX, minY, minZ).color(Color.WHITE).tex(0, 0).endVertex();
             TextureManager.instance().getWhiteTexture().bind();
-            directRenderer.draw();
+            directRenderer.draw(DrawMode.LINES);
         }
     }
 

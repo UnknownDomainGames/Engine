@@ -34,7 +34,7 @@ public class Pane implements Renderable {
         from.max(to,max);
         DirectRenderer instance = DirectRenderer.getInstance();
         GLBuffer buffer = instance.getBuffer();
-        buffer.begin(DrawMode.TRIANGLE_FAN, VertexFormat.POSITION);
+        buffer.begin(VertexFormat.POSITION);
         buffer.pos(min.x, max.y, -10).endVertex();
         buffer.pos(min.x,min.y,-10).endVertex();
         buffer.pos(max.x,min.y,-10).endVertex();

@@ -162,7 +162,7 @@ public class ItemGenerateModel implements Model {
         @Override
         public void putVertexes(GLBuffer buffer, int coveredFace) {
             for (var vertex : this.vertexes) {
-                buffer.pos(vertex, 0).color(1, 1, 1, 1).uv(vertex, 3).normal(vertex, 5).endVertex();
+                buffer.pos(vertex, 0).rgba(1, 1, 1, 1).tex(vertex, 3).normal(vertex, 5).endVertex();
             }
         }
 

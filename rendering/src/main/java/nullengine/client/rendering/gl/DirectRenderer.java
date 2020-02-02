@@ -1,5 +1,7 @@
 package nullengine.client.rendering.gl;
 
+import nullengine.client.rendering.util.DrawMode;
+
 public class DirectRenderer {
 
     private static final DirectRenderer INSTANCE = new DirectRenderer(0x100000);
@@ -19,11 +21,11 @@ public class DirectRenderer {
         return buffer;
     }
 
-    public void draw() {
+    public void draw(DrawMode drawMode) {
         buffer.finish();
         vao.uploadData(buffer);
         vao.setVertexFormat(buffer.getVertexFormat());
-        vao.setDrawMode(buffer.getDrawMode());
+        vao.setDrawMode(drawMode);
         vao.draw();
     }
 }

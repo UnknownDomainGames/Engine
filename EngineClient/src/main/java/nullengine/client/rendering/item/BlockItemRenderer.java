@@ -20,9 +20,9 @@ public class BlockItemRenderer implements ItemRenderer {
         Block block = ((BlockItem) itemStack.getItem()).getBlock();
         DirectRenderer directRenderer = DirectRenderer.getInstance();
         GLBuffer buffer = directRenderer.getBuffer();
-        buffer.begin(DrawMode.TRIANGLES, VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
+        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
         BlockRenderManager.instance().generateMesh(block, buffer);
-        directRenderer.draw();
+        directRenderer.draw(DrawMode.TRIANGLES);
     }
 
     @Override

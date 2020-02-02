@@ -27,7 +27,7 @@ public class Line implements Renderable {
     public void refreshMesh() {
         DirectRenderer instance = DirectRenderer.getInstance();
         GLBuffer buffer = instance.getBuffer();
-        buffer.begin(DrawMode.LINES, VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         buffer.pos(from).color(color).endVertex();
         buffer.pos(to).color(color).endVertex();
         buffer.finish();
