@@ -60,7 +60,11 @@ public final class GLHelper {
     }
 
     public static void disableVertexFormat(VertexFormat format) {
-        for (int i = 0, size = format.getElements().length; i < size; i++) {
+        disableVertexFormat(format, 0);
+    }
+
+    public static void disableVertexFormat(VertexFormat format, int firstIndex) {
+        for (int i = firstIndex, size = firstIndex + format.getElementCount(); i < size; i++) {
             glDisableVertexAttribArray(i);
         }
     }

@@ -1,11 +1,9 @@
 package nullengine.client.rendering3d.shape;
 
 import nullengine.client.rendering.gl.GLVertexArray;
-import nullengine.client.rendering.gl.buffer.GLBufferUsage;
 import nullengine.client.rendering.util.DataType;
 import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexDataBuf;
-import nullengine.client.rendering.vertex.VertexElement;
 import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.client.rendering3d.Renderable;
 import nullengine.util.Color;
@@ -76,11 +74,11 @@ public class Box implements Renderable {
         buffer.pos(max.x, max.y, min.z).endVertex();
         buffer.pos(max).endVertex();
         buffer.finish();
-        var indicesBuffer = BufferUtils.createByteBuffer(36).put(indices).flip();
+        var indexBuffer = BufferUtils.createByteBuffer(36).put(indices).flip();
         mesh = GLVertexArray.builder().drawMode(DrawMode.TRIANGLES)
-                .newBufferAttribute(VertexElement.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getByteBuffer())
-                .newIndicesBuffer(GLBufferUsage.STATIC_DRAW, DataType.UNSIGNED_BYTE, indicesBuffer)
-                .newValueAttribute(VertexElement.COLOR_RGBA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))
+                .newBufferAttribute(VertexFormat.POSITION, buffer.getByteBuffer())
+                .newValueAttribute(VertexFormat.COLOR_ALPHA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))
+                .newIndexBuffer(DataType.UNSIGNED_BYTE, indexBuffer)
                 .build();
     }
 

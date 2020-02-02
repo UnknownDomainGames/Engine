@@ -95,6 +95,10 @@ public class VertexFormat {
         return elements;
     }
 
+    public int getElementCount() {
+        return elements.length;
+    }
+
     public int getBytes() {
         return bytes;
     }
