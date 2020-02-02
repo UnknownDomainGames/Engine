@@ -12,7 +12,7 @@ import java.util.Set;
 public abstract class VertexDataBufPool {
 
     private final Set<VertexDataBuf> buffers = Sets.newConcurrentHashSet();
-    private final Queue<VertexDataBuf> availableBuffers = new PriorityQueue<>(11, Comparator.comparingInt(o -> -o.getBuffer().capacity()));
+    private final Queue<VertexDataBuf> availableBuffers = new PriorityQueue<>(11, Comparator.comparingInt(o -> -o.getByteBuffer().capacity()));
 
     private final int bufferInitialCapacity;
     private final int poolCapacity;

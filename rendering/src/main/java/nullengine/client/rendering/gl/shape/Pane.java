@@ -41,7 +41,7 @@ public class Pane implements Renderable {
         buffer.pos(max.x,max.y,-10).endVertex();
         buffer.finish();
         mesh = VertexArrayObject.builder().drawMode(DrawMode.TRIANGLE_FAN)
-                .newBufferAttribute(VertexElement.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getBuffer())
+                .newBufferAttribute(VertexElement.POSITION, GLBufferUsage.STATIC_DRAW, buffer.getByteBuffer())
                 .newValueAttribute(VertexElement.COLOR_RGBA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))
                 .build();
     }
