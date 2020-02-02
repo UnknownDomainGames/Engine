@@ -1,6 +1,6 @@
 package nullengine.client.rendering.gl.shape;
 
-import nullengine.client.rendering.gl.DirectRenderer;
+import nullengine.client.rendering.gl.GLStreamedRenderer;
 import nullengine.client.rendering.gl.VertexArrayObject;
 import nullengine.client.rendering.gl.buffer.GLBufferUsage;
 import nullengine.client.rendering.scene.Renderable;
@@ -66,7 +66,7 @@ public class Box implements Renderable {
         var max = new Vector3f();
         from.min(to, min);
         from.max(to, max);
-        DirectRenderer instance = DirectRenderer.getInstance();
+        GLStreamedRenderer instance = GLStreamedRenderer.getInstance();
         VertexDataBuf buffer = instance.getBuffer();
         buffer.begin(VertexFormat.POSITION);
         buffer.pos(min).endVertex();

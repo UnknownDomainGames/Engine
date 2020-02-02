@@ -4,7 +4,7 @@ import nullengine.Platform;
 import nullengine.client.asset.Asset;
 import nullengine.client.asset.AssetTypes;
 import nullengine.client.asset.AssetURL;
-import nullengine.client.rendering.gl.DirectRenderer;
+import nullengine.client.rendering.gl.GLStreamedRenderer;
 import nullengine.client.rendering.model.BakedModel;
 import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexDataBuf;
@@ -25,11 +25,11 @@ public class VoxelItemRenderer implements ItemRenderer {
 
     @Override
     public void render(ItemStack itemStack, float partial) {
-        DirectRenderer directRenderer = DirectRenderer.getInstance();
-        VertexDataBuf buffer = directRenderer.getBuffer();
+        GLStreamedRenderer renderer = GLStreamedRenderer.getInstance();
+        VertexDataBuf buffer = renderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
         model.get().putVertexes(buffer, 0);
-        directRenderer.draw(DrawMode.TRIANGLES);
+        renderer.draw(DrawMode.TRIANGLES);
     }
 
     @Override

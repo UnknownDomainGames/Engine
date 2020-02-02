@@ -7,7 +7,7 @@ import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
-import nullengine.client.rendering.gl.DirectRenderer;
+import nullengine.client.rendering.gl.GLStreamedRenderer;
 import nullengine.client.rendering.texture.Texture2D;
 import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexDataBuf;
@@ -26,7 +26,7 @@ import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 
 public class GLGraphics implements Graphics {
 
-    private final DirectRenderer directRenderer = DirectRenderer.getInstance();
+    private final GLStreamedRenderer directRenderer = GLStreamedRenderer.getInstance();
     private final GUIResourceFactory resourceFactory = new GUIResourceFactory();
 
     private final Stack<Vector4fc> clipRect = new Stack<>();

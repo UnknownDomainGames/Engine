@@ -1,7 +1,7 @@
 package nullengine.client.rendering.gl.shape;
 
-import nullengine.client.rendering.gl.DirectRenderer;
 import nullengine.client.rendering.gl.GLSingleBufferMesh;
+import nullengine.client.rendering.gl.GLStreamedRenderer;
 import nullengine.client.rendering.scene.Renderable;
 import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexDataBuf;
@@ -25,7 +25,7 @@ public class Line implements Renderable {
     }
 
     public void refreshMesh() {
-        DirectRenderer instance = DirectRenderer.getInstance();
+        GLStreamedRenderer instance = GLStreamedRenderer.getInstance();
         VertexDataBuf buffer = instance.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         buffer.pos(from).color(color).endVertex();

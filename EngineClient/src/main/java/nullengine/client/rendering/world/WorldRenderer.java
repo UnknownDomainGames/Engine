@@ -5,7 +5,7 @@ import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.entity.EntityRenderManagerImpl;
 import nullengine.client.rendering.game3d.Scene;
-import nullengine.client.rendering.gl.DirectRenderer;
+import nullengine.client.rendering.gl.GLStreamedRenderer;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.shader.ShaderType;
 import nullengine.client.rendering.gl.texture.GLFrameBuffer;
@@ -168,7 +168,7 @@ public class WorldRenderer {
 
     private void drawFrameBufferToScreen(GLFrameBuffer frameBuffer) {
         frameBuffer.getTexture(GL_COLOR_ATTACHMENT0).bind();
-        DirectRenderer t = DirectRenderer.getInstance();
+        GLStreamedRenderer t = GLStreamedRenderer.getInstance();
         VertexDataBuf bb = t.getBuffer();
         bb.begin(VertexFormat.POSITION_TEX_COORD);
         bb.pos(-1.0f, 1.0f, 0).tex(0, 1.0f).endVertex();
