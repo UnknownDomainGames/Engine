@@ -155,15 +155,15 @@ public class Scene implements EventTarget {
         return tail.append(eventHandlerManager);
     }
 
-    private float lastScreenX = Float.NaN;
-    private float lastScreenY = Float.NaN;
+    private float lastCursorX = Float.NaN;
+    private float lastCursorY = Float.NaN;
 
     public void processCursor(double xPos, double yPos) {
         var screenX = (float) xPos / scaleX.get();
         var screenY = (float) yPos / scaleY.get();
-        if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
+        if (!Float.isNaN(lastCursorX) && !Float.isNaN(lastCursorY)) {
             var root = this.root.get();
-            var lastNodes = root.getPointingComponents(lastScreenX, lastScreenY);
+            var lastNodes = root.getPointingComponents(lastCursorX, lastCursorY);
             var currentNodes = root.getPointingComponents(screenX, screenY);
             for (var node : currentNodes) {
                 if (lastNodes.contains(node)) {
@@ -183,55 +183,63 @@ public class Scene implements EventTarget {
                 new MouseEvent(MouseEvent.MOUSE_MOVED, this, screenX, screenY, screenX, screenY).fireEvent();
             }
         }
-        lastScreenX = screenX;
-        lastScreenY = screenY;
+        lastCursorX = screenX;
+        lastCursorY = screenY;
     }
 
-    private final Set<Node> focused = new HashSet<>();
+    private final Set<Node> focusedNodes = new HashSet<>();
+    private final EnumMap<MouseButton, List<Node>> pressedNodes = new EnumMap<>(MouseButton.class);
 
     public void processMouse(MouseButton button, Modifiers modifier, boolean pressed) {
-        if (!Float.isNaN(lastScreenX) && !Float.isNaN(lastScreenY)) {
-            var root = this.root.get();
-            var nodes = root.getPointingComponents(lastScreenX, lastScreenY);
-            if (pressed) {
-                for (var node : nodes) {
-                    if (node.disabled.get()) continue;
-                    if (focused.contains(node)) continue;
-                    focused.add(node);
-                    node.focused.set(true);
-                }
-                List<Node> focusedList = new ArrayList<>(focused);
-                focusedList.removeAll(nodes);
-                focused.removeAll(focusedList);
-                focusedList.forEach(node -> node.focused.set(false));
+        if (Float.isNaN(lastCursorX) || Float.isNaN(lastCursorY)) return;
+
+        var root = this.root.get();
+        var hitNodes = root.getPointingComponents(lastCursorX, lastCursorY);
+
+        if (pressed) {
+            for (var node : hitNodes) {
+                if (node.disabled.get()) continue;
+                if (focusedNodes.contains(node)) continue;
+                focusedNodes.add(node);
+                node.focused.set(true);
             }
-            for (var node : nodes) {
-                if (pressed) {
-                    var pos = node.relativePos(lastScreenX, lastScreenY);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, node, pos.getX(), pos.getY(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
-                } else {
-                    var pos = node.relativePos(lastScreenX, lastScreenY);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, node, pos.getX(), pos.getY(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
-                    new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, node, pos.getX(), pos.getY(), lastScreenX, lastScreenY, button, modifier).fireEvent(node);
-                }
+            List<Node> lostFocusNodes = new ArrayList<>(focusedNodes);
+            lostFocusNodes.removeAll(hitNodes);
+            focusedNodes.removeAll(lostFocusNodes);
+            lostFocusNodes.forEach(node -> node.focused.set(false));
+        }
+
+        List<Node> pressedNodeList = pressedNodes.computeIfAbsent(button, key -> new ArrayList<>());
+        if (pressed) {
+            for (var node : hitNodes) {
+                var pos = node.relativePos(lastCursorX, lastCursorY);
+                new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, node, pos.getX(), pos.getY(), lastCursorX, lastCursorY, button, modifier).fireEvent(node);
             }
+            pressedNodeList.addAll(hitNodes);
+        } else {
+            for (Node node : pressedNodeList) {
+                var pos = node.relativePos(lastCursorX, lastCursorY);
+                new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, node, pos.getX(), pos.getY(), lastCursorX, lastCursorY, button, modifier).fireEvent(node);
+                new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, node, pos.getX(), pos.getY(), lastCursorX, lastCursorY, button, modifier).fireEvent(node);
+            }
+            pressedNodeList.clear();
         }
     }
 
     public void processScroll(double xOffset, double yOffset) {
-        focused.forEach(node -> {
-            var pos = node.relativePos(lastScreenX, lastScreenY);
-            new ScrollEvent(ScrollEvent.ANY, node, pos.getX(), pos.getY(), lastScreenX, lastScreenY, xOffset, yOffset).fireEvent();
+        focusedNodes.forEach(node -> {
+            var pos = node.relativePos(lastCursorX, lastCursorY);
+            new ScrollEvent(ScrollEvent.ANY, node, pos.getX(), pos.getY(), lastCursorX, lastCursorY, xOffset, yOffset).fireEvent();
         });
     }
 
     public void processKey(KeyCode key, Modifiers modifier, boolean pressed) {
-        focused.forEach(node ->
+        focusedNodes.forEach(node ->
                 new KeyEvent(pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED, node, key, modifier, pressed).fireEvent());
     }
 
     public void processCharMods(char codePoint, Modifiers modifier) {
-        focused.forEach(node ->
+        focusedNodes.forEach(node ->
                 new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.NONE, String.valueOf(codePoint), modifier, true).fireEvent());
     }
 
@@ -281,7 +289,7 @@ public class Scene implements EventTarget {
             };
             addEventHandler(MouseEvent.MOUSE_MOVED, handler);
             popup.getInsertedHandlers().add(new ImmutablePair<>(MouseEvent.MOUSE_MOVED, handler));
-            popup.relocate(lastScreenX, lastScreenY);
+            popup.relocate(lastCursorX, lastCursorY);
         }
         popups.add(popup);
     }
