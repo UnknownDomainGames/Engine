@@ -9,8 +9,8 @@ import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.misc.IndexRange;
 import nullengine.client.gui.misc.Insets;
+import nullengine.client.gui.text.Text;
 import nullengine.client.rendering.font.Font;
-import nullengine.client.rendering.font.FontHelper;
 import nullengine.input.Modifiers;
 import nullengine.math.Math2;
 import nullengine.util.Color;
@@ -32,7 +32,9 @@ public abstract class TextInput extends Control {
     private BreakIterator charIterator;
     private BreakIterator wordIterator;
 
-    public TextInput(){
+    private Text prompt;
+
+    public TextInput() {
         background().setValue(Background.fromColor(Color.fromARGB(0x000000c8)));
         border().setValue(new Border(Color.WHITE, 2));
         padding().setValue(new Insets(3f));
@@ -42,6 +44,11 @@ public abstract class TextInput extends Control {
         addEventHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
         addEventHandler(MouseActionEvent.MOUSE_CLICKED, this::onClicked);
         addEventHandler(MouseEvent.MOUSE_MOVED, this::onMouseMove);
+
+        prompt = new Text();
+        promptText().bindBidirectional(prompt.text());
+        getChildren().add(prompt);
+        text().addChangeListener((observable, oldValue, newValue) -> prompt.visible().set(length() == 0));
     }
 
     public MutableObjectValue<Font> font() {

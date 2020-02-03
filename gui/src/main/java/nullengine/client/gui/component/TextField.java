@@ -1,15 +1,8 @@
 package nullengine.client.gui.component;
 
-import nullengine.client.gui.input.KeyEvent;
-import nullengine.client.gui.input.MouseActionEvent;
-import nullengine.client.gui.input.MouseEvent;
-import nullengine.client.gui.misc.Background;
-import nullengine.client.gui.misc.Border;
-import nullengine.client.gui.misc.Insets;
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.TextFieldRenderer;
 import nullengine.client.rendering.font.FontHelper;
-import nullengine.util.Color;
 
 public class TextField extends TextInput {
 
@@ -51,7 +44,7 @@ public class TextField extends TextInput {
 
     @Override
     protected ComponentRenderer createDefaultRenderer() {
-        return TextFieldRenderer.INSTANCE;
+        return new TextFieldRenderer(this);
     }
 
     @Override

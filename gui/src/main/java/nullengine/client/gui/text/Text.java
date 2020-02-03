@@ -61,6 +61,6 @@ public class Text extends Node {
 
     @Override
     protected ComponentRenderer createDefaultRenderer() {
-        return TextRenderer.INSTANCE;
+        return new TextRenderer(this);
     }
 }

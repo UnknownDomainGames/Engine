@@ -1,16 +1,10 @@
-package nullengine.client.rendering.font;
+package nullengine.client.rendering.gl.font;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import nullengine.client.rendering.gl.font.FontPlaneTexture;
-import nullengine.client.rendering.gl.font.NativeTTFont;
-import nullengine.client.rendering.gl.font.NativeTTFontInfo;
-import nullengine.client.rendering.vertex.VertexDataBuf;
-import nullengine.client.rendering.vertex.VertexFormat;
-import nullengine.util.Color;
+import nullengine.client.rendering.font.*;
 import org.apache.commons.io.IOUtils;
-import org.joml.Vector3fc;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
 import org.slf4j.Logger;
@@ -202,10 +196,11 @@ public final class WindowsFontHelper implements FontHelper {
     }
 
     /**
-    compute the text width
-     @param text the text
-     @param font the font of the text
-     @param ceilingWidth the maximum width of the text. -1 if no limitation on it
+     * compute the text width
+     *
+     * @param text         the text
+     * @param font         the font of the text
+     * @param ceilingWidth the maximum width of the text. -1 if no limitation on it
      */
     @Override
     public float computeTextWidth(String text, Font font, float ceilingWidth) {
@@ -305,25 +300,10 @@ public final class WindowsFontHelper implements FontHelper {
         nativeTTFont.getPlaneTextures().get(0).bind();
     }
 
-    private final Map<TextInfo, BakedTextMesh> bakedTextMeshMap = new HashMap<>();
-
     @Override
-    public void renderText(VertexDataBuf buffer, CharSequence text, Font font, Color color, Vector3fc pos, Runnable renderer) throws UnavailableFontException {
-        if (text == null || text.length() == 0) {
-            return;
-        }
+    public TextMesh bakeTextMesh(CharSequence text, Font font) {
+        TextMesh.CharQuad[] quads = new TextMesh.CharQuad[text.length()];
 
-        NativeTTFont nativeFont = getNativeFont(font);
-        bindTexture(nativeFont);
-        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
-        buffer.setTranslation(pos.x(), pos.y(), pos.z());
-        bakedTextMeshMap.computeIfAbsent(new TextInfo(text, font), this::bakeMesh).putVertices(buffer, color);
-        renderer.run();
-    }
-
-    public BakedTextMesh bakeMesh(TextInfo info) {
-        CharSequence text = info.getText();
-        Font font = info.getFont();
         NativeTTFont nativeTTFont = getNativeFont(font);
         STBTTFontinfo fontInfo = nativeTTFont.getInfo().getFontInfo();
         float scale = nativeTTFont.getScaleForPixelHeight();
@@ -346,8 +326,7 @@ public final class WindowsFontHelper implements FontHelper {
                     fontPlaneTexture.bakeTexture(nativeTTFont.getFont(), nativeTTFont.getInfo());
                 }
             }
-            var vertices = new ArrayList<float[]>();
-            for (int i = 0; i < text.length(); ) {
+            for (int i = 0, j = 0; i < text.length(); j++) {
                 i += getCodePoint(text, i, charPointBuffer);
 
                 int charPoint = charPointBuffer.get(0);
@@ -358,27 +337,21 @@ public final class WindowsFontHelper implements FontHelper {
                 }
 
                 float centerX = posX.get(0);
-                var quads = fontPlaneTexture.getQuad((char) charPoint);
-                if (quads == null) continue;
-                posX.put(0,posX.get(0) + quads.getXOffset());
+                var quad = fontPlaneTexture.getQuad((char) charPoint);
+                if (quad == null) continue;
+                posX.put(0, posX.get(0) + quad.getXOffset());
                 if (i < text.length()) {
                     getCodePoint(text, i, charPointBuffer);
                     posX.put(0, posX.get(0)
                             + stbtt_GetCodepointKernAdvance(fontInfo, charPoint, charPointBuffer.get(0)) * scale);
                 }
-                float x0 = (float) Math.floor(centerX + quads.getPos().x() + 0.5),
-                        x1 = (float) Math.floor(centerX + quads.getPos().z() + 0.5),
-                        y0 = (float) Math.floor(quads.getPos().y() + 0.5),
-                        y1 = (float) Math.floor(quads.getPos().w()+ 0.5);
-                vertices.add(new float[]{x0, y0, 0, quads.getTexCoord().x(), quads.getTexCoord().y()});
-                vertices.add(new float[]{x0, y1, 0,quads.getTexCoord().x(), quads.getTexCoord().w()});
-                vertices.add(new float[]{x1, y0, 0,quads.getTexCoord().z(), quads.getTexCoord().y()});
-
-                vertices.add(new float[]{x1, y0, 0,quads.getTexCoord().z(), quads.getTexCoord().y()});
-                vertices.add(new float[]{x0, y1, 0,quads.getTexCoord().x(), quads.getTexCoord().w()});
-                vertices.add(new float[]{x1, y1, 0,quads.getTexCoord().z(), quads.getTexCoord().w()});
+                float x0 = (float) Math.floor(centerX + quad.getPos().x() + 0.5),
+                        x1 = (float) Math.floor(centerX + quad.getPos().z() + 0.5),
+                        y0 = (float) Math.floor(quad.getPos().y() + 0.5),
+                        y1 = (float) Math.floor(quad.getPos().w() + 0.5);
+                quads[j] = new TextMesh.CharQuad((char) charPoint, x0, y0, x1, y1, quad.getTexCoord());
             }
-            return new BakedTextMesh(vertices, text, font, fontPlaneTexture);
+            return new TextMesh(text, font, fontPlaneTexture, quads);
         }
     }
 

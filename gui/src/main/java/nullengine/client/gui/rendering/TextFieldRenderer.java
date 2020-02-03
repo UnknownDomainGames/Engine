@@ -1,13 +1,37 @@
 package nullengine.client.gui.rendering;
 
+import com.google.common.base.Strings;
 import nullengine.client.gui.component.TextField;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
+import nullengine.client.rendering.font.TextMesh;
 import nullengine.util.Color;
 
-public class TextFieldRenderer extends RegionRenderer<TextField> {
+public final class TextFieldRenderer extends RegionRenderer<TextField> {
 
-    public static final TextFieldRenderer INSTANCE = new TextFieldRenderer();
+    private TextField textField;
+
+    private boolean textMeshDirty = true;
+    private TextMesh textMesh;
+
+    public TextFieldRenderer(TextField textField) {
+        this.textField = textField;
+        textField.text().addChangeListener((observable, oldValue, newValue) -> textMeshDirty = true);
+        textField.font().addChangeListener((observable, oldValue, newValue) -> textMeshDirty = true);
+    }
+
+    private void bakeTextMesh() {
+        textMeshDirty = false;
+        String text = textField.text().get();
+        if (Strings.isNullOrEmpty(text)) {
+            textMesh = null;
+            return;
+        }
+
+        Font font = textField.font().get();
+        FontHelper fontHelper = FontHelper.instance();
+        textMesh = fontHelper.bakeTextMesh(text, font);
+    }
 
     @Override
     public void render(TextField textField, Graphics graphics) {
@@ -25,36 +49,35 @@ public class TextFieldRenderer extends RegionRenderer<TextField> {
             ph = textField.height().get();
         }
         graphics.pushClipRect(px, py, pw, ph);
-        graphics.setColor(textField.fontcolor().getValue());
+        Color frontColor = textField.fontcolor().getValue();
+        graphics.setColor(frontColor);
         Font font = textField.font().getValue();
-        graphics.setFont(font);
         FontHelper helper = FontHelper.instance();
         float caretWidth = helper.computeTextWidth(textField.getTextInRange(0, textField.caret().get()), font);
         float offset = textField.getLineScrollOffset();
         Color selectionColor = Color.BLUE;
-        if (textField.length() == 0) {
-            graphics.drawText(textField.promptText().getValue(), 0, 0);
-        } else {
+        if (textMeshDirty) bakeTextMesh();
+        if (textMesh != null) {
             if (textField.selectedText().isEmpty()) {
-                graphics.drawText(textField.text().getValue(), offset, 0);
+                graphics.setColor(frontColor);
+                graphics.drawText(textMesh, offset, 0);
             } else {
-                String b = textField.text().getValue().substring(0, textField.selection().getValue().getStart());
+                int selectionStart = textField.selection().get().getStart();
+                int selectionEnd = textField.selection().get().getEnd();
+                String b = textField.text().get().substring(0, selectionStart);
                 String s = textField.selectedText();
-                String a = textField.text().getValue().substring(textField.selection().getValue().getEnd());
-
                 graphics.setColor(selectionColor);
                 graphics.fillRect(helper.computeTextWidth(b, font) + offset, 0, helper.computeTextWidth(s, font), ph - py);
-                graphics.setColor(textField.fontcolor().getValue());
-                graphics.drawText(b, offset, 0);
-                graphics.setColor(textField.fontcolor().getValue().difference(selectionColor));
-                graphics.drawText(s, helper.computeTextWidth(b, font) + offset, 0);
-                graphics.setColor(textField.fontcolor().getValue());
-                graphics.drawText(a, helper.computeTextWidth(b + s, font) + offset, 0);
+                graphics.setColor(frontColor);
+                graphics.drawText(textMesh, 0, selectionStart, offset, 0);
+                graphics.drawText(textMesh, selectionEnd, textMesh.length(), offset, 0);
+                graphics.setColor(frontColor.difference(selectionColor));
+                graphics.drawText(textMesh, selectionStart, selectionEnd, offset, 0);
             }
         }
         if (textField.focused().get() && System.currentTimeMillis() % 1000 < 500) {
             if (textField.selection().isPresent() && textField.selection().getValue().isInRange(textField.caret().get())) {
-                graphics.setColor(textField.fontcolor().getValue().difference(selectionColor));
+                graphics.setColor(frontColor.difference(selectionColor));
             }
             graphics.fillRect(caretWidth + offset, 0, 1, ph - py);
         }

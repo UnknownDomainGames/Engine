@@ -1,10 +1,5 @@
 package nullengine.client.rendering.font;
 
-import nullengine.client.rendering.vertex.VertexDataBuf;
-import nullengine.util.Color;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -45,11 +40,7 @@ public interface FontHelper {
 
     float computeTextHeight(String text, Font font, float ceilingWidth, float leading) throws UnavailableFontException;
 
-    default void renderText(VertexDataBuf buffer, CharSequence text, Font font, Color color, Runnable renderer) throws UnavailableFontException {
-        renderText(buffer, text, font, color, new Vector3f(), renderer);
-    }
-
-    void renderText(VertexDataBuf buffer, CharSequence text, Font font, Color color, Vector3fc pos, Runnable renderer) throws UnavailableFontException;
+    TextMesh bakeTextMesh(CharSequence text, Font font);
 
     static FontHelper instance() {
         return Internal.instance.get();

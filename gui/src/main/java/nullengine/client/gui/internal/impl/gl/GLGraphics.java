@@ -5,8 +5,7 @@ import nullengine.client.gui.image.Image;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.rendering.Graphics;
-import nullengine.client.rendering.font.Font;
-import nullengine.client.rendering.font.FontHelper;
+import nullengine.client.rendering.font.TextMesh;
 import nullengine.client.rendering.gl.GLStreamedRenderer;
 import nullengine.client.rendering.texture.Texture2D;
 import nullengine.client.rendering.util.DrawMode;
@@ -15,7 +14,6 @@ import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.math.Math2;
 import nullengine.util.Color;
 import org.joml.Vector2fc;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
 
@@ -33,13 +31,12 @@ public class GLGraphics implements Graphics {
 
     private final GLGUIRenderer renderer;
 
+    @Deprecated
     private Color color;
-    private Font font;
 
     public GLGraphics(GLGUIRenderer renderer) {
         this.renderer = renderer;
         setColor(Color.WHITE);
-        setFont(Font.getDefaultFont());
     }
 
     @Override
@@ -50,16 +47,6 @@ public class GLGraphics implements Graphics {
     @Override
     public void setColor(Color color) {
         this.color = color;
-    }
-
-    @Override
-    public Font getFont() {
-        return font;
-    }
-
-    @Override
-    public void setFont(Font font) {
-        this.font = font;
     }
 
     @Override
@@ -185,14 +172,21 @@ public class GLGraphics implements Graphics {
     }
 
     @Override
-    public void drawText(CharSequence text, float x, float y) {
-        VertexDataBuf buffer = directRenderer.getBuffer();
-        FontHelper.instance().renderText(buffer, text, font, color, new Vector3f(x,y,0), () -> {
-            renderer.startRenderText();
-            directRenderer.draw(DrawMode.TRIANGLES);
-            renderer.endRenderText();
-            renderer.bindWhiteTexture();
-        });
+    public void drawText(TextMesh mesh, float x, float y) {
+        drawText(mesh, 0, mesh.length(), x, y);
+    }
+
+    @Override
+    public void drawText(TextMesh mesh, int beginIndex, int endIndex, float x, float y) {
+        renderer.startRenderText();
+        mesh.getTexture().bind();
+        VertexDataBuf buf = directRenderer.getBuffer();
+        buf.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
+        buf.setTranslation(x, y, 0);
+        mesh.put(buf, color, beginIndex, endIndex);
+        directRenderer.draw(DrawMode.TRIANGLES);
+        renderer.endRenderText();
+        renderer.bindWhiteTexture();
     }
 
     @Override

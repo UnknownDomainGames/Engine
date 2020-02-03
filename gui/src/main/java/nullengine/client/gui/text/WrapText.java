@@ -38,6 +38,6 @@ public class WrapText extends Text {
 
     @Override
     protected ComponentRenderer createDefaultRenderer() {
-        return WrapTextRenderer.INSTANCE;
+        return new WrapTextRenderer(this);
     }
 }

@@ -4,7 +4,7 @@ import nullengine.client.gui.Node;
 import nullengine.client.gui.image.Image;
 import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
-import nullengine.client.rendering.font.Font;
+import nullengine.client.rendering.font.TextMesh;
 import nullengine.client.rendering.texture.Texture2D;
 import nullengine.util.Color;
 import org.joml.Vector2fc;
@@ -14,10 +14,6 @@ public interface Graphics {
     Color getColor();
 
     void setColor(Color color);
-
-    Font getFont();
-
-    void setFont(Font font);
 
     void drawLine(float x1, float y1, float x2, float y2);
 
@@ -52,7 +48,9 @@ public interface Graphics {
 
     // TODO: void fillPolygon(Polygon polygon);
 
-    void drawText(CharSequence text, float x, float y);
+    void drawText(TextMesh mesh, float x, float y);
+
+    void drawText(TextMesh mesh, int beginIndex, int endIndex, float x, float y);
 
     void drawTexture(Texture2D texture, float x, float y, float width, float height);
 

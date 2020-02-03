@@ -1,9 +1,9 @@
 package nullengine.client.rendering.gl.font;
 
 import nullengine.client.rendering.font.Font;
-import nullengine.client.rendering.font.UnicodeBlockWrapper;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.texture.FilterMode;
+import nullengine.client.rendering.texture.Texture;
 import nullengine.math.Math2;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -22,7 +22,7 @@ import static org.lwjgl.opengl.GL11.GL_RED;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.stb.STBTruetype.*;
 
-public class FontPlaneTexture {
+public class FontPlaneTexture implements Texture {
     //    private List<Integer> abandonedTexIds;
     private GLTexture2D glTexture;
     private Font font;
@@ -43,6 +43,14 @@ public class FontPlaneTexture {
     public void bind() {
         if (glTexture != null) {
             glTexture.bind();
+        }
+    }
+
+    @Override
+    public void dispose() {
+        if (glTexture != null) {
+            glTexture.dispose();
+            glTexture = null;
         }
     }
 
