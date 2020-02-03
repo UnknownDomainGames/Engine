@@ -4,7 +4,6 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.ValueChangeListener;
-import nullengine.client.gui.component.Control;
 import nullengine.client.gui.util.Utils;
 
 import java.util.ArrayList;
@@ -153,25 +152,5 @@ public abstract class Parent extends Node {
         node.y().set(y);
         node.width.set(width);
         node.height.set(height);
-    }
-
-    public List<Node> getPointingComponents(float posX, float posY) {
-        var list = new ArrayList<Node>();
-        for (Node node : getChildren()) {
-            if (node.contains(posX, posY)) {
-                if (node instanceof Parent) {
-                    var container = (Parent) node;
-                    var pointingComponents = container.getPointingComponents(posX - container.x().get(), posY - container.y().get());
-                    if (!pointingComponents.isEmpty()) {
-                        list.addAll(pointingComponents);
-                    } else {
-                        list.add(node);
-                    }
-                } else {
-                    list.add(node);
-                }
-            }
-        }
-        return list;
     }
 }

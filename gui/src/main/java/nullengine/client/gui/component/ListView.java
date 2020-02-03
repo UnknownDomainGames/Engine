@@ -10,7 +10,6 @@ import nullengine.client.gui.layout.ScrollPane;
 import nullengine.client.gui.layout.VBox;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -65,26 +64,5 @@ public class ListView<T> extends Control {
 
     public ObservableList<T> items() {
         return items;
-    }
-
-    //restoring Container's definition
-    @Override
-    public List<Node> getPointingComponents(float posX, float posY) {
-        var list = new ArrayList<Node>();
-        for (Node node : getChildren()) {
-            if (node.contains(posX, posY)) {
-                if (node instanceof Parent) {
-                    var container = (Parent) node;
-                    if (!(node instanceof Control)) {
-                        list.add(container);
-                    }
-                    list.addAll(container.getPointingComponents(posX - container.x().get(), posY - container.y().get()));
-
-                } else {
-                    list.add(node);
-                }
-            }
-        }
-        return list;
     }
 }
