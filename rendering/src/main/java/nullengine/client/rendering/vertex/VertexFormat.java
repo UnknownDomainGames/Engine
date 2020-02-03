@@ -6,6 +6,7 @@ import static nullengine.client.rendering.vertex.VertexElement.*;
 
 public class VertexFormat {
 
+    public static final VertexFormat NONE = of();
     public static final VertexFormat POSITION = of(VertexElement.POSITION);
     public static final VertexFormat COLOR = of(VertexElement.COLOR_RGB);
     public static final VertexFormat COLOR_ALPHA = of(VertexElement.COLOR_RGBA);

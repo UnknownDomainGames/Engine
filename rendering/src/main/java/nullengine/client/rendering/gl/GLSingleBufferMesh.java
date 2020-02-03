@@ -23,7 +23,7 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
     private int id;
     private Cleaner.Disposable disposable;
     private GLVertexBuffer vertexBuffer;
-    private VertexFormat vertexFormat;
+    private VertexFormat vertexFormat = VertexFormat.NONE;
     private GLDrawMode drawMode;
 
     private int vertexCount;
@@ -86,10 +86,11 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
     }
 
     private void setVertexFormat(VertexFormat vertexFormat) {
-        this.vertexFormat = vertexFormat;
         bind();
         vertexBuffer.bind();
+        GLHelper.disableVertexFormat(this.vertexFormat);
         GLHelper.enableVertexFormat(vertexFormat);
+        this.vertexFormat = vertexFormat;
     }
 
     @Override
