@@ -6,9 +6,7 @@ import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.ValueChangeListener;
 import nullengine.client.gui.util.Utils;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 public abstract class Parent extends Node {
 
@@ -42,23 +40,12 @@ public abstract class Parent extends Node {
         });
     }
 
-    public ObservableList<Node> getChildren() {
+    protected ObservableList<Node> getChildren() {
         return children;
     }
 
     public final ObservableList<Node> getUnmodifiableChildren() {
         return unmodifiableChildren;
-    }
-
-    public final List<Node> getChildrenRecursive() {
-        var list = new ArrayList<Node>();
-        for (Node child : children) {
-            if (child instanceof Parent) {
-                list.addAll(((Parent) child).getChildrenRecursive());
-            }
-            list.add(child);
-        }
-        return list;
     }
 
     @Override
