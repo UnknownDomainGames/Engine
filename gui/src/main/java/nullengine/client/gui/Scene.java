@@ -33,7 +33,7 @@ public class Scene implements EventTarget {
 
     final MutableObjectValue<Stage> stage = new SimpleMutableObjectValue<>();
 
-    private final MutableObjectValue<Color> fill = new SimpleMutableObjectValue<>(Color.WHITE);
+    private final MutableObjectValue<Color> fill = new SimpleMutableObjectValue<>(Color.BLACK);
 
     private final MutableObjectValue<Parent> root = new SimpleMutableObjectValue<>();
 
@@ -143,7 +143,7 @@ public class Scene implements EventTarget {
     }
 
     public Color getFill() {
-        return fill.orElse(Color.WHITE);
+        return fill.orElse(Color.BLACK);
     }
 
     public void setFill(Color color) {
