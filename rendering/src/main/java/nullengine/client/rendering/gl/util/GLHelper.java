@@ -41,7 +41,7 @@ public final class GLHelper {
 
     public static void enableVertexElement(VertexElement element, int index, int stride, int offset) {
         glEnableVertexAttribArray(index);
-        glVertexAttribPointer(index, element.getSize(), toGLDataType(element.getType()), element.isNormalized(), stride, offset);
+        glVertexAttribPointer(index, element.getComponentCount(), toGLDataType(element.getType()), element.isNormalized(), stride, offset);
     }
 
     public static void enableVertexFormat(VertexFormat format) {

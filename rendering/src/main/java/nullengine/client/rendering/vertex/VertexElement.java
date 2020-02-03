@@ -27,27 +27,27 @@ public class VertexElement {
 
     private final DataType type;
     private final String name;
-    private final int size;
+    private final int componentCount;
     private final int bytes;
     private final boolean normalized;
 
-    public VertexElement(@Nonnull DataType type, int size) {
-        this(type, NAME_UNKNOWN, size, false);
+    public VertexElement(@Nonnull DataType type, int componentCount) {
+        this(type, NAME_UNKNOWN, componentCount, false);
     }
 
-    public VertexElement(@Nonnull DataType type, int size, boolean normalized) {
-        this(type, NAME_UNKNOWN, size, normalized);
+    public VertexElement(@Nonnull DataType type, int componentCount, boolean normalized) {
+        this(type, NAME_UNKNOWN, componentCount, normalized);
     }
 
-    public VertexElement(@Nonnull DataType type, @Nonnull String name, int size) {
-        this(type, name, size, false);
+    public VertexElement(@Nonnull DataType type, @Nonnull String name, int componentCount) {
+        this(type, name, componentCount, false);
     }
 
-    public VertexElement(@Nonnull DataType type, @Nonnull String name, int size, boolean normalized) {
+    public VertexElement(@Nonnull DataType type, @Nonnull String name, int componentCount, boolean normalized) {
         this.type = notNull(type);
         this.name = notNull(name);
-        this.size = size;
-        this.bytes = size * type.getBytes();
+        this.componentCount = componentCount;
+        this.bytes = componentCount * type.getBytes();
         this.normalized = normalized;
     }
 
@@ -59,8 +59,8 @@ public class VertexElement {
         return name;
     }
 
-    public int getSize() {
-        return size;
+    public int getComponentCount() {
+        return componentCount;
     }
 
     public int getBytes() {
@@ -76,7 +76,7 @@ public class VertexElement {
         return "VertexElement{" +
                 "type=" + type +
                 ", name='" + name + '\'' +
-                ", size=" + size +
+                ", size=" + componentCount +
                 ", normalized=" + normalized +
                 '}';
     }
@@ -86,7 +86,7 @@ public class VertexElement {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VertexElement that = (VertexElement) o;
-        return size == that.size &&
+        return componentCount == that.componentCount &&
                 bytes == that.bytes &&
                 normalized == that.normalized &&
                 type == that.type &&
@@ -95,6 +95,6 @@ public class VertexElement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, name, size, bytes, normalized);
+        return Objects.hash(type, name, componentCount, bytes, normalized);
     }
 }

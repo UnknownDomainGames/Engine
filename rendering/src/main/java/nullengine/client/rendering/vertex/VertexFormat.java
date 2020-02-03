@@ -73,7 +73,7 @@ public class VertexFormat {
                     break;
                 case NAME_COLOR:
                     colorElement = i;
-                    usingAlpha = element.getSize() == 4;
+                    usingAlpha = element.getComponentCount() == 4;
                     break;
                 case NAME_TEX_COORD:
                     texCoordElement = i;
