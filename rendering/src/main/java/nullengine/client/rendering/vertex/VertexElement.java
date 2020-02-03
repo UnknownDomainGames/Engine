@@ -76,7 +76,7 @@ public class VertexElement {
         return "VertexElement{" +
                 "type=" + type +
                 ", name='" + name + '\'' +
-                ", size=" + componentCount +
+                ", componentCount=" + componentCount +
                 ", normalized=" + normalized +
                 '}';
     }
