@@ -70,7 +70,7 @@ public class GLGraphics implements Graphics {
         VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         rect2(buffer, x, y, width, height);
-        directRenderer.draw(DrawMode.TRIANGLES_STRIP);
+        directRenderer.draw(DrawMode.TRIANGLE_STRIP);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class GLGraphics implements Graphics {
         VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         quads(buffer, new float[]{p1.x(), p4.x(), p2.x(), p3.x()}, new float[]{p1.y(), p4.y(), p2.y(), p3.y()});
-        directRenderer.draw(DrawMode.TRIANGLES_STRIP);
+        directRenderer.draw(DrawMode.TRIANGLE_STRIP);
     }
 
     @Override
@@ -204,7 +204,7 @@ public class GLGraphics implements Graphics {
         buffer.pos(x2, y, 0).rgba(1, 1, 1, 1).tex(maxU, minV).endVertex();
         buffer.pos(x2, y2, 0).rgba(1, 1, 1, 1).tex(maxU, maxV).endVertex();
         texture.bind();
-        directRenderer.draw(DrawMode.TRIANGLES_STRIP);
+        directRenderer.draw(DrawMode.TRIANGLE_STRIP);
     }
 
     @Override

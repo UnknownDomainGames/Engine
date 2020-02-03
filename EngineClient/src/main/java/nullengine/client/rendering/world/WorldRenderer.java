@@ -175,7 +175,7 @@ public class WorldRenderer {
         bb.pos(-1.0f, -1.0f, 0).tex(0, 0).endVertex();
         bb.pos(1.0f, 1.0f, 0).tex(1.0f, 1.0f).endVertex();
         bb.pos(1.0f, -1.0f, 0).tex(1.0f, 0).endVertex();
-        t.draw(DrawMode.TRIANGLES_STRIP);
+        t.draw(DrawMode.TRIANGLE_STRIP);
     }
 
     private void renderEntity(Matrix4f lightSpaceMat, float partial) {
