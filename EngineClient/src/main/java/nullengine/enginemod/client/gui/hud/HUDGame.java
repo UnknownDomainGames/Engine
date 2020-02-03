@@ -2,7 +2,7 @@ package nullengine.enginemod.client.gui.hud;
 
 import nullengine.Platform;
 import nullengine.client.event.rendering.RenderEvent;
-import nullengine.client.gui.component.ItemView;
+import nullengine.client.gui.control.ItemView;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.entity.Entity;
 import nullengine.entity.component.TwoHands;

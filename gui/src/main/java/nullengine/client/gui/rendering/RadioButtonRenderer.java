@@ -1,6 +1,6 @@
 package nullengine.client.gui.rendering;
 
-import nullengine.client.gui.component.RadioButton;
+import nullengine.client.gui.control.RadioButton;
 import nullengine.client.gui.misc.Insets;
 
 public class RadioButtonRenderer implements ComponentRenderer<RadioButton> {

@@ -1,7 +1,5 @@
-package nullengine.client.gui.component;
+package nullengine.client.gui.control;
 
-import com.github.mouse0w0.observable.value.ObservableFloatValue;
-import com.github.mouse0w0.observable.value.ObservableValue;
 import nullengine.client.gui.input.KeyEvent;
 import nullengine.client.gui.layout.ScrollPane;
 import nullengine.client.gui.text.WrapText;

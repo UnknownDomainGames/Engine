@@ -1,6 +1,6 @@
 package nullengine.client.gui.rendering;
 
-import nullengine.client.gui.component.CheckBox;
+import nullengine.client.gui.control.CheckBox;
 import nullengine.client.gui.misc.Insets;
 import org.joml.Vector2f;
 

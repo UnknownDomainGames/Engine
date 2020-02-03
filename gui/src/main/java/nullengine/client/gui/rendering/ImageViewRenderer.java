@@ -1,6 +1,6 @@
 package nullengine.client.gui.rendering;
 
-import nullengine.client.gui.component.ImageView;
+import nullengine.client.gui.control.ImageView;
 import nullengine.client.gui.image.Image;
 
 public class ImageViewRenderer implements ComponentRenderer<ImageView> {

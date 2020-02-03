@@ -1,10 +1,6 @@
-package nullengine.client.gui.component;
+package nullengine.client.gui.control;
 
-import com.google.common.collect.Lists;
-import nullengine.client.gui.Node;
 import nullengine.client.gui.Region;
-
-import java.util.List;
 
 public abstract class Control extends Region {
 

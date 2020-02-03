@@ -3,7 +3,7 @@ package nullengine.client.gui.example;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.Stage;
 import nullengine.client.gui.application.GUIApplication;
-import nullengine.client.gui.component.Button;
+import nullengine.client.gui.control.Button;
 import nullengine.client.gui.layout.FlowPane;
 import nullengine.client.gui.layout.VBox;
 import nullengine.client.gui.misc.Border;

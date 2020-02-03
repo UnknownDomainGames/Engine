@@ -1,9 +1,12 @@
 package nullengine.client.gui.layout;
 
-import com.github.mouse0w0.observable.value.*;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
+import com.github.mouse0w0.observable.value.ObservableDoubleValue;
+import com.github.mouse0w0.observable.value.ObservableValue;
+import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Node;
-import nullengine.client.gui.component.HSlider;
-import nullengine.client.gui.component.VSlider;
+import nullengine.client.gui.control.HSlider;
+import nullengine.client.gui.control.VSlider;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.util.Utils;
 

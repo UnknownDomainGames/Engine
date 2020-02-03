@@ -1,6 +1,6 @@
 package nullengine.enginemod.client.gui.game;
 
-import nullengine.client.gui.component.ItemView;
+import nullengine.client.gui.control.ItemView;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.layout.HBox;
 import nullengine.client.gui.layout.VBox;

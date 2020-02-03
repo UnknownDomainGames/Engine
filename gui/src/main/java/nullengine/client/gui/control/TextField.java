@@ -1,4 +1,4 @@
-package nullengine.client.gui.component;
+package nullengine.client.gui.control;
 
 import nullengine.client.gui.rendering.ComponentRenderer;
 import nullengine.client.gui.rendering.TextFieldRenderer;

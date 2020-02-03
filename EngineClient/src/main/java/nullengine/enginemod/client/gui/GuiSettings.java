@@ -2,8 +2,8 @@ package nullengine.enginemod.client.gui;
 
 import com.github.mouse0w0.observable.value.ValueChangeListener;
 import nullengine.Platform;
-import nullengine.client.gui.component.Button;
-import nullengine.client.gui.component.HSlider;
+import nullengine.client.gui.control.Button;
+import nullengine.client.gui.control.HSlider;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.layout.HBox;
 import nullengine.client.gui.layout.VBox;

@@ -1,6 +1,6 @@
 package nullengine.client.gui.rendering;
 
-import nullengine.client.gui.component.ItemView;
+import nullengine.client.gui.control.ItemView;
 import nullengine.client.rendering.item.ItemRenderManager;
 import nullengine.client.rendering.shader.ShaderManager;
 import org.joml.AxisAngle4f;

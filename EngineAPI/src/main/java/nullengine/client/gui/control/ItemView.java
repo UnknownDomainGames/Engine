@@ -1,4 +1,4 @@
-package nullengine.client.gui.component;
+package nullengine.client.gui.control;
 
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;

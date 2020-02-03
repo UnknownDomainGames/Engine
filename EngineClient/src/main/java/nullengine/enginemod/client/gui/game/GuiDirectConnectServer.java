@@ -2,9 +2,9 @@ package nullengine.enginemod.client.gui.game;
 
 import nullengine.Platform;
 import nullengine.client.gui.Scene;
-import nullengine.client.gui.component.Button;
-import nullengine.client.gui.component.Label;
-import nullengine.client.gui.component.TextField;
+import nullengine.client.gui.control.Button;
+import nullengine.client.gui.control.Label;
+import nullengine.client.gui.control.TextField;
 import nullengine.client.gui.layout.BorderPane;
 import nullengine.client.gui.layout.HBox;
 import nullengine.client.gui.layout.VBox;

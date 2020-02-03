@@ -1,7 +1,7 @@
 package nullengine.client.gui.rendering;
 
 import com.google.common.base.Strings;
-import nullengine.client.gui.component.TextField;
+import nullengine.client.gui.control.TextField;
 import nullengine.client.rendering.font.Font;
 import nullengine.client.rendering.font.FontHelper;
 import nullengine.client.rendering.font.TextMesh;
