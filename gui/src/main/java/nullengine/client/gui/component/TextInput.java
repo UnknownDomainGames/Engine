@@ -42,7 +42,7 @@ public abstract class TextInput extends Control {
 
         addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
         addEventHandler(KeyEvent.KEY_TYPED, this::onKeyTyped);
-        addEventHandler(MouseActionEvent.MOUSE_CLICKED, this::onClicked);
+        addEventHandler(MouseActionEvent.MOUSE_PRESSED, this::onPressed);
         addEventHandler(MouseEvent.MOUSE_MOVED, this::onMouseMove);
 
         prompt = new Text();
@@ -135,7 +135,7 @@ public abstract class TextInput extends Control {
         }
     }
 
-    protected void onClicked(MouseActionEvent event) {
+    protected void onPressed(MouseActionEvent event) {
         positionCaret(getNearestMousePos(event.getX(), event.getY()));
     }
 
