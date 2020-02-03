@@ -24,6 +24,7 @@ public abstract class VertexDataBuf {
     private VertexFormat vertexFormat;
 
     private boolean ready = true;
+    private int vertexCount = 0;
 
     public static VertexDataBuf create(int initialCapacity) {
         return new Direct(initialCapacity);
@@ -61,7 +62,7 @@ public abstract class VertexDataBuf {
     }
 
     public int getVertexCount() {
-        return byteBuffer.capacity() / vertexFormat.getBytes();
+        return vertexCount;
     }
 
     public void begin(@Nonnull VertexFormat format) {
@@ -86,6 +87,7 @@ public abstract class VertexDataBuf {
         if (byteBuffer.limit() % vertexFormat.getBytes() != 0) {
             throw new IllegalStateException("Invalid vertex data");
         }
+        vertexCount = byteBuffer.limit() / vertexFormat.getBytes();
         ready = true;
     }
 
@@ -268,25 +270,24 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf rgb(float r, float g, float b) {
         if (vertexFormat.isUsingColor()) {
-            if (vertexFormat.isUsingAlpha()) {
-                return rgba(r, g, b, 1);
-            }
             byteBuffer.putFloat(r);
             byteBuffer.putFloat(g);
             byteBuffer.putFloat(b);
+            if (vertexFormat.isUsingAlpha()) {
+                byteBuffer.putFloat(1f);
+            }
         }
         return this;
     }
 
     public VertexDataBuf rgba(float r, float g, float b, float a) {
         if (vertexFormat.isUsingColor()) {
-            if (!vertexFormat.isUsingAlpha()) {
-                return rgb(r, g, b);
-            }
             byteBuffer.putFloat(r);
             byteBuffer.putFloat(g);
             byteBuffer.putFloat(b);
-            byteBuffer.putFloat(a);
+            if (vertexFormat.isUsingAlpha()) {
+                byteBuffer.putFloat(a);
+            }
         }
         return this;
     }
