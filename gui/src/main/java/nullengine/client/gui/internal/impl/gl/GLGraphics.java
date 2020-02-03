@@ -22,7 +22,7 @@ import java.util.Stack;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 
-public class GLGraphics implements Graphics {
+public final class GLGraphics implements Graphics {
 
     private final GLStreamedRenderer directRenderer = GLStreamedRenderer.getInstance();
     private final GUIResourceFactory resourceFactory = new GUIResourceFactory();
@@ -31,7 +31,6 @@ public class GLGraphics implements Graphics {
 
     private final GLGUIRenderer renderer;
 
-    @Deprecated
     private Color color;
 
     public GLGraphics(GLGUIRenderer renderer) {
@@ -197,7 +196,7 @@ public class GLGraphics implements Graphics {
     @Override
     public void drawTexture(Texture2D texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
         VertexDataBuf buffer = directRenderer.getBuffer();
-        buffer.begin(VertexFormat.POSITION_COLOR_TEX_COORD);
+        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
         float x2 = x + width, y2 = y + height;
         buffer.pos(x, y, 0).rgba(1, 1, 1, 1).tex(minU, minV).endVertex();
         buffer.pos(x, y2, 0).rgba(1, 1, 1, 1).tex(minU, maxV).endVertex();
@@ -237,17 +236,21 @@ public class GLGraphics implements Graphics {
         }
 
         setColor(border.getColor());
-        if (border.getInsets().getTop() != 0) {
-            fillRect(x, y, x + width, y + border.getInsets().getTop());
+        float top = border.getInsets().getTop();
+        if (top != 0) {
+            fillRect(x, y, width, top);
         }
-        if (border.getInsets().getBottom() != 0) {
-            fillRect(x, y + height - border.getInsets().getBottom(), x + width, y + height);
+        float bottom = border.getInsets().getBottom();
+        if (bottom != 0) {
+            fillRect(x, y + height - bottom, width, bottom);
         }
-        if (border.getInsets().getLeft() != 0) {
-            fillRect(x, y, x + border.getInsets().getLeft(), y + height);
+        float left = border.getInsets().getLeft();
+        if (left != 0) {
+            fillRect(x, y, left, height);
         }
-        if (border.getInsets().getRight() != 0) {
-            fillRect(x + width - border.getInsets().getRight(), y, x + width, y + height);
+        float right = border.getInsets().getRight();
+        if (right != 0) {
+            fillRect(x + width - right, y, right, height);
         }
     }
 
