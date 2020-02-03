@@ -94,7 +94,7 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
 
     @Override
     public void bind() {
-        if (id == -1) {
+        if (id == 0) {
             throw new IllegalStateException("Object has been disposed");
         }
         GL30.glBindVertexArray(id);
@@ -112,15 +112,15 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
 
     @Override
     public void dispose() {
-        if (id == -1) return;
+        if (id == 0) return;
         vertexBuffer.dispose();
         disposable.dispose();
-        id = -1;
+        id = 0;
     }
 
     @Override
     public boolean isDisposed() {
-        return id == -1;
+        return id == 0;
     }
 
     public static Builder builder() {
