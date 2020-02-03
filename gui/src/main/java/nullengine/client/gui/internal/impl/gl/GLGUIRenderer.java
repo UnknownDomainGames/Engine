@@ -11,6 +11,7 @@ import nullengine.client.rendering.gl.texture.GLFrameBuffer;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.image.BufferedImage;
 import nullengine.client.rendering.texture.Texture2D;
+import nullengine.util.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4fc;
@@ -48,7 +49,8 @@ public class GLGUIRenderer {
     }
 
     private void render0(Scene scene) {
-        glClearColor(0, 0, 0, 1);
+        Color fill = scene.getFill();
+        glClearColor(fill.getRed(), fill.getGreen(), fill.getBlue(), fill.getAlpha());
         glClear(GL_COLOR_BUFFER_BIT);
 
         Parent root = scene.getRoot();

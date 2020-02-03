@@ -12,6 +12,7 @@ import nullengine.client.gui.misc.Pos;
 import nullengine.input.KeyCode;
 import nullengine.input.Modifiers;
 import nullengine.input.MouseButton;
+import nullengine.util.Color;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,6 +32,8 @@ public class Scene implements EventTarget {
     private final MutableFloatValue scaleY = new SimpleMutableFloatValue(1);
 
     final MutableObjectValue<Stage> stage = new SimpleMutableObjectValue<>();
+
+    private final MutableObjectValue<Color> fill = new SimpleMutableObjectValue<>(Color.WHITE);
 
     private final MutableObjectValue<Parent> root = new SimpleMutableObjectValue<>();
 
@@ -133,6 +136,18 @@ public class Scene implements EventTarget {
         for (Popup popup : popups) {
             popup.layout();
         }
+    }
+
+    public MutableObjectValue<Color> fill() {
+        return fill;
+    }
+
+    public Color getFill() {
+        return fill.orElse(Color.WHITE);
+    }
+
+    public void setFill(Color color) {
+        fill.set(color);
     }
 
     @Override
