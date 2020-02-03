@@ -6,6 +6,7 @@ import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.client.gui.Node;
 import nullengine.client.gui.misc.Insets;
+import nullengine.client.gui.misc.Orientation;
 import nullengine.client.gui.misc.Pos;
 import nullengine.client.gui.util.Utils;
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -15,10 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FlowPane extends Pane {
-
-    public enum Orientation {
-        HORIZONTAL, VERTICAL
-    }
 
     private final MutableObjectValue<Pos> alignment = new SimpleMutableObjectValue<>(Pos.TOP_LEFT);
     private final MutableObjectValue<Orientation> orientation = new SimpleMutableObjectValue<>(Orientation.HORIZONTAL);
