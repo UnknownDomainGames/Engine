@@ -2,6 +2,7 @@ package nullengine.client.gui.internal.impl;
 
 import nullengine.client.gui.Stage;
 import nullengine.client.gui.application.GUIApplication;
+import nullengine.client.gui.internal.ClipboardHelper;
 import nullengine.client.gui.internal.GUIPlatform;
 import nullengine.client.gui.internal.SceneHelper;
 import nullengine.client.gui.internal.StageHelper;

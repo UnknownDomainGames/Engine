@@ -1,4 +1,4 @@
-package nullengine.client.gui.internal.impl;
+package nullengine.client.gui.internal;
 
 public interface ClipboardHelper {
 

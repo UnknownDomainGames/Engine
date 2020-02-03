@@ -1,6 +1,6 @@
 package nullengine.client.gui.internal.impl.glfw;
 
-import nullengine.client.gui.internal.impl.ClipboardHelper;
+import nullengine.client.gui.internal.ClipboardHelper;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryUtil;
 

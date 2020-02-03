@@ -1,7 +1,5 @@
 package nullengine.client.gui.internal;
 
-import nullengine.client.gui.internal.impl.ClipboardHelper;
-
 public abstract class GUIPlatform {
 
     private static GUIPlatform PLATFORM;
