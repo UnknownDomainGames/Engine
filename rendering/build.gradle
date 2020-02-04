@@ -1,7 +1,7 @@
 dependencies {
     compile project(':common')
 
-    compile 'org.joml:joml:1.9.12'
+    compile 'org.joml:joml:1.9.20'
 
     compile 'com.github.Mouse0w0:Observable:1.2.1'
 
