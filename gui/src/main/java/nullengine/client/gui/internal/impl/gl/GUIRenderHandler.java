@@ -19,6 +19,10 @@ public final class GUIRenderHandler implements RenderHandler {
     public GUIRenderHandler() {
     }
 
+    public GLGUIRenderer getRenderer() {
+        return renderer;
+    }
+
     @Override
     public void init(RenderManager manager) {
         this.manager = manager;

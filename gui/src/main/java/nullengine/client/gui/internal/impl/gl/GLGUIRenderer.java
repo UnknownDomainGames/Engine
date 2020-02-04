@@ -39,20 +39,26 @@ public final class GLGUIRenderer {
         graphics = new GLGraphics(this);
     }
 
+    public Graphics getGraphics() {
+        return graphics;
+    }
+
     public void render(Scene scene) {
-        GLFrameBuffer.bindDefaultFrameBuffer();
-        render0(scene);
+        render(scene, true);
     }
 
-    public void render(Scene scene, GLFrameBuffer frameBuffer) {
+    public void render(Scene scene, boolean clear) {
+        render(scene, GLFrameBuffer.getDefaultFrameBuffer(), clear);
+    }
+
+    public void render(Scene scene, GLFrameBuffer frameBuffer, boolean clear) {
         frameBuffer.bind();
-        render0(scene);
-    }
 
-    private void render0(Scene scene) {
-        Color fill = scene.getFill();
-        glClearColor(fill.getRed(), fill.getGreen(), fill.getBlue(), fill.getAlpha());
-        glClear(GL_COLOR_BUFFER_BIT);
+        if (clear) {
+            Color fill = scene.getFill();
+            glClearColor(fill.getRed(), fill.getGreen(), fill.getBlue(), fill.getAlpha());
+            glClear(GL_COLOR_BUFFER_BIT);
+        }
 
         Parent root = scene.getRoot();
         if (!root.visible().get()) return; // Invisible root, don't need render it.
