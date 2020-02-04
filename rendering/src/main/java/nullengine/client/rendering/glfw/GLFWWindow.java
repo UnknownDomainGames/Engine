@@ -39,6 +39,7 @@ public class GLFWWindow implements Window {
     private String title;
 
     private boolean showing = false;
+    private boolean doCloseImmediately = true;
 
     private DisplayMode displayMode = DisplayMode.WINDOWED;
 
@@ -218,6 +219,16 @@ public class GLFWWindow implements Window {
     @Override
     public boolean isShowing() {
         return showing;
+    }
+
+    @Override
+    public boolean isDoCloseImmediately() {
+        return doCloseImmediately;
+    }
+
+    @Override
+    public void setDoCloseImmediately(boolean doCloseImmediately) {
+        this.doCloseImmediately = doCloseImmediately;
     }
 
     @Override
@@ -567,7 +578,9 @@ public class GLFWWindow implements Window {
         });
         glfwSetWindowCloseCallback(pointer, window -> {
             windowCloseCallbacks.forEach(callback -> callback.invoke(this));
-            dispose();
+            if (doCloseImmediately) {
+                dispose();
+            }
         });
         glfwSetWindowFocusCallback(pointer, (window, focused) -> {
             this.focused = focused;

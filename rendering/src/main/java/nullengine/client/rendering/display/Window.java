@@ -48,6 +48,14 @@ public interface Window extends WindowCallbacks {
 
     boolean isShowing();
 
+    boolean isDoCloseImmediately();
+
+    void setDoCloseImmediately(boolean doCloseImmediately);
+
+    void swapBuffers();
+
+    void dispose();
+
     // ================= Window Attributes Start =================
     boolean isFocused();
 
@@ -78,8 +86,5 @@ public interface Window extends WindowCallbacks {
     void maximize();
 
     void restore();
-
-    void swapBuffers();
-
-    void dispose();
+    // ================= Window Attributes End =================
 }
