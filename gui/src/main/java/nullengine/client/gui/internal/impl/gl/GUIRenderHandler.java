@@ -3,12 +3,13 @@ package nullengine.client.gui.internal.impl.gl;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.Stage;
+import nullengine.client.gui.internal.SceneHelper;
 import nullengine.client.gui.internal.StageHelper;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.management.RenderHandler;
 import nullengine.client.rendering.management.RenderManager;
 
-public class GUIRenderHandler implements RenderHandler {
+public final class GUIRenderHandler implements RenderHandler {
 
     private final ObservableList<Stage> stages = Stage.getStages();
 
@@ -32,7 +33,8 @@ public class GUIRenderHandler implements RenderHandler {
 
             Window window = StageHelper.getWindow(stage);
             if (window.isResized()) {
-                scene.setViewport(window.getWidth(), window.getHeight(), window.getContentScaleX(), window.getContentScaleY());
+                SceneHelper.setViewport(scene, window.getWidth(), window.getHeight(),
+                        window.getContentScaleX(), window.getContentScaleY());
             }
 
             scene.update();

@@ -7,7 +7,7 @@ import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.WindowHelper;
 import nullengine.client.rendering.management.RenderManager;
 
-public class StageHelperImpl extends StageHelper {
+public final class StageHelperImpl extends StageHelper {
 
     private final WindowHelper windowHelper;
 

@@ -8,6 +8,7 @@ import nullengine.client.gui.input.KeyEvent;
 import nullengine.client.gui.input.MouseActionEvent;
 import nullengine.client.gui.input.MouseEvent;
 import nullengine.client.gui.input.ScrollEvent;
+import nullengine.client.gui.internal.SceneHelper;
 import nullengine.client.gui.misc.Pos;
 import nullengine.input.KeyCode;
 import nullengine.input.Modifiers;
@@ -22,8 +23,8 @@ import java.util.*;
 
 public class Scene implements EventTarget {
 
-    private final MutableIntValue viewportWidth = new SimpleMutableIntValue();
-    private final MutableIntValue viewportHeight = new SimpleMutableIntValue();
+    private int viewportWidth;
+    private int viewportHeight;
 
     private final MutableFloatValue width = new SimpleMutableFloatValue();
     private final MutableFloatValue height = new SimpleMutableFloatValue();
@@ -39,24 +40,27 @@ public class Scene implements EventTarget {
 
     private final EventHandlerManager eventHandlerManager = new EventHandlerManager();
 
+    static {
+        SceneHelper.setSceneAccessor(new SceneHelper.SceneAccessor() {
+            @Override
+            public int getViewportWidth(Scene scene) {
+                return scene.viewportWidth;
+            }
+
+            @Override
+            public int getViewportHeight(Scene scene) {
+                return scene.viewportHeight;
+            }
+
+            @Override
+            public void setViewport(Scene scene, int width, int height, float scaleX, float scaleY) {
+                scene.setViewport(width, height, scaleX, scaleY);
+            }
+        });
+    }
+
     public Scene(Parent root) {
         setRoot(root);
-    }
-
-    public ObservableIntValue viewportWidth() {
-        return viewportWidth.toUnmodifiable();
-    }
-
-    public int getViewportWidth() {
-        return viewportWidth.get();
-    }
-
-    public ObservableIntValue viewportHeight() {
-        return viewportHeight.toUnmodifiable();
-    }
-
-    public int getViewportHeight() {
-        return viewportHeight.get();
     }
 
     public ObservableFloatValue width() {
@@ -75,26 +79,22 @@ public class Scene implements EventTarget {
         return height.get();
     }
 
-    public void setViewport(int width, int height) {
-        setViewport(width, height, 1f, 1f);
-    }
-
-    public void setViewport(int width, int height, float scaleX, float scaleY) {
-        this.viewportWidth.set(width);
-        this.viewportHeight.set(height);
-        this.scaleX.set(scaleX);
-        this.scaleY.set(scaleY);
-        this.width.set(width / scaleX);
-        this.height.set(height / scaleY);
-        updateRoot();
-    }
-
     public float getScaleX() {
         return scaleX.get();
     }
 
     public float getScaleY() {
         return scaleY.get();
+    }
+
+    private void setViewport(int width, int height, float scaleX, float scaleY) {
+        this.viewportWidth = width;
+        this.viewportHeight = height;
+        this.scaleX.set(scaleX);
+        this.scaleY.set(scaleY);
+        this.width.set(width / scaleX);
+        this.height.set(height / scaleY);
+        updateRoot();
     }
 
     public ObservableObjectValue<Stage> stage() {

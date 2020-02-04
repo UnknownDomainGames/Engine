@@ -3,6 +3,7 @@ package nullengine.client.gui.internal.impl.gl;
 import nullengine.client.gui.Parent;
 import nullengine.client.gui.Popup;
 import nullengine.client.gui.Scene;
+import nullengine.client.gui.internal.SceneHelper;
 import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.gl.shader.ShaderManager;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
@@ -18,7 +19,7 @@ import org.joml.Vector4fc;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class GLGUIRenderer {
+public final class GLGUIRenderer {
 
     private ShaderProgram shader;
     private Graphics graphics;
@@ -65,7 +66,7 @@ public class GLGUIRenderer {
     }
 
     private void startRender(Scene scene) {
-        int viewportWidth = scene.getViewportWidth(), viewportHeight = scene.getViewportHeight();
+        int viewportWidth = SceneHelper.getViewportWidth(scene), viewportHeight = SceneHelper.getViewportHeight(scene);
         float width = scene.getWidth(), height = scene.getHeight();
         float scaleX = scene.getScaleX(), scaleY = scene.getScaleY();
         glViewport(0, 0, viewportWidth, viewportHeight);
