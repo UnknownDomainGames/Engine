@@ -7,9 +7,14 @@ import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.WindowHelper;
 import nullengine.client.rendering.management.RenderManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public final class StageHelperImpl extends StageHelper {
 
     private final WindowHelper windowHelper;
+
+    private final Map<Stage, StageInputHandler> stageInputHandlerMap = new HashMap<>();
 
     private Stage primaryStage;
     private Window primaryWindow;
@@ -28,6 +33,9 @@ public final class StageHelperImpl extends StageHelper {
         setWindow(stage, window);
         window.show();
         getShowingProperty(stage).set(true);
+        StageInputHandler stageInputHandler = new StageInputHandler(stage, window);
+        stageInputHandler.enable();
+        stageInputHandlerMap.put(stage, stageInputHandler);
         doVisibleChanged(stage, true);
     }
 
@@ -37,6 +45,7 @@ public final class StageHelperImpl extends StageHelper {
         window.hide();
         getShowingProperty(stage).set(false);
         doVisibleChanged(stage, false);
+        stageInputHandlerMap.remove(stage).disable();
         setWindow(stage, null);
         window.dispose();
     }
