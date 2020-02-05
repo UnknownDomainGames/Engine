@@ -341,11 +341,6 @@ public class Stage {
     private WindowIconifyCallback iconifyCallback;
     private WindowMaximizeCallback maximizeCallback;
     private WindowCloseCallback closeCallback;
-    private CursorCallback cursorCallback;
-    private MouseCallback mouseCallback;
-    private KeyCallback keyCallback;
-    private ScrollCallback scrollCallback;
-    private CharModsCallback charModsCallback;
 
     private void doVisibleChanged(boolean value) {
         if (value) {

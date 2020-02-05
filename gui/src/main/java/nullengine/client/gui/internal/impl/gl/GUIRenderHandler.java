@@ -4,10 +4,13 @@ import com.github.mouse0w0.observable.collection.ObservableList;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.Stage;
 import nullengine.client.gui.internal.SceneHelper;
-import nullengine.client.gui.internal.StageHelper;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.management.RenderHandler;
 import nullengine.client.rendering.management.RenderManager;
+
+import static nullengine.client.gui.internal.SceneHelper.getViewportHeight;
+import static nullengine.client.gui.internal.SceneHelper.getViewportWidth;
+import static nullengine.client.gui.internal.StageHelper.getWindow;
 
 public final class GUIRenderHandler implements RenderHandler {
 
@@ -35,8 +38,10 @@ public final class GUIRenderHandler implements RenderHandler {
             Scene scene = stage.getScene();
             if (scene == null) continue;
 
-            Window window = StageHelper.getWindow(stage);
-            if (window.isResized()) {
+            Window window = getWindow(stage);
+            if (window.isResized() ||
+                    getViewportWidth(scene) != window.getWidth() ||
+                    getViewportHeight(scene) != window.getHeight()) {
                 SceneHelper.setViewport(scene, window.getWidth(), window.getHeight(),
                         window.getContentScaleX(), window.getContentScaleY());
             }
