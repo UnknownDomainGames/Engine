@@ -6,6 +6,7 @@ import nullengine.client.rendering.display.Monitor;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.display.callback.*;
 import nullengine.client.rendering.image.ReadOnlyImage;
+import nullengine.client.rendering.util.Cleaner;
 import nullengine.input.Action;
 import nullengine.input.KeyCode;
 import nullengine.input.Modifiers;
@@ -25,6 +26,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class GLFWWindow implements Window {
 
     private long pointer;
+    private Cleaner.Disposable disposable;
 
     private int x;
     private int y;
@@ -233,15 +235,10 @@ public class GLFWWindow implements Window {
 
     @Override
     public void dispose() {
-        disposeInternal();
-        GLFWContext.onDisposedWindow(this);
-    }
-
-    void disposeInternal() {
         if (pointer == NULL) return;
 
         hide();
-        glfwDestroyWindow(pointer);
+        disposable.dispose();
         pointer = NULL;
     }
 
@@ -293,6 +290,7 @@ public class GLFWWindow implements Window {
         initWindowHint();
         pointer = glfwCreateWindow(width, height, title, NULL, NULL);
         checkCreated();
+        disposable = createDisposable(pointer);
         width *= getContentScaleX();
         height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
         initCallbacks();
@@ -301,7 +299,10 @@ public class GLFWWindow implements Window {
         enableVSync();
         cursor = new GLFWCursor(pointer);
         resize();
-        GLFWContext.onInitializedWindow(this);
+    }
+
+    private Cleaner.Disposable createDisposable(long pointer) {
+        return Cleaner.register(this, () -> glfwDestroyWindow(pointer));
     }
 
     private void checkCreated() {

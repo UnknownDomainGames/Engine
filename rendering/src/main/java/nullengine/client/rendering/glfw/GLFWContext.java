@@ -10,7 +10,10 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
@@ -25,7 +28,6 @@ public final class GLFWContext {
     private static Monitor primaryMonitor;
     private static Map<Long, Monitor> monitors;
 
-    private static List<GLFWWindow> windows = new ArrayList<>();
     private static ObservableList<Window> showingWindows = ObservableCollections.observableList(new ArrayList<>());
     private static ObservableList<Window> unmodifiableShowingWindows = ObservableCollections.unmodifiableObservableList(showingWindows);
 
@@ -54,9 +56,6 @@ public final class GLFWContext {
     public static synchronized void terminate() {
         if (terminated) return;
         terminated = true;
-
-        windows.forEach(GLFWWindow::disposeInternal);
-
         glfwTerminate();
     }
 
@@ -91,14 +90,6 @@ public final class GLFWContext {
         var monitor = new Monitor(pointer);
         monitor.refreshMonitor();
         return monitor;
-    }
-
-    static void onInitializedWindow(GLFWWindow window) {
-        windows.add(window);
-    }
-
-    static void onDisposedWindow(GLFWWindow window) {
-        windows.remove(window);
     }
 
     public static ObservableList<Window> getShowingWindows() {

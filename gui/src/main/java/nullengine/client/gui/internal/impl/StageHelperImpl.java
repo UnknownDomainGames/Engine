@@ -31,8 +31,12 @@ public final class StageHelperImpl extends StageHelper {
 
     @Override
     public void show(Stage stage) {
-        Window window = isPrimary(stage) ? primaryWindow : windowHelper.createWindow();
-        setWindow(stage, window);
+        if (stage.isShowing()) throw new IllegalStateException("Stage is showing");
+        Window window = getWindow(stage);
+        if (window == null) {
+            window = isPrimary(stage) ? primaryWindow : windowHelper.createWindow();
+            setWindow(stage, window);
+        }
         window.show();
         getShowingProperty(stage).set(true);
         doVisibleChanged(stage, true);
@@ -42,14 +46,13 @@ public final class StageHelperImpl extends StageHelper {
 
     @Override
     public void hide(Stage stage) {
+        if (!stage.isShowing()) throw new IllegalStateException("Stage is hiding");
         Window window = getWindow(stage);
         window.hide();
         disableRender(stage);
         disableInput(stage, window);
         getShowingProperty(stage).set(false);
         doVisibleChanged(stage, false);
-        setWindow(stage, null);
-        window.dispose();
     }
 
     public Stage getPrimaryStage() {
