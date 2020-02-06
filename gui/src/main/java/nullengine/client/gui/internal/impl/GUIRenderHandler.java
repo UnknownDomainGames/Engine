@@ -1,12 +1,15 @@
-package nullengine.client.gui.internal.impl.gl;
+package nullengine.client.gui.internal.impl;
 
-import com.github.mouse0w0.observable.collection.ObservableList;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.Stage;
 import nullengine.client.gui.internal.SceneHelper;
+import nullengine.client.gui.internal.impl.gl.GLGUIRenderer;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.management.RenderHandler;
 import nullengine.client.rendering.management.RenderManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static nullengine.client.gui.internal.SceneHelper.getViewportHeight;
 import static nullengine.client.gui.internal.SceneHelper.getViewportWidth;
@@ -14,7 +17,7 @@ import static nullengine.client.gui.internal.StageHelper.getWindow;
 
 public final class GUIRenderHandler implements RenderHandler {
 
-    private final ObservableList<Stage> stages = Stage.getStages();
+    private final List<Stage> stages = new ArrayList<>();
 
     private RenderManager manager;
     private GLGUIRenderer renderer;
@@ -24,6 +27,14 @@ public final class GUIRenderHandler implements RenderHandler {
 
     public GLGUIRenderer getRenderer() {
         return renderer;
+    }
+
+    public void add(Stage stage) {
+        stages.add(stage);
+    }
+
+    public void remove(Stage stage) {
+        stages.remove(stage);
     }
 
     @Override

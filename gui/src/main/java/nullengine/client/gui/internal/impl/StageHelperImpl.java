@@ -15,11 +15,13 @@ public final class StageHelperImpl extends StageHelper {
     private final WindowHelper windowHelper;
 
     private final Map<Stage, StageInputHandler> stageInputHandlerMap = new HashMap<>();
+    private final GUIRenderHandler renderHandler;
 
     private Stage primaryStage;
     private Window primaryWindow;
 
-    public StageHelperImpl() {
+    public StageHelperImpl(GUIRenderHandler renderHandler) {
+        this.renderHandler = renderHandler;
         RenderManager renderManager = RenderEngine.getManager();
         windowHelper = renderManager.getWindowHelper();
         primaryStage = new Stage();
@@ -33,24 +35,42 @@ public final class StageHelperImpl extends StageHelper {
         setWindow(stage, window);
         window.show();
         getShowingProperty(stage).set(true);
-        StageInputHandler stageInputHandler = new StageInputHandler(stage, window);
-        stageInputHandler.enable();
-        stageInputHandlerMap.put(stage, stageInputHandler);
         doVisibleChanged(stage, true);
+        enableInput(stage, window);
+        enableRender(stage);
     }
 
     @Override
     public void hide(Stage stage) {
         Window window = getWindow(stage);
         window.hide();
+        disableRender(stage);
+        disableInput(stage, window);
         getShowingProperty(stage).set(false);
         doVisibleChanged(stage, false);
-        stageInputHandlerMap.remove(stage).disable();
         setWindow(stage, null);
         window.dispose();
     }
 
     public Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    public void enableInput(Stage stage, Window window) {
+        StageInputHandler stageInputHandler = new StageInputHandler(stage, window);
+        stageInputHandler.enable();
+        stageInputHandlerMap.put(stage, stageInputHandler);
+    }
+
+    public void disableInput(Stage stage, Window window) {
+        stageInputHandlerMap.remove(stage).disable();
+    }
+
+    public void enableRender(Stage stage) {
+        renderHandler.add(stage);
+    }
+
+    public void disableRender(Stage stage) {
+        renderHandler.remove(stage);
     }
 }

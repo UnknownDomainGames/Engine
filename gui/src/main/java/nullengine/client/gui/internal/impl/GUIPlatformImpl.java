@@ -6,7 +6,6 @@ import nullengine.client.gui.internal.ClipboardHelper;
 import nullengine.client.gui.internal.GUIPlatform;
 import nullengine.client.gui.internal.SceneHelper;
 import nullengine.client.gui.internal.StageHelper;
-import nullengine.client.gui.internal.impl.gl.GUIRenderHandler;
 import nullengine.client.gui.internal.impl.glfw.GLFWClipboardHelper;
 import nullengine.client.rendering.RenderEngine;
 import nullengine.client.rendering.management.RenderManager;
@@ -14,7 +13,9 @@ import nullengine.client.rendering.util.FrameTicker;
 
 public final class GUIPlatformImpl extends GUIPlatform {
 
-    private final StageHelperImpl stageHelper = new StageHelperImpl();
+    private final GUIRenderHandler renderHandler = new GUIRenderHandler();
+
+    private final StageHelperImpl stageHelper = new StageHelperImpl(renderHandler);
     private final SceneHelper sceneHelper = new SceneHelperImpl();
 
     private final ClipboardHelper clipboardHelper = new GLFWClipboardHelper();
@@ -26,7 +27,7 @@ public final class GUIPlatformImpl extends GUIPlatform {
         GUIPlatformImpl platform = new GUIPlatformImpl();
         setInstance(platform);
         RenderManager renderManager = RenderEngine.getManager();
-        renderManager.attachHandler(new GUIRenderHandler());
+        renderManager.attachHandler(platform.renderHandler);
         Stage.getStages().addChangeListener(change -> {
             if (change.getList().isEmpty()) platform.ticker.stop();
         });

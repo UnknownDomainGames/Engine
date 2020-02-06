@@ -3,7 +3,6 @@ package nullengine.client.gui.internal.impl.gl;
 import nullengine.client.gui.Parent;
 import nullengine.client.gui.Popup;
 import nullengine.client.gui.Scene;
-import nullengine.client.gui.internal.SceneHelper;
 import nullengine.client.gui.rendering.Graphics;
 import nullengine.client.rendering.gl.shader.ShaderManager;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
@@ -17,6 +16,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4fc;
 
+import static nullengine.client.gui.internal.SceneHelper.getViewportHeight;
+import static nullengine.client.gui.internal.SceneHelper.getViewportWidth;
 import static org.lwjgl.opengl.GL11.*;
 
 public final class GLGUIRenderer {
@@ -55,6 +56,9 @@ public final class GLGUIRenderer {
         frameBuffer.bind();
 
         if (clear) {
+            int viewportWidth = getViewportWidth(scene), viewportHeight = getViewportHeight(scene);
+            glViewport(0, 0, viewportWidth, viewportHeight);
+
             Color fill = scene.getFill();
             glClearColor(fill.getRed(), fill.getGreen(), fill.getBlue(), fill.getAlpha());
             glClear(GL_COLOR_BUFFER_BIT);
@@ -72,10 +76,9 @@ public final class GLGUIRenderer {
     }
 
     private void startRender(Scene scene) {
-        int viewportWidth = SceneHelper.getViewportWidth(scene), viewportHeight = SceneHelper.getViewportHeight(scene);
+        int viewportWidth = getViewportWidth(scene), viewportHeight = getViewportHeight(scene);
         float width = scene.getWidth(), height = scene.getHeight();
         float scaleX = scene.getScaleX(), scaleY = scene.getScaleY();
-        glViewport(0, 0, viewportWidth, viewportHeight);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
