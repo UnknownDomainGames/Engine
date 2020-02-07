@@ -54,7 +54,7 @@ public abstract class GLTexture implements Texture {
 
     protected GLTexture(int id) {
         this.id = id;
-        GLCleaner.registerTexture(this, id);
+        disposable = GLCleaner.registerTexture(this, id);
     }
 
     public abstract int getTarget();
