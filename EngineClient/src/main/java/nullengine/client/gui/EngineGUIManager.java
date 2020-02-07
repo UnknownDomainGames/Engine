@@ -14,8 +14,6 @@ public class EngineGUIManager implements GUIManager {
     private Scene showingScene;
     private UndoHistory<Scene> sceneHistory;
 
-    private boolean incognito = false;
-
     public EngineGUIManager(Window window, Stage stage) {
         this.window = window;
         this.stage = stage;
@@ -24,11 +22,6 @@ public class EngineGUIManager implements GUIManager {
 
     @Override
     public void show(Scene scene) {
-        showInternal(scene);
-        incognito = false;
-    }
-
-    private void showInternal(Scene scene) {
         pushToHistory();
         showingScene = scene;
         if (scene == null) {
@@ -43,25 +36,17 @@ public class EngineGUIManager implements GUIManager {
         if (showingScene == null) {
             return;
         }
-        if (!incognito) {
-            sceneHistory.pushHistory(showingScene);
-        }
-    }
-
-    public void showIncognitoScene(Scene scene) {
-        showInternal(scene);
-        incognito = true;
+        sceneHistory.pushHistory(showingScene);
     }
 
     @Override
     public void showLast() {
-        var lastScene = sceneHistory.undo();
-        showIncognitoScene(lastScene);
+        show(sceneHistory.undo());
     }
 
     @Override
     public void close() {
-        showInternal(null);
+        show(null);
     }
 
     @Override
