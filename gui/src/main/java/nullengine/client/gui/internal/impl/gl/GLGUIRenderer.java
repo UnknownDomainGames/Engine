@@ -55,10 +55,10 @@ public final class GLGUIRenderer {
     public void render(Scene scene, GLFrameBuffer frameBuffer, boolean clear) {
         frameBuffer.bind();
 
-        if (clear) {
-            int viewportWidth = getViewportWidth(scene), viewportHeight = getViewportHeight(scene);
-            glViewport(0, 0, viewportWidth, viewportHeight);
+        int viewportWidth = getViewportWidth(scene), viewportHeight = getViewportHeight(scene);
+        glViewport(0, 0, viewportWidth, viewportHeight);
 
+        if (clear) {
             Color fill = scene.getFill();
             glClearColor(fill.getRed(), fill.getGreen(), fill.getBlue(), fill.getAlpha());
             glClear(GL_COLOR_BUFFER_BIT);
