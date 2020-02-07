@@ -84,11 +84,6 @@ public class EngineRenderManager implements RenderManager {
         return hudManager;
     }
 
-    @Override
-    public GPUInfo getGPUInfo() {
-        return RenderEngine.getManager().getGPUInfo();
-    }
-
     private long lastUpdateFps = System.currentTimeMillis();
     private int frameCount = 0;
     private int fps = 0;

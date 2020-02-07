@@ -16,6 +16,7 @@ import nullengine.client.i18n.LocaleManager;
 import nullengine.client.input.keybinding.KeyBinding;
 import nullengine.client.input.keybinding.KeyBindingManager;
 import nullengine.client.rendering.EngineRenderManager;
+import nullengine.client.rendering.RenderEngine;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.gl.util.GLContextUtils;
 import nullengine.client.rendering.model.BakedModel;
@@ -157,7 +158,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         crashHandler.addReportDetail("GL Extensions", builder -> builder.append(GLContextUtils.getExtensions()));
         crashHandler.addReportDetail("GL Shading Language Version", builder -> builder.append(GLContextUtils.getShadingLanguageVersion()));
         crashHandler.addReportDetail("GPU Memory Usage", builder -> {
-            var gpuMemoryInfo = renderManager.getGPUInfo();
+            var gpuMemoryInfo = RenderEngine.getManager().getGPUInfo();
             var usedMemory = (gpuMemoryInfo.getTotalMemory() - gpuMemoryInfo.getFreeMemory()) / 1024;
             var totalMemory = gpuMemoryInfo.getTotalMemory() / 1024;
             builder.append(usedMemory).append(" MB / ").append(totalMemory).append(" MB");

@@ -6,7 +6,6 @@ import nullengine.client.hud.HUDManager;
 import nullengine.client.rendering.camera.OldCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.TextureManager;
-import nullengine.client.rendering.util.GPUInfo;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4fc;
 
@@ -37,8 +36,6 @@ public interface RenderManager {
     GUIManager getGUIManager();
 
     HUDManager getHUDManager();
-
-    GPUInfo getGPUInfo();
 
     int getFPS();
 
