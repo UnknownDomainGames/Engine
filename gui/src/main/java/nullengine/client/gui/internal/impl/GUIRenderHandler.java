@@ -50,8 +50,7 @@ public final class GUIRenderHandler implements RenderHandler {
             if (scene == null) continue;
 
             Window window = getWindow(stage);
-            if (window.isResized() ||
-                    getViewportWidth(scene) != window.getWidth() ||
+            if (getViewportWidth(scene) != window.getWidth() ||
                     getViewportHeight(scene) != window.getHeight()) {
                 SceneHelper.setViewport(scene, window.getWidth(), window.getHeight(),
                         window.getContentScaleX(), window.getContentScaleY());
