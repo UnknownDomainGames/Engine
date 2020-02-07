@@ -23,12 +23,12 @@ public class GUIGameCreation extends FlowPane {
 
     public GUIGameCreation() {
         alignment().set(Pos.CENTER);
+        background().set(new Background(Color.fromRGB(0xAAAAAA)));
 
         VBox vBox = new VBox();
         vBox.spacing().set(5);
         vBox.alignment().setValue(Pos.HPos.CENTER);
         getChildren().add(vBox);
-        this.background().setValue(new Background(Color.fromRGB(0xAAAAAA)));
 
         Label text = new Label();
         text.text().setValue(I18n.translate("engine.gui.game_creation.text.name"));

@@ -7,6 +7,7 @@ import nullengine.client.gui.control.HSlider;
 import nullengine.client.gui.layout.AnchorPane;
 import nullengine.client.gui.layout.HBox;
 import nullengine.client.gui.layout.VBox;
+import nullengine.client.gui.misc.Background;
 import nullengine.client.gui.misc.Border;
 import nullengine.client.gui.text.Text;
 import nullengine.client.rendering.display.DisplayMode;
@@ -19,6 +20,7 @@ public class GuiSettings extends AnchorPane {
     private int videoModeIndex;
 
     public GuiSettings() {
+        background().set(new Background(Color.fromRGB(0xAAAAAA)));
         var settings = Platform.getEngineClient().getSettings();
         var baksettings = new EngineSettings();
         baksettings.getDisplaySettings().setDisplayMode(settings.getDisplaySettings().getDisplayMode());
