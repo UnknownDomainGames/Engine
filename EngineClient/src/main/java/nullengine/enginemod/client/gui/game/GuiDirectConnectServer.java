@@ -42,12 +42,12 @@ public class GuiDirectConnectServer extends BorderPane {
                 }
                 fullAddress = fullAddress.substring(0, colonIndex);
             }
-            Platform.getEngineClient().getRenderManager().getGuiManager().showScreen(new Scene(new GuiConnectServer(fullAddress, port)));
+            Platform.getEngineClient().getRenderManager().getGUIManager().show(new Scene(new GuiConnectServer(fullAddress, port)));
         });
         var butBack = new Button("Back");
         butBack.setOnMouseClicked(e -> {
-            var guiManager = Platform.getEngineClient().getRenderManager().getGuiManager();
-            guiManager.showLastScreen();
+            var guiManager = Platform.getEngineClient().getRenderManager().getGUIManager();
+            guiManager.showLast();
         });
         hbox.getChildren().addAll(butConnect, butBack);
         vbox.getChildren().addAll(label1, lblAddress, txtboxAddress, hbox);

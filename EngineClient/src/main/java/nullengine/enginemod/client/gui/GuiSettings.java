@@ -127,14 +127,14 @@ public class GuiSettings extends AnchorPane {
             settings.getDisplaySettings().setResolutionWidth(baksettings.getDisplaySettings().getResolutionWidth());
             settings.getDisplaySettings().setUiScale(baksettings.getDisplaySettings().getUiScale());
             settings.getDisplaySettings().setHudScale(baksettings.getDisplaySettings().getHudScale());
-            var guiManager = Platform.getEngineClient().getRenderManager().getGuiManager();
-            guiManager.showLastScreen();
+            var guiManager = Platform.getEngineClient().getRenderManager().getGUIManager();
+            guiManager.showLast();
         });
         butSave.setOnMouseClicked(event -> {
             settings.apply();
             settings.save();
-            var guiManager = Platform.getEngineClient().getRenderManager().getGuiManager();
-            guiManager.showLastScreen();
+            var guiManager = Platform.getEngineClient().getRenderManager().getGUIManager();
+            guiManager.showLast();
         });
         butSave.border().setValue(new Border(Color.WHITE, 2));
         butBack.border().setValue(new Border(Color.WHITE, 2));

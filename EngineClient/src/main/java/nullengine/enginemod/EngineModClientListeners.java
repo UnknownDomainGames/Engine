@@ -9,7 +9,6 @@ import nullengine.client.event.rendering.RegisterEntityRendererEvent;
 import nullengine.client.game.GameClient;
 import nullengine.client.gui.Scene;
 import nullengine.client.input.controller.MotionType;
-import nullengine.client.input.keybinding.ActionMode;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyBinding;
 import nullengine.client.rendering.block.BlockDisplay;
@@ -20,7 +19,6 @@ import nullengine.enginemod.client.gui.game.GUIGameCreation;
 import nullengine.enginemod.client.gui.game.GuiChat;
 import nullengine.enginemod.client.gui.game.GuiIngameMenu;
 import nullengine.enginemod.client.gui.game.GuiItemList;
-import nullengine.enginemod.client.gui.hud.HUDGameDebug;
 import nullengine.entity.Entity;
 import nullengine.entity.component.TwoHands;
 import nullengine.entity.item.ItemEntity;
@@ -215,7 +213,7 @@ public final class EngineModClientListeners {
                 .key(Key.KEY_ENTER)
                 .startHandler(c -> {
                     Scene scene = new Scene(new GuiChat(c.getCurrentGame()));
-                    c.getRenderManager().getGuiManager().showScreen(scene);
+                    c.getRenderManager().getGUIManager().show(scene);
                 })
                 .build());
         event.register(KeyBinding.builder()
@@ -223,15 +221,15 @@ public final class EngineModClientListeners {
                 .key(Key.KEY_E)
                 .startHandler(c -> {
                     Scene scene = new Scene(new GuiItemList(c.getRenderManager()));
-                    c.getRenderManager().getGuiManager().showScreen(scene);
+                    c.getRenderManager().getGUIManager().show(scene);
                 })
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.menu")
                 .key(Key.KEY_ESCAPE)
                 .startHandler(c -> {
-                    if (!c.getRenderManager().getGuiManager().isDisplayingScreen()) {
-                        c.getRenderManager().getGuiManager().showScreen(new Scene(new GuiIngameMenu()));
+                    if (!c.getRenderManager().getGUIManager().isShowing()) {
+                        c.getRenderManager().getGUIManager().show(new Scene(new GuiIngameMenu()));
                     }
                 })
                 .build());
@@ -242,20 +240,20 @@ public final class EngineModClientListeners {
                 .build());
 
         var renderContext = Platform.getEngineClient().getRenderManager();
-        var guiManager = renderContext.getGuiManager();
-        var hudGameDebug = new HUDGameDebug();
+        var hudManager = renderContext.getHUDManager();
+//        var hudGameDebug = new HUDGameDebug();
 //        renderContext.getScheduler().runTaskEveryFrame(() -> hudGameDebug.update(renderContext));
-        event.register(KeyBinding.builder()
-                .name("game.debug_display_switch")
-                .key(Key.KEY_F3)
-                .actionMode(ActionMode.SWITCH)
-                .startHandler(gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug)))
-                .endHandler((gameClient, integer) -> guiManager.removeHud("debugGame"))
-                .build());
+//        event.register(KeyBinding.builder()
+//                .name("game.debug_display_switch")
+//                .key(Key.KEY_F3)
+//                .actionMode(ActionMode.SWITCH)
+//                .startHandler(gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug)))
+//                .endHandler((gameClient, integer) -> guiManager.removeHud("debugGame"))
+//                .build());
         event.register(KeyBinding.builder()
                 .name("game.hud_display_switch")
                 .key(Key.KEY_F1)
-                .startHandler(gameClient -> guiManager.toggleHudVisible())
+                .startHandler(gameClient -> hudManager.toggleVisible())
                 .build());
     }
 
@@ -267,9 +265,9 @@ public final class EngineModClientListeners {
     @Listener
     public static void onEngineReady(EngineEvent.Ready event) {
         var renderContext = Platform.getEngineClient().getRenderManager();
-        var guiManager = renderContext.getGuiManager();
+        var guiManager = renderContext.getGUIManager();
 
         var scene = new Scene(new GUIGameCreation());
-        guiManager.showScreen(scene);
+        guiManager.show(scene);
     }
 }

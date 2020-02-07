@@ -1,17 +1,18 @@
 package nullengine.client.rendering;
 
-import nullengine.Platform;
 import nullengine.client.EngineClient;
 import nullengine.client.asset.AssetType;
 import nullengine.client.event.rendering.CameraChangeEvent;
 import nullengine.client.event.rendering.RenderEvent;
-import nullengine.client.gui.EngineGuiManager;
-import nullengine.client.gui.GuiManager;
+import nullengine.client.gui.EngineGUIManager;
+import nullengine.client.gui.EngineHUDManager;
+import nullengine.client.gui.GUIManager;
+import nullengine.client.gui.GameGUIPlatform;
+import nullengine.client.hud.HUDManager;
 import nullengine.client.rendering.camera.FixedCamera;
 import nullengine.client.rendering.camera.OldCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
-import nullengine.client.rendering.gui.GuiRenderHelper;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.TextureManager;
 import nullengine.client.rendering.util.GPUInfo;
@@ -23,8 +24,6 @@ import org.joml.Vector3f;
 import javax.annotation.Nonnull;
 
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
 
 public class EngineRenderManager implements RenderManager {
 
@@ -34,8 +33,9 @@ public class EngineRenderManager implements RenderManager {
     private Window window;
     private Matrix4f projection = new Matrix4f();
     private EngineTextureManager textureManager;
-    private EngineGuiManager guiManager;
-    private GuiRenderHelper guiRenderHelper;
+    private EngineGUIManager guiManager;
+    private EngineHUDManager hudManager;
+    private GameGUIPlatform gameGUIPlatform;
 
     private OldCamera camera;
     private final FrustumIntersection frustumIntersection = new FrustumIntersection();
@@ -75,8 +75,13 @@ public class EngineRenderManager implements RenderManager {
     }
 
     @Override
-    public GuiManager getGuiManager() {
+    public GUIManager getGUIManager() {
         return guiManager;
+    }
+
+    @Override
+    public HUDManager getHUDManager() {
+        return hudManager;
     }
 
     @Override
@@ -134,8 +139,8 @@ public class EngineRenderManager implements RenderManager {
         camera.update(partial);
         frustumIntersection.set(projection.mul(camera.getViewMatrix(), new Matrix4f()));
 
-        glClear(GL_COLOR_BUFFER_BIT);
         RenderEngine.doRender(partial);
+        gameGUIPlatform.doRender();
         updateFPS();
 
         engine.getEventBus().post(new RenderEvent.Post());
@@ -148,11 +153,15 @@ public class EngineRenderManager implements RenderManager {
 
         nullengine.client.rendering.management.RenderManager manager = RenderEngine.getManager();
         window = manager.getPrimaryWindow();
-        window.setDisplayMode(Platform.getEngineClient().getSettings().getDisplaySettings().getDisplayMode(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionWidth(), Platform.getEngineClient().getSettings().getDisplaySettings().getResolutionHeight(), Platform.getEngineClient().getSettings().getDisplaySettings().getFrameRate());
+        window.setDisplayMode(engine.getSettings().getDisplaySettings().getDisplayMode(),
+                engine.getSettings().getDisplaySettings().getResolutionWidth(),
+                engine.getSettings().getDisplaySettings().getResolutionHeight(),
+                engine.getSettings().getDisplaySettings().getFrameRate());
 
         initTexture();
-        guiManager = new EngineGuiManager(window);
-        guiRenderHelper = new GuiRenderHelper(guiManager);
+        gameGUIPlatform = new GameGUIPlatform();
+        guiManager = new EngineGUIManager(window, gameGUIPlatform.getGUIStage());
+        hudManager = new EngineHUDManager();
 
         camera = new FixedCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
 
@@ -166,7 +175,7 @@ public class EngineRenderManager implements RenderManager {
     }
 
     public void dispose() {
-        guiRenderHelper.dispose();
+        gameGUIPlatform.dispose();
         RenderEngine.stop();
     }
 }

@@ -35,7 +35,7 @@ public class GuiChat extends AnchorPane {
                     // TODO go to server
 
                 }
-                Platform.getEngineClient().getRenderManager().getGuiManager().closeScreen();
+                Platform.getEngineClient().getRenderManager().getGUIManager().close();
             }
         });
     }

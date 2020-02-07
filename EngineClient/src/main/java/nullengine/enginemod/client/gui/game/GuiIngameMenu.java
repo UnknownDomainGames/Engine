@@ -1,7 +1,7 @@
 package nullengine.enginemod.client.gui.game;
 
 import nullengine.Platform;
-import nullengine.client.gui.GuiManager;
+import nullengine.client.gui.GUIManager;
 import nullengine.client.gui.Scene;
 import nullengine.client.gui.control.Button;
 import nullengine.client.gui.control.Label;
@@ -31,8 +31,8 @@ public class GuiIngameMenu extends BorderPane {
         terminateGame.setOnMouseClicked(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
             engine.getCurrentGame().terminate();
-            GuiManager guiManager = engine.getRenderManager().getGuiManager();
-            guiManager.showScreen(new Scene(new GUIGameCreation()));
+            GUIManager guiManager = engine.getRenderManager().getGUIManager();
+            guiManager.show(new Scene(new GUIGameCreation()));
         });
         vBox.getChildren().add(terminateGame);
     }

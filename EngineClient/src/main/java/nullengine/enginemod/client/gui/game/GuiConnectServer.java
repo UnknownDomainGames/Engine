@@ -45,8 +45,8 @@ public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
             if (networkClient != null) {
                 networkClient.close();
             }
-            var guiManager = Platform.getEngineClient().getRenderManager().getGuiManager();
-            guiManager.showLastScreen();
+            var guiManager = Platform.getEngineClient().getRenderManager().getGUIManager();
+            guiManager.showLast();
         });
         lblStatus.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         lblReason.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());

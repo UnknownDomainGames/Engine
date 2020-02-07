@@ -1,7 +1,8 @@
 package nullengine.client.rendering;
 
 import nullengine.client.EngineClient;
-import nullengine.client.gui.GuiManager;
+import nullengine.client.gui.GUIManager;
+import nullengine.client.hud.HUDManager;
 import nullengine.client.rendering.camera.OldCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.TextureManager;
@@ -33,7 +34,9 @@ public interface RenderManager {
 
     TextureManager getTextureManager();
 
-    GuiManager getGuiManager();
+    GUIManager getGUIManager();
+
+    HUDManager getHUDManager();
 
     GPUInfo getGPUInfo();
 
