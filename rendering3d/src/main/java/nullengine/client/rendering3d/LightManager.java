@@ -1,11 +1,11 @@
 package nullengine.client.rendering3d;
 
-import nullengine.client.rendering.camera.OldCamera;
 import nullengine.client.rendering.light.DirectionalLight;
 import nullengine.client.rendering.light.Light;
 import nullengine.client.rendering.light.PointLight;
 import nullengine.client.rendering.light.SpotLight;
 import nullengine.client.rendering.management.BindingProxy;
+import org.joml.Vector3fc;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -51,18 +51,17 @@ public class LightManager {
             spotLights.remove(light);
     }
 
-    public void bind(OldCamera camera, BindingProxy proxy) {
+    public void bind(Vector3fc cameraPosition, BindingProxy proxy) {
         for (int i = 0; i < directionalLights.size() && i < MAX_DIRECTIONAL_LIGHT_COUNT; i++) {
             directionalLights.get(i).bind(proxy, "dirLights[" + i + "]");
         }
 
-        var position = camera.getPosition();
-        pointLights.sort(Comparator.comparingInt(light -> (int) light.getPosition().distanceSquared(position)));
+        pointLights.sort(Comparator.comparingInt(light -> (int) light.getPosition().distanceSquared(cameraPosition)));
         for (int i = 0; i < pointLights.size() && i < MAX_POINT_LIGHT_COUNT; i++) {
             pointLights.get(i).bind(proxy, "pointLights[" + i + "]");
         }
 
-        spotLights.sort(Comparator.comparingInt(light -> (int) light.getDirection().distanceSquared(position)));
+        spotLights.sort(Comparator.comparingInt(light -> (int) light.getDirection().distanceSquared(cameraPosition)));
         for (int i = 0; i < spotLights.size() && i < MAX_SPOT_LIGHT_COUNT; i++) {
             spotLights.get(i).bind(proxy, "spotLights[" + i + "]");
         }
