@@ -12,7 +12,7 @@ import nullengine.client.input.controller.MotionType;
 import nullengine.client.input.keybinding.Key;
 import nullengine.client.input.keybinding.KeyBinding;
 import nullengine.client.rendering.block.BlockDisplay;
-import nullengine.client.rendering.camera.OldCamera;
+import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.entity.EntityItemRenderer;
 import nullengine.client.rendering.util.GLHelper;
 import nullengine.enginemod.client.gui.game.GUIGameCreation;
@@ -78,39 +78,39 @@ public final class EngineModClientListeners {
                 KeyBinding.builder()
                         .name("player.move.forward")
                         .key(Key.KEY_W)
-                        .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.FORWARD, true))
-                        .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.FORWARD, false))
+                        .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.FORWARD, true))
+                        .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.FORWARD, false))
                         .build());
         event.register(
                 KeyBinding.builder()
                         .name("player.move.backward")
                         .key(Key.KEY_S)
-                        .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.BACKWARD, true))
-                        .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.BACKWARD, false))
+                        .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.BACKWARD, true))
+                        .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.BACKWARD, false))
                         .build());
         event.register(KeyBinding.builder()
                 .name("player.move.left")
                 .key(Key.KEY_A)
-                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.LEFT, true))
-                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.LEFT, false))
+                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.LEFT, true))
+                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.LEFT, false))
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.move.right")
                 .key(Key.KEY_D)
-                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.RIGHT, true))
-                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.RIGHT, false))
+                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.RIGHT, true))
+                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.RIGHT, false))
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.move.jump")
                 .key(Key.KEY_SPACE)
-                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.UP, true))
-                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.UP, false))
+                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.UP, true))
+                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.UP, false))
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.move.sneak")
                 .key(Key.KEY_LEFT_SHIFT)
-                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.DOWN, true))
-                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().handleMotion(MotionType.DOWN, false))
+                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.DOWN, true))
+                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.DOWN, false))
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.mouse.left")
@@ -118,7 +118,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getClientPlayer();
-                    OldCamera camera = c.getRenderManager().getCamera();
+                    Camera camera = c.getRenderManager().getViewport().getCamera();
                     Entity entity = player.getControlledEntity();
                     HitResult hitResult = player.getWorld().raycast(camera.getPosition(), camera.getFront(), 10);
                     if (hitResult.isFailure()) {
@@ -160,7 +160,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getClientPlayer();
-                    OldCamera camera = c.getRenderManager().getCamera();
+                    Camera camera = c.getRenderManager().getViewport().getCamera();
                     Entity entity = player.getControlledEntity();
                     HitResult hitResult = player.getWorld().raycast(camera.getPosition(), camera.getFront(), 10);
                     if (hitResult.isFailure()) {
@@ -200,7 +200,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getClientPlayer();
-                    OldCamera camera = c.getRenderManager().getCamera();
+                    Camera camera = c.getRenderManager().getViewport().getCamera();
                     Entity entity = player.getControlledEntity();
                     player.getWorld().raycastBlock(camera.getPosition(), camera.getFront(), 10).ifSuccess(hit ->
                             entity.getComponent(TwoHands.class).ifPresent(twoHands ->
@@ -230,6 +230,8 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     if (!c.getRenderManager().getGUIManager().isShowing()) {
                         c.getRenderManager().getGUIManager().show(new Scene(new GuiIngameMenu()));
+                    } else {
+                        c.getRenderManager().getGUIManager().close();
                     }
                 })
                 .build());

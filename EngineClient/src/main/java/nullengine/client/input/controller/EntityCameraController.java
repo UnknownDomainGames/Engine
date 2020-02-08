@@ -1,11 +1,14 @@
 package nullengine.client.input.controller;
 
-import nullengine.client.EngineClient;
+import nullengine.client.player.ClientPlayer;
+import nullengine.client.rendering.camera.Camera;
+import nullengine.entity.Entity;
 import nullengine.math.Math2;
-import nullengine.player.Player;
+import org.joml.Vector3dc;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-public class EntityCameraController extends EntityController {
+public class EntityCameraController implements EntityController {
 
     private static final float SENSIBILITY = 0.05f;
     private static final float MOTION_FACTOR = 0.2f;
@@ -15,12 +18,30 @@ public class EntityCameraController extends EntityController {
     private double lastX, lastY;
     private boolean setupLast = false;
 
-    public EntityCameraController(Player player) {
-        super(player);
+    private ClientPlayer player;
+    private Entity entity;
+
+    @Override
+    public void setPlayer(ClientPlayer player, Entity entity) {
+        this.player = player;
+        this.entity = entity;
     }
 
     @Override
-    public void handleMotion(MotionType motionType, boolean state) {
+    public void updateCamera(Camera camera, float tpf) {
+        Vector3dc position = entity.getPosition();
+        Vector3fc motion = entity.getMotion();
+        Vector3fc rotation = entity.getRotation();
+        camera.look(new Vector3f((float) position.x() + motion.x() * tpf,
+                        (float) position.y() + motion.y() * tpf,
+                        (float) position.z() + motion.z() * tpf),
+                new Vector3f((float) (Math.cos(Math.toRadians(rotation.y())) * Math.cos(Math.toRadians(-rotation.x()))),
+                        (float) Math.sin(Math.toRadians(rotation.y())),
+                        (float) (Math.cos(Math.toRadians(rotation.y())) * Math.sin(Math.toRadians(-rotation.x())))).normalize());
+    }
+
+    @Override
+    public void onInputMove(MotionType motionType, boolean state) {
         if (motionState[motionType.ordinal()] == state) {
             return;
         }
@@ -62,31 +83,28 @@ public class EntityCameraController extends EntityController {
     }
 
     @Override
-    public void handleCursorMove(double x, double y) {
+    public void onCursorMove(double x, double y) {
         double yaw = (lastX - x) * SENSIBILITY;
         double pitch = (lastY - y) * SENSIBILITY;
         lastX = x;
         lastY = y;
-        if (((EngineClient) getPlayer().getWorld().getGame().getEngine()).getRenderManager().getWindow().getCursor().isHiddenCursor()) {
-            if (setupLast) {
-                Vector3f rotation = getPlayer().getControlledEntity().getRotation();
-                rotation.y += pitch;
-                rotation.y = Math.min(89.0f, Math.max(-89.0f, rotation.y));
-                rotation.x = Math2.loop(rotation.x + (float) yaw, 360);
-                updateMotion();
-            } else setupLast = true;
-        }else{
+        if (setupLast) {
+            Vector3f rotation = player.getControlledEntity().getRotation();
+            rotation.y += pitch;
+            rotation.y = Math.min(89.0f, Math.max(-89.0f, rotation.y));
+            rotation.x = Math2.loop(rotation.x + (float) yaw, 360);
             updateMotion();
-        }
+        } else setupLast = true;
     }
 
     private void updateMotion() {
-        Vector3f rotation = getPlayer().getControlledEntity().getRotation();
+        Vector3f rotation = entity.getRotation();
         if (movingDirection.lengthSquared() != 0) {
-            movingDirection.normalize(getPlayer().getControlledEntity().getMotion()).mul(MOTION_FACTOR).rotateAxis((float) Math.toRadians(rotation.x), 0, 1, 0);
+            movingDirection.normalize(entity.getMotion())
+                    .mul(MOTION_FACTOR)
+                    .rotateAxis((float) Math.toRadians(rotation.x), 0, 1, 0);
         } else {
-            getPlayer().getControlledEntity().getMotion().set(0);
+            entity.getMotion().set(0);
         }
-//                .rotateAxis(rotation.x, 0, 1, 0).rotateY(rotation.y);
     }
 }

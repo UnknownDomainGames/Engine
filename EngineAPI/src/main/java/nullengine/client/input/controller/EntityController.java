@@ -1,20 +1,16 @@
 package nullengine.client.input.controller;
 
-import nullengine.player.Player;
+import nullengine.client.player.ClientPlayer;
+import nullengine.client.rendering.camera.Camera;
+import nullengine.entity.Entity;
 
-public abstract class EntityController {
+public interface EntityController {
 
-    private final Player player;
+    void setPlayer(ClientPlayer player, Entity entity);
 
-    public EntityController(Player player) {
-        this.player = player;
-    }
+    void updateCamera(Camera camera, float tpf);
 
-    public Player getPlayer() {
-        return player;
-    }
+    void onInputMove(MotionType motionType, boolean state);
 
-    public abstract void handleMotion(MotionType motionType, boolean state);
-
-    public abstract void handleCursorMove(double x, double y);
+    void onCursorMove(double x, double y);
 }

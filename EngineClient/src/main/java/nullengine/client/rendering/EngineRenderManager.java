@@ -2,28 +2,20 @@ package nullengine.client.rendering;
 
 import nullengine.client.EngineClient;
 import nullengine.client.asset.AssetType;
-import nullengine.client.event.rendering.CameraChangeEvent;
 import nullengine.client.event.rendering.RenderEvent;
 import nullengine.client.gui.EngineGUIManager;
 import nullengine.client.gui.EngineHUDManager;
 import nullengine.client.gui.GUIManager;
 import nullengine.client.gui.GameGUIPlatform;
 import nullengine.client.hud.HUDManager;
-import nullengine.client.rendering.camera.FixedCamera;
-import nullengine.client.rendering.camera.OldCamera;
+import nullengine.client.rendering.camera.Camera;
 import nullengine.client.rendering.display.Window;
+import nullengine.client.rendering.game.GameRenderer;
 import nullengine.client.rendering.gl.texture.GLTexture2D;
 import nullengine.client.rendering.texture.EngineTextureManager;
 import nullengine.client.rendering.texture.TextureManager;
-import nullengine.client.rendering.util.GPUInfo;
-import org.joml.FrustumIntersection;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
-import org.joml.Vector3f;
-
-import javax.annotation.Nonnull;
-
-import static org.apache.commons.lang3.Validate.notNull;
+import nullengine.client.rendering3d.Scene3D;
+import nullengine.client.rendering3d.viewport.PerspectiveViewport;
 
 public class EngineRenderManager implements RenderManager {
 
@@ -31,14 +23,14 @@ public class EngineRenderManager implements RenderManager {
 
     private Thread renderThread;
     private Window window;
-    private Matrix4f projection = new Matrix4f();
+    private PerspectiveViewport viewport;
+
     private EngineTextureManager textureManager;
+
+    private GameRenderer gameRenderer;
     private EngineGUIManager guiManager;
     private EngineHUDManager hudManager;
     private GameGUIPlatform gameGUIPlatform;
-
-    private OldCamera camera;
-    private final FrustumIntersection frustumIntersection = new FrustumIntersection();
 
     public EngineRenderManager(EngineClient engine) {
         this.engine = engine;
@@ -65,8 +57,8 @@ public class EngineRenderManager implements RenderManager {
     }
 
     @Override
-    public Matrix4fc getProjectionMatrix() {
-        return projection;
+    public PerspectiveViewport getViewport() {
+        return viewport;
     }
 
     @Override
@@ -82,6 +74,51 @@ public class EngineRenderManager implements RenderManager {
     @Override
     public HUDManager getHUDManager() {
         return hudManager;
+    }
+
+    public void init(Thread renderThread) {
+        this.renderThread = renderThread;
+
+        RenderEngine.start(new RenderEngine.Settings());
+
+        nullengine.client.rendering.management.RenderManager manager = RenderEngine.getManager();
+        window = manager.getPrimaryWindow();
+        window.setDisplayMode(engine.getSettings().getDisplaySettings().getDisplayMode(),
+                engine.getSettings().getDisplaySettings().getResolutionWidth(),
+                engine.getSettings().getDisplaySettings().getResolutionHeight(),
+                engine.getSettings().getDisplaySettings().getFrameRate());
+
+        viewport = new PerspectiveViewport();
+        viewport.setScene(new Scene3D());
+        viewport.setCamera(new Camera());
+
+        initTexture();
+        gameRenderer = new GameRenderer(this);
+        gameGUIPlatform = new GameGUIPlatform();
+        guiManager = new EngineGUIManager(window, gameGUIPlatform.getGUIStage());
+        hudManager = new EngineHUDManager();
+
+        window.show();
+    }
+
+    private void initTexture() {
+        textureManager = new EngineTextureManager();
+        TextureManager.Internal.setInstance(textureManager);
+        getEngine().getAssetManager().register(AssetType.builder(GLTexture2D.class).name("Texture").provider(textureManager).parentLocation("texture").extensionName(".png").build());
+    }
+
+    public void render(float tpf) {
+        engine.getEventBus().post(new RenderEvent.Pre());
+
+        RenderEngine.doRender(tpf);
+        viewport.getScene().doUpdate(tpf);
+        gameRenderer.render(tpf);
+        gameGUIPlatform.render(gameGUIPlatform.getGUIStage());
+        gameGUIPlatform.render(gameGUIPlatform.getHUDStage());
+        window.swapBuffers();
+        updateFPS();
+
+        engine.getEventBus().post(new RenderEvent.Post());
     }
 
     private long lastUpdateFps = System.currentTimeMillis();
@@ -101,72 +138,6 @@ public class EngineRenderManager implements RenderManager {
             lastUpdateFps += 1000; // add one second
         }
         frameCount++;
-    }
-
-    @Override
-    @Nonnull
-    public OldCamera getCamera() {
-        return camera;
-    }
-
-    @Override
-    public void setCamera(@Nonnull OldCamera camera) {
-        if (this.camera == camera) {
-            return;
-        }
-
-        this.camera = notNull(camera);
-        getEngine().getEventBus().post(new CameraChangeEvent(camera));
-    }
-
-    @Override
-    public FrustumIntersection getFrustumIntersection() {
-        return frustumIntersection;
-    }
-
-    public void render(float partial) {
-        engine.getEventBus().post(new RenderEvent.Pre());
-
-        if (window.isResized()) {
-            projection.identity().perspective((float) Math.toRadians(60),
-                    (float) window.getWidth() / window.getHeight(), 0.01f, 1000f);
-        }
-        camera.update(partial);
-        frustumIntersection.set(projection.mul(camera.getViewMatrix(), new Matrix4f()));
-
-        RenderEngine.doRender(partial);
-        gameGUIPlatform.doRender();
-        updateFPS();
-
-        engine.getEventBus().post(new RenderEvent.Post());
-    }
-
-    public void init(Thread renderThread) {
-        this.renderThread = renderThread;
-
-        RenderEngine.start(new RenderEngine.Settings());
-
-        nullengine.client.rendering.management.RenderManager manager = RenderEngine.getManager();
-        window = manager.getPrimaryWindow();
-        window.setDisplayMode(engine.getSettings().getDisplaySettings().getDisplayMode(),
-                engine.getSettings().getDisplaySettings().getResolutionWidth(),
-                engine.getSettings().getDisplaySettings().getResolutionHeight(),
-                engine.getSettings().getDisplaySettings().getFrameRate());
-
-        initTexture();
-        gameGUIPlatform = new GameGUIPlatform();
-        guiManager = new EngineGUIManager(window, gameGUIPlatform.getGUIStage());
-        hudManager = new EngineHUDManager();
-
-        camera = new FixedCamera(new Vector3f(0, 0, 0), new Vector3f(0, 0, -1));
-
-        window.show();
-    }
-
-    private void initTexture() {
-        textureManager = new EngineTextureManager();
-        TextureManager.Internal.setInstance(textureManager);
-        getEngine().getAssetManager().register(AssetType.builder(GLTexture2D.class).name("Texture").provider(textureManager).parentLocation("texture").extensionName(".png").build());
     }
 
     public void dispose() {

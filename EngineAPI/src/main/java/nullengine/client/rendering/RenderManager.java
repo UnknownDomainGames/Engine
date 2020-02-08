@@ -3,13 +3,10 @@ package nullengine.client.rendering;
 import nullengine.client.EngineClient;
 import nullengine.client.gui.GUIManager;
 import nullengine.client.hud.HUDManager;
-import nullengine.client.rendering.camera.OldCamera;
 import nullengine.client.rendering.display.Window;
 import nullengine.client.rendering.texture.TextureManager;
-import org.joml.FrustumIntersection;
-import org.joml.Matrix4fc;
+import nullengine.client.rendering3d.viewport.Viewport;
 
-import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
 public interface RenderManager {
@@ -22,14 +19,7 @@ public interface RenderManager {
 
     Window getWindow();
 
-    Matrix4fc getProjectionMatrix();
-
-    @Nonnull
-    OldCamera getCamera();
-
-    void setCamera(@Nonnull OldCamera camera);
-
-    FrustumIntersection getFrustumIntersection();
+    Viewport getViewport();
 
     TextureManager getTextureManager();
 

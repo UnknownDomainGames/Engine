@@ -6,13 +6,15 @@ import io.netty.util.collection.LongObjectMap;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.game.GameClient;
 import nullengine.client.rendering.RenderManager;
-import nullengine.client.rendering.game3d.Scene;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.shader.ShaderType;
+import nullengine.client.rendering.material.Material;
 import nullengine.client.rendering.shader.ShaderManager;
 import nullengine.client.rendering.shader.ShaderProgramBuilder;
 import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.client.rendering.vertex.VertexDataBufPool;
+import nullengine.client.rendering3d.Scene3D;
+import nullengine.client.rendering3d.viewport.Viewport;
 import nullengine.event.Listener;
 import nullengine.event.block.BlockChangeEvent;
 import nullengine.event.world.chunk.ChunkLoadEvent;
@@ -20,6 +22,7 @@ import nullengine.math.BlockPos;
 import nullengine.world.World;
 import nullengine.world.chunk.Chunk;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector3ic;
 import org.lwjgl.opengl.GL11;
@@ -30,29 +33,40 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static nullengine.world.chunk.ChunkConstants.*;
 import static org.lwjgl.opengl.GL11.*;
 
-public class ChunkRenderer {
+public final class ChunkRenderer {
 
     private final LongObjectMap<ChunkMesh> loadedChunkMeshes = new LongObjectHashMap<>();
     private final BlockingQueue<Runnable> uploadTasks = new LinkedBlockingQueue<>();
     private final VertexDataBufPool bufferPool = VertexDataBufPool.create(0x200000, 64);
 
-    private ObservableValue<ShaderProgram> chunkSolidShader;
+    private final ObservableValue<ShaderProgram> chunkSolidShader;
 
-    private RenderManager context;
-    private GameClient game;
-    private Scene scene;
+    private final RenderManager manager;
+    private final GameClient game;
+    private final Viewport viewport;
+    private final Scene3D scene;
+    private final World world;
 
-    private ThreadPoolExecutor chunkBakeExecutor;
+    private final ThreadPoolExecutor chunkBakeExecutor;
 
-    public void init(RenderManager context, Scene scene) {
-        this.context = context;
-        this.game = context.getEngine().getCurrentGame();
-        this.scene = scene;
+    @Deprecated
+    private final Material material;
+
+    public ChunkRenderer(RenderManager manager, World world) {
+        this.manager = manager;
+        this.game = manager.getEngine().getCurrentGame();
         game.getEventBus().register(this);
+        this.viewport = manager.getViewport();
+        this.scene = viewport.getScene();
+        this.world = world;
 
         chunkSolidShader = ShaderManager.instance().registerShader("chunk_solid", new ShaderProgramBuilder()
                 .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/chunk_solid.vert"))
                 .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/chunk_solid.frag")));
+
+        material = new Material().setAmbientColor(new Vector3f(0.5f))
+                .setDiffuseColor(new Vector3f(1.0f))
+                .setSpecularColor(new Vector3f(1.0f)).setShininess(32f);
 
         // TODO: Configurable and manage
         int threadCount = Runtime.getRuntime().availableProcessors() / 2;
@@ -67,8 +81,8 @@ public class ChunkRenderer {
             }
         });
 
-        context.getTextureManager().getDefaultAtlas().reload();
-        initWorld(scene.getWorld());
+        manager.getTextureManager().getDefaultAtlas().reload();
+        initWorld(world);
     }
 
     public void render() {
@@ -91,7 +105,7 @@ public class ChunkRenderer {
     private boolean shouldRenderChunk(ChunkMesh mesh) {
         Vector3ic min = mesh.getChunk().getMin();
         Vector3ic max = mesh.getChunk().getMax();
-        return context.getFrustumIntersection().testAab(min.x(), min.y(), min.z(), max.x(), max.y(), max.z());
+        return viewport.getFrustum().testAab(min.x(), min.y(), min.z(), max.x(), max.y(), max.z());
     }
 
     private void preRender() {
@@ -105,15 +119,15 @@ public class ChunkRenderer {
 //        glFrontFace(GL_CCW);
         glEnable(GL11.GL_DEPTH_TEST);
 
-        shader.setUniform("u_ProjMatrix", context.getProjectionMatrix());
-        shader.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
+        shader.setUniform("u_ProjMatrix", viewport.getProjectionMatrix());
+        shader.setUniform("u_ViewMatrix", viewport.getCamera().getViewMatrix());
         shader.setUniform("u_ModelMatrix", new Matrix4f());
-        shader.setUniform("u_viewPos", context.getCamera().getPosition());
+        shader.setUniform("u_viewPos", viewport.getCamera().getPosition());
 
-        context.getTextureManager().getDefaultAtlas().bind();
+        manager.getTextureManager().getDefaultAtlas().bind();
         shader.setUniform("useDirectUV", true);
-        scene.getLightManager().bind(context.getCamera(), shader);
-        scene.getMaterial().bind(shader, "material");
+        scene.getLightManager().bind(viewport.getCamera().getPosition(), shader);
+        material.bind(shader, "material");
     }
 
     private void postRender() {
@@ -151,8 +165,9 @@ public class ChunkRenderer {
 
     @Listener
     public void onChunkLoad(ChunkLoadEvent event) {
-        if (scene.isEqualsWorld(event.getChunk().getWorld())) {
-            initChunk(event.getChunk());
+        Chunk chunk = event.getChunk();
+        if (world.equals(chunk.getWorld())) {
+            initChunk(chunk);
         }
     }
 
@@ -226,12 +241,7 @@ public class ChunkRenderer {
     }
 
     private double getDistanceSqChunkToCamera(Chunk chunk) {
-        // FIXME:
-        if (context.getCamera() == null) {
-            return 0;
-        }
-
-        Vector3fc position = context.getCamera().getPosition();
+        Vector3fc position = viewport.getCamera().getPosition();
         Vector3ic center = chunk.getCenter();
         return position.distanceSquared(center.x(), center.y(), center.z());
     }

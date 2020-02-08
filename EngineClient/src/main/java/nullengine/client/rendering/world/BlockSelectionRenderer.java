@@ -9,20 +9,20 @@ import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.util.Color;
 import nullengine.world.hit.BlockHitResult;
 
-public class BlockSelectionRenderer {
+public final class BlockSelectionRenderer {
 
-    private RenderManager context;
+    private final RenderManager manager;
 
-    public void init(RenderManager context) {
-        this.context = context;
+    public BlockSelectionRenderer(RenderManager manager) {
+        this.manager = manager;
     }
 
-    public void render(float partial) {
+    public void render(float tpf) {
         GLStreamedRenderer directRenderer = GLStreamedRenderer.getInstance();
         VertexDataBuf buffer = directRenderer.getBuffer();
 
-        var player = context.getEngine().getCurrentGame().getClientPlayer();
-        var camera = context.getCamera();
+        var player = manager.getEngine().getCurrentGame().getClientPlayer();
+        var camera = manager.getViewport().getCamera();
         BlockHitResult hit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFront(), 10);
         if (hit.isSuccess()) {
             float minX = hit.getPos().x() - 0.001f, maxX = hit.getPos().x() + 1.001f,

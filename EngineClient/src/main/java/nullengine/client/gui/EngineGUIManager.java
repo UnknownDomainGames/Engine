@@ -24,11 +24,11 @@ public class EngineGUIManager implements GUIManager {
     public void show(Scene scene) {
         pushToHistory();
         showingScene = scene;
+        stage.setScene(scene);
         if (scene == null) {
             window.getCursor().disableCursor();
             return;
         }
-        stage.setScene(scene);
         window.getCursor().showCursor();
     }
 

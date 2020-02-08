@@ -198,7 +198,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         }
 
         // TODO: Remove it.
-        soundManager.updateListener(renderManager.getCamera());
+        soundManager.updateListener(renderManager.getViewport().getCamera());
 
         if (isMarkedTermination()) {
             if (isPlaying()) {

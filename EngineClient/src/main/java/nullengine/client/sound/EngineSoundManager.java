@@ -5,7 +5,7 @@ import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import nullengine.Platform;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.asset.exception.AssetLoadException;
-import nullengine.client.rendering.camera.OldCamera;
+import nullengine.client.rendering.camera.Camera;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
@@ -62,7 +62,7 @@ public class EngineSoundManager implements ALSoundManager {
     }
 
     @Override
-    public void updateListener(OldCamera camera) {
+    public void updateListener(Camera camera) {
         cameraMatrix = camera.getViewMatrix();
         // Optimized version to get lookAt vector and Up vector from View Matrix, provided by author of JOML at a LWJGL forum
         Vector3f at = new Vector3f();

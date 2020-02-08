@@ -66,13 +66,7 @@ public final class GameGUIPlatform extends GUIPlatform {
         return hudStage;
     }
 
-    public void doRender() {
-        render(guiStage);
-        render(hudStage);
-        primaryWindow.swapBuffers();
-    }
-
-    private void render(Stage stage) {
+    public void render(Stage stage) {
         Scene scene = stage.getScene();
         if (scene == null) return;
 

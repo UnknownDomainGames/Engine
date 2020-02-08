@@ -14,7 +14,7 @@ import nullengine.world.BlockGetter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BlockRenderManagerImpl implements BlockRenderManager {
+public final class BlockRenderManagerImpl implements BlockRenderManager {
 
     private final Map<Block, Asset<BakedModel>> blockModelMap = new HashMap<>();
 

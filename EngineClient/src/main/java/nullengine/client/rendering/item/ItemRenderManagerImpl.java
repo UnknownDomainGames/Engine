@@ -12,16 +12,16 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 
-public class ItemRenderManagerImpl implements ItemRenderManager {
+public final class ItemRenderManagerImpl implements ItemRenderManager {
 
     private final Map<Item, ItemRenderer> itemRendererMap = new HashMap<>();
 
     private final ItemRenderer blockItemRenderer = new BlockItemRenderer();
 
-    private RenderManager context;
+    private RenderManager manager;
 
-    public void init(RenderManager context) {
-        this.context = context;
+    public void init(RenderManager manager) {
+        this.manager = manager;
         Registries.getItemRegistry().getValues().forEach(this::registerItemRenderer);
         itemRendererMap.values().forEach(ItemRenderer::init);
     }
@@ -54,7 +54,7 @@ public class ItemRenderManagerImpl implements ItemRenderManager {
     }
 
     private void preRender() {
-        context.getTextureManager().getDefaultAtlas().bind();
+        manager.getTextureManager().getDefaultAtlas().bind();
     }
 
     private void postRender() {

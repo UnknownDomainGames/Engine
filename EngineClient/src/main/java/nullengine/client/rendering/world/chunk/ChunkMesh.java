@@ -1,6 +1,7 @@
 package nullengine.client.rendering.world.chunk;
 
 import nullengine.client.rendering.gl.GLSingleBufferMesh;
+import nullengine.client.rendering.mesh.SingleBufferMesh;
 import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.util.Disposable;
 import nullengine.world.chunk.Chunk;
@@ -11,7 +12,7 @@ public class ChunkMesh implements Disposable {
 
     private AtomicInteger dirtyCount = new AtomicInteger(0);
 
-    private GLSingleBufferMesh chunkSolidMesh;
+    private SingleBufferMesh chunkSolidMesh;
 
     private final Chunk chunk;
 

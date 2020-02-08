@@ -10,13 +10,13 @@ import org.lwjgl.opengl.GL11;
 
 import static nullengine.client.asset.AssetTypes.TEXTURE;
 
-public class SkyboxRenderer {
+public final class SkyboxRenderer {
 
     private Asset<GLTexture2D> skybox;
     private GLMesh skyboxMesh;
 
-    public void init(RenderManager context) {
-        skybox = context.getEngine().getAssetManager().create(TEXTURE, AssetURL.of("engine", "misc/skybox"));
+    public SkyboxRenderer(RenderManager manager) {
+        skybox = manager.getEngine().getAssetManager().create(TEXTURE, AssetURL.of("engine", "misc/skybox"));
         skyboxMesh = GLMesh.of(new Mesh(
                 new float[]{
                         256, 256, -256,
@@ -90,7 +90,7 @@ public class SkyboxRenderer {
         ));
     }
 
-    public void render(float partial){
+    public void render(float tpf) {
         skybox.get().bind();
         skyboxMesh.render();
     }

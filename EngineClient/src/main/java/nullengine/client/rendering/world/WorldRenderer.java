@@ -4,7 +4,6 @@ import com.github.mouse0w0.observable.value.ObservableValue;
 import nullengine.client.asset.AssetURL;
 import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.entity.EntityRenderManagerImpl;
-import nullengine.client.rendering.game3d.Scene;
 import nullengine.client.rendering.gl.GLStreamedRenderer;
 import nullengine.client.rendering.gl.shader.ShaderProgram;
 import nullengine.client.rendering.gl.shader.ShaderType;
@@ -17,6 +16,9 @@ import nullengine.client.rendering.util.DrawMode;
 import nullengine.client.rendering.vertex.VertexDataBuf;
 import nullengine.client.rendering.vertex.VertexFormat;
 import nullengine.client.rendering.world.chunk.ChunkRenderer;
+import nullengine.client.rendering3d.Scene3D;
+import nullengine.client.rendering3d.viewport.Viewport;
+import nullengine.world.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -28,19 +30,25 @@ import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT;
 
-public class WorldRenderer {
+public final class WorldRenderer {
 
     // TODO: adjustable width and height
     public static final int SHADOW_WIDTH = 2048;
     public static final int SHADOW_HEIGHT = 2048;
 
-    private final ChunkRenderer chunkRenderer = new ChunkRenderer();
-    private final BlockSelectionRenderer blockSelectionRenderer = new BlockSelectionRenderer();
-    private final SkyboxRenderer skyboxRenderer = new SkyboxRenderer();
+    private final RenderManager manager;
+    private final Viewport viewport;
+    private final Scene3D scene;
+    private final World world;
+
+    private final ChunkRenderer chunkRenderer;
+    private final BlockSelectionRenderer blockSelectionRenderer;
+    private final SkyboxRenderer skyboxRenderer;
 
     private final EntityRenderManagerImpl entityRenderManager = new EntityRenderManagerImpl();
 
-    private Scene scene;
+    @Deprecated
+    private final Material material;
 
     private ObservableValue<ShaderProgram> worldShader;
     private ObservableValue<ShaderProgram> entityShader;
@@ -50,25 +58,25 @@ public class WorldRenderer {
     private GLFrameBuffer frameBufferShadow; //TODO: move to 3D Renderer!!!
     private ObservableValue<ShaderProgram> shadowShader;
 
-    private RenderManager context;
+    public WorldRenderer(RenderManager manager, World world) {
+        this.manager = manager;
+        this.viewport = manager.getViewport();
+        this.scene = viewport.getScene();
+        this.world = world;
 
-    public void init(RenderManager context, Scene scene) {
-        this.context = context;
-        this.scene = scene;
-
-        chunkRenderer.init(context, scene);
-        blockSelectionRenderer.init(context);
-        entityRenderManager.init(context);
-        skyboxRenderer.init(context);
+        chunkRenderer = new ChunkRenderer(manager, world);
+        blockSelectionRenderer = new BlockSelectionRenderer(manager);
+        entityRenderManager.init(manager);
+        skyboxRenderer = new SkyboxRenderer(manager);
 
         scene.getLightManager().getDirectionalLights().add(new DirectionalLight()
                 .setDirection(new Vector3f(-0.15f, -1f, -0.35f))
                 .setAmbient(new Vector3f(0.4f))
                 .setDiffuse(new Vector3f(1f))
                 .setSpecular(new Vector3f(1f)));
-        scene.setMaterial(new Material().setAmbientColor(new Vector3f(0.5f))
+        material = new Material().setAmbientColor(new Vector3f(0.5f))
                 .setDiffuseColor(new Vector3f(1.0f))
-                .setSpecularColor(new Vector3f(1.0f)).setShininess(32f));
+                .setSpecularColor(new Vector3f(1.0f)).setShininess(32f);
 
         worldShader = ShaderManager.instance().registerShader("world_shader", new ShaderProgramBuilder()
                 .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/world.vert"))
@@ -77,8 +85,8 @@ public class WorldRenderer {
                 .addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/entity.vert"))
                 .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/entity.frag")));
 
-        frameBuffer = GLFrameBuffer.createRGB16FDepth24Stencil8FrameBuffer(context.getWindow().getWidth(), context.getWindow().getHeight());
-        frameBufferMultiSample = GLFrameBuffer.createMultiSampleRGB16FDepth24Stencil8FrameBuffer(context.getWindow().getWidth(), context.getWindow().getHeight(), 1);
+        frameBuffer = GLFrameBuffer.createRGB16FDepth24Stencil8FrameBuffer(manager.getWindow().getWidth(), manager.getWindow().getHeight());
+        frameBufferMultiSample = GLFrameBuffer.createMultiSampleRGB16FDepth24Stencil8FrameBuffer(manager.getWindow().getWidth(), manager.getWindow().getHeight(), 1);
         frameBufferSP = ShaderManager.instance().registerShader("frame_buffer_shader",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/framebuffer.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/framebuffer.frag")));
@@ -89,10 +97,14 @@ public class WorldRenderer {
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/shadow.frag")));
     }
 
-    public void render(float partial) {
-        if (context.getWindow().isResized()) {
-            frameBuffer.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
-            frameBufferMultiSample.resize(context.getWindow().getWidth(), context.getWindow().getHeight());
+    public World getWorld() {
+        return world;
+    }
+
+    public void render(float tpf) {
+        if (manager.getWindow().isResized()) {
+            frameBuffer.resize(manager.getWindow().getWidth(), manager.getWindow().getHeight());
+            frameBufferMultiSample.resize(manager.getWindow().getWidth(), manager.getWindow().getHeight());
         }
 
         // shadow
@@ -118,7 +130,7 @@ public class WorldRenderer {
         ShaderManager.instance().unbindOverriding();
 
         // render chunk
-        GL11.glViewport(0, 0, context.getWindow().getWidth(), context.getWindow().getHeight());
+        GL11.glViewport(0, 0, manager.getWindow().getWidth(), manager.getWindow().getHeight());
 
         frameBufferMultiSample.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -138,8 +150,8 @@ public class WorldRenderer {
 
         // render world
         ShaderManager.instance().bindShader(worldShader.getValue());
-        ShaderManager.instance().setUniform("u_ProjMatrix", context.getProjectionMatrix());
-        ShaderManager.instance().setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
+        ShaderManager.instance().setUniform("u_ProjMatrix", viewport.getProjectionMatrix());
+        ShaderManager.instance().setUniform("u_ViewMatrix", viewport.getCamera().getViewMatrix());
         ShaderManager.instance().setUniform("u_ModelMatrix", new Matrix4f());
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
@@ -147,10 +159,10 @@ public class WorldRenderer {
         glEnable(GL_BLEND);
         glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        skyboxRenderer.render(partial);
-        blockSelectionRenderer.render(partial);
+        skyboxRenderer.render(tpf);
+        blockSelectionRenderer.render(tpf);
 
-        renderEntity(lightSpaceMat, partial);
+        renderEntity(lightSpaceMat, tpf);
 
         // multi sample
         frameBuffer.bind();
@@ -178,17 +190,17 @@ public class WorldRenderer {
         t.draw(DrawMode.TRIANGLE_STRIP);
     }
 
-    private void renderEntity(Matrix4f lightSpaceMat, float partial) {
+    private void renderEntity(Matrix4f lightSpaceMat, float tpf) {
         ShaderProgram shader = entityShader.getValue();
         ShaderManager.instance().bindShader(shader);
-        shader.setUniform("u_ProjMatrix", context.getProjectionMatrix());
-        shader.setUniform("u_ViewMatrix", context.getCamera().getViewMatrix());
+        shader.setUniform("u_ProjMatrix", viewport.getProjectionMatrix());
+        shader.setUniform("u_ViewMatrix", viewport.getCamera().getViewMatrix());
         shader.setUniform("u_LightSpace", lightSpaceMat);
         shader.setUniform("u_ShadowMap", 8);
-        scene.getLightManager().bind(context.getCamera(), shader);
-        scene.getMaterial().bind(shader, "material");
-        context.getEngine().getCurrentGame().getClientWorld().getEntities().forEach(entity ->
-                entityRenderManager.render(entity, partial));
+        scene.getLightManager().bind(viewport.getCamera().getPosition(), shader);
+        material.bind(shader, "material");
+        manager.getEngine().getCurrentGame().getClientWorld().getEntities().forEach(entity ->
+                entityRenderManager.render(entity, tpf));
     }
 
     public void dispose() {

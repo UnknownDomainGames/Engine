@@ -2,6 +2,7 @@ package nullengine.client.player;
 
 import nullengine.Platform;
 import nullengine.client.input.controller.EntityController;
+import nullengine.client.rendering.RenderManager;
 import nullengine.client.rendering.display.callback.CursorCallback;
 import nullengine.entity.Entity;
 import nullengine.player.PlayerImpl;
@@ -31,13 +32,16 @@ public class ClientPlayerImpl extends PlayerImpl implements ClientPlayer {
 
     @Override
     public void setEntityController(EntityController controller) {
-        if (entityController == controller) {
-            return;
-        }
         entityController = controller;
-        Platform.getEngineClient().getRenderManager().getWindow().removeCursorCallback(cursorCallback);
-        cursorCallback = (window, xpos, ypos) -> entityController.handleCursorMove(xpos, ypos);
-        Platform.getEngineClient().getRenderManager().getWindow().addCursorCallback(cursorCallback);
+        controller.setPlayer(this, getControlledEntity());
+        RenderManager renderManager = Platform.getEngineClient().getRenderManager();
+        renderManager.getWindow().removeCursorCallback(cursorCallback);
+        cursorCallback = (window, xpos, ypos) -> {
+            if (!renderManager.getGUIManager().isShowing()) {
+                entityController.onCursorMove(xpos, ypos);
+            }
+        };
+        renderManager.getWindow().addCursorCallback(cursorCallback);
     }
 
     @Nonnull
