@@ -38,6 +38,13 @@ public final class PerspectiveViewport extends BaseViewport {
         updateProjectionMatrix();
     }
 
+    public void setPerspective(float fovAngle, float zNear, float zFar) {
+        this.fovAngle = fovAngle;
+        this.zNear = zNear;
+        this.zFar = zFar;
+        updateProjectionMatrix();
+    }
+
     protected void onFrameSizeChanged() {
         aspect = (float) getWidth() / getHeight();
         updateProjectionMatrix();
