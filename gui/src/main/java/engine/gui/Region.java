@@ -2,7 +2,6 @@ package engine.gui;
 
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import engine.client.gui.misc.*;
 import engine.gui.misc.*;
 import engine.gui.rendering.ComponentRenderer;
 import engine.gui.rendering.RegionRenderer;

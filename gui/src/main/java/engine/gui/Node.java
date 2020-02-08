@@ -3,7 +3,6 @@ package engine.gui;
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
-import engine.client.gui.event.*;
 import engine.gui.event.*;
 import engine.gui.input.KeyEvent;
 import engine.gui.input.MouseActionEvent;
