@@ -210,13 +210,13 @@ public class Node3D {
         this.controller = controller;
     }
 
-    void doUpdate(float partial) {
+    void doUpdate(float tpf) {
         if (controller != null) {
-            controller.update(this, partial);
+            controller.update(this, tpf);
         }
 
         if (children != null && !children.isEmpty()) {
-            children.forEach(child -> child.doUpdate(partial));
+            children.forEach(child -> child.doUpdate(tpf));
         }
     }
 
