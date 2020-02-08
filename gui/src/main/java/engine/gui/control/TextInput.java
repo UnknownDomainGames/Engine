@@ -1,6 +1,7 @@
 package engine.gui.control;
 
 import com.github.mouse0w0.observable.value.*;
+import engine.graphics.font.Font;
 import engine.gui.input.Clipboard;
 import engine.gui.input.KeyEvent;
 import engine.gui.input.MouseActionEvent;
@@ -10,7 +11,6 @@ import engine.gui.misc.Border;
 import engine.gui.misc.IndexRange;
 import engine.gui.misc.Insets;
 import engine.gui.text.Text;
-import engine.graphics.font.Font;
 import engine.input.Modifiers;
 import engine.math.Math2;
 import engine.util.Color;
@@ -142,7 +142,7 @@ public abstract class TextInput extends Control {
     protected abstract int getNearestMousePos(float posX, float posY);
 
     protected void onMouseMove(MouseEvent event) {
-        if (pressed.get()) {
+        if (pressed().get()) {
             selectPositionCaret(getNearestMousePos(event.getX(), event.getY()));
         }
     }
@@ -342,7 +342,7 @@ public abstract class TextInput extends Control {
 
     public boolean backspace() {
         boolean failed = true;
-        if (editable.get() && !disabled.get()) {
+        if (editable.get() && !disabled().get()) {
             final String original = text.getValue();
             final int caret = this.caret.get();
             final int anchor = this.anchor.get();
@@ -361,7 +361,7 @@ public abstract class TextInput extends Control {
 
     public boolean delete() {
         boolean failed = true;
-        if (editable.get() && !disabled.get()) {
+        if (editable.get() && !disabled().get()) {
             final int textLength = length();
             final String original = text.getValue();
             final int caret = this.caret.get();

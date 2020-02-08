@@ -26,12 +26,12 @@ public abstract class Node implements EventTarget {
     final MutableFloatValue width = new SimpleMutableFloatValue();
     final MutableFloatValue height = new SimpleMutableFloatValue();
 
-    protected final MutableBooleanValue visible = new SimpleMutableBooleanValue(true);
-    protected final MutableBooleanValue disabled = new SimpleMutableBooleanValue(false);
+    final MutableBooleanValue visible = new SimpleMutableBooleanValue(true);
+    final MutableBooleanValue disabled = new SimpleMutableBooleanValue(false);
 
-    protected final MutableBooleanValue focused = new SimpleMutableBooleanValue(false);
-    protected final MutableBooleanValue hover = new SimpleMutableBooleanValue(false);
-    protected final MutableBooleanValue pressed = new SimpleMutableBooleanValue(false);
+    final MutableBooleanValue focused = new SimpleMutableBooleanValue(false);
+    final MutableBooleanValue hover = new SimpleMutableBooleanValue(false);
+    final MutableBooleanValue pressed = new SimpleMutableBooleanValue(false);
 
     private ComponentRenderer renderer;
 

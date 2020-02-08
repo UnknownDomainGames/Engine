@@ -21,9 +21,9 @@ public class Button extends Label {
 
     public Button() {
         super();
-        pressed.addChangeListener((observable, oldValue, newValue) -> handleBackground());
-        disabled.addChangeListener((observable, oldValue, newValue) -> handleBackground());
-        hover.addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        pressed().addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        disabled().addChangeListener((observable, oldValue, newValue) -> handleBackground());
+        hover().addChangeListener((observable, oldValue, newValue) -> handleBackground());
         background.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         pressedBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         hoveredBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
