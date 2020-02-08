@@ -81,8 +81,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     @Override
     protected void resourceStage() {
         super.resourceStage();
-
-        engineClient.getAssetManager().reload();
     }
 
     @Override
