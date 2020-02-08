@@ -6,15 +6,10 @@ dependencies {
     compile 'com.github.Mouse0w0:Observable:1.2.1'
 
     compile "org.lwjgl:lwjgl:$lwjglVersion"
-    compile "org.lwjgl:lwjgl-assimp:$lwjglVersion"
-    compile "org.lwjgl:lwjgl-glfw:$lwjglVersion"
-    compile "org.lwjgl:lwjgl-openal:$lwjglVersion"
-    compile "org.lwjgl:lwjgl-opengl:$lwjglVersion"
-    compile "org.lwjgl:lwjgl-stb:$lwjglVersion"
-    runtimeOnly "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-assimp:$lwjglVersion:$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-glfw:$lwjglVersion:$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-openal:$lwjglVersion:$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-opengl:$lwjglVersion:$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-stb:$lwjglVersion:$lwjglNatives"
+    implementation "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
+
+    String[] lwjglModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb']
+    String[] lwjglNativeModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb']
+    for (module in lwjglModules) compile("org.lwjgl:lwjgl-$module:$lwjglVersion")
+    for (module in lwjglNativeModules) implementation("org.lwjgl:lwjgl-$module:$lwjglVersion:$lwjglNatives")
 }
