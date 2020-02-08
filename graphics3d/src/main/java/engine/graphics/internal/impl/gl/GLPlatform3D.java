@@ -1,10 +1,10 @@
 package engine.graphics.internal.impl.gl;
 
-import engine.graphics.RenderEngine;
+import engine.graphics.GraphicsEngine;
 import engine.graphics.gl.texture.GLFrameBuffer;
-import engine.graphics.texture.FrameBuffer;
 import engine.graphics.internal.Platform3D;
 import engine.graphics.internal.ViewportHelper;
+import engine.graphics.texture.FrameBuffer;
 
 public class GLPlatform3D extends Platform3D {
 
@@ -13,8 +13,8 @@ public class GLPlatform3D extends Platform3D {
     public static void launch(String[] args) throws Exception {
         GLPlatform3D platform = new GLPlatform3D();
         setInstance(platform);
-        RenderEngine.start(new RenderEngine.Settings());
-        RenderEngine.getManager().attachHandler(new Scene3DRenderHandler(platform.viewportHelper.getViewports()));
+        GraphicsEngine.start(new GraphicsEngine.Settings());
+        GraphicsEngine.getGraphicsBackend().attachHandler(new Scene3DRenderHandler(platform.viewportHelper.getViewports()));
     }
 
     @Override

@@ -1,13 +1,13 @@
 package engine.graphics.texture;
 
-import engine.graphics.RenderEngine;
+import engine.graphics.GraphicsEngine;
 import engine.graphics.image.ReadOnlyImage;
 import engine.util.Color;
 
 public interface Texture2D extends Texture {
 
     static Builder builder() {
-        return RenderEngine.getManager().getResourceFactory().createTexture2DBuilder();
+        return GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder();
     }
 
     int getWidth();

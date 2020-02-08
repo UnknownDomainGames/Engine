@@ -6,15 +6,15 @@ import engine.graphics.font.Font;
 import engine.graphics.font.FontHelper;
 import engine.graphics.gl.font.WindowsFontHelper;
 import engine.graphics.gl.util.DebugMessageCallback;
+import engine.graphics.gl.util.GLContextUtils;
 import engine.graphics.gl.util.GPUInfoImpl;
 import engine.graphics.glfw.GLFWContext;
 import engine.graphics.glfw.GLFWWindow;
+import engine.graphics.management.GraphicsBackend;
 import engine.graphics.management.RenderHandler;
-import engine.graphics.management.RenderManager;
 import engine.graphics.management.ResourceFactory;
 import engine.graphics.util.Cleaner;
 import engine.graphics.util.GPUInfo;
-import engine.graphics.gl.util.GLContextUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.ARBDebugOutput;
 import org.lwjgl.opengl.GL;
@@ -31,9 +31,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
 
-public final class GLRenderManager implements RenderManager {
+public final class GLGraphicsBackend implements GraphicsBackend {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("Rendering");
+    public static final Logger LOGGER = LoggerFactory.getLogger("Graphics");
 
     private Thread renderingThread;
     private GLCapabilities capabilities;
@@ -45,7 +45,7 @@ public final class GLRenderManager implements RenderManager {
     private final List<RenderHandler> handlers = new ArrayList<>();
     private final List<RunnableFuture<?>> pendingTasks = new ArrayList<>();
 
-    public GLRenderManager() {
+    public GLGraphicsBackend() {
     }
 
     @Nonnull

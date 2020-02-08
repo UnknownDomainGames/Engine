@@ -1,11 +1,11 @@
 package engine.gui.internal.impl.gl;
 
-import engine.gui.image.Image;
-import engine.graphics.RenderEngine;
+import engine.graphics.GraphicsEngine;
 import engine.graphics.image.ReadOnlyImage;
 import engine.graphics.management.ResourceFactory;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture2D;
+import engine.gui.image.Image;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -14,7 +14,7 @@ public final class GUIResourceFactory {
 
     private final Map<Image, Texture2D> textures = new WeakHashMap<>();
 
-    private final ResourceFactory resourceFactory = RenderEngine.getManager().getResourceFactory();
+    private final ResourceFactory resourceFactory = GraphicsEngine.getGraphicsBackend().getResourceFactory();
 
     public Texture2D getTexture(Image image) {
         Texture2D texture = textures.get(image);

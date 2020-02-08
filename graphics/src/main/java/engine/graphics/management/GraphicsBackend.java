@@ -7,7 +7,7 @@ import engine.graphics.util.GPUInfo;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-public interface RenderManager {
+public interface GraphicsBackend {
 
     Thread getRenderingThread();
 

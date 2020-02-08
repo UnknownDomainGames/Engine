@@ -1,8 +1,8 @@
 package engine.graphics.queue;
 
-import engine.graphics.management.RenderManager;
+import engine.graphics.management.GraphicsBackend;
 
 public interface RenderTypeHandler {
 
-    void render(RenderManager manager, GeometryList geometries);
+    void render(GraphicsBackend manager, GeometryList geometries);
 }

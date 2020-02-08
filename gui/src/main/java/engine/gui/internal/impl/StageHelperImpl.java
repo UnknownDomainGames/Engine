@@ -1,11 +1,11 @@
 package engine.gui.internal.impl;
 
-import engine.gui.Stage;
-import engine.gui.internal.StageHelper;
-import engine.graphics.RenderEngine;
+import engine.graphics.GraphicsEngine;
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
-import engine.graphics.management.RenderManager;
+import engine.graphics.management.GraphicsBackend;
+import engine.gui.Stage;
+import engine.gui.internal.StageHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ public final class StageHelperImpl extends StageHelper {
 
     public StageHelperImpl(GUIRenderHandler renderHandler) {
         this.renderHandler = renderHandler;
-        RenderManager renderManager = RenderEngine.getManager();
+        GraphicsBackend renderManager = GraphicsEngine.getGraphicsBackend();
         windowHelper = renderManager.getWindowHelper();
         primaryStage = new Stage();
         primaryWindow = renderManager.getPrimaryWindow();

@@ -3,18 +3,19 @@ package engine.graphics;
 import engine.client.EngineClient;
 import engine.client.asset.AssetType;
 import engine.client.event.rendering.RenderEvent;
-import engine.gui.EngineGUIManager;
-import engine.gui.EngineHUDManager;
-import engine.gui.GUIManager;
-import engine.gui.GameGUIPlatform;
 import engine.client.hud.HUDManager;
 import engine.graphics.camera.Camera;
 import engine.graphics.display.Window;
 import engine.graphics.game.GameRenderer;
 import engine.graphics.gl.texture.GLTexture2D;
+import engine.graphics.management.GraphicsBackend;
 import engine.graphics.texture.EngineTextureManager;
 import engine.graphics.texture.TextureManager;
 import engine.graphics.viewport.PerspectiveViewport;
+import engine.gui.EngineGUIManager;
+import engine.gui.EngineHUDManager;
+import engine.gui.GUIManager;
+import engine.gui.GameGUIPlatform;
 
 public class EngineRenderManager implements RenderManager {
 
@@ -78,9 +79,9 @@ public class EngineRenderManager implements RenderManager {
     public void init(Thread renderThread) {
         this.renderThread = renderThread;
 
-        RenderEngine.start(new RenderEngine.Settings());
+        GraphicsEngine.start(new GraphicsEngine.Settings());
 
-        engine.graphics.management.RenderManager manager = RenderEngine.getManager();
+        GraphicsBackend manager = GraphicsEngine.getGraphicsBackend();
         window = manager.getPrimaryWindow();
         window.setDisplayMode(engine.getSettings().getDisplaySettings().getDisplayMode(),
                 engine.getSettings().getDisplaySettings().getResolutionWidth(),
@@ -109,7 +110,7 @@ public class EngineRenderManager implements RenderManager {
     public void render(float tpf) {
         engine.getEventBus().post(new RenderEvent.Pre());
 
-        RenderEngine.doRender(tpf);
+        GraphicsEngine.doRender(tpf);
         viewport.getScene().doUpdate(tpf);
         gameRenderer.render(tpf);
         gameGUIPlatform.render(gameGUIPlatform.getGUIStage());
@@ -141,6 +142,6 @@ public class EngineRenderManager implements RenderManager {
 
     public void dispose() {
         gameGUIPlatform.dispose();
-        RenderEngine.stop();
+        GraphicsEngine.stop();
     }
 }

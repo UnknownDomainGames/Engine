@@ -1,6 +1,9 @@
 package engine.gui;
 
 import engine.Platform;
+import engine.graphics.GraphicsEngine;
+import engine.graphics.display.Window;
+import engine.graphics.management.GraphicsBackend;
 import engine.gui.internal.ClipboardHelper;
 import engine.gui.internal.GUIPlatform;
 import engine.gui.internal.SceneHelper;
@@ -9,9 +12,6 @@ import engine.gui.internal.impl.GUIRenderHandler;
 import engine.gui.internal.impl.SceneHelperImpl;
 import engine.gui.internal.impl.StageHelperImpl;
 import engine.gui.internal.impl.glfw.GLFWClipboardHelper;
-import engine.graphics.RenderEngine;
-import engine.graphics.display.Window;
-import engine.graphics.management.RenderManager;
 
 public final class GameGUIPlatform extends GUIPlatform {
 
@@ -20,14 +20,14 @@ public final class GameGUIPlatform extends GUIPlatform {
     private final SceneHelper sceneHelper = new SceneHelperImpl();
     private final ClipboardHelper clipboardHelper = new GLFWClipboardHelper();
 
-    private final Window primaryWindow = RenderEngine.getManager().getPrimaryWindow();
+    private final Window primaryWindow = GraphicsEngine.getGraphicsBackend().getPrimaryWindow();
 
     private Stage guiStage;
     private Stage hudStage;
 
     public GameGUIPlatform() {
         setInstance(this);
-        RenderManager renderManager = RenderEngine.getManager();
+        GraphicsBackend renderManager = GraphicsEngine.getGraphicsBackend();
         renderManager.attachHandler(renderHandler);
         Stage.getStages().addChangeListener(change -> {
             if (change.getList().isEmpty()) Platform.getEngine().terminate();

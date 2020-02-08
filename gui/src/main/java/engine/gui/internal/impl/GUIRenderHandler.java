@@ -1,13 +1,13 @@
 package engine.gui.internal.impl;
 
+import engine.graphics.display.Window;
+import engine.graphics.management.GraphicsBackend;
+import engine.graphics.management.RenderHandler;
 import engine.gui.Scene;
 import engine.gui.Stage;
 import engine.gui.internal.SceneHelper;
-import engine.gui.internal.impl.gl.GLGUIRenderer;
-import engine.graphics.display.Window;
-import engine.graphics.management.RenderHandler;
-import engine.graphics.management.RenderManager;
 import engine.gui.internal.StageHelper;
+import engine.gui.internal.impl.gl.GLGUIRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public final class GUIRenderHandler implements RenderHandler {
 
     private final List<Stage> stages = new ArrayList<>();
 
-    private RenderManager manager;
+    private GraphicsBackend manager;
     private GLGUIRenderer renderer;
 
     public GUIRenderHandler() {
@@ -38,7 +38,7 @@ public final class GUIRenderHandler implements RenderHandler {
     }
 
     @Override
-    public void init(RenderManager manager) {
+    public void init(GraphicsBackend manager) {
         this.manager = manager;
         this.renderer = new GLGUIRenderer();
     }

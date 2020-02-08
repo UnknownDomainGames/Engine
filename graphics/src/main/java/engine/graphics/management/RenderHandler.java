@@ -2,7 +2,7 @@ package engine.graphics.management;
 
 public interface RenderHandler {
 
-    void init(RenderManager manager);
+    void init(GraphicsBackend manager);
 
     void render(float tpf);
 

@@ -1,17 +1,17 @@
 package engine.graphics.application;
 
-import engine.graphics.RenderEngine;
-import engine.graphics.management.RenderManager;
-import engine.graphics.util.FrameTicker;
+import engine.graphics.GraphicsEngine;
 import engine.graphics.Scene3D;
 import engine.graphics.internal.impl.gl.GLPlatform3D;
+import engine.graphics.management.GraphicsBackend;
+import engine.graphics.util.FrameTicker;
 import engine.graphics.viewport.PerspectiveViewport;
 
 public abstract class Application3D {
 
     protected final FrameTicker ticker = new FrameTicker(this::doRender);
 
-    protected RenderManager manager;
+    protected GraphicsBackend manager;
 
     protected PerspectiveViewport mainViewPort;
     protected Scene3D mainScene;
@@ -59,7 +59,7 @@ public abstract class Application3D {
     }
 
     private void doInitialize() throws Exception {
-        manager = RenderEngine.getManager();
+        manager = GraphicsEngine.getGraphicsBackend();
         mainViewPort = new PerspectiveViewport();
         mainScene = new Scene3D();
         mainViewPort.setScene(mainScene);
@@ -71,14 +71,14 @@ public abstract class Application3D {
 
     private void doRender() {
         onPreRender();
-        RenderEngine.doRender(ticker.getTpf());
+        GraphicsEngine.doRender(ticker.getTpf());
         onPostRender();
     }
 
     public synchronized final void stop() {
         onStopping();
         ticker.stop();
-        RenderEngine.stop();
+        GraphicsEngine.stop();
         onStopped();
     }
 }

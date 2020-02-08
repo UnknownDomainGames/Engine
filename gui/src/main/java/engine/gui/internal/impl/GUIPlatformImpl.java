@@ -1,5 +1,8 @@
 package engine.gui.internal.impl;
 
+import engine.graphics.GraphicsEngine;
+import engine.graphics.management.GraphicsBackend;
+import engine.graphics.util.FrameTicker;
 import engine.gui.Stage;
 import engine.gui.application.GUIApplication;
 import engine.gui.internal.ClipboardHelper;
@@ -7,9 +10,6 @@ import engine.gui.internal.GUIPlatform;
 import engine.gui.internal.SceneHelper;
 import engine.gui.internal.StageHelper;
 import engine.gui.internal.impl.glfw.GLFWClipboardHelper;
-import engine.graphics.RenderEngine;
-import engine.graphics.management.RenderManager;
-import engine.graphics.util.FrameTicker;
 
 public final class GUIPlatformImpl extends GUIPlatform {
 
@@ -23,10 +23,10 @@ public final class GUIPlatformImpl extends GUIPlatform {
     private final FrameTicker ticker = new FrameTicker(this::doRender);
 
     public static void launch(Class<? extends GUIApplication> clazz, String[] args) throws Exception {
-        RenderEngine.start(new RenderEngine.Settings());
+        GraphicsEngine.start(new GraphicsEngine.Settings());
         GUIPlatformImpl platform = new GUIPlatformImpl();
         setInstance(platform);
-        RenderManager renderManager = RenderEngine.getManager();
+        GraphicsBackend renderManager = GraphicsEngine.getGraphicsBackend();
         renderManager.attachHandler(platform.renderHandler);
         Stage.getStages().addChangeListener(change -> {
             if (change.getList().isEmpty()) platform.ticker.stop();
@@ -55,6 +55,6 @@ public final class GUIPlatformImpl extends GUIPlatform {
     }
 
     private void doRender() {
-        RenderEngine.doRender(ticker.getTpf());
+        GraphicsEngine.doRender(ticker.getTpf());
     }
 }

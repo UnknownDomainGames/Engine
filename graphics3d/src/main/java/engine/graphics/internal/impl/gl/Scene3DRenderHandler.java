@@ -4,13 +4,13 @@ import com.github.mouse0w0.observable.value.ObservableObjectValue;
 import engine.graphics.display.Window;
 import engine.graphics.gl.shader.ShaderManager;
 import engine.graphics.gl.shader.ShaderProgram;
+import engine.graphics.management.GraphicsBackend;
 import engine.graphics.management.RenderHandler;
-import engine.graphics.management.RenderManager;
-import engine.graphics.texture.FrameBuffer;
 import engine.graphics.queue.GeometryList;
 import engine.graphics.queue.RenderQueue;
 import engine.graphics.queue.RenderTypeHandler;
 import engine.graphics.queue.StandardRenderTypes;
+import engine.graphics.texture.FrameBuffer;
 import engine.graphics.viewport.Viewport;
 import engine.util.Color;
 import org.lwjgl.opengl.GL11;
@@ -23,7 +23,7 @@ public final class Scene3DRenderHandler implements RenderHandler {
 
     private final ObservableObjectValue<ShaderProgram> shader;
 
-    private RenderManager manager;
+    private GraphicsBackend manager;
 
 //    private final Material material;
 
@@ -39,7 +39,7 @@ public final class Scene3DRenderHandler implements RenderHandler {
     }
 
     @Override
-    public void init(RenderManager manager) {
+    public void init(GraphicsBackend manager) {
         this.manager = manager;
     }
 
@@ -74,7 +74,7 @@ public final class Scene3DRenderHandler implements RenderHandler {
 //        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
         renderQueue.render(manager, StandardRenderTypes.OPAQUE, new RenderTypeHandler() {
             @Override
-            public void render(RenderManager manager, GeometryList geometries) {
+            public void render(GraphicsBackend manager, GeometryList geometries) {
                 geometries.forEach(geometry -> {
                     shader.setUniform("u_ModelMatrix", geometry.getWorldTransform().toTransformMatrix());
                     geometry.getRenderable().render();

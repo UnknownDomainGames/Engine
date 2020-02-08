@@ -1,7 +1,7 @@
 package engine.graphics.queue;
 
-import engine.graphics.management.RenderManager;
 import engine.graphics.Geometry;
+import engine.graphics.management.GraphicsBackend;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class RenderQueue {
         queue.clear();
     }
 
-    public void render(RenderManager manager, RenderType layer, RenderTypeHandler handler) {
+    public void render(GraphicsBackend manager, RenderType layer, RenderTypeHandler handler) {
         GeometryList geometries = queue.get(layer);
         if (geometries == null) return;
         handler.render(manager, geometries);

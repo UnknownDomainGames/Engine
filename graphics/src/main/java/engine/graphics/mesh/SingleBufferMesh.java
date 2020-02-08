@@ -1,6 +1,6 @@
 package engine.graphics.mesh;
 
-import engine.graphics.RenderEngine;
+import engine.graphics.GraphicsEngine;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 
 public interface SingleBufferMesh {
     static Builder builder() {
-        return RenderEngine.getManager().getResourceFactory().createSingleBufferMeshBuilder();
+        return GraphicsEngine.getGraphicsBackend().getResourceFactory().createSingleBufferMeshBuilder();
     }
 
     VertexFormat getVertexFormat();
