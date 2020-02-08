@@ -1,8 +1,8 @@
 rootProject.name = 'PanguEngine'
 
 include 'common'
-include 'rendering'
-include 'rendering3d'
+include 'graphics'
+include 'graphics3d'
 include 'gui'
 include 'EngineAPI'
 include 'Engine'

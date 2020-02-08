@@ -1,6 +1,6 @@
 dependencies {
     compile project(':gui')
-    compile project(':rendering3d')
+    compile project(':graphics3d')
 
     compile 'com.google.inject:guice:4.2.2'
     compile 'com.github.Mouse0w0.Configuration:configuration-api:1.2.0'
