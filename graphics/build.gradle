@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':common')
+    compile project(':misc')
 
     compile 'org.joml:joml:1.9.20'
 

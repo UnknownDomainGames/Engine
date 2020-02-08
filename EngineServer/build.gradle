@@ -1,5 +1,0 @@
-dependencies {
-    compile project(':Engine')
-
-    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
-}

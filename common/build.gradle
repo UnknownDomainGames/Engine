@@ -1,9 +1,11 @@
 dependencies {
-    compile 'com.google.guava:guava:27.0.1-jre'
-    compile 'org.apache.commons:commons-lang3:3.8.1'
-    compile 'com.google.code.gson:gson:2.8.5'
-    compile 'commons-io:commons-io:2.6'
-    compile 'org.ow2.asm:asm-commons:7.0'
-    compile 'net.jodah:typetools:0.6.1'
-    compile 'org.slf4j:slf4j-api:1.7.25'
+    compile(project(':game-engine')) {
+        exclude group: 'org.lwjgl'
+        exclude group: 'org.l33tlabs.twl'
+    }
+
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+
+    implementation 'com.github.Mouse0w0.Configuration:configuration-toml4j:1.2.0'
+    implementation 'com.github.Mouse0w0.Configuration:configuration-gson:1.2.0'
 }

@@ -1,0 +1,24 @@
+apply plugin: "application"
+
+mainClassName = 'nullengine.client.launch.Bootstrap'
+
+dependencies {
+    compile project(':game-engine')
+    compile project(':server')
+
+    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
+}
+
+jar {
+    String gitVersion = 'git rev-parse --short HEAD'.execute().text.trim();
+    manifest.attributes([
+            "Main-Class"              : mainClassName,
+            "Implementation-Title"    : rootProject.name,
+            "Implementation-Version"  : "git-${rootProject.name}-${project.version}-${gitVersion}",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "Git-Version"             : gitVersion,
+            "Engine-Version"          : project.version
+    ])
+}
+
+
