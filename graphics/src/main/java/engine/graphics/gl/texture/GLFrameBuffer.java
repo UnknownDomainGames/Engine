@@ -2,6 +2,7 @@ package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.texture.FrameBuffer;
+import engine.graphics.texture.Sampler;
 import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
@@ -39,12 +40,12 @@ public class GLFrameBuffer implements FrameBuffer {
                 .build();
     }
 
-    public static GLFrameBuffer createMultiSampleRGB16FDepth24Stencil8FrameBuffer(int width, int height, int sample) {
+    public static GLFrameBuffer createMultiSampleRGB16FDepth24Stencil8FrameBuffer(int width, int height, Sampler sampler) {
         return builder()
                 .width(width)
                 .height(height)
-                .attachments(GL_COLOR_ATTACHMENT0, GLTexture2DMultiSample.builder().format(TextureFormat.RGB16F).sample(sample))
-                .attachments(GL_DEPTH_STENCIL_ATTACHMENT, GLTexture2DMultiSample.builder().format(TextureFormat.DEPTH24_STENCIL8).sample(sample))
+                .attachments(GL_COLOR_ATTACHMENT0, GLTexture2DMultiSample.builder().format(TextureFormat.RGB16F).sampler(sampler))
+                .attachments(GL_DEPTH_STENCIL_ATTACHMENT, GLTexture2DMultiSample.builder().format(TextureFormat.DEPTH24_STENCIL8).sampler(sampler))
                 .build();
     }
 

@@ -1,22 +1,16 @@
 package engine.graphics.gl.texture;
 
-import engine.graphics.texture.FilterMode;
+import engine.graphics.texture.Sampler;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.texture.TextureFormat;
-import engine.graphics.texture.WrapMode;
 import org.lwjgl.opengl.GL40;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 
 public final class GLTexture2DMultiSample extends GLTexture implements Texture2D {
 
-    public static final GLTexture2DMultiSample EMPTY = new GLTexture2DMultiSample(0);
-
-    private int sample;
+    private Sampler sampler;
     private boolean fixedSampleLocation;
 
     private int width;
@@ -26,8 +20,8 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
         return new Builder();
     }
 
-    private GLTexture2DMultiSample(int id) {
-        super(id);
+    private GLTexture2DMultiSample() {
+        super(glGenTextures());
     }
 
     @Override
@@ -39,7 +33,7 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
         this.width = width;
         this.height = height;
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        GL40.glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, sample, format.internalFormat, width, height, fixedSampleLocation);
+        GL40.glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, sampler.getId(), format.internalFormat, width, height, fixedSampleLocation);
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
 
@@ -53,8 +47,8 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
         return height;
     }
 
-    public int getSample() {
-        return sample;
+    public Sampler getSampler() {
+        return sampler;
     }
 
     public boolean isFixedSampleLocation() {
@@ -68,35 +62,10 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
 
     public static final class Builder {
         private GLTextureFormat format;
-        private int sample = 1;
+        private Sampler sampler = GLSampler.DEFAULT;
         private boolean fixedSampleLocation = false;
-        private final Map<Integer, Integer> parameterMap = new HashMap<>();
 
         private Builder() {
-            magFilter(FilterMode.NEAREST);
-            minFilter(FilterMode.NEAREST);
-            wrapS(WrapMode.REPEAT);
-            wrapT(WrapMode.REPEAT);
-        }
-
-        public Builder magFilter(FilterMode mode) {
-            parameterMap.put(GL_TEXTURE_MAG_FILTER, toGLFilterMode(mode));
-            return this;
-        }
-
-        public Builder minFilter(FilterMode mode) {
-            parameterMap.put(GL_TEXTURE_MIN_FILTER, toGLFilterMode(mode));
-            return this;
-        }
-
-        public Builder wrapS(WrapMode mode) {
-            parameterMap.put(GL_TEXTURE_WRAP_S, toGLWrapMode(mode));
-            return this;
-        }
-
-        public Builder wrapT(WrapMode mode) {
-            parameterMap.put(GL_TEXTURE_WRAP_T, toGLWrapMode(mode));
-            return this;
         }
 
         public Builder format(TextureFormat format) {
@@ -104,8 +73,8 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
             return this;
         }
 
-        public Builder sample(int sample) {
-            this.sample = sample;
+        public Builder sampler(Sampler sampler) {
+            this.sampler = sampler;
             return this;
         }
 
@@ -115,12 +84,11 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
         }
 
         public GLTexture2DMultiSample build(int width, int height) {
-            GLTexture2DMultiSample texture = new GLTexture2DMultiSample(glGenTextures());
+            GLTexture2DMultiSample texture = new GLTexture2DMultiSample();
             texture.format = format;
-            texture.sample = sample;
+            texture.sampler = sampler;
             texture.fixedSampleLocation = fixedSampleLocation;
             texture.bind();
-            parameterMap.forEach((key, value) -> glTexParameteri(GL_TEXTURE_2D, key, value));
             texture.glTexImage2DMultisample(width, height);
             return texture;
         }

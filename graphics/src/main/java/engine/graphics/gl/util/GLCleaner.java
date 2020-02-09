@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL20.glDeleteProgram;
 import static org.lwjgl.opengl.GL30.glDeleteFramebuffers;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
+import static org.lwjgl.opengl.GL33.glDeleteSamplers;
 
 public class GLCleaner {
     public static Cleaner.Disposable registerTexture(Object obj, int textureId) {
@@ -27,5 +28,9 @@ public class GLCleaner {
 
     public static Cleaner.Disposable registerProgram(Object obj, int programId) {
         return Cleaner.register(obj, () -> glDeleteProgram(programId));
+    }
+
+    public static Cleaner.Disposable registerSampler(Object obj, int samplerId) {
+        return Cleaner.register(obj, () -> glDeleteSamplers(samplerId));
     }
 }
