@@ -110,8 +110,9 @@ public class GLFrameBuffer implements FrameBuffer {
         bind();
         attachments.forEach((key, value) -> {
             Texture2D texture = value.create(width, height);
+            GLTexture glTexture = (GLTexture) texture;
             attachedTextures.put(key, texture);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, key, ((GLTexture) texture).getTarget(), texture.getId(), 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, key, glTexture.getTarget(), glTexture.getId(), 0);
         });
     }
 
