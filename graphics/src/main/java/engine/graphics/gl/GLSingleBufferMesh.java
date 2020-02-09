@@ -29,6 +29,8 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
     private int vertexCount;
 
     private GLSingleBufferMesh() {
+        id = GL30.glGenVertexArrays();
+        disposable = GLCleaner.registerVertexArray(this, id);
     }
 
     public int getId() {
@@ -163,8 +165,6 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
         public GLSingleBufferMesh build() {
             GLSingleBufferMesh mesh = new GLSingleBufferMesh();
             mesh.vertexBuffer = new GLVertexBuffer(GLBufferType.ARRAY_BUFFER, bufferUsage);
-            mesh.id = GL30.glGenVertexArrays();
-            mesh.disposable = GLCleaner.registerVertexArray(this, mesh.id);
             mesh.setDrawMode(drawMode);
             return mesh;
         }
