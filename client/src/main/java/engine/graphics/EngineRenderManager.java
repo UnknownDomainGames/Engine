@@ -96,7 +96,7 @@ public class EngineRenderManager implements RenderManager {
         gameRenderer = new GameRenderer(this);
         gameGUIPlatform = new GameGUIPlatform();
         guiManager = new EngineGUIManager(window, gameGUIPlatform.getGUIStage());
-        hudManager = new EngineHUDManager();
+        hudManager = new EngineHUDManager(gameGUIPlatform.getHUDStage());
 
         window.show();
     }

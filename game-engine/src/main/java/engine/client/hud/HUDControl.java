@@ -1,5 +1,6 @@
 package engine.client.hud;
 
+import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
@@ -13,6 +14,7 @@ public abstract class HUDControl extends Control {
 
     public HUDControl(String name) {
         this.name = name;
+        visible().set(false);
     }
 
     public String getName() {
@@ -22,7 +24,12 @@ public abstract class HUDControl extends Control {
     public MutableObjectValue<Node> content() {
         if (content == null) {
             content = new SimpleMutableObjectValue<>();
-            content.addChangeListener((observable, oldValue, newValue) -> needsLayout());
+            content.addChangeListener((observable, oldValue, newValue) -> {
+                ObservableList<Node> children = getChildren();
+                children.remove(oldValue);
+                children.add(newValue);
+                needsLayout();
+            });
         }
         return content;
     }
@@ -33,5 +40,25 @@ public abstract class HUDControl extends Control {
 
     public void setContent(Node content) {
         content().set(content);
+    }
+
+    @Override
+    public float computeWidth() {
+        Node content = getContent();
+        return content == null ? 0 : content.prefWidth();
+    }
+
+    @Override
+    public float computeHeight() {
+        Node content = getContent();
+        return content == null ? 0 : content.prefHeight();
+    }
+
+    @Override
+    protected void layoutChildren() {
+        Node content = getContent();
+        if (content != null) {
+            layoutInArea(content, 0, 0, width().get(), height().get());
+        }
     }
 }

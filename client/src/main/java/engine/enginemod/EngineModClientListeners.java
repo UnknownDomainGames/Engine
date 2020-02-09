@@ -14,6 +14,7 @@ import engine.enginemod.client.gui.game.GUIGameCreation;
 import engine.enginemod.client.gui.game.GuiChat;
 import engine.enginemod.client.gui.game.GuiIngameMenu;
 import engine.enginemod.client.gui.game.GuiItemList;
+import engine.enginemod.client.gui.hud.HUDGameDebug;
 import engine.entity.Entity;
 import engine.entity.component.TwoHands;
 import engine.entity.item.ItemEntity;
@@ -240,18 +241,14 @@ public final class EngineModClientListeners {
                 .key(Key.KEY_F2)
                 .startHandler(engineClient -> GLHelper.takeScreenshot(engineClient.getRunPath().resolve("screenshot")))
                 .build());
-
-        var renderContext = Platform.getEngineClient().getRenderManager();
-        var hudManager = renderContext.getHUDManager();
-//        var hudGameDebug = new HUDGameDebug();
-//        renderContext.getScheduler().runTaskEveryFrame(() -> hudGameDebug.update(renderContext));
-//        event.register(KeyBinding.builder()
-//                .name("game.debug_display_switch")
-//                .key(Key.KEY_F3)
-//                .actionMode(ActionMode.SWITCH)
-//                .startHandler(gameClient -> guiManager.showHud("debugGame", new Scene(hudGameDebug)))
-//                .endHandler((gameClient, integer) -> guiManager.removeHud("debugGame"))
-//                .build());
+        var hudManager = Platform.getEngineClient().getRenderManager().getHUDManager();
+        var hudGameDebug = new HUDGameDebug();
+        hudManager.add(hudGameDebug);
+        event.register(KeyBinding.builder()
+                .name("game.debug_display_switch")
+                .key(Key.KEY_F3)
+                .startHandler(gameClient -> hudGameDebug.visible().set(!hudGameDebug.visible().get()))
+                .build());
         event.register(KeyBinding.builder()
                 .name("game.hud_display_switch")
                 .key(Key.KEY_F1)
