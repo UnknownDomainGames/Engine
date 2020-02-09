@@ -9,6 +9,7 @@ import engine.graphics.gl.GLStreamedRenderer;
 import engine.graphics.gl.shader.ShaderProgram;
 import engine.graphics.gl.shader.ShaderType;
 import engine.graphics.gl.texture.GLFrameBuffer;
+import engine.graphics.gl.texture.GLSampler;
 import engine.graphics.light.DirectionalLight;
 import engine.graphics.material.Material;
 import engine.graphics.shader.ShaderManager;
@@ -86,7 +87,7 @@ public final class WorldRenderer {
                 .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/entity.frag")));
 
         frameBuffer = GLFrameBuffer.createRGB16FDepth24Stencil8FrameBuffer(manager.getWindow().getWidth(), manager.getWindow().getHeight());
-        frameBufferMultiSample = GLFrameBuffer.createMultiSampleRGB16FDepth24Stencil8FrameBuffer(manager.getWindow().getWidth(), manager.getWindow().getHeight(), 1);
+        frameBufferMultiSample = GLFrameBuffer.createMultiSampleRGB16FDepth24Stencil8FrameBuffer(manager.getWindow().getWidth(), manager.getWindow().getHeight(), GLSampler.DEFAULT);
         frameBufferSP = ShaderManager.instance().registerShader("frame_buffer_shader",
                 new ShaderProgramBuilder().addShader(ShaderType.VERTEX_SHADER, AssetURL.of("engine", "shader/framebuffer.vert"))
                         .addShader(ShaderType.FRAGMENT_SHADER, AssetURL.of("engine", "shader/framebuffer.frag")));
