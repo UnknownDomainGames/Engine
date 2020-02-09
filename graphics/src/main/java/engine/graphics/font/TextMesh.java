@@ -35,6 +35,21 @@ public class TextMesh {
         return quads.length;
     }
 
+    public float getWidth(int beginIndex, int endIndex) {
+        if (beginIndex >= endIndex) return 0;
+        if (endIndex == quads.length) return quads[endIndex - 1].x1 - quads[beginIndex].x0;
+        return quads[endIndex].x0 - quads[beginIndex].x0;
+    }
+
+    public float getHeight(int beginIndex, int endIndex) {
+        float height = 0;
+        for (int i = beginIndex; i < endIndex; i++) {
+            float quadHeight = quads[i].getHeight();
+            if (quadHeight > height) height = quadHeight;
+        }
+        return height;
+    }
+
     public void put(VertexDataBuf buf, Color color) {
         put(buf, color, 0, quads.length);
     }
@@ -61,6 +76,14 @@ public class TextMesh {
 
         public char getCharacter() {
             return character;
+        }
+
+        public float getWidth() {
+            return x1 - x0;
+        }
+
+        public float getHeight() {
+            return y1 - y0;
         }
 
         public void put(VertexDataBuf buf, Color color) {

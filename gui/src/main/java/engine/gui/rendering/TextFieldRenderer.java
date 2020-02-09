@@ -1,10 +1,10 @@
 package engine.gui.rendering;
 
 import com.google.common.base.Strings;
-import engine.gui.control.TextField;
 import engine.graphics.font.Font;
 import engine.graphics.font.FontHelper;
 import engine.graphics.font.TextMesh;
+import engine.gui.control.TextField;
 import engine.util.Color;
 
 public final class TextFieldRenderer extends RegionRenderer<TextField> {
@@ -64,10 +64,8 @@ public final class TextFieldRenderer extends RegionRenderer<TextField> {
             } else {
                 int selectionStart = textField.selection().get().getStart();
                 int selectionEnd = textField.selection().get().getEnd();
-                String b = textField.text().get().substring(0, selectionStart);
-                String s = textField.selectedText();
                 graphics.setColor(selectionColor);
-                graphics.fillRect(helper.computeTextWidth(b, font) + offset, 0, helper.computeTextWidth(s, font), ph - py);
+                graphics.fillRect(textMesh.getWidth(0, selectionStart) + offset, 0, textMesh.getWidth(selectionStart, selectionEnd), ph - py);
                 graphics.setColor(frontColor);
                 graphics.drawText(textMesh, 0, selectionStart, offset, 0);
                 graphics.drawText(textMesh, selectionEnd, textMesh.length(), offset, 0);
