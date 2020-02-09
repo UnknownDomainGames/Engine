@@ -4,6 +4,7 @@ import engine.graphics.image.ImageHelper;
 import engine.graphics.image.ReadOnlyImage;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture2D;
+import engine.graphics.texture.TextureFormat;
 import engine.graphics.texture.WrapMode;
 import engine.util.Color;
 import org.lwjgl.opengl.GL11;
@@ -14,16 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL21.GL_SRGB_ALPHA;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public final class GLTexture2D extends GLTexture implements Texture2D {
 
     public static final GLTexture2D EMPTY = new GLTexture2D(0);
-
-    private int internalFormat;
-    private int format;
-    private int type;
 
     private int width;
     private int height;
@@ -78,7 +74,7 @@ public final class GLTexture2D extends GLTexture implements Texture2D {
         this.width = width;
         this.height = height;
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        GL11.glTexImage2D(GL_TEXTURE_2D, level, internalFormat, width, height, 0, format, type, pixelBuffer);
+        GL11.glTexImage2D(GL_TEXTURE_2D, level, format.internalFormat, width, height, 0, format.format, format.type, pixelBuffer);
         if (mipmap) glGenerateMipmap(GL_TEXTURE_2D);
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
@@ -94,7 +90,7 @@ public final class GLTexture2D extends GLTexture implements Texture2D {
 
     public void glTexSubImage2D(int offsetX, int offsetY, ReadOnlyImage image, int level) {
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        GL11.glTexSubImage2D(GL_TEXTURE_2D, level, offsetX, offsetY, image.getWidth(), image.getHeight(), format, type, image.getPixelBuffer());
+        GL11.glTexSubImage2D(GL_TEXTURE_2D, level, offsetX, offsetY, image.getWidth(), image.getHeight(), format.format, format.type, image.getPixelBuffer());
         if (mipmap) glGenerateMipmap(GL_TEXTURE_2D);
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
@@ -109,32 +105,24 @@ public final class GLTexture2D extends GLTexture implements Texture2D {
         return height;
     }
 
-    public int getInternalFormat() {
-        return internalFormat;
-    }
-
-    public int getFormat() {
-        return format;
-    }
-
-    public int getType() {
-        return type;
-    }
-
     public static final class Builder implements Texture2D.Builder {
 
         private final Map<Integer, Integer> parameterMap = new HashMap<>();
 
         private boolean mipmap = false;
-        private int internalFormat = GL_SRGB_ALPHA;
-        private int format = GL_RGBA;
-        private int type = GL_UNSIGNED_BYTE;
+        private GLTextureFormat format = GLTextureFormat.RGBA8;
 
         private Builder() {
             magFilter(FilterMode.NEAREST);
             minFilter(FilterMode.NEAREST);
             wrapS(WrapMode.REPEAT);
             wrapT(WrapMode.REPEAT);
+        }
+
+        @Override
+        public Builder format(TextureFormat format) {
+            this.format = GLTextureFormat.valueOf(format);
+            return this;
         }
 
         @Override
@@ -173,21 +161,6 @@ public final class GLTexture2D extends GLTexture implements Texture2D {
             return this;
         }
 
-        public Builder internalFormat(int internalFormat) {
-            this.internalFormat = internalFormat;
-            return this;
-        }
-
-        public Builder format(int format) {
-            this.format = format;
-            return this;
-        }
-
-        public Builder type(int type) {
-            this.type = type;
-            return this;
-        }
-
         public GLTexture2D build() {
             return build(null, 0, 0);
         }
@@ -202,9 +175,7 @@ public final class GLTexture2D extends GLTexture implements Texture2D {
 
         public GLTexture2D build(ByteBuffer pixelBuffer, int width, int height) {
             GLTexture2D glTexture2D = new GLTexture2D(glGenTextures());
-            glTexture2D.internalFormat = internalFormat;
             glTexture2D.format = format;
-            glTexture2D.type = type;
             glTexture2D.mipmap = mipmap;
             glTexture2D.bind();
 

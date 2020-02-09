@@ -15,6 +15,8 @@ public interface Texture2D extends Texture {
     int getHeight();
 
     interface Builder {
+        Builder format(TextureFormat format);
+
         Builder magFilter(FilterMode mode);
 
         Builder minFilter(FilterMode mode);

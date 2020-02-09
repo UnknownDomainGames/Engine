@@ -3,6 +3,7 @@ package engine.graphics.gl.texture;
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture;
+import engine.graphics.texture.TextureFormat;
 import engine.graphics.texture.WrapMode;
 import engine.graphics.util.Cleaner;
 
@@ -15,6 +16,8 @@ public abstract class GLTexture implements Texture {
 
     protected int id;
     protected Cleaner.Disposable disposable;
+
+    protected GLTextureFormat format;
 
     public static int toGLFilterMode(FilterMode filterMode) {
         switch (filterMode) {
@@ -61,6 +64,11 @@ public abstract class GLTexture implements Texture {
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public TextureFormat getFormat() {
+        return format.peer;
     }
 
     public void bind() {

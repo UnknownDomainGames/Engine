@@ -51,6 +51,11 @@ public class TextureAtlasImpl implements TextureAtlas {
     }
 
     @Override
+    public TextureFormat getFormat() {
+        return bakedTextureAtlas.getFormat();
+    }
+
+    @Override
     public void bind() {
         if (bakedTextureAtlas != null) bakedTextureAtlas.bind();
     }

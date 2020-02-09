@@ -4,6 +4,7 @@ import engine.graphics.font.Font;
 import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture;
+import engine.graphics.texture.TextureFormat;
 import engine.math.Math2;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -18,8 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.lwjgl.opengl.GL11.GL_RED;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.stb.STBTruetype.*;
 
 public class FontPlaneTexture implements Texture {
@@ -38,6 +37,11 @@ public class FontPlaneTexture implements Texture {
 //        abandonedTexIds = new ArrayList<>();
         blocks = new ArrayList<>();
         charQuads = new HashMap<>();
+    }
+
+    @Override
+    public TextureFormat getFormat() {
+        return glTexture.getFormat();
     }
 
     public void bind() {
@@ -103,7 +107,7 @@ public class FontPlaneTexture implements Texture {
             stbtt_PackFontRanges(context, fontInfo.getFontData(), fontInfo.getOffsetIndex(), ranges);
             stbtt_PackEnd(context);
 
-            glTexture = GLTexture2D.builder().format(GL_RED).internalFormat(GL_RED).type(GL_UNSIGNED_BYTE).magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR).build(bitmap, bitmapSize, bitmapSize);
+            glTexture = GLTexture2D.builder().format(TextureFormat.RED8).magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR).build(bitmap, bitmapSize, bitmapSize);
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack();
             for (int i = 0; i < blocks.size(); i++) {
                 FloatBuffer posX = BufferUtils.createFloatBuffer(1);

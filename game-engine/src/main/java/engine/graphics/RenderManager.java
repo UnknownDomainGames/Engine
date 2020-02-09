@@ -4,7 +4,7 @@ import engine.client.EngineClient;
 import engine.client.hud.HUDManager;
 import engine.graphics.display.Window;
 import engine.graphics.texture.TextureManager;
-import engine.graphics.viewport.Viewport;
+import engine.graphics.viewport.PerspectiveViewport;
 import engine.gui.GUIManager;
 
 import java.util.function.Supplier;
@@ -19,7 +19,7 @@ public interface RenderManager {
 
     Window getWindow();
 
-    Viewport getViewport();
+    PerspectiveViewport getViewport();
 
     TextureManager getTextureManager();
 

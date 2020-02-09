@@ -2,6 +2,7 @@ package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.texture.FrameBuffer;
+import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
@@ -10,8 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL30.*;
 
 public class GLFrameBuffer implements FrameBuffer {
@@ -35,10 +34,8 @@ public class GLFrameBuffer implements FrameBuffer {
         return builder()
                 .width(width)
                 .height(height)
-                .attachments(GL_COLOR_ATTACHMENT0, GLTexture2D.builder()
-                        .internalFormat(GL_RGB16F).format(GL_RGB).type(GL_FLOAT))
-                .attachments(GL_DEPTH_STENCIL_ATTACHMENT, GLTexture2D.builder()
-                        .internalFormat(GL_DEPTH24_STENCIL8).format(GL_DEPTH_STENCIL).type(GL_UNSIGNED_INT_24_8))
+                .attachments(GL_COLOR_ATTACHMENT0, GLTexture2D.builder().format(TextureFormat.RGB16F))
+                .attachments(GL_DEPTH_STENCIL_ATTACHMENT, GLTexture2D.builder().format(TextureFormat.DEPTH24_STENCIL8))
                 .build();
     }
 
@@ -46,8 +43,8 @@ public class GLFrameBuffer implements FrameBuffer {
         return builder()
                 .width(width)
                 .height(height)
-                .attachments(GL_COLOR_ATTACHMENT0, GLTexture2DMultiSample.builder().internalFormat(GL_RGB16F).sample(sample))
-                .attachments(GL_DEPTH_STENCIL_ATTACHMENT, GLTexture2DMultiSample.builder().internalFormat(GL_DEPTH24_STENCIL8).sample(sample))
+                .attachments(GL_COLOR_ATTACHMENT0, GLTexture2DMultiSample.builder().format(TextureFormat.RGB16F).sample(sample))
+                .attachments(GL_DEPTH_STENCIL_ATTACHMENT, GLTexture2DMultiSample.builder().format(TextureFormat.DEPTH24_STENCIL8).sample(sample))
                 .build();
     }
 
@@ -55,8 +52,7 @@ public class GLFrameBuffer implements FrameBuffer {
         return builder()
                 .width(width)
                 .height(height)
-                .attachments(GL_DEPTH_ATTACHMENT, GLTexture2D.builder()
-                        .internalFormat(GL_DEPTH_COMPONENT).format(GL_DEPTH_COMPONENT).type(GL_FLOAT))
+                .attachments(GL_DEPTH_ATTACHMENT, GLTexture2D.builder().format(TextureFormat.DEPTH32))
                 .build();
     }
 
