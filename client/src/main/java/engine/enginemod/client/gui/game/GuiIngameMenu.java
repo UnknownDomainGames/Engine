@@ -27,6 +27,10 @@ public class GuiIngameMenu extends BorderPane {
         text.font().setValue(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
+        Button backtoGame = new Button("Back To Game");
+        backtoGame.setOnMouseClicked(event -> Platform.getEngineClient().getRenderManager().getGUIManager().close());
+        vBox.getChildren().add(backtoGame);
+
         Button terminateGame = new Button("Terminate");
         terminateGame.setOnMouseClicked(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
