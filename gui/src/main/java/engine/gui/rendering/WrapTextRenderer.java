@@ -1,11 +1,11 @@
 package engine.gui.rendering;
 
 import com.google.common.base.Strings;
-import engine.gui.misc.Pos;
-import engine.gui.text.WrapText;
 import engine.graphics.font.Font;
 import engine.graphics.font.FontHelper;
 import engine.graphics.font.TextMesh;
+import engine.gui.misc.Pos;
+import engine.gui.text.WrapText;
 
 import java.util.stream.Collectors;
 
@@ -53,20 +53,20 @@ public final class WrapTextRenderer implements ComponentRenderer<WrapText> {
         graphics.setColor(text.color().get());
         Pos alignment = text.textAlignment().get();
         float leading = text.leading().getFloat();
-        float x = text.x().get(), y = text.y().get();
+        float y = 0;
         for (LineMesh mesh : meshes) {
+            var y1 = y + (lineHeight * leading - lineHeight) / 2;
             switch (alignment.getHpos()) {
                 case RIGHT:
-                    x = text.width().get() - mesh.width;
+                    graphics.drawText(mesh.mesh, text.width().get() - mesh.width, y1);
                     break;
                 case CENTER:
-                    x = (text.width().get() - mesh.width) / 2;
+                    graphics.drawText(mesh.mesh, (text.width().get() - mesh.width) / 2, y1);
                     break;
                 case LEFT:
+                    graphics.drawText(mesh.mesh, 0, y1);
                     break;
             }
-            var y1 = y + (lineHeight * leading - lineHeight) / 2;
-            graphics.drawText(mesh.mesh, x, y1);
             y += lineHeight * leading;
         }
     }
