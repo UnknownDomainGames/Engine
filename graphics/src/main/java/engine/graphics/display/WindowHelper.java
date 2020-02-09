@@ -4,9 +4,11 @@ import java.util.Collection;
 
 public interface WindowHelper {
 
-    Collection<Monitor> getMonitors();
+    Collection<Screen> getScreens();
 
-    Monitor getPrimaryMonitor();
+    Screen getPrimaryScreen();
+
+    Screen getScreen(String name);
 
     Window createWindow();
 }

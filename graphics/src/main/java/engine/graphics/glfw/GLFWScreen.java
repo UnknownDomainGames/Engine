@@ -1,5 +1,7 @@
-package engine.graphics.display;
+package engine.graphics.glfw;
 
+import engine.graphics.display.Screen;
+import engine.graphics.display.VideoMode;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
@@ -9,7 +11,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Monitor {
+public class GLFWScreen implements Screen {
     private final long pointer;
     private String name;
 
@@ -25,65 +27,62 @@ public class Monitor {
     private VideoMode videoMode;
     private final List<VideoMode> videoModes;
 
-    public Monitor(long pointer){
+    public GLFWScreen(long pointer) {
         this.pointer = pointer;
         videoModes = new ArrayList<>();
     }
 
-    public Monitor(long pointer, String name, int physicsWidth, int physicsHeight, float scaleX, float scaleY, int posX, int posY, VideoMode videoMode, List<VideoMode> videoModes) {
-        this.pointer = pointer;
-        this.name = name;
-        this.physicsWidth = physicsWidth;
-        this.physicsHeight = physicsHeight;
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        this.posX = posX;
-        this.posY = posY;
-        this.videoMode = videoMode;
-        this.videoModes = videoModes;
-    }
-
+    @Override
     public long getPointer() {
         return pointer;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public int getPhysicsWidth() {
         return physicsWidth;
     }
 
+    @Override
     public int getPhysicsHeight() {
         return physicsHeight;
     }
 
+    @Override
     public float getScaleX() {
         return scaleX;
     }
 
+    @Override
     public float getScaleY() {
         return scaleY;
     }
 
+    @Override
     public int getPosX() {
         return posX;
     }
 
+    @Override
     public int getPosY() {
         return posY;
     }
 
+    @Override
     public VideoMode getVideoMode() {
         return videoMode;
     }
 
+    @Override
     public List<VideoMode> getVideoModes() {
         return videoModes;
     }
 
-    public void refreshMonitor() {
+    public void refresh() {
         name = GLFW.glfwGetMonitorName(pointer);
         try (MemoryStack memoryStack = MemoryStack.stackPush()) {
             IntBuffer width = memoryStack.mallocInt(1);
@@ -95,6 +94,7 @@ public class Monitor {
             IntBuffer xPos = memoryStack.mallocInt(1);
             IntBuffer yPos = memoryStack.mallocInt(1);
             GLFW.glfwGetMonitorPos(pointer, xPos, yPos);
+
             GLFWVidMode vidMode = GLFW.glfwGetVideoMode(pointer);
             GLFWVidMode.Buffer vidModes = GLFW.glfwGetVideoModes(pointer);
             this.physicsWidth = width.get();

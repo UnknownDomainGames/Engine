@@ -2,7 +2,7 @@ package engine.graphics.glfw;
 
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
-import engine.graphics.display.Monitor;
+import engine.graphics.display.Screen;
 import engine.graphics.display.Window;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
@@ -25,22 +25,27 @@ public final class GLFWContext {
     private static boolean initialized;
     private static boolean terminated;
 
-    private static Monitor primaryMonitor;
-    private static Map<Long, Monitor> monitors;
+    private static Screen primaryScreen;
+    private static Map<Long, Screen> pointerToScreen;
+    private static Map<String, Screen> nameToScreen;
 
     private static ObservableList<Window> showingWindows = ObservableCollections.observableList(new ArrayList<>());
     private static ObservableList<Window> unmodifiableShowingWindows = ObservableCollections.unmodifiableObservableList(showingWindows);
 
-    public static Monitor getPrimaryMonitor() {
-        return primaryMonitor;
+    public static Screen getPrimaryScreen() {
+        return primaryScreen;
     }
 
-    public static Collection<Monitor> getMonitors() {
-        return monitors.values();
+    public static Collection<Screen> getNameToScreen() {
+        return pointerToScreen.values();
     }
 
-    public static Monitor getMonitor(long pointer) {
-        return monitors.get(pointer);
+    public static Screen getScreen(long pointer) {
+        return pointerToScreen.get(pointer);
+    }
+
+    public static Screen getScreen(String name) {
+        return nameToScreen.get(name);
     }
 
     public static synchronized void initialize() {
@@ -50,7 +55,7 @@ public final class GLFWContext {
         GLFWErrorCallback.createThrow().set();
         if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
-        initMonitor();
+        initScreens();
     }
 
     public static synchronized void terminate() {
@@ -59,37 +64,25 @@ public final class GLFWContext {
         glfwTerminate();
     }
 
-    private static void initMonitor() {
+    private static void initScreens() {
         PointerBuffer pointerBuffer = GLFW.glfwGetMonitors();
-        Map<Long, Monitor> monitors = new HashMap<>();
+        Map<Long, Screen> pointerToScreen = new HashMap<>();
+        Map<String, Screen> nameToScreen = new HashMap<>();
         for (int i = 0; i < pointerBuffer.capacity(); i++) {
             long pointer = pointerBuffer.get();
-            monitors.put(pointer, createMonitor(pointer));
+            Screen screen = createScreen(pointer);
+            pointerToScreen.put(pointer, screen);
+            nameToScreen.put(screen.getName(), screen);
         }
-        GLFWContext.monitors = Map.copyOf(monitors);
-        GLFWContext.primaryMonitor = getMonitor(GLFW.glfwGetPrimaryMonitor());
+        GLFWContext.pointerToScreen = Map.copyOf(pointerToScreen);
+        GLFWContext.nameToScreen = Map.copyOf(nameToScreen);
+        GLFWContext.primaryScreen = getScreen(GLFW.glfwGetPrimaryMonitor());
     }
 
-    private static Monitor createMonitor(long pointer) {
-//        String name = GLFW.glfwGetMonitorName(pointer);
-//        try (MemoryStack memoryStack = MemoryStack.stackPush()) {
-//            IntBuffer width = memoryStack.mallocInt(1);
-//            IntBuffer height = memoryStack.mallocInt(1);
-//            GLFW.glfwGetMonitorPhysicalSize(pointer, width, height);
-//            FloatBuffer xScale = memoryStack.mallocFloat(1);
-//            FloatBuffer yScale = memoryStack.mallocFloat(1);
-//            GLFW.glfwGetMonitorContentScale(pointer, xScale, yScale);
-//            IntBuffer xPos = memoryStack.mallocInt(1);
-//            IntBuffer yPos = memoryStack.mallocInt(1);
-//            GLFW.glfwGetMonitorPos(pointer, xPos, yPos);
-//            GLFWVidMode vidMode = GLFW.glfwGetVideoMode(pointer);
-//            GLFWVidMode.Buffer vidModes = GLFW.glfwGetVideoModes(pointer);
-//            return new Monitor(pointer, name, width.get(), height.get(), xScale.get(), yScale.get(), xPos.get(), yPos.get(),
-//                    createVideoMode(vidMode), createVideoModes(vidModes));
-//        }
-        var monitor = new Monitor(pointer);
-        monitor.refreshMonitor();
-        return monitor;
+    private static Screen createScreen(long pointer) {
+        var screen = new GLFWScreen(pointer);
+        screen.refresh();
+        return screen;
     }
 
     public static ObservableList<Window> getShowingWindows() {
@@ -104,17 +97,9 @@ public final class GLFWContext {
         showingWindows.remove(window);
     }
 
-//    private static List<VideoMode> createVideoModes(GLFWVidMode.Buffer vidModes) {
-//        List<VideoMode> videoModes = new ArrayList<>();
-//        for (int i = 0; i < vidModes.limit(); i++) {
-//            videoModes.add(createVideoMode(vidModes.get()));
-//        }
-//        return List.copyOf(videoModes);
-//    }
-//
-//    private static VideoMode createVideoMode(GLFWVidMode vidMode) {
-//        return new VideoMode(vidMode.width(), vidMode.height(), vidMode.redBits(), vidMode.greenBits(), vidMode.blueBits(), vidMode.refreshRate());
-//    }
+    static void refreshScreen(Screen screen) {
+        ((GLFWScreen) screen).refresh();
+    }
 
     private GLFWContext() {
     }

@@ -34,19 +34,19 @@ public class GuiSettings extends AnchorPane {
         var lblDisplayMode = new Text("Display Mode");
         var lblRes = new Text("Resolution");
         var butRes = new Button();
-        var monitor = Platform.getEngineClient().getRenderManager().getWindow().getMonitor();
-        monitor.
-                getVideoModes().stream().filter(mode -> mode.getWidth() == (settings.getDisplaySettings().getResolutionWidth() == -1 ? monitor.getVideoMode().getWidth() : settings.getDisplaySettings().getResolutionWidth())
-                && mode.getHeight() == (settings.getDisplaySettings().getResolutionHeight() == -1 ? monitor.getVideoMode().getHeight() : settings.getDisplaySettings().getResolutionHeight())
-                && mode.getRefreshRate() == (settings.getDisplaySettings().getFrameRate() == -1 ? monitor.getVideoMode().getRefreshRate() : settings.getDisplaySettings().getFrameRate()))
-                .findFirst().ifPresentOrElse(videoMode -> videoModeIndex = monitor.getVideoModes().indexOf(videoMode),
-                () -> videoModeIndex = monitor.getVideoModes().indexOf(monitor.getVideoMode()));
-        butRes.text().setValue(String.format("%dx%d, %dHz", Platform.getEngineClient().getRenderManager().getWindow().getWidth(), Platform.getEngineClient().getRenderManager().getWindow().getHeight(), settings.getDisplaySettings().getDisplayMode() != DisplayMode.FULLSCREEN ? 60 : monitor.getVideoMode().getRefreshRate()));
+        var screen = Platform.getEngineClient().getRenderManager().getWindow().getScreen();
+        screen.
+                getVideoModes().stream().filter(mode -> mode.getWidth() == (settings.getDisplaySettings().getResolutionWidth() == -1 ? screen.getVideoMode().getWidth() : settings.getDisplaySettings().getResolutionWidth())
+                && mode.getHeight() == (settings.getDisplaySettings().getResolutionHeight() == -1 ? screen.getVideoMode().getHeight() : settings.getDisplaySettings().getResolutionHeight())
+                && mode.getRefreshRate() == (settings.getDisplaySettings().getFrameRate() == -1 ? screen.getVideoMode().getRefreshRate() : settings.getDisplaySettings().getFrameRate()))
+                .findFirst().ifPresentOrElse(videoMode -> videoModeIndex = screen.getVideoModes().indexOf(videoMode),
+                () -> videoModeIndex = screen.getVideoModes().indexOf(screen.getVideoMode()));
+        butRes.text().setValue(String.format("%dx%d, %dHz", Platform.getEngineClient().getRenderManager().getWindow().getWidth(), Platform.getEngineClient().getRenderManager().getWindow().getHeight(), settings.getDisplaySettings().getDisplayMode() != DisplayMode.FULLSCREEN ? 60 : screen.getVideoMode().getRefreshRate()));
         butRes.setOnMouseClicked(event -> {
-            videoModeIndex = (GuiSettings.this.videoModeIndex + 1) % monitor.getVideoModes().size();
-            settings.getDisplaySettings().setResolutionWidth(monitor.getVideoModes().get(videoModeIndex).getWidth());
-            settings.getDisplaySettings().setResolutionHeight(monitor.getVideoModes().get(videoModeIndex).getHeight());
-            settings.getDisplaySettings().setFrameRate(monitor.getVideoModes().get(videoModeIndex).getRefreshRate());
+            videoModeIndex = (GuiSettings.this.videoModeIndex + 1) % screen.getVideoModes().size();
+            settings.getDisplaySettings().setResolutionWidth(screen.getVideoModes().get(videoModeIndex).getWidth());
+            settings.getDisplaySettings().setResolutionHeight(screen.getVideoModes().get(videoModeIndex).getHeight());
+            settings.getDisplaySettings().setFrameRate(screen.getVideoModes().get(videoModeIndex).getRefreshRate());
             butRes.text().setValue(String.format("%dx%d, %dHz", settings.getDisplaySettings().getResolutionWidth(), settings.getDisplaySettings().getResolutionHeight(), settings.getDisplaySettings().getFrameRate()));
         });
         butRes.disabled().set(settings.getDisplaySettings().getDisplayMode() != DisplayMode.FULLSCREEN);
@@ -59,15 +59,15 @@ public class GuiSettings extends AnchorPane {
                 if (settings.getDisplaySettings().getDisplayMode() == DisplayMode.FULLSCREEN) {
                     butRes.disabled().set(false);
                     if (settings.getDisplaySettings().getResolutionWidth() == -1 || settings.getDisplaySettings().getResolutionHeight() == -1 || settings.getDisplaySettings().getFrameRate() == -1) {
-                        settings.getDisplaySettings().setResolutionWidth(monitor.getVideoMode().getWidth());
-                        settings.getDisplaySettings().setResolutionHeight(monitor.getVideoMode().getHeight());
-                        settings.getDisplaySettings().setFrameRate(monitor.getVideoMode().getRefreshRate());
+                        settings.getDisplaySettings().setResolutionWidth(screen.getVideoMode().getWidth());
+                        settings.getDisplaySettings().setResolutionHeight(screen.getVideoMode().getHeight());
+                        settings.getDisplaySettings().setFrameRate(screen.getVideoMode().getRefreshRate());
                     }
                     butRes.text().setValue(String.format("%dx%d, %dHz", settings.getDisplaySettings().getResolutionWidth(), settings.getDisplaySettings().getResolutionHeight(), settings.getDisplaySettings().getFrameRate()));
                 } else {
                     butRes.disabled().set(true);
-                    settings.getDisplaySettings().setResolutionWidth(settings.getDisplaySettings().getDisplayMode() == DisplayMode.WINDOWED ? -1 : monitor.getVideoMode().getWidth());
-                    settings.getDisplaySettings().setResolutionHeight(settings.getDisplaySettings().getDisplayMode() == DisplayMode.WINDOWED ? -1 : monitor.getVideoMode().getHeight());
+                    settings.getDisplaySettings().setResolutionWidth(settings.getDisplaySettings().getDisplayMode() == DisplayMode.WINDOWED ? -1 : screen.getVideoMode().getWidth());
+                    settings.getDisplaySettings().setResolutionHeight(settings.getDisplaySettings().getDisplayMode() == DisplayMode.WINDOWED ? -1 : screen.getVideoMode().getHeight());
                     settings.getDisplaySettings().setFrameRate(60);
                     butRes.text().setValue(String.format("%dx%d, %dHz", Platform.getEngineClient().getRenderManager().getWindow().getWidth(), Platform.getEngineClient().getRenderManager().getWindow().getHeight(), 60));
                 }

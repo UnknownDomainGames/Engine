@@ -14,9 +14,9 @@ public interface Window extends WindowCallbacks {
 
     int getHeight();
 
-    Monitor getMonitor();
+    Screen getScreen();
 
-    void setMonitor(Monitor monitor);
+    void setScreen(Screen screen);
 
     float getContentScaleX();
 
@@ -32,7 +32,7 @@ public interface Window extends WindowCallbacks {
         setDisplayMode(mode, -1, -1, -1);
     }
 
-    void setDisplayMode(DisplayMode mode, int newWidth, int newHeight, int frameRate);
+    void setDisplayMode(DisplayMode mode, int width, int height, int frameRate);
 
     String getTitle();
 

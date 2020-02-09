@@ -1,6 +1,6 @@
 package engine.graphics.gl;
 
-import engine.graphics.display.Monitor;
+import engine.graphics.display.Screen;
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
 import engine.graphics.glfw.GLFWContext;
@@ -10,13 +10,18 @@ import java.util.Collection;
 
 public final class GLWindowHelper implements WindowHelper {
     @Override
-    public Collection<Monitor> getMonitors() {
-        return GLFWContext.getMonitors();
+    public Collection<Screen> getScreens() {
+        return GLFWContext.getNameToScreen();
     }
 
     @Override
-    public Monitor getPrimaryMonitor() {
-        return GLFWContext.getPrimaryMonitor();
+    public Screen getPrimaryScreen() {
+        return GLFWContext.getPrimaryScreen();
+    }
+
+    @Override
+    public Screen getScreen(String name) {
+        return GLFWContext.getScreen(name);
     }
 
     @Override

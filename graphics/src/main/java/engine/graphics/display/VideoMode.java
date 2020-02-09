@@ -1,6 +1,6 @@
 package engine.graphics.display;
 
-public class VideoMode {
+public final class VideoMode {
     private final int width;
     private final int height;
     private final int redBits;
