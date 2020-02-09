@@ -51,7 +51,7 @@ public final class TextRenderer implements ComponentRenderer<Text> {
         graphics.setColor(text.color().get());
         Pos alignment = text.textAlignment().get();
         float leading = text.leading().getFloat();
-        float x = text.x().get(), y = text.y().get();
+        float x = text.x().get(), y = text.y().get() * 0;
         for (LineMesh mesh : meshes) {
             switch (alignment.getHpos()) {
                 case RIGHT:
