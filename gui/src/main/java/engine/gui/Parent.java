@@ -20,7 +20,7 @@ public abstract class Parent extends Node {
                 if (oldParent != null) {
                     node.scene.unbindBidirectional(oldParent.scene);
                 }
-                node.parent.setValue(this);
+                node.parent.set(this);
                 node.scene.bindBidirectional(Parent.this.scene);
                 node.parent.addChangeListener(new ValueChangeListener<>() {
                     @Override
@@ -90,10 +90,10 @@ public abstract class Parent extends Node {
                 ((Parent) child).needsLayout();
             }
         }
-        Parent parent = parent().getValue();
+        Parent parent = parent().get();
         while (parent != null && parent.layoutState == LayoutState.CLEAN) {
             parent.layoutState = LayoutState.DIRTY_BRANCH;
-            parent = parent.parent().getValue();
+            parent = parent.parent().get();
         }
     }
 
@@ -135,9 +135,7 @@ public abstract class Parent extends Node {
     }
 
     protected final void layoutInArea(Node node, float x, float y, float width, float height) {
-        node.x().set(x);
-        node.y().set(y);
-        node.width.set(width);
-        node.height.set(height);
+        node.relocate(x, y);
+        node.resize(width, height);
     }
 }
