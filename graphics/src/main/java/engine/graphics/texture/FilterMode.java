@@ -8,9 +8,13 @@ public enum FilterMode {
     NEAREST_MIPMAP_LINEAR(true),
     LINEAR_MIPMAP_LINEAR(true);
 
-    public final boolean mipmap;
+    private final boolean mipmap;
 
     FilterMode(boolean mipmap) {
         this.mipmap = mipmap;
+    }
+
+    public boolean isMipmap() {
+        return mipmap;
     }
 }
