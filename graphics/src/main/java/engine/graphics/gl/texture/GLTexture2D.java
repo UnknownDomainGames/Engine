@@ -161,28 +161,29 @@ public final class GLTexture2D extends GLTexture implements Texture2D {
             return this;
         }
 
+        @Override
         public GLTexture2D build() {
             return build(null, 0, 0);
         }
 
-        public GLTexture2D build(ReadOnlyImage image) {
-            return build(image.getPixelBuffer(), image.getWidth(), image.getHeight());
-        }
-
+        @Override
         public GLTexture2D build(int width, int height) {
             return build(null, width, height);
         }
 
+        @Override
+        public GLTexture2D build(ReadOnlyImage image) {
+            return build(image.getPixelBuffer(), image.getWidth(), image.getHeight());
+        }
+
         public GLTexture2D build(ByteBuffer pixelBuffer, int width, int height) {
-            GLTexture2D glTexture2D = new GLTexture2D(glGenTextures());
-            glTexture2D.format = format;
-            glTexture2D.mipmap = mipmap;
-            glTexture2D.bind();
-
+            GLTexture2D texture = new GLTexture2D(glGenTextures());
+            texture.format = format;
+            texture.mipmap = mipmap;
+            texture.bind();
             parameterMap.forEach((key, value) -> glTexParameteri(GL_TEXTURE_2D, key, value));
-
-            glTexture2D.glTexImage2D(pixelBuffer, width, height, 0);
-            return glTexture2D;
+            texture.glTexImage2D(pixelBuffer, width, height, 0);
+            return texture;
         }
     }
 }

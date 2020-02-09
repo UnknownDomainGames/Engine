@@ -3,6 +3,7 @@ package engine.graphics.gl.texture;
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.texture.FrameBuffer;
 import engine.graphics.texture.Sampler;
+import engine.graphics.texture.Texture2D;
 import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
@@ -25,7 +26,7 @@ public class GLFrameBuffer implements FrameBuffer {
 
     private final Map<Integer, TextureFactory> attachments;
 
-    private final Map<Integer, GLTexture> attachedTextures;
+    private final Map<Integer, Texture2D> attachedTextures;
 
     public static Builder builder() {
         return new Builder();
@@ -35,8 +36,8 @@ public class GLFrameBuffer implements FrameBuffer {
         return builder()
                 .width(width)
                 .height(height)
-                .attachments(GL_COLOR_ATTACHMENT0, GLTexture2D.builder().format(TextureFormat.RGB16F))
-                .attachments(GL_DEPTH_STENCIL_ATTACHMENT, GLTexture2D.builder().format(TextureFormat.DEPTH24_STENCIL8))
+                .attachments(GL_COLOR_ATTACHMENT0, Texture2D.builder().format(TextureFormat.RGB16F))
+                .attachments(GL_DEPTH_STENCIL_ATTACHMENT, Texture2D.builder().format(TextureFormat.DEPTH24_STENCIL8))
                 .build();
     }
 
@@ -53,7 +54,7 @@ public class GLFrameBuffer implements FrameBuffer {
         return builder()
                 .width(width)
                 .height(height)
-                .attachments(GL_DEPTH_ATTACHMENT, GLTexture2D.builder().format(TextureFormat.DEPTH32))
+                .attachments(GL_DEPTH_ATTACHMENT, Texture2D.builder().format(TextureFormat.DEPTH32))
                 .build();
     }
 
@@ -86,7 +87,7 @@ public class GLFrameBuffer implements FrameBuffer {
         return id;
     }
 
-    public GLTexture getTexture(int attachment) {
+    public Texture2D getTexture(int attachment) {
         return attachedTextures.get(attachment);
     }
 
@@ -108,9 +109,9 @@ public class GLFrameBuffer implements FrameBuffer {
         disposeAttachedTextures();
         bind();
         attachments.forEach((key, value) -> {
-            GLTexture texture = value.create(width, height);
+            Texture2D texture = value.create(width, height);
             attachedTextures.put(key, texture);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, key, texture.getTarget(), texture.getId(), 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, key, ((GLTexture) texture).getTarget(), texture.getId(), 0);
         });
     }
 
@@ -165,7 +166,7 @@ public class GLFrameBuffer implements FrameBuffer {
         private Builder() {
         }
 
-        public Builder attachments(int attachment, GLTexture2D.Builder builder) {
+        public Builder attachments(int attachment, Texture2D.Builder builder) {
             return attachments(attachment, builder::build);
         }
 
@@ -195,6 +196,6 @@ public class GLFrameBuffer implements FrameBuffer {
 
     @FunctionalInterface
     public interface TextureFactory {
-        GLTexture create(int width, int height);
+        Texture2D create(int width, int height);
     }
 }

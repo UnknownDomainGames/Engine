@@ -62,6 +62,7 @@ public abstract class GLTexture implements Texture {
 
     public abstract int getTarget();
 
+    @Override
     public int getId() {
         return id;
     }

@@ -29,6 +29,10 @@ public interface Texture2D extends Texture {
 
         Builder borderColor(Color color);
 
+        Texture2D build();
+
+        Texture2D build(int width, int height);
+
         Texture2D build(ReadOnlyImage image);
     }
 }
