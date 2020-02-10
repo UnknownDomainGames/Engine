@@ -87,14 +87,13 @@ public class VertexElement {
         if (o == null || getClass() != o.getClass()) return false;
         VertexElement that = (VertexElement) o;
         return componentCount == that.componentCount &&
-                bytes == that.bytes &&
                 normalized == that.normalized &&
                 type == that.type &&
-                name == that.name;
+                Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, name, componentCount, bytes, normalized);
+        return Objects.hash(type, name, componentCount, normalized);
     }
 }
