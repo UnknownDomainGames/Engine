@@ -1,5 +1,6 @@
-package engine.graphics.gl;
+package engine.graphics.gl.mesh;
 
+import engine.graphics.gl.GLDrawMode;
 import engine.graphics.gl.buffer.GLBufferType;
 import engine.graphics.gl.buffer.GLBufferUsage;
 import engine.graphics.gl.buffer.GLVertexBuffer;
@@ -73,15 +74,15 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
 
     @Override
     public void uploadData(@Nonnull VertexDataBuf buffer) {
-        uploadData(buffer.getByteBuffer(), buffer.getVertexFormat(), buffer.getVertexCount());
+        uploadData(buffer.getVertexFormat(), buffer.getByteBuffer(), buffer.getVertexCount());
     }
 
     @Override
-    public void uploadData(@Nonnull ByteBuffer buffer, @Nonnull VertexFormat format) {
-        uploadData(buffer, notNull(format), buffer.limit() / format.getBytes());
+    public void uploadData(@Nonnull VertexFormat format, @Nonnull ByteBuffer buffer) {
+        uploadData(notNull(format), buffer, buffer.limit() / format.getBytes());
     }
 
-    private void uploadData(ByteBuffer buffer, VertexFormat format, int vertexCount) {
+    private void uploadData(VertexFormat format, ByteBuffer buffer, int vertexCount) {
         setVertexFormat(format);
         vertexBuffer.uploadData(buffer);
         this.vertexCount = vertexCount;
@@ -177,9 +178,9 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
         }
 
         @Override
-        public GLSingleBufferMesh build(@Nonnull ByteBuffer buffer, @Nonnull VertexFormat format) {
+        public GLSingleBufferMesh build(@Nonnull VertexFormat format, @Nonnull ByteBuffer buffer) {
             GLSingleBufferMesh mesh = build();
-            mesh.uploadData(buffer, format);
+            mesh.uploadData(format, buffer);
             return mesh;
         }
     }

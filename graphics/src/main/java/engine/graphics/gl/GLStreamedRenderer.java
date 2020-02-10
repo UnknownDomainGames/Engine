@@ -1,5 +1,6 @@
 package engine.graphics.gl;
 
+import engine.graphics.gl.mesh.GLSingleBufferMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 

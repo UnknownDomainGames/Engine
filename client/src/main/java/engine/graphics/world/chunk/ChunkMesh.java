@@ -1,6 +1,6 @@
 package engine.graphics.world.chunk;
 
-import engine.graphics.gl.GLSingleBufferMesh;
+import engine.graphics.gl.mesh.GLSingleBufferMesh;
 import engine.graphics.mesh.SingleBufferMesh;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.util.Disposable;

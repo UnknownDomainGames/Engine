@@ -27,7 +27,7 @@ public interface SingleBufferMesh {
 
     void uploadData(@Nonnull VertexDataBuf buffer);
 
-    void uploadData(@Nonnull ByteBuffer buffer, @Nonnull VertexFormat format);
+    void uploadData(@Nonnull VertexFormat format, @Nonnull ByteBuffer buffer);
 
     void bind();
 
@@ -50,6 +50,6 @@ public interface SingleBufferMesh {
 
         SingleBufferMesh build(@Nonnull VertexDataBuf buffer);
 
-        SingleBufferMesh build(@Nonnull ByteBuffer buffer, @Nonnull VertexFormat format);
+        SingleBufferMesh build(@Nonnull VertexFormat format, @Nonnull ByteBuffer buffer);
     }
 }

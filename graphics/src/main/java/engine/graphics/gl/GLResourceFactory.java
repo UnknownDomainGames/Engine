@@ -1,6 +1,7 @@
 package engine.graphics.gl;
 
 import engine.graphics.gl.mesh.GLMesh;
+import engine.graphics.gl.mesh.GLSingleBufferMesh;
 import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.management.ResourceFactory;
 import engine.graphics.mesh.Mesh;
