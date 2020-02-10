@@ -9,7 +9,7 @@ import org.joml.Vector4fc;
 
 import static org.lwjgl.opengl.GL20.*;
 
-enum VertexAttributeType {
+enum AttributeType {
     BUFFER(GLVertexBuffer.class, false) {
         @Override
         public void apply(int index, VertexFormat format, Object value) {
@@ -73,7 +73,7 @@ enum VertexAttributeType {
     private final Class<?> superType;
     private final boolean applyBeforeRendering;
 
-    VertexAttributeType(Class<?> superType, boolean applyBeforeRendering) {
+    AttributeType(Class<?> superType, boolean applyBeforeRendering) {
         this.superType = superType;
         this.applyBeforeRendering = applyBeforeRendering;
     }
@@ -82,7 +82,7 @@ enum VertexAttributeType {
 
     public abstract void applyDefault(int index, VertexFormat format);
 
-    public boolean is(Class<?> clazz) {
+    public boolean isAcceptableType(Class<?> clazz) {
         return superType.isAssignableFrom(clazz);
     }
 

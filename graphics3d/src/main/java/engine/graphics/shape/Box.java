@@ -1,11 +1,10 @@
 package engine.graphics.shape;
 
+import engine.graphics.Renderable;
 import engine.graphics.gl.GLVertexArray;
-import engine.graphics.util.DataType;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
-import engine.graphics.Renderable;
 import engine.util.Color;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -78,7 +77,7 @@ public class Box implements Renderable {
         mesh = GLVertexArray.builder().drawMode(DrawMode.TRIANGLES)
                 .newBufferAttribute(VertexFormat.POSITION, buffer.getByteBuffer())
                 .newValueAttribute(VertexFormat.COLOR_ALPHA, new Vector4f(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()))
-                .newIndexBuffer(DataType.UNSIGNED_BYTE, indexBuffer)
+                .newIndexBuffer(indexBuffer)
                 .build();
     }
 

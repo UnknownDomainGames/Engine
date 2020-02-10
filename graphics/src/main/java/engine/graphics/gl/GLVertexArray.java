@@ -8,6 +8,7 @@ import engine.graphics.gl.util.GLHelper;
 import engine.graphics.util.Cleaner;
 import engine.graphics.util.DataType;
 import engine.graphics.util.DrawMode;
+import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -141,7 +142,7 @@ public final class GLVertexArray {
     public static final class VertexAttribute {
         private VertexFormat format;
         private Object value;
-        private VertexAttributeType type;
+        private AttributeType type = AttributeType.BUFFER;
 
         public VertexAttribute(VertexFormat format, Object value) {
             this.format = format;
@@ -161,16 +162,20 @@ public final class GLVertexArray {
         }
 
         public void setValue(Object value) {
-            Object oldValue = this.value;
             this.value = value;
+            checkAttributeType();
+        }
 
-            if (oldValue != null && oldValue.getClass() == value.getClass()) return;
-
-            for (var type : VertexAttributeType.values()) {
-                if (!type.is(value.getClass())) continue;
-                this.type = type;
-                return;
+        private void checkAttributeType() {
+            Class<?> clazz = value.getClass();
+            if (this.type.isAcceptableType(clazz)) return;
+            for (var type : AttributeType.values()) {
+                if (type.isAcceptableType(clazz)) {
+                    this.type = type;
+                    return;
+                }
             }
+            throw new IllegalArgumentException("Unsupported value type \"" + clazz + "\" as attribute value");
         }
 
         public void apply(int index) {
@@ -182,7 +187,7 @@ public final class GLVertexArray {
         }
 
         public void dispose() {
-            if (value instanceof GLVertexBuffer) {
+            if (type == AttributeType.BUFFER) {
                 ((GLVertexBuffer) value).dispose();
             }
         }
@@ -221,9 +226,8 @@ public final class GLVertexArray {
             return this;
         }
 
-        public Builder newBufferAttribute(VertexFormat format) {
-            attributes.add(new VertexAttribute(format, new GLVertexBuffer(GLBufferType.ARRAY_BUFFER, usage)));
-            return this;
+        public Builder newBufferAttribute(VertexDataBuf buf) {
+            return newBufferAttribute(buf.getVertexFormat(), buf.getByteBuffer());
         }
 
         public Builder newBufferAttribute(VertexFormat format, ByteBuffer buffer) {
@@ -239,26 +243,27 @@ public final class GLVertexArray {
             return this;
         }
 
-        public Builder newIndexBuffer(DataType indexType, ByteBuffer buffer) {
-            indexBuffer = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage, buffer);
-            this.indexType = indexType;
-            this.vertexCount = buffer.limit() / indexType.getBytes();
+        public Builder newIndexBuffer(ByteBuffer buffer) {
+            indexBuffer = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
+            indexBuffer.uploadData(buffer);
+            this.indexType = DataType.UNSIGNED_BYTE;
+            this.vertexCount = buffer.limit();
             return this;
         }
 
-        public Builder newIndexBuffer(DataType indexType, ShortBuffer buffer) {
+        public Builder newIndexBuffer(ShortBuffer buffer) {
             indexBuffer = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
             indexBuffer.uploadData(buffer);
-            this.indexType = indexType;
-            this.vertexCount = buffer.limit() * Short.BYTES / indexType.getBytes();
+            this.indexType = DataType.UNSIGNED_SHORT;
+            this.vertexCount = buffer.limit();
             return this;
         }
 
-        public Builder newIndexBuffer(DataType indexType, IntBuffer buffer) {
+        public Builder newIndexBuffer(IntBuffer buffer) {
             indexBuffer = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
             indexBuffer.uploadData(buffer);
-            this.indexType = indexType;
-            this.vertexCount = buffer.limit() * Integer.BYTES / indexType.getBytes();
+            this.indexType = DataType.UNSIGNED_INT;
+            this.vertexCount = buffer.limit();
             return this;
         }
 
