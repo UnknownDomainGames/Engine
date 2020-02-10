@@ -25,20 +25,20 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class GLFWWindow implements Window {
 
-    private long pointer;
-    private Cleaner.Disposable disposable;
+    protected long pointer;
+    protected Cleaner.Disposable disposable;
 
-    private int x;
-    private int y;
+    protected int x;
+    protected int y;
 
-    private int width;
-    private int height;
+    protected int width;
+    protected int height;
 
     private Screen screen;
 
     private boolean resized = false;
 
-    private String title;
+    protected String title;
 
     private boolean showing = false;
     private boolean doCloseImmediately = true;
@@ -54,7 +54,7 @@ public class GLFWWindow implements Window {
     private boolean iconified = false;
     private boolean maximized = false;
 
-    private Cursor cursor;
+    protected Cursor cursor;
 
     private final List<KeyCallback> keyCallbacks = new LinkedList<>();
     private final List<MouseCallback> mouseCallbacks = new LinkedList<>();
@@ -143,7 +143,7 @@ public class GLFWWindow implements Window {
         resize(width, height);
     }
 
-    private void resize() {
+    protected void resize() {
         resize(width, height);
     }
 
@@ -301,17 +301,17 @@ public class GLFWWindow implements Window {
         resize();
     }
 
-    private Cleaner.Disposable createDisposable(long pointer) {
+    protected Cleaner.Disposable createDisposable(long pointer) {
         return Cleaner.register(this, () -> glfwDestroyWindow(pointer));
     }
 
-    private void checkCreated() {
+    protected void checkCreated() {
         if (pointer == NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
         }
     }
 
-    private void initWindowHint() {
+    protected void initWindowHint() {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
@@ -323,7 +323,7 @@ public class GLFWWindow implements Window {
         }
     }
 
-    private void setWindowPosCenter() {
+    protected void setWindowPosCenter() {
         setPos((screen.getVideoMode().getWidth() - width) / 2, (screen.getVideoMode().getHeight() - height) / 2);
     }
 
@@ -556,7 +556,7 @@ public class GLFWWindow implements Window {
         dropCallbacks.remove(callback);
     }
 
-    private void initCallbacks() {
+    protected void initCallbacks() {
         glfwSetKeyCallback(pointer, (window, key, scancode, action, mods) -> {
             KeyCode _key = KeyCode.valueOf(key);
             Action _action = Action.values()[action];
