@@ -44,4 +44,8 @@ public final class BufferUtils {
         byteBuffer.asDoubleBuffer().put(src).flip();
         return byteBuffer;
     }
+
+    public static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
+        return createByteBuffer(newCapacity).put(buffer.flip());
+    }
 }

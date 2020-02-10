@@ -7,6 +7,7 @@ import engine.graphics.vertex.VertexFormat;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.GL_HALF_FLOAT;
+import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
 
 public final class GLHelper {
 
@@ -68,6 +69,30 @@ public final class GLHelper {
             glDisableVertexAttribArray(i);
         }
     }
+
+    public static String getFriendlyErrorCode(int errorCode) {
+        switch (errorCode) {
+            case GL_NO_ERROR:
+                return "NO_ERROR";
+            case GL_INVALID_ENUM:
+                return "INVALID_ENUM";
+            case GL_INVALID_VALUE:
+                return "INVALID_VALUE";
+            case GL_INVALID_OPERATION:
+                return "INVALID_OPERATION";
+            case GL_STACK_OVERFLOW:
+                return "STACK_OVERFLOW";
+            case GL_STACK_UNDERFLOW:
+                return "STACK_UNDERFLOW";
+            case GL_OUT_OF_MEMORY:
+                return "OUT_OF_MEMORY";
+            case GL_INVALID_FRAMEBUFFER_OPERATION:
+                return "INVALID_FRAMEBUFFER_OPERATION";
+            default:
+                throw new IllegalArgumentException("Unknown error code");
+        }
+    }
+
 
     private GLHelper() {
     }

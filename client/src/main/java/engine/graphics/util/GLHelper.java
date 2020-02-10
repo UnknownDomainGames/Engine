@@ -1,12 +1,9 @@
 package engine.graphics.util;
 
 import engine.Platform;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.stb.STBImageWrite;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -19,17 +16,10 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
+import static org.lwjgl.opengl.GL11.GL_RGBA;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 
 public class GLHelper {
-
-    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
-        ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
-        buffer.flip();
-        newBuffer.put(buffer);
-        return newBuffer;
-    }
 
     public static ByteBuffer getResourcesAsBuffer(String resource, int size) throws IOException {
         ByteBuffer buffer;
@@ -55,7 +45,7 @@ public class GLHelper {
                         break;
                     }
                     if (buffer.remaining() == 0) {
-                        buffer = resizeBuffer(buffer, buffer.capacity() * 3 / 2); // 50%
+                        buffer = BufferUtils.resizeBuffer(buffer, buffer.capacity() * 3 / 2); // 50%
                     }
                 }
             } catch (Exception e) {
@@ -65,72 +55,6 @@ public class GLHelper {
 
         buffer.flip();
         return buffer.slice();
-    }
-
-    public static ByteBuffer getByteBufferFromImage(BufferedImage img) {
-        int[] data = new int[img.getWidth() * img.getHeight()];
-        img.getRGB(0, 0, img.getWidth(), img.getHeight(), data, 0, img.getWidth());
-
-        ByteBuffer buffer = BufferUtils.createByteBuffer(img.getWidth() * img.getHeight() * 4);
-        boolean isAlpha = img.getType() == BufferedImage.TYPE_4BYTE_ABGR ||
-                img.getType() == BufferedImage.TYPE_4BYTE_ABGR_PRE ||
-                img.getType() == BufferedImage.TYPE_INT_ARGB ||
-                img.getType() == BufferedImage.TYPE_INT_ARGB_PRE;
-
-        for (int y = 0; y < img.getHeight(); y++) {
-            for (int x = 0; x < img.getWidth(); x++) {
-                int pixel = data[y * img.getWidth() + x];
-                buffer.put((byte) ((pixel >> 16) & 0xFF));     // Red component
-                buffer.put((byte) ((pixel >> 8) & 0xFF));      // Green component
-                buffer.put((byte) (pixel & 0xFF));               // Blue component
-                if (isAlpha)
-                    buffer.put((byte) ((pixel >> 24) & 0xFF));    // Alpha component. Only for RGBA
-                else {
-                    if (img.getType() == BufferedImage.TYPE_BYTE_INDEXED) {
-                        if (pixel == img.getColorModel().getRGB(((IndexColorModel) img.getColorModel()).getTransparentPixel())) {
-                            buffer.put((byte) 0);
-                        } else {
-                            buffer.put((byte) 255);
-                        }
-                    } else {
-                        buffer.put((byte) 255);
-                    }
-                }
-            }
-        }
-        buffer.flip();
-        return buffer;
-    }
-
-    public static String getFriendlyErrorEnum(int flag) {
-        var error = "";
-        switch (flag) {
-            case GL_NO_ERROR:
-                error = "NO_ERROR";
-                break;
-            case GL_INVALID_ENUM:
-                error = "INVALID_ENUM";
-                break;
-            case GL_INVALID_VALUE:
-                error = "INVALID_VALUE";
-                break;
-            case GL_INVALID_OPERATION:
-                error = "INVALID_OPERATION";
-                break;
-            case GL_STACK_OVERFLOW:
-                error = "STACK_OVERFLOW";
-                break;
-            case GL_STACK_UNDERFLOW:
-                error = "STACK_UNDERFLOW";
-                break;
-            case GL_OUT_OF_MEMORY:
-                error = "OUT_OF_MEMORY";
-                break;
-            case GL_INVALID_FRAMEBUFFER_OPERATION:
-                error = "INVALID_FRAMEBUFFER_OPERATION";
-                break;
-        }
-        return error;
     }
 
     public static void takeScreenshot(Path storagePath){
