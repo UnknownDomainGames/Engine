@@ -95,7 +95,9 @@ public final class GLMesh implements Mesh {
         public MeshAttribute(VertexFormat format, ByteBuffer buffer, GLBufferUsage usage) {
             this.format = format;
             this.buffer = new GLVertexBuffer(GLBufferType.ARRAY_BUFFER, usage);
-            this.buffer.uploadData(buffer);
+            if (buffer != null) {
+                this.buffer.uploadData(buffer);
+            }
         }
 
         @Override
