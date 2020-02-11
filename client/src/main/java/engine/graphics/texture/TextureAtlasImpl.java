@@ -1,7 +1,6 @@
 package engine.graphics.texture;
 
 import engine.client.asset.AssetURL;
-import engine.graphics.gl.texture.GLTexture2D;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +9,7 @@ public class TextureAtlasImpl implements TextureAtlas {
 
     private final Map<AssetURL, TextureAtlasRegionImpl> textures = new HashMap<>();
 
-    private GLTexture2D bakedTextureAtlas;
+    private Texture2D bakedTextureAtlas;
 
     @Override
     public TextureAtlasRegion getTexture(AssetURL url) {
@@ -31,8 +30,10 @@ public class TextureAtlasImpl implements TextureAtlas {
         }
 
         textureMap.finish();
-        if (bakedTextureAtlas != null) bakedTextureAtlas.dispose();
-        bakedTextureAtlas = GLTexture2D.of(textureMap.getTexture());
+        if (bakedTextureAtlas != null) {
+            bakedTextureAtlas.dispose();
+        }
+        bakedTextureAtlas = Texture2D.builder().build(textureMap.getTexture());
         textureMap.dispose();
     }
 
@@ -57,11 +58,21 @@ public class TextureAtlasImpl implements TextureAtlas {
 
     @Override
     public void bind() {
-        if (bakedTextureAtlas != null) bakedTextureAtlas.bind();
+        if (bakedTextureAtlas != null) {
+            bakedTextureAtlas.bind();
+        }
     }
 
     @Override
     public void dispose() {
-        if (bakedTextureAtlas != null) bakedTextureAtlas.dispose();
+        if (bakedTextureAtlas != null) {
+            bakedTextureAtlas.dispose();
+            bakedTextureAtlas = null;
+        }
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return bakedTextureAtlas == null || bakedTextureAtlas.isDisposed();
     }
 }

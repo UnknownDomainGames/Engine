@@ -58,6 +58,11 @@ public class FontPlaneTexture implements Texture {
         }
     }
 
+    @Override
+    public boolean isDisposed() {
+        return glTexture == null;
+    }
+
     public void putBlock(Character.UnicodeBlock block) {
         if (!blocks.contains(block)) { //Make sure we don't load the same block twice
             blocks.add(block);
