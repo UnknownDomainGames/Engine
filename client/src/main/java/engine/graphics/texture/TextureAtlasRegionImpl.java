@@ -16,13 +16,13 @@ public class TextureAtlasRegionImpl implements TextureAtlasRegion {
     private final AssetURL url;
 
     private BufferedImage data;
-    private TextureAtlasBuilder.UVResult uv;
+    private TextureAtlasBuilder.TexCoord uv;
 
     public TextureAtlasRegionImpl(AssetURL url) {
         this.url = url;
     }
 
-    public void setUv(TextureAtlasBuilder.UVResult uv) {
+    public void setUv(TextureAtlasBuilder.TexCoord uv) {
         this.uv = uv;
     }
 

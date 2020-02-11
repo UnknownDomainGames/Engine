@@ -28,7 +28,7 @@ public class TextureAtlasBuilder {
         return size;
     }
 
-    public UVResult add(BufferedImage texture) {
+    public TexCoord add(BufferedImage texture) {
         // TODO: support texture size isn't power of two.
         var regionSize = Math2.ceilPowerOfTwo(Math.max(texture.getWidth(), texture.getHeight()));
         var node = root.requestNode(texture, regionSize);
@@ -61,7 +61,7 @@ public class TextureAtlasBuilder {
         texture = null;
     }
 
-    public static final class UVResult {
+    public static final class TexCoord {
         private float minU;
         private float minV;
         private float maxU;
@@ -95,7 +95,7 @@ public class TextureAtlasBuilder {
         private int y;
         private int size;
 
-        private UVResult uv;
+        private TexCoord uv;
 
         private boolean used;
         private Node[] children;
@@ -123,9 +123,9 @@ public class TextureAtlasBuilder {
             return size;
         }
 
-        public UVResult getUv() {
+        public TexCoord getUv() {
             if (uv == null) {
-                uv = new UVResult();
+                uv = new TexCoord();
                 used = true;
                 if (parent != null) parent.notifyChildUsed();
             }
