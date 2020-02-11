@@ -29,6 +29,8 @@ public interface Mesh {
 
     void dispose();
 
+    boolean isDisposed();
+
     interface Attribute {
         VertexFormat getFormat();
 

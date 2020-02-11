@@ -81,8 +81,16 @@ public final class GLMesh implements Mesh {
     @Override
     public void dispose() {
         if (id == 0) return;
+        for (Attribute attribute : attributes)
+            ((MeshAttribute) attribute).buffer.dispose();
+        if (indices != null) indices.buffer.dispose();
         disposable.dispose();
         id = 0;
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return id == 0;
     }
 
     private static class MeshAttribute implements Attribute {
