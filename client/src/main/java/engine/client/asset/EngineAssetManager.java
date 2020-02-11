@@ -19,6 +19,7 @@ public class EngineAssetManager implements AssetManager {
     public EngineAssetManager() {
         AssetSourceManager.Internal.setInstance(sourceManager);
         AssetURLStreamHandler.initialize();
+        AssetManager.Internal.setInstance(this);
     }
 
     @Override
@@ -49,16 +50,16 @@ public class EngineAssetManager implements AssetManager {
 
     @Nonnull
     @Override
-    public <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull AssetURL path) {
-        Asset<T> asset = new Asset<>(type, path);
+    public <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull AssetURL url) {
+        Asset<T> asset = new Asset<>(type, url);
         type.getProvider().register(asset);
         return asset;
     }
 
     @Nonnull
     @Override
-    public <T> T loadDirect(@Nonnull AssetType<T> type, @Nonnull AssetURL path) {
-        return type.getProvider().loadDirect(path);
+    public <T> T loadDirect(@Nonnull AssetType<T> type, @Nonnull AssetURL url) {
+        return type.getProvider().loadDirect(url);
     }
 
     @Override

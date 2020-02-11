@@ -15,6 +15,21 @@ public final class Asset<T> {
 
     private volatile boolean disposed;
 
+    @Nonnull
+    public static <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull AssetURL url) {
+        return AssetManager.instance().create(type, url);
+    }
+
+    @Nonnull
+    public static <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull String url) {
+        return AssetManager.instance().create(type, AssetURL.fromString(url));
+    }
+
+    @Nonnull
+    public static <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull String domain, @Nonnull String location) {
+        return AssetManager.instance().create(type, AssetURL.of(domain, location));
+    }
+
     Asset(@Nonnull AssetType<T> type, @Nonnull AssetURL url) {
         this.type = Validate.notNull(type);
         this.url = Validate.notNull(url);
