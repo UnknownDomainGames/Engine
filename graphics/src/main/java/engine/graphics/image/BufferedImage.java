@@ -101,18 +101,18 @@ public class BufferedImage implements WritableImage {
 
     @Override
     public int getPixel(int x, int y) {
-        return pixelBuffer.getInt(y * stride + x << 2);
+        return pixelBuffer.getInt(y * stride + (x << 2));
     }
 
     @Override
     public void setPixel(int x, int y, int rgba) {
-        pixelBuffer.putInt(y * stride + x << 2, rgba);
+        pixelBuffer.putInt(y * stride + (x << 2), rgba);
     }
 
     @Override
     public void setPixel(int x, int y, int width, int height, int rgba) {
         for (int i = y, maxY = y + height; i < maxY; i++) {
-            memSet(address + i * stride + x << 2, rgba, width << 2);
+            memSet(address + i * stride + (x << 2), rgba, width << 2);
         }
     }
 
