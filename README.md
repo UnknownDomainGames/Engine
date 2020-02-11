@@ -28,7 +28,7 @@ You can learn about what we are doing in [Projects](https://github.com/UnknownDo
 
 ## 相关链接（Links）
 - [Wiki](https://github.com/UnknownDomainGame/PanguEngine/wiki)
-- [项目简介（Introducing Project）](https://github.com/UnknownDomainGame/NullEngine/wiki/%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D%EF%BC%88Introducing-Project%EF%BC%89)
+- [项目简介（Introducing Project）](https://github.com/UnknownDomainGame/PanguEngine/wiki/Introducing-Project)
 - [示例模组（Example Mod）](https://github.com/UnknownDomainGame/ExampleMod)
 - 交流QQ群（QQ group for communication）：[965101316](https://jq.qq.com/?_wv=1027&k=5exnX2o)
 - Discord：http://discord.gg/KRGMBw3
