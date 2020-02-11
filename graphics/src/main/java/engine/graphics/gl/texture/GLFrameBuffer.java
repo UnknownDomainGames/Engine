@@ -147,11 +147,16 @@ public class GLFrameBuffer implements FrameBuffer {
 
     @Override
     public void dispose() {
-        if (id == -1) return;
+        if (id == 0) return;
         disposable.dispose();
-        id = -1;
+        id = 0;
 
         disposeAttachedTextures();
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return id == 0;
     }
 
     private void disposeAttachedTextures() {

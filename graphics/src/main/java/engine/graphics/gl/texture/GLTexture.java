@@ -77,9 +77,14 @@ public abstract class GLTexture implements Texture {
 
     @Override
     public void dispose() {
-        if (id == -1) return;
+        if (id == 0) return;
 
         disposable.dispose();
-        id = -1;
+        id = 0;
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return id == 0;
     }
 }

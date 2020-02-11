@@ -7,4 +7,6 @@ public interface Texture {
     void bind();
 
     void dispose();
+
+    boolean isDisposed();
 }

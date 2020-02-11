@@ -16,4 +16,6 @@ public interface FrameBuffer {
     void bindDrawOnly();
 
     void dispose();
+
+    boolean isDisposed();
 }

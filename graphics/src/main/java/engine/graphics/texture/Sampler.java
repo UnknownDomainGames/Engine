@@ -14,4 +14,6 @@ public interface Sampler {
     void setWrapR(WrapMode wrapMode);
 
     void dispose();
+
+    boolean isDisposed();
 }

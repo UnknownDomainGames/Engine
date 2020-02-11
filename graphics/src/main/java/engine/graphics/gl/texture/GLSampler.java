@@ -66,4 +66,9 @@ public class GLSampler implements Sampler {
         disposable.dispose();
         id = 0;
     }
+
+    @Override
+    public boolean isDisposed() {
+        return id == 0;
+    }
 }
