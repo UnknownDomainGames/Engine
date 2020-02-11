@@ -2,15 +2,13 @@ package engine.graphics;
 
 import engine.client.EngineClient;
 import engine.client.asset.AssetType;
+import engine.client.asset.provider.TextureAssetProvider;
 import engine.client.event.rendering.RenderEvent;
 import engine.client.hud.HUDManager;
-import engine.graphics.camera.Camera;
 import engine.graphics.display.Window;
 import engine.graphics.game.GameRenderer;
 import engine.graphics.management.GraphicsBackend;
-import engine.graphics.texture.EngineTextureManager;
 import engine.graphics.texture.Texture2D;
-import engine.graphics.texture.TextureManager;
 import engine.graphics.viewport.PerspectiveViewport;
 import engine.gui.EngineGUIManager;
 import engine.gui.EngineHUDManager;
@@ -24,8 +22,6 @@ public class EngineRenderManager implements RenderManager {
     private Thread renderThread;
     private Window window;
     private PerspectiveViewport viewport;
-
-    private EngineTextureManager textureManager;
 
     private GameRenderer gameRenderer;
     private EngineGUIManager guiManager;
@@ -62,11 +58,6 @@ public class EngineRenderManager implements RenderManager {
     }
 
     @Override
-    public TextureManager getTextureManager() {
-        return textureManager;
-    }
-
-    @Override
     public GUIManager getGUIManager() {
         return guiManager;
     }
@@ -92,7 +83,7 @@ public class EngineRenderManager implements RenderManager {
         viewport.setScene(new Scene3D());
         viewport.setCamera(new Camera());
 
-        initTexture();
+        initTextureAssetProvider();
         gameRenderer = new GameRenderer(this);
         gameGUIPlatform = new GameGUIPlatform();
         guiManager = new EngineGUIManager(window, gameGUIPlatform.getGUIStage());
@@ -101,10 +92,14 @@ public class EngineRenderManager implements RenderManager {
         window.show();
     }
 
-    private void initTexture() {
-        textureManager = new EngineTextureManager();
-        TextureManager.Internal.setInstance(textureManager);
-        getEngine().getAssetManager().register(AssetType.builder(Texture2D.class).name("Texture").provider(textureManager).parentLocation("texture").extensionName(".png").build());
+    private void initTextureAssetProvider() {
+        getEngine().getAssetManager().register(
+                AssetType.builder(Texture2D.class)
+                        .name("Texture")
+                        .provider(new TextureAssetProvider())
+                        .parentLocation("texture")
+                        .extensionName(".png")
+                        .build());
     }
 
     public void render(float tpf) {

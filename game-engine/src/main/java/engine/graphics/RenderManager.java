@@ -3,7 +3,6 @@ package engine.graphics;
 import engine.client.EngineClient;
 import engine.client.hud.HUDManager;
 import engine.graphics.display.Window;
-import engine.graphics.texture.TextureManager;
 import engine.graphics.viewport.PerspectiveViewport;
 import engine.gui.GUIManager;
 
@@ -21,8 +20,6 @@ public interface RenderManager {
 
     PerspectiveViewport getViewport();
 
-    TextureManager getTextureManager();
-
     GUIManager getGUIManager();
 
     HUDManager getHUDManager();
@@ -30,16 +27,16 @@ public interface RenderManager {
     int getFPS();
 
     static RenderManager instance() {
-        return RenderManager.Internal.instance.get();
+        return Internal.instance.get();
     }
 
     class Internal {
         private static Supplier<RenderManager> instance = () -> {
-            throw new IllegalStateException("TextureManager is uninitialized");
+            throw new IllegalStateException("RenderManager is uninitialized");
         };
 
         public static void setInstance(RenderManager instance) {
-            RenderManager.Internal.instance = () -> instance;
+            Internal.instance = () -> instance;
         }
     }
 }
