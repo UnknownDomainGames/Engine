@@ -1,6 +1,5 @@
 package engine.graphics.material;
 
-import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.management.BindingProxy;
 import engine.graphics.texture.Texture2D;
 import org.joml.Vector3f;
@@ -71,22 +70,22 @@ public class Material {
         return this;
     }
 
-    public Material setDiffuseUV(GLTexture2D diffuseUV) {
+    public Material setDiffuseUV(Texture2D diffuseUV) {
         this.diffuseUV = diffuseUV;
         return this;
     }
 
-    public Material setSpecularUV(GLTexture2D specularUV) {
+    public Material setSpecularUV(Texture2D specularUV) {
         this.specularUV = specularUV;
         return this;
     }
 
-    public Material setNormalUV(GLTexture2D normalUV) {
+    public Material setNormalUV(Texture2D normalUV) {
         this.normalUV = normalUV;
         return this;
     }
 
-    public Material setAlphaUV(GLTexture2D alphaUV) {
+    public Material setAlphaUV(Texture2D alphaUV) {
         this.alphaUV = alphaUV;
         return this;
     }
