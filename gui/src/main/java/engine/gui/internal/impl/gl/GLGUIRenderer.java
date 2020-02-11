@@ -1,9 +1,5 @@
 package engine.gui.internal.impl.gl;
 
-import engine.gui.Parent;
-import engine.gui.Popup;
-import engine.gui.Scene;
-import engine.gui.rendering.Graphics;
 import engine.graphics.gl.shader.ShaderManager;
 import engine.graphics.gl.shader.ShaderProgram;
 import engine.graphics.gl.shader.Uniforms;
@@ -11,6 +7,10 @@ import engine.graphics.gl.texture.GLFrameBuffer;
 import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.image.BufferedImage;
 import engine.graphics.texture.Texture2D;
+import engine.gui.Parent;
+import engine.gui.Popup;
+import engine.gui.Scene;
+import engine.gui.rendering.Graphics;
 import engine.util.Color;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -35,7 +35,7 @@ public final class GLGUIRenderer {
         clipRectLocation = shader.getUniformLocation("u_ClipRect");
         renderTextLocation = shader.getUniformLocation("u_RenderText");
 
-        whiteTexture = GLTexture2D.of(new BufferedImage(2, 2, 0xffffffff));
+        whiteTexture = GLTexture2D.of(new BufferedImage(1, 1, Color.WHITE));
 
         graphics = new GLGraphics(this);
     }
