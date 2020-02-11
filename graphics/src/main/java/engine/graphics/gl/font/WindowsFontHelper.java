@@ -34,6 +34,8 @@ public final class WindowsFontHelper implements FontHelper {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("Font");
 
+    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("engine.font.debug", "false"));
+
     //    private static final int[] PLATFORMs = {STBTT_PLATFORM_ID_MICROSOFT, STBTT_PLATFORM_ID_UNICODE, STBTT_PLATFORM_ID_MAC, STBTT_PLATFORM_ID_ISO};
     private static final int[] EIDs = {STBTT_MS_EID_UNICODE_BMP, STBTT_MS_EID_SHIFTJIS, STBTT_MS_EID_UNICODE_FULL, STBTT_MS_EID_SYMBOL};
     private static final int[] LANGs = {
@@ -97,7 +99,9 @@ public final class WindowsFontHelper implements FontHelper {
                 try {
                     Collections.addAll(loadedFonts, loadFontInfo(fontFile, true, false));
                 } catch (Exception e) {
-                    LOGGER.debug("Cannot load local font. Path: " + fontFile, e);
+                    if (DEBUG) {
+                        LOGGER.debug("Cannot load local font. Path: " + fontFile, e);
+                    }
                 }
             }));
         }
@@ -380,7 +384,8 @@ public final class WindowsFontHelper implements FontHelper {
         return loadFontInfo(null, ByteBuffer.allocateDirect(bytes.length).put(bytes).flip(), false, true);
     }
 
-    private NativeTTFontInfo[] loadFontInfo(Path fontFile, boolean delayLoading, boolean enable) throws IOException {
+    private NativeTTFontInfo[] loadFontInfo(Path fontFile, boolean delayLoading, boolean enable) throws
+            IOException {
         ByteBuffer fontData;
         try (var fileChannel = FileChannel.open(fontFile)) {
             fontData = ByteBuffer.allocateDirect((int) fileChannel.size());
@@ -390,7 +395,8 @@ public final class WindowsFontHelper implements FontHelper {
         return loadFontInfo(fontFile, fontData, delayLoading, enable);
     }
 
-    private NativeTTFontInfo[] loadFontInfo(Path fontFile, ByteBuffer fontData, boolean delayLoading, boolean enable) {
+    private NativeTTFontInfo[] loadFontInfo(Path fontFile, ByteBuffer fontData, boolean delayLoading,
+                                            boolean enable) {
         var fontCount = stbtt_GetNumberOfFonts(fontData);
         if (fontCount == -1) {
             throw new IllegalArgumentException("Cannot determine the number of fonts in the font buffer.");
