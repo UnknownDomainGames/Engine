@@ -48,9 +48,7 @@ public class TextureAtlasBuilder {
             newRoot.setChild(Node.TOP_LEFT, root);
             root = newRoot;
         }
-        var newTexture = new BufferedImage(size);
-        newTexture.setImage(0, 0, texture);
-        texture = newTexture;
+        texture = BufferedImage.resize(texture, size);
     }
 
     public void finish() {

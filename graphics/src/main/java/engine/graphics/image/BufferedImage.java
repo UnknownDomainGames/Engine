@@ -31,11 +31,17 @@ public class BufferedImage implements WritableImage {
     }
 
     public static BufferedImage wrap(ByteBuffer pixelBuffer, int width, int height) {
-        return new BufferedImage(pixelBuffer, width, height, false);
+        return new BufferedImage(pixelBuffer, width, height, pixelBuffer.isReadOnly() || !pixelBuffer.isDirect());
     }
 
-    public static BufferedImage wrapDirect(ByteBuffer pixelBuffer, int width, int height) {
-        return new BufferedImage(pixelBuffer, width, height, pixelBuffer.isReadOnly() || !pixelBuffer.isDirect());
+    public static BufferedImage resize(BufferedImage src, int size) {
+        return resize(src, size, size);
+    }
+
+    public static BufferedImage resize(BufferedImage src, int width, int height) {
+        BufferedImage image = new BufferedImage(width, height);
+        image.setImage(0, 0, src);
+        return image;
     }
 
     public BufferedImage(int size) {
