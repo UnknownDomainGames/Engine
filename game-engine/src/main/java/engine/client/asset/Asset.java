@@ -21,8 +21,8 @@ public final class Asset<T> {
     }
 
     @Nonnull
-    public static <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull String url) {
-        return AssetManager.instance().create(type, AssetURL.fromString(url));
+    public static <T> Asset<T> create(@Nonnull AssetType<T> type, @Nonnull String location) {
+        return AssetManager.instance().create(type, AssetURL.of(location));
     }
 
     @Nonnull
