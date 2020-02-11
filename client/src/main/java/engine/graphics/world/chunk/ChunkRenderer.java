@@ -16,6 +16,7 @@ import engine.graphics.shader.ShaderProgramBuilder;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexDataBufPool;
 import engine.graphics.viewport.Viewport;
+import engine.graphics.voxel.VoxelRenderHelper;
 import engine.math.BlockPos;
 import engine.world.World;
 import engine.world.chunk.Chunk;
@@ -81,7 +82,7 @@ public final class ChunkRenderer {
             }
         });
 
-        manager.getTextureManager().getDefaultAtlas().reload();
+        VoxelRenderHelper.getVoxelTextureAtlas().reload();
         initWorld(world);
     }
 
@@ -124,7 +125,7 @@ public final class ChunkRenderer {
         shader.setUniform("u_ModelMatrix", new Matrix4f());
         shader.setUniform("u_viewPos", viewport.getCamera().getPosition());
 
-        manager.getTextureManager().getDefaultAtlas().bind();
+        VoxelRenderHelper.getVoxelTextureAtlas().bind();
         shader.setUniform("useDirectUV", true);
         scene.getLightManager().bind(viewport.getCamera().getPosition(), shader);
         material.bind(shader, "material");

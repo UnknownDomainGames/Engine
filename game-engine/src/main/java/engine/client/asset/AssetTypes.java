@@ -1,14 +1,14 @@
 package engine.client.asset;
 
 import engine.Platform;
-import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.model.BakedModel;
+import engine.graphics.texture.Texture2D;
 
 import java.util.Optional;
 
 public final class AssetTypes {
 
-    public static final AssetType<GLTexture2D> TEXTURE = getType("Texture");
+    public static final AssetType<Texture2D> TEXTURE = getType("Texture");
     public static final AssetType<BakedModel> VOXEL_MODEL = getType("VoxelModel");
 
     private static <T> AssetType<T> getType(String name) {

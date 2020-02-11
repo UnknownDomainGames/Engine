@@ -24,6 +24,7 @@ public final class GameRenderer {
         this.manager = manager;
         this.viewport = manager.getViewport();
         this.game = manager.getEngine().getCurrentGame();
+        VoxelRenderHelper.initialize(manager);
         manager.getEngine().getEventBus().register(this);
     }
 
@@ -48,9 +49,6 @@ public final class GameRenderer {
         World world = event.getNewEntity().getWorld();
         if (worldRenderer != null && worldRenderer.getWorld().equals(world)) {
             return;
-        }
-        if (worldRenderer == null) {
-            VoxelRenderHelper.initialize(manager);
         }
         disposeWorldRenderer();
         worldRenderer = new WorldRenderer(manager, world);

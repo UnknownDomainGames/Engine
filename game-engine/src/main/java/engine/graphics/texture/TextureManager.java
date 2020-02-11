@@ -1,14 +1,10 @@
 package engine.graphics.texture;
 
-import engine.graphics.gl.texture.GLTexture2D;
-
 import java.util.function.Supplier;
 
 public interface TextureManager {
 
-    GLTexture2D getWhiteTexture();
-
-    TextureAtlas getDefaultAtlas();
+    Texture2D getWhiteTexture();
 
     static TextureManager instance() {
         return Internal.instance.get();

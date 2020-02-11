@@ -5,6 +5,7 @@ import engine.client.asset.AssetTypes;
 import engine.client.asset.AssetURL;
 import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.material.Material;
+import engine.graphics.texture.Texture2D;
 import org.apache.commons.io.FilenameUtils;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -31,10 +32,10 @@ public class AssimpMaterial {
         mMaterial = material;
 
 
-        GLTexture2D diffuseTexture = loadTexture(aiTextureType_DIFFUSE, url);
-        GLTexture2D specularTexture = loadTexture(aiTextureType_SPECULAR, url);
-        GLTexture2D normalTexture = loadTexture(aiTextureType_NORMALS, url);
-        GLTexture2D alphaTexture = loadTexture(aiTextureType_OPACITY, url);
+        Texture2D diffuseTexture = loadTexture(aiTextureType_DIFFUSE, url);
+        Texture2D specularTexture = loadTexture(aiTextureType_SPECULAR, url);
+        Texture2D normalTexture = loadTexture(aiTextureType_NORMALS, url);
+        Texture2D alphaTexture = loadTexture(aiTextureType_OPACITY, url);
         AIString mName = AIString.create();
         aiGetMaterialString(mMaterial, AI_MATKEY_NAME, aiTextureType_NONE, 0, mName);
         name = mName.dataString();
@@ -69,7 +70,7 @@ public class AssimpMaterial {
         referenceMat.setAlphaUV(alphaTexture);
     }
 
-    private GLTexture2D loadTexture(int textureType, AssetURL url) {
+    private Texture2D loadTexture(int textureType, AssetURL url) {
         AIString path = AIString.calloc();
         aiGetMaterialTexture(mMaterial, textureType, 0, path, null, null, null, null, null, (IntBuffer) null);
         String s = path.dataString();

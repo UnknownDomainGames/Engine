@@ -1,6 +1,6 @@
 package engine.graphics.item;
 
-import engine.graphics.RenderManager;
+import engine.graphics.voxel.VoxelRenderHelper;
 import engine.item.BlockItem;
 import engine.item.Item;
 import engine.item.ItemStack;
@@ -18,10 +18,7 @@ public final class ItemRenderManagerImpl implements ItemRenderManager {
 
     private final ItemRenderer blockItemRenderer = new BlockItemRenderer();
 
-    private RenderManager manager;
-
-    public void init(RenderManager manager) {
-        this.manager = manager;
+    public void init() {
         Registries.getItemRegistry().getValues().forEach(this::registerItemRenderer);
         itemRendererMap.values().forEach(ItemRenderer::init);
     }
@@ -54,7 +51,7 @@ public final class ItemRenderManagerImpl implements ItemRenderManager {
     }
 
     private void preRender() {
-        manager.getTextureManager().getDefaultAtlas().bind();
+        VoxelRenderHelper.getVoxelTextureAtlas().bind();
     }
 
     private void postRender() {

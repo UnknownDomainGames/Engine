@@ -7,9 +7,9 @@ import engine.client.hud.HUDManager;
 import engine.graphics.camera.Camera;
 import engine.graphics.display.Window;
 import engine.graphics.game.GameRenderer;
-import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.texture.EngineTextureManager;
+import engine.graphics.texture.Texture2D;
 import engine.graphics.texture.TextureManager;
 import engine.graphics.viewport.PerspectiveViewport;
 import engine.gui.EngineGUIManager;
@@ -104,7 +104,7 @@ public class EngineRenderManager implements RenderManager {
     private void initTexture() {
         textureManager = new EngineTextureManager();
         TextureManager.Internal.setInstance(textureManager);
-        getEngine().getAssetManager().register(AssetType.builder(GLTexture2D.class).name("Texture").provider(textureManager).parentLocation("texture").extensionName(".png").build());
+        getEngine().getAssetManager().register(AssetType.builder(Texture2D.class).name("Texture").provider(textureManager).parentLocation("texture").extensionName(".png").build());
     }
 
     public void render(float tpf) {

@@ -3,8 +3,8 @@ package engine.graphics.world;
 import engine.client.asset.Asset;
 import engine.client.asset.AssetURL;
 import engine.graphics.RenderManager;
-import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.mesh.Mesh;
+import engine.graphics.texture.Texture2D;
 import engine.graphics.util.BufferUtils;
 import engine.graphics.vertex.VertexFormat;
 
@@ -14,7 +14,7 @@ import static engine.client.asset.AssetTypes.TEXTURE;
 
 public final class SkyboxRenderer {
 
-    private Asset<GLTexture2D> skybox;
+    private Asset<Texture2D> skybox;
     private Mesh mesh;
 
     public SkyboxRenderer(RenderManager manager) {
@@ -43,10 +43,9 @@ public final class SkyboxRenderer {
                 256, -256, -256,
                 256, -256, 256,
                 -256, -256, -256,
-                -256, -256, 256, //Down
+                -256, -256, 256 //Down
         });
-        ByteBuffer texCoords = BufferUtils.wrapAsByteBuffer(new float[]{
-                0.6666667f, 0.0f,
+        ByteBuffer texCoords = BufferUtils.wrapAsByteBuffer(0.6666667f, 0.0f,
                 1.0f, 0.0f,
                 0.6666667f, 0.5f,
                 1.0f, 0.5f, //East
@@ -69,8 +68,8 @@ public final class SkyboxRenderer {
                 0.6666667f, 0.5f,
                 1.0f, 0.5f,
                 0.6666667f, 1.0f,
-                1.0f, 1.0f, //Down
-        });
+                1.0f, 1.0f //Down
+        );
         ByteBuffer indices = BufferUtils.wrapAsByteBuffer(new byte[]{
                 0, 2, 1,
                 2, 3, 1, //East
