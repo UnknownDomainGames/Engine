@@ -81,7 +81,7 @@ public class EngineRenderManager implements RenderManager {
 
         viewport = new PerspectiveViewport();
         viewport.setScene(new Scene3D());
-        viewport.setCamera(new Camera());
+        viewport.setSize(window.getWidth(), window.getHeight());
 
         initTextureAssetProvider();
         gameRenderer = new GameRenderer(this);
@@ -106,6 +106,9 @@ public class EngineRenderManager implements RenderManager {
         engine.getEventBus().post(new RenderEvent.Pre());
 
         GraphicsEngine.doRender(tpf);
+        if (window.isResized()) {
+            viewport.setSize(window.getWidth(), window.getHeight());
+        }
         viewport.getScene().doUpdate(tpf);
         gameRenderer.render(tpf);
         gameGUIPlatform.render(gameGUIPlatform.getGUIStage());
