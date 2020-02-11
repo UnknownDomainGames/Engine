@@ -1,14 +1,14 @@
 package engine.graphics.shape;
 
+import engine.graphics.Drawable;
 import engine.graphics.mesh.SingleBufferMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
-import engine.graphics.Renderable;
 import engine.util.Color;
 import org.joml.Vector3fc;
 
-public class Line implements Renderable {
+public class Line implements Drawable {
 
     private Vector3fc from;
     private Vector3fc to;
@@ -33,7 +33,7 @@ public class Line implements Renderable {
     }
 
     @Override
-    public void render() {
+    public void draw() {
         mesh.draw();
     }
 

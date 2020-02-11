@@ -77,7 +77,7 @@ public final class Scene3DRenderHandler implements RenderHandler {
             public void render(GraphicsBackend manager, GeometryList geometries) {
                 geometries.forEach(geometry -> {
                     shader.setUniform("u_ModelMatrix", geometry.getWorldTransform().toTransformMatrix());
-                    geometry.getRenderable().render();
+                    geometry.getDrawable().draw();
                 });
             }
         });

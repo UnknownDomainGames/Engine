@@ -1,7 +1,7 @@
 package engine.graphics;
 
-public interface Renderable {
-    void render();
+public interface Drawable {
+    void draw();
 
     void dispose();
 }

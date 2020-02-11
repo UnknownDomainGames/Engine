@@ -1,6 +1,6 @@
 package engine.graphics.shape;
 
-import engine.graphics.Renderable;
+import engine.graphics.Drawable;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
@@ -11,7 +11,7 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.ByteBuffer;
 
-public class Box implements Renderable {
+public class Box implements Drawable {
 
     private static final ByteBuffer indices = BufferUtils.createByteBuffer(36).put(new byte[]{
             // facing +x
@@ -77,7 +77,7 @@ public class Box implements Renderable {
     }
 
     @Override
-    public void render() {
+    public void draw() {
         mesh.draw();
     }
 

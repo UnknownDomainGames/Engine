@@ -7,7 +7,7 @@ import engine.graphics.queue.StandardRenderTypes;
 
 public class Geometry extends Node3D {
 
-    private Renderable renderable;
+    private Drawable drawable;
     private RenderType renderType;
 
     private BoundingVolume boundingVolume = new BoundingVolume();
@@ -16,12 +16,12 @@ public class Geometry extends Node3D {
         this(null, StandardRenderTypes.OPAQUE);
     }
 
-    public Geometry(Renderable renderable) {
-        this(renderable, StandardRenderTypes.OPAQUE);
+    public Geometry(Drawable drawable) {
+        this(drawable, StandardRenderTypes.OPAQUE);
     }
 
-    public Geometry(Renderable renderable, RenderType renderType) {
-        this.renderable = renderable;
+    public Geometry(Drawable drawable, RenderType renderType) {
+        this.drawable = drawable;
         this.renderType = renderType;
         scene().addChangeListener((observable, oldValue, newValue) -> {
             if (oldValue != null) {
@@ -33,12 +33,12 @@ public class Geometry extends Node3D {
         });
     }
 
-    public Renderable getRenderable() {
-        return renderable;
+    public Drawable getDrawable() {
+        return drawable;
     }
 
-    public void setRenderable(Renderable renderable) {
-        this.renderable = renderable;
+    public void setDrawable(Drawable drawable) {
+        this.drawable = drawable;
     }
 
     public RenderType getRenderType() {
