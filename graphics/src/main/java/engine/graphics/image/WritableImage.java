@@ -21,18 +21,18 @@ public interface WritableImage extends ReadOnlyImage {
 
     void setPixel(int x, int y, int width, int height, int rgba);
 
-    void setImage(int x, int y, ByteBuffer pixelBuffer, int u, int v, int width, int height);
+    void setImage(int x, int y, ByteBuffer src, int srcWidth, int srcHeight, int srcMinX, int srcMinY, int srcMaxX, int srcMaxY);
 
-    default void setImage(int x, int y, ByteBuffer pixelBuffer, int width, int height) {
-        setImage(x, y, pixelBuffer, width, height, 0, 0);
+    default void setImage(int x, int y, ByteBuffer src, int srcWidth, int srcHeight) {
+        setImage(x, y, src, srcWidth, srcHeight, 0, 0, srcWidth, srcHeight);
     }
 
-    default void setImage(int x, int y, ReadOnlyImage image) {
-        setImage(x, y, image.getPixelBuffer(), image.getWidth(), image.getHeight());
+    default void setImage(int x, int y, ReadOnlyImage src) {
+        setImage(x, y, src.getPixelBuffer(), src.getWidth(), src.getHeight());
     }
 
-    default void setImage(int x, int y, ReadOnlyImage image, int u, int v) {
-        setImage(x, y, image.getPixelBuffer(), image.getWidth(), image.getHeight(), u, v);
+    default void setImage(int x, int y, ReadOnlyImage src, int srcMinX, int srcMinY, int srcMaxX, int srcMaxY) {
+        setImage(x, y, src.getPixelBuffer(), src.getWidth(), src.getHeight(), srcMinX, srcMinY, srcMaxX, srcMaxY);
     }
 
     default void fill(Color color) {

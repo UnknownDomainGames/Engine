@@ -73,7 +73,7 @@ public class BufferedImage implements WritableImage {
     private BufferedImage(ByteBuffer pixelBuffer, int width, int height, boolean copy) {
         this.width = width;
         this.height = height;
-        this.stride = Integer.BYTES * width;
+        this.stride = width * Integer.BYTES;
         this.pixelBuffer = copy ? allocateDirect(pixelBuffer.capacity()).put(pixelBuffer).flip() : pixelBuffer;
         this.readOnlyBuffer = pixelBuffer.asReadOnlyBuffer();
         this.address = memAddress(this.pixelBuffer);
@@ -101,37 +101,38 @@ public class BufferedImage implements WritableImage {
 
     @Override
     public int getPixel(int x, int y) {
-        return pixelBuffer.getInt(y * stride + x * Integer.BYTES);
+        return pixelBuffer.getInt(y * stride + x << 2);
     }
 
     @Override
     public void setPixel(int x, int y, int rgba) {
-        pixelBuffer.putInt(rgba, y * stride + x * Integer.BYTES);
+        pixelBuffer.putInt(y * stride + x << 2, rgba);
     }
 
     @Override
     public void setPixel(int x, int y, int width, int height, int rgba) {
-        for (int i = 0; i < height; i++) {
-            memSet(address + (y + i) * stride + x * Integer.BYTES, rgba, width * Integer.BYTES);
+        for (int i = y, maxY = y + height; i < maxY; i++) {
+            memSet(address + i * stride + x << 2, rgba, width << 2);
         }
     }
 
     @Override
-    public void setImage(int x, int y, ByteBuffer pixelBuffer, int width, int height, int u, int v) {
-        int srcStride = width * Integer.BYTES;
-        long srcAddress = memAddress(pixelBuffer, 0);
-        for (int i = 0; i < height; i++) {
-            memCopy(srcAddress + (u + i) * srcStride + v * Integer.BYTES,
-                    address + (y + i) * this.stride + x * Integer.BYTES,
-                    width * Integer.BYTES);
+    public void setImage(int x, int y, ByteBuffer src, int srcWidth, int srcHeight, int srcMinX, int srcMinY, int srcMaxX, int srcMaxY) {
+        final int srcLineBytes = srcWidth << 2;
+        final int srcLineOffset = srcMinX << 2;
+        final int dstLineOffset = x << 2;
+        final int copyRegionLineBytes = (srcMaxX - srcMinX) << 2;
+        final long srcAddress = memAddress(src, 0);
+        for (int srcY = srcMinY, dstY = y; srcY < srcMaxY; srcY++, dstY++) {
+            memCopy(srcAddress + srcY * srcLineBytes + srcLineOffset,
+                    address + dstY * stride + dstLineOffset,
+                    copyRegionLineBytes);
         }
-        this.pixelBuffer.clear();
     }
 
     @Override
     public void fill(int rgba) {
-        pixelBuffer.position(0);
-        memSet(pixelBuffer.asIntBuffer(), rgba);
         pixelBuffer.clear();
+        memSet(pixelBuffer.asIntBuffer(), rgba);
     }
 }
