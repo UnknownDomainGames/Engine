@@ -1,5 +1,6 @@
 package engine.client.asset.provider;
 
+import com.google.common.collect.Maps;
 import engine.client.asset.*;
 import engine.client.asset.exception.AssetLoadException;
 import engine.client.asset.reloading.AssetReloadListener;
@@ -14,23 +15,30 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class TextureAssetProvider implements AssetProvider<Texture2D> {
+public final class TextureAssetProvider implements AssetProvider<Texture2D> {
 
     private final List<Asset<Texture2D>> assets = new ArrayList<>();
-    private final Texture2D whiteTexture;
+    private final Map<AssetURL, Texture2D> loadedTextures = Maps.newConcurrentMap();
+
+    private final Map<AssetURL, Texture2D> buildinTextures;
+
     private final Texture2D.Builder builder;
 
+    private AssetType<Texture2D> type;
     private AssetSourceManager sourceManager;
 
     public TextureAssetProvider() {
-        this.whiteTexture = Texture2D.builder().build(new BufferedImage(1, 1, Color.WHITE));
+        buildinTextures = Map.of(AssetURL.of("buildin", "white"),
+                Texture2D.builder().build(new BufferedImage(1, 1, Color.WHITE)));
         this.builder = Texture2D.builder();
     }
 
     @Override
     public void init(AssetManager manager, AssetType<Texture2D> type) {
-        sourceManager = manager.getSourceManager();
+        this.type = type;
+        this.sourceManager = manager.getSourceManager();
         manager.getReloadManager().addListener(AssetReloadListener.builder().name("Texture").runnable(this::reload).build());
     }
 
@@ -41,31 +49,24 @@ public class TextureAssetProvider implements AssetProvider<Texture2D> {
 
     @Override
     public void unregister(Asset<Texture2D> asset) {
-        var texture = asset.get();
-        if (texture != null) {
-            texture.dispose();
-        }
         assets.remove(asset);
     }
 
     private void reload() {
-        assets.forEach(asset -> {
-            var texture = asset.get();
-            if (texture != null) {
-                texture.dispose();
-            }
-            asset.reload();
-        });
+        loadedTextures.forEach((assetURL, texture2D) -> texture2D.dispose());
+        loadedTextures.clear();
+        assets.forEach(Asset::reload);
     }
 
     @Nonnull
     @Override
     public Texture2D loadDirect(AssetURL url) {
-        if ("buildin".equals(url.getDomain()) && "white".equals(url.getLocation())) {
-            return whiteTexture;
-        }
+        if ("buildin".equals(url.getDomain())) return buildinTextures.get(url);
+        return loadedTextures.computeIfAbsent(url, this::load);
+    }
 
-        var localPath = sourceManager.getPath(url.toFileLocation("texture", ".png"));
+    private Texture2D load(AssetURL url) {
+        var localPath = sourceManager.getPath(url.toFileLocation(type));
         if (localPath.isEmpty()) {
             throw new AssetLoadException("Cannot load texture because missing asset. Path: " + url.toFileLocation("texture", ".png"));
         }
@@ -82,11 +83,6 @@ public class TextureAssetProvider implements AssetProvider<Texture2D> {
 
     @Override
     public void dispose() {
-        assets.forEach(asset -> {
-            var texture = asset.get();
-            if (texture != null) {
-                texture.dispose();
-            }
-        });
+        assets.forEach(this::unregister);
     }
 }
