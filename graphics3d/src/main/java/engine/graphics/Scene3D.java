@@ -37,6 +37,10 @@ public class Scene3D {
         children.addAll(nodes);
     }
 
+    public void removeNode(Node3D node) {
+        children.remove(node);
+    }
+
     public Node3D getNodeById(String id) {
         return idToNode.get(id);
     }

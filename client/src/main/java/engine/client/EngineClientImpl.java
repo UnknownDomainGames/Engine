@@ -5,7 +5,6 @@ import configuration.parser.ConfigParseException;
 import engine.EngineBase;
 import engine.Platform;
 import engine.client.asset.AssetManager;
-import engine.client.asset.AssetType;
 import engine.client.asset.EngineAssetManager;
 import engine.client.asset.reloading.AssetReloadListener;
 import engine.client.asset.source.AssetSource;
@@ -26,8 +25,6 @@ import engine.graphics.EngineRenderManager;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.RenderManager;
 import engine.graphics.gl.util.GLContextUtils;
-import engine.graphics.model.BakedModel;
-import engine.graphics.model.voxel.ModelManager;
 import engine.graphics.shader.ShaderManager;
 import engine.logic.Ticker;
 import engine.mod.ModContainer;
@@ -121,14 +118,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         assetManager = new EngineAssetManager();
         assetManager.getSourceManager().getSources().add(engineAssetSource);
         shutdownListeners.add(() -> assetManager.dispose());
-
-        assetManager.register(AssetType
-                .builder(BakedModel.class)
-                .name("VoxelModel")
-                .provider(new ModelManager())
-                .parentLocation("model")
-                .extensionName(".json")
-                .build());
 
         logger.info("Initializing render context!");
         renderManager = new EngineRenderManager(this);

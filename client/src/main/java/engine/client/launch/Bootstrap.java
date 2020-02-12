@@ -25,7 +25,7 @@ public class Bootstrap {
             }
         }
 
-        System.out.println(ManagementFactory.getRuntimeMXBean().getName());
+        System.out.println(ManagementFactory.getRuntimeMXBean().getPid());
 
         Engine engine = new EngineClientImpl(Path.of("run"));
 
