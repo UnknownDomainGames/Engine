@@ -1,10 +1,7 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
-import engine.graphics.texture.FrameBuffer;
-import engine.graphics.texture.Sampler;
-import engine.graphics.texture.Texture2D;
-import engine.graphics.texture.TextureFormat;
+import engine.graphics.texture.*;
 import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
@@ -12,6 +9,8 @@ import org.joml.Vector4ic;
 import java.util.HashMap;
 import java.util.Map;
 
+import static engine.graphics.gl.texture.GLTexture.toGLFilterMode;
+import static engine.graphics.gl.util.GLHelper.getMask;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.lwjgl.opengl.GL30.*;
 
@@ -30,6 +29,14 @@ public class GLFrameBuffer implements FrameBuffer {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public static GLFrameBuffer createRGB16FFrameBuffer(int width, int height) {
+        return builder()
+                .width(width)
+                .height(height)
+                .attachments(GL_COLOR_ATTACHMENT0, Texture2D.builder().format(TextureFormat.RGB16F))
+                .build();
     }
 
     public static GLFrameBuffer createRGB16FDepth24Stencil8FrameBuffer(int width, int height) {
@@ -103,9 +110,9 @@ public class GLFrameBuffer implements FrameBuffer {
 
     @Override
     public void resize(int width, int height) {
-        if (id == 0) return;
         this.width = width;
         this.height = height;
+        if (id == 0) return;
         disposeAttachedTextures();
         bind();
         attachments.forEach((key, value) -> {
@@ -135,14 +142,24 @@ public class GLFrameBuffer implements FrameBuffer {
         glBindFramebuffer(target, id);
     }
 
-    public void blitFrom(GLFrameBuffer source) {
-        blitFrom(source, new Vector4i(0, 0, source.width, source.height), new Vector4i(0, 0, width, height));
+    @Override
+    public void copyFrom(FrameBuffer source, boolean copyColor, boolean copyDepth, boolean copyStencil,
+                         FilterMode filterMode) {
+        copyFrom(source, new Vector4i(0, 0, source.getWidth(), source.getHeight()),
+                new Vector4i(0, 0, width, height), copyColor, copyDepth, copyStencil, filterMode);
     }
 
-    public void blitFrom(GLFrameBuffer source, Vector4ic sourceRect, Vector4ic destRect) {
+    @Override
+    public void copyFrom(FrameBuffer source, Vector4ic sourceRect, Vector4ic destRect,
+                         boolean copyColor, boolean copyDepth, boolean copyStencil, FilterMode filterMode) {
+        copyFrom(source, sourceRect, destRect, getMask(copyColor, copyDepth, copyStencil), toGLFilterMode(filterMode));
+    }
+
+    public void copyFrom(FrameBuffer source, Vector4ic sourceRect, Vector4ic destRect, int mask, int filter) {
         source.bindReadOnly();
         bindDrawOnly();
-        glBlitFramebuffer(sourceRect.x(), sourceRect.y(), sourceRect.z(), sourceRect.w(), destRect.x(), destRect.y(), destRect.z(), destRect.w(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBlitFramebuffer(sourceRect.x(), sourceRect.y(), sourceRect.z(), sourceRect.w(),
+                destRect.x(), destRect.y(), destRect.z(), destRect.w(), mask, filter);
     }
 
     @Override

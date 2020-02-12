@@ -14,6 +14,7 @@ import engine.graphics.light.DirectionalLight;
 import engine.graphics.material.Material;
 import engine.graphics.shader.ShaderManager;
 import engine.graphics.shader.ShaderProgramBuilder;
+import engine.graphics.texture.FilterMode;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
@@ -167,7 +168,7 @@ public final class WorldRenderer {
 
         // multi sample
         frameBuffer.bind();
-        frameBuffer.blitFrom(frameBufferMultiSample);
+        frameBuffer.copyFrom(frameBufferMultiSample, true, false, false, FilterMode.NEAREST);
         GLFrameBuffer.bindDefaultFrameBuffer();
         glClear(GL_COLOR_BUFFER_BIT);
         ShaderManager.instance().bindShader(frameBufferSP.getValue());

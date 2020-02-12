@@ -6,6 +6,7 @@ import engine.graphics.gl.shader.Uniforms;
 import engine.graphics.gl.texture.GLFrameBuffer;
 import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.image.BufferedImage;
+import engine.graphics.texture.FrameBuffer;
 import engine.graphics.texture.Texture2D;
 import engine.gui.Parent;
 import engine.gui.Popup;
@@ -52,7 +53,7 @@ public final class GLGUIRenderer {
         render(scene, GLFrameBuffer.getDefaultFrameBuffer(), clear);
     }
 
-    public void render(Scene scene, GLFrameBuffer frameBuffer, boolean clear) {
+    public void render(Scene scene, FrameBuffer frameBuffer, boolean clear) {
         frameBuffer.bind();
 
         int viewportWidth = getViewportWidth(scene), viewportHeight = getViewportHeight(scene);
