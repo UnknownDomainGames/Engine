@@ -6,24 +6,31 @@ import engine.client.asset.provider.TextureAssetProvider;
 import engine.client.event.rendering.RenderEvent;
 import engine.client.hud.HUDManager;
 import engine.graphics.display.Window;
-import engine.graphics.game.GameRenderer;
+import engine.graphics.gl.texture.GLFrameBuffer;
+import engine.graphics.internal.impl.gl.GLPlatform3D;
 import engine.graphics.management.GraphicsBackend;
+import engine.graphics.shape.SkyBox;
+import engine.graphics.texture.FilterMode;
+import engine.graphics.texture.FrameBuffer;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.viewport.PerspectiveViewport;
+import engine.graphics.voxel.VoxelRenderHelper;
 import engine.gui.EngineGUIManager;
 import engine.gui.EngineHUDManager;
 import engine.gui.GUIManager;
 import engine.gui.GameGUIPlatform;
 
-public class EngineRenderManager implements RenderManager {
+public final class EngineRenderManager implements RenderManager {
 
     private final EngineClient engine;
 
     private Thread renderThread;
     private Window window;
+    private Scene3D scene;
     private PerspectiveViewport viewport;
+    private FrameBuffer frameBuffer;
 
-    private GameRenderer gameRenderer;
+    //    private GameRenderer gameRenderer;
     private EngineGUIManager guiManager;
     private EngineHUDManager hudManager;
     private GameGUIPlatform gameGUIPlatform;
@@ -53,6 +60,11 @@ public class EngineRenderManager implements RenderManager {
     }
 
     @Override
+    public Scene3D getScene() {
+        return scene;
+    }
+
+    @Override
     public PerspectiveViewport getViewport() {
         return viewport;
     }
@@ -79,17 +91,29 @@ public class EngineRenderManager implements RenderManager {
                 engine.getSettings().getDisplaySettings().getResolutionHeight(),
                 engine.getSettings().getDisplaySettings().getFrameRate());
 
+        GLPlatform3D.launchEmbedded();
+
+        scene = new Scene3D();
         viewport = new PerspectiveViewport();
-        viewport.setScene(new Scene3D());
+        viewport.setScene(scene);
+        viewport.setClearMask(true, true, true);
         viewport.setSize(window.getWidth(), window.getHeight());
+        frameBuffer = GLFrameBuffer.createRGB16FFrameBuffer(window.getWidth(), window.getHeight());
+        viewport.show(frameBuffer);
 
         initTextureAssetProvider();
-        gameRenderer = new GameRenderer(this);
+        VoxelRenderHelper.initialize(this);
+//        gameRenderer = new GameRenderer(this);
+        initScene();
         gameGUIPlatform = new GameGUIPlatform();
         guiManager = new EngineGUIManager(window, gameGUIPlatform.getGUIStage());
         hudManager = new EngineHUDManager(gameGUIPlatform.getHUDStage());
 
         window.show();
+    }
+
+    private void initScene() {
+        scene.addNode(new Geometry(new SkyBox()));
     }
 
     private void initTextureAssetProvider() {
@@ -105,14 +129,16 @@ public class EngineRenderManager implements RenderManager {
     public void render(float tpf) {
         engine.getEventBus().post(new RenderEvent.Pre());
 
-        GraphicsEngine.doRender(tpf);
-        if (window.isResized()) {
-            viewport.setSize(window.getWidth(), window.getHeight());
+        if (engine.getCurrentGame() != null) {
+            engine.getCurrentGame().getClientPlayer().getEntityController().updateCamera(viewport.getCamera(), tpf);
         }
-        viewport.getScene().doUpdate(tpf);
-        gameRenderer.render(tpf);
-        gameGUIPlatform.render(gameGUIPlatform.getGUIStage());
-        gameGUIPlatform.render(gameGUIPlatform.getHUDStage());
+        GraphicsEngine.doRender(tpf);
+        gameGUIPlatform.render(gameGUIPlatform.getGUIStage(), frameBuffer);
+        gameGUIPlatform.render(gameGUIPlatform.getHUDStage(), frameBuffer);
+        FrameBuffer screenBuffer = GLFrameBuffer.getDefaultFrameBuffer();
+        screenBuffer.resize(window.getWidth(), window.getHeight());
+        screenBuffer.bindDrawOnly();
+        screenBuffer.copyFrom(frameBuffer, true, false, false, FilterMode.NEAREST);
         window.swapBuffers();
         updateFPS();
 

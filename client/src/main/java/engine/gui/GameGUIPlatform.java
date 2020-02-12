@@ -4,6 +4,7 @@ import engine.Platform;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.display.Window;
 import engine.graphics.management.GraphicsBackend;
+import engine.graphics.texture.FrameBuffer;
 import engine.gui.internal.ClipboardHelper;
 import engine.gui.internal.GUIPlatform;
 import engine.gui.internal.SceneHelper;
@@ -62,7 +63,7 @@ public final class GameGUIPlatform extends GUIPlatform {
         return hudStage;
     }
 
-    public void render(Stage stage) {
+    public void render(Stage stage, FrameBuffer frameBuffer) {
         Scene scene = stage.getScene();
         if (scene == null) return;
 
@@ -74,7 +75,7 @@ public final class GameGUIPlatform extends GUIPlatform {
         }
 
         scene.update();
-        renderHandler.getRenderer().render(scene, false);
+        renderHandler.getRenderer().render(scene, frameBuffer, false);
     }
 
     @Override
