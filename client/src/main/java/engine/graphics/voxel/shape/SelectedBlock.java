@@ -17,9 +17,9 @@ public class SelectedBlock implements Drawable {
 
     public SelectedBlock() {
         texture = Asset.create(AssetTypes.TEXTURE, "buildin", "white");
-        float minX = -0.01f, maxX = 1.01f,
-                minY = -0.01f, maxY = 1.01f,
-                minZ = -0.01f, maxZ = 1.01f;
+        float minX = -0.001f, maxX = 1.001f,
+                minY = -0.001f, maxY = 1.001f,
+                minZ = -0.001f, maxZ = 1.001f;
         VertexDataBuf buf = VertexDataBuf.currentThreadBuffer();
         buf.begin(VertexFormat.POSITION_COLOR);
         buf.pos(minX, minY, minZ).color(Color.WHITE).endVertex();
