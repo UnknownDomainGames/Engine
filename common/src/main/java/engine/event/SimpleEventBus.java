@@ -131,7 +131,7 @@ public class SimpleEventBus implements EventBus {
             return;
         }
 
-        registeredListeners.get(target).forEach(listener -> getListenerList(listener.getEventType()).unregister(listener));
+        registeredListeners.remove(target).forEach(listener -> getListenerList(listener.getEventType()).unregister(listener));
     }
 
     @Override
