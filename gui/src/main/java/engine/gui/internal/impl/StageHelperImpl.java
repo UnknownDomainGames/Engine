@@ -66,7 +66,8 @@ public final class StageHelperImpl extends StageHelper {
     }
 
     public void disableInput(Stage stage, Window window) {
-        stageInputHandlerMap.remove(stage).disable();
+        StageInputHandler inputHandler = stageInputHandlerMap.remove(stage);
+        if (inputHandler != null) inputHandler.disable();
     }
 
     public void enableRender(Stage stage) {

@@ -16,6 +16,7 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.system.MemoryUtil;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -578,7 +579,7 @@ public class GLFWWindow implements Window {
             charModsCallbacks.forEach(callback -> callback.invoke(this, (char) codepoint, modifiers));
         });
         glfwSetWindowCloseCallback(pointer, window -> {
-            windowCloseCallbacks.forEach(callback -> callback.invoke(this));
+            new ArrayList<>(windowCloseCallbacks).forEach(callback -> callback.invoke(this));
             if (doCloseImmediately) {
                 dispose();
             }
