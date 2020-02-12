@@ -18,6 +18,8 @@ public interface RenderManager {
 
     Window getWindow();
 
+    Scene3D getScene();
+
     PerspectiveViewport getViewport();
 
     GUIManager getGUIManager();

@@ -228,13 +228,7 @@ public final class EngineModClientListeners {
         event.register(KeyBinding.builder()
                 .name("game.menu")
                 .key(Key.KEY_ESCAPE)
-                .startHandler(c -> {
-                    if (!c.getRenderManager().getGUIManager().isShowing()) {
-                        c.getRenderManager().getGUIManager().show(new Scene(new GuiIngameMenu()));
-                    } else {
-                        c.getRenderManager().getGUIManager().close();
-                    }
-                })
+                .startHandler(c -> c.getRenderManager().getGUIManager().show(new Scene(new GuiIngameMenu())))
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.screenshot")
