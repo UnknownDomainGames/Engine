@@ -83,6 +83,6 @@ public final class TextureAssetProvider implements AssetProvider<Texture2D> {
 
     @Override
     public void dispose() {
-        assets.forEach(this::unregister);
+        new ArrayList<>(assets).forEach(this::unregister);
     }
 }
