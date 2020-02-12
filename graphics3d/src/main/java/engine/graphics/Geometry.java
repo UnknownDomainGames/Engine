@@ -7,6 +7,8 @@ import engine.graphics.queue.StandardRenderTypes;
 
 public class Geometry extends Node3D {
 
+    private boolean visible = true;
+
     private Drawable drawable;
     private RenderType renderType;
 
@@ -24,13 +26,20 @@ public class Geometry extends Node3D {
         this.drawable = drawable;
         this.renderType = renderType;
         scene().addChangeListener((observable, oldValue, newValue) -> {
-            if (oldValue != null) {
-                oldValue.getRenderQueue().remove(this, renderType);
-            }
-            if (newValue != null) {
-                newValue.getRenderQueue().add(this, renderType);
-            }
+            if (oldValue != null) oldValue.getRenderQueue().remove(this, renderType);
+            if (newValue != null) newValue.getRenderQueue().add(this, renderType);
         });
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        if (this.visible == visible) return;
+        this.visible = visible;
+        if (visible) getScene().getRenderQueue().add(this, renderType);
+        else getScene().getRenderQueue().remove(this, renderType);
     }
 
     public Drawable getDrawable() {

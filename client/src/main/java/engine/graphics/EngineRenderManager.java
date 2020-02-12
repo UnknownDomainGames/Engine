@@ -121,6 +121,7 @@ public final class EngineRenderManager implements RenderManager {
             var player = getEngine().getCurrentGame().getClientPlayer();
             var camera = getViewport().getCamera();
             var hit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFront(), 10);
+            selectedBlock.setVisible(hit.isSuccess());
             if (hit.isSuccess()) {
                 BlockPos pos = hit.getPos();
                 node.setTranslation(pos.x(), pos.y(), pos.z());
