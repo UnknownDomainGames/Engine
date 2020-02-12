@@ -10,7 +10,6 @@ import engine.graphics.gl.texture.GLFrameBuffer;
 import engine.graphics.internal.impl.gl.GLPlatform3D;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.shape.SkyBox;
-import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.FrameBuffer;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.viewport.PerspectiveViewport;
@@ -100,7 +99,7 @@ public final class EngineRenderManager implements RenderManager {
         viewport.setScene(scene);
         viewport.setClearMask(true, true, true);
         viewport.setSize(window.getWidth(), window.getHeight());
-        frameBuffer = GLFrameBuffer.createRGB16FFrameBuffer(window.getWidth(), window.getHeight());
+        frameBuffer = GLFrameBuffer.getDefaultFrameBuffer();
         viewport.show(frameBuffer);
 
         initTextureAssetProvider();
@@ -143,15 +142,15 @@ public final class EngineRenderManager implements RenderManager {
     public void render(float tpf) {
         engine.getEventBus().post(new RenderEvent.Pre());
 
-        if (engine.getCurrentGame() != null) {
+        if (window.isResized()) {
+            viewport.setSize(window.getWidth(), window.getHeight());
+        }
+        if (engine.isPlaying()) {
             engine.getCurrentGame().getClientPlayer().getEntityController().updateCamera(viewport.getCamera(), tpf);
         }
         GraphicsEngine.doRender(tpf);
         gameGUIPlatform.render(gameGUIPlatform.getGUIStage(), frameBuffer);
         gameGUIPlatform.render(gameGUIPlatform.getHUDStage(), frameBuffer);
-        FrameBuffer screenBuffer = GLFrameBuffer.getDefaultFrameBuffer();
-        screenBuffer.resize(window.getWidth(), window.getHeight());
-        screenBuffer.copyFrom(frameBuffer, true, false, false, FilterMode.NEAREST);
         window.swapBuffers();
         updateFPS();
 
