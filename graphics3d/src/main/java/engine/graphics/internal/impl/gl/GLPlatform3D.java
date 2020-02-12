@@ -10,10 +10,16 @@ public class GLPlatform3D extends Platform3D {
 
     private final ViewportHelperImpl viewportHelper = new ViewportHelperImpl();
 
-    public static void launch(String[] args) throws Exception {
+    public static void launch(String... args) {
         GLPlatform3D platform = new GLPlatform3D();
         setInstance(platform);
         GraphicsEngine.start(new GraphicsEngine.Settings());
+        GraphicsEngine.getGraphicsBackend().attachHandler(new Scene3DRenderHandler(platform.viewportHelper.getViewports()));
+    }
+
+    public static void launchEmbedded(String... args) {
+        GLPlatform3D platform = new GLPlatform3D();
+        setInstance(platform);
         GraphicsEngine.getGraphicsBackend().attachHandler(new Scene3DRenderHandler(platform.viewportHelper.getViewports()));
     }
 
