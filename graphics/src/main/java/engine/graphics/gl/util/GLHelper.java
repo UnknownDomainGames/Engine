@@ -11,6 +11,14 @@ import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
 
 public final class GLHelper {
 
+    public static int getMask(boolean color, boolean depth, boolean stencil) {
+        int mask = 0;
+        if (color) mask |= GL_COLOR_BUFFER_BIT;
+        if (depth) mask |= GL_DEPTH_BUFFER_BIT;
+        if (stencil) mask |= GL_STENCIL_BUFFER_BIT;
+        return mask;
+    }
+
     public static int toGLDataType(DataType type) {
         switch (type) {
             case BYTE:

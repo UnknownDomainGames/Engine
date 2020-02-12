@@ -4,6 +4,7 @@ import com.github.mouse0w0.observable.value.ObservableObjectValue;
 import engine.graphics.display.Window;
 import engine.graphics.gl.shader.ShaderManager;
 import engine.graphics.gl.shader.ShaderProgram;
+import engine.graphics.gl.util.GLHelper;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.management.RenderHandler;
 import engine.graphics.queue.GeometryList;
@@ -103,17 +104,7 @@ public final class Scene3DRenderHandler implements RenderHandler {
         GL11.glViewport(0, 0, width, height);
         Color clearColor = viewport.getClearColor();
         GL11.glClearColor(clearColor.getRed(), clearColor.getGreen(), clearColor.getBlue(), clearColor.getAlpha());
-        int clearMask = 0;
-        if (viewport.isClearColor()) {
-            clearMask |= GL11.GL_COLOR_BUFFER_BIT;
-        }
-        if (viewport.isClearDepth()) {
-            clearMask |= GL11.GL_DEPTH_BUFFER_BIT;
-        }
-        if (viewport.isClearStencil()) {
-            clearMask |= GL11.GL_STENCIL_BUFFER_BIT;
-        }
-        GL11.glClear(clearMask);
+        GL11.glClear(GLHelper.getMask(viewport.isClearColor(), viewport.isClearDepth(), viewport.isClearStencil()));
     }
 
     @Override
