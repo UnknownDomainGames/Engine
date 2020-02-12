@@ -14,6 +14,7 @@ import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.FrameBuffer;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.viewport.PerspectiveViewport;
+import engine.graphics.voxel.SelectedBlock;
 import engine.graphics.voxel.VoxelRenderHelper;
 import engine.gui.EngineGUIManager;
 import engine.gui.EngineHUDManager;
@@ -114,6 +115,17 @@ public final class EngineRenderManager implements RenderManager {
 
     private void initScene() {
         scene.addNode(new Geometry(new SkyBox()));
+        Geometry selectedBlock = new Geometry(new SelectedBlock());
+        selectedBlock.setController((node, tpf) -> {
+            if (!getEngine().isPlaying()) return;
+            var player = getEngine().getCurrentGame().getClientPlayer();
+            var camera = getViewport().getCamera();
+            var hit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFront(), 10);
+            if (hit.isSuccess()) {
+                node.setTranslation(hit.getHitPoint());
+            }
+        });
+        scene.addNode(selectedBlock);
     }
 
     private void initTextureAssetProvider() {
@@ -137,7 +149,6 @@ public final class EngineRenderManager implements RenderManager {
         gameGUIPlatform.render(gameGUIPlatform.getHUDStage(), frameBuffer);
         FrameBuffer screenBuffer = GLFrameBuffer.getDefaultFrameBuffer();
         screenBuffer.resize(window.getWidth(), window.getHeight());
-        screenBuffer.bindDrawOnly();
         screenBuffer.copyFrom(frameBuffer, true, false, false, FilterMode.NEAREST);
         window.swapBuffers();
         updateFPS();
