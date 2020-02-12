@@ -124,6 +124,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         RenderManager.Internal.setInstance(renderManager);
         renderManager.init(clientThread);
         initRenderCrashReportDetails();
+        renderManager.getWindow().setDoCloseImmediately(false);
         renderManager.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         addShutdownListener(renderManager::dispose);
         assetManager.getReloadManager().addListener(AssetReloadListener.builder().name("Shader").runnable(ShaderManager.instance()::reload).build());
