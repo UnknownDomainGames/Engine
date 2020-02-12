@@ -11,10 +11,11 @@ layout (location = 3) in vec3 a_Normal;
 
 out vec4 v_Color;
 out vec2 v_TexCoord;
+out vec3 v_Normal;
 
 void main() {
-    vec4 worldPos = u_ModelMatrix * vec4(a_Position, 1.0);
-    gl_Position = u_ProjMatrix * u_ViewMatrix * worldPos;
+    gl_Position = u_ProjMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
     v_Color = a_Color;
     v_TexCoord = a_TexCoord;
+    v_Normal = a_Normal;
 }
