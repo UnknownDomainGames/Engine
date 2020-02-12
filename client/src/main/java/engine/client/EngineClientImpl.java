@@ -122,6 +122,14 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         assetManager.getSourceManager().getSources().add(engineAssetSource);
         shutdownListeners.add(() -> assetManager.dispose());
 
+        assetManager.register(AssetType
+                .builder(BakedModel.class)
+                .name("VoxelModel")
+                .provider(new ModelManager())
+                .parentLocation("model")
+                .extensionName(".json")
+                .build());
+
         logger.info("Initializing render context!");
         renderManager = new EngineRenderManager(this);
         RenderManager.Internal.setInstance(renderManager);
@@ -130,8 +138,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         renderManager.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         addShutdownListener(renderManager::dispose);
         assetManager.getReloadManager().addListener(AssetReloadListener.builder().name("Shader").runnable(ShaderManager.instance()::reload).build());
-
-        assetManager.register(AssetType.builder(BakedModel.class).name("VoxelModel").provider(new ModelManager()).parentLocation("model").extensionName(".json").build());
 
         logger.info("Initializing audio context!");
         soundManager = new EngineSoundManager();
