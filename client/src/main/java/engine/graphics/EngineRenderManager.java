@@ -20,6 +20,7 @@ import engine.gui.EngineGUIManager;
 import engine.gui.EngineHUDManager;
 import engine.gui.GUIManager;
 import engine.gui.GameGUIPlatform;
+import engine.math.BlockPos;
 
 public final class EngineRenderManager implements RenderManager {
 
@@ -122,7 +123,8 @@ public final class EngineRenderManager implements RenderManager {
             var camera = getViewport().getCamera();
             var hit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFront(), 10);
             if (hit.isSuccess()) {
-                node.setTranslation(hit.getHitPoint());
+                BlockPos pos = hit.getPos();
+                node.setTranslation(pos.x(), pos.y(), pos.z());
             }
         });
         scene.addNode(selectedBlock);
