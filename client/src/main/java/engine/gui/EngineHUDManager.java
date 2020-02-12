@@ -26,6 +26,9 @@ public final class EngineHUDManager implements HUDManager {
     @Override
     public void setVisible(boolean visible) {
         hudPane.visible().set(visible);
+        hudControls.values().stream().filter(hudControl ->
+                hudControl.visible().get()).forEach(hudControl ->
+                hudControl.onVisibleChanged(visible));
     }
 
     @Override

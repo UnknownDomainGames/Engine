@@ -14,7 +14,7 @@ import engine.enginemod.client.gui.game.GUIGameCreation;
 import engine.enginemod.client.gui.game.GuiChat;
 import engine.enginemod.client.gui.game.GuiIngameMenu;
 import engine.enginemod.client.gui.game.GuiItemList;
-import engine.enginemod.client.gui.hud.HUDGameDebug;
+import engine.enginemod.client.gui.hud.HUDDebug;
 import engine.entity.Entity;
 import engine.entity.component.TwoHands;
 import engine.entity.item.ItemEntity;
@@ -236,7 +236,7 @@ public final class EngineModClientListeners {
                 .startHandler(engineClient -> GLHelper.takeScreenshot(engineClient.getRunPath().resolve("screenshot")))
                 .build());
         var hudManager = Platform.getEngineClient().getRenderManager().getHUDManager();
-        var hudGameDebug = new HUDGameDebug();
+        var hudGameDebug = new HUDDebug();
         hudManager.add(hudGameDebug);
         event.register(KeyBinding.builder()
                 .name("game.debug_display_switch")

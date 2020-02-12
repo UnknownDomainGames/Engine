@@ -104,11 +104,10 @@ public final class EngineRenderManager implements RenderManager {
 
         initTextureAssetProvider();
         VoxelRenderHelper.initialize(this);
-//        gameRenderer = new GameRenderer(this);
         initScene();
         gameGUIPlatform = new GameGUIPlatform();
-        guiManager = new EngineGUIManager(window, gameGUIPlatform.getGUIStage());
         hudManager = new EngineHUDManager(gameGUIPlatform.getHUDStage());
+        guiManager = new EngineGUIManager(window, gameGUIPlatform.getGUIStage(), hudManager);
 
         window.show();
     }

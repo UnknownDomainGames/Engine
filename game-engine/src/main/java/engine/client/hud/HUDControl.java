@@ -15,6 +15,7 @@ public abstract class HUDControl extends Control {
     public HUDControl(String name) {
         this.name = name;
         visible().set(false);
+        visible().addChangeListener((observable, oldValue, newValue) -> onVisibleChanged(newValue));
     }
 
     public String getName() {
@@ -40,6 +41,9 @@ public abstract class HUDControl extends Control {
 
     public void setContent(Node content) {
         content().set(content);
+    }
+
+    public void onVisibleChanged(boolean visible) {
     }
 
     @Override

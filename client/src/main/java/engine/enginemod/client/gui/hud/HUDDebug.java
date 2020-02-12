@@ -25,9 +25,8 @@ import org.joml.Vector3fc;
 import static engine.world.chunk.ChunkConstants.*;
 import static java.lang.String.format;
 
-public class HUDGameDebug extends HUDControl {
+public final class HUDDebug extends HUDControl {
 
-    private final VBox vBox;
     private final Text fps;
     private final Text playerPosition;
     private final Text playerMotion;
@@ -41,16 +40,12 @@ public class HUDGameDebug extends HUDControl {
     private final Text hitBlockOrEntityPos;
     private final Text hitPos;
 
-    public HUDGameDebug() {
+    public HUDDebug() {
         super("GameDebug");
         AnchorPane.setTopAnchor(this, 0f);
         AnchorPane.setLeftAnchor(this, 0f);
-        visible().addChangeListener((observable, oldValue, newValue) -> {
-            if (newValue) Platform.getEngineClient().getEventBus().register(this);
-            else Platform.getEngineClient().getEventBus().unregister(this);
-        });
 
-        vBox = new VBox();
+        VBox vBox = new VBox();
         vBox.spacing().set(5);
         vBox.padding().set(new Insets(5));
         setContent(vBox);
@@ -70,6 +65,12 @@ public class HUDGameDebug extends HUDControl {
         hitPos = new Text();
         hitResult.getChildren().addAll(hitBlockOrEntity, hitBlockOrEntityPos, hitPos);
         hitResult.spacing().set(5);
+    }
+
+    @Override
+    public void onVisibleChanged(boolean visible) {
+        if (visible) Platform.getEngineClient().getEventBus().register(this);
+        else Platform.getEngineClient().getEventBus().unregister(this);
     }
 
     @Listener
