@@ -25,7 +25,6 @@ import engine.graphics.EngineRenderManager;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.RenderManager;
 import engine.graphics.gl.util.GLContextUtils;
-import engine.graphics.shader.ShaderManager;
 import engine.logic.Ticker;
 import engine.mod.ModContainer;
 import engine.util.ClassPathUtils;
@@ -127,7 +126,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         renderManager.getWindow().setDoCloseImmediately(false);
         renderManager.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         addShutdownListener(renderManager::dispose);
-        assetManager.getReloadManager().addListener(AssetReloadListener.builder().name("Shader").runnable(ShaderManager.instance()::reload).build());
 
         logger.info("Initializing audio context!");
         soundManager = new EngineSoundManager();
