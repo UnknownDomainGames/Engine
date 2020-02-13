@@ -1,10 +1,10 @@
 package engine.gui.control;
 
 import com.github.mouse0w0.observable.value.MutableDoubleValue;
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
+import engine.graphics.font.Font;
 import engine.gui.misc.Pos;
 import engine.gui.text.Text;
-import engine.graphics.font.Font;
 import engine.util.Color;
 
 public class Label extends Control {
@@ -20,19 +20,19 @@ public class Label extends Control {
         text().setValue(text);
     }
 
-    public final MutableValue<Font> font() {
+    public final MutableObjectValue<Font> font() {
         return text.font();
     }
 
-    public final MutableValue<String> text() {
+    public final MutableObjectValue<String> text() {
         return text.text();
     }
 
-    public final MutableValue<Color> textColor() {
+    public final MutableObjectValue<Color> textColor() {
         return text.color();
     }
 
-    public MutableValue<Pos> textAlignment() {
+    public MutableObjectValue<Pos> textAlignment() {
         return text.textAlignment();
     }
 
