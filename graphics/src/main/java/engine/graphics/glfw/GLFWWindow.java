@@ -98,10 +98,10 @@ public class GLFWWindow implements Window {
     @Override
     public void setPos(int x, int y) {
         glfwSetWindowPos(pointer, x, y);
-        setPotInternal(x, y);
+        setPosInternal(x, y);
     }
 
-    private void setPotInternal(int x, int y) {
+    private void setPosInternal(int x, int y) {
         this.x = x;
         this.y = y;
         windowPosCallbacks.forEach(callback -> callback.invoke(this, x, y));
@@ -590,7 +590,7 @@ public class GLFWWindow implements Window {
         });
         glfwSetCursorEnterCallback(pointer, (window, entered) ->
                 cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
-        glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> setPotInternal(xpos, ypos));
+        glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> setPosInternal(xpos, ypos));
         glfwSetWindowSizeCallback(pointer, (window, width, height) -> resize(width, height));
         glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> GLFWContext.refreshScreen(screen)));
         glfwSetDropCallback(pointer, (window, count, names) -> {

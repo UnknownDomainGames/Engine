@@ -27,8 +27,8 @@ public final class GPUInfoImpl implements GPUInfo {
             vendor = Vendor.AMD;
             totalMemory = glGetInteger(GL_VBO_FREE_MEMORY_ATI) + glGetInteger(GL_TEXTURE_FREE_MEMORY_ATI) +
                     glGetInteger(GL_RENDERBUFFER_FREE_MEMORY_ATI);
-        } else if (lowerVendorName.contains("inter")) {
-            vendor = Vendor.INTER;
+        } else if (lowerVendorName.contains("intel")) {
+            vendor = Vendor.INTEL;
             totalMemory = -1;
         } else {
             vendor = Vendor.UNKNOWN;
