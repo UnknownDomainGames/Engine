@@ -1,13 +1,16 @@
 package engine.enginemod.client.gui.game;
 
+import engine.Platform;
 import engine.entity.component.TwoHands;
 import engine.graphics.RenderManager;
+import engine.gui.Scene;
 import engine.gui.control.ItemView;
 import engine.gui.layout.AnchorPane;
 import engine.gui.layout.HBox;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.text.Text;
+import engine.input.KeyCode;
 import engine.item.Item;
 import engine.item.ItemStack;
 import engine.registry.Registries;
@@ -15,8 +18,18 @@ import engine.util.Color;
 
 import java.util.Map;
 
-public class GuiItemList extends AnchorPane {
-    public GuiItemList(RenderManager context) {
+public final class GUIItemList extends AnchorPane {
+    public static Scene create() {
+        Scene scene = new Scene(new GUIItemList());
+        scene.setOnKeyPressed(event -> {
+            if (event.getKey() == KeyCode.ESCAPE) {
+                RenderManager.instance().getGUIManager().close();
+            }
+        });
+        return scene;
+    }
+
+    public GUIItemList() {
         var vBox = new VBox();
         vBox.background().setValue(Background.fromColor(Color.fromARGB(0x7f000000)));
         vBox.spacing().set(5f);
@@ -29,7 +42,7 @@ public class GuiItemList extends AnchorPane {
         var hBox = new HBox();
         for (Map.Entry<String, Item> entry : Registries.getItemRegistry().getEntries()) {
             ItemView itemView = new ItemView(new ItemStack(entry.getValue()));
-            itemView.setOnMouseClicked(event -> context.getEngine().getCurrentGame().getClientPlayer().getControlledEntity()
+            itemView.setOnMouseClicked(event -> Platform.getEngineClient().getCurrentGame().getClientPlayer().getControlledEntity()
                     .getComponent(TwoHands.class)
                     .ifPresent(twoHands -> twoHands.setMainHand(itemView.item().getValue())));
             itemView.viewSize().set(40);

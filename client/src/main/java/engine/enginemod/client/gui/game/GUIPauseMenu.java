@@ -1,30 +1,43 @@
 package engine.enginemod.client.gui.game;
 
 import engine.Platform;
+import engine.graphics.RenderManager;
 import engine.graphics.font.Font;
 import engine.gui.GUIManager;
 import engine.gui.Scene;
 import engine.gui.control.Button;
-import engine.gui.control.Label;
-import engine.gui.layout.BorderPane;
+import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
-import engine.gui.misc.Insets;
 import engine.gui.misc.Pos;
+import engine.gui.text.Text;
+import engine.input.KeyCode;
 import engine.util.Color;
 
-public class GuiIngameMenu extends BorderPane {
-    public GuiIngameMenu() {
+public final class GUIPauseMenu extends FlowPane {
+
+    public static Scene create() {
+        Scene scene = new Scene(new GUIPauseMenu());
+        scene.setOnKeyPressed(event -> {
+            if (event.getKey() == KeyCode.ESCAPE) {
+                RenderManager.instance().getGUIManager().close();
+            }
+        });
+        return scene;
+    }
+
+    private GUIPauseMenu() {
+        alignment().set(Pos.CENTER);
+        background().set(new Background(Color.fromARGB(0x7FAAAAAA)));
+
         VBox vBox = new VBox();
         vBox.spacing().set(5);
-        vBox.alignment().setValue(Pos.HPos.CENTER);
-        center().setValue(vBox);
-        this.background().setValue(new Background(Color.fromARGB(0x7FAAAAAA)));
-        vBox.padding().setValue(new Insets(100, 350, 0, 350));
+        vBox.alignment().set(Pos.HPos.CENTER);
+        getChildren().add(vBox);
 
-        Label text = new Label();
-        text.text().setValue("Game Menu");
-        text.font().setValue(new Font(Font.getDefaultFont(), 20));
+        Text text = new Text();
+        text.text().set("Game Menu");
+        text.font().set(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
         Button backtoGame = new Button("Back To Game");

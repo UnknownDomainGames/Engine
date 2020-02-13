@@ -11,9 +11,9 @@ import engine.client.input.controller.MotionType;
 import engine.client.input.keybinding.Key;
 import engine.client.input.keybinding.KeyBinding;
 import engine.enginemod.client.gui.game.GUIGameCreation;
+import engine.enginemod.client.gui.game.GUIItemList;
+import engine.enginemod.client.gui.game.GUIPauseMenu;
 import engine.enginemod.client.gui.game.GuiChat;
-import engine.enginemod.client.gui.game.GuiIngameMenu;
-import engine.enginemod.client.gui.game.GuiItemList;
 import engine.enginemod.client.gui.hud.HUDDebug;
 import engine.enginemod.client.gui.hud.HUDHandingItem;
 import engine.entity.Entity;
@@ -223,15 +223,12 @@ public final class EngineModClientListeners {
         event.register(KeyBinding.builder()
                 .name("game.inventory")
                 .key(Key.KEY_E)
-                .startHandler(c -> {
-                    Scene scene = new Scene(new GuiItemList(c.getRenderManager()));
-                    c.getRenderManager().getGUIManager().show(scene);
-                })
+                .startHandler(c -> c.getRenderManager().getGUIManager().show(GUIItemList.create()))
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.menu")
                 .key(Key.KEY_ESCAPE)
-                .startHandler(c -> c.getRenderManager().getGUIManager().show(new Scene(new GuiIngameMenu())))
+                .startHandler(c -> c.getRenderManager().getGUIManager().show(GUIPauseMenu.create()))
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.screenshot")
