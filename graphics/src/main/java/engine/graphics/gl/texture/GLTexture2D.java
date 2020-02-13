@@ -109,8 +109,11 @@ public final class GLTexture2D extends GLTexture implements Texture2D {
 
         private final Map<Integer, Integer> parameterMap = new HashMap<>();
 
-        private boolean mipmap = false;
         private GLTextureFormat format = GLTextureFormat.RGBA8;
+
+        private boolean mipmap = false;
+
+        private Color borderColor;
 
         private Builder() {
             magFilter(FilterMode.NEAREST);
@@ -157,7 +160,7 @@ public final class GLTexture2D extends GLTexture implements Texture2D {
 
         @Override
         public Builder borderColor(Color color) {
-            parameterMap.put(GL_TEXTURE_BORDER_COLOR, color.toRGBA());
+            borderColor = color;
             return this;
         }
 
@@ -182,6 +185,10 @@ public final class GLTexture2D extends GLTexture implements Texture2D {
             texture.mipmap = mipmap;
             texture.bind();
             parameterMap.forEach((key, value) -> glTexParameteri(GL_TEXTURE_2D, key, value));
+            if (borderColor != null) {
+                glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR,
+                        new float[]{borderColor.getRed(), borderColor.getGreen(), borderColor.getBlue(), borderColor.getAlpha()});
+            }
             texture.glTexImage2D(pixelBuffer, width, height, 0);
             return texture;
         }
