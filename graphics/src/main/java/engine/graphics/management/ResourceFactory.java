@@ -18,4 +18,6 @@ public interface ResourceFactory {
     RenderBuffer createRenderBuffer(TextureFormat format, int width, int height);
 
     RenderBuffer createRenderBuffer(TextureFormat format, Sampler sampler, int width, int height);
+
+    RenderBuffer.Builder createRenderBufferBuilder();
 }

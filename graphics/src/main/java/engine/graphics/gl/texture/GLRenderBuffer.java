@@ -19,13 +19,12 @@ public final class GLRenderBuffer implements RenderBuffer {
     private int width;
     private int height;
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public GLRenderBuffer(TextureFormat format, int width, int height) {
-        id = GL30.glGenRenderbuffers();
-        disposable = GLCleaner.registerRenderBuffer(this, id);
-        this.format = GLTextureFormat.valueOf(format);
-        this.width = width;
-        this.height = height;
-        GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, this.format.internalFormat, width, height);
+        this(format, null, width, height);
     }
 
     public GLRenderBuffer(TextureFormat format, Sampler sampler, int width, int height) {
@@ -35,7 +34,11 @@ public final class GLRenderBuffer implements RenderBuffer {
         this.sampler = sampler;
         this.width = width;
         this.height = height;
-        GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, sampler.getId(), this.format.internalFormat, width, height);
+        if (sampler == null) {
+            GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, this.format.internalFormat, width, height);
+        } else {
+            GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, sampler.getId(), this.format.internalFormat, width, height);
+        }
     }
 
     @Override
@@ -85,5 +88,37 @@ public final class GLRenderBuffer implements RenderBuffer {
     @Override
     public boolean isDisposed() {
         return id == 0;
+    }
+
+    private static final class Builder implements RenderBuffer.Builder {
+
+        private TextureFormat format;
+        private Sampler sampler;
+        private int width;
+        private int height;
+
+        @Override
+        public RenderBuffer.Builder format(TextureFormat format) {
+            this.format = format;
+            return this;
+        }
+
+        @Override
+        public RenderBuffer.Builder sampler(Sampler sampler) {
+            this.sampler = sampler;
+            return this;
+        }
+
+        @Override
+        public RenderBuffer.Builder size(int width, int height) {
+            this.width = width;
+            this.height = height;
+            return this;
+        }
+
+        @Override
+        public RenderBuffer build() {
+            return new GLRenderBuffer(format, sampler, width, height);
+        }
     }
 }

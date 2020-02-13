@@ -43,4 +43,9 @@ public final class GLResourceFactory implements ResourceFactory {
     public RenderBuffer createRenderBuffer(TextureFormat format, Sampler sampler, int width, int height) {
         return new GLRenderBuffer(format, sampler, width, height);
     }
+
+    @Override
+    public RenderBuffer.Builder createRenderBufferBuilder() {
+        return GLRenderBuffer.builder();
+    }
 }
