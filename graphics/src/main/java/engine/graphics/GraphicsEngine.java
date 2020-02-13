@@ -5,6 +5,8 @@ import engine.graphics.lwjgl.STBImageHelper;
 import engine.graphics.management.GraphicsBackend;
 
 public final class GraphicsEngine {
+    public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("graphics.debug", "false"));
+
     private static Settings settings;
     private static GraphicsBackend graphicsBackend;
 
@@ -40,7 +42,7 @@ public final class GraphicsEngine {
     }
 
     public static class Settings {
-        private boolean debug = Boolean.parseBoolean(System.getProperty("rendering.debug", "false"));
+        private boolean debug = DEBUG;
 
         public Settings debug(boolean debug) {
             this.debug = debug;
