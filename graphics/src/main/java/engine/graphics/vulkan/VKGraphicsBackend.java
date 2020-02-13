@@ -3,26 +3,42 @@ package engine.graphics.vulkan;
 
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
+import engine.graphics.gl.util.GLContextUtils;
 import engine.graphics.glfw.GLFWContext;
 import engine.graphics.glfw.GLFWVulkanWindow;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.management.RenderHandler;
 import engine.graphics.management.ResourceFactory;
+import engine.graphics.util.Cleaner;
 import engine.graphics.util.GPUInfo;
+import engine.graphics.vulkan.device.LogicalDevice;
+import engine.graphics.vulkan.device.PhysicalDevice;
+import engine.graphics.vulkan.pipeline.PipelineStage;
+import engine.graphics.vulkan.render.RenderPass;
+import engine.graphics.vulkan.synchronize.Semaphore;
+import engine.graphics.vulkan.util.GPUInfoVk;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.vulkan.VK10;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RunnableFuture;
 
 public class VKGraphicsBackend implements GraphicsBackend {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("Graphics");
 
-
     private Thread renderingThread;
-    private GLFWVulkanWindow primaryWindow;
+    private GPUInfo gpuInfo;
     private VKWindowHelper windowHelper;
+    private GLFWVulkanWindow primaryWindow;
+    private final List<RenderHandler> handlers = new ArrayList<>();
+    private final List<RunnableFuture<?>> pendingTasks = new ArrayList<>();
 
     public VKGraphicsBackend() {
 
@@ -40,7 +56,7 @@ public class VKGraphicsBackend implements GraphicsBackend {
 
     @Override
     public GPUInfo getGPUInfo() {
-        return null;
+        return gpuInfo;
     }
 
     @Override
@@ -60,22 +76,65 @@ public class VKGraphicsBackend implements GraphicsBackend {
 
     @Override
     public void attachHandler(RenderHandler handler) {
-
+        handler.init(this);
+        this.handlers.add(handler);
     }
 
     @Override
     public Future<Void> submitTask(Runnable runnable) {
-        return null;
+        FutureTask<Void> task = new FutureTask<>(runnable, null);
+        submitTask(task);
+        return task;
     }
 
     @Override
     public <V> Future<V> submitTask(Callable<V> callable) {
-        return null;
+        FutureTask<V> task = new FutureTask<>(callable);
+        submitTask(task);
+        return task;
+    }
+
+    private void submitTask(RunnableFuture<?> task) {
+        if (Thread.currentThread() == renderingThread) {
+            task.run();
+            return;
+        }
+
+        synchronized (pendingTasks) {
+            pendingTasks.add(task);
+        }
     }
 
     @Override
-    public void render(float partial) {
+    public void render(float tpf) {
+        Cleaner.clean();
+        runPendingTasks();
+        var imageAcquireSemaphore = Semaphore.createSemaphore(device);
+        var renderCompleteSemaphore = Semaphore.createSemaphore(device);
+        int nextImage = swapchain.acquireNextImage(imageAcquireSemaphore, null);
+        var cmdBuf = commandPool.createCommandBuffer();
+        cmdBuf.beginCommandBuffer();
+        for (RenderHandler handler : handlers) {
+            handler.render(tpf);
+        }
+        cmdBuf.endCommandBuffer();
+        queue.submit(cmdBuf, List.of(imageAcquireSemaphore), List.of(PipelineStage.COLOR_ATTACHMENT_OUTPUT), List.of(renderCompleteSemaphore), null);
+        queue.present(swapchain, nextImage, List.of(renderCompleteSemaphore));
+        queue.waitIdle();
+        imageAcquireSemaphore.dispose();
+        renderCompleteSemaphore.dispose();
+        GLFW.glfwPollEvents();
+    }
 
+    private void runPendingTasks() {
+        synchronized (pendingTasks) {
+            if (pendingTasks.isEmpty()) return;
+            for (RunnableFuture<?> task : pendingTasks) {
+                if (task.isCancelled()) continue;
+                task.run();
+            }
+            pendingTasks.clear();
+        }
     }
 
     @Override
@@ -93,6 +152,11 @@ public class VKGraphicsBackend implements GraphicsBackend {
     }
 
     private VulkanInstance vulkanInstance;
+    private PhysicalDevice physicalDevice;
+    private LogicalDevice device;
+    private CommandPool commandPool;
+    private Queue queue;
+    private Swapchain swapchain;
 
     private void initVulkan(){
         LOGGER.info("Initializing Vulkan instance!");
@@ -101,10 +165,39 @@ public class VKGraphicsBackend implements GraphicsBackend {
         if(requiredExtensions == null)
             throw new IllegalStateException("Unable to get extension required for Vulkan to load");
         vulkanInstance = VulkanInstance.createInstance(requiredExtensions, "",1,VulkanVersion.VER_1_0);
+        physicalDevice = vulkanInstance.getPhysicalDevices().get(0);
+        gpuInfo = new GPUInfoVk(physicalDevice);
+        printVKInfo();
+
+        var i = 0;
+        for(i = 0; i < physicalDevice.getQueueFamilyCount(); i++){
+            if(physicalDevice.doQueueFamilySupportGraphics(i)){
+                break;
+            }
+        }
+        if(i >= physicalDevice.getQueueFamilyCount()) {
+            throw new IllegalStateException(String.format("Unable to retrieve graphics queue family for device %s", physicalDevice.getDeviceName()));
+        }
+        device = physicalDevice.createLogicalDevice(new int[]{i}, new int[]{1}, null, null);
+        commandPool = device.createCommandPool(i);
+        queue = device.getQueue(i, 0);
+        var surface = primaryWindow.getSurface(vulkanInstance);
+        swapchain = Swapchain.createSwapChain(device, surface, null, primaryWindow.getWidth(), primaryWindow.getHeight(), ColorSpace.getColorSpace(physicalDevice, surface));
+    }
+
+    private void printVKInfo() {
+        LOGGER.info("----- Vulkan Information -----");
+        LOGGER.info("\tVK_VENDOR: {}", gpuInfo.getVendorName());
+        LOGGER.info("\tVK_DEVICE: {}", gpuInfo.getName());
+        LOGGER.info("\tVK_VERSION: {}", "1.0.0");
+        LOGGER.info("\tVK_AVAILABLE_EXTENSIONS: {}", physicalDevice.getSupportedExtensionProperties(null).stream().reduce((s, s2) -> s + ", " + " s2").orElse(""));
+        LOGGER.info("\tGPU_TOTAL_MEMORY: {} MB", (gpuInfo.getTotalMemory()) >> 10);
+        LOGGER.info("------------------------------");
     }
 
     @Override
     public void dispose() {
 
+        vulkanInstance.free();
     }
 }

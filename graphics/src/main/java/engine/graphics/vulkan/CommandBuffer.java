@@ -32,7 +32,7 @@ public class CommandBuffer {
         }
     }
 
-    private void checkReleased() {
+    public void checkReleased() {
         if(released) throw new IllegalStateException("CommandBuffer already released!");
     }
 
@@ -41,7 +41,7 @@ public class CommandBuffer {
         return vkEndCommandBuffer(vkbuffer);
     }
 
-    public void submitCommandBuffer(VkQueue queue){
+    public void submitCommandBuffer(Queue queue){
         checkReleased();
         try(var stack = MemoryStack.stackPush()) {
             VkSubmitInfo submitInfo = VkSubmitInfo.callocStack(stack)
@@ -50,7 +50,7 @@ public class CommandBuffer {
                     .put(vkbuffer)
                     .flip();
             submitInfo.pCommandBuffers(pCommandBuffers);
-            int err = vkQueueSubmit(queue, submitInfo, VK_NULL_HANDLE);
+            int err = vkQueueSubmit(queue.getNativeQueue(), submitInfo, VK_NULL_HANDLE);
             if (err != VK_SUCCESS) {
                 throw new AssertionError("Failed to submit command buffer: " + VulkanUtils.translateVulkanResult(err));
             }

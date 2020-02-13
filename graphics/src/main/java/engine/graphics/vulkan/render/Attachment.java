@@ -1,16 +1,17 @@
 package engine.graphics.vulkan.render;
 
+import engine.graphics.vulkan.texture.ColorFormat;
 import engine.graphics.vulkan.texture.VKTexture;
 import org.lwjgl.vulkan.VK10;
 
 public class Attachment {
 
-    private VKTexture.Format format;
+    private ColorFormat format;
     private int samples;
     private VKTexture.Layout initialLayout;
     private VKTexture.Layout finalLayout;
 
-    public Attachment(VKTexture.Format format, int samples, VKTexture.Layout initialLayout, VKTexture.Layout finalLayout){
+    public Attachment(ColorFormat format, int samples, VKTexture.Layout initialLayout, VKTexture.Layout finalLayout){
         this.format = format;
         this.samples = samples;
         this.initialLayout = initialLayout;
@@ -19,7 +20,7 @@ public class Attachment {
 
     private Operation loadOp = Operation.IGNORE, storeOp = Operation.DISCARD, stencilLoadOp = Operation.IGNORE, stencilStoreOp = Operation.DISCARD;
 
-    public VKTexture.Format getFormat() {
+    public ColorFormat getFormat() {
         return format;
     }
 

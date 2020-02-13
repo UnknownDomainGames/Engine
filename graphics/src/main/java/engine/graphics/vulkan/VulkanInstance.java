@@ -36,30 +36,28 @@ public class VulkanInstance {
             if(err != VK_SUCCESS){
                 return new ArrayList<>();
             }
-            return ptrs.stream().map(vkExtensionProperties -> String.format("%s:%d.%d.%d", vkExtensionProperties.extensionNameString(),
-                    VK10.VK_VERSION_MAJOR(vkExtensionProperties.specVersion()),
-                    VK10.VK_VERSION_MINOR(vkExtensionProperties.specVersion()),
-                    VK10.VK_VERSION_PATCH(vkExtensionProperties.specVersion()))).collect(Collectors.toList());
+            return ptrs.stream().map(vkExtensionProperties -> String.format("%s:%d", vkExtensionProperties.extensionNameString(),vkExtensionProperties.specVersion())).collect(Collectors.toList());
         }
     }
 
-    public static VulkanInstance createInstance(PointerBuffer extensions, String appName, int appVersion, VulkanVersion apiVersion){
+    public static VulkanInstance createInstance(@Nullable PointerBuffer extensions, String appName, int appVersion, VulkanVersion apiVersion){
         return createInstance(extensions, null, appName, appVersion, "", 1, apiVersion);
     }
 
-    public static VulkanInstance createInstance(PointerBuffer extensions, PointerBuffer layers, String appName, int appVersion, VulkanVersion apiVersion){
+    public static VulkanInstance createInstance(@Nullable PointerBuffer extensions, @Nullable PointerBuffer layers, String appName, int appVersion, VulkanVersion apiVersion){
         return createInstance(extensions, layers, appName, appVersion, "", 1, apiVersion);
     }
 
-    public static VulkanInstance createInstance(PointerBuffer extensions, PointerBuffer layers, String appName, int appVersion, String engineName, int engineVersion, VulkanVersion apiVersion){
+    public static VulkanInstance createInstance(@Nullable PointerBuffer extensions, @Nullable PointerBuffer layers, String appName, int appVersion, String engineName, int engineVersion, VulkanVersion apiVersion){
         try(var stack = MemoryStack.stackPush()){
-            var appInfo = VkApplicationInfo.calloc()
+            var appInfo = VkApplicationInfo.callocStack(stack)
                     .sType(VK_STRUCTURE_TYPE_APPLICATION_INFO)
                     .pApplicationName(MemoryStack.stackUTF8(appName))
                     .applicationVersion(appVersion)
                     .pEngineName(MemoryStack.stackUTF8(engineName))
                     .engineVersion(engineVersion)
                     .apiVersion(apiVersion.vk);
+            if(extensions == null) extensions = stack.mallocPointer(0);
             PointerBuffer ppEnabledExtensionNames;
             if(GraphicsEngine.isDebug()) {
                 ppEnabledExtensionNames = stack.mallocPointer(extensions.remaining() + 1);
@@ -71,7 +69,7 @@ public class VulkanInstance {
             else{
                 ppEnabledExtensionNames = extensions;
             }
-            VkInstanceCreateInfo pCreateInfo = VkInstanceCreateInfo.calloc()
+            VkInstanceCreateInfo pCreateInfo = VkInstanceCreateInfo.callocStack(stack)
                     .sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
                     .pNext(NULL)
                     .pApplicationInfo(appInfo)
@@ -85,8 +83,6 @@ public class VulkanInstance {
             }
             var jInstance = new VulkanInstance();
             jInstance.instance = new VkInstance(instance, pCreateInfo);
-            pCreateInfo.free();
-            appInfo.free();
             return jInstance;
         }
     }

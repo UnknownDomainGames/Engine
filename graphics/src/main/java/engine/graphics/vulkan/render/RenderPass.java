@@ -15,6 +15,7 @@ public class RenderPass {
 
     private long handle;
     private boolean released = false;
+    private List<Subpass> subpasses;
 
     private RenderPass(LogicalDevice device, long handle){
         this.device = device;
@@ -25,6 +26,14 @@ public class RenderPass {
         if(released) throw new IllegalStateException("RenderPass already released!");
         vkDestroyRenderPass(device.getNativeDevice(), handle, null);
         handle = 0;
+    }
+
+    public long getHandle() {
+        return handle;
+    }
+
+    public List<Subpass> getSubpasses() {
+        return subpasses;
     }
 
     public static RenderPass createRenderPass(LogicalDevice device, List<Subpass> subpasses){
@@ -98,7 +107,9 @@ public class RenderPass {
             if(err != VK_SUCCESS){
                 return null;
             }
-            return new RenderPass(device, ptrs.get(0));
+            var renderPass = new RenderPass(device, ptrs.get(0));
+            renderPass.subpasses = subpasses;
+            return renderPass;
         }
     }
 

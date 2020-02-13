@@ -21,20 +21,17 @@ public class VulkanShader {
 
     private ShaderType stage;
 
-    private String entryPoint;
-
-    private VulkanShader(String entryPoint, long module, ShaderType stage){
-        this.entryPoint = entryPoint;
+    private VulkanShader(long module, ShaderType stage){
         this.moduleHandle = module;
         this.stage = stage;
     }
 
-    public ShaderType getStage() {
-        return stage;
+    public long getModuleHandle() {
+        return moduleHandle;
     }
 
-    public String getEntryPoint() {
-        return entryPoint;
+    public ShaderType getStage() {
+        return stage;
     }
 
     public static VulkanShader createShader(Path sourcePath, LogicalDevice device, ShaderType stage){
@@ -62,7 +59,7 @@ public class VulkanShader {
                 throw new AssertionError("Failed to create shader module: " + translateVulkanResult(err));
             }
             long shaderModule = pShaderModule.get(0);
-            return new VulkanShader("main", shaderModule, stage);
+            return new VulkanShader(shaderModule, stage);
         }
     }
 

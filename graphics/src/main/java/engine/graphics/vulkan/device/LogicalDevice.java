@@ -1,15 +1,24 @@
 package engine.graphics.vulkan.device;
 
+import engine.graphics.math.ViewSpace;
 import engine.graphics.vulkan.CommandPool;
-import engine.graphics.vulkan.Pipeline;
+import engine.graphics.vulkan.VKDrawMode;
+import engine.graphics.vulkan.pipeline.Pipeline;
 import engine.graphics.vulkan.Queue;
 import engine.graphics.vulkan.VulkanBuffer;
-import engine.graphics.vulkan.shader.VulkanShader;
+import engine.graphics.vulkan.pipeline.PipelineState;
+import engine.graphics.vulkan.render.RenderPass;
+import engine.graphics.vulkan.synchronize.VulkanFence;
+import engine.graphics.vulkan.texture.ColorFormat;
 import engine.graphics.vulkan.texture.VKTexture;
+import engine.graphics.vulkan.util.VulkanUtils;
+import org.joml.Vector4i;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.LongBuffer;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.lwjgl.vulkan.VK10.*;
@@ -46,19 +55,18 @@ public class LogicalDevice {
             if(err != VK_SUCCESS){
                 return null;
             }
-            var handle = ptr.get(0);
-            return new VulkanBuffer(this, handle);
+            return new VulkanBuffer(this, ptr.get(0), Stream.of(usage).collect(Collectors.toList()));
         }
     }
 
-    public VKTexture createTexture(int width, int height, VKTexture.Format format, VKTexture.Usage usage, VKTexture.Layout layout){
+    public VKTexture createTexture(int width, int height, ColorFormat format, VKTexture.Usage usage, VKTexture.Layout layout){
         return createTextureInternal(width, height, 0, format, usage, layout, false, new int[0]);
     }
-    public VKTexture createSharedTexture(int width, int height, VKTexture.Format format, VKTexture.Usage usage, VKTexture.Layout layout, int[] queueFamilyIndex){
+    public VKTexture createSharedTexture(int width, int height, ColorFormat format, VKTexture.Usage usage, VKTexture.Layout layout, int[] queueFamilyIndex){
         return createTextureInternal(width, height, 0, format, usage, layout, true, queueFamilyIndex);
     }
 
-    private VKTexture createTextureInternal(int width, int height, int flag, VKTexture.Format format, VKTexture.Usage usage, VKTexture.Layout layout, boolean shared, int[] queueFamilyIndices){
+    private VKTexture createTextureInternal(int width, int height, int flag, ColorFormat format, VKTexture.Usage usage, VKTexture.Layout layout, boolean shared, int[] queueFamilyIndices){
         try(var stack = MemoryStack.stackPush()) {
             var createInfo = VkImageCreateInfo.callocStack(stack).sType(VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO);
             createInfo.imageType(VK_IMAGE_TYPE_2D).samples(VK_SAMPLE_COUNT_1_BIT).mipLevels(0)
@@ -73,7 +81,7 @@ public class LogicalDevice {
             if(err != VK_SUCCESS){
                 return null;
             }
-            return new VKTexture(this, ptr.get(0));
+            return new VKTexture(this, ptr.get(0), format, usage);
         }
     }
 
@@ -106,13 +114,133 @@ public class LogicalDevice {
         }
     }
 
-    public Pipeline createPipeline(VulkanShader... shaders){
+    public Pipeline createPipeline(PipelineState.Builder state, RenderPass pass, int subpassIndex){
         try(var stack = MemoryStack.stackPush()){
             VkGraphicsPipelineCreateInfo.Buffer infos = VkGraphicsPipelineCreateInfo.callocStack(1, stack);
+            var info = infos.get(0);
+            info.flags((state.isDisableOptimization() ? VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT : 0)
+            | (state.isAllowDerivatives() ? VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT : 0)
+            | (state.isDerivative() ? VK_PIPELINE_CREATE_DERIVATIVE_BIT : 0));
+
+            var vertexInputState = VkPipelineVertexInputStateCreateInfo.callocStack(stack).sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO);
+            var vertexBinding = VkVertexInputBindingDescription.callocStack(1, stack);
+            vertexInputState.pVertexBindingDescriptions(vertexBinding);
+            vertexBinding.get(0)
+                    .binding(0)
+                    .stride(state.getFormat().getBytes())
+                    .inputRate(VK_VERTEX_INPUT_RATE_VERTEX);
+            var vertexAttr = VkVertexInputAttributeDescription.callocStack(state.getFormat().getElements().length, stack);
+            vertexInputState.pVertexAttributeDescriptions(vertexAttr);
+            int offset = 0;
+            for (int i = 0; i < state.getFormat().getElementCount(); i++) {
+                var attr = vertexAttr.get();
+                attr.binding(0).location(i).offset(offset).format();
+                offset += state.getFormat().getElements()[i].getBytes();
+            }
+            info.pVertexInputState(vertexInputState);
+            var inputAssembly = VkPipelineInputAssemblyStateCreateInfo.callocStack(stack).sType(VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO);
+            var vkDrawMode = VKDrawMode.valueOf(state.getDrawMode());
+            inputAssembly.topology(vkDrawMode != null ? vkDrawMode.vk : 0).primitiveRestartEnable(state.isAllowStripsFansRestart());
+            info.pInputAssemblyState(inputAssembly);
+
+            var viewportState = VkPipelineViewportStateCreateInfo.callocStack(stack).sType(VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO);
+            var viewports = VkViewport.callocStack(state.getViewSpaces().size(), stack);
+            for (ViewSpace viewSpace : state.getViewSpaces()) {
+                viewports.get().set(viewSpace.getOrigin().x, viewSpace.getOrigin().y, viewSpace.getSize().x, viewSpace.getSize().y, viewSpace.getDepthRange().x, viewSpace.getDepthRange().y);
+            }
+            viewports.flip();
+            viewportState.pViewports(viewports).viewportCount(viewports.remaining());
+            var scissors = VkRect2D.callocStack(state.getScissors().size(), stack);
+            for (Vector4i stateScissor : state.getScissors()) {
+                var rect2D = scissors.get();
+                rect2D.offset().x(stateScissor.x).y(stateScissor.y);
+                rect2D.extent().width(stateScissor.z).height(stateScissor.w);
+            }
+            scissors.flip();
+            viewportState.pScissors(scissors).scissorCount(scissors.remaining());
+            info.pViewportState(viewportState);
+
+            var rasterizationState = VkPipelineRasterizationStateCreateInfo.callocStack(stack)
+                    .sType(VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO)
+                    .polygonMode(state.getPolygonMode().getVk())
+                    .cullMode(state.getCullMode().getVk())
+                    .frontFace(state.isCwAsFrontFace() ? VK_FRONT_FACE_CLOCKWISE : VK_FRONT_FACE_COUNTER_CLOCKWISE)
+                    .depthClampEnable(state.isDepthClampEnable())
+                    .rasterizerDiscardEnable(state.isRasterizerDiscardEnable())
+                    .depthBiasEnable(state.isDepthBiasEnable())
+                    .lineWidth(1.0f);
+            info.pRasterizationState(rasterizationState);
+
+            //TODO configurable state
+            var multisampleState = VkPipelineMultisampleStateCreateInfo.callocStack(stack)
+                    .sType(VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO)
+                    .pSampleMask(null)
+                    .rasterizationSamples(VK_SAMPLE_COUNT_1_BIT);
+            info.pMultisampleState(multisampleState);
+
+            //TODO configurable state
+            var depthStencilState = VkPipelineDepthStencilStateCreateInfo.callocStack(stack)
+                    .sType(VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO)
+                    .depthTestEnable(state.isDepthTestEnable())
+                    .depthWriteEnable(state.isDepthWriteEnable())
+                    .depthCompareOp(VK_COMPARE_OP_ALWAYS)
+                    .depthBoundsTestEnable(state.isDepthBoundTestEnable())
+                    .stencilTestEnable(state.isStencilTestEnable());
+            depthStencilState.back()
+                    .failOp(VK_STENCIL_OP_KEEP)
+                    .passOp(VK_STENCIL_OP_KEEP)
+                    .compareOp(VK_COMPARE_OP_ALWAYS);
+            depthStencilState.front(depthStencilState.back());
+            info.pDepthStencilState(depthStencilState);
+
+            //TODO configurable color blend
+            var colorWriteMask = VkPipelineColorBlendAttachmentState.callocStack(1, stack)
+                    .blendEnable(false)
+                    .colorWriteMask(0xF); // <- RGBA
+            var colorBlendState = VkPipelineColorBlendStateCreateInfo.callocStack(stack)
+                    .sType(VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO)
+                    .pAttachments(colorWriteMask);
+            info.pColorBlendState(colorBlendState);
+
+            var dynamicState = VkPipelineDynamicStateCreateInfo.callocStack(stack).sType(VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO);
+            var stateflag = stack.mallocInt(state.getDynamicStates().size());
+            stateflag.put(state.getDynamicStates().stream().mapToInt(PipelineState.DynamicState::getVk).toArray()).flip();
+            dynamicState.pDynamicStates(stateflag);
+
+            var pPipelineLayoutCreateInfo = VkPipelineLayoutCreateInfo.callocStack(stack)
+                    .sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO)
+                    .pSetLayouts(null);
+
+            var pPipelineLayout = stack.mallocLong(1);
+            vkCreatePipelineLayout(getNativeDevice(), pPipelineLayoutCreateInfo, null, pPipelineLayout);
+            long layout = pPipelineLayout.get(0);
+            info.layout(layout);
+
+            info.renderPass(pass.getHandle()).subpass(subpassIndex);
 
             LongBuffer ptrs = stack.mallocLong(1);
-            vkCreateGraphicsPipelines(vk, 0, infos, null, ptrs);
-            return new Pipeline(this, ptrs.get(0));
+            var err = vkCreateGraphicsPipelines(vk, 0, infos, null, ptrs);
+            if(err != VK_SUCCESS){
+                return null;
+            }
+            return new Pipeline(this, ptrs.get(0), state.build());
+        }
+    }
+
+    public boolean waitForFences(VulkanFence... fences) {
+        return waitForFences(-1L, true, fences);
+    }
+
+    public boolean waitForFences(long timeout, boolean waitForAll, VulkanFence... fences){
+        try(var stack = MemoryStack.stackPush()){
+            var ptrs = stack.mallocLong(fences.length);
+            ptrs.put(Arrays.stream(fences).mapToLong(VulkanFence::getHandle).toArray()).flip();
+            var code = vkWaitForFences(getNativeDevice(), ptrs, waitForAll, timeout);
+            if(code == VK_SUCCESS) return true;
+            else if(code == VK_TIMEOUT) return false;
+            else {
+                throw new IllegalStateException("Error occurred when waiting for fences to signal: " + VulkanUtils.translateVulkanResult(code));
+            }
         }
     }
 

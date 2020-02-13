@@ -1,10 +1,11 @@
 package engine.graphics.vulkan;
 
 import engine.graphics.vulkan.device.LogicalDevice;
+import engine.graphics.vulkan.synchronize.Semaphore;
+import engine.graphics.vulkan.synchronize.VulkanFence;
 import engine.graphics.vulkan.texture.VKTexture;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkExtent2D;
-import org.lwjgl.vulkan.VkImageViewCreateInfo;
 import org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR;
 import org.lwjgl.vulkan.VkSwapchainCreateInfoKHR;
 
@@ -12,7 +13,6 @@ import javax.annotation.Nullable;
 import java.nio.LongBuffer;
 
 import static engine.graphics.vulkan.util.VulkanUtils.translateVulkanResult;
-import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.system.MemoryUtil.memAllocInt;
 import static org.lwjgl.vulkan.KHRSurface.*;
 import static org.lwjgl.vulkan.KHRSwapchain.*;
@@ -22,7 +22,7 @@ public class Swapchain {
     private final LogicalDevice device;
     long swapchainHandle;
     VKTexture[] images;
-    long[] imageViews;
+    VKTexture.ImageView[] imageViews;
     private boolean released = false;
 
     public Swapchain(LogicalDevice device, long handle){
@@ -30,12 +30,12 @@ public class Swapchain {
         this.swapchainHandle = handle;
     }
 
-    public long getSwapchainHandle() {
+    public long getHandle() {
         return swapchainHandle;
     }
 
     private static final int VK_FLAGS_NONE = 0;
-    public static Swapchain createSwapChain(LogicalDevice device, long surface, @Nullable Swapchain oldSwapChain, CommandBuffer commandBuffer, int newWidth,
+    public static Swapchain createSwapChain(LogicalDevice device, long surface, @Nullable Swapchain oldSwapChain, int newWidth,
                                             int newHeight, ColorSpace colorSpace) {
         try(var stack = MemoryStack.stackPush()) {
             int err;
@@ -101,7 +101,7 @@ public class Swapchain {
                     .sType(VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR)
                     .surface(surface)
                     .minImageCount(desiredNumberOfSwapchainImages)
-                    .imageFormat(colorSpace.getColorFormat())
+                    .imageFormat(colorSpace.getColorFormat().getVk())
                     .imageColorSpace(colorSpace.getColorSpace())
                     .imageUsage(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
                     .preTransform(preTransform)
@@ -115,7 +115,7 @@ public class Swapchain {
                     .width(width)
                     .height(height);
             if(oldSwapChain != null){
-                swapchainCI.oldSwapchain(oldSwapChain.getSwapchainHandle());
+                swapchainCI.oldSwapchain(oldSwapChain.getHandle());
             }
             LongBuffer pSwapChain = stack.mallocLong(1);
             err = vkCreateSwapchainKHR(device.getNativeDevice(), swapchainCI, null, pSwapChain);
@@ -127,7 +127,7 @@ public class Swapchain {
             // If we just re-created an existing swapchain, we should destroy the old swapchain at this point.
             // Note: destroying the swapchain also cleans up all its associated presentable images once the platform is done with them.
             if (oldSwapChain != null) {
-                vkDestroySwapchainKHR(device.getNativeDevice(), oldSwapChain.getSwapchainHandle(), null);
+                vkDestroySwapchainKHR(device.getNativeDevice(), oldSwapChain.getHandle(), null);
             }
 
             var pImageCount = memAllocInt(1);
@@ -144,33 +144,10 @@ public class Swapchain {
             }
 
             var images = new VKTexture[imageCount];
-            long[] imageViews = new long[imageCount];
-            LongBuffer pBufferView = stack.mallocLong(1);
-            VkImageViewCreateInfo colorAttachmentView = VkImageViewCreateInfo.callocStack(stack)
-                    .sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO)
-                    .pNext(NULL)
-                    .format(colorSpace.getColorFormat())
-                    .viewType(VK_IMAGE_VIEW_TYPE_2D)
-                    .flags(VK_FLAGS_NONE);
-            colorAttachmentView.components()
-                    .r(VK_COMPONENT_SWIZZLE_IDENTITY)
-                    .g(VK_COMPONENT_SWIZZLE_IDENTITY)
-                    .b(VK_COMPONENT_SWIZZLE_IDENTITY)
-                    .a(VK_COMPONENT_SWIZZLE_IDENTITY);
-            colorAttachmentView.subresourceRange()
-                    .aspectMask(VK_IMAGE_ASPECT_COLOR_BIT)
-                    .baseMipLevel(0)
-                    .levelCount(1)
-                    .baseArrayLayer(0)
-                    .layerCount(1);
+            var imageViews = new VKTexture.ImageView[imageCount];
             for (int i = 0; i < imageCount; i++) {
-                images[i] = new VKTexture(device, pSwapchainImages.get(i));
-                colorAttachmentView.image(images[i].getHandle());
-                err = vkCreateImageView(device.getNativeDevice(), colorAttachmentView, null, pBufferView);
-                imageViews[i] = pBufferView.get(0);
-                if (err != VK_SUCCESS) {
-                    throw new AssertionError("Failed to create image view: " + translateVulkanResult(err));
-                }
+                images[i] = new VKTexture(device, pSwapchainImages.get(i), colorSpace.getColorFormat(), VKTexture.Usage.COLOR_ATTACHMENT);
+                imageViews[i] = images[i].createView(VKTexture.ImageAspect.COLOR);
             }
             Swapchain ret = new Swapchain(device, swapChain);
             ret.images = images;
@@ -184,7 +161,26 @@ public class Swapchain {
         released = true;
     }
 
-//    public VKTexture acquireNextImage(int timeout, Semaphore semaphore){
-//
-//    }
+    /**
+        acquire the next image to be rendered, and signal to passing semaphore and fence when completed
+ * @param semaphore
+ * @param fence
+     */
+    public int acquireNextImage(@Nullable Semaphore semaphore, @Nullable VulkanFence fence) {
+        return acquireNextImage(-1L, semaphore, fence);
+    }
+
+    /**
+        acquire the next image to be rendered, and signal to passing semaphore and fence when completed
+     @param timeout
+     @param semaphore
+     @param fence
+     */
+    public int acquireNextImage(long timeout, @Nullable Semaphore semaphore, @Nullable VulkanFence fence){
+        try(var stack = MemoryStack.stackPush()){
+            var index = stack.mallocInt(1);
+            vkAcquireNextImageKHR(device.getNativeDevice(), swapchainHandle, timeout, semaphore != null ? semaphore.getHandle() : VK_NULL_HANDLE, fence != null ? fence.getHandle() : VK_NULL_HANDLE, index);
+            return index.get(0);
+        }
+    }
 }

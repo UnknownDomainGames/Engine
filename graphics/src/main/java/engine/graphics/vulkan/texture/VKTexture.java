@@ -1,17 +1,26 @@
 package engine.graphics.vulkan.texture;
 
 import engine.graphics.vulkan.device.LogicalDevice;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.KHRSwapchain;
 import org.lwjgl.vulkan.VK10;
+import org.lwjgl.vulkan.VkImageViewCreateInfo;
+
+import static org.lwjgl.vulkan.VK10.*;
 
 public class VKTexture {
     private final LogicalDevice device;
     private long handle;
     private boolean released = false;
 
-    public VKTexture(LogicalDevice device, long handle) {
+    private ColorFormat format;
+    private Usage usage;
+
+    public VKTexture(LogicalDevice device, long handle, ColorFormat format, Usage usage) {
         this.device = device;
         this.handle = handle;
+        this.format = format;
+        this.usage = usage;
     }
 
     public LogicalDevice getDevice() {
@@ -31,6 +40,75 @@ public class VKTexture {
         VK10.vkDestroyImage(device.getNativeDevice(), handle, null);
         released = true;
         handle = 0;
+    }
+
+    public ImageView createView(ImageAspect aspect) {
+        return createView(aspect, 0, 1, 0, 1);
+    }
+
+    public ImageView createView(ImageAspect aspect, int baseMipmapLevel, int levelCount, int baseLayer, int layerCount){
+        try(var stack = MemoryStack.stackPush()){
+            var view = VkImageViewCreateInfo.callocStack(stack)
+                    .sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO)
+                    .format(format.getVk())
+                    .viewType(VK_IMAGE_VIEW_TYPE_2D)
+                    .image(handle);
+            view.components()
+                    .r(VK_COMPONENT_SWIZZLE_IDENTITY)
+                    .g(VK_COMPONENT_SWIZZLE_IDENTITY)
+                    .b(VK_COMPONENT_SWIZZLE_IDENTITY)
+                    .a(VK_COMPONENT_SWIZZLE_IDENTITY);
+            view.subresourceRange()
+                    .aspectMask(aspect.getVk())
+                    .baseMipLevel(baseMipmapLevel)
+                    .levelCount(levelCount)
+                    .baseArrayLayer(baseLayer)
+                    .layerCount(layerCount);
+            var ptr = stack.mallocLong(1);
+            var err = vkCreateImageView(device.getNativeDevice(), view, null, ptr);
+            if (err != VK_SUCCESS) {
+                return null;
+            }
+            return new ImageView(this, ptr.get(0));
+        }
+    }
+
+    public static class ImageView {
+        private VKTexture texture;
+        private long handle;
+
+        public ImageView(VKTexture texture, long handle){
+            this.texture = texture;
+            this.handle = handle;
+        }
+
+        public long getHandle() {
+            return handle;
+        }
+
+        public VKTexture getTexture() {
+            return texture;
+        }
+    }
+
+    public enum Swizzle {
+        IDENTITY(VK10.VK_COMPONENT_SWIZZLE_IDENTITY),
+        ZERO(VK10.VK_COMPONENT_SWIZZLE_ZERO),
+        ONE(VK10.VK_COMPONENT_SWIZZLE_ONE),
+        R(VK10.VK_COMPONENT_SWIZZLE_R),
+        G(VK10.VK_COMPONENT_SWIZZLE_G),
+        B(VK10.VK_COMPONENT_SWIZZLE_B),
+        A(VK10.VK_COMPONENT_SWIZZLE_A);
+
+        private final int vk;
+
+        Swizzle(int vk){
+            this.vk = vk;
+        }
+
+        public int getVk() {
+            return vk;
+        }
     }
 
     public enum Usage {
@@ -63,7 +141,7 @@ public class VKTexture {
         DEPTH_STENCIL_ATTACHMENT(VK10.VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL),
         DEPTH_STENCIL_READONLY(VK10.VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL),
         PREINITIALIZED(VK10.VK_IMAGE_LAYOUT_PREINITIALIZED),
-        PRESENTATION_SUFRACE(KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+        PRESENTATION_SURFACE(KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
         private final int vk;
 
         Layout(int vk){
@@ -75,46 +153,15 @@ public class VKTexture {
         }
     }
 
-    public enum Format{
-        BGRA_UNSIGNED_NORMALIZED(VK10.VK_FORMAT_B8G8R8A8_UNORM),
-        RGBA_UNSIGNED_NORMALIZED(VK10.VK_FORMAT_R8G8B8A8_UNORM),
-        BGRA_NORMALIZED(VK10.VK_FORMAT_B8G8R8A8_SNORM),
-        RGBA_NORMALIZED(VK10.VK_FORMAT_R8G8B8A8_SNORM),
-        BGRA_UINT(VK10.VK_FORMAT_B8G8R8A8_UINT),
-        RGBA_UINT(VK10.VK_FORMAT_R8G8B8A8_UINT),
-        BGRA_INT(VK10.VK_FORMAT_B8G8R8A8_SINT),
-        RGBA_INT(VK10.VK_FORMAT_R8G8B8A8_SINT),
-        BGRA_UNSIGNED_SCALED_FLOAT(VK10.VK_FORMAT_B8G8R8A8_USCALED),
-        RGBA_UNSIGNED_SCALED_FLOAT(VK10.VK_FORMAT_R8G8B8A8_USCALED),
-        BGRA_SCALED_FLOAT(VK10.VK_FORMAT_B8G8R8A8_SSCALED),
-        RGBA_SCALED_FLOAT(VK10.VK_FORMAT_R8G8B8A8_SSCALED),
-        R8_UNSIGNED_NORMALIZED(VK10.VK_FORMAT_R8_UNORM),
-        R8_NORMALIZED(VK10.VK_FORMAT_R8_SNORM),
-        R8_UINT(VK10.VK_FORMAT_R8_UINT),
-        R8_INT(VK10.VK_FORMAT_R8_SINT),
-        R8_UNSIGNED_SCALED_FLOAT(VK10.VK_FORMAT_R8_USCALED),
-        R8_SCALED_FLOAT(VK10.VK_FORMAT_R8_SSCALED),
-        R8G8_UNSIGNED_NORMALIZED(VK10.VK_FORMAT_R8G8_UNORM),
-        R8G8_NORMALIZED(VK10.VK_FORMAT_R8G8_SNORM),
-        R8G8_UINT(VK10.VK_FORMAT_R8G8_UINT),
-        R8G8_INT(VK10.VK_FORMAT_R8G8_SINT),
-        R8G8_UNSIGNED_SCALED_FLOAT(VK10.VK_FORMAT_R8G8_USCALED),
-        R8G8_SCALED_FLOAT(VK10.VK_FORMAT_R8G8_SSCALED),
-        RGB_UNSIGNED_NORMALIZED(VK10.VK_FORMAT_R8G8B8_UNORM),
-        RGB_NORMALIZED(VK10.VK_FORMAT_R8G8B8_SNORM),
-        RGB_UINT(VK10.VK_FORMAT_R8G8B8_UINT),
-        RGB_INT(VK10.VK_FORMAT_R8G8B8_SINT),
-        RGB_UNSIGNED_SCALED_FLOAT(VK10.VK_FORMAT_R8G8B8_USCALED),
-        RGB_SCALED_FLOAT(VK10.VK_FORMAT_R8G8B8_SSCALED),
-        BGR_UNSIGNED_NORMALIZED(VK10.VK_FORMAT_B8G8R8_UNORM),
-        BGR_NORMALIZED(VK10.VK_FORMAT_B8G8R8_SNORM),
-        BGR_UINT(VK10.VK_FORMAT_B8G8R8_UINT),
-        BGR_INT(VK10.VK_FORMAT_B8G8R8_SINT),
-        BGR_UNSIGNED_SCALED_FLOAT(VK10.VK_FORMAT_B8G8R8_USCALED),
-        BGR_SCALED_FLOAT(VK10.VK_FORMAT_B8G8R8_SSCALED);
+    public enum ImageAspect {
+        COLOR(VK10.VK_IMAGE_ASPECT_COLOR_BIT),
+        DEPTH(VK10.VK_IMAGE_ASPECT_DEPTH_BIT),
+        STENCIL(VK10.VK_IMAGE_ASPECT_STENCIL_BIT),
+        METADATA(VK10.VK_IMAGE_ASPECT_METADATA_BIT);
+
         private final int vk;
 
-        Format(int vk){
+        ImageAspect(int vk){
             this.vk = vk;
         }
 

@@ -2,6 +2,7 @@ package engine.graphics.vulkan;
 
 
 import engine.graphics.vulkan.device.PhysicalDevice;
+import engine.graphics.vulkan.texture.ColorFormat;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkSurfaceFormatKHR;
 
@@ -12,10 +13,10 @@ import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR;
 import static org.lwjgl.vulkan.VK10.*;
 
 public class ColorSpace {
-    private int colorFormat;
+    private ColorFormat colorFormat;
     private int colorSpace;
 
-    public int getColorFormat() {
+    public ColorFormat getColorFormat() {
         return colorFormat;
     }
 
@@ -86,11 +87,11 @@ public class ColorSpace {
                 throw new AssertionError("Failed to query physical device surface formats: " + translateVulkanResult(err));
             }
 
-            int colorFormat;
+            ColorFormat colorFormat;
             if (formatCount == 1 && surfFormats.get(0).format() == VK_FORMAT_UNDEFINED) {
-                colorFormat = VK_FORMAT_B8G8R8A8_UNORM;
+                colorFormat = ColorFormat.BGR_UNSIGNED_NORMALIZED;
             } else {
-                colorFormat = surfFormats.get(0).format();
+                colorFormat = ColorFormat.fromVkFormat(surfFormats.get(0).format());
             }
             int colorSpace = surfFormats.get(0).colorSpace();
 

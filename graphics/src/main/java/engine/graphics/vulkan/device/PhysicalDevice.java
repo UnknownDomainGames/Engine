@@ -113,10 +113,8 @@ public class PhysicalDevice {
             if(err != VK_SUCCESS){
                 return new ArrayList<>();
             }
-            return ptrs.stream().map(vkExtensionProperties -> String.format("%s:%d.%d.%d", vkExtensionProperties.extensionNameString(),
-                    VK10.VK_VERSION_MAJOR(vkExtensionProperties.specVersion()),
-                    VK10.VK_VERSION_MINOR(vkExtensionProperties.specVersion()),
-                    VK10.VK_VERSION_PATCH(vkExtensionProperties.specVersion()))).collect(Collectors.toList());
+            return ptrs.stream().map(vkExtensionProperties -> String.format("%s:%d", vkExtensionProperties.extensionNameString(),
+                    vkExtensionProperties.specVersion())).collect(Collectors.toList());
         }
     }
 
