@@ -15,6 +15,7 @@ import engine.enginemod.client.gui.game.GuiChat;
 import engine.enginemod.client.gui.game.GuiIngameMenu;
 import engine.enginemod.client.gui.game.GuiItemList;
 import engine.enginemod.client.gui.hud.HUDDebug;
+import engine.enginemod.client.gui.hud.HUDHandingItem;
 import engine.entity.Entity;
 import engine.entity.component.TwoHands;
 import engine.entity.item.ItemEntity;
@@ -25,10 +26,12 @@ import engine.event.block.cause.BlockInteractCause;
 import engine.event.engine.EngineEvent;
 import engine.event.entity.EntityInteractEvent;
 import engine.event.entity.cause.EntityInteractCause;
+import engine.event.game.GameStartEvent;
 import engine.event.item.ItemInteractEvent;
 import engine.event.item.cause.ItemInteractCause;
 import engine.event.mod.ModLifecycleEvent;
 import engine.event.mod.ModRegistrationEvent;
+import engine.graphics.RenderManager;
 import engine.graphics.block.BlockDisplay;
 import engine.graphics.camera.Camera;
 import engine.graphics.entity.EntityItemRenderer;
@@ -262,5 +265,12 @@ public final class EngineModClientListeners {
 
         var scene = new Scene(new GUIGameCreation());
         guiManager.show(scene);
+    }
+
+    @Listener
+    public static void onGameReady(GameStartEvent.Post event) {
+        HUDHandingItem hudHandingItem = new HUDHandingItem();
+        RenderManager.instance().getHUDManager().add(hudHandingItem);
+        hudHandingItem.visible().set(true);
     }
 }

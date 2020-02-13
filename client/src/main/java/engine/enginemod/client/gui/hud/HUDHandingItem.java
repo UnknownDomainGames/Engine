@@ -16,12 +16,11 @@ public final class HUDHandingItem extends HUDControl {
 
     public HUDHandingItem() {
         super("HandingItem");
-        AnchorPane anchorPane = new AnchorPane();
+        AnchorPane.setLeftAnchor(this, 0f);
+        AnchorPane.setBottomAnchor(this, 0f);
         mainHandItem = new ItemView();
         mainHandItem.viewSize().set(40);
-        AnchorPane.setLeftAnchor(mainHandItem, 0f);
-        AnchorPane.setBottomAnchor(mainHandItem, 0f);
-        anchorPane.getChildren().add(mainHandItem);
+        setContent(mainHandItem);
     }
 
     @Override
