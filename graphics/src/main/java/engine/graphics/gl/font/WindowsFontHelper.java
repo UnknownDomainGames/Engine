@@ -300,10 +300,6 @@ public final class WindowsFontHelper implements FontHelper {
         }
     }
 
-    private void bindTexture(NativeTTFont nativeTTFont) {
-        nativeTTFont.getPlaneTextures().get(0).bind();
-    }
-
     @Override
     public TextMesh bakeTextMesh(CharSequence text, Font font) {
         TextMesh.CharQuad[] quads = new TextMesh.CharQuad[text.length()];
@@ -355,7 +351,7 @@ public final class WindowsFontHelper implements FontHelper {
                         y1 = (float) Math.floor(quad.getPos().w() + 0.5);
                 quads[j] = new TextMesh.CharQuad((char) charPoint, x0, y0, x1, y1, quad.getTexCoord());
             }
-            return new TextMesh(text, font, fontPlaneTexture, quads);
+            return new TextMesh(text, font, fontPlaneTexture.getTexture(), quads);
         }
     }
 

@@ -3,7 +3,7 @@ package engine.graphics.gl.font;
 import engine.graphics.font.Font;
 import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.texture.FilterMode;
-import engine.graphics.texture.Texture;
+import engine.graphics.texture.Texture2D;
 import engine.graphics.texture.TextureFormat;
 import engine.math.Math2;
 import org.joml.Vector4f;
@@ -21,9 +21,9 @@ import java.util.Map;
 
 import static org.lwjgl.stb.STBTruetype.*;
 
-public class FontPlaneTexture implements Texture {
+public class FontPlaneTexture {
     //    private List<Integer> abandonedTexIds;
-    private GLTexture2D glTexture;
+    private Texture2D texture;
     private Font font;
     private int bitmapWidth;
     private int bitmapHeight;
@@ -39,28 +39,8 @@ public class FontPlaneTexture implements Texture {
         charQuads = new HashMap<>();
     }
 
-    @Override
-    public TextureFormat getFormat() {
-        return glTexture.getFormat();
-    }
-
-    public void bind() {
-        if (glTexture != null) {
-            glTexture.bind();
-        }
-    }
-
-    @Override
-    public void dispose() {
-        if (glTexture != null) {
-            glTexture.dispose();
-            glTexture = null;
-        }
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return glTexture == null;
+    public Texture2D getTexture() {
+        return texture;
     }
 
     public void putBlock(Character.UnicodeBlock block) {
@@ -87,8 +67,8 @@ public class FontPlaneTexture implements Texture {
     }
 
     public void bakeTexture(Font font, NativeTTFontInfo fontInfo) {
-        if (glTexture != null) {
-            glTexture.dispose();
+        if (texture != null) {
+            texture.dispose();
         }
         this.font = font;
         this.fontInfo = fontInfo;
@@ -112,7 +92,7 @@ public class FontPlaneTexture implements Texture {
             stbtt_PackFontRanges(context, fontInfo.getFontData(), fontInfo.getOffsetIndex(), ranges);
             stbtt_PackEnd(context);
 
-            glTexture = GLTexture2D.builder().format(TextureFormat.RED8).magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR).build(bitmap, bitmapSize, bitmapSize);
+            texture = GLTexture2D.builder().format(TextureFormat.RED8).magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR).build(bitmap, bitmapSize, bitmapSize);
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack();
             for (int i = 0; i < blocks.size(); i++) {
                 FloatBuffer posX = BufferUtils.createFloatBuffer(1);

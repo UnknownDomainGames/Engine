@@ -2,6 +2,7 @@ package engine.graphics.texture;
 
 import engine.client.asset.AssetURL;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +10,7 @@ public class TextureAtlasImpl implements TextureAtlas {
 
     private final Map<AssetURL, TextureAtlasRegionImpl> textures = new HashMap<>();
 
-    private Texture2D bakedTextureAtlas;
+    private Texture2D texture;
 
     @Override
     public TextureAtlasRegion getTexture(AssetURL url) {
@@ -30,10 +31,10 @@ public class TextureAtlasImpl implements TextureAtlas {
         }
 
         textureMap.finish();
-        if (bakedTextureAtlas != null) {
-            bakedTextureAtlas.dispose();
+        if (texture != null) {
+            texture.dispose();
         }
-        bakedTextureAtlas = Texture2D.builder().build(textureMap.getTexture());
+        texture = Texture2D.builder().build(textureMap.getTexture());
         textureMap.dispose();
     }
 
@@ -43,36 +44,52 @@ public class TextureAtlasImpl implements TextureAtlas {
 
     @Override
     public int getWidth() {
-        return bakedTextureAtlas.getWidth();
+        return texture.getWidth();
     }
 
     @Override
     public int getHeight() {
-        return bakedTextureAtlas.getHeight();
+        return texture.getHeight();
+    }
+
+    @Override
+    public int getId() {
+        return texture.getId();
     }
 
     @Override
     public TextureFormat getFormat() {
-        return bakedTextureAtlas.getFormat();
+        return texture.getFormat();
+    }
+
+    @Override
+    public boolean isMultiSample() {
+        return texture.isMultiSample();
+    }
+
+    @Nullable
+    @Override
+    public Sampler getSampler() {
+        return texture.getSampler();
     }
 
     @Override
     public void bind() {
-        if (bakedTextureAtlas != null) {
-            bakedTextureAtlas.bind();
+        if (texture != null) {
+            texture.bind();
         }
     }
 
     @Override
     public void dispose() {
-        if (bakedTextureAtlas != null) {
-            bakedTextureAtlas.dispose();
-            bakedTextureAtlas = null;
+        if (texture != null) {
+            texture.dispose();
+            texture = null;
         }
     }
 
     @Override
     public boolean isDisposed() {
-        return bakedTextureAtlas == null || bakedTextureAtlas.isDisposed();
+        return texture == null || texture.isDisposed();
     }
 }

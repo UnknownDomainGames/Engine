@@ -1,6 +1,6 @@
 package engine.graphics.font;
 
-import engine.graphics.texture.Texture;
+import engine.graphics.texture.Texture2D;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.util.Color;
 import org.joml.Vector4fc;
@@ -9,10 +9,10 @@ public class TextMesh {
 
     private final CharSequence text;
     private final Font font;
-    private final Texture texture;
+    private final Texture2D texture;
     private final CharQuad[] quads;
 
-    public TextMesh(CharSequence text, Font font, Texture texture, CharQuad[] quads) {
+    public TextMesh(CharSequence text, Font font, Texture2D texture, CharQuad[] quads) {
         this.text = text;
         this.font = font;
         this.texture = texture;
@@ -27,7 +27,7 @@ public class TextMesh {
         return font;
     }
 
-    public Texture getTexture() {
+    public Texture2D getTexture() {
         return texture;
     }
 
