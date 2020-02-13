@@ -1,11 +1,10 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
-import engine.graphics.texture.FilterMode;
-import engine.graphics.texture.Texture;
-import engine.graphics.texture.TextureFormat;
-import engine.graphics.texture.WrapMode;
+import engine.graphics.texture.*;
 import engine.graphics.util.Cleaner;
+
+import javax.annotation.Nullable;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
@@ -62,6 +61,7 @@ public abstract class GLTexture implements Texture {
 
     public abstract int getTarget();
 
+    @Override
     public int getId() {
         return id;
     }
@@ -69,6 +69,17 @@ public abstract class GLTexture implements Texture {
     @Override
     public TextureFormat getFormat() {
         return format.peer;
+    }
+
+    @Override
+    public boolean isMultiSample() {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public Sampler getSampler() {
+        return null;
     }
 
     public void bind() {

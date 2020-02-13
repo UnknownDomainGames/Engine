@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 public final class GLTexture2DMultiSample extends GLTexture implements Texture2D {
 
     private Sampler sampler;
-    private boolean fixedSampleLocation;
+    private boolean fixedSampleLocations;
 
     private int width;
     private int height;
@@ -33,7 +33,7 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
         this.width = width;
         this.height = height;
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        GL40.glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, sampler.getId(), format.internalFormat, width, height, fixedSampleLocation);
+        GL40.glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, sampler.getId(), format.internalFormat, width, height, fixedSampleLocations);
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
 
@@ -47,12 +47,18 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
         return height;
     }
 
+    @Override
+    public boolean isMultiSample() {
+        return true;
+    }
+
+    @Override
     public Sampler getSampler() {
         return sampler;
     }
 
-    public boolean isFixedSampleLocation() {
-        return fixedSampleLocation;
+    public boolean isFixedSampleLocations() {
+        return fixedSampleLocations;
     }
 
     @Override
@@ -63,7 +69,7 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
     public static final class Builder {
         private GLTextureFormat format;
         private Sampler sampler = GLSampler.DEFAULT;
-        private boolean fixedSampleLocation = false;
+        private boolean fixedSampleLocations = false;
 
         private Builder() {
         }
@@ -78,8 +84,8 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
             return this;
         }
 
-        public Builder fixedSampleLocation() {
-            this.fixedSampleLocation = true;
+        public Builder fixedSampleLocations() {
+            this.fixedSampleLocations = true;
             return this;
         }
 
@@ -87,7 +93,7 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
             GLTexture2DMultiSample texture = new GLTexture2DMultiSample();
             texture.format = format;
             texture.sampler = sampler;
-            texture.fixedSampleLocation = fixedSampleLocation;
+            texture.fixedSampleLocations = fixedSampleLocations;
             texture.bind();
             texture.glTexImage2DMultisample(width, height);
             return texture;

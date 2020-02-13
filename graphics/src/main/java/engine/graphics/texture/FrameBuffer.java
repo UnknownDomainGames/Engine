@@ -2,6 +2,8 @@ package engine.graphics.texture;
 
 import org.joml.Vector4ic;
 
+import javax.annotation.Nullable;
+
 public interface FrameBuffer {
     int getId();
 
@@ -26,4 +28,25 @@ public interface FrameBuffer {
     void dispose();
 
     boolean isDisposed();
+
+    interface Attachable {
+        TextureFormat getFormat();
+
+        int getId();
+
+        boolean isMultiSample();
+
+        @Nullable
+        Sampler getSampler();
+
+        int getWidth();
+
+        int getHeight();
+
+        void bind();
+
+        void dispose();
+
+        boolean isDisposed();
+    }
 }

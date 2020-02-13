@@ -4,7 +4,7 @@ import engine.graphics.GraphicsEngine;
 
 import javax.annotation.Nullable;
 
-public interface RenderBuffer {
+public interface RenderBuffer extends FrameBuffer.Attachable {
 
     static RenderBuffer create(TextureFormat format, int width, int height) {
         return GraphicsEngine.getGraphicsBackend().getResourceFactory().createRenderBuffer(format, width, height);

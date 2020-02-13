@@ -4,7 +4,7 @@ import engine.graphics.GraphicsEngine;
 import engine.graphics.image.ReadOnlyImage;
 import engine.util.Color;
 
-public interface Texture2D extends Texture {
+public interface Texture2D extends Texture, FrameBuffer.Attachable {
 
     static Builder builder() {
         return GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder();

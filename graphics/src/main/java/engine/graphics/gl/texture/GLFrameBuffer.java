@@ -13,6 +13,7 @@ import static engine.graphics.gl.texture.GLTexture.toGLFilterMode;
 import static engine.graphics.gl.util.GLHelper.getMask;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 
 public class GLFrameBuffer implements FrameBuffer {
 
@@ -23,9 +24,9 @@ public class GLFrameBuffer implements FrameBuffer {
     private int width;
     private int height;
 
-    private final Map<Integer, TextureFactory> attachments;
+    private final Map<Integer, AttachableFactory> attachmentFactories;
 
-    private final Map<Integer, Texture2D> attachedTextures;
+    private final Map<Integer, Attachable> attachments;
 
     public static Builder builder() {
         return new Builder();
@@ -77,13 +78,13 @@ public class GLFrameBuffer implements FrameBuffer {
 
     private GLFrameBuffer() {
         this.id = 0;
-        this.attachments = Map.of();
-        this.attachedTextures = new HashMap<>();
+        this.attachmentFactories = Map.of();
+        this.attachments = new HashMap<>();
     }
 
-    private GLFrameBuffer(Map<Integer, TextureFactory> attachments, int width, int height) {
-        this.attachments = notNull(attachments);
-        this.attachedTextures = new HashMap<>();
+    private GLFrameBuffer(Map<Integer, AttachableFactory> attachmentFactories, int width, int height) {
+        this.attachmentFactories = notNull(attachmentFactories);
+        this.attachments = new HashMap<>();
         this.id = glGenFramebuffers();
         this.disposable = GLCleaner.registerFrameBuffer(this, id);
         resize(width, height);
@@ -94,8 +95,8 @@ public class GLFrameBuffer implements FrameBuffer {
         return id;
     }
 
-    public Texture2D getTexture(int attachment) {
-        return attachedTextures.get(attachment);
+    public Attachable getTexture(int attachment) {
+        return attachments.get(attachment);
     }
 
     @Override
@@ -115,11 +116,14 @@ public class GLFrameBuffer implements FrameBuffer {
         if (id == 0) return;
         disposeAttachedTextures();
         bind();
-        attachments.forEach((key, value) -> {
-            Texture2D texture = value.create(width, height);
-            GLTexture glTexture = (GLTexture) texture;
-            attachedTextures.put(key, texture);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, key, glTexture.getTarget(), glTexture.getId(), 0);
+        attachmentFactories.forEach((attachment, attachableFactory) -> {
+            Attachable attachable = attachableFactory.create(width, height);
+            if (attachable instanceof RenderBuffer) {
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, attachable.getId());
+            } else if (attachable instanceof Texture2D) {
+                int target = attachable.isMultiSample() ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+                glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, attachable.getId(), 0);
+            }
         });
     }
 
@@ -177,12 +181,12 @@ public class GLFrameBuffer implements FrameBuffer {
     }
 
     private void disposeAttachedTextures() {
-        attachedTextures.forEach((key, value) -> value.dispose());
-        attachedTextures.clear();
+        attachments.forEach((key, value) -> value.dispose());
+        attachments.clear();
     }
 
     public static final class Builder {
-        private Map<Integer, TextureFactory> attachments = new HashMap<>();
+        private Map<Integer, AttachableFactory> attachments = new HashMap<>();
         private int width;
         private int height;
 
@@ -197,7 +201,7 @@ public class GLFrameBuffer implements FrameBuffer {
             return attachments(attachment, builder::build);
         }
 
-        public Builder attachments(int attachment, TextureFactory factory) {
+        public Builder attachments(int attachment, AttachableFactory factory) {
             this.attachments.put(attachment, factory);
             return this;
         }
@@ -218,7 +222,7 @@ public class GLFrameBuffer implements FrameBuffer {
     }
 
     @FunctionalInterface
-    public interface TextureFactory {
-        Texture2D create(int width, int height);
+    public interface AttachableFactory {
+        FrameBuffer.Attachable create(int width, int height);
     }
 }
