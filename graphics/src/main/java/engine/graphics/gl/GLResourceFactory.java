@@ -2,15 +2,13 @@ package engine.graphics.gl;
 
 import engine.graphics.gl.mesh.GLMesh;
 import engine.graphics.gl.mesh.GLSingleBufferMesh;
+import engine.graphics.gl.texture.GLFrameBuffer;
 import engine.graphics.gl.texture.GLRenderBuffer;
 import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.management.ResourceFactory;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.mesh.SingleBufferMesh;
-import engine.graphics.texture.RenderBuffer;
-import engine.graphics.texture.Sampler;
-import engine.graphics.texture.Texture2D;
-import engine.graphics.texture.TextureFormat;
+import engine.graphics.texture.*;
 
 public final class GLResourceFactory implements ResourceFactory {
     private final Thread renderingThread;
@@ -20,18 +18,18 @@ public final class GLResourceFactory implements ResourceFactory {
     }
 
     @Override
+    public FrameBuffer getDefaultFrameBuffer() {
+        return GLFrameBuffer.getDefaultFrameBuffer();
+    }
+
+    @Override
+    public FrameBuffer.Builder createFrameBufferBuilder() {
+        return GLFrameBuffer.builder();
+    }
+
+    @Override
     public Texture2D.Builder createTexture2DBuilder() {
         return GLTexture2D.builder();
-    }
-
-    @Override
-    public Mesh.Builder createMeshBuilder() {
-        return GLMesh.builder();
-    }
-
-    @Override
-    public SingleBufferMesh.Builder createSingleBufferMeshBuilder() {
-        return GLSingleBufferMesh.builder();
     }
 
     @Override
@@ -47,5 +45,15 @@ public final class GLResourceFactory implements ResourceFactory {
     @Override
     public RenderBuffer.Builder createRenderBufferBuilder() {
         return GLRenderBuffer.builder();
+    }
+
+    @Override
+    public Mesh.Builder createMeshBuilder() {
+        return GLMesh.builder();
+    }
+
+    @Override
+    public SingleBufferMesh.Builder createSingleBufferMeshBuilder() {
+        return GLSingleBufferMesh.builder();
     }
 }

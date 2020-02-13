@@ -3,7 +3,7 @@ package engine.graphics.gl.texture;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.texture.TextureFormat;
-import org.lwjgl.opengl.GL40;
+import org.lwjgl.opengl.GL32;
 
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
@@ -33,7 +33,7 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
         this.width = width;
         this.height = height;
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        GL40.glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, sampler.getId(), format.internalFormat, width, height, fixedSampleLocations);
+        GL32.glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, sampler.getId(), format.internalFormat, width, height, fixedSampleLocations);
 //        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
     }
 
