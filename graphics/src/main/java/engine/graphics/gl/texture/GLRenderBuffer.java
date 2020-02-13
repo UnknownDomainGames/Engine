@@ -94,8 +94,6 @@ public final class GLRenderBuffer implements RenderBuffer {
 
         private TextureFormat format;
         private Sampler sampler;
-        private int width;
-        private int height;
 
         @Override
         public RenderBuffer.Builder format(TextureFormat format) {
@@ -110,14 +108,7 @@ public final class GLRenderBuffer implements RenderBuffer {
         }
 
         @Override
-        public RenderBuffer.Builder size(int width, int height) {
-            this.width = width;
-            this.height = height;
-            return this;
-        }
-
-        @Override
-        public RenderBuffer build() {
+        public RenderBuffer build(int width, int height) {
             return new GLRenderBuffer(format, sampler, width, height);
         }
     }

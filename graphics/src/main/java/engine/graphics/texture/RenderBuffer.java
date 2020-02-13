@@ -42,8 +42,6 @@ public interface RenderBuffer extends FrameBuffer.Attachable {
 
         Builder sampler(Sampler sampler);
 
-        Builder size(int width, int height);
-
-        RenderBuffer build();
+        RenderBuffer build(int width, int height);
     }
 }
