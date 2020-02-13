@@ -15,6 +15,7 @@ import engine.graphics.texture.FrameBuffer;
 import engine.graphics.viewport.Viewport;
 import engine.util.Color;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import java.util.List;
 
@@ -68,6 +69,7 @@ public final class Scene3DRenderHandler implements RenderHandler {
 
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glDisable(GL13.GL_MULTISAMPLE);
         GL11.glFrontFace(GL11.GL_CCW);
         GL11.glCullFace(GL11.GL_BACK);
 
@@ -83,6 +85,7 @@ public final class Scene3DRenderHandler implements RenderHandler {
             }
         });
 
+        GL11.glEnable(GL13.GL_MULTISAMPLE);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDisable(GL11.GL_CULL_FACE);
 
