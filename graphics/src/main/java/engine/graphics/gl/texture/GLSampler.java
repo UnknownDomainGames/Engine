@@ -1,19 +1,21 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
+import engine.graphics.texture.CompareMode;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.WrapMode;
 import engine.graphics.util.Cleaner;
+import engine.util.Color;
+import org.lwjgl.opengl.GL33;
 
-import static engine.graphics.gl.texture.GLTexture.toGLFilterMode;
-import static engine.graphics.gl.texture.GLTexture.toGLWrapMode;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.GL_TEXTURE_WRAP_R;
+import static org.lwjgl.opengl.GL12.*;
+import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_FUNC;
+import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_MODE;
 import static org.lwjgl.opengl.GL33.glGenSamplers;
-import static org.lwjgl.opengl.GL33.glSamplerParameteri;
 
-public class GLSampler implements Sampler {
+public final class GLSampler implements Sampler {
 
     public static final Sampler DEFAULT = new GLSampler(null);
 
@@ -35,28 +37,50 @@ public class GLSampler implements Sampler {
     }
 
     @Override
-    public void setMagFilter(FilterMode filterMode) {
-        glSamplerParameteri(id, GL_TEXTURE_MAG_FILTER, toGLFilterMode(filterMode));
+    public Sampler setMagFilter(FilterMode filterMode) {
+        GL33.glSamplerParameteri(id, GL_TEXTURE_MAG_FILTER, GLTexture.toGLFilterMode(filterMode));
+        return this;
     }
 
     @Override
-    public void setMinFilter(FilterMode filterMode) {
-        glSamplerParameteri(id, GL_TEXTURE_MIN_FILTER, toGLFilterMode(filterMode));
+    public Sampler setMinFilter(FilterMode filterMode) {
+        GL33.glSamplerParameteri(id, GL_TEXTURE_MIN_FILTER, GLTexture.toGLFilterMode(filterMode));
+        return this;
     }
 
     @Override
-    public void setWrapS(WrapMode wrapMode) {
-        glSamplerParameteri(id, GL_TEXTURE_WRAP_S, toGLWrapMode(wrapMode));
+    public Sampler setWrapMode(WrapMode wrapMode) {
+        int glWrapMode = GLTexture.toGLWrapMode(wrapMode);
+        GL33.glSamplerParameteri(id, GL_TEXTURE_WRAP_S, glWrapMode);
+        GL33.glSamplerParameteri(id, GL_TEXTURE_WRAP_T, glWrapMode);
+        GL33.glSamplerParameteri(id, GL_TEXTURE_WRAP_R, glWrapMode);
+        return this;
     }
 
     @Override
-    public void setWrapT(WrapMode wrapMode) {
-        glSamplerParameteri(id, GL_TEXTURE_WRAP_T, toGLWrapMode(wrapMode));
+    public Sampler setMinLod(float min) {
+        GL33.glSamplerParameterf(id, GL_TEXTURE_MIN_LOD, min);
+        return this;
     }
 
     @Override
-    public void setWrapR(WrapMode wrapMode) {
-        glSamplerParameteri(id, GL_TEXTURE_WRAP_R, toGLWrapMode(wrapMode));
+    public Sampler setMaxLod(float max) {
+        GL33.glSamplerParameterf(id, GL_TEXTURE_MAX_LOD, max);
+        return this;
+    }
+
+    @Override
+    public Sampler setBorderColor(Color color) {
+        GL33.glSamplerParameterfv(id, GL_TEXTURE_BORDER_COLOR,
+                new float[]{color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()});
+        return this;
+    }
+
+    @Override
+    public Sampler setCompareMode(CompareMode compareMode) {
+        GL33.glSamplerParameteri(id, GL_TEXTURE_COMPARE_MODE, GLTexture.toGLCompareMode(compareMode));
+        GL33.glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, GLTexture.toGLCompareFunc(compareMode));
+        return this;
     }
 
     @Override

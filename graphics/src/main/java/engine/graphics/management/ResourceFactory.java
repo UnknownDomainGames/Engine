@@ -18,6 +18,8 @@ public interface ResourceFactory {
 
     RenderBuffer.Builder createRenderBufferBuilder();
 
+    Sampler createSampler();
+
     Mesh.Builder createMeshBuilder();
 
     SingleBufferMesh.Builder createSingleBufferMeshBuilder();

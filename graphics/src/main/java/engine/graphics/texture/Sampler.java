@@ -1,17 +1,23 @@
 package engine.graphics.texture;
 
+import engine.util.Color;
+
 public interface Sampler {
     int getId();
 
-    void setMagFilter(FilterMode filterMode);
+    Sampler setMagFilter(FilterMode filterMode);
 
-    void setMinFilter(FilterMode filterMode);
+    Sampler setMinFilter(FilterMode filterMode);
 
-    void setWrapS(WrapMode wrapMode);
+    Sampler setWrapMode(WrapMode wrapMode);
 
-    void setWrapT(WrapMode wrapMode);
+    Sampler setMinLod(float min);
 
-    void setWrapR(WrapMode wrapMode);
+    Sampler setMaxLod(float max);
+
+    Sampler setBorderColor(Color color);
+
+    Sampler setCompareMode(CompareMode compareMode);
 
     void dispose();
 

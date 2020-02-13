@@ -4,6 +4,7 @@ import engine.graphics.gl.mesh.GLMesh;
 import engine.graphics.gl.mesh.GLSingleBufferMesh;
 import engine.graphics.gl.texture.GLFrameBuffer;
 import engine.graphics.gl.texture.GLRenderBuffer;
+import engine.graphics.gl.texture.GLSampler;
 import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.management.ResourceFactory;
 import engine.graphics.mesh.Mesh;
@@ -45,6 +46,11 @@ public final class GLResourceFactory implements ResourceFactory {
     @Override
     public RenderBuffer.Builder createRenderBufferBuilder() {
         return GLRenderBuffer.builder();
+    }
+
+    @Override
+    public Sampler createSampler() {
+        return new GLSampler();
     }
 
     @Override
