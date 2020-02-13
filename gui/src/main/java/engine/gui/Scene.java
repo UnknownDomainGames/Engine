@@ -243,20 +243,32 @@ public class Scene implements EventTarget {
     }
 
     public void processScroll(double xOffset, double yOffset) {
-        focusedNodes.forEach(node -> {
-            var pos = node.relativePos(cursorX, cursorY);
-            new ScrollEvent(ScrollEvent.ANY, node, pos.getX(), pos.getY(), cursorX, cursorY, xOffset, yOffset).fireEvent();
-        });
+        if (focusedNodes.isEmpty()) {
+            new ScrollEvent(ScrollEvent.ANY, this, cursorX, cursorY, cursorX, cursorY, xOffset, yOffset).fireEvent();
+        } else {
+            focusedNodes.forEach(node -> {
+                var pos = node.relativePos(cursorX, cursorY);
+                new ScrollEvent(ScrollEvent.ANY, node, pos.getX(), pos.getY(), cursorX, cursorY, xOffset, yOffset).fireEvent();
+            });
+        }
     }
 
     public void processKey(KeyCode key, Modifiers modifier, boolean pressed) {
-        focusedNodes.forEach(node ->
-                new KeyEvent(pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED, node, key, modifier, pressed).fireEvent());
+        if (focusedNodes.isEmpty()) {
+            new KeyEvent(pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED, this, key, modifier, pressed).fireEvent();
+        } else {
+            focusedNodes.forEach(node ->
+                    new KeyEvent(pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED, node, key, modifier, pressed).fireEvent());
+        }
     }
 
     public void processCharMods(char codePoint, Modifiers modifier) {
-        focusedNodes.forEach(node ->
-                new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.NONE, String.valueOf(codePoint), modifier, true).fireEvent());
+        if (focusedNodes.isEmpty()) {
+            new KeyEvent(KeyEvent.KEY_TYPED, this, KeyCode.NONE, String.valueOf(codePoint), modifier, true).fireEvent();
+        } else {
+            focusedNodes.forEach(node ->
+                    new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.NONE, String.valueOf(codePoint), modifier, true).fireEvent());
+        }
     }
 
     public <T extends Event> void addEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
