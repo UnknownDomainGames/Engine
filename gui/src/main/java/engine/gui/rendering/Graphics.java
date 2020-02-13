@@ -1,12 +1,13 @@
 package engine.gui.rendering;
 
+import engine.graphics.font.TextMesh;
+import engine.graphics.texture.Texture2D;
 import engine.gui.Node;
 import engine.gui.image.Image;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
-import engine.graphics.font.TextMesh;
-import engine.graphics.texture.Texture2D;
 import engine.util.Color;
+import org.joml.Matrix4fc;
 import org.joml.Vector2fc;
 
 public interface Graphics {
@@ -71,4 +72,12 @@ public interface Graphics {
     void pushClipRect(float x, float y, float width, float height);
 
     void popClipRect();
+
+    void pushModelMatrix(Matrix4fc matrix);
+
+    void popModelMatrix();
+
+    void enableGamma();
+
+    void disableGamma();
 }

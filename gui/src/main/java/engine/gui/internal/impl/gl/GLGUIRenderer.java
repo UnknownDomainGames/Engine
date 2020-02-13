@@ -14,6 +14,7 @@ import engine.gui.Scene;
 import engine.gui.rendering.Graphics;
 import engine.util.Color;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.joml.Vector2f;
 import org.joml.Vector4fc;
 
@@ -30,11 +31,15 @@ public final class GLGUIRenderer {
 
     private int clipRectLocation;
     private int renderTextLocation;
+    private int modelMatrix;
+    private int enableGamma;
 
     public GLGUIRenderer() {
         shader = ShaderManager.load("gui");
         clipRectLocation = shader.getUniformLocation("u_ClipRect");
         renderTextLocation = shader.getUniformLocation("u_RenderText");
+        modelMatrix = shader.getUniformLocation("u_ModelMatrix");
+        enableGamma = shader.getUniformLocation("u_EnableGamma");
 
         whiteTexture = GLTexture2D.of(new BufferedImage(1, 1, Color.WHITE));
 
@@ -92,8 +97,8 @@ public final class GLGUIRenderer {
 //        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
         shader.use();
-        shader.setUniform("u_ProjMatrix", new Matrix4f().setOrtho2D(0, viewportWidth, viewportHeight, 0));
-        shader.setUniform("u_ModelMatrix", new Matrix4f().scale(scaleX, scaleY, 1));
+        shader.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, viewportWidth, viewportHeight, 0, -1000, 1000));
+        graphics.pushModelMatrix(new Matrix4f().scale(scaleX, scaleY, 1));
         shader.setUniform("u_ViewportSize", new Vector2f(viewportWidth, viewportHeight));
         graphics.pushClipRect(0, 0, width, height);
 
@@ -123,6 +128,14 @@ public final class GLGUIRenderer {
 
     public void endRenderText() {
         Uniforms.setUniform(renderTextLocation, false);
+    }
+
+    public void setEnableGamma(boolean enable) {
+        Uniforms.setUniform(enableGamma, enable);
+    }
+
+    public void setModelMatrix(Matrix4fc matrix) {
+        Uniforms.setUniform(modelMatrix, matrix);
     }
 
     public void dispose() {

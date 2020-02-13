@@ -1,22 +1,20 @@
 package engine.gui.internal.impl.gl;
 
-import engine.gui.Node;
-import engine.gui.image.Image;
-import engine.gui.misc.Background;
-import engine.gui.misc.Border;
-import engine.gui.rendering.Graphics;
 import engine.graphics.font.TextMesh;
 import engine.graphics.gl.GLStreamedRenderer;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
-import engine.math.Math2;
+import engine.gui.Node;
+import engine.gui.image.Image;
+import engine.gui.misc.Background;
+import engine.gui.misc.Border;
+import engine.gui.rendering.Graphics;
 import engine.util.Color;
-import org.joml.Vector2fc;
-import org.joml.Vector4f;
-import org.joml.Vector4fc;
+import org.joml.*;
 
+import java.lang.Math;
 import java.util.Stack;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -28,6 +26,7 @@ public final class GLGraphics implements Graphics {
     private final GUIResourceFactory resourceFactory = new GUIResourceFactory();
 
     private final Stack<Vector4fc> clipRect = new Stack<>();
+    private final Stack<Matrix4fc> modelMatrix = new Stack<>();
 
     private final GLGUIRenderer renderer;
 
@@ -309,12 +308,38 @@ public final class GLGraphics implements Graphics {
         updateClipRect();
     }
 
+    @Override
+    public void pushModelMatrix(Matrix4fc matrix) {
+        if (modelMatrix.isEmpty()) {
+            modelMatrix.push(matrix);
+        } else {
+            modelMatrix.push(modelMatrix.peek().mul(matrix, new Matrix4f()));
+        }
+        renderer.setModelMatrix(modelMatrix.peek());
+    }
+
+    @Override
+    public void popModelMatrix() {
+        modelMatrix.pop();
+        renderer.setModelMatrix(modelMatrix.peek());
+    }
+
+    @Override
+    public void enableGamma() {
+        renderer.setEnableGamma(true);
+    }
+
+    @Override
+    public void disableGamma() {
+        renderer.setEnableGamma(false);
+    }
+
     private void updateClipRect() {
         clipRect.stream().reduce((parent, child) -> {
-            var newX = Math2.clamp(child.x(), parent.x(), parent.z());
-            var newY = Math2.clamp(child.y(), parent.y(), parent.w());
-            var newZ = Math2.clamp(child.z(), parent.x(), parent.z());
-            var newW = Math2.clamp(child.w(), parent.y(), parent.w());
+            var newX = Math.max(child.x(), parent.x());
+            var newY = Math.max(child.y(), parent.y());
+            var newZ = Math.min(child.z(), parent.z());
+            var newW = Math.min(child.w(), parent.w());
             return new Vector4f(newX, newY, newZ, newW);
         }).ifPresent(renderer::setClipRect);
 //        if (!clipRect.isEmpty()) {
