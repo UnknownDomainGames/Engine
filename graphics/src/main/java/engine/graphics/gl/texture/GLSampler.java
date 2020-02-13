@@ -1,7 +1,7 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
-import engine.graphics.texture.CompareMode;
+import engine.graphics.texture.DepthCompareMode;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.WrapMode;
@@ -77,9 +77,9 @@ public final class GLSampler implements Sampler {
     }
 
     @Override
-    public Sampler setCompareMode(CompareMode compareMode) {
-        GL33.glSamplerParameteri(id, GL_TEXTURE_COMPARE_MODE, GLTexture.toGLCompareMode(compareMode));
-        GL33.glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, GLTexture.toGLCompareFunc(compareMode));
+    public Sampler setDepthCompareMode(DepthCompareMode depthCompareMode) {
+        GL33.glSamplerParameteri(id, GL_TEXTURE_COMPARE_MODE, GLTexture.toGLCompareMode(depthCompareMode));
+        GL33.glSamplerParameteri(id, GL_TEXTURE_COMPARE_FUNC, GLTexture.toGLCompareFunc(depthCompareMode));
         return this;
     }
 

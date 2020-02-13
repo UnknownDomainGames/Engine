@@ -1,9 +1,9 @@
 package engine.graphics.texture;
 
-public enum CompareMode {
+public enum DepthCompareMode {
     NONE,
-    LESS_AND_EQUAL,
-    GREATER_AND_EQUAL,
+    LESS_OR_EQUAL,
+    GREATER_OR_EQUAL,
     LESS,
     GREATER,
     EQUAL,

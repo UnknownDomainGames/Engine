@@ -17,7 +17,7 @@ public interface Sampler {
 
     Sampler setBorderColor(Color color);
 
-    Sampler setCompareMode(CompareMode compareMode);
+    Sampler setDepthCompareMode(DepthCompareMode depthCompareMode);
 
     void dispose();
 

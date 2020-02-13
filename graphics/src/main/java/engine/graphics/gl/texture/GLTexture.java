@@ -55,14 +55,14 @@ public abstract class GLTexture implements Texture {
         }
     }
 
-    public static int toGLCompareMode(CompareMode compareMode) {
-        return compareMode != CompareMode.NONE ? GL_COMPARE_R_TO_TEXTURE : GL_NONE;
+    public static int toGLCompareMode(DepthCompareMode depthCompareMode) {
+        return depthCompareMode != DepthCompareMode.NONE ? GL_COMPARE_R_TO_TEXTURE : GL_NONE;
     }
 
-    public static int toGLCompareFunc(CompareMode compareMode) {
-        switch (compareMode) {
+    public static int toGLCompareFunc(DepthCompareMode depthCompareMode) {
+        switch (depthCompareMode) {
             case NONE:
-            case LESS_AND_EQUAL:
+            case LESS_OR_EQUAL:
                 return GL_LEQUAL;
             case LESS:
                 return GL_LESS;
@@ -76,7 +76,7 @@ public abstract class GLTexture implements Texture {
                 return GL_GREATER;
             case NOT_EQUAL:
                 return GL_NOTEQUAL;
-            case GREATER_AND_EQUAL:
+            case GREATER_OR_EQUAL:
                 return GL_GEQUAL;
             default:
                 throw new IllegalArgumentException();
