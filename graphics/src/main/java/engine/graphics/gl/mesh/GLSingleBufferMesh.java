@@ -89,6 +89,7 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
     }
 
     private void setVertexFormat(VertexFormat vertexFormat) {
+        if (this.vertexFormat.equals(vertexFormat)) return;
         bind();
         vertexBuffer.bind();
         GLHelper.disableVertexFormat(this.vertexFormat);
