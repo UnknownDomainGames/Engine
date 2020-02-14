@@ -2,7 +2,9 @@ package engine.graphics.texture;
 
 public enum TextureFormat {
     RGBA8,
+    BGRA8,
     RGB8,
+    BGR8,
     RG8,
     RED8,
     RGB10_A2,

@@ -1,6 +1,7 @@
 package engine.graphics.vulkan;
 
 
+import engine.graphics.GraphicsEngine;
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
 import engine.graphics.gl.util.GLContextUtils;
@@ -18,16 +19,26 @@ import engine.graphics.vulkan.render.RenderPass;
 import engine.graphics.vulkan.synchronize.Semaphore;
 import engine.graphics.vulkan.util.GPUInfoVk;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.vulkan.EXTDebugReport;
 import org.lwjgl.vulkan.VK10;
+import org.lwjgl.vulkan.VkDebugReportCallbackCreateInfoEXT;
+import org.lwjgl.vulkan.VkDebugReportCallbackEXT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.LongBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RunnableFuture;
+
+import static engine.graphics.vulkan.util.VulkanUtils.translateVulkanResult;
+import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.vulkan.EXTDebugReport.*;
+import static org.lwjgl.vulkan.VK10.VK_SUCCESS;
 
 public class VKGraphicsBackend implements GraphicsBackend {
 
@@ -115,7 +126,7 @@ public class VKGraphicsBackend implements GraphicsBackend {
         var cmdBuf = commandPool.createCommandBuffer();
         cmdBuf.beginCommandBuffer();
         for (RenderHandler handler : handlers) {
-            handler.render(tpf);
+//            handler.render(tpf);
         }
         cmdBuf.endCommandBuffer();
         queue.submit(cmdBuf, List.of(imageAcquireSemaphore), List.of(PipelineStage.COLOR_ATTACHMENT_OUTPUT), List.of(renderCompleteSemaphore), null);
@@ -164,7 +175,17 @@ public class VKGraphicsBackend implements GraphicsBackend {
         var requiredExtensions = primaryWindow.getRequiredExtensions();
         if(requiredExtensions == null)
             throw new IllegalStateException("Unable to get extension required for Vulkan to load");
-        vulkanInstance = VulkanInstance.createInstance(requiredExtensions, "",1,VulkanVersion.VER_1_0);
+        var extensions = new ArrayList<String>();
+        while(requiredExtensions.hasRemaining()){
+            extensions.add(requiredExtensions.getStringUTF8());
+        }
+        if(GraphicsEngine.isDebug()){
+            extensions.add(EXTDebugReport.VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+        }
+        vulkanInstance = VulkanInstance.createInstance(extensions, "",1,VulkanVersion.VER_1_0);
+        if(GraphicsEngine.isDebug()){
+            initDebugCallback();
+        }
         physicalDevice = vulkanInstance.getPhysicalDevices().get(0);
         gpuInfo = new GPUInfoVk(physicalDevice);
         printVKInfo();
@@ -190,14 +211,54 @@ public class VKGraphicsBackend implements GraphicsBackend {
         LOGGER.info("\tVK_VENDOR: {}", gpuInfo.getVendorName());
         LOGGER.info("\tVK_DEVICE: {}", gpuInfo.getName());
         LOGGER.info("\tVK_VERSION: {}", "1.0.0");
-        LOGGER.info("\tVK_AVAILABLE_EXTENSIONS: {}", physicalDevice.getSupportedExtensionProperties(null).stream().reduce((s, s2) -> s + ", " + " s2").orElse(""));
-        LOGGER.info("\tGPU_TOTAL_MEMORY: {} MB", (gpuInfo.getTotalMemory()) >> 10);
+        LOGGER.info("\tVK_AVAILABLE_EXTENSIONS: {}", physicalDevice.getSupportedExtensionProperties(null).stream().reduce((s, s2) -> s + ", " + s2).orElse(""));
+        LOGGER.info("\tGPU_TOTAL_MEMORY: {} MB", gpuInfo.getTotalMemory() / 1024);
         LOGGER.info("------------------------------");
+    }
+
+    private long debugCallback;
+
+    private void initDebugCallback(){
+        try(var stack = MemoryStack.stackPush()) {
+            var vkCallback = new VkDebugReportCallbackEXT() {
+            public int invoke(int flags, int objectType, long object, long location, int messageCode, long pLayerPrefix, long pMessage, long pUserData) {
+                var msg = VkDebugReportCallbackEXT.getString(pMessage);
+                switch (flags){
+                    case VK_DEBUG_REPORT_DEBUG_BIT_EXT:
+                        LOGGER.debug(msg);
+                        break;
+                    case VK_DEBUG_REPORT_INFORMATION_BIT_EXT:
+                        LOGGER.info(msg);
+                        break;
+                    case VK_DEBUG_REPORT_WARNING_BIT_EXT:
+                        LOGGER.warn(msg);
+                        break;
+                    case VK_DEBUG_REPORT_ERROR_BIT_EXT:
+                        LOGGER.error(msg);
+                        break;
+                }
+                return 0;
+            }
+        };
+            var dbgCreateInfo = VkDebugReportCallbackCreateInfoEXT.callocStack(stack)
+                    .sType(EXTDebugReport.VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT)
+                    .pNext(NULL)
+                    .pfnCallback(vkCallback)
+                    .pUserData(NULL)
+                    .flags(VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT);
+            var pCallback = stack.mallocLong(1);
+            int err = vkCreateDebugReportCallbackEXT(vulkanInstance.getNativeInstance(), dbgCreateInfo, null, pCallback);
+            long callbackHandle = pCallback.get(0);
+            if (err != VK_SUCCESS) {
+                throw new IllegalStateException("Failed to create VkInstance: " + translateVulkanResult(err));
+            }
+            debugCallback = callbackHandle;
+        }
     }
 
     @Override
     public void dispose() {
-
+        vkDestroyDebugReportCallbackEXT(vulkanInstance.getNativeInstance(), debugCallback, null);
         vulkanInstance.free();
     }
 }

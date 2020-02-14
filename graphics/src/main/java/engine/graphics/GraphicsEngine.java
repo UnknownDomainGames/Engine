@@ -3,6 +3,7 @@ package engine.graphics;
 import engine.graphics.gl.GLGraphicsBackend;
 import engine.graphics.lwjgl.STBImageHelper;
 import engine.graphics.management.GraphicsBackend;
+import engine.graphics.vulkan.VKGraphicsBackend;
 
 public final class GraphicsEngine {
     public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("graphics.debug", "false"));
@@ -25,7 +26,12 @@ public final class GraphicsEngine {
         GraphicsEngine.settings = settings;
         // TODO: delegate render context creation
         STBImageHelper.init();
-        graphicsBackend = new GLGraphicsBackend();
+        if(settings.backend == Settings.Backend.VULKAN) {
+            graphicsBackend = new VKGraphicsBackend();
+        }
+        else {
+            graphicsBackend = new GLGraphicsBackend();
+        }
         graphicsBackend.init();
     }
 
@@ -43,10 +49,20 @@ public final class GraphicsEngine {
 
     public static class Settings {
         private boolean debug = DEBUG;
+        private Backend backend = Backend.GL;
 
         public Settings debug(boolean debug) {
             this.debug = debug;
             return this;
+        }
+
+        public Settings backend(Backend backend) {
+            this.backend = backend;
+            return this;
+        }
+
+        public enum Backend {
+            GL, VULKAN
         }
     }
 

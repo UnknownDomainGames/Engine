@@ -40,15 +40,15 @@ public class VulkanInstance {
         }
     }
 
-    public static VulkanInstance createInstance(@Nullable PointerBuffer extensions, String appName, int appVersion, VulkanVersion apiVersion){
+    public static VulkanInstance createInstance(@Nullable List<String> extensions, String appName, int appVersion, VulkanVersion apiVersion){
         return createInstance(extensions, null, appName, appVersion, "", 1, apiVersion);
     }
 
-    public static VulkanInstance createInstance(@Nullable PointerBuffer extensions, @Nullable PointerBuffer layers, String appName, int appVersion, VulkanVersion apiVersion){
+    public static VulkanInstance createInstance(@Nullable List<String> extensions, @Nullable List<String> layers, String appName, int appVersion, VulkanVersion apiVersion){
         return createInstance(extensions, layers, appName, appVersion, "", 1, apiVersion);
     }
 
-    public static VulkanInstance createInstance(@Nullable PointerBuffer extensions, @Nullable PointerBuffer layers, String appName, int appVersion, String engineName, int engineVersion, VulkanVersion apiVersion){
+    public static VulkanInstance createInstance(@Nullable List<String> extensions, @Nullable List<String> layers, String appName, int appVersion, String engineName, int engineVersion, VulkanVersion apiVersion){
         try(var stack = MemoryStack.stackPush()){
             var appInfo = VkApplicationInfo.callocStack(stack)
                     .sType(VK_STRUCTURE_TYPE_APPLICATION_INFO)
@@ -57,24 +57,27 @@ public class VulkanInstance {
                     .pEngineName(MemoryStack.stackUTF8(engineName))
                     .engineVersion(engineVersion)
                     .apiVersion(apiVersion.vk);
-            if(extensions == null) extensions = stack.mallocPointer(0);
-            PointerBuffer ppEnabledExtensionNames;
-            if(GraphicsEngine.isDebug()) {
-                ppEnabledExtensionNames = stack.mallocPointer(extensions.remaining() + 1);
-                ppEnabledExtensionNames.put(extensions);
-                var VK_EXT_DEBUG_REPORT_EXTENSION = MemoryStack.stackUTF8(EXTDebugReport.VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-                ppEnabledExtensionNames.put(VK_EXT_DEBUG_REPORT_EXTENSION);
-                ppEnabledExtensionNames.flip();
-            }
-            else{
-                ppEnabledExtensionNames = extensions;
-            }
             VkInstanceCreateInfo pCreateInfo = VkInstanceCreateInfo.callocStack(stack)
                     .sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
-                    .pNext(NULL)
-                    .pApplicationInfo(appInfo)
-                    .ppEnabledExtensionNames(ppEnabledExtensionNames)
-                    .ppEnabledLayerNames(layers);
+                    .pApplicationInfo(appInfo);
+            if(extensions != null) {
+                var ppEnabledExtensionNames = stack.mallocPointer(extensions.size());
+                for (String extension : extensions) {
+                    var p = MemoryStack.stackUTF8(extension);
+                    ppEnabledExtensionNames.put(p);
+                }
+                ppEnabledExtensionNames.flip();
+                pCreateInfo.ppEnabledExtensionNames(ppEnabledExtensionNames);
+            }
+            if(layers != null){
+                var ppLayers = stack.mallocPointer(layers.size());
+                for (String layer : layers) {
+                    var p = MemoryStack.stackUTF8(layer);
+                    ppLayers.put(p);
+                }
+                ppLayers.flip();
+                pCreateInfo.ppEnabledLayerNames(ppLayers);
+            }
             PointerBuffer pInstance = stack.mallocPointer(1);
             int err = vkCreateInstance(pCreateInfo, null, pInstance);
             long instance = pInstance.get(0);

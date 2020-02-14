@@ -126,10 +126,11 @@ public class PhysicalDevice {
             var queueCreateInfos = VkDeviceQueueCreateInfo.callocStack(queueFamilyIndices.length, stack);
             for (int i = 0; i < queueFamilyIndices.length; i++) {
                 var info = queueCreateInfos.get(i);
+                var prior = stack.floats(0);
                 info.sType(VK10.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO)
-                        .queueFamilyIndex(queueFamilyIndices[i]);
-                var count = Math.max(1,Math.min(queueCount[i], getQueueFamilyPropertiesList().get(queueFamilyIndices[i]).queueCount()));
-                VkDeviceQueueCreateInfo.nqueueCount(info.address(), count);
+                        .queueFamilyIndex(queueFamilyIndices[i]).pQueuePriorities(prior);
+//                var count = Math.max(1,Math.min(queueCount[i], getQueueFamilyPropertiesList().get(queueFamilyIndices[i]).queueCount()));
+//                VkDeviceQueueCreateInfo.nqueueCount(info.address(), count);
             }
             var deviceCreationInfo = VkDeviceCreateInfo.callocStack(stack);
             deviceCreationInfo.sType(VK10.VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO).flags(0).pQueueCreateInfos(queueCreateInfos);

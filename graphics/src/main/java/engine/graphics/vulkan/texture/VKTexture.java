@@ -1,14 +1,19 @@
 package engine.graphics.vulkan.texture;
 
+import engine.graphics.texture.Sampler;
+import engine.graphics.texture.Texture;
+import engine.graphics.texture.TextureFormat;
 import engine.graphics.vulkan.device.LogicalDevice;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.KHRSwapchain;
 import org.lwjgl.vulkan.VK10;
 import org.lwjgl.vulkan.VkImageViewCreateInfo;
 
+import javax.annotation.Nullable;
+
 import static org.lwjgl.vulkan.VK10.*;
 
-public class VKTexture {
+public class VKTexture implements Texture {
     private final LogicalDevice device;
     private long handle;
     private boolean released = false;
@@ -33,13 +38,6 @@ public class VKTexture {
 
     public void checkReleased(){
         if(released) throw new IllegalStateException("Texture already released!");
-    }
-
-    public void free(){
-        checkReleased();
-        VK10.vkDestroyImage(device.getNativeDevice(), handle, null);
-        released = true;
-        handle = 0;
     }
 
     public ImageView createView(ImageAspect aspect) {
@@ -71,6 +69,46 @@ public class VKTexture {
             }
             return new ImageView(this, ptr.get(0));
         }
+    }
+
+    @Override
+    public int getId() {
+        return Math.toIntExact(handle);
+    }
+
+    @Override
+    public TextureFormat getFormat() {
+        return format.getPeer();
+    }
+
+    @Override
+    public boolean isMultiSample() {
+        return false;
+    }
+
+    @Nullable
+    @Override
+    public Sampler getSampler() {
+        return null;
+    }
+
+    @Override
+    public void bind() {
+
+    }
+
+    @Override
+    public void dispose() {
+        if (!isDisposed()) {
+            VK10.vkDestroyImage(device.getNativeDevice(), handle, null);
+            released = true;
+            handle = 0;
+        }
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return released;
     }
 
     public static class ImageView {

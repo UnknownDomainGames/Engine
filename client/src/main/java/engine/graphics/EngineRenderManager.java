@@ -6,8 +6,10 @@ import engine.client.asset.provider.TextureAssetProvider;
 import engine.client.event.rendering.RenderEvent;
 import engine.client.hud.HUDManager;
 import engine.graphics.display.Window;
+import engine.graphics.gl.GLGraphicsBackend;
 import engine.graphics.gl.texture.GLFrameBuffer;
 import engine.graphics.internal.impl.gl.GLPlatform3D;
+import engine.graphics.internal.impl.vk.VKPlatform3D;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.shape.SkyBox;
 import engine.graphics.texture.FrameBuffer;
@@ -15,6 +17,7 @@ import engine.graphics.texture.Texture2D;
 import engine.graphics.viewport.PerspectiveViewport;
 import engine.graphics.voxel.VoxelRenderHelper;
 import engine.graphics.voxel.shape.SelectedBlock;
+import engine.graphics.vulkan.VKGraphicsBackend;
 import engine.gui.EngineGUIManager;
 import engine.gui.EngineHUDManager;
 import engine.gui.GUIManager;
@@ -92,7 +95,12 @@ public final class EngineRenderManager implements RenderManager {
                 engine.getSettings().getDisplaySettings().getResolutionHeight(),
                 engine.getSettings().getDisplaySettings().getFrameRate());
 
-        GLPlatform3D.launchEmbedded();
+        if(manager instanceof GLGraphicsBackend) {
+            GLPlatform3D.launchEmbedded();
+        }
+        else if(manager instanceof VKGraphicsBackend){
+            VKPlatform3D.launchEmbedded();
+        }
 
         scene = new Scene3D();
         viewport = new PerspectiveViewport();
