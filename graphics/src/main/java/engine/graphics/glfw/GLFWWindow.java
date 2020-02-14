@@ -314,7 +314,6 @@ public class GLFWWindow implements Window {
 
     protected void initWindowHint() {
         glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_SAMPLES, 4);
         glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
         if (Boolean.parseBoolean(System.getProperty("rendering.debug", "false"))) {
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
