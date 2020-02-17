@@ -1,4 +1,4 @@
-package engine.graphics.gl.font;
+package engine.graphics.lwjgl.font;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
@@ -58,7 +58,14 @@ public final class WindowsFontHelper implements FontHelper {
 
     private Font defaultFont;
 
-    public WindowsFontHelper() {
+    public static void initialize() {
+        var fontHelper = new WindowsFontHelper();
+        FontHelper.Internal.setInstance(fontHelper);
+        Font defaultFont = new Font("Arial", "Regular", 16);
+        fontHelper.setDefaultFont(defaultFont);
+    }
+
+    private WindowsFontHelper() {
         initLocalFonts();
     }
 

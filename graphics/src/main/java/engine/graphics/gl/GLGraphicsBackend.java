@@ -2,9 +2,6 @@ package engine.graphics.gl;
 
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
-import engine.graphics.font.Font;
-import engine.graphics.font.FontHelper;
-import engine.graphics.gl.font.WindowsFontHelper;
 import engine.graphics.gl.util.DebugMessageCallback;
 import engine.graphics.gl.util.GLContextUtils;
 import engine.graphics.gl.util.GPUInfoImpl;
@@ -137,7 +134,6 @@ public final class GLGraphicsBackend implements GraphicsBackend {
         this.renderingThread = Thread.currentThread();
         initGLFW();
         initGL();
-        initFont();
     }
 
     private void initGLFW() {
@@ -190,13 +186,6 @@ public final class GLGraphicsBackend implements GraphicsBackend {
         LOGGER.info("\tGL_SHADING_LANGUAGE_VERSION: {}", GLContextUtils.getShadingLanguageVersion());
         LOGGER.info("\tGPU_TOTAL_MEMORY: {} MB", (gpuInfo.getTotalMemory()) >> 10);
         LOGGER.info("------------------------------");
-    }
-
-    private void initFont() {
-        var fontHelper = new WindowsFontHelper();
-        FontHelper.Internal.setInstance(fontHelper);
-        Font defaultFont = new Font("Arial", "Regular", 16);
-        fontHelper.setDefaultFont(defaultFont);
     }
 
     @Override

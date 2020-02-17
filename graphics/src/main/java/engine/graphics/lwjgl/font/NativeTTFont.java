@@ -1,4 +1,4 @@
-package engine.graphics.gl.font;
+package engine.graphics.lwjgl.font;
 
 import engine.graphics.font.Font;
 

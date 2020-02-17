@@ -1,4 +1,4 @@
-package engine.graphics.gl.font;
+package engine.graphics.lwjgl.font;
 
 import com.google.common.collect.Range;
 import org.slf4j.Logger;

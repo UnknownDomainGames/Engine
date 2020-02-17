@@ -9,7 +9,6 @@ import engine.graphics.display.Window;
 import engine.graphics.gl.GLGraphicsBackend;
 import engine.graphics.gl.texture.GLFrameBuffer;
 import engine.graphics.internal.impl.gl.GLPlatform3D;
-import engine.graphics.internal.impl.vk.VKPlatform3D;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.shape.SkyBox;
 import engine.graphics.texture.FrameBuffer;
@@ -99,7 +98,7 @@ public final class EngineRenderManager implements RenderManager {
             GLPlatform3D.launchEmbedded();
         }
         else if(manager instanceof VKGraphicsBackend){
-            VKPlatform3D.launchEmbedded();
+//            VKPlatform3D.launchEmbedded();
         }
 
         scene = new Scene3D();

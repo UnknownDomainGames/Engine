@@ -2,6 +2,7 @@ package engine.graphics;
 
 import engine.graphics.gl.GLGraphicsBackend;
 import engine.graphics.lwjgl.STBImageHelper;
+import engine.graphics.lwjgl.font.WindowsFontHelper;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.vulkan.VKGraphicsBackend;
 
@@ -33,6 +34,7 @@ public final class GraphicsEngine {
             graphicsBackend = new GLGraphicsBackend();
         }
         graphicsBackend.init();
+        WindowsFontHelper.initialize();
     }
 
     public static void doRender(float tpf) {

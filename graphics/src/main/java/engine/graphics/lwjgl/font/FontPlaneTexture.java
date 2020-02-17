@@ -1,7 +1,6 @@
-package engine.graphics.gl.font;
+package engine.graphics.lwjgl.font;
 
 import engine.graphics.font.Font;
-import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.texture.TextureFormat;
@@ -25,8 +24,6 @@ public class FontPlaneTexture {
     //    private List<Integer> abandonedTexIds;
     private Texture2D texture;
     private Font font;
-    private int bitmapWidth;
-    private int bitmapHeight;
     private NativeTTFontInfo fontInfo;
 
     private ArrayList<Character.UnicodeBlock> blocks;
@@ -39,8 +36,16 @@ public class FontPlaneTexture {
         charQuads = new HashMap<>();
     }
 
+    public Font getFont() {
+        return font;
+    }
+
     public Texture2D getTexture() {
         return texture;
+    }
+
+    public NativeTTFontInfo getFontInfo() {
+        return fontInfo;
     }
 
     public void putBlock(Character.UnicodeBlock block) {
@@ -75,8 +80,6 @@ public class FontPlaneTexture {
         charQuads.clear();
         var blockSize = blocks.stream().mapToInt(UnicodeBlockWrapper::getBlockSize).sum();
         int bitmapSize = getBitmapSize(font.getSize(), blockSize);
-        bitmapWidth = bitmapSize;
-        bitmapHeight = bitmapSize;
         ByteBuffer bitmap = ByteBuffer.allocateDirect(bitmapSize * bitmapSize);
         try (var context = STBTTPackContext.malloc()) {
             var ranges = STBTTPackRange.malloc(blocks.size());
@@ -92,7 +95,7 @@ public class FontPlaneTexture {
             stbtt_PackFontRanges(context, fontInfo.getFontData(), fontInfo.getOffsetIndex(), ranges);
             stbtt_PackEnd(context);
 
-            texture = GLTexture2D.builder().format(TextureFormat.RED8).magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR).build(bitmap, bitmapSize, bitmapSize);
+            texture = Texture2D.builder().format(TextureFormat.RED8).magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR).build(bitmap, bitmapSize, bitmapSize);
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack();
             for (int i = 0; i < blocks.size(); i++) {
                 FloatBuffer posX = BufferUtils.createFloatBuffer(1);
@@ -101,7 +104,7 @@ public class FontPlaneTexture {
                 var startPoint = UnicodeBlockWrapper.getRange(blocks.get(i)).lowerEndpoint();
                 var cdata = ranges.get(i).chardata_for_range();
                 for (int j = 0; j < UnicodeBlockWrapper.getBlockSize(blocks.get(i)); j++) {
-                    stbtt_GetPackedQuad(cdata, bitmapWidth, bitmapHeight, j, posX, posY, stbQuad, false);
+                    stbtt_GetPackedQuad(cdata, bitmapSize, bitmapSize, j, posX, posY, stbQuad, false);
                     var quads = new Vector4f(stbQuad.x0(), stbQuad.y0(), stbQuad.x1(), stbQuad.y1());
                     var tex = new Vector4f(stbQuad.s0(), stbQuad.t0(), stbQuad.s1(), stbQuad.t1());
                     charQuads.put((char) (startPoint + j), new CharQuad((char) (startPoint + j), quads, tex, posX.get(0)));
