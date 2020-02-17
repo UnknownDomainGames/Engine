@@ -4,6 +4,8 @@ import engine.graphics.GraphicsEngine;
 import engine.graphics.image.ReadOnlyImage;
 import engine.util.Color;
 
+import java.nio.ByteBuffer;
+
 public interface Texture2D extends Texture, FrameBuffer.Attachable {
 
     static Builder builder() {
@@ -34,5 +36,7 @@ public interface Texture2D extends Texture, FrameBuffer.Attachable {
         Texture2D build(int width, int height);
 
         Texture2D build(ReadOnlyImage image);
+
+        Texture2D build(ByteBuffer pixelBuffer, int width, int height);
     }
 }

@@ -179,6 +179,7 @@ public final class GLTexture2D extends GLTexture implements Texture2D {
             return build(image.getPixelBuffer(), image.getWidth(), image.getHeight());
         }
 
+        @Override
         public GLTexture2D build(ByteBuffer pixelBuffer, int width, int height) {
             GLTexture2D texture = new GLTexture2D(glGenTextures());
             texture.format = format;
