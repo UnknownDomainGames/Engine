@@ -9,7 +9,9 @@ import static org.lwjgl.opengl.GL30.*;
 public enum GLTextureFormat {
 
     RGBA8(TextureFormat.RGBA8, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE),
+    BGRA8(TextureFormat.BGRA8, GL_RGBA8, GL_BGRA, GL_UNSIGNED_BYTE),
     RGB8(TextureFormat.RGB8, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE),
+    BGR8(TextureFormat.BGR8, GL_RGB8, GL_BGR, GL_UNSIGNED_BYTE),
     RG8(TextureFormat.RG8, GL_RG, GL_RG, GL_UNSIGNED_BYTE),
     RED8(TextureFormat.RED8, GL_RED, GL_RED, GL_UNSIGNED_BYTE),
     RGB10_A2(TextureFormat.RGB10_A2, GL_RGB10_A2, GL_RGBA, GL_UNSIGNED_BYTE),
