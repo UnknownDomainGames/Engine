@@ -1,8 +1,12 @@
 package engine.graphics.gl.buffer;
 
+import engine.graphics.GraphicsEngine;
+import engine.graphics.gl.GLGraphicsBackend;
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.util.Cleaner;
+import org.lwjgl.opengl.EXTDirectStateAccess;
 import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL45;
 
 import java.nio.*;
 
@@ -20,7 +24,13 @@ public class GLVertexBuffer {
     public GLVertexBuffer(GLBufferType type, GLBufferUsage usage) {
         this.type = type;
         this.usage = usage;
-        this.id = glGenBuffers();
+        //In GL45 DSA, object has to be created by glCreate* function so as to initialize their states first, or else INVALID_OPERATION will thrown out in succeeding call
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            this.id = GL45.glCreateBuffers();
+        }
+        else {
+            this.id = glGenBuffers();
+        }
         this.disposable = GLCleaner.registerBuffer(this, id);
     }
 
@@ -50,113 +60,281 @@ public class GLVertexBuffer {
     }
 
     public void uploadData(ByteBuffer buffer) {
-        bind();
-        GL15.glBufferData(type.gl, buffer, usage.gl);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferData(id, buffer, usage.gl);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferDataEXT(id, buffer, usage.gl);
+        }
+        else {
+            bind();
+            GL15.glBufferData(type.gl, buffer, usage.gl);
+        }
     }
 
     public void uploadData(ShortBuffer buffer) {
-        bind();
-        GL15.glBufferData(type.gl, buffer, usage.gl);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferData(id, buffer, usage.gl);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferDataEXT(id, buffer, usage.gl);
+        }
+        else {
+            bind();
+            GL15.glBufferData(type.gl, buffer, usage.gl);
+        }
     }
 
     public void uploadData(IntBuffer buffer) {
-        bind();
-        GL15.glBufferData(type.gl, buffer, usage.gl);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferData(id, buffer, usage.gl);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferDataEXT(id, buffer, usage.gl);
+        }
+        else {
+            bind();
+            GL15.glBufferData(type.gl, buffer, usage.gl);
+        }
     }
 
     public void uploadData(LongBuffer buffer) {
-        bind();
-        GL15.glBufferData(type.gl, buffer, usage.gl);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferData(id, buffer, usage.gl);
+        }
+        // EXT version of DSA has no LongBuffer version exposed
+        else {
+            bind();
+            GL15.glBufferData(type.gl, buffer, usage.gl);
+        }
     }
 
     public void uploadData(FloatBuffer buffer) {
-        bind();
-        GL15.glBufferData(type.gl, buffer, usage.gl);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferData(id, buffer, usage.gl);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferDataEXT(id, buffer, usage.gl);
+        }
+        else {
+            bind();
+            GL15.glBufferData(type.gl, buffer, usage.gl);
+        }
     }
 
     public void uploadData(DoubleBuffer buffer) {
-        bind();
-        GL15.glBufferData(type.gl, buffer, usage.gl);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferData(id, buffer, usage.gl);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferDataEXT(id, buffer, usage.gl);
+        }
+        else {
+            bind();
+            GL15.glBufferData(type.gl, buffer, usage.gl);
+        }
     }
 
     public void uploadData(short[] data) {
-        bind();
-        GL15.glBufferData(type.gl, data, usage.gl);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferData(id, data, usage.gl);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferDataEXT(id, data, usage.gl);
+        }
+        else {
+            bind();
+            GL15.glBufferData(type.gl, data, usage.gl);
+        }
     }
 
     public void uploadData(int[] data) {
-        bind();
-        GL15.glBufferData(type.gl, data, usage.gl);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferData(id, data, usage.gl);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferDataEXT(id, data, usage.gl);
+        }
+        else {
+            bind();
+            GL15.glBufferData(type.gl, data, usage.gl);
+        }
     }
 
     public void uploadData(long[] data) {
-        bind();
-        GL15.glBufferData(type.gl, data, usage.gl);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferData(id, data, usage.gl);
+        }
+        // EXT version of DSA has no long[] version exposed
+        else {
+            bind();
+            GL15.glBufferData(type.gl, data, usage.gl);
+        }
     }
 
     public void uploadData(float[] data) {
-        bind();
-        GL15.glBufferData(type.gl, data, usage.gl);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferData(id, data, usage.gl);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferDataEXT(id, data, usage.gl);
+        }
+        else {
+            bind();
+            GL15.glBufferData(type.gl, data, usage.gl);
+        }
     }
 
     public void uploadData(double[] data) {
-        bind();
-        GL15.glBufferData(type.gl, data, usage.gl);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferData(id, data, usage.gl);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferDataEXT(id, data, usage.gl);
+        }
+        else {
+            bind();
+            GL15.glBufferData(type.gl, data, usage.gl);
+        }
     }
 
     public void uploadSubData(ByteBuffer buffer, long offset) {
-        bind();
-        GL15.glBufferSubData(type.gl, offset, buffer);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferSubData(id, offset, buffer);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, buffer);
+        }
+        else {
+            bind();
+            GL15.glBufferSubData(type.gl, offset, buffer);
+        }
     }
 
     public void uploadSubData(ShortBuffer buffer, long offset) {
-        bind();
-        GL15.glBufferSubData(type.gl, offset, buffer);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferSubData(id, offset, buffer);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, buffer);
+        }
+        else {
+            bind();
+            GL15.glBufferSubData(type.gl, offset, buffer);
+        }
     }
 
     public void uploadSubData(IntBuffer buffer, long offset) {
-        bind();
-        GL15.glBufferSubData(type.gl, offset, buffer);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferSubData(id, offset, buffer);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, buffer);
+        }
+        else {
+            bind();
+            GL15.glBufferSubData(type.gl, offset, buffer);
+        }
     }
 
     public void uploadSubData(LongBuffer buffer, long offset) {
-        bind();
-        GL15.glBufferSubData(type.gl, offset, buffer);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferSubData(id, offset, buffer);
+        }
+        // EXT version of DSA has no LongBuffer version exposed
+        else {
+            bind();
+            GL15.glBufferSubData(type.gl, offset, buffer);
+        }
     }
 
     public void uploadSubData(FloatBuffer buffer, long offset) {
-        bind();
-        GL15.glBufferSubData(type.gl, offset, buffer);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferSubData(id, offset, buffer);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, buffer);
+        }
+        else {
+            bind();
+            GL15.glBufferSubData(type.gl, offset, buffer);
+        }
     }
 
     public void uploadSubData(DoubleBuffer buffer, long offset) {
-        bind();
-        GL15.glBufferSubData(type.gl, offset, buffer);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferSubData(id, offset, buffer);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, buffer);
+        }
+        else {
+            bind();
+            GL15.glBufferSubData(type.gl, offset, buffer);
+        }
     }
 
     public void uploadSubData(short[] data, long offset) {
-        bind();
-        GL15.glBufferSubData(type.gl, offset, data);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferSubData(id, offset, data);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, data);
+        }
+        else {
+            bind();
+            GL15.glBufferSubData(type.gl, offset, data);
+        }
     }
 
     public void uploadSubData(int[] data, long offset) {
-        bind();
-        GL15.glBufferSubData(type.gl, offset, data);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferSubData(id, offset, data);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, data);
+        }
+        else {
+            bind();
+            GL15.glBufferSubData(type.gl, offset, data);
+        }
     }
 
     public void uploadSubData(long[] data, long offset) {
-        bind();
-        GL15.glBufferSubData(type.gl, offset, data);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferSubData(id, offset, data);
+        }
+        // EXT version of DSA has no long[] version exposed
+        else {
+            bind();
+            GL15.glBufferSubData(type.gl, offset, data);
+        }
     }
 
     public void uploadSubData(float[] data, long offset) {
-        bind();
-        GL15.glBufferSubData(type.gl, offset, data);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferSubData(id, offset, data);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, data);
+        }
+        else {
+            bind();
+            GL15.glBufferSubData(type.gl, offset, data);
+        }
     }
 
     public void uploadSubData(double[] data, long offset) {
-        bind();
-        GL15.glBufferSubData(type.gl, offset, data);
+        if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().OpenGL45) {
+            GL45.glNamedBufferSubData(id, offset, data);
+        }
+        else if(((GLGraphicsBackend) GraphicsEngine.getGraphicsBackend()).getCapabilities().GL_EXT_direct_state_access){
+            EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, data);
+        }
+        else {
+            bind();
+            GL15.glBufferSubData(type.gl, offset, data);
+        }
     }
 
     public void dispose() {

@@ -195,4 +195,8 @@ public final class GLGraphicsBackend implements GraphicsBackend {
         }
         GLFWContext.terminate();
     }
+
+    public GLCapabilities getCapabilities() {
+        return capabilities;
+    }
 }
