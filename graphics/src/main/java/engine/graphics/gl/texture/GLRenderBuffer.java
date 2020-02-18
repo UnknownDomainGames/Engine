@@ -1,7 +1,6 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
-import engine.graphics.texture.RenderBuffer;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.Cleaner;
@@ -9,7 +8,7 @@ import org.lwjgl.opengl.GL30;
 
 import javax.annotation.Nullable;
 
-public final class GLRenderBuffer implements RenderBuffer {
+public final class GLRenderBuffer implements GLFrameBuffer.Attachable {
 
     private int id;
     private Cleaner.Disposable disposable;
@@ -41,43 +40,35 @@ public final class GLRenderBuffer implements RenderBuffer {
         }
     }
 
-    @Override
     public int getId() {
         return id;
     }
 
-    @Override
     public TextureFormat getFormat() {
         return format.peer;
     }
 
-    @Override
     public boolean isMultiSample() {
         return sampler != null;
     }
 
     @Nullable
-    @Override
     public Sampler getSampler() {
         return sampler;
     }
 
-    @Override
     public int getWidth() {
         return width;
     }
 
-    @Override
     public int getHeight() {
         return height;
     }
 
-    @Override
     public void bind() {
         GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, id);
     }
 
-    @Override
     public void dispose() {
         if (id == 0) return;
 
@@ -85,30 +76,29 @@ public final class GLRenderBuffer implements RenderBuffer {
         id = 0;
     }
 
-    @Override
     public boolean isDisposed() {
         return id == 0;
     }
 
-    private static final class Builder implements RenderBuffer.Builder {
+    public static final class Builder {
 
         private TextureFormat format;
         private Sampler sampler;
 
-        @Override
-        public RenderBuffer.Builder format(TextureFormat format) {
+        private Builder() {
+        }
+
+        public Builder format(TextureFormat format) {
             this.format = format;
             return this;
         }
 
-        @Override
-        public RenderBuffer.Builder sampler(Sampler sampler) {
+        public Builder sampler(Sampler sampler) {
             this.sampler = sampler;
             return this;
         }
 
-        @Override
-        public RenderBuffer build(int width, int height) {
+        public GLRenderBuffer build(int width, int height) {
             return new GLRenderBuffer(format, sampler, width, height);
         }
     }

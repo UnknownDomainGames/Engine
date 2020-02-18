@@ -6,7 +6,7 @@ import engine.util.Color;
 
 import java.nio.ByteBuffer;
 
-public interface Texture2D extends Texture, FrameBuffer.Attachable {
+public interface Texture2D extends Texture {
 
     static Builder builder() {
         return GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder();

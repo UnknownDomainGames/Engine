@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL32;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 
-public final class GLTexture2DMultiSample extends GLTexture implements Texture2D {
+public final class GLTexture2DMultiSample extends GLTexture implements Texture2D, GLFrameBuffer.Attachable {
 
     private Sampler sampler;
     private boolean fixedSampleLocations;

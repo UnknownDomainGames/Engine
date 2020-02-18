@@ -3,12 +3,13 @@ package engine.graphics.gl.texture;
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.FrameBuffer;
-import engine.graphics.texture.RenderBuffer;
-import engine.graphics.texture.Texture2D;
+import engine.graphics.texture.Sampler;
+import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,22 +18,12 @@ import static engine.graphics.gl.util.GLHelper.getMask;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 
-public class GLFrameBuffer implements FrameBuffer {
+public final class GLFrameBuffer implements FrameBuffer {
 
     private static final GLFrameBuffer DEFAULT_FRAME_BUFFER = new GLFrameBuffer();
 
-    private static final int[] glAttachments = {
-            GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4,
-            GL_COLOR_ATTACHMENT5, GL_COLOR_ATTACHMENT6, GL_COLOR_ATTACHMENT7, GL_COLOR_ATTACHMENT8, GL_COLOR_ATTACHMENT9,
-            GL_COLOR_ATTACHMENT10, GL_COLOR_ATTACHMENT11, GL_COLOR_ATTACHMENT12, GL_COLOR_ATTACHMENT13, GL_COLOR_ATTACHMENT14,
-            GL_COLOR_ATTACHMENT15, GL_COLOR_ATTACHMENT16, GL_COLOR_ATTACHMENT17, GL_COLOR_ATTACHMENT18, GL_COLOR_ATTACHMENT19,
-            GL_COLOR_ATTACHMENT20, GL_COLOR_ATTACHMENT21, GL_COLOR_ATTACHMENT22, GL_COLOR_ATTACHMENT23, GL_COLOR_ATTACHMENT24,
-            GL_COLOR_ATTACHMENT25, GL_COLOR_ATTACHMENT26, GL_COLOR_ATTACHMENT27, GL_COLOR_ATTACHMENT28, GL_COLOR_ATTACHMENT29,
-            GL_COLOR_ATTACHMENT30, GL_COLOR_ATTACHMENT31, GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT, GL_DEPTH_STENCIL_ATTACHMENT
-    };
-
-    private final Map<Attachment, AttachableFactory> attachmentFactories;
-    private final Map<Attachment, Attachable> attachments;
+    private final Map<Integer, AttachableFactory> attachmentFactories;
+    private final Map<Integer, Attachable> attachments;
 
     private int id;
     private Cleaner.Disposable disposable;
@@ -53,7 +44,7 @@ public class GLFrameBuffer implements FrameBuffer {
         this.attachments = new HashMap<>();
     }
 
-    private GLFrameBuffer(Map<Attachment, AttachableFactory> attachmentFactories, int width, int height) {
+    private GLFrameBuffer(Map<Integer, AttachableFactory> attachmentFactories, int width, int height) {
         this.attachmentFactories = attachmentFactories;
         this.attachments = new HashMap<>();
         this.id = glGenFramebuffers();
@@ -66,8 +57,7 @@ public class GLFrameBuffer implements FrameBuffer {
         return id;
     }
 
-    @Override
-    public Attachable getAttachable(Attachment attachment) {
+    public Attachable getAttachable(int attachment) {
         return attachments.get(attachment);
     }
 
@@ -90,18 +80,14 @@ public class GLFrameBuffer implements FrameBuffer {
         disposeAttachments();
         attachmentFactories.forEach((attachment, attachableFactory) -> {
             Attachable attachable = attachableFactory.create(width, height);
-            if (attachable instanceof RenderBuffer) {
-                glFramebufferRenderbuffer(GL_FRAMEBUFFER, getGLAttachment(attachment), GL_RENDERBUFFER, attachable.getId());
-            } else if (attachable instanceof Texture2D) {
+            if (attachable instanceof GLRenderBuffer) {
+                glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, attachable.getId());
+            } else if (attachable instanceof GLTexture2D) {
                 int target = attachable.isMultiSample() ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
-                glFramebufferTexture2D(GL_FRAMEBUFFER, getGLAttachment(attachment), target, attachable.getId(), 0);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, attachable.getId(), 0);
             }
             attachments.put(attachment, attachable);
         });
-    }
-
-    private int getGLAttachment(Attachment attachment) {
-        return glAttachments[attachment.ordinal()];
     }
 
     @Override
@@ -158,33 +144,55 @@ public class GLFrameBuffer implements FrameBuffer {
         return id == 0;
     }
 
-    public static final class Builder implements FrameBuffer.Builder {
-        private Map<Attachment, AttachableFactory> attachableFactories = new HashMap<>();
+    @FunctionalInterface
+    public interface AttachableFactory {
+        Attachable create(int width, int height);
+    }
+
+    public interface Attachable {
+        TextureFormat getFormat();
+
+        int getId();
+
+        boolean isMultiSample();
+
+        @Nullable
+        Sampler getSampler();
+
+        int getWidth();
+
+        int getHeight();
+
+        void bind();
+
+        void dispose();
+
+        boolean isDisposed();
+    }
+
+    public static final class Builder {
+        private Map<Integer, AttachableFactory> attachableFactories = new HashMap<>();
 
         private Builder() {
         }
 
-        @Override
-        public Builder attach(Attachment attachment, Texture2D.Builder builder) {
+        public Builder attach(int attachment, GLTexture2D.Builder builder) {
             return attach(attachment, builder::build);
         }
 
-        public Builder attach(Attachment attachment, GLTexture2DMultiSample.Builder builder) {
+        public Builder attach(int attachment, GLTexture2DMultiSample.Builder builder) {
             return attach(attachment, builder::build);
         }
 
-        @Override
-        public Builder attach(Attachment attachment, RenderBuffer.Builder builder) {
+        public Builder attach(int attachment, GLRenderBuffer.Builder builder) {
             return attach(attachment, builder::build);
         }
 
-        @Override
-        public Builder attach(Attachment attachment, AttachableFactory factory) {
+        public Builder attach(int attachment, AttachableFactory factory) {
             this.attachableFactories.put(attachment, factory);
             return this;
         }
 
-        @Override
         public GLFrameBuffer build(int width, int height) {
             return new GLFrameBuffer(Map.copyOf(attachableFactories), width, height);
         }

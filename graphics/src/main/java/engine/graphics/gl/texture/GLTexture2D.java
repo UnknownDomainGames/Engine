@@ -17,7 +17,7 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
-public final class GLTexture2D extends GLTexture implements Texture2D {
+public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBuffer.Attachable {
 
     public static final GLTexture2D EMPTY = new GLTexture2D(0);
 

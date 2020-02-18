@@ -2,21 +2,12 @@ package engine.graphics.management;
 
 import engine.graphics.mesh.Mesh;
 import engine.graphics.mesh.SingleBufferMesh;
-import engine.graphics.texture.*;
+import engine.graphics.texture.Sampler;
+import engine.graphics.texture.Texture2D;
 
 public interface ResourceFactory {
 
-    FrameBuffer getDefaultFrameBuffer();
-
-    FrameBuffer.Builder createFrameBufferBuilder();
-
     Texture2D.Builder createTexture2DBuilder();
-
-    RenderBuffer createRenderBuffer(TextureFormat format, int width, int height);
-
-    RenderBuffer createRenderBuffer(TextureFormat format, Sampler sampler, int width, int height);
-
-    RenderBuffer.Builder createRenderBufferBuilder();
 
     Sampler createSampler();
 
