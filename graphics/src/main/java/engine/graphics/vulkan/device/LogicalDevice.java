@@ -5,7 +5,7 @@ import engine.graphics.vulkan.CommandPool;
 import engine.graphics.vulkan.VKDrawMode;
 import engine.graphics.vulkan.pipeline.Pipeline;
 import engine.graphics.vulkan.Queue;
-import engine.graphics.vulkan.VulkanBuffer;
+import engine.graphics.vulkan.buffer.VulkanBuffer;
 import engine.graphics.vulkan.pipeline.PipelineState;
 import engine.graphics.vulkan.render.RenderPass;
 import engine.graphics.vulkan.synchronize.VulkanFence;

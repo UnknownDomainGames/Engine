@@ -115,36 +115,6 @@ public class GLFWVulkanWindow extends GLFWWindow {
         setWindowPosCenter();
         cursor = new GLFWCursor(pointer);
         resize();
-
-//        if(!GLFWVulkan.glfwVulkanSupported())
-//            throw new IllegalStateException("Vulkan not supported in GLFW");
-//        var vulkanManager = ((EngineRenderContext) Platform.getEngineClient().getRenderContext()).getVulkanManager();
-//        vulkanManager.createVulkanInstance(title);
-//        vulkanManager.setupDebugging(VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT, new VkDebugReportCallbackEXT() {
-//            @Override
-//            public int invoke(int flags, int objectType, long object, long location, int messageCode, long pLayerPrefix, long pMessage, long pUserData) {
-//                var msg = VkDebugReportCallbackEXT.getString(pMessage);
-//                switch (flags){
-//                    case VK_DEBUG_REPORT_DEBUG_BIT_EXT:
-//                        Platform.getLogger().debug(msg);
-//                        break;
-//                    case VK_DEBUG_REPORT_INFORMATION_BIT_EXT:
-//                        Platform.getLogger().info(msg);
-//                        break;
-//                    case VK_DEBUG_REPORT_WARNING_BIT_EXT:
-//                        Platform.getLogger().warn(msg);
-//                        break;
-//                    case VK_DEBUG_REPORT_ERROR_BIT_EXT:
-//                        Platform.getLogger().error(msg);
-//                        break;
-//                }
-//                return 0;
-//            }
-//        });
-//        vulkanManager.preInitVulkanResources();
-
-//        vulkanManager.createWindowSurface(pointer);
-//        vulkanManager.initVulkanResources();
     }
 
     @Override

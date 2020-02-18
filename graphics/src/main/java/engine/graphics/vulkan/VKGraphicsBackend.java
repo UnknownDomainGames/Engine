@@ -48,6 +48,8 @@ public class VKGraphicsBackend implements GraphicsBackend {
     private GPUInfo gpuInfo;
     private VKWindowHelper windowHelper;
     private GLFWVulkanWindow primaryWindow;
+    private VKResourceFactory resourceFactory;
+
     private final List<RenderHandler> handlers = new ArrayList<>();
     private final List<RunnableFuture<?>> pendingTasks = new ArrayList<>();
 
@@ -82,7 +84,7 @@ public class VKGraphicsBackend implements GraphicsBackend {
 
     @Override
     public ResourceFactory getResourceFactory() {
-        return null;
+        return resourceFactory;
     }
 
     @Override
@@ -165,6 +167,7 @@ public class VKGraphicsBackend implements GraphicsBackend {
     private VulkanInstance vulkanInstance;
     private PhysicalDevice physicalDevice;
     private LogicalDevice device;
+    private VulkanMemoryAllocator allocator;
     private CommandPool commandPool;
     private Queue queue;
     private Swapchain swapchain;
@@ -200,6 +203,8 @@ public class VKGraphicsBackend implements GraphicsBackend {
             throw new IllegalStateException(String.format("Unable to retrieve graphics queue family for device %s", physicalDevice.getDeviceName()));
         }
         device = physicalDevice.createLogicalDevice(new int[]{i}, new int[]{1}, null, null);
+        resourceFactory = new VKResourceFactory(device);
+        allocator = VulkanMemoryAllocator.createAllocator(device);
         commandPool = device.createCommandPool(i);
         queue = device.getQueue(i, 0);
         var surface = primaryWindow.getSurface(vulkanInstance);
@@ -214,6 +219,10 @@ public class VKGraphicsBackend implements GraphicsBackend {
         LOGGER.info("\tVK_AVAILABLE_EXTENSIONS: {}", physicalDevice.getSupportedExtensionProperties(null).stream().reduce((s, s2) -> s + ", " + s2).orElse(""));
         LOGGER.info("\tGPU_TOTAL_MEMORY: {} MB", gpuInfo.getTotalMemory() / 1024);
         LOGGER.info("------------------------------");
+    }
+
+    public VulkanMemoryAllocator getAllocator() {
+        return allocator;
     }
 
     private long debugCallback;
