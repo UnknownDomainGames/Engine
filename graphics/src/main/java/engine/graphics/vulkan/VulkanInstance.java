@@ -7,8 +7,8 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static engine.graphics.vulkan.util.VulkanUtils.translateVulkanResult;
@@ -24,20 +24,54 @@ public class VulkanInstance {
 
     private VulkanInstance(){}
 
-    public static List<String> getSupportedExtensionProperties(@Nullable String layerName){
-        try(var stack = MemoryStack.stackPush()){
-            var size = stack.mallocInt(1);
-            var err = VK10.vkEnumerateInstanceExtensionProperties(layerName, size, null);
-            if(err != VK_SUCCESS){
-                return new ArrayList<>();
+    private static Map<String, String> supportedLayers = null;
+
+    private static Map<String, List<String>> supportedExtensions = new HashMap<>();
+
+    public static Map<String, String> getSupportedLayerProperties(){
+        if(supportedLayers == null) {
+            try(var stack = MemoryStack.stackPush()){
+                var size = stack.mallocInt(1);
+                var err = VK10.vkEnumerateInstanceLayerProperties(size, null);
+                if(err != VK_SUCCESS){
+                    supportedLayers = new HashMap<>();
+                }
+                var ptrs = VkLayerProperties.callocStack(size.get(0), stack);
+                err = VK10.vkEnumerateInstanceLayerProperties(size, ptrs);
+                if(err != VK_SUCCESS) {
+                    supportedLayers = new HashMap<>();
+                }
+                supportedLayers = ptrs.stream().collect(Collectors.toMap(VkLayerProperties::layerNameString, VkLayerProperties::descriptionString));
             }
-            var ptrs = VkExtensionProperties.callocStack(size.get(0), stack);
-            err = VK10.vkEnumerateInstanceExtensionProperties(layerName, size, ptrs);
-            if(err != VK_SUCCESS){
-                return new ArrayList<>();
-            }
-            return ptrs.stream().map(vkExtensionProperties -> String.format("%s:%d", vkExtensionProperties.extensionNameString(),vkExtensionProperties.specVersion())).collect(Collectors.toList());
         }
+        return supportedLayers;
+    }
+
+    public static List<String> getSupportedExtensionProperties(@Nullable String layerName){
+        if(layerName != null && !isLayerSupported(layerName)) return new ArrayList<>();
+        return supportedExtensions.computeIfAbsent(layerName != null ? layerName : "", key -> {
+            try (var stack = MemoryStack.stackPush()) {
+                var size = stack.mallocInt(1);
+                var err = VK10.vkEnumerateInstanceExtensionProperties(layerName, size, null);
+                if (err != VK_SUCCESS) {
+                    return new ArrayList<>();
+                }
+                var ptrs = VkExtensionProperties.callocStack(size.get(0), stack);
+                err = VK10.vkEnumerateInstanceExtensionProperties(layerName, size, ptrs);
+                if (err != VK_SUCCESS) {
+                    return new ArrayList<>();
+                }
+                return ptrs.stream().map(VkExtensionProperties::extensionNameString).collect(Collectors.toList());
+            }
+        });
+    }
+
+    public static boolean isLayerSupported(String layer){
+        return getSupportedLayerProperties().containsKey(layer);
+    }
+
+    public static boolean isExtensionSupported(String extension, @Nullable String layerName) {
+        return getSupportedExtensionProperties(layerName).contains(extension);
     }
 
     public static VulkanInstance createInstance(@Nullable List<String> extensions, String appName, int appVersion, VulkanVersion apiVersion){
@@ -60,23 +94,39 @@ public class VulkanInstance {
             VkInstanceCreateInfo pCreateInfo = VkInstanceCreateInfo.callocStack(stack)
                     .sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
                     .pApplicationInfo(appInfo);
+            if(layers != null){
+                var ppLayers = stack.mallocPointer(layers.size());
+
+                var iterator = layers.iterator();
+                while (iterator.hasNext()) {
+                    String layer = iterator.next();
+                    if (!isLayerSupported(layer)) {
+                        iterator.remove();
+                    }
+                    else {
+                        var p = MemoryStack.stackUTF8(layer);
+                        ppLayers.put(p);
+                    }
+                }
+                ppLayers.flip();
+                pCreateInfo.ppEnabledLayerNames(ppLayers);
+            }
             if(extensions != null) {
                 var ppEnabledExtensionNames = stack.mallocPointer(extensions.size());
+                Predicate<String> predicate = o -> {
+                    boolean flag = false;
+                    if(layers != null) {
+                        flag = layers.stream().anyMatch(layer -> isExtensionSupported(o, layer));
+                    }
+                    return flag || isExtensionSupported(o, null);
+                };
                 for (String extension : extensions) {
+                    if(!predicate.test(extension)) continue;
                     var p = MemoryStack.stackUTF8(extension);
                     ppEnabledExtensionNames.put(p);
                 }
                 ppEnabledExtensionNames.flip();
                 pCreateInfo.ppEnabledExtensionNames(ppEnabledExtensionNames);
-            }
-            if(layers != null){
-                var ppLayers = stack.mallocPointer(layers.size());
-                for (String layer : layers) {
-                    var p = MemoryStack.stackUTF8(layer);
-                    ppLayers.put(p);
-                }
-                ppLayers.flip();
-                pCreateInfo.ppEnabledLayerNames(ppLayers);
             }
             PointerBuffer pInstance = stack.mallocPointer(1);
             int err = vkCreateInstance(pCreateInfo, null, pInstance);
