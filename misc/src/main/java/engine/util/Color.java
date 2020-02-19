@@ -112,6 +112,10 @@ public class Color {
         return (toRGB() << 8) | getAlphaAsInt();
     }
 
+    public float[] toRGBAFloatArray() {
+        return new float[]{red, green, blue, alpha};
+    }
+
     public Color invert() {
         return difference(Color.WHITE);
     }
