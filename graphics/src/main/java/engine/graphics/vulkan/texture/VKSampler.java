@@ -57,7 +57,7 @@ public class VKSampler implements Sampler {
     }
 
     private static int toVkAddressMode(WrapMode mode) {
-        switch (mode){
+        switch (mode) {
             case CLAMP:
             case CLAMP_TO_EDGE:
                 return (VK10.VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
@@ -101,7 +101,7 @@ public class VKSampler implements Sampler {
                                           DepthCompareMode compareMode,
                                           float mipLodBias,
                                           float minLod, float maxLod) {
-        try(var stack = MemoryStack.stackPush()){
+        try (var stack = MemoryStack.stackPush()) {
             var info = VkSamplerCreateInfo.callocStack(stack).sType(VK10.VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO);
             info.magFilter(toVkFilter(mag))
                     .minFilter(toVkFilter(min))
@@ -117,7 +117,7 @@ public class VKSampler implements Sampler {
                     .compareOp(fromDepthCompareMode(compareMode).getVk());
             var ptr = stack.mallocLong(1);
             var err = VK10.vkCreateSampler(device.getNativeDevice(), info, null, ptr);
-            if(err != VK_SUCCESS){
+            if (err != VK_SUCCESS) {
                 return null;
             }
             return new VKSampler(device, ptr.get(0));
@@ -127,6 +127,12 @@ public class VKSampler implements Sampler {
     @Override
     public int getId() {
         return Math.toIntExact(handle);
+    }
+
+    @Override
+    public void bind(int unit) {
+        // TODO:
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -166,7 +172,7 @@ public class VKSampler implements Sampler {
 
     @Override
     public void dispose() {
-        if(isReleased) return;
+        if (isReleased) return;
         VK10.vkDestroySampler(device.getNativeDevice(), handle, null);
         handle = 0;
         isReleased = true;
