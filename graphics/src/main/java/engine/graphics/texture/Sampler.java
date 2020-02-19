@@ -5,6 +5,8 @@ import engine.util.Color;
 public interface Sampler {
     int getId();
 
+    void bind(int unit);
+
     Sampler setMagFilter(FilterMode filterMode);
 
     Sampler setMinFilter(FilterMode filterMode);

@@ -37,6 +37,7 @@ public final class GLSampler implements Sampler {
         return id;
     }
 
+    @Override
     public void bind(int unit) {
         glBindSampler(unit, id);
     }
