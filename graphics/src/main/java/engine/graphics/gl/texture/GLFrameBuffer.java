@@ -3,13 +3,11 @@ package engine.graphics.gl.texture;
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.FrameBuffer;
-import engine.graphics.texture.Sampler;
 import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -155,9 +153,6 @@ public final class GLFrameBuffer implements FrameBuffer {
         int getId();
 
         boolean isMultiSample();
-
-        @Nullable
-        Sampler getSampler();
 
         int getWidth();
 

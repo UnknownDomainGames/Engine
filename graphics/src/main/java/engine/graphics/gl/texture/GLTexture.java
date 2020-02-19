@@ -4,8 +4,6 @@ import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.texture.*;
 import engine.graphics.util.Cleaner;
 
-import javax.annotation.Nullable;
-
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
@@ -100,15 +98,13 @@ public abstract class GLTexture implements Texture {
         return format.peer;
     }
 
-    @Override
     public boolean isMultiSample() {
         return false;
     }
 
-    @Nullable
     @Override
-    public Sampler getSampler() {
-        return null;
+    public int getSamples() {
+        return 0;
     }
 
     public void bind() {

@@ -1,7 +1,5 @@
 package engine.graphics.texture;
 
-import javax.annotation.Nullable;
-
 public interface Texture {
 
     int getId();
@@ -10,8 +8,7 @@ public interface Texture {
 
     boolean isMultiSample();
 
-    @Nullable
-    Sampler getSampler();
+    int getSamples();
 
     void bind();
 

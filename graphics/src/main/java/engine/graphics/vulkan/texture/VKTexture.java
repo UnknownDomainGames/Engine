@@ -1,6 +1,5 @@
 package engine.graphics.vulkan.texture;
 
-import engine.graphics.texture.Sampler;
 import engine.graphics.texture.Texture;
 import engine.graphics.texture.TextureFormat;
 import engine.graphics.vulkan.device.LogicalDevice;
@@ -8,8 +7,6 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.KHRSwapchain;
 import org.lwjgl.vulkan.VK10;
 import org.lwjgl.vulkan.VkImageViewCreateInfo;
-
-import javax.annotation.Nullable;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -86,10 +83,9 @@ public class VKTexture implements Texture {
         return false;
     }
 
-    @Nullable
     @Override
-    public Sampler getSampler() {
-        return null;
+    public int getSamples() {
+        return 0;
     }
 
     @Override

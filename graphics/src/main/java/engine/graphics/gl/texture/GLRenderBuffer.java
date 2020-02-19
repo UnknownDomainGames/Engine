@@ -1,12 +1,9 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
-import engine.graphics.texture.Sampler;
 import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.Cleaner;
 import org.lwjgl.opengl.GL30;
-
-import javax.annotation.Nullable;
 
 public final class GLRenderBuffer implements GLFrameBuffer.Attachable {
 
@@ -14,7 +11,7 @@ public final class GLRenderBuffer implements GLFrameBuffer.Attachable {
     private Cleaner.Disposable disposable;
 
     private GLTextureFormat format;
-    private Sampler sampler;
+    private int samples;
     private int width;
     private int height;
 
@@ -23,20 +20,20 @@ public final class GLRenderBuffer implements GLFrameBuffer.Attachable {
     }
 
     public GLRenderBuffer(TextureFormat format, int width, int height) {
-        this(format, null, width, height);
+        this(format, 0, width, height);
     }
 
-    public GLRenderBuffer(TextureFormat format, Sampler sampler, int width, int height) {
+    public GLRenderBuffer(TextureFormat format, int samples, int width, int height) {
         id = GL30.glGenRenderbuffers();
         disposable = GLCleaner.registerRenderBuffer(this, id);
         this.format = GLTextureFormat.valueOf(format);
-        this.sampler = sampler;
+        this.samples = samples;
         this.width = width;
         this.height = height;
-        if (sampler == null) {
+        if (samples == 0) {
             GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, this.format.internalFormat, width, height);
         } else {
-            GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, sampler.getId(), this.format.internalFormat, width, height);
+            GL30.glRenderbufferStorageMultisample(GL30.GL_RENDERBUFFER, samples, this.format.internalFormat, width, height);
         }
     }
 
@@ -49,12 +46,11 @@ public final class GLRenderBuffer implements GLFrameBuffer.Attachable {
     }
 
     public boolean isMultiSample() {
-        return sampler != null;
+        return samples != 0;
     }
 
-    @Nullable
-    public Sampler getSampler() {
-        return sampler;
+    public int getSamples() {
+        return samples;
     }
 
     public int getWidth() {
@@ -83,7 +79,7 @@ public final class GLRenderBuffer implements GLFrameBuffer.Attachable {
     public static final class Builder {
 
         private TextureFormat format;
-        private Sampler sampler;
+        private int samples;
 
         private Builder() {
         }
@@ -93,13 +89,13 @@ public final class GLRenderBuffer implements GLFrameBuffer.Attachable {
             return this;
         }
 
-        public Builder sampler(Sampler sampler) {
-            this.sampler = sampler;
+        public Builder samples(int samples) {
+            this.samples = samples;
             return this;
         }
 
         public GLRenderBuffer build(int width, int height) {
-            return new GLRenderBuffer(format, sampler, width, height);
+            return new GLRenderBuffer(format, samples, width, height);
         }
     }
 }

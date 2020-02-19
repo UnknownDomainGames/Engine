@@ -2,7 +2,6 @@ package engine.graphics.texture;
 
 import engine.client.asset.AssetURL;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,10 +66,9 @@ public class TextureAtlasImpl implements TextureAtlas {
         return texture.isMultiSample();
     }
 
-    @Nullable
     @Override
-    public Sampler getSampler() {
-        return texture.getSampler();
+    public int getSamples() {
+        return 0;
     }
 
     @Override
