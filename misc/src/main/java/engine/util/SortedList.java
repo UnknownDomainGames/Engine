@@ -30,8 +30,8 @@ public class SortedList<E> extends AbstractList<E> {
         return sortedList;
     }
 
-    public static <E extends Comparable<E>> SortedList<E> copyOf(Collection<E> list) {
-        return copyOf(list, Comparable::compareTo);
+    public static <E extends Comparable<E>> SortedList<E> copyOf(Collection<E> coll) {
+        return copyOf(coll, Comparable::compareTo);
     }
 
     public static <E> SortedList<E> of(Comparator<E> comparator, E... elements) {
