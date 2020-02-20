@@ -1,5 +1,6 @@
 package engine.util;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -21,18 +22,15 @@ public class SortedList<E> extends AbstractList<E> {
         return create(Comparable::compareTo, constructor);
     }
 
-    public static <E> SortedList<E> copyOf(List<E> list, Comparator<E> comparator) {
-        for (int i = 0, size = list.size(); i < size; i++) {
-            E element = list.get(i);
-            if (element == null)
-                list.remove(i);
-        }
+    public static <E> SortedList<E> copyOf(Collection<E> coll, Comparator<E> comparator) {
         var sortedList = create(comparator);
-        sortedList.addAll(list);
+        for (E e : coll) {
+            if (e != null) sortedList.add(e);
+        }
         return sortedList;
     }
 
-    public static <E extends Comparable<E>> SortedList<E> copyOf(List<E> list) {
+    public static <E extends Comparable<E>> SortedList<E> copyOf(Collection<E> list) {
         return copyOf(list, Comparable::compareTo);
     }
 
@@ -55,7 +53,7 @@ public class SortedList<E> extends AbstractList<E> {
     }
 
     @Override
-    public boolean add(E e) {
+    public boolean add(@Nonnull E e) {
         Objects.requireNonNull(e, "Element cannot be null.");
         int index = 0;
         for (int size = size(); index < size; index++) {
