@@ -11,30 +11,30 @@ public class RenderTaskInfo {
         return new RenderTaskInfo();
     }
 
-    public RenderTaskInfo name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public RenderTaskInfo renderBuffers(RenderBufferInfo... renderBuffers) {
-        this.renderBuffers = List.of(renderBuffers);
-        return this;
-    }
-
-    public RenderTaskInfo passes(RenderPassInfo... passes) {
-        this.passes = List.of(passes);
-        return this;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public RenderTaskInfo setName(String name) {
+        this.name = name;
+        return this;
     }
 
     public List<RenderBufferInfo> getRenderBuffers() {
         return renderBuffers;
     }
 
+    public RenderTaskInfo setRenderBuffers(RenderBufferInfo... renderBuffers) {
+        this.renderBuffers = List.of(renderBuffers);
+        return this;
+    }
+
     public List<RenderPassInfo> getPasses() {
         return passes;
+    }
+
+    public RenderTaskInfo setPasses(RenderPassInfo... passes) {
+        this.passes = List.of(passes);
+        return this;
     }
 }

@@ -12,32 +12,32 @@ public class RenderBufferInfo {
         return new RenderBufferInfo();
     }
 
-    public RenderBufferInfo name(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public RenderBufferInfo format(TextureFormat format) {
-        this.format = format;
-        return this;
-    }
-
-    public RenderBufferInfo fixedSize(int width, int height) {
-        size = new RenderBufferSize.FixedSize(width, height);
-        return this;
-    }
-
-    public RenderBufferInfo relativeSize(float scaleWidth, float scaleHeight) {
-        size = new RenderBufferSize.ViewportRelativeSize(scaleWidth, scaleHeight);
-        return this;
-    }
-
     public String getName() {
         return name;
     }
 
+    public RenderBufferInfo setName(String name) {
+        this.name = name;
+        return this;
+    }
+
     public TextureFormat getFormat() {
         return format;
+    }
+
+    public RenderBufferInfo setFormat(TextureFormat format) {
+        this.format = format;
+        return this;
+    }
+
+    public RenderBufferInfo setFixedSize(int width, int height) {
+        size = new RenderBufferSize.FixedSize(width, height);
+        return this;
+    }
+
+    public RenderBufferInfo setRelativeSize(float scaleWidth, float scaleHeight) {
+        size = new RenderBufferSize.ViewportRelativeSize(scaleWidth, scaleHeight);
+        return this;
     }
 
     public RenderBufferSize getSize() {

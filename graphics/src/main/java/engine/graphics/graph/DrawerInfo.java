@@ -8,21 +8,21 @@ public class DrawerInfo {
         return new DrawerInfo();
     }
 
-    public DrawerInfo shader(String shader) {
-        this.shader = shader;
-        return this;
-    }
-
-    public DrawerInfo drawDispatcher(DrawDispatcher drawDispatcher) {
-        this.drawDispatcher = drawDispatcher;
-        return this;
-    }
-
     public String getShader() {
         return shader;
     }
 
+    public DrawerInfo setShader(String shader) {
+        this.shader = shader;
+        return this;
+    }
+
     public DrawDispatcher getDrawDispatcher() {
         return drawDispatcher;
+    }
+
+    public DrawerInfo setDrawDispatcher(DrawDispatcher drawDispatcher) {
+        this.drawDispatcher = drawDispatcher;
+        return this;
     }
 }
