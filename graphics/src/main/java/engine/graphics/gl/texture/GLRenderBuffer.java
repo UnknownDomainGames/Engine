@@ -37,14 +37,22 @@ public final class GLRenderBuffer implements GLFrameBuffer.Attachable {
         }
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
+    public int getTarget() {
+        return GL30.GL_RENDERBUFFER;
+    }
+
+    @Override
     public TextureFormat getFormat() {
         return format.peer;
     }
 
+    @Override
     public boolean isMultiSample() {
         return samples != 0;
     }
@@ -53,10 +61,12 @@ public final class GLRenderBuffer implements GLFrameBuffer.Attachable {
         return samples;
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }

@@ -14,7 +14,6 @@ import java.util.Map;
 import static engine.graphics.gl.texture.GLTexture.toGLFilterMode;
 import static engine.graphics.gl.util.GLHelper.getMask;
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 
 public final class GLFrameBuffer implements FrameBuffer {
 
@@ -71,20 +70,22 @@ public final class GLFrameBuffer implements FrameBuffer {
 
     @Override
     public void resize(int width, int height) {
+        if (this.width == width && this.height == height) return;
         this.width = width;
         this.height = height;
+
         if (id == 0) return;
+
         bind();
-        disposeAttachments();
         attachmentFactories.forEach((attachment, attachableFactory) -> {
             Attachable attachable = attachableFactory.create(width, height);
-            if (attachable instanceof GLRenderBuffer) {
+            if (attachable.getTarget() == GL_RENDERBUFFER) {
                 glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, attachable.getId());
-            } else if (attachable instanceof GLTexture2D) {
-                int target = attachable.isMultiSample() ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
-                glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, target, attachable.getId(), 0);
+            } else {
+                glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, attachable.getTarget(), attachable.getId(), 0);
             }
-            attachments.put(attachment, attachable);
+            Attachable oldAttachable = attachments.put(attachment, attachable);
+            if (oldAttachable != null) oldAttachable.dispose();
         });
     }
 
@@ -129,11 +130,7 @@ public final class GLFrameBuffer implements FrameBuffer {
         disposable.dispose();
         id = 0;
 
-        disposeAttachments();
-    }
-
-    private void disposeAttachments() {
-        attachments.forEach((key, value) -> value.dispose());
+        attachments.values().forEach(Attachable::dispose);
         attachments.clear();
     }
 
@@ -152,13 +149,13 @@ public final class GLFrameBuffer implements FrameBuffer {
 
         int getId();
 
+        int getTarget();
+
         boolean isMultiSample();
 
         int getWidth();
 
         int getHeight();
-
-        void bind();
 
         void dispose();
 
