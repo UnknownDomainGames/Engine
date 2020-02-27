@@ -114,13 +114,18 @@ public final class GLFrameBuffer implements FrameBuffer {
     @Override
     public void copyFrom(FrameBuffer source, Vector4ic sourceRect, Vector4ic destRect,
                          boolean copyColor, boolean copyDepth, boolean copyStencil, FilterMode filterMode) {
-        copyFrom(source, sourceRect, destRect, getMask(copyColor, copyDepth, copyStencil), toGLFilterMode(filterMode));
+        copy(source, sourceRect, this, destRect, copyColor, copyDepth, copyStencil, filterMode);
     }
 
-    public void copyFrom(FrameBuffer source, Vector4ic sourceRect, Vector4ic destRect, int mask, int filter) {
-        source.bindReadOnly();
-        bindDrawOnly();
-        glBlitFramebuffer(sourceRect.x(), sourceRect.y(), sourceRect.z(), sourceRect.w(),
+    public static void copy(FrameBuffer src, Vector4ic srcRect, FrameBuffer dest, Vector4ic destRect,
+                            boolean copyColor, boolean copyDepth, boolean copyStencil, FilterMode filterMode) {
+        copy(src, srcRect, dest, destRect, getMask(copyColor, copyDepth, copyStencil), toGLFilterMode(filterMode));
+    }
+
+    public static void copy(FrameBuffer src, Vector4ic srcRect, FrameBuffer dest, Vector4ic destRect, int mask, int filter) {
+        src.bindReadOnly();
+        dest.bindDrawOnly();
+        glBlitFramebuffer(srcRect.x(), srcRect.y(), srcRect.z(), srcRect.w(),
                 destRect.x(), destRect.y(), destRect.z(), destRect.w(), mask, filter);
     }
 

@@ -3,21 +3,11 @@ package engine.graphics.graph;
 import java.util.List;
 
 public class RenderGraphInfo {
-    private String name;
     private String mainTask;
     private List<RenderTaskInfo> tasks;
 
     public static RenderGraphInfo renderGraph() {
         return new RenderGraphInfo();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public RenderGraphInfo setName(String name) {
-        this.name = name;
-        return this;
     }
 
     public String getMainTask() {

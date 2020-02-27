@@ -1,9 +1,9 @@
 package engine.graphics.vulkan.texture;
 
-import engine.graphics.texture.DepthCompareMode;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.WrapMode;
+import engine.graphics.util.DepthCompareMode;
 import engine.graphics.vulkan.device.LogicalDevice;
 import engine.graphics.vulkan.pipeline.PipelineState;
 import engine.util.Color;

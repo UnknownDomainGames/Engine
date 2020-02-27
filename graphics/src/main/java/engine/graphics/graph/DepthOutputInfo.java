@@ -1,11 +1,14 @@
 package engine.graphics.graph;
 
+import engine.graphics.util.DepthCompareMode;
+
 public class DepthOutputInfo {
     private boolean enable = true;
     private String depthBuffer;
     private boolean clear = false;
-    private float clearValue = 0f;
+    private float clearValue = 1f;
     private boolean writable = true;
+    private DepthCompareMode compareMode = DepthCompareMode.LESS;
 
     public static DepthOutputInfo depthOutput() {
         return new DepthOutputInfo();
@@ -54,5 +57,13 @@ public class DepthOutputInfo {
     public DepthOutputInfo setWritable(boolean writable) {
         this.writable = writable;
         return this;
+    }
+
+    public DepthCompareMode getCompareMode() {
+        return compareMode;
+    }
+
+    public void setCompareMode(DepthCompareMode compareMode) {
+        this.compareMode = compareMode;
     }
 }

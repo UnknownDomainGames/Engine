@@ -1,5 +1,6 @@
 package engine.graphics.texture;
 
+import engine.graphics.util.DepthCompareMode;
 import engine.util.Color;
 
 public interface Sampler {

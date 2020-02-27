@@ -6,6 +6,7 @@ public class RenderTaskInfo {
     private String name;
     private List<RenderBufferInfo> renderBuffers;
     private List<RenderPassInfo> passes;
+    private String finalPass;
 
     public static RenderTaskInfo renderTask() {
         return new RenderTaskInfo();
@@ -35,6 +36,15 @@ public class RenderTaskInfo {
 
     public RenderTaskInfo setPasses(RenderPassInfo... passes) {
         this.passes = List.of(passes);
+        return this;
+    }
+
+    public String getFinalPass() {
+        return finalPass;
+    }
+
+    public RenderTaskInfo setFinalPass(String finalPass) {
+        this.finalPass = finalPass;
         return this;
     }
 }

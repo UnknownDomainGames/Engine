@@ -2,11 +2,14 @@ package engine.graphics.gl;
 
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
+import engine.graphics.gl.graph.GLRenderGraph;
 import engine.graphics.gl.util.DebugMessageCallback;
 import engine.graphics.gl.util.GLContextUtils;
 import engine.graphics.gl.util.GPUInfoImpl;
 import engine.graphics.glfw.GLFWContext;
 import engine.graphics.glfw.GLFWWindow;
+import engine.graphics.graph.RenderGraph;
+import engine.graphics.graph.RenderGraphInfo;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.management.RenderHandler;
 import engine.graphics.management.ResourceFactory;
@@ -39,6 +42,7 @@ public final class GLGraphicsBackend implements GraphicsBackend {
     private GLFWWindow primaryWindow;
     private GLResourceFactory resourceFactory;
 
+    private final List<GLRenderGraph> renderGraphs = new ArrayList<>();
     private final List<RenderHandler> handlers = new ArrayList<>();
     private final List<RunnableFuture<?>> pendingTasks = new ArrayList<>();
 
@@ -65,6 +69,21 @@ public final class GLGraphicsBackend implements GraphicsBackend {
     @Override
     public ResourceFactory getResourceFactory() {
         return resourceFactory;
+    }
+
+    @Override
+    public RenderGraph loadRenderGraph(RenderGraphInfo renderGraph) {
+        GLRenderGraph glRenderGraph = new GLRenderGraph(renderGraph);
+        renderGraphs.add(glRenderGraph);
+        return glRenderGraph;
+    }
+
+    @Override
+    public void removeRenderGraph(RenderGraph renderGraph) {
+        GLRenderGraph glRenderGraph = (GLRenderGraph) renderGraph;
+        if (renderGraphs.remove(glRenderGraph)) {
+            glRenderGraph.dispose();
+        }
     }
 
     @Override
@@ -112,9 +131,8 @@ public final class GLGraphicsBackend implements GraphicsBackend {
     public void render(float tpf) {
         Cleaner.clean();
         runPendingTasks();
-        for (RenderHandler handler : handlers) {
-            handler.render(tpf);
-        }
+        renderGraphs.forEach(renderGraph -> renderGraph.draw(tpf));
+        handlers.forEach(handler -> handler.render(tpf));
         GLFW.glfwPollEvents();
     }
 

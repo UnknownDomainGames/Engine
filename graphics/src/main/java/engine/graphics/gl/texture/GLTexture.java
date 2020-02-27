@@ -1,13 +1,15 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
-import engine.graphics.texture.*;
+import engine.graphics.texture.FilterMode;
+import engine.graphics.texture.Texture;
+import engine.graphics.texture.TextureFormat;
+import engine.graphics.texture.WrapMode;
 import engine.graphics.util.Cleaner;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
-import static org.lwjgl.opengl.GL14.GL_COMPARE_R_TO_TEXTURE;
 import static org.lwjgl.opengl.GL14.GL_MIRRORED_REPEAT;
 
 public abstract class GLTexture implements Texture {
@@ -48,34 +50,6 @@ public abstract class GLTexture implements Texture {
                 return GL_CLAMP_TO_BORDER;
             case MIRRORED_REPEAT:
                 return GL_MIRRORED_REPEAT;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
-
-    public static int toGLCompareMode(DepthCompareMode depthCompareMode) {
-        return depthCompareMode != DepthCompareMode.NONE ? GL_COMPARE_R_TO_TEXTURE : GL_NONE;
-    }
-
-    public static int toGLCompareFunc(DepthCompareMode depthCompareMode) {
-        switch (depthCompareMode) {
-            case NONE:
-            case LESS_OR_EQUAL:
-                return GL_LEQUAL;
-            case LESS:
-                return GL_LESS;
-            case EQUAL:
-                return GL_EQUAL;
-            case NEVER:
-                return GL_NEVER;
-            case ALWAYS:
-                return GL_ALWAYS;
-            case GREATER:
-                return GL_GREATER;
-            case NOT_EQUAL:
-                return GL_NOTEQUAL;
-            case GREATER_OR_EQUAL:
-                return GL_GEQUAL;
             default:
                 throw new IllegalArgumentException();
         }

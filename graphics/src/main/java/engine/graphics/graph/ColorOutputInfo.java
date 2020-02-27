@@ -4,7 +4,7 @@ import engine.util.Color;
 
 public class ColorOutputInfo {
     private String colorBuffer;
-    private boolean clear;
+    private boolean clear = false;
     private Color clearColor = Color.BLACK;
 
     public static ColorOutputInfo colorOutput() {

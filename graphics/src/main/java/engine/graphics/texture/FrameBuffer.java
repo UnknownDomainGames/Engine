@@ -2,7 +2,6 @@ package engine.graphics.texture;
 
 import org.joml.Vector4ic;
 
-@Deprecated
 public interface FrameBuffer {
 
     int getId();

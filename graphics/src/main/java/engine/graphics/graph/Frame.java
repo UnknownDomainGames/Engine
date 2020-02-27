@@ -12,20 +12,14 @@ public final class Frame {
     private final boolean resized;
 
     public Frame(int number, long startTime, float timeLastFrame, int width, int height, boolean resized) {
-        this.number = number;
-        this.startTime = startTime;
-        this.timeLastFrame = timeLastFrame;
-        this.tickLastFrame = timeLastFrame;
-        this.width = width;
-        this.height = height;
-        this.resized = resized;
+        this(number, startTime, timeLastFrame, timeLastFrame, width, height, resized);
     }
 
     public Frame(int number, long startTime, float timeLastFrame, float tickLastFrame, int width, int height, boolean resized) {
         this.number = number;
         this.startTime = startTime;
         this.timeLastFrame = timeLastFrame;
-        this.tickLastFrame = tickLastFrame;
+        this.tickLastFrame = Float.isNaN(tickLastFrame) ? timeLastFrame : tickLastFrame;
         this.width = width;
         this.height = height;
         this.resized = resized;

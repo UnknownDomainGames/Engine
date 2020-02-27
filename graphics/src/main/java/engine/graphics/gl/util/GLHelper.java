@@ -1,6 +1,7 @@
 package engine.graphics.gl.util;
 
 import engine.graphics.util.DataType;
+import engine.graphics.util.DepthCompareMode;
 import engine.graphics.vertex.VertexElement;
 import engine.graphics.vertex.VertexFormat;
 
@@ -101,6 +102,34 @@ public final class GLHelper {
         }
     }
 
+    public static int toGLCompareMode(DepthCompareMode depthCompareMode) {
+        return depthCompareMode != DepthCompareMode.NONE ? GL_COMPARE_R_TO_TEXTURE : GL_NONE;
+    }
+
+    public static int toGLCompareFunc(DepthCompareMode depthCompareMode) {
+        switch (depthCompareMode) {
+            case NONE:
+                return GL_NONE;
+            case LESS_OR_EQUAL:
+                return GL_LEQUAL;
+            case LESS:
+                return GL_LESS;
+            case EQUAL:
+                return GL_EQUAL;
+            case NEVER:
+                return GL_NEVER;
+            case ALWAYS:
+                return GL_ALWAYS;
+            case GREATER:
+                return GL_GREATER;
+            case NOT_EQUAL:
+                return GL_NOTEQUAL;
+            case GREATER_OR_EQUAL:
+                return GL_GEQUAL;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
 
     private GLHelper() {
     }

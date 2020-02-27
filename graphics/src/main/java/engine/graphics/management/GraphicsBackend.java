@@ -2,6 +2,8 @@ package engine.graphics.management;
 
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
+import engine.graphics.graph.RenderGraph;
+import engine.graphics.graph.RenderGraphInfo;
 import engine.graphics.util.GPUInfo;
 
 import java.util.concurrent.Callable;
@@ -13,6 +15,8 @@ public interface GraphicsBackend {
 
     boolean isRenderingThread();
 
+    void removeRenderGraph(RenderGraph renderGraph);
+
     GPUInfo getGPUInfo();
 
     WindowHelper getWindowHelper();
@@ -20,6 +24,8 @@ public interface GraphicsBackend {
     Window getPrimaryWindow();
 
     ResourceFactory getResourceFactory();
+
+    RenderGraph loadRenderGraph(RenderGraphInfo renderGraph);
 
     void attachHandler(RenderHandler handler);
 
