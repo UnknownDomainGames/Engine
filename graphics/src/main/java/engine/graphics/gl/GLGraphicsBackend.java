@@ -49,6 +49,11 @@ public final class GLGraphicsBackend implements GraphicsBackend {
     public GLGraphicsBackend() {
     }
 
+    @Override
+    public String getName() {
+        return "opengl";
+    }
+
     @Nonnull
     @Override
     public Thread getRenderingThread() {

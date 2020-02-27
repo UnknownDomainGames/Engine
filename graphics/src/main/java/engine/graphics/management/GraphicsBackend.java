@@ -11,6 +11,8 @@ import java.util.concurrent.Future;
 
 public interface GraphicsBackend {
 
+    String getName();
+
     Thread getRenderingThread();
 
     boolean isRenderingThread();

@@ -56,6 +56,11 @@ public class VKGraphicsBackend implements GraphicsBackend {
     }
 
     @Override
+    public String getName() {
+        return "vulkan";
+    }
+
+    @Override
     public Thread getRenderingThread() {
         return renderingThread;
     }
