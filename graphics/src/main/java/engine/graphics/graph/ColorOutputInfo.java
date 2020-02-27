@@ -1,11 +1,13 @@
 package engine.graphics.graph;
 
+import engine.graphics.util.BlendMode;
 import engine.util.Color;
 
 public class ColorOutputInfo {
     private String colorBuffer;
     private boolean clear = false;
     private Color clearColor = Color.BLACK;
+    private BlendMode blendMode = BlendMode.DISABLED;
 
     public static ColorOutputInfo colorOutput() {
         return new ColorOutputInfo();
@@ -36,5 +38,13 @@ public class ColorOutputInfo {
     public ColorOutputInfo setClearColor(Color clearColor) {
         this.clearColor = clearColor;
         return this;
+    }
+
+    public BlendMode getBlendMode() {
+        return blendMode;
+    }
+
+    public void setBlendMode(BlendMode blendMode) {
+        this.blendMode = blendMode;
     }
 }

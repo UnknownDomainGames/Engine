@@ -45,6 +45,7 @@ public final class GLRenderPass implements RenderPass {
         setupViewport();
         setupCullMode(info.getCullMode());
         setupDepthTest(info.getDepthOutput());
+        setupBlend();
         drawers.forEach(drawer -> drawer.draw(frame));
     }
 
@@ -83,6 +84,14 @@ public final class GLRenderPass implements RenderPass {
             GL11.glDepthFunc(GLHelper.toGLCompareFunc(depthOutput.getCompareMode()));
         } else {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
+        }
+    }
+
+    private void setupBlend() {
+        if (frameBuffer.isEnableBlend()) {
+            GL11.glEnable(GL11.GL_BLEND);
+        } else {
+            GL11.glDisable(GL11.GL_BLEND);
         }
     }
 

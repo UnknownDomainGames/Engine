@@ -8,11 +8,13 @@ import engine.graphics.graph.RenderBufferSize;
 import engine.graphics.graph.RenderPassInfo;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.FrameBuffer;
+import engine.graphics.util.BlendMode;
 import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL40;
 
 public final class GLRenderPassFB implements FrameBuffer {
 
@@ -23,6 +25,8 @@ public final class GLRenderPassFB implements FrameBuffer {
 
     private ColorOutput[] colorOutputs;
     private DepthOutput depthOutput;
+
+    private boolean enableBlend = false;
 
     private int width;
     private int height;
@@ -37,6 +41,7 @@ public final class GLRenderPassFB implements FrameBuffer {
             var colorOutputInfo = colorOutputs.get(i);
             var renderBuffer = task.getRenderBuffer(colorOutputInfo.getColorBuffer());
             this.colorOutputs[i] = new ColorOutput(colorOutputInfo, renderBuffer);
+            enableBlend |= colorOutputInfo.getBlendMode() != BlendMode.DISABLED;
         }
 
         var depthOutputInfo = info.getDepthOutput();
@@ -56,6 +61,10 @@ public final class GLRenderPassFB implements FrameBuffer {
 
     public DepthOutput getDepthOutput() {
         return depthOutput;
+    }
+
+    public boolean isEnableBlend() {
+        return enableBlend;
     }
 
     @Override
@@ -101,6 +110,7 @@ public final class GLRenderPassFB implements FrameBuffer {
             if (info.isClear()) {
                 GL30.glClearBufferfv(GL11.GL_COLOR, i, info.getClearColor().toRGBAFloatArray());
             }
+            setupBlendMode(i, colorOutput.info.getBlendMode());
         }
         if (depthOutput != null) {
             DepthOutputInfo info = depthOutput.info;
@@ -112,6 +122,18 @@ public final class GLRenderPassFB implements FrameBuffer {
             if (info.isClear()) {
                 GL30.glClearBufferfv(GL11.GL_DEPTH, 0, new float[]{info.getClearValue()});
             }
+        }
+    }
+
+    private void setupBlendMode(int buffer, BlendMode blendMode) {
+        if (!enableBlend) return;
+        switch (blendMode) {
+            case DISABLED:
+                GL40.glBlendFunci(buffer, GL11.GL_ONE, GL11.GL_ZERO);
+                break;
+            case MIX:
+                GL40.glBlendFunci(buffer, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                break;
         }
     }
 
