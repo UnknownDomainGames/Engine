@@ -21,6 +21,10 @@ public class RenderQueue {
         queue.computeIfAbsent(layer, key -> new GeometryList()).remove(geometry);
     }
 
+    public GeometryList getGeometryList(RenderType type) {
+        return queue.get(type);
+    }
+
     public void clear() {
         queue.clear();
     }

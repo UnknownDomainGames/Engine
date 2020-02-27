@@ -8,7 +8,7 @@ import engine.client.hud.HUDManager;
 import engine.graphics.display.Window;
 import engine.graphics.gl.GLGraphicsBackend;
 import engine.graphics.gl.texture.GLFrameBuffer;
-import engine.graphics.internal.impl.gl.GLPlatform3D;
+import engine.graphics.internal.impl.Platform3DImpl;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.shape.SkyBox;
 import engine.graphics.texture.FrameBuffer;
@@ -95,7 +95,7 @@ public final class EngineRenderManager implements RenderManager {
                 engine.getSettings().getDisplaySettings().getFrameRate());
 
         if(manager instanceof GLGraphicsBackend) {
-            GLPlatform3D.launchEmbedded();
+            Platform3DImpl.launchEmbedded();
         }
         else if(manager instanceof VKGraphicsBackend){
 //            VKPlatform3D.launchEmbedded();

@@ -1,4 +1,4 @@
-package engine.graphics.internal.impl.gl;
+package engine.graphics.internal.impl;
 
 import engine.graphics.internal.ViewportHelper;
 import engine.graphics.viewport.Viewport;

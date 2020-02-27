@@ -2,7 +2,7 @@ package engine.graphics.application;
 
 import engine.graphics.GraphicsEngine;
 import engine.graphics.Scene3D;
-import engine.graphics.internal.impl.gl.GLPlatform3D;
+import engine.graphics.internal.impl.Platform3DImpl;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.util.FrameTicker;
 import engine.graphics.viewport.PerspectiveViewport;
@@ -34,7 +34,7 @@ public abstract class Application3D {
 
     public static void launch(Class<? extends Application3D> clazz, String[] args) {
         try {
-            GLPlatform3D.launch(args);
+            Platform3DImpl.launch(args);
             Application3D application = clazz.getConstructor().newInstance();
             application.doInitialize();
         } catch (Exception e) {

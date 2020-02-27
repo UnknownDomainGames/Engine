@@ -1,11 +1,14 @@
 package engine.graphics.viewport;
 
+import engine.graphics.GraphicsEngine;
+import engine.graphics.Scene3D;
 import engine.graphics.camera.Camera;
 import engine.graphics.display.Window;
 import engine.graphics.display.callback.WindowSizeCallback;
-import engine.graphics.texture.FrameBuffer;
-import engine.graphics.Scene3D;
+import engine.graphics.graph.RenderGraph;
 import engine.graphics.internal.Platform3D;
+import engine.graphics.internal.impl.Scene3DRenderGraph;
+import engine.graphics.texture.FrameBuffer;
 import engine.util.Color;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
@@ -38,6 +41,8 @@ public abstract class BaseViewport implements Viewport {
 
     private Window window;
     private WindowSizeCallback windowSizeCallback;
+
+    private RenderGraph renderGraph;
 
     @Override
     public int getWidth() {
@@ -195,11 +200,15 @@ public abstract class BaseViewport implements Viewport {
         this.window = window;
         this.showing = true;
         Platform3D.getInstance().getViewportHelper().show(this);
+        this.renderGraph = GraphicsEngine.getGraphicsBackend()
+                .loadRenderGraph(Scene3DRenderGraph.createRenderGraph(this));
+        this.renderGraph.bindWindow(window);
     }
 
     @Override
     public void hide() {
         Platform3D.getInstance().getViewportHelper().hide(this);
+        GraphicsEngine.getGraphicsBackend().removeRenderGraph(renderGraph);
         if (this.window != null) {
             this.window.removeWindowSizeCallback(windowSizeCallback);
         }

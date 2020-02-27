@@ -1,0 +1,4 @@
+{
+  "Vertex": "opaque.vert",
+  "Fragment": "opaque.frag"
+}
