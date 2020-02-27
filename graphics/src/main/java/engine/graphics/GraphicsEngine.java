@@ -1,12 +1,18 @@
 package engine.graphics;
 
-import engine.graphics.gl.GLGraphicsBackend;
 import engine.graphics.lwjgl.STBImageHelper;
 import engine.graphics.lwjgl.font.WindowsFontHelper;
 import engine.graphics.management.GraphicsBackend;
-import engine.graphics.vulkan.VKGraphicsBackend;
+import engine.graphics.management.GraphicsBackendFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ServiceLoader;
 
 public final class GraphicsEngine {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger("Graphics");
+
     public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("graphics.debug", "false"));
 
     private static Settings settings;
@@ -25,15 +31,18 @@ public final class GraphicsEngine {
             throw new IllegalArgumentException("Graphics engine has been started.");
         }
         GraphicsEngine.settings = settings;
-        // TODO: delegate render context creation
+        // TODO: create image helper by factory
         STBImageHelper.init();
-        if(settings.backend == Settings.Backend.VULKAN) {
-            graphicsBackend = new VKGraphicsBackend();
-        }
-        else {
-            graphicsBackend = new GLGraphicsBackend();
-        }
+        graphicsBackend = ServiceLoader.load(GraphicsBackendFactory.class)
+                .stream()
+                .filter(provider -> provider.get().getName().equals(settings.backend))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No found graphics backend: " + settings.backend))
+                .get()
+                .create();
+        LOGGER.info("Graphics backend: {}", settings.backend);
         graphicsBackend.init();
+        // TODO: create font helper by factory
         WindowsFontHelper.initialize();
     }
 
@@ -51,20 +60,16 @@ public final class GraphicsEngine {
 
     public static class Settings {
         private boolean debug = DEBUG;
-        private Backend backend = Backend.GL;
+        private String backend = "opengl";
 
         public Settings debug(boolean debug) {
             this.debug = debug;
             return this;
         }
 
-        public Settings backend(Backend backend) {
+        public Settings backend(String backend) {
             this.backend = backend;
             return this;
-        }
-
-        public enum Backend {
-            GL, VULKAN
         }
     }
 

@@ -9,6 +9,7 @@ import engine.graphics.glfw.GLFWVulkanWindow;
 import engine.graphics.graph.RenderGraph;
 import engine.graphics.graph.RenderGraphInfo;
 import engine.graphics.management.GraphicsBackend;
+import engine.graphics.management.GraphicsBackendFactory;
 import engine.graphics.management.RenderHandler;
 import engine.graphics.management.ResourceFactory;
 import engine.graphics.util.Cleaner;
@@ -40,6 +41,8 @@ import static org.lwjgl.vulkan.VK10.VK_SUCCESS;
 
 public class VKGraphicsBackend implements GraphicsBackend {
 
+    public static final String BACKEND_NAME = "vulkan";
+
     public static final Logger LOGGER = LoggerFactory.getLogger("Graphics");
 
     private Thread renderingThread;
@@ -57,7 +60,7 @@ public class VKGraphicsBackend implements GraphicsBackend {
 
     @Override
     public String getName() {
-        return "vulkan";
+        return BACKEND_NAME;
     }
 
     @Override
@@ -282,5 +285,18 @@ public class VKGraphicsBackend implements GraphicsBackend {
     public void dispose() {
         vkDestroyDebugReportCallbackEXT(vulkanInstance.getNativeInstance(), debugCallback, null);
         vulkanInstance.free();
+    }
+
+    public static final class Factory implements GraphicsBackendFactory {
+
+        @Override
+        public String getName() {
+            return BACKEND_NAME;
+        }
+
+        @Override
+        public GraphicsBackend create() {
+            return new VKGraphicsBackend();
+        }
     }
 }

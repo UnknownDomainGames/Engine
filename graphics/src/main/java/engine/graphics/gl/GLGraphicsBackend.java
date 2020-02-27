@@ -11,6 +11,7 @@ import engine.graphics.glfw.GLFWWindow;
 import engine.graphics.graph.RenderGraph;
 import engine.graphics.graph.RenderGraphInfo;
 import engine.graphics.management.GraphicsBackend;
+import engine.graphics.management.GraphicsBackendFactory;
 import engine.graphics.management.RenderHandler;
 import engine.graphics.management.ResourceFactory;
 import engine.graphics.util.Cleaner;
@@ -33,6 +34,8 @@ import java.util.concurrent.RunnableFuture;
 
 public final class GLGraphicsBackend implements GraphicsBackend {
 
+    public static final String BACKEND_NAME = "opengl";
+
     public static final Logger LOGGER = LoggerFactory.getLogger("Graphics");
 
     private Thread renderingThread;
@@ -51,7 +54,7 @@ public final class GLGraphicsBackend implements GraphicsBackend {
 
     @Override
     public String getName() {
-        return "opengl";
+        return BACKEND_NAME;
     }
 
     @Nonnull
@@ -221,5 +224,18 @@ public final class GLGraphicsBackend implements GraphicsBackend {
 
     public GLCapabilities getCapabilities() {
         return capabilities;
+    }
+
+    public static final class Factory implements GraphicsBackendFactory {
+
+        @Override
+        public String getName() {
+            return BACKEND_NAME;
+        }
+
+        @Override
+        public GraphicsBackend create() {
+            return new GLGraphicsBackend();
+        }
     }
 }
