@@ -88,13 +88,6 @@ public final class GLGUIRenderer {
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_LINE_SMOOTH);
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-        glEnable(GL_POINT_SMOOTH);
-        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-        // GL_POLYGON_SMOOTH will cause transparent lines on objects
-//        glEnable(GL_POLYGON_SMOOTH);
-//        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
 
         shader.use();
         shader.setUniform("u_ProjMatrix", new Matrix4f().setOrtho(0, viewportWidth, viewportHeight, 0, -1000, 1000));
@@ -109,9 +102,6 @@ public final class GLGUIRenderer {
         graphics.popClipRect();
 
         glDisable(GL_BLEND);
-        glDisable(GL_LINE_SMOOTH);
-        glDisable(GL_POINT_SMOOTH);
-//        glDisable(GL_POLYGON_SMOOTH);
     }
 
     public void bindWhiteTexture() {
