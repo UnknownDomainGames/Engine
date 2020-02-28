@@ -1,10 +1,11 @@
 package engine.graphics.lwjgl.font;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
-import com.google.common.collect.Tables;
 import engine.graphics.font.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
 import org.slf4j.Logger;
@@ -53,7 +54,7 @@ public final class WindowsFontHelper implements FontHelper {
             STBTT_MS_LANG_ENGLISH};
 
     private final List<Font> availableFonts = new CopyOnWriteArrayList<>();
-    private final Table<String, String, NativeTTFontInfo> loadedFontInfos = Tables.newCustomTable(new HashMap<>(), HashMap::new);
+    private final Table<String, String, NativeTTFontInfo> loadedFontInfos = HashBasedTable.create();
     private final Map<Font, NativeTTFont> loadedNativeFonts = new HashMap<>();
 
     private Font defaultFont;
@@ -96,10 +97,8 @@ public final class WindowsFontHelper implements FontHelper {
         }
     }
 
-    private boolean allLocalFontsInitialized = false;
-
     private void initLocalFonts() {
-        var tasks = new ArrayList<CompletableFuture>();
+        List<CompletableFuture<Void>> tasks = new ArrayList<>();
         List<NativeTTFontInfo> loadedFonts = Collections.synchronizedList(new ArrayList<>());
         for (var fontFile : findLocalTTFonts()) {
             tasks.add(CompletableFuture.runAsync(() -> {
@@ -112,36 +111,36 @@ public final class WindowsFontHelper implements FontHelper {
                 }
             }));
         }
-        CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0]))
-                .thenRun(() -> {
-                    loadedFonts.forEach(info -> {
-                        availableFonts.add(info.getFont());
-                        loadedFontInfos.put(info.getFamily(), info.getStyle(), info);
-                    });
-                    allLocalFontsInitialized = true;
-                });
+        CompletableFuture.allOf(tasks.toArray(CompletableFuture[]::new))
+                .thenRun(() -> loadedFonts.forEach(info -> {
+                    availableFonts.add(info.getFont());
+                    loadedFontInfos.put(info.getFamily(), info.getStyle(), info);
+                }));
     }
 
     private List<Path> findLocalTTFonts() {
         try {
             Predicate<Path> typefaceFilter = path -> path.getFileName().toString().endsWith(".ttf") || path.getFileName().toString().endsWith(".ttc");
             List<Path> fonts;
-            if (System.getProperty("os.name").toLowerCase().equals("linux")) {
-                fonts = Files.walk(Path.of("/usr/share/fonts/WindowsFonts").toAbsolutePath())
+            if (SystemUtils.IS_OS_LINUX) {
+                fonts = Files.walk(Path.of("/usr/share/fonts/WindowsFonts"))
                         .filter(typefaceFilter)
                         .collect(Collectors.toList());
-            } else {
-                fonts = Files.walk(Path.of("C:\\Windows\\Fonts").toAbsolutePath())
+            } else if (SystemUtils.IS_OS_WINDOWS) {
+                fonts = Files.walk(Path.of("C:\\Windows\\Fonts"))
                         .filter(typefaceFilter)
                         .collect(Collectors.toList());
-                var userFontDir = Path.of(System.getProperty("user.home"), "Appdata", "Local", "Microsoft", "Windows", "Fonts");
+                var userFontDir = Path.of(SystemUtils.USER_HOME, "Appdata", "Local", "Microsoft", "Windows", "Fonts");
                 if (userFontDir.toFile().exists()) {
                     var userFont = Files.walk(userFontDir).filter(typefaceFilter).collect(Collectors.toList());
                     fonts.addAll(userFont);
                 }
+            } else {
+                fonts = List.of();
             }
             return fonts;
         } catch (IOException e) {
+            LOGGER.warn("Cannot collect local font", e);
             return List.of();
         }
     }
