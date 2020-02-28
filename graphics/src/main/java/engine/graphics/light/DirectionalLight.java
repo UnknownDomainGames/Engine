@@ -1,13 +1,13 @@
 package engine.graphics.light;
 
-import engine.graphics.management.BindingProxy;
+import engine.graphics.shader.ShaderResource;
 import org.joml.Vector3f;
 
 public class DirectionalLight extends Light {
     private Vector3f direction;
 
     @Override
-    public void bind(BindingProxy proxy, String fieldName) {
+    public void bind(ShaderResource proxy, String fieldName) {
         proxy.setUniform(fieldName + ".filled", true);
         proxy.setUniform(fieldName + ".direction", direction);
         proxy.setUniform(fieldName + ".light.ambient", ambient);

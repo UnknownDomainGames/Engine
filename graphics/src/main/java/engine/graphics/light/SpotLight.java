@@ -1,6 +1,6 @@
 package engine.graphics.light;
 
-import engine.graphics.management.BindingProxy;
+import engine.graphics.shader.ShaderResource;
 import org.joml.Vector3f;
 
 public class SpotLight extends Light {
@@ -15,7 +15,7 @@ public class SpotLight extends Light {
     private float outerCutoffAngle; // in Radian
 
     @Override
-    public void bind(BindingProxy proxy, String fieldName) {
+    public void bind(ShaderResource proxy, String fieldName) {
         proxy.setUniform(fieldName + ".filled", true);
         proxy.setUniform(fieldName + ".position", position);
         proxy.setUniform(fieldName + ".constant", kconstant);

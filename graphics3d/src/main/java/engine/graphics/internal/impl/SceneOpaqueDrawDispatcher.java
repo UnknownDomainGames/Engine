@@ -3,8 +3,8 @@ package engine.graphics.internal.impl;
 import engine.graphics.Scene3D;
 import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Frame;
-import engine.graphics.management.BindingProxy;
 import engine.graphics.queue.StandardRenderTypes;
+import engine.graphics.shader.ShaderResource;
 import engine.graphics.viewport.Viewport;
 
 public class SceneOpaqueDrawDispatcher implements DrawDispatcher {
@@ -15,7 +15,7 @@ public class SceneOpaqueDrawDispatcher implements DrawDispatcher {
     }
 
     @Override
-    public void draw(Frame frame, BindingProxy shader) {
+    public void draw(Frame frame, ShaderResource shader) {
         shader.setUniform("u_ProjMatrix", viewport.getProjectionMatrix());
         shader.setUniform("u_ViewMatrix", viewport.getViewMatrix());
         Scene3D scene = viewport.getScene();

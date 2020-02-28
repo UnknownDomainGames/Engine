@@ -1,7 +1,7 @@
 package engine.graphics.gl.shader;
 
 import engine.graphics.gl.util.GLCleaner;
-import engine.graphics.management.BindingProxy;
+import engine.graphics.shader.ShaderResource;
 import engine.graphics.util.Cleaner;
 import org.joml.*;
 import org.slf4j.Logger;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
 
-public class ShaderProgram implements BindingProxy {
+public class ShaderProgram implements ShaderResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShaderProgram.class);
 

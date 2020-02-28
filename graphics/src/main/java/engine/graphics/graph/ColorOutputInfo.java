@@ -44,7 +44,8 @@ public class ColorOutputInfo {
         return blendMode;
     }
 
-    public void setBlendMode(BlendMode blendMode) {
+    public ColorOutputInfo setBlendMode(BlendMode blendMode) {
         this.blendMode = blendMode;
+        return this;
     }
 }

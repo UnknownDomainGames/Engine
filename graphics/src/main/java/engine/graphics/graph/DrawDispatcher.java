@@ -1,8 +1,8 @@
 package engine.graphics.graph;
 
-import engine.graphics.management.BindingProxy;
+import engine.graphics.shader.ShaderResource;
 
 public interface DrawDispatcher {
 
-    void draw(Frame frame, BindingProxy shader);
+    void draw(Frame frame, ShaderResource shader);
 }

@@ -1,8 +1,8 @@
-package engine.graphics.management;
+package engine.graphics.shader;
 
 import org.joml.*;
 
-public interface BindingProxy {
+public interface ShaderResource {
     void setUniform(String location, int value);
 
     void setUniform(String location, float value);

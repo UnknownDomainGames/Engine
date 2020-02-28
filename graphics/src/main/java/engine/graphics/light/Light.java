@@ -1,6 +1,6 @@
 package engine.graphics.light;
 
-import engine.graphics.management.BindingProxy;
+import engine.graphics.shader.ShaderResource;
 import org.joml.Vector3f;
 
 public abstract class Light {
@@ -11,7 +11,7 @@ public abstract class Light {
     public Light() {
     }
 
-    public abstract void bind(BindingProxy proxy, String fieldName);
+    public abstract void bind(ShaderResource proxy, String fieldName);
 
     public Vector3f getAmbient() {
         return ambient;

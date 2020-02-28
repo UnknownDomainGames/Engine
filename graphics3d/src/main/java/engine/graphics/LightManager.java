@@ -4,7 +4,7 @@ import engine.graphics.light.DirectionalLight;
 import engine.graphics.light.Light;
 import engine.graphics.light.PointLight;
 import engine.graphics.light.SpotLight;
-import engine.graphics.management.BindingProxy;
+import engine.graphics.shader.ShaderResource;
 import org.joml.Vector3fc;
 
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class LightManager {
             spotLights.remove(light);
     }
 
-    public void bind(Vector3fc cameraPosition, BindingProxy proxy) {
+    public void bind(Vector3fc cameraPosition, ShaderResource proxy) {
         for (int i = 0; i < directionalLights.size() && i < MAX_DIRECTIONAL_LIGHT_COUNT; i++) {
             directionalLights.get(i).bind(proxy, "dirLights[" + i + "]");
         }

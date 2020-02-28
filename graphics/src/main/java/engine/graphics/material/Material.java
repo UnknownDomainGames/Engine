@@ -1,6 +1,6 @@
 package engine.graphics.material;
 
-import engine.graphics.management.BindingProxy;
+import engine.graphics.shader.ShaderResource;
 import engine.graphics.texture.Texture2D;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL13;
@@ -17,7 +17,7 @@ public class Material {
     private Texture2D normalUV;
     private Texture2D alphaUV;
 
-    public void bind(BindingProxy proxy, String fieldName) {
+    public void bind(ShaderResource proxy, String fieldName) {
         proxy.setUniform(fieldName + ".ambient", ambient);
         proxy.setUniform(fieldName + ".diffuseColor", diffuse);
         proxy.setUniform(fieldName + ".specularColor", specular);
