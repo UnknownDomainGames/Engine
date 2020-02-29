@@ -24,7 +24,7 @@ import engine.game.Game;
 import engine.graphics.EngineRenderManager;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.RenderManager;
-import engine.graphics.gl.util.GLContextUtils;
+import engine.graphics.gl.util.GLHelper;
 import engine.logic.Ticker;
 import engine.mod.ModContainer;
 import engine.util.ClassPathUtils;
@@ -146,11 +146,11 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     private void initRenderCrashReportDetails() {
-        crashHandler.addReportDetail("GL Vendor", builder -> builder.append(GLContextUtils.getVendor()));
-        crashHandler.addReportDetail("GL Renderer", builder -> builder.append(GLContextUtils.getRenderer()));
-        crashHandler.addReportDetail("GL Version", builder -> builder.append(GLContextUtils.getVersion()));
-        crashHandler.addReportDetail("GL Extensions", builder -> builder.append(GLContextUtils.getExtensions()));
-        crashHandler.addReportDetail("GL Shading Language Version", builder -> builder.append(GLContextUtils.getShadingLanguageVersion()));
+        crashHandler.addReportDetail("GL Vendor", builder -> builder.append(GLHelper.getVendor()));
+        crashHandler.addReportDetail("GL Renderer", builder -> builder.append(GLHelper.getRenderer()));
+        crashHandler.addReportDetail("GL Version", builder -> builder.append(GLHelper.getVersion()));
+        crashHandler.addReportDetail("GL Extensions", builder -> builder.append(GLHelper.getExtensions()));
+        crashHandler.addReportDetail("GL Shading Language Version", builder -> builder.append(GLHelper.getShadingLanguageVersion()));
         crashHandler.addReportDetail("GPU Memory Usage", builder -> {
             var gpuMemoryInfo = GraphicsEngine.getGraphicsBackend().getGPUInfo();
             var usedMemory = (gpuMemoryInfo.getTotalMemory() - gpuMemoryInfo.getFreeMemory()) / 1024;

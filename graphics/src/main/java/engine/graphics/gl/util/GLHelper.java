@@ -4,6 +4,9 @@ import engine.graphics.util.DataType;
 import engine.graphics.util.DepthCompareMode;
 import engine.graphics.vertex.VertexElement;
 import engine.graphics.vertex.VertexFormat;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GLCapabilities;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -11,6 +14,40 @@ import static org.lwjgl.opengl.GL30.GL_HALF_FLOAT;
 import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
 
 public final class GLHelper {
+
+    private static GLCapabilities capabilities;
+
+    public static GLCapabilities getCapabilities() {
+        return capabilities;
+    }
+
+    public static void setCapabilities(GLCapabilities capabilities) {
+        GLHelper.capabilities = capabilities;
+    }
+
+    public static boolean isOpenGL45() {
+        return capabilities.OpenGL45;
+    }
+
+    public static String getVendor() {
+        return GL11.glGetString(GL11.GL_VENDOR);
+    }
+
+    public static String getRenderer() {
+        return GL11.glGetString(GL11.GL_RENDERER);
+    }
+
+    public static String getVersion() {
+        return GL11.glGetString(GL11.GL_VERSION);
+    }
+
+    public static String getExtensions() {
+        return GL11.glGetString(GL11.GL_EXTENSIONS);
+    }
+
+    public static String getShadingLanguageVersion() {
+        return GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION);
+    }
 
     public static int getMask(boolean color, boolean depth, boolean stencil) {
         int mask = 0;

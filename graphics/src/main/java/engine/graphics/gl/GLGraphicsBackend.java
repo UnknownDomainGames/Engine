@@ -4,7 +4,7 @@ import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
 import engine.graphics.gl.graph.GLRenderGraph;
 import engine.graphics.gl.util.DebugMessageCallback;
-import engine.graphics.gl.util.GLContextUtils;
+import engine.graphics.gl.util.GLHelper;
 import engine.graphics.gl.util.GPUInfoImpl;
 import engine.graphics.glfw.GLFWContext;
 import engine.graphics.glfw.GLFWWindow;
@@ -172,8 +172,8 @@ public final class GLGraphicsBackend implements GraphicsBackend {
     private void initGL() {
         LOGGER.info("Initializing OpenGL context!");
 
-        capabilities = GL.createCapabilities(true);
-        GLContextUtils.setCapabilities(capabilities);
+        capabilities = GL.createCapabilities();
+        GLHelper.setCapabilities(capabilities);
         gpuInfo = new GPUInfoImpl();
         printGLInfo();
 
@@ -205,11 +205,11 @@ public final class GLGraphicsBackend implements GraphicsBackend {
 
     private void printGLInfo() {
         LOGGER.info("----- OpenGL Information -----");
-        LOGGER.info("\tGL_VENDOR: {}", GLContextUtils.getVendor());
-        LOGGER.info("\tGL_RENDERER: {}", GLContextUtils.getRenderer());
-        LOGGER.info("\tGL_VERSION: {}", GLContextUtils.getVersion());
-        LOGGER.info("\tGL_EXTENSIONS: {}", GLContextUtils.getExtensions());
-        LOGGER.info("\tGL_SHADING_LANGUAGE_VERSION: {}", GLContextUtils.getShadingLanguageVersion());
+        LOGGER.info("\tGL_VENDOR: {}", GLHelper.getVendor());
+        LOGGER.info("\tGL_RENDERER: {}", GLHelper.getRenderer());
+        LOGGER.info("\tGL_VERSION: {}", GLHelper.getVersion());
+        LOGGER.info("\tGL_EXTENSIONS: {}", GLHelper.getExtensions());
+        LOGGER.info("\tGL_SHADING_LANGUAGE_VERSION: {}", GLHelper.getShadingLanguageVersion());
         LOGGER.info("\tGPU_TOTAL_MEMORY: {} MB", (gpuInfo.getTotalMemory()) >> 10);
         LOGGER.info("------------------------------");
     }
