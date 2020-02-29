@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 
-//TODO to have a home his own (move to a specific package)
 public class Material {
     private Vector3f ambient = new Vector3f(0.1f);
     private Vector3f diffuse = new Vector3f(1f);

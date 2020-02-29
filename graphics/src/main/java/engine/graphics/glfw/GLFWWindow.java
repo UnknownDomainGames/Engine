@@ -609,7 +609,7 @@ public class GLFWWindow implements Window {
             windowMaximizeCallbacks.forEach(callback -> callback.invoke(this, maximized));
         });
 
-        // TODO: callbacks
+//        Unused window callbacks
 //        glfwSetWindowRefreshCallback()
 //        glfwSetWindowContentScaleCallback()
     }
