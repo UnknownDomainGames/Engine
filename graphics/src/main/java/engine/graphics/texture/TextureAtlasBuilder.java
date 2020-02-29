@@ -1,11 +1,12 @@
 package engine.graphics.texture;
 
 import engine.graphics.image.BufferedImage;
+import engine.graphics.image.ReadOnlyImage;
 import engine.math.Math2;
 
 public class TextureAtlasBuilder {
 
-    private BufferedImage texture;
+    private BufferedImage result;
     private int size;
 
     private Node root;
@@ -16,27 +17,27 @@ public class TextureAtlasBuilder {
 
     public TextureAtlasBuilder(int size) {
         this.size = size;
-        this.texture = new BufferedImage(size);
+        this.result = new BufferedImage(size);
         this.root = new Node(size);
     }
 
-    public BufferedImage getTexture() {
-        return texture;
+    public BufferedImage getResult() {
+        return result;
     }
 
     public int getSize() {
         return size;
     }
 
-    public TexCoord add(BufferedImage texture) {
-        // TODO: support texture size isn't power of two.
-        var regionSize = Math2.ceilPowerOfTwo(Math.max(texture.getWidth(), texture.getHeight()));
-        var node = root.requestNode(texture, regionSize);
+    public TexCoord add(ReadOnlyImage image) {
+        // Each image occupies an area which size is power of two.
+        var regionSize = Math2.ceilPowerOfTwo(Math.max(image.getWidth(), image.getHeight()));
+        var node = root.requestNode(image, regionSize);
         if (node == null) {
             resize(regionSize);
-            node = root.requestNode(texture, regionSize);
+            node = root.requestNode(image, regionSize);
         }
-        this.texture.setImage(node.getX(), node.getY(), texture);
+        result.setImage(node.getX(), node.getY(), image);
         return node.getUv();
     }
 
@@ -48,7 +49,7 @@ public class TextureAtlasBuilder {
             newRoot.setChild(Node.TOP_LEFT, root);
             root = newRoot;
         }
-        texture = BufferedImage.resize(texture, size);
+        result = BufferedImage.resize(result, size);
     }
 
     public void finish() {
@@ -56,7 +57,7 @@ public class TextureAtlasBuilder {
     }
 
     public void dispose() {
-        texture = null;
+        result = null;
     }
 
     public static final class TexCoord {
@@ -166,7 +167,7 @@ public class TextureAtlasBuilder {
             child.resizeUv(minU, minV, maxU, maxV);
         }
 
-        private Node requestNode(BufferedImage texture, int requestSize) {
+        private Node requestNode(ReadOnlyImage image, int requestSize) {
             if (this.size == requestSize && !hasChildren()) {
                 return this;
             }
@@ -179,7 +180,7 @@ public class TextureAtlasBuilder {
                 var child = getChild(i);
                 if (child.isUsed()) continue;
 
-                var node = child.requestNode(texture, requestSize);
+                var node = child.requestNode(image, requestSize);
                 if (node != null) return node;
             }
             return null;

@@ -33,7 +33,7 @@ public class TextureAtlasImpl implements TextureAtlas {
         if (texture != null) {
             texture.dispose();
         }
-        texture = Texture2D.builder().build(textureMap.getTexture());
+        texture = Texture2D.builder().build(textureMap.getResult());
         textureMap.dispose();
     }
 
