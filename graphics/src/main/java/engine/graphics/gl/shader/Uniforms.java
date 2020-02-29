@@ -22,27 +22,15 @@ public class Uniforms {
     }
 
     public static void setUniform(int location, Vector2fc value) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer buffer = stack.mallocFloat(2);
-            value.get(buffer);
-            glUniform2fv(location, buffer);
-        }
+        glUniform2f(location, value.x(), value.y());
     }
 
     public static void setUniform(int location, Vector3fc value) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer buffer = stack.mallocFloat(3);
-            value.get(buffer);
-            glUniform3fv(location, buffer);
-        }
+        glUniform3f(location, value.x(), value.y(), value.z());
     }
 
     public static void setUniform(int location, Vector4fc value) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer buffer = stack.mallocFloat(4);
-            value.get(buffer);
-            glUniform4fv(location, buffer);
-        }
+        glUniform4f(location, value.x(), value.y(), value.z(), value.w());
     }
 
     public static void setUniform(int location, Matrix3fc value) {
