@@ -41,9 +41,25 @@ public class Uniforms {
         }
     }
 
+    public static void setUniform(int location, Matrix3x2fc value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(3 * 2);
+            value.get(buffer);
+            glUniformMatrix3fv(location, false, buffer);
+        }
+    }
+
     public static void setUniform(int location, Matrix4fc value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(4 * 4);
+            value.get(buffer);
+            glUniformMatrix4fv(location, false, buffer);
+        }
+    }
+
+    public static void setUniform(int location, Matrix4x3fc value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(4 * 3);
             value.get(buffer);
             glUniformMatrix4fv(location, false, buffer);
         }
