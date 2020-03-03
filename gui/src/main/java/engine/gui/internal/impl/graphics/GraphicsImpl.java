@@ -292,10 +292,10 @@ public final class GraphicsImpl implements Graphics {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             }
 
-            drawTexture(texture, x, y, x + width, y + height);
+            drawTexture(texture, x, y, width, height);
         } else {
             setColor(background.getColor());
-            fillRect(x, y, x + width, y + height);
+            fillRect(x, y, width, height);
         }
     }
 
