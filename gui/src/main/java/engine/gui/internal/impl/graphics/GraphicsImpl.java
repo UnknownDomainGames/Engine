@@ -1,7 +1,10 @@
-package engine.gui.internal.impl.gl;
+package engine.gui.internal.impl.graphics;
 
 import engine.graphics.font.TextMesh;
-import engine.graphics.gl.GLStreamedRenderer;
+import engine.graphics.graph.Renderer;
+import engine.graphics.image.BufferedImage;
+import engine.graphics.shader.ShaderResource;
+import engine.graphics.shader.UniformTexture;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
@@ -20,21 +23,32 @@ import java.util.Stack;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 
-public final class GLGraphics implements Graphics {
+public final class GraphicsImpl implements Graphics {
 
-    private final GLStreamedRenderer directRenderer = GLStreamedRenderer.getInstance();
+    private final VertexDataBuf buffer = VertexDataBuf.create(4096);
     private final GUIResourceFactory resourceFactory = new GUIResourceFactory();
 
     private final Stack<Vector4fc> clipRect = new Stack<>();
     private final Stack<Matrix4fc> modelMatrix = new Stack<>();
 
-    private final GLGUIRenderer renderer;
+    private final ShaderResource resource;
+    private final UniformTexture uniformTexture;
+
+    private final Texture2D whiteTexture;
+
+    private Renderer renderer;
 
     private Color color;
 
-    public GLGraphics(GLGUIRenderer renderer) {
-        this.renderer = renderer;
+    public GraphicsImpl(ShaderResource resource) {
+        this.resource = resource;
+        this.uniformTexture = resource.getUniformTexture("u_Texture");
+        this.whiteTexture = Texture2D.builder().build(new BufferedImage(1, 1, Color.WHITE));
         setColor(Color.WHITE);
+    }
+
+    public void setRenderer(Renderer renderer) {
+        this.renderer = renderer;
     }
 
     @Override
@@ -49,120 +63,110 @@ public final class GLGraphics implements Graphics {
 
     @Override
     public void drawLine(float x1, float y1, float x2, float y2) {
-        VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, x1, y1);
         putVertex(buffer, x2, y2);
-        directRenderer.draw(DrawMode.LINES);
+        renderer.drawStreamed(DrawMode.LINES, buffer);
     }
 
     @Override
     public void drawRect(float x, float y, float width, float height) {
-        VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         float x2 = x + width, y2 = y + height;
         quads(buffer, x, y, x2, y, x2, y2, x, y2);
         putVertex(buffer, x, y);
-        directRenderer.draw(DrawMode.LINE_STRIP);
+        renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
     @Override
     public void fillRect(float x, float y, float width, float height) {
-        VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         float x2 = x + width, y2 = y + height;
         quads(buffer, x, y, x, y2, x2, y, x2, y2);
-        directRenderer.draw(DrawMode.TRIANGLE_STRIP);
+        renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
     }
 
     @Override
     public void drawQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4) {
-        VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         quads(buffer, p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y());
         putVertex(buffer, p1.x(), p1.y());
-        directRenderer.draw(DrawMode.LINE_STRIP);
+        renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
     @Override
     public void fillQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4) {
-        VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         quads(buffer, p1.x(), p1.y(), p4.x(), p4.y(), p2.x(), p2.y(), p3.x(), p3.y());
-        directRenderer.draw(DrawMode.TRIANGLE_STRIP);
+        renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
     }
 
     @Override
     public void drawRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight) {
         float x2 = x + width, y2 = y + height;
-        VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         quadCurveTo(buffer, x2 - arcWidth, y, x2, y + arcHeight, x2, y);
         quadCurveTo(buffer, x2, y2 - arcHeight, x2 - arcWidth, y2, x2, y2);
         quadCurveTo(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
         quadCurveTo(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
         putVertex(buffer, x2 - arcWidth, y);
-        directRenderer.draw(DrawMode.LINE_STRIP);
+        renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
     @Override
     public void fillRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight) {
         float x2 = x + width, y2 = y + height;
-        VertexDataBuf buffer = directRenderer.getBuffer();
 
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, x + arcWidth, y + arcHeight);
         quadCurveTo(buffer, x + arcWidth, y, x, y + arcHeight, x, y);
-        directRenderer.draw(DrawMode.TRIANGLE_FAN);
+        renderer.drawStreamed(DrawMode.TRIANGLE_FAN, buffer);
 
         fillRect(x, y + arcHeight, arcWidth, height - arcHeight * 2);
 
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, x + arcWidth, y2 - arcHeight);
         quadCurveTo(buffer, x, y2 - arcHeight, x + arcWidth, y2, x, y2);
-        directRenderer.draw(DrawMode.TRIANGLE_FAN);
+        renderer.drawStreamed(DrawMode.TRIANGLE_FAN, buffer);
 
         fillRect(x + arcWidth, y2 - arcHeight, width - arcWidth * 2, arcHeight);
 
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, x2 - arcWidth, y2 - arcHeight);
         quadCurveTo(buffer, x2 - arcWidth, y2, x2, y2 - arcHeight, x2, y2);
-        directRenderer.draw(DrawMode.TRIANGLE_FAN);
+        renderer.drawStreamed(DrawMode.TRIANGLE_FAN, buffer);
 
         fillRect(x2 - arcWidth, y + arcHeight, arcWidth, height - arcHeight * 2);
 
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, x2 - arcWidth, y + arcHeight);
         quadCurveTo(buffer, x2, y + arcHeight, x2 - arcWidth, y, x2, y);
-        directRenderer.draw(DrawMode.TRIANGLE_FAN);
+        renderer.drawStreamed(DrawMode.TRIANGLE_FAN, buffer);
 
         fillRect(x + arcWidth, y, width - arcWidth * 2, height - arcHeight);
     }
 
     @Override
     public void drawCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2) {
-        VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, startX, startY);
         curveTo(buffer, startX, startY, endX, endY, px1, py1, px2, py2);
-        directRenderer.draw(DrawMode.LINE_STRIP);
+        renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
     @Override
     public void drawQuadCurve(float startX, float startY, float endX, float endY, float px, float py) {
-        VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         quadCurveTo(buffer, startX, startY, endX, endY, px, py);
-        directRenderer.draw(DrawMode.LINE_STRIP);
+        renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
     @Override
     public void drawArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
-        VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, startX, startY);
         arcTo(buffer, startX, startY, endX, endY, radiusX, radiusY, xAxisRotation, largeArcFlag, sweepFlag);
-        directRenderer.draw(DrawMode.LINE_STRIP);
+        renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
     @Override
@@ -172,15 +176,16 @@ public final class GLGraphics implements Graphics {
 
     @Override
     public void drawText(TextMesh mesh, int beginIndex, int endIndex, float x, float y) {
-        renderer.startRenderText();
-        mesh.getTexture().bind();
-        VertexDataBuf buf = directRenderer.getBuffer();
-        buf.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
-        buf.setTranslation(x, y, 0);
-        mesh.put(buf, color, beginIndex, endIndex);
-        directRenderer.draw(DrawMode.TRIANGLES);
-        renderer.endRenderText();
-        renderer.bindWhiteTexture();
+        resource.setUniform("u_RenderText", true);
+        uniformTexture.set(mesh.getTexture());
+        resource.refresh();
+        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
+        buffer.setTranslation(x, y, 0);
+        mesh.put(buffer, color, beginIndex, endIndex);
+        renderer.drawStreamed(DrawMode.TRIANGLES, buffer);
+        resource.setUniform("u_RenderText", false);
+        uniformTexture.set(whiteTexture);
+        resource.refresh();
     }
 
     @Override
@@ -190,15 +195,17 @@ public final class GLGraphics implements Graphics {
 
     @Override
     public void drawTexture(Texture2D texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
-        VertexDataBuf buffer = directRenderer.getBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
         float x2 = x + width, y2 = y + height;
         buffer.pos(x, y, 0).rgba(1, 1, 1, 1).tex(minU, minV).endVertex();
         buffer.pos(x, y2, 0).rgba(1, 1, 1, 1).tex(minU, maxV).endVertex();
         buffer.pos(x2, y, 0).rgba(1, 1, 1, 1).tex(maxU, minV).endVertex();
         buffer.pos(x2, y2, 0).rgba(1, 1, 1, 1).tex(maxU, maxV).endVertex();
-        texture.bind();
-        directRenderer.draw(DrawMode.TRIANGLE_STRIP);
+        uniformTexture.set(texture);
+        resource.refresh();
+        renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
+        uniformTexture.set(whiteTexture);
+        resource.refresh();
     }
 
     @Override
@@ -263,10 +270,7 @@ public final class GLGraphics implements Graphics {
         Image image = background.getImage();
         if (image != null) {
             Texture2D texture = resourceFactory.getTexture(image);
-            if (texture == null) {
-                return;
-            }
-            texture.bind();
+            if (texture == null) return;
 
             if (background.isRepeat()) {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -277,7 +281,6 @@ public final class GLGraphics implements Graphics {
             }
 
             drawTexture(texture, x, y, x + width, y + height);
-            renderer.bindWhiteTexture();
         } else {
             setColor(background.getColor());
             fillRect(x, y, x + width, y + height);
@@ -293,7 +296,7 @@ public final class GLGraphics implements Graphics {
             Vector4fc parent = clipRect.peek();
             float newX = parent.x() + x, newY = parent.y() + y;
             float newZ = newX + width, newW = newY + height;
-            clipRect.push(new Vector4f(newX, newY, newZ, newW));
+            clipRect.push(new Vector4f(newX, newY, Math.min(newZ, parent.z()), Math.min(newW, parent.w())));
             updateClipRect();
         }
     }
@@ -311,36 +314,27 @@ public final class GLGraphics implements Graphics {
         } else {
             modelMatrix.push(modelMatrix.peek().mul(matrix, new Matrix4f()));
         }
-        renderer.setModelMatrix(modelMatrix.peek());
+        resource.setUniform("u_ModelMatrix", modelMatrix.peek());
     }
 
     @Override
     public void popModelMatrix() {
         modelMatrix.pop();
-        renderer.setModelMatrix(modelMatrix.peek());
+        resource.setUniform("u_ModelMatrix", modelMatrix.peek());
     }
 
     @Override
     public void enableGamma() {
-        renderer.setEnableGamma(true);
+        resource.setUniform("u_EnableGamma", true);
     }
 
     @Override
     public void disableGamma() {
-        renderer.setEnableGamma(false);
+        resource.setUniform("u_EnableGamma", false);
     }
 
     private void updateClipRect() {
-        clipRect.stream().reduce((parent, child) -> {
-            var newX = Math.max(child.x(), parent.x());
-            var newY = Math.max(child.y(), parent.y());
-            var newZ = Math.min(child.z(), parent.z());
-            var newW = Math.min(child.w(), parent.w());
-            return new Vector4f(newX, newY, newZ, newW);
-        }).ifPresent(renderer::setClipRect);
-//        if (!clipRect.isEmpty()) {
-//            guiRenderer.setClipRect(clipRect.peek());
-//        }
+        resource.setUniform("u_ClipRect", clipRect.peek());
     }
 
     private void putVertex(VertexDataBuf buffer, float x, float y) {
@@ -463,4 +457,5 @@ public final class GLGraphics implements Graphics {
             angle = -angle;
         return (float) angle;
     }
+
 }

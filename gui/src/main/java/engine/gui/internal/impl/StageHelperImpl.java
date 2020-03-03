@@ -3,29 +3,31 @@ package engine.gui.internal.impl;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
+import engine.graphics.graph.RenderGraph;
 import engine.graphics.management.GraphicsBackend;
 import engine.gui.Stage;
 import engine.gui.internal.StageHelper;
+import engine.gui.internal.impl.graphics.GUIRenderGraphHelper;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public final class StageHelperImpl extends StageHelper {
 
+    private final GraphicsBackend graphicsBackend;
     private final WindowHelper windowHelper;
 
     private final Map<Stage, StageInputHandler> stageInputHandlerMap = new HashMap<>();
-    private final GUIRenderHandler renderHandler;
+    private final Map<Stage, RenderGraph> stageRenderGraphMap = new HashMap<>();
 
     private Stage primaryStage;
     private Window primaryWindow;
 
-    public StageHelperImpl(GUIRenderHandler renderHandler) {
-        this.renderHandler = renderHandler;
-        GraphicsBackend renderManager = GraphicsEngine.getGraphicsBackend();
-        windowHelper = renderManager.getWindowHelper();
+    public StageHelperImpl() {
+        graphicsBackend = GraphicsEngine.getGraphicsBackend();
+        windowHelper = graphicsBackend.getWindowHelper();
         primaryStage = new Stage();
-        primaryWindow = renderManager.getPrimaryWindow();
+        primaryWindow = graphicsBackend.getPrimaryWindow();
         setPrimary(primaryStage, true);
     }
 
@@ -71,10 +73,12 @@ public final class StageHelperImpl extends StageHelper {
     }
 
     public void enableRender(Stage stage) {
-        renderHandler.add(stage);
+        RenderGraph renderGraph = graphicsBackend.loadRenderGraph(GUIRenderGraphHelper.createRenderGraph(stage));
+        renderGraph.bindWindow(getWindow(stage));
+        stageRenderGraphMap.put(stage, renderGraph);
     }
 
     public void disableRender(Stage stage) {
-        renderHandler.remove(stage);
+        graphicsBackend.removeRenderGraph(stageRenderGraphMap.get(stage));
     }
 }

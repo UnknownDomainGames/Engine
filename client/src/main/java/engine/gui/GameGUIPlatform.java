@@ -3,21 +3,18 @@ package engine.gui;
 import engine.Platform;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.display.Window;
-import engine.graphics.management.GraphicsBackend;
 import engine.graphics.texture.FrameBuffer;
 import engine.gui.internal.ClipboardHelper;
 import engine.gui.internal.GUIPlatform;
 import engine.gui.internal.SceneHelper;
 import engine.gui.internal.StageHelper;
-import engine.gui.internal.impl.GUIRenderHandler;
 import engine.gui.internal.impl.SceneHelperImpl;
 import engine.gui.internal.impl.StageHelperImpl;
 import engine.gui.internal.impl.glfw.GLFWClipboardHelper;
 
 public final class GameGUIPlatform extends GUIPlatform {
 
-    private final GUIRenderHandler renderHandler = new GUIRenderHandler();
-    private final StageHelperImpl stageHelper = new StageHelperImpl(renderHandler);
+    private final StageHelperImpl stageHelper = new StageHelperImpl();
     private final SceneHelper sceneHelper = new SceneHelperImpl();
     private final ClipboardHelper clipboardHelper = new GLFWClipboardHelper();
 
@@ -28,8 +25,6 @@ public final class GameGUIPlatform extends GUIPlatform {
 
     public GameGUIPlatform() {
         setInstance(this);
-        GraphicsBackend renderManager = GraphicsEngine.getGraphicsBackend();
-        renderManager.attachHandler(renderHandler);
         Stage.getStages().addChangeListener(change -> {
             if (change.getList().isEmpty()) Platform.getEngine().terminate();
         });
@@ -64,18 +59,18 @@ public final class GameGUIPlatform extends GUIPlatform {
     }
 
     public void render(Stage stage, FrameBuffer frameBuffer) {
-        Scene scene = stage.getScene();
-        if (scene == null) return;
-
-        Window window = StageHelper.getWindow(stage);
-        if (SceneHelper.getViewportWidth(scene) != window.getWidth() ||
-                SceneHelper.getViewportHeight(scene) != window.getHeight()) {
-            SceneHelper.setViewport(scene, window.getWidth(), window.getHeight(),
-                    window.getContentScaleX(), window.getContentScaleY());
-        }
-
-        scene.update();
-        renderHandler.getRenderer().render(scene, frameBuffer, false);
+//        Scene scene = stage.getScene();
+//        if (scene == null) return;
+//
+//        Window window = StageHelper.getWindow(stage);
+//        if (SceneHelper.getViewportWidth(scene) != window.getWidth() ||
+//                SceneHelper.getViewportHeight(scene) != window.getHeight()) {
+//            SceneHelper.setViewport(scene, window.getWidth(), window.getHeight(),
+//                    window.getContentScaleX(), window.getContentScaleY());
+//        }
+//
+//        scene.update();
+//        renderHandler.getRenderer().render(scene, frameBuffer, false);
     }
 
     @Override

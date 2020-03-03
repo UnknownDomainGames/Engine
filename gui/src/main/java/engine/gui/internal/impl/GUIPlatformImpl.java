@@ -1,7 +1,6 @@
 package engine.gui.internal.impl;
 
 import engine.graphics.GraphicsEngine;
-import engine.graphics.management.GraphicsBackend;
 import engine.graphics.util.FrameTicker;
 import engine.gui.Stage;
 import engine.gui.application.GUIApplication;
@@ -13,9 +12,7 @@ import engine.gui.internal.impl.glfw.GLFWClipboardHelper;
 
 public final class GUIPlatformImpl extends GUIPlatform {
 
-    private final GUIRenderHandler renderHandler = new GUIRenderHandler();
-
-    private final StageHelperImpl stageHelper = new StageHelperImpl(renderHandler);
+    private final StageHelperImpl stageHelper = new StageHelperImpl();
     private final SceneHelper sceneHelper = new SceneHelperImpl();
 
     private final ClipboardHelper clipboardHelper = new GLFWClipboardHelper();
@@ -26,8 +23,6 @@ public final class GUIPlatformImpl extends GUIPlatform {
         GraphicsEngine.start(new GraphicsEngine.Settings());
         GUIPlatformImpl platform = new GUIPlatformImpl();
         setInstance(platform);
-        GraphicsBackend renderManager = GraphicsEngine.getGraphicsBackend();
-        renderManager.attachHandler(platform.renderHandler);
         Stage.getStages().addChangeListener(change -> {
             if (change.getList().isEmpty()) platform.ticker.stop();
         });

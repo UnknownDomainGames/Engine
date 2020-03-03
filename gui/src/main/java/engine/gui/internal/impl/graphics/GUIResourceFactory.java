@@ -1,4 +1,4 @@
-package engine.gui.internal.impl.gl;
+package engine.gui.internal.impl.graphics;
 
 import engine.graphics.GraphicsEngine;
 import engine.graphics.image.ReadOnlyImage;
@@ -25,8 +25,7 @@ public final class GUIResourceFactory {
 
         Texture2D.Builder builder = resourceFactory.createTexture2DBuilder();
         if (image.isSmooth()) {
-            builder.magFilter(FilterMode.LINEAR);
-            builder.minFilter(FilterMode.LINEAR);
+            builder.magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR);
         }
         texture = builder.build(loadedImage);
         textures.put(image, texture);
