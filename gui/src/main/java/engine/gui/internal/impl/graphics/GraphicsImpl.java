@@ -184,16 +184,20 @@ public final class GraphicsImpl implements Graphics {
 
     @Override
     public void drawText(TextMesh mesh, int beginIndex, int endIndex, float x, float y) {
-        resource.setUniform("u_RenderText", true);
+        setRenderText(true);
         uniformTexture.set(mesh.getTexture());
         resource.refresh();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
         buffer.setTranslation(x, y, 0);
         mesh.put(buffer, color, beginIndex, endIndex);
         renderer.drawStreamed(DrawMode.TRIANGLES, buffer);
-        resource.setUniform("u_RenderText", false);
+        setRenderText(false);
         uniformTexture.set(whiteTexture);
         resource.refresh();
+    }
+
+    private void setRenderText(boolean renderText) {
+        resource.setUniform("u_RenderText", renderText);
     }
 
     @Override
@@ -299,20 +303,27 @@ public final class GraphicsImpl implements Graphics {
     public void pushClipRect(float x, float y, float width, float height) {
         if (clipRect.isEmpty()) {
             clipRect.push(new Vector4f(x, y, x + width, y + height));
-            updateClipRect();
         } else {
             Vector4fc parent = clipRect.peek();
             float newX = parent.x() + x, newY = parent.y() + y;
             float newZ = newX + width, newW = newY + height;
             clipRect.push(new Vector4f(newX, newY, Math.min(newZ, parent.z()), Math.min(newW, parent.w())));
-            updateClipRect();
         }
+        updateClipRect();
     }
 
     @Override
     public void popClipRect() {
         clipRect.pop();
         updateClipRect();
+    }
+
+    private void updateClipRect() {
+        Vector4fc peek = clipRect.peek();
+        resource.setUniform("u_ClipRect", peek);
+        float height = peek.w() - peek.y();
+        renderer.setScissor(Math.round(peek.x()), frameHeight - Math.round(peek.y() + height),
+                Math.round(peek.z() - peek.x()), Math.round(height));
     }
 
     @Override
@@ -322,12 +333,16 @@ public final class GraphicsImpl implements Graphics {
         } else {
             modelMatrix.push(modelMatrix.peek().mul(matrix, new Matrix4f()));
         }
-        resource.setUniform("u_ModelMatrix", modelMatrix.peek());
+        updateModelMatrix();
     }
 
     @Override
     public void popModelMatrix() {
         modelMatrix.pop();
+        updateModelMatrix();
+    }
+
+    private void updateModelMatrix() {
         resource.setUniform("u_ModelMatrix", modelMatrix.peek());
     }
 
@@ -339,14 +354,6 @@ public final class GraphicsImpl implements Graphics {
     @Override
     public void disableGamma() {
         resource.setUniform("u_EnableGamma", false);
-    }
-
-    private void updateClipRect() {
-        Vector4fc peek = clipRect.peek();
-        resource.setUniform("u_ClipRect", peek);
-        float height = peek.w() - peek.y();
-        renderer.setScissor(Math.round(peek.x()), frameHeight - Math.round(peek.y() + height),
-                Math.round(peek.z() - peek.x()), Math.round(height));
     }
 
     private void putVertex(VertexDataBuf buffer, float x, float y) {
