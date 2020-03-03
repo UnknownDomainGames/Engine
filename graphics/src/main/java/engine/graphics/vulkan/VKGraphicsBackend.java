@@ -10,7 +10,6 @@ import engine.graphics.graph.RenderGraph;
 import engine.graphics.graph.RenderGraphInfo;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.management.GraphicsBackendFactory;
-import engine.graphics.management.RenderHandler;
 import engine.graphics.management.ResourceFactory;
 import engine.graphics.util.Cleaner;
 import engine.graphics.util.GPUInfo;
@@ -51,7 +50,6 @@ public class VKGraphicsBackend implements GraphicsBackend {
     private GLFWVulkanWindow primaryWindow;
     private VKResourceFactory resourceFactory;
 
-    private final List<RenderHandler> handlers = new ArrayList<>();
     private final List<RunnableFuture<?>> pendingTasks = new ArrayList<>();
 
     public VKGraphicsBackend() {
@@ -100,13 +98,7 @@ public class VKGraphicsBackend implements GraphicsBackend {
 
     @Override
     public RenderGraph loadRenderGraph(RenderGraphInfo renderGraph) {
-        throw new UnsupportedOperationException(); // TODO:
-    }
-
-    @Override
-    public void attachHandler(RenderHandler handler) {
-        handler.init(this);
-        this.handlers.add(handler);
+        throw new UnsupportedOperationException(); // TODO: render graph
     }
 
     @Override
@@ -143,9 +135,7 @@ public class VKGraphicsBackend implements GraphicsBackend {
         int nextImage = swapchain.acquireNextImage(imageAcquireSemaphore, null);
         var cmdBuf = commandPool.createCommandBuffer();
         cmdBuf.beginCommandBuffer();
-        for (RenderHandler handler : handlers) {
-//            handler.render(tpf);
-        }
+        // TODO: render graph
         cmdBuf.endCommandBuffer();
         queue.submit(cmdBuf, List.of(imageAcquireSemaphore), List.of(PipelineStage.COLOR_ATTACHMENT_OUTPUT), List.of(renderCompleteSemaphore), null);
         queue.present(swapchain, nextImage, List.of(renderCompleteSemaphore));

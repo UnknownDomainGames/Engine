@@ -12,7 +12,6 @@ import engine.graphics.graph.RenderGraph;
 import engine.graphics.graph.RenderGraphInfo;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.management.GraphicsBackendFactory;
-import engine.graphics.management.RenderHandler;
 import engine.graphics.management.ResourceFactory;
 import engine.graphics.util.Cleaner;
 import engine.graphics.util.GPUInfo;
@@ -46,11 +45,7 @@ public final class GLGraphicsBackend implements GraphicsBackend {
     private GLResourceFactory resourceFactory;
 
     private final List<GLRenderGraph> renderGraphs = new ArrayList<>();
-    private final List<RenderHandler> handlers = new ArrayList<>();
     private final List<RunnableFuture<?>> pendingTasks = new ArrayList<>();
-
-    public GLGraphicsBackend() {
-    }
 
     @Override
     public String getName() {
@@ -105,12 +100,6 @@ public final class GLGraphicsBackend implements GraphicsBackend {
     }
 
     @Override
-    public void attachHandler(RenderHandler handler) {
-        handler.init(this);
-        this.handlers.add(handler);
-    }
-
-    @Override
     public Future<Void> submitTask(Runnable runnable) {
         FutureTask<Void> task = new FutureTask<>(runnable, null);
         submitTask(task);
@@ -140,7 +129,6 @@ public final class GLGraphicsBackend implements GraphicsBackend {
         Cleaner.clean();
         runPendingTasks();
         renderGraphs.forEach(renderGraph -> renderGraph.draw(tpf));
-        handlers.forEach(handler -> handler.render(tpf));
         GLFW.glfwPollEvents();
     }
 
@@ -216,9 +204,6 @@ public final class GLGraphicsBackend implements GraphicsBackend {
 
     @Override
     public void dispose() {
-        for (RenderHandler handler : handlers) {
-            handler.dispose();
-        }
         GLFWContext.terminate();
     }
 

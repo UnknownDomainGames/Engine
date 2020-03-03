@@ -29,8 +29,6 @@ public interface GraphicsBackend {
 
     RenderGraph loadRenderGraph(RenderGraphInfo renderGraph);
 
-    void attachHandler(RenderHandler handler);
-
     Future<Void> submitTask(Runnable runnable);
 
     <V> Future<V> submitTask(Callable<V> callable);
