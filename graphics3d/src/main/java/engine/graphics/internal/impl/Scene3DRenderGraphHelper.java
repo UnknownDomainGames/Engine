@@ -39,7 +39,7 @@ public final class Scene3DRenderGraphHelper {
                 {
                     DrawerInfo sceneDrawer = DrawerInfo.drawer();
                     sceneDrawer.setShader("opaque");
-                    sceneDrawer.setDrawDispatcher(new SceneOpaqueDrawDispatcher(viewport));
+                    sceneDrawer.setDrawDispatcher(new ViewportOpaqueDrawDispatcher(viewport));
                     opaquePass.setDrawers(sceneDrawer);
                 }
                 mainTask.setPasses(opaquePass);

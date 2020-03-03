@@ -8,10 +8,10 @@ import engine.graphics.queue.StandardRenderTypes;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.viewport.Viewport;
 
-public class SceneOpaqueDrawDispatcher implements DrawDispatcher {
+public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
     private final Viewport viewport;
 
-    public SceneOpaqueDrawDispatcher(Viewport viewport) {
+    public ViewportOpaqueDrawDispatcher(Viewport viewport) {
         this.viewport = viewport;
     }
 
