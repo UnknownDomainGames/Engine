@@ -1,7 +1,7 @@
 package engine.gui.image;
 
 import com.github.mouse0w0.observable.value.*;
-import engine.graphics.image.ImageHelper;
+import engine.graphics.image.ImageIO;
 import engine.graphics.image.ReadOnlyImage;
 
 import java.io.IOException;
@@ -47,7 +47,7 @@ public final class Image {
 
     private void loadImage() {
         try {
-            finishImage(ImageHelper.instance().loadImage(url));
+            finishImage(ImageIO.instance().loadImage(url));
         } catch (IOException e) {
             finishImage(e);
         }

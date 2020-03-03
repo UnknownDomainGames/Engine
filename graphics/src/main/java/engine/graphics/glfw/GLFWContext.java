@@ -20,7 +20,7 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 public final class GLFWContext {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("GLFW");
+    public static final Logger LOGGER = LoggerFactory.getLogger("Graphics");
 
     private static boolean initialized;
     private static boolean terminated;
