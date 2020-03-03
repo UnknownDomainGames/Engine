@@ -33,8 +33,9 @@ public final class StageDrawDispatcher implements DrawDispatcher {
 
         Window window = StageHelper.getWindow(stage);
         int width = frame.getWidth(), height = frame.getHeight();
-        if (frame.isResized()) {
-            SceneHelper.setViewport(scene, width, height,
+        if (SceneHelper.getViewportWidth(scene) != window.getWidth() ||
+                SceneHelper.getViewportHeight(scene) != window.getHeight()) {
+            SceneHelper.setViewport(scene, frame.getWidth(), frame.getHeight(),
                     window.getContentScaleX(), window.getContentScaleY());
         }
         scene.update();
