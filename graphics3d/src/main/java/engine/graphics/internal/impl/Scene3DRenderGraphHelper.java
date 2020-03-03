@@ -8,7 +8,7 @@ import engine.graphics.viewport.Viewport;
 import static engine.graphics.graph.ColorOutputInfo.colorOutput;
 import static engine.graphics.graph.DepthOutputInfo.depthOutput;
 
-public final class Scene3DRenderGraph {
+public final class Scene3DRenderGraphHelper {
 
     public static RenderGraphInfo createRenderGraph(Viewport viewport) {
         RenderGraphInfo renderGraph = RenderGraphInfo.renderGraph();
@@ -49,6 +49,6 @@ public final class Scene3DRenderGraph {
         return renderGraph;
     }
 
-    private Scene3DRenderGraph() {
+    private Scene3DRenderGraphHelper() {
     }
 }

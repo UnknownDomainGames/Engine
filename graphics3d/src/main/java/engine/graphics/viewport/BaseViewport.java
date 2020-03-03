@@ -7,7 +7,7 @@ import engine.graphics.display.Window;
 import engine.graphics.display.callback.WindowSizeCallback;
 import engine.graphics.graph.RenderGraph;
 import engine.graphics.internal.Platform3D;
-import engine.graphics.internal.impl.Scene3DRenderGraph;
+import engine.graphics.internal.impl.Scene3DRenderGraphHelper;
 import engine.graphics.texture.FrameBuffer;
 import engine.util.Color;
 import org.joml.FrustumIntersection;
@@ -201,7 +201,7 @@ public abstract class BaseViewport implements Viewport {
         this.showing = true;
         Platform3D.getInstance().getViewportHelper().show(this);
         this.renderGraph = GraphicsEngine.getGraphicsBackend()
-                .loadRenderGraph(Scene3DRenderGraph.createRenderGraph(this));
+                .loadRenderGraph(Scene3DRenderGraphHelper.createRenderGraph(this));
         this.renderGraph.bindWindow(window);
     }
 
