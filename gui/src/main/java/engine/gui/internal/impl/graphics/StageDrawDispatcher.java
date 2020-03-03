@@ -12,7 +12,6 @@ import engine.gui.Stage;
 import engine.gui.internal.SceneHelper;
 import engine.gui.internal.StageHelper;
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 
 public final class StageDrawDispatcher implements DrawDispatcher {
     private final Stage stage;
@@ -47,10 +46,9 @@ public final class StageDrawDispatcher implements DrawDispatcher {
         }
 
         float scaleX = scene.getScaleX(), scaleY = scene.getScaleY();
-        graphics.setRenderer(renderer);
+        graphics.setup(renderer, width, height, scaleX, scaleY);
         resource.setUniform("u_ProjMatrix", new Matrix4f().setOrtho2D(0, width, height, 0));
         graphics.pushModelMatrix(new Matrix4f().scale(scaleX, scaleY, 1));
-        resource.setUniform("u_ViewportSize", new Vector2f(width, height));
         graphics.pushClipRect(0, 0, width / scaleX, height / scaleY);
 
         root.getRenderer().render(root, graphics);

@@ -37,6 +37,10 @@ public final class GraphicsImpl implements Graphics {
     private final Texture2D whiteTexture;
 
     private Renderer renderer;
+    private int frameWidth;
+    private int frameHeight;
+    private float scaleX;
+    private float scaleY;
 
     private Color color;
 
@@ -47,8 +51,12 @@ public final class GraphicsImpl implements Graphics {
         setColor(Color.WHITE);
     }
 
-    public void setRenderer(Renderer renderer) {
+    public void setup(Renderer renderer, int frameWidth, int frameHeight, float scaleX, float scaleY) {
         this.renderer = renderer;
+        this.frameWidth = frameWidth;
+        this.frameHeight = frameHeight;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
     }
 
     @Override
@@ -334,7 +342,11 @@ public final class GraphicsImpl implements Graphics {
     }
 
     private void updateClipRect() {
-        resource.setUniform("u_ClipRect", clipRect.peek());
+        Vector4fc peek = clipRect.peek();
+        resource.setUniform("u_ClipRect", peek);
+        float height = peek.w() - peek.y();
+        renderer.setScissor(Math.round(peek.x()), frameHeight - Math.round(peek.y() + height),
+                Math.round(peek.z() - peek.x()), Math.round(height));
     }
 
     private void putVertex(VertexDataBuf buffer, float x, float y) {

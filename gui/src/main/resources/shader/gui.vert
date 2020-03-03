@@ -13,8 +13,8 @@ out vec2 v_TexCoord;
 
 void main()
 {
-    vec4 initPos = u_ProjMatrix * u_ModelMatrix * vec4(a_Position.x, a_Position.y, a_Position.z, 1.0);
-    vec4 clipRectCorr = u_ProjMatrix * u_ModelMatrix * vec4(u_ClipRect.x, u_ClipRect.y, 0.0, 0.0);
+    vec4 initPos = u_ProjMatrix * u_ModelMatrix * vec4(a_Position.xyz, 1.0);
+    vec4 clipRectCorr = u_ProjMatrix * u_ModelMatrix * vec4(u_ClipRect.xy, 0.0, 0.0);
     gl_Position = vec4(initPos.x + clipRectCorr.x, initPos.y + clipRectCorr.y, a_Position.z, 1.0);
     v_Color = a_Color;
     v_TexCoord = a_TexCoord;
