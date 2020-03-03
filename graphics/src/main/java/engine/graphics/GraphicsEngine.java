@@ -1,6 +1,6 @@
 package engine.graphics;
 
-import engine.graphics.lwjgl.STBImageHelper;
+import engine.graphics.image.ImageLoader;
 import engine.graphics.lwjgl.font.WindowsFontHelper;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.management.GraphicsBackendFactory;
@@ -31,8 +31,7 @@ public final class GraphicsEngine {
             throw new IllegalArgumentException("Graphics engine has been started.");
         }
         GraphicsEngine.settings = settings;
-        // TODO: create image helper by factory
-        STBImageHelper.init();
+        ImageLoader.initialize("stb");
         graphicsBackend = ServiceLoader.load(GraphicsBackendFactory.class)
                 .stream()
                 .filter(provider -> provider.get().getName().equals(settings.backend))
@@ -61,6 +60,7 @@ public final class GraphicsEngine {
     public static class Settings {
         private boolean debug = DEBUG;
         private String backend = "opengl";
+        private String imageio = "stb";
 
         public Settings debug(boolean debug) {
             this.debug = debug;
@@ -69,6 +69,11 @@ public final class GraphicsEngine {
 
         public Settings backend(String backend) {
             this.backend = backend;
+            return this;
+        }
+
+        public Settings imageio(String imageio) {
+            this.imageio = imageio;
             return this;
         }
     }

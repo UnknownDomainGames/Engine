@@ -1,6 +1,6 @@
 package engine.graphics.gl.texture;
 
-import engine.graphics.image.ImageHelper;
+import engine.graphics.image.ImageLoader;
 import engine.graphics.image.ReadOnlyImage;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture2D;
@@ -27,7 +27,7 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
     private boolean mipmap;
 
     public static GLTexture2D of(ByteBuffer fileBuffer) throws IOException {
-        ReadOnlyImage image = ImageHelper.instance().loadImage(fileBuffer);
+        ReadOnlyImage image = ImageLoader.instance().loadImage(fileBuffer);
         return of(image.getPixelBuffer(), image.getWidth(), image.getHeight());
     }
 

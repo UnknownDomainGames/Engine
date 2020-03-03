@@ -1,7 +1,7 @@
 package engine.graphics.lwjgl;
 
 import engine.graphics.image.BufferedImage;
-import engine.graphics.image.ImageHelper;
+import engine.graphics.image.ImageLoader;
 import engine.graphics.image.ReadOnlyImage;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.stb.STBImage;
@@ -17,11 +17,7 @@ import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class STBImageHelper implements ImageHelper {
-
-    public static void init() {
-        Internal.setInstance(new STBImageHelper());
-    }
+public final class STBImageLoader extends ImageLoader {
 
     @Override
     public ReadOnlyImage loadImage(File file) throws IOException {
@@ -170,6 +166,19 @@ public final class STBImageHelper implements ImageHelper {
         @Override
         public int getHeight() {
             return height;
+        }
+    }
+
+    public static final class Factory implements ImageLoader.Factory {
+
+        @Override
+        public String getName() {
+            return "stb";
+        }
+
+        @Override
+        public ImageLoader create() {
+            return new STBImageLoader();
         }
     }
 }

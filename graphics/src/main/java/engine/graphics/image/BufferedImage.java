@@ -19,15 +19,15 @@ public class BufferedImage implements WritableImage {
     private final long address;
 
     public static BufferedImage load(String url) throws IOException {
-        return ImageHelper.instance().loadWritableImage(url);
+        return ImageLoader.instance().loadWritableImage(url);
     }
 
     public static BufferedImage load(InputStream input) throws IOException {
-        return ImageHelper.instance().loadWritableImage(input);
+        return ImageLoader.instance().loadWritableImage(input);
     }
 
     public static BufferedImage load(ByteBuffer bytes) throws IOException {
-        return ImageHelper.instance().loadWritableImage(bytes);
+        return ImageLoader.instance().loadWritableImage(bytes);
     }
 
     public static BufferedImage wrap(ByteBuffer pixelBuffer, int width, int height) {
