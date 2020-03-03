@@ -63,7 +63,6 @@ public abstract class Application3D {
         mainViewPort = new PerspectiveViewport();
         mainScene = new Scene3D();
         mainViewPort.setScene(mainScene);
-        mainViewPort.setClearMask(true, true, true);
         mainViewPort.show(manager.getPrimaryWindow());
         onInitialized();
         ticker.run();

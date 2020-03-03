@@ -104,7 +104,6 @@ public final class EngineRenderManager implements RenderManager {
         scene = new Scene3D();
         viewport = new PerspectiveViewport();
         viewport.setScene(scene);
-        viewport.setClearMask(true, true, true);
         viewport.setSize(window.getWidth(), window.getHeight());
         frameBuffer = GLFrameBuffer.getDefaultFrameBuffer();
         viewport.show(frameBuffer);

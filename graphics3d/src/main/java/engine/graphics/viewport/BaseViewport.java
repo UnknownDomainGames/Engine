@@ -9,7 +9,6 @@ import engine.graphics.graph.RenderGraph;
 import engine.graphics.internal.Platform3D;
 import engine.graphics.internal.impl.Scene3DRenderGraphHelper;
 import engine.graphics.texture.FrameBuffer;
-import engine.util.Color;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
@@ -22,11 +21,6 @@ public abstract class BaseViewport implements Viewport {
     private int height;
 
     private Scene3D scene;
-
-    private Color clearColor = new Color(0f, 0f, 0f, 1f);
-    private boolean isClearColor;
-    private boolean isClearDepth;
-    private boolean isClearStencil;
 
     private Camera camera = new Camera();
 
@@ -69,53 +63,6 @@ public abstract class BaseViewport implements Viewport {
     @Override
     public void setScene(Scene3D scene) {
         this.scene = scene;
-    }
-
-    @Override
-    public Color getClearColor() {
-        return clearColor;
-    }
-
-    @Override
-    public void setClearColor(Color clearColor) {
-        this.clearColor = clearColor;
-    }
-
-    @Override
-    public boolean isClearColor() {
-        return isClearColor;
-    }
-
-    @Override
-    public void setClearColor(boolean clearColor) {
-        isClearColor = clearColor;
-    }
-
-    @Override
-    public boolean isClearDepth() {
-        return isClearDepth;
-    }
-
-    @Override
-    public void setClearDepth(boolean clearDepth) {
-        isClearDepth = clearDepth;
-    }
-
-    @Override
-    public boolean isClearStencil() {
-        return isClearStencil;
-    }
-
-    @Override
-    public void setClearStencil(boolean clearStencil) {
-        isClearStencil = clearStencil;
-    }
-
-    @Override
-    public void setClearMask(boolean color, boolean depth, boolean stencil) {
-        setClearColor(color);
-        setClearDepth(depth);
-        setClearStencil(stencil);
     }
 
     protected abstract void onFrameSizeChanged();
