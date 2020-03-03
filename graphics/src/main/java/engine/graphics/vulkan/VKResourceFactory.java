@@ -1,6 +1,6 @@
 package engine.graphics.vulkan;
 
-import engine.graphics.management.ResourceFactory;
+import engine.graphics.backend.ResourceFactory;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.mesh.SingleBufferMesh;
 import engine.graphics.texture.Sampler;

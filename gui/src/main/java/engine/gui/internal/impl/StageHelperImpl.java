@@ -1,10 +1,10 @@
 package engine.gui.internal.impl;
 
 import engine.graphics.GraphicsEngine;
+import engine.graphics.backend.GraphicsBackend;
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
 import engine.graphics.graph.RenderGraph;
-import engine.graphics.management.GraphicsBackend;
 import engine.gui.Stage;
 import engine.gui.internal.StageHelper;
 import engine.gui.internal.impl.graphics.GUIRenderGraphHelper;

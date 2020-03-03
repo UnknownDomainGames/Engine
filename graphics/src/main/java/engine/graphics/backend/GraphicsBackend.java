@@ -1,4 +1,4 @@
-package engine.graphics.management;
+package engine.graphics.backend;
 
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;

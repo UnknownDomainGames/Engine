@@ -1,6 +1,6 @@
 package engine.graphics.queue;
 
-import engine.graphics.management.GraphicsBackend;
+import engine.graphics.backend.GraphicsBackend;
 
 public interface RenderTypeHandler {
 

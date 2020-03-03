@@ -1,8 +1,8 @@
 package engine.gui.internal.impl.graphics;
 
 import engine.graphics.GraphicsEngine;
+import engine.graphics.backend.ResourceFactory;
 import engine.graphics.image.ReadOnlyImage;
-import engine.graphics.management.ResourceFactory;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture2D;
 import engine.gui.image.Image;

@@ -1,10 +1,10 @@
 package engine.graphics.gl;
 
+import engine.graphics.backend.ResourceFactory;
 import engine.graphics.gl.mesh.GLMesh;
 import engine.graphics.gl.mesh.GLSingleBufferMesh;
 import engine.graphics.gl.texture.GLSampler;
 import engine.graphics.gl.texture.GLTexture2D;
-import engine.graphics.management.ResourceFactory;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.mesh.SingleBufferMesh;
 import engine.graphics.texture.Sampler;

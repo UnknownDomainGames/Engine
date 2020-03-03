@@ -1,4 +1,4 @@
-package engine.graphics.management;
+package engine.graphics.backend;
 
 import engine.graphics.mesh.Mesh;
 import engine.graphics.mesh.SingleBufferMesh;

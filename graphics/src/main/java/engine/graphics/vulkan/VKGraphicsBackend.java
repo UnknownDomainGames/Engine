@@ -2,15 +2,15 @@ package engine.graphics.vulkan;
 
 
 import engine.graphics.GraphicsEngine;
+import engine.graphics.backend.GraphicsBackend;
+import engine.graphics.backend.GraphicsBackendFactory;
+import engine.graphics.backend.ResourceFactory;
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
 import engine.graphics.glfw.GLFWContext;
 import engine.graphics.glfw.GLFWVulkanWindow;
 import engine.graphics.graph.RenderGraph;
 import engine.graphics.graph.RenderGraphInfo;
-import engine.graphics.management.GraphicsBackend;
-import engine.graphics.management.GraphicsBackendFactory;
-import engine.graphics.management.ResourceFactory;
 import engine.graphics.util.Cleaner;
 import engine.graphics.util.GPUInfo;
 import engine.graphics.vulkan.device.LogicalDevice;

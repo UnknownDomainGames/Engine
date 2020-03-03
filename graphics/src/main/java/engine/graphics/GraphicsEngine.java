@@ -1,9 +1,9 @@
 package engine.graphics;
 
+import engine.graphics.backend.GraphicsBackend;
+import engine.graphics.backend.GraphicsBackendFactory;
 import engine.graphics.image.ImageLoader;
 import engine.graphics.lwjgl.font.WindowsFontHelper;
-import engine.graphics.management.GraphicsBackend;
-import engine.graphics.management.GraphicsBackendFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

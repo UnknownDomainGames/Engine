@@ -2,8 +2,8 @@ package engine.graphics.application;
 
 import engine.graphics.GraphicsEngine;
 import engine.graphics.Scene3D;
+import engine.graphics.backend.GraphicsBackend;
 import engine.graphics.internal.impl.Platform3DImpl;
-import engine.graphics.management.GraphicsBackend;
 import engine.graphics.util.FrameTicker;
 import engine.graphics.viewport.PerspectiveViewport;
 
