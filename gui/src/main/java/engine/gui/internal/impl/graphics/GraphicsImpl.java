@@ -57,6 +57,11 @@ public final class GraphicsImpl implements Graphics {
         this.frameHeight = frameHeight;
         this.scaleX = scaleX;
         this.scaleY = scaleY;
+        resource.setUniform("u_ProjMatrix", new Matrix4f().setOrtho2D(0, frameWidth, frameHeight, 0));
+        pushModelMatrix(new Matrix4f().scale(scaleX, scaleY, 1));
+        pushClipRect(0, 0, frameWidth / scaleX, frameHeight / scaleY);
+        this.uniformTexture.set(whiteTexture);
+        this.resource.refresh();
     }
 
     @Override
