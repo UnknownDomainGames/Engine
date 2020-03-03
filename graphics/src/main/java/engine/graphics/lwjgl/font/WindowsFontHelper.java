@@ -100,14 +100,18 @@ public final class WindowsFontHelper implements FontHelper {
     private void initLocalFonts() {
         List<CompletableFuture<Void>> tasks = new ArrayList<>();
         List<NativeTTFontInfo> loadedFonts = Collections.synchronizedList(new ArrayList<>());
-        for (var fontFile : findLocalTTFonts()) {
+        List<Path> localTTFonts = findLocalTTFonts();
+        if (localTTFonts.size() == 0) {
+            LOGGER.warn("Not found any local font.");
+            return;
+        }
+
+        for (var fontFile : localTTFonts) {
             tasks.add(CompletableFuture.runAsync(() -> {
                 try {
                     Collections.addAll(loadedFonts, loadFontInfo(fontFile, true, false));
                 } catch (Exception e) {
-                    if (DEBUG) {
-                        LOGGER.debug("Cannot load local font. Path: " + fontFile, e);
-                    }
+                    if (DEBUG) LOGGER.debug("Cannot load local font. Path: " + fontFile, e);
                 }
             }));
         }
@@ -115,7 +119,7 @@ public final class WindowsFontHelper implements FontHelper {
                 .thenRun(() -> loadedFonts.forEach(info -> {
                     availableFonts.add(info.getFont());
                     loadedFontInfos.put(info.getFamily(), info.getStyle(), info);
-                }));
+                })).join();
     }
 
     private List<Path> findLocalTTFonts() {
@@ -140,7 +144,7 @@ public final class WindowsFontHelper implements FontHelper {
             }
             return fonts;
         } catch (IOException e) {
-            LOGGER.warn("Cannot collect local font", e);
+            LOGGER.warn("Cannot collect local font.", e);
             return List.of();
         }
     }
