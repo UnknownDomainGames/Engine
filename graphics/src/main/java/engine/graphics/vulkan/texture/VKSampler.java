@@ -130,12 +130,6 @@ public class VKSampler implements Sampler {
     }
 
     @Override
-    public void bind(int unit) {
-        // TODO:
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Sampler setMagFilter(FilterMode filterMode) {
         return this;
     }

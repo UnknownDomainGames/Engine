@@ -14,7 +14,6 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.*;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_FUNC;
 import static org.lwjgl.opengl.GL14.GL_TEXTURE_COMPARE_MODE;
-import static org.lwjgl.opengl.GL33.glBindSampler;
 import static org.lwjgl.opengl.GL33.glGenSamplers;
 
 public final class GLSampler implements Sampler {
@@ -36,11 +35,6 @@ public final class GLSampler implements Sampler {
     @Override
     public int getId() {
         return id;
-    }
-
-    @Override
-    public void bind(int unit) {
-        glBindSampler(unit, id);
     }
 
     @Override
