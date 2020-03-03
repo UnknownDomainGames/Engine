@@ -9,6 +9,6 @@ in vec3 v_Normal;
 out vec4 fragColor;
 
 void main() {
-    fragColor = v_Color;
-    //    fragColor = v_Color * texture(u_Texture, v_TexCoord);
+    //    fragColor = v_Color;
+    fragColor = v_Color * texture(u_Texture, v_TexCoord);
 }

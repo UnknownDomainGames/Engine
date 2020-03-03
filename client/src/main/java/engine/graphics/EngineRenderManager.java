@@ -6,22 +6,22 @@ import engine.client.asset.provider.TextureAssetProvider;
 import engine.client.event.rendering.RenderEvent;
 import engine.client.hud.HUDManager;
 import engine.graphics.display.Window;
-import engine.graphics.gl.GLGraphicsBackend;
-import engine.graphics.gl.texture.GLFrameBuffer;
-import engine.graphics.internal.impl.Platform3DImpl;
+import engine.graphics.graph.*;
+import engine.graphics.internal.impl.ViewportOpaqueDrawDispatcher;
 import engine.graphics.management.GraphicsBackend;
 import engine.graphics.shape.SkyBox;
-import engine.graphics.texture.FrameBuffer;
 import engine.graphics.texture.Texture2D;
+import engine.graphics.texture.TextureFormat;
+import engine.graphics.util.BlendMode;
+import engine.graphics.util.CullMode;
 import engine.graphics.viewport.PerspectiveViewport;
 import engine.graphics.voxel.VoxelRenderHelper;
 import engine.graphics.voxel.shape.SelectedBlock;
-import engine.graphics.vulkan.VKGraphicsBackend;
-import engine.gui.EngineGUIManager;
-import engine.gui.EngineHUDManager;
-import engine.gui.GUIManager;
-import engine.gui.GameGUIPlatform;
+import engine.gui.*;
 import engine.math.BlockPos;
+
+import static engine.graphics.graph.ColorOutputInfo.colorOutput;
+import static engine.graphics.graph.DepthOutputInfo.depthOutput;
 
 public final class EngineRenderManager implements RenderManager {
 
@@ -31,9 +31,7 @@ public final class EngineRenderManager implements RenderManager {
     private Window window;
     private Scene3D scene;
     private PerspectiveViewport viewport;
-    private FrameBuffer frameBuffer;
 
-    //    private GameRenderer gameRenderer;
     private EngineGUIManager guiManager;
     private EngineHUDManager hudManager;
     private GameGUIPlatform gameGUIPlatform;
@@ -94,19 +92,10 @@ public final class EngineRenderManager implements RenderManager {
                 engine.getSettings().getDisplaySettings().getResolutionHeight(),
                 engine.getSettings().getDisplaySettings().getFrameRate());
 
-        if(manager instanceof GLGraphicsBackend) {
-            Platform3DImpl.launchEmbedded();
-        }
-        else if(manager instanceof VKGraphicsBackend){
-//            VKPlatform3D.launchEmbedded();
-        }
-
         scene = new Scene3D();
         viewport = new PerspectiveViewport();
         viewport.setScene(scene);
         viewport.setSize(window.getWidth(), window.getHeight());
-        frameBuffer = GLFrameBuffer.getDefaultFrameBuffer();
-        viewport.show(frameBuffer);
 
         initTextureAssetProvider();
         VoxelRenderHelper.initialize(this);
@@ -115,6 +104,8 @@ public final class EngineRenderManager implements RenderManager {
         hudManager = new EngineHUDManager(gameGUIPlatform.getHUDStage());
         guiManager = new EngineGUIManager(window, gameGUIPlatform.getGUIStage(), hudManager);
 
+        RenderGraph renderGraph = GraphicsEngine.getGraphicsBackend().loadRenderGraph(createRenderGraph());
+        renderGraph.bindWindow(window);
         window.show();
     }
 
@@ -151,16 +142,74 @@ public final class EngineRenderManager implements RenderManager {
         if (window.isResized()) {
             viewport.setSize(window.getWidth(), window.getHeight());
         }
+
         if (engine.isPlaying()) {
             engine.getCurrentGame().getClientPlayer().getEntityController().updateCamera(viewport.getCamera(), tpf);
         }
+
         GraphicsEngine.doRender(tpf);
-        gameGUIPlatform.render(gameGUIPlatform.getGUIStage(), frameBuffer);
-        gameGUIPlatform.render(gameGUIPlatform.getHUDStage(), frameBuffer);
-        window.swapBuffers();
         updateFPS();
 
         engine.getEventBus().post(new RenderEvent.Post());
+    }
+
+    private RenderGraphInfo createRenderGraph() {
+        RenderGraphInfo renderGraph = RenderGraphInfo.renderGraph();
+        renderGraph.setMainTask("main");
+        {
+            RenderTaskInfo mainTask = RenderTaskInfo.renderTask();
+            mainTask.setName("main");
+            mainTask.setFinalPass("gui");
+            {
+                RenderBufferInfo colorBuffer = RenderBufferInfo.renderBuffer();
+                colorBuffer.setName("color");
+                colorBuffer.setFormat(TextureFormat.RGB8);
+                colorBuffer.setRelativeSize(1, 1);
+
+                RenderBufferInfo depthBuffer = RenderBufferInfo.renderBuffer();
+                depthBuffer.setName("depth");
+                depthBuffer.setFormat(TextureFormat.DEPTH24);
+                depthBuffer.setRelativeSize(1, 1);
+
+                mainTask.setRenderBuffers(colorBuffer, depthBuffer);
+            }
+            {
+                RenderPassInfo opaquePass = RenderPassInfo.renderPass();
+                opaquePass.setName("opaque");
+                opaquePass.setCullMode(CullMode.CULL_BACK);
+                opaquePass.setColorOutputs(colorOutput()
+                        .setClear(true)
+                        .setColorBuffer("color"));
+                opaquePass.setDepthOutput(depthOutput()
+                        .setClear(true)
+                        .setDepthBuffer("depth"));
+                {
+                    DrawerInfo sceneDrawer = DrawerInfo.drawer();
+                    sceneDrawer.setShader("opaque");
+                    sceneDrawer.setDrawDispatcher(new ViewportOpaqueDrawDispatcher(viewport));
+                    opaquePass.setDrawers(sceneDrawer);
+                }
+
+                RenderPassInfo guiPass = RenderPassInfo.renderPass();
+                guiPass.setName("gui");
+                guiPass.dependsOn("opaque");
+                guiPass.setCullMode(CullMode.CULL_BACK);
+                guiPass.setColorOutputs(colorOutput()
+                        .setColorBuffer("color")
+                        .setBlendMode(BlendMode.MIX));
+                {
+                    DrawerInfo sceneDrawer = DrawerInfo.drawer();
+                    sceneDrawer.setShader("gui");
+                    sceneDrawer.setDrawDispatcher(new GameGUIDrawDispatcher(gameGUIPlatform.getGUIStage(),
+                            gameGUIPlatform.getHUDStage()));
+                    guiPass.setDrawers(sceneDrawer);
+                }
+
+                mainTask.setPasses(opaquePass, guiPass);
+            }
+            renderGraph.setTasks(mainTask);
+        }
+        return renderGraph;
     }
 
     private long lastUpdateFps = System.currentTimeMillis();

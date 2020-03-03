@@ -3,7 +3,6 @@ package engine.gui;
 import engine.Platform;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.display.Window;
-import engine.graphics.texture.FrameBuffer;
 import engine.gui.internal.ClipboardHelper;
 import engine.gui.internal.GUIPlatform;
 import engine.gui.internal.SceneHelper;
@@ -56,21 +55,6 @@ public final class GameGUIPlatform extends GUIPlatform {
 
     public Stage getHUDStage() {
         return hudStage;
-    }
-
-    public void render(Stage stage, FrameBuffer frameBuffer) {
-//        Scene scene = stage.getScene();
-//        if (scene == null) return;
-//
-//        Window window = StageHelper.getWindow(stage);
-//        if (SceneHelper.getViewportWidth(scene) != window.getWidth() ||
-//                SceneHelper.getViewportHeight(scene) != window.getHeight()) {
-//            SceneHelper.setViewport(scene, window.getWidth(), window.getHeight(),
-//                    window.getContentScaleX(), window.getContentScaleY());
-//        }
-//
-//        scene.update();
-//        renderHandler.getRenderer().render(scene, frameBuffer, false);
     }
 
     @Override
