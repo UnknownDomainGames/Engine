@@ -16,6 +16,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL40;
 
+import java.util.List;
+
 public final class GLRenderPassFB implements FrameBuffer {
 
     private static final String BACK_BUFFER = "back";
@@ -32,9 +34,26 @@ public final class GLRenderPassFB implements FrameBuffer {
     private int height;
 
     public GLRenderPassFB(RenderPassInfo info, GLRenderTask task) {
-        this.id = GL30.glGenFramebuffers();
-        this.disposable = GLCleaner.registerFrameBuffer(this, id);
+        if (isBackBuffer(info)) {
+            this.id = 0;
+        } else {
+            this.id = GL30.glGenFramebuffers();
+            this.disposable = GLCleaner.registerFrameBuffer(this, id);
+        }
+        initFrameBuffer(info, task);
+    }
 
+    private boolean isBackBuffer(RenderPassInfo info) {
+        List<ColorOutputInfo> colorOutputs = info.getColorOutputs();
+        if (colorOutputs.size() != 1) return false;
+        if (colorOutputs.get(0).getColorBuffer() != null) return false;
+
+        DepthOutputInfo depthOutput = info.getDepthOutput();
+        if (depthOutput != null && depthOutput.getDepthBuffer() != null) return false;
+        return true;
+    }
+
+    private void initFrameBuffer(RenderPassInfo info, GLRenderTask task) {
         var colorOutputs = info.getColorOutputs();
         this.colorOutputs = new ColorOutput[colorOutputs.size()];
         for (int i = 0; i < colorOutputs.size(); i++) {

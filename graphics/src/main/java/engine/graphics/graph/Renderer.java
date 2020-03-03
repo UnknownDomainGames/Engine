@@ -1,8 +1,14 @@
 package engine.graphics.graph;
 
+import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
+import org.joml.Vector4ic;
 
 public interface Renderer {
 
-    void drawStreamed(VertexDataBuf buf);
+    void setScissor(Vector4ic scissor);
+
+    void drawStreamed(DrawMode drawMode, VertexDataBuf buf);
+
+    void drawStreamed(DrawMode drawMode, VertexDataBuf buf, int first, int count);
 }

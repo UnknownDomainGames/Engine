@@ -4,6 +4,7 @@ import engine.graphics.gl.mesh.GLSingleBufferMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 
+@Deprecated
 public final class GLStreamedRenderer {
 
     private static final GLStreamedRenderer INSTANCE = new GLStreamedRenderer(0x100000);

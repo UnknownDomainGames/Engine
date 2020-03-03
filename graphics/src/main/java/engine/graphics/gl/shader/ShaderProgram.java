@@ -1,7 +1,6 @@
 package engine.graphics.gl.shader;
 
 import engine.graphics.gl.util.GLCleaner;
-import engine.graphics.shader.ShaderResource;
 import engine.graphics.util.Cleaner;
 import org.joml.*;
 import org.slf4j.Logger;
@@ -10,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL20.*;
 
-public class ShaderProgram implements ShaderResource {
+public class ShaderProgram {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShaderProgram.class);
 
@@ -42,6 +41,10 @@ public class ShaderProgram implements ShaderResource {
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
     public void use() {
         glUseProgram(id);
     }
@@ -64,48 +67,47 @@ public class ShaderProgram implements ShaderResource {
         return glGetUniformLocation(id, name);
     }
 
-    @Override
-    public void setUniform(String location, int value) {
-        Uniforms.setUniform(getUniformLocation(location), value);
+    public void setUniform(String name, int value) {
+        Uniforms.setUniform(getUniformLocation(name), value);
     }
 
-    @Override
-    public void setUniform(String location, float value) {
-        Uniforms.setUniform(getUniformLocation(location), value);
+    public void setUniform(String name, float value) {
+        Uniforms.setUniform(getUniformLocation(name), value);
     }
 
-    @Override
-    public void setUniform(String location, boolean value) {
-        Uniforms.setUniform(getUniformLocation(location), value);
+    public void setUniform(String name, boolean value) {
+        Uniforms.setUniform(getUniformLocation(name), value);
     }
 
-    @Override
-    public void setUniform(String location, Vector2fc value) {
-        Uniforms.setUniform(getUniformLocation(location), value);
+    public void setUniform(String name, Vector2fc value) {
+        Uniforms.setUniform(getUniformLocation(name), value);
     }
 
-    @Override
-    public void setUniform(String location, Vector3fc value) {
-        Uniforms.setUniform(getUniformLocation(location), value);
+    public void setUniform(String name, Vector3fc value) {
+        Uniforms.setUniform(getUniformLocation(name), value);
     }
 
-    @Override
-    public void setUniform(String location, Vector4fc value) {
-        Uniforms.setUniform(getUniformLocation(location), value);
+    public void setUniform(String name, Vector4fc value) {
+        Uniforms.setUniform(getUniformLocation(name), value);
     }
 
-    @Override
-    public void setUniform(String location, Matrix3fc value) {
-        Uniforms.setUniform(getUniformLocation(location), value);
+    public void setUniform(String name, Matrix3fc value) {
+        Uniforms.setUniform(getUniformLocation(name), value);
     }
 
-    @Override
-    public void setUniform(String location, Matrix4fc value) {
-        Uniforms.setUniform(getUniformLocation(location), value);
+    public void setUniform(String name, Matrix3x2fc value) {
+        Uniforms.setUniform(getUniformLocation(name), value);
     }
 
-    @Override
-    public void setUniform(String location, Matrix4fc[] values) {
-        Uniforms.setUniform(getUniformLocation(location), values);
+    public void setUniform(String name, Matrix4fc value) {
+        Uniforms.setUniform(getUniformLocation(name), value);
+    }
+
+    public void setUniform(String name, Matrix4x3fc value) {
+        Uniforms.setUniform(getUniformLocation(name), value);
+    }
+
+    public void setUniform(String name, Matrix4fc[] values) {
+        Uniforms.setUniform(getUniformLocation(name), values);
     }
 }

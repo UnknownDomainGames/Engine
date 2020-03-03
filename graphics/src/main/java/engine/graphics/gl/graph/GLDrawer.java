@@ -11,13 +11,16 @@ public final class GLDrawer {
     private final GLRenderPass renderPass;
 
     private final ShaderProgram shader;
+    private final GLShaderResource shaderResource;
     private final DrawDispatcher drawDispatcher;
 
     public GLDrawer(DrawerInfo info, GLRenderPass renderPass) {
         this.info = info;
         this.renderPass = renderPass;
         this.shader = ShaderManager.load(info.getShader());
+        this.shaderResource = new GLShaderResource(shader);
         this.drawDispatcher = info.getDrawDispatcher();
+        this.drawDispatcher.init(shaderResource);
     }
 
     public DrawerInfo getInfo() {
@@ -30,7 +33,7 @@ public final class GLDrawer {
 
     public void draw(Frame frame) {
         shader.use();
-        drawDispatcher.draw(frame, shader);
+        drawDispatcher.draw(frame, shaderResource, GLRenderer.getInstance());
     }
 
     public void dispose() {

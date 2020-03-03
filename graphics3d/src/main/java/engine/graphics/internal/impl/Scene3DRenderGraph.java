@@ -7,7 +7,6 @@ import engine.graphics.viewport.Viewport;
 
 import static engine.graphics.graph.ColorOutputInfo.colorOutput;
 import static engine.graphics.graph.DepthOutputInfo.depthOutput;
-import static engine.graphics.graph.RenderBufferInfo.renderBuffer;
 
 public final class Scene3DRenderGraph {
 
@@ -18,7 +17,6 @@ public final class Scene3DRenderGraph {
             RenderTaskInfo mainTask = RenderTaskInfo.renderTask();
             mainTask.setName("main");
             mainTask.setFinalPass("opaque");
-            mainTask.setRenderBuffers(renderBuffer());
             {
                 RenderBufferInfo colorBuffer = RenderBufferInfo.renderBuffer();
                 colorBuffer.setName("color");

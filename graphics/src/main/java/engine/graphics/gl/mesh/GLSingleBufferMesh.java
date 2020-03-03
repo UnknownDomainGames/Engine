@@ -108,11 +108,16 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
     @Override
     public void draw() {
         bind();
-        drawArrays();
+        drawArrays(0, vertexCount);
     }
 
-    public void drawArrays() {
-        GL11.glDrawArrays(drawMode.gl, 0, vertexCount);
+    public void draw(int first, int count) {
+        bind();
+        drawArrays(first, count);
+    }
+
+    public void drawArrays(int first, int count) {
+        GL11.glDrawArrays(drawMode.gl, first, count);
     }
 
     @Override
