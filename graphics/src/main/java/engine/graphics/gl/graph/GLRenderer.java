@@ -4,6 +4,7 @@ import engine.graphics.gl.mesh.GLSingleBufferMesh;
 import engine.graphics.graph.Renderer;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
+import org.joml.Vector4i;
 import org.joml.Vector4ic;
 import org.lwjgl.opengl.GL11;
 
@@ -21,6 +22,11 @@ public final class GLRenderer implements Renderer {
 
     public GLRenderer() {
         streamedMesh = GLSingleBufferMesh.builder().setStreamed().build();
+    }
+
+    @Override
+    public void setScissor(int x, int y, int width, int height) {
+        setScissor(new Vector4i(x, y, width, height));
     }
 
     @Override
