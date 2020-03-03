@@ -37,6 +37,10 @@ public final class GLVertexBuffer {
         uploadData(buffer);
     }
 
+    public int getId() {
+        return id;
+    }
+
     public GLBufferType getType() {
         return type;
     }
