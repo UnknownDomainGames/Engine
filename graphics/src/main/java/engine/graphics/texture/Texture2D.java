@@ -12,6 +12,10 @@ public interface Texture2D extends Texture {
         return GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder();
     }
 
+    static Texture2D white() {
+        return GraphicsEngine.getGraphicsBackend().getResourceFactory().getWhiteTexture2D();
+    }
+
     int getWidth();
 
     int getHeight();

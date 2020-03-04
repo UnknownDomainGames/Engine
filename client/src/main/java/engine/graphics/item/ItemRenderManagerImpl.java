@@ -51,7 +51,7 @@ public final class ItemRenderManagerImpl implements ItemRenderManager {
     }
 
     private void preRender() {
-        VoxelRenderHelper.getVoxelTextureAtlas().bind();
+        VoxelRenderHelper.getVoxelTextureAtlas().getTexture().bind();
     }
 
     private void postRender() {

@@ -21,16 +21,6 @@ public interface MultiBufMesh extends Mesh {
 
     Indices getIndices();
 
-    DrawMode getDrawMode();
-
-    void bind();
-
-    void draw();
-
-    void dispose();
-
-    boolean isDisposed();
-
     interface Attribute {
         VertexFormat getFormat();
 

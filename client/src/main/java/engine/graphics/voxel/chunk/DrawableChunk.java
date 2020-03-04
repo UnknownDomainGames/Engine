@@ -1,6 +1,5 @@
 package engine.graphics.voxel.chunk;
 
-import engine.graphics.Drawable;
 import engine.graphics.Geometry;
 import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.util.DrawMode;
@@ -8,9 +7,7 @@ import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.voxel.VoxelRenderHelper;
 import engine.world.chunk.Chunk;
 
-public final class DrawableChunk implements Drawable {
-
-    private final Geometry geometry = new Geometry();
+public final class DrawableChunk extends Geometry {
 
     private Chunk chunk;
     private SingleBufMesh mesh;
@@ -19,16 +16,13 @@ public final class DrawableChunk implements Drawable {
     private volatile boolean drawing;
 
     public DrawableChunk() {
-        geometry.setDrawable(this);
-    }
-
-    public Geometry getGeometry() {
-        return geometry;
+        setTexture(VoxelRenderHelper.getVoxelTextureAtlas().getTexture());
     }
 
     public void uploadData(VertexDataBuf buf) {
         if (mesh == null) {
             mesh = SingleBufMesh.builder().setDynamic().drawMode(DrawMode.TRIANGLES).build();
+            setMesh(mesh);
         }
         mesh.uploadData(buf);
     }
@@ -59,17 +53,5 @@ public final class DrawableChunk implements Drawable {
 
     public void setDrawing(boolean drawing) {
         this.drawing = drawing;
-    }
-
-    @Override
-    public void draw() {
-        if (mesh == null) return;
-        VoxelRenderHelper.getVoxelTextureAtlas().bind();
-        mesh.draw();
-    }
-
-    @Override
-    public void dispose() {
-        mesh.dispose();
     }
 }

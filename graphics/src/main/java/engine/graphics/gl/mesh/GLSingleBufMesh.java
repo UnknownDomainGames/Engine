@@ -4,38 +4,37 @@ import engine.graphics.gl.GLDrawMode;
 import engine.graphics.gl.buffer.GLBufferType;
 import engine.graphics.gl.buffer.GLBufferUsage;
 import engine.graphics.gl.buffer.GLVertexBuffer;
-import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.gl.util.GLHelper;
 import engine.graphics.mesh.SingleBufMesh;
-import engine.graphics.util.Cleaner;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-public final class GLSingleBufMesh implements SingleBufMesh {
+public final class GLSingleBufMesh extends GLMesh implements SingleBufMesh {
 
-    private int id;
-    private Cleaner.Disposable disposable;
     private GLVertexBuffer vertexBuffer;
     private VertexFormat vertexFormat = VertexFormat.NONE;
-    private GLDrawMode drawMode;
 
-    private int vertexCount;
-
-    private GLSingleBufMesh() {
-        id = GL30.glGenVertexArrays();
-        disposable = GLCleaner.registerVertexArray(this, id);
+    public static Builder builder() {
+        return new Builder();
     }
 
-    public int getId() {
-        return id;
+    private GLSingleBufMesh() {
+    }
+
+    @Override
+    protected boolean hasIndices() {
+        return false;
+    }
+
+    @Override
+    protected int getIndicesType() {
+        return 0;
     }
 
     public GLVertexBuffer getVertexBuffer() {
@@ -55,21 +54,6 @@ public final class GLSingleBufMesh implements SingleBufMesh {
     @Override
     public void setDrawMode(DrawMode drawMode) {
         this.drawMode = GLDrawMode.valueOf(drawMode);
-    }
-
-    @Override
-    public void setStatic() {
-        vertexBuffer.setUsage(GLBufferUsage.STATIC_DRAW);
-    }
-
-    @Override
-    public void setDynamic() {
-        vertexBuffer.setUsage(GLBufferUsage.DYNAMIC_DRAW);
-    }
-
-    @Override
-    public void setStreamed() {
-        vertexBuffer.setUsage(GLBufferUsage.STREAM_DRAW);
     }
 
     @Override
@@ -98,43 +82,11 @@ public final class GLSingleBufMesh implements SingleBufMesh {
     }
 
     @Override
-    public void bind() {
-        if (id == 0) {
-            throw new IllegalStateException("Object has been disposed");
-        }
-        GL30.glBindVertexArray(id);
-    }
-
-    @Override
-    public void draw() {
-        bind();
-        drawArrays(0, vertexCount);
-    }
-
-    public void draw(int first, int count) {
-        bind();
-        drawArrays(first, count);
-    }
-
-    public void drawArrays(int first, int count) {
-        GL11.glDrawArrays(drawMode.gl, first, count);
-    }
-
-    @Override
     public void dispose() {
         if (id == 0) return;
         vertexBuffer.dispose();
         disposable.dispose();
         id = 0;
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return id == 0;
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public static final class Builder implements SingleBufMesh.Builder {

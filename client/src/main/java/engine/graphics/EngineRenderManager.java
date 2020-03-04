@@ -110,8 +110,8 @@ public final class EngineRenderManager implements RenderManager {
     }
 
     private void initScene() {
-        scene.addNode(new Geometry(new SkyBox()));
-        Geometry selectedBlock = new Geometry(new SelectedBlock());
+        scene.addNode(new SkyBox());
+        Geometry selectedBlock = new SelectedBlock();
         selectedBlock.setController((node, tpf) -> {
             if (!getEngine().isPlaying()) return;
             var player = getEngine().getCurrentGame().getClientPlayer();

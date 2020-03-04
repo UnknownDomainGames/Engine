@@ -4,10 +4,8 @@ import engine.graphics.gl.GLDrawMode;
 import engine.graphics.gl.buffer.GLBufferType;
 import engine.graphics.gl.buffer.GLBufferUsage;
 import engine.graphics.gl.buffer.GLVertexBuffer;
-import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.gl.util.GLHelper;
 import engine.graphics.mesh.MultiBufMesh;
-import engine.graphics.util.Cleaner;
 import engine.graphics.util.DataType;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
@@ -20,27 +18,13 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+public final class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
 
-public final class GLMultiBufMesh implements MultiBufMesh {
-
-    private int id;
-    private Cleaner.Disposable disposable;
     private Attribute[] attributes;
     private MeshIndices indices;
-    private GLDrawMode drawMode;
-    private int vertexCount;
 
     public static MultiBufMesh.Builder builder() {
         return new Builder();
-    }
-
-    private GLMultiBufMesh() {
-        id = glGenVertexArrays();
-        disposable = GLCleaner.registerVertexArray(this, id);
     }
 
     @Override
@@ -62,23 +46,6 @@ public final class GLMultiBufMesh implements MultiBufMesh {
     }
 
     @Override
-    public DrawMode getDrawMode() {
-        return drawMode.peer;
-    }
-
-    @Override
-    public void bind() {
-        glBindVertexArray(id);
-    }
-
-    @Override
-    public void draw() {
-        bind();
-        if (indices == null) glDrawArrays(drawMode.gl, 0, vertexCount);
-        else glDrawElements(drawMode.gl, vertexCount, indices.glType, 0);
-    }
-
-    @Override
     public void dispose() {
         if (id == 0) return;
         for (Attribute attribute : attributes)
@@ -89,8 +56,13 @@ public final class GLMultiBufMesh implements MultiBufMesh {
     }
 
     @Override
-    public boolean isDisposed() {
-        return id == 0;
+    protected boolean hasIndices() {
+        return indices != null;
+    }
+
+    @Override
+    protected int getIndicesType() {
+        return indices.glType;
     }
 
     private static class MeshAttribute implements Attribute {

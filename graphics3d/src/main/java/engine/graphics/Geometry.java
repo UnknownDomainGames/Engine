@@ -1,29 +1,29 @@
 package engine.graphics;
 
 import engine.graphics.math.BoundingVolume;
+import engine.graphics.mesh.Mesh;
 import engine.graphics.queue.RenderQueue;
 import engine.graphics.queue.RenderType;
 import engine.graphics.queue.StandardRenderTypes;
+import engine.graphics.texture.Texture;
+import engine.graphics.texture.Texture2D;
 
 public class Geometry extends Node3D {
 
     private boolean visible = true;
 
-    private Drawable drawable;
     private RenderType renderType;
+
+    private Mesh mesh;
+    private Texture texture = Texture2D.white();
 
     private BoundingVolume boundingVolume = new BoundingVolume();
 
     public Geometry() {
-        this(null, StandardRenderTypes.OPAQUE);
+        this(StandardRenderTypes.OPAQUE);
     }
 
-    public Geometry(Drawable drawable) {
-        this(drawable, StandardRenderTypes.OPAQUE);
-    }
-
-    public Geometry(Drawable drawable, RenderType renderType) {
-        this.drawable = drawable;
+    public Geometry(RenderType renderType) {
         this.renderType = renderType;
         scene().addChangeListener((observable, oldValue, newValue) -> {
             if (oldValue != null) oldValue.getRenderQueue().remove(this, renderType);
@@ -42,14 +42,6 @@ public class Geometry extends Node3D {
         else getScene().getRenderQueue().remove(this, renderType);
     }
 
-    public Drawable getDrawable() {
-        return drawable;
-    }
-
-    public void setDrawable(Drawable drawable) {
-        this.drawable = drawable;
-    }
-
     public RenderType getRenderType() {
         return renderType;
     }
@@ -61,6 +53,22 @@ public class Geometry extends Node3D {
             renderQueue.add(this, renderType);
         });
         this.renderType = renderType;
+    }
+
+    public Mesh getMesh() {
+        return mesh;
+    }
+
+    public void setMesh(Mesh mesh) {
+        this.mesh = mesh;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 
     public BoundingVolume getBoundingVolume() {

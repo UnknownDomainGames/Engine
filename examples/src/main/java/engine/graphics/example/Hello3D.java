@@ -1,6 +1,5 @@
 package engine.graphics.example;
 
-import engine.graphics.Geometry;
 import engine.graphics.application.Application3D;
 import engine.graphics.shape.Box;
 import engine.graphics.shape.Line;
@@ -30,12 +29,12 @@ public class Hello3D extends Application3D {
         cameraInput = new FlyCameraInput(mainViewPort.getCamera());
         cameraInput.bindWindow(manager.getPrimaryWindow());
 
-        var lineX = new Geometry(new Line(new Vector3f(0, 0, 0), new Vector3f(128, 0, 0), Color.RED));
-        var lineY = new Geometry(new Line(new Vector3f(0, 0, 0), new Vector3f(0, 128, 0), Color.GREEN));
-        var lineZ = new Geometry(new Line(new Vector3f(0, 0, 0), new Vector3f(0, 0, 128), Color.BLUE));
-        var box = new Geometry(new Box(new Vector3f(0, 0, 0), 1, Color.BLUE));
+        var lineX = new Line(new Vector3f(0, 0, 0), new Vector3f(128, 0, 0), Color.RED);
+        var lineY = new Line(new Vector3f(0, 0, 0), new Vector3f(0, 128, 0), Color.GREEN);
+        var lineZ = new Line(new Vector3f(0, 0, 0), new Vector3f(0, 0, 128), Color.BLUE);
+        var box = new Box(new Vector3f(0, 0, 0), 1, Color.BLUE);
         box.setTranslation(0, 0, -5);
-        var box2 = new Geometry(new Box(new Vector3f(0, 0, 0), 1, Color.WHITE));
+        var box2 = new Box(new Vector3f(0, 0, 0), 1, Color.WHITE);
         box2.setTranslation(.5f, .5f, .5f);
         mainScene.addNode(lineX, lineY, lineZ, box, box2);
 

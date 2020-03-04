@@ -22,6 +22,11 @@ public class TextureAtlasImpl implements TextureAtlas {
     }
 
     @Override
+    public Texture2D getTexture() {
+        return texture;
+    }
+
+    @Override
     public void reload() {
         var textureMap = new TextureAtlasBuilder();
         for (var part : textures.values()) {
@@ -39,55 +44,5 @@ public class TextureAtlasImpl implements TextureAtlas {
 
     public void cleanCache() {
         textures.values().forEach(TextureAtlasRegionImpl::cleanCache);
-    }
-
-    @Override
-    public int getWidth() {
-        return texture.getWidth();
-    }
-
-    @Override
-    public int getHeight() {
-        return texture.getHeight();
-    }
-
-    @Override
-    public int getId() {
-        return texture.getId();
-    }
-
-    @Override
-    public TextureFormat getFormat() {
-        return texture.getFormat();
-    }
-
-    @Override
-    public boolean isMultiSample() {
-        return texture.isMultiSample();
-    }
-
-    @Override
-    public int getSamples() {
-        return 0;
-    }
-
-    @Override
-    public void bind() {
-        if (texture != null) {
-            texture.bind();
-        }
-    }
-
-    @Override
-    public void dispose() {
-        if (texture != null) {
-            texture.dispose();
-            texture = null;
-        }
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return texture == null || texture.isDisposed();
     }
 }

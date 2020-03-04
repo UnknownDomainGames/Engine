@@ -1,8 +1,9 @@
 package engine.graphics.shape;
 
 import engine.client.asset.Asset;
-import engine.graphics.Drawable;
+import engine.graphics.Geometry;
 import engine.graphics.mesh.MultiBufMesh;
+import engine.graphics.texture.Texture;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.BufferUtils;
 import engine.graphics.vertex.VertexFormat;
@@ -12,10 +13,9 @@ import java.util.Arrays;
 
 import static engine.client.asset.AssetTypes.TEXTURE;
 
-public class SkyBox implements Drawable {
+public final class SkyBox extends Geometry {
 
     private final Asset<Texture2D> texture;
-    private final MultiBufMesh mesh;
 
     public SkyBox() {
         texture = Asset.create(TEXTURE, "engine", "misc/skybox");
@@ -88,23 +88,21 @@ public class SkyBox implements Drawable {
                 21, 22, 23 //Down
 
         });
-        mesh = MultiBufMesh.builder()
+        setMesh(MultiBufMesh.builder()
                 .attribute(VertexFormat.POSITION, positions)
                 .attribute(VertexFormat.COLOR_ALPHA, colors)
                 .attribute(VertexFormat.TEX_COORD, texCoords)
                 .indices(indices)
-                .build();
+                .build());
     }
 
     @Override
-    public void draw() {
-        texture.get().bind();
-        mesh.draw();
+    public Texture getTexture() {
+        return texture.get();
     }
 
     @Override
-    public void dispose() {
-        texture.dispose();
-        mesh.dispose();
+    public void setTexture(Texture texture) {
+        throw new UnsupportedOperationException();
     }
 }

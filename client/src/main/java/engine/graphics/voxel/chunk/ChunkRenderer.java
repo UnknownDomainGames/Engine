@@ -61,7 +61,7 @@ public final class ChunkRenderer {
         if (drawableChunk == null) drawableChunk = new DrawableChunk();
         drawableChunk.setChunk(chunk);
         chunks.put(index, drawableChunk);
-        scene.addNode(drawableChunk.getGeometry());
+        scene.addNode(drawableChunk);
         markChunkDirty(drawableChunk);
     }
 
@@ -86,7 +86,7 @@ public final class ChunkRenderer {
     private void removeChunk(Chunk chunk) {
         long index = getChunkIndex(chunk);
         DrawableChunk drawableChunk = chunks.get(index);
-        scene.removeNode(drawableChunk.getGeometry());
+        scene.removeNode(drawableChunk);
         drawableChunk.setChunk(null);
         recycleChunks.add(drawableChunk);
     }

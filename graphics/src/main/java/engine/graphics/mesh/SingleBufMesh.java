@@ -15,27 +15,11 @@ public interface SingleBufMesh extends Mesh {
 
     VertexFormat getVertexFormat();
 
-    DrawMode getDrawMode();
-
     void setDrawMode(DrawMode drawMode);
-
-    void setStatic();
-
-    void setDynamic();
-
-    void setStreamed();
 
     void uploadData(@Nonnull VertexDataBuf buffer);
 
     void uploadData(@Nonnull VertexFormat format, @Nonnull ByteBuffer buffer);
-
-    void bind();
-
-    void draw();
-
-    void dispose();
-
-    boolean isDisposed();
 
     interface Builder {
         Builder setStatic();

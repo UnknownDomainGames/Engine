@@ -1,5 +1,6 @@
 package engine.graphics.gl;
 
+import engine.graphics.gl.graph.GLRenderer;
 import engine.graphics.gl.mesh.GLSingleBufMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
@@ -31,6 +32,6 @@ public final class GLStreamedRenderer {
         }
         mesh.uploadData(buffer);
         mesh.setDrawMode(drawMode);
-        mesh.draw();
+        GLRenderer.getInstance().drawMesh(mesh);
     }
 }

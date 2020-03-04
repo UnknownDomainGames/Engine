@@ -1,7 +1,9 @@
 package engine.graphics.gl.graph;
 
+import engine.graphics.gl.mesh.GLMesh;
 import engine.graphics.gl.mesh.GLSingleBufMesh;
 import engine.graphics.graph.Renderer;
+import engine.graphics.mesh.Mesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import org.joml.Vector4i;
@@ -41,16 +43,22 @@ public final class GLRenderer implements Renderer {
     }
 
     @Override
+    public void drawMesh(Mesh mesh) {
+        drawMesh(mesh, 0, mesh.getVertexCount());
+    }
+
+    @Override
+    public void drawMesh(Mesh mesh, int first, int count) {
+        ((GLMesh) mesh).draw(first, count);
+    }
+
+    @Override
     public void drawStreamed(DrawMode drawMode, VertexDataBuf buf) {
-        if (!buf.isReady()) buf.finish();
-        streamedMesh.uploadData(buf);
-        streamedMesh.setDrawMode(drawMode);
-        streamedMesh.draw();
+        drawStreamed(drawMode, buf, 0, buf.getVertexCount());
     }
 
     @Override
     public void drawStreamed(DrawMode drawMode, VertexDataBuf buf, int first, int count) {
-        if (!buf.isReady()) buf.finish();
         streamedMesh.uploadData(buf);
         streamedMesh.setDrawMode(drawMode);
         streamedMesh.draw(first, count);

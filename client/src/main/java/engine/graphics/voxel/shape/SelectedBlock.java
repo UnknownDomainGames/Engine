@@ -1,22 +1,15 @@
 package engine.graphics.voxel.shape;
 
-import engine.client.asset.Asset;
-import engine.client.asset.AssetTypes;
-import engine.graphics.Drawable;
+import engine.graphics.Geometry;
 import engine.graphics.mesh.SingleBufMesh;
-import engine.graphics.texture.Texture2D;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
 import engine.util.Color;
 
-public class SelectedBlock implements Drawable {
-
-    private final Asset<Texture2D> texture;
-    private final SingleBufMesh mesh;
+public class SelectedBlock extends Geometry {
 
     public SelectedBlock() {
-        texture = Asset.create(AssetTypes.TEXTURE, "buildin", "white");
         float minX = -0.001f, maxX = 1.001f,
                 minY = -0.001f, maxY = 1.001f,
                 minZ = -0.001f, maxZ = 1.001f;
@@ -51,17 +44,6 @@ public class SelectedBlock implements Drawable {
         buf.pos(maxX, minY, minZ).color(Color.WHITE).endVertex();
         buf.finish();
 
-        mesh = SingleBufMesh.builder().drawMode(DrawMode.LINES).build(buf);
-    }
-
-    @Override
-    public void draw() {
-        texture.get().bind();
-        mesh.draw();
-    }
-
-    @Override
-    public void dispose() {
-        texture.dispose();
+        setMesh(SingleBufMesh.builder().drawMode(DrawMode.LINES).build(buf));
     }
 }

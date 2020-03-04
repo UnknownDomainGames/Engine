@@ -1,6 +1,6 @@
 package engine.graphics.shape;
 
-import engine.graphics.Drawable;
+import engine.graphics.Geometry;
 import engine.graphics.mesh.MultiBufMesh;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
@@ -11,7 +11,7 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.ByteBuffer;
 
-public class Box implements Drawable {
+public class Box extends Geometry {
 
     private static final ByteBuffer indices = BufferUtils.createByteBuffer(36).put(new byte[]{
             // facing +x
@@ -37,8 +37,6 @@ public class Box implements Drawable {
     private Vector3fc from;
     private Vector3fc to;
     private Color color;
-
-    private MultiBufMesh mesh;
 
     public Box(Vector3fc center, float size, Color color) {
         this(center, size, size, size, color);
@@ -73,16 +71,6 @@ public class Box implements Drawable {
         buf.pos(max.x, max.y, min.z).color(color).endVertex();
         buf.pos(max).color(color).endVertex();
         buf.finish();
-        mesh = MultiBufMesh.builder().attribute(buf).indices(indices).build();
-    }
-
-    @Override
-    public void draw() {
-        mesh.draw();
-    }
-
-    @Override
-    public void dispose() {
-        mesh.dispose();
+        setMesh(MultiBufMesh.builder().attribute(buf).indices(indices).build());
     }
 }
