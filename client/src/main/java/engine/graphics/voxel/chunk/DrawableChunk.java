@@ -17,12 +17,14 @@ public final class DrawableChunk extends Geometry {
 
     public DrawableChunk() {
         setTexture(VoxelRenderHelper.getVoxelTextureAtlas().getTexture());
+        setVisible(false);
     }
 
     public void uploadData(VertexDataBuf buf) {
         if (mesh == null) {
             mesh = SingleBufMesh.builder().setDynamic().drawMode(DrawMode.TRIANGLES).build();
             setMesh(mesh);
+            setVisible(true);
         }
         mesh.uploadData(buf);
     }

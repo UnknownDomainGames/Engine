@@ -4,7 +4,6 @@ import engine.graphics.Scene3D;
 import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Frame;
 import engine.graphics.graph.Renderer;
-import engine.graphics.mesh.Mesh;
 import engine.graphics.queue.StandardRenderTypes;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.shader.UniformTexture;
@@ -32,12 +31,10 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
         Scene3D scene = viewport.getScene();
         scene.doUpdate(frame.getTickLastFrame());
         scene.getRenderQueue().getGeometryList(StandardRenderTypes.OPAQUE).forEach(geometry -> {
-            Mesh mesh = geometry.getMesh();
-            if (mesh == null) return;
             resource.setUniform("u_ModelMatrix", geometry.getWorldTransform().toTransformMatrix());
             uniformTexture.set(geometry.getTexture());
             resource.refresh();
-            renderer.drawMesh(mesh);
+            renderer.drawMesh(geometry.getMesh());
         });
     }
 }

@@ -7,6 +7,7 @@ import engine.graphics.queue.RenderType;
 import engine.graphics.queue.StandardRenderTypes;
 import engine.graphics.texture.Texture;
 import engine.graphics.texture.Texture2D;
+import org.apache.commons.lang3.Validate;
 
 public class Geometry extends Node3D {
 
@@ -26,8 +27,10 @@ public class Geometry extends Node3D {
     public Geometry(RenderType renderType) {
         this.renderType = renderType;
         scene().addChangeListener((observable, oldValue, newValue) -> {
-            if (oldValue != null) oldValue.getRenderQueue().remove(this, renderType);
-            if (newValue != null) newValue.getRenderQueue().add(this, renderType);
+            if (visible) {
+                if (oldValue != null) oldValue.getRenderQueue().remove(this, renderType);
+                if (newValue != null) newValue.getRenderQueue().add(this, renderType);
+            }
         });
     }
 
@@ -38,8 +41,8 @@ public class Geometry extends Node3D {
     public void setVisible(boolean visible) {
         if (this.visible == visible) return;
         this.visible = visible;
-        if (visible) getScene().getRenderQueue().add(this, renderType);
-        else getScene().getRenderQueue().remove(this, renderType);
+        if (visible) scene.ifPresent(scene -> scene.getRenderQueue().add(this, renderType));
+        else scene.ifPresent(scene -> scene.getRenderQueue().remove(this, renderType));
     }
 
     public RenderType getRenderType() {
@@ -47,11 +50,13 @@ public class Geometry extends Node3D {
     }
 
     public void setRenderType(RenderType renderType) {
-        scene.ifPresent(scene -> {
-            RenderQueue renderQueue = scene.getRenderQueue();
-            renderQueue.remove(this, this.renderType);
-            renderQueue.add(this, renderType);
-        });
+        if (visible) {
+            scene.ifPresent(scene -> {
+                RenderQueue renderQueue = scene.getRenderQueue();
+                renderQueue.remove(this, this.renderType);
+                renderQueue.add(this, renderType);
+            });
+        }
         this.renderType = renderType;
     }
 
@@ -68,7 +73,7 @@ public class Geometry extends Node3D {
     }
 
     public void setTexture(Texture texture) {
-        this.texture = texture;
+        this.texture = Validate.notNull(texture);
     }
 
     public BoundingVolume getBoundingVolume() {
