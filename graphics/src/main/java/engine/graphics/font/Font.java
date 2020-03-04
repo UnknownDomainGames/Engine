@@ -12,7 +12,7 @@ public class Font {
     private int hash = 0;
 
     public static Font getDefaultFont() {
-        return FontHelper.instance().getDefaultFont();
+        return FontManager.instance().getDefaultFont();
     }
 
     public Font(String family, String style, float size) {

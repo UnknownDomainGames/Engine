@@ -1,9 +1,9 @@
 package engine.gui.control;
 
+import engine.graphics.font.FontManager;
 import engine.gui.input.KeyEvent;
 import engine.gui.layout.ScrollPane;
 import engine.gui.text.WrapText;
-import engine.graphics.font.FontHelper;
 import engine.input.KeyCode;
 
 public class TextArea extends TextInput {
@@ -42,7 +42,7 @@ public class TextArea extends TextInput {
         int posExclusive = 1;
         float x = 0;
         while (posExclusive <= length()) {
-            x += FontHelper.instance().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().getValue());
+            x += FontManager.instance().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().getValue());
             if (x > adjustedX)
                 break;
             posExclusive++;

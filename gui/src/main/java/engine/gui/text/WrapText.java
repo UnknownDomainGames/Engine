@@ -2,9 +2,9 @@ package engine.gui.text;
 
 import com.github.mouse0w0.observable.value.MutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
+import engine.graphics.font.FontManager;
 import engine.gui.rendering.ComponentRenderer;
 import engine.gui.rendering.WrapTextRenderer;
-import engine.graphics.font.FontHelper;
 
 public class WrapText extends Text {
 
@@ -26,14 +26,14 @@ public class WrapText extends Text {
 
     @Override
     public float prefWidth() {
-        var max = FontHelper.instance().computeTextWidth(text().getValue(), font().getValue(), textWidth.get());
+        var max = FontManager.instance().computeTextWidth(text().getValue(), font().getValue(), textWidth.get());
 
         return max;
     }
 
     @Override
     public float prefHeight() {
-        return FontHelper.instance().computeTextHeight(text().getValue(), font().getValue(), textWidth.get(), leading().getFloat());
+        return FontManager.instance().computeTextHeight(text().getValue(), font().getValue(), textWidth.get(), leading().getFloat());
     }
 
     @Override

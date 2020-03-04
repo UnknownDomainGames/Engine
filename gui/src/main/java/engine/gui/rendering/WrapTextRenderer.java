@@ -2,7 +2,7 @@ package engine.gui.rendering;
 
 import com.google.common.base.Strings;
 import engine.graphics.font.Font;
-import engine.graphics.font.FontHelper;
+import engine.graphics.font.FontManager;
 import engine.graphics.font.TextMesh;
 import engine.gui.misc.Pos;
 import engine.gui.text.WrapText;
@@ -34,14 +34,14 @@ public final class WrapTextRenderer implements ComponentRenderer<WrapText> {
         }
         Font font = wrapText.font().get();
         float textWidth = wrapText.textWidth().get();
-        FontHelper fontHelper = FontHelper.instance();
+        FontManager fontManager = FontManager.instance();
 
-        var lines = text.lines().flatMap(str -> fontHelper.wrapText(str, textWidth, font).stream()).collect(Collectors.toList());
-        lineHeight = fontHelper.computeTextHeight(text, font, textWidth) / lines.size();
+        var lines = text.lines().flatMap(str -> fontManager.wrapText(str, textWidth, font).stream()).collect(Collectors.toList());
+        lineHeight = fontManager.computeTextHeight(text, font, textWidth) / lines.size();
         meshes = new LineMesh[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            meshes[i] = new LineMesh(fontHelper.bakeTextMesh(line, font), fontHelper.computeTextWidth(line, font));
+            meshes[i] = new LineMesh(fontManager.bakeTextMesh(line, font), fontManager.computeTextWidth(line, font));
         }
     }
 

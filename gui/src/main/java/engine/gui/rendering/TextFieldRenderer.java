@@ -2,7 +2,7 @@ package engine.gui.rendering;
 
 import com.google.common.base.Strings;
 import engine.graphics.font.Font;
-import engine.graphics.font.FontHelper;
+import engine.graphics.font.FontManager;
 import engine.graphics.font.TextMesh;
 import engine.gui.control.TextField;
 import engine.util.Color;
@@ -29,8 +29,8 @@ public final class TextFieldRenderer extends RegionRenderer<TextField> {
         }
 
         Font font = textField.font().get();
-        FontHelper fontHelper = FontHelper.instance();
-        textMesh = fontHelper.bakeTextMesh(text, font);
+        FontManager fontManager = FontManager.instance();
+        textMesh = fontManager.bakeTextMesh(text, font);
     }
 
     @Override
@@ -52,7 +52,7 @@ public final class TextFieldRenderer extends RegionRenderer<TextField> {
         Color frontColor = textField.fontcolor().getValue();
         graphics.setColor(frontColor);
         Font font = textField.font().getValue();
-        FontHelper helper = FontHelper.instance();
+        FontManager helper = FontManager.instance();
         float caretWidth = helper.computeTextWidth(textField.getTextInRange(0, textField.caret().get()), font);
         float offset = textField.getLineScrollOffset();
         Color selectionColor = Color.BLUE;

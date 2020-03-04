@@ -1,8 +1,8 @@
 package engine.gui.control;
 
+import engine.graphics.font.FontManager;
 import engine.gui.rendering.ComponentRenderer;
 import engine.gui.rendering.TextFieldRenderer;
-import engine.graphics.font.FontHelper;
 
 public class TextField extends TextInput {
 
@@ -34,7 +34,7 @@ public class TextField extends TextInput {
         int posExclusive = 1;
         float x = 0;
         while (posExclusive <= length()) {
-            x += FontHelper.instance().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().getValue());
+            x += FontManager.instance().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().getValue());
             if (x > adjustedX)
                 break;
             posExclusive++;
@@ -50,7 +50,7 @@ public class TextField extends TextInput {
     @Override
     protected void updatePointer() {
         var viewableWidth = width().get() - padding().getValue().getLeft() - padding().getValue().getRight();
-        var caretOffset = FontHelper.instance().computeTextWidth(getTextInRange(0, caret().get()), font().getValue());
+        var caretOffset = FontManager.instance().computeTextWidth(getTextInRange(0, caret().get()), font().getValue());
         var adjusted = caretOffset + lineScrollOffset;
         if (viewableWidth < adjusted) {
             lineScrollOffset = viewableWidth - caretOffset;

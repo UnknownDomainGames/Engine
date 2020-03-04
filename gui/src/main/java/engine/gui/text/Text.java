@@ -1,12 +1,12 @@
 package engine.gui.text;
 
 import com.github.mouse0w0.observable.value.*;
+import engine.graphics.font.Font;
+import engine.graphics.font.FontManager;
 import engine.gui.Node;
 import engine.gui.misc.Pos;
 import engine.gui.rendering.ComponentRenderer;
 import engine.gui.rendering.TextRenderer;
-import engine.graphics.font.Font;
-import engine.graphics.font.FontHelper;
 import engine.util.Color;
 
 public class Text extends Node {
@@ -51,12 +51,12 @@ public class Text extends Node {
 
     @Override
     public float prefWidth() {
-        return FontHelper.instance().computeTextWidth(text.getValue(), font().getValue());
+        return FontManager.instance().computeTextWidth(text.getValue(), font().getValue());
     }
 
     @Override
     public float prefHeight() {
-        return FontHelper.instance().computeTextHeight(text().getValue(), font().getValue(), -1, leading.getFloat());
+        return FontManager.instance().computeTextHeight(text().getValue(), font().getValue(), -1, leading.getFloat());
     }
 
     @Override

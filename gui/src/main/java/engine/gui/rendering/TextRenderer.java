@@ -2,7 +2,7 @@ package engine.gui.rendering;
 
 import com.google.common.base.Strings;
 import engine.graphics.font.Font;
-import engine.graphics.font.FontHelper;
+import engine.graphics.font.FontManager;
 import engine.graphics.font.TextMesh;
 import engine.gui.misc.Pos;
 import engine.gui.text.Text;
@@ -32,14 +32,14 @@ public final class TextRenderer implements ComponentRenderer<Text> {
             return;
         }
         Font font = this.text.font().get();
-        FontHelper fontHelper = FontHelper.instance();
+        FontManager fontManager = FontManager.instance();
 
         var lines = text.lines().collect(Collectors.toList());
-        lineHeight = FontHelper.instance().computeTextHeight(text, font) / lines.size();
+        lineHeight = FontManager.instance().computeTextHeight(text, font) / lines.size();
         meshes = new LineMesh[lines.size()];
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            meshes[i] = new LineMesh(fontHelper.bakeTextMesh(line, font), fontHelper.computeTextWidth(line, font));
+            meshes[i] = new LineMesh(fontManager.bakeTextMesh(line, font), fontManager.computeTextWidth(line, font));
         }
     }
 

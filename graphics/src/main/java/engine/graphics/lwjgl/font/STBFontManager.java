@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-public final class WindowsFontHelper implements FontHelper {
+public final class STBFontManager extends FontManager {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("Font");
 
@@ -59,15 +59,10 @@ public final class WindowsFontHelper implements FontHelper {
 
     private Font defaultFont;
 
-    public static void initialize() {
-        var fontHelper = new WindowsFontHelper();
-        FontHelper.Internal.setInstance(fontHelper);
-        Font defaultFont = new Font("Arial", "Regular", 16);
-        fontHelper.setDefaultFont(defaultFont);
-    }
-
-    private WindowsFontHelper() {
+    private STBFontManager() {
         initLocalFonts();
+        Font defaultFont = new Font("Arial", "Regular", 16);
+        setDefaultFont(defaultFont);
     }
 
     private int getLanguageId(Locale locale) {
@@ -508,5 +503,18 @@ public final class WindowsFontHelper implements FontHelper {
         var counter = stbtt_FindGlyphIndex(font.getInfo().getFontInfo(), 0x1A);
         var ci = stbtt_FindGlyphIndex(font.getInfo().getFontInfo(), character);
         return counter != ci;
+    }
+
+    public static final class Factory implements FontManager.Factory {
+
+        @Override
+        public String getName() {
+            return "stb";
+        }
+
+        @Override
+        public FontManager create() {
+            return new STBFontManager();
+        }
     }
 }
