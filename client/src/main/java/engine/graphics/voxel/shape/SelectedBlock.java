@@ -3,7 +3,7 @@ package engine.graphics.voxel.shape;
 import engine.client.asset.Asset;
 import engine.client.asset.AssetTypes;
 import engine.graphics.Drawable;
-import engine.graphics.mesh.SingleBufferMesh;
+import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
@@ -13,7 +13,7 @@ import engine.util.Color;
 public class SelectedBlock implements Drawable {
 
     private final Asset<Texture2D> texture;
-    private final SingleBufferMesh mesh;
+    private final SingleBufMesh mesh;
 
     public SelectedBlock() {
         texture = Asset.create(AssetTypes.TEXTURE, "buildin", "white");
@@ -51,7 +51,7 @@ public class SelectedBlock implements Drawable {
         buf.pos(maxX, minY, minZ).color(Color.WHITE).endVertex();
         buf.finish();
 
-        mesh = SingleBufferMesh.builder().drawMode(DrawMode.LINES).build(buf);
+        mesh = SingleBufMesh.builder().drawMode(DrawMode.LINES).build(buf);
     }
 
     @Override

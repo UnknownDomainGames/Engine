@@ -1,6 +1,6 @@
 package engine.graphics.gl.graph;
 
-import engine.graphics.gl.mesh.GLSingleBufferMesh;
+import engine.graphics.gl.mesh.GLSingleBufMesh;
 import engine.graphics.graph.Renderer;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
@@ -12,7 +12,7 @@ public final class GLRenderer implements Renderer {
 
     private static final GLRenderer INSTANCE = new GLRenderer();
 
-    private final GLSingleBufferMesh streamedMesh;
+    private final GLSingleBufMesh streamedMesh;
 
     private Vector4ic scissor;
 
@@ -21,7 +21,7 @@ public final class GLRenderer implements Renderer {
     }
 
     public GLRenderer() {
-        streamedMesh = GLSingleBufferMesh.builder().setStreamed().build();
+        streamedMesh = GLSingleBufMesh.builder().setStreamed().build();
     }
 
     @Override

@@ -6,7 +6,7 @@ import engine.graphics.gl.buffer.GLBufferUsage;
 import engine.graphics.gl.buffer.GLVertexBuffer;
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.gl.util.GLHelper;
-import engine.graphics.mesh.SingleBufferMesh;
+import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.util.Cleaner;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-public final class GLSingleBufferMesh implements SingleBufferMesh {
+public final class GLSingleBufMesh implements SingleBufMesh {
 
     private int id;
     private Cleaner.Disposable disposable;
@@ -29,7 +29,7 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
 
     private int vertexCount;
 
-    private GLSingleBufferMesh() {
+    private GLSingleBufMesh() {
         id = GL30.glGenVertexArrays();
         disposable = GLCleaner.registerVertexArray(this, id);
     }
@@ -137,7 +137,7 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
         return new Builder();
     }
 
-    public static final class Builder implements SingleBufferMesh.Builder {
+    public static final class Builder implements SingleBufMesh.Builder {
         private GLBufferUsage bufferUsage = GLBufferUsage.STATIC_DRAW;
         private DrawMode drawMode = DrawMode.TRIANGLES;
 
@@ -169,23 +169,23 @@ public final class GLSingleBufferMesh implements SingleBufferMesh {
         }
 
         @Override
-        public GLSingleBufferMesh build() {
-            GLSingleBufferMesh mesh = new GLSingleBufferMesh();
+        public GLSingleBufMesh build() {
+            GLSingleBufMesh mesh = new GLSingleBufMesh();
             mesh.vertexBuffer = new GLVertexBuffer(GLBufferType.ARRAY_BUFFER, bufferUsage);
             mesh.setDrawMode(drawMode);
             return mesh;
         }
 
         @Override
-        public GLSingleBufferMesh build(@Nonnull VertexDataBuf buffer) {
-            GLSingleBufferMesh mesh = build();
+        public GLSingleBufMesh build(@Nonnull VertexDataBuf buffer) {
+            GLSingleBufMesh mesh = build();
             mesh.uploadData(buffer);
             return mesh;
         }
 
         @Override
-        public GLSingleBufferMesh build(@Nonnull VertexFormat format, @Nonnull ByteBuffer buffer) {
-            GLSingleBufferMesh mesh = build();
+        public GLSingleBufMesh build(@Nonnull VertexFormat format, @Nonnull ByteBuffer buffer) {
+            GLSingleBufMesh mesh = build();
             mesh.uploadData(format, buffer);
             return mesh;
         }

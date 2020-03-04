@@ -2,7 +2,7 @@ package engine.graphics.voxel.chunk;
 
 import engine.graphics.Drawable;
 import engine.graphics.Geometry;
-import engine.graphics.mesh.SingleBufferMesh;
+import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.voxel.VoxelRenderHelper;
@@ -13,7 +13,7 @@ public final class DrawableChunk implements Drawable {
     private final Geometry geometry = new Geometry();
 
     private Chunk chunk;
-    private SingleBufferMesh mesh;
+    private SingleBufMesh mesh;
 
     private volatile boolean dirty;
     private volatile boolean drawing;
@@ -28,7 +28,7 @@ public final class DrawableChunk implements Drawable {
 
     public void uploadData(VertexDataBuf buf) {
         if (mesh == null) {
-            mesh = SingleBufferMesh.builder().setDynamic().drawMode(DrawMode.TRIANGLES).build();
+            mesh = SingleBufMesh.builder().setDynamic().drawMode(DrawMode.TRIANGLES).build();
         }
         mesh.uploadData(buf);
     }

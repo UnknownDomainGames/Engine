@@ -1,7 +1,7 @@
 package engine.graphics.shape;
 
 import engine.graphics.Drawable;
-import engine.graphics.mesh.SingleBufferMesh;
+import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
@@ -14,7 +14,7 @@ public class Line implements Drawable {
     private Vector3fc to;
     private Color color;
 
-    private SingleBufferMesh mesh;
+    private SingleBufMesh mesh;
 
     public Line(Vector3fc from, Vector3fc to, Color color) {
         this.from = from;
@@ -29,7 +29,7 @@ public class Line implements Drawable {
         buffer.pos(from).color(color).endVertex();
         buffer.pos(to).color(color).endVertex();
         buffer.finish();
-        mesh = SingleBufferMesh.builder().drawMode(DrawMode.LINES).build(buffer);
+        mesh = SingleBufMesh.builder().drawMode(DrawMode.LINES).build(buffer);
     }
 
     @Override

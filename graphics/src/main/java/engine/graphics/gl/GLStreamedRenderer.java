@@ -1,6 +1,6 @@
 package engine.graphics.gl;
 
-import engine.graphics.gl.mesh.GLSingleBufferMesh;
+import engine.graphics.gl.mesh.GLSingleBufMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 
@@ -10,10 +10,10 @@ public final class GLStreamedRenderer {
     private static final GLStreamedRenderer INSTANCE = new GLStreamedRenderer(0x100000);
 
     private VertexDataBuf buffer;
-    private GLSingleBufferMesh mesh;
+    private GLSingleBufMesh mesh;
 
     private GLStreamedRenderer(int initialBufferCapacity) {
-        mesh = GLSingleBufferMesh.builder().setStreamed().build();
+        mesh = GLSingleBufMesh.builder().setStreamed().build();
         buffer = VertexDataBuf.create(initialBufferCapacity);
     }
 

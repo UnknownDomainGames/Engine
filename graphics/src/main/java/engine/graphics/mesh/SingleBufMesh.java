@@ -8,7 +8,7 @@ import engine.graphics.vertex.VertexFormat;
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 
-public interface SingleBufferMesh {
+public interface SingleBufMesh {
     static Builder builder() {
         return GraphicsEngine.getGraphicsBackend().getResourceFactory().createSingleBufferMeshBuilder();
     }
@@ -46,10 +46,10 @@ public interface SingleBufferMesh {
 
         Builder drawMode(DrawMode drawMode);
 
-        SingleBufferMesh build();
+        SingleBufMesh build();
 
-        SingleBufferMesh build(@Nonnull VertexDataBuf buffer);
+        SingleBufMesh build(@Nonnull VertexDataBuf buffer);
 
-        SingleBufferMesh build(@Nonnull VertexFormat format, @Nonnull ByteBuffer buffer);
+        SingleBufMesh build(@Nonnull VertexFormat format, @Nonnull ByteBuffer buffer);
     }
 }

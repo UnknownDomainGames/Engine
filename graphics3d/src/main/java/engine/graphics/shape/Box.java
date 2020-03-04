@@ -1,7 +1,7 @@
 package engine.graphics.shape;
 
 import engine.graphics.Drawable;
-import engine.graphics.mesh.Mesh;
+import engine.graphics.mesh.MultiBufMesh;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
 import engine.util.Color;
@@ -38,7 +38,7 @@ public class Box implements Drawable {
     private Vector3fc to;
     private Color color;
 
-    private Mesh mesh;
+    private MultiBufMesh mesh;
 
     public Box(Vector3fc center, float size, Color color) {
         this(center, size, size, size, color);
@@ -73,7 +73,7 @@ public class Box implements Drawable {
         buf.pos(max.x, max.y, min.z).color(color).endVertex();
         buf.pos(max).color(color).endVertex();
         buf.finish();
-        mesh = Mesh.builder().attribute(buf).indices(indices).build();
+        mesh = MultiBufMesh.builder().attribute(buf).indices(indices).build();
     }
 
     @Override

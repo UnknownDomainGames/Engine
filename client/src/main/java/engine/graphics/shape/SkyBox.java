@@ -2,7 +2,7 @@ package engine.graphics.shape;
 
 import engine.client.asset.Asset;
 import engine.graphics.Drawable;
-import engine.graphics.mesh.Mesh;
+import engine.graphics.mesh.MultiBufMesh;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.BufferUtils;
 import engine.graphics.vertex.VertexFormat;
@@ -15,7 +15,7 @@ import static engine.client.asset.AssetTypes.TEXTURE;
 public class SkyBox implements Drawable {
 
     private final Asset<Texture2D> texture;
-    private final Mesh mesh;
+    private final MultiBufMesh mesh;
 
     public SkyBox() {
         texture = Asset.create(TEXTURE, "engine", "misc/skybox");
@@ -88,7 +88,7 @@ public class SkyBox implements Drawable {
                 21, 22, 23 //Down
 
         });
-        mesh = Mesh.builder()
+        mesh = MultiBufMesh.builder()
                 .attribute(VertexFormat.POSITION, positions)
                 .attribute(VertexFormat.COLOR_ALPHA, colors)
                 .attribute(VertexFormat.TEX_COORD, texCoords)

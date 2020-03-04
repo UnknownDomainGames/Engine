@@ -6,7 +6,7 @@ import engine.graphics.gl.buffer.GLBufferUsage;
 import engine.graphics.gl.buffer.GLVertexBuffer;
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.gl.util.GLHelper;
-import engine.graphics.mesh.Mesh;
+import engine.graphics.mesh.MultiBufMesh;
 import engine.graphics.util.Cleaner;
 import engine.graphics.util.DataType;
 import engine.graphics.util.DrawMode;
@@ -25,7 +25,7 @@ import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
-public final class GLMesh implements Mesh {
+public final class GLMultiBufMesh implements MultiBufMesh {
 
     private int id;
     private Cleaner.Disposable disposable;
@@ -34,11 +34,11 @@ public final class GLMesh implements Mesh {
     private GLDrawMode drawMode;
     private int vertexCount;
 
-    public static Mesh.Builder builder() {
+    public static MultiBufMesh.Builder builder() {
         return new Builder();
     }
 
-    private GLMesh() {
+    private GLMultiBufMesh() {
         id = glGenVertexArrays();
         disposable = GLCleaner.registerVertexArray(this, id);
     }
@@ -98,7 +98,7 @@ public final class GLMesh implements Mesh {
         private final VertexFormat format;
         private final GLVertexBuffer buffer;
 
-        private GLMesh mesh;
+        private GLMultiBufMesh mesh;
 
         public MeshAttribute(VertexFormat format, ByteBuffer buffer, GLBufferUsage usage) {
             this.format = format;
@@ -132,7 +132,7 @@ public final class GLMesh implements Mesh {
         private final DataType type;
         private final int glType;
 
-        private GLMesh mesh;
+        private GLMultiBufMesh mesh;
 
         public MeshIndices(Buffer buffer, GLBufferUsage usage) {
             this.buffer = new GLVertexBuffer(GLBufferType.ELEMENT_ARRAY_BUFFER, usage);
@@ -179,7 +179,7 @@ public final class GLMesh implements Mesh {
         }
     }
 
-    private static class Builder implements Mesh.Builder {
+    private static class Builder implements MultiBufMesh.Builder {
 
         private List<MeshAttribute> attributes = new ArrayList<>();
         private MeshIndices indices;
@@ -248,8 +248,8 @@ public final class GLMesh implements Mesh {
         }
 
         @Override
-        public Mesh build() {
-            GLMesh mesh = new GLMesh();
+        public MultiBufMesh build() {
+            GLMultiBufMesh mesh = new GLMultiBufMesh();
             mesh.bind();
             mesh.drawMode = GLDrawMode.valueOf(drawMode);
             int index = 0;
