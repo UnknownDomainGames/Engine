@@ -60,7 +60,7 @@ public final class GraphicsEngine {
     public static class Settings {
         private boolean debug = DEBUG;
         private String backend = "opengl";
-        private String imageio = "stb";
+        private String imageLoader = "stb";
 
         public Settings debug(boolean debug) {
             this.debug = debug;
@@ -72,8 +72,8 @@ public final class GraphicsEngine {
             return this;
         }
 
-        public Settings imageio(String imageio) {
-            this.imageio = imageio;
+        public Settings imageLoader(String imageLoader) {
+            this.imageLoader = imageLoader;
             return this;
         }
     }
