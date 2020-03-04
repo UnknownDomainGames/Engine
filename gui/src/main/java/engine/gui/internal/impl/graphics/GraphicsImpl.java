@@ -2,7 +2,6 @@ package engine.gui.internal.impl.graphics;
 
 import engine.graphics.font.TextMesh;
 import engine.graphics.graph.Renderer;
-import engine.graphics.image.BufferedImage;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.shader.UniformTexture;
 import engine.graphics.texture.Texture2D;
@@ -47,7 +46,7 @@ public final class GraphicsImpl implements Graphics {
     public GraphicsImpl(ShaderResource resource) {
         this.resource = resource;
         this.uniformTexture = resource.getUniformTexture("u_Texture");
-        this.whiteTexture = Texture2D.builder().build(new BufferedImage(1, 1, Color.WHITE));
+        this.whiteTexture = Texture2D.white();
         setColor(Color.WHITE);
     }
 

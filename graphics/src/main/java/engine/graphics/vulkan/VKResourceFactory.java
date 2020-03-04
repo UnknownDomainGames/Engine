@@ -21,6 +21,11 @@ public class VKResourceFactory implements ResourceFactory {
     }
 
     @Override
+    public Texture2D getWhiteTexture2D() {
+        return null;
+    }
+
+    @Override
     public Sampler createSampler() {
         return null;
     }

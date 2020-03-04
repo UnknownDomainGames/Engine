@@ -7,7 +7,6 @@ import engine.client.asset.reloading.AssetReloadListener;
 import engine.client.asset.source.AssetSourceManager;
 import engine.graphics.image.BufferedImage;
 import engine.graphics.texture.Texture2D;
-import engine.util.Color;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -30,8 +29,7 @@ public final class TextureAssetProvider implements AssetProvider<Texture2D> {
     private AssetSourceManager sourceManager;
 
     public TextureAssetProvider() {
-        buildinTextures = Map.of(AssetURL.of("buildin", "white"),
-                Texture2D.builder().build(new BufferedImage(1, 1, Color.WHITE)));
+        this.buildinTextures = Map.of(AssetURL.of("buildin", "white"), Texture2D.white());
         this.builder = Texture2D.builder();
     }
 

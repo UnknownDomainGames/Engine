@@ -9,6 +9,8 @@ public interface ResourceFactory {
 
     Texture2D.Builder createTexture2DBuilder();
 
+    Texture2D getWhiteTexture2D();
+
     Sampler createSampler();
 
     MultiBufMesh.Builder createMultiBufMeshBuilder();
