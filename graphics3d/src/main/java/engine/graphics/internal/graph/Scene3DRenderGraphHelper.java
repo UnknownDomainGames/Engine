@@ -1,4 +1,4 @@
-package engine.graphics.internal.impl;
+package engine.graphics.internal.graph;
 
 import engine.graphics.graph.*;
 import engine.graphics.texture.TextureFormat;

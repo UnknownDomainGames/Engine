@@ -8,7 +8,7 @@ import engine.client.hud.HUDManager;
 import engine.graphics.backend.GraphicsBackend;
 import engine.graphics.display.Window;
 import engine.graphics.graph.*;
-import engine.graphics.internal.impl.ViewportOpaqueDrawDispatcher;
+import engine.graphics.internal.graph.ViewportOpaqueDrawDispatcher;
 import engine.graphics.shape.SkyBox;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.texture.TextureFormat;

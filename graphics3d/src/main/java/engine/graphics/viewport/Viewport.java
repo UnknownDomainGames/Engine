@@ -2,8 +2,8 @@ package engine.graphics.viewport;
 
 import engine.graphics.Scene3D;
 import engine.graphics.camera.Camera;
-import engine.graphics.display.Window;
-import engine.graphics.texture.FrameBuffer;
+import engine.graphics.graph.RenderGraph;
+import engine.graphics.graph.RenderGraphInfo;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4fc;
 
@@ -31,17 +31,13 @@ public interface Viewport {
 
     FrustumIntersection getFrustum();
 
-    FrameBuffer getFrameBuffer();
-
-    Window getWindow();
+    RenderGraph getRenderGraph();
 
     boolean isShowing();
 
-    void show(FrameBuffer frameBuffer);
+    RenderGraph show();
 
-    void show(Window window);
-
-    void show(Window window, FrameBuffer frameBuffer);
+    RenderGraph show(RenderGraphInfo renderGraph);
 
     void hide();
 }

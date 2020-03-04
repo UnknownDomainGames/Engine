@@ -1,4 +1,4 @@
-package engine.graphics.internal.impl;
+package engine.graphics.internal.graph;
 
 import engine.graphics.Scene3D;
 import engine.graphics.graph.DrawDispatcher;
@@ -22,6 +22,7 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
 
     @Override
     public void draw(Frame frame, ShaderResource resource, Renderer renderer) {
+        if (frame.isResized()) viewport.setSize(frame.getWidth(), frame.getHeight());
         resource.setUniform("u_ProjMatrix", viewport.getProjectionMatrix());
         resource.setUniform("u_ViewMatrix", viewport.getViewMatrix());
         Scene3D scene = viewport.getScene();

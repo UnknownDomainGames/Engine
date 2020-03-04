@@ -3,7 +3,6 @@ package engine.graphics.application;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.Scene3D;
 import engine.graphics.backend.GraphicsBackend;
-import engine.graphics.internal.impl.Platform3DImpl;
 import engine.graphics.util.FrameTicker;
 import engine.graphics.viewport.PerspectiveViewport;
 
@@ -34,7 +33,7 @@ public abstract class Application3D {
 
     public static void launch(Class<? extends Application3D> clazz, String[] args) {
         try {
-            Platform3DImpl.launch(args);
+            GraphicsEngine.start(new GraphicsEngine.Settings());
             Application3D application = clazz.getConstructor().newInstance();
             application.doInitialize();
         } catch (Exception e) {
@@ -63,7 +62,7 @@ public abstract class Application3D {
         mainViewPort = new PerspectiveViewport();
         mainScene = new Scene3D();
         mainViewPort.setScene(mainScene);
-        mainViewPort.show(manager.getPrimaryWindow());
+        mainViewPort.show().bindWindow(manager.getPrimaryWindow());
         onInitialized();
         ticker.run();
     }
