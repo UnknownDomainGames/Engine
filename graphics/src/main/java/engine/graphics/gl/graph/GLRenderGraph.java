@@ -24,6 +24,9 @@ public final class GLRenderGraph implements RenderGraph {
     private int frameNumber = 0;
     private long lastFrameStartTime;
 
+    private int width;
+    private int height;
+    private boolean resized;
     private Window window;
 
     public GLRenderGraph(RenderGraphInfo info) {
@@ -46,19 +49,40 @@ public final class GLRenderGraph implements RenderGraph {
         return tasks;
     }
 
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public void setSize(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.resized = true;
+    }
+
     public void draw(float tickLastFrame) {
-        if (window == null) return;
+        if (window != null && window.isResized()) {
+            setSize(window.getWidth(), window.getHeight());
+        }
 
         frameNumber++;
         long frameStartTime = System.nanoTime();
         float timeLastFrame = (frameStartTime - lastFrameStartTime) / 1e9f;
-        mainTask.draw(new Frame(frameNumber, System.currentTimeMillis(), timeLastFrame, tickLastFrame, window.getWidth(), window.getHeight(), window.isResized()));
+        mainTask.draw(new Frame(frameNumber, System.currentTimeMillis(), timeLastFrame, tickLastFrame, width, height, resized));
         lastFrameStartTime = frameStartTime;
+        resized = false;
 
         swapBuffers();
     }
 
     private void swapBuffers() {
+        if (window == null) return;
         FrameBuffer result = getMainTask().getFinalPass().getFrameBuffer();
         GLFrameBuffer screen = getDefaultFrameBuffer();
         screen.resize(result.getWidth(), result.getHeight());
