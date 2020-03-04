@@ -11,7 +11,7 @@ public interface ResourceFactory {
 
     Sampler createSampler();
 
-    MultiBufMesh.Builder createMeshBuilder();
+    MultiBufMesh.Builder createMultiBufMeshBuilder();
 
-    SingleBufMesh.Builder createSingleBufferMeshBuilder();
+    SingleBufMesh.Builder createSingleBufMeshBuilder();
 }

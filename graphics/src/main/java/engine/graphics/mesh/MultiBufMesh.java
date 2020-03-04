@@ -11,8 +11,8 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 public interface MultiBufMesh {
-    static MultiBufMesh.Builder builder() {
-        return GraphicsEngine.getGraphicsBackend().getResourceFactory().createMeshBuilder();
+    static Builder builder() {
+        return GraphicsEngine.getGraphicsBackend().getResourceFactory().createMultiBufMeshBuilder();
     }
 
     Attribute[] getAttributes();

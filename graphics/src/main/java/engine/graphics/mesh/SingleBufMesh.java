@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 
 public interface SingleBufMesh {
     static Builder builder() {
-        return GraphicsEngine.getGraphicsBackend().getResourceFactory().createSingleBufferMeshBuilder();
+        return GraphicsEngine.getGraphicsBackend().getResourceFactory().createSingleBufMeshBuilder();
     }
 
     VertexFormat getVertexFormat();

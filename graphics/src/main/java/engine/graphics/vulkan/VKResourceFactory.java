@@ -26,12 +26,12 @@ public class VKResourceFactory implements ResourceFactory {
     }
 
     @Override
-    public MultiBufMesh.Builder createMeshBuilder() {
+    public MultiBufMesh.Builder createMultiBufMeshBuilder() {
         return null;
     }
 
     @Override
-    public SingleBufMesh.Builder createSingleBufferMeshBuilder() {
+    public SingleBufMesh.Builder createSingleBufMeshBuilder() {
         return null;
     }
 }
