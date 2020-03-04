@@ -79,6 +79,7 @@ public final class GraphicsImpl implements Graphics {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, x1, y1);
         putVertex(buffer, x2, y2);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.LINES, buffer);
     }
 
@@ -88,6 +89,7 @@ public final class GraphicsImpl implements Graphics {
         float x2 = x + width, y2 = y + height;
         quads(buffer, x, y, x2, y, x2, y2, x, y2);
         putVertex(buffer, x, y);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
@@ -96,6 +98,7 @@ public final class GraphicsImpl implements Graphics {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         float x2 = x + width, y2 = y + height;
         quads(buffer, x, y, x, y2, x2, y, x2, y2);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
     }
 
@@ -104,6 +107,7 @@ public final class GraphicsImpl implements Graphics {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         quads(buffer, p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y());
         putVertex(buffer, p1.x(), p1.y());
+        buffer.finish();
         renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
@@ -111,6 +115,7 @@ public final class GraphicsImpl implements Graphics {
     public void fillQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4) {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         quads(buffer, p1.x(), p1.y(), p4.x(), p4.y(), p2.x(), p2.y(), p3.x(), p3.y());
+        buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
     }
 
@@ -123,6 +128,7 @@ public final class GraphicsImpl implements Graphics {
         quadCurveTo(buffer, x + arcWidth, y2, x, y2 - arcHeight, x, y2);
         quadCurveTo(buffer, x, y + arcHeight, x + arcWidth, y, x, y);
         putVertex(buffer, x2 - arcWidth, y);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
@@ -133,6 +139,7 @@ public final class GraphicsImpl implements Graphics {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, x + arcWidth, y + arcHeight);
         quadCurveTo(buffer, x + arcWidth, y, x, y + arcHeight, x, y);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLE_FAN, buffer);
 
         fillRect(x, y + arcHeight, arcWidth, height - arcHeight * 2);
@@ -140,6 +147,7 @@ public final class GraphicsImpl implements Graphics {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, x + arcWidth, y2 - arcHeight);
         quadCurveTo(buffer, x, y2 - arcHeight, x + arcWidth, y2, x, y2);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLE_FAN, buffer);
 
         fillRect(x + arcWidth, y2 - arcHeight, width - arcWidth * 2, arcHeight);
@@ -147,6 +155,7 @@ public final class GraphicsImpl implements Graphics {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, x2 - arcWidth, y2 - arcHeight);
         quadCurveTo(buffer, x2 - arcWidth, y2, x2, y2 - arcHeight, x2, y2);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLE_FAN, buffer);
 
         fillRect(x2 - arcWidth, y + arcHeight, arcWidth, height - arcHeight * 2);
@@ -154,6 +163,7 @@ public final class GraphicsImpl implements Graphics {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, x2 - arcWidth, y + arcHeight);
         quadCurveTo(buffer, x2, y + arcHeight, x2 - arcWidth, y, x2, y);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLE_FAN, buffer);
 
         fillRect(x + arcWidth, y, width - arcWidth * 2, height - arcHeight);
@@ -164,6 +174,7 @@ public final class GraphicsImpl implements Graphics {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, startX, startY);
         curveTo(buffer, startX, startY, endX, endY, px1, py1, px2, py2);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
@@ -171,6 +182,7 @@ public final class GraphicsImpl implements Graphics {
     public void drawQuadCurve(float startX, float startY, float endX, float endY, float px, float py) {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         quadCurveTo(buffer, startX, startY, endX, endY, px, py);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
@@ -179,6 +191,7 @@ public final class GraphicsImpl implements Graphics {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, startX, startY);
         arcTo(buffer, startX, startY, endX, endY, radiusX, radiusY, xAxisRotation, largeArcFlag, sweepFlag);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
     }
 
@@ -195,6 +208,7 @@ public final class GraphicsImpl implements Graphics {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
         buffer.setTranslation(x, y, 0);
         mesh.put(buffer, color, beginIndex, endIndex);
+        buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLES, buffer);
         setRenderText(false);
         uniformTexture.set(whiteTexture);
@@ -220,6 +234,7 @@ public final class GraphicsImpl implements Graphics {
         buffer.pos(x2, y2, 0).rgba(1, 1, 1, 1).tex(maxU, maxV).endVertex();
         uniformTexture.set(texture);
         resource.refresh();
+        buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
         uniformTexture.set(whiteTexture);
         resource.refresh();
