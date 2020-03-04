@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
-public interface MultiBufMesh {
+public interface MultiBufMesh extends Mesh {
     static Builder builder() {
         return GraphicsEngine.getGraphicsBackend().getResourceFactory().createMultiBufMeshBuilder();
     }

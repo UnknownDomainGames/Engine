@@ -8,7 +8,7 @@ import engine.graphics.vertex.VertexFormat;
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 
-public interface SingleBufMesh {
+public interface SingleBufMesh extends Mesh {
     static Builder builder() {
         return GraphicsEngine.getGraphicsBackend().getResourceFactory().createSingleBufMeshBuilder();
     }

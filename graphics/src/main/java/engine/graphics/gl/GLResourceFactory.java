@@ -28,12 +28,12 @@ public final class GLResourceFactory implements ResourceFactory {
     }
 
     @Override
-    public MultiBufMesh.Builder createMeshBuilder() {
+    public MultiBufMesh.Builder createMultiBufMeshBuilder() {
         return GLMultiBufMesh.builder();
     }
 
     @Override
-    public SingleBufMesh.Builder createSingleBufferMeshBuilder() {
+    public SingleBufMesh.Builder createSingleBufMeshBuilder() {
         return GLSingleBufMesh.builder();
     }
 }
