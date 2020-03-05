@@ -1,12 +1,14 @@
 package engine.graphics.model.assimp;
 
-import engine.client.asset.AssetURL;
-import engine.graphics.util.GLHelper;
+import org.apache.commons.io.IOUtils;
 import org.joml.Matrix4f;
 import org.lwjgl.assimp.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Path;
 
 import static org.lwjgl.assimp.Assimp.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -22,8 +24,9 @@ public class AssimpHelper {
                 AIFile aiFile = AIFile.create();
                 final ByteBuffer data;
                 String fileNameUtf8 = memUTF8(fileName);
-                try {
-                    data = GLHelper.getResourcesAsBuffer(fileNameUtf8, 8192);
+                try (var channel = FileChannel.open(Path.of(fileNameUtf8))){
+                    data = ByteBuffer.allocateDirect((int) channel.size());
+                    channel.read(data);
                 } catch (IOException e) {
                     throw new RuntimeException("Could not open file: " + fileNameUtf8);
                 }
@@ -68,17 +71,17 @@ public class AssimpHelper {
     /**
      * Load a model from jar
      *
-     * @param url relative path of the model from root
+     * @param path relative path of the model from root
      * @return a model
      * @todo Use ResourceLocation-styled instead
      */
-    public static AssimpModel loadModel(AssetURL url) {
-        AIScene scene = aiImportFileEx("assets/" + url.toFileLocation(),
+    public static AssimpModel loadModel(String path) {
+        AIScene scene = aiImportFileEx(path,
                 /*aiProcess_JoinIdenticalVertices | */aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_FlipUVs, ASSIMP_JARFILEIO);
         if (scene == null) {
             throw new IllegalStateException(aiGetErrorString());
         }
-        return new AssimpModel(scene, url);
+        return new AssimpModel(scene, path);
     }
 
     public static Matrix4f generalizeNativeMatrix(AIMatrix4x4 aiMatrix4x4) {

@@ -1,19 +1,22 @@
 package engine.graphics.model.assimp;
 
-import engine.Platform;
-import engine.client.asset.AssetTypes;
-import engine.client.asset.AssetURL;
-import engine.graphics.gl.texture.GLTexture2D;
+import engine.graphics.GraphicsEngine;
+import engine.graphics.image.BufferedImage;
 import engine.graphics.material.Material;
 import engine.graphics.texture.Texture2D;
+import engine.graphics.texture.TextureFormat;
 import org.apache.commons.io.FilenameUtils;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 import static org.lwjgl.assimp.Assimp.*;
@@ -26,7 +29,7 @@ public class AssimpMaterial {
 
     private Material referenceMat;
 
-    AssimpMaterial(AIScene scene, AIMaterial material, AssetURL url) {
+    AssimpMaterial(AIScene scene, AIMaterial material, String url) {
 
         mScene = scene;
         mMaterial = material;
@@ -70,7 +73,7 @@ public class AssimpMaterial {
         referenceMat.setAlphaUV(alphaTexture);
     }
 
-    private Texture2D loadTexture(int textureType, AssetURL url) {
+    private Texture2D loadTexture(int textureType, String url) {
         AIString path = AIString.calloc();
         aiGetMaterialTexture(mMaterial, textureType, 0, path, null, null, null, null, null, (IntBuffer) null);
         String s = path.dataString();
@@ -80,8 +83,10 @@ public class AssimpMaterial {
                 PointerBuffer textures = mScene.mTextures();
                 if (textures != null) {
                     var texture = AITexture.createSafe(textures.get(Integer.parseInt(Pattern.compile("\\*(\\d+)").matcher(s).group(1))));
-                    var buf = texture.pcData(texture.mWidth() * texture.mHeight());
-                    var buf1 = BufferUtils.createByteBuffer(texture.mWidth() * texture.mHeight() * 4);
+                    var width = texture.mWidth();
+                    var height = texture.mHeight();
+                    var buf = texture.pcData(width * height);
+                    var buf1 = BufferUtils.createByteBuffer(width * height * 4);
                     for (AITexel aiTexel : buf) {
                         buf1.put(aiTexel.r()).put(aiTexel.g()).put(aiTexel.b()).put(aiTexel.a());
                     }
@@ -89,14 +94,23 @@ public class AssimpMaterial {
                     buf.free();
                     texture.free();
                     textures.free();
-                    return GLTexture2D.of(buf1, texture.mWidth(), texture.mHeight());
+                    return GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder().format(TextureFormat.RGBA8).build(buf1, width, height);
                 }
             } else {
                 //Promise: Loader now only search in texture/model/[FILENAME] folder
-                return Platform.getEngineClient().getAssetManager().loadDirect(AssetTypes.TEXTURE, AssetURL.of(url.getDomain(), "texture/model/" + FilenameUtils.getBaseName(url.getLocation()) + "/" + s));
+                try (var channel = Files.newByteChannel(Path.of("texture", "model", FilenameUtils.getBaseName(url), s))) {
+                    var buffer = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
+                    channel.read(buffer);
+                    buffer.flip();
+                    var builder = GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder();
+                    return builder.build(BufferedImage.load(buffer));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
-        return GLTexture2D.EMPTY;
+        return null;
     }
 
     Material getEngineMaterial() {
