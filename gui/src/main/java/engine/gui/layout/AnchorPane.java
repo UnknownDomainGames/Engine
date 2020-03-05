@@ -105,17 +105,17 @@ public class AnchorPane extends Pane {
 
 
             float x = 0, y = 0;
-            float w = computeChildWidth(child, left, right, width().get());
-            float h = computeChildHeight(child, top, bottom, height().get());
+            float w = computeChildWidth(child, left, right, getWidth());
+            float h = computeChildHeight(child, top, bottom, getHeight());
             if (left != null) {
                 x = left;
             } else if (right != null) {
-                x = width().get() - right - w;
+                x = getWidth() - right - w;
             }
             if (top != null) {
                 y = top;
             } else if (bottom != null) {
-                y = height().get() - bottom - h;
+                y = getHeight() - bottom - h;
             }
 
             layoutInArea(child, x, y, w, h);

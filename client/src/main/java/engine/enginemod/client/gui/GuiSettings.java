@@ -12,6 +12,7 @@ import engine.gui.layout.HBox;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
+import engine.gui.misc.Bounds;
 import engine.gui.text.Text;
 import engine.input.MouseButton;
 import engine.util.Color;
@@ -107,18 +108,18 @@ public class GuiSettings extends AnchorPane {
         hb2.getChildren().addAll(lblRes, butRes);
         var hb3 = new HBox();
         hb3.spacing().set(10f);
-        hb3.getChildren().addAll(lblUiScale,sliderUiScale, lblUiScaleVal);
+        hb3.getChildren().addAll(lblUiScale, sliderUiScale, lblUiScaleVal);
         var hb4 = new HBox();
         hb4.spacing().set(10f);
-        hb4.getChildren().addAll(lblHudScale,sliderHudScale, lblHudScaleVal);
+        hb4.getChildren().addAll(lblHudScale, sliderHudScale, lblHudScaleVal);
         var vb = new VBox();
         vb.getChildren().addAll(hb1, hb2, hb3, hb4);
 
         //All
         setTopAnchor(title, 10f);
-        setLeftAnchor(title, (this.width().get() - title.width().get()) / 2);
-        setTopAnchor(vb, title.height().get() + 20f);
-        setLeftAnchor(vb, (this.width().get() - vb.width().get()) / 2);
+        setLeftAnchor(title, (this.getWidth() - title.getWidth()) / 2);
+        setTopAnchor(vb, title.getHeight() + 20f);
+        setLeftAnchor(vb, (this.getWidth() - vb.getWidth()) / 2);
         var butBack = new Button("Return without Saving");
         var butSave = new Button("Save and Return");
         butBack.getSize().minHeight().set(25);
@@ -143,20 +144,19 @@ public class GuiSettings extends AnchorPane {
         var hb5 = new HBox();
         hb5.getChildren().addAll(butSave, butBack);
         setBottomAnchor(hb5, 10f);
-        setBottomAnchor(vb, hb5.height().get() + 20f);
+        setBottomAnchor(vb, hb5.getHeight() + 20f);
         setRightAnchor(hb5, 10f);
         this.getChildren().addAll(title, vb, hb5);
-        ValueChangeListener<Float> sizeChangeListener = (observable, oldValue, newValue) -> {
+        ValueChangeListener<Bounds> sizeChangeListener = (observable, oldValue, newValue) -> {
             setTopAnchor(title, 10f);
-            setLeftAnchor(title, (this.width().get() - title.width().get()) / 2);
-            setTopAnchor(vb, title.height().get() + 20f);
-            setLeftAnchor(vb, (this.width().get() - vb.width().get()) / 2);
+            setLeftAnchor(title, (this.getWidth() - title.getWidth()) / 2);
+            setTopAnchor(vb, title.getHeight() + 20f);
+            setLeftAnchor(vb, (this.getWidth() - vb.getWidth()) / 2);
             setBottomAnchor(hb5, 10f);
-            setBottomAnchor(vb, hb5.height().get() + 20f);
+            setBottomAnchor(vb, hb5.getHeight() + 20f);
             setRightAnchor(hb5, 10f);
             layoutChildren();
         };
-        width().addChangeListener(sizeChangeListener);
-        height().addChangeListener(sizeChangeListener);
+        layoutBounds().addChangeListener(sizeChangeListener);
     }
 }

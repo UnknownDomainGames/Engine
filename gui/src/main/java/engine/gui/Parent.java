@@ -52,8 +52,8 @@ public abstract class Parent extends Node {
     public float prefWidth() {
         float minX = 0, maxX = 0;
         for (Node child : getChildren()) {
-            float childMinX = child.x().get();
-            float childMaxX = childMinX + Math.max(Utils.prefWidth(child), child.width().get());
+            float childMinX = child.getLayoutX();
+            float childMaxX = childMinX + Math.max(Utils.prefWidth(child), child.getWidth());
             if (minX > childMinX) {
                 minX = childMinX;
             }
@@ -68,8 +68,8 @@ public abstract class Parent extends Node {
     public float prefHeight() {
         float minY = 0, maxY = 0;
         for (Node child : getChildren()) {
-            float childMinY = child.y().get();
-            float childMaxY = childMinY + Math.max(Utils.prefHeight(child), child.height().get());
+            float childMinY = child.getLayoutY();
+            float childMaxY = childMinY + Math.max(Utils.prefHeight(child), child.getHeight());
             if (minY > childMinY) {
                 minY = childMinY;
             }
@@ -130,12 +130,11 @@ public abstract class Parent extends Node {
 
     protected void layoutChildren() {
         for (Node node : getChildren()) {
-            layoutInArea(node, node.x().get(), node.y().get(), Utils.prefWidth(node), Utils.prefHeight(node));
+            layoutInArea(node, node.getLayoutX(), node.getLayoutY(), Utils.prefWidth(node), Utils.prefHeight(node));
         }
     }
 
     protected final void layoutInArea(Node node, float x, float y, float width, float height) {
-        node.relocate(x, y);
-        node.resize(width, height);
+        node.position(x, y, width, height);
     }
 }

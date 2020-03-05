@@ -97,15 +97,15 @@ public class VSlider extends Region {
         }
         resizeBack(sliderThickness.get(), sliderLength.get());
         resizeSlider(sliderThickness.get(), sliderLength.get() * (float) (step.get() / (max.get() - min.get())));
-        slider.x().set(back.x().get());
-        slider.y().set((float) (((back.height().get() - slider.height().get()) * (flip.get() ? 1 - ((value.get() - min.get()) / (max.get() - min.get())) : ((value.get() - min.get()) / (max.get() - min.get()))))));
+        slider.layoutX().set(back.getLayoutX());
+        slider.layoutY().set((float) (((back.getHeight() - slider.getHeight()) * (flip.get() ? 1 - ((value.get() - min.get()) / (max.get() - min.get())) : ((value.get() - min.get()) / (max.get() - min.get()))))));
     }
 
     private void onPressed(MouseActionEvent e) {
         if(e.getTarget().equals(back)) {
-            if (e.getY() > slider.y().get() + slider.height().get()) {
+            if (e.getY() > slider.getLayoutY() + slider.getHeight()) {
                 value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
-            } else if (e.getY() < slider.y().get()) {
+            } else if (e.getY() < slider.getLayoutY()) {
                 value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
             }
         }
@@ -115,10 +115,10 @@ public class VSlider extends Region {
     }
 
     private void onMoved(MouseEvent e) {
-        if(!select) return;
-        if ((e.getY() - slider.y().get() - slider.rectSize().get().y()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
+        if (!select) return;
+        if ((e.getY() - slider.getLayoutY() - slider.rectSize().get().y()) / getHeight() > step.get() / (max.get() - min.get()) * 0.9) {
             value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
-        } else if ((slider.y().get() - e.getY()) / height().get() > step.get() / (max.get() - min.get()) * 0.9) {
+        } else if ((slider.getLayoutY() - e.getY()) / getHeight() > step.get() / (max.get() - min.get()) * 0.9) {
             value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
         }
     }

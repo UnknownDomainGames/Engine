@@ -50,7 +50,7 @@ public class FlowPane extends Pane {
             float pw = Utils.prefWidth(child);
             float ph = Utils.prefHeight(child);
             if (orientation.get() == Orientation.VERTICAL) {
-                if (tmpsize + ph > height().get()) {
+                if (tmpsize + ph > getHeight()) {
                     tmpsize = ph + spacing;
                     tmpgroup.setRight(max);
                     groups.add(tmpgroup);
@@ -61,7 +61,7 @@ public class FlowPane extends Pane {
                     tmpsize += ph + spacing;
                 }
             } else {
-                if (tmpsize + pw > width().get()) {
+                if (tmpsize + pw > getWidth()) {
                     tmpsize = pw + spacing;
                     tmpgroup.setRight(max);
                     groups.add(tmpgroup);
@@ -76,16 +76,16 @@ public class FlowPane extends Pane {
         }
         tmpgroup.setRight(max);
         groups.add(tmpgroup);
-        var size = Math.min(orientation.get() == Orientation.VERTICAL ? width().get() : height().get(), groups.stream().mapToDouble(Pair::getRight).reduce(0, Double::sum));
+        var size = Math.min(orientation.get() == Orientation.VERTICAL ? getWidth() : getHeight(), groups.stream().mapToDouble(Pair::getRight).reduce(0, Double::sum));
         float x;
         float y;
         switch (alignment.getValue().getHpos()) {
             case RIGHT:
-                x = width().get() - padding.getRight();
+                x = getWidth() - padding.getRight();
                 break;
             case CENTER:
                 if (orientation.get() == Orientation.VERTICAL) {
-                    x = (float) (Math.max((width().get() - padding.getLeft() - padding.getRight()) - size, 0) / 2 + padding.getLeft());
+                    x = (float) (Math.max((getWidth() - padding.getLeft() - padding.getRight()) - size, 0) / 2 + padding.getLeft());
                 } else {
                     x = 0; // Handle x in groups
                 }
@@ -96,11 +96,11 @@ public class FlowPane extends Pane {
         }
         switch (alignment.getValue().getVpos()) {
             case BOTTOM:
-                y = height().get() - padding.getBottom();
+                y = getHeight() - padding.getBottom();
                 break;
             case CENTER:
                 if (orientation.get() == Orientation.HORIZONTAL) {
-                    y = (float) (Math.max(height().get() - padding.getTop() - padding.getBottom() - size, 0) / 2 + padding.getTop());
+                    y = (float) (Math.max(getHeight() - padding.getTop() - padding.getBottom() - size, 0) / 2 + padding.getTop());
                 } else {
                     y = 0; // Handle y in groups
                 }
@@ -113,9 +113,9 @@ public class FlowPane extends Pane {
         float lineH = 0;
         for (Pair<List<Node>, Float> group : groups) {
             if (orientation.get() == Orientation.VERTICAL) {
-                y = (float) (Math.max(height().get() - padding.getTop() - padding.getBottom() - group.getLeft().stream().mapToDouble(Node::prefHeight).reduce(0, Double::sum) - spacing * (group.getLeft().size() - 1), 0) / 2 + padding.getTop());
+                y = (float) (Math.max(getHeight() - padding.getTop() - padding.getBottom() - group.getLeft().stream().mapToDouble(Node::prefHeight).reduce(0, Double::sum) - spacing * (group.getLeft().size() - 1), 0) / 2 + padding.getTop());
             } else {
-                x = (float) (Math.max(width().get() - padding.getLeft() - padding.getRight() - group.getLeft().stream().mapToDouble(Node::prefWidth).reduce(0, Double::sum) - spacing * (group.getLeft().size() - 1), 0) / 2 + padding.getLeft());
+                x = (float) (Math.max(getWidth() - padding.getLeft() - padding.getRight() - group.getLeft().stream().mapToDouble(Node::prefWidth).reduce(0, Double::sum) - spacing * (group.getLeft().size() - 1), 0) / 2 + padding.getLeft());
             }
             for (var child : group.getLeft()) {
                 float pw = Utils.prefWidth(child);

@@ -49,7 +49,7 @@ public class TextField extends TextInput {
 
     @Override
     protected void updatePointer() {
-        var viewableWidth = width().get() - padding().getValue().getLeft() - padding().getValue().getRight();
+        var viewableWidth = getWidth() - padding().getValue().getLeft() - padding().getValue().getRight();
         var caretOffset = FontManager.instance().computeTextWidth(getTextInRange(0, caret().get()), font().getValue());
         var adjusted = caretOffset + lineScrollOffset;
         if (viewableWidth < adjusted) {

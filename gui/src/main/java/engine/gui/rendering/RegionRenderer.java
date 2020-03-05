@@ -13,7 +13,7 @@ public class RegionRenderer<E extends Region> implements ComponentRenderer<E> {
         graphics.drawBorder(region.border().getValue(), region);
         for (Node child : region.getUnmodifiableChildren()) {
             if (!child.isVisible()) continue;
-            graphics.pushClipRect(child.x().get(), child.y().get(), child.width().get(), child.height().get());
+            graphics.pushClipRect(child.getLayoutX(), child.getLayoutY(), child.getWidth(), child.getHeight());
             child.getRenderer().render(child, graphics);
             graphics.popClipRect();
         }

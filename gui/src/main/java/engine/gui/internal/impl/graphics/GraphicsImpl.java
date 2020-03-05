@@ -259,7 +259,7 @@ public final class GraphicsImpl implements Graphics {
 
     @Override
     public void drawBorder(Border border, Node node) {
-        drawBorder(border, 0, 0, node.width().get(), node.height().get());
+        drawBorder(border, 0, 0, node.getWidth(), node.getHeight());
     }
 
     @Override
@@ -289,7 +289,7 @@ public final class GraphicsImpl implements Graphics {
 
     @Override
     public void drawBackground(Background background, Node node) {
-        drawBackground(background, 0, 0, node.width().get(), node.height().get());
+        drawBackground(background, 0, 0, node.getWidth(), node.getHeight());
     }
 
     @Override

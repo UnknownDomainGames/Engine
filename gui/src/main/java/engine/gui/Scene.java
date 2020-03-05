@@ -126,8 +126,8 @@ public class Scene implements EventTarget {
 
     private void updateRoot() {
         Parent root = this.root.get();
-        root.width.set(getWidth() - root.x().get());
-        root.height.set(getHeight() - root.y().get());
+        root.position(root.getLayoutX(), root.getLayoutY(),
+                getWidth() - root.getLayoutX(), getHeight() - root.getLayoutY());
         root.needsLayout();
     }
 
@@ -193,7 +193,7 @@ public class Scene implements EventTarget {
 
             matched = true;
             if (node instanceof Parent) {
-                boolean mismatchChild = !raycast((Parent) node, x - node.x().get(), y - node.y().get(), results, keepParent);
+                boolean mismatchChild = !raycast((Parent) node, x - node.getLayoutX(), y - node.getLayoutY(), results, keepParent);
                 if (keepParent || mismatchChild) {
                     results.add(node);
                 }

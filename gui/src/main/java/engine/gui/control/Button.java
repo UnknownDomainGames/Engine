@@ -104,7 +104,7 @@ public class Button extends Label {
                 y = (float) Math.floor(y + 0.5f);
                 layoutInArea(child, snap(padding().getValue().getLeft() + x, true), snap(padding().getValue().getTop() + y, true), Utils.prefWidth(child), Utils.prefHeight(child));
             } else { //Although we only have Text inside, we still layout others in case acting as a child
-                layoutInArea(child, child.x().get(), child.y().get(), Utils.prefWidth(child), Utils.prefHeight(child));
+                layoutInArea(child, child.getLayoutX(), child.getLayoutY(), Utils.prefWidth(child), Utils.prefHeight(child));
             }
         }
     }

@@ -54,12 +54,12 @@ public class Rect extends Shape {
         return (ComponentRenderer<Rect>) (component, graphics) -> {
             if (strokeSize.get() > 0) {
                 graphics.popClipRect();
-                graphics.pushClipRect(component.x().get() - component.strokeSize.get(), component.y().get() - component.strokeSize.get(), component.width().get() + component.strokeSize.get() * 2, component.height().get() + component.strokeSize.get() * 2);
+                graphics.pushClipRect(component.getLayoutX() - component.strokeSize.get(), component.getLayoutY() - component.strokeSize.get(), component.getWidth() + component.strokeSize.get() * 2, component.getHeight() + component.strokeSize.get() * 2);
                 graphics.setColor(component.strokeColor.getValue());
-                graphics.fillRect(0, 0, component.width().get() + component.strokeSize.get() * 2, component.height().get() + component.strokeSize.get() * 2);
+                graphics.fillRect(0, 0, component.getWidth() + component.strokeSize.get() * 2, component.getHeight() + component.strokeSize.get() * 2);
             }
             graphics.setColor(component.fillColor.getValue());
-            graphics.fillRect(component.strokeSize.get(), component.strokeSize.get(), component.width().get(), component.height().get());
+            graphics.fillRect(component.strokeSize.get(), component.strokeSize.get(), component.getWidth(), component.getHeight());
         };
     }
 }

@@ -14,15 +14,15 @@ public class CheckBoxRenderer implements ComponentRenderer<CheckBox> {
             float width;
             float height;
             if (component.state().getValue() == null) {
-                width = component.width().get() - insets.getRight() - insets.getLeft();
-                height = component.width().get() - insets.getTop() - insets.getBottom();
+                width = component.getWidth() - insets.getRight() - insets.getLeft();
+                height = component.getWidth() - insets.getTop() - insets.getBottom();
                 graphics.pushClipRect(insets.getLeft(), insets.getTop(), width, height);
                 graphics.setColor(component.contentColor().getValue());
                 graphics.fillRect(0, 0, width, height);
                 graphics.popClipRect();
             } else {
-                width = component.width().get();
-                height = component.width().get();
+                width = component.getWidth();
+                height = component.getWidth();
                 float vc = (float) Math.sqrt(Math.pow(component.border().getValue().getInsets().getLeft(), 2) / 2);
                 graphics.fillQuad(new Vector2f(vc, 0), new Vector2f(width, height - vc), new Vector2f(width - vc, height), new Vector2f(0, vc));
                 graphics.fillQuad(new Vector2f(0, height - vc), new Vector2f(width - vc, 0), new Vector2f(width, vc), new Vector2f(vc, height));

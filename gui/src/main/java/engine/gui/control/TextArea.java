@@ -11,7 +11,7 @@ public class TextArea extends TextInput {
     private ScrollPane scrollPane;
     private WrapText wrapText;
 
-    public TextArea(){
+    public TextArea() {
         super();
 //        removeEventHandler(KeyEvent.KEY_PRESSED, super::onKeyPressed);
 //        addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
@@ -19,14 +19,13 @@ public class TextArea extends TextInput {
         wrapText = new WrapText();
         wrapText.text().bindBidirectional(this.text());
         scrollPane.setContent(wrapText);
-        width().addChangeListener((observable,o,n) -> scrollPane.getSize().prefWidth().set(n));
-        height().addChangeListener((observable, oldValue, newValue) -> scrollPane.getSize().prefHeight().set(newValue));
+        layoutBounds().addChangeListener((observable, o, n) -> scrollPane.getSize().setPrefSize(n.getWidth(), n.getHeight()));
         this.getChildren().add(scrollPane);
     }
 
     public void onKeyPressed(KeyEvent event) {
         super.onKeyPressed(event);
-        if(event.getKey() == KeyCode.ENTER || event.getKey() == KeyCode.NUMPAD_ENTER){
+        if (event.getKey() == KeyCode.ENTER || event.getKey() == KeyCode.NUMPAD_ENTER) {
             if (caret.get() != anchor.get()) {
                 replaceSelection("");
                 deselect();

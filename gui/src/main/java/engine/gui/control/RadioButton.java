@@ -31,7 +31,7 @@ public class RadioButton extends ToggleButton {
         });
         border().setValue(new Border(Color.BLACK, 3));
         padding().setValue(new Insets(5));
-        resize(24f, 24f);
+        getSize().setPrefSize(24, 24);
         addEventHandler(MouseActionEvent.MOUSE_CLICKED, this::onClicked);
     }
 

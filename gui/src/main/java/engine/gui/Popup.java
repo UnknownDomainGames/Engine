@@ -47,7 +47,7 @@ public class Popup extends Parent{
     @Override
     protected ComponentRenderer createDefaultRenderer() {
         return (ComponentRenderer<Popup>) (component, graphics) -> {
-            graphics.pushClipRect(component.x().get(), component.y().get(), component.prefWidth(), component.prefHeight());
+            graphics.pushClipRect(component.getLayoutX(), component.getLayoutY(), component.prefWidth(), component.prefHeight());
             component.content().ifPresent(node -> node.getRenderer().render(node, graphics));
             graphics.popClipRect();
         };

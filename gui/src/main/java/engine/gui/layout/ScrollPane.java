@@ -31,41 +31,37 @@ public class ScrollPane extends BorderPane {
         content.addChangeListener((observable, oldValue, newValue) -> {
             update();
             if (newValue != null) {
-                newValue.width().addChangeListener((observable1, oldValue1, newValue1) -> update());
-                newValue.height().addChangeListener((observable1, oldValue1, newValue1) -> update());
+                newValue.layoutBounds().addChangeListener((observable1, o, n) -> update());
             }
         });
-        width().addChangeListener((observable, oldValue, newValue) -> {
-            hScroll.sliderLength().set(width().get());
-            update();
-        });
-        height().addChangeListener((observable, oldValue, newValue) -> {
-            vScroll.sliderLength().set(height().get());
+        layoutBounds().addChangeListener((observable, oldValue, newValue) -> {
+            hScroll.sliderLength().set(getWidth());
+            vScroll.sliderLength().set(getHeight());
             update();
         });
     }
 
     private void update() {
         if (content.isPresent()) {
-            if (content.getValue().width().get() > width().get()) {
+            if (content.getValue().getWidth() > getWidth()) {
                 hScroll.setDisabled(false);
                 vScroll.setVisible(true);
-                var delta = content.getValue().width().get() - width().get();
+                var delta = content.getValue().getWidth() - getWidth();
                 hScroll.max().set(delta);
                 hScroll.step().set(delta / 10.0f);
-                hScroll.value().addChangeListener((observable, oldValue, newValue) -> content.getValue().relocate(-hScroll.value().getFloat(), content.getValue().y().get()));
+                hScroll.value().addChangeListener((observable, oldValue, newValue) -> content.getValue().relocate(-hScroll.value().getFloat(), content.getValue().getLayoutY()));
             } else {
                 hScroll.setDisabled(true);
                 hScroll.setVisible(false);
                 hScroll.max().set(1);
             }
-            if (content.getValue().height().get() > height().get()) {
+            if (content.getValue().getHeight() > getHeight()) {
                 vScroll.setDisabled(false);
                 vScroll.setVisible(true);
-                var delta = content.getValue().height().get() - height().get();
+                var delta = content.getValue().getHeight() - getHeight();
                 vScroll.max().set(delta);
                 vScroll.step().set(delta / 10.0f);
-                vScroll.value().addChangeListener((observable, oldValue, newValue) -> content.getValue().relocate(content.getValue().x().get(), -vScroll.value().getFloat()));
+                vScroll.value().addChangeListener((observable, oldValue, newValue) -> content.getValue().relocate(content.getValue().getLayoutX(), -vScroll.value().getFloat()));
             } else {
                 vScroll.setDisabled(true);
                 vScroll.setVisible(false);

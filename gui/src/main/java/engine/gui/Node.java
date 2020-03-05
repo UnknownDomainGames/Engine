@@ -8,6 +8,7 @@ import engine.gui.input.KeyEvent;
 import engine.gui.input.MouseActionEvent;
 import engine.gui.input.MouseEvent;
 import engine.gui.input.ScrollEvent;
+import engine.gui.misc.Bounds;
 import engine.gui.misc.Point;
 import engine.gui.rendering.ComponentRenderer;
 import engine.input.MouseButton;
@@ -19,13 +20,10 @@ public abstract class Node implements EventTarget {
     final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
     final MutableObjectValue<Parent> parent = new SimpleMutableObjectValue<>();
 
-    private final MutableFloatValue x = new SimpleMutableFloatValue();
-    private final MutableFloatValue y = new SimpleMutableFloatValue();
+    private final MutableObjectValue<Bounds> layoutBounds = new SimpleMutableObjectValue<>(Bounds.EMPTY);
 
-    final MutableFloatValue width = new SimpleMutableFloatValue();
-    final MutableFloatValue height = new SimpleMutableFloatValue();
-
-    final MutableFloatValue layoutBounds = new SimpleMutableFloatValue();
+    private MutableFloatValue layoutX;
+    private MutableFloatValue layoutY;
 
     final MutableBooleanValue focused = new SimpleMutableBooleanValue(false);
     final MutableBooleanValue hover = new SimpleMutableBooleanValue(false);
@@ -57,36 +55,67 @@ public abstract class Node implements EventTarget {
         return parent.get();
     }
 
-    public final MutableFloatValue x() {
-        return x;
+    public final ObservableObjectValue<Bounds> layoutBounds() {
+        return layoutBounds.toUnmodifiable();
     }
 
-    public final float getX() {
-        return x.get();
+    public final Bounds getLayoutBounds() {
+        return layoutBounds.get();
     }
 
-    public final MutableFloatValue y() {
-        return y;
+    void position(float x, float y, float width, float height) {
+        layoutBounds.set(new Bounds(x, y, width, height));
+        layoutX().set(x);
+        layoutY().set(y);
     }
 
-    public final float getY() {
-        return y.get();
+    public final MutableFloatValue layoutX() {
+        if (layoutX == null) {
+            layoutX = new SimpleMutableFloatValue();
+            layoutX.addChangeListener((observable, oldValue, newValue) -> {
+                if (newValue != getLayoutBounds().getMinX()) requestParentLayout();
+            });
+        }
+        return layoutX;
     }
 
-    public final ObservableFloatValue width() {
-        return width.toUnmodifiable();
+    public final float getLayoutX() {
+        return layoutX == null ? 0 : layoutX.get();
+    }
+
+    public final void setLayoutX(float x) {
+        layoutX().set(x);
+    }
+
+    public final MutableFloatValue layoutY() {
+        if (layoutY == null) {
+            layoutY = new SimpleMutableFloatValue();
+            layoutY.addChangeListener((observable, oldValue, newValue) -> {
+                if (newValue != getLayoutBounds().getMinY()) requestParentLayout();
+            });
+        }
+        return layoutY;
+    }
+
+    public final float getLayoutY() {
+        return layoutX == null ? 0 : layoutY.get();
+    }
+
+    public final void setLayoutY(float y) {
+        layoutY().set(y);
+    }
+
+    public final void relocate(float x, float y) {
+        setLayoutX(x);
+        setLayoutY(y);
     }
 
     public final float getWidth() {
-        return width.get();
-    }
-
-    public final ObservableFloatValue height() {
-        return height.toUnmodifiable();
+        return getLayoutBounds().getWidth();
     }
 
     public final float getHeight() {
-        return height.get();
+        return getLayoutBounds().getHeight();
     }
 
     public final ObservableBooleanValue focused() {
@@ -170,11 +199,8 @@ public abstract class Node implements EventTarget {
         return prefHeight();
     }
 
-    public boolean contains(float posX, float posY) {
-        return (x().get() <= posX) &&
-                (posX <= x().get() + width().get()) &&
-                (y().get() <= posY) &&
-                (posY <= y().get() + height().get());
+    public boolean contains(float x, float y) {
+        return getLayoutBounds().contains(x, y);
     }
 
     public ComponentRenderer getRenderer() {
@@ -202,16 +228,6 @@ public abstract class Node implements EventTarget {
         return properties != null && !properties.isEmpty();
     }
 
-    public void resize(float width, float height) {
-        this.width.set(width);
-        this.height.set(height);
-    }
-
-    public void relocate(float x, float y) {
-        this.x.set(x);
-        this.y.set(y);
-    }
-
     public void forceFocus() {
         focused.set(true);
     }
@@ -220,7 +236,7 @@ public abstract class Node implements EventTarget {
         if (parent().isEmpty()) {
             return new Point(x, y);
         } else {
-            return parent().getValue().relativePos(x - x().get(), y - y().get());
+            return parent().getValue().relativePos(x - getLayoutX(), y - getLayoutY());
         }
     }
 

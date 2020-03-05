@@ -10,8 +10,8 @@ public class RadioButtonRenderer implements ComponentRenderer<RadioButton> {
         graphics.drawBorder(component.border().getValue(), component);
         if (component.selected().get()) {
             Insets insets = component.padding().getValue();
-            float width = component.width().get() - insets.getRight() - insets.getLeft();
-            float height = component.width().get() - insets.getTop() - insets.getBottom();
+            float width = component.getWidth() - insets.getRight() - insets.getLeft();
+            float height = component.getWidth() - insets.getTop() - insets.getBottom();
             graphics.pushClipRect(insets.getLeft(), insets.getTop(), width, height);
             graphics.setColor(component.contentColor().getValue());
             graphics.fillRect(0, 0, width, height);

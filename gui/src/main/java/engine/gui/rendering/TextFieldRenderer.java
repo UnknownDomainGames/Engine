@@ -40,13 +40,13 @@ public final class TextFieldRenderer extends RegionRenderer<TextField> {
         if (textField.padding().isPresent()) {
             px = textField.padding().getValue().getLeft();
             py = textField.padding().getValue().getTop();
-            pw = textField.width().get() - textField.padding().getValue().getRight();
-            ph = textField.height().get() - textField.padding().getValue().getBottom();
+            pw = textField.getWidth() - textField.padding().getValue().getRight();
+            ph = textField.getHeight() - textField.padding().getValue().getBottom();
         } else {
             px = 0;
             py = 0;
-            pw = textField.width().get();
-            ph = textField.height().get();
+            pw = textField.getWidth();
+            ph = textField.getHeight();
         }
         graphics.pushClipRect(px, py, pw, ph);
         Color frontColor = textField.fontcolor().getValue();

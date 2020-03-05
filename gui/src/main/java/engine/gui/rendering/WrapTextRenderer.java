@@ -58,10 +58,10 @@ public final class WrapTextRenderer implements ComponentRenderer<WrapText> {
             var y1 = y + (lineHeight * leading - lineHeight) / 2;
             switch (alignment.getHpos()) {
                 case RIGHT:
-                    graphics.drawText(mesh.mesh, text.width().get() - mesh.width, y1);
+                    graphics.drawText(mesh.mesh, text.getWidth() - mesh.width, y1);
                     break;
                 case CENTER:
-                    graphics.drawText(mesh.mesh, (text.width().get() - mesh.width) / 2, y1);
+                    graphics.drawText(mesh.mesh, (text.getWidth() - mesh.width) / 2, y1);
                     break;
                 case LEFT:
                     graphics.drawText(mesh.mesh, 0, y1);

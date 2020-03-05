@@ -4,6 +4,8 @@ import java.util.Objects;
 
 public final class Bounds {
 
+    public static final Bounds EMPTY = new Bounds(0, 0, 0, 0);
+
     private final float minX;
     private final float minY;
     private final float maxX;
@@ -45,7 +47,7 @@ public final class Bounds {
     }
 
     public boolean isEmpty() {
-        return minX > maxX || minY > maxY;
+        return minX >= maxX || minY >= maxY;
     }
 
     public boolean contains(Point point) {

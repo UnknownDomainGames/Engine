@@ -31,7 +31,7 @@ public class VBox extends Pane {
     public float computeWidth() {
         float width = 0;
         for (Node node : getChildren()) {
-            width = Math.max(Math.max(width, node.width().get()), Utils.prefWidth(node));
+            width = Math.max(Math.max(width, node.getWidth()), Utils.prefWidth(node));
         }
         Insets padding = padding().getValue();
         return padding.getLeft() + width + padding.getRight();
@@ -41,7 +41,7 @@ public class VBox extends Pane {
     public float computeHeight() {
         float height = 0, spacing = spacing().get();
         for (Node node : getChildren()) {
-            height += Math.max(node.height().get(), Utils.prefHeight(node));
+            height += Math.max(node.getHeight(), Utils.prefHeight(node));
         }
         Insets padding = padding().getValue();
         return padding.getTop() + height + ((getChildren().size() == 0) ? 0 : spacing * (getChildren().size() - 1)) + padding.getBottom();
@@ -50,7 +50,7 @@ public class VBox extends Pane {
     @Override
     protected void layoutChildren() {
         Insets padding = padding().getValue();
-        float x, y = padding.getTop(), spacing = spacing().get(), w = width().get() - padding.getLeft() - padding.getRight();
+        float x, y = padding.getTop(), spacing = spacing().get(), w = getWidth() - padding.getLeft() - padding.getRight();
         for (Node node : getChildren()) {
             float prefWidth = Utils.prefWidth(node);
             float prefHeight = Utils.prefHeight(node);

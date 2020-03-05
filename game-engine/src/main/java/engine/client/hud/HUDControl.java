@@ -62,7 +62,7 @@ public abstract class HUDControl extends Control {
     protected void layoutChildren() {
         Node content = getContent();
         if (content != null) {
-            layoutInArea(content, 0, 0, width().get(), height().get());
+            layoutInArea(content, 0, 0, getWidth(), getHeight());
         }
     }
 }

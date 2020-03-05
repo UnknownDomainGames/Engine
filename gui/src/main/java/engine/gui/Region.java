@@ -32,11 +32,6 @@ public class Region extends Parent {
         return padding;
     }
 
-    @Override
-    public float minWidth() {
-        return getSize().minWidth().get();
-    }
-
     public static void positionInArea(Node child, float areaX, float areaY, float areaWidth, float areaHeight,
                                       float areaBaselineOffset, Insets margin, Pos.HPos halignment, Pos.VPos valignment, boolean isSnapToPixel) {
         Insets childMargin = margin != null ? margin : Insets.EMPTY;
@@ -58,7 +53,7 @@ public class Region extends Parent {
                                  float topMargin, float rightMargin, float bottomMargin, float leftMargin,
                                  Pos.HPos hpos, Pos.VPos vpos, boolean isSnapToPixel) {
         final float xoffset = leftMargin + computeXOffset(areaWidth - leftMargin - rightMargin,
-                child.width().get(), hpos);
+                child.getWidth(), hpos);
         final float yoffset;
         /*if (vpos == Pos.VPos.BASELINE) {
             double bo = child.getBaselineOffset();
@@ -71,12 +66,12 @@ public class Region extends Parent {
         } else */
         {
             yoffset = topMargin + computeYOffset(areaHeight - topMargin - bottomMargin,
-                    child.height().get(), vpos);
+                    child.getHeight(), vpos);
         }
         final float x = snap(areaX + xoffset, isSnapToPixel);
         final float y = snap(areaY + yoffset, isSnapToPixel);
 
-        child.relocate(x, y);
+        child.position(x, y, areaWidth - leftMargin - rightMargin, areaHeight - topMargin - bottomMargin);
     }
 
     static float computeXOffset(float width, float contentWidth, Pos.HPos hpos) {
@@ -107,6 +102,11 @@ public class Region extends Parent {
     }
 
     @Override
+    public float minWidth() {
+        return getSize().minWidth().get();
+    }
+
+    @Override
     public float minHeight() {
         return getSize().minHeight().get();
     }
@@ -117,7 +117,7 @@ public class Region extends Parent {
         if (width == Size.USE_COMPUTE_VALUE) {
             return computeWidth();
         } else if (width == Size.USE_PARENT_VALUE) {
-            return (parent().isPresent() ? parent().getValue().width().get() : 0);
+            return (parent().isPresent() ? parent().getValue().getWidth() : 0);
         }
         return width;
     }
@@ -132,7 +132,7 @@ public class Region extends Parent {
         if (height == Size.USE_COMPUTE_VALUE) {
             return computeHeight();
         } else if (height == Size.USE_PARENT_VALUE) {
-            return (parent().isPresent() ? parent().getValue().height().get() : 0);
+            return (parent().isPresent() ? parent().getValue().getHeight() : 0);
         }
         return height;
     }
@@ -183,7 +183,6 @@ public class Region extends Parent {
 //        if (child.isResizable()) {
 //            Vec2d size = boundedNodeSizeWithBias(child, areaWidth - left - right, areaHeight - top - bottom,
 //                    fillWidth, fillHeight, TEMP_VEC2D);
-        c.resize(areaWidth - left - right, areaHeight - top - bottom);
 //        }
         position(c, areaX, areaY, areaWidth, areaHeight, areaBaselineOffset,
                 top, right, bottom, left, hAlign, vAlign, true);

@@ -90,14 +90,14 @@ public class HSlider extends Region {
         }
         resizeBack(sliderLength.get(), sliderThickness.get());
         resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
-        slider.x().set((float) ((back.rectSize().get().x() - slider.rectSize().get().x()) * ((value.get() - min.get()) / (max.get() - min.get()))));
-        slider.y().set(back.y().get());
+        slider.layoutX().set((float) ((back.rectSize().get().x() - slider.rectSize().get().x()) * ((value.get() - min.get()) / (max.get() - min.get()))));
+        slider.layoutY().set(back.getLayoutY());
     }
 
     private void onMousePressed(MouseActionEvent e) {
-        if (e.getX() > slider.x().get() + slider.width().get()) {
+        if (e.getX() > slider.getLayoutX() + slider.getWidth()) {
             value.set(value.getValue() + step.get());
-        } else if (e.getX() < slider.x().get()) {
+        } else if (e.getX() < slider.getLayoutX()) {
             value.set(value.getValue() - step.get());
         }
         if (slider.contains(e.getX(), e.getY()))
@@ -106,9 +106,9 @@ public class HSlider extends Region {
 
     private void onMouseMove(MouseEvent event) {
         if (!select) return;
-        if ((event.getX() - slider.x().get() - slider.rectSize().get().x()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
+        if ((event.getX() - slider.getLayoutX() - slider.rectSize().get().x()) / getWidth() > step.get() / (max.get() - min.get()) * 0.9) {
             value.set(value.getValue() + step.get());
-        } else if ((slider.x().get() - event.getX()) / width().get() > step.get() / (max.get() - min.get()) * 0.9) {
+        } else if ((slider.getLayoutX() - event.getX()) / getWidth() > step.get() / (max.get() - min.get()) * 0.9) {
             value.set(value.getValue() - step.get());
         }
     }
