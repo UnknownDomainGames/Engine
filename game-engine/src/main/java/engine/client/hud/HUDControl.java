@@ -14,7 +14,7 @@ public abstract class HUDControl extends Control {
 
     public HUDControl(String name) {
         this.name = name;
-        visible().set(false);
+        setVisible(false);
         visible().addChangeListener((observable, oldValue, newValue) -> onVisibleChanged(newValue));
     }
 

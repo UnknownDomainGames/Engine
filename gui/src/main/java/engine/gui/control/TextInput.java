@@ -48,7 +48,7 @@ public abstract class TextInput extends Control {
         prompt = new Text();
         promptText().bindBidirectional(prompt.text());
         getChildren().add(prompt);
-        text().addChangeListener((observable, oldValue, newValue) -> prompt.visible().set(length() == 0));
+        text().addChangeListener((observable, oldValue, newValue) -> prompt.setVisible(length() == 0));
     }
 
     public MutableObjectValue<Font> font() {

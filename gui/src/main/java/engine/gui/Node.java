@@ -26,12 +26,12 @@ public abstract class Node implements EventTarget {
     final MutableFloatValue width = new SimpleMutableFloatValue();
     final MutableFloatValue height = new SimpleMutableFloatValue();
 
-    final MutableBooleanValue visible = new SimpleMutableBooleanValue(true);
-    final MutableBooleanValue disabled = new SimpleMutableBooleanValue(false);
-
     final MutableBooleanValue focused = new SimpleMutableBooleanValue(false);
     final MutableBooleanValue hover = new SimpleMutableBooleanValue(false);
     final MutableBooleanValue pressed = new SimpleMutableBooleanValue(false);
+
+    private MutableBooleanValue visible;
+    private MutableBooleanValue disabled;
 
     private ComponentRenderer renderer;
 
@@ -61,36 +61,86 @@ public abstract class Node implements EventTarget {
         return x;
     }
 
+    public final float getX() {
+        return x.get();
+    }
+
     public final MutableFloatValue y() {
         return y;
+    }
+
+    public final float getY() {
+        return y.get();
     }
 
     public final ObservableFloatValue width() {
         return width.toUnmodifiable();
     }
 
+    public final float getWidth() {
+        return width.get();
+    }
+
     public final ObservableFloatValue height() {
         return height.toUnmodifiable();
     }
 
-    public final MutableBooleanValue visible() {
-        return visible;
-    }
-
-    public final MutableBooleanValue disabled() {
-        return disabled;
+    public final float getHeight() {
+        return height.get();
     }
 
     public final ObservableBooleanValue focused() {
         return focused.toUnmodifiable();
     }
 
+    public final boolean isFocused() {
+        return focused.get();
+    }
+
     public final ObservableBooleanValue hover() {
         return hover.toUnmodifiable();
     }
 
+    public final boolean isHover() {
+        return hover.get();
+    }
+
     public final ObservableBooleanValue pressed() {
         return pressed.toUnmodifiable();
+    }
+
+    public final boolean isPressed() {
+        return pressed.get();
+    }
+
+    public final MutableBooleanValue visible() {
+        if (visible == null) {
+            visible = new SimpleMutableBooleanValue(true);
+        }
+        return visible;
+    }
+
+    public final boolean isVisible() {
+        return visible == null || visible.get();
+    }
+
+    public final void setVisible(boolean visible) {
+        visible().set(visible);
+    }
+
+    public final MutableBooleanValue disabled() {
+        if (disabled == null) {
+            disabled = new SimpleMutableBooleanValue(false);
+        }
+        return disabled;
+    }
+
+    public final boolean isDisabled() {
+        return disabled != null && disabled.get();
+    }
+
+    public final void setDisabled(boolean visible) {
+        visible().set(visible);
     }
 
     public final void requestParentLayout() {
@@ -148,8 +198,8 @@ public abstract class Node implements EventTarget {
         return properties;
     }
 
-    public boolean isResizable() {
-        return false;
+    public boolean hasProperties() {
+        return properties != null && !properties.isEmpty();
     }
 
     public void resize(float width, float height) {
@@ -160,10 +210,6 @@ public abstract class Node implements EventTarget {
     public void relocate(float x, float y) {
         this.x.set(x);
         this.y.set(y);
-    }
-
-    public boolean hasProperties() {
-        return properties != null && !properties.isEmpty();
     }
 
     public void forceFocus() {

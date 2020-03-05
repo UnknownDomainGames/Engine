@@ -241,7 +241,7 @@ public final class EngineModClientListeners {
         event.register(KeyBinding.builder()
                 .name("game.debug_display_switch")
                 .key(Key.KEY_F3)
-                .startHandler(gameClient -> hudGameDebug.visible().set(!hudGameDebug.visible().get()))
+                .startHandler(gameClient -> hudGameDebug.setVisible(!hudGameDebug.isVisible()))
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.hud_display_switch")
@@ -268,6 +268,6 @@ public final class EngineModClientListeners {
     public static void onGameReady(GameStartEvent.Post event) {
         HUDHandingItem hudHandingItem = new HUDHandingItem();
         RenderManager.instance().getHUDManager().add(hudHandingItem);
-        hudHandingItem.visible().set(true);
+        hudHandingItem.setVisible(true);
     }
 }

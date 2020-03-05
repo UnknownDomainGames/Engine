@@ -48,33 +48,33 @@ public class ScrollPane extends BorderPane {
     private void update() {
         if (content.isPresent()) {
             if (content.getValue().width().get() > width().get()) {
-                hScroll.disabled().set(false);
-                vScroll.visible().set(true);
+                hScroll.setDisabled(false);
+                vScroll.setVisible(true);
                 var delta = content.getValue().width().get() - width().get();
                 hScroll.max().set(delta);
                 hScroll.step().set(delta / 10.0f);
                 hScroll.value().addChangeListener((observable, oldValue, newValue) -> content.getValue().relocate(-hScroll.value().getFloat(), content.getValue().y().get()));
             } else {
-                hScroll.disabled().set(true);
-                hScroll.visible().set(false);
+                hScroll.setDisabled(true);
+                hScroll.setVisible(false);
                 hScroll.max().set(1);
             }
             if (content.getValue().height().get() > height().get()) {
-                vScroll.disabled().set(false);
-                vScroll.visible().set(true);
+                vScroll.setDisabled(false);
+                vScroll.setVisible(true);
                 var delta = content.getValue().height().get() - height().get();
                 vScroll.max().set(delta);
                 vScroll.step().set(delta / 10.0f);
                 vScroll.value().addChangeListener((observable, oldValue, newValue) -> content.getValue().relocate(content.getValue().x().get(), -vScroll.value().getFloat()));
             } else {
-                vScroll.disabled().set(true);
-                vScroll.visible().set(false);
+                vScroll.setDisabled(true);
+                vScroll.setVisible(false);
                 vScroll.max().set(1);
             }
         } else {
-            hScroll.disabled().set(true);
+            hScroll.setDisabled(true);
             hScroll.max().set(1);
-            vScroll.disabled().set(true);
+            vScroll.setDisabled(true);
             vScroll.max().set(1);
         }
     }

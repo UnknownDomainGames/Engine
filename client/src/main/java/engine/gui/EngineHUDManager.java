@@ -25,15 +25,14 @@ public final class EngineHUDManager implements HUDManager {
 
     @Override
     public void setVisible(boolean visible) {
-        hudPane.visible().set(visible);
-        hudControls.values().stream().filter(hudControl ->
-                hudControl.visible().get()).forEach(hudControl ->
+        hudPane.setVisible(visible);
+        hudControls.values().stream().filter(Node::isVisible).forEach(hudControl ->
                 hudControl.onVisibleChanged(visible));
     }
 
     @Override
     public boolean isVisible() {
-        return hudPane.visible().get();
+        return hudPane.isVisible();
     }
 
     @Override

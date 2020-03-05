@@ -41,7 +41,7 @@ public final class StageDrawDispatcher implements DrawDispatcher {
         scene.update();
 
         Parent root = scene.getRoot();
-        if (!root.visible().get()) {
+        if (!root.isVisible()) {
             return; // Invisible root, don't need render it.
         }
 

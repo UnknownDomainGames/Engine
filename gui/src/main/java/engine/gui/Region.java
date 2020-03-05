@@ -79,11 +79,6 @@ public class Region extends Parent {
         child.relocate(x, y);
     }
 
-    @Override
-    public boolean isResizable() {
-        return true;
-    }
-
     static float computeXOffset(float width, float contentWidth, Pos.HPos hpos) {
         switch (hpos) {
             case LEFT:

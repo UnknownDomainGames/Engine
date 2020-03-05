@@ -95,9 +95,9 @@ public final class HUDDebug extends HUDControl {
         Camera camera = manager.getViewport().getCamera();
         HitResult hitResult = manager.getEngine().getCurrentGame().getClientWorld().raycast(camera.getPosition(), camera.getFront(), 10);
         if (hitResult.isFailure()) {
-            this.hitResult.visible().set(false);
+            this.hitResult.setVisible(false);
         } else if (hitResult instanceof EntityHitResult) {
-            this.hitResult.visible().set(true);
+            this.hitResult.setVisible(true);
             Entity entity = ((EntityHitResult) hitResult).getEntity();
             hitBlockOrEntity.text().set(String.format("Hit Entity: %s@%s", entity.getProvider().getName(), Integer.toHexString(entity.hashCode())));
             Vector3d position = entity.getPosition();
@@ -105,7 +105,7 @@ public final class HUDDebug extends HUDControl {
             Vector3fc hitPoint = ((EntityHitResult) hitResult).getHitPoint();
             hitPos.text().set(String.format("Hit Entity Point: %.2f, %.2f, %.2f", hitPoint.x(), hitPoint.y(), hitPoint.z()));
         } else if (hitResult instanceof BlockHitResult) {
-            this.hitResult.visible().set(true);
+            this.hitResult.setVisible(true);
             Block block = ((BlockHitResult) hitResult).getBlock();
             hitBlockOrEntity.text().set(String.format("Hit Block: %s", block.getName()));
             BlockPos pos = ((BlockHitResult) hitResult).getPos();

@@ -214,7 +214,7 @@ public class Scene implements EventTarget {
 
         if (pressed) {
             for (var node : hitNodes) {
-                if (node.disabled.get()) continue;
+                if (node.isDisabled()) continue;
                 if (focusedNodes.contains(node)) continue;
                 focusedNodes.add(node);
                 node.focused.set(true);
