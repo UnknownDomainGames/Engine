@@ -145,13 +145,13 @@ public class VulkanUtils {
         }, 0L);*/
         long res;
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            res = shaderc_compile_into_spv(compiler, src, vulkanStageToShadercKind(vulkanStage.vk),
+            res = shaderc_compile_into_spv(compiler, src, vulkanStageToShadercKind(vulkanStage.shaderVk),
                     stack.UTF8(/*shaderPath.toString()*/""), stack.UTF8("main"), options);
             if (res == 0L)
                 throw new AssertionError("Internal error during compilation!");
         }
         if (shaderc_result_get_compilation_status(res) != shaderc_compilation_status_success) {
-            throw new AssertionError("Shader compilation failed: " + shaderc_result_get_error_message(res));
+            throw new AssertionError("Shader compilation failed:\n" + shaderc_result_get_error_message(res));
         }
         int size = (int) shaderc_result_get_length(res);
         var resultBytes = createByteBuffer(size);

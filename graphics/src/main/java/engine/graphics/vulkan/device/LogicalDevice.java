@@ -1,8 +1,10 @@
 package engine.graphics.vulkan.device;
 
 import engine.graphics.math.ViewSpace;
+import engine.graphics.shader.ShaderModuleInfo;
 import engine.graphics.vulkan.CommandPool;
 import engine.graphics.vulkan.VKDrawMode;
+import engine.graphics.vulkan.pipeline.Descriptor;
 import engine.graphics.vulkan.pipeline.Pipeline;
 import engine.graphics.vulkan.Queue;
 import engine.graphics.vulkan.buffer.VulkanBuffer;
@@ -17,7 +19,7 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.LongBuffer;
-import java.util.Arrays;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -59,19 +61,19 @@ public class LogicalDevice {
         }
     }
 
-    public VKTexture createTexture(int width, int height, ColorFormat format, VKTexture.Usage usage, VKTexture.Layout layout){
+    public VKTexture createTexture(int width, int height, ColorFormat format, List<VKTexture.Usage> usage, VKTexture.Layout layout){
         return createTextureInternal(width, height, 0, format, usage, layout, false, new int[0]);
     }
-    public VKTexture createSharedTexture(int width, int height, ColorFormat format, VKTexture.Usage usage, VKTexture.Layout layout, int[] queueFamilyIndex){
+    public VKTexture createSharedTexture(int width, int height, ColorFormat format, List<VKTexture.Usage> usage, VKTexture.Layout layout, int[] queueFamilyIndex){
         return createTextureInternal(width, height, 0, format, usage, layout, true, queueFamilyIndex);
     }
 
-    private VKTexture createTextureInternal(int width, int height, int flag, ColorFormat format, VKTexture.Usage usage, VKTexture.Layout layout, boolean shared, int[] queueFamilyIndices){
+    private VKTexture createTextureInternal(int width, int height, int flag, ColorFormat format, List<VKTexture.Usage> usage, VKTexture.Layout layout, boolean shared, int[] queueFamilyIndices){
         try(var stack = MemoryStack.stackPush()) {
             var createInfo = VkImageCreateInfo.callocStack(stack).sType(VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO);
             createInfo.imageType(VK_IMAGE_TYPE_2D).samples(VK_SAMPLE_COUNT_1_BIT).mipLevels(0)
                     .extent(vkExtent3D -> vkExtent3D.set(width, height,1))
-            .format(format.getVk()).usage(usage.getVk()).initialLayout(layout.getVk()).arrayLayers(1).flags(flag).sharingMode(VK_SHARING_MODE_EXCLUSIVE);
+            .format(format.getVk()).usage(usage.stream().mapToInt(VKTexture.Usage::getVk).reduce(0, (i1,i2)->i1|i2)).initialLayout(layout.getVk()).arrayLayers(1).flags(flag).sharingMode(VK_SHARING_MODE_EXCLUSIVE);
             if(shared){
                 var queues = stack.mallocInt(queueFamilyIndices.length).put(queueFamilyIndices).flip();
                 createInfo.sharingMode(VK10.VK_SHARING_MODE_CONCURRENT).pQueueFamilyIndices(queues);
@@ -207,9 +209,54 @@ public class LogicalDevice {
             stateflag.put(state.getDynamicStates().stream().mapToInt(PipelineState.DynamicState::getVk).toArray()).flip();
             dynamicState.pDynamicStates(stateflag);
 
+            var descriptors = new ArrayList<Descriptor.Builder>();
+            state.getShaders().stream().flatMap(stage ->
+                stage.getShader().getDescriptor().getVariables().stream().map(variable -> variable.getQualifiers().stream()
+                        .filter(variableQualifier -> variableQualifier instanceof ShaderModuleInfo.LayoutVariableQualifier)
+                        .findFirst().map(variableQualifier -> new Descriptor.Builder().setName(variable.getName()).setLayout((ShaderModuleInfo.LayoutVariableQualifier) variableQualifier).setType(variable.getType()).setStageReferred(List.of(stage.getStage())))
+            )).filter(Optional::isPresent).forEach(optional -> {
+                var builder = optional.get();
+                var potentialMatch = descriptors.stream().filter(builder1 -> builder1.getLayout().getBinding() == builder.getLayout().getBinding()
+                        && builder1.getLayout().getDescriptorSet() == builder.getLayout().getDescriptorSet()
+                        && builder1.getType() == builder.getType()).findFirst();
+                if(potentialMatch.isPresent()){
+                   potentialMatch.get().getStageReferred().addAll(builder.getStageReferred());
+                }
+                else {
+                    descriptors.add(builder);
+                }
+            });
+            var descriptorSets = descriptors.stream().map(Descriptor.Builder::build).collect(Collectors.groupingBy(descriptor -> descriptor.getLayout().getDescriptorSet()));
+            state.setDescriptorSets(descriptorSets);
+            var setLayouts = stack.mallocLong(descriptorSets.size());
+
             var pPipelineLayoutCreateInfo = VkPipelineLayoutCreateInfo.callocStack(stack)
                     .sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO)
-                    .pSetLayouts(null);
+                    .pSetLayouts(setLayouts);
+
+            for (var entry : descriptorSets.entrySet()) {
+                var set = entry.getKey();
+                var variables = entry.getValue();
+                var setLayoutInfo = VkDescriptorSetLayoutCreateInfo.callocStack(stack).sType(VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO);
+                var bindings = VkDescriptorSetLayoutBinding.callocStack(variables.size(), stack);
+                for (var variable : variables) {
+                    var binding = bindings.get();
+                    var layoutQualifier = variable.getLayout();
+                    binding.binding(layoutQualifier.getBinding());
+                    if(variable.getType() instanceof ShaderModuleInfo.StructVariableType) {
+                        binding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+                    }
+                    else if (variable.getType() instanceof ShaderModuleInfo.OpaqueVariableType){
+                        if("sampler".equals(variable.getType().getType())) {
+                            binding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
+                        }
+                    }
+                }
+
+                var layoutptr = stack.mallocLong(1);
+                VK10.vkCreateDescriptorSetLayout(getNativeDevice(), setLayoutInfo, null, layoutptr);
+                setLayouts.put(layoutptr.get(0));
+            }
 
             var pPipelineLayout = stack.mallocLong(1);
             vkCreatePipelineLayout(getNativeDevice(), pPipelineLayoutCreateInfo, null, pPipelineLayout);

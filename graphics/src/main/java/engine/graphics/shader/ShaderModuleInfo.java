@@ -7,17 +7,35 @@ import engine.graphics.gl.shader.ShaderType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShaderDescriptor {
+public class ShaderModuleInfo {
     private int glslVersion;
     private ShaderType shaderType;
+    private List<Variable> variables;
 
+    public ShaderType getShaderType() {
+        return shaderType;
+    }
+
+    public List<Variable> getVariables() {
+        return variables;
+    }
 
     public static class Variable {
         private String name;
         private VariableType type;
         private List<VariableQualifier> qualifiers = new ArrayList<>();
 
+        public String getName() {
+            return name;
+        }
 
+        public VariableType getType() {
+            return type;
+        }
+
+        public List<VariableQualifier> getQualifiers() {
+            return qualifiers;
+        }
     }
 
     public static abstract class VariableType {
@@ -111,6 +129,25 @@ public class ShaderDescriptor {
         }
     }
 
+    public static class StructVariableType extends VariableType {
+        private List<Variable> variables;
+        public StructVariableType(List<Variable> variables) {
+            super("struct");
+            this.variables = variables;
+        }
+
+        public List<Variable> getVariables() {
+            return variables;
+        }
+    }
+
+    public static class OpaqueVariableType extends VariableType {
+
+        public OpaqueVariableType(String type) {
+            super(type);
+        }
+    }
+
     public static class VariableQualifier {
         private String qualifier;
 
@@ -132,6 +169,7 @@ public class ShaderDescriptor {
         private int index;
 
         private int binding;
+        private int descriptorSet;
         private int offset;
 
         public LayoutVariableQualifier(String qualifier) {
@@ -168,6 +206,14 @@ public class ShaderDescriptor {
 
         public void setBinding(int binding) {
             this.binding = binding;
+        }
+
+        public int getDescriptorSet() {
+            return descriptorSet;
+        }
+
+        public void setDescriptorSet(int descriptorSet) {
+            this.descriptorSet = descriptorSet;
         }
 
         public int getOffset() {

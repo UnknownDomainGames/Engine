@@ -8,6 +8,8 @@ import org.lwjgl.vulkan.KHRSwapchain;
 import org.lwjgl.vulkan.VK10;
 import org.lwjgl.vulkan.VkImageViewCreateInfo;
 
+import java.util.List;
+
 import static org.lwjgl.vulkan.VK10.*;
 
 public class VKTexture implements Texture {
@@ -16,9 +18,9 @@ public class VKTexture implements Texture {
     private boolean released = false;
 
     private ColorFormat format;
-    private Usage usage;
+    private List<Usage> usage;
 
-    public VKTexture(LogicalDevice device, long handle, ColorFormat format, Usage usage) {
+    public VKTexture(LogicalDevice device, long handle, ColorFormat format, List<Usage> usage) {
         this.device = device;
         this.handle = handle;
         this.format = format;
@@ -38,10 +40,14 @@ public class VKTexture implements Texture {
     }
 
     public ImageView createView(ImageAspect aspect) {
+        return createView(List.of(aspect));
+    }
+
+    public ImageView createView(List<ImageAspect> aspect) {
         return createView(aspect, 0, 1, 0, 1);
     }
 
-    public ImageView createView(ImageAspect aspect, int baseMipmapLevel, int levelCount, int baseLayer, int layerCount){
+    public ImageView createView(List<ImageAspect> aspect, int baseMipmapLevel, int levelCount, int baseLayer, int layerCount){
         try(var stack = MemoryStack.stackPush()){
             var view = VkImageViewCreateInfo.callocStack(stack)
                     .sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO)
@@ -54,7 +60,7 @@ public class VKTexture implements Texture {
                     .b(VK_COMPONENT_SWIZZLE_IDENTITY)
                     .a(VK_COMPONENT_SWIZZLE_IDENTITY);
             view.subresourceRange()
-                    .aspectMask(aspect.getVk())
+                    .aspectMask(aspect.stream().mapToInt(ImageAspect::getVk).reduce(0, (i1,i2)->i1|i2))
                     .baseMipLevel(baseMipmapLevel)
                     .levelCount(levelCount)
                     .baseArrayLayer(baseLayer)

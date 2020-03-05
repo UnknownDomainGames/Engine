@@ -9,7 +9,7 @@ dependencies {
     implementation "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
 
     String[] lwjglModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'vulkan', 'shaderc', 'vma']
-    String[] lwjglNativeModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'vma']
+    String[] lwjglNativeModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'shaderc', 'vma']
     for (module in lwjglModules) compile("org.lwjgl:lwjgl-$module:$lwjglVersion")
     for (module in lwjglNativeModules) implementation("org.lwjgl:lwjgl-$module:$lwjglVersion:$lwjglNatives")
 }

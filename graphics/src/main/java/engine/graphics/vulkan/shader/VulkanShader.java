@@ -1,9 +1,9 @@
 package engine.graphics.vulkan.shader;
 
+import engine.graphics.shader.ShaderModuleInfo;
 import engine.graphics.vulkan.device.LogicalDevice;
 import engine.graphics.vulkan.util.VulkanUtils;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.vulkan.VkPipelineShaderStageCreateInfo;
 import org.lwjgl.vulkan.VkShaderModuleCreateInfo;
 
 import java.io.IOException;
@@ -21,6 +21,8 @@ public class VulkanShader {
 
     private ShaderType stage;
 
+    private ShaderModuleInfo descriptor;
+
     private VulkanShader(long module, ShaderType stage){
         this.moduleHandle = module;
         this.stage = stage;
@@ -32,6 +34,10 @@ public class VulkanShader {
 
     public ShaderType getStage() {
         return stage;
+    }
+
+    public ShaderModuleInfo getDescriptor() {
+        return descriptor;
     }
 
     public static VulkanShader createShader(Path sourcePath, LogicalDevice device, ShaderType stage){

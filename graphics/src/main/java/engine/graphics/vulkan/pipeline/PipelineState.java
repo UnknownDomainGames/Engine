@@ -7,10 +7,7 @@ import engine.graphics.vulkan.shader.ShaderStage;
 import org.joml.Vector4i;
 import org.lwjgl.vulkan.VK10;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class PipelineState {
     //Parent of this states
@@ -62,6 +59,9 @@ public class PipelineState {
 
     //Dynamic state
     private List<DynamicState> dynamicStates;
+
+    //Descriptor sets
+    private Map<Integer, List<Descriptor>> descriptorSets;
 
 
     private PipelineState(boolean disableOptimization, boolean allowDerivatives, boolean isDerivative) {
@@ -259,6 +259,9 @@ public class PipelineState {
 
         //Dynamic state
         private List<DynamicState> dynamicStates;
+
+        //Descriptor sets
+        private Map<Integer, List<Descriptor>> descriptorSets;
 
         public Builder(){
 
@@ -516,6 +519,15 @@ public class PipelineState {
             return this;
         }
 
+        public Map<Integer, List<Descriptor>> getDescriptorSets() {
+            return descriptorSets;
+        }
+
+        public Builder setDescriptorSets(Map<Integer, List<Descriptor>> descriptorSets) {
+            this.descriptorSets = descriptorSets;
+            return this;
+        }
+
         public PipelineState build(){
             var state = new PipelineState(disableOptimization, allowDerivatives, isDerivative);
             state.allowStripsFansRestart = allowStripsFansRestart;
@@ -540,6 +552,7 @@ public class PipelineState {
             state.stencilTestEnable = stencilTestEnable;
             state.viewSpaces = viewSpaces.toArray(ViewSpace[]::new);
             state.dynamicStates = dynamicStates;
+            state.descriptorSets = descriptorSets;
             return state;
         }
     }

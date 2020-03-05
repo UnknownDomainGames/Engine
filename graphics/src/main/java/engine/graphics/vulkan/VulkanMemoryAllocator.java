@@ -38,6 +38,10 @@ public class VulkanMemoryAllocator {
         }
     }
 
+    public VulkanBuffer createBuffer(long size, VulkanBuffer.Usage[] usage){
+        return createBuffer(size, usage, false, new int[0]);
+    }
+
     public VulkanBuffer createBuffer(long size, VulkanBuffer.Usage[] usage, boolean shared, int[] queueFamilyIndices) {
         try(var stack= MemoryStack.stackPush()) {
             var createInfo = VkBufferCreateInfo.callocStack(stack).sType(VK10.VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO);

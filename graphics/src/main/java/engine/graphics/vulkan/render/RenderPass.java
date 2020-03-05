@@ -1,12 +1,15 @@
 package engine.graphics.vulkan.render;
 
 import engine.graphics.vulkan.device.LogicalDevice;
+import engine.graphics.vulkan.texture.VKTexture;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.LongBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -15,6 +18,8 @@ public class RenderPass {
 
     private long handle;
     private boolean released = false;
+    private List<Attachment> attachments;
+    private Map<Attachment, List<VKTexture.Usage>> attachmentUsages;
     private List<Subpass> subpasses;
 
     private RenderPass(LogicalDevice device, long handle){
@@ -36,10 +41,19 @@ public class RenderPass {
         return subpasses;
     }
 
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public Map<Attachment, List<VKTexture.Usage>> getAttachmentUsages() {
+        return attachmentUsages;
+    }
+
     public static RenderPass createRenderPass(LogicalDevice device, List<Subpass> subpasses){
         try(var stack = MemoryStack.stackPush()){
             VkRenderPassCreateInfo info = VkRenderPassCreateInfo.callocStack(stack).sType(VK10.VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO);
             var attachments = new ArrayList<Attachment>();
+            var attachmentUsages = new HashMap<Attachment, List<VKTexture.Usage>>();
             var nativeSubpasses = VkSubpassDescription.callocStack(subpasses.size(), stack);
             for (Subpass subpass : subpasses) {
                 VkSubpassDescription description = nativeSubpasses.get();
@@ -47,6 +61,7 @@ public class RenderPass {
                 if(subpass.getColorAttachments() != null && !subpass.getColorAttachments().isEmpty()){
                     var references = VkAttachmentReference.callocStack(subpass.getColorAttachments().size(), stack);
                     for (Attachment.AttachmentReference reference : subpass.getColorAttachments()) {
+                        attachmentUsages.computeIfAbsent(reference.getAttachment(), k -> new ArrayList<>()).add(VKTexture.Usage.COLOR_ATTACHMENT);
                         buildNativeAttachmentReference(attachments, references.get(), reference);
                     }
                     references.flip();
@@ -54,12 +69,14 @@ public class RenderPass {
                 }
                 if(subpass.getDepthStencilAttachment() != null){
                     var reference = VkAttachmentReference.callocStack(stack);
+                    attachmentUsages.computeIfAbsent(subpass.getDepthStencilAttachment().getAttachment(), k -> new ArrayList<>()).add(VKTexture.Usage.DEPTH_STENCIL_ATTACHMENT);
                     buildNativeAttachmentReference(attachments, reference, subpass.getDepthStencilAttachment());
                     description.pDepthStencilAttachment(reference);
                 }
                 if(subpass.getInputAttachments() != null && !subpass.getInputAttachments().isEmpty()){
                     var references = VkAttachmentReference.callocStack(subpass.getInputAttachments().size(), stack);
                     for (Attachment.AttachmentReference reference : subpass.getInputAttachments()) {
+                        attachmentUsages.computeIfAbsent(reference.getAttachment(), k -> new ArrayList<>()).add(VKTexture.Usage.INPUT_ATTACHMENT);
                         buildNativeAttachmentReference(attachments, references.get(), reference);
                     }
                     references.flip();
@@ -109,6 +126,8 @@ public class RenderPass {
             }
             var renderPass = new RenderPass(device, ptrs.get(0));
             renderPass.subpasses = subpasses;
+            renderPass.attachments = attachments;
+            renderPass.attachmentUsages = attachmentUsages;
             return renderPass;
         }
     }

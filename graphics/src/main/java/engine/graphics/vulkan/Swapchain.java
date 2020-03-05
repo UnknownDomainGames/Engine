@@ -11,6 +11,7 @@ import org.lwjgl.vulkan.VkSwapchainCreateInfoKHR;
 
 import javax.annotation.Nullable;
 import java.nio.LongBuffer;
+import java.util.List;
 
 import static engine.graphics.vulkan.util.VulkanUtils.translateVulkanResult;
 import static org.lwjgl.system.MemoryUtil.memAllocInt;
@@ -146,7 +147,7 @@ public class Swapchain {
             var images = new VKTexture[imageCount];
             var imageViews = new VKTexture.ImageView[imageCount];
             for (int i = 0; i < imageCount; i++) {
-                images[i] = new VKTexture(device, pSwapchainImages.get(i), colorSpace.getColorFormat(), VKTexture.Usage.COLOR_ATTACHMENT);
+                images[i] = new VKTexture(device, pSwapchainImages.get(i), colorSpace.getColorFormat(), List.of(VKTexture.Usage.COLOR_ATTACHMENT));
                 imageViews[i] = images[i].createView(VKTexture.ImageAspect.COLOR);
             }
             Swapchain ret = new Swapchain(device, swapChain);
