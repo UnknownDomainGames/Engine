@@ -151,12 +151,12 @@ public abstract class TextInput extends Control {
         if (!text.isPresent() || !selection.isPresent()) {
             return "";
         } else {
-            int s = selection.getValue().getStart();
-            int e = selection.getValue().getEnd();
+            int s = selection.get().getStart();
+            int e = selection.get().getEnd();
             int l = length();
             if (e > s + l) e = l;
             if (s > l - 1) s = e = 0;
-            return text.getValue().substring(s, e);
+            return text.get().substring(s, e);
         }
     }
 
@@ -165,12 +165,12 @@ public abstract class TextInput extends Control {
     }
 
     public int length() {
-        return text.isPresent() ? text.getValue().length() : 0;
+        return text.isPresent() ? text.get().length() : 0;
     }
 
     public String getTextInRange(int start, int end) {
         rangeCheck(start, end);
-        return text.getValue().substring(start, end);
+        return text.get().substring(start, end);
     }
 
     public void appendText(String text) {
@@ -206,7 +206,7 @@ public abstract class TextInput extends Control {
     private int replaceText(int start, int end, String text, int anchor, int caret) {
         int len = length();
         int adjusted = 0;
-        String content = text().getValue();
+        String content = text().get();
         if (end != start) {
             content = content.substring(0, start) + content.substring(end);
             len -= (end - start);
@@ -226,7 +226,7 @@ public abstract class TextInput extends Control {
     }
 
     public void replaceSelection(String replacement) {
-        replaceText(selection.getValue(), replacement);
+        replaceText(selection.get(), replacement);
     }
 
     private void selectRange(int anchor, int caret) {
@@ -246,7 +246,7 @@ public abstract class TextInput extends Control {
 
     public void cut() {
         copy();
-        IndexRange selection = this.selection.getValue();
+        IndexRange selection = this.selection.get();
         deleteText(selection.getStart(), selection.getEnd());
     }
 
@@ -287,7 +287,7 @@ public abstract class TextInput extends Control {
             if (charIterator == null) {
                 charIterator = BreakIterator.getCharacterInstance();
             }
-            charIterator.setText(text.getValue());
+            charIterator.setText(text.get());
             selectRange(anchor.get(), charIterator.preceding(caret.get()));
         }
     }
@@ -303,7 +303,7 @@ public abstract class TextInput extends Control {
             if (charIterator == null) {
                 charIterator = BreakIterator.getCharacterInstance();
             }
-            charIterator.setText(text.getValue());
+            charIterator.setText(text.get());
             selectRange(anchor.get(), charIterator.following(caret.get()));
         }
     }
@@ -343,7 +343,7 @@ public abstract class TextInput extends Control {
     public boolean backspace() {
         boolean failed = true;
         if (editable.get() && !disabled().get()) {
-            final String original = text.getValue();
+            final String original = text.get();
             final int caret = this.caret.get();
             final int anchor = this.anchor.get();
             if (caret != anchor) {
@@ -363,7 +363,7 @@ public abstract class TextInput extends Control {
         boolean failed = true;
         if (editable.get() && !disabled().get()) {
             final int textLength = length();
-            final String original = text.getValue();
+            final String original = text.get();
             final int caret = this.caret.get();
             final int anchor = this.anchor.get();
             if (caret != anchor) {
@@ -394,7 +394,7 @@ public abstract class TextInput extends Control {
             if (charIterator == null) {
                 charIterator = BreakIterator.getCharacterInstance();
             }
-            charIterator.setText(text.getValue());
+            charIterator.setText(text.get());
             int pos = charIterator.following(dot);
             selectRange(pos, pos);
         }
@@ -413,7 +413,7 @@ public abstract class TextInput extends Control {
             if (charIterator == null) {
                 charIterator = BreakIterator.getCharacterInstance();
             }
-            charIterator.setText(text.getValue());
+            charIterator.setText(text.get());
             int pos = charIterator.preceding(dot);
             selectRange(pos, pos);
         }

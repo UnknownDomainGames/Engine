@@ -26,14 +26,14 @@ public class WrapText extends Text {
 
     @Override
     public float prefWidth() {
-        var max = FontManager.instance().computeTextWidth(text().getValue(), font().getValue(), textWidth.get());
+        var max = FontManager.instance().computeTextWidth(text().get(), font().get(), textWidth.get());
 
         return max;
     }
 
     @Override
     public float prefHeight() {
-        return FontManager.instance().computeTextHeight(text().getValue(), font().getValue(), textWidth.get(), leading().getFloat());
+        return FontManager.instance().computeTextHeight(text().get(), font().get(), textWidth.get(), leading().getFloat());
     }
 
     @Override

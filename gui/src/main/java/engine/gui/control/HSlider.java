@@ -96,9 +96,9 @@ public class HSlider extends Region {
 
     private void onMousePressed(MouseActionEvent e) {
         if (e.getX() > slider.getLayoutX() + slider.getWidth()) {
-            value.set(value.getValue() + step.get());
+            value.set(value.get() + step.get());
         } else if (e.getX() < slider.getLayoutX()) {
-            value.set(value.getValue() - step.get());
+            value.set(value.get() - step.get());
         }
         if (slider.contains(e.getX(), e.getY()))
             select = true;
@@ -107,9 +107,9 @@ public class HSlider extends Region {
     private void onMouseMove(MouseEvent event) {
         if (!select) return;
         if ((event.getX() - slider.getLayoutX() - slider.rectSize().get().x()) / getWidth() > step.get() / (max.get() - min.get()) * 0.9) {
-            value.set(value.getValue() + step.get());
+            value.set(value.get() + step.get());
         } else if ((slider.getLayoutX() - event.getX()) / getWidth() > step.get() / (max.get() - min.get()) * 0.9) {
-            value.set(value.getValue() - step.get());
+            value.set(value.get() - step.get());
         }
     }
 

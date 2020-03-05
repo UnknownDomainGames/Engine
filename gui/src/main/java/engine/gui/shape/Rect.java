@@ -41,12 +41,12 @@ public class Rect extends Shape {
 
     @Override
     public float prefWidth() {
-        return size.getValue().x();
+        return size.get().x();
     }
 
     @Override
     public float prefHeight() {
-        return size.getValue().y();
+        return size.get().y();
     }
 
     @Override
@@ -55,10 +55,10 @@ public class Rect extends Shape {
             if (strokeSize.get() > 0) {
                 graphics.popClipRect();
                 graphics.pushClipRect(component.getLayoutX() - component.strokeSize.get(), component.getLayoutY() - component.strokeSize.get(), component.getWidth() + component.strokeSize.get() * 2, component.getHeight() + component.strokeSize.get() * 2);
-                graphics.setColor(component.strokeColor.getValue());
+                graphics.setColor(component.strokeColor.get());
                 graphics.fillRect(0, 0, component.getWidth() + component.strokeSize.get() * 2, component.getHeight() + component.strokeSize.get() * 2);
             }
-            graphics.setColor(component.fillColor.getValue());
+            graphics.setColor(component.fillColor.get());
             graphics.fillRect(component.strokeSize.get(), component.strokeSize.get(), component.getWidth(), component.getHeight());
         };
     }

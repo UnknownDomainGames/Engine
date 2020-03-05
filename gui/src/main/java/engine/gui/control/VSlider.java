@@ -104,9 +104,9 @@ public class VSlider extends Region {
     private void onPressed(MouseActionEvent e) {
         if(e.getTarget().equals(back)) {
             if (e.getY() > slider.getLayoutY() + slider.getHeight()) {
-                value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
+                value.set(value.get() + step.get() * (flip.get() ? -1 : 1));
             } else if (e.getY() < slider.getLayoutY()) {
-                value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
+                value.set(value.get() - step.get() * (flip.get() ? -1 : 1));
             }
         }
 //        if (slider.contains(e.getX(), e.getY()))
@@ -117,9 +117,9 @@ public class VSlider extends Region {
     private void onMoved(MouseEvent e) {
         if (!select) return;
         if ((e.getY() - slider.getLayoutY() - slider.rectSize().get().y()) / getHeight() > step.get() / (max.get() - min.get()) * 0.9) {
-            value.set(value.getValue() + step.get() * (flip.get() ? -1 : 1));
+            value.set(value.get() + step.get() * (flip.get() ? -1 : 1));
         } else if ((slider.getLayoutY() - e.getY()) / getHeight() > step.get() / (max.get() - min.get()) * 0.9) {
-            value.set(value.getValue() - step.get() * (flip.get() ? -1 : 1));
+            value.set(value.get() - step.get() * (flip.get() ? -1 : 1));
         }
     }
 

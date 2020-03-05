@@ -12,7 +12,7 @@ public class Pane extends Region {
         } else {
             node.getProperties().put(key, value);
         }
-        if (node.parent().getValue() != null) {
+        if (node.parent().get() != null) {
             node.requestParentLayout();
         }
     }

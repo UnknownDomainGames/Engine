@@ -117,7 +117,7 @@ public class Region extends Parent {
         if (width == Size.USE_COMPUTE_VALUE) {
             return computeWidth();
         } else if (width == Size.USE_PARENT_VALUE) {
-            return (parent().isPresent() ? parent().getValue().getWidth() : 0);
+            return (parent().isPresent() ? parent().get().getWidth() : 0);
         }
         return width;
     }
@@ -132,7 +132,7 @@ public class Region extends Parent {
         if (height == Size.USE_COMPUTE_VALUE) {
             return computeHeight();
         } else if (height == Size.USE_PARENT_VALUE) {
-            return (parent().isPresent() ? parent().getValue().getHeight() : 0);
+            return (parent().isPresent() ? parent().get().getHeight() : 0);
         }
         return height;
     }

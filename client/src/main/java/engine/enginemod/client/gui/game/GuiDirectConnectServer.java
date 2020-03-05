@@ -31,7 +31,7 @@ public class GuiDirectConnectServer extends BorderPane {
         hbox.spacing().set(10f);
         var butConnect = new Button("Connect");
         butConnect.setOnMouseClicked(e -> {
-            var fullAddress = txtboxAddress.text().getValue();
+            var fullAddress = txtboxAddress.text().get();
             var port = 18104;
             var colonIndex = fullAddress.lastIndexOf(":");
             if (colonIndex != -1) {

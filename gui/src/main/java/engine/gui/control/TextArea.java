@@ -41,7 +41,7 @@ public class TextArea extends TextInput {
         int posExclusive = 1;
         float x = 0;
         while (posExclusive <= length()) {
-            x += FontManager.instance().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().getValue());
+            x += FontManager.instance().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().get());
             if (x > adjustedX)
                 break;
             posExclusive++;

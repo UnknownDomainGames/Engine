@@ -173,7 +173,7 @@ public abstract class Node implements EventTarget {
     }
 
     public final void requestParentLayout() {
-        Parent parent = parent().getValue();
+        Parent parent = parent().get();
         if (parent != null && !parent.isNeedsLayout()) {
             parent.needsLayout();
         }
@@ -236,7 +236,7 @@ public abstract class Node implements EventTarget {
         if (parent().isEmpty()) {
             return new Point(x, y);
         } else {
-            return parent().getValue().relativePos(x - getLayoutX(), y - getLayoutY());
+            return parent().get().relativePos(x - getLayoutX(), y - getLayoutY());
         }
     }
 

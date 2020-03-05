@@ -43,25 +43,25 @@ public class ScrollPane extends BorderPane {
 
     private void update() {
         if (content.isPresent()) {
-            if (content.getValue().getWidth() > getWidth()) {
+            if (content.get().getWidth() > getWidth()) {
                 hScroll.setDisabled(false);
                 vScroll.setVisible(true);
-                var delta = content.getValue().getWidth() - getWidth();
+                var delta = content.get().getWidth() - getWidth();
                 hScroll.max().set(delta);
                 hScroll.step().set(delta / 10.0f);
-                hScroll.value().addChangeListener((observable, oldValue, newValue) -> content.getValue().relocate(-hScroll.value().getFloat(), content.getValue().getLayoutY()));
+                hScroll.value().addChangeListener((observable, oldValue, newValue) -> content.get().relocate(-hScroll.value().getFloat(), content.get().getLayoutY()));
             } else {
                 hScroll.setDisabled(true);
                 hScroll.setVisible(false);
                 hScroll.max().set(1);
             }
-            if (content.getValue().getHeight() > getHeight()) {
+            if (content.get().getHeight() > getHeight()) {
                 vScroll.setDisabled(false);
                 vScroll.setVisible(true);
-                var delta = content.getValue().getHeight() - getHeight();
+                var delta = content.get().getHeight() - getHeight();
                 vScroll.max().set(delta);
                 vScroll.step().set(delta / 10.0f);
-                vScroll.value().addChangeListener((observable, oldValue, newValue) -> content.getValue().relocate(content.getValue().getLayoutX(), -vScroll.value().getFloat()));
+                vScroll.value().addChangeListener((observable, oldValue, newValue) -> content.get().relocate(content.get().getLayoutX(), -vScroll.value().getFloat()));
             } else {
                 vScroll.setDisabled(true);
                 vScroll.setVisible(false);
@@ -96,7 +96,7 @@ public class ScrollPane extends BorderPane {
     protected void layoutChildren() {
         super.layoutChildren();
         if (content.isPresent()) {
-            var c = content.getValue();
+            var c = content.get();
             layoutInArea(c, hScroll.disabled().get() ? 0 : hScroll.value().getFloat(), vScroll.disabled().get() ? 0 : vScroll.value().getFloat(),
                     Utils.prefWidth(c),
                     Utils.prefHeight(c), 0/*ignore baseline*/,

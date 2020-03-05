@@ -50,7 +50,7 @@ public class ToggleButton extends Button {
     }
 
     public void onClicked(MouseActionEvent event) {
-        selected.set(!selected.getValue());
+        selected.set(!selected.get());
     }
 
     public MutableBooleanValue selected() {

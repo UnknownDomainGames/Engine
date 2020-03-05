@@ -62,7 +62,7 @@ public class AnchorPane extends Pane {
             float childH = -1;
             max = Math.max(max, left + (minimum && leftA != null && rightA != null ? child.minWidth() : computeChildPrefAreaWidth(child, -1, null, childH, false)) + right);
         }
-        final Insets padding = padding().getValue();
+        final Insets padding = padding().get();
         return padding.getLeft() + max + padding.getRight();
     }
 
@@ -76,7 +76,7 @@ public class AnchorPane extends Pane {
             float childW = -1;
             max = Math.max(max, top + (minimum && topA != null && bottomA != null ? child.minHeight() : computeChildPrefAreaHeight(child, -1, null, childW)) + bottom);
         }
-        final Insets padding = padding().getValue();
+        final Insets padding = padding().get();
         return padding.getTop() + max + padding.getBottom();
     }
 

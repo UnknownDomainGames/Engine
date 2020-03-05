@@ -39,11 +39,11 @@ public class Node3D {
     }
 
     public final Scene3D getScene() {
-        return scene.getValue();
+        return scene.get();
     }
 
     public final Node3D getParent() {
-        return parent.getValue();
+        return parent.get();
     }
 
     private void setParent(Node3D parent) {

@@ -20,7 +20,7 @@ public class HBox extends Pane {
         for (Node node : getChildren()) {
             width += Math.max(node.getWidth(), Utils.prefWidth(node));
         }
-        Insets padding = padding().getValue();
+        Insets padding = padding().get();
         return padding.getLeft() + width + ((getChildren().size() == 0) ? 0 : spacing * (getChildren().size() - 1)) + padding.getRight();
     }
 
@@ -30,13 +30,13 @@ public class HBox extends Pane {
         for (Node node : getChildren()) {
             height = Math.max(Math.max(height, node.getHeight()), Utils.prefHeight(node));
         }
-        Insets padding = padding().getValue();
+        Insets padding = padding().get();
         return padding.getTop() + height + padding.getBottom();
     }
 
     @Override
     protected void layoutChildren() {
-        Insets padding = padding().getValue();
+        Insets padding = padding().get();
         float x = padding.getLeft(), y = padding.getTop(), spacing = spacing().get();
         for (Node node : getChildren()) {
             float prefWidth = Utils.prefWidth(node);

@@ -33,7 +33,7 @@ public class VBox extends Pane {
         for (Node node : getChildren()) {
             width = Math.max(Math.max(width, node.getWidth()), Utils.prefWidth(node));
         }
-        Insets padding = padding().getValue();
+        Insets padding = padding().get();
         return padding.getLeft() + width + padding.getRight();
     }
 
@@ -43,18 +43,18 @@ public class VBox extends Pane {
         for (Node node : getChildren()) {
             height += Math.max(node.getHeight(), Utils.prefHeight(node));
         }
-        Insets padding = padding().getValue();
+        Insets padding = padding().get();
         return padding.getTop() + height + ((getChildren().size() == 0) ? 0 : spacing * (getChildren().size() - 1)) + padding.getBottom();
     }
 
     @Override
     protected void layoutChildren() {
-        Insets padding = padding().getValue();
+        Insets padding = padding().get();
         float x, y = padding.getTop(), spacing = spacing().get(), w = getWidth() - padding.getLeft() - padding.getRight();
         for (Node node : getChildren()) {
             float prefWidth = Utils.prefWidth(node);
             float prefHeight = Utils.prefHeight(node);
-            x = alignment.getValue() == Pos.HPos.RIGHT ? w - prefWidth : alignment.getValue() == Pos.HPos.CENTER ? (w - prefWidth) / 2 : 0;
+            x = alignment.get() == Pos.HPos.RIGHT ? w - prefWidth : alignment.get() == Pos.HPos.CENTER ? (w - prefWidth) / 2 : 0;
             x += padding.getLeft();
             layoutInArea(node, snap(x, true), snap(y, true), prefWidth, prefHeight);
             y += prefHeight + spacing;

@@ -27,7 +27,7 @@ public class GuiChat extends AnchorPane {
         this.background().setValue(Background.NOTHING);
         setOnKeyPressed(event -> {
             if (event.getKey() == KeyCode.ENTER) {
-                String text = textField.text().getValue();
+                String text = textField.text().get();
                 if (text.startsWith("/")) { //command
                     //TODO go to command system
 

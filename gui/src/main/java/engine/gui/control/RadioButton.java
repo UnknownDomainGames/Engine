@@ -66,8 +66,8 @@ public class RadioButton extends ToggleButton {
         public Texted(String str) {
             text.setValue(new Text(str));
             radioButton.setValue(new RadioButton());
-            setMargin(radioButton.getValue(), new Insets(3));
-            center().setValue(radioButton.getValue());
+            setMargin(radioButton.get(), new Insets(3));
+            center().setValue(radioButton.get());
             processTextPos();
             contentPos.addChangeListener((observable, oldValue, newValue) -> processTextPos());
         }
@@ -85,7 +85,7 @@ public class RadioButton extends ToggleButton {
         }
 
         private void processTextPos() {
-            Text text1 = text.getValue();
+            Text text1 = text.get();
             Pos alignment = BorderPane.getAlignment(text1);
             if (alignment != null) {
                 switch (alignment) {
@@ -112,7 +112,7 @@ public class RadioButton extends ToggleButton {
                         break;
                 }
             }
-            switch (contentPos.getValue()) {
+            switch (contentPos.get()) {
                 case TOP_LEFT:
                 case TOP_RIGHT:
                 case BASELINE_RIGHT:

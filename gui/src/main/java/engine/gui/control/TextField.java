@@ -34,7 +34,7 @@ public class TextField extends TextInput {
         int posExclusive = 1;
         float x = 0;
         while (posExclusive <= length()) {
-            x += FontManager.instance().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().getValue());
+            x += FontManager.instance().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().get());
             if (x > adjustedX)
                 break;
             posExclusive++;
@@ -49,8 +49,8 @@ public class TextField extends TextInput {
 
     @Override
     protected void updatePointer() {
-        var viewableWidth = getWidth() - padding().getValue().getLeft() - padding().getValue().getRight();
-        var caretOffset = FontManager.instance().computeTextWidth(getTextInRange(0, caret().get()), font().getValue());
+        var viewableWidth = getWidth() - padding().get().getLeft() - padding().get().getRight();
+        var caretOffset = FontManager.instance().computeTextWidth(getTextInRange(0, caret().get()), font().get());
         var adjusted = caretOffset + lineScrollOffset;
         if (viewableWidth < adjusted) {
             lineScrollOffset = viewableWidth - caretOffset;

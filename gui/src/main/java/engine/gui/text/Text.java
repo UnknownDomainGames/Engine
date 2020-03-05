@@ -51,12 +51,12 @@ public class Text extends Node {
 
     @Override
     public float prefWidth() {
-        return FontManager.instance().computeTextWidth(text.getValue(), font().getValue());
+        return FontManager.instance().computeTextWidth(text.get(), font().get());
     }
 
     @Override
     public float prefHeight() {
-        return FontManager.instance().computeTextHeight(text().getValue(), font().getValue(), -1, leading.getFloat());
+        return FontManager.instance().computeTextHeight(text().get(), font().get(), -1, leading.getFloat());
     }
 
     @Override

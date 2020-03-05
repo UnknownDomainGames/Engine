@@ -115,45 +115,45 @@ public class BorderPane extends Pane {
 
     @Override
     public float computeWidth() {
-        var padding = padding().getValue();
+        var padding = padding().get();
         float width = 0f;
         if (padding != null) {
             width += padding.getLeft() + padding.getRight();
         }
-        if (left.getValue() != null) {
-            width += left.getValue().prefWidth();
+        if (left.get() != null) {
+            width += left.get().prefWidth();
         }
-        if (center.getValue() != null) {
-            width += center.getValue().prefWidth();
+        if (center.get() != null) {
+            width += center.get().prefWidth();
         }
-        if (right.getValue() != null) {
-            width += right.getValue().prefWidth();
+        if (right.get() != null) {
+            width += right.get().prefWidth();
         }
         return width;
     }
 
     @Override
     public float computeHeight() {
-        var padding = padding().getValue();
+        var padding = padding().get();
         float height = 0f;
         if (padding != null) {
             height += padding.getTop() + padding.getBottom();
         }
-        if (top.getValue() != null) {
-            height += top.getValue().prefHeight();
+        if (top.get() != null) {
+            height += top.get().prefHeight();
         }
-        if (center.getValue() != null) {
-            height += center.getValue().prefHeight();
+        if (center.get() != null) {
+            height += center.get().prefHeight();
         }
-        if (bottom.getValue() != null) {
-            height += bottom.getValue().prefHeight();
+        if (bottom.get() != null) {
+            height += bottom.get().prefHeight();
         }
         return height;
     }
 
     @Override
     protected void layoutChildren() {
-        final Insets padding = padding().getValue();
+        final Insets padding = padding().get();
         float width = getWidth();
         float height = getHeight();
         width = width < minWidth() ? minWidth() : width;
@@ -164,11 +164,11 @@ public class BorderPane extends Pane {
         final float insideY = padding.getTop();
         final float insideWidth = width - insideX - padding.getRight();
         final float insideHeight = height - insideY - padding.getBottom();
-        final Node c = center().getValue();
-        final Node r = right().getValue();
-        final Node b = bottom().getValue();
-        final Node l = left().getValue();
-        final Node t = top().getValue();
+        final Node c = center().get();
+        final Node r = right().get();
+        final Node b = bottom().get();
+        final Node l = left().get();
+        final Node t = top().get();
         float topHeight = 0;
         if (t != null) {
             Insets topMargin = getNodeMargin(t);

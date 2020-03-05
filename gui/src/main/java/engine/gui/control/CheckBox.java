@@ -33,12 +33,12 @@ public class CheckBox extends Button {
     }
 
     private void switchState() {
-        if (allowIntermediate.get() && state.getValue() != null && !state.getValue()) {
+        if (allowIntermediate.get() && state.get() != null && !state.get()) {
             state.setValue(null);
-        } else if (state.getValue() == null) {
+        } else if (state.get() == null) {
             state.setValue(true);
         } else {
-            state.setValue(!state.getValue());
+            state.setValue(!state.get());
         }
     }
 
@@ -76,8 +76,8 @@ public class CheckBox extends Button {
         public Texted(String str) {
             text.setValue(new Text(str));
             checkBox.setValue(new CheckBox());
-            setMargin(checkBox.getValue(), new Insets(3));
-            center().setValue(checkBox.getValue());
+            setMargin(checkBox.get(), new Insets(3));
+            center().setValue(checkBox.get());
             processTextPos();
             contentPos.addChangeListener((observable, oldValue, newValue) -> processTextPos());
         }
@@ -95,7 +95,7 @@ public class CheckBox extends Button {
         }
 
         private void processTextPos() {
-            Text text1 = text.getValue();
+            Text text1 = text.get();
             Pos alignment = BorderPane.getAlignment(text1);
             if (alignment != null) {
                 switch (alignment) {
@@ -122,7 +122,7 @@ public class CheckBox extends Button {
                         break;
                 }
             }
-            switch (contentPos.getValue()) {
+            switch (contentPos.get()) {
                 case TOP_LEFT:
                 case TOP_RIGHT:
                 case BASELINE_RIGHT:

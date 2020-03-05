@@ -40,7 +40,7 @@ public class FlowPane extends Pane {
 
     @Override
     protected void layoutChildren() {
-        Insets padding = padding().getValue();
+        Insets padding = padding().get();
         float spacing = spacing().get();
         List<Pair<List<Node>, Float>> groups = new ArrayList<>();
         var max = 0f;
@@ -79,7 +79,7 @@ public class FlowPane extends Pane {
         var size = Math.min(orientation.get() == Orientation.VERTICAL ? getWidth() : getHeight(), groups.stream().mapToDouble(Pair::getRight).reduce(0, Double::sum));
         float x;
         float y;
-        switch (alignment.getValue().getHpos()) {
+        switch (alignment.get().getHpos()) {
             case RIGHT:
                 x = getWidth() - padding.getRight();
                 break;
@@ -94,7 +94,7 @@ public class FlowPane extends Pane {
                 x = padding.getLeft();
                 break;
         }
-        switch (alignment.getValue().getVpos()) {
+        switch (alignment.get().getVpos()) {
             case BOTTOM:
                 y = getHeight() - padding.getBottom();
                 break;
@@ -121,7 +121,7 @@ public class FlowPane extends Pane {
                 float pw = Utils.prefWidth(child);
                 float ph = Utils.prefHeight(child);
                 float x1;
-                if (alignment.getValue().getHpos() == Pos.HPos.RIGHT) {
+                if (alignment.get().getHpos() == Pos.HPos.RIGHT) {
                     x1 = x - pw;
                 } else if (alignment.get().getHpos() == Pos.HPos.CENTER) {
                     if (orientation.get() == Orientation.HORIZONTAL) {
@@ -133,7 +133,7 @@ public class FlowPane extends Pane {
                     x1 = x;
                 }
                 float y1;
-                if (alignment.getValue().getVpos() == Pos.VPos.BOTTOM) {
+                if (alignment.get().getVpos() == Pos.VPos.BOTTOM) {
                     y1 = y - ph;
                 } else if (alignment.get().getVpos() == Pos.VPos.CENTER) {
                     if (orientation.get() == Orientation.VERTICAL) {
@@ -144,11 +144,11 @@ public class FlowPane extends Pane {
                 } else {
                     y1 = y;
                 }
-                layoutInArea(child, snap(x1,true), snap(y1, true), snap(pw, true), snap(ph, true));
-                if (orientation.getValue() == Orientation.HORIZONTAL) {
-                    x = x1 + (alignment.getValue().getHpos() == Pos.HPos.RIGHT ? -spacing : spacing + pw);
+                layoutInArea(child, snap(x1, true), snap(y1, true), snap(pw, true), snap(ph, true));
+                if (orientation.get() == Orientation.HORIZONTAL) {
+                    x = x1 + (alignment.get().getHpos() == Pos.HPos.RIGHT ? -spacing : spacing + pw);
                 } else {
-                    y = y1 + (alignment.getValue().getVpos() == Pos.VPos.BOTTOM ? -spacing : spacing + ph);
+                    y = y1 + (alignment.get().getVpos() == Pos.VPos.BOTTOM ? -spacing : spacing + ph);
                 }
             }
             if (orientation.get() == Orientation.VERTICAL) {

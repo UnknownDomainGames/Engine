@@ -38,10 +38,10 @@ public final class TextFieldRenderer extends RegionRenderer<TextField> {
         super.render(textField, graphics);
         float px, py, pw, ph;
         if (textField.padding().isPresent()) {
-            px = textField.padding().getValue().getLeft();
-            py = textField.padding().getValue().getTop();
-            pw = textField.getWidth() - textField.padding().getValue().getRight();
-            ph = textField.getHeight() - textField.padding().getValue().getBottom();
+            px = textField.padding().get().getLeft();
+            py = textField.padding().get().getTop();
+            pw = textField.getWidth() - textField.padding().get().getRight();
+            ph = textField.getHeight() - textField.padding().get().getBottom();
         } else {
             px = 0;
             py = 0;
@@ -49,9 +49,9 @@ public final class TextFieldRenderer extends RegionRenderer<TextField> {
             ph = textField.getHeight();
         }
         graphics.pushClipRect(px, py, pw, ph);
-        Color frontColor = textField.fontcolor().getValue();
+        Color frontColor = textField.fontcolor().get();
         graphics.setColor(frontColor);
-        Font font = textField.font().getValue();
+        Font font = textField.font().get();
         FontManager helper = FontManager.instance();
         float caretWidth = helper.computeTextWidth(textField.getTextInRange(0, textField.caret().get()), font);
         float offset = textField.getLineScrollOffset();
@@ -74,7 +74,7 @@ public final class TextFieldRenderer extends RegionRenderer<TextField> {
             }
         }
         if (textField.focused().get() && System.currentTimeMillis() % 1000 < 500) {
-            if (textField.selection().isPresent() && textField.selection().getValue().isInRange(textField.caret().get())) {
+            if (textField.selection().isPresent() && textField.selection().get().isInRange(textField.caret().get())) {
                 graphics.setColor(frontColor.difference(selectionColor));
             }
             graphics.fillRect(caretWidth + offset, 0, 1, ph - py);
