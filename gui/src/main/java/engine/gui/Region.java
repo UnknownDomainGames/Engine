@@ -71,7 +71,7 @@ public class Region extends Parent {
         final float x = snap(areaX + xoffset, isSnapToPixel);
         final float y = snap(areaY + yoffset, isSnapToPixel);
 
-        child.position(x, y, areaWidth - leftMargin - rightMargin, areaHeight - topMargin - bottomMargin);
+        child.relocate(x, y);
     }
 
     static float computeXOffset(float width, float contentWidth, Pos.HPos hpos) {
@@ -184,6 +184,7 @@ public class Region extends Parent {
 //            Vec2d size = boundedNodeSizeWithBias(child, areaWidth - left - right, areaHeight - top - bottom,
 //                    fillWidth, fillHeight, TEMP_VEC2D);
 //        }
+        c.resize(areaWidth - left - right, areaHeight - top - bottom);
         position(c, areaX, areaY, areaWidth, areaHeight, areaBaselineOffset,
                 top, right, bottom, left, hAlign, vAlign, true);
     }

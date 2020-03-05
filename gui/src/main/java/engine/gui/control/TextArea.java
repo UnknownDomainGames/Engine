@@ -19,7 +19,8 @@ public class TextArea extends TextInput {
         wrapText = new WrapText();
         wrapText.text().bindBidirectional(this.text());
         scrollPane.setContent(wrapText);
-        layoutBounds().addChangeListener((observable, o, n) -> scrollPane.getSize().setPrefSize(n.getWidth(), n.getHeight()));
+        width().addChangeListener((observable, o, n) -> scrollPane.getSize().prefWidth().set(n));
+        height().addChangeListener((observable, o, n) -> scrollPane.getSize().prefHeight().set(n));
         this.getChildren().add(scrollPane);
     }
 

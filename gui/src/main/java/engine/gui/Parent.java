@@ -135,6 +135,7 @@ public abstract class Parent extends Node {
     }
 
     protected final void layoutInArea(Node node, float x, float y, float width, float height) {
-        node.position(x, y, width, height);
+        node.resize(width, height);
+        node.relocate(x, y);
     }
 }

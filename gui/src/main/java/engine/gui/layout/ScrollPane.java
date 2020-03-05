@@ -31,11 +31,15 @@ public class ScrollPane extends BorderPane {
         content.addChangeListener((observable, oldValue, newValue) -> {
             update();
             if (newValue != null) {
-                newValue.layoutBounds().addChangeListener((observable1, o, n) -> update());
+                newValue.width().addChangeListener((observable1, o, n) -> update());
+                newValue.height().addChangeListener((observable1, o, n) -> update());
             }
         });
-        layoutBounds().addChangeListener((observable, oldValue, newValue) -> {
+        width().addChangeListener((observable, oldValue, newValue) -> {
             hScroll.sliderLength().set(getWidth());
+            update();
+        });
+        height().addChangeListener((observable, oldValue, newValue) -> {
             vScroll.sliderLength().set(getHeight());
             update();
         });

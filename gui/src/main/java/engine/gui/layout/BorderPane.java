@@ -178,7 +178,7 @@ public class BorderPane extends Pane {
 //            Vec2d result = boundedNodeSizeWithBias(t, adjustedWidth,
 //                    topHeight, true, true, TEMP_VEC2D);
 //            topHeight = snapSize(result.y);
-//            t.resize(t.prefWidth(), topHeight);
+            t.resize(t.prefWidth(), topHeight);
 
 //            topHeight = snapSpace(topMargin.getBottom()) + topHeight + snapSpace(topMargin.getTop());
             Pos alignment = getAlignment(t);
@@ -198,7 +198,7 @@ public class BorderPane extends Pane {
 //            Vec2d result = boundedNodeSizeWithBias(b, adjustedWidth,
 //                    bottomHeight, true, true, TEMP_VEC2D);
 //            bottomHeight = snapSize(result.y);
-//            b.resize(b.prefWidth(), bottomHeight);
+            b.resize(b.prefWidth(), bottomHeight);
 
 //            bottomHeight = snapSpace(bottomMargin.getBottom()) + bottomHeight + snapSpace(bottomMargin.getTop());
             Pos alignment = getAlignment(b);
@@ -219,7 +219,7 @@ public class BorderPane extends Pane {
 //            Vec2d result = boundedNodeSizeWithBias(l, leftWidth, adjustedHeight,
 //                    true, true, TEMP_VEC2D);
 //            leftWidth = snapSize(result.x);
-//            l.resize(leftWidth, l.prefHeight());
+            l.resize(leftWidth, l.prefHeight());
 
 //            leftWidth = snapSpace(leftMargin.getLeft()) + leftWidth + snapSpace(leftMargin.getRight());
             Pos alignment = getAlignment(l);
@@ -240,7 +240,7 @@ public class BorderPane extends Pane {
 //            Vec2d result = boundedNodeSizeWithBias(r, rightWidth, adjustedHeight,
 //                    true, true, TEMP_VEC2D);
 //            rightWidth = snapSize(result.x);
-//            r.resize(rightWidth, r.prefHeight());
+            r.resize(rightWidth, r.prefHeight());
 
 //            rightWidth = snapSpace(rightMargin.getLeft()) + rightWidth + snapSpace(rightMargin.getRight());
             Pos alignment = getAlignment(r);

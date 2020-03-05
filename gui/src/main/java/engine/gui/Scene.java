@@ -126,8 +126,7 @@ public class Scene implements EventTarget {
 
     private void updateRoot() {
         Parent root = this.root.get();
-        root.position(root.getLayoutX(), root.getLayoutY(),
-                getWidth() - root.getLayoutX(), getHeight() - root.getLayoutY());
+        root.resize(getWidth() - root.getLayoutX(), getHeight() - root.getLayoutY());
         root.needsLayout();
     }
 

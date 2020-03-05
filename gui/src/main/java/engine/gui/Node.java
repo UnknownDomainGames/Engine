@@ -8,7 +8,6 @@ import engine.gui.input.KeyEvent;
 import engine.gui.input.MouseActionEvent;
 import engine.gui.input.MouseEvent;
 import engine.gui.input.ScrollEvent;
-import engine.gui.misc.Bounds;
 import engine.gui.misc.Point;
 import engine.gui.rendering.ComponentRenderer;
 import engine.input.MouseButton;
@@ -20,10 +19,11 @@ public abstract class Node implements EventTarget {
     final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
     final MutableObjectValue<Parent> parent = new SimpleMutableObjectValue<>();
 
-    private final MutableObjectValue<Bounds> layoutBounds = new SimpleMutableObjectValue<>(Bounds.EMPTY);
-
     private MutableFloatValue layoutX;
     private MutableFloatValue layoutY;
+
+    private final MutableFloatValue width = new SimpleMutableFloatValue();
+    private final MutableFloatValue height = new SimpleMutableFloatValue();
 
     final MutableBooleanValue focused = new SimpleMutableBooleanValue(false);
     final MutableBooleanValue hover = new SimpleMutableBooleanValue(false);
@@ -55,26 +55,15 @@ public abstract class Node implements EventTarget {
         return parent.get();
     }
 
-    public final ObservableObjectValue<Bounds> layoutBounds() {
-        return layoutBounds.toUnmodifiable();
-    }
-
-    public final Bounds getLayoutBounds() {
-        return layoutBounds.get();
-    }
-
-    void position(float x, float y, float width, float height) {
-        layoutBounds.set(new Bounds(x, y, width, height));
-        layoutX().set(x);
-        layoutY().set(y);
+    public void resize(float width, float height) {
+        this.width.set(width);
+        this.height.set(height);
     }
 
     public final MutableFloatValue layoutX() {
         if (layoutX == null) {
             layoutX = new SimpleMutableFloatValue();
-            layoutX.addChangeListener((observable, oldValue, newValue) -> {
-                if (newValue != getLayoutBounds().getMinX()) requestParentLayout();
-            });
+            layoutX.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         }
         return layoutX;
     }
@@ -90,9 +79,7 @@ public abstract class Node implements EventTarget {
     public final MutableFloatValue layoutY() {
         if (layoutY == null) {
             layoutY = new SimpleMutableFloatValue();
-            layoutY.addChangeListener((observable, oldValue, newValue) -> {
-                if (newValue != getLayoutBounds().getMinY()) requestParentLayout();
-            });
+            layoutY.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         }
         return layoutY;
     }
@@ -110,12 +97,20 @@ public abstract class Node implements EventTarget {
         setLayoutY(y);
     }
 
+    public final ObservableFloatValue width() {
+        return width;
+    }
+
     public final float getWidth() {
-        return getLayoutBounds().getWidth();
+        return width.get();
+    }
+
+    public final ObservableFloatValue height() {
+        return height;
     }
 
     public final float getHeight() {
-        return getLayoutBounds().getHeight();
+        return height.get();
     }
 
     public final ObservableBooleanValue focused() {
@@ -200,7 +195,7 @@ public abstract class Node implements EventTarget {
     }
 
     public boolean contains(float x, float y) {
-        return getLayoutBounds().contains(x, y);
+        return x >= getLayoutX() && x <= getLayoutX() + getWidth() && y >= getLayoutY() && y <= getLayoutY() + getHeight();
     }
 
     public ComponentRenderer getRenderer() {

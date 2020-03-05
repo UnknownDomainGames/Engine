@@ -12,7 +12,6 @@ import engine.gui.layout.HBox;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
-import engine.gui.misc.Bounds;
 import engine.gui.text.Text;
 import engine.input.MouseButton;
 import engine.util.Color;
@@ -147,7 +146,7 @@ public class GuiSettings extends AnchorPane {
         setBottomAnchor(vb, hb5.getHeight() + 20f);
         setRightAnchor(hb5, 10f);
         this.getChildren().addAll(title, vb, hb5);
-        ValueChangeListener<Bounds> sizeChangeListener = (observable, oldValue, newValue) -> {
+        ValueChangeListener<Float> sizeChangeListener = (observable, oldValue, newValue) -> {
             setTopAnchor(title, 10f);
             setLeftAnchor(title, (this.getWidth() - title.getWidth()) / 2);
             setTopAnchor(vb, title.getHeight() + 20f);
@@ -157,6 +156,7 @@ public class GuiSettings extends AnchorPane {
             setRightAnchor(hb5, 10f);
             layoutChildren();
         };
-        layoutBounds().addChangeListener(sizeChangeListener);
+        width().addChangeListener(sizeChangeListener);
+        height().addChangeListener(sizeChangeListener);
     }
 }
