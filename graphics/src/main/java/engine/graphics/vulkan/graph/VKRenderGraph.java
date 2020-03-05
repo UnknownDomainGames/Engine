@@ -1,7 +1,6 @@
 package engine.graphics.vulkan.graph;
 
 import engine.graphics.display.Window;
-import engine.graphics.gl.graph.GLRenderTask;
 import engine.graphics.graph.RenderGraph;
 import engine.graphics.graph.RenderGraphInfo;
 import engine.graphics.graph.RenderTask;
@@ -34,6 +33,21 @@ public class VKRenderGraph implements RenderGraph {
     @Override
     public RenderTask getMainTask() {
         return mainTask;
+    }
+
+    @Override
+    public int getWidth() {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
+    }
+
+    @Override
+    public void setSize(int width, int height) {
+
     }
 
     @Override
