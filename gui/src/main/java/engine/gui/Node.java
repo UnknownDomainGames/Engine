@@ -22,9 +22,10 @@ public abstract class Node implements EventTarget {
     private final MutableFloatValue x = new SimpleMutableFloatValue();
     private final MutableFloatValue y = new SimpleMutableFloatValue();
 
-    public static final float FOLLOW_PARENT = -1;
     final MutableFloatValue width = new SimpleMutableFloatValue();
     final MutableFloatValue height = new SimpleMutableFloatValue();
+
+    final MutableFloatValue layoutBounds = new SimpleMutableFloatValue();
 
     final MutableBooleanValue focused = new SimpleMutableBooleanValue(false);
     final MutableBooleanValue hover = new SimpleMutableBooleanValue(false);
@@ -38,7 +39,6 @@ public abstract class Node implements EventTarget {
     private EventHandlerManager eventHandlerManager = new EventHandlerManager();
 
     public Node() {
-        visible.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
     }
 
     public final ObservableObjectValue<Scene> scene() {
