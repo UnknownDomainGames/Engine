@@ -36,7 +36,8 @@ public final class StageHelperImpl extends StageHelper {
         if (stage.isShowing()) throw new IllegalStateException("Stage is showing");
         Window window = getWindow(stage);
         if (window == null) {
-            window = isPrimary(stage) ? primaryWindow : windowHelper.createWindow();
+            Stage owner = stage.getOwner();
+            window = isPrimary(stage) ? primaryWindow : windowHelper.createWindow(owner == null ? null : getWindow(owner));
             setWindow(stage, window);
         }
         window.show();

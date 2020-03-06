@@ -3,11 +3,11 @@ package engine.gui;
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.*;
-import engine.gui.internal.GUIPlatform;
-import engine.gui.internal.StageHelper;
 import engine.graphics.display.Window;
 import engine.graphics.display.callback.*;
 import engine.graphics.image.ReadOnlyImage;
+import engine.gui.internal.GUIPlatform;
+import engine.gui.internal.StageHelper;
 
 import java.util.ArrayList;
 
@@ -15,6 +15,8 @@ public class Stage {
 
     private static final ObservableList<Stage> stages = ObservableCollections.observableList(new ArrayList<>());
     private static final ObservableList<Stage> unmodifiableStages = ObservableCollections.unmodifiableObservableList(stages);
+
+    private Stage owner;
 
     private MutableIntValue x;
     private MutableIntValue y;
@@ -66,12 +68,12 @@ public class Stage {
 
             @Override
             public boolean isPrimary(Stage stage) {
-                return stage.primary;
+                return stage.isPrimary();
             }
 
             @Override
             public void setPrimary(Stage stage, boolean primary) {
-                stage.primary = primary;
+                stage.setPrimary(primary);
             }
 
             @Override
@@ -91,6 +93,21 @@ public class Stage {
     }
 
     public Stage() {
+    }
+
+    public Stage getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Stage owner) {
+        if (window != null) {
+            throw new IllegalStateException("Cannot set owner once stage has been shown");
+        }
+
+        if (isPrimary()) {
+            throw new IllegalStateException("Cannot set owner for the primary stage");
+        }
+        this.owner = owner;
     }
 
     private MutableIntValue xImpl() {
@@ -333,6 +350,14 @@ public class Stage {
 
     public void hide() {
         GUIPlatform.getInstance().getStageHelper().hide(this);
+    }
+
+    private boolean isPrimary() {
+        return primary;
+    }
+
+    private void setPrimary(boolean primary) {
+        this.primary = primary;
     }
 
     private WindowPosCallback posCallback;
