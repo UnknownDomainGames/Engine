@@ -39,4 +39,13 @@ public abstract class Event implements Cloneable {
     public Event fireEvent() {
         return EventUtils.fireEvent(this, target);
     }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "eventType=" + getEventType() +
+                ", target=" + getTarget() +
+                ", consumed=" + isConsumed() +
+                '}';
+    }
 }

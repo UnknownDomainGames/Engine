@@ -12,4 +12,13 @@ public class ActionEvent extends Event {
     public ActionEvent(EventType<? extends Event> eventType, EventTarget target) {
         super(eventType, target);
     }
+
+    @Override
+    public String toString() {
+        return "ActionEvent{" +
+                "eventType=" + getEventType() +
+                ", target=" + getTarget() +
+                ", consumed=" + isConsumed() +
+                '}';
+    }
 }

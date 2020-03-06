@@ -49,4 +49,17 @@ public class KeyEvent extends Event {
     public boolean isPressed() {
         return pressed;
     }
+
+    @Override
+    public String toString() {
+        return "KeyEvent{" +
+                "eventType=" + getEventType() +
+                ", target=" + getTarget() +
+                ", consumed=" + isConsumed() +
+                ", key=" + getKey() +
+                ", character='" + getCharacter() + '\'' +
+                ", modifier=" + getModifier() +
+                ", pressed=" + isPressed() +
+                '}';
+    }
 }

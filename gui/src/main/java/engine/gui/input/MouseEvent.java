@@ -43,4 +43,17 @@ public class MouseEvent extends Event {
     public float getY() {
         return y;
     }
+
+    @Override
+    public String toString() {
+        return "MouseEvent{" +
+                "eventType=" + getEventType() +
+                ", target=" + getTarget() +
+                ", consumed=" + isConsumed() +
+                ", screenX=" + getScreenX() +
+                ", screenY=" + getScreenY() +
+                ", x=" + getX() +
+                ", y=" + getY() +
+                '}';
+    }
 }

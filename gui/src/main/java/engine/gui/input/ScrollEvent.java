@@ -24,4 +24,19 @@ public class ScrollEvent extends MouseEvent {
     public double getYScroll() {
         return yScroll;
     }
+
+    @Override
+    public String toString() {
+        return "ScrollEvent{" +
+                "eventType=" + getEventType() +
+                ", target=" + getTarget() +
+                ", consumed=" + isConsumed() +
+                ", screenX=" + getScreenX() +
+                ", screenY=" + getScreenY() +
+                ", x=" + getX() +
+                ", y=" + getY() +
+                ", xScroll=" + getXScroll() +
+                ", yScroll=" + getYScroll() +
+                '}';
+    }
 }

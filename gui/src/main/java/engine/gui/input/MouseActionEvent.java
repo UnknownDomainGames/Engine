@@ -31,4 +31,19 @@ public class MouseActionEvent extends MouseEvent {
     public Modifiers getModifier() {
         return modifier;
     }
+
+    @Override
+    public String toString() {
+        return "MouseActionEvent{" +
+                "eventType=" + getEventType() +
+                ", target=" + getTarget() +
+                ", consumed=" + isConsumed() +
+                ", screenX=" + getScreenX() +
+                ", screenY=" + getScreenY() +
+                ", x=" + getX() +
+                ", y=" + getY() +
+                ", button=" + getButton() +
+                ", modifier=" + getModifier() +
+                '}';
+    }
 }
