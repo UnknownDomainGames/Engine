@@ -56,11 +56,11 @@ public class Button extends Label {
     }
 
     protected void handleBackground() {
-        if (disabled().get()) {
+        if (isDisabled()) {
             super.background().setValue(disabledBackground().get());
-        } else if (pressed().get()) {
+        } else if (isPressed()) {
             super.background().setValue(pressBackground().get());
-        } else if (hover().get()) {
+        } else if (isHover()) {
             super.background().setValue(hoverBackground().get());
         } else {
             super.background().setValue(buttonBackground().get());

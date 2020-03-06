@@ -387,17 +387,29 @@ public class Stage {
                 yImpl().set(y);
             };
             window.addWindowPosCallback(posCallback);
+            xImpl().set(window.getX());
+            yImpl().set(window.getY());
+
             if (sizeCallback == null) sizeCallback = (window, width, height) -> {
                 widthImpl().set(width);
                 heightImpl().set(height);
             };
             window.addWindowSizeCallback(sizeCallback);
+            widthImpl().set(window.getWidth());
+            heightImpl().set(window.getHeight());
+
             if (focusCallback == null) focusCallback = (window, focused) -> focusedImpl().set(focused);
             window.addWindowFocusCallback(focusCallback);
+            focusedImpl().set(window.isFocused());
+
             if (iconifyCallback == null) iconifyCallback = (window, iconified) -> iconifiedImpl().set(iconified);
             window.addWindowIconifyCallback(iconifyCallback);
+            iconifiedImpl().set(window.isIconified());
+
             if (maximizeCallback == null) maximizeCallback = (window, maximized) -> maximizedImpl().set(maximized);
             window.addWindowMaximizeCallback(maximizeCallback);
+            maximizedImpl().set(window.isMaximized());
+
             if (closeCallback == null) closeCallback = window -> hide();
             window.addWindowCloseCallback(closeCallback);
 

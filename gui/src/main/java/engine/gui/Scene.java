@@ -154,6 +154,30 @@ public class Scene implements EventTarget {
         return tail.append(eventHandlerManager);
     }
 
+    private List<Node> raycast(float x, float y, boolean keepParent) {
+        List<Node> results = new ArrayList<>();
+        raycast(root.get(), x, y, results, keepParent);
+        return results;
+    }
+
+    private boolean raycast(Parent parent, float x, float y, List<Node> results, boolean keepParent) {
+        boolean matched = false;
+        for (Node node : parent.getUnmodifiableChildren()) {
+            if (!node.contains(x, y)) continue;
+
+            matched = true;
+            if (node instanceof Parent) {
+                boolean mismatchChild = !raycast((Parent) node, x - node.getLayoutX(), y - node.getLayoutY(), results, keepParent);
+                if (keepParent || mismatchChild) {
+                    results.add(node);
+                }
+            } else {
+                results.add(node);
+            }
+        }
+        return matched;
+    }
+
     private float cursorX = Float.NaN;
     private float cursorY = Float.NaN;
 
@@ -179,32 +203,8 @@ public class Scene implements EventTarget {
         }
     }
 
-    private List<Node> raycast(float x, float y, boolean keepParent) {
-        List<Node> results = new ArrayList<>();
-        raycast(root.get(), x, y, results, keepParent);
-        return results;
-    }
-
-    private boolean raycast(Parent parent, float x, float y, List<Node> results, boolean keepParent) {
-        boolean matched = false;
-        for (Node node : parent.getUnmodifiableChildren()) {
-            if (!node.contains(x, y)) continue;
-
-            matched = true;
-            if (node instanceof Parent) {
-                boolean mismatchChild = !raycast((Parent) node, x - node.getLayoutX(), y - node.getLayoutY(), results, keepParent);
-                if (keepParent || mismatchChild) {
-                    results.add(node);
-                }
-            } else {
-                results.add(node);
-            }
-        }
-        return matched;
-    }
-
     private final Set<Node> focusedNodes = new HashSet<>();
-    private final EnumMap<MouseButton, List<Node>> pressedNodes = new EnumMap<>(MouseButton.class);
+    private final Map<MouseButton, List<Node>> pressedNodes = new HashMap<>();
 
     public void processMouse(MouseButton button, Modifiers modifier, boolean pressed) {
         if (Float.isNaN(cursorX) || Float.isNaN(cursorY)) return;
@@ -227,15 +227,15 @@ public class Scene implements EventTarget {
         List<Node> pressedNodeList = pressedNodes.computeIfAbsent(button, key -> new ArrayList<>());
         if (pressed) {
             for (var node : hitNodes) {
+                pressedNodeList.add(node);
                 var pos = node.relativePos(cursorX, cursorY);
-                new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier).fireEvent(node);
+                new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier).fireEvent();
             }
-            pressedNodeList.addAll(hitNodes);
         } else {
             for (Node node : pressedNodeList) {
                 var pos = node.relativePos(cursorX, cursorY);
-                new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier).fireEvent(node);
-                new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier).fireEvent(node);
+                new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier).fireEvent();
+                new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier).fireEvent();
             }
             pressedNodeList.clear();
         }
@@ -267,6 +267,21 @@ public class Scene implements EventTarget {
         } else {
             focusedNodes.forEach(node ->
                     new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.NONE, String.valueOf(codePoint), modifier, true).fireEvent());
+        }
+    }
+
+    public void processFocus(boolean focused) {
+        if (!focused) {
+            // lost focus of all focused nodes.
+            focusedNodes.forEach(node -> node.focused.set(false));
+            focusedNodes.clear();
+
+            // lost hover of all hovered nodes.
+            hoveredNodes.forEach(node -> {
+                var pos = node.relativePos(cursorX, cursorY);
+                new MouseEvent(MouseEvent.MOUSE_EXITED, node, pos.getX(), pos.getY(), cursorX, cursorY).fireEvent();
+            });
+            hoveredNodes.clear();
         }
     }
 

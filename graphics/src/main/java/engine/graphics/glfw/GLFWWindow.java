@@ -310,6 +310,7 @@ public class GLFWWindow implements Window {
         this.showing = showing;
         if (showing) {
             glfwShowWindow(pointer);
+            setFocused(true);
             GLFWContext.onShowedWindow(this);
         } else {
             glfwHideWindow(pointer);
@@ -362,6 +363,11 @@ public class GLFWWindow implements Window {
     @Override
     public void focus() {
         glfwFocusWindow(pointer);
+    }
+
+    private void setFocused(boolean focused) {
+        this.focused = focused;
+        windowFocusCallbacks.forEach(callback -> callback.invoke(this, focused));
     }
 
     @Override
@@ -605,10 +611,7 @@ public class GLFWWindow implements Window {
                 dispose();
             }
         });
-        glfwSetWindowFocusCallback(pointer, (window, focused) -> {
-            this.focused = focused;
-            windowFocusCallbacks.forEach(callback -> callback.invoke(this, focused));
-        });
+        glfwSetWindowFocusCallback(pointer, (window, focused) -> setFocused(focused));
         glfwSetCursorEnterCallback(pointer, (window, entered) ->
                 cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
         glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> setPosInternal(xpos, ypos));

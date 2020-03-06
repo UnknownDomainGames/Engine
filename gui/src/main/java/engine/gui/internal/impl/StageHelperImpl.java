@@ -17,7 +17,7 @@ public final class StageHelperImpl extends StageHelper {
     private final GraphicsBackend graphicsBackend;
     private final WindowHelper windowHelper;
 
-    private final Map<Stage, StageInputHandler> stageInputHandlerMap = new HashMap<>();
+    private final Map<Stage, StageInputHelper> stageInputHandlerMap = new HashMap<>();
     private final Map<Stage, RenderGraph> stageRenderGraphMap = new HashMap<>();
 
     private Stage primaryStage;
@@ -43,7 +43,7 @@ public final class StageHelperImpl extends StageHelper {
         window.show();
         getShowingProperty(stage).set(true);
         doVisibleChanged(stage, true);
-        enableInput(stage, window);
+        enableInput(stage);
         enableRender(stage);
     }
 
@@ -53,7 +53,7 @@ public final class StageHelperImpl extends StageHelper {
         Window window = getWindow(stage);
         window.hide();
         disableRender(stage);
-        disableInput(stage, window);
+        disableInput(stage);
         getShowingProperty(stage).set(false);
         doVisibleChanged(stage, false);
     }
@@ -62,14 +62,14 @@ public final class StageHelperImpl extends StageHelper {
         return primaryStage;
     }
 
-    public void enableInput(Stage stage, Window window) {
-        StageInputHandler stageInputHandler = new StageInputHandler(stage, window);
-        stageInputHandler.enable();
-        stageInputHandlerMap.put(stage, stageInputHandler);
+    public void enableInput(Stage stage) {
+        StageInputHelper stageInputHelper = new StageInputHelper(stage);
+        stageInputHelper.enable();
+        stageInputHandlerMap.put(stage, stageInputHelper);
     }
 
-    public void disableInput(Stage stage, Window window) {
-        StageInputHandler inputHandler = stageInputHandlerMap.remove(stage);
+    public void disableInput(Stage stage) {
+        StageInputHelper inputHandler = stageInputHandlerMap.remove(stage);
         if (inputHandler != null) inputHandler.disable();
     }
 

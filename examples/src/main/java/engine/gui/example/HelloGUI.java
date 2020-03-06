@@ -53,6 +53,7 @@ public class HelloGUI extends GUIApplication {
             stage.setScene(scene);
             stage.show();
         });
+        sayIt.setOnMouseReleased(event -> System.out.println(sayIt.isPressed()));
 
         vBox.getChildren().addAll(text, sayIt);
 
@@ -61,6 +62,7 @@ public class HelloGUI extends GUIApplication {
         Scene scene = new Scene(flowPane);
 
         primaryStage.setScene(scene);
+        primaryStage.setTitle("Hello World");
         primaryStage.show();
     }
 }

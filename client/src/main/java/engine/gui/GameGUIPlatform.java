@@ -36,7 +36,7 @@ public final class GameGUIPlatform extends GUIPlatform {
         StageHelper.setWindow(stage, primaryWindow);
         StageHelper.getShowingProperty(stage).set(true);
         StageHelper.doVisibleChanged(stage, true);
-        stageHelper.enableInput(stage, primaryWindow);
+        stageHelper.enableInput(stage);
         guiStage = stage;
     }
 
