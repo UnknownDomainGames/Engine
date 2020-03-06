@@ -67,6 +67,7 @@ public final class GLRenderGraph implements RenderGraph {
     }
 
     public void draw(float tickLastFrame) {
+        window.prepareDraw();
         if (window != null && window.isResized()) {
             setSize(window.getWidth(), window.getHeight());
         }

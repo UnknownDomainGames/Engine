@@ -56,6 +56,8 @@ public interface Window extends WindowCallbacks {
 
     void setDoCloseImmediately(boolean doCloseImmediately);
 
+    void prepareDraw();
+
     void swapBuffers();
 
     void dispose();

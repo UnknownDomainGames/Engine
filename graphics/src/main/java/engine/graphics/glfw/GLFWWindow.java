@@ -95,6 +95,54 @@ public class GLFWWindow implements Window {
         this.height = height;
     }
 
+    public long getPointer() {
+        return pointer;
+    }
+
+    public void init() {
+        screen = GLFWContext.getPrimaryScreen();
+        width *= getContentScaleX();
+        height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
+        initWindowHint();
+        pointer = glfwCreateWindow(width, height, title, NULL, parent == null ? NULL : getRootWindow().getPointer());
+        checkCreated();
+        disposable = createDisposable(pointer);
+        if (parent == null) glfwMakeContextCurrent(pointer);
+        cursor = new GLFWCursor(pointer);
+        initCallbacks();
+        centerOnScreen();
+        resize();
+    }
+
+    protected GLFWWindow getRootWindow() {
+        GLFWWindow window = this.parent;
+        while (window.parent != null) {
+            window = window.parent;
+        }
+        return window;
+    }
+
+    protected Cleaner.Disposable createDisposable(long pointer) {
+        return Cleaner.register(this, () -> glfwDestroyWindow(pointer));
+    }
+
+    protected void checkCreated() {
+        if (pointer == NULL) {
+            throw new RuntimeException("Failed to create the GLFW window");
+        }
+    }
+
+    protected void initWindowHint() {
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+        if (GraphicsEngine.isDebug()) {
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+        }
+        if (SystemUtils.IS_OS_MAC) {
+            glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
+        }
+    }
+
     @Override
     public Window getParent() {
         return parent;
@@ -181,6 +229,45 @@ public class GLFWWindow implements Window {
     }
 
     @Override
+    public DisplayMode getDisplayMode() {
+        return displayMode;
+    }
+
+    private int lastPosX, lastPosY, lastWidth, lastHeight;
+
+    @Override
+    public void setDisplayMode(DisplayMode displayMode, int width, int height, int frameRate) {
+        if (this.displayMode == displayMode && width == -1 && height == -1) return;
+        var nw = width != -1 ? width : screen.getVideoMode().getWidth();
+        var nh = height != -1 ? height : screen.getVideoMode().getHeight();
+        switch (displayMode) {
+            case FULLSCREEN:
+                if (this.displayMode == DisplayMode.WINDOWED) {
+                    lastPosX = x;
+                    lastPosY = y;
+                    lastWidth = this.width;
+                    lastHeight = this.height;
+                }
+                glfwSetWindowMonitor(pointer, screen.getPointer(), 0, 0, nw, nh, frameRate > 0 ? frameRate : screen.getVideoMode().getRefreshRate());
+                break;
+            case WINDOWED_FULLSCREEN:
+                if (this.displayMode == DisplayMode.WINDOWED) {
+                    lastPosX = x;
+                    lastPosY = y;
+                    lastWidth = this.width;
+                    lastHeight = this.height;
+                }
+                setDecorated(false);
+                glfwSetWindowMonitor(pointer, NULL, 0, 0, screen.getVideoMode().getWidth(), screen.getVideoMode().getHeight(), screen.getVideoMode().getRefreshRate());
+                break;
+            case WINDOWED:
+                setDecorated(true);
+                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, width != -1 ? width : lastWidth, height != -1 ? height : lastHeight, screen.getVideoMode().getRefreshRate());
+        }
+        this.displayMode = displayMode;
+    }
+
+    @Override
     public String getTitle() {
         return title;
     }
@@ -203,15 +290,6 @@ public class GLFWWindow implements Window {
     @Override
     public Cursor getCursor() {
         return cursor;
-    }
-
-    @Override
-    public void swapBuffers() {
-        glfwSwapBuffers(pointer);
-
-        if (resized) {
-            resized = false;
-        }
     }
 
     @Override
@@ -255,99 +333,24 @@ public class GLFWWindow implements Window {
     }
 
     @Override
+    public void prepareDraw() {
+        glfwMakeContextCurrent(pointer);
+    }
+
+    @Override
+    public void swapBuffers() {
+        glfwSwapBuffers(pointer);
+
+        if (resized) resized = false;
+    }
+
+    @Override
     public void dispose() {
         if (pointer == NULL) return;
 
         hide();
         disposable.dispose();
         pointer = NULL;
-    }
-
-    @Override
-    public DisplayMode getDisplayMode() {
-        return displayMode;
-    }
-
-    private int lastPosX, lastPosY, lastWidth, lastHeight;
-
-    @Override
-    public void setDisplayMode(DisplayMode displayMode, int width, int height, int frameRate) {
-        if (this.displayMode == displayMode && width == -1 && height == -1) return;
-        var nw = width != -1 ? width : screen.getVideoMode().getWidth();
-        var nh = height != -1 ? height : screen.getVideoMode().getHeight();
-        switch (displayMode) {
-            case FULLSCREEN:
-                if (this.displayMode == DisplayMode.WINDOWED) {
-                    lastPosX = x;
-                    lastPosY = y;
-                    lastWidth = this.width;
-                    lastHeight = this.height;
-                }
-                glfwSetWindowMonitor(pointer, screen.getPointer(), 0, 0, nw, nh, frameRate > 0 ? frameRate : screen.getVideoMode().getRefreshRate());
-                break;
-            case WINDOWED_FULLSCREEN:
-                if (this.displayMode == DisplayMode.WINDOWED) {
-                    lastPosX = x;
-                    lastPosY = y;
-                    lastWidth = this.width;
-                    lastHeight = this.height;
-                }
-                setDecorated(false);
-                glfwSetWindowMonitor(pointer, NULL, 0, 0, screen.getVideoMode().getWidth(), screen.getVideoMode().getHeight(), screen.getVideoMode().getRefreshRate());
-                break;
-            case WINDOWED:
-                setDecorated(true);
-                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, width != -1 ? width : lastWidth, height != -1 ? height : lastHeight, screen.getVideoMode().getRefreshRate());
-        }
-        this.displayMode = displayMode;
-    }
-
-    public long getPointer() {
-        return pointer;
-    }
-
-    public void init() {
-        screen = GLFWContext.getPrimaryScreen();
-        width *= getContentScaleX();
-        height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
-        initWindowHint();
-        pointer = glfwCreateWindow(width, height, title, NULL, parent == null ? NULL : getRootWindow().getPointer());
-        checkCreated();
-        disposable = createDisposable(pointer);
-        cursor = new GLFWCursor(pointer);
-        initCallbacks();
-        if (parent == null) glfwMakeContextCurrent(pointer);
-        centerOnScreen();
-        resize();
-    }
-
-    protected GLFWWindow getRootWindow() {
-        GLFWWindow window = this.parent;
-        while (window.parent != null) {
-            window = window.parent;
-        }
-        return window;
-    }
-
-    protected Cleaner.Disposable createDisposable(long pointer) {
-        return Cleaner.register(this, () -> glfwDestroyWindow(pointer));
-    }
-
-    protected void checkCreated() {
-        if (pointer == NULL) {
-            throw new RuntimeException("Failed to create the GLFW window");
-        }
-    }
-
-    protected void initWindowHint() {
-        glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
-        if (GraphicsEngine.isDebug()) {
-            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-        }
-        if (SystemUtils.IS_OS_MAC) {
-            glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
-        }
     }
 
     // ================= Window Attributes Start =================
