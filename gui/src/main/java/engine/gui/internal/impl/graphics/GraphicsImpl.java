@@ -57,7 +57,9 @@ public final class GraphicsImpl implements Graphics {
         this.scaleX = scaleX;
         this.scaleY = scaleY;
         resource.setUniform("u_ProjMatrix", new Matrix4f().setOrtho2D(0, frameWidth, frameHeight, 0));
+        resetModelMatrix();
         pushModelMatrix(new Matrix4f().scale(scaleX, scaleY, 1));
+        resetClipRect();
         pushClipRect(0, 0, frameWidth / scaleX, frameHeight / scaleY);
         this.uniformTexture.set(whiteTexture);
         this.resource.refresh();
@@ -318,6 +320,10 @@ public final class GraphicsImpl implements Graphics {
         }
     }
 
+    public void resetClipRect() {
+        clipRect.clear();
+    }
+
     @Override
     public void pushClipRect(float x, float y, float width, float height) {
         if (clipRect.isEmpty()) {
@@ -343,6 +349,10 @@ public final class GraphicsImpl implements Graphics {
         float height = peek.w() - peek.y();
         renderer.setScissor(Math.round(peek.x()), frameHeight - Math.round(peek.y() + height),
                 Math.round(peek.z() - peek.x()), Math.round(height));
+    }
+
+    private void resetModelMatrix() {
+        modelMatrix.clear();
     }
 
     @Override
