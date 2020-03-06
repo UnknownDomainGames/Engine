@@ -1,5 +1,7 @@
 package engine.graphics.glfw;
 
+import com.google.common.base.Strings;
+import engine.graphics.GraphicsEngine;
 import engine.graphics.display.Cursor;
 import engine.graphics.display.DisplayMode;
 import engine.graphics.display.Screen;
@@ -29,6 +31,8 @@ public class GLFWWindow implements Window {
     protected long pointer;
     protected Cleaner.Disposable disposable;
 
+    private final GLFWWindow parent;
+
     protected int x;
     protected int y;
 
@@ -39,7 +43,7 @@ public class GLFWWindow implements Window {
 
     private boolean resized = false;
 
-    protected String title;
+    protected String title = "";
 
     private boolean showing = false;
     private boolean doCloseImmediately = true;
@@ -72,17 +76,28 @@ public class GLFWWindow implements Window {
     private final List<DropCallback> dropCallbacks = new LinkedList<>();
 
     public GLFWWindow() {
-        this("");
+        this(null);
     }
 
-    public GLFWWindow(String title) {
-        this(854, 480, title);
+    public GLFWWindow(Window parent) {
+        this(parent, 854, 480);
     }
 
-    public GLFWWindow(int width, int height, String title) {
-        this.title = title;
+    public GLFWWindow(int width, int height) {
+        this(null, width, height);
+    }
+
+    public GLFWWindow(Window parent, int width, int height) {
+        if (!(parent instanceof GLFWWindow || parent == null))
+            throw new IllegalArgumentException("Parent window is not GLFWWindow or null");
+        this.parent = (GLFWWindow) parent;
         this.width = width;
         this.height = height;
+    }
+
+    @Override
+    public Window getParent() {
+        return parent;
     }
 
     @Override
@@ -167,7 +182,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void setTitle(String title) {
-        this.title = title;
+        this.title = Strings.nullToEmpty(title);
         glfwSetWindowTitle(pointer, title);
     }
 
@@ -289,7 +304,7 @@ public class GLFWWindow implements Window {
     public void init() {
         setScreen(GLFWContext.getPrimaryScreen());
         initWindowHint();
-        pointer = glfwCreateWindow(width, height, title, NULL, NULL);
+        pointer = glfwCreateWindow(width, height, title, NULL, parent == null ? NULL : getRootWindow().getPointer());
         checkCreated();
         disposable = createDisposable(pointer);
         width *= getContentScaleX();
@@ -300,6 +315,14 @@ public class GLFWWindow implements Window {
         enableVSync();
         cursor = new GLFWCursor(pointer);
         resize();
+    }
+
+    protected GLFWWindow getRootWindow() {
+        GLFWWindow window = this.parent;
+        while (window.parent != null) {
+            window = window.parent;
+        }
+        return window;
     }
 
     protected Cleaner.Disposable createDisposable(long pointer) {
@@ -315,7 +338,7 @@ public class GLFWWindow implements Window {
     protected void initWindowHint() {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
-        if (Boolean.parseBoolean(System.getProperty("rendering.debug", "false"))) {
+        if (GraphicsEngine.isDebug()) {
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
         }
         if (SystemUtils.IS_OS_MAC) {

@@ -9,4 +9,9 @@ public class VKWindowHelper extends BaseWindowHelper {
     public Window createWindow() {
         return new GLFWVulkanWindow();
     }
+
+    @Override
+    public Window createWindow(Window parent) {
+        return new GLFWVulkanWindow(parent);
+    }
 }

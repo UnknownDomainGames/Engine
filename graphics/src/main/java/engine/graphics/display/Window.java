@@ -4,6 +4,8 @@ import engine.graphics.image.ReadOnlyImage;
 
 public interface Window extends WindowCallbacks {
 
+    Window getParent();
+
     int getX();
 
     int getY();

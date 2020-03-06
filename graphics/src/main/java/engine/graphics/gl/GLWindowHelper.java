@@ -10,4 +10,9 @@ public final class GLWindowHelper extends BaseWindowHelper {
     public Window createWindow() {
         return new GLFWWindow();
     }
+
+    @Override
+    public Window createWindow(Window parent) {
+        return new GLFWWindow(parent);
+    }
 }

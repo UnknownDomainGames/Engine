@@ -1,5 +1,6 @@
 package engine.graphics.glfw;
 
+import engine.graphics.display.Window;
 import engine.graphics.vulkan.VulkanInstance;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWVulkan;
@@ -13,15 +14,23 @@ public class GLFWVulkanWindow extends GLFWWindow {
 
     private VkInstance vulkanInstance;
 
-    public GLFWVulkanWindow(){
+    public GLFWVulkanWindow() {
         super();
     }
 
-    public GLFWVulkanWindow(int width, int height, String title) {
-        super(width, height, title);
+    public GLFWVulkanWindow(Window parent) {
+        super(parent);
     }
 
-//    @Override
+    public GLFWVulkanWindow(int width, int height) {
+        super(width, height);
+    }
+
+    public GLFWVulkanWindow(Window parent, int width, int height) {
+        super(parent, width, height);
+    }
+
+    //    @Override
 //    public void doRender(Runnable renderAction) {
 //        glfwPollEvents();
 //        var vulkanManager = ((EngineRenderContext) Platform.getEngineClient().getRenderContext()).getVulkanManager();
@@ -112,7 +121,7 @@ public class GLFWVulkanWindow extends GLFWWindow {
         width *= getContentScaleX();
         height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
         initCallbacks();
-        setWindowPosCenter();
+        centerOnScreen();
         cursor = new GLFWCursor(pointer);
         resize();
     }
