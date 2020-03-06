@@ -307,18 +307,17 @@ public class GLFWWindow implements Window {
     }
 
     public void init() {
-        setScreen(GLFWContext.getPrimaryScreen());
+        screen = GLFWContext.getPrimaryScreen();
+        width *= getContentScaleX();
+        height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
         initWindowHint();
         pointer = glfwCreateWindow(width, height, title, NULL, parent == null ? NULL : getRootWindow().getPointer());
         checkCreated();
         disposable = createDisposable(pointer);
-        width *= getContentScaleX();
-        height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
-        initCallbacks();
-        centerOnScreen();
-        glfwMakeContextCurrent(pointer);
-        enableVSync();
         cursor = new GLFWCursor(pointer);
+        initCallbacks();
+        if (parent == null) glfwMakeContextCurrent(pointer);
+        centerOnScreen();
         resize();
     }
 
@@ -349,10 +348,6 @@ public class GLFWWindow implements Window {
         if (SystemUtils.IS_OS_MAC) {
             glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
         }
-    }
-
-    private void enableVSync() {
-        glfwSwapInterval(1);
     }
 
     // ================= Window Attributes Start =================

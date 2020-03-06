@@ -15,8 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.lwjgl.glfw.GLFW.glfwInit;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.*;
 
 public final class GLFWContext {
 
@@ -31,6 +30,8 @@ public final class GLFWContext {
 
     private static ObservableList<Window> showingWindows = ObservableCollections.observableList(new ArrayList<>());
     private static ObservableList<Window> unmodifiableShowingWindows = ObservableCollections.unmodifiableObservableList(showingWindows);
+
+    private static int swapInternal = 0;
 
     public static Screen getPrimaryScreen() {
         return primaryScreen;
@@ -99,6 +100,15 @@ public final class GLFWContext {
 
     static void refreshScreen(Screen screen) {
         ((GLFWScreen) screen).refresh();
+    }
+
+    public int getSwapInternal() {
+        return swapInternal;
+    }
+
+    public void setSwapInternal(int internal) {
+        GLFWContext.swapInternal = internal;
+        glfwSwapInterval(internal);
     }
 
     private GLFWContext() {
