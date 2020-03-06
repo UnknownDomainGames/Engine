@@ -37,10 +37,7 @@ public class ListView<T> extends Control {
             var cellFactory = this.cellFactory.get();
             contentChildren.clear();
             for (T item : items) contentChildren.add(cellFactory.apply(item));
-
-            //TODO scrollPane did not update when contentPane's children change.have other way to update?
-            scrollPane.setContent(null);
-            scrollPane.setContent(contentPane);
+            needsLayout();
         });
 //        padding().addChangeListener((observable, oldValue, newValue) -> layoutInArea(scrollPane));
         border().addChangeListener((observable, oldValue, newValue) -> padding().setValue(newValue.getInsets()));

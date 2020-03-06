@@ -13,6 +13,7 @@ import engine.gui.image.Image;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
 import engine.gui.rendering.Graphics;
+import engine.math.Math2;
 import engine.util.Color;
 import org.joml.*;
 
@@ -346,9 +347,16 @@ public final class GraphicsImpl implements Graphics {
     private void updateClipRect() {
         Vector4fc peek = clipRect.peek();
         resource.setUniform("u_ClipRect", peek);
+        peek = clipRect.stream().reduce((parent, child) ->{
+            var newX = Math2.clamp(child.x(), parent.x(), parent.z());
+            var newY = Math2.clamp(child.y(), parent.y(), parent.w());
+            var newZ = Math2.clamp(child.z(), parent.x(), parent.z());
+            var newW = Math2.clamp(child.w(), parent.y(), parent.w());
+            return new Vector4f(newX, newY, newZ, newW);
+        }).get();
         float height = peek.w() - peek.y();
-        renderer.setScissor(Math.round(peek.x()), frameHeight - Math.round(peek.y() + height),
-                Math.round(peek.z() - peek.x()), Math.round(height));
+        renderer.setScissor(Math.round(peek.x() * scaleX), frameHeight - Math.round((peek.y() + height) * scaleY),
+                Math.round((peek.z() - peek.x()) * scaleX), Math.round(height * scaleY));
     }
 
     private void resetModelMatrix() {
