@@ -123,6 +123,11 @@ public class GLFWWindow implements Window {
     }
 
     @Override
+    public void centerOnScreen() {
+        setPos((screen.getVideoMode().getWidth() - width) / 2, (screen.getVideoMode().getHeight() - height) / 2);
+    }
+
+    @Override
     public int getWidth() {
         return width;
     }
@@ -310,7 +315,7 @@ public class GLFWWindow implements Window {
         width *= getContentScaleX();
         height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
         initCallbacks();
-        setWindowPosCenter();
+        centerOnScreen();
         glfwMakeContextCurrent(pointer);
         enableVSync();
         cursor = new GLFWCursor(pointer);
@@ -344,10 +349,6 @@ public class GLFWWindow implements Window {
         if (SystemUtils.IS_OS_MAC) {
             glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
         }
-    }
-
-    protected void setWindowPosCenter() {
-        setPos((screen.getVideoMode().getWidth() - width) / 2, (screen.getVideoMode().getHeight() - height) / 2);
     }
 
     private void enableVSync() {

@@ -12,6 +12,8 @@ public interface Window extends WindowCallbacks {
 
     void setPos(int x, int y);
 
+    void centerOnScreen();
+
     int getWidth();
 
     int getHeight();
