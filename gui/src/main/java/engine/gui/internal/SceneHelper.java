@@ -10,16 +10,8 @@ public abstract class SceneHelper {
         return sceneAccessor;
     }
 
-    public static int getViewportWidth(Scene scene) {
-        return sceneAccessor.getViewportWidth(scene);
-    }
-
-    public static int getViewportHeight(Scene scene) {
-        return sceneAccessor.getViewportHeight(scene);
-    }
-
-    public static void setViewport(Scene scene, int width, int height, float scaleX, float scaleY) {
-        sceneAccessor.setViewport(scene, width, height, scaleX, scaleY);
+    public static void resize(Scene scene, float width, float height) {
+        sceneAccessor.resize(scene, width, height);
     }
 
     public static void setSceneAccessor(SceneAccessor accessor) {
@@ -29,10 +21,6 @@ public abstract class SceneHelper {
     }
 
     public interface SceneAccessor {
-        int getViewportWidth(Scene scene);
-
-        int getViewportHeight(Scene scene);
-
-        void setViewport(Scene scene, int width, int height, float scaleX, float scaleY);
+        void resize(Scene scene, float width, float height);
     }
 }

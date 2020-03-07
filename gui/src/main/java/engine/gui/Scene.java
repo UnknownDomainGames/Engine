@@ -19,17 +19,8 @@ import static engine.gui.internal.InputHelper.getDoubleClickTime;
 
 public class Scene implements EventTarget {
 
-    private int viewportWidth;
-    private int viewportHeight;
-
     private final MutableFloatValue width = new SimpleMutableFloatValue();
     private final MutableFloatValue height = new SimpleMutableFloatValue();
-
-    private final MutableFloatValue scaleX = new SimpleMutableFloatValue(1);
-    private final MutableFloatValue scaleY = new SimpleMutableFloatValue(1);
-
-    private MutableFloatValue userScaleX;
-    private MutableFloatValue userScaleY;
 
     final MutableObjectValue<Stage> stage = new SimpleMutableObjectValue<>();
 
@@ -42,18 +33,8 @@ public class Scene implements EventTarget {
     static {
         SceneHelper.setSceneAccessor(new SceneHelper.SceneAccessor() {
             @Override
-            public int getViewportWidth(Scene scene) {
-                return scene.viewportWidth;
-            }
-
-            @Override
-            public int getViewportHeight(Scene scene) {
-                return scene.viewportHeight;
-            }
-
-            @Override
-            public void setViewport(Scene scene, int width, int height, float scaleX, float scaleY) {
-                scene.setViewport(width, height, scaleX, scaleY);
+            public void resize(Scene scene, float width, float height) {
+                scene.resize(width, height);
             }
         });
     }
@@ -78,66 +59,9 @@ public class Scene implements EventTarget {
         return height.get();
     }
 
-    public final ObservableFloatValue scaleX() {
-        return scaleX.toUnmodifiable();
-    }
-
-    public final float getScaleX() {
-        return scaleX.get();
-    }
-
-    public final ObservableFloatValue scaleY() {
-        return scaleY.toUnmodifiable();
-    }
-
-    public final float getScaleY() {
-        return scaleY.get();
-    }
-
-    public final MutableFloatValue userScaleX() {
-        if (userScaleX == null) {
-            userScaleX = new SimpleMutableFloatValue();
-            userScaleX.addChangeListener((observable, oldValue, newValue) ->
-                    setViewport(viewportWidth, viewportHeight, newValue, getScaleY()));
-        }
-        return userScaleX;
-    }
-
-    public final float getUserScaleX() {
-        return userScaleX == null ? Float.NaN : userScaleX.get();
-    }
-
-    public final MutableFloatValue userScaleY() {
-        if (userScaleY == null) {
-            userScaleY = new SimpleMutableFloatValue();
-            userScaleY.addChangeListener((observable, oldValue, newValue) ->
-                    setViewport(viewportWidth, viewportHeight, getScaleX(), newValue));
-        }
-        return userScaleY;
-    }
-
-    public final float getUserScaleY() {
-        return userScaleY == null ? Float.NaN : userScaleY.get();
-    }
-
-    public final void setUserScale(float scaleX, float scaleY) {
-        userScaleX().set(scaleX);
-        userScaleY().set(scaleY);
-    }
-
-    private void setViewport(int width, int height, float scaleX, float scaleY) {
-        this.viewportWidth = width;
-        this.viewportHeight = height;
-
-        float userScaleX = getUserScaleX();
-        if (!Float.isNaN(userScaleX)) scaleX = userScaleX;
-        float userScaleY = getUserScaleY();
-        if (!Float.isNaN(userScaleY)) scaleY = userScaleY;
-
-        this.scaleX.set(scaleX);
-        this.scaleY.set(scaleY);
-        this.width.set(width / scaleX);
-        this.height.set(height / scaleY);
+    private void resize(float width, float height) {
+        this.width.set(width);
+        this.height.set(height);
         updateRoot();
     }
 
@@ -175,10 +99,7 @@ public class Scene implements EventTarget {
     }
 
     public void update() {
-        root.get().layout();
-//        for (Popup popup : popups) {
-//            popup.layout();
-//        }
+        getRoot().layout();
     }
 
     public MutableObjectValue<Color> fill() {
@@ -228,8 +149,9 @@ public class Scene implements EventTarget {
     private final Set<Node> hoveredNodes = new HashSet<>();
 
     public void processCursor(double xPos, double yPos) {
-        cursorX = (float) xPos / scaleX.get();
-        cursorY = (float) yPos / scaleY.get();
+        Stage stage = getStage();
+        cursorX = (float) xPos / stage.getScaleX();
+        cursorY = (float) yPos / stage.getScaleY();
 
         var hitNodes = raycast(cursorX, cursorY, true);
         var lostHoveredNodes = new HashSet<>(hoveredNodes);

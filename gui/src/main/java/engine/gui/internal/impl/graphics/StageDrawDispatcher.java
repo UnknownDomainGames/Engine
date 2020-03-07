@@ -8,7 +8,6 @@ import engine.graphics.shader.ShaderResource;
 import engine.gui.Parent;
 import engine.gui.Scene;
 import engine.gui.Stage;
-import engine.gui.internal.SceneHelper;
 import engine.gui.internal.StageHelper;
 
 public final class StageDrawDispatcher implements DrawDispatcher {
@@ -27,16 +26,16 @@ public final class StageDrawDispatcher implements DrawDispatcher {
 
     @Override
     public void draw(Frame frame, ShaderResource resource, Renderer renderer) {
-        Scene scene = stage.getScene();
-        if (scene == null) return;
-
         Window window = StageHelper.getWindow(stage);
         int width = frame.getWidth(), height = frame.getHeight();
-        if (SceneHelper.getViewportWidth(scene) != window.getWidth() ||
-                SceneHelper.getViewportHeight(scene) != window.getHeight()) {
-            SceneHelper.setViewport(scene, frame.getWidth(), frame.getHeight(),
+        if (stage.getWidth() != window.getWidth() ||
+                stage.getHeight() != window.getHeight()) {
+            StageHelper.setViewport(stage, frame.getWidth(), frame.getHeight(),
                     window.getContentScaleX(), window.getContentScaleY());
         }
+
+        Scene scene = stage.getScene();
+        if (scene == null) return;
         scene.update();
 
         Parent root = scene.getRoot();
@@ -44,11 +43,8 @@ public final class StageDrawDispatcher implements DrawDispatcher {
             return; // Invisible root, don't need render it.
         }
 
-        graphics.setup(renderer, width, height, scene.getScaleX(), scene.getScaleY());
+        graphics.setup(renderer, width, height, stage.getScaleX(), stage.getScaleY());
 
         root.getRenderer().render(root, graphics);
-//        for (Popup popup : scene.getPopups()) {
-//            popup.getRenderer().render(popup, graphics);
-//        }
     }
 }

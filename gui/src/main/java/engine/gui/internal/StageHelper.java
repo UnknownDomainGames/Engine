@@ -1,8 +1,8 @@
 package engine.gui.internal;
 
 import com.github.mouse0w0.observable.value.MutableBooleanValue;
-import engine.gui.Stage;
 import engine.graphics.display.Window;
+import engine.gui.Stage;
 
 public abstract class StageHelper {
 
@@ -43,6 +43,10 @@ public abstract class StageHelper {
         stageAccessor.doVisibleChanged(stage, value);
     }
 
+    public static void setViewport(Stage stage, int width, int height, float scaleX, float scaleY) {
+        stageAccessor.setViewport(stage, width, height, scaleX, scaleY);
+    }
+
     public abstract void show(Stage stage);
 
     public abstract void hide(Stage stage);
@@ -59,5 +63,7 @@ public abstract class StageHelper {
         MutableBooleanValue getShowingProperty(Stage stage);
 
         void doVisibleChanged(Stage stage, boolean value);
+
+        void setViewport(Stage stage, int width, int height, float scaleX, float scaleY);
     }
 }

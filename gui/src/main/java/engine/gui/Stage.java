@@ -7,6 +7,7 @@ import engine.graphics.display.Window;
 import engine.graphics.display.callback.*;
 import engine.graphics.image.ReadOnlyImage;
 import engine.gui.internal.GUIPlatform;
+import engine.gui.internal.SceneHelper;
 import engine.gui.internal.StageHelper;
 
 import java.util.ArrayList;
@@ -23,6 +24,12 @@ public class Stage {
 
     private MutableIntValue width;
     private MutableIntValue height;
+
+    private final MutableFloatValue scaleX = new SimpleMutableFloatValue(1);
+    private final MutableFloatValue scaleY = new SimpleMutableFloatValue(1);
+
+    private MutableFloatValue userScaleX;
+    private MutableFloatValue userScaleY;
 
     private final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>() {
         @Override
@@ -84,6 +91,11 @@ public class Stage {
             @Override
             public void doVisibleChanged(Stage stage, boolean value) {
                 stage.doVisibleChanged(value);
+            }
+
+            @Override
+            public void setViewport(Stage stage, int width, int height, float scaleX, float scaleY) {
+                stage.setViewport(width, height, scaleX, scaleY);
             }
         });
     }
@@ -172,6 +184,66 @@ public class Stage {
 
     public final int getHeight() {
         return height == null ? 0 : height.get();
+    }
+
+    public final ObservableFloatValue scaleX() {
+        return scaleX.toUnmodifiable();
+    }
+
+    public final float getScaleX() {
+        return scaleX.get();
+    }
+
+    public final ObservableFloatValue scaleY() {
+        return scaleY.toUnmodifiable();
+    }
+
+    public final float getScaleY() {
+        return scaleY.get();
+    }
+
+    public final MutableFloatValue userScaleX() {
+        if (userScaleX == null) {
+            userScaleX = new SimpleMutableFloatValue();
+            userScaleX.addChangeListener((observable, oldValue, newValue) ->
+                    setViewport(getWidth(), getHeight(), newValue, getScaleY()));
+        }
+        return userScaleX;
+    }
+
+    public final float getUserScaleX() {
+        return userScaleX == null ? Float.NaN : userScaleX.get();
+    }
+
+    public final MutableFloatValue userScaleY() {
+        if (userScaleY == null) {
+            userScaleY = new SimpleMutableFloatValue();
+            userScaleY.addChangeListener((observable, oldValue, newValue) ->
+                    setViewport(getWidth(), getHeight(), getScaleX(), newValue));
+        }
+        return userScaleY;
+    }
+
+    public final float getUserScaleY() {
+        return userScaleY == null ? Float.NaN : userScaleY.get();
+    }
+
+    public final void setUserScale(float scaleX, float scaleY) {
+        userScaleX().set(scaleX);
+        userScaleY().set(scaleY);
+    }
+
+    private void setViewport(int width, int height, float scaleX, float scaleY) {
+        float userScaleX = getUserScaleX();
+        if (!Float.isNaN(userScaleX)) scaleX = userScaleX;
+        float userScaleY = getUserScaleY();
+        if (!Float.isNaN(userScaleY)) scaleY = userScaleY;
+
+        widthImpl().set(width);
+        heightImpl().set(height);
+        this.scaleX.set(scaleX);
+        this.scaleY.set(scaleY);
+        scene().ifPresent(scene -> SceneHelper.resize(scene, getWidth() / getScaleX(), getHeight() / getScaleY()));
     }
 
     public final MutableObjectValue<Scene> scene() {
@@ -365,7 +437,7 @@ public class Stage {
     }
 
     private WindowPosCallback posCallback;
-    private WindowSizeCallback sizeCallback;
+    //    private WindowSizeCallback sizeCallback;
     private WindowFocusCallback focusCallback;
     private WindowIconifyCallback iconifyCallback;
     private WindowMaximizeCallback maximizeCallback;
@@ -398,13 +470,13 @@ public class Stage {
                 yImpl().set(window.getY());
             }
 
-            if (sizeCallback == null) sizeCallback = (window, width, height) -> {
-                widthImpl().set(width);
-                heightImpl().set(height);
-            };
-            window.addWindowSizeCallback(sizeCallback);
-            widthImpl().set(window.getWidth());
-            heightImpl().set(window.getHeight());
+//            if (sizeCallback == null) sizeCallback = (window, width, height) -> {
+//                widthImpl().set(width);
+//                heightImpl().set(height);
+//            };
+//            window.addWindowSizeCallback(sizeCallback);
+//            widthImpl().set(window.getWidth());
+//            heightImpl().set(window.getHeight());
 
             if (focusCallback == null) focusCallback = (window, focused) -> focusedImpl().set(focused);
             window.addWindowFocusCallback(focusCallback);
@@ -421,11 +493,13 @@ public class Stage {
             if (closeCallback == null) closeCallback = window -> hide();
             window.addWindowCloseCallback(closeCallback);
 
+            setViewport(window.getWidth(), window.getHeight(), window.getContentScaleX(), window.getContentScaleY());
+
             stages.add(this);
         } else {
             stages.remove(this);
             window.removeWindowPosCallback(posCallback);
-            window.removeWindowSizeCallback(sizeCallback);
+//            window.removeWindowSizeCallback(sizeCallback);
             window.removeWindowFocusCallback(focusCallback);
             window.removeWindowIconifyCallback(iconifyCallback);
             window.removeWindowMaximizeCallback(maximizeCallback);
