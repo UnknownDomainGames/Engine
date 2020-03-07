@@ -7,6 +7,7 @@ import engine.gui.internal.ClipboardHelper;
 import engine.gui.internal.GUIPlatform;
 import engine.gui.internal.SceneHelper;
 import engine.gui.internal.StageHelper;
+import engine.gui.internal.impl.InputHelperImpl;
 import engine.gui.internal.impl.SceneHelperImpl;
 import engine.gui.internal.impl.StageHelperImpl;
 import engine.gui.internal.impl.glfw.GLFWClipboardHelper;
@@ -24,6 +25,7 @@ public final class GameGUIPlatform extends GUIPlatform {
 
     public GameGUIPlatform() {
         setInstance(this);
+        InputHelperImpl.initialize();
         Stage.getStages().addChangeListener(change -> {
             if (change.getList().isEmpty()) Platform.getEngine().terminate();
         });
