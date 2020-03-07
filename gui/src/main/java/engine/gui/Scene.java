@@ -28,6 +28,9 @@ public class Scene implements EventTarget {
     private final MutableFloatValue scaleX = new SimpleMutableFloatValue(1);
     private final MutableFloatValue scaleY = new SimpleMutableFloatValue(1);
 
+    private MutableFloatValue userScaleX;
+    private MutableFloatValue userScaleY;
+
     final MutableObjectValue<Stage> stage = new SimpleMutableObjectValue<>();
 
     private final MutableObjectValue<Color> fill = new SimpleMutableObjectValue<>(Color.BLACK);
@@ -59,33 +62,78 @@ public class Scene implements EventTarget {
         setRoot(root);
     }
 
-    public ObservableFloatValue width() {
+    public final ObservableFloatValue width() {
         return width.toUnmodifiable();
     }
 
-    public float getWidth() {
+    public final float getWidth() {
         return width.get();
     }
 
-    public ObservableFloatValue height() {
+    public final ObservableFloatValue height() {
         return height.toUnmodifiable();
     }
 
-    public float getHeight() {
+    public final float getHeight() {
         return height.get();
     }
 
-    public float getScaleX() {
+    public final ObservableFloatValue scaleX() {
+        return scaleX.toUnmodifiable();
+    }
+
+    public final float getScaleX() {
         return scaleX.get();
     }
 
-    public float getScaleY() {
+    public final ObservableFloatValue scaleY() {
+        return scaleY.toUnmodifiable();
+    }
+
+    public final float getScaleY() {
         return scaleY.get();
+    }
+
+    public final MutableFloatValue userScaleX() {
+        if (userScaleX == null) {
+            userScaleX = new SimpleMutableFloatValue();
+            userScaleX.addChangeListener((observable, oldValue, newValue) ->
+                    setViewport(viewportWidth, viewportHeight, newValue, getScaleY()));
+        }
+        return userScaleX;
+    }
+
+    public final float getUserScaleX() {
+        return userScaleX == null ? Float.NaN : userScaleX.get();
+    }
+
+    public final MutableFloatValue userScaleY() {
+        if (userScaleY == null) {
+            userScaleY = new SimpleMutableFloatValue();
+            userScaleY.addChangeListener((observable, oldValue, newValue) ->
+                    setViewport(viewportWidth, viewportHeight, getScaleX(), newValue));
+        }
+        return userScaleY;
+    }
+
+    public final float getUserScaleY() {
+        return userScaleY == null ? Float.NaN : userScaleY.get();
+    }
+
+    public final void setUserScale(float scaleX, float scaleY) {
+        userScaleX().set(scaleX);
+        userScaleY().set(scaleY);
     }
 
     private void setViewport(int width, int height, float scaleX, float scaleY) {
         this.viewportWidth = width;
         this.viewportHeight = height;
+
+        float userScaleX = getUserScaleX();
+        if (!Float.isNaN(userScaleX)) scaleX = userScaleX;
+        float userScaleY = getUserScaleY();
+        if (!Float.isNaN(userScaleY)) scaleY = userScaleY;
+
         this.scaleX.set(scaleX);
         this.scaleY.set(scaleY);
         this.width.set(width / scaleX);
@@ -121,7 +169,7 @@ public class Scene implements EventTarget {
     }
 
     private void updateRoot() {
-        Parent root = this.root.get();
+        Parent root = getRoot();
         root.resize(getWidth() - root.getLayoutX(), getHeight() - root.getLayoutY());
         root.needsLayout();
     }
