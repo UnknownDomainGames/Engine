@@ -152,6 +152,15 @@ public class Stage {
         return y == null ? 0 : y.get();
     }
 
+    public final void setPos(int x, int y) {
+        if (window != null) {
+            window.setPos(x, y);
+        } else {
+            xImpl().set(x);
+            yImpl().set(y);
+        }
+    }
+
     public final void centerOnScreen() {
         if (window != null) window.centerOnScreen();
     }
@@ -461,11 +470,10 @@ public class Stage {
                 yImpl().set(y);
             };
             window.addWindowPosCallback(posCallback);
-            if (x == null && y == null) {
+            if (x == null || y == null) {
                 centerOnScreen();
             } else {
-                xImpl().set(window.getX());
-                yImpl().set(window.getY());
+                setPos(xImpl().get(), yImpl().get());
             }
 
 //            if (sizeCallback == null) sizeCallback = (window, width, height) -> {
