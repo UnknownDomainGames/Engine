@@ -150,6 +150,8 @@ public final class STBFontManager extends FontManager {
     }
 
     public void setDefaultFont(Font defaultFont) {
+        if (!isAvailableFont(defaultFont))
+            throw new IllegalStateException("Failed to set default font cause by " + defaultFont + " is unavailable");
         this.defaultFont = defaultFont;
     }
 
