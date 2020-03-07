@@ -4,7 +4,7 @@ import engine.graphics.graph.*;
 import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.BlendMode;
 import engine.graphics.util.CullMode;
-import engine.gui.Stage;
+import engine.gui.stage.Stage;
 
 import static engine.graphics.graph.ColorOutputInfo.colorOutput;
 

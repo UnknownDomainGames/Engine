@@ -11,6 +11,7 @@ import engine.gui.internal.impl.InputHelperImpl;
 import engine.gui.internal.impl.SceneHelperImpl;
 import engine.gui.internal.impl.StageHelperImpl;
 import engine.gui.internal.impl.glfw.GLFWClipboardHelper;
+import engine.gui.stage.Stage;
 
 public final class GameGUIPlatform extends GUIPlatform {
 

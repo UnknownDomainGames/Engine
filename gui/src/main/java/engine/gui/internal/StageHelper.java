@@ -2,7 +2,7 @@ package engine.gui.internal;
 
 import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import engine.graphics.display.Window;
-import engine.gui.Stage;
+import engine.gui.stage.Stage;
 
 public abstract class StageHelper {
 

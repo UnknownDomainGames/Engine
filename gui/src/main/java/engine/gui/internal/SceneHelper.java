@@ -1,6 +1,7 @@
 package engine.gui.internal;
 
 import engine.gui.Scene;
+import engine.gui.stage.Stage;
 
 public abstract class SceneHelper {
 
@@ -8,6 +9,10 @@ public abstract class SceneHelper {
 
     public static SceneAccessor getSceneAccessor() {
         return sceneAccessor;
+    }
+
+    public static void setStage(Scene scene, Stage stage) {
+        sceneAccessor.setStage(scene, stage);
     }
 
     public static void resize(Scene scene, float width, float height) {
@@ -21,6 +26,8 @@ public abstract class SceneHelper {
     }
 
     public interface SceneAccessor {
+        void setStage(Scene scene, Stage stage);
+
         void resize(Scene scene, float width, float height);
     }
 }

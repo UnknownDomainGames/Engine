@@ -2,6 +2,7 @@ package engine.gui;
 
 import engine.client.hud.HUDManager;
 import engine.graphics.display.Window;
+import engine.gui.stage.Stage;
 import engine.util.UndoHistory;
 
 public class EngineGUIManager implements GUIManager {

@@ -3,6 +3,7 @@ package engine.gui;
 import engine.client.hud.HUDControl;
 import engine.client.hud.HUDManager;
 import engine.gui.layout.AnchorPane;
+import engine.gui.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -3,8 +3,8 @@ package engine.gui.internal.impl;
 import com.github.mouse0w0.observable.value.ValueChangeListener;
 import engine.graphics.display.Window;
 import engine.graphics.display.callback.*;
-import engine.gui.Stage;
 import engine.gui.internal.StageHelper;
+import engine.gui.stage.Stage;
 import engine.input.Action;
 
 public final class StageInputHelper {

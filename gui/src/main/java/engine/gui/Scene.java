@@ -7,6 +7,7 @@ import engine.gui.input.MouseActionEvent;
 import engine.gui.input.MouseEvent;
 import engine.gui.input.ScrollEvent;
 import engine.gui.internal.SceneHelper;
+import engine.gui.stage.Stage;
 import engine.input.KeyCode;
 import engine.input.Modifiers;
 import engine.input.MouseButton;
@@ -32,6 +33,11 @@ public class Scene implements EventTarget {
 
     static {
         SceneHelper.setSceneAccessor(new SceneHelper.SceneAccessor() {
+            @Override
+            public void setStage(Scene scene, Stage stage) {
+                scene.stage.set(stage);
+            }
+
             @Override
             public void resize(Scene scene, float width, float height) {
                 scene.resize(width, height);

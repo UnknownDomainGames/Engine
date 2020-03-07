@@ -7,8 +7,8 @@ import engine.graphics.graph.Renderer;
 import engine.graphics.shader.ShaderResource;
 import engine.gui.Parent;
 import engine.gui.Scene;
-import engine.gui.Stage;
 import engine.gui.internal.StageHelper;
+import engine.gui.stage.Stage;
 
 public final class StageDrawDispatcher implements DrawDispatcher {
     private final Stage stage;

@@ -1,6 +1,7 @@
-package engine.gui;
+package engine.gui.stage;
 
 import com.github.mouse0w0.observable.value.*;
+import engine.gui.Node;
 
 import java.util.ArrayList;
 import java.util.List;

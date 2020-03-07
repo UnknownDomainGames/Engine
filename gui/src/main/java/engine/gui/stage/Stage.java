@@ -1,4 +1,4 @@
-package engine.gui;
+package engine.gui.stage;
 
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
@@ -6,6 +6,7 @@ import com.github.mouse0w0.observable.value.*;
 import engine.graphics.display.Window;
 import engine.graphics.display.callback.*;
 import engine.graphics.image.ReadOnlyImage;
+import engine.gui.Scene;
 import engine.gui.internal.GUIPlatform;
 import engine.gui.internal.SceneHelper;
 import engine.gui.internal.StageHelper;
@@ -31,19 +32,18 @@ public class Stage {
     private MutableFloatValue userScaleX;
     private MutableFloatValue userScaleY;
 
-    private final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>() {
-        @Override
-        public void set(Scene value) {
-            Scene oldScene = get();
-            if (oldScene != null) {
-                oldScene.stage.set(null);
+    private final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
+
+    {
+        scene.addChangeListener((observable, oldValue, newValue) -> {
+            if (oldValue != null) {
+                SceneHelper.setStage(oldValue, null);
             }
-            super.set(value);
-            if (value != null) {
-                value.stage.set(Stage.this);
+            if (newValue != null) {
+                SceneHelper.setStage(newValue, Stage.this);
             }
-        }
-    };
+        });
+    }
 
     private MutableStringValue title;
 

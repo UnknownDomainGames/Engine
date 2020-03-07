@@ -1,7 +1,7 @@
 package engine.gui.application;
 
-import engine.gui.Stage;
 import engine.gui.internal.impl.GUIPlatformImpl;
+import engine.gui.stage.Stage;
 
 public abstract class GUIApplication {
 

@@ -5,9 +5,9 @@ import engine.graphics.backend.GraphicsBackend;
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
 import engine.graphics.graph.RenderGraph;
-import engine.gui.Stage;
 import engine.gui.internal.StageHelper;
 import engine.gui.internal.impl.graphics.GUIRenderGraphHelper;
+import engine.gui.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;

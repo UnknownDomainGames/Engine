@@ -1,12 +1,12 @@
 package engine.gui.example;
 
 import engine.gui.Scene;
-import engine.gui.Stage;
 import engine.gui.application.GUIApplication;
 import engine.gui.control.Button;
 import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Pos;
+import engine.gui.stage.Stage;
 import engine.gui.text.Text;
 
 public class Example1 extends GUIApplication {

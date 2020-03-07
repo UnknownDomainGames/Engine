@@ -2,13 +2,13 @@ package engine.gui.internal.impl;
 
 import engine.graphics.GraphicsEngine;
 import engine.graphics.util.FrameTicker;
-import engine.gui.Stage;
 import engine.gui.application.GUIApplication;
 import engine.gui.internal.ClipboardHelper;
 import engine.gui.internal.GUIPlatform;
 import engine.gui.internal.SceneHelper;
 import engine.gui.internal.StageHelper;
 import engine.gui.internal.impl.glfw.GLFWClipboardHelper;
+import engine.gui.stage.Stage;
 
 public final class GUIPlatformImpl extends GUIPlatform {
 
