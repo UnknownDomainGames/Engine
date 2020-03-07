@@ -140,6 +140,10 @@ public class Stage {
         return y == null ? 0 : y.get();
     }
 
+    public final void centerOnScreen() {
+        if (window != null) window.centerOnScreen();
+    }
+
     private MutableIntValue widthImpl() {
         if (width == null) {
             width = new SimpleMutableIntValue();
@@ -387,8 +391,12 @@ public class Stage {
                 yImpl().set(y);
             };
             window.addWindowPosCallback(posCallback);
-            xImpl().set(window.getX());
-            yImpl().set(window.getY());
+            if (x == null && y == null) {
+                centerOnScreen();
+            } else {
+                xImpl().set(window.getX());
+                yImpl().set(window.getY());
+            }
 
             if (sizeCallback == null) sizeCallback = (window, width, height) -> {
                 widthImpl().set(width);

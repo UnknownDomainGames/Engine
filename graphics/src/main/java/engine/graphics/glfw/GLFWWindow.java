@@ -110,8 +110,7 @@ public class GLFWWindow implements Window {
         if (parent == null) glfwMakeContextCurrent(pointer);
         cursor = new GLFWCursor(pointer);
         initCallbacks();
-        centerOnScreen();
-        resize();
+        notifyResized();
     }
 
     protected GLFWWindow getRootWindow() {
@@ -194,7 +193,7 @@ public class GLFWWindow implements Window {
     public void setScreen(Screen screen) {
         if (this.screen == screen) return;
         this.screen = screen;
-        resize();
+        notifyResized();
     }
 
     @Override
@@ -212,15 +211,15 @@ public class GLFWWindow implements Window {
         resize(width, height);
     }
 
-    protected void resize() {
-        resize(width, height);
+    protected void notifyResized() {
+        resized = true;
+        windowSizeCallbacks.forEach(callback -> callback.invoke(this, width, height));
     }
 
     protected void resize(int width, int height) {
-        resized = true;
         this.width = width;
         this.height = height;
-        windowSizeCallbacks.forEach(callback -> callback.invoke(this, width, height));
+        notifyResized();
     }
 
     @Override

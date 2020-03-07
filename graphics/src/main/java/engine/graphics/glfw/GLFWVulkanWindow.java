@@ -123,7 +123,7 @@ public class GLFWVulkanWindow extends GLFWWindow {
         initCallbacks();
         centerOnScreen();
         cursor = new GLFWCursor(pointer);
-        resize();
+        notifyResized();
     }
 
     @Override
