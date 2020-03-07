@@ -35,7 +35,8 @@ public final class StageInputHelper {
                 scene.processScroll(xoffset, yoffset));
         charModsCallback = (window, character, mods) -> stage.scene().ifPresent(scene ->
                 scene.processCharMods(character, mods));
-        focusListener = (observable, oldValue, newValue) -> stage.getScene().processFocus(newValue);
+        focusListener = (observable, oldValue, newValue) -> stage.scene().ifPresent(scene ->
+                scene.processFocus(newValue));
     }
 
     public void enable() {
