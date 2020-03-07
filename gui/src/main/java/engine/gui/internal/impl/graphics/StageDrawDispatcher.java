@@ -6,7 +6,6 @@ import engine.graphics.graph.Frame;
 import engine.graphics.graph.Renderer;
 import engine.graphics.shader.ShaderResource;
 import engine.gui.Parent;
-import engine.gui.Popup;
 import engine.gui.Scene;
 import engine.gui.Stage;
 import engine.gui.internal.SceneHelper;
@@ -48,8 +47,8 @@ public final class StageDrawDispatcher implements DrawDispatcher {
         graphics.setup(renderer, width, height, scene.getScaleX(), scene.getScaleY());
 
         root.getRenderer().render(root, graphics);
-        for (Popup popup : scene.getPopups()) {
-            popup.getRenderer().render(popup, graphics);
-        }
+//        for (Popup popup : scene.getPopups()) {
+//            popup.getRenderer().render(popup, graphics);
+//        }
     }
 }

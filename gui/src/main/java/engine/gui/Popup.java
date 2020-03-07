@@ -1,55 +1,132 @@
 package engine.gui;
 
-import com.github.mouse0w0.observable.value.MutableObjectValue;
-import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import engine.gui.event.EventHandler;
-import engine.gui.event.EventType;
-import engine.gui.rendering.ComponentRenderer;
-import org.apache.commons.lang3.tuple.Pair;
+import com.github.mouse0w0.observable.value.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Popup extends Parent{
+public class Popup extends Stage {
 
-    private MutableObjectValue<Node> content = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<Node> ownerNode = new SimpleMutableObjectValue<>();
 
-    private List<Pair<EventType, EventHandler>> insertedHandlers = new ArrayList<>();
+    private final MutableFloatValue anchorX = new SimpleMutableFloatValue();
+    private final MutableFloatValue anchorY = new SimpleMutableFloatValue();
 
-    public MutableObjectValue<Node> content() {
-        return content;
-    }
+    private final MutableObjectValue<AnchorLocation> anchorLocation = new SimpleMutableObjectValue<>();
 
-    public Popup(Node content){
-        this.content.addChangeListener((observable, oldValue, newValue) -> {
-            if(oldValue != null) {
-                getChildren().remove(oldValue);
-            }
-            getChildren().add(newValue);
+    private MutableBooleanValue autoHide;
+
+    {
+        focused().addChangeListener((observable, oldValue, newValue) -> {
+            if (isAutoHide() && !newValue) hide();
         });
-        this.content.set(content);
+    }
+
+    private final List<Popup> children = new ArrayList<>();
+
+    public enum AnchorLocation {
+        SCREEN_LEFT_TOP,
+        SCREEN_RIGHT_TOP,
+        SCREEN_LEFT_BOTTOM,
+        SCREEN_RIGHT_BOTTOM,
+
+        CONTENT_LEFT_TOP,
+        CONTENT_RIGHT_TOP,
+        CONTENT_LEFT_BOTTOM,
+        CONTENT_RIGHT_BOTTOM,
+
+        NODE_LEFT_TOP,
+        NODE_RIGHT_TOP,
+        NODE_LEFT_BOTTOM,
+        NODE_RIGHT_BOTTOM,
+    }
+
+    public final MutableBooleanValue autoHide() {
+        if (autoHide == null) {
+            autoHide = new SimpleMutableBooleanValue();
+        }
+        return autoHide;
+    }
+
+    public final boolean isAutoHide() {
+        return autoHide != null && autoHide.get();
+    }
+
+    public final void setAutoHide(boolean autoHide) {
+        autoHide().set(autoHide);
+    }
+
+    public final ObservableObjectValue<Node> ownerNode() {
+        return ownerNode.toUnmodifiable();
+    }
+
+    public final Node getOwnerNode() {
+        return ownerNode.get();
+    }
+
+    public final ObservableFloatValue anchorX() {
+        return anchorX.toUnmodifiable();
+    }
+
+    public final float getAnchorX() {
+        return anchorX.get();
+    }
+
+    public final ObservableFloatValue anchorY() {
+        return anchorY.toUnmodifiable();
+    }
+
+    public final float getAnchorY() {
+        return anchorY.get();
+    }
+
+    public final MutableObjectValue<AnchorLocation> anchorLocation() {
+        return anchorLocation;
+    }
+
+    public final AnchorLocation getAnchorLocation() {
+        return anchorLocation.get();
+    }
+
+    public final void setAnchorLocation(AnchorLocation anchorLocation) {
+        anchorLocation().set(anchorLocation);
+    }
+
+    public void show(Stage ownerStage, float anchorX, float anchorY) {
+        setOwner(ownerStage);
+        updateWindowPos(anchorX, anchorY);
+        show(ownerStage);
+    }
+
+    public void show(Node ownerNode, float anchorX, float anchorY) {
+        this.ownerNode.set(ownerNode);
+        Stage ownerStage = ownerNode.getScene().getStage();
+        setOwner(ownerStage);
+        updateWindowPos(anchorX, anchorY);
+        show(ownerStage);
+    }
+
+    private void updateWindowPos(float anchorX, float anchorY) {
+
+    }
+
+    private void show(Stage ownerStage) {
+        if (ownerStage instanceof Popup) {
+            ((Popup) ownerStage).children.add(this);
+        }
+        super.show();
+        window.setDecorated(false);
+        window.setFloating(true);
     }
 
     @Override
-    public float prefWidth() {
-        return content.isPresent() ? content.get().prefWidth() : 0;
-    }
-
-    @Override
-    public float prefHeight() {
-        return content.isPresent() ? content.get().prefHeight() : 0;
-    }
-
-    public List<Pair<EventType, EventHandler>> getInsertedHandlers() {
-        return insertedHandlers;
-    }
-
-    @Override
-    protected ComponentRenderer createDefaultRenderer() {
-        return (ComponentRenderer<Popup>) (component, graphics) -> {
-            graphics.pushClipRect(component.getLayoutX(), component.getLayoutY(), component.prefWidth(), component.prefHeight());
-            component.content().ifPresent(node -> node.getRenderer().render(node, graphics));
-            graphics.popClipRect();
-        };
+    public void hide() {
+        children.forEach(Popup::hide);
+        children.clear();
+        super.hide();
+        Stage ownerStage = getOwner();
+        if (ownerStage instanceof Popup) {
+            ((Popup) ownerStage).children.remove(this);
+        }
     }
 }

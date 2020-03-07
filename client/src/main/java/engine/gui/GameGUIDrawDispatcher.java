@@ -49,8 +49,8 @@ public class GameGUIDrawDispatcher implements DrawDispatcher {
         graphics.setup(renderer, width, height, scene.getScaleX(), scene.getScaleY());
 
         root.getRenderer().render(root, graphics);
-        for (Popup popup : scene.getPopups()) {
-            popup.getRenderer().render(popup, graphics);
-        }
+//        for (Popup popup : scene.getPopups()) {
+//            popup.getRenderer().render(popup, graphics);
+//        }
     }
 }

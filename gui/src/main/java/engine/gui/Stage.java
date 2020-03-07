@@ -50,7 +50,7 @@ public class Stage {
 
     private final MutableBooleanValue showing = new SimpleMutableBooleanValue();
 
-    private Window window;
+    Window window;
 
     private boolean primary;
 

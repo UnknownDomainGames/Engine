@@ -1,7 +1,5 @@
 package engine.gui;
 
-import com.github.mouse0w0.observable.collection.ObservableCollections;
-import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.*;
 import engine.gui.event.*;
 import engine.gui.input.KeyEvent;
@@ -9,16 +7,12 @@ import engine.gui.input.MouseActionEvent;
 import engine.gui.input.MouseEvent;
 import engine.gui.input.ScrollEvent;
 import engine.gui.internal.SceneHelper;
-import engine.gui.misc.Pos;
 import engine.input.KeyCode;
 import engine.input.Modifiers;
 import engine.input.MouseButton;
 import engine.util.Color;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 
 import static engine.gui.internal.InputHelper.getDoubleClickTime;
@@ -134,9 +128,9 @@ public class Scene implements EventTarget {
 
     public void update() {
         root.get().layout();
-        for (Popup popup : popups) {
-            popup.layout();
-        }
+//        for (Popup popup : popups) {
+//            popup.layout();
+//        }
     }
 
     public MutableObjectValue<Color> fill() {
@@ -323,56 +317,6 @@ public class Scene implements EventTarget {
 
     public <T extends Event> void removeEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
         eventHandlerManager.removeEventHandler(eventType, eventHandler);
-    }
-
-    private ObservableList<Popup> popups = ObservableCollections.observableList(new LinkedList<>());
-    private ObservableList<Popup> unmodifiablePopups = ObservableCollections.unmodifiableObservableList(popups);
-
-    public ObservableList<Popup> getPopups() {
-        return unmodifiablePopups;
-    }
-
-    public void showPopup(@Nonnull Popup popup, boolean shouldFollowCursor, Pos location) {
-        if (shouldFollowCursor) {
-            EventHandler<MouseEvent> handler = event -> {
-                float x = 0, y = 0;
-                switch (location.getHpos()) {
-                    case LEFT:
-                        x = event.getScreenX();
-                        break;
-                    case CENTER:
-                        x = event.getScreenX() - popup.prefWidth() / 2;
-                        break;
-                    case RIGHT:
-                        x = event.getScreenX() - popup.prefWidth();
-                        break;
-                }
-                switch (location.getVpos()) {
-                    case TOP:
-                    case BASELINE:
-                        y = event.getScreenY();
-                        break;
-                    case CENTER:
-                        y = event.getScreenY() - popup.prefHeight() / 2;
-                        break;
-                    case BOTTOM:
-                        y = event.getScreenY() - popup.prefHeight();
-                        break;
-                }
-                popup.relocate(x, y);
-            };
-            addEventHandler(MouseEvent.MOUSE_MOVED, handler);
-            popup.getInsertedHandlers().add(new ImmutablePair<>(MouseEvent.MOUSE_MOVED, handler));
-            popup.relocate(cursorX, cursorY);
-        }
-        popups.add(popup);
-    }
-
-    public void closePopup(Popup popup) {
-        for (Pair<EventType, EventHandler> insertedHandler : popup.getInsertedHandlers()) {
-            removeEventHandler(insertedHandler.getKey(), insertedHandler.getValue());
-        }
-        popups.remove(popup);
     }
 
     // ===== Event handlers =====
