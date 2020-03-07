@@ -1,10 +1,9 @@
-package engine.gui.control;
+package engine.gui.image;
 
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import com.github.mouse0w0.observable.value.ValueChangeListener;
 import engine.gui.Node;
-import engine.gui.image.Image;
 import engine.gui.rendering.ComponentRenderer;
 import engine.gui.rendering.ImageViewRenderer;
 

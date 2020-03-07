@@ -1,7 +1,7 @@
 package engine.gui.rendering;
 
-import engine.gui.control.ImageView;
 import engine.gui.image.Image;
+import engine.gui.image.ImageView;
 
 public class ImageViewRenderer implements ComponentRenderer<ImageView> {
 
