@@ -153,7 +153,7 @@ public class Stage {
     }
 
     public final void setPos(int x, int y) {
-        if (window != null) {
+        if (isShowing()) {
             window.setPos(x, y);
         } else {
             xImpl().set(x);
@@ -162,7 +162,7 @@ public class Stage {
     }
 
     public final void centerOnScreen() {
-        if (window != null) window.centerOnScreen();
+        if (isShowing()) window.centerOnScreen();
     }
 
     private MutableIntValue widthImpl() {
@@ -316,7 +316,7 @@ public class Stage {
     }
 
     public final void focus() {
-        if (window != null) {
+        if (isShowing()) {
             window.focus();
         }
     }
@@ -353,14 +353,14 @@ public class Stage {
 
     public final void iconify() {
         iconifiedImpl().set(true);
-        if (window != null) {
+        if (isShowing()) {
             window.iconify();
         }
     }
 
     public final void maximize() {
         maximizedImpl().set(true);
-        if (window != null) {
+        if (isShowing()) {
             window.maximize();
         }
     }
@@ -368,7 +368,7 @@ public class Stage {
     public final void restore() {
         iconifiedImpl().set(false);
         maximizedImpl().set(false);
-        if (window != null) {
+        if (isShowing()) {
             window.restore();
         }
     }
@@ -379,7 +379,7 @@ public class Stage {
                 @Override
                 public void set(boolean value) {
                     super.set(value);
-                    if (window != null) {
+                    if (isShowing()) {
                         window.setResizable(value);
                     }
                 }
@@ -402,7 +402,7 @@ public class Stage {
                 @Override
                 public void set(boolean value) {
                     super.set(value);
-                    if (window != null) {
+                    if (isShowing()) {
                         window.setFloating(value);
                     }
                 }
