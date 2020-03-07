@@ -4,6 +4,9 @@ import engine.graphics.backend.GraphicsBackend;
 import engine.graphics.backend.GraphicsBackendFactory;
 import engine.graphics.font.FontManager;
 import engine.graphics.image.ImageLoader;
+import org.apache.commons.lang3.SystemUtils;
+import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.system.windows.User32;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +34,7 @@ public final class GraphicsEngine {
             throw new IllegalArgumentException("Graphics engine has been started.");
         }
         GraphicsEngine.settings = settings;
+        initEnvironment();
         ImageLoader.initialize(settings.imageLoader);
         graphicsBackend = ServiceLoader.load(GraphicsBackendFactory.class)
                 .stream()
@@ -42,6 +46,17 @@ public final class GraphicsEngine {
         LOGGER.info("Graphics backend: {}", settings.backend);
         graphicsBackend.init();
         FontManager.initialize(settings.fontManager);
+    }
+
+    private static void initEnvironment() {
+        if (SystemUtils.IS_OS_MAC) {
+            System.setProperty("java.awt.headless", "true");
+        }
+        if (SystemUtils.IS_OS_WINDOWS) {
+            if (User32.Functions.SetThreadDpiAwarenessContext != MemoryUtil.NULL) {
+                User32.SetThreadDpiAwarenessContext(User32.IsValidDpiAwarenessContext(User32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2) ? User32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 : User32.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+            }
+        }
     }
 
     public static void doRender(float tpf) {
