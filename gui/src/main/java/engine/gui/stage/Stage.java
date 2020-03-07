@@ -239,8 +239,8 @@ public class Stage {
 
         widthImpl().set(width);
         heightImpl().set(height);
-        this.scaleX.set(scaleX);
-        this.scaleY.set(scaleY);
+        this.scaleX.set(finalScaleX);
+        this.scaleY.set(finalScaleY);
         scene().ifPresent(scene -> SceneHelper.resize(scene, width / finalScaleX, height / finalScaleY));
     }
 
