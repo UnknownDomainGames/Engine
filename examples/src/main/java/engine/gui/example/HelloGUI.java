@@ -53,7 +53,6 @@ public class HelloGUI extends GUIApplication {
             stage.setScene(scene);
             stage.show();
         });
-        sayIt.setOnMouseReleased(event -> System.out.println(sayIt.isPressed()));
 
         vBox.getChildren().addAll(text, sayIt);
 

@@ -32,6 +32,7 @@ public final class GUIPlatformImpl extends GUIPlatform {
     }
 
     private GUIPlatformImpl() {
+        InputHelperImpl.initialize();
     }
 
     @Override

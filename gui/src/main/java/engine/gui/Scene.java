@@ -21,6 +21,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import java.util.*;
 
+import static engine.gui.internal.InputHelper.getDoubleClickTime;
+
 public class Scene implements EventTarget {
 
     private int viewportWidth;
@@ -204,7 +206,36 @@ public class Scene implements EventTarget {
     }
 
     private final Set<Node> focusedNodes = new HashSet<>();
-    private final Map<MouseButton, List<Node>> pressedNodes = new HashMap<>();
+    private final Map<MouseButton, PressedButton> pressedNodes = new HashMap<>();
+
+    private static final class PressedButton {
+        private long lastPressedTime;
+        private int clickCount;
+        private List<Node> pressedNodes = new ArrayList<>();
+
+        public void onPressed() {
+            long currentPressedTime = System.currentTimeMillis();
+            if (currentPressedTime - lastPressedTime <= getDoubleClickTime()) clickCount++;
+            else clickCount = 1; // timeout, reset click count.
+            lastPressedTime = currentPressedTime;
+        }
+
+        public int getClickCount() {
+            return clickCount;
+        }
+
+        public List<Node> getPressedNodes() {
+            return pressedNodes;
+        }
+
+        public void addPressedNode(Node node) {
+            pressedNodes.add(node);
+        }
+
+        public void clearPressedNodes() {
+            pressedNodes.clear();
+        }
+    }
 
     public void processMouse(MouseButton button, Modifiers modifier, boolean pressed) {
         if (Float.isNaN(cursorX) || Float.isNaN(cursorY)) return;
@@ -224,20 +255,21 @@ public class Scene implements EventTarget {
             lostFocusNodes.forEach(node -> node.focused.set(false));
         }
 
-        List<Node> pressedNodeList = pressedNodes.computeIfAbsent(button, key -> new ArrayList<>());
+        PressedButton pressedButton = pressedNodes.computeIfAbsent(button, key -> new PressedButton());
         if (pressed) {
+            pressedButton.onPressed();
             for (var node : hitNodes) {
-                pressedNodeList.add(node);
+                pressedButton.addPressedNode(node);
                 var pos = node.relativePos(cursorX, cursorY);
-                new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier).fireEvent();
+                new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier, 0).fireEvent();
             }
         } else {
-            for (Node node : pressedNodeList) {
+            for (Node node : pressedButton.getPressedNodes()) {
                 var pos = node.relativePos(cursorX, cursorY);
-                new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier).fireEvent();
-                new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier).fireEvent();
+                new MouseActionEvent(MouseActionEvent.MOUSE_RELEASED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier, 0).fireEvent();
+                new MouseActionEvent(MouseActionEvent.MOUSE_CLICKED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier, pressedButton.getClickCount()).fireEvent();
             }
-            pressedNodeList.clear();
+            pressedButton.clearPressedNodes();
         }
     }
 
