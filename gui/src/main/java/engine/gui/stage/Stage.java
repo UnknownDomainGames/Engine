@@ -212,7 +212,7 @@ public class Stage {
     }
 
     public final float getUserScaleX() {
-        return userScaleX == null ? Float.NaN : userScaleX.get();
+        return userScaleX == null ? 1f : userScaleX.get();
     }
 
     public final MutableFloatValue userScaleY() {
@@ -225,7 +225,7 @@ public class Stage {
     }
 
     public final float getUserScaleY() {
-        return userScaleY == null ? Float.NaN : userScaleY.get();
+        return userScaleY == null ? 1f : userScaleY.get();
     }
 
     public final void setUserScale(float scaleX, float scaleY) {
@@ -234,16 +234,14 @@ public class Stage {
     }
 
     private void setViewport(int width, int height, float scaleX, float scaleY) {
-        float userScaleX = getUserScaleX();
-        if (!Float.isNaN(userScaleX)) scaleX = userScaleX;
-        float userScaleY = getUserScaleY();
-        if (!Float.isNaN(userScaleY)) scaleY = userScaleY;
+        float finalScaleX = scaleX * getUserScaleX();
+        float finalScaleY = scaleY * getUserScaleY();
 
         widthImpl().set(width);
         heightImpl().set(height);
         this.scaleX.set(scaleX);
         this.scaleY.set(scaleY);
-        scene().ifPresent(scene -> SceneHelper.resize(scene, getWidth() / getScaleX(), getHeight() / getScaleY()));
+        scene().ifPresent(scene -> SceneHelper.resize(scene, width / finalScaleX, height / finalScaleY));
     }
 
     public final MutableObjectValue<Scene> scene() {
