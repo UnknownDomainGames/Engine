@@ -160,10 +160,10 @@ public class GLFWWindow implements Window {
     @Override
     public void setPos(int x, int y) {
         glfwSetWindowPos(pointer, x, y);
-        setPosInternal(x, y);
+        relocate(x, y);
     }
 
-    private void setPosInternal(int x, int y) {
+    private void relocate(int x, int y) {
         this.x = x;
         this.y = y;
         windowPosCallbacks.forEach(callback -> callback.invoke(this, x, y));
@@ -238,33 +238,44 @@ public class GLFWWindow implements Window {
     @Override
     public void setDisplayMode(DisplayMode displayMode, int width, int height, int frameRate) {
         if (this.displayMode == displayMode && width == -1 && height == -1) return;
-        var nw = width != -1 ? width : screen.getVideoMode().getWidth();
-        var nh = height != -1 ? height : screen.getVideoMode().getHeight();
+        if (this.displayMode == DisplayMode.WINDOWED) {
+            lastPosX = getX();
+            lastPosY = getY();
+            lastWidth = getWidth();
+            lastHeight = getHeight();
+        }
+
+        int finalX = 0, finalY = 0;
+        int finalWidth = 0, finalHeight = 0;
         switch (displayMode) {
             case FULLSCREEN:
-                if (this.displayMode == DisplayMode.WINDOWED) {
-                    lastPosX = x;
-                    lastPosY = y;
-                    lastWidth = this.width;
-                    lastHeight = this.height;
-                }
-                glfwSetWindowMonitor(pointer, screen.getPointer(), 0, 0, nw, nh, frameRate > 0 ? frameRate : screen.getVideoMode().getRefreshRate());
+                finalWidth = width != -1 ? width : screen.getVideoMode().getWidth();
+                finalHeight = height != -1 ? height : screen.getVideoMode().getHeight();
+                glfwSetWindowMonitor(pointer, screen.getPointer(),
+                        finalX, finalY,
+                        finalWidth, finalHeight,
+                        frameRate != -1 ? frameRate : screen.getVideoMode().getRefreshRate());
                 break;
             case WINDOWED_FULLSCREEN:
-                if (this.displayMode == DisplayMode.WINDOWED) {
-                    lastPosX = x;
-                    lastPosY = y;
-                    lastWidth = this.width;
-                    lastHeight = this.height;
-                }
+                glfwSetWindowMonitor(pointer, NULL,
+                        finalX, finalY,
+                        finalWidth = screen.getVideoMode().getWidth(), finalHeight = screen.getVideoMode().getHeight(),
+                        screen.getVideoMode().getRefreshRate());
                 setDecorated(false);
-                glfwSetWindowMonitor(pointer, NULL, 0, 0, screen.getVideoMode().getWidth(), screen.getVideoMode().getHeight(), screen.getVideoMode().getRefreshRate());
                 break;
             case WINDOWED:
+                finalWidth = width != -1 ? width : lastWidth;
+                finalHeight = height != -1 ? height : lastHeight;
+                glfwSetWindowMonitor(pointer, NULL,
+                        finalX = lastPosX, finalY = lastPosY,
+                        finalWidth, finalHeight,
+                        screen.getVideoMode().getRefreshRate());
                 setDecorated(true);
-                glfwSetWindowMonitor(pointer, NULL, lastPosX, lastPosY, width != -1 ? width : lastWidth, height != -1 ? height : lastHeight, screen.getVideoMode().getRefreshRate());
+                break;
         }
         this.displayMode = displayMode;
+        relocate(finalX, finalY);
+        resize(finalWidth, finalHeight);
     }
 
     @Override
@@ -614,7 +625,7 @@ public class GLFWWindow implements Window {
         glfwSetWindowFocusCallback(pointer, (window, focused) -> setFocused(focused));
         glfwSetCursorEnterCallback(pointer, (window, entered) ->
                 cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
-        glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> setPosInternal(xpos, ypos));
+        glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> relocate(xpos, ypos));
         glfwSetWindowSizeCallback(pointer, (window, width, height) -> resize(width, height));
         glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> GLFWContext.refreshScreen(screen)));
         glfwSetDropCallback(pointer, (window, count, names) -> {

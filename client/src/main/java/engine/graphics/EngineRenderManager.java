@@ -91,15 +91,10 @@ public final class EngineRenderManager implements RenderManager {
 
         GraphicsBackend manager = GraphicsEngine.getGraphicsBackend();
         window = manager.getPrimaryWindow();
-        window.setDisplayMode(engine.getSettings().getDisplaySettings().getDisplayMode(),
-                engine.getSettings().getDisplaySettings().getResolutionWidth(),
-                engine.getSettings().getDisplaySettings().getResolutionHeight(),
-                engine.getSettings().getDisplaySettings().getFrameRate());
 
         scene = new Scene3D();
         viewport = new PerspectiveViewport();
         viewport.setScene(scene);
-        viewport.setSize(window.getWidth(), window.getHeight());
 
         initTextureAssetProvider();
         VoxelRenderHelper.initialize(this);
@@ -110,6 +105,11 @@ public final class EngineRenderManager implements RenderManager {
 
         RenderGraph renderGraph = GraphicsEngine.getGraphicsBackend().loadRenderGraph(createRenderGraph());
         renderGraph.bindWindow(window);
+
+        window.setDisplayMode(engine.getSettings().getDisplaySettings().getDisplayMode(),
+                engine.getSettings().getDisplaySettings().getResolutionWidth(),
+                engine.getSettings().getDisplaySettings().getResolutionHeight(),
+                engine.getSettings().getDisplaySettings().getFrameRate());
         window.show();
     }
 

@@ -11,8 +11,8 @@ public final class DisplaySettings {
 
     private DisplayMode displayMode = DisplayMode.WINDOWED;
     private int maxFps = -1;
-    private int resolutionWidth = -1;
-    private int resolutionHeight = -1;
+    private int resolutionWidth = 854;
+    private int resolutionHeight = 480;
     private int frameRate = 60;
     private float brightness = 1;
     private boolean vSync = false;
