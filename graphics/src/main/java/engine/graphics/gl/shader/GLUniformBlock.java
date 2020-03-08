@@ -34,11 +34,12 @@ public final class GLUniformBlock implements UniformBlock {
     @Override
     public void set(Value value) {
         this.value = value;
+        bind();
     }
 
     public void bind() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            buffer.uploadData(value.write(stack).flip());
+            buffer.uploadData(value.write(stack));
             GL30.glBindBufferBase(GL31.GL_UNIFORM_BUFFER, binding, buffer.getId());
         }
     }

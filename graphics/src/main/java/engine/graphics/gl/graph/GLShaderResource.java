@@ -27,6 +27,8 @@ public class GLShaderResource implements ShaderResource {
     public UniformBlock getUniformBlock(String name) {
         int programId = shader.getId();
         int blockIndex = GL31.glGetUniformBlockIndex(programId, name);
+        if (blockIndex == GL31.GL_INVALID_INDEX)
+            throw new IllegalArgumentException("Failed to get uniform block: " + name);
         int blockBinding = blocks.size();
         GL31.glUniformBlockBinding(programId, blockIndex, blockBinding);
         GLUniformBlock uniformBlock = new GLUniformBlock(name, blockBinding);
