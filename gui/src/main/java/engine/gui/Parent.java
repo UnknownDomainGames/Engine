@@ -91,10 +91,21 @@ public abstract class Parent extends Node {
             }
         }
         Parent parent = parent().get();
-        while (parent != null && parent.layoutState == LayoutState.CLEAN) {
-            parent.layoutState = LayoutState.DIRTY_BRANCH;
-            parent = parent.parent().get();
+        if(parent != null && parent.layoutState == LayoutState.CLEAN){
+            parent.needsLayout();
         }
+    }
+
+    // Tell that this Parent does not need layouting anymore
+    public void revokeNeedsLayout(){
+        var flag = LayoutState.CLEAN;
+        for (Node child : children) {
+            if(child instanceof Parent && ((Parent) child).isNeedsLayout()){
+                flag = LayoutState.DIRTY_BRANCH;
+                break;
+            }
+        }
+        layoutState = flag;
     }
 
     public boolean isNeedsLayout() {
