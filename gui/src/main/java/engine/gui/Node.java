@@ -229,7 +229,7 @@ public abstract class Node implements EventTarget {
 
     public Point relativePos(float x, float y) {
         if (parent().isEmpty()) {
-            return new Point(x, y);
+            return new Point(x - getLayoutX(), y - getLayoutY());
         } else {
             return parent().get().relativePos(x - getLayoutX(), y - getLayoutY());
         }
