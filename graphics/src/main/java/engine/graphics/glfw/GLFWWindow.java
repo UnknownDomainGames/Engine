@@ -208,6 +208,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void setSize(int width, int height) {
+        glfwSetWindowSize(pointer, width, height);
         resize(width, height);
     }
 
