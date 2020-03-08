@@ -208,10 +208,6 @@ public abstract class Node implements EventTarget {
         return renderer;
     }
 
-    public void overrideRenderer(ComponentRenderer r) {
-        renderer = r;
-    }
-
     protected abstract ComponentRenderer createDefaultRenderer();
 
     private ObservableMap<Object, Object> properties;
