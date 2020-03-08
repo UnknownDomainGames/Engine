@@ -73,7 +73,7 @@ public class Text extends Node {
     }
 
     public final Pos getTextAlignment() {
-        return textAlignment.get();
+        return textAlignment == null ? Pos.CENTER : textAlignment.get();
     }
 
     public final void setTextAlignment(Pos alignment) {
