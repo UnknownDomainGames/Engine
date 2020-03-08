@@ -194,6 +194,10 @@ public abstract class Node implements EventTarget {
         return prefHeight();
     }
 
+    public boolean contains(Point point) {
+        return contains(point.getX(), point.getY());
+    }
+
     public boolean contains(float x, float y) {
         return x >= getLayoutX() && x <= getLayoutX() + getWidth() && y >= getLayoutY() && y <= getLayoutY() + getHeight();
     }
