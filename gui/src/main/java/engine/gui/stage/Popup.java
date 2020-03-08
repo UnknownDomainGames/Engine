@@ -17,11 +17,6 @@ public class Popup extends Stage {
 
     private MutableBooleanValue autoHide;
 
-    {
-        focused().addChangeListener((observable, oldValue, newValue) -> {
-            if (isAutoHide() && !newValue) hide();
-        });
-    }
 
     private final List<Popup> children = new ArrayList<>();
 
@@ -31,15 +26,16 @@ public class Popup extends Stage {
         SCREEN_LEFT_BOTTOM,
         SCREEN_RIGHT_BOTTOM,
 
-        CONTENT_LEFT_TOP,
-        CONTENT_RIGHT_TOP,
-        CONTENT_LEFT_BOTTOM,
-        CONTENT_RIGHT_BOTTOM,
-
         NODE_LEFT_TOP,
         NODE_RIGHT_TOP,
         NODE_LEFT_BOTTOM,
         NODE_RIGHT_BOTTOM,
+    }
+
+    public Popup() {
+        focused().addChangeListener((observable, oldValue, newValue) -> {
+            if (isAutoHide() && !newValue) hide();
+        });
     }
 
     public final MutableBooleanValue autoHide() {
@@ -108,7 +104,7 @@ public class Popup extends Stage {
     }
 
     private void updateWindowPos(float anchorX, float anchorY) {
-
+        // TODO:
     }
 
     private void show(Stage ownerStage) {

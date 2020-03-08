@@ -21,9 +21,9 @@ public class Example1 extends GUIApplication {
         Button button3 = new Button("Medium");
         Text text = new Text();
 
-        button1.setOnAction(event -> text.text().set("Left"));
-        button2.setOnAction(event -> text.text().set("Right"));
-        button3.setOnAction(event -> text.text().set("Center"));
+        button1.setOnAction(event -> text.setText("Left"));
+        button2.setOnAction(event -> text.setText("Right"));
+        button3.setOnAction(event -> text.setText("Center"));
 
         VBox vBox = new VBox();
         vBox.spacing().set(10);

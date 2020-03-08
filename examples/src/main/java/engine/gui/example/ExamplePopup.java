@@ -42,6 +42,7 @@ public class ExamplePopup extends GUIApplication {
             vBox.getChildren().addAll(text, hidePopup);
 
             popup.setScene(new Scene(vBox));
+            popup.setAnchorLocation(Popup.AnchorLocation.NODE_LEFT_BOTTOM);
             popup.setAutoHide(true);
             popup.show(showPopup, 0, 0);
         });

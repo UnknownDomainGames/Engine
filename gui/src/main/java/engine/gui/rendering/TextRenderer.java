@@ -26,12 +26,12 @@ public final class TextRenderer implements ComponentRenderer<Text> {
 
     private void bakeTextMesh() {
         dirty = false;
-        String text = this.text.text().get();
+        String text = this.text.getText();
         if (Strings.isNullOrEmpty(text)) {
             meshes = null;
             return;
         }
-        Font font = this.text.font().get();
+        Font font = this.text.getFont();
         FontManager fontManager = FontManager.instance();
 
         var lines = text.lines().collect(Collectors.toList());
@@ -48,9 +48,9 @@ public final class TextRenderer implements ComponentRenderer<Text> {
         if (dirty) bakeTextMesh();
         if (meshes == null) return;
 
-        graphics.setColor(text.color().get());
-        Pos alignment = text.textAlignment().get();
-        float leading = text.leading().getFloat();
+        graphics.setColor(text.getColor());
+        Pos alignment = text.getTextAlignment();
+        float leading = (float) text.getLeading();
         float y = 0;
         for (LineMesh mesh : meshes) {
             var y1 = y + (lineHeight * leading - lineHeight) / 2;

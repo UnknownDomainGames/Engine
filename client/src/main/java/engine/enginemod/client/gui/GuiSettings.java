@@ -29,7 +29,7 @@ public class GuiSettings extends AnchorPane {
         baksettings.getDisplaySettings().setUiScale(settings.getDisplaySettings().getUiScale());
         baksettings.getDisplaySettings().setHudScale(settings.getDisplaySettings().getHudScale());
         var title = new Text("Engine Settings");
-        title.font().setValue(new Font(Font.getDefaultFont(), 20.0f));
+        title.setFont(new Font(Font.getDefaultFont(), 20.0f));
         //Display settings
         var lblDisplayMode = new Text("Display Mode");
         var lblRes = new Text("Resolution");
@@ -83,7 +83,7 @@ public class GuiSettings extends AnchorPane {
         var lblUiScaleVal = new Text(String.valueOf(settings.getDisplaySettings().getUiScale()));
         sliderUiScale.value().addChangeListener((observable, oldValue, newValue) -> {
             var i = (int) Math.round(sliderUiScale.value().get());
-            lblUiScaleVal.text().set(String.valueOf(i));
+            lblUiScaleVal.setText(String.valueOf(i));
             settings.getDisplaySettings().setUiScale(i);
         });
         var lblHudScale = new Text("HUD Scale");
@@ -96,7 +96,7 @@ public class GuiSettings extends AnchorPane {
         var lblHudScaleVal = new Text(String.valueOf(settings.getDisplaySettings().getHudScale()));
         sliderHudScale.value().addChangeListener((observable, oldValue, newValue) -> {
             var i = (int) Math.round(sliderHudScale.value().get());
-            lblHudScaleVal.text().set(String.valueOf(i));
+            lblHudScaleVal.setText(String.valueOf(i));
             settings.getDisplaySettings().setHudScale(i);
         });
         var hb1 = new HBox();

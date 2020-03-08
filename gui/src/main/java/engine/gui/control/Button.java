@@ -97,7 +97,7 @@ public class Button extends Label {
                         y = ah - child.prefHeight();
                         break;
                     case BASELINE:
-                        y = (ah - ((Text) child).font().get().getSize()) / 2;
+                        y = (ah - ((Text) child).getFont().getSize()) / 2;
                         break;
                 }
                 x = (float) Math.floor(x + 0.5f);

@@ -17,23 +17,29 @@ public class WrapText extends Text {
 
     public WrapText(String text) {
         this();
-        this.text().setValue(text);
+        setText(text);
     }
 
-    public MutableFloatValue textWidth() {
+    public final MutableFloatValue textWidth() {
         return textWidth;
+    }
+
+    public final float getTextWidth() {
+        return textWidth.get();
+    }
+
+    public final void setTextWidth(float textWidth) {
+        this.textWidth.set(textWidth);
     }
 
     @Override
     public float prefWidth() {
-        var max = FontManager.instance().computeTextWidth(text().get(), font().get(), textWidth.get());
-
-        return max;
+        return FontManager.instance().computeTextWidth(getText(), getFont(), textWidth.get());
     }
 
     @Override
     public float prefHeight() {
-        return FontManager.instance().computeTextHeight(text().get(), font().get(), textWidth.get(), leading().getFloat());
+        return FontManager.instance().computeTextHeight(getText(), getFont(), textWidth.get(), (float) getLeading());
     }
 
     @Override

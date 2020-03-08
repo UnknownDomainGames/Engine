@@ -27,13 +27,13 @@ public final class WrapTextRenderer implements ComponentRenderer<WrapText> {
 
     private void bakeTextMesh() {
         dirty = false;
-        String text = wrapText.text().get();
+        String text = wrapText.getText();
         if (Strings.isNullOrEmpty(text)) {
             meshes = null;
             return;
         }
-        Font font = wrapText.font().get();
-        float textWidth = wrapText.textWidth().get();
+        Font font = wrapText.getFont();
+        float textWidth = wrapText.getTextWidth();
         FontManager fontManager = FontManager.instance();
 
         var lines = text.lines().flatMap(str -> fontManager.wrapText(str, textWidth, font).stream()).collect(Collectors.toList());
@@ -50,9 +50,9 @@ public final class WrapTextRenderer implements ComponentRenderer<WrapText> {
         if (dirty) bakeTextMesh();
         if (meshes == null) return;
 
-        graphics.setColor(text.color().get());
-        Pos alignment = text.textAlignment().get();
-        float leading = text.leading().getFloat();
+        graphics.setColor(text.getColor());
+        Pos alignment = text.getTextAlignment();
+        float leading = (float) text.getLeading();
         float y = 0;
         for (LineMesh mesh : meshes) {
             var y1 = y + (lineHeight * leading - lineHeight) / 2;

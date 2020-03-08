@@ -36,8 +36,8 @@ public final class GUIPauseMenu extends FlowPane {
         getChildren().add(vBox);
 
         Text text = new Text();
-        text.text().set("Game Menu");
-        text.font().set(new Font(Font.getDefaultFont(), 20));
+        text.setText("Game Menu");
+        text.setFont(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
         Button backtoGame = new Button("Back To Game");

@@ -79,18 +79,18 @@ public final class HUDDebug extends HUDControl {
         Entity player = engine.getCurrentGame().getClientPlayer().getControlledEntity();
         RenderManager manager = engine.getRenderManager();
 
-        fps.text().set("FPS: " + manager.getFPS());
-        playerPosition.text().set(format("Player Position: %.2f, %.2f, %.2f", player.getPosition().x, player.getPosition().y, player.getPosition().z));
-        playerMotion.text().set(format("Player Motion: %.2f, %.2f, %.2f", player.getMotion().x, player.getMotion().y, player.getMotion().z));
-        playerDirection.text().set(format("Player Direction (yaw, pitch, roll): %.2f, %.2f, %.2f (%s)", player.getRotation().x, player.getRotation().y, player.getRotation().z, getDirection(player.getRotation().x)));
-        playerChunkPos.text().set(format("Player At Chunk: %d, %d, %d", (int) Math.floor(player.getPosition().x) >> CHUNK_X_BITS, (int) Math.floor(player.getPosition().y) >> CHUNK_Y_BITS, (int) Math.floor(player.getPosition().z) >> CHUNK_Z_BITS));
+        fps.setText("FPS: " + manager.getFPS());
+        playerPosition.setText(format("Player Position: %.2f, %.2f, %.2f", player.getPosition().x, player.getPosition().y, player.getPosition().z));
+        playerMotion.setText(format("Player Motion: %.2f, %.2f, %.2f", player.getMotion().x, player.getMotion().y, player.getMotion().z));
+        playerDirection.setText(format("Player Direction (yaw, pitch, roll): %.2f, %.2f, %.2f (%s)", player.getRotation().x, player.getRotation().y, player.getRotation().z, getDirection(player.getRotation().x)));
+        playerChunkPos.setText(format("Player At Chunk: %d, %d, %d", (int) Math.floor(player.getPosition().x) >> CHUNK_X_BITS, (int) Math.floor(player.getPosition().y) >> CHUNK_Y_BITS, (int) Math.floor(player.getPosition().z) >> CHUNK_Z_BITS));
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
         long maxMemory = runtime.maxMemory();
         long freeMemory = runtime.freeMemory();
-        memory.text().set(format("Memory: %d MB / %d MB (Max: %d MB)", (totalMemory - freeMemory) / 1024 / 1024, totalMemory / 1024 / 1024, maxMemory / 1024 / 1024));
+        memory.setText(format("Memory: %d MB / %d MB (Max: %d MB)", (totalMemory - freeMemory) / 1024 / 1024, totalMemory / 1024 / 1024, maxMemory / 1024 / 1024));
         GPUInfo gpuInfo = GraphicsEngine.getGraphicsBackend().getGPUInfo();
-        gpuMemory.text().set(format("GPU Memory: %d MB / %d MB", (gpuInfo.getTotalMemory() - gpuInfo.getFreeMemory()) / 1024, gpuInfo.getTotalMemory() / 1024));
+        gpuMemory.setText(format("GPU Memory: %d MB / %d MB", (gpuInfo.getTotalMemory() - gpuInfo.getFreeMemory()) / 1024, gpuInfo.getTotalMemory() / 1024));
 
         Camera camera = manager.getViewport().getCamera();
         HitResult hitResult = manager.getEngine().getCurrentGame().getClientWorld().raycast(camera.getPosition(), camera.getFront(), 10);
@@ -99,19 +99,19 @@ public final class HUDDebug extends HUDControl {
         } else if (hitResult instanceof EntityHitResult) {
             this.hitResult.setVisible(true);
             Entity entity = ((EntityHitResult) hitResult).getEntity();
-            hitBlockOrEntity.text().set(String.format("Hit Entity: %s@%s", entity.getProvider().getName(), Integer.toHexString(entity.hashCode())));
+            hitBlockOrEntity.setText(String.format("Hit Entity: %s@%s", entity.getProvider().getName(), Integer.toHexString(entity.hashCode())));
             Vector3d position = entity.getPosition();
-            hitBlockOrEntityPos.text().set(String.format("Hit Entity Position: %.2f, %.2f, %.2f", position.x, position.y, position.z));
+            hitBlockOrEntityPos.setText(String.format("Hit Entity Position: %.2f, %.2f, %.2f", position.x, position.y, position.z));
             Vector3fc hitPoint = ((EntityHitResult) hitResult).getHitPoint();
-            hitPos.text().set(String.format("Hit Entity Point: %.2f, %.2f, %.2f", hitPoint.x(), hitPoint.y(), hitPoint.z()));
+            hitPos.setText(String.format("Hit Entity Point: %.2f, %.2f, %.2f", hitPoint.x(), hitPoint.y(), hitPoint.z()));
         } else if (hitResult instanceof BlockHitResult) {
             this.hitResult.setVisible(true);
             Block block = ((BlockHitResult) hitResult).getBlock();
-            hitBlockOrEntity.text().set(String.format("Hit Block: %s", block.getName()));
+            hitBlockOrEntity.setText(String.format("Hit Block: %s", block.getName()));
             BlockPos pos = ((BlockHitResult) hitResult).getPos();
-            hitBlockOrEntityPos.text().set(String.format("Hit Block Position: %d, %d, %d", pos.x(), pos.y(), pos.z()));
+            hitBlockOrEntityPos.setText(String.format("Hit Block Position: %d, %d, %d", pos.x(), pos.y(), pos.z()));
             Vector3fc hitPoint = ((BlockHitResult) hitResult).getHitPoint();
-            hitPos.text().set(String.format("Hit Block Point: %.2f, %.2f, %.2f", hitPoint.x(), hitPoint.y(), hitPoint.z()));
+            hitPos.setText(String.format("Hit Block Point: %.2f, %.2f, %.2f", hitPoint.x(), hitPoint.y(), hitPoint.z()));
         }
     }
 
