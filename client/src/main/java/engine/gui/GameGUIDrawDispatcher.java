@@ -1,11 +1,9 @@
 package engine.gui;
 
-import engine.graphics.display.Window;
 import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Frame;
 import engine.graphics.graph.Renderer;
 import engine.graphics.shader.ShaderResource;
-import engine.gui.internal.StageHelper;
 import engine.gui.internal.impl.graphics.GraphicsImpl;
 import engine.gui.stage.Stage;
 
@@ -28,13 +26,6 @@ public class GameGUIDrawDispatcher implements DrawDispatcher {
     @Override
     public void draw(Frame frame, ShaderResource resource, Renderer renderer) {
         Stage stage = guiStage.getScene() != null ? guiStage : hudStage;
-        Window window = StageHelper.getWindow(stage);
-        int width = frame.getWidth(), height = frame.getHeight();
-        if (stage.getWidth() != window.getWidth() ||
-                stage.getHeight() != window.getHeight()) {
-            StageHelper.setViewport(stage, frame.getWidth(), frame.getHeight(),
-                    window.getContentScaleX(), window.getContentScaleY());
-        }
 
         Scene scene = stage.getScene();
         if (scene == null) return;
@@ -45,8 +36,7 @@ public class GameGUIDrawDispatcher implements DrawDispatcher {
             return; // Invisible root, don't need render it.
         }
 
-        graphics.setup(renderer, width, height, stage.getScaleX(), stage.getScaleY());
-
+        graphics.setup(renderer, frame.getWidth(), frame.getHeight(), stage.getScaleX(), stage.getScaleY());
         root.getRenderer().render(root, graphics);
     }
 }

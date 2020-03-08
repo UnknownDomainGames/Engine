@@ -50,6 +50,7 @@ public class HelloGUI extends GUIApplication {
 
             Stage stage = new Stage();
             stage.setOwner(primaryStage);
+            stage.sizeToScene();
             stage.setScene(scene);
             stage.show();
         });
@@ -60,6 +61,7 @@ public class HelloGUI extends GUIApplication {
 
         Scene scene = new Scene(flowPane);
 
+        primaryStage.setSize(854, 480);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Hello World");
         primaryStage.show();

@@ -34,17 +34,6 @@ public class Stage {
 
     private final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
 
-    {
-        scene.addChangeListener((observable, oldValue, newValue) -> {
-            if (oldValue != null) {
-                SceneHelper.setStage(oldValue, null);
-            }
-            if (newValue != null) {
-                SceneHelper.setStage(newValue, Stage.this);
-            }
-        });
-    }
-
     private MutableStringValue title;
 
     private ObservableList<ReadOnlyImage> icons;
@@ -60,6 +49,8 @@ public class Stage {
     Window window;
 
     private boolean primary;
+
+    private boolean sizeToScene;
 
     static {
         StageHelper.setStageAccessor(new StageHelper.StageAccessor() {
@@ -105,6 +96,14 @@ public class Stage {
     }
 
     public Stage() {
+        scene.addChangeListener((observable, oldValue, newValue) -> {
+            if (oldValue != null) {
+                SceneHelper.setStage(oldValue, null);
+            }
+            if (newValue != null) {
+                SceneHelper.setStage(newValue, Stage.this);
+            }
+        });
     }
 
     public Stage getOwner() {
@@ -195,6 +194,25 @@ public class Stage {
         return height == null ? 0 : height.get();
     }
 
+    public void setSize(int width, int height) {
+        if (isShowing()) {
+            window.setSize(width, height);
+        } else {
+            widthImpl().set(width);
+            heightImpl().set(height);
+        }
+    }
+
+    public void sizeToScene() {
+        Scene scene = getScene();
+        if (scene != null) {
+            SceneHelper.preferredSize(scene);
+            setSize((int) Math.ceil(scene.getWidth()), (int) Math.ceil(scene.getHeight()));
+        } else {
+            sizeToScene = true;
+        }
+    }
+
     public final ObservableFloatValue scaleX() {
         return scaleX.toUnmodifiable();
     }
@@ -250,7 +268,7 @@ public class Stage {
         heightImpl().set(height);
         this.scaleX.set(finalScaleX);
         this.scaleY.set(finalScaleY);
-        scene().ifPresent(scene -> SceneHelper.resize(scene, width / finalScaleX, height / finalScaleY));
+        scene().ifPresent(scene -> SceneHelper.setSize(scene, width / finalScaleX, height / finalScaleY));
     }
 
     public final MutableObjectValue<Scene> scene() {
@@ -444,7 +462,7 @@ public class Stage {
     }
 
     private WindowPosCallback posCallback;
-    //    private WindowSizeCallback sizeCallback;
+    private WindowSizeCallback sizeCallback;
     private WindowFocusCallback focusCallback;
     private WindowIconifyCallback iconifyCallback;
     private WindowMaximizeCallback maximizeCallback;
@@ -470,19 +488,10 @@ public class Stage {
                 yImpl().set(y);
             };
             window.addWindowPosCallback(posCallback);
-            if (x == null || y == null) {
-                centerOnScreen();
-            } else {
-                setPos(xImpl().get(), yImpl().get());
-            }
 
-//            if (sizeCallback == null) sizeCallback = (window, width, height) -> {
-//                widthImpl().set(width);
-//                heightImpl().set(height);
-//            };
-//            window.addWindowSizeCallback(sizeCallback);
-//            widthImpl().set(window.getWidth());
-//            heightImpl().set(window.getHeight());
+            if (sizeCallback == null) sizeCallback = (window, width, height) ->
+                    setViewport(width, height, window.getContentScaleX(), window.getContentScaleY());
+            window.addWindowSizeCallback(sizeCallback);
 
             if (focusCallback == null) focusCallback = (window, focused) -> focusedImpl().set(focused);
             window.addWindowFocusCallback(focusCallback);
@@ -499,13 +508,24 @@ public class Stage {
             if (closeCallback == null) closeCallback = window -> hide();
             window.addWindowCloseCallback(closeCallback);
 
-            setViewport(window.getWidth(), window.getHeight(), window.getContentScaleX(), window.getContentScaleY());
-
             stages.add(this);
+
+            if (sizeToScene) {
+                sizeToScene = false;
+                sizeToScene();
+            } else {
+                window.setSize(getWidth(), getHeight());
+            }
+
+            if (x == null && y == null) {
+                centerOnScreen();
+            } else {
+                setPos(xImpl().get(), yImpl().get());
+            }
         } else {
             stages.remove(this);
             window.removeWindowPosCallback(posCallback);
-//            window.removeWindowSizeCallback(sizeCallback);
+            window.removeWindowSizeCallback(sizeCallback);
             window.removeWindowFocusCallback(focusCallback);
             window.removeWindowIconifyCallback(iconifyCallback);
             window.removeWindowMaximizeCallback(maximizeCallback);

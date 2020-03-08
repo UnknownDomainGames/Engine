@@ -8,6 +8,7 @@ import engine.gui.input.MouseEvent;
 import engine.gui.input.ScrollEvent;
 import engine.gui.internal.SceneHelper;
 import engine.gui.stage.Stage;
+import engine.gui.util.Utils;
 import engine.input.KeyCode;
 import engine.input.Modifiers;
 import engine.input.MouseButton;
@@ -39,8 +40,13 @@ public class Scene implements EventTarget {
             }
 
             @Override
-            public void resize(Scene scene, float width, float height) {
-                scene.resize(width, height);
+            public void setSize(Scene scene, float width, float height) {
+                scene.setSize(width, height);
+            }
+
+            @Override
+            public void preferredSize(Scene scene) {
+                scene.preferredSize();
             }
         });
     }
@@ -65,10 +71,17 @@ public class Scene implements EventTarget {
         return height.get();
     }
 
-    private void resize(float width, float height) {
+    private void setSize(float width, float height) {
         this.width.set(width);
         this.height.set(height);
         updateRoot();
+    }
+
+    private void preferredSize() {
+        Parent root = getRoot();
+        float width = root.getLayoutX() + Utils.prefWidth(root);
+        float height = root.getLayoutY() + Utils.prefHeight(root);
+        setSize(width, height);
     }
 
     public ObservableObjectValue<Stage> stage() {
