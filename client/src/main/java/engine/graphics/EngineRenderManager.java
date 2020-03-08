@@ -17,7 +17,11 @@ import engine.graphics.util.CullMode;
 import engine.graphics.viewport.PerspectiveViewport;
 import engine.graphics.voxel.VoxelRenderHelper;
 import engine.graphics.voxel.shape.SelectedBlock;
-import engine.gui.*;
+import engine.gui.EngineGUIManager;
+import engine.gui.EngineHUDManager;
+import engine.gui.GUIManager;
+import engine.gui.GameGUIPlatform;
+import engine.gui.internal.impl.graphics.StageDrawDispatcher;
 import engine.math.BlockPos;
 
 import static engine.graphics.graph.ColorOutputInfo.colorOutput;
@@ -198,11 +202,15 @@ public final class EngineRenderManager implements RenderManager {
                         .setColorBuffer("color")
                         .setBlendMode(BlendMode.MIX));
                 {
-                    DrawerInfo sceneDrawer = DrawerInfo.drawer();
-                    sceneDrawer.setShader("gui");
-                    sceneDrawer.setDrawDispatcher(new GameGUIDrawDispatcher(gameGUIPlatform.getGUIStage(),
-                            gameGUIPlatform.getHUDStage()));
-                    guiPass.setDrawers(sceneDrawer);
+                    DrawerInfo hudDrawer = DrawerInfo.drawer();
+                    hudDrawer.setShader("gui");
+                    hudDrawer.setDrawDispatcher(new StageDrawDispatcher(gameGUIPlatform.getHUDStage()));
+
+                    DrawerInfo guiDrawer = DrawerInfo.drawer();
+                    guiDrawer.setShader("gui");
+                    guiDrawer.setDrawDispatcher(new StageDrawDispatcher(gameGUIPlatform.getGUIStage()));
+
+                    guiPass.setDrawers(hudDrawer, guiDrawer);
                 }
 
                 mainTask.setPasses(opaquePass, guiPass);
