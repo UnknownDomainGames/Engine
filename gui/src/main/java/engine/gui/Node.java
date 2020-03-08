@@ -8,6 +8,7 @@ import engine.gui.input.KeyEvent;
 import engine.gui.input.MouseActionEvent;
 import engine.gui.input.MouseEvent;
 import engine.gui.input.ScrollEvent;
+import engine.gui.misc.Bounds;
 import engine.gui.misc.Point;
 import engine.gui.rendering.ComponentRenderer;
 import engine.input.MouseButton;
@@ -221,6 +222,25 @@ public abstract class Node implements EventTarget {
 
     public boolean hasProperties() {
         return properties != null && !properties.isEmpty();
+    }
+
+    public final Bounds getBoundsInLocal() {
+        return new Bounds(0, 0, getWidth(), getHeight());
+    }
+
+    public final Bounds getBoundsInParent() {
+        return new Bounds(getLayoutX(), getLayoutY(), getWidth(), getHeight());
+    }
+
+    public final Bounds getBoundsInScene() {
+        float minX = 0, minY = 0;
+        Node node = this;
+        while (node != null) {
+            minX += node.getLayoutX();
+            minY += node.getLayoutY();
+            node = node.getParent();
+        }
+        return new Bounds(minX, minY, getWidth(), getHeight());
     }
 
     public void forceFocus() {
