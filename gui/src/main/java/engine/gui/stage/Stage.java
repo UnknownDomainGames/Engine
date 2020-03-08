@@ -510,7 +510,7 @@ public class Stage {
 
             stages.add(this);
 
-            if (sizeToScene) {
+            if (sizeToScene || width == null || height == null) {
                 sizeToScene = false;
                 sizeToScene();
             } else {
