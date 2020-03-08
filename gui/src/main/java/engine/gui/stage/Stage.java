@@ -102,6 +102,7 @@ public class Stage {
             }
             if (newValue != null) {
                 SceneHelper.setStage(newValue, Stage.this);
+                SceneHelper.setSize(newValue, getWidth() / getScaleX(), getHeight() / getScaleY());
             }
         });
     }
