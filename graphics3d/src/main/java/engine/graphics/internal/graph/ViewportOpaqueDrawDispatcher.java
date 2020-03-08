@@ -17,6 +17,9 @@ import java.nio.ByteBuffer;
 public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
     private final Viewport viewport;
 
+    private UniformBlock uniformMatrices;
+    private UniformTexture uniformTexture;
+
     private static class Matrices implements UniformBlock.Value {
         private Matrix4fc projMatrix;
         private Matrix4fc viewMatrix;
@@ -37,9 +40,6 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
             return buffer;
         }
     }
-
-    private UniformBlock uniformMatrices;
-    private UniformTexture uniformTexture;
 
     public ViewportOpaqueDrawDispatcher(Viewport viewport) {
         this.viewport = viewport;
