@@ -1,6 +1,7 @@
 package engine.graphics.example;
 
 import engine.graphics.application.Application3D;
+import engine.graphics.display.Window;
 import engine.graphics.shape.Box;
 import engine.graphics.shape.Line;
 import engine.input.Action;
@@ -21,13 +22,14 @@ public class Hello3D extends Application3D {
 
     @Override
     protected void onInitialized() {
-        manager.getPrimaryWindow().addWindowCloseCallback(window -> stop());
-        manager.getPrimaryWindow().addKeyCallback((window, key, scancode, action, mods) -> {
+        Window window = manager.getPrimaryWindow();
+        window.addWindowCloseCallback(win -> stop());
+        window.addKeyCallback((win, key, scancode, action, mods) -> {
             if (key == KeyCode.ESCAPE && action == Action.PRESS) stop();
         });
 
         cameraInput = new FlyCameraInput(mainViewPort.getCamera());
-        cameraInput.bindWindow(manager.getPrimaryWindow());
+        cameraInput.bindWindow(window);
 
         var lineX = new Line(new Vector3f(0, 0, 0), new Vector3f(128, 0, 0), Color.RED);
         var lineY = new Line(new Vector3f(0, 0, 0), new Vector3f(0, 128, 0), Color.GREEN);
@@ -38,7 +40,9 @@ public class Hello3D extends Application3D {
         box2.setTranslation(.5f, .5f, .5f);
         mainScene.addNode(lineX, lineY, lineZ, box, box2);
 
-        manager.getPrimaryWindow().getCursor().disableCursor();
+        window.setSize(854, 480);
+        window.centerOnScreen();
+        window.getCursor().disableCursor();
         System.out.println("Hello World!");
     }
 
