@@ -100,7 +100,7 @@ public class GLFWWindow implements Window {
     }
 
     public void init() {
-        screen = GLFWContext.getPrimaryScreen();
+        screen = parent != null ? parent.getScreen() : GLFWContext.getPrimaryScreen();
         width *= getContentScaleX();
         height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
         initWindowHint();
@@ -165,6 +165,7 @@ public class GLFWWindow implements Window {
     private void relocate(int x, int y) {
         this.x = x;
         this.y = y;
+        this.screen = GLFWContext.getScreen(x, y);
         windowPosCallbacks.forEach(callback -> callback.invoke(this, x, y));
     }
 
@@ -645,6 +646,7 @@ public class GLFWWindow implements Window {
 
 //        Unused window callbacks
 //        glfwSetWindowRefreshCallback()
+//        glfwSetFramebufferSizeCallback()
 //        glfwSetWindowContentScaleCallback()
     }
     // ================= Window Callbacks End =================
