@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.Validate.notNull;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -466,7 +466,7 @@ public class GLFWWindow implements Window {
     // ================= Window Callbacks Start =================
     @Override
     public void addKeyCallback(KeyCallback callback) {
-        keyCallbacks.add(requireNonNull(callback));
+        keyCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -476,7 +476,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addMouseCallback(MouseCallback callback) {
-        mouseCallbacks.add(requireNonNull(callback));
+        mouseCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -486,7 +486,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addCursorCallback(CursorCallback callback) {
-        cursorCallbacks.add(requireNonNull(callback));
+        cursorCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -496,7 +496,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addScrollCallback(ScrollCallback callback) {
-        scrollCallbacks.add(requireNonNull(callback));
+        scrollCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -506,7 +506,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addCharModsCallback(CharModsCallback callback) {
-        charModsCallbacks.add(callback);
+        charModsCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -516,7 +516,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addWindowCloseCallback(WindowCloseCallback callback) {
-        windowCloseCallbacks.add(callback);
+        windowCloseCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -526,7 +526,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addWindowFocusCallback(WindowFocusCallback callback) {
-        windowFocusCallbacks.add(callback);
+        windowFocusCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -536,7 +536,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addWindowIconifyCallback(WindowIconifyCallback callback) {
-        windowIconifyCallbacks.add(callback);
+        windowIconifyCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -546,7 +546,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addWindowMaximizeCallback(WindowMaximizeCallback callback) {
-        windowMaximizeCallbacks.add(callback);
+        windowMaximizeCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -556,7 +556,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addCursorEnterCallback(CursorEnterCallback callback) {
-        cursorEnterCallbacks.add(callback);
+        cursorEnterCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -566,7 +566,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addWindowSizeCallback(WindowSizeCallback callback) {
-        windowSizeCallbacks.add(callback);
+        windowSizeCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -576,7 +576,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addWindowPosCallback(WindowPosCallback callback) {
-        windowPosCallbacks.add(callback);
+        windowPosCallbacks.add(notNull(callback));
     }
 
     @Override
@@ -586,7 +586,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void addDropCallback(DropCallback callback) {
-        dropCallbacks.add(callback);
+        dropCallbacks.add(notNull(callback));
     }
 
     @Override
