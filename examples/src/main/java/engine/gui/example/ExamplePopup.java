@@ -7,6 +7,7 @@ import engine.gui.layout.FlowPane;
 import engine.gui.layout.HBox;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Border;
+import engine.gui.misc.Bounds;
 import engine.gui.misc.Pos;
 import engine.gui.stage.Popup;
 import engine.gui.stage.Stage;
@@ -36,15 +37,16 @@ public class ExamplePopup extends GUIApplication {
 
             VBox vBox = new VBox();
             vBox.alignment().set(Pos.HPos.CENTER);
+            vBox.border().set(new Border(Color.WHITE));
             Text text = new Text("Hello Popup");
             Button hidePopup = new Button("Hide Popup");
             hidePopup.setOnAction(event1 -> popup.hide());
             vBox.getChildren().addAll(text, hidePopup);
 
+            Bounds boundsInScreen = showPopup.getBoundsInScreen();
             popup.setScene(new Scene(vBox));
-            popup.setAnchorLocation(Popup.AnchorLocation.NODE_LEFT_BOTTOM);
             popup.setAutoHide(true);
-            popup.show(showPopup, 0, 0);
+            popup.show(showPopup, boundsInScreen.getMinX(), boundsInScreen.getMaxY());
         });
 
         hBox.getChildren().addAll(showPopup);

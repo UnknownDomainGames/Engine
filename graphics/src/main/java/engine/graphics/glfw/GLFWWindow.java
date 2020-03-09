@@ -80,7 +80,7 @@ public class GLFWWindow implements Window {
     }
 
     public GLFWWindow(Window parent) {
-        this(parent, 854, 480);
+        this(parent, 1, 1);
     }
 
     public GLFWWindow(int width, int height) {

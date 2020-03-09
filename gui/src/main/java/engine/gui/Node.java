@@ -11,6 +11,7 @@ import engine.gui.input.ScrollEvent;
 import engine.gui.misc.Bounds;
 import engine.gui.misc.Point;
 import engine.gui.rendering.ComponentRenderer;
+import engine.gui.stage.Stage;
 import engine.input.MouseButton;
 
 import java.util.HashMap;
@@ -241,6 +242,22 @@ public abstract class Node implements EventTarget {
             node = node.getParent();
         }
         return new Bounds(minX, minY, getWidth(), getHeight());
+    }
+
+    public final Bounds getBoundsInScreen() {
+        float minX = 0, minY = 0;
+        Node node = this;
+        while (node != null) {
+            minX += node.getLayoutX();
+            minY += node.getLayoutY();
+            node = node.getParent();
+        }
+        Stage stage = getScene().getStage();
+        float scaleX = stage.getScaleX();
+        float scaleY = stage.getScaleY();
+        minX = minX * scaleX + stage.getX();
+        minY = minY * scaleY + stage.getY();
+        return new Bounds(minX, minY, getWidth() * scaleX, getHeight() * scaleY);
     }
 
     public void forceFocus() {
