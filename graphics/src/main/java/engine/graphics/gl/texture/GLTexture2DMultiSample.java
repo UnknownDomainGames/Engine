@@ -1,39 +1,36 @@
 package engine.graphics.gl.texture;
 
+import engine.graphics.gl.util.GLHelper;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.texture.TextureFormat;
 import org.lwjgl.opengl.GL32;
+import org.lwjgl.opengl.GL45;
 
-import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 
 public final class GLTexture2DMultiSample extends GLTexture implements Texture2D, GLFrameBuffer.Attachable {
 
-    private int samples;
-    private boolean fixedSampleLocations;
+    private final int width;
+    private final int height;
 
-    private int width;
-    private int height;
+    private final int samples;
+    private final boolean fixedSampleLocations;
 
     public static Builder builder() {
         return new Builder();
     }
 
-    private GLTexture2DMultiSample() {
-        super(glGenTextures());
-    }
-
-    @Override
-    public int getTarget() {
-        return GL_TEXTURE_2D_MULTISAMPLE;
-    }
-
-    public void glTexImage2DMultisample(int width, int height) {
+    private GLTexture2DMultiSample(GLTextureFormat format, int width, int height, int samples, boolean fixedSampleLocations) {
+        super(GL_TEXTURE_2D_MULTISAMPLE, format);
         this.width = width;
         this.height = height;
-//        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        GL32.glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format.internalFormat, width, height, fixedSampleLocations);
-//        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        this.samples = samples;
+        this.fixedSampleLocations = fixedSampleLocations;
+        if (GLHelper.isOpenGL45()) {
+            GL45.glTexStorage2DMultisample(id, this.samples, format.internalFormat, width, height, this.fixedSampleLocations);
+        } else {
+            GL32.glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, this.samples, format.internalFormat, width, height, this.fixedSampleLocations);
+        }
     }
 
     @Override
@@ -89,13 +86,7 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
         }
 
         public GLTexture2DMultiSample build(int width, int height) {
-            GLTexture2DMultiSample texture = new GLTexture2DMultiSample();
-            texture.format = format;
-            texture.samples = samples;
-            texture.fixedSampleLocations = fixedSampleLocations;
-            texture.bind();
-            texture.glTexImage2DMultisample(width, height);
-            return texture;
+            return new GLTexture2DMultiSample(format, width, height, samples, fixedSampleLocations);
         }
     }
 }

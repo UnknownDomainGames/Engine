@@ -1,6 +1,6 @@
 package engine.graphics.gl.texture;
 
-import engine.graphics.image.ImageLoader;
+import engine.graphics.gl.util.GLHelper;
 import engine.graphics.image.ReadOnlyImage;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture2D;
@@ -8,32 +8,22 @@ import engine.graphics.texture.TextureFormat;
 import engine.graphics.texture.WrapMode;
 import engine.util.Color;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL45;
+import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL30.glGenerateMipmap;
-
 public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBuffer.Attachable {
 
-    public static final GLTexture2D EMPTY = new GLTexture2D(0);
+    public static final GLTexture2D EMPTY = new GLTexture2D();
 
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
 
-    private boolean mipmap;
-
-    public static GLTexture2D of(ByteBuffer fileBuffer) throws IOException {
-        ReadOnlyImage image = ImageLoader.instance().loadImage(fileBuffer);
-        return of(image.getPixelBuffer(), image.getWidth(), image.getHeight());
-    }
-
-    public static GLTexture2D of(ReadOnlyImage image) {
-        return of(image.getPixelBuffer(), image.getWidth(), image.getHeight());
-    }
+    private final boolean mipmap;
 
     public static GLTexture2D of(ByteBuffer pixelBuffer, int width, int height) {
         if (!pixelBuffer.isDirect()) {
@@ -48,51 +38,18 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
         return new Builder();
     }
 
-    private GLTexture2D(int id) {
-        super(id);
-    }
-
-    @Override
-    public int getTarget() {
-        return GL_TEXTURE_2D;
-    }
-
-    public void upload(ReadOnlyImage image) {
-        upload(image.getPixelBuffer(), image.getWidth(), image.getHeight(), 0);
-    }
-
-    public void upload(ByteBuffer pixelBuffer, int width, int height) {
-        upload(pixelBuffer, width, height, 0);
-    }
-
-    public void upload(ByteBuffer pixelBuffer, int width, int height, int level) {
-        bind();
-        glTexImage2D(pixelBuffer, width, height, level);
-    }
-
-    public void glTexImage2D(ByteBuffer pixelBuffer, int width, int height, int level) {
+    private GLTexture2D(GLTextureFormat format, int width, int height, boolean mipmap) {
+        super(GL11.GL_TEXTURE_2D, format);
         this.width = width;
         this.height = height;
-//        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        GL11.glTexImage2D(GL_TEXTURE_2D, level, format.internalFormat, width, height, 0, format.format, format.type, pixelBuffer);
-        if (mipmap) glGenerateMipmap(GL_TEXTURE_2D);
-//        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+        this.mipmap = mipmap;
     }
 
-    public void upload(int offsetX, int offsetY, ReadOnlyImage image) {
-        upload(offsetX, offsetY, image, 0);
-    }
-
-    public void upload(int offsetX, int offsetY, ReadOnlyImage image, int level) {
-        bind();
-        glTexSubImage2D(offsetX, offsetY, image, level);
-    }
-
-    public void glTexSubImage2D(int offsetX, int offsetY, ReadOnlyImage image, int level) {
-//        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        GL11.glTexSubImage2D(GL_TEXTURE_2D, level, offsetX, offsetY, image.getWidth(), image.getHeight(), format.format, format.type, image.getPixelBuffer());
-        if (mipmap) glGenerateMipmap(GL_TEXTURE_2D);
-//        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+    private GLTexture2D() {
+        super(GL11.GL_TEXTURE_2D);
+        this.width = 0;
+        this.height = 0;
+        this.mipmap = false;
     }
 
     @Override
@@ -103,6 +60,36 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
     @Override
     public int getHeight() {
         return height;
+    }
+
+    public void upload(ByteBuffer pixelBuffer, int level) {
+        if (GLHelper.isOpenGL45()) {
+            GL45.glTextureStorage2D(id, 1, format.internalFormat, width, height);
+            if (pixelBuffer == null) return;
+            GL45.glTextureSubImage2D(id, level, 0, 0, width, height,
+                    format.format, format.type, pixelBuffer);
+            if (mipmap) GL45.glGenerateTextureMipmap(id);
+        } else {
+            bind();
+            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, level, format.internalFormat,
+                    width, height, 0, format.format, format.type, pixelBuffer);
+            if (mipmap) GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+        }
+    }
+
+    public void uploadSubImage(int offsetX, int offsetY, ReadOnlyImage image, int level) {
+        if (GLHelper.isOpenGL45()) {
+            GL45.glTextureSubImage2D(id, level,
+                    offsetX, offsetX, image.getWidth(), image.getHeight(),
+                    format.format, format.type, image.getPixelBuffer());
+            if (mipmap) GL45.glGenerateTextureMipmap(id);
+        } else {
+            bind();
+            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, level,
+                    offsetX, offsetY, image.getWidth(), image.getHeight(),
+                    format.format, format.type, image.getPixelBuffer());
+            if (mipmap) GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+        }
     }
 
     public static final class Builder implements Texture2D.Builder {
@@ -118,8 +105,9 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
         private Builder() {
             magFilter(FilterMode.NEAREST);
             minFilter(FilterMode.NEAREST);
-            wrapS(WrapMode.REPEAT);
-            wrapT(WrapMode.REPEAT);
+//            Following values has been set to default:
+//            wrapS(WrapMode.REPEAT);
+//            wrapT(WrapMode.REPEAT);
         }
 
         @Override
@@ -130,25 +118,25 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
 
         @Override
         public Builder magFilter(FilterMode mode) {
-            parameterMap.put(GL_TEXTURE_MAG_FILTER, toGLFilterMode(mode));
+            parameterMap.put(GL11.GL_TEXTURE_MAG_FILTER, toGLFilterMode(mode));
             return this;
         }
 
         @Override
         public Builder minFilter(FilterMode mode) {
-            parameterMap.put(GL_TEXTURE_MIN_FILTER, toGLFilterMode(mode));
+            parameterMap.put(GL11.GL_TEXTURE_MIN_FILTER, toGLFilterMode(mode));
             return this;
         }
 
         @Override
         public Builder wrapS(WrapMode mode) {
-            parameterMap.put(GL_TEXTURE_WRAP_S, toGLWrapMode(mode));
+            parameterMap.put(GL11.GL_TEXTURE_WRAP_S, toGLWrapMode(mode));
             return this;
         }
 
         @Override
         public Builder wrapT(WrapMode mode) {
-            parameterMap.put(GL_TEXTURE_WRAP_T, toGLWrapMode(mode));
+            parameterMap.put(GL11.GL_TEXTURE_WRAP_T, toGLWrapMode(mode));
             return this;
         }
 
@@ -181,16 +169,15 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
 
         @Override
         public GLTexture2D build(ByteBuffer pixelBuffer, int width, int height) {
-            GLTexture2D texture = new GLTexture2D(glGenTextures());
-            texture.format = format;
-            texture.mipmap = mipmap;
-            texture.bind();
-            parameterMap.forEach((key, value) -> glTexParameteri(GL_TEXTURE_2D, key, value));
+            GLTexture2D texture = new GLTexture2D(format, width, height, mipmap);
+            parameterMap.forEach(texture::setTextureParameteri);
             if (borderColor != null) {
-                glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR,
-                        new float[]{borderColor.getRed(), borderColor.getGreen(), borderColor.getBlue(), borderColor.getAlpha()});
+                try (MemoryStack stack = MemoryStack.stackPush()) {
+                    texture.setTextureParameterfv(GL11.GL_TEXTURE_BORDER_COLOR,
+                            borderColor.get(stack.mallocFloat(4)));
+                }
             }
-            texture.glTexImage2D(pixelBuffer, width, height, 0);
+            texture.upload(pixelBuffer, 0);
             return texture;
         }
     }

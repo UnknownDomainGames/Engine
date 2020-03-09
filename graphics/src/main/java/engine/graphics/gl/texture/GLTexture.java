@@ -1,11 +1,16 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
+import engine.graphics.gl.util.GLHelper;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture;
 import engine.graphics.texture.TextureFormat;
 import engine.graphics.texture.WrapMode;
 import engine.graphics.util.Cleaner;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL45;
+
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
@@ -14,10 +19,12 @@ import static org.lwjgl.opengl.GL14.GL_MIRRORED_REPEAT;
 
 public abstract class GLTexture implements Texture {
 
+    protected final int target;
+
     protected int id;
     protected Cleaner.Disposable disposable;
 
-    protected GLTextureFormat format;
+    protected final GLTextureFormat format;
 
     public static int toGLFilterMode(FilterMode filterMode) {
         switch (filterMode) {
@@ -55,12 +62,22 @@ public abstract class GLTexture implements Texture {
         }
     }
 
-    protected GLTexture(int id) {
-        this.id = id;
-        disposable = GLCleaner.registerTexture(this, id);
+    public GLTexture(int target, GLTextureFormat format) {
+        this.target = target;
+        this.id = GLHelper.isOpenGL45() ? GL45.glCreateTextures(target) : GL11.glGenTextures();
+        this.format = format;
+        this.disposable = GLCleaner.registerTexture(this, id);
     }
 
-    public abstract int getTarget();
+    public GLTexture(int target) {
+        this.target = target;
+        this.id = 0;
+        this.format = GLTextureFormat.RGB8;
+    }
+
+    public int getTarget() {
+        return target;
+    }
 
     @Override
     public int getId() {
@@ -82,7 +99,7 @@ public abstract class GLTexture implements Texture {
     }
 
     public void bind() {
-        glBindTexture(getTarget(), id);
+        glBindTexture(target, id);
     }
 
     @Override
@@ -96,5 +113,23 @@ public abstract class GLTexture implements Texture {
     @Override
     public boolean isDisposed() {
         return id == 0;
+    }
+
+    public void setTextureParameteri(int pname, int param) {
+        if (GLHelper.isOpenGL45()) {
+            GL45.glTextureParameteri(id, pname, param);
+        } else {
+            GL11.glBindTexture(target, id);
+            GL11.glTexParameteri(target, pname, param);
+        }
+    }
+
+    public void setTextureParameterfv(int pname, FloatBuffer params) {
+        if (GLHelper.isOpenGL45()) {
+            GL45.glTextureParameterfv(id, pname, params);
+        } else {
+            GL11.glBindTexture(target, id);
+            GL11.glTexParameterfv(target, pname, params);
+        }
     }
 }
