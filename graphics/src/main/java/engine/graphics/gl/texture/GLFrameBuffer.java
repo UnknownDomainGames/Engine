@@ -181,10 +181,6 @@ public final class GLFrameBuffer implements FrameBuffer {
             return attach(attachment, builder::build);
         }
 
-        public Builder attach(int attachment, GLRenderBuffer.Builder builder) {
-            return attach(attachment, builder::build);
-        }
-
         public Builder attach(int attachment, AttachableFactory factory) {
             this.attachableFactories.put(attachment, factory);
             return this;
