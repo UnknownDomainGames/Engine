@@ -26,7 +26,7 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
         this.height = height;
         this.samples = samples;
         this.fixedSampleLocations = fixedSampleLocations;
-        if (GLHelper.isOpenGL45()) {
+        if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glTexStorage2DMultisample(id, this.samples, format.internalFormat, width, height, this.fixedSampleLocations);
         } else {
             GL32.glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, this.samples, format.internalFormat, width, height, this.fixedSampleLocations);

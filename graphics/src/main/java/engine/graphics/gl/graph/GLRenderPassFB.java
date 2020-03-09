@@ -107,7 +107,7 @@ public final class GLRenderPassFB implements FrameBuffer {
     }
 
     public void beginRenderPass() {
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
+        bind();
 
         RenderBufferSize size = null;
         if (colorOutputs.length > 0) {

@@ -21,7 +21,7 @@ public final class GLSampler implements Sampler {
     private Cleaner.Disposable disposable;
 
     public GLSampler() {
-        if (GLHelper.isOpenGL45()) {
+        if (GLHelper.isSupportARBDirectStateAccess()) {
             id = GL45.glCreateSamplers();
         } else {
             id = GL33.glGenSamplers();

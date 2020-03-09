@@ -64,7 +64,7 @@ public abstract class GLTexture implements Texture {
 
     public GLTexture(int target, GLTextureFormat format) {
         this.target = target;
-        this.id = GLHelper.isOpenGL45() ? GL45.glCreateTextures(target) : GL11.glGenTextures();
+        this.id = GLHelper.isSupportARBDirectStateAccess() ? GL45.glCreateTextures(target) : GL11.glGenTextures();
         this.format = format;
         this.disposable = GLCleaner.registerTexture(this, id);
     }
@@ -116,7 +116,7 @@ public abstract class GLTexture implements Texture {
     }
 
     public void setTextureParameteri(int pname, int param) {
-        if (GLHelper.isOpenGL45()) {
+        if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glTextureParameteri(id, pname, param);
         } else {
             GL11.glBindTexture(target, id);
@@ -125,7 +125,7 @@ public abstract class GLTexture implements Texture {
     }
 
     public void setTextureParameterfv(int pname, FloatBuffer params) {
-        if (GLHelper.isOpenGL45()) {
+        if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glTextureParameterfv(id, pname, params);
         } else {
             GL11.glBindTexture(target, id);

@@ -63,7 +63,7 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
     }
 
     public void upload(ByteBuffer pixelBuffer, int level) {
-        if (GLHelper.isOpenGL45()) {
+        if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glTextureStorage2D(id, 1, format.internalFormat, width, height);
             if (pixelBuffer == null) return;
             GL45.glTextureSubImage2D(id, level, 0, 0, width, height,
@@ -78,7 +78,7 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
     }
 
     public void uploadSubImage(int offsetX, int offsetY, ReadOnlyImage image, int level) {
-        if (GLHelper.isOpenGL45()) {
+        if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glTextureSubImage2D(id, level,
                     offsetX, offsetX, image.getWidth(), image.getHeight(),
                     format.format, format.type, image.getPixelBuffer());
