@@ -64,7 +64,7 @@ public final class GLVertexBuffer {
     public void uploadData(ByteBuffer buffer) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferData(id, buffer, usage.gl);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferDataEXT(id, buffer, usage.gl);
         } else {
             bind();
@@ -75,7 +75,7 @@ public final class GLVertexBuffer {
     public void uploadData(ShortBuffer buffer) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferData(id, buffer, usage.gl);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferDataEXT(id, buffer, usage.gl);
         } else {
             bind();
@@ -86,7 +86,7 @@ public final class GLVertexBuffer {
     public void uploadData(IntBuffer buffer) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferData(id, buffer, usage.gl);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferDataEXT(id, buffer, usage.gl);
         } else {
             bind();
@@ -108,7 +108,7 @@ public final class GLVertexBuffer {
     public void uploadData(FloatBuffer buffer) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferData(id, buffer, usage.gl);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferDataEXT(id, buffer, usage.gl);
         } else {
             bind();
@@ -119,7 +119,7 @@ public final class GLVertexBuffer {
     public void uploadData(DoubleBuffer buffer) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferData(id, buffer, usage.gl);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferDataEXT(id, buffer, usage.gl);
         } else {
             bind();
@@ -130,7 +130,7 @@ public final class GLVertexBuffer {
     public void uploadData(short[] data) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferData(id, data, usage.gl);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferDataEXT(id, data, usage.gl);
         } else {
             bind();
@@ -141,7 +141,7 @@ public final class GLVertexBuffer {
     public void uploadData(int[] data) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferData(id, data, usage.gl);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferDataEXT(id, data, usage.gl);
         } else {
             bind();
@@ -163,7 +163,7 @@ public final class GLVertexBuffer {
     public void uploadData(float[] data) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferData(id, data, usage.gl);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferDataEXT(id, data, usage.gl);
         } else {
             bind();
@@ -174,7 +174,7 @@ public final class GLVertexBuffer {
     public void uploadData(double[] data) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferData(id, data, usage.gl);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferDataEXT(id, data, usage.gl);
         } else {
             bind();
@@ -185,7 +185,7 @@ public final class GLVertexBuffer {
     public void uploadSubData(ByteBuffer buffer, long offset) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferSubData(id, offset, buffer);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, buffer);
         } else {
             bind();
@@ -196,7 +196,7 @@ public final class GLVertexBuffer {
     public void uploadSubData(ShortBuffer buffer, long offset) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferSubData(id, offset, buffer);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, buffer);
         } else {
             bind();
@@ -207,7 +207,7 @@ public final class GLVertexBuffer {
     public void uploadSubData(IntBuffer buffer, long offset) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferSubData(id, offset, buffer);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, buffer);
         } else {
             bind();
@@ -229,7 +229,7 @@ public final class GLVertexBuffer {
     public void uploadSubData(FloatBuffer buffer, long offset) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferSubData(id, offset, buffer);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, buffer);
         } else {
             bind();
@@ -240,7 +240,7 @@ public final class GLVertexBuffer {
     public void uploadSubData(DoubleBuffer buffer, long offset) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferSubData(id, offset, buffer);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, buffer);
         } else {
             bind();
@@ -251,7 +251,7 @@ public final class GLVertexBuffer {
     public void uploadSubData(short[] data, long offset) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferSubData(id, offset, data);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, data);
         } else {
             bind();
@@ -262,7 +262,7 @@ public final class GLVertexBuffer {
     public void uploadSubData(int[] data, long offset) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferSubData(id, offset, data);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, data);
         } else {
             bind();
@@ -284,7 +284,7 @@ public final class GLVertexBuffer {
     public void uploadSubData(float[] data, long offset) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferSubData(id, offset, data);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, data);
         } else {
             bind();
@@ -295,7 +295,7 @@ public final class GLVertexBuffer {
     public void uploadSubData(double[] data, long offset) {
         if (GLHelper.isOpenGL45()) {
             GL45.glNamedBufferSubData(id, offset, data);
-        } else if (GLHelper.getCapabilities().GL_EXT_direct_state_access) {
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
             EXTDirectStateAccess.glNamedBufferSubDataEXT(id, offset, data);
         } else {
             bind();

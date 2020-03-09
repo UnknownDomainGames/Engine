@@ -29,6 +29,14 @@ public final class GLHelper {
         return capabilities.OpenGL45;
     }
 
+    public static boolean isSupportARBDirectStateAccess() {
+        return capabilities.GL_ARB_direct_state_access;
+    }
+
+    public static boolean isSupportEXTDirectStateAccess() {
+        return capabilities.GL_EXT_direct_state_access;
+    }
+
     public static String getVendor() {
         return GL11.glGetString(GL11.GL_VENDOR);
     }
@@ -116,8 +124,12 @@ public final class GLHelper {
         }
     }
 
-    public static String getFriendlyErrorCode(int errorCode) {
-        switch (errorCode) {
+    public static String getErrorMessage() {
+        return getFriendlyErrorMessage(GL11.glGetError());
+    }
+
+    public static String getFriendlyErrorMessage(int error) {
+        switch (error) {
             case GL_NO_ERROR:
                 return "NO_ERROR";
             case GL_INVALID_ENUM:
