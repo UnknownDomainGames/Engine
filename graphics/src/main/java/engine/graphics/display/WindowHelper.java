@@ -10,6 +10,8 @@ public interface WindowHelper {
 
     Screen getScreen(String name);
 
+    Screen getScreen(double x, double y);
+
     Window createWindow();
 
     Window createWindow(Window parent);

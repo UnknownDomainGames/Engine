@@ -3,6 +3,7 @@ package engine.graphics.glfw;
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import engine.graphics.display.Screen;
+import engine.graphics.display.VideoMode;
 import engine.graphics.display.Window;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
@@ -37,7 +38,7 @@ public final class GLFWContext {
         return primaryScreen;
     }
 
-    public static Collection<Screen> getNameToScreen() {
+    public static Collection<Screen> getScreens() {
         return pointerToScreen.values();
     }
 
@@ -47,6 +48,20 @@ public final class GLFWContext {
 
     public static Screen getScreen(String name) {
         return nameToScreen.get(name);
+    }
+
+    public static Screen getScreen(double x, double y) {
+        for (Screen screen : getScreens()) {
+            VideoMode videoMode = screen.getVideoMode();
+            int screenMinX = screen.getPosX();
+            int screenMinY = screen.getPosY();
+            int screenMaxX = screenMinX + videoMode.getWidth();
+            int screenMaxY = screenMinY + videoMode.getHeight();
+            if (x >= screenMinX && x < screenMaxX && y >= screenMinY && y < screenMaxY) {
+                return screen;
+            }
+        }
+        return null;
     }
 
     public static synchronized void initialize() {
