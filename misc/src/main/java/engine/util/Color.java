@@ -1,5 +1,7 @@
 package engine.util;
 
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.Objects;
 
 public class Color {
@@ -98,6 +100,39 @@ public class Color {
 
     public int getAlphaAsInt() {
         return (int) (alpha * 255);
+    }
+
+    public void get(FloatBuffer dst) {
+        get(dst.position(), dst);
+    }
+
+    public void get(int index, FloatBuffer dst) {
+        dst.put(index, red);
+        dst.put(index + 1, green);
+        dst.put(index + 2, blue);
+        dst.put(index + 3, alpha);
+    }
+
+    public void get(ByteBuffer dst) {
+        get(dst.position(), dst);
+    }
+
+    public void get(int index, ByteBuffer dst) {
+        dst.putFloat(index, red);
+        dst.putFloat(index + 4, green);
+        dst.putFloat(index + 8, blue);
+        dst.putFloat(index + 12, alpha);
+    }
+
+    public void get(float[] dst) {
+        get(0, dst);
+    }
+
+    public void get(int index, float[] dst) {
+        dst[index] = red;
+        dst[index + 1] = green;
+        dst[index + 2] = blue;
+        dst[index + 3] = alpha;
     }
 
     public int toRGB() {
