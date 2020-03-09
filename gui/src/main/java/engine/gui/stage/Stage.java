@@ -3,6 +3,7 @@ package engine.gui.stage;
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.*;
+import engine.graphics.display.Screen;
 import engine.graphics.display.Window;
 import engine.graphics.display.callback.*;
 import engine.graphics.image.ReadOnlyImage;
@@ -19,6 +20,8 @@ public class Stage {
     private static final ObservableList<Stage> unmodifiableStages = ObservableCollections.unmodifiableObservableList(stages);
 
     private Stage owner;
+
+    private MutableObjectValue<Screen> screen;
 
     private MutableIntValue x;
     private MutableIntValue y;
@@ -120,6 +123,21 @@ public class Stage {
             throw new IllegalStateException("Cannot set owner for the primary stage");
         }
         this.owner = owner;
+    }
+
+    private MutableObjectValue<Screen> screenImpl() {
+        if (screen == null) {
+            screen = new SimpleMutableObjectValue<>(Screen.getPrimary());
+        }
+        return screen;
+    }
+
+    public final ObservableObjectValue<Screen> screen() {
+        return screenImpl().toUnmodifiable();
+    }
+
+    public final Screen getScreen() {
+        return screen == null ? Screen.getPrimary() : screen.get();
     }
 
     private MutableIntValue xImpl() {
@@ -487,6 +505,7 @@ public class Stage {
             if (posCallback == null) posCallback = (window, x, y) -> {
                 xImpl().set(x);
                 yImpl().set(y);
+                screenImpl().set(window.getScreen());
             };
             window.addWindowPosCallback(posCallback);
 
@@ -515,7 +534,7 @@ public class Stage {
                 sizeToScene = false;
                 sizeToScene();
             } else {
-                window.setSize(getWidth(), getHeight());
+                setSize(getWidth(), getHeight());
             }
 
             if (x == null && y == null) {
