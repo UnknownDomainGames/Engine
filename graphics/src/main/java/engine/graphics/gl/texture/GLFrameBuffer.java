@@ -7,13 +7,15 @@ import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL45;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static engine.graphics.gl.texture.GLTexture.toGLFilterMode;
 import static engine.graphics.gl.util.GLHelper.getMask;
-import static org.lwjgl.opengl.GL30.*;
+import static engine.graphics.gl.util.GLHelper.isSupportARBDirectStateAccess;
 
 public final class GLFrameBuffer implements FrameBuffer {
 
@@ -44,7 +46,11 @@ public final class GLFrameBuffer implements FrameBuffer {
     private GLFrameBuffer(Map<Integer, AttachableFactory> attachmentFactories, int width, int height) {
         this.attachmentFactories = attachmentFactories;
         this.attachments = new HashMap<>();
-        this.id = glGenFramebuffers();
+        if (isSupportARBDirectStateAccess()) {
+            this.id = GL45.glCreateFramebuffers();
+        } else {
+            this.id = GL30.glGenFramebuffers();
+        }
         this.disposable = GLCleaner.registerFrameBuffer(this, id);
         resize(width, height);
     }
@@ -76,13 +82,13 @@ public final class GLFrameBuffer implements FrameBuffer {
 
         if (id == 0) return;
 
-        bind();
+        if (!isSupportARBDirectStateAccess()) bind();
         attachmentFactories.forEach((attachment, attachableFactory) -> {
             Attachable attachable = attachableFactory.create(width, height);
-            if (attachable.getTarget() == GL_RENDERBUFFER) {
-                glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, attachable.getId());
+            if (isSupportARBDirectStateAccess()) {
+                GL45.glNamedFramebufferTexture(id, attachment, attachable.getId(), 0);
             } else {
-                glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, attachable.getTarget(), attachable.getId(), 0);
+                GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, attachment, attachable.getTarget(), attachable.getId(), 0);
             }
             Attachable oldAttachable = attachments.put(attachment, attachable);
             if (oldAttachable != null) oldAttachable.dispose();
@@ -91,17 +97,17 @@ public final class GLFrameBuffer implements FrameBuffer {
 
     @Override
     public void bind() {
-        glBindFramebuffer(GL_FRAMEBUFFER, id);
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
     }
 
     @Override
     public void bindReadOnly() {
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, id);
+        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, id);
     }
 
     @Override
     public void bindDrawOnly() {
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id);
+        GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, id);
     }
 
     @Override
@@ -123,10 +129,15 @@ public final class GLFrameBuffer implements FrameBuffer {
     }
 
     public static void copy(FrameBuffer src, Vector4ic srcRect, FrameBuffer dest, Vector4ic destRect, int mask, int filter) {
-        src.bindReadOnly();
-        dest.bindDrawOnly();
-        glBlitFramebuffer(srcRect.x(), srcRect.y(), srcRect.z(), srcRect.w(),
-                destRect.x(), destRect.y(), destRect.z(), destRect.w(), mask, filter);
+        if (isSupportARBDirectStateAccess()) {
+            GL45.glBlitNamedFramebuffer(src.getId(), dest.getId(), srcRect.x(), srcRect.y(), srcRect.z(), srcRect.w(),
+                    destRect.x(), destRect.y(), destRect.z(), destRect.w(), mask, filter);
+        } else {
+            src.bindReadOnly();
+            dest.bindDrawOnly();
+            GL30.glBlitFramebuffer(srcRect.x(), srcRect.y(), srcRect.z(), srcRect.w(),
+                    destRect.x(), destRect.y(), destRect.z(), destRect.w(), mask, filter);
+        }
     }
 
     @Override
