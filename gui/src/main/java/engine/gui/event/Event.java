@@ -28,14 +28,6 @@ public abstract class Event implements Cloneable {
         consumed = true;
     }
 
-    public static Event fireEvent(Event event, EventTarget eventTarget) {
-        return EventUtils.fireEvent(event, eventTarget);
-    }
-
-    public Event fireEvent(EventTarget eventTargets) {
-        return EventUtils.fireEvent(this, eventTargets);
-    }
-
     public Event fireEvent() {
         return EventUtils.fireEvent(this, target);
     }
