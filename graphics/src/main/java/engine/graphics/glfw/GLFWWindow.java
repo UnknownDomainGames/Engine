@@ -160,7 +160,6 @@ public class GLFWWindow implements Window {
     @Override
     public void setPos(int x, int y) {
         glfwSetWindowPos(pointer, x, y);
-        relocate(x, y);
     }
 
     private void relocate(int x, int y) {
@@ -209,7 +208,6 @@ public class GLFWWindow implements Window {
     @Override
     public void setSize(int width, int height) {
         glfwSetWindowSize(pointer, width, height);
-        resize(width, height);
     }
 
     protected void notifyResized() {
