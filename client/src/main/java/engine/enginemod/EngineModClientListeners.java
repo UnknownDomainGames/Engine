@@ -7,6 +7,8 @@ import engine.block.component.ActivateBehavior;
 import engine.block.component.ClickBehavior;
 import engine.client.event.rendering.RegisterEntityRendererEvent;
 import engine.client.game.GameClient;
+import engine.client.hud.HUDControl;
+import engine.client.hud.HUDManager;
 import engine.client.input.controller.MotionType;
 import engine.client.input.keybinding.Key;
 import engine.client.input.keybinding.KeyBinding;
@@ -31,7 +33,6 @@ import engine.event.item.ItemInteractEvent;
 import engine.event.item.cause.ItemInteractCause;
 import engine.event.mod.ModLifecycleEvent;
 import engine.event.mod.ModRegistrationEvent;
-import engine.graphics.RenderManager;
 import engine.graphics.block.BlockDisplay;
 import engine.graphics.camera.Camera;
 import engine.graphics.entity.EntityItemRenderer;
@@ -45,6 +46,7 @@ import engine.item.component.ClickEntityBehavior;
 import engine.player.Player;
 import engine.registry.Registries;
 import engine.registry.impl.IdAutoIncreaseRegistry;
+import engine.registry.impl.NonIdRegistry;
 import engine.world.WorldProvider;
 import engine.world.hit.BlockHitResult;
 import engine.world.hit.EntityHitResult;
@@ -52,6 +54,9 @@ import engine.world.hit.HitResult;
 import engine.world.provider.FlatWorldProvider;
 
 public final class EngineModClientListeners {
+
+    public static final HUDDebug HUD_DEBUG = new HUDDebug();
+    public static final HUDHandingItem HUD_HANDING_ITEM = new HUDHandingItem();
 
     @Listener
     public static void onPreInit(ModLifecycleEvent.PreInitialization event) {
@@ -61,6 +66,7 @@ public final class EngineModClientListeners {
     @Listener
     public static void constructRegistry(ModRegistrationEvent.Construction e) {
         e.addRegistry(KeyBinding.class, () -> new IdAutoIncreaseRegistry<>(KeyBinding.class));
+        e.addRegistry(HUDControl.class, () -> new NonIdRegistry<>(HUDControl.class));
     }
 
     @Listener
@@ -235,19 +241,23 @@ public final class EngineModClientListeners {
                 .key(Key.KEY_F2)
                 .startHandler(engineClient -> GLHelper.takeScreenshot(engineClient.getRunPath().resolve("screenshot")))
                 .build());
-        var hudManager = Platform.getEngineClient().getRenderManager().getHUDManager();
-        var hudGameDebug = new HUDDebug();
-        hudManager.add(hudGameDebug);
         event.register(KeyBinding.builder()
                 .name("game.debug_display_switch")
                 .key(Key.KEY_F3)
-                .startHandler(gameClient -> hudGameDebug.setVisible(!hudGameDebug.isVisible()))
+                .startHandler(gameClient -> HUD_DEBUG.setVisible(!HUD_DEBUG.isVisible()))
                 .build());
+        HUDManager hudManager = Platform.getEngineClient().getRenderManager().getHUDManager();
         event.register(KeyBinding.builder()
                 .name("game.hud_display_switch")
                 .key(Key.KEY_F1)
                 .startHandler(gameClient -> hudManager.toggleVisible())
                 .build());
+    }
+
+
+    @Listener
+    public static void registerHUDControls(ModRegistrationEvent.Register<HUDControl> event) {
+        event.registerAll(HUD_DEBUG, HUD_HANDING_ITEM);
     }
 
     @Listener
@@ -266,8 +276,6 @@ public final class EngineModClientListeners {
 
     @Listener
     public static void onGameReady(GameStartEvent.Post event) {
-        HUDHandingItem hudHandingItem = new HUDHandingItem();
-        RenderManager.instance().getHUDManager().add(hudHandingItem);
-        hudHandingItem.setVisible(true);
+        HUD_HANDING_ITEM.setVisible(true);
     }
 }

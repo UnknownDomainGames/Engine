@@ -41,7 +41,7 @@ public final class HUDDebug extends HUDControl {
     private final Text hitPos;
 
     public HUDDebug() {
-        super("GameDebug");
+        name("debug");
         AnchorPane.setTopAnchor(this, 0f);
         AnchorPane.setLeftAnchor(this, 0f);
 

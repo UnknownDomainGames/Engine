@@ -5,21 +5,46 @@ import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
 import engine.gui.control.Control;
+import engine.registry.Name;
+import engine.registry.Registrable;
 
-public abstract class HUDControl extends Control {
+public abstract class HUDControl extends Control implements Registrable<HUDControl> {
 
-    private final String name;
-
+    private Name name;
     private MutableObjectValue<Node> content;
 
-    public HUDControl(String name) {
-        this.name = name;
+    public HUDControl() {
         setVisible(false);
         visible().addChangeListener((observable, oldValue, newValue) -> onVisibleChanged(newValue));
     }
 
-    public String getName() {
+    @Override
+    public Class<HUDControl> getEntryType() {
+        return HUDControl.class;
+    }
+
+    @Override
+    public HUDControl name(String name) {
+        if (this.name != null) throw new Error("Duplicated register " + name);
+        this.name = Name.fromString(name);
+        return this;
+    }
+
+    @Override
+    public HUDControl name(Name name) {
+        if (this.name != null) throw new Error("Duplicated register " + name);
+        this.name = name;
+        return this;
+    }
+
+    @Override
+    public Name getName() {
         return name;
+    }
+
+    @Override
+    public int getId() {
+        return 0;
     }
 
     public MutableObjectValue<Node> content() {

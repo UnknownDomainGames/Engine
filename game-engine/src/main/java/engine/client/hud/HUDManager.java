@@ -1,6 +1,6 @@
 package engine.client.hud;
 
-import java.util.Map;
+import java.util.Collection;
 
 public interface HUDManager {
     /**
@@ -12,11 +12,7 @@ public interface HUDManager {
 
     boolean isVisible();
 
-    void add(HUDControl control);
+    HUDControl getControl(String name);
 
-    void remove(String name);
-
-    void remove(HUDControl control);
-
-    Map<String, HUDControl> getControls();
+    Collection<HUDControl> getControls();
 }

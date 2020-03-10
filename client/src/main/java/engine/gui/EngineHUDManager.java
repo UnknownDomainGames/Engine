@@ -1,22 +1,29 @@
 package engine.gui;
 
+import engine.Platform;
 import engine.client.hud.HUDControl;
 import engine.client.hud.HUDManager;
+import engine.event.Listener;
+import engine.event.game.GameStartEvent;
+import engine.event.game.GameTerminationEvent;
 import engine.gui.layout.AnchorPane;
 import engine.gui.stage.Stage;
+import engine.registry.Registries;
+import engine.registry.Registry;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
 
 public final class EngineHUDManager implements HUDManager {
 
     private final AnchorPane hudPane;
 
-    private Map<String, HUDControl> hudControls = new HashMap<>();
+    private Registry<HUDControl> hudControls;
 
     public EngineHUDManager(Stage stage) {
         this.hudPane = new AnchorPane();
         stage.setScene(new Scene(hudPane));
+        Platform.getEngine().getEventBus().register(this);
     }
 
     @Override
@@ -27,7 +34,7 @@ public final class EngineHUDManager implements HUDManager {
     @Override
     public void setVisible(boolean visible) {
         hudPane.setVisible(visible);
-        hudControls.values().stream().filter(Node::isVisible).forEach(hudControl ->
+        getControls().stream().filter(Node::isVisible).forEach(hudControl ->
                 hudControl.onVisibleChanged(visible));
     }
 
@@ -37,28 +44,26 @@ public final class EngineHUDManager implements HUDManager {
     }
 
     @Override
-    public void add(HUDControl control) {
-        if (hudControls.containsKey(control.getName())) {
-            throw new IllegalStateException("HUD has exists");
-        }
-        hudControls.put(control.getName(), control);
-        hudPane.getChildren().add(control);
+    public HUDControl getControl(String name) {
+        return hudControls == null ? null : hudControls.getValue(name);
     }
 
     @Override
-    public void remove(String name) {
-        remove(hudControls.get(name));
+    public Collection<HUDControl> getControls() {
+        return hudControls == null ? List.of() : hudControls.getValues();
     }
 
-    @Override
-    public void remove(HUDControl control) {
-        if (control == null) return;
-        hudControls.remove(control.getName());
-        hudPane.getChildren().remove(control);
+    @Listener
+    public void onGameReady(GameStartEvent.Post event) {
+        Registries.getRegistryManager().getRegistry(HUDControl.class).ifPresent(registry -> {
+            hudControls = registry;
+            hudPane.getChildren().addAll(registry.getValues());
+        });
     }
 
-    @Override
-    public Map<String, HUDControl> getControls() {
-        return hudControls;
+    @Listener
+    public void onGameMarkedStop(GameTerminationEvent.Marked event) {
+        hudPane.getChildren().clear();
+        hudControls = null;
     }
 }
