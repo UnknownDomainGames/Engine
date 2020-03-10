@@ -3,7 +3,7 @@ dependencies {
 
     compile 'org.joml:joml:1.9.20'
 
-    compile 'com.github.Mouse0w0:Observable:1.2.3'
+    compile 'com.github.Mouse0w0:Observable:1.2.4'
 
     compile "org.lwjgl:lwjgl:$lwjglVersion"
     implementation "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
