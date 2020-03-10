@@ -17,15 +17,16 @@ import engine.graphics.model.BakedModel;
 import engine.graphics.model.voxel.ModelManager;
 import engine.graphics.texture.TextureAtlas;
 import engine.graphics.texture.TextureAtlasImpl;
-import engine.graphics.voxel.chunk.ChunkBaker;
 import engine.graphics.voxel.chunk.ChunkRenderer;
 import engine.world.World;
 
-public final class VoxelRenderHelper {
+public final class VoxelGraphicsHelper {
 
     private static BlockRenderManagerImpl blockRenderManager;
     private static ItemRenderManagerImpl itemRenderManager;
     private static TextureAtlasImpl textureAtlas;
+
+    private static ChunkRenderer renderer;
 
     public static void initialize(RenderManager manager) {
         textureAtlas = new TextureAtlasImpl();
@@ -49,9 +50,7 @@ public final class VoxelRenderHelper {
                 .extensionName(".json")
                 .build());
 
-        ChunkBaker.start();
-
-        manager.getEngine().getEventBus().register(VoxelRenderHelper.class);
+        manager.getEngine().getEventBus().register(VoxelGraphicsHelper.class);
     }
 
     public static TextureAtlas getVoxelTextureAtlas() {
@@ -62,19 +61,19 @@ public final class VoxelRenderHelper {
     public static void onEngineReady(EngineEvent.Ready event) {
         blockRenderManager.init();
         itemRenderManager.init();
+        AssetManager.instance().reload();
     }
-
-    @Listener
-    public static void onGameMarkedTermination(GameTerminationEvent.Marked event) {
-        ChunkBaker.stop();
-    }
-
-    private static ChunkRenderer renderer;
 
     @Listener(order = Order.LAST)
     public static void onControlEntity(PlayerControlEntityEvent.Post event) {
         World world = event.getNewEntity().getWorld();
+        if (renderer != null && renderer.isEqualsWorld(world)) return;
         renderer = new ChunkRenderer(RenderManager.instance(), world);
-        AssetManager.instance().reload();
+    }
+
+    @Listener
+    public static void onGameMarkedTermination(GameTerminationEvent.Marked event) {
+        renderer.dispose();
+        renderer = null;
     }
 }

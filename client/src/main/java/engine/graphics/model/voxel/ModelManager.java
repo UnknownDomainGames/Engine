@@ -9,7 +9,7 @@ import engine.graphics.model.BakedModel;
 import engine.graphics.model.voxel.block.BlockModelLoader;
 import engine.graphics.model.voxel.item.ItemGenerateModelLoader;
 import engine.graphics.texture.TextureAtlas;
-import engine.graphics.voxel.VoxelRenderHelper;
+import engine.graphics.voxel.VoxelGraphicsHelper;
 import engine.util.JsonUtils;
 
 import javax.annotation.Nonnull;
@@ -36,7 +36,7 @@ public class ModelManager implements AssetProvider<BakedModel> {
     public void init(AssetManager manager, AssetType<BakedModel> type) {
         this.source = manager.getSourceManager();
         this.type = type;
-        this.textureAtlas = VoxelRenderHelper.getVoxelTextureAtlas();
+        this.textureAtlas = VoxelGraphicsHelper.getVoxelTextureAtlas();
         manager.getReloadManager().addListener(
                 AssetReloadListener.builder().name("ReloadVoxelModel").before("VoxelTexture").runnable(this::reloadModels).build());
         manager.getReloadManager().addListener(

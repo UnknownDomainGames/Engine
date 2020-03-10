@@ -4,29 +4,25 @@ import engine.graphics.Geometry;
 import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
-import engine.graphics.voxel.VoxelRenderHelper;
+import engine.graphics.voxel.VoxelGraphicsHelper;
 import engine.world.chunk.Chunk;
+import org.joml.Vector3fc;
+import org.joml.Vector3ic;
 
 public final class DrawableChunk extends Geometry {
+
+    private final ChunkRenderer renderer;
 
     private Chunk chunk;
     private SingleBufMesh mesh;
 
     private volatile boolean dirty;
-    private volatile boolean drawing;
+    private boolean drawing;
 
-    public DrawableChunk() {
-        setTexture(VoxelRenderHelper.getVoxelTextureAtlas().getTexture());
+    public DrawableChunk(ChunkRenderer renderer) {
+        this.renderer = renderer;
+        setTexture(VoxelGraphicsHelper.getVoxelTextureAtlas().getTexture());
         setVisible(false);
-    }
-
-    public void uploadData(VertexDataBuf buf) {
-        if (mesh == null) {
-            mesh = SingleBufMesh.builder().setDynamic().drawMode(DrawMode.TRIANGLES).build();
-            setMesh(mesh);
-            setVisible(true);
-        }
-        mesh.uploadData(buf);
     }
 
     public Chunk getChunk() {
@@ -47,13 +43,30 @@ public final class DrawableChunk extends Geometry {
 
     public void markDirty() {
         dirty = true;
+        if (!drawing) executeBake();
     }
 
-    public boolean isDrawing() {
-        return drawing;
+    public void executeBake() {
+        drawing = true;
+        ChunkBaker.execute(new ChunkBaker.Task(this, distanceSqChunkToCamera()));
     }
 
-    public void setDrawing(boolean drawing) {
-        this.drawing = drawing;
+    private double distanceSqChunkToCamera() {
+        Vector3fc position = renderer.getViewport().getCamera().getPosition();
+        Vector3ic center = chunk.getCenter();
+        return position.distanceSquared(center.x(), center.y(), center.z());
+    }
+
+    public void finishBake(VertexDataBuf buf) {
+        if (mesh == null) {
+            setMesh(mesh = SingleBufMesh.builder().setDynamic().drawMode(DrawMode.TRIANGLES).build());
+            setVisible(true);
+        }
+        mesh.uploadData(buf);
+        drawing = false;
+    }
+
+    public boolean isDisposed() {
+        return renderer.isDisposed();
     }
 }

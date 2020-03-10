@@ -63,31 +63,27 @@ public final class ChunkBaker {
         @Override
         public void run() {
             try {
-                drawableChunk.setDrawing(true);
                 drawableChunk.clearDirty();
-
                 Chunk chunk = drawableChunk.getChunk();
+                if (chunk.isAirChunk()) return;
 
                 BlockRenderManager blockRenderManager = BlockRenderManager.instance();
                 VertexDataBuf buf = dataBufPool.get();
                 buf.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
-                if (!chunk.isAirChunk()) {
-                    BlockGetter blockGetter = createChunkCache(chunk.getWorld(), chunk);
-                    BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunk(chunk);
-                    while (blockPosIterator.hasNext()) {
-                        BlockPos pos = blockPosIterator.next();
-                        Block block = blockGetter.getBlock(pos);
-                        blockRenderManager.generateMesh(block, blockGetter, pos, buf);
-                    }
+                BlockGetter blockCache = createChunkCache(chunk.getWorld(), chunk);
+                BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunk(chunk);
+                while (blockPosIterator.hasNext()) {
+                    BlockPos pos = blockPosIterator.next();
+                    Block block = blockCache.getBlock(pos);
+                    blockRenderManager.generateMesh(block, blockCache, pos, buf);
                 }
                 buf.finish();
+
                 GraphicsEngine.getGraphicsBackend().submitTask(() -> {
-                    drawableChunk.uploadData(buf);
+                    drawableChunk.finishBake(buf);
                     dataBufPool.free(buf);
-                    drawableChunk.setDrawing(false);
-                    if (drawableChunk.isDirty()) {
-                        execute(new Task(drawableChunk, sqDistance));
-                    }
+                    if (drawableChunk.isDisposed()) return;
+                    if (drawableChunk.isDirty()) drawableChunk.executeBake();
                 });
             } catch (InterruptedException ignored) {
             }

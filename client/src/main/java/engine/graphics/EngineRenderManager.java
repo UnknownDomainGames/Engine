@@ -15,7 +15,7 @@ import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.BlendMode;
 import engine.graphics.util.CullMode;
 import engine.graphics.viewport.PerspectiveViewport;
-import engine.graphics.voxel.VoxelRenderHelper;
+import engine.graphics.voxel.VoxelGraphicsHelper;
 import engine.graphics.voxel.shape.SelectedBlock;
 import engine.gui.EngineGUIManager;
 import engine.gui.EngineHUDManager;
@@ -97,7 +97,7 @@ public final class EngineRenderManager implements RenderManager {
         viewport.setScene(scene);
 
         initTextureAssetProvider();
-        VoxelRenderHelper.initialize(this);
+        VoxelGraphicsHelper.initialize(this);
         initScene();
         gameGUIPlatform = new GameGUIPlatform();
         hudManager = new EngineHUDManager(gameGUIPlatform.getHUDStage());

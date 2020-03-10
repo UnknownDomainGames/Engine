@@ -1,5 +1,6 @@
 package engine.graphics.voxel.chunk;
 
+import engine.Platform;
 import engine.event.Listener;
 import engine.event.Order;
 import engine.event.block.BlockChangeEvent;
@@ -14,10 +15,9 @@ import engine.world.World;
 import engine.world.chunk.Chunk;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
-import org.joml.Vector3fc;
-import org.joml.Vector3ic;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import static engine.world.chunk.ChunkConstants.*;
@@ -31,64 +31,82 @@ public final class ChunkRenderer {
     private final Viewport viewport;
     private final World world;
 
+    private volatile boolean disposed;
+
     public ChunkRenderer(RenderManager manager, World world) {
         this.scene = manager.getScene();
         this.viewport = manager.getViewport();
         this.world = world;
+        ChunkBaker.start();
         world.getLoadedChunks().forEach(this::addChunk);
-        manager.getEngine().getEventBus().register(this);
+        Platform.getEngine().getEventBus().register(this);
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public Viewport getViewport() {
+        return viewport;
+    }
+
+    public boolean isEqualsWorld(World world) {
+        return this.world.equals(world);
     }
 
     @Listener(order = Order.LAST)
     public void onChunkLoad(ChunkLoadEvent event) {
         Chunk chunk = event.getChunk();
-        if (world.equals(chunk.getWorld())) {
+        if (isEqualsWorld(chunk.getWorld())) {
             GraphicsEngine.getGraphicsBackend().submitTask(() -> addChunk(chunk));
         }
+    }
+
+    private void addChunk(Chunk chunk) {
+        if (disposed) return;
+        long index = getChunkIndex(chunk);
+        if (chunks.containsKey(index)) return;
+        DrawableChunk drawableChunk = recycleChunks.poll();
+        if (drawableChunk == null) {
+            drawableChunk = new DrawableChunk(this);
+        }
+        drawableChunk.setChunk(chunk);
+        chunks.put(index, drawableChunk);
+        scene.addNode(drawableChunk);
+        drawableChunk.markDirty();
     }
 
     @Listener(order = Order.LAST)
     public void onChunkUnload(ChunkUnloadEvent event) {
         Chunk chunk = event.getChunk();
-        if (world.equals(chunk.getWorld())) {
+        if (isEqualsWorld(chunk.getWorld())) {
             GraphicsEngine.getGraphicsBackend().submitTask(() -> removeChunk(chunk));
         }
     }
 
-    private void addChunk(Chunk chunk) {
-        long index = getChunkIndex(chunk);
-        DrawableChunk drawableChunk = recycleChunks.poll();
-        if (drawableChunk == null) drawableChunk = new DrawableChunk();
-        drawableChunk.setChunk(chunk);
-        chunks.put(index, drawableChunk);
-        scene.addNode(drawableChunk);
-        markChunkDirty(drawableChunk);
-    }
-
-    private void markChunkDirty(DrawableChunk chunk) {
-        if (chunk == null || chunk.isDirty()) return;
-        chunk.markDirty();
-
-        if (chunk.isDrawing()) return;
-        ChunkBaker.execute(new ChunkBaker.Task(chunk, distanceSqChunkToCamera(chunk)));
-    }
-
-    private void markChunkDirty(long index) {
-        markChunkDirty(chunks.get(index));
-    }
-
-    private double distanceSqChunkToCamera(DrawableChunk chunk) {
-        Vector3fc position = viewport.getCamera().getPosition();
-        Vector3ic center = chunk.getChunk().getCenter();
-        return position.distanceSquared(center.x(), center.y(), center.z());
-    }
-
     private void removeChunk(Chunk chunk) {
-        long index = getChunkIndex(chunk);
-        DrawableChunk drawableChunk = chunks.get(index);
-        scene.removeNode(drawableChunk);
-        drawableChunk.setChunk(null);
-        recycleChunks.add(drawableChunk);
+        long chunkIndex = getChunkIndex(chunk);
+        DrawableChunk removed = chunks.remove(chunkIndex);
+        if (removed == null) return;
+        removed.setChunk(null);
+        scene.removeNode(removed);
+        recycleChunks.add(removed);
+    }
+
+    private void removeChunk(DrawableChunk chunk) {
+        removeChunk(chunk.getChunk());
+    }
+
+    public boolean isDisposed() {
+        return disposed;
+    }
+
+    public void dispose() {
+        if (disposed) return;
+        disposed = true;
+        ChunkBaker.stop();
+        Platform.getEngine().getEventBus().unregister(this);
+        List.copyOf(chunks.values()).forEach(this::removeChunk);
     }
 
     @Listener(order = Order.LAST)
@@ -124,5 +142,9 @@ public final class ChunkRenderer {
         if (chunkW != chunkZ) {
             markChunkDirty(getChunkIndex(chunkX, chunkY, chunkW));
         }
+    }
+
+    private void markChunkDirty(long index) {
+        chunks.get(index).markDirty();
     }
 }

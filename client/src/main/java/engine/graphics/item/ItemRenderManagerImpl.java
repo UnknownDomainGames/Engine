@@ -1,6 +1,6 @@
 package engine.graphics.item;
 
-import engine.graphics.voxel.VoxelRenderHelper;
+import engine.graphics.voxel.VoxelGraphicsHelper;
 import engine.item.BlockItem;
 import engine.item.Item;
 import engine.item.ItemStack;
@@ -51,7 +51,7 @@ public final class ItemRenderManagerImpl implements ItemRenderManager {
     }
 
     private void preRender() {
-        VoxelRenderHelper.getVoxelTextureAtlas().getTexture().bind();
+        VoxelGraphicsHelper.getVoxelTextureAtlas().getTexture().bind();
     }
 
     private void postRender() {
