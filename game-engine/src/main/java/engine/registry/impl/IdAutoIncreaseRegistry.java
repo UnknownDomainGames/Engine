@@ -7,7 +7,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @NotThreadSafe
-public class IdAutoIncreaseRegistry<T extends Registrable<T>> extends SimpleRegistry<T> {
+public class IdAutoIncreaseRegistry<T extends Registrable<T>> extends IdRegistry<T> {
 
     private final AtomicInteger nextId = new AtomicInteger(0);
 
@@ -23,9 +23,7 @@ public class IdAutoIncreaseRegistry<T extends Registrable<T>> extends SimpleRegi
     @Override
     public T register(@Nonnull T obj) {
         super.register(obj);
-
         setId(obj, nextId.getAndIncrement());
-
         return obj;
     }
 }

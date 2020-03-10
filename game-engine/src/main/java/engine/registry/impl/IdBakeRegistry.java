@@ -5,7 +5,7 @@ import engine.registry.Registrable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IdBakeRegistry<T extends Registrable<T>> extends SimpleRegistry<T> {
+public class IdBakeRegistry<T extends Registrable<T>> extends IdRegistry<T> {
 
     protected List<T> registeredObjects = new ArrayList<>();
     private volatile boolean baked = false;

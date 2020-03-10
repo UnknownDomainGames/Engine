@@ -4,34 +4,26 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import engine.registry.Name;
 import engine.registry.Registrable;
-import engine.registry.RegistrationException;
 import engine.registry.Registry;
-import io.netty.util.collection.IntObjectHashMap;
-import io.netty.util.collection.IntObjectMap;
 
 import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.Validate.notNull;
 
-@NotThreadSafe
-public class SimpleRegistry<T extends Registrable<T>> implements Registry<T> {
-
+public class NonIdRegistry<T extends Registrable<T>> implements Registry<T> {
     private final Class<T> entryType;
     private final String name;
 
     protected final BiMap<String, T> nameToObject = HashBiMap.create();
-    protected final IntObjectMap<T> idToObject = new IntObjectHashMap<>();
 
-    public SimpleRegistry(Class<T> entryType) {
+    public NonIdRegistry(Class<T> entryType) {
         this(entryType, entryType.getSimpleName().toLowerCase());
     }
 
-    public SimpleRegistry(Class<T> entryType, String name) {
+    public NonIdRegistry(Class<T> entryType, String name) {
         this.entryType = entryType;
         this.name = name;
     }
@@ -39,10 +31,10 @@ public class SimpleRegistry<T extends Registrable<T>> implements Registry<T> {
     @Nonnull
     @Override
     public T register(@Nonnull T obj) {
-        requireNonNull(obj);
+        notNull(obj, "Registrable object cannot be null");
 
-        if (!(obj instanceof Registrable.Impl)) {
-            throw new RegistrationException(String.format("%s must be a subclass of RegistryEntry.Impl", obj.getEntryType().getSimpleName()));
+        if (nameToObject.containsKey(obj.getName().toString())) {
+            throw new IllegalStateException("Registrable object " + obj.getName() + " has been registered");
         }
 
         nameToObject.put(obj.getName().toString(), obj);
@@ -98,50 +90,31 @@ public class SimpleRegistry<T extends Registrable<T>> implements Registry<T> {
 
     @Override
     public int getId(T obj) {
-        return obj == null ? -1 : obj.getId();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int getId(String key) {
-        return getId(getValue(key));
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int getId(Name key) {
-        return getId(key.toString());
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Name getKey(int id) {
-        return idToObject.get(id).getName();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public T getValue(int id) {
-        return idToObject.get(id);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<Map.Entry<String, T>> getEntries() {
         return nameToObject.entrySet();
-    }
-
-    private static Field idField;
-
-    protected void setId(T entry, int id) {
-        if (idField == null) {
-            try {
-                idField = Registrable.Impl.class.getDeclaredField("id");
-                idField.setAccessible(true);
-            } catch (NoSuchFieldException e) {
-                throw new RegistrationException("Cannot init id.", e);
-            }
-        }
-        try {
-            idField.setInt(entry, id);
-            idToObject.put(id, entry);
-        } catch (IllegalAccessException e) {
-            throw new RegistrationException("Cannot init id.", e);
-        }
     }
 }
