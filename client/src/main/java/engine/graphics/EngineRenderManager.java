@@ -110,6 +110,7 @@ public final class EngineRenderManager implements RenderManager {
                 engine.getSettings().getDisplaySettings().getResolutionWidth(),
                 engine.getSettings().getDisplaySettings().getResolutionHeight(),
                 engine.getSettings().getDisplaySettings().getFrameRate());
+        window.centerOnScreen();
         window.show();
     }
 
