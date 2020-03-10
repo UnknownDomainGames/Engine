@@ -18,9 +18,9 @@ import engine.graphics.viewport.PerspectiveViewport;
 import engine.graphics.voxel.VoxelGraphicsHelper;
 import engine.graphics.voxel.shape.SelectedBlock;
 import engine.gui.EngineGUIManager;
+import engine.gui.EngineGUIPlatform;
 import engine.gui.EngineHUDManager;
 import engine.gui.GUIManager;
-import engine.gui.GameGUIPlatform;
 import engine.gui.internal.impl.graphics.StageDrawDispatcher;
 import engine.math.BlockPos;
 
@@ -36,9 +36,9 @@ public final class EngineRenderManager implements RenderManager {
     private Scene3D scene;
     private PerspectiveViewport viewport;
 
+    private EngineGUIPlatform guiPlatform;
     private EngineGUIManager guiManager;
     private EngineHUDManager hudManager;
-    private GameGUIPlatform gameGUIPlatform;
 
     public EngineRenderManager(EngineClient engine) {
         this.engine = engine;
@@ -99,9 +99,9 @@ public final class EngineRenderManager implements RenderManager {
         initTextureAssetProvider();
         VoxelGraphicsHelper.initialize(this);
         initScene();
-        gameGUIPlatform = new GameGUIPlatform();
-        hudManager = new EngineHUDManager(gameGUIPlatform.getHUDStage());
-        guiManager = new EngineGUIManager(window, gameGUIPlatform.getGUIStage(), hudManager);
+        guiPlatform = new EngineGUIPlatform();
+        hudManager = new EngineHUDManager(guiPlatform.getHUDStage());
+        guiManager = new EngineGUIManager(window, guiPlatform.getGUIStage(), hudManager);
 
         RenderGraph renderGraph = GraphicsEngine.getGraphicsBackend().loadRenderGraph(createRenderGraph());
         renderGraph.bindWindow(window);
@@ -205,11 +205,11 @@ public final class EngineRenderManager implements RenderManager {
                 {
                     DrawerInfo hudDrawer = DrawerInfo.drawer();
                     hudDrawer.setShader("gui");
-                    hudDrawer.setDrawDispatcher(new StageDrawDispatcher(gameGUIPlatform.getHUDStage()));
+                    hudDrawer.setDrawDispatcher(new StageDrawDispatcher(guiPlatform.getHUDStage()));
 
                     DrawerInfo guiDrawer = DrawerInfo.drawer();
                     guiDrawer.setShader("gui");
-                    guiDrawer.setDrawDispatcher(new StageDrawDispatcher(gameGUIPlatform.getGUIStage()));
+                    guiDrawer.setDrawDispatcher(new StageDrawDispatcher(guiPlatform.getGUIStage()));
 
                     guiPass.setDrawers(hudDrawer, guiDrawer);
                 }
@@ -241,7 +241,7 @@ public final class EngineRenderManager implements RenderManager {
     }
 
     public void dispose() {
-        gameGUIPlatform.dispose();
+        guiPlatform.dispose();
         GraphicsEngine.stop();
     }
 }

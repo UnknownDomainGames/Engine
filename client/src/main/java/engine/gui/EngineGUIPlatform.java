@@ -13,7 +13,7 @@ import engine.gui.internal.impl.StageHelperImpl;
 import engine.gui.internal.impl.glfw.GLFWClipboardHelper;
 import engine.gui.stage.Stage;
 
-public final class GameGUIPlatform extends GUIPlatform {
+public final class EngineGUIPlatform extends GUIPlatform {
 
     private final StageHelperImpl stageHelper = new StageHelperImpl();
     private final SceneHelper sceneHelper = new SceneHelperImpl();
@@ -24,7 +24,7 @@ public final class GameGUIPlatform extends GUIPlatform {
     private Stage guiStage;
     private Stage hudStage;
 
-    public GameGUIPlatform() {
+    public EngineGUIPlatform() {
         setInstance(this);
         InputHelperImpl.initialize();
         Stage.getStages().addChangeListener(change -> {
