@@ -1,4 +1,4 @@
-#version 450 core
+#version 420 core
 
 layout (binding = 0, std140) uniform Transformation {
     mat4 projMatrix;
