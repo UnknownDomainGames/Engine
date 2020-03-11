@@ -1,5 +1,7 @@
 package engine.gui.control;
 
+import com.github.mouse0w0.observable.value.MutableFloatValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
@@ -8,38 +10,54 @@ import engine.gui.rendering.ItemViewRenderer;
 import engine.item.ItemStack;
 
 public class ItemView extends Node {
-    private final SimpleMutableObjectValue<ItemStack> item = new SimpleMutableObjectValue<>();
-    private final SimpleMutableFloatValue viewSize = new SimpleMutableFloatValue(80);
+    private final MutableObjectValue<ItemStack> itemStack = new SimpleMutableObjectValue<>();
+    private final MutableFloatValue size = new SimpleMutableFloatValue(80);
 
     public ItemView() {
-        viewSize.addChangeListener((ob, o, n) -> requestParentLayout());
+        size().addChangeListener((ob, o, n) -> requestParentLayout());
     }
 
-    public ItemView(ItemStack item) {
+    public ItemView(ItemStack itemStack) {
         this();
-        this.item.setValue(item);
+        setItemStack(itemStack);
+    }
+
+    public final MutableObjectValue<ItemStack> itemStack() {
+        return itemStack;
+    }
+
+    public final ItemStack getItemStack() {
+        return itemStack.get();
+    }
+
+    public final void setItemStack(ItemStack itemStack) {
+        this.itemStack.set(itemStack);
+    }
+
+    public final MutableFloatValue size() {
+        return size;
+    }
+
+    public final float getSize() {
+        return size.get();
+    }
+
+    public final void setSize(float size) {
+        this.size.set(size);
     }
 
     @Override
     public float prefWidth() {
-        return viewSize.get();
+        return size.get();
     }
 
     @Override
     public float prefHeight() {
-        return viewSize.get();
+        return size.get();
     }
 
     @Override
     protected ComponentRenderer createDefaultRenderer() {
         return ItemViewRenderer.INSTANCE;
-    }
-
-    public SimpleMutableObjectValue<ItemStack> item() {
-        return item;
-    }
-
-    public SimpleMutableFloatValue viewSize() {
-        return viewSize;
     }
 }

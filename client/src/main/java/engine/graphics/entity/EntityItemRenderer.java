@@ -2,7 +2,6 @@ package engine.graphics.entity;
 
 import engine.entity.item.ItemEntity;
 import engine.graphics.RenderManager;
-import engine.graphics.item.ItemRenderManager;
 
 public class EntityItemRenderer implements EntityRenderer<ItemEntity> {
 
@@ -25,7 +24,7 @@ public class EntityItemRenderer implements EntityRenderer<ItemEntity> {
 //                .scale(1f / 3, 1f / 3, 1f / 3)
 //                .rotateY(((int) entity.getWorld().getGameTick() % 360000) / 20f));
 
-        ItemRenderManager.instance().render(entity.getItemStack(), partial);
+//        ItemRenderManager.instance().render(entity.getItemStack(), partial);
     }
 
     @Override

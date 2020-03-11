@@ -4,11 +4,8 @@ import engine.Platform;
 import engine.client.asset.Asset;
 import engine.client.asset.AssetTypes;
 import engine.client.asset.AssetURL;
-import engine.graphics.gl.GLStreamedRenderer;
 import engine.graphics.model.BakedModel;
-import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
-import engine.graphics.vertex.VertexFormat;
 import engine.item.ItemStack;
 
 public class VoxelItemRenderer implements ItemRenderer {
@@ -24,12 +21,8 @@ public class VoxelItemRenderer implements ItemRenderer {
     }
 
     @Override
-    public void render(ItemStack itemStack, float partial) {
-        GLStreamedRenderer renderer = GLStreamedRenderer.getInstance();
-        VertexDataBuf buffer = renderer.getBuffer();
-        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
+    public void generateMesh(VertexDataBuf buffer, ItemStack itemStack, float partial) {
         model.get().putVertexes(buffer, 0);
-        renderer.draw(DrawMode.TRIANGLES);
     }
 
     @Override

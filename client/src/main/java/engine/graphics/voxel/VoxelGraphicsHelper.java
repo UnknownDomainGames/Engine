@@ -30,6 +30,7 @@ public final class VoxelGraphicsHelper {
 
     public static void initialize(RenderManager manager) {
         textureAtlas = new TextureAtlasImpl();
+        VoxelGraphics.setVoxelTextureAtlas(textureAtlas);
         AssetManager assetManager = manager.getEngine().getAssetManager();
         assetManager.getReloadManager().addListener(
                 AssetReloadListener.builder().name("VoxelTexture").after("Texture").runnable(textureAtlas::reload).build());

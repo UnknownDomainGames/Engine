@@ -1,6 +1,9 @@
 package engine.graphics.item;
 
-import engine.graphics.voxel.VoxelGraphicsHelper;
+import engine.graphics.graph.Renderer;
+import engine.graphics.util.DrawMode;
+import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexFormat;
 import engine.item.BlockItem;
 import engine.item.Item;
 import engine.item.ItemStack;
@@ -8,9 +11,6 @@ import engine.registry.Registries;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
 
 public final class ItemRenderManagerImpl implements ItemRenderManager {
 
@@ -34,29 +34,27 @@ public final class ItemRenderManagerImpl implements ItemRenderManager {
     }
 
     @Override
-    public void render(ItemStack itemStack, float partial) {
+    public void render(Renderer renderer, ItemStack itemStack, float partial) {
         if (itemStack.isEmpty())
             return;
 
+        VertexDataBuf buffer = VertexDataBuf.currentThreadBuffer();
+        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
+        generateMesh(buffer, itemStack, partial);
+        buffer.finish();
+        renderer.drawStreamed(DrawMode.TRIANGLES, buffer);
+    }
+
+    @Override
+    public void generateMesh(VertexDataBuf buffer, ItemStack itemStack, float partial) {
         var render = itemRendererMap.get(itemStack.getItem());
-        if (render == null) {
-            return;
-        }
-
-        preRender();
-
-        render.render(itemStack, partial);
-
-        postRender();
+        if (render == null) return;
+        render.generateMesh(buffer, itemStack, partial);
     }
 
-    private void preRender() {
-        VoxelGraphicsHelper.getVoxelTextureAtlas().getTexture().bind();
-    }
-
-    private void postRender() {
-        glBindTexture(GL_TEXTURE_2D, 0);
-    }
+//    private void preRender() {
+//        VoxelGraphicsHelper.getVoxelTextureAtlas().getTexture().bind();
+//    }
 
     public void dispose() {
         itemRendererMap.values().forEach(ItemRenderer::dispose);

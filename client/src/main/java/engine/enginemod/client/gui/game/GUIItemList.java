@@ -44,8 +44,8 @@ public final class GUIItemList extends AnchorPane {
             ItemView itemView = new ItemView(new ItemStack(entry.getValue()));
             itemView.setOnMouseClicked(event -> Platform.getEngineClient().getCurrentGame().getClientPlayer().getControlledEntity()
                     .getComponent(TwoHands.class)
-                    .ifPresent(twoHands -> twoHands.setMainHand(itemView.item().get())));
-            itemView.viewSize().set(40);
+                    .ifPresent(twoHands -> twoHands.setMainHand(itemView.itemStack().get())));
+            itemView.size().set(40);
             hBox.getChildren().add(itemView);
         }
         vBox.getChildren().add(hBox);

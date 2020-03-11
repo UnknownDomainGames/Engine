@@ -19,7 +19,7 @@ public final class HUDHandingItem extends HUDControl {
         AnchorPane.setLeftAnchor(this, 0f);
         AnchorPane.setBottomAnchor(this, 0f);
         mainHandItem = new ItemView();
-        mainHandItem.viewSize().set(40);
+        mainHandItem.size().set(40);
         setContent(mainHandItem);
     }
 
@@ -35,7 +35,7 @@ public final class HUDHandingItem extends HUDControl {
         if (player != null) {
             Entity entity = player.getControlledEntity();
             entity.getComponent(TwoHands.class).ifPresent(twoHands ->
-                    mainHandItem.item().setValue(twoHands.getMainHand()));
+                    mainHandItem.itemStack().setValue(twoHands.getMainHand()));
         }
     }
 }

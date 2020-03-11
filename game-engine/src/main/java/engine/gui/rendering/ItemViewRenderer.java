@@ -1,10 +1,13 @@
 package engine.gui.rendering;
 
 import engine.graphics.item.ItemRenderManager;
+import engine.graphics.util.DrawMode;
+import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexFormat;
+import engine.graphics.voxel.VoxelGraphics;
 import engine.gui.control.ItemView;
+import engine.item.BlockItem;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public class ItemViewRenderer implements ComponentRenderer<ItemView> {
 
@@ -12,15 +15,24 @@ public class ItemViewRenderer implements ComponentRenderer<ItemView> {
 
     @Override
     public void render(ItemView component, Graphics graphics) {
-        component.item().ifPresent(itemStack -> {
-            graphics.enableGamma();
-            graphics.pushModelMatrix(new Matrix4f().translationRotateScale(
-                    new Vector3f(component.viewSize().get() * 0.5f, component.viewSize().get() * 0.5f, 0),
-                    new Quaternionf().rotateAxis((float) -(Math.PI / 4), 0, 1, 0).rotateAxis((float) -Math.PI / 6f, 1, 0, -1),
-                    new Vector3f(component.viewSize().get() * 0.6f, -component.viewSize().get() * 0.6f, component.viewSize().get() * 0.6f)));
-            ItemRenderManager.instance().render(itemStack, 0);
-            graphics.popModelMatrix();
-            graphics.disableGamma();
+        component.itemStack().ifPresent(itemStack -> {
+            VertexDataBuf buf = VertexDataBuf.currentThreadBuffer();
+            buf.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
+            ItemRenderManager.instance().generateMesh(buf, itemStack, 0);
+            buf.finish();
+            float size = component.size().get();
+            Matrix4f modelMatrix = new Matrix4f();
+            if (itemStack.getItem() instanceof BlockItem) {
+                modelMatrix.translate(size * 0.5f, size * 0.5f, 0)
+                        .rotate((float) -(Math.PI / 4), 0, 1, 0)
+                        .rotate((float) -Math.PI / 6f, 1, 0, -1)
+                        .scale(size * 0.55f, -size * 0.55f, size * 0.55f);
+            } else {
+                modelMatrix.rotate((float) Math.PI, 0, 1, 0)
+                        .translate(-size * 0.5f, size * 0.5f, 0)
+                        .scale(size, -size, 1);
+            }
+            graphics.drawStreamedMesh(DrawMode.TRIANGLES, buf, VoxelGraphics.getVoxelTextureAtlas().getTexture(), modelMatrix);
         });
     }
 }
