@@ -2,6 +2,7 @@ package engine.gui.internal.impl.graphics;
 
 import engine.graphics.font.TextMesh;
 import engine.graphics.graph.Renderer;
+import engine.graphics.mesh.Mesh;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.shader.UniformTexture;
 import engine.graphics.texture.Texture2D;
@@ -29,7 +30,8 @@ public final class GraphicsImpl implements Graphics {
     private final GUIResourceFactory resourceFactory = new GUIResourceFactory();
 
     private final Stack<Vector4fc> clipRect = new Stack<>();
-    private final Stack<Matrix4fc> modelMatrix = new Stack<>();
+
+    private final Matrix4fc identityMatrix4f = new Matrix4f();
 
     private final ShaderResource resource;
     private final UniformTexture uniformTexture;
@@ -57,9 +59,8 @@ public final class GraphicsImpl implements Graphics {
         this.frameHeight = frameHeight;
         this.scaleX = scaleX;
         this.scaleY = scaleY;
-        resource.setUniform("u_ProjMatrix", new Matrix4f().setOrtho2D(0, frameWidth, frameHeight, 0));
-        resetModelMatrix();
-        pushModelMatrix(new Matrix4f().scale(scaleX, scaleY, 1));
+        resource.setUniform("u_ProjMatrix", new Matrix4f().setOrtho2D(0, frameWidth, frameHeight, 0).scale(scaleX, scaleY, 1));
+        setModelMatrix(identityMatrix4f);
         resetClipRect();
         pushClipRect(0, 0, frameWidth / scaleX, frameHeight / scaleY);
         this.uniformTexture.set(whiteTexture);
@@ -321,6 +322,28 @@ public final class GraphicsImpl implements Graphics {
         }
     }
 
+    @Override
+    public void drawMesh(Mesh mesh, Texture2D texture, Matrix4fc modelMatrix) {
+        uniformTexture.set(texture);
+        setModelMatrix(modelMatrix);
+        resource.refresh();
+        renderer.drawMesh(mesh);
+        setModelMatrix(identityMatrix4f);
+        uniformTexture.set(whiteTexture);
+        resource.refresh();
+    }
+
+    @Override
+    public void drawStreamedMesh(DrawMode drawMode, VertexDataBuf mesh, Texture2D texture, Matrix4fc modelMatrix) {
+        uniformTexture.set(texture);
+        setModelMatrix(modelMatrix);
+        resource.refresh();
+        renderer.drawStreamed(drawMode, mesh);
+        setModelMatrix(identityMatrix4f);
+        uniformTexture.set(whiteTexture);
+        resource.refresh();
+    }
+
     public void resetClipRect() {
         clipRect.clear();
     }
@@ -359,28 +382,8 @@ public final class GraphicsImpl implements Graphics {
                 (int) Math.ceil((peek.z() - peek.x()) * scaleX), (int) Math.ceil(height * scaleY));
     }
 
-    private void resetModelMatrix() {
-        modelMatrix.clear();
-    }
-
-    @Override
-    public void pushModelMatrix(Matrix4fc matrix) {
-        if (modelMatrix.isEmpty()) {
-            modelMatrix.push(matrix);
-        } else {
-            modelMatrix.push(modelMatrix.peek().mul(matrix, new Matrix4f()));
-        }
-        updateModelMatrix();
-    }
-
-    @Override
-    public void popModelMatrix() {
-        modelMatrix.pop();
-        updateModelMatrix();
-    }
-
-    private void updateModelMatrix() {
-        resource.setUniform("u_ModelMatrix", modelMatrix.peek());
+    private void setModelMatrix(Matrix4fc modelMatrix) {
+        resource.setUniform("u_ModelMatrix", modelMatrix);
     }
 
     @Override

@@ -1,7 +1,10 @@
 package engine.gui.rendering;
 
 import engine.graphics.font.TextMesh;
+import engine.graphics.mesh.Mesh;
 import engine.graphics.texture.Texture2D;
+import engine.graphics.util.DrawMode;
+import engine.graphics.vertex.VertexDataBuf;
 import engine.gui.Node;
 import engine.gui.image.Image;
 import engine.gui.misc.Background;
@@ -69,13 +72,13 @@ public interface Graphics {
 
     void drawBackground(Background background, float x, float y, float width, float height);
 
+    void drawMesh(Mesh mesh, Texture2D texture, Matrix4fc modelMatrix);
+
+    void drawStreamedMesh(DrawMode drawMode, VertexDataBuf mesh, Texture2D texture, Matrix4fc modelMatrix);
+
     void pushClipRect(float x, float y, float width, float height);
 
     void popClipRect();
-
-    void pushModelMatrix(Matrix4fc matrix);
-
-    void popModelMatrix();
 
     void enableGamma();
 
