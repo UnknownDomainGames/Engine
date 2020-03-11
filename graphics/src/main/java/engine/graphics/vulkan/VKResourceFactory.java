@@ -5,6 +5,7 @@ import engine.graphics.mesh.MultiBufMesh;
 import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.Texture2D;
+import engine.graphics.texture.TextureCubeMap;
 import engine.graphics.vulkan.device.LogicalDevice;
 
 public class VKResourceFactory implements ResourceFactory {
@@ -22,6 +23,11 @@ public class VKResourceFactory implements ResourceFactory {
 
     @Override
     public Texture2D getWhiteTexture2D() {
+        return null;
+    }
+
+    @Override
+    public TextureCubeMap.Builder createTextureCubeMapBuilder() {
         return null;
     }
 
