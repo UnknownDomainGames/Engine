@@ -1,5 +1,6 @@
 package engine.graphics;
 
+import engine.graphics.animation.AnimationManager;
 import engine.graphics.backend.GraphicsBackend;
 import engine.graphics.backend.GraphicsBackendFactory;
 import engine.graphics.font.FontManager;
@@ -20,9 +21,14 @@ public final class GraphicsEngine {
 
     private static Settings settings;
     private static GraphicsBackend graphicsBackend;
+    private static AnimationManager animationManager;
 
     public static GraphicsBackend getGraphicsBackend() {
         return graphicsBackend;
+    }
+
+    public static AnimationManager getAnimationManager() {
+        return animationManager;
     }
 
     public static boolean isDebug() {
@@ -45,6 +51,7 @@ public final class GraphicsEngine {
                 .create();
         LOGGER.info("Graphics backend: {}", settings.backend);
         graphicsBackend.init();
+        animationManager = new AnimationManager();
         FontManager.initialize(settings.fontManager);
     }
 
@@ -60,6 +67,7 @@ public final class GraphicsEngine {
     }
 
     public static void doRender(float tpf) {
+        animationManager.update();
         graphicsBackend.render(tpf);
     }
 
