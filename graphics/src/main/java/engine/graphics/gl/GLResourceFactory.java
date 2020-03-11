@@ -5,10 +5,12 @@ import engine.graphics.gl.mesh.GLMultiBufMesh;
 import engine.graphics.gl.mesh.GLSingleBufMesh;
 import engine.graphics.gl.texture.GLSampler;
 import engine.graphics.gl.texture.GLTexture2D;
+import engine.graphics.gl.texture.GLTextureCubeMap;
 import engine.graphics.mesh.MultiBufMesh;
 import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.Texture2D;
+import engine.graphics.texture.TextureCubeMap;
 import engine.graphics.util.BufferUtils;
 
 public final class GLResourceFactory implements ResourceFactory {
@@ -29,6 +31,11 @@ public final class GLResourceFactory implements ResourceFactory {
     @Override
     public Texture2D getWhiteTexture2D() {
         return whiteTexture2D;
+    }
+
+    @Override
+    public TextureCubeMap.Builder createTextureCubeMapBuilder() {
+        return GLTextureCubeMap.builder();
     }
 
     @Override

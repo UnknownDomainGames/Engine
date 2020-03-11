@@ -7,6 +7,7 @@ import engine.graphics.texture.Texture;
 import engine.graphics.texture.TextureFormat;
 import engine.graphics.texture.WrapMode;
 import engine.graphics.util.Cleaner;
+import org.apache.commons.lang3.Validate;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL45;
 
@@ -65,7 +66,7 @@ public abstract class GLTexture implements Texture {
     public GLTexture(int target, GLTextureFormat format) {
         this.target = target;
         this.id = GLHelper.isSupportARBDirectStateAccess() ? GL45.glCreateTextures(target) : GL11.glGenTextures();
-        this.format = format;
+        this.format = Validate.notNull(format);
         this.disposable = GLCleaner.registerTexture(this, id);
     }
 

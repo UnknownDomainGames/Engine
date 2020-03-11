@@ -29,8 +29,32 @@ public final class GLHelper {
         return capabilities.OpenGL45;
     }
 
+    public static boolean isOpenGL44() {
+        return capabilities.OpenGL44;
+    }
+
+    public static boolean isOpenGL43() {
+        return capabilities.OpenGL43;
+    }
+
+    public static boolean isOpenGL42() {
+        return capabilities.OpenGL42;
+    }
+
+    public static boolean isOpenGL41() {
+        return capabilities.OpenGL41;
+    }
+
+    public static boolean isOpenGL40() {
+        return capabilities.OpenGL40;
+    }
+
     public static boolean isSupportARBDirectStateAccess() {
         return capabilities.GL_ARB_direct_state_access;
+    }
+
+    public static boolean isSupportARBTextureStorage() {
+        return capabilities.GL_ARB_texture_storage;
     }
 
     public static boolean isSupportEXTDirectStateAccess() {
