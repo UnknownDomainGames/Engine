@@ -1,6 +1,7 @@
 package engine.graphics.vulkan.util;
 
 import engine.graphics.util.GPUInfo;
+import engine.graphics.util.GPUVendor;
 import engine.graphics.vulkan.device.DeviceMemoryProperties;
 import engine.graphics.vulkan.device.PhysicalDevice;
 
@@ -8,7 +9,7 @@ public class GPUInfoVk implements GPUInfo {
 
     private final PhysicalDevice device;
     private String name;
-    private Vendor vendor;
+    private GPUVendor vendor;
     private String vendorName;
     //In KiB
     private int totalMemory;
@@ -19,31 +20,31 @@ public class GPUInfoVk implements GPUInfo {
         switch (device.getVenderId()) {
             // From: https://www.reddit.com/r/vulkan/comments/4ta9nj/is_there_a_comprehensive_list_of_the_names_and/d5nso2t/
             case 0x1002:
-                vendor = Vendor.AMD;
+                vendor = GPUVendor.AMD;
                 vendorName = vendor.name();
                 break;
             case 0x1010:
-                vendor = Vendor.UNKNOWN;
+                vendor = GPUVendor.UNKNOWN;
                 vendorName = "ImgTec";
                 break;
             case 0x10DE:
-                vendor = Vendor.NVIDIA;
+                vendor = GPUVendor.NVIDIA;
                 vendorName = vendor.name();
                 break;
             case 0x13B5:
-                vendor = Vendor.UNKNOWN;
+                vendor = GPUVendor.UNKNOWN;
                 vendorName = "ARM";
                 break;
             case 0x5143:
-                vendor = Vendor.UNKNOWN;
+                vendor = GPUVendor.UNKNOWN;
                 vendorName = "Qualcomm";
                 break;
             case 0x8086:
-                vendor = Vendor.INTEL;
+                vendor = GPUVendor.INTEL;
                 vendorName = vendor.name();
                 break;
             default:
-                vendor = Vendor.UNKNOWN;
+                vendor = GPUVendor.UNKNOWN;
                 vendorName = vendor.name();
         }
         totalMemory = Math.toIntExact(device.getMemoryProperties().getMemoryHeaps().stream().mapToLong(DeviceMemoryProperties.MemoryHeap::getSize).sum() / 1024);
@@ -55,7 +56,7 @@ public class GPUInfoVk implements GPUInfo {
     }
 
     @Override
-    public Vendor getVendor() {
+    public GPUVendor getVendor() {
         return vendor;
     }
 

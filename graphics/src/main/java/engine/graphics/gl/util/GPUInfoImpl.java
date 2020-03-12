@@ -1,7 +1,7 @@
 package engine.graphics.gl.util;
 
 import engine.graphics.util.GPUInfo;
-import org.lwjgl.opengl.GL11;
+import engine.graphics.util.GPUVendor;
 
 import static org.lwjgl.opengl.ATIMeminfo.*;
 import static org.lwjgl.opengl.GL11.glGetInteger;
@@ -11,27 +11,27 @@ import static org.lwjgl.opengl.NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_TOTAL_AVAILAB
 public final class GPUInfoImpl implements GPUInfo {
 
     private String name;
-    private Vendor vendor;
+    private GPUVendor vendor;
     private String vendorName;
     private int totalMemory;
 
     public GPUInfoImpl() {
-        this.name = GL11.glGetString(GL11.GL_RENDERER);
-        this.vendorName = GL11.glGetString(GL11.GL_VENDOR);
+        this.name = GLHelper.getRenderer();
+        this.vendorName = GLHelper.getVendor();
 
         String lowerVendorName = vendorName.toLowerCase();
         if (lowerVendorName.contains("nvidia")) {
-            vendor = Vendor.NVIDIA;
+            vendor = GPUVendor.NVIDIA;
             totalMemory = glGetInteger(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX);
         } else if (lowerVendorName.contains("amd") || lowerVendorName.contains("ati")) {
-            vendor = Vendor.AMD;
+            vendor = GPUVendor.AMD;
             totalMemory = glGetInteger(GL_VBO_FREE_MEMORY_ATI) + glGetInteger(GL_TEXTURE_FREE_MEMORY_ATI) +
                     glGetInteger(GL_RENDERBUFFER_FREE_MEMORY_ATI);
         } else if (lowerVendorName.contains("intel")) {
-            vendor = Vendor.INTEL;
+            vendor = GPUVendor.INTEL;
             totalMemory = -1;
         } else {
-            vendor = Vendor.UNKNOWN;
+            vendor = GPUVendor.UNKNOWN;
             totalMemory = -1;
         }
     }
@@ -42,7 +42,7 @@ public final class GPUInfoImpl implements GPUInfo {
     }
 
     @Override
-    public Vendor getVendor() {
+    public GPUVendor getVendor() {
         return vendor;
     }
 
