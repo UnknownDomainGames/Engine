@@ -1,7 +1,9 @@
 package engine.graphics.light;
 
-import engine.graphics.shader.ShaderResource;
 import org.joml.Vector3f;
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.ByteBuffer;
 
 public class SpotLight extends Light {
     private Vector3f position;
@@ -15,19 +17,24 @@ public class SpotLight extends Light {
     private float outerCutoffAngle; // in Radian
 
     @Override
-    public void bind(ShaderResource proxy, String fieldName) {
-        proxy.setUniform(fieldName + ".filled", true);
-        proxy.setUniform(fieldName + ".position", position);
-        proxy.setUniform(fieldName + ".constant", kconstant);
-        proxy.setUniform(fieldName + ".linear", klinear);
-        proxy.setUniform(fieldName + ".quadratic", kquadratic);
-        proxy.setUniform(fieldName + ".direction", direction);
-        proxy.setUniform(fieldName + ".cutoffCosine", (float) Math.cos(cutoffAngle));
-        proxy.setUniform(fieldName + ".direction", (float) Math.cos(outerCutoffAngle));
+    public ByteBuffer get(MemoryStack stack) {
+        return get(stack.malloc(26 * Float.BYTES));
+    }
 
-        proxy.setUniform(fieldName + ".light.ambient", ambient);
-        proxy.setUniform(fieldName + ".light.diffuse", diffuse);
-        proxy.setUniform(fieldName + ".light.specular", specular);
+    @Override
+    public ByteBuffer get(int index, ByteBuffer buffer) {
+        buffer.putInt(index, 1);
+        position.get(index + 1, buffer);
+        buffer.putFloat(index + 5, kconstant);
+        buffer.putFloat(index + 6, klinear);
+        buffer.putFloat(index + 7, kquadratic);
+        direction.get(index + 8, buffer);
+        buffer.putFloat(index + 12, (float) Math.cos(cutoffAngle));
+        buffer.putFloat(index + 13, (float) Math.cos(outerCutoffAngle));
+        ambient.get(index + 14, buffer);
+        diffuse.get(index + 18, buffer);
+        specular.get(index + 22, buffer);
+        return buffer;
     }
 
     public Vector3f getPosition() {

@@ -4,11 +4,8 @@ import engine.graphics.light.DirectionalLight;
 import engine.graphics.light.Light;
 import engine.graphics.light.PointLight;
 import engine.graphics.light.SpotLight;
-import engine.graphics.shader.ShaderResource;
-import org.joml.Vector3fc;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class LightManager {
@@ -51,21 +48,21 @@ public class LightManager {
             spotLights.remove(light);
     }
 
-    public void bind(Vector3fc cameraPosition, ShaderResource proxy) {
-        for (int i = 0; i < directionalLights.size() && i < MAX_DIRECTIONAL_LIGHT_COUNT; i++) {
-            directionalLights.get(i).bind(proxy, "dirLights[" + i + "]");
-        }
-
-        pointLights.sort(Comparator.comparingInt(light -> (int) light.getPosition().distanceSquared(cameraPosition)));
-        for (int i = 0; i < pointLights.size() && i < MAX_POINT_LIGHT_COUNT; i++) {
-            pointLights.get(i).bind(proxy, "pointLights[" + i + "]");
-        }
-
-        spotLights.sort(Comparator.comparingInt(light -> (int) light.getDirection().distanceSquared(cameraPosition)));
-        for (int i = 0; i < spotLights.size() && i < MAX_SPOT_LIGHT_COUNT; i++) {
-            spotLights.get(i).bind(proxy, "spotLights[" + i + "]");
-        }
-    }
+//    public void bind(Vector3fc cameraPosition, ShaderResource proxy) {
+//        for (int i = 0; i < directionalLights.size() && i < MAX_DIRECTIONAL_LIGHT_COUNT; i++) {
+//            directionalLights.get(i).bind(proxy, "dirLights[" + i + "]");
+//        }
+//
+//        pointLights.sort(Comparator.comparingInt(light -> (int) light.getPosition().distanceSquared(cameraPosition)));
+//        for (int i = 0; i < pointLights.size() && i < MAX_POINT_LIGHT_COUNT; i++) {
+//            pointLights.get(i).bind(proxy, "pointLights[" + i + "]");
+//        }
+//
+//        spotLights.sort(Comparator.comparingInt(light -> (int) light.getDirection().distanceSquared(cameraPosition)));
+//        for (int i = 0; i < spotLights.size() && i < MAX_SPOT_LIGHT_COUNT; i++) {
+//            spotLights.get(i).bind(proxy, "spotLights[" + i + "]");
+//        }
+//    }
 
     @Deprecated
     public void clear() {

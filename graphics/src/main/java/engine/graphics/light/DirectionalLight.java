@@ -1,18 +1,26 @@
 package engine.graphics.light;
 
-import engine.graphics.shader.ShaderResource;
 import org.joml.Vector3f;
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.ByteBuffer;
 
 public class DirectionalLight extends Light {
     private Vector3f direction;
 
     @Override
-    public void bind(ShaderResource proxy, String fieldName) {
-        proxy.setUniform(fieldName + ".filled", true);
-        proxy.setUniform(fieldName + ".direction", direction);
-        proxy.setUniform(fieldName + ".light.ambient", ambient);
-        proxy.setUniform(fieldName + ".light.diffuse", diffuse);
-        proxy.setUniform(fieldName + ".light.specular", specular);
+    public ByteBuffer get(MemoryStack stack) {
+        return get(stack.malloc(17 * Float.BYTES));
+    }
+
+    @Override
+    public ByteBuffer get(int index, ByteBuffer buffer) {
+        buffer.putInt(index, 1);
+        direction.get(index + 1, buffer);
+        ambient.get(index + 5, buffer);
+        diffuse.get(index + 9, buffer);
+        specular.get(index + 13, buffer);
+        return buffer;
     }
 
     public Vector3f getDirection() {

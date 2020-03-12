@@ -2,6 +2,9 @@ package engine.graphics.light;
 
 import engine.graphics.shader.ShaderResource;
 import org.joml.Vector3f;
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.ByteBuffer;
 
 public class PointLight extends Light {
     private Vector3f position;
@@ -10,7 +13,6 @@ public class PointLight extends Light {
     private float klinear;
     private float kquadratic;
 
-    @Override
     public void bind(ShaderResource proxy, String fieldName) {
         proxy.setUniform(fieldName + ".filled", true);
         proxy.setUniform(fieldName + ".position", position);
@@ -20,6 +22,24 @@ public class PointLight extends Light {
         proxy.setUniform(fieldName + ".light.ambient", ambient);
         proxy.setUniform(fieldName + ".light.diffuse", diffuse);
         proxy.setUniform(fieldName + ".light.specular", specular);
+    }
+
+    @Override
+    public ByteBuffer get(MemoryStack stack) {
+        return get(stack.malloc(20 * Float.BYTES));
+    }
+
+    @Override
+    public ByteBuffer get(int index, ByteBuffer buffer) {
+        buffer.putInt(index, 1);
+        position.get(index + 1, buffer);
+        buffer.putFloat(index + 5, kconstant);
+        buffer.putFloat(index + 6, klinear);
+        buffer.putFloat(index + 7, kquadratic);
+        ambient.get(index + 8, buffer);
+        diffuse.get(index + 12, buffer);
+        specular.get(index + 16, buffer);
+        return buffer;
     }
 
     public Vector3f getPosition() {

@@ -1,17 +1,15 @@
 package engine.graphics.light;
 
-import engine.graphics.shader.ShaderResource;
+import engine.graphics.shader.UniformBlock;
 import org.joml.Vector3f;
 
-public abstract class Light {
+public abstract class Light implements UniformBlock.Value {
     protected Vector3f ambient = new Vector3f(0.1f);
     protected Vector3f diffuse = new Vector3f(1f);
     protected Vector3f specular = new Vector3f(1f);
 
     public Light() {
     }
-
-    public abstract void bind(ShaderResource proxy, String fieldName);
 
     public Vector3f getAmbient() {
         return ambient;
