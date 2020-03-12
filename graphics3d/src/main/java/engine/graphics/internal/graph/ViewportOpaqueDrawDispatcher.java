@@ -32,11 +32,15 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
         }
 
         @Override
-        public ByteBuffer write(MemoryStack stack) {
-            ByteBuffer buffer = stack.malloc(192);
-            projMatrix.get(0, buffer);
-            viewMatrix.get(64, buffer);
-            modelMatrix.get(128, buffer);
+        public ByteBuffer get(MemoryStack stack) {
+            return get(stack.malloc(192));
+        }
+
+        @Override
+        public ByteBuffer get(int index, ByteBuffer buffer) {
+            projMatrix.get(index, buffer);
+            viewMatrix.get(index + 64, buffer);
+            modelMatrix.get(index + 128, buffer);
             return buffer;
         }
     }

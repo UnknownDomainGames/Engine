@@ -13,6 +13,12 @@ public interface UniformBlock {
     void set(Value value);
 
     interface Value {
-        ByteBuffer write(MemoryStack stack);
+        ByteBuffer get(MemoryStack stack);
+
+        default ByteBuffer get(ByteBuffer buffer) {
+            return get(0, buffer);
+        }
+
+        ByteBuffer get(int index, ByteBuffer buffer);
     }
 }

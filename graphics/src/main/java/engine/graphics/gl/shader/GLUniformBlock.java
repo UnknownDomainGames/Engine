@@ -39,7 +39,7 @@ public final class GLUniformBlock implements UniformBlock {
 
     public void bind() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            buffer.uploadData(value.write(stack));
+            buffer.uploadData(value.get(stack));
             GL30.glBindBufferBase(GL31.GL_UNIFORM_BUFFER, binding, buffer.getId());
         }
     }
