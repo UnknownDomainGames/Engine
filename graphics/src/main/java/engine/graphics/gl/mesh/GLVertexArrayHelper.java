@@ -4,6 +4,7 @@ import engine.graphics.gl.buffer.GLVertexBuffer;
 import engine.graphics.gl.util.GLHelper;
 import engine.graphics.vertex.VertexElement;
 import engine.graphics.vertex.VertexFormat;
+import org.lwjgl.opengl.EXTDirectStateAccess;
 import org.lwjgl.opengl.GL20C;
 import org.lwjgl.opengl.GL30C;
 import org.lwjgl.opengl.GL45C;
@@ -27,6 +28,17 @@ public final class GLVertexArrayHelper {
                         toGLDataType(element.getType()), element.isNormalized(), 0);
                 GL45C.glVertexArrayVertexBuffer(vertexArray, index, buffer.getId(), offset, stride);
                 GL45C.glVertexArrayAttribBinding(vertexArray, index, index);
+                offset += element.getBytes();
+            }
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
+            VertexElement[] elements = format.getElements();
+            int stride = format.getBytes(), offset = 0;
+            for (int i = 0, index = firstIndex, size = elements.length; i < size; i++, index++) {
+                VertexElement element = elements[i];
+                EXTDirectStateAccess.glEnableVertexArrayAttribEXT(vertexArray, index);
+                EXTDirectStateAccess.glVertexArrayVertexAttribOffsetEXT(vertexArray, buffer.getId(),
+                        index, element.getComponentCount(), toGLDataType(element.getType()),
+                        element.isNormalized(), stride, offset);
                 offset += element.getBytes();
             }
         } else {
@@ -56,6 +68,9 @@ public final class GLVertexArrayHelper {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             for (int i = first, size = first + count; i < size; i++)
                 GL45C.glDisableVertexArrayAttrib(vertexArray, i);
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
+            for (int i = first, size = first + count; i < size; i++)
+                EXTDirectStateAccess.glDisableVertexArrayAttribEXT(vertexArray, i);
         } else {
             GL30C.glBindVertexArray(vertexArray);
             for (int i = first, size = first + count; i < size; i++)
