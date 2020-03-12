@@ -1,8 +1,9 @@
-package engine.graphics.shape;
+package engine.graphics.sky;
 
 import engine.client.asset.Asset;
 import engine.graphics.Geometry;
 import engine.graphics.mesh.MultiBufMesh;
+import engine.graphics.queue.RenderType;
 import engine.graphics.texture.Texture;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.BufferUtils;
@@ -18,6 +19,7 @@ public final class SkyBox extends Geometry {
     private final Asset<Texture2D> texture;
 
     public SkyBox() {
+        super(RenderType.SKY);
         texture = Asset.create(TEXTURE, "engine", "misc/skybox");
         ByteBuffer positions = BufferUtils.wrapAsByteBuffer(new float[]{
                 256, 256, -256,

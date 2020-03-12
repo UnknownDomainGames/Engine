@@ -31,18 +31,31 @@ public final class Scene3DRenderGraphHelper {
                 mainTask.setRenderBuffers(colorBuffer, depthBuffer);
             }
             {
+                RenderPassInfo skyPass = RenderPassInfo.renderPass();
+                skyPass.setName("sky");
+                skyPass.setCullMode(CullMode.CULL_BACK);
+                skyPass.setColorOutputs(colorOutput().setClear(true).setColorBuffer("color"));
+                skyPass.setDepthOutput(depthOutput().setClear(true).setWritable(false).setDepthBuffer("depth"));
+                {
+                    DrawerInfo skyDrawer = DrawerInfo.drawer();
+                    skyDrawer.setShader("sky");
+                    skyDrawer.setDrawDispatcher(new ViewportSkyDrawDispatcher(viewport));
+                    skyPass.setDrawers(skyDrawer);
+                }
+
                 RenderPassInfo opaquePass = RenderPassInfo.renderPass();
                 opaquePass.setName("opaque");
+                opaquePass.dependsOn("sky");
                 opaquePass.setCullMode(CullMode.CULL_BACK);
-                opaquePass.setColorOutputs(colorOutput().setClear(true).setColorBuffer("color"));
-                opaquePass.setDepthOutput(depthOutput().setClear(true).setDepthBuffer("depth"));
+                opaquePass.setColorOutputs(colorOutput().setColorBuffer("color"));
+                opaquePass.setDepthOutput(depthOutput().setDepthBuffer("depth"));
                 {
                     DrawerInfo sceneDrawer = DrawerInfo.drawer();
                     sceneDrawer.setShader("opaque");
                     sceneDrawer.setDrawDispatcher(new ViewportOpaqueDrawDispatcher(viewport));
                     opaquePass.setDrawers(sceneDrawer);
                 }
-                mainTask.setPasses(opaquePass);
+                mainTask.setPasses(skyPass, opaquePass);
             }
             renderGraph.setTasks(mainTask);
         }

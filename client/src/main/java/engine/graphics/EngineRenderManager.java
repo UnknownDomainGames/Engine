@@ -9,7 +9,8 @@ import engine.graphics.backend.GraphicsBackend;
 import engine.graphics.display.Window;
 import engine.graphics.graph.*;
 import engine.graphics.internal.graph.ViewportOpaqueDrawDispatcher;
-import engine.graphics.shape.SkyBox;
+import engine.graphics.internal.graph.ViewportSkyDrawDispatcher;
+import engine.graphics.sky.SkyBox;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.BlendMode;
@@ -179,15 +180,24 @@ public final class EngineRenderManager implements RenderManager {
                 mainTask.setRenderBuffers(colorBuffer, depthBuffer);
             }
             {
+                RenderPassInfo skyPass = RenderPassInfo.renderPass();
+                skyPass.setName("sky");
+                skyPass.setCullMode(CullMode.CULL_BACK);
+                skyPass.setColorOutputs(colorOutput().setClear(true).setColorBuffer("color"));
+                skyPass.setDepthOutput(depthOutput().setClear(true).setWritable(false).setDepthBuffer("depth"));
+                {
+                    DrawerInfo skyDrawer = DrawerInfo.drawer();
+                    skyDrawer.setShader("sky");
+                    skyDrawer.setDrawDispatcher(new ViewportSkyDrawDispatcher(viewport));
+                    skyPass.setDrawers(skyDrawer);
+                }
+
                 RenderPassInfo opaquePass = RenderPassInfo.renderPass();
                 opaquePass.setName("opaque");
+                opaquePass.dependsOn("sky");
                 opaquePass.setCullMode(CullMode.CULL_BACK);
-                opaquePass.setColorOutputs(colorOutput()
-                        .setClear(true)
-                        .setColorBuffer("color"));
-                opaquePass.setDepthOutput(depthOutput()
-                        .setClear(true)
-                        .setDepthBuffer("depth"));
+                opaquePass.setColorOutputs(colorOutput().setColorBuffer("color"));
+                opaquePass.setDepthOutput(depthOutput().setDepthBuffer("depth"));
                 {
                     DrawerInfo sceneDrawer = DrawerInfo.drawer();
                     sceneDrawer.setShader("opaque");
@@ -214,7 +224,7 @@ public final class EngineRenderManager implements RenderManager {
                     guiPass.setDrawers(hudDrawer, guiDrawer);
                 }
 
-                mainTask.setPasses(opaquePass, guiPass);
+                mainTask.setPasses(skyPass, opaquePass, guiPass);
             }
             renderGraph.setTasks(mainTask);
         }

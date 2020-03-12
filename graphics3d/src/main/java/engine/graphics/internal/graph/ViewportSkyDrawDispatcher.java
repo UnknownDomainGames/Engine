@@ -14,7 +14,7 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 
-public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
+public class ViewportSkyDrawDispatcher implements DrawDispatcher {
     private final Viewport viewport;
 
     private UniformBlock uniformMatrices;
@@ -23,29 +23,26 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
     private static class Matrices implements UniformBlock.Value {
         private Matrix4fc projMatrix;
         private Matrix4fc viewMatrix;
-        private Matrix4fc modelMatrix;
 
-        public Matrices(Matrix4fc projMatrix, Matrix4fc viewMatrix, Matrix4fc modelMatrix) {
+        public Matrices(Matrix4fc projMatrix, Matrix4fc viewMatrix) {
             this.projMatrix = projMatrix;
             this.viewMatrix = viewMatrix;
-            this.modelMatrix = modelMatrix;
         }
 
         @Override
         public ByteBuffer get(MemoryStack stack) {
-            return get(stack.malloc(192));
+            return get(stack.malloc(128));
         }
 
         @Override
         public ByteBuffer get(int index, ByteBuffer buffer) {
             projMatrix.get(index, buffer);
             viewMatrix.get(index + 64, buffer);
-            modelMatrix.get(index + 128, buffer);
             return buffer;
         }
     }
 
-    public ViewportOpaqueDrawDispatcher(Viewport viewport) {
+    public ViewportSkyDrawDispatcher(Viewport viewport) {
         this.viewport = viewport;
     }
 
@@ -57,12 +54,11 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
 
     @Override
     public void draw(Frame frame, ShaderResource resource, Renderer renderer) {
+        if (frame.isResized()) viewport.setSize(frame.getWidth(), frame.getHeight());
+        uniformMatrices.set(new Matrices(viewport.getProjectionMatrix(), viewport.getViewMatrix()));
         Scene3D scene = viewport.getScene();
-        scene.getRenderQueue().getGeometryList(RenderType.OPAQUE).forEach(geometry -> {
-            uniformMatrices.set(new Matrices(
-                    viewport.getProjectionMatrix(),
-                    viewport.getViewMatrix(),
-                    geometry.getWorldTransform().toTransformMatrix()));
+        scene.doUpdate(frame.getTickLastFrame());
+        scene.getRenderQueue().getGeometryList(RenderType.SKY).forEach(geometry -> {
             uniformTexture.set(geometry.getTexture());
             resource.refresh();
             renderer.drawMesh(geometry.getMesh());
