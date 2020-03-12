@@ -161,8 +161,8 @@ public final class GLGraphicsBackend implements GraphicsBackend {
         LOGGER.info("Initializing OpenGL context!");
 
         capabilities = GL.createCapabilities();
-        GLHelper.setCapabilities(capabilities);
         gpuInfo = new GPUInfoImpl();
+        GLHelper.setup(capabilities, gpuInfo.getVendor());
         printGLInfo();
 
         initDebugMessageCallback();

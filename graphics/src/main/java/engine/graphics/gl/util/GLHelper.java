@@ -2,6 +2,7 @@ package engine.graphics.gl.util;
 
 import engine.graphics.util.DataType;
 import engine.graphics.util.DepthCompareMode;
+import engine.graphics.util.GPUVendor;
 import engine.graphics.vertex.VertexElement;
 import engine.graphics.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11;
@@ -17,12 +18,24 @@ public final class GLHelper {
 
     private static GLCapabilities capabilities;
 
+    private static boolean GL_ARB_direct_state_access;
+    private static boolean GL_EXT_direct_state_access;
+
     public static GLCapabilities getCapabilities() {
         return capabilities;
     }
 
-    public static void setCapabilities(GLCapabilities capabilities) {
+    public static void setup(GLCapabilities capabilities, GPUVendor vendor) {
         GLHelper.capabilities = capabilities;
+
+        if (vendor == GPUVendor.INTEL) {
+            // Fix intel IGP cannot work perfectly with DSA
+            GL_ARB_direct_state_access = false;
+            GL_EXT_direct_state_access = false;
+        } else {
+            GL_ARB_direct_state_access = capabilities.GL_ARB_direct_state_access;
+            GL_EXT_direct_state_access = capabilities.GL_EXT_direct_state_access;
+        }
     }
 
     public static boolean isOpenGL45() {
@@ -50,7 +63,7 @@ public final class GLHelper {
     }
 
     public static boolean isSupportARBDirectStateAccess() {
-        return capabilities.GL_ARB_direct_state_access;
+        return GL_ARB_direct_state_access;
     }
 
     public static boolean isSupportARBTextureStorage() {
@@ -58,7 +71,7 @@ public final class GLHelper {
     }
 
     public static boolean isSupportEXTDirectStateAccess() {
-        return capabilities.GL_EXT_direct_state_access;
+        return GL_EXT_direct_state_access;
     }
 
     public static String getVendor() {
