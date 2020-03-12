@@ -4,7 +4,6 @@ import engine.graphics.math.BoundingVolume;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.queue.RenderQueue;
 import engine.graphics.queue.RenderType;
-import engine.graphics.queue.StandardRenderTypes;
 import engine.graphics.texture.Texture;
 import engine.graphics.texture.Texture2D;
 import org.apache.commons.lang3.Validate;
@@ -21,7 +20,7 @@ public class Geometry extends Node3D {
     private BoundingVolume boundingVolume = new BoundingVolume();
 
     public Geometry() {
-        this(StandardRenderTypes.OPAQUE);
+        this(RenderType.OPAQUE);
     }
 
     public Geometry(RenderType renderType) {

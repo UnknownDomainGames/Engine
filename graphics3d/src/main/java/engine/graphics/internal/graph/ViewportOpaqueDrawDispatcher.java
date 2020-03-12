@@ -4,7 +4,7 @@ import engine.graphics.Scene3D;
 import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Frame;
 import engine.graphics.graph.Renderer;
-import engine.graphics.queue.StandardRenderTypes;
+import engine.graphics.queue.RenderType;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.shader.UniformBlock;
 import engine.graphics.shader.UniformTexture;
@@ -60,7 +60,7 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
         if (frame.isResized()) viewport.setSize(frame.getWidth(), frame.getHeight());
         Scene3D scene = viewport.getScene();
         scene.doUpdate(frame.getTickLastFrame());
-        scene.getRenderQueue().getGeometryList(StandardRenderTypes.OPAQUE).forEach(geometry -> {
+        scene.getRenderQueue().getGeometryList(RenderType.OPAQUE).forEach(geometry -> {
             uniformMatrices.set(new Matrices(
                     viewport.getProjectionMatrix(),
                     viewport.getViewMatrix(),

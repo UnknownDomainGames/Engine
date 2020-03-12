@@ -1,21 +1,26 @@
 package engine.graphics.queue;
 
-import engine.util.KeyComparable;
-
-import java.util.Set;
-
 import static org.apache.commons.lang3.Validate.notNull;
 
-public final class RenderType implements KeyComparable<String, RenderType> {
+public final class RenderType {
+
+    public static final RenderType SKY = create("Sky");
+    public static final RenderType GUI = create("Gui");
+    public static final RenderType OPAQUE = create("Opaque");
+    public static final RenderType TRANSPARENT = create("Transparent");
+    public static final RenderType TRANSLUCENT = create("Translucent");
+    public static final RenderType WATER = create("Water");
+    public static final RenderType LIQUID_OPAQUE = create("LiquidOpaque");
+    public static final RenderType LIQUID_TRANSLUCENT = create("LiquidTranslucent");
 
     private final String name;
-    private final Set<String> before;
-    private final Set<String> after;
 
-    private RenderType(String name, Set<String> before, Set<String> after) {
+    public static RenderType create(String name) {
+        return new RenderType(name);
+    }
+
+    private RenderType(String name) {
         this.name = notNull(name);
-        this.before = before;
-        this.after = after;
     }
 
     public String getName() {
@@ -23,49 +28,22 @@ public final class RenderType implements KeyComparable<String, RenderType> {
     }
 
     @Override
-    public String key() {
-        return name;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RenderType that = (RenderType) o;
+        return name.equals(that.name);
     }
 
     @Override
-    public Set<String> beforeThis() {
-        return before;
+    public int hashCode() {
+        return name.hashCode();
     }
 
     @Override
-    public Set<String> afterThis() {
-        return after;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static final class Builder {
-        private String name;
-        private Set<String> before = Set.of();
-        private Set<String> after = Set.of();
-
-        private Builder() {
-        }
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder before(String... before) {
-            this.before = Set.of(before);
-            return this;
-        }
-
-        public Builder after(String... after) {
-            this.after = Set.of(after);
-            return this;
-        }
-
-        public RenderType build() {
-            return new RenderType(name, before, after);
-        }
+    public String toString() {
+        return "RenderType{" +
+                "name='" + name + '\'' +
+                '}';
     }
 }
