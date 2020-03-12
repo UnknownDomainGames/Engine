@@ -1,6 +1,7 @@
 dependencies {
     compile project(':misc')
 
+    compile 'com.github.oshi:oshi-core:4.4.2'
     compile 'org.joml:joml:1.9.20'
 
     compile 'com.github.Mouse0w0:Observable:1.2.4'
