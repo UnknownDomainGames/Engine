@@ -61,7 +61,7 @@ public final class GLFWContext {
                 return screen;
             }
         }
-        return null;
+        return primaryScreen;
     }
 
     public static synchronized void initialize() {
