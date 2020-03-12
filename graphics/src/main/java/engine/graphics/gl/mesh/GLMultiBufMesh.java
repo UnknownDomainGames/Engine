@@ -18,6 +18,9 @@ import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static engine.graphics.gl.mesh.GLVertexArrayHelper.bindElementBuffer;
+import static engine.graphics.gl.mesh.GLVertexArrayHelper.enableVertexFormat;
+
 public final class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
 
     private Attribute[] attributes;
@@ -222,20 +225,18 @@ public final class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
         @Override
         public MultiBufMesh build() {
             GLMultiBufMesh mesh = new GLMultiBufMesh();
-            mesh.bind();
             mesh.drawMode = GLDrawMode.valueOf(drawMode);
             int index = 0;
             for (MeshAttribute attribute : attributes) {
                 attribute.mesh = mesh;
-                attribute.buffer.bind();
-                GLHelper.enableVertexFormat(attribute.format, index);
+                enableVertexFormat(mesh.id, attribute.buffer, attribute.format, index);
                 index += attribute.format.getElementCount();
             }
             mesh.attributes = attributes.toArray(Attribute[]::new);
             if (indices != null) {
                 mesh.indices = indices;
                 indices.mesh = mesh;
-                indices.buffer.bind();
+                bindElementBuffer(mesh.id, indices.buffer);
             }
             mesh.vertexCount = vertexCount;
             return mesh;

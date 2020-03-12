@@ -4,7 +4,6 @@ import engine.graphics.gl.GLDrawMode;
 import engine.graphics.gl.buffer.GLBufferType;
 import engine.graphics.gl.buffer.GLBufferUsage;
 import engine.graphics.gl.buffer.GLVertexBuffer;
-import engine.graphics.gl.util.GLHelper;
 import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
@@ -13,6 +12,8 @@ import engine.graphics.vertex.VertexFormat;
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 
+import static engine.graphics.gl.mesh.GLVertexArrayHelper.disableVertexFormat;
+import static engine.graphics.gl.mesh.GLVertexArrayHelper.enableVertexFormat;
 import static org.apache.commons.lang3.Validate.notNull;
 
 public final class GLSingleBufMesh extends GLMesh implements SingleBufMesh {
@@ -72,13 +73,12 @@ public final class GLSingleBufMesh extends GLMesh implements SingleBufMesh {
         this.vertexCount = vertexCount;
     }
 
-    private void setVertexFormat(VertexFormat vertexFormat) {
-        if (this.vertexFormat.equals(vertexFormat)) return;
+    private void setVertexFormat(VertexFormat format) {
+        if (vertexFormat.equals(format)) return;
         bind();
-        vertexBuffer.bind();
-        GLHelper.disableVertexFormat(this.vertexFormat);
-        GLHelper.enableVertexFormat(vertexFormat);
-        this.vertexFormat = vertexFormat;
+        disableVertexFormat(id, vertexFormat);
+        enableVertexFormat(id, vertexBuffer, format);
+        vertexFormat = format;
     }
 
     @Override

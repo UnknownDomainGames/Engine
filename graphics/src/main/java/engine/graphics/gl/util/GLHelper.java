@@ -3,14 +3,12 @@ package engine.graphics.gl.util;
 import engine.graphics.util.DataType;
 import engine.graphics.util.DepthCompareMode;
 import engine.graphics.util.GPUVendor;
-import engine.graphics.vertex.VertexElement;
-import engine.graphics.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GLCapabilities;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.GL_COMPARE_R_TO_TEXTURE;
 import static org.lwjgl.opengl.GL30.GL_HALF_FLOAT;
 import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
 
@@ -124,40 +122,6 @@ public final class GLHelper {
                 return GL_HALF_FLOAT;
             default:
                 throw new IllegalArgumentException();
-        }
-    }
-
-    public static void enableVertexElement(VertexElement element, int index) {
-        enableVertexElement(element, index, 0, 0);
-    }
-
-    public static void enableVertexElement(VertexElement element, int index, int stride, int offset) {
-        glEnableVertexAttribArray(index);
-        glVertexAttribPointer(index, element.getComponentCount(), toGLDataType(element.getType()), element.isNormalized(), stride, offset);
-    }
-
-    public static void enableVertexFormat(VertexFormat format) {
-        enableVertexFormat(format, 0);
-    }
-
-    public static void enableVertexFormat(VertexFormat format, int firstIndex) {
-        VertexElement[] elements = format.getElements();
-        int stride = format.getBytes();
-        int offset = 0;
-        for (int index = 0; index < elements.length; index++) {
-            VertexElement element = elements[index];
-            enableVertexElement(element, firstIndex + index, stride, offset);
-            offset += element.getBytes();
-        }
-    }
-
-    public static void disableVertexFormat(VertexFormat format) {
-        disableVertexFormat(format, 0);
-    }
-
-    public static void disableVertexFormat(VertexFormat format, int firstIndex) {
-        for (int i = firstIndex, size = firstIndex + format.getElementCount(); i < size; i++) {
-            glDisableVertexAttribArray(i);
         }
     }
 
