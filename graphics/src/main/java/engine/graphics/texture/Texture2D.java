@@ -3,6 +3,7 @@ package engine.graphics.texture;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.image.ReadOnlyImage;
 import engine.util.Color;
+import org.joml.Vector2ic;
 
 import java.nio.ByteBuffer;
 
@@ -36,6 +37,8 @@ public interface Texture2D extends Texture {
         Builder borderColor(Color color);
 
         Texture2D build();
+
+        Texture2D build(Vector2ic size);
 
         Texture2D build(int width, int height);
 

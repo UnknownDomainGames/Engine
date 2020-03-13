@@ -7,6 +7,7 @@ import engine.graphics.texture.Texture2D;
 import engine.graphics.texture.TextureFormat;
 import engine.graphics.texture.WrapMode;
 import engine.util.Color;
+import org.joml.Vector2ic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL45;
@@ -155,6 +156,11 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
         @Override
         public GLTexture2D build() {
             return build(null, 0, 0);
+        }
+
+        @Override
+        public GLTexture2D build(Vector2ic size) {
+            return build(null, size.x(), size.y());
         }
 
         @Override
