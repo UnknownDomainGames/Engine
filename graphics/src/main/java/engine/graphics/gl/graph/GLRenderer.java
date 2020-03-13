@@ -16,8 +16,6 @@ public final class GLRenderer implements Renderer {
 
     private final GLSingleBufMesh streamedMesh;
 
-    private Vector4ic scissor;
-
     public static GLRenderer getInstance() {
         return INSTANCE;
     }
@@ -33,7 +31,6 @@ public final class GLRenderer implements Renderer {
 
     @Override
     public void setScissor(Vector4ic scissor) {
-        this.scissor = scissor;
         if (scissor == null) {
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
         } else {
