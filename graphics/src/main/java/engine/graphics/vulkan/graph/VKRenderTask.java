@@ -1,12 +1,10 @@
 package engine.graphics.vulkan.graph;
 
-import engine.graphics.gl.graph.GLRenderGraph;
-import engine.graphics.gl.graph.GLRenderPass;
-import engine.graphics.gl.graph.GLRenderTaskRB;
 import engine.graphics.graph.RenderGraph;
 import engine.graphics.graph.RenderPass;
 import engine.graphics.graph.RenderTask;
 import engine.graphics.graph.RenderTaskInfo;
+import engine.graphics.texture.Texture2D;
 import engine.util.SortedList;
 
 import java.util.HashMap;
@@ -51,5 +49,10 @@ public class VKRenderTask implements RenderTask {
     @Override
     public RenderPass getFinalPass() {
         return finalPass;
+    }
+
+    @Override
+    public Texture2D getRenderBuffer(String name) {
+        return null;
     }
 }

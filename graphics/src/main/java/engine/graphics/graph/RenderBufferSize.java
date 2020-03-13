@@ -1,17 +1,14 @@
 package engine.graphics.graph;
 
+import org.joml.Vector2i;
+import org.joml.Vector2ic;
+
 public interface RenderBufferSize {
-    int getWidth();
-
-    int getHeight();
-
-    void resize(int width, int height);
-
-    void resizeWithViewport(int viewportWidth, int viewportHeight);
+    Vector2ic compute(int viewportWidth, int viewportHeight);
 
     class FixedSize implements RenderBufferSize {
-        private int width;
-        private int height;
+        private final int width;
+        private final int height;
 
         public FixedSize(int width, int height) {
             this.width = width;
@@ -19,24 +16,8 @@ public interface RenderBufferSize {
         }
 
         @Override
-        public int getWidth() {
-            return width;
-        }
-
-        @Override
-        public int getHeight() {
-            return height;
-        }
-
-        @Override
-        public void resize(int width, int height) {
-            this.width = width;
-            this.height = height;
-        }
-
-        @Override
-        public void resizeWithViewport(int viewportWidth, int viewportHeight) {
-            // DO NOT DO ANYTHING
+        public Vector2ic compute(int viewportWidth, int viewportHeight) {
+            return new Vector2i(width, height);
         }
     }
 
@@ -53,24 +34,8 @@ public interface RenderBufferSize {
         }
 
         @Override
-        public int getWidth() {
-            return width;
-        }
-
-        @Override
-        public int getHeight() {
-            return height;
-        }
-
-        @Override
-        public void resize(int width, int height) {
-            // DO NOT DO ANYTHING
-        }
-
-        @Override
-        public void resizeWithViewport(int viewportWidth, int viewportHeight) {
-            this.width = Math.round(viewportWidth * scaleWidth);
-            this.height = Math.round(viewportHeight * scaleHeight);
+        public Vector2ic compute(int viewportWidth, int viewportHeight) {
+            return new Vector2i(Math.round(viewportWidth * scaleWidth), Math.round(viewportHeight * scaleHeight));
         }
     }
 }

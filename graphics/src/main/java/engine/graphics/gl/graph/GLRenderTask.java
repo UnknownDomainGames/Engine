@@ -1,6 +1,7 @@
 package engine.graphics.gl.graph;
 
 import engine.graphics.graph.*;
+import engine.graphics.texture.Texture;
 import engine.util.SortedList;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public final class GLRenderTask implements RenderTask {
     private final RenderTaskInfo info;
     private final GLRenderGraph renderGraph;
 
-    private final Map<String, GLRenderTaskRB> renderBuffers;
+    private final Map<String, GLRenderBufferProxy> renderBuffers;
     private final Map<String, GLRenderPass> passes;
     private final List<GLRenderPass> sortedPasses;
     private final GLRenderPass finalPass;
@@ -21,7 +22,7 @@ public final class GLRenderTask implements RenderTask {
         this.info = info;
         this.renderGraph = renderGraph;
         this.renderBuffers = info.getRenderBuffers().stream().collect(Collectors.toUnmodifiableMap(
-                RenderBufferInfo::getName, renderBufferInfo -> new GLRenderTaskRB(renderBufferInfo, this)));
+                RenderBufferInfo::getName, renderBufferInfo -> new GLRenderBufferProxy(renderBufferInfo, this)));
         this.passes = info.getPasses().stream().collect(Collectors.toUnmodifiableMap(
                 RenderPassInfo::getName, renderPassInfo -> new GLRenderPass(renderPassInfo, this)));
         this.sortedPasses = SortedList.copyOf(passes.values(), (o1, o2) -> {
@@ -47,11 +48,12 @@ public final class GLRenderTask implements RenderTask {
         return finalPass;
     }
 
-    public Map<String, GLRenderTaskRB> getRenderBuffers() {
-        return renderBuffers;
+    @Override
+    public Texture getRenderBuffer(String name) {
+        return getRenderBufferProxy(name).getTexture();
     }
 
-    public GLRenderTaskRB getRenderBuffer(String name) {
+    public GLRenderBufferProxy getRenderBufferProxy(String name) {
         return renderBuffers.get(name);
     }
 
@@ -59,13 +61,13 @@ public final class GLRenderTask implements RenderTask {
         int width = frame.getWidth();
         int height = frame.getHeight();
         if (frame.isResized()) {
-            renderBuffers.values().forEach(renderBuffer -> renderBuffer.resizeWithViewport(width, height));
+            renderBuffers.values().forEach(renderBuffer -> renderBuffer.resize(width, height));
         }
         sortedPasses.forEach(pass -> pass.draw(frame));
     }
 
     public void dispose() {
         passes.values().forEach(GLRenderPass::dispose);
-        renderBuffers.values().forEach(GLRenderTaskRB::dispose);
+        renderBuffers.values().forEach(GLRenderBufferProxy::dispose);
     }
 }

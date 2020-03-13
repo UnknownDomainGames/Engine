@@ -50,14 +50,14 @@ public final class GLRenderPass implements RenderPass {
         this.colorOutputs = new ColorOutput[colorOutputs.size()];
         for (int i = 0; i < colorOutputs.size(); i++) {
             var colorOutputInfo = colorOutputs.get(i);
-            var renderBuffer = task.getRenderBuffer(colorOutputInfo.getColorBuffer());
+            var renderBuffer = task.getRenderBufferProxy(colorOutputInfo.getColorBuffer());
             this.colorOutputs[i] = new ColorOutput(colorOutputInfo, renderBuffer);
             enableBlend |= colorOutputInfo.getBlendMode() != BlendMode.DISABLED;
         }
 
         var depthOutputInfo = info.getDepthOutput();
         if (depthOutputInfo != null) {
-            var renderBuffer = task.getRenderBuffer(depthOutputInfo.getDepthBuffer());
+            var renderBuffer = task.getRenderBufferProxy(depthOutputInfo.getDepthBuffer());
             this.depthOutput = new DepthOutput(depthOutputInfo, renderBuffer);
         }
 
@@ -96,7 +96,7 @@ public final class GLRenderPass implements RenderPass {
         for (int i = 0; i < colorOutputs.length; i++) {
             ColorOutput colorOutput = colorOutputs[i];
             ColorOutputInfo info = colorOutput.info;
-            GLRenderTaskRB renderBuffer = colorOutput.renderBuffer;
+            GLRenderBufferProxy renderBuffer = colorOutput.renderBuffer;
             if (resized) frameBuffer.attach(GL30.GL_COLOR_ATTACHMENT0 + i, renderBuffer.getTexture());
             if (info.isClear()) GL30.glClearBufferfv(GL11.GL_COLOR, i, info.getClearColor().toRGBAFloatArray());
             setupBufferBlend(i, colorOutput.info.getBlendMode());
@@ -104,7 +104,7 @@ public final class GLRenderPass implements RenderPass {
 
         if (depthOutput != null) {
             DepthOutputInfo info = depthOutput.info;
-            GLRenderTaskRB renderBuffer = depthOutput.renderBuffer;
+            GLRenderBufferProxy renderBuffer = depthOutput.renderBuffer;
             if (resized) frameBuffer.attach(GL30.GL_DEPTH_ATTACHMENT, renderBuffer.getTexture());
             if (info.isClear()) GL30.glClearBufferfv(GL11.GL_DEPTH, 0, new float[]{info.getClearValue()});
         }
@@ -173,9 +173,9 @@ public final class GLRenderPass implements RenderPass {
 
     public static final class ColorOutput {
         private final ColorOutputInfo info;
-        private final GLRenderTaskRB renderBuffer;
+        private final GLRenderBufferProxy renderBuffer;
 
-        public ColorOutput(ColorOutputInfo info, GLRenderTaskRB renderBuffer) {
+        public ColorOutput(ColorOutputInfo info, GLRenderBufferProxy renderBuffer) {
             this.info = info;
             this.renderBuffer = renderBuffer;
         }
@@ -184,16 +184,16 @@ public final class GLRenderPass implements RenderPass {
             return info;
         }
 
-        public GLRenderTaskRB getRenderBuffer() {
+        public GLRenderBufferProxy getRenderBuffer() {
             return renderBuffer;
         }
     }
 
     public static final class DepthOutput {
         private final DepthOutputInfo info;
-        private final GLRenderTaskRB renderBuffer;
+        private final GLRenderBufferProxy renderBuffer;
 
-        public DepthOutput(DepthOutputInfo info, GLRenderTaskRB renderBuffer) {
+        public DepthOutput(DepthOutputInfo info, GLRenderBufferProxy renderBuffer) {
             this.info = info;
             this.renderBuffer = renderBuffer;
         }
@@ -202,7 +202,7 @@ public final class GLRenderPass implements RenderPass {
             return info;
         }
 
-        public GLRenderTaskRB getRenderBuffer() {
+        public GLRenderBufferProxy getRenderBuffer() {
             return renderBuffer;
         }
     }

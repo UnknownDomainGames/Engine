@@ -2,16 +2,15 @@ package engine.graphics.gl.graph;
 
 import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.graph.RenderBufferInfo;
-import engine.graphics.graph.RenderBufferSize;
 
-public final class GLRenderTaskRB {
+public final class GLRenderBufferProxy {
 
     private final RenderBufferInfo info;
     private final GLRenderTask renderTask;
 
     private GLTexture2D texture;
 
-    public GLRenderTaskRB(RenderBufferInfo info, GLRenderTask renderTask) {
+    public GLRenderBufferProxy(RenderBufferInfo info, GLRenderTask renderTask) {
         this.info = info;
         this.renderTask = renderTask;
     }
@@ -28,11 +27,11 @@ public final class GLRenderTaskRB {
         return texture;
     }
 
-    public void resizeWithViewport(int width, int height) {
+    public void resize(int width, int height) {
         if (texture != null) texture.dispose();
-        RenderBufferSize size = info.getSize();
-        size.resizeWithViewport(width, height);
-        texture = GLTexture2D.builder().format(info.getFormat()).build(size.getWidth(), size.getHeight());
+        texture = GLTexture2D.builder()
+                .format(info.getFormat())
+                .build(info.getSize().compute(width, height));
     }
 
     public void dispose() {
