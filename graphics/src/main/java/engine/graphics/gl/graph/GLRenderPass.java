@@ -7,8 +7,8 @@ import engine.graphics.texture.FrameBuffer;
 import engine.graphics.util.CullMode;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class GLRenderPass implements RenderPass {
 
@@ -16,13 +16,15 @@ public final class GLRenderPass implements RenderPass {
     private final GLRenderTask task;
 
     private final GLRenderPassFB frameBuffer;
-    private final List<GLDrawer> drawers = new ArrayList<>();
+    private final List<GLDrawer> drawers;
 
     public GLRenderPass(RenderPassInfo info, GLRenderTask task) {
         this.info = info;
         this.task = task;
         this.frameBuffer = new GLRenderPassFB(info, task);
-        info.getDrawers().forEach(drawerInfo -> drawers.add(new GLDrawer(drawerInfo, this)));
+        this.drawers = info.getDrawers().stream()
+                .map(drawerInfo -> new GLDrawer(drawerInfo, this))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override

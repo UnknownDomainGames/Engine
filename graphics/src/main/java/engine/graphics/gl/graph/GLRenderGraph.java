@@ -2,15 +2,13 @@ package engine.graphics.gl.graph;
 
 import engine.graphics.display.Window;
 import engine.graphics.gl.texture.GLFrameBuffer;
-import engine.graphics.graph.Frame;
-import engine.graphics.graph.RenderGraph;
-import engine.graphics.graph.RenderGraphInfo;
-import engine.graphics.graph.RenderTask;
+import engine.graphics.graph.*;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.FrameBuffer;
+import org.apache.commons.lang3.Validate;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static engine.graphics.gl.texture.GLFrameBuffer.getDefaultFrameBuffer;
 import static org.apache.commons.lang3.Validate.notNull;
@@ -19,7 +17,7 @@ public final class GLRenderGraph implements RenderGraph {
     private final RenderGraphInfo info;
 
     private final GLRenderTask mainTask;
-    private final Map<String, GLRenderTask> tasks = new HashMap<>();
+    private final Map<String, GLRenderTask> tasks;
 
     private int frameNumber = 0;
     private long lastFrameStartTime;
@@ -31,7 +29,8 @@ public final class GLRenderGraph implements RenderGraph {
 
     public GLRenderGraph(RenderGraphInfo info) {
         this.info = info;
-        info.getTasks().forEach(task -> tasks.put(task.getName(), new GLRenderTask(task, this)));
+        this.tasks = info.getTasks().stream().collect(Collectors.toUnmodifiableMap(
+                RenderTaskInfo::getName, taskInfo -> new GLRenderTask(taskInfo, this)));
         this.mainTask = tasks.get(info.getMainTask());
     }
 
@@ -43,6 +42,20 @@ public final class GLRenderGraph implements RenderGraph {
     @Override
     public RenderTask getMainTask() {
         return mainTask;
+    }
+
+    @Override
+    public RenderTask getTask(String name) {
+        return tasks.get(name);
+    }
+
+    @Override
+    public RenderTask dispatchTask(String name, Frame frame, Map<String, Object> args) {
+        Validate.notNull(frame, "Frame cannot be null");
+        GLRenderTask task = tasks.get(name);
+        if (task == null) throw new IllegalArgumentException("Failed to found render task: " + name);
+        task.draw(frame, args == null ? Map.of() : args);
+        return task;
     }
 
     public Map<String, GLRenderTask> getTasks() {
@@ -74,8 +87,10 @@ public final class GLRenderGraph implements RenderGraph {
 
         frameNumber++;
         long frameStartTime = System.nanoTime();
+        long currentTimeMillis = System.currentTimeMillis();
         float timeLastFrame = (frameStartTime - lastFrameStartTime) / 1e9f;
-        mainTask.draw(new Frame(frameNumber, System.currentTimeMillis(), timeLastFrame, tickLastFrame, width, height, resized));
+        Frame frame = new Frame(frameNumber, currentTimeMillis, timeLastFrame, tickLastFrame, width, height, resized);
+        mainTask.draw(frame, Map.of());
         lastFrameStartTime = frameStartTime;
         resized = false;
 

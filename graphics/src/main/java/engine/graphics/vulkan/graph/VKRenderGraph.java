@@ -1,18 +1,16 @@
 package engine.graphics.vulkan.graph;
 
 import engine.graphics.display.Window;
-import engine.graphics.graph.RenderGraph;
-import engine.graphics.graph.RenderGraphInfo;
-import engine.graphics.graph.RenderTask;
+import engine.graphics.graph.*;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class VKRenderGraph implements RenderGraph {
     private final RenderGraphInfo info;
 
     private final VKRenderTask mainTask;
-    private final Map<String, VKRenderTask> tasks = new HashMap<>();
+    private final Map<String, VKRenderTask> tasks;
 
     private int frameNumber = 0;
     private long lastFrameStartTime;
@@ -21,7 +19,8 @@ public class VKRenderGraph implements RenderGraph {
 
     public VKRenderGraph(RenderGraphInfo info) {
         this.info = info;
-        info.getTasks().forEach(task -> tasks.put(task.getName(), new VKRenderTask(task, this)));
+        this.tasks = info.getTasks().stream().collect(Collectors.toUnmodifiableMap(
+                RenderTaskInfo::getName, taskInfo -> new VKRenderTask(taskInfo, this)));
         this.mainTask = tasks.get(info.getMainTask());
     }
 
@@ -33,6 +32,16 @@ public class VKRenderGraph implements RenderGraph {
     @Override
     public RenderTask getMainTask() {
         return mainTask;
+    }
+
+    @Override
+    public RenderTask getTask(String name) {
+        return tasks.get(name);
+    }
+
+    @Override
+    public RenderTask dispatchTask(String name, Frame frame, Map<String, Object> args) {
+        return null;
     }
 
     @Override
