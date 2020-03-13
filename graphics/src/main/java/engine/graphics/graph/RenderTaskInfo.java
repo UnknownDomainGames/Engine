@@ -1,12 +1,14 @@
 package engine.graphics.graph;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class RenderTaskInfo {
     private String name;
-    private List<RenderBufferInfo> renderBuffers;
-    private List<RenderPassInfo> passes;
     private String finalPass;
+    private final List<RenderBufferInfo> renderBuffers = new ArrayList<>();
+    private final List<RenderPassInfo> passes = new ArrayList<>();
 
     public static RenderTaskInfo renderTask() {
         return new RenderTaskInfo();
@@ -21,12 +23,21 @@ public class RenderTaskInfo {
         return this;
     }
 
+    public String getFinalPass() {
+        return finalPass;
+    }
+
+    public RenderTaskInfo setFinalPass(String finalPass) {
+        this.finalPass = finalPass;
+        return this;
+    }
+
     public List<RenderBufferInfo> getRenderBuffers() {
         return renderBuffers;
     }
 
-    public RenderTaskInfo setRenderBuffers(RenderBufferInfo... renderBuffers) {
-        this.renderBuffers = List.of(renderBuffers);
+    public RenderTaskInfo addRenderBuffers(RenderBufferInfo... renderBuffers) {
+        Collections.addAll(this.renderBuffers, renderBuffers);
         return this;
     }
 
@@ -34,17 +45,8 @@ public class RenderTaskInfo {
         return passes;
     }
 
-    public RenderTaskInfo setPasses(RenderPassInfo... passes) {
-        this.passes = List.of(passes);
-        return this;
-    }
-
-    public String getFinalPass() {
-        return finalPass;
-    }
-
-    public RenderTaskInfo setFinalPass(String finalPass) {
-        this.finalPass = finalPass;
+    public RenderTaskInfo addPasses(RenderPassInfo... passes) {
+        Collections.addAll(this.passes, passes);
         return this;
     }
 }

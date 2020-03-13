@@ -28,13 +28,13 @@ public final class GUIRenderGraphHelper {
                 depthBuffer.setFormat(TextureFormat.DEPTH24);
                 depthBuffer.setRelativeSize(1, 1);
 
-                mainTask.setRenderBuffers(colorBuffer, depthBuffer);
+                mainTask.addRenderBuffers(colorBuffer, depthBuffer);
             }
             {
                 RenderPassInfo guiPass = RenderPassInfo.renderPass();
                 guiPass.setName("gui");
                 guiPass.setCullMode(CullMode.CULL_BACK);
-                guiPass.setColorOutputs(colorOutput()
+                guiPass.addColorOutputs(colorOutput()
                         .setColorBuffer("color")
                         .setClear(true)
                         .setClearColor(stage.getScene().getFill())
@@ -43,11 +43,11 @@ public final class GUIRenderGraphHelper {
                     DrawerInfo sceneDrawer = DrawerInfo.drawer();
                     sceneDrawer.setShader("gui");
                     sceneDrawer.setDrawDispatcher(new StageDrawDispatcher(stage));
-                    guiPass.setDrawers(sceneDrawer);
+                    guiPass.addDrawers(sceneDrawer);
                 }
-                mainTask.setPasses(guiPass);
+                mainTask.addPasses(guiPass);
             }
-            renderGraph.setTasks(mainTask);
+            renderGraph.addTasks(mainTask);
         }
         return renderGraph;
     }

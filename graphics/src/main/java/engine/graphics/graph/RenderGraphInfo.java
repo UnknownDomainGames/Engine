@@ -1,10 +1,12 @@
 package engine.graphics.graph;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class RenderGraphInfo {
     private String mainTask;
-    private List<RenderTaskInfo> tasks;
+    private final List<RenderTaskInfo> tasks = new ArrayList<>();
 
     public static RenderGraphInfo renderGraph() {
         return new RenderGraphInfo();
@@ -23,13 +25,13 @@ public class RenderGraphInfo {
         return tasks;
     }
 
-    public RenderGraphInfo setTasks(RenderTaskInfo task) {
-        this.tasks = List.of(task);
+    public RenderGraphInfo addTasks(RenderTaskInfo task) {
+        this.tasks.add(task);
         return this;
     }
 
-    public RenderGraphInfo setTasks(RenderTaskInfo... tasks) {
-        this.tasks = List.of(tasks);
+    public RenderGraphInfo addTasks(RenderTaskInfo... tasks) {
+        Collections.addAll(this.tasks, tasks);
         return this;
     }
 }

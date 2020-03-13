@@ -2,14 +2,16 @@ package engine.graphics.graph;
 
 import engine.graphics.util.CullMode;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class RenderPassInfo {
     private String name;
-    private List<String> dependencies = List.of();
+    private final List<String> dependencies = new ArrayList<>();
     private CullMode cullMode = CullMode.DISABLED;
-    private List<DrawerInfo> drawers = List.of();
-    private List<ColorOutputInfo> colorOutputs = List.of();
+    private final List<DrawerInfo> drawers = new ArrayList<>();
+    private final List<ColorOutputInfo> colorOutputs = new ArrayList<>();
     private DepthOutputInfo depthOutput;
 
     public static RenderPassInfo renderPass() {
@@ -30,12 +32,12 @@ public class RenderPassInfo {
     }
 
     public RenderPassInfo dependsOn(String dependency) {
-        this.dependencies = List.of(dependency);
+        this.dependencies.add(dependency);
         return this;
     }
 
     public RenderPassInfo dependsOn(String... dependencies) {
-        this.dependencies = List.of(dependencies);
+        Collections.addAll(this.dependencies, dependencies);
         return this;
     }
 
@@ -52,13 +54,13 @@ public class RenderPassInfo {
         return drawers;
     }
 
-    public RenderPassInfo setDrawers(DrawerInfo drawer) {
-        this.drawers = List.of(drawer);
+    public RenderPassInfo addDrawers(DrawerInfo drawer) {
+        this.drawers.add(drawer);
         return this;
     }
 
-    public RenderPassInfo setDrawers(DrawerInfo... drawers) {
-        this.drawers = List.of(drawers);
+    public RenderPassInfo addDrawers(DrawerInfo... drawers) {
+        Collections.addAll(this.drawers, drawers);
         return this;
     }
 
@@ -66,13 +68,13 @@ public class RenderPassInfo {
         return colorOutputs;
     }
 
-    public RenderPassInfo setColorOutputs(ColorOutputInfo output) {
-        this.colorOutputs = List.of(output);
+    public RenderPassInfo addColorOutputs(ColorOutputInfo output) {
+        this.colorOutputs.add(output);
         return this;
     }
 
-    public RenderPassInfo setColorOutputs(ColorOutputInfo... outputs) {
-        this.colorOutputs = List.of(outputs);
+    public RenderPassInfo addColorOutputs(ColorOutputInfo... outputs) {
+        Collections.addAll(this.colorOutputs, outputs);
         return this;
     }
 
