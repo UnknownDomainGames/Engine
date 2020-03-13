@@ -125,10 +125,10 @@ public final class GLGraphicsBackend implements GraphicsBackend {
     }
 
     @Override
-    public void render(float tpf) {
+    public void render(float timeToLastUpdate) {
         Cleaner.clean();
         runPendingTasks();
-        renderGraphs.forEach(renderGraph -> renderGraph.draw(tpf));
+        renderGraphs.forEach(renderGraph -> renderGraph.draw(timeToLastUpdate));
         GLFW.glfwPollEvents();
     }
 

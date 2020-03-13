@@ -79,7 +79,7 @@ public final class GLRenderGraph implements RenderGraph {
         this.resized = true;
     }
 
-    public void draw(float tickLastFrame) {
+    public void draw(float timeToLastUpdate) {
         window.prepareDraw();
         if (window != null && window.isResized()) {
             setSize(window.getWidth(), window.getHeight());
@@ -89,7 +89,7 @@ public final class GLRenderGraph implements RenderGraph {
         long frameStartTime = System.nanoTime();
         long currentTimeMillis = System.currentTimeMillis();
         float timeLastFrame = (frameStartTime - lastFrameStartTime) / 1e9f;
-        Frame frame = new Frame(frameNumber, currentTimeMillis, timeLastFrame, tickLastFrame, width, height, resized);
+        Frame frame = new Frame(frameNumber, currentTimeMillis, timeLastFrame, timeToLastUpdate, width, height, resized);
         mainTask.draw(frame, Map.of());
         lastFrameStartTime = frameStartTime;
         resized = false;

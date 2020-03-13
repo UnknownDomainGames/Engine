@@ -60,7 +60,7 @@ public class ViewportSkyDrawDispatcher implements DrawDispatcher {
         if (frame.isResized()) viewport.setSize(frame.getWidth(), frame.getHeight());
         uniformMatrices.set(new Matrices(viewport.getProjectionMatrix(), viewport.getViewMatrix()));
         Scene3D scene = viewport.getScene();
-        scene.doUpdate(frame.getTickLastFrame());
+        scene.doUpdate(frame.getTimeToLastUpdate());
         scene.getRenderQueue().getGeometryList(RenderType.SKY).forEach(geometry -> {
             uniformTexture.set(geometry.getTexture());
             resource.refresh();

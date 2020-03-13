@@ -51,6 +51,6 @@ public final class GUIPlatformImpl extends GUIPlatform {
     }
 
     private void doRender() {
-        GraphicsEngine.doRender(ticker.getTpf());
+        GraphicsEngine.doRender(0);
     }
 }

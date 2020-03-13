@@ -4,22 +4,18 @@ public final class Frame {
 
     private final int number;
     private final long startTime;
-    private final float timeLastFrame;
-    private final float tickLastFrame;
+    private final float timeToLastDraw;
+    private final float timeToLastUpdate;
 
     private final int width;
     private final int height;
     private final boolean resized;
 
-    public Frame(int number, long startTime, float timeLastFrame, int width, int height, boolean resized) {
-        this(number, startTime, timeLastFrame, timeLastFrame, width, height, resized);
-    }
-
-    public Frame(int number, long startTime, float timeLastFrame, float tickLastFrame, int width, int height, boolean resized) {
+    public Frame(int number, long startTime, float timeToLastDraw, float timeToLastUpdate, int width, int height, boolean resized) {
         this.number = number;
         this.startTime = startTime;
-        this.timeLastFrame = timeLastFrame;
-        this.tickLastFrame = Float.isNaN(tickLastFrame) ? timeLastFrame : tickLastFrame;
+        this.timeToLastDraw = timeToLastDraw;
+        this.timeToLastUpdate = timeToLastUpdate;
         this.width = width;
         this.height = height;
         this.resized = resized;
@@ -33,12 +29,12 @@ public final class Frame {
         return startTime;
     }
 
-    public float getTimeLastFrame() {
-        return timeLastFrame;
+    public float getTimeToLastDraw() {
+        return timeToLastDraw;
     }
 
-    public float getTickLastFrame() {
-        return tickLastFrame;
+    public float getTimeToLastUpdate() {
+        return timeToLastUpdate;
     }
 
     public int getWidth() {

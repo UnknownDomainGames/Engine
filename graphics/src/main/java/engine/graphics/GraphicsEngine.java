@@ -66,9 +66,9 @@ public final class GraphicsEngine {
         }
     }
 
-    public static void doRender(float tpf) {
+    public static void doRender(float timeToLastUpdate) {
         animationManager.update();
-        graphicsBackend.render(tpf);
+        graphicsBackend.render(timeToLastUpdate);
     }
 
     public static void stop() {

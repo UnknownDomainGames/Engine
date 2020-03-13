@@ -69,7 +69,7 @@ public abstract class Application3D {
 
     private void doRender() {
         onPreRender();
-        GraphicsEngine.doRender(ticker.getTpf());
+        GraphicsEngine.doRender(0);
         onPostRender();
     }
 
