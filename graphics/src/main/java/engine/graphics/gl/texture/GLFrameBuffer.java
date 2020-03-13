@@ -17,51 +17,40 @@ import static engine.graphics.gl.texture.GLTexture.toGLFilterMode;
 import static engine.graphics.gl.util.GLHelper.getMask;
 import static engine.graphics.gl.util.GLHelper.isSupportARBDirectStateAccess;
 
-public final class GLFrameBuffer implements FrameBuffer {
+public class GLFrameBuffer implements FrameBuffer {
 
-    private static final GLFrameBuffer DEFAULT_FRAME_BUFFER = new GLFrameBuffer();
+    private static final GLFrameBuffer BACK_BUFFER = new BackBuffer();
 
-    private final Map<Integer, AttachableFactory> attachmentFactories;
     private final Map<Integer, Attachable> attachments;
 
     private int id;
     private Cleaner.Disposable disposable;
-    private int width;
-    private int height;
 
-    public static Builder builder() {
-        return new Builder();
+    private int width = Integer.MAX_VALUE;
+    private int height = Integer.MAX_VALUE;
+
+    public static GLFrameBuffer getBackBuffer() {
+        return BACK_BUFFER;
     }
 
-    public static GLFrameBuffer getDefaultFrameBuffer() {
-        return DEFAULT_FRAME_BUFFER;
-    }
-
-    private GLFrameBuffer() {
-        this.id = 0;
-        this.attachmentFactories = Map.of();
-        this.attachments = new HashMap<>();
-    }
-
-    private GLFrameBuffer(Map<Integer, AttachableFactory> attachmentFactories, int width, int height) {
-        this.attachmentFactories = attachmentFactories;
-        this.attachments = new HashMap<>();
+    public GLFrameBuffer() {
         if (isSupportARBDirectStateAccess()) {
             this.id = GL45.glCreateFramebuffers();
         } else {
             this.id = GL30.glGenFramebuffers();
         }
         this.disposable = GLCleaner.registerFrameBuffer(this, id);
-        resize(width, height);
+        this.attachments = new HashMap<>();
+    }
+
+    private GLFrameBuffer(Void unused) {
+        this.id = 0;
+        this.attachments = Map.of();
     }
 
     @Override
     public int getId() {
         return id;
-    }
-
-    public Attachable getAttachable(int attachment) {
-        return attachments.get(attachment);
     }
 
     @Override
@@ -74,25 +63,26 @@ public final class GLFrameBuffer implements FrameBuffer {
         return height;
     }
 
-    @Override
-    public void resize(int width, int height) {
-        if (this.width == width && this.height == height) return;
-        this.width = width;
-        this.height = height;
+    public Attachable getAttachable(int attachment) {
+        return attachments.get(attachment);
+    }
 
-        if (id == 0) return;
+    public void attach(int attachment, Attachable attachable) {
+        if (isSupportARBDirectStateAccess()) {
+            GL45.glNamedFramebufferTexture(id, attachment, attachable.getId(), 0);
+        } else {
+            bind();
+            GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, attachment, attachable.getTarget(), attachable.getId(), 0);
+        }
+        attachments.put(attachment, attachable);
+        if (attachable.getWidth() < width) width = attachable.getWidth();
+        if (attachable.getHeight() < height) height = attachable.getHeight();
+    }
 
-        if (!isSupportARBDirectStateAccess()) bind();
-        attachmentFactories.forEach((attachment, attachableFactory) -> {
-            Attachable attachable = attachableFactory.create(width, height);
-            if (isSupportARBDirectStateAccess()) {
-                GL45.glNamedFramebufferTexture(id, attachment, attachable.getId(), 0);
-            } else {
-                GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, attachment, attachable.getTarget(), attachable.getId(), 0);
-            }
-            Attachable oldAttachable = attachments.put(attachment, attachable);
-            if (oldAttachable != null) oldAttachable.dispose();
-        });
+    public void reset() {
+        attachments.clear();
+        width = Integer.MAX_VALUE;
+        height = Integer.MAX_VALUE;
     }
 
     @Override
@@ -111,16 +101,18 @@ public final class GLFrameBuffer implements FrameBuffer {
     }
 
     @Override
-    public void copyFrom(FrameBuffer source, boolean copyColor, boolean copyDepth, boolean copyStencil,
+    public void copyFrom(FrameBuffer src, boolean copyColor, boolean copyDepth, boolean copyStencil,
                          FilterMode filterMode) {
-        copyFrom(source, new Vector4i(0, 0, source.getWidth(), source.getHeight()),
-                new Vector4i(0, 0, width, height), copyColor, copyDepth, copyStencil, filterMode);
+        copyFrom(src,
+                new Vector4i(0, 0, src.getWidth(), src.getHeight()),
+                new Vector4i(0, 0, getWidth(), getHeight()),
+                copyColor, copyDepth, copyStencil, filterMode);
     }
 
     @Override
-    public void copyFrom(FrameBuffer source, Vector4ic sourceRect, Vector4ic destRect,
+    public void copyFrom(FrameBuffer src, Vector4ic srcRect, Vector4ic destRect,
                          boolean copyColor, boolean copyDepth, boolean copyStencil, FilterMode filterMode) {
-        copy(source, sourceRect, this, destRect, copyColor, copyDepth, copyStencil, filterMode);
+        copy(src, srcRect, this, destRect, copyColor, copyDepth, copyStencil, filterMode);
     }
 
     public static void copy(FrameBuffer src, Vector4ic srcRect, FrameBuffer dest, Vector4ic destRect,
@@ -155,11 +147,6 @@ public final class GLFrameBuffer implements FrameBuffer {
         return id == 0;
     }
 
-    @FunctionalInterface
-    public interface AttachableFactory {
-        Attachable create(int width, int height);
-    }
-
     public interface Attachable {
         TextureFormat getFormat();
 
@@ -178,27 +165,26 @@ public final class GLFrameBuffer implements FrameBuffer {
         boolean isDisposed();
     }
 
-    public static final class Builder {
-        private Map<Integer, AttachableFactory> attachableFactories = new HashMap<>();
+    private static final class BackBuffer extends GLFrameBuffer {
 
-        private Builder() {
+        public BackBuffer() {
+            super(null);
         }
 
-        public Builder attach(int attachment, GLTexture2D.Builder builder) {
-            return attach(attachment, builder::build);
+        @Override
+        public void attach(int attachment, Attachable attachable) {
+            throw new UnsupportedOperationException("Cannot attach attachment to back buffer");
         }
 
-        public Builder attach(int attachment, GLTexture2DMultiSample.Builder builder) {
-            return attach(attachment, builder::build);
+        @Override
+        public void reset() {
+            throw new UnsupportedOperationException("Cannot reset back buffer");
         }
 
-        public Builder attach(int attachment, AttachableFactory factory) {
-            this.attachableFactories.put(attachment, factory);
-            return this;
-        }
-
-        public GLFrameBuffer build(int width, int height) {
-            return new GLFrameBuffer(Map.copyOf(attachableFactories), width, height);
+        @Override
+        public void copyFrom(FrameBuffer src, boolean copyColor, boolean copyDepth, boolean copyStencil, FilterMode filterMode) {
+            Vector4i rect = new Vector4i(0, 0, src.getWidth(), src.getHeight());
+            copyFrom(src, rect, rect, copyColor, copyDepth, copyStencil, filterMode);
         }
     }
 }

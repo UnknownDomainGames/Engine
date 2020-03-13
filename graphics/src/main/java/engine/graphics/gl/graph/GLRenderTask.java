@@ -62,9 +62,6 @@ public final class GLRenderTask implements RenderTask {
             renderBuffers.values().forEach(renderBuffer -> renderBuffer.resizeWithViewport(width, height));
         }
         sortedPasses.forEach(pass -> pass.draw(frame));
-        if (frame.isResized()) {
-            renderBuffers.values().forEach(GLRenderTaskRB::resetResized);
-        }
     }
 
     public void dispose() {

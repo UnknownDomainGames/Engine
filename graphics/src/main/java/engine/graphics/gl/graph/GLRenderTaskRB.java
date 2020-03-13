@@ -11,8 +11,6 @@ public final class GLRenderTaskRB {
 
     private GLTexture2D texture;
 
-    private boolean resized;
-
     public GLRenderTaskRB(RenderBufferInfo info, GLRenderTask renderTask) {
         this.info = info;
         this.renderTask = renderTask;
@@ -30,27 +28,14 @@ public final class GLRenderTaskRB {
         return texture;
     }
 
-    public boolean isResized() {
-        return resized;
-    }
-
     public void resizeWithViewport(int width, int height) {
-        resized = true;
-        if (texture != null) {
-            texture.dispose();
-        }
+        if (texture != null) texture.dispose();
         RenderBufferSize size = info.getSize();
         size.resizeWithViewport(width, height);
         texture = GLTexture2D.builder().format(info.getFormat()).build(size.getWidth(), size.getHeight());
     }
 
-    public void resetResized() {
-        resized = false;
-    }
-
     public void dispose() {
-        if (texture != null) {
-            texture.dispose();
-        }
+        if (texture != null) texture.dispose();
     }
 }

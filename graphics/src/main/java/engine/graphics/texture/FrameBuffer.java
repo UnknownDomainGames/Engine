@@ -10,18 +10,16 @@ public interface FrameBuffer {
 
     int getHeight();
 
-    void resize(int width, int height);
-
     void bind();
 
     void bindReadOnly();
 
     void bindDrawOnly();
 
-    void copyFrom(FrameBuffer source, boolean copyColor, boolean copyDepth, boolean copyStencil,
+    void copyFrom(FrameBuffer src, boolean copyColor, boolean copyDepth, boolean copyStencil,
                   FilterMode filterMode);
 
-    void copyFrom(FrameBuffer source, Vector4ic sourceRect, Vector4ic destRect,
+    void copyFrom(FrameBuffer src, Vector4ic srcRect, Vector4ic destRect,
                   boolean copyColor, boolean copyDepth, boolean copyStencil, FilterMode filterMode);
 
     void dispose();

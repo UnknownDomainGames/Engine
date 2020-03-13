@@ -1,7 +1,6 @@
 package engine.graphics.gl.graph;
 
 import engine.graphics.display.Window;
-import engine.graphics.gl.texture.GLFrameBuffer;
 import engine.graphics.graph.*;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.FrameBuffer;
@@ -10,7 +9,7 @@ import org.apache.commons.lang3.Validate;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static engine.graphics.gl.texture.GLFrameBuffer.getDefaultFrameBuffer;
+import static engine.graphics.gl.texture.GLFrameBuffer.getBackBuffer;
 import static org.apache.commons.lang3.Validate.notNull;
 
 public final class GLRenderGraph implements RenderGraph {
@@ -100,9 +99,7 @@ public final class GLRenderGraph implements RenderGraph {
     private void swapBuffers() {
         if (window == null) return;
         FrameBuffer result = getMainTask().getFinalPass().getFrameBuffer();
-        GLFrameBuffer screen = getDefaultFrameBuffer();
-        screen.resize(result.getWidth(), result.getHeight());
-        screen.copyFrom(result, true, false, false, FilterMode.NEAREST);
+        getBackBuffer().copyFrom(result, true, false, false, FilterMode.NEAREST);
         window.swapBuffers();
     }
 
