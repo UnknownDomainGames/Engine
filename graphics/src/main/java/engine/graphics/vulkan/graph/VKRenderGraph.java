@@ -4,6 +4,7 @@ import engine.graphics.display.Window;
 import engine.graphics.graph.*;
 
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class VKRenderGraph implements RenderGraph {
@@ -40,8 +41,8 @@ public class VKRenderGraph implements RenderGraph {
     }
 
     @Override
-    public RenderTask dispatchTask(String name, Frame frame, Map<String, Object> args) {
-        return null;
+    public void dispatchTask(String name, Frame frame, Map<String, Object> args, Consumer<RenderTask> callback) {
+
     }
 
     @Override
