@@ -2,6 +2,7 @@ package engine.graphics.internal.graph;
 
 import engine.graphics.Scene3D;
 import engine.graphics.graph.DrawDispatcher;
+import engine.graphics.graph.Drawer;
 import engine.graphics.graph.Frame;
 import engine.graphics.graph.Renderer;
 import engine.graphics.queue.RenderType;
@@ -50,14 +51,16 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
     }
 
     @Override
-    public void init(ShaderResource resource) {
+    public void init(Drawer drawer) {
+        ShaderResource resource = drawer.getShaderResource();
         this.uniformMatrices = resource.getUniformBlock("Transformation");
         this.uniformTexture = resource.getUniformTexture("u_Texture");
     }
 
     @Override
-    public void draw(Frame frame, ShaderResource resource, Renderer renderer) {
+    public void draw(Frame frame, Drawer drawer, Renderer renderer) {
         Scene3D scene = viewport.getScene();
+        ShaderResource resource = drawer.getShaderResource();
         scene.getRenderQueue().getGeometryList(RenderType.OPAQUE).forEach(geometry -> {
             uniformMatrices.set(new Matrices(
                     viewport.getProjectionMatrix(),

@@ -39,7 +39,7 @@ public final class GLRenderTask implements RenderTask {
     }
 
     @Override
-    public RenderGraph getRenderGraph() {
+    public GLRenderGraph getRenderGraph() {
         return renderGraph;
     }
 

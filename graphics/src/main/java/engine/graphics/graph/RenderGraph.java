@@ -3,6 +3,7 @@ package engine.graphics.graph;
 import engine.graphics.display.Window;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 public interface RenderGraph {
 
@@ -12,7 +13,7 @@ public interface RenderGraph {
 
     RenderTask getTask(String name);
 
-    RenderTask dispatchTask(String name, Frame frame, Map<String, Object> args);
+    void dispatchTask(String name, Frame frame, Map<String, Object> args, Consumer<RenderTask> callback);
 
     int getWidth();
 

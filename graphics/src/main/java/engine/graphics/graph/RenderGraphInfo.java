@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// TODO: 一块是渲染缓冲区的结果获取，一块是游戏刻的输入，一块是渲染前的预处理接口，一块是其他任务的调用
 public class RenderGraphInfo {
     private String mainTask;
     private final List<RenderTaskInfo> tasks = new ArrayList<>();

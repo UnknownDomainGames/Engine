@@ -1,9 +1,9 @@
 package engine.gui.internal.impl.graphics;
 
 import engine.graphics.graph.DrawDispatcher;
+import engine.graphics.graph.Drawer;
 import engine.graphics.graph.Frame;
 import engine.graphics.graph.Renderer;
-import engine.graphics.shader.ShaderResource;
 import engine.gui.Parent;
 import engine.gui.Scene;
 import engine.gui.stage.Stage;
@@ -18,12 +18,12 @@ public final class StageDrawDispatcher implements DrawDispatcher {
     }
 
     @Override
-    public void init(ShaderResource resource) {
-        graphics = new GraphicsImpl(resource);
+    public void init(Drawer drawer) {
+        graphics = new GraphicsImpl(drawer.getShaderResource());
     }
 
     @Override
-    public void draw(Frame frame, ShaderResource resource, Renderer renderer) {
+    public void draw(Frame frame, Drawer drawer, Renderer renderer) {
         Scene scene = stage.getScene();
         if (scene == null) return;
         scene.update();

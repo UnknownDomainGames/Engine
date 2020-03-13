@@ -7,6 +7,7 @@ import engine.graphics.texture.FrameBuffer;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static engine.graphics.gl.texture.GLFrameBuffer.getBackBuffer;
@@ -49,12 +50,12 @@ public final class GLRenderGraph implements RenderGraph {
     }
 
     @Override
-    public RenderTask dispatchTask(String name, Frame frame, Map<String, Object> args) {
+    public void dispatchTask(String name, Frame frame, Map<String, Object> args, Consumer<RenderTask> callback) {
         Validate.notNull(frame, "Frame cannot be null");
         GLRenderTask task = tasks.get(name);
         if (task == null) throw new IllegalArgumentException("Failed to found render task: " + name);
         task.draw(frame, args == null ? Map.of() : args);
-        return task;
+        if (callback != null) callback.accept(task);
     }
 
     public Map<String, GLRenderTask> getTasks() {

@@ -2,11 +2,14 @@ package engine.graphics.gl.graph;
 
 import engine.graphics.gl.shader.ShaderManager;
 import engine.graphics.gl.shader.ShaderProgram;
-import engine.graphics.graph.DrawDispatcher;
-import engine.graphics.graph.DrawerInfo;
-import engine.graphics.graph.Frame;
+import engine.graphics.graph.*;
+import engine.graphics.shader.ShaderResource;
+import engine.graphics.texture.FrameBuffer;
 
-public final class GLDrawer {
+import java.util.Map;
+import java.util.function.Consumer;
+
+public final class GLDrawer implements Drawer {
     private final DrawerInfo info;
     private final GLRenderPass renderPass;
 
@@ -20,20 +23,37 @@ public final class GLDrawer {
         this.shader = ShaderManager.load(info.getShader());
         this.shaderResource = new GLShaderResource(shader);
         this.drawDispatcher = info.getDrawDispatcher();
-        this.drawDispatcher.init(shaderResource);
+        this.drawDispatcher.init(this);
     }
 
+    @Override
     public DrawerInfo getInfo() {
         return info;
     }
 
+    @Override
     public GLRenderPass getRenderPass() {
         return renderPass;
     }
 
+    @Override
+    public ShaderResource getShaderResource() {
+        return shaderResource;
+    }
+
+    @Override
+    public FrameBuffer getFrameBuffer() {
+        return renderPass.getFrameBuffer();
+    }
+
+    @Override
+    public void dispatchTask(String name, Frame frame, Map<String, Object> args, Consumer<RenderTask> callback) {
+        renderPass.getRenderTask().getRenderGraph().dispatchTask(name, frame, args, callback);
+    }
+
     public void draw(Frame frame) {
         shader.use();
-        drawDispatcher.draw(frame, shaderResource, GLRenderer.getInstance());
+        drawDispatcher.draw(frame, this, GLRenderer.getInstance());
     }
 
     public void dispose() {

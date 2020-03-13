@@ -2,6 +2,7 @@ package engine.graphics.internal.graph;
 
 import engine.graphics.Scene3D;
 import engine.graphics.graph.DrawDispatcher;
+import engine.graphics.graph.Drawer;
 import engine.graphics.graph.Frame;
 import engine.graphics.graph.Renderer;
 import engine.graphics.queue.RenderType;
@@ -47,13 +48,15 @@ public class ViewportSkyDrawDispatcher implements DrawDispatcher {
     }
 
     @Override
-    public void init(ShaderResource resource) {
+    public void init(Drawer drawer) {
+        ShaderResource resource = drawer.getShaderResource();
         this.uniformMatrices = resource.getUniformBlock("Transformation");
         this.uniformTexture = resource.getUniformTexture("u_Texture");
     }
 
     @Override
-    public void draw(Frame frame, ShaderResource resource, Renderer renderer) {
+    public void draw(Frame frame, Drawer drawer, Renderer renderer) {
+        ShaderResource resource = drawer.getShaderResource();
         if (frame.isResized()) viewport.setSize(frame.getWidth(), frame.getHeight());
         uniformMatrices.set(new Matrices(viewport.getProjectionMatrix(), viewport.getViewMatrix()));
         Scene3D scene = viewport.getScene();

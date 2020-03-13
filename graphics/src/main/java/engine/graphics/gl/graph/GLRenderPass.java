@@ -70,7 +70,7 @@ public final class GLRenderPass implements RenderPass {
     }
 
     @Override
-    public RenderTask getRenderTask() {
+    public GLRenderTask getRenderTask() {
         return task;
     }
 
@@ -88,7 +88,7 @@ public final class GLRenderPass implements RenderPass {
         drawers.forEach(drawer -> drawer.draw(frame));
     }
 
-    public void setupFrameBuffer(boolean resized) {
+    private void setupFrameBuffer(boolean resized) {
         frameBuffer.bind();
 
         if (resized) frameBuffer.reset();

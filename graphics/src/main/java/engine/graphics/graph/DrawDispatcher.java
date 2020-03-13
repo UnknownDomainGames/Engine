@@ -1,10 +1,8 @@
 package engine.graphics.graph;
 
-import engine.graphics.shader.ShaderResource;
-
 public interface DrawDispatcher {
 
-    void init(ShaderResource resource);
+    void init(Drawer drawer);
 
-    void draw(Frame frame, ShaderResource resource, Renderer renderer);
+    void draw(Frame frame, Drawer drawer, Renderer renderer);
 }
