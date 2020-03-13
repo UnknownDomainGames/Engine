@@ -17,6 +17,7 @@ import java.util.Map;
 public class ShaderManager {
 
     private static final Map<String, MutableObjectValue<ShaderProgram>> registeredShader = new HashMap<>();
+    private static final Map<String, ShaderProgram> loadedShader = new HashMap<>();
     private static final JsonParser JSON_PARSER = new JsonParser();
 
     private static final ShaderResourceLoader loader = ClassPathShaderResourceLoader.DEFAULT;
@@ -30,6 +31,10 @@ public class ShaderManager {
     }
 
     public static ShaderProgram load(String name, ShaderResourceLoader loader) {
+        if (loadedShader.containsKey(name)) {
+            return loadedShader.get(name);
+        }
+
         var input = loader.openStream(name + ".json");
         if (input == null) {
             throw new RuntimeException("Cannot load shader " + name);
@@ -48,7 +53,9 @@ public class ShaderManager {
             throw new RuntimeException(e);
         }
 
-        return new ShaderProgram(shaders.toArray(new CompiledShader[0]));
+        ShaderProgram shaderProgram = new ShaderProgram(shaders.toArray(CompiledShader[]::new));
+        loadedShader.put(name, shaderProgram);
+        return shaderProgram;
     }
 
     private static CompiledShader loadShader(ShaderType type, String name, ShaderResourceLoader loader) {
