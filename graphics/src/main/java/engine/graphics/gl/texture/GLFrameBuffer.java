@@ -8,6 +8,7 @@ import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.GL45;
 
 import java.util.HashMap;
@@ -72,7 +73,7 @@ public class GLFrameBuffer implements FrameBuffer {
             GL45.glNamedFramebufferTexture(id, attachment, attachable.getId(), 0);
         } else {
             bind();
-            GL30.glFramebufferTexture2D(GL30.GL_FRAMEBUFFER, attachment, attachable.getTarget(), attachable.getId(), 0);
+            GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, attachment, attachable.getId(), 0);
         }
         attachments.put(attachment, attachable);
         if (attachable.getWidth() < width) width = attachable.getWidth();
@@ -178,7 +179,7 @@ public class GLFrameBuffer implements FrameBuffer {
 
         @Override
         public void reset() {
-            throw new UnsupportedOperationException("Cannot reset back buffer");
+            // DO NOTHING
         }
 
         @Override
