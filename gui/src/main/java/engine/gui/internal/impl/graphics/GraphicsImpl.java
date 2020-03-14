@@ -4,6 +4,7 @@ import engine.graphics.font.TextMesh;
 import engine.graphics.graph.Renderer;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.shader.ShaderResource;
+import engine.graphics.shader.UniformBlock;
 import engine.graphics.shader.UniformTexture;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.DrawMode;
@@ -17,8 +18,10 @@ import engine.gui.rendering.Graphics;
 import engine.math.Math2;
 import engine.util.Color;
 import org.joml.*;
+import org.lwjgl.system.MemoryStack;
 
 import java.lang.Math;
+import java.nio.ByteBuffer;
 import java.util.Stack;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -34,8 +37,11 @@ public final class GraphicsImpl implements Graphics {
     private final Matrix4fc identityMatrix4f = new Matrix4f();
 
     private final ShaderResource resource;
-    private final UniformTexture uniformTexture;
 
+    private final UniformBlock uniformStates;
+    private final States states = new States();
+
+    private final UniformTexture uniformTexture;
     private final Texture2D whiteTexture;
 
     private Renderer renderer;
@@ -46,8 +52,33 @@ public final class GraphicsImpl implements Graphics {
 
     private Color color;
 
+    private static class States implements UniformBlock.Value {
+        Matrix4fc projMatrix;
+        Matrix4fc modelMatrix;
+        Vector4fc clipRect;
+        boolean renderText;
+        boolean enableGamma;
+
+        @Override
+        public ByteBuffer get(MemoryStack stack) {
+            return get(stack.malloc(152));
+        }
+
+        @Override
+        public ByteBuffer get(int index, ByteBuffer buffer) {
+            projMatrix.get(0, buffer);
+            modelMatrix.get(64, buffer);
+            clipRect.get(128, buffer);
+            buffer.putInt(144, renderText ? 1 : 0);
+            buffer.putInt(148, enableGamma ? 1 : 0);
+            return buffer;
+        }
+    }
+
     public GraphicsImpl(ShaderResource resource) {
         this.resource = resource;
+        this.uniformStates = resource.getUniformBlock("States");
+        this.uniformStates.set(states);
         this.uniformTexture = resource.getUniformTexture("u_Texture");
         this.whiteTexture = Texture2D.white();
         setColor(Color.WHITE);
@@ -59,7 +90,7 @@ public final class GraphicsImpl implements Graphics {
         this.frameHeight = frameHeight;
         this.scaleX = scaleX;
         this.scaleY = scaleY;
-        resource.setUniform("u_ProjMatrix", new Matrix4f().setOrtho2D(0, frameWidth, frameHeight, 0).scale(scaleX, scaleY, 1));
+        states.projMatrix = new Matrix4f().setOrtho2D(0, frameWidth, frameHeight, 0).scale(scaleX, scaleY, 1);
         setModelMatrix(identityMatrix4f);
         resetClipRect();
         pushClipRect(0, 0, frameWidth / scaleX, frameHeight / scaleY);
@@ -219,7 +250,7 @@ public final class GraphicsImpl implements Graphics {
     }
 
     private void setRenderText(boolean renderText) {
-        resource.setUniform("u_RenderText", renderText);
+        states.renderText = renderText;
     }
 
     @Override
@@ -369,7 +400,8 @@ public final class GraphicsImpl implements Graphics {
 
     private void updateClipRect() {
         Vector4fc peek = clipRect.peek();
-        resource.setUniform("u_ClipRect", peek);
+        states.clipRect = peek;
+        resource.refresh();
         peek = clipRect.stream().reduce((parent, child) -> {
             var newX = Math2.clamp(child.x(), parent.x(), parent.z());
             var newY = Math2.clamp(child.y(), parent.y(), parent.w());
@@ -383,17 +415,17 @@ public final class GraphicsImpl implements Graphics {
     }
 
     private void setModelMatrix(Matrix4fc modelMatrix) {
-        resource.setUniform("u_ModelMatrix", modelMatrix);
+        states.modelMatrix = modelMatrix;
     }
 
     @Override
     public void enableGamma() {
-        resource.setUniform("u_EnableGamma", true);
+        states.enableGamma = true;
     }
 
     @Override
     public void disableGamma() {
-        resource.setUniform("u_EnableGamma", false);
+        states.enableGamma = false;
     }
 
     private void putVertex(VertexDataBuf buffer, float x, float y) {

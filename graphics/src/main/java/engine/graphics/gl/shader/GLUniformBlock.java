@@ -34,7 +34,6 @@ public final class GLUniformBlock implements UniformBlock {
     @Override
     public void set(Value value) {
         this.value = value;
-        bind();
     }
 
     public void bind() {

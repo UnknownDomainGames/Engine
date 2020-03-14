@@ -3,8 +3,6 @@ package engine.graphics.material;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.texture.Texture2D;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL15;
 
 public class Material {
     private Vector3f ambient = new Vector3f(0.1f);
@@ -17,46 +15,46 @@ public class Material {
     private Texture2D alphaUV;
 
     public void bind(ShaderResource proxy, String fieldName) {
-        proxy.setUniform(fieldName + ".ambient", ambient);
-        proxy.setUniform(fieldName + ".diffuseColor", diffuse);
-        proxy.setUniform(fieldName + ".specularColor", specular);
-        proxy.setUniform(fieldName + ".diffuse", 1);
-        proxy.setUniform(fieldName + ".specular", 2);
-        proxy.setUniform(fieldName + ".normalUV", 3);
-        proxy.setUniform(fieldName + ".alphaUV", 4);
-        proxy.setUniform(fieldName + ".shininess", shininess);
-        if (diffuseUV != null) {
-            proxy.setUniform(fieldName + ".diffuseUseUV", true);
-            GL15.glActiveTexture(GL15.GL_TEXTURE1);
-            diffuseUV.bind();
-            GL15.glActiveTexture(GL13.GL_TEXTURE0);
-        } else {
-            proxy.setUniform(fieldName + ".diffuseUseUV", false);
-        }
-        if (specularUV != null) {
-            proxy.setUniform(fieldName + ".specularUseUV", true);
-            GL15.glActiveTexture(GL15.GL_TEXTURE2);
-            specularUV.bind();
-            GL15.glActiveTexture(GL13.GL_TEXTURE0);
-        } else {
-            proxy.setUniform(fieldName + ".specularUseUV", false);
-        }
-        if (normalUV != null) {
-            proxy.setUniform(fieldName + ".normalUseUV", true);
-            GL15.glActiveTexture(GL15.GL_TEXTURE3);
-            normalUV.bind();
-            GL15.glActiveTexture(GL13.GL_TEXTURE0);
-        } else {
-            proxy.setUniform(fieldName + ".normalUseUV", false);
-        }
-        if (alphaUV != null) {
-            proxy.setUniform(fieldName + ".alphaUseUV", true);
-            GL15.glActiveTexture(GL15.GL_TEXTURE4);
-            alphaUV.bind();
-            GL15.glActiveTexture(GL13.GL_TEXTURE0);
-        } else {
-            proxy.setUniform(fieldName + ".alphaUseUV", false);
-        }
+//        proxy.setUniform(fieldName + ".ambient", ambient);
+//        proxy.setUniform(fieldName + ".diffuseColor", diffuse);
+//        proxy.setUniform(fieldName + ".specularColor", specular);
+//        proxy.setUniform(fieldName + ".diffuse", 1);
+//        proxy.setUniform(fieldName + ".specular", 2);
+//        proxy.setUniform(fieldName + ".normalUV", 3);
+//        proxy.setUniform(fieldName + ".alphaUV", 4);
+//        proxy.setUniform(fieldName + ".shininess", shininess);
+//        if (diffuseUV != null) {
+//            proxy.setUniform(fieldName + ".diffuseUseUV", true);
+//            GL15.glActiveTexture(GL15.GL_TEXTURE1);
+//            diffuseUV.bind();
+//            GL15.glActiveTexture(GL13.GL_TEXTURE0);
+//        } else {
+//            proxy.setUniform(fieldName + ".diffuseUseUV", false);
+//        }
+//        if (specularUV != null) {
+//            proxy.setUniform(fieldName + ".specularUseUV", true);
+//            GL15.glActiveTexture(GL15.GL_TEXTURE2);
+//            specularUV.bind();
+//            GL15.glActiveTexture(GL13.GL_TEXTURE0);
+//        } else {
+//            proxy.setUniform(fieldName + ".specularUseUV", false);
+//        }
+//        if (normalUV != null) {
+//            proxy.setUniform(fieldName + ".normalUseUV", true);
+//            GL15.glActiveTexture(GL15.GL_TEXTURE3);
+//            normalUV.bind();
+//            GL15.glActiveTexture(GL13.GL_TEXTURE0);
+//        } else {
+//            proxy.setUniform(fieldName + ".normalUseUV", false);
+//        }
+//        if (alphaUV != null) {
+//            proxy.setUniform(fieldName + ".alphaUseUV", true);
+//            GL15.glActiveTexture(GL15.GL_TEXTURE4);
+//            alphaUV.bind();
+//            GL15.glActiveTexture(GL13.GL_TEXTURE0);
+//        } else {
+//            proxy.setUniform(fieldName + ".alphaUseUV", false);
+//        }
     }
 
     public Material setDiffuseColor(Vector3f diffuse) {

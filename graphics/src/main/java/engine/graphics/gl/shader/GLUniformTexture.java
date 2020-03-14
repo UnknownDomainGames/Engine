@@ -45,16 +45,17 @@ public final class GLUniformTexture implements UniformTexture {
     public void set(Texture texture, Sampler sampler) {
         this.texture = texture;
         this.sampler = sampler;
-        bind();
     }
 
     public void bind() {
-        GLTexture glTexture = (GLTexture) texture;
-        if (GLHelper.isOpenGL45()) {
-            GL45.glBindTextureUnit(unit, glTexture.getId());
-        } else {
-            GL13.glActiveTexture(GL13.GL_TEXTURE0 + unit);
-            GL11.glBindTexture(glTexture.getTarget(), glTexture.getId());
+        if (texture != null) {
+            GLTexture glTexture = (GLTexture) texture;
+            if (GLHelper.isOpenGL45()) {
+                GL45.glBindTextureUnit(unit, glTexture.getId());
+            } else {
+                GL13.glActiveTexture(GL13.GL_TEXTURE0 + unit);
+                GL11.glBindTexture(glTexture.getTarget(), glTexture.getId());
+            }
         }
 
         if (sampler != null) {

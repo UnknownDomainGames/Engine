@@ -6,7 +6,6 @@ import engine.graphics.gl.shader.ShaderProgram;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.shader.UniformBlock;
 import engine.graphics.shader.UniformTexture;
-import org.joml.*;
 import org.lwjgl.opengl.GL31;
 
 import java.util.ArrayList;
@@ -44,62 +43,8 @@ public class GLShaderResource implements ShaderResource {
     }
 
     @Override
-    public void setUniform(String name, int value) {
-        shader.setUniform(name, value);
-    }
-
-    @Override
-    public void setUniform(String name, float value) {
-        shader.setUniform(name, value);
-    }
-
-    @Override
-    public void setUniform(String name, boolean value) {
-        shader.setUniform(name, value);
-    }
-
-    @Override
-    public void setUniform(String name, Vector2fc value) {
-        shader.setUniform(name, value);
-    }
-
-    @Override
-    public void setUniform(String name, Vector3fc value) {
-        shader.setUniform(name, value);
-    }
-
-    @Override
-    public void setUniform(String name, Vector4fc value) {
-        shader.setUniform(name, value);
-    }
-
-    @Override
-    public void setUniform(String name, Matrix3fc value) {
-        shader.setUniform(name, value);
-    }
-
-    @Override
-    public void setUniform(String name, Matrix3x2fc value) {
-        shader.setUniform(name, value);
-    }
-
-    @Override
-    public void setUniform(String name, Matrix4fc value) {
-        shader.setUniform(name, value);
-    }
-
-    @Override
-    public void setUniform(String name, Matrix4x3fc value) {
-        shader.setUniform(name, value);
-    }
-
-    @Override
-    public void setUniform(String name, Matrix4fc[] values) {
-        shader.setUniform(name, values);
-    }
-
-    @Override
     public void refresh() {
-
+        textures.forEach(GLUniformTexture::bind);
+        blocks.forEach(GLUniformBlock::bind);
     }
 }
