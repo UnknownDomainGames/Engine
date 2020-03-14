@@ -1,6 +1,7 @@
 package engine.graphics.graph;
 
 import engine.graphics.display.Window;
+import engine.graphics.texture.FrameBuffer;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -20,6 +21,8 @@ public interface RenderGraph {
     int getHeight();
 
     void setSize(int width, int height);
+
+    FrameBuffer getOutputFrameBuffer();
 
     Window getWindow();
 

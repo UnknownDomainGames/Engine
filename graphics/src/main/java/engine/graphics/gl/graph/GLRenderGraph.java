@@ -79,6 +79,11 @@ public final class GLRenderGraph implements RenderGraph {
         this.resized = true;
     }
 
+    @Override
+    public FrameBuffer getOutputFrameBuffer() {
+        return getMainTask().getFinalPass().getFrameBuffer();
+    }
+
     public void draw(float timeToLastUpdate) {
         window.prepareDraw();
         if (window != null && window.isResized()) {
@@ -99,7 +104,7 @@ public final class GLRenderGraph implements RenderGraph {
 
     private void swapBuffers() {
         if (window == null) return;
-        FrameBuffer result = getMainTask().getFinalPass().getFrameBuffer();
+        FrameBuffer result = getOutputFrameBuffer();
         getBackBuffer().copyFrom(result, true, false, false, FilterMode.NEAREST);
         window.swapBuffers();
     }

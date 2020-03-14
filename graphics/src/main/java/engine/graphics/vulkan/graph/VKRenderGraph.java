@@ -2,6 +2,7 @@ package engine.graphics.vulkan.graph;
 
 import engine.graphics.display.Window;
 import engine.graphics.graph.*;
+import engine.graphics.texture.FrameBuffer;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -58,6 +59,11 @@ public class VKRenderGraph implements RenderGraph {
     @Override
     public void setSize(int width, int height) {
 
+    }
+
+    @Override
+    public FrameBuffer getOutputFrameBuffer() {
+        return null;
     }
 
     @Override
