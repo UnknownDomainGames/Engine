@@ -17,8 +17,6 @@ public interface GraphicsBackend {
 
     boolean isRenderingThread();
 
-    void removeRenderGraph(RenderGraph renderGraph);
-
     GPUInfo getGPUInfo();
 
     WindowHelper getWindowHelper();
@@ -28,6 +26,8 @@ public interface GraphicsBackend {
     ResourceFactory getResourceFactory();
 
     RenderGraph loadRenderGraph(RenderGraphInfo renderGraph);
+
+    void removeRenderGraph(RenderGraph renderGraph);
 
     Future<Void> submitTask(Runnable runnable);
 

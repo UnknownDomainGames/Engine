@@ -79,13 +79,13 @@ public final class GLRenderPass implements RenderPass {
         return frameBuffer;
     }
 
-    public void draw(Frame frame) {
-        setupFrameBuffer(frame.isResized());
+    public void draw(FrameContext frameContext) {
+        setupFrameBuffer(frameContext.getFrame().isResized());
         setupViewport();
         setupCullMode(info.getCullMode());
         setupDepthTest(info.getDepthOutput());
         setupBlend();
-        drawers.forEach(drawer -> drawer.draw(frame));
+        drawers.forEach(drawer -> drawer.draw(frameContext));
     }
 
     private void setupFrameBuffer(boolean resized) {

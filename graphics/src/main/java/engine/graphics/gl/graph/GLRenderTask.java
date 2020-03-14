@@ -18,7 +18,7 @@ public final class GLRenderTask implements RenderTask {
     private final Map<String, GLRenderPass> passes;
     private final List<GLRenderPass> sortedPasses;
     private final GLRenderPass finalPass;
-    private final List<BiConsumer<Frame, RenderTask>> setups;
+    private final List<BiConsumer<FrameContext, RenderTask>> setups;
 
 
     public GLRenderTask(RenderTaskInfo info, GLRenderGraph renderGraph) {
@@ -67,8 +67,9 @@ public final class GLRenderTask implements RenderTask {
         if (frame.isResized()) {
             renderBuffers.values().forEach(renderBuffer -> renderBuffer.resize(width, height));
         }
-        setups.forEach(consumer -> consumer.accept(frame, this));
-        sortedPasses.forEach(pass -> pass.draw(frame));
+        FrameContext frameContext = new FrameContext(frame, args);
+        setups.forEach(consumer -> consumer.accept(frameContext, this));
+        sortedPasses.forEach(pass -> pass.draw(frameContext));
     }
 
     public void dispose() {

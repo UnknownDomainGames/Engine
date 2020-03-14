@@ -51,9 +51,9 @@ public final class GLDrawer implements Drawer {
         renderPass.getRenderTask().getRenderGraph().dispatchTask(name, frame, args, callback);
     }
 
-    public void draw(Frame frame) {
+    public void draw(FrameContext frameContext) {
         shader.use();
-        drawDispatcher.draw(frame, this, GLRenderer.getInstance());
+        drawDispatcher.draw(frameContext, this, GLRenderer.getInstance());
     }
 
     public void dispose() {

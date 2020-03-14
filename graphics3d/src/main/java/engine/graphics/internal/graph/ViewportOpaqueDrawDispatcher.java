@@ -2,7 +2,7 @@ package engine.graphics.internal.graph;
 
 import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Drawer;
-import engine.graphics.graph.Frame;
+import engine.graphics.graph.FrameContext;
 import engine.graphics.graph.Renderer;
 import engine.graphics.queue.RenderType;
 import engine.graphics.shader.ShaderResource;
@@ -57,7 +57,7 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
     }
 
     @Override
-    public void draw(Frame frame, Drawer drawer, Renderer renderer) {
+    public void draw(FrameContext frameContext, Drawer drawer, Renderer renderer) {
         ShaderResource resource = drawer.getShaderResource();
         viewport.getScene().getRenderQueue().getGeometryList(RenderType.OPAQUE).forEach(geometry -> {
             uniformMatrices.set(new Matrices(

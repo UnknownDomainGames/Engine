@@ -4,5 +4,5 @@ public interface DrawDispatcher {
 
     void init(Drawer drawer);
 
-    void draw(Frame frame, Drawer drawer, Renderer renderer);
+    void draw(FrameContext frameContext, Drawer drawer, Renderer renderer);
 }

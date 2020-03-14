@@ -9,7 +9,7 @@ public class RenderTaskInfo {
     private String name;
     private String finalPass;
     private final List<RenderBufferInfo> renderBuffers = new ArrayList<>();
-    private final List<BiConsumer<Frame, RenderTask>> setups = new ArrayList<>();
+    private final List<BiConsumer<FrameContext, RenderTask>> setups = new ArrayList<>();
     private final List<RenderPassInfo> passes = new ArrayList<>();
 
     public static RenderTaskInfo renderTask() {
@@ -43,11 +43,11 @@ public class RenderTaskInfo {
         return this;
     }
 
-    public List<BiConsumer<Frame, RenderTask>> getSetups() {
+    public List<BiConsumer<FrameContext, RenderTask>> getSetups() {
         return setups;
     }
 
-    public RenderTaskInfo addSetup(BiConsumer<Frame, RenderTask> setup) {
+    public RenderTaskInfo addSetup(BiConsumer<FrameContext, RenderTask> setup) {
         this.setups.add(setup);
         return this;
     }
