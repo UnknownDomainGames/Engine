@@ -435,7 +435,6 @@ public final class STBFontManager extends FontManager {
                 stbtt_GetFontBoundingBox(fontInfo, x0, y0, x1, y1);
 
                 var builder = NativeTTFontInfo.builder()
-                        .fontInfo(fontInfo)
                         .platformId(STBTT_PLATFORM_ID_MICROSOFT)
                         .encodingId(format.encodingId)
                         .languageId(format.languageId)
@@ -445,7 +444,7 @@ public final class STBFontManager extends FontManager {
                 if (delayLoading) {
                     builder.fontFile(fontFile);
                 } else {
-                    builder.fontData(fontData);
+                    builder.fontData(fontData).fontInfo(fontInfo);
                 }
                 var result = builder.build();
                 if (enable) {

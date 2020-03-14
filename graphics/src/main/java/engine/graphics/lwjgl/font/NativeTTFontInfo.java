@@ -1,15 +1,16 @@
 package engine.graphics.lwjgl.font;
 
 import engine.graphics.font.Font;
+import engine.graphics.util.BufferUtils;
 import org.lwjgl.stb.STBTTFontinfo;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.lwjgl.stb.STBTruetype.*;
+import static org.lwjgl.stb.STBTruetype.stbtt_GetFontOffsetForIndex;
+import static org.lwjgl.stb.STBTruetype.stbtt_InitFont;
 
 public class NativeTTFontInfo {
 
@@ -34,23 +35,26 @@ public class NativeTTFontInfo {
     private int[] boundingBox;
 
     public STBTTFontinfo getFontInfo() {
+        checkFontData();
         return fontInfo;
     }
 
     public ByteBuffer getFontData() {
-        if (fontData == null) {
-            try {
-                byte[] bytes = Files.readAllBytes(fontFile);
-                fontData = ByteBuffer.allocateDirect(bytes.length).put(bytes).flip();
-                fontInfo = STBTTFontinfo.create();
-                if (!stbtt_InitFont(fontInfo, fontData, stbtt_GetFontOffsetForIndex(fontData, offsetIndex))) {
-                    throw new IllegalStateException("Failed in initializing ttf font info");
-                }
-            } catch (IOException e) {
-                throw new IllegalStateException("Cannot read font data", e);
-            }
-        }
+        checkFontData();
         return fontData;
+    }
+
+    private void checkFontData() {
+        if (fontData != null) return;
+        try {
+            fontData = BufferUtils.wrapAsByteBuffer(Files.readAllBytes(fontFile));
+            fontInfo = STBTTFontinfo.create();
+            if (!stbtt_InitFont(fontInfo, fontData, stbtt_GetFontOffsetForIndex(fontData, offsetIndex))) {
+                throw new IllegalStateException("Failed in initializing ttf font info");
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Cannot read font data", e);
+        }
     }
 
     public String getFamily() {
@@ -83,14 +87,6 @@ public class NativeTTFontInfo {
 
     public Font getFont() {
         return font;
-    }
-
-    public String getFontName(int nameID) {
-        ByteBuffer buffer = stbtt_GetFontNameString(fontInfo, platformId, encodingId, languageId, nameID);
-        if (buffer == null) {
-            return null;
-        }
-        return buffer.order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
     }
 
     public static Builder builder() {
