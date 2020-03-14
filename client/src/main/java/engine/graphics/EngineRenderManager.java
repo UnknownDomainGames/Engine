@@ -166,6 +166,11 @@ public final class EngineRenderManager implements RenderManager {
             RenderTaskInfo mainTask = RenderTaskInfo.renderTask();
             mainTask.setName("main");
             mainTask.setFinalPass("gui");
+            mainTask.addSetup((frameContext, renderTask) -> {
+                Frame frame = frameContext.getFrame();
+                if (frame.isResized()) viewport.setSize(frame.getOutputWidth(), frame.getOutputHeight());
+                viewport.getScene().doUpdate(frame.getTimeToLastUpdate());
+            });
             {
                 RenderBufferInfo colorBuffer = RenderBufferInfo.renderBuffer();
                 colorBuffer.setName("color");
