@@ -1,6 +1,6 @@
 apply plugin: "application"
 
-mainClassName = 'nullengine.client.launch.Bootstrap'
+mainClassName = 'engine.client.launch.Bootstrap'
 
 dependencies {
     compile project(':game-engine')
