@@ -4,7 +4,6 @@ import engine.graphics.gl.buffer.GLVertexBuffer;
 import engine.graphics.gl.util.GLHelper;
 import engine.graphics.vertex.VertexElement;
 import engine.graphics.vertex.VertexFormat;
-import org.lwjgl.opengl.EXTDirectStateAccess;
 import org.lwjgl.opengl.GL20C;
 import org.lwjgl.opengl.GL30C;
 import org.lwjgl.opengl.GL45C;
@@ -18,42 +17,32 @@ public final class GLVertexArrayHelper {
     }
 
     public static void enableVertexFormat(int vertexArray, GLVertexBuffer buffer, VertexFormat format, int firstIndex) {
-        if (GLHelper.isSupportARBDirectStateAccess()) {
-            VertexElement[] elements = format.getElements();
-            int stride = format.getBytes(), offset = 0;
-            for (int i = 0, index = firstIndex, size = elements.length; i < size; i++, index++) {
-                VertexElement element = elements[i];
-                GL45C.glEnableVertexArrayAttrib(vertexArray, index);
-                GL45C.glVertexArrayAttribFormat(vertexArray, index, element.getComponentCount(),
-                        toGLDataType(element.getType()), element.isNormalized(), 0);
-                GL45C.glVertexArrayVertexBuffer(vertexArray, index, buffer.getId(), offset, stride);
-                GL45C.glVertexArrayAttribBinding(vertexArray, index, index);
-                offset += element.getBytes();
+//        Fix failed to draw multi window.
+//        if (GLHelper.isSupportARBDirectStateAccess()) {
+//            VertexElement[] elements = format.getElements();
+//            int stride = format.getBytes(), offset = 0;
+//            for (int i = 0, index = firstIndex, size = elements.length; i < size; i++, index++) {
+//                VertexElement element = elements[i];
+//                GL45C.glEnableVertexArrayAttrib(vertexArray, index);
+//                GL45C.glVertexArrayVertexBuffer(vertexArray, index, buffer.getId(), offset, stride);
+//                GL45C.glVertexArrayAttribFormat(vertexArray, index, element.getComponentCount(),
+//                        toGLDataType(element.getType()), element.isNormalized(), 0);
+//                GL45C.glVertexArrayAttribBinding(vertexArray, index, index);
+//                offset += element.getBytes();
+//            }
+//        } else {
+        GL30C.glBindVertexArray(vertexArray);
+        buffer.bind();
+        VertexElement[] elements = format.getElements();
+        int stride = format.getBytes(), offset = 0;
+        for (int i = 0, index = firstIndex, size = elements.length; i < size; i++, index++) {
+            VertexElement element = elements[i];
+            GL20C.glEnableVertexAttribArray(index);
+            GL20C.glVertexAttribPointer(index, element.getComponentCount(),
+                    toGLDataType(element.getType()), element.isNormalized(), stride, offset);
+            offset += element.getBytes();
             }
-        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
-            VertexElement[] elements = format.getElements();
-            int stride = format.getBytes(), offset = 0;
-            for (int i = 0, index = firstIndex, size = elements.length; i < size; i++, index++) {
-                VertexElement element = elements[i];
-                EXTDirectStateAccess.glEnableVertexArrayAttribEXT(vertexArray, index);
-                EXTDirectStateAccess.glVertexArrayVertexAttribOffsetEXT(vertexArray, buffer.getId(),
-                        index, element.getComponentCount(), toGLDataType(element.getType()),
-                        element.isNormalized(), stride, offset);
-                offset += element.getBytes();
-            }
-        } else {
-            GL30C.glBindVertexArray(vertexArray);
-            buffer.bind();
-            VertexElement[] elements = format.getElements();
-            int stride = format.getBytes(), offset = 0;
-            for (int i = 0, index = firstIndex, size = elements.length; i < size; i++, index++) {
-                VertexElement element = elements[i];
-                GL20C.glEnableVertexAttribArray(index);
-                GL20C.glVertexAttribPointer(index, element.getComponentCount(),
-                        toGLDataType(element.getType()), element.isNormalized(), stride, offset);
-                offset += element.getBytes();
-            }
-        }
+//        }
     }
 
     public static void disableVertexFormat(int vertexArray, VertexFormat format) {
@@ -68,9 +57,6 @@ public final class GLVertexArrayHelper {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             for (int i = first, size = first + count; i < size; i++)
                 GL45C.glDisableVertexArrayAttrib(vertexArray, i);
-        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
-            for (int i = first, size = first + count; i < size; i++)
-                EXTDirectStateAccess.glDisableVertexArrayAttribEXT(vertexArray, i);
         } else {
             GL30C.glBindVertexArray(vertexArray);
             for (int i = first, size = first + count; i < size; i++)
