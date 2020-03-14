@@ -399,19 +399,18 @@ public final class GraphicsImpl implements Graphics {
     }
 
     private void updateClipRect() {
-        Vector4fc peek = clipRect.peek();
-        states.clipRect = peek;
+        states.clipRect = clipRect.peek();
         resource.refresh();
-        peek = clipRect.stream().reduce((parent, child) -> {
+        Vector4fc scissor = clipRect.stream().reduce((parent, child) -> {
             var newX = Math2.clamp(child.x(), parent.x(), parent.z());
             var newY = Math2.clamp(child.y(), parent.y(), parent.w());
             var newZ = Math2.clamp(child.z(), parent.x(), parent.z());
             var newW = Math2.clamp(child.w(), parent.y(), parent.w());
             return new Vector4f(newX, newY, newZ, newW);
         }).get();
-        float height = peek.w() - peek.y();
-        renderer.setScissor((int) (peek.x() * scaleX), (int) (frameHeight - (peek.y() + height) * scaleY),
-                (int) Math.ceil((peek.z() - peek.x()) * scaleX), (int) Math.ceil(height * scaleY));
+        float height = scissor.w() - scissor.y();
+        renderer.setScissor((int) (scissor.x() * scaleX), (int) (frameHeight - (scissor.y() + height) * scaleY),
+                (int) Math.ceil((scissor.z() - scissor.x()) * scaleX), (int) Math.ceil(height * scaleY));
     }
 
     private void setModelMatrix(Matrix4fc modelMatrix) {
