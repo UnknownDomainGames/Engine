@@ -36,7 +36,7 @@ import engine.event.mod.ModRegistrationEvent;
 import engine.graphics.block.BlockDisplay;
 import engine.graphics.camera.Camera;
 import engine.graphics.entity.EntityItemRenderer;
-import engine.graphics.util.GLHelper;
+import engine.graphics.util.GraphicsUtils;
 import engine.gui.Scene;
 import engine.item.ItemStack;
 import engine.item.component.ActivateBlockBehavior;
@@ -239,7 +239,7 @@ public final class EngineModClientListeners {
         event.register(KeyBinding.builder()
                 .name("game.screenshot")
                 .key(Key.KEY_F2)
-                .startHandler(engineClient -> GLHelper.takeScreenshot(engineClient.getRunPath().resolve("screenshot")))
+                .startHandler(engineClient -> GraphicsUtils.takeScreenshot(engineClient.getRunPath().resolve("screenshot")))
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.debug_display_switch")
@@ -253,7 +253,6 @@ public final class EngineModClientListeners {
                 .startHandler(gameClient -> hudManager.toggleVisible())
                 .build());
     }
-
 
     @Listener
     public static void registerHUDControls(ModRegistrationEvent.Register<HUDControl> event) {
