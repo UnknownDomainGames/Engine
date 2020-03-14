@@ -7,10 +7,12 @@ import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.GL45;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -114,6 +116,18 @@ public class GLFrameBuffer implements FrameBuffer {
     public void copyFrom(FrameBuffer src, Vector4ic srcRect, Vector4ic destRect,
                          boolean copyColor, boolean copyDepth, boolean copyStencil, FilterMode filterMode) {
         copy(src, srcRect, this, destRect, copyColor, copyDepth, copyStencil, filterMode);
+    }
+
+    @Override
+    public void readPixels(TextureFormat format, ByteBuffer pixels) {
+        readPixels(0, 0, width, height, format, pixels);
+    }
+
+    @Override
+    public void readPixels(int x, int y, int width, int height, TextureFormat format, ByteBuffer pixels) {
+        GLTextureFormat glFormat = GLTextureFormat.valueOf(format);
+        bindReadOnly();
+        GL11.glReadPixels(x, y, width, height, glFormat.format, glFormat.type, pixels);
     }
 
     public static void copy(FrameBuffer src, Vector4ic srcRect, FrameBuffer dest, Vector4ic destRect,

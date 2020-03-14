@@ -2,6 +2,8 @@ package engine.graphics.texture;
 
 import org.joml.Vector4ic;
 
+import java.nio.ByteBuffer;
+
 public interface FrameBuffer {
 
     int getId();
@@ -21,6 +23,10 @@ public interface FrameBuffer {
 
     void copyFrom(FrameBuffer src, Vector4ic srcRect, Vector4ic destRect,
                   boolean copyColor, boolean copyDepth, boolean copyStencil, FilterMode filterMode);
+
+    void readPixels(TextureFormat format, ByteBuffer pixels);
+
+    void readPixels(int x, int y, int width, int height, TextureFormat format, ByteBuffer pixels);
 
     void dispose();
 
