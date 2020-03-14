@@ -22,7 +22,7 @@ public class Platform {
      * Get platform version
      */
     public static String getVersion() {
-        return "0.2.0-snapshot";
+        return "0.2.0.1-rc";
     }
 
     public static boolean isClient() {
