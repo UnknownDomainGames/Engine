@@ -7,17 +7,18 @@ public final class Frame {
     private final float timeToLastDraw;
     private final float timeToLastUpdate;
 
-    private final int width;
-    private final int height;
+    private final int outputWidth;
+    private final int outputHeight;
     private final boolean resized;
 
-    public Frame(int number, long startTime, float timeToLastDraw, float timeToLastUpdate, int width, int height, boolean resized) {
+    public Frame(int number, long startTime, float timeToLastDraw, float timeToLastUpdate,
+                 int outputWidth, int outputHeight, boolean resized) {
         this.number = number;
         this.startTime = startTime;
         this.timeToLastDraw = timeToLastDraw;
         this.timeToLastUpdate = timeToLastUpdate;
-        this.width = width;
-        this.height = height;
+        this.outputWidth = outputWidth;
+        this.outputHeight = outputHeight;
         this.resized = resized;
     }
 
@@ -37,12 +38,12 @@ public final class Frame {
         return timeToLastUpdate;
     }
 
-    public int getWidth() {
-        return width;
+    public int getOutputWidth() {
+        return outputWidth;
     }
 
-    public int getHeight() {
-        return height;
+    public int getOutputHeight() {
+        return outputHeight;
     }
 
     public boolean isResized() {

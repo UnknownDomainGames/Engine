@@ -18,7 +18,7 @@ public final class Scene3DRenderGraphHelper {
             mainTask.setName("main");
             mainTask.setFinalPass("opaque");
             mainTask.addSetup((frame, renderTask) -> {
-                if (frame.isResized()) viewport.setSize(frame.getWidth(), frame.getHeight());
+                if (frame.isResized()) viewport.setSize(frame.getOutputWidth(), frame.getOutputHeight());
                 viewport.getScene().doUpdate(frame.getTimeToLastUpdate());
             });
             {

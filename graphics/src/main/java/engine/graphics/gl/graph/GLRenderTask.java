@@ -62,8 +62,8 @@ public final class GLRenderTask implements RenderTask {
     }
 
     public void draw(Frame frame, Map<String, Object> args) {
-        int width = frame.getWidth();
-        int height = frame.getHeight();
+        int width = frame.getOutputWidth();
+        int height = frame.getOutputHeight();
         if (frame.isResized()) {
             renderBuffers.values().forEach(renderBuffer -> renderBuffer.resize(width, height));
         }

@@ -33,7 +33,7 @@ public final class StageDrawDispatcher implements DrawDispatcher {
             return; // Invisible root, don't need render it.
         }
 
-        graphics.setup(renderer, frame.getWidth(), frame.getHeight(), stage.getScaleX(), stage.getScaleY());
+        graphics.setup(renderer, frame.getOutputWidth(), frame.getOutputHeight(), stage.getScaleX(), stage.getScaleY());
         root.getRenderer().render(root, graphics);
     }
 }
