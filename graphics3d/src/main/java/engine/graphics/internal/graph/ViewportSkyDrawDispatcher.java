@@ -1,6 +1,5 @@
 package engine.graphics.internal.graph;
 
-import engine.graphics.Scene3D;
 import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Drawer;
 import engine.graphics.graph.Frame;
@@ -57,11 +56,8 @@ public class ViewportSkyDrawDispatcher implements DrawDispatcher {
     @Override
     public void draw(Frame frame, Drawer drawer, Renderer renderer) {
         ShaderResource resource = drawer.getShaderResource();
-        if (frame.isResized()) viewport.setSize(frame.getWidth(), frame.getHeight());
         uniformMatrices.set(new Matrices(viewport.getProjectionMatrix(), viewport.getViewMatrix()));
-        Scene3D scene = viewport.getScene();
-        scene.doUpdate(frame.getTimeToLastUpdate());
-        scene.getRenderQueue().getGeometryList(RenderType.SKY).forEach(geometry -> {
+        viewport.getScene().getRenderQueue().getGeometryList(RenderType.SKY).forEach(geometry -> {
             uniformTexture.set(geometry.getTexture());
             resource.refresh();
             renderer.drawMesh(geometry.getMesh());

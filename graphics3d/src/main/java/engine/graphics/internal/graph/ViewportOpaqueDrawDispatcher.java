@@ -1,6 +1,5 @@
 package engine.graphics.internal.graph;
 
-import engine.graphics.Scene3D;
 import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Drawer;
 import engine.graphics.graph.Frame;
@@ -59,9 +58,8 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
 
     @Override
     public void draw(Frame frame, Drawer drawer, Renderer renderer) {
-        Scene3D scene = viewport.getScene();
         ShaderResource resource = drawer.getShaderResource();
-        scene.getRenderQueue().getGeometryList(RenderType.OPAQUE).forEach(geometry -> {
+        viewport.getScene().getRenderQueue().getGeometryList(RenderType.OPAQUE).forEach(geometry -> {
             uniformMatrices.set(new Matrices(
                     viewport.getProjectionMatrix(),
                     viewport.getViewMatrix(),
