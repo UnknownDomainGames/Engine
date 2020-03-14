@@ -2,7 +2,7 @@ package engine.enginemod.client.gui.game;
 
 import engine.Platform;
 import engine.entity.component.TwoHands;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 import engine.gui.Scene;
 import engine.gui.control.ItemView;
 import engine.gui.layout.AnchorPane;
@@ -23,7 +23,7 @@ public final class GUIItemList extends AnchorPane {
         Scene scene = new Scene(new GUIItemList());
         scene.setOnKeyPressed(event -> {
             if (event.getKey() == KeyCode.ESCAPE) {
-                RenderManager.instance().getGUIManager().close();
+                GraphicsManager.instance().getGUIManager().close();
             }
         });
         return scene;

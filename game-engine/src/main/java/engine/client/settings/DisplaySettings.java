@@ -1,7 +1,7 @@
 package engine.client.settings;
 
 import configuration.Config;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 import engine.graphics.display.DisplayMode;
 import engine.graphics.display.Window;
 
@@ -101,7 +101,7 @@ public final class DisplaySettings {
     }
 
     public void apply() {
-        Window window = RenderManager.instance().getWindow();
+        Window window = GraphicsManager.instance().getWindow();
         window.setDisplayMode(displayMode, resolutionWidth, resolutionHeight, frameRate);
     }
 }

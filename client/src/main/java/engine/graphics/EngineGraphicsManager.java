@@ -28,7 +28,7 @@ import engine.math.BlockPos;
 import static engine.graphics.graph.ColorOutputInfo.colorOutput;
 import static engine.graphics.graph.DepthOutputInfo.depthOutput;
 
-public final class EngineRenderManager implements RenderManager {
+public final class EngineGraphicsManager implements GraphicsManager {
 
     private final EngineClient engine;
 
@@ -41,8 +41,10 @@ public final class EngineRenderManager implements RenderManager {
     private EngineGUIManager guiManager;
     private EngineHUDManager hudManager;
 
-    public EngineRenderManager(EngineClient engine) {
+    public EngineGraphicsManager(EngineClient engine, Thread renderThread) {
         this.engine = engine;
+        this.renderThread = renderThread;
+        initialize();
     }
 
     @Override
@@ -85,8 +87,8 @@ public final class EngineRenderManager implements RenderManager {
         return hudManager;
     }
 
-    public void init(Thread renderThread) {
-        this.renderThread = renderThread;
+    private void initialize() {
+        Internal.setInstance(this);
 
         GraphicsEngine.start(new GraphicsEngine.Settings());
 
@@ -142,7 +144,7 @@ public final class EngineRenderManager implements RenderManager {
                         .build());
     }
 
-    public void render(float tpf) {
+    public void doRender(float timeToLastUpdate) {
         engine.getEventBus().post(new RenderEvent.Pre());
 
         if (window.isResized()) {
@@ -150,10 +152,10 @@ public final class EngineRenderManager implements RenderManager {
         }
 
         if (engine.isPlaying()) {
-            engine.getCurrentGame().getClientPlayer().getEntityController().updateCamera(viewport.getCamera(), tpf);
+            engine.getCurrentGame().getClientPlayer().getEntityController().updateCamera(viewport.getCamera(), timeToLastUpdate);
         }
 
-        GraphicsEngine.doRender(tpf);
+        GraphicsEngine.doRender(timeToLastUpdate);
         updateFPS();
 
         engine.getEventBus().post(new RenderEvent.Post());

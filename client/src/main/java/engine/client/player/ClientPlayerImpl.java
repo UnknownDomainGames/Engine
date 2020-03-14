@@ -3,7 +3,7 @@ package engine.client.player;
 import engine.Platform;
 import engine.client.input.controller.EntityController;
 import engine.entity.Entity;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 import engine.graphics.display.callback.CursorCallback;
 import engine.player.PlayerImpl;
 import engine.player.Profile;
@@ -34,14 +34,14 @@ public class ClientPlayerImpl extends PlayerImpl implements ClientPlayer {
     public void setEntityController(EntityController controller) {
         entityController = controller;
         controller.setPlayer(this, getControlledEntity());
-        RenderManager renderManager = Platform.getEngineClient().getRenderManager();
-        renderManager.getWindow().removeCursorCallback(cursorCallback);
+        GraphicsManager graphicsManager = Platform.getEngineClient().getGraphicsManager();
+        graphicsManager.getWindow().removeCursorCallback(cursorCallback);
         cursorCallback = (window, xpos, ypos) -> {
-            if (!renderManager.getGUIManager().isShowing()) {
+            if (!graphicsManager.getGUIManager().isShowing()) {
                 entityController.onCursorMove(xpos, ypos);
             }
         };
-        renderManager.getWindow().addCursorCallback(cursorCallback);
+        graphicsManager.getWindow().addCursorCallback(cursorCallback);
     }
 
     @Nonnull

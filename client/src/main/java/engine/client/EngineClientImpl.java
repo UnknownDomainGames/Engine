@@ -21,9 +21,9 @@ import engine.enginemod.EngineModClientListeners;
 import engine.enginemod.EngineModListeners;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
-import engine.graphics.EngineRenderManager;
+import engine.graphics.EngineGraphicsManager;
 import engine.graphics.GraphicsEngine;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 import engine.graphics.gl.util.GLHelper;
 import engine.logic.Ticker;
 import engine.mod.ModContainer;
@@ -45,7 +45,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     private AssetSource engineAssetSource;
     private EngineAssetManager assetManager;
     private EngineSoundManager soundManager;
-    private EngineRenderManager renderManager;
+    private EngineGraphicsManager graphicsManager;
     private LocaleManager localeManager;
 
     private Ticker ticker;
@@ -118,14 +118,12 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         assetManager.getSourceManager().getSources().add(engineAssetSource);
         shutdownListeners.add(() -> assetManager.dispose());
 
-        logger.info("Initializing render context!");
-        renderManager = new EngineRenderManager(this);
-        RenderManager.Internal.setInstance(renderManager);
-        renderManager.init(clientThread);
-        initRenderCrashReportDetails();
-        renderManager.getWindow().setDoCloseImmediately(false);
-        renderManager.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
-        addShutdownListener(renderManager::dispose);
+        logger.info("Initializing graphics!");
+        graphicsManager = new EngineGraphicsManager(this, clientThread);
+        initGraphicsCrashReportDetails();
+        graphicsManager.getWindow().setDoCloseImmediately(false);
+        graphicsManager.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
+        addShutdownListener(graphicsManager::dispose);
 
         logger.info("Initializing audio context!");
         soundManager = new EngineSoundManager();
@@ -145,7 +143,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         assetManager.reload();
     }
 
-    private void initRenderCrashReportDetails() {
+    private void initGraphicsCrashReportDetails() {
         crashHandler.addReportDetail("GL Vendor", builder -> builder.append(GLHelper.getVendor()));
         crashHandler.addReportDetail("GL Renderer", builder -> builder.append(GLHelper.getRenderer()));
         crashHandler.addReportDetail("GL Version", builder -> builder.append(GLHelper.getVersion()));
@@ -164,13 +162,13 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         super.finishStage();
 
         logger.info("Initializing key binding!");
-        var window = renderManager.getWindow();
+        var window = graphicsManager.getWindow();
         keyBindingManager = new KeyBindingManager(this, registryManager.getRegistry(KeyBinding.class).orElseThrow());
         keyBindingManager.reload();
         window.addKeyCallback(keyBindingManager::handleKey);
         window.addMouseCallback(keyBindingManager::handleMouse);
 
-        ticker = new Ticker(this::clientTick, partial -> renderManager.render(partial), Ticker.CLIENT_TICK);
+        ticker = new Ticker(this::clientTick, partial -> graphicsManager.doRender(partial), Ticker.CLIENT_TICK);
     }
 
     @Override
@@ -192,7 +190,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         }
 
         // TODO: Remove it.
-        soundManager.updateListener(renderManager.getViewport().getCamera());
+        soundManager.updateListener(graphicsManager.getViewport().getCamera());
 
         if (isMarkedTermination()) {
             if (isPlaying()) {
@@ -257,8 +255,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     @Override
-    public RenderManager getRenderManager() {
-        return renderManager;
+    public GraphicsManager getGraphicsManager() {
+        return graphicsManager;
     }
 
     @Override

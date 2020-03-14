@@ -58,7 +58,7 @@ public class GLHelper {
     }
 
     public static void takeScreenshot(Path storagePath){
-        var window = Platform.getEngineClient().getRenderManager().getWindow();
+        var window = Platform.getEngineClient().getGraphicsManager().getWindow();
         var buffer = ByteBuffer.allocateDirect(window.getWidth() * window.getHeight() * 4);
         GL11.glReadPixels(0,0, window.getWidth(),window.getHeight(),GL_RGBA,GL_UNSIGNED_BYTE,buffer);
         var filename = "Screenshot-" + DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss").format(LocalDateTime.now()) + ".png";

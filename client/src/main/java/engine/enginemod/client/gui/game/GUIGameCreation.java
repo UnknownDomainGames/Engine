@@ -39,7 +39,7 @@ public class GUIGameCreation extends FlowPane {
         buttonCreate.border().setValue(new Border(Color.WHITE));
         buttonCreate.setOnMouseClicked(event -> {
             var engine = Platform.getEngineClient();
-            engine.getRenderManager().getGUIManager().close();
+            engine.getGraphicsManager().getGUIManager().close();
             Path gameBasePath = engine.getRunPath().resolve("game");
             Files2.deleteDirectoryIfPresent(gameBasePath);
             engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default")));
@@ -50,7 +50,7 @@ public class GUIGameCreation extends FlowPane {
         buttonLoad.border().setValue(new Border(Color.WHITE));
         buttonLoad.setOnMouseClicked(event -> {
             var engine = Platform.getEngineClient();
-            engine.getRenderManager().getGUIManager().close();
+            engine.getGraphicsManager().getGUIManager().close();
             Path gameBasePath = engine.getRunPath().resolve("game");
             engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromGame(gameBasePath)));
         });
@@ -58,7 +58,7 @@ public class GUIGameCreation extends FlowPane {
 
         var buttonSettings = new Button("Settings");
         buttonSettings.setOnMouseClicked(event ->
-                Platform.getEngineClient().getRenderManager().getGUIManager().show(new Scene(new GuiSettings())));
+                Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiSettings())));
         vBox.getChildren().add(buttonSettings);
 
         Button buttonExit = new Button("Exit");
@@ -67,7 +67,7 @@ public class GUIGameCreation extends FlowPane {
 
         var butCS = new Button("MultiPlayer");
         butCS.setOnMouseClicked(e -> {
-            Platform.getEngineClient().getRenderManager().getGUIManager().show(new Scene(new GuiDirectConnectServer()));
+            Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiDirectConnectServer()));
         });
         vBox.getChildren().add(butCS);
     }

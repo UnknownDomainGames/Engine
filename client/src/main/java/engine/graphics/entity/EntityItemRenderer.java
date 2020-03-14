@@ -1,14 +1,14 @@
 package engine.graphics.entity;
 
 import engine.entity.item.ItemEntity;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 
 public class EntityItemRenderer implements EntityRenderer<ItemEntity> {
 
-    private RenderManager context;
+    private GraphicsManager context;
 
     @Override
-    public void init(RenderManager context) {
+    public void init(GraphicsManager context) {
         this.context = context;
     }
 

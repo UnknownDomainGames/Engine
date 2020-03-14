@@ -34,14 +34,14 @@ public class GuiSettings extends AnchorPane {
         var lblDisplayMode = new Text("Display Mode");
         var lblRes = new Text("Resolution");
         var butRes = new Button();
-        var screen = Platform.getEngineClient().getRenderManager().getWindow().getScreen();
+        var screen = Platform.getEngineClient().getGraphicsManager().getWindow().getScreen();
         screen.
                 getVideoModes().stream().filter(mode -> mode.getWidth() == (settings.getDisplaySettings().getResolutionWidth() == -1 ? screen.getVideoMode().getWidth() : settings.getDisplaySettings().getResolutionWidth())
                 && mode.getHeight() == (settings.getDisplaySettings().getResolutionHeight() == -1 ? screen.getVideoMode().getHeight() : settings.getDisplaySettings().getResolutionHeight())
                 && mode.getRefreshRate() == (settings.getDisplaySettings().getFrameRate() == -1 ? screen.getVideoMode().getRefreshRate() : settings.getDisplaySettings().getFrameRate()))
                 .findFirst().ifPresentOrElse(videoMode -> videoModeIndex = screen.getVideoModes().indexOf(videoMode),
                 () -> videoModeIndex = screen.getVideoModes().indexOf(screen.getVideoMode()));
-        butRes.text().setValue(String.format("%dx%d, %dHz", Platform.getEngineClient().getRenderManager().getWindow().getWidth(), Platform.getEngineClient().getRenderManager().getWindow().getHeight(), settings.getDisplaySettings().getDisplayMode() != DisplayMode.FULLSCREEN ? 60 : screen.getVideoMode().getRefreshRate()));
+        butRes.text().setValue(String.format("%dx%d, %dHz", Platform.getEngineClient().getGraphicsManager().getWindow().getWidth(), Platform.getEngineClient().getGraphicsManager().getWindow().getHeight(), settings.getDisplaySettings().getDisplayMode() != DisplayMode.FULLSCREEN ? 60 : screen.getVideoMode().getRefreshRate()));
         butRes.setOnMouseClicked(event -> {
             videoModeIndex = (GuiSettings.this.videoModeIndex + 1) % screen.getVideoModes().size();
             settings.getDisplaySettings().setResolutionWidth(screen.getVideoModes().get(videoModeIndex).getWidth());
@@ -69,7 +69,7 @@ public class GuiSettings extends AnchorPane {
                     settings.getDisplaySettings().setResolutionWidth(settings.getDisplaySettings().getDisplayMode() == DisplayMode.WINDOWED ? -1 : screen.getVideoMode().getWidth());
                     settings.getDisplaySettings().setResolutionHeight(settings.getDisplaySettings().getDisplayMode() == DisplayMode.WINDOWED ? -1 : screen.getVideoMode().getHeight());
                     settings.getDisplaySettings().setFrameRate(60);
-                    butRes.text().setValue(String.format("%dx%d, %dHz", Platform.getEngineClient().getRenderManager().getWindow().getWidth(), Platform.getEngineClient().getRenderManager().getWindow().getHeight(), 60));
+                    butRes.text().setValue(String.format("%dx%d, %dHz", Platform.getEngineClient().getGraphicsManager().getWindow().getWidth(), Platform.getEngineClient().getGraphicsManager().getWindow().getHeight(), 60));
                 }
             }
         });
@@ -129,13 +129,13 @@ public class GuiSettings extends AnchorPane {
             settings.getDisplaySettings().setResolutionWidth(baksettings.getDisplaySettings().getResolutionWidth());
             settings.getDisplaySettings().setUiScale(baksettings.getDisplaySettings().getUiScale());
             settings.getDisplaySettings().setHudScale(baksettings.getDisplaySettings().getHudScale());
-            var guiManager = Platform.getEngineClient().getRenderManager().getGUIManager();
+            var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
             guiManager.showLast();
         });
         butSave.setOnMouseClicked(event -> {
             settings.apply();
             settings.save();
-            var guiManager = Platform.getEngineClient().getRenderManager().getGUIManager();
+            var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
             guiManager.showLast();
         });
         butSave.border().setValue(new Border(Color.WHITE, 2));

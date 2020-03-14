@@ -2,7 +2,7 @@ package engine.graphics.entity;
 
 import engine.client.event.rendering.RegisterEntityRendererEvent;
 import engine.entity.Entity;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
 
     private final Map<Class<? extends Entity>, EntityRenderer<?>> renderers = new HashMap<>();
 
-    public void init(RenderManager context) {
+    public void init(GraphicsManager context) {
         EntityRenderManagerImpl.Internal.setInstance(this);
         context.getEngine().getCurrentGame().getEventBus().post(new RegisterEntityRendererEvent(this::register));
         renderers.values().forEach(entityRenderer -> entityRenderer.init(context));

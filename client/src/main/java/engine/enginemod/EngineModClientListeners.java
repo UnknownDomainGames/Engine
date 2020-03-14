@@ -128,7 +128,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getClientPlayer();
-                    Camera camera = c.getRenderManager().getViewport().getCamera();
+                    Camera camera = c.getGraphicsManager().getViewport().getCamera();
                     Entity entity = player.getControlledEntity();
                     HitResult hitResult = player.getWorld().raycast(camera.getPosition(), camera.getFront(), 10);
                     if (hitResult.isFailure()) {
@@ -170,7 +170,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getClientPlayer();
-                    Camera camera = c.getRenderManager().getViewport().getCamera();
+                    Camera camera = c.getGraphicsManager().getViewport().getCamera();
                     Entity entity = player.getControlledEntity();
                     HitResult hitResult = player.getWorld().raycast(camera.getPosition(), camera.getFront(), 10);
                     if (hitResult.isFailure()) {
@@ -210,7 +210,7 @@ public final class EngineModClientListeners {
                 .startHandler(c -> {
                     GameClient game = c.getCurrentGame();
                     Player player = game.getClientPlayer();
-                    Camera camera = c.getRenderManager().getViewport().getCamera();
+                    Camera camera = c.getGraphicsManager().getViewport().getCamera();
                     Entity entity = player.getControlledEntity();
                     player.getWorld().raycastBlock(camera.getPosition(), camera.getFront(), 10).ifSuccess(hit ->
                             entity.getComponent(TwoHands.class).ifPresent(twoHands ->
@@ -223,18 +223,18 @@ public final class EngineModClientListeners {
                 .key(Key.KEY_ENTER)
                 .startHandler(c -> {
                     Scene scene = new Scene(new GuiChat(c.getCurrentGame()));
-                    c.getRenderManager().getGUIManager().show(scene);
+                    c.getGraphicsManager().getGUIManager().show(scene);
                 })
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.inventory")
                 .key(Key.KEY_E)
-                .startHandler(c -> c.getRenderManager().getGUIManager().show(GUIItemList.create()))
+                .startHandler(c -> c.getGraphicsManager().getGUIManager().show(GUIItemList.create()))
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.menu")
                 .key(Key.KEY_ESCAPE)
-                .startHandler(c -> c.getRenderManager().getGUIManager().show(GUIPauseMenu.create()))
+                .startHandler(c -> c.getGraphicsManager().getGUIManager().show(GUIPauseMenu.create()))
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.screenshot")
@@ -246,7 +246,7 @@ public final class EngineModClientListeners {
                 .key(Key.KEY_F3)
                 .startHandler(gameClient -> HUD_DEBUG.setVisible(!HUD_DEBUG.isVisible()))
                 .build());
-        HUDManager hudManager = Platform.getEngineClient().getRenderManager().getHUDManager();
+        HUDManager hudManager = Platform.getEngineClient().getGraphicsManager().getHUDManager();
         event.register(KeyBinding.builder()
                 .name("game.hud_display_switch")
                 .key(Key.KEY_F1)
@@ -267,7 +267,7 @@ public final class EngineModClientListeners {
 
     @Listener
     public static void onEngineReady(EngineEvent.Ready event) {
-        var renderContext = Platform.getEngineClient().getRenderManager();
+        var renderContext = Platform.getEngineClient().getGraphicsManager();
         var guiManager = renderContext.getGUIManager();
 
         var scene = new Scene(new GUIGameCreation());

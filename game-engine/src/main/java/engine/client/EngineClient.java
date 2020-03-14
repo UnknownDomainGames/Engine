@@ -6,7 +6,7 @@ import engine.client.asset.source.AssetSource;
 import engine.client.game.GameClient;
 import engine.client.settings.EngineSettings;
 import engine.client.sound.ALSoundManager;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 
 public interface EngineClient extends Engine {
 
@@ -18,7 +18,7 @@ public interface EngineClient extends Engine {
 
     AssetSource getEngineAssetSource();
 
-    RenderManager getRenderManager();
+    GraphicsManager getGraphicsManager();
 
     ALSoundManager getSoundManager();
 

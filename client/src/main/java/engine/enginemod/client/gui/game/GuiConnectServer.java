@@ -3,7 +3,7 @@ package engine.enginemod.client.gui.game;
 import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
 import engine.Platform;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 import engine.gui.control.Button;
 import engine.gui.control.Label;
 import engine.gui.layout.BorderPane;
@@ -45,7 +45,7 @@ public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
             if (networkClient != null) {
                 networkClient.close();
             }
-            var guiManager = Platform.getEngineClient().getRenderManager().getGUIManager();
+            var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
             guiManager.showLast();
         });
         lblStatus.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
@@ -107,7 +107,7 @@ public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
         connector.start();
     }
 
-    public void update(RenderManager context) {
+    public void update(GraphicsManager context) {
 //        if(networkClient != null && networkClient.getHandler() != null) {
 //            if(!networkClient.getHandler().isChannelOpen()){
 //                lblStatus.text().setValue("Disconnected");

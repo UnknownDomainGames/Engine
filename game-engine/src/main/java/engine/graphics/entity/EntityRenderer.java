@@ -1,11 +1,11 @@
 package engine.graphics.entity;
 
 import engine.entity.Entity;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 
 public interface EntityRenderer<T extends Entity> {
 
-    void init(RenderManager context);
+    void init(GraphicsManager context);
 
     boolean shouldRender(T entity, double x, double y, double z, float partial);
 

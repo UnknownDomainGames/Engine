@@ -8,7 +8,7 @@ import engine.gui.GUIManager;
 
 import java.util.function.Supplier;
 
-public interface RenderManager {
+public interface GraphicsManager {
 
     EngineClient getEngine();
 
@@ -28,16 +28,16 @@ public interface RenderManager {
 
     int getFPS();
 
-    static RenderManager instance() {
+    static GraphicsManager instance() {
         return Internal.instance.get();
     }
 
     class Internal {
-        private static Supplier<RenderManager> instance = () -> {
-            throw new IllegalStateException("RenderManager is uninitialized");
+        private static Supplier<GraphicsManager> instance = () -> {
+            throw new IllegalStateException("GraphicsManager is uninitialized");
         };
 
-        public static void setInstance(RenderManager instance) {
+        static void setInstance(GraphicsManager instance) {
             Internal.instance = () -> instance;
         }
     }

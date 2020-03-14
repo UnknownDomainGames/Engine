@@ -7,7 +7,7 @@ import engine.event.block.BlockChangeEvent;
 import engine.event.world.chunk.ChunkLoadEvent;
 import engine.event.world.chunk.ChunkUnloadEvent;
 import engine.graphics.GraphicsEngine;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 import engine.graphics.Scene3D;
 import engine.graphics.viewport.Viewport;
 import engine.math.BlockPos;
@@ -33,7 +33,7 @@ public final class ChunkRenderer {
 
     private volatile boolean disposed;
 
-    public ChunkRenderer(RenderManager manager, World world) {
+    public ChunkRenderer(GraphicsManager manager, World world) {
         this.scene = manager.getScene();
         this.viewport = manager.getViewport();
         this.world = world;

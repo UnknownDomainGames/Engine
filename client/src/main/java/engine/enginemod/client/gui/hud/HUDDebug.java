@@ -8,7 +8,7 @@ import engine.client.hud.HUDControl;
 import engine.entity.Entity;
 import engine.event.Listener;
 import engine.graphics.GraphicsEngine;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 import engine.graphics.camera.Camera;
 import engine.graphics.util.GPUInfo;
 import engine.gui.layout.AnchorPane;
@@ -77,7 +77,7 @@ public final class HUDDebug extends HUDControl {
     public void update(RenderEvent.Pre event) {
         EngineClient engine = Platform.getEngineClient();
         Entity player = engine.getCurrentGame().getClientPlayer().getControlledEntity();
-        RenderManager manager = engine.getRenderManager();
+        GraphicsManager manager = engine.getGraphicsManager();
 
         fps.setText("FPS: " + manager.getFPS());
         playerPosition.setText(format("Player Position: %.2f, %.2f, %.2f", player.getPosition().x, player.getPosition().y, player.getPosition().z));

@@ -8,7 +8,7 @@ import engine.event.Order;
 import engine.event.engine.EngineEvent;
 import engine.event.game.GameTerminationEvent;
 import engine.event.player.PlayerControlEntityEvent;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 import engine.graphics.block.BlockRenderManager;
 import engine.graphics.block.BlockRenderManagerImpl;
 import engine.graphics.item.ItemRenderManager;
@@ -28,7 +28,7 @@ public final class VoxelGraphicsHelper {
 
     private static ChunkRenderer renderer;
 
-    public static void initialize(RenderManager manager) {
+    public static void initialize(GraphicsManager manager) {
         textureAtlas = new TextureAtlasImpl();
         VoxelGraphics.setVoxelTextureAtlas(textureAtlas);
         AssetManager assetManager = manager.getEngine().getAssetManager();
@@ -69,7 +69,7 @@ public final class VoxelGraphicsHelper {
     public static void onControlEntity(PlayerControlEntityEvent.Post event) {
         World world = event.getNewEntity().getWorld();
         if (renderer != null && renderer.isEqualsWorld(world)) return;
-        renderer = new ChunkRenderer(RenderManager.instance(), world);
+        renderer = new ChunkRenderer(GraphicsManager.instance(), world);
     }
 
     @Listener

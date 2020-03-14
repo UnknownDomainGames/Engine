@@ -1,7 +1,7 @@
 package engine.enginemod.client.gui.game;
 
 import engine.Platform;
-import engine.graphics.RenderManager;
+import engine.graphics.GraphicsManager;
 import engine.graphics.font.Font;
 import engine.gui.GUIManager;
 import engine.gui.Scene;
@@ -20,7 +20,7 @@ public final class GUIPauseMenu extends FlowPane {
         Scene scene = new Scene(new GUIPauseMenu());
         scene.setOnKeyPressed(event -> {
             if (event.getKey() == KeyCode.ESCAPE) {
-                RenderManager.instance().getGUIManager().close();
+                GraphicsManager.instance().getGUIManager().close();
             }
         });
         return scene;
@@ -41,14 +41,14 @@ public final class GUIPauseMenu extends FlowPane {
         vBox.getChildren().add(text);
 
         Button backtoGame = new Button("Back To Game");
-        backtoGame.setOnMouseClicked(event -> Platform.getEngineClient().getRenderManager().getGUIManager().close());
+        backtoGame.setOnMouseClicked(event -> Platform.getEngineClient().getGraphicsManager().getGUIManager().close());
         vBox.getChildren().add(backtoGame);
 
         Button terminateGame = new Button("Terminate");
         terminateGame.setOnMouseClicked(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
             engine.getCurrentGame().terminate();
-            GUIManager guiManager = engine.getRenderManager().getGUIManager();
+            GUIManager guiManager = engine.getGraphicsManager().getGUIManager();
             guiManager.show(new Scene(new GUIGameCreation()));
         });
         vBox.getChildren().add(terminateGame);
