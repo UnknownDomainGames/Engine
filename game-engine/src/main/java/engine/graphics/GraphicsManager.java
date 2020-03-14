@@ -3,6 +3,7 @@ package engine.graphics;
 import engine.client.EngineClient;
 import engine.client.hud.HUDManager;
 import engine.graphics.display.Window;
+import engine.graphics.graph.RenderGraph;
 import engine.graphics.viewport.PerspectiveViewport;
 import engine.gui.GUIManager;
 
@@ -17,6 +18,8 @@ public interface GraphicsManager {
     boolean isRenderThread();
 
     Window getWindow();
+
+    RenderGraph getRenderGraph();
 
     Scene3D getScene();
 

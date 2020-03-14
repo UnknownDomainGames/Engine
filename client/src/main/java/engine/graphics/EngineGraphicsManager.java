@@ -34,6 +34,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
 
     private Thread renderThread;
     private Window window;
+    private RenderGraph renderGraph;
     private Scene3D scene;
     private PerspectiveViewport viewport;
 
@@ -65,6 +66,11 @@ public final class EngineGraphicsManager implements GraphicsManager {
     @Override
     public Window getWindow() {
         return window;
+    }
+
+    @Override
+    public RenderGraph getRenderGraph() {
+        return renderGraph;
     }
 
     @Override
@@ -106,7 +112,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
         hudManager = new EngineHUDManager(guiPlatform.getHUDStage());
         guiManager = new EngineGUIManager(window, guiPlatform.getGUIStage(), hudManager);
 
-        RenderGraph renderGraph = GraphicsEngine.getGraphicsBackend().loadRenderGraph(createRenderGraph());
+        renderGraph = GraphicsEngine.getGraphicsBackend().loadRenderGraph(createRenderGraph());
         renderGraph.bindWindow(window);
 
         window.setDisplayMode(engine.getSettings().getDisplaySettings().getDisplayMode(),
