@@ -1,6 +1,5 @@
 package engine.graphics.light;
 
-import engine.graphics.shader.ShaderResource;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
@@ -12,17 +11,6 @@ public class PointLight extends Light {
     private float kconstant = 1.0f;
     private float klinear;
     private float kquadratic;
-
-    public void bind(ShaderResource proxy, String fieldName) {
-        proxy.setUniform(fieldName + ".filled", true);
-        proxy.setUniform(fieldName + ".position", position);
-        proxy.setUniform(fieldName + ".constant", kconstant);
-        proxy.setUniform(fieldName + ".linear", klinear);
-        proxy.setUniform(fieldName + ".quadratic", kquadratic);
-        proxy.setUniform(fieldName + ".light.ambient", ambient);
-        proxy.setUniform(fieldName + ".light.diffuse", diffuse);
-        proxy.setUniform(fieldName + ".light.specular", specular);
-    }
 
     @Override
     public ByteBuffer get(MemoryStack stack) {
