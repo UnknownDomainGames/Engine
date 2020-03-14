@@ -2,10 +2,9 @@ package engine.graphics.vulkan;
 
 
 import engine.graphics.vulkan.device.PhysicalDevice;
-import engine.graphics.vulkan.texture.ColorFormat;
+import engine.graphics.vulkan.texture.VKColorFormat;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VkSurfaceFormatKHR;
-
 
 import static engine.graphics.vulkan.util.VulkanUtils.translateVulkanResult;
 import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceFormatsKHR;
@@ -13,10 +12,10 @@ import static org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR;
 import static org.lwjgl.vulkan.VK10.*;
 
 public class ColorSpace {
-    private ColorFormat colorFormat;
+    private VKColorFormat colorFormat;
     private int colorSpace;
 
-    public ColorFormat getColorFormat() {
+    public VKColorFormat getColorFormat() {
         return colorFormat;
     }
 
@@ -87,11 +86,11 @@ public class ColorSpace {
                 throw new AssertionError("Failed to query physical device surface formats: " + translateVulkanResult(err));
             }
 
-            ColorFormat colorFormat;
+            VKColorFormat colorFormat;
             if (formatCount == 1 && surfFormats.get(0).format() == VK_FORMAT_UNDEFINED) {
-                colorFormat = ColorFormat.BGR_UNSIGNED_NORMALIZED;
+                colorFormat = VKColorFormat.BGR_UNSIGNED_NORMALIZED;
             } else {
-                colorFormat = ColorFormat.fromVkFormat(surfFormats.get(0).format());
+                colorFormat = VKColorFormat.fromVkFormat(surfFormats.get(0).format());
             }
             int colorSpace = surfFormats.get(0).colorSpace();
 

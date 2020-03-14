@@ -1,7 +1,7 @@
 package engine.graphics.vulkan.texture;
 
+import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.Texture;
-import engine.graphics.texture.TextureFormat;
 import engine.graphics.vulkan.device.LogicalDevice;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.KHRSwapchain;
@@ -17,10 +17,10 @@ public class VKTexture implements Texture {
     private long handle;
     private boolean released = false;
 
-    private ColorFormat format;
+    private VKColorFormat format;
     private List<Usage> usage;
 
-    public VKTexture(LogicalDevice device, long handle, ColorFormat format, List<Usage> usage) {
+    public VKTexture(LogicalDevice device, long handle, VKColorFormat format, List<Usage> usage) {
         this.device = device;
         this.handle = handle;
         this.format = format;
@@ -80,7 +80,7 @@ public class VKTexture implements Texture {
     }
 
     @Override
-    public TextureFormat getFormat() {
+    public ColorFormat getFormat() {
         return format.getPeer();
     }
 

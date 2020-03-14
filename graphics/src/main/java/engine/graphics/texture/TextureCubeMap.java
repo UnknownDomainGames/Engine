@@ -11,7 +11,7 @@ public interface TextureCubeMap extends Texture {
     int getLength();
 
     interface Builder {
-        Builder format(TextureFormat format);
+        Builder format(ColorFormat format);
 
         Builder magFilter(FilterMode mode);
 

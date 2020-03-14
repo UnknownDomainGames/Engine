@@ -24,9 +24,9 @@ public interface FrameBuffer {
     void copyFrom(FrameBuffer src, Vector4ic srcRect, Vector4ic destRect,
                   boolean copyColor, boolean copyDepth, boolean copyStencil, FilterMode filterMode);
 
-    void readPixels(TextureFormat format, ByteBuffer pixels);
+    void readPixels(ColorFormat format, ByteBuffer pixels);
 
-    void readPixels(int x, int y, int width, int height, TextureFormat format, ByteBuffer pixels);
+    void readPixels(int x, int y, int width, int height, ColorFormat format, ByteBuffer pixels);
 
     void dispose();
 

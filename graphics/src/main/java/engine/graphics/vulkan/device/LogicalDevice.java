@@ -3,15 +3,15 @@ package engine.graphics.vulkan.device;
 import engine.graphics.math.ViewSpace;
 import engine.graphics.shader.ShaderModuleInfo;
 import engine.graphics.vulkan.CommandPool;
+import engine.graphics.vulkan.Queue;
 import engine.graphics.vulkan.VKDrawMode;
+import engine.graphics.vulkan.buffer.VulkanBuffer;
 import engine.graphics.vulkan.pipeline.Descriptor;
 import engine.graphics.vulkan.pipeline.Pipeline;
-import engine.graphics.vulkan.Queue;
-import engine.graphics.vulkan.buffer.VulkanBuffer;
 import engine.graphics.vulkan.pipeline.PipelineState;
 import engine.graphics.vulkan.render.RenderPass;
 import engine.graphics.vulkan.synchronize.VulkanFence;
-import engine.graphics.vulkan.texture.ColorFormat;
+import engine.graphics.vulkan.texture.VKColorFormat;
 import engine.graphics.vulkan.texture.VKTexture;
 import engine.graphics.vulkan.util.VulkanUtils;
 import org.joml.Vector4i;
@@ -19,7 +19,10 @@ import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
 import java.nio.LongBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -61,20 +64,21 @@ public class LogicalDevice {
         }
     }
 
-    public VKTexture createTexture(int width, int height, ColorFormat format, List<VKTexture.Usage> usage, VKTexture.Layout layout){
+    public VKTexture createTexture(int width, int height, VKColorFormat format, List<VKTexture.Usage> usage, VKTexture.Layout layout) {
         return createTextureInternal(width, height, 0, format, usage, layout, false, new int[0]);
     }
-    public VKTexture createSharedTexture(int width, int height, ColorFormat format, List<VKTexture.Usage> usage, VKTexture.Layout layout, int[] queueFamilyIndex){
+
+    public VKTexture createSharedTexture(int width, int height, VKColorFormat format, List<VKTexture.Usage> usage, VKTexture.Layout layout, int[] queueFamilyIndex) {
         return createTextureInternal(width, height, 0, format, usage, layout, true, queueFamilyIndex);
     }
 
-    private VKTexture createTextureInternal(int width, int height, int flag, ColorFormat format, List<VKTexture.Usage> usage, VKTexture.Layout layout, boolean shared, int[] queueFamilyIndices){
-        try(var stack = MemoryStack.stackPush()) {
+    private VKTexture createTextureInternal(int width, int height, int flag, VKColorFormat format, List<VKTexture.Usage> usage, VKTexture.Layout layout, boolean shared, int[] queueFamilyIndices) {
+        try (var stack = MemoryStack.stackPush()) {
             var createInfo = VkImageCreateInfo.callocStack(stack).sType(VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO);
             createInfo.imageType(VK_IMAGE_TYPE_2D).samples(VK_SAMPLE_COUNT_1_BIT).mipLevels(0)
-                    .extent(vkExtent3D -> vkExtent3D.set(width, height,1))
-            .format(format.getVk()).usage(usage.stream().mapToInt(VKTexture.Usage::getVk).reduce(0, (i1,i2)->i1|i2)).initialLayout(layout.getVk()).arrayLayers(1).flags(flag).sharingMode(VK_SHARING_MODE_EXCLUSIVE);
-            if(shared){
+                    .extent(vkExtent3D -> vkExtent3D.set(width, height, 1))
+                    .format(format.getVk()).usage(usage.stream().mapToInt(VKTexture.Usage::getVk).reduce(0, (i1, i2) -> i1 | i2)).initialLayout(layout.getVk()).arrayLayers(1).flags(flag).sharingMode(VK_SHARING_MODE_EXCLUSIVE);
+            if (shared) {
                 var queues = stack.mallocInt(queueFamilyIndices.length).put(queueFamilyIndices).flip();
                 createInfo.sharingMode(VK10.VK_SHARING_MODE_CONCURRENT).pQueueFamilyIndices(queues);
             }

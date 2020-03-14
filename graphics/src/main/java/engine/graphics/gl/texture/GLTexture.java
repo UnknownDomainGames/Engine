@@ -2,9 +2,9 @@ package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.gl.util.GLHelper;
+import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture;
-import engine.graphics.texture.TextureFormat;
 import engine.graphics.texture.WrapMode;
 import engine.graphics.util.Cleaner;
 import org.apache.commons.lang3.Validate;
@@ -25,7 +25,7 @@ public abstract class GLTexture implements Texture {
     protected int id;
     protected Cleaner.Disposable disposable;
 
-    protected final GLTextureFormat format;
+    protected final GLColorFormat format;
 
     public static int toGLFilterMode(FilterMode filterMode) {
         switch (filterMode) {
@@ -63,7 +63,7 @@ public abstract class GLTexture implements Texture {
         }
     }
 
-    public GLTexture(int target, GLTextureFormat format) {
+    public GLTexture(int target, GLColorFormat format) {
         this.target = target;
         this.id = GLHelper.isSupportARBDirectStateAccess() ? GL45.glCreateTextures(target) : GL11.glGenTextures();
         this.format = Validate.notNull(format);
@@ -73,7 +73,7 @@ public abstract class GLTexture implements Texture {
     public GLTexture(int target) {
         this.target = target;
         this.id = 0;
-        this.format = GLTextureFormat.RGB8;
+        this.format = GLColorFormat.RGB8;
     }
 
     public int getTarget() {
@@ -86,7 +86,7 @@ public abstract class GLTexture implements Texture {
     }
 
     @Override
-    public TextureFormat getFormat() {
+    public ColorFormat getFormat() {
         return format.peer;
     }
 

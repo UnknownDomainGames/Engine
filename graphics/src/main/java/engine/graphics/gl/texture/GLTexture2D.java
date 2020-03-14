@@ -2,9 +2,9 @@ package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLHelper;
 import engine.graphics.image.ReadOnlyImage;
+import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture2D;
-import engine.graphics.texture.TextureFormat;
 import engine.graphics.texture.WrapMode;
 import engine.util.Color;
 import org.joml.Vector2ic;
@@ -39,7 +39,7 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
         return new Builder();
     }
 
-    private GLTexture2D(GLTextureFormat format, int width, int height, boolean mipmap) {
+    private GLTexture2D(GLColorFormat format, int width, int height, boolean mipmap) {
         super(GL11.GL_TEXTURE_2D, format);
         this.width = width;
         this.height = height;
@@ -97,7 +97,7 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
 
         private final Map<Integer, Integer> parameterMap = new HashMap<>();
 
-        private GLTextureFormat format = GLTextureFormat.RGBA8;
+        private GLColorFormat format = GLColorFormat.RGBA8;
 
         private boolean mipmap = false;
 
@@ -112,8 +112,8 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
         }
 
         @Override
-        public Builder format(TextureFormat format) {
-            this.format = GLTextureFormat.valueOf(format);
+        public Builder format(ColorFormat format) {
+            this.format = GLColorFormat.valueOf(format);
             return this;
         }
 

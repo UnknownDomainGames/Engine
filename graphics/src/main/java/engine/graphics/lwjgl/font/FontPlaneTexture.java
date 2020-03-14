@@ -1,9 +1,9 @@
 package engine.graphics.lwjgl.font;
 
 import engine.graphics.font.Font;
+import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture2D;
-import engine.graphics.texture.TextureFormat;
 import engine.math.Math2;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -95,7 +95,7 @@ public class FontPlaneTexture {
             stbtt_PackFontRanges(context, fontInfo.getFontData(), fontInfo.getOffsetIndex(), ranges);
             stbtt_PackEnd(context);
 
-            texture = Texture2D.builder().format(TextureFormat.RED8).magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR).build(bitmap, bitmapSize, bitmapSize);
+            texture = Texture2D.builder().format(ColorFormat.RED8).magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR).build(bitmap, bitmapSize, bitmapSize);
             STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack();
             for (int i = 0; i < blocks.size(); i++) {
                 FloatBuffer posX = BufferUtils.createFloatBuffer(1);

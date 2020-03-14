@@ -1,8 +1,8 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLHelper;
+import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.Texture2D;
-import engine.graphics.texture.TextureFormat;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.GL45;
 
@@ -20,7 +20,7 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
         return new Builder();
     }
 
-    private GLTexture2DMultiSample(GLTextureFormat format, int width, int height, int samples, boolean fixedSampleLocations) {
+    private GLTexture2DMultiSample(GLColorFormat format, int width, int height, int samples, boolean fixedSampleLocations) {
         super(GL_TEXTURE_2D_MULTISAMPLE, format);
         this.width = width;
         this.height = height;
@@ -58,20 +58,20 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
     }
 
     @Override
-    public TextureFormat getFormat() {
+    public ColorFormat getFormat() {
         return null;
     }
 
     public static final class Builder {
-        private GLTextureFormat format;
+        private GLColorFormat format;
         private int samples = 0;
         private boolean fixedSampleLocations = false;
 
         private Builder() {
         }
 
-        public Builder format(TextureFormat format) {
-            this.format = GLTextureFormat.valueOf(format);
+        public Builder format(ColorFormat format) {
+            this.format = GLColorFormat.valueOf(format);
             return this;
         }
 

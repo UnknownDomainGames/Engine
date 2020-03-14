@@ -3,8 +3,8 @@ package engine.graphics.model.assimp;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.image.BufferedImage;
 import engine.graphics.material.Material;
+import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.Texture2D;
-import engine.graphics.texture.TextureFormat;
 import org.apache.commons.io.FilenameUtils;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -94,7 +94,7 @@ public class AssimpMaterial {
                     buf.free();
                     texture.free();
                     textures.free();
-                    return GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder().format(TextureFormat.RGBA8).build(buf1, width, height);
+                    return GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder().format(ColorFormat.RGBA8).build(buf1, width, height);
                 }
             } else {
                 //Promise: Loader now only search in texture/model/[FILENAME] folder

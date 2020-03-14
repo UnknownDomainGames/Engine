@@ -1,6 +1,6 @@
 package engine.graphics.texture;
 
-public enum TextureFormat {
+public enum ColorFormat {
     RGBA8,
     BGRA8,
     RGB8,

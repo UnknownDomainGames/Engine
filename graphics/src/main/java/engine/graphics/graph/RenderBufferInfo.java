@@ -1,11 +1,11 @@
 package engine.graphics.graph;
 
-import engine.graphics.texture.TextureFormat;
+import engine.graphics.texture.ColorFormat;
 
 public class RenderBufferInfo {
 
     private String name;
-    private TextureFormat format;
+    private ColorFormat format;
     private RenderBufferSize size;
 
     public static RenderBufferInfo renderBuffer() {
@@ -21,11 +21,11 @@ public class RenderBufferInfo {
         return this;
     }
 
-    public TextureFormat getFormat() {
+    public ColorFormat getFormat() {
         return format;
     }
 
-    public RenderBufferInfo setFormat(TextureFormat format) {
+    public RenderBufferInfo setFormat(ColorFormat format) {
         this.format = format;
         return this;
     }

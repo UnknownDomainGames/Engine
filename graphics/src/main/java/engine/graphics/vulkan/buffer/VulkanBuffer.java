@@ -2,16 +2,14 @@ package engine.graphics.vulkan.buffer;
 
 import engine.graphics.GraphicsEngine;
 import engine.graphics.vulkan.VKGraphicsBackend;
-import engine.graphics.vulkan.VulkanMemoryAllocator;
 import engine.graphics.vulkan.device.DeviceMemory;
 import engine.graphics.vulkan.device.LogicalDevice;
-import engine.graphics.vulkan.texture.ColorFormat;
+import engine.graphics.vulkan.texture.VKColorFormat;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.util.vma.Vma;
 import org.lwjgl.vulkan.VK10;
 import org.lwjgl.vulkan.VkBufferViewCreateInfo;
-import org.lwjgl.vulkan.VkMemoryAllocateInfo;
 import org.lwjgl.vulkan.VkMemoryRequirements;
 
 import java.nio.ByteBuffer;
@@ -78,16 +76,16 @@ public class VulkanBuffer {
         if(released) throw new IllegalStateException("Buffer has been released!");
     }
 
-    public BufferView createView(ColorFormat format, long offset, long size){
+    public BufferView createView(VKColorFormat format, long offset, long size) {
         if (!usages.contains(Usage.UNIFORM_TEXEL_BUFFER) && !usages.contains(Usage.STORAGE_TEXEL_BUFFER)) {
             return null;
         }
-        try(var stack = MemoryStack.stackPush()){
+        try (var stack = MemoryStack.stackPush()) {
             var info = VkBufferViewCreateInfo.callocStack(stack).sType(VK10.VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO);
             info.buffer(handle).format(format.getVk()).offset(offset).range(size);
             var ptr = stack.mallocLong(1);
             var err = VK10.vkCreateBufferView(device.getNativeDevice(), info, null, ptr);
-            if(err != VK10.VK_SUCCESS){
+            if (err != VK10.VK_SUCCESS) {
                 return null;
             }
             return new BufferView(this, ptr.get(0));

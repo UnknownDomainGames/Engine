@@ -4,7 +4,7 @@ public interface Texture {
 
     int getId();
 
-    TextureFormat getFormat();
+    ColorFormat getFormat();
 
     boolean isMultiSample();
 

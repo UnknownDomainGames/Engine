@@ -1,9 +1,9 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLHelper;
+import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.TextureCubeMap;
-import engine.graphics.texture.TextureFormat;
 import engine.graphics.texture.WrapMode;
 import org.lwjgl.opengl.*;
 
@@ -18,7 +18,7 @@ public final class GLTextureCubeMap extends GLTexture implements TextureCubeMap 
         return new Builder();
     }
 
-    private GLTextureCubeMap(GLTextureFormat format, int length) {
+    private GLTextureCubeMap(GLColorFormat format, int length) {
         super(GL13.GL_TEXTURE_CUBE_MAP, format);
         this.length = length;
         if (GLHelper.isSupportARBDirectStateAccess()) {
@@ -43,7 +43,7 @@ public final class GLTextureCubeMap extends GLTexture implements TextureCubeMap 
 
         private final Map<Integer, Integer> parameterMap = new HashMap<>();
 
-        private GLTextureFormat format = GLTextureFormat.RGBA8;
+        private GLColorFormat format = GLColorFormat.RGBA8;
 
         private Builder() {
             magFilter(FilterMode.NEAREST);
@@ -54,8 +54,8 @@ public final class GLTextureCubeMap extends GLTexture implements TextureCubeMap 
         }
 
         @Override
-        public Builder format(TextureFormat format) {
-            this.format = GLTextureFormat.valueOf(format);
+        public Builder format(ColorFormat format) {
+            this.format = GLColorFormat.valueOf(format);
             return this;
         }
 

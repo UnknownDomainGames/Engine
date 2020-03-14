@@ -1,9 +1,9 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
+import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.FrameBuffer;
-import engine.graphics.texture.TextureFormat;
 import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
@@ -119,13 +119,13 @@ public class GLFrameBuffer implements FrameBuffer {
     }
 
     @Override
-    public void readPixels(TextureFormat format, ByteBuffer pixels) {
+    public void readPixels(ColorFormat format, ByteBuffer pixels) {
         readPixels(0, 0, width, height, format, pixels);
     }
 
     @Override
-    public void readPixels(int x, int y, int width, int height, TextureFormat format, ByteBuffer pixels) {
-        GLTextureFormat glFormat = GLTextureFormat.valueOf(format);
+    public void readPixels(int x, int y, int width, int height, ColorFormat format, ByteBuffer pixels) {
+        GLColorFormat glFormat = GLColorFormat.valueOf(format);
         bindReadOnly();
         GL11.glReadPixels(x, y, width, height, glFormat.format, glFormat.type, pixels);
     }
@@ -163,7 +163,7 @@ public class GLFrameBuffer implements FrameBuffer {
     }
 
     public interface Attachable {
-        TextureFormat getFormat();
+        ColorFormat getFormat();
 
         int getId();
 

@@ -1,7 +1,7 @@
 package engine.gui.internal.impl.graphics;
 
 import engine.graphics.graph.*;
-import engine.graphics.texture.TextureFormat;
+import engine.graphics.texture.ColorFormat;
 import engine.graphics.util.BlendMode;
 import engine.graphics.util.CullMode;
 import engine.gui.stage.Stage;
@@ -20,12 +20,12 @@ public final class GUIRenderGraphHelper {
             {
                 RenderBufferInfo colorBuffer = RenderBufferInfo.renderBuffer();
                 colorBuffer.setName("color");
-                colorBuffer.setFormat(TextureFormat.RGB8);
+                colorBuffer.setFormat(ColorFormat.RGB8);
                 colorBuffer.setRelativeSize(1, 1);
 
                 RenderBufferInfo depthBuffer = RenderBufferInfo.renderBuffer();
                 depthBuffer.setName("depth");
-                depthBuffer.setFormat(TextureFormat.DEPTH24);
+                depthBuffer.setFormat(ColorFormat.DEPTH24);
                 depthBuffer.setRelativeSize(1, 1);
 
                 mainTask.addRenderBuffers(colorBuffer, depthBuffer);
