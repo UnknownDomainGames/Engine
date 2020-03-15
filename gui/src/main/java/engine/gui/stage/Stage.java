@@ -485,7 +485,6 @@ public class Stage {
     private WindowFocusCallback focusCallback;
     private WindowIconifyCallback iconifyCallback;
     private WindowMaximizeCallback maximizeCallback;
-    private WindowCloseCallback closeCallback;
 
     private void doVisibleChanged(boolean value) {
         if (value) {
@@ -525,9 +524,6 @@ public class Stage {
             window.addWindowMaximizeCallback(maximizeCallback);
             maximizedImpl().set(window.isMaximized());
 
-            if (closeCallback == null) closeCallback = window -> hide();
-            window.addWindowCloseCallback(closeCallback);
-
             stages.add(this);
 
             if (sizeToScene || width == null || height == null) {
@@ -549,7 +545,6 @@ public class Stage {
             window.removeWindowFocusCallback(focusCallback);
             window.removeWindowIconifyCallback(iconifyCallback);
             window.removeWindowMaximizeCallback(maximizeCallback);
-            window.removeWindowCloseCallback(closeCallback);
         }
     }
 }

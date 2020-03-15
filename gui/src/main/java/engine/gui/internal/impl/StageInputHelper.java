@@ -17,6 +17,7 @@ public final class StageInputHelper {
     private ScrollCallback scrollCallback;
     private CharModsCallback charModsCallback;
     private ValueChangeListener<Boolean> focusListener;
+    private WindowCloseCallback windowCloseCallback;
 
     public StageInputHelper(Stage stage) {
         this.stage = stage;
@@ -35,6 +36,7 @@ public final class StageInputHelper {
                 scene.processScroll(xoffset, yoffset));
         charModsCallback = (window, character, mods) -> stage.scene().ifPresent(scene ->
                 scene.processCharMods(character, mods));
+        windowCloseCallback = window -> stage.hide();
         focusListener = (observable, oldValue, newValue) -> stage.scene().ifPresent(scene ->
                 scene.processFocus(newValue));
     }
@@ -45,6 +47,7 @@ public final class StageInputHelper {
         window.addKeyCallback(keyCallback);
         window.addCursorCallback(cursorCallback);
         window.addCharModsCallback(charModsCallback);
+        window.addWindowCloseCallback(windowCloseCallback);
         stage.focused().addChangeListener(focusListener);
     }
 
@@ -54,6 +57,7 @@ public final class StageInputHelper {
         window.removeKeyCallback(keyCallback);
         window.removeScrollCallback(scrollCallback);
         window.removeCharModsCallback(charModsCallback);
+        window.removeWindowCloseCallback(windowCloseCallback);
         stage.focused().removeChangeListener(focusListener);
     }
 
