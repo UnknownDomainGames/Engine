@@ -69,6 +69,14 @@ public final class GLRenderPass implements RenderPass {
         return info;
     }
 
+    public String getName() {
+        return info.getName();
+    }
+
+    public List<String> getDependencies() {
+        return info.getDependencies();
+    }
+
     @Override
     public GLRenderTask getRenderTask() {
         return task;

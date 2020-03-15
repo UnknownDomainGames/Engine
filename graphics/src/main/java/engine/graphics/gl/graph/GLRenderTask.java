@@ -2,10 +2,8 @@ package engine.graphics.gl.graph;
 
 import engine.graphics.graph.*;
 import engine.graphics.texture.Texture;
-import engine.util.SortedList;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -15,26 +13,37 @@ public final class GLRenderTask implements RenderTask {
     private final GLRenderGraph renderGraph;
 
     private final Map<String, GLRenderBufferProxy> renderBuffers;
-    private final Map<String, GLRenderPass> passes;
-    private final List<GLRenderPass> sortedPasses;
-    private final GLRenderPass finalPass;
     private final List<BiConsumer<FrameContext, RenderTask>> setups;
-
+    private final Map<String, GLRenderPass> passes;
+    private final GLRenderPass finalPass;
+    private final List<GLRenderPass> sortedPasses;
 
     public GLRenderTask(RenderTaskInfo info, GLRenderGraph renderGraph) {
         this.info = info;
         this.renderGraph = renderGraph;
         this.renderBuffers = info.getRenderBuffers().stream().collect(Collectors.toUnmodifiableMap(
                 RenderBufferInfo::getName, renderBufferInfo -> new GLRenderBufferProxy(renderBufferInfo, this)));
+        this.setups = List.copyOf(info.getSetups());
         this.passes = info.getPasses().stream().collect(Collectors.toUnmodifiableMap(
                 RenderPassInfo::getName, renderPassInfo -> new GLRenderPass(renderPassInfo, this)));
-        this.sortedPasses = SortedList.copyOf(passes.values(), (o1, o2) -> {
-            if (o1.getInfo().getDependencies().contains(o2.getInfo().getName())) return 1;
-            if (o2.getInfo().getDependencies().contains(o1.getInfo().getName())) return -1;
-            return 0;
-        });
-        this.setups = List.copyOf(info.getSetups());
         this.finalPass = passes.get(info.getFinalPass());
+        this.sortedPasses = sortPasses(passes.values());
+    }
+
+    private List<GLRenderPass> sortPasses(Collection<GLRenderPass> passes) {
+        List<GLRenderPass> sortedPasses = new ArrayList<>(passes.size());
+        List<GLRenderPass> needSortPasses = new LinkedList<>(passes);
+        while (!needSortPasses.isEmpty()) {
+            var iterator = needSortPasses.listIterator();
+            while (iterator.hasNext()) {
+                GLRenderPass pass = iterator.next();
+                if (needSortPasses.stream().noneMatch($ -> pass.getDependencies().contains($.getName()))) {
+                    sortedPasses.add(pass);
+                    iterator.remove();
+                }
+            }
+        }
+        return List.copyOf(sortedPasses);
     }
 
     @Override
