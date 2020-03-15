@@ -16,14 +16,31 @@ import java.util.List;
 
 public final class EngineHUDManager implements HUDManager {
 
-    private final AnchorPane hudPane;
+    private final Stage stage;
+    private final AnchorPane contentPane;
 
     private Registry<HUDControl> hudControls;
 
     public EngineHUDManager(Stage stage) {
-        this.hudPane = new AnchorPane();
-        stage.setScene(new Scene(hudPane));
+        this.stage = stage;
+        this.contentPane = new AnchorPane();
+        stage.setScene(new Scene(contentPane));
         Platform.getEngine().getEventBus().register(this);
+    }
+
+    @Override
+    public float getScaleX() {
+        return stage.getUserScaleX();
+    }
+
+    @Override
+    public float getScaleY() {
+        return stage.getUserScaleY();
+    }
+
+    @Override
+    public void setScale(float scaleX, float scaleY) {
+        stage.setUserScale(scaleX, scaleY);
     }
 
     @Override
@@ -33,14 +50,14 @@ public final class EngineHUDManager implements HUDManager {
 
     @Override
     public void setVisible(boolean visible) {
-        hudPane.setVisible(visible);
+        contentPane.setVisible(visible);
         getControls().stream().filter(Node::isVisible).forEach(hudControl ->
                 hudControl.onVisibleChanged(visible));
     }
 
     @Override
     public boolean isVisible() {
-        return hudPane.isVisible();
+        return contentPane.isVisible();
     }
 
     @Override
@@ -57,13 +74,13 @@ public final class EngineHUDManager implements HUDManager {
     public void onGameReady(GameStartEvent.Post event) {
         Registries.getRegistryManager().getRegistry(HUDControl.class).ifPresent(registry -> {
             hudControls = registry;
-            hudPane.getChildren().addAll(registry.getValues());
+            contentPane.getChildren().addAll(registry.getValues());
         });
     }
 
     @Listener
     public void onGameMarkedStop(GameTerminationEvent.Marked event) {
-        hudPane.getChildren().clear();
+        contentPane.getChildren().clear();
         hudControls = null;
     }
 }

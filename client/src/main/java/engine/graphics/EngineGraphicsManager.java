@@ -98,8 +98,8 @@ public final class EngineGraphicsManager implements GraphicsManager {
 
         GraphicsEngine.start(new GraphicsEngine.Settings());
 
-        GraphicsBackend manager = GraphicsEngine.getGraphicsBackend();
-        window = manager.getPrimaryWindow();
+        GraphicsBackend backend = GraphicsEngine.getGraphicsBackend();
+        window = backend.getPrimaryWindow();
 
         scene = new Scene3D();
         viewport = new PerspectiveViewport();
@@ -115,10 +115,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
         renderGraph = GraphicsEngine.getGraphicsBackend().loadRenderGraph(createRenderGraph());
         renderGraph.bindWindow(window);
 
-        window.setDisplayMode(engine.getSettings().getDisplaySettings().getDisplayMode(),
-                engine.getSettings().getDisplaySettings().getResolutionWidth(),
-                engine.getSettings().getDisplaySettings().getResolutionHeight(),
-                engine.getSettings().getDisplaySettings().getFrameRate());
+        engine.getSettings().getDisplaySettings().apply();
         window.centerOnScreen();
         window.show();
     }

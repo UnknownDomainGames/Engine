@@ -55,7 +55,7 @@ public final class DisplaySettings {
         return uiScale;
     }
 
-    public float getUiScalePercentage(){
+    public float getUiScalePercentage() {
         return uiScale / 100f;
     }
 
@@ -63,8 +63,8 @@ public final class DisplaySettings {
         return hudScale;
     }
 
-    public float getHudScalePercentage(){
-        return  hudScale / 100f;
+    public float getHudScalePercentage() {
+        return hudScale / 100f;
     }
 
     public void setUiScale(int uiScale) {
@@ -75,11 +75,10 @@ public final class DisplaySettings {
         this.hudScale = hudScale;
     }
 
-    public void load(Config config){
+    public void load(Config config) {
         try {
             displayMode = DisplayMode.valueOf(config.getString("display_mode", "windowed").toUpperCase());
-        }
-        catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             displayMode = DisplayMode.WINDOWED;
         }
         resolutionWidth = config.getInt("res_width");
@@ -89,7 +88,7 @@ public final class DisplaySettings {
         hudScale = config.getInt("hud_scale", 100);
     }
 
-    public Map<String, Object> save(){
+    public Map<String, Object> save() {
         var config = new Config();
         config.set("display_mode", displayMode.name().toLowerCase());
         config.set("res_width", resolutionWidth);
@@ -101,7 +100,12 @@ public final class DisplaySettings {
     }
 
     public void apply() {
-        Window window = GraphicsManager.instance().getWindow();
+        GraphicsManager graphicsManager = GraphicsManager.instance();
+        Window window = graphicsManager.getWindow();
         window.setDisplayMode(displayMode, resolutionWidth, resolutionHeight, frameRate);
+        float uiScalePercentage = getUiScalePercentage();
+        graphicsManager.getGUIManager().setScale(uiScalePercentage, uiScalePercentage);
+        float hudScalePercentage = getHudScalePercentage();
+        graphicsManager.getHUDManager().setScale(hudScalePercentage, hudScalePercentage);
     }
 }

@@ -3,6 +3,13 @@ package engine.client.hud;
 import java.util.Collection;
 
 public interface HUDManager {
+
+    float getScaleX();
+
+    float getScaleY();
+
+    void setScale(float scaleX, float scaleY);
+
     /**
      * @see #setVisible(boolean)
      */
