@@ -12,7 +12,6 @@ import engine.client.asset.source.CompositeAssetSource;
 import engine.client.asset.source.FileSystemAssetSource;
 import engine.client.game.GameClient;
 import engine.client.i18n.LocaleManager;
-import engine.client.input.keybinding.KeyBinding;
 import engine.client.input.keybinding.KeyBindingManager;
 import engine.client.settings.EngineSettings;
 import engine.client.sound.ALSoundManager;
@@ -25,6 +24,7 @@ import engine.graphics.EngineGraphicsManager;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.GraphicsManager;
 import engine.graphics.gl.util.GLHelper;
+import engine.gui.EngineGUIPlatform;
 import engine.logic.Ticker;
 import engine.mod.ModContainer;
 import engine.util.ClassPathUtils;
@@ -125,6 +125,11 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         graphicsManager.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         addShutdownListener(graphicsManager::dispose);
 
+        logger.info("Initializing input!");
+        keyBindingManager = new KeyBindingManager(this);
+        EngineGUIPlatform guiPlatform = EngineGUIPlatform.getInstance();
+        guiPlatform.getStageHelper().enableInput(guiPlatform.getGUIStage());
+
         logger.info("Initializing audio context!");
         soundManager = new EngineSoundManager();
         soundManager.init();
@@ -160,14 +165,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     @Override
     protected void finishStage() {
         super.finishStage();
-
-        logger.info("Initializing key binding!");
-        var window = graphicsManager.getWindow();
-        keyBindingManager = new KeyBindingManager(this, registryManager.getRegistry(KeyBinding.class).orElseThrow());
-        keyBindingManager.reload();
-        window.addKeyCallback(keyBindingManager::handleKey);
-        window.addMouseCallback(keyBindingManager::handleMouse);
-
         ticker = new Ticker(this::clientTick, partial -> graphicsManager.doRender(partial), Ticker.CLIENT_TICK);
     }
 

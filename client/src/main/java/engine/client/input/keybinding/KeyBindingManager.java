@@ -4,18 +4,20 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import engine.client.EngineClient;
+import engine.event.Listener;
+import engine.event.game.GameStartEvent;
+import engine.event.game.GameTerminationEvent;
 import engine.graphics.display.Window;
 import engine.input.Action;
 import engine.input.KeyCode;
 import engine.input.Modifiers;
 import engine.input.MouseButton;
 import engine.logic.Tickable;
+import engine.registry.Registries;
 import engine.registry.Registry;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Handles the registration of KeyBinding and also handles key inputs (and mouse
@@ -23,7 +25,7 @@ import java.util.Set;
  */
 public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
-    private final EngineClient engineClient;
+    private final EngineClient engine;
     /**
      * Mappes the key binding index to the KeyBinding objects.
      */
@@ -31,16 +33,14 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     /**
      * KeyBinding Registry
      */
-    private final Registry<KeyBinding> registry;
-    /**
-     * @Deprecated Not used.
-     */
-    @Deprecated
-    private final Set<Key> pressedKey = new HashSet<>();
+    private Registry<KeyBinding> registry;
 
-    public KeyBindingManager(EngineClient engineClient, Registry<KeyBinding> keyBindingRegistry) {
-        this.engineClient = engineClient;
-        this.registry = keyBindingRegistry;
+    public KeyBindingManager(EngineClient engine) {
+        this.engine = engine;
+        engine.getEventBus().register(this);
+        Window window = engine.getGraphicsManager().getWindow();
+        window.addKeyCallback(this::handleKey);
+        window.addMouseCallback(this::handleMouse);
     }
 
     /**
@@ -55,11 +55,26 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
         registry.register(keybinding);
     }
 
+    @Listener
+    public void onGameReady(GameStartEvent.Post event) {
+        Registries.getRegistryManager().getRegistry(KeyBinding.class).ifPresent(registry -> {
+            this.registry = registry;
+            reload();
+        });
+    }
+
+    @Listener
+    public void onGameMarkedStop(GameTerminationEvent.Marked event) {
+        this.registry = null;
+        reload();
+    }
+
     /**
      * Reload the bindings. Use this after keybinding settings have changed
      */
     public void reload() {
         indexToBinding.clear();
+        if (registry == null) return;
         for (KeyBinding keybinding : registry.getValues()) {
             int code = keybinding.getKey().code;
             int mods = keybinding.getModifier().getInternalCode();
@@ -68,11 +83,9 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     }
 
     protected void handlePress(int code, int modifiers) {
-        Key key = Key.valueOf(code);
-        pressedKey.add(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
         for (KeyBinding binding : keyBindings) {
-            if (engineClient.getGraphicsManager().getGUIManager().isShowing() && !binding.isAllowInScreen())
+            if (engine.getGraphicsManager().getGUIManager().isShowing() && !binding.isAllowInScreen())
                 continue;
             binding.setPressed(true);
             binding.setDirty(true);
@@ -84,12 +97,9 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
     }
 
     protected void handleRelease(int code, int modifiers) {
-        // TODO: Remove it, hard code.
-        Key key = Key.valueOf(code);
-        pressedKey.remove(key);
         Collection<KeyBinding> keyBindings = this.indexToBinding.get(getIndex(code, modifiers));
         for (KeyBinding binding : keyBindings) {
-            if (engineClient.getGraphicsManager().getGUIManager().isShowing() && !binding.isAllowInScreen())
+            if (engine.getGraphicsManager().getGUIManager().isShowing() && !binding.isAllowInScreen())
                 continue;
             binding.setPressed(false);
             if (binding.getActionMode() == ActionMode.PRESS) {
@@ -144,7 +154,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
      */
     @Override
     public void tick() {
-        boolean displayingScreen = engineClient.getGraphicsManager().getGUIManager().isShowing();
+        boolean displayingScreen = engine.getGraphicsManager().getGUIManager().isShowing();
         if (displayingScreen) {
             releaseAllPressedKeys(false);
         }
@@ -162,13 +172,13 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
                     }
                 }
                 if (keyBinding.isActive()) {
-                    keyBinding.onKeyStart(engineClient);
+                    keyBinding.onKeyStart(engine);
                 } else {
-                    keyBinding.onKeyEnd(engineClient);
+                    keyBinding.onKeyEnd(engine);
                 }
             } else if (keyBinding.isActive()) {
                 // keep key
-                keyBinding.onKeyKeep(engineClient);
+                keyBinding.onKeyKeep(engine);
             }
         }
     }
@@ -190,12 +200,12 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
                     keyBinding.setPressed(false);
                     keyBinding.setActive(false);
                 } else {
-                    keyBinding.onKeyEnd(engineClient);
+                    keyBinding.onKeyEnd(engine);
                 }
             } else if (keyBinding.isActive()) {
                 keyBinding.setPressed(false);
                 keyBinding.setActive(false);
-                keyBinding.onKeyEnd(engineClient);
+                keyBinding.onKeyEnd(engine);
             }
         }
     }

@@ -15,6 +15,8 @@ import engine.gui.stage.Stage;
 
 public final class EngineGUIPlatform extends GUIPlatform {
 
+    private static EngineGUIPlatform PLATFORM;
+
     private final StageHelperImpl stageHelper = new StageHelperImpl();
     private final SceneHelper sceneHelper = new SceneHelperImpl();
     private final ClipboardHelper clipboardHelper = new GLFWClipboardHelper();
@@ -24,8 +26,13 @@ public final class EngineGUIPlatform extends GUIPlatform {
     private Stage guiStage;
     private Stage hudStage;
 
+    public static EngineGUIPlatform getInstance() {
+        return PLATFORM;
+    }
+
     public EngineGUIPlatform() {
         setInstance(this);
+        PLATFORM = this;
         InputHelperImpl.initialize();
         Stage.getStages().addChangeListener(change -> {
             if (change.getList().isEmpty()) Platform.getEngine().terminate();
@@ -39,7 +46,6 @@ public final class EngineGUIPlatform extends GUIPlatform {
         StageHelper.setWindow(stage, primaryWindow);
         StageHelper.getShowingProperty(stage).set(true);
         StageHelper.doVisibleChanged(stage, true);
-        stageHelper.enableInput(stage);
         guiStage = stage;
     }
 
@@ -61,7 +67,7 @@ public final class EngineGUIPlatform extends GUIPlatform {
     }
 
     @Override
-    public StageHelper getStageHelper() {
+    public StageHelperImpl getStageHelper() {
         return stageHelper;
     }
 
