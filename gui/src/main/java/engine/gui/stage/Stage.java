@@ -488,19 +488,6 @@ public class Stage {
 
     private void doVisibleChanged(boolean value) {
         if (value) {
-            window.setTitle(getTitle());
-            if (icons != null) {
-                window.setIcon(icons.toArray(ReadOnlyImage[]::new));
-            }
-            window.setResizable(isResizable());
-            window.setFloating(isAlwaysOnTop());
-            if (isIconified() || isMaximized()) {
-                if (isIconified()) window.iconify();
-                if (isMaximized()) window.maximize();
-            } else {
-                window.restore();
-            }
-
             if (posCallback == null) posCallback = (window, x, y) -> {
                 xImpl().set(x);
                 yImpl().set(y);
@@ -525,6 +512,19 @@ public class Stage {
             maximizedImpl().set(window.isMaximized());
 
             stages.add(this);
+
+            window.setTitle(getTitle());
+            if (icons != null) {
+                window.setIcon(icons.toArray(ReadOnlyImage[]::new));
+            }
+            window.setResizable(isResizable());
+            window.setFloating(isAlwaysOnTop());
+            if (isIconified() || isMaximized()) {
+                if (isIconified()) window.iconify();
+                if (isMaximized()) window.maximize();
+            } else {
+                window.restore();
+            }
 
             if (sizeToScene || width == null || height == null) {
                 sizeToScene = false;
