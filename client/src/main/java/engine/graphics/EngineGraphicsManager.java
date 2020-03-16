@@ -8,8 +8,10 @@ import engine.client.hud.HUDManager;
 import engine.graphics.backend.GraphicsBackend;
 import engine.graphics.display.Window;
 import engine.graphics.graph.*;
+import engine.graphics.internal.graph.ShadowOpaqueDrawDispatcher;
 import engine.graphics.internal.graph.ViewportOpaqueDrawDispatcher;
 import engine.graphics.internal.graph.ViewportSkyDrawDispatcher;
+import engine.graphics.light.DirectionalLight;
 import engine.graphics.sky.SkyBox;
 import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.Texture2D;
@@ -24,6 +26,7 @@ import engine.gui.EngineHUDManager;
 import engine.gui.GUIManager;
 import engine.gui.internal.impl.graphics.StageDrawDispatcher;
 import engine.math.BlockPos;
+import engine.util.Color;
 
 import static engine.graphics.graph.ColorOutputInfo.colorOutput;
 import static engine.graphics.graph.DepthOutputInfo.depthOutput;
@@ -135,6 +138,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
             }
         });
         scene.addNode(selectedBlock);
+        scene.getLightManager().add(new DirectionalLight().setColor(Color.WHITE).setDirection(1, 1, 1).setIntensity(1f));
     }
 
     private void initTextureAssetProvider() {
