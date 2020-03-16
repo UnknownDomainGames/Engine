@@ -138,6 +138,39 @@ public class Color {
         return dst;
     }
 
+    public FloatBuffer getRGB(FloatBuffer dst) {
+        return get(dst.position(), dst);
+    }
+
+    public FloatBuffer getRGB(int index, FloatBuffer dst) {
+        dst.put(index, red);
+        dst.put(index + 1, green);
+        dst.put(index + 2, blue);
+        return dst;
+    }
+
+    public ByteBuffer getRGB(ByteBuffer dst) {
+        return get(dst.position(), dst);
+    }
+
+    public ByteBuffer getRGB(int index, ByteBuffer dst) {
+        dst.putFloat(index, red);
+        dst.putFloat(index + 4, green);
+        dst.putFloat(index + 8, blue);
+        return dst;
+    }
+
+    public float[] getRGB(float[] dst) {
+        return get(0, dst);
+    }
+
+    public float[] getRGB(int index, float[] dst) {
+        dst[index] = red;
+        dst[index + 1] = green;
+        dst[index + 2] = blue;
+        return dst;
+    }
+
     public int toRGB() {
         return (getRedAsInt() << 16) | (getGreenAsInt() << 8) | getBlueAsInt();
     }
