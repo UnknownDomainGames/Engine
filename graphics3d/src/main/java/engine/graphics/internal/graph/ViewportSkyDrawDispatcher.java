@@ -49,7 +49,7 @@ public class ViewportSkyDrawDispatcher implements DrawDispatcher {
     @Override
     public void init(Drawer drawer) {
         ShaderResource resource = drawer.getShaderResource();
-        this.uniformMatrices = resource.getUniformBlock("Transformation");
+        this.uniformMatrices = resource.getUniformBlock("Matrices");
         this.uniformTexture = resource.getUniformTexture("u_Texture");
     }
 
