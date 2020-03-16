@@ -1,40 +1,33 @@
 package engine.graphics.light;
 
 import engine.graphics.shader.UniformBlock;
-import org.joml.Vector3f;
+import engine.util.Color;
+import org.joml.Matrix4fc;
 
 public abstract class Light implements UniformBlock.Value {
-    protected Vector3f ambient = new Vector3f(0.1f);
-    protected Vector3f diffuse = new Vector3f(1f);
-    protected Vector3f specular = new Vector3f(1f);
+    protected Color color;
+    protected float intensity;
 
     public Light() {
     }
 
-    public Vector3f getAmbient() {
-        return ambient;
+    public abstract void setup(Matrix4fc viewMatrix);
+
+    public Color getColor() {
+        return color;
     }
 
-    public Light setAmbient(Vector3f ambient) {
-        this.ambient = ambient;
+    public Light setColor(Color color) {
+        this.color = color;
         return this;
     }
 
-    public Vector3f getDiffuse() {
-        return diffuse;
+    public float getIntensity() {
+        return intensity;
     }
 
-    public Light setDiffuse(Vector3f diffuse) {
-        this.diffuse = diffuse;
-        return this;
-    }
-
-    public Vector3f getSpecular() {
-        return specular;
-    }
-
-    public Light setSpecular(Vector3f specular) {
-        this.specular = specular;
+    public Light setIntensity(float intensity) {
+        this.intensity = intensity;
         return this;
     }
 }

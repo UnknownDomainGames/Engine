@@ -1,12 +1,14 @@
 package engine.graphics.light;
 
+import org.joml.Matrix4fc;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 
 public class PointLight extends Light {
-    private Vector3f position;
+    private final Vector3f position = new Vector3f();
 
     private float kconstant = 1.0f;
     private float klinear;
@@ -14,28 +16,31 @@ public class PointLight extends Light {
 
     @Override
     public ByteBuffer get(MemoryStack stack) {
-        return get(stack.malloc(20 * Float.BYTES));
+        return get(stack.malloc(40));
     }
 
     @Override
     public ByteBuffer get(int index, ByteBuffer buffer) {
-        buffer.putInt(index, 1);
-        position.get(index + 1, buffer);
-        buffer.putFloat(index + 5, kconstant);
-        buffer.putFloat(index + 6, klinear);
-        buffer.putFloat(index + 7, kquadratic);
-        ambient.get(index + 8, buffer);
-        diffuse.get(index + 12, buffer);
-        specular.get(index + 16, buffer);
+        color.getRGB(index, buffer);
+        buffer.putFloat(index + 12, intensity);
+        position.get(index + 16, buffer);
+        buffer.putFloat(index + 28, kconstant);
+        buffer.putFloat(index + 32, klinear);
+        buffer.putFloat(index + 36, kquadratic);
         return buffer;
     }
 
-    public Vector3f getPosition() {
+    @Override
+    public void setup(Matrix4fc viewMatrix) {
+
+    }
+
+    public Vector3fc getPosition() {
         return position;
     }
 
-    public PointLight setPosition(Vector3f position) {
-        this.position = position;
+    public PointLight setPosition(Vector3fc position) {
+        this.position.set(position);
         return this;
     }
 
@@ -63,24 +68,6 @@ public class PointLight extends Light {
 
     public PointLight setKquadratic(float kquadratic) {
         this.kquadratic = kquadratic;
-        return this;
-    }
-
-    @Override
-    public PointLight setAmbient(Vector3f ambient) {
-        super.setAmbient(ambient);
-        return this;
-    }
-
-    @Override
-    public PointLight setDiffuse(Vector3f diffuse) {
-        super.setDiffuse(diffuse);
-        return this;
-    }
-
-    @Override
-    public PointLight setSpecular(Vector3f specular) {
-        super.setSpecular(specular);
         return this;
     }
 }

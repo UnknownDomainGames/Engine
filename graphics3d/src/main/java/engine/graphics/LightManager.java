@@ -4,6 +4,7 @@ import engine.graphics.light.DirectionalLight;
 import engine.graphics.light.Light;
 import engine.graphics.light.PointLight;
 import engine.graphics.light.SpotLight;
+import org.joml.Matrix4fc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +31,16 @@ public class LightManager {
         return spotLights;
     }
 
-    void add(Light light) {
-        if (light instanceof DirectionalLight)
-            directionalLights.add((DirectionalLight) light);
-        else if (light instanceof PointLight)
-            pointLights.add((PointLight) light);
-        else if (light instanceof SpotLight)
-            spotLights.add((SpotLight) light);
+    public void add(DirectionalLight light) {
+        directionalLights.add(light);
+    }
+
+    public void add(PointLight light) {
+        pointLights.add(light);
+    }
+
+    public void add(SpotLight light) {
+        spotLights.add(light);
     }
 
     void remove(Light light) {
@@ -46,6 +50,12 @@ public class LightManager {
             pointLights.remove(light);
         else if (light instanceof SpotLight)
             spotLights.remove(light);
+    }
+
+    public void setup(Matrix4fc viewMatrix) {
+        directionalLights.forEach(directionalLight -> directionalLight.setup(viewMatrix));
+        pointLights.forEach(pointLight -> pointLight.setup(viewMatrix));
+        spotLights.forEach(spotLight -> spotLight.setup(viewMatrix));
     }
 
 //    public void bind(Vector3fc cameraPosition, ShaderResource proxy) {
@@ -64,7 +74,6 @@ public class LightManager {
 //        }
 //    }
 
-    @Deprecated
     public void clear() {
         directionalLights.clear();
         pointLights.clear();

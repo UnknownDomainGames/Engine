@@ -1,48 +1,53 @@
 package engine.graphics.light;
 
+import org.joml.Matrix4fc;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 
 public class SpotLight extends Light {
-    private Vector3f position;
+    private final Vector3f position = new Vector3f();
 
     private float kconstant = 1.0f;
     private float klinear;
     private float kquadratic;
 
-    private Vector3f direction;
+    private final Vector3f direction = new Vector3f();
     private float cutoffAngle; // in Radian
     private float outerCutoffAngle; // in Radian
 
     @Override
     public ByteBuffer get(MemoryStack stack) {
-        return get(stack.malloc(26 * Float.BYTES));
+        return get(stack.malloc(60));
     }
 
     @Override
     public ByteBuffer get(int index, ByteBuffer buffer) {
-        buffer.putInt(index, 1);
-        position.get(index + 1, buffer);
-        buffer.putFloat(index + 5, kconstant);
-        buffer.putFloat(index + 6, klinear);
-        buffer.putFloat(index + 7, kquadratic);
-        direction.get(index + 8, buffer);
-        buffer.putFloat(index + 12, (float) Math.cos(cutoffAngle));
-        buffer.putFloat(index + 13, (float) Math.cos(outerCutoffAngle));
-        ambient.get(index + 14, buffer);
-        diffuse.get(index + 18, buffer);
-        specular.get(index + 22, buffer);
+        color.getRGB(index, buffer);
+        buffer.putFloat(index + 12, intensity);
+        position.get(index + 16, buffer);
+        buffer.putFloat(index + 28, kconstant);
+        buffer.putFloat(index + 32, klinear);
+        buffer.putFloat(index + 36, kquadratic);
+        direction.get(index + 40, buffer);
+        buffer.putFloat(index + 52, (float) Math.cos(cutoffAngle));
+        buffer.putFloat(index + 56, (float) Math.cos(outerCutoffAngle));
         return buffer;
     }
 
-    public Vector3f getPosition() {
+    @Override
+    public void setup(Matrix4fc viewMatrix) {
+
+    }
+
+    public Vector3fc getPosition() {
         return position;
     }
 
-    public SpotLight setPosition(Vector3f position) {
-        this.position = position;
+    public SpotLight setPosition(Vector3fc position) {
+        this.position.set(position);
         return this;
     }
 
@@ -73,12 +78,12 @@ public class SpotLight extends Light {
         return this;
     }
 
-    public Vector3f getDirection() {
+    public Vector3fc getDirection() {
         return direction;
     }
 
-    public SpotLight setDirection(Vector3f direction) {
-        this.direction = direction;
+    public SpotLight setDirection(Vector3fc direction) {
+        this.direction.set(direction);
         return this;
     }
 
@@ -97,24 +102,6 @@ public class SpotLight extends Light {
 
     public SpotLight setOuterCutoffAngle(float outerCutoffAngle) {
         this.outerCutoffAngle = outerCutoffAngle;
-        return this;
-    }
-
-    @Override
-    public SpotLight setAmbient(Vector3f ambient) {
-        super.setAmbient(ambient);
-        return this;
-    }
-
-    @Override
-    public SpotLight setDiffuse(Vector3f diffuse) {
-        super.setDiffuse(diffuse);
-        return this;
-    }
-
-    @Override
-    public SpotLight setSpecular(Vector3f specular) {
-        super.setSpecular(specular);
         return this;
     }
 }
