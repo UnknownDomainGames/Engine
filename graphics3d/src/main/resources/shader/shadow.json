@@ -1,0 +1,4 @@
+{
+  "Vertex": "shadow.vert",
+  "Fragment": "shadow.frag"
+}
