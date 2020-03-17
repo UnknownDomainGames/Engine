@@ -3,12 +3,7 @@ package engine.graphics.shader;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.Texture;
 
-public interface UniformTexture {
-
-    String getName();
-
-    TextureBinding getBinding();
-
+public interface TextureBinding {
     int getUnit();
 
     Texture getTexture();

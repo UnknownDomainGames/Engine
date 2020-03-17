@@ -2,9 +2,13 @@ package engine.graphics.shader;
 
 public interface ShaderResource {
 
-    UniformBlock getUniformBlock(String name);
+    TextureBinding createTextureBinding();
+
+    TextureBinding getTextureBinding(int unit);
 
     UniformTexture getUniformTexture(String name);
+
+    UniformBlock getUniformBlock(String name);
 
     void refresh();
 }

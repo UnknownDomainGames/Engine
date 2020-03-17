@@ -1,6 +1,7 @@
 package engine.graphics.vulkan.graph;
 
 import engine.graphics.shader.ShaderResource;
+import engine.graphics.shader.TextureBinding;
 import engine.graphics.shader.UniformBlock;
 import engine.graphics.shader.UniformTexture;
 import engine.graphics.vulkan.pipeline.PipelineState;
@@ -16,6 +17,16 @@ public class VKShaderResource implements ShaderResource {
 
     public VKShaderResource(PipelineState state) {
         this.state = state;
+    }
+
+    @Override
+    public TextureBinding createTextureBinding() {
+        return null;
+    }
+
+    @Override
+    public TextureBinding getTextureBinding(int unit) {
+        return null;
     }
 
     @Override
