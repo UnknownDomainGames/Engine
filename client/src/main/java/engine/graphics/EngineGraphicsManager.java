@@ -138,7 +138,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
             }
         });
         scene.addNode(selectedBlock);
-        scene.getLightManager().add(new DirectionalLight().setColor(Color.WHITE).setDirection(1, 1, 1).setIntensity(1f));
+        scene.getLightManager().add(new DirectionalLight().setColor(Color.WHITE).setDirection(1, -1, 1).setIntensity(1f));
         scene.getLightManager().setAmbientLight(0.5f);
     }
 

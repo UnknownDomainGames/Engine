@@ -81,8 +81,8 @@ public final class DisplaySettings {
         } catch (IllegalArgumentException e) {
             displayMode = DisplayMode.WINDOWED;
         }
-        resolutionWidth = config.getInt("res_width");
-        resolutionHeight = config.getInt("res_height");
+        resolutionWidth = config.getInt("res_width", 854);
+        resolutionHeight = config.getInt("res_height", 480);
         frameRate = config.getInt("frame_rate", 60);
         uiScale = config.getInt("ui_scale", 100);
         hudScale = config.getInt("hud_scale", 100);

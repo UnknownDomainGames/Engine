@@ -90,7 +90,7 @@ public class LightManager implements UniformBlock.Value {
 
     @Override
     public ByteBuffer get(MemoryStack stack) {
-        return get(0, stack.malloc(BUFFER_CAPACITY));
+        return get(0, stack.calloc(BUFFER_CAPACITY));
     }
 
     @Override
