@@ -139,6 +139,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
         });
         scene.addNode(selectedBlock);
         scene.getLightManager().add(new DirectionalLight().setColor(Color.WHITE).setDirection(1, 1, 1).setIntensity(1f));
+        scene.getLightManager().setAmbientLight(0.5f);
     }
 
     private void initTextureAssetProvider() {
@@ -185,13 +186,19 @@ public final class EngineGraphicsManager implements GraphicsManager {
                 colorBuffer.setName("color");
                 colorBuffer.setFormat(ColorFormat.RGB8);
                 colorBuffer.setRelativeSize(1, 1);
+                mainTask.addRenderBuffers(colorBuffer);
 
                 RenderBufferInfo depthBuffer = RenderBufferInfo.renderBuffer();
                 depthBuffer.setName("depth");
                 depthBuffer.setFormat(ColorFormat.DEPTH24);
                 depthBuffer.setRelativeSize(1, 1);
+                mainTask.addRenderBuffers(depthBuffer);
 
-                mainTask.addRenderBuffers(colorBuffer, depthBuffer);
+                RenderBufferInfo shadowBuffer = RenderBufferInfo.renderBuffer();
+                shadowBuffer.setName("shadow");
+                shadowBuffer.setFormat(ColorFormat.DEPTH24);
+                shadowBuffer.setFixedSize(1024, 1024);
+                mainTask.addRenderBuffers(shadowBuffer);
             }
             {
                 RenderPassInfo skyPass = RenderPassInfo.renderPass();
@@ -204,6 +211,18 @@ public final class EngineGraphicsManager implements GraphicsManager {
                     skyDrawer.setShader("sky");
                     skyDrawer.setDrawDispatcher(new ViewportSkyDrawDispatcher(viewport));
                     skyPass.addDrawers(skyDrawer);
+                }
+
+                RenderPassInfo shadowPass = RenderPassInfo.renderPass();
+                shadowPass.setName("shadow");
+                shadowPass.dependsOn("sky");
+                shadowPass.setCullMode(CullMode.CULL_FRONT);
+                shadowPass.setDepthOutput(depthOutput().setClear(true).setDepthBuffer("shadow"));
+                {
+                    DrawerInfo sceneDrawer = DrawerInfo.drawer();
+                    sceneDrawer.setShader("shadow");
+                    sceneDrawer.setDrawDispatcher(new ShadowOpaqueDrawDispatcher(viewport));
+                    shadowPass.addDrawers(sceneDrawer);
                 }
 
                 RenderPassInfo opaquePass = RenderPassInfo.renderPass();

@@ -2,6 +2,7 @@ package engine.graphics;
 
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
+import engine.graphics.light.LightManager;
 import engine.graphics.queue.RenderQueue;
 
 import java.util.ArrayList;

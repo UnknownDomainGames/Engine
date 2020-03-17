@@ -3,18 +3,21 @@ package engine.graphics.light;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 
 public class SpotLight extends Light {
     private final Vector3f position = new Vector3f();
+    private final Vector3f viewPosition = new Vector3f();
 
     private float kconstant = 1.0f;
     private float klinear;
     private float kquadratic;
 
     private final Vector3f direction = new Vector3f();
+    private final Vector3f viewDirection = new Vector3f();
     private float cutoffAngle; // in Radian
     private float outerCutoffAngle; // in Radian
 
@@ -27,11 +30,11 @@ public class SpotLight extends Light {
     public ByteBuffer get(int index, ByteBuffer buffer) {
         color.getRGB(index, buffer);
         buffer.putFloat(index + 12, intensity);
-        position.get(index + 16, buffer);
+        viewPosition.get(index + 16, buffer);
         buffer.putFloat(index + 28, kconstant);
         buffer.putFloat(index + 32, klinear);
         buffer.putFloat(index + 36, kquadratic);
-        direction.get(index + 40, buffer);
+        viewDirection.get(index + 40, buffer);
         buffer.putFloat(index + 52, (float) Math.cos(cutoffAngle));
         buffer.putFloat(index + 56, (float) Math.cos(outerCutoffAngle));
         return buffer;
@@ -39,7 +42,10 @@ public class SpotLight extends Light {
 
     @Override
     public void setup(Matrix4fc viewMatrix) {
-
+        Vector4f pos = viewMatrix.transform(new Vector4f(position, 1f));
+        viewPosition.set(pos.x, pos.y, pos.z);
+        Vector4f dir = viewMatrix.transform(new Vector4f(direction, 0f));
+        viewDirection.set(dir.x, dir.y, dir.z).normalize();
     }
 
     public Vector3fc getPosition() {

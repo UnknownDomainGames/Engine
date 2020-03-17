@@ -15,7 +15,7 @@ public class DirectionalLight extends Light {
     private final Vector3f viewDirection = new Vector3f();
 
     public ByteBuffer get(MemoryStack stack) {
-        return get(stack.malloc(8 * Float.BYTES));
+        return get(stack.malloc(28));
     }
 
     @Override

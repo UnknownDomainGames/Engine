@@ -23,6 +23,6 @@ public class SpotLightNode extends Node3D {
     @Override
     protected void refreshTransform() {
         super.refreshTransform();
-        this.light.getDirection().set(0, 0, -1).rotate(getWorldRotation());
+//        this.light.getDirection().set(0, 0, -1).rotate(getWorldRotation());
     }
 }
