@@ -4,6 +4,11 @@ import static org.apache.commons.lang3.Validate.notEmpty;
 
 public class Font {
 
+    public static final String REGULAR = "Regular";
+    public static final String BOLD = "Bold";
+    public static final String ITALIC = "Italic";
+    public static final String BOLD_ITALIC = "Bold Italic";
+
     private final String family;
     private final String style;
     private final String fullName;
