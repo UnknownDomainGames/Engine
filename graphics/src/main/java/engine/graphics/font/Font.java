@@ -1,5 +1,7 @@
 package engine.graphics.font;
 
+import java.util.Locale;
+
 import static org.apache.commons.lang3.Validate.notEmpty;
 
 public class Font {
@@ -38,12 +40,24 @@ public class Font {
         return family;
     }
 
+    public String getFamily(Locale locale) {
+        return FontManager.instance().getFontFamily(this, locale);
+    }
+
     public String getStyle() {
         return style;
     }
 
-    public String getFullName() {
+    public String getName() {
         return fullName;
+    }
+
+    public String getFullName() {
+        return getFullName(Locale.getDefault());
+    }
+
+    public String getFullName(Locale locale) {
+        return FontManager.instance().getFontName(this, locale);
     }
 
     public float getSize() {

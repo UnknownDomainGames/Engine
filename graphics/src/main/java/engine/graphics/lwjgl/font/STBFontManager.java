@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
@@ -35,23 +34,23 @@ public final class STBFontManager extends FontManager {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("Font");
 
-    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("engine.font.debug", "false"));
+    public static final int PLATFORM_ID;
+    public static final int ENCODING_ID;
+    public static final int LANGUAGE_ID;
 
-    //    private static final int[] PLATFORMs = {STBTT_PLATFORM_ID_MICROSOFT, STBTT_PLATFORM_ID_UNICODE, STBTT_PLATFORM_ID_MAC, STBTT_PLATFORM_ID_ISO};
-    private static final int[] EIDs = {STBTT_MS_EID_UNICODE_BMP, STBTT_MS_EID_SHIFTJIS, STBTT_MS_EID_UNICODE_FULL, STBTT_MS_EID_SYMBOL};
-    private static final int[] LANGs = {
-            STBTT_MS_LANG_CHINESE,
-            STBTT_MS_LANG_DUTCH,
-            STBTT_MS_LANG_FRENCH,
-            STBTT_MS_LANG_GERMAN,
-            STBTT_MS_LANG_HEBREW,
-            STBTT_MS_LANG_ITALIAN,
-            STBTT_MS_LANG_JAPANESE,
-            STBTT_MS_LANG_KOREAN,
-            STBTT_MS_LANG_RUSSIAN,
-            STBTT_MS_LANG_SPANISH,
-            STBTT_MS_LANG_SWEDISH,
-            STBTT_MS_LANG_ENGLISH};
+    static {
+        if (SystemUtils.IS_OS_WINDOWS) {
+            PLATFORM_ID = STBTT_PLATFORM_ID_MICROSOFT;
+            ENCODING_ID = STBTT_MS_EID_UNICODE_BMP;
+            LANGUAGE_ID = STBTT_MS_LANG_ENGLISH;
+        } else {
+            PLATFORM_ID = STBTT_PLATFORM_ID_UNICODE;
+            ENCODING_ID = STBTT_UNICODE_EID_UNICODE_2_0_BMP;
+            LANGUAGE_ID = 0;
+        }
+    }
+
+    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("engine.font.debug", "false"));
 
     private final List<Font> availableFonts = new CopyOnWriteArrayList<>();
     private final Table<String, String, NativeTTFontInfo> loadedFontInfos = HashBasedTable.create();
@@ -61,35 +60,8 @@ public final class STBFontManager extends FontManager {
 
     private STBFontManager() {
         initLocalFonts();
-        Font defaultFont = new Font("Arial", "Regular", 16);
+        Font defaultFont = new Font("Arial", Font.REGULAR, 16);
         setDefaultFont(defaultFont);
-    }
-
-    private int getLanguageId(Locale locale) {
-        switch (locale.getLanguage()) {
-            case "zh":
-                return STBTT_MS_LANG_CHINESE;
-            case "nl":
-                return STBTT_MS_LANG_DUTCH;
-            case "fr":
-                return STBTT_MS_LANG_FRENCH;
-            case "de":
-                return STBTT_MS_LANG_GERMAN;
-            case "it":
-                return STBTT_MS_LANG_ITALIAN;
-            case "ja":
-                return STBTT_MS_LANG_JAPANESE;
-            case "ko":
-                return STBTT_MS_LANG_KOREAN;
-            case "ru":
-                return STBTT_MS_LANG_RUSSIAN;
-            case "es":
-                return STBTT_MS_LANG_SPANISH;
-            case "sv":
-                return STBTT_MS_LANG_SWEDISH;
-            default:
-                return STBTT_MS_LANG_ENGLISH;
-        }
     }
 
     private void initLocalFonts() {
@@ -187,6 +159,20 @@ public final class STBFontManager extends FontManager {
     }
 
     @Override
+    public String getFontFamily(Font font, Locale locale) {
+        String family = loadedFontInfos.get(font.getFamily(), font.getStyle()).getNameTable()
+                .getFontNameString(PLATFORM_ID, ENCODING_ID, LCIDHelper.INSTANCE.getLanguageID(locale), 1);
+        return family != null ? family : font.getFamily();
+    }
+
+    @Override
+    public String getFontName(Font font, Locale locale) {
+        String fullName = loadedFontInfos.get(font.getFamily(), font.getStyle()).getNameTable()
+                .getFontNameString(PLATFORM_ID, ENCODING_ID, LCIDHelper.INSTANCE.getLanguageID(locale), 4);
+        return fullName != null ? fullName : font.getName();
+    }
+
+    @Override
     public List<String> wrapText(String text, float width, Font font) {
         if (computeTextWidth(text, font) <= width || width <= 0) {
             return Lists.newArrayList(text);
@@ -233,7 +219,7 @@ public final class STBFontManager extends FontManager {
         }
 
         NativeTTFont nativeFont = getNativeFont(font);
-        STBTTFontinfo info = nativeFont.getInfo().getFontInfo();
+        STBTTFontinfo info = nativeFont.getFontInfo().getSTBFontInfo();
         int width = 0;
 
         try (MemoryStack stack = stackPush()) {
@@ -284,7 +270,7 @@ public final class STBFontManager extends FontManager {
             FloatBuffer posX = stack.floats(0);
             FloatBuffer posY = stack.floats(0 + font.getSize());
 
-            float maxY = (float) (nativeTTFont.getInfo().getAscent() - nativeTTFont.getInfo().getDescent()) * stbtt_ScaleForPixelHeight(nativeTTFont.getInfo().getFontInfo(), font.getSize());
+            float maxY = (float) (nativeTTFont.getFontInfo().getAscent() - nativeTTFont.getFontInfo().getDescent()) * stbtt_ScaleForPixelHeight(nativeTTFont.getFontInfo().getSTBFontInfo(), font.getSize());
             var plane = nativeTTFont.getPlaneTextures().get(0);
             for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, charPointBuffer);
@@ -312,7 +298,7 @@ public final class STBFontManager extends FontManager {
         TextMesh.CharQuad[] quads = new TextMesh.CharQuad[text.length()];
 
         NativeTTFont nativeTTFont = getNativeFont(font);
-        STBTTFontinfo fontInfo = nativeTTFont.getInfo().getFontInfo();
+        STBTTFontinfo fontInfo = nativeTTFont.getFontInfo().getSTBFontInfo();
         float scale = nativeTTFont.getScaleForPixelHeight();
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -330,7 +316,7 @@ public final class STBFontManager extends FontManager {
                     fontPlaneTexture.putBlock(Character.UnicodeBlock.of(charPoint));
                 }
                 if (fontPlaneTexture.isWaitingForReloading()) {
-                    fontPlaneTexture.bakeTexture(nativeTTFont.getFont(), nativeTTFont.getInfo());
+                    fontPlaneTexture.bakeTexture(nativeTTFont.getFont(), nativeTTFont.getFontInfo());
                 }
             }
             for (int i = 0, j = 0; i < text.length(); j++) {
@@ -375,7 +361,7 @@ public final class STBFontManager extends FontManager {
     }
 
     private NativeTTFont loadNativeFont(NativeTTFontInfo info, Font font) {
-        float scale = stbtt_ScaleForPixelHeight(info.getFontInfo(), font.getSize());
+        float scale = stbtt_ScaleForPixelHeight(info.getSTBFontInfo(), font.getSize());
         var plane = new FontPlaneTexture();
         plane.putBlock(Character.UnicodeBlock.BASIC_LATIN);
         plane.bakeTexture(font, info);
@@ -412,15 +398,14 @@ public final class STBFontManager extends FontManager {
                 throw new IllegalStateException("Failed in initializing ttf font info");
             }
 
-            FontDataFormat format = findDataFormat(fontInfo);
-            if (format == null) {
-                throw new FontLoadException("Cannot load font because of not found encoding id.");
-            }
+            TTFontNameTable nameTable = STBTTFontHelper.getFontNameTable(fontInfo);
 
-            String family = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, format.encodingId, format.languageId, 1)
-                    .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
-            String style = stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, format.encodingId, format.languageId, 2)
-                    .order(ByteOrder.BIG_ENDIAN).asCharBuffer().toString();
+            String family = nameTable.getFontNameString(PLATFORM_ID, ENCODING_ID, LANGUAGE_ID, 1);
+            String style = nameTable.getFontNameString(PLATFORM_ID, ENCODING_ID, LANGUAGE_ID, 2);
+
+            if (family == null || style == null) {
+                throw new FontLoadException("Failed to find font family or style");
+            }
 
             try (MemoryStack stack = stackPush()) {
                 IntBuffer pAscent = stack.mallocInt(1);
@@ -435,16 +420,14 @@ public final class STBFontManager extends FontManager {
                 stbtt_GetFontBoundingBox(fontInfo, x0, y0, x1, y1);
 
                 var builder = NativeTTFontInfo.builder()
-                        .platformId(STBTT_PLATFORM_ID_MICROSOFT)
-                        .encodingId(format.encodingId)
-                        .languageId(format.languageId)
-                        .family(family).style(style).offsetIndex(i)
+                        .offsetIndex(i).family(family).style(style)
+                        .nameTable(nameTable)
                         .ascent(pAscent.get(0)).descent(pDescent.get(0)).lineGap(pLineGap.get(0))
                         .boundingBox(new int[]{x0.get(), y0.get(), x1.get(), y1.get()});
                 if (delayLoading) {
                     builder.fontFile(fontFile);
                 } else {
-                    builder.fontData(fontData).fontInfo(fontInfo);
+                    builder.fontData(fontData).stbFontInfo(fontInfo);
                 }
                 var result = builder.build();
                 if (enable) {
@@ -455,35 +438,6 @@ public final class STBFontManager extends FontManager {
             }
         }
         return results;
-    }
-
-    private static final class FontDataFormat {
-        private int encodingId;
-        private int languageId;
-
-        private FontDataFormat(int encodingId, int languageId) {
-            this.encodingId = encodingId;
-            this.languageId = languageId;
-        }
-    }
-
-    private FontDataFormat findDataFormat(STBTTFontinfo fontInfo) {
-        for (int eid : EIDs) {
-            for (int lang : LANGs) {
-                if (stbtt_GetFontNameString(fontInfo, STBTT_PLATFORM_ID_MICROSOFT, eid, lang, 1) != null) {
-                    return new FontDataFormat(eid, lang);
-                }
-            }
-        }
-        return null;
-    }
-
-    private int getBitmapSize(float size, int countOfChar) {
-        return (int) Math.ceil((size + 8 * size / 16.0f) * Math.sqrt(countOfChar));
-    }
-
-    private float scale(float center, float offset, float factor) {
-        return (offset - center) * factor + center;
     }
 
     private int getCodePoint(CharSequence text, int i, IntBuffer cpOut) {
@@ -501,8 +455,8 @@ public final class STBFontManager extends FontManager {
 
     private boolean isSupportedCharacter(NativeTTFont font, int character) {
         if (character == '\u001A' || character == '\uFFFD') return true;
-        var counter = stbtt_FindGlyphIndex(font.getInfo().getFontInfo(), 0x1A);
-        var ci = stbtt_FindGlyphIndex(font.getInfo().getFontInfo(), character);
+        var counter = stbtt_FindGlyphIndex(font.getFontInfo().getSTBFontInfo(), 0x1A);
+        var ci = stbtt_FindGlyphIndex(font.getFontInfo().getSTBFontInfo(), character);
         return counter != ci;
     }
 

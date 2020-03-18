@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 import java.util.ServiceLoader;
 
 public abstract class FontManager {
@@ -37,6 +38,10 @@ public abstract class FontManager {
     public abstract Font loadFont(InputStream input) throws IOException;
 
     public abstract Font loadFont(InputStream input, float size) throws IOException;
+
+    public abstract String getFontFamily(Font font, Locale locale);
+
+    public abstract String getFontName(Font font, Locale locale);
 
     public float computeTextWidth(String text, Font font) throws UnavailableFontException {
         return computeTextWidth(text, font, -1);

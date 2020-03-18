@@ -20,8 +20,7 @@ import java.util.Map;
 
 import static org.lwjgl.stb.STBTruetype.*;
 
-public class FontPlaneTexture {
-    //    private List<Integer> abandonedTexIds;
+public final class FontPlaneTexture {
     private Texture2D texture;
     private Font font;
     private NativeTTFontInfo fontInfo;
@@ -31,7 +30,6 @@ public class FontPlaneTexture {
     private boolean dirty = false;
 
     public FontPlaneTexture() {
-//        abandonedTexIds = new ArrayList<>();
         blocks = new ArrayList<>();
         charQuads = new HashMap<>();
     }

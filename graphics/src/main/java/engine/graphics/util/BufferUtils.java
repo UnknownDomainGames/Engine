@@ -48,4 +48,13 @@ public final class BufferUtils {
     public static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
         return createByteBuffer(newCapacity).put(buffer.flip());
     }
+
+    public static byte[] toBytes(ByteBuffer buffer) {
+        if (!buffer.isDirect()) return buffer.array();
+
+        int capacity = buffer.capacity();
+        byte[] bytes = new byte[capacity];
+        buffer.get(bytes, 0, capacity);
+        return bytes;
+    }
 }

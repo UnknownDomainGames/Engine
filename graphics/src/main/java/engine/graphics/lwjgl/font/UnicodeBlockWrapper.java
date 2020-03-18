@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UnicodeBlockWrapper {
+public final class UnicodeBlockWrapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UnicodeBlockWrapper.class);
 
