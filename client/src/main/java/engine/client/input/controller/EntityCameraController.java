@@ -83,18 +83,24 @@ public class EntityCameraController implements EntityController {
     }
 
     @Override
-    public void onCursorMove(double x, double y) {
+    public void onCursorMove(double x, double y, boolean cursorLock) {
         double yaw = (lastX - x) * SENSIBILITY;
         double pitch = (lastY - y) * SENSIBILITY;
         lastX = x;
         lastY = y;
-        if (setupLast) {
-            Vector3f rotation = player.getControlledEntity().getRotation();
-            rotation.y += pitch;
-            rotation.y = Math.min(89.0f, Math.max(-89.0f, rotation.y));
-            rotation.x = Math2.loop(rotation.x + (float) yaw, 360);
-            updateMotion();
-        } else setupLast = true;
+        if(cursorLock) {
+            if (setupLast) {
+                Vector3f rotation = player.getControlledEntity().getRotation();
+                rotation.y += pitch;
+                rotation.y = Math.min(89.0f, Math.max(-89.0f, rotation.y));
+                rotation.x = Math2.loop(rotation.x + (float) yaw, 360);
+                updateMotion();
+            } else {
+                setupLast = true;
+            }
+        } else {
+            setupLast = false;
+        }
     }
 
     private void updateMotion() {

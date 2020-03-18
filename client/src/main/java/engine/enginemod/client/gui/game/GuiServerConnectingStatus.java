@@ -19,7 +19,7 @@ import engine.util.Color;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
+public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickable*/ {
 
     private Label lblStatus;
     private Label lblReason;
@@ -31,7 +31,7 @@ public class GuiConnectServer extends BorderPane/* implements GuiTickable*/ {
     private boolean isCancelled = false;
     private MutableBooleanValue isFailed = new SimpleMutableBooleanValue(false);
 
-    public GuiConnectServer(String ip, int port){
+    public GuiServerConnectingStatus(String ip, int port){
         var vbox = new VBox();
         vbox.alignment().setValue(Pos.HPos.CENTER);
         vbox.padding().setValue(new Insets(200,0,0,0));

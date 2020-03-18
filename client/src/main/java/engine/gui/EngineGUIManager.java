@@ -42,6 +42,10 @@ public final class EngineGUIManager implements GUIManager {
     @Override
     public void show(Scene scene) {
         pushToHistory();
+        showInternal(scene);
+    }
+
+    private void showInternal(Scene scene) {
         showingScene = scene;
         stage.setScene(scene);
         if (scene == null) {
@@ -62,7 +66,7 @@ public final class EngineGUIManager implements GUIManager {
 
     @Override
     public void showLast() {
-        show(sceneHistory.undo());
+        showInternal(sceneHistory.undo());
     }
 
     @Override

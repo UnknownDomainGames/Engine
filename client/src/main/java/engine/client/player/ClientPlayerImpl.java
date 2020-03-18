@@ -36,11 +36,7 @@ public class ClientPlayerImpl extends PlayerImpl implements ClientPlayer {
         controller.setPlayer(this, getControlledEntity());
         GraphicsManager graphicsManager = Platform.getEngineClient().getGraphicsManager();
         graphicsManager.getWindow().removeCursorCallback(cursorCallback);
-        cursorCallback = (window, xpos, ypos) -> {
-            if (!graphicsManager.getGUIManager().isShowing()) {
-                entityController.onCursorMove(xpos, ypos);
-            }
-        };
+        cursorCallback = (window, xpos, ypos) -> entityController.onCursorMove(xpos, ypos, !graphicsManager.getGUIManager().isShowing());
         graphicsManager.getWindow().addCursorCallback(cursorCallback);
     }
 
