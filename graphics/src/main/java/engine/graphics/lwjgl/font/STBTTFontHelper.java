@@ -29,8 +29,8 @@ public final class STBTTFontHelper {
             long loc = nm + 6 + 12 * i;
             int platform = ttGetUShort(data + loc);
             int encoding = ttGetUShort(data + loc + 2);
-            if (encoding != 3) {
-                // No need to load deprecated encoding (0, 1, 2) or others encoding.
+            if (encoding != STBFontManager.ENCODING_ID) {
+                // No need to load others encoding.
                 continue;
             }
             int language = ttGetUShort(data + loc + 4);
