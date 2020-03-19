@@ -17,4 +17,6 @@ public abstract class GUIPlatform {
     public abstract SceneHelper getSceneHelper();
 
     public abstract ClipboardHelper getClipboardHelper();
+
+    public abstract FileChooserHelper getFileChooserHelper();
 }
