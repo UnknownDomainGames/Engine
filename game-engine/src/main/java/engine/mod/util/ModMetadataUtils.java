@@ -3,8 +3,8 @@ package engine.mod.util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import engine.mod.Dependency;
 import engine.mod.InstallationType;
-import engine.mod.ModDependencyItem;
 import engine.mod.ModMetadata;
 import engine.mod.misc.SimpleModMetadata;
 
@@ -40,7 +40,7 @@ public class ModMetadataUtils {
         jo.add("permissions", ja);
 
         ja = new JsonArray();
-        for (ModDependencyItem dependencyEntry : descriptor.getDependencies()) {
+        for (Dependency dependencyEntry : descriptor.getDependencies()) {
             ja.add(dependencyEntry.toString());
         }
         jo.add("dependencies", ja);
@@ -103,9 +103,9 @@ public class ModMetadataUtils {
             builder.permissions(List.copyOf(permissions));
         }
         if (jo.has("dependencies")) {
-            List<ModDependencyItem> dependencies = new ArrayList<>();
+            List<Dependency> dependencies = new ArrayList<>();
             for (JsonElement je : jo.getAsJsonArray("dependencies")) {
-                dependencies.add(ModDependencyItem.parse(je.getAsString()));
+                dependencies.add(Dependency.parse(je.getAsString()));
             }
             builder.dependencies(List.copyOf(dependencies));
         }

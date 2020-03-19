@@ -36,7 +36,7 @@ public interface ModMetadata {
 
     List<String> getPermissions();
 
-    List<ModDependencyItem> getDependencies();
+    List<Dependency> getDependencies();
 
     Map<String, JsonElement> getCustomElements();
 

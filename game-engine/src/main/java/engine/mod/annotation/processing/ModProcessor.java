@@ -1,9 +1,9 @@
 package engine.mod.annotation.processing;
 
 import com.google.gson.JsonElement;
+import engine.mod.Dependency;
 import engine.mod.DependencyType;
 import engine.mod.InstallationType;
-import engine.mod.ModDependencyItem;
 import engine.mod.ModMetadata;
 import engine.mod.annotation.Mod;
 import engine.mod.misc.SimpleModMetadata;
@@ -84,13 +84,13 @@ public class ModProcessor extends AbstractProcessor {
         }
     }
 
-    private List<ModDependencyItem> createDependencyList(List<AnnotationMirror> dependencies) {
-        List<ModDependencyItem> list = new ArrayList<>();
+    private List<Dependency> createDependencyList(List<AnnotationMirror> dependencies) {
+        List<Dependency> list = new ArrayList<>();
         if (dependencies == null)
             return list;
         for (AnnotationMirror dependency : dependencies) {
             Map<String, Object> values = getAnnotationValues(dependency);
-            list.add(new ModDependencyItem((String) values.get("id"),
+            list.add(new Dependency((String) values.get("id"),
                     (String) values.getOrDefault("version", "*"),
                     DependencyType.valueOf((String) values.getOrDefault("type", DependencyType.REQUIRED.name()))));
         }

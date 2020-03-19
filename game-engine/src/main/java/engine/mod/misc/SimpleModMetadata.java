@@ -1,8 +1,8 @@
 package engine.mod.misc;
 
 import com.google.gson.JsonElement;
+import engine.mod.Dependency;
 import engine.mod.InstallationType;
-import engine.mod.ModDependencyItem;
 import engine.mod.ModMetadata;
 import engine.util.versioning.Version;
 
@@ -29,10 +29,10 @@ public class SimpleModMetadata implements ModMetadata {
     private final String logo;
     private final List<String> authors;
     private final List<String> permissions;
-    private final List<ModDependencyItem> dependencies;
+    private final List<Dependency> dependencies;
     private final Map<String, JsonElement> elements;
 
-    protected SimpleModMetadata(String id, Version version, String mainClass, String name, InstallationType installationType, String description, String license, String url, String logo, List<String> authors, List<String> permissions, List<ModDependencyItem> dependencies, Map<String, JsonElement> elements) {
+    protected SimpleModMetadata(String id, Version version, String mainClass, String name, InstallationType installationType, String description, String license, String url, String logo, List<String> authors, List<String> permissions, List<Dependency> dependencies, Map<String, JsonElement> elements) {
         this.id = id;
         this.version = version;
         this.mainClass = mainClass;
@@ -108,7 +108,7 @@ public class SimpleModMetadata implements ModMetadata {
     }
 
     @Override
-    public List<ModDependencyItem> getDependencies() {
+    public List<Dependency> getDependencies() {
         return dependencies;
     }
 
@@ -138,7 +138,7 @@ public class SimpleModMetadata implements ModMetadata {
         private String logo = "";
         private List<String> authors = Collections.emptyList();
         private List<String> permissions = Collections.emptyList();
-        private List<ModDependencyItem> dependencies = Collections.emptyList();
+        private List<Dependency> dependencies = Collections.emptyList();
         private Map<String, JsonElement> elements = Collections.emptyMap();
 
         public Builder id(String id) {
@@ -206,7 +206,7 @@ public class SimpleModMetadata implements ModMetadata {
             return this;
         }
 
-        public Builder dependencies(List<ModDependencyItem> dependencies) {
+        public Builder dependencies(List<Dependency> dependencies) {
             this.dependencies = dependencies;
             return this;
         }
