@@ -6,10 +6,7 @@ import engine.gui.event.BasicEventHandlerManager;
 import engine.gui.event.Event;
 import engine.gui.event.EventHandler;
 import engine.gui.event.EventType;
-import engine.gui.input.KeyEvent;
-import engine.gui.input.MouseActionEvent;
-import engine.gui.input.MouseEvent;
-import engine.gui.input.ScrollEvent;
+import engine.gui.input.*;
 
 final class EventHandlerManager extends BasicEventHandlerManager {
 
@@ -181,6 +178,23 @@ final class EventHandlerManager extends BasicEventHandlerManager {
 
     public void setOnScroll(EventHandler<ScrollEvent> onScroll) {
         onScroll().set(onScroll);
+    }
+
+    private MutableObjectValue<EventHandler<DropEvent>> onDrop;
+
+    public MutableObjectValue<EventHandler<DropEvent>> onDrop() {
+        if (onDrop == null) {
+            onDrop = new EventHandlerValue<>(DropEvent.DROP);
+        }
+        return onDrop;
+    }
+
+    public EventHandler<DropEvent> getOnDrop() {
+        return onDrop == null ? null : onDrop.get();
+    }
+
+    public void setOnDrop(EventHandler<DropEvent> onDrop) {
+        onDrop().set(onDrop);
     }
 
     private class EventHandlerValue<ET extends Event, T extends EventHandler<ET>> extends SimpleMutableObjectValue<T> {

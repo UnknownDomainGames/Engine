@@ -4,10 +4,7 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
 import engine.gui.event.*;
-import engine.gui.input.KeyEvent;
-import engine.gui.input.MouseActionEvent;
-import engine.gui.input.MouseEvent;
-import engine.gui.input.ScrollEvent;
+import engine.gui.input.*;
 import engine.gui.misc.Bounds;
 import engine.gui.misc.Point;
 import engine.gui.rendering.ComponentRenderer;
@@ -452,5 +449,17 @@ public abstract class Node implements EventTarget {
 
     public final void setOnScroll(EventHandler<ScrollEvent> onScroll) {
         eventHandlerManager.setOnScroll(onScroll);
+    }
+
+    public MutableObjectValue<EventHandler<DropEvent>> onDrop() {
+        return eventHandlerManager.onDrop();
+    }
+
+    public EventHandler<DropEvent> getOnDrop() {
+        return eventHandlerManager.getOnDrop();
+    }
+
+    public void setOnDrop(EventHandler<DropEvent> onDrop) {
+        eventHandlerManager.setOnDrop(onDrop);
     }
 }

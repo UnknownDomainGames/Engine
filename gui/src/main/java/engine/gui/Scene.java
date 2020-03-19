@@ -2,10 +2,7 @@ package engine.gui;
 
 import com.github.mouse0w0.observable.value.*;
 import engine.gui.event.*;
-import engine.gui.input.KeyEvent;
-import engine.gui.input.MouseActionEvent;
-import engine.gui.input.MouseEvent;
-import engine.gui.input.ScrollEvent;
+import engine.gui.input.*;
 import engine.gui.internal.SceneHelper;
 import engine.gui.stage.Stage;
 import engine.gui.util.Utils;
@@ -15,6 +12,7 @@ import engine.input.MouseButton;
 import engine.util.Color;
 import org.apache.commons.lang3.Validate;
 
+import java.nio.file.Path;
 import java.util.*;
 
 import static engine.gui.internal.InputHelper.getDoubleClickTime;
@@ -282,6 +280,17 @@ public class Scene implements EventTarget {
         } else {
             focusedNodes.forEach(node ->
                     new KeyEvent(KeyEvent.KEY_TYPED, node, KeyCode.NONE, String.valueOf(codePoint), modifier, true).fireEvent());
+        }
+    }
+
+    public void processDrop(List<Path> paths) {
+        if (hoveredNodes.isEmpty()) {
+            new DropEvent(DropEvent.DROP, this, cursorX, cursorY, cursorX, cursorY, paths).fireEvent();
+        } else {
+            for (Node node : hoveredNodes) {
+                var pos = node.relativePos(cursorX, cursorY);
+                new DropEvent(DropEvent.DROP, node, pos.getX(), pos.getY(), cursorX, cursorY, paths).fireEvent();
+            }
         }
     }
 
