@@ -6,7 +6,6 @@ import engine.mod.DependencyType;
 import engine.mod.InstallationType;
 import engine.mod.ModMetadata;
 import engine.mod.annotation.Mod;
-import engine.mod.misc.SimpleModMetadata;
 import engine.mod.util.ModMetadataUtils;
 import engine.util.JsonUtils;
 
@@ -62,7 +61,7 @@ public class ModProcessor extends AbstractProcessor {
         FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "metadata.json");
 
         try (Writer writer = fileObject.openWriter()) {
-            ModMetadata metadata = SimpleModMetadata.builder()
+            ModMetadata metadata = ModMetadata.builder()
                     .id((String) values.get("id"))
                     .version((String) values.getOrDefault("version", "1.0.0"))
                     .mainClass(element.getQualifiedName().toString())

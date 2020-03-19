@@ -7,6 +7,7 @@ import engine.event.reflect.ReflectEventListenerFactory;
 import engine.mod.ModContainer;
 import engine.mod.ModLoader;
 import engine.mod.ModManager;
+import engine.mod.ModMetadata;
 import engine.mod.dummy.DummyModContainer;
 import engine.mod.exception.InvalidModMetadataException;
 import engine.mod.exception.MissingDependencyException;
@@ -16,7 +17,6 @@ import engine.mod.init.ModInitializer;
 import engine.mod.java.JavaModAssets;
 import engine.mod.java.JavaModLoader;
 import engine.mod.java.ModClassLoader;
-import engine.mod.misc.SimpleModMetadata;
 import engine.util.RuntimeEnvironment;
 
 import javax.annotation.Nonnull;
@@ -124,7 +124,7 @@ public class EngineModManager implements ModManager {
 
     private void loadEngineDummyMod() {
         try {
-            var engineMod = new DummyModContainer(SimpleModMetadata.builder().id("engine").version(Platform.getVersion()).name("Engine").build());
+            var engineMod = new DummyModContainer(ModMetadata.builder().id("engine").version(Platform.getVersion()).name("Engine").build());
             var classLoader = engine.getClass().getClassLoader();
             engineMod.setClassLoader(classLoader);
             var engineJarPath = Path.of(engine.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());

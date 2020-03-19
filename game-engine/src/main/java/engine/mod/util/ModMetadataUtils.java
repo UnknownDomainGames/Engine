@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import engine.mod.Dependency;
 import engine.mod.InstallationType;
 import engine.mod.ModMetadata;
-import engine.mod.misc.SimpleModMetadata;
 
 import java.util.*;
 
@@ -56,7 +55,7 @@ public class ModMetadataUtils {
     }
 
     public static ModMetadata fromJson(JsonObject jo) {
-        SimpleModMetadata.Builder builder = SimpleModMetadata.builder();
+        ModMetadata.Builder builder = ModMetadata.builder();
         if (jo.has("id")) {
             builder.id(jo.get("id").getAsString());
         }
