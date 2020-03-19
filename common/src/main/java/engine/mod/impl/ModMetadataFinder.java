@@ -3,7 +3,7 @@ package engine.mod.impl;
 import com.google.gson.JsonObject;
 import engine.mod.ModMetadata;
 import engine.mod.exception.InvalidModMetadataException;
-import engine.mod.util.ModMetadataUtils;
+import engine.mod.metadata.ModMetadataUtils;
 import engine.util.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 

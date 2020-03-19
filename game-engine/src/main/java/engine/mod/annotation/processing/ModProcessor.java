@@ -6,7 +6,7 @@ import engine.mod.DependencyType;
 import engine.mod.InstallationType;
 import engine.mod.ModMetadata;
 import engine.mod.annotation.Mod;
-import engine.mod.util.ModMetadataUtils;
+import engine.mod.metadata.ModMetadataUtils;
 import engine.util.JsonUtils;
 
 import javax.annotation.processing.AbstractProcessor;

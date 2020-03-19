@@ -1,6 +1,7 @@
 package engine.mod;
 
 import com.google.gson.JsonElement;
+import com.google.gson.annotations.SerializedName;
 import engine.util.versioning.Version;
 
 import javax.annotation.Nonnull;
@@ -16,6 +17,7 @@ public class ModMetadata {
 
     private final String id;
     private final Version version;
+    @SerializedName("main")
     private final String mainClass;
     private final String name;
     private final InstallationType installationType;
