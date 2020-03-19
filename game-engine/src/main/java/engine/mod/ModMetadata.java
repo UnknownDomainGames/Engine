@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import engine.util.versioning.Version;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,11 +24,12 @@ public class ModMetadata {
     private final String url;
     private final String logo;
     private final List<String> authors;
+    private final List<String> credits;
     private final List<String> permissions;
     private final List<Dependency> dependencies;
     private final Map<String, JsonElement> elements;
 
-    protected ModMetadata(String id, Version version, String mainClass, String name, InstallationType installationType, String description, String license, String url, String logo, List<String> authors, List<String> permissions, List<Dependency> dependencies, Map<String, JsonElement> elements) {
+    protected ModMetadata(String id, Version version, String mainClass, String name, InstallationType installationType, String description, String license, String url, String logo, List<String> authors, List<String> credits, List<String> permissions, List<Dependency> dependencies, Map<String, JsonElement> elements) {
         this.id = id;
         this.version = version;
         this.mainClass = mainClass;
@@ -40,6 +40,7 @@ public class ModMetadata {
         this.url = url;
         this.logo = logo;
         this.authors = authors;
+        this.credits = credits;
         this.permissions = permissions;
         this.dependencies = dependencies;
         this.elements = elements;
@@ -81,16 +82,20 @@ public class ModMetadata {
         return url;
     }
 
+    public String getLogoFile() {
+        return logo;
+    }
+
     public List<String> getAuthors() {
         return authors;
     }
 
-    public List<String> getPermissions() {
-        return permissions;
+    public List<String> getCredits() {
+        return credits;
     }
 
-    public String getLogoFile() {
-        return logo;
+    public List<String> getPermissions() {
+        return permissions;
     }
 
     public List<Dependency> getDependencies() {
@@ -119,10 +124,11 @@ public class ModMetadata {
         private String license = "";
         private String url = "";
         private String logo = "";
-        private List<String> authors = Collections.emptyList();
-        private List<String> permissions = Collections.emptyList();
-        private List<Dependency> dependencies = Collections.emptyList();
-        private Map<String, JsonElement> elements = Collections.emptyMap();
+        private List<String> authors = List.of();
+        private List<String> credits = List.of();
+        private List<String> permissions = List.of();
+        private List<Dependency> dependencies = List.of();
+        private Map<String, JsonElement> elements = Map.of();
 
         public Builder id(String id) {
             this.id = id;
@@ -174,8 +180,28 @@ public class ModMetadata {
             return this;
         }
 
+        public Builder authors(String... authors) {
+            this.authors = List.of(authors);
+            return this;
+        }
+
         public Builder authors(List<String> authors) {
             this.authors = authors;
+            return this;
+        }
+
+        public Builder credits(String... credits) {
+            this.credits = List.of(credits);
+            return this;
+        }
+
+        public Builder credits(List<String> credits) {
+            this.credits = credits;
+            return this;
+        }
+
+        public Builder permissions(String... permissions) {
+            this.permissions = List.of(permissions);
             return this;
         }
 
@@ -184,8 +210,8 @@ public class ModMetadata {
             return this;
         }
 
-        public Builder elements(Map<String, JsonElement> elements) {
-            this.elements = elements;
+        public Builder dependencies(Dependency... dependencies) {
+            this.dependencies = List.of(dependencies);
             return this;
         }
 
@@ -194,8 +220,13 @@ public class ModMetadata {
             return this;
         }
 
+        public Builder elements(Map<String, JsonElement> elements) {
+            this.elements = elements;
+            return this;
+        }
+
         public ModMetadata build() {
-            return new ModMetadata(id, version, mainClass, name, installationType, description, license, url, logo, authors, permissions, dependencies, elements);
+            return new ModMetadata(id, version, mainClass, name, installationType, description, license, url, logo, authors, credits, permissions, dependencies, elements);
         }
     }
 }
