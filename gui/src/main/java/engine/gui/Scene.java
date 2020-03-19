@@ -140,26 +140,26 @@ public class Scene implements EventTarget {
 
     private List<Node> raycast(float x, float y, boolean keepParent) {
         List<Node> results = new ArrayList<>();
-        raycast(root.get(), x, y, results, keepParent);
+        raycast(getRoot(), x, y, results, keepParent);
         return results;
     }
 
-    private boolean raycast(Parent parent, float x, float y, List<Node> results, boolean keepParent) {
-        boolean matched = false;
+    private void raycast(Parent parent, float x, float y, List<Node> results, boolean keepParent) {
+        boolean noMatchingChild = true;
         for (Node node : parent.getUnmodifiableChildren()) {
             if (!node.contains(x, y)) continue;
 
-            matched = true;
+            noMatchingChild = false;
             if (node instanceof Parent) {
-                boolean mismatchChild = !raycast((Parent) node, x - node.getLayoutX(), y - node.getLayoutY(), results, keepParent);
-                if (keepParent || mismatchChild) {
-                    results.add(node);
-                }
+                raycast((Parent) node, x - node.getLayoutX(), y - node.getLayoutY(), results, keepParent);
             } else {
                 results.add(node);
             }
         }
-        return matched;
+
+        if (keepParent || noMatchingChild) {
+            results.add(parent);
+        }
     }
 
     private float cursorX = Float.NaN;
