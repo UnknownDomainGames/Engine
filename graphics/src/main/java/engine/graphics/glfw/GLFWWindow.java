@@ -18,6 +18,7 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.system.MemoryUtil;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -629,12 +630,13 @@ public class GLFWWindow implements Window {
         glfwSetWindowSizeCallback(pointer, (window, width, height) -> resize(width, height));
         glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> GLFWContext.refreshScreen(screen)));
         glfwSetDropCallback(pointer, (window, count, names) -> {
-            String[] files = new String[count];
+            Path[] paths = new Path[count];
             PointerBuffer buffer = MemoryUtil.memPointerBuffer(names, count);
             for (int i = 0; i < count; i++) {
-                files[i] = MemoryUtil.memUTF8(buffer.get());
+                paths[i] = Path.of(MemoryUtil.memUTF8(buffer.get(i)));
             }
-            dropCallbacks.forEach(callback -> callback.invoke(this, files));
+            List<Path> pathList = List.of(paths);
+            dropCallbacks.forEach(callback -> callback.invoke(this, pathList));
         });
         glfwSetWindowIconifyCallback(pointer, (window, iconified) -> {
             this.iconified = iconified;
