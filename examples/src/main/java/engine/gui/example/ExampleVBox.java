@@ -9,7 +9,7 @@ import engine.gui.misc.Pos;
 import engine.gui.stage.Stage;
 import engine.gui.text.Text;
 
-public class Example1 extends GUIApplication {
+public class ExampleVBox extends GUIApplication {
     public static void main(String[] args) {
         launch(args);
     }
