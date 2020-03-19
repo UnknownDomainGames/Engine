@@ -8,7 +8,8 @@ import java.nio.file.attribute.FileAttribute;
 public final class Files2 {
 
     /**
-     * This method is for fixing a bug JDK-8029608.
+     * This method is for fixing bugs (Relates to <a target="_blank" href="https://bugs.openjdk.java.net/browse/JDK-8024496">JDK-8024496</a>, JDK-8029608).
+     * <br>
      * Call {@link Files#createDirectories(Path, FileAttribute[])} throws AccessDeniedException after called {@link Files#delete(Path)}
      */
     public static boolean createDirectories(Path path) {
