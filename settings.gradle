@@ -1,6 +1,6 @@
 rootProject.name = 'PanguEngine'
 
-include 'misc'
+include 'base'
 include 'graphics', 'graphics3d', 'gui'
 include 'game-engine', 'common', 'client', 'server'
 include 'examples'
