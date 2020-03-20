@@ -3,8 +3,8 @@ package engine.math;
 import com.google.common.base.MoreObjects;
 import engine.util.Direction;
 import engine.world.chunk.ChunkConstants;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
+import org.joml.Vector3dc;
+import org.joml.Vector3fc;
 import org.joml.Vector3ic;
 
 public abstract class BlockPos extends Vector3iBase {
@@ -19,12 +19,12 @@ public abstract class BlockPos extends Vector3iBase {
         return of(vec.x(), vec.y(), vec.z());
     }
 
-    public static BlockPos of(Vector3f vector3f) {
-        return of((int) Math.floor(vector3f.x), (int) Math.floor(vector3f.y), (int) Math.floor(vector3f.z));
+    public static BlockPos of(Vector3fc vector3f) {
+        return of((int) Math.floor(vector3f.x()), (int) Math.floor(vector3f.y()), (int) Math.floor(vector3f.z()));
     }
 
-    public static BlockPos of(Vector3d vector3d) {
-        return of((int) Math.floor(vector3d.x), (int) Math.floor(vector3d.y), (int) Math.floor(vector3d.z));
+    public static BlockPos of(Vector3dc vector3d) {
+        return of((int) Math.floor(vector3d.x()), (int) Math.floor(vector3d.y()), (int) Math.floor(vector3d.z()));
     }
 
     public static boolean inSameChunk(BlockPos a, BlockPos b) {
