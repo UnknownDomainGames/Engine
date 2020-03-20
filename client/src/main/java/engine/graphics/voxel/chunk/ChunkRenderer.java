@@ -88,7 +88,7 @@ public final class ChunkRenderer {
         long chunkIndex = getChunkIndex(chunk);
         DrawableChunk removed = chunks.remove(chunkIndex);
         if (removed == null) return;
-        removed.setChunk(null);
+        removed.reset();
         scene.removeNode(removed);
         recycleChunks.add(removed);
     }

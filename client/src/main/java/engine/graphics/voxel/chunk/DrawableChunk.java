@@ -6,6 +6,7 @@ import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.voxel.VoxelGraphicsHelper;
 import engine.world.chunk.Chunk;
+import org.joml.AABBf;
 import org.joml.Vector3fc;
 import org.joml.Vector3ic;
 
@@ -31,6 +32,13 @@ public final class DrawableChunk extends Geometry {
 
     public void setChunk(Chunk chunk) {
         this.chunk = chunk;
+        Vector3ic min = chunk.getMin();
+        Vector3ic max = chunk.getMax();
+        getBoundingVolume().setBox(new AABBf(min.x(), min.y(), min.z(), max.x(), max.y(), max.z()));
+    }
+
+    public void reset() {
+        this.chunk = null;
     }
 
     public boolean isDirty() {
