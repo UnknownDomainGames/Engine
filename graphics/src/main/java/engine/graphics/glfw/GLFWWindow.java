@@ -2,10 +2,7 @@ package engine.graphics.glfw;
 
 import com.google.common.base.Strings;
 import engine.graphics.GraphicsEngine;
-import engine.graphics.display.Cursor;
-import engine.graphics.display.DisplayMode;
-import engine.graphics.display.Screen;
-import engine.graphics.display.Window;
+import engine.graphics.display.*;
 import engine.graphics.display.callback.*;
 import engine.graphics.image.ReadOnlyImage;
 import engine.graphics.util.Cleaner;
@@ -235,6 +232,7 @@ public class GLFWWindow implements Window {
     }
 
     private int lastPosX, lastPosY, lastWidth, lastHeight;
+    private boolean lastFloating, lastDecorated;
 
     @Override
     public void setDisplayMode(DisplayMode displayMode, int width, int height, int frameRate) {
@@ -244,34 +242,38 @@ public class GLFWWindow implements Window {
             lastPosY = getY();
             lastWidth = getWidth();
             lastHeight = getHeight();
+            lastFloating = isFloating();
+            lastDecorated = isDecorated();
         }
 
+        VideoMode videoMode = screen.getVideoMode();
         int finalX = 0, finalY = 0;
         int finalWidth = 0, finalHeight = 0;
         switch (displayMode) {
             case FULLSCREEN:
-                finalWidth = width != -1 ? width : screen.getVideoMode().getWidth();
-                finalHeight = height != -1 ? height : screen.getVideoMode().getHeight();
                 glfwSetWindowMonitor(pointer, screen.getPointer(),
                         finalX, finalY,
-                        finalWidth, finalHeight,
-                        frameRate != -1 ? frameRate : screen.getVideoMode().getRefreshRate());
+                        finalWidth = width != -1 ? width : videoMode.getWidth(),
+                        finalHeight = height != -1 ? height : videoMode.getHeight(),
+                        frameRate != -1 ? frameRate : videoMode.getRefreshRate());
                 break;
             case WINDOWED_FULLSCREEN:
+                setFloating(true);
+                setDecorated(false);
                 glfwSetWindowMonitor(pointer, NULL,
                         finalX, finalY,
-                        finalWidth = screen.getVideoMode().getWidth(), finalHeight = screen.getVideoMode().getHeight(),
-                        screen.getVideoMode().getRefreshRate());
-                setDecorated(false);
+                        finalWidth = videoMode.getWidth(),
+                        finalHeight = videoMode.getHeight(),
+                        videoMode.getRefreshRate());
                 break;
             case WINDOWED:
-                finalWidth = width != -1 ? width : lastWidth;
-                finalHeight = height != -1 ? height : lastHeight;
+                setFloating(lastFloating);
+                setDecorated(lastDecorated);
                 glfwSetWindowMonitor(pointer, NULL,
                         finalX = lastPosX, finalY = lastPosY,
-                        finalWidth, finalHeight,
-                        screen.getVideoMode().getRefreshRate());
-                setDecorated(true);
+                        finalWidth = width != -1 ? width : lastWidth,
+                        finalHeight = height != -1 ? height : lastHeight,
+                        videoMode.getRefreshRate());
                 break;
         }
         this.displayMode = displayMode;
