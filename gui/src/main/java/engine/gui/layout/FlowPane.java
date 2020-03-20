@@ -40,7 +40,7 @@ public class FlowPane extends Pane {
 
     @Override
     protected void layoutChildren() {
-        Insets padding = padding().get();
+        Insets padding = getPadding();
         float spacing = spacing().get();
         List<Pair<List<Node>, Float>> groups = new ArrayList<>();
         var max = 0f;

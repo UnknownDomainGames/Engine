@@ -42,12 +42,12 @@ public class Label extends Control {
 
     @Override
     public float computeWidth() {
-        return text.prefWidth() + padding().get().getLeft() + padding().get().getRight();
+        return text.prefWidth() + getPadding().getLeft() + getPadding().getRight();
     }
 
     @Override
     public float computeHeight() {
-        return text.prefHeight() + padding().get().getTop() + padding().get().getBottom();
+        return text.prefHeight() + getPadding().getTop() + getPadding().getBottom();
     }
 
 }

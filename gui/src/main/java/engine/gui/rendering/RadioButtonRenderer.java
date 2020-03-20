@@ -6,10 +6,10 @@ import engine.gui.misc.Insets;
 public class RadioButtonRenderer implements ComponentRenderer<RadioButton> {
     @Override
     public void render(RadioButton component, Graphics graphics) {
-        graphics.drawBackground(component.background().get(), component);
-        graphics.drawBorder(component.border().get(), component);
+        graphics.drawBackground(component.getBackground(), component);
+        graphics.drawBorder(component.getBorder(), component);
         if (component.selected().get()) {
-            Insets insets = component.padding().get();
+            Insets insets = component.getPadding();
             float width = component.getWidth() - insets.getRight() - insets.getLeft();
             float height = component.getWidth() - insets.getTop() - insets.getBottom();
             graphics.pushClipRect(insets.getLeft(), insets.getTop(), width, height);

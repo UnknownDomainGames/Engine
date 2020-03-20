@@ -38,10 +38,10 @@ public final class TextFieldRenderer extends RegionRenderer<TextField> {
         super.render(textField, graphics);
         float px, py, pw, ph;
         if (textField.padding().isPresent()) {
-            px = textField.padding().get().getLeft();
-            py = textField.padding().get().getTop();
-            pw = textField.getWidth() - textField.padding().get().getRight();
-            ph = textField.getHeight() - textField.padding().get().getBottom();
+            px = textField.getPadding().getLeft();
+            py = textField.getPadding().getTop();
+            pw = textField.getWidth() - textField.getPadding().getRight();
+            ph = textField.getHeight() - textField.getPadding().getBottom();
         } else {
             px = 0;
             py = 0;

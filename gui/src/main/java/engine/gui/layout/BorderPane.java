@@ -115,7 +115,7 @@ public class BorderPane extends Pane {
 
     @Override
     public float computeWidth() {
-        var padding = padding().get();
+        var padding = getPadding();
         float width = 0f;
         if (padding != null) {
             width += padding.getLeft() + padding.getRight();
@@ -134,7 +134,7 @@ public class BorderPane extends Pane {
 
     @Override
     public float computeHeight() {
-        var padding = padding().get();
+        var padding = getPadding();
         float height = 0f;
         if (padding != null) {
             height += padding.getTop() + padding.getBottom();
@@ -153,7 +153,7 @@ public class BorderPane extends Pane {
 
     @Override
     protected void layoutChildren() {
-        final Insets padding = padding().get();
+        final Insets padding = getPadding();
         float width = getWidth();
         float height = getHeight();
         width = width < minWidth() ? minWidth() : width;

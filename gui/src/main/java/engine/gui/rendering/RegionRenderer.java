@@ -9,8 +9,8 @@ public class RegionRenderer<E extends Region> implements ComponentRenderer<E> {
 
     @Override
     public void render(E region, Graphics graphics) {
-        graphics.drawBackground(region.background().get(), region);
-        graphics.drawBorder(region.border().get(), region);
+        graphics.drawBackground(region.getBackground(), region);
+        graphics.drawBorder(region.getBorder(), region);
         for (Node child : region.getUnmodifiableChildren()) {
             if (!child.isVisible()) continue;
             graphics.pushClipRect(child.getLayoutX(), child.getLayoutY(), child.getWidth(), child.getHeight());

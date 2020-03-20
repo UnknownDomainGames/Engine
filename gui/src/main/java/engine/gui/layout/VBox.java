@@ -33,7 +33,7 @@ public class VBox extends Pane {
         for (Node node : getChildren()) {
             width = Math.max(Math.max(width, node.getWidth()), Utils.prefWidth(node));
         }
-        Insets padding = padding().get();
+        Insets padding = getPadding();
         return padding.getLeft() + width + padding.getRight();
     }
 
@@ -43,13 +43,13 @@ public class VBox extends Pane {
         for (Node node : getChildren()) {
             height += Math.max(node.getHeight(), Utils.prefHeight(node));
         }
-        Insets padding = padding().get();
+        Insets padding = getPadding();
         return padding.getTop() + height + ((getChildren().size() == 0) ? 0 : spacing * (getChildren().size() - 1)) + padding.getBottom();
     }
 
     @Override
     protected void layoutChildren() {
-        Insets padding = padding().get();
+        Insets padding = getPadding();
         float x, y = padding.getTop(), spacing = spacing().get(), w = getWidth() - padding.getLeft() - padding.getRight();
         for (Node node : getChildren()) {
             float prefWidth = Utils.prefWidth(node);

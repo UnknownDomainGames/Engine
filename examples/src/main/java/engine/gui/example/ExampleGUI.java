@@ -31,7 +31,7 @@ public class ExampleGUI extends GUIApplication {
         Text text = new Text("Hello World");
 
         Button sayIt = new Button("Say it");
-        sayIt.border().set(new Border(Color.WHITE));
+        sayIt.setBorder(new Border(Color.WHITE));
         sayIt.setOnAction(event -> System.out.println("Hello World"));
 
         vBox.getChildren().addAll(text, sayIt);

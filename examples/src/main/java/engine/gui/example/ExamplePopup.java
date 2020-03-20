@@ -31,13 +31,13 @@ public class ExamplePopup extends GUIApplication {
         hBox.spacing().set(5);
 
         Button showPopup = new Button("Show Popup");
-        showPopup.border().set(new Border(Color.WHITE));
+        showPopup.setBorder(new Border(Color.WHITE));
         showPopup.setOnAction(event -> {
             Popup popup = new Popup();
 
             VBox vBox = new VBox();
             vBox.alignment().set(Pos.HPos.CENTER);
-            vBox.border().set(new Border(Color.WHITE));
+            vBox.setBorder(new Border(Color.WHITE));
             Text text = new Text("Hello Popup");
             Button hidePopup = new Button("Hide Popup");
             hidePopup.setOnAction(event1 -> popup.hide());

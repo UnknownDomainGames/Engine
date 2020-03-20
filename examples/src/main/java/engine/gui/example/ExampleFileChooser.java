@@ -30,12 +30,12 @@ public class ExampleFileChooser extends GUIApplication {
         hBox.spacing().set(5);
 
         TextField textField = new TextField();
-        textField.border().set(new Border(Color.WHITE));
+        textField.setBorder(new Border(Color.WHITE));
         textField.promptText().set("Enter...");
         textField.getSize().setPrefSize(200, 24);
 
         Button save = new Button("Save");
-        save.border().set(new Border(Color.WHITE));
+        save.setBorder(new Border(Color.WHITE));
         save.setOnAction(event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save File");

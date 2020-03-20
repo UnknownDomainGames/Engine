@@ -28,7 +28,7 @@ public final class GUIPauseMenu extends FlowPane {
 
     private GUIPauseMenu() {
         alignment().set(Pos.CENTER);
-        background().set(new Background(Color.fromARGB(0x7FAAAAAA)));
+        setBackground(new Background(Color.fromARGB(0x7FAAAAAA)));
 
         VBox vBox = new VBox();
         vBox.spacing().set(5);

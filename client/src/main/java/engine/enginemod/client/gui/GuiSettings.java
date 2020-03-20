@@ -20,7 +20,7 @@ public class GuiSettings extends AnchorPane {
     private int videoModeIndex;
 
     public GuiSettings() {
-        background().set(new Background(Color.fromRGB(0xAAAAAA)));
+        setBackground(new Background(Color.fromRGB(0xAAAAAA)));
         var settings = Platform.getEngineClient().getSettings();
         var baksettings = new EngineSettings();
         baksettings.getDisplaySettings().setDisplayMode(settings.getDisplaySettings().getDisplayMode());

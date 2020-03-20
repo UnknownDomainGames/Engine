@@ -47,7 +47,7 @@ public final class HUDDebug extends HUDControl {
 
         VBox vBox = new VBox();
         vBox.spacing().set(5);
-        vBox.padding().set(new Insets(5));
+        vBox.setPadding(new Insets(5));
         setContent(vBox);
 
         fps = new Text();

@@ -34,7 +34,7 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
     public GuiServerConnectingStatus(String ip, int port){
         var vbox = new VBox();
         vbox.alignment().setValue(Pos.HPos.CENTER);
-        vbox.padding().setValue(new Insets(200,0,0,0));
+        vbox.setPadding(new Insets(200, 0, 0, 0));
         lblStatus = new Label();
         lblStatus.text().setValue("Connecting");
         lblReason = new Label();

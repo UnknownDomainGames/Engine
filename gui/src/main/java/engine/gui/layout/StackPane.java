@@ -75,7 +75,7 @@ public class StackPane extends Pane {
 
     @Override
     protected void layoutChildren() {
-        final Insets padding = padding().get();
+        final Insets padding = getPadding();
         float width = getWidth();
         float height = getHeight();
         width = width < minWidth() ? minWidth() : width;

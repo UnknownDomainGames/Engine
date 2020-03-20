@@ -23,7 +23,7 @@ public class GUIGameCreation extends FlowPane {
 
     public GUIGameCreation() {
         alignment().set(Pos.CENTER);
-        background().set(new Background(Color.fromRGB(0xAAAAAA)));
+        setBackground(new Background(Color.fromRGB(0xAAAAAA)));
 
         VBox vBox = new VBox();
         vBox.spacing().set(5);

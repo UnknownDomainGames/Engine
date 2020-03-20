@@ -1,7 +1,7 @@
 package engine.gui;
 
 import com.github.mouse0w0.observable.value.MutableObjectValue;
-import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
+import com.github.mouse0w0.observable.value.NonNullMutableObjectValue;
 import engine.gui.misc.*;
 import engine.gui.rendering.ComponentRenderer;
 import engine.gui.rendering.RegionRenderer;
@@ -15,21 +15,53 @@ public class Region extends Parent {
         return size;
     }
 
-    private final MutableObjectValue<Background> background = new SimpleMutableObjectValue<>(Background.NOTHING);
-    private final MutableObjectValue<Border> border = new SimpleMutableObjectValue<>(Border.NO_BORDER);
+    private MutableObjectValue<Background> background;
+    private MutableObjectValue<Border> border;
+    private MutableObjectValue<Insets> padding;
 
-    public MutableObjectValue<Background> background() {
+    public final MutableObjectValue<Background> background() {
+        if (background == null) {
+            background = new NonNullMutableObjectValue<>(Background.NOTHING);
+        }
         return background;
     }
 
-    public MutableObjectValue<Border> border() {
+    public final Background getBackground() {
+        return background == null ? Background.NOTHING : background.get();
+    }
+
+    public final void setBackground(Background background) {
+        background().set(background);
+    }
+
+    public final MutableObjectValue<Border> border() {
+        if (border == null) {
+            border = new NonNullMutableObjectValue<>(Border.NO_BORDER);
+        }
         return border;
     }
 
-    private final MutableObjectValue<Insets> padding = new SimpleMutableObjectValue<>(Insets.EMPTY);
+    public final Border getBorder() {
+        return border == null ? Border.NO_BORDER : border.get();
+    }
+
+    public final void setBorder(Border border) {
+        border().set(border);
+    }
 
     public final MutableObjectValue<Insets> padding() {
+        if (padding == null) {
+            padding = new NonNullMutableObjectValue<>(Insets.EMPTY);
+        }
         return padding;
+    }
+
+    public final Insets getPadding() {
+        return padding == null ? Insets.EMPTY : padding.get();
+    }
+
+    public final void setPadding(Insets padding) {
+        padding().set(padding);
     }
 
     public static void positionInArea(Node child, float areaX, float areaY, float areaWidth, float areaHeight,
