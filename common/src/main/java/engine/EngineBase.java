@@ -96,7 +96,7 @@ public abstract class EngineBase implements Engine {
         initialized = true;
 
         initEnvironment();
-        LoggerUtils.initLogger(getRunPath().resolve("logs"), getRuntimeEnvironment() != RuntimeEnvironment.DEPLOYMENT);
+        LoggerUtils.initLogger(getRunPath().resolve("log"), getRuntimeEnvironment() != RuntimeEnvironment.DEPLOYMENT);
 
         constructionStage();
         resourceStage();
@@ -130,7 +130,7 @@ public abstract class EngineBase implements Engine {
     }
 
     protected void initExceptionHandler() {
-        crashHandler = new CrashHandlerImpl(this, getRunPath().resolve("crashreports"));
+        crashHandler = new CrashHandlerImpl(this, getRunPath().resolve("crashreport"));
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             logger.error("Caught unhandled exception!!! Engine will terminate!");
             crashHandler.crash(t, e);

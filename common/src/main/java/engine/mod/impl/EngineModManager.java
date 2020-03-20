@@ -156,7 +156,7 @@ public class EngineModManager implements ModManager {
     }
 
     private void collectDirMods(List<ModCandidate> collectedMods) {
-        Path modFolder = engine.getRunPath().resolve("mods");
+        Path modFolder = engine.getRunPath().resolve("mod");
         if (!Files.exists(modFolder)) {
             try {
                 Files.createDirectories(modFolder);
