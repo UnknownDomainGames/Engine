@@ -1,7 +1,6 @@
 package engine.world.collision;
 
 import engine.block.Block;
-import engine.math.BlockPos;
 import engine.registry.Registries;
 import engine.util.Direction;
 import engine.world.CollisionManager;
@@ -38,13 +37,8 @@ public class DefaultCollisionManager implements CollisionManager {
         var rayOffset = dir.normalize(new Vector3f()).mul(distance);
         var dist = rayOffset.add(from, new Vector3f());
         var iterator = RayTraceUtils.rayTraceBlockPos(from, dist);
-        BlockPos pos = null;
-        do {
-            if(pos == null){ // previous element not exists: this is where the eye is
-                pos = BlockPos.of((int) Math.floor(from.x()), (int) Math.floor(from.y()),(int) Math.floor(from.z()));
-            } else {
-                pos = iterator.next();
-            }
+        while (iterator.hasNext()) {
+            var pos = iterator.next();
             var block = world.getBlock(pos);
             if (ignore.contains(block))
                 continue;
@@ -73,7 +67,7 @@ public class DefaultCollisionManager implements CollisionManager {
                     return new BlockHitResult(world, pos, block, hitPoint, direction);
                 }
             }
-        } while (iterator.hasNext());
+        }
         return BlockHitResult.failure();
     }
 }

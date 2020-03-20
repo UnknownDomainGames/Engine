@@ -5,6 +5,7 @@ import engine.util.Direction;
 import engine.world.chunk.ChunkConstants;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
+import org.joml.Vector3ic;
 
 public abstract class BlockPos extends Vector3iBase {
 
@@ -12,6 +13,10 @@ public abstract class BlockPos extends Vector3iBase {
 
     public static BlockPos of(int x, int y, int z) {
         return new Immutable(x, y, z);
+    }
+
+    public static BlockPos of(Vector3ic vec) {
+        return of(vec.x(), vec.y(), vec.z());
     }
 
     public static BlockPos of(Vector3f vector3f) {

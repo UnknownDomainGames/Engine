@@ -9,15 +9,7 @@ import java.util.Iterator;
 /**
  * https://stackoverflow.com/questions/12367071/how-do-i-initialize-the-t-variables-in-a-fast-voxel-traversal-algorithm-for-ray
  */
-public class RayTraceUtils {
-
-    private static float frac0(float x) {
-        return x - (float) Math.floor(x);
-    }
-
-    private static float frac1(float x) {
-        return 1 - x + (float) Math.floor(x);
-    }
+public final class RayTraceUtils {
 
     public static Iterator<BlockPos> rayTraceBlockPos(Vector3fc start, Vector3fc end) {
         return new Iterator<>() {
@@ -31,7 +23,7 @@ public class RayTraceUtils {
                 float x1 = start.x(), y1 = start.y(), z1 = start.z(); // start point
                 float x2 = end.x(), y2 = end.y(), z2 = end.z(); // end point
 
-                dx = Float.compare((x2 - x1), 0);
+                dx = Float.compare(x2 - x1, 0);
                 if (dx != 0) tDeltaX = Math.min(dx / (x2 - x1), 10000000.0f);
                 else tDeltaX = 10000000.0f;
                 if (dx > 0) tMaxX = tDeltaX * frac1(x1);
@@ -60,6 +52,7 @@ public class RayTraceUtils {
 
             @Override
             public BlockPos next() {
+                BlockPos blockPos = BlockPos.of(voxel);
                 if (tMaxX < tMaxY) {
                     if (tMaxX < tMaxZ) {
                         voxel.x += dx;
@@ -77,8 +70,19 @@ public class RayTraceUtils {
                         tMaxZ += tDeltaZ;
                     }
                 }
-                return BlockPos.of(voxel.x, voxel.y, voxel.z);
+                return blockPos;
             }
         };
+    }
+
+    private static float frac0(float x) {
+        return x - (float) Math.floor(x);
+    }
+
+    private static float frac1(float x) {
+        return 1 - x + (float) Math.floor(x);
+    }
+
+    private RayTraceUtils() {
     }
 }
