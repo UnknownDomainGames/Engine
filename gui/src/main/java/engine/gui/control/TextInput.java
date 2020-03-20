@@ -11,6 +11,7 @@ import engine.gui.misc.Border;
 import engine.gui.misc.IndexRange;
 import engine.gui.misc.Insets;
 import engine.gui.text.Text;
+import engine.gui.util.Utils;
 import engine.input.Modifiers;
 import engine.math.Math2;
 import engine.util.Color;
@@ -443,5 +444,11 @@ public abstract class TextInput extends Control {
 
     public MutableIntValue anchor() {
         return anchor;
+    }
+
+    @Override
+    protected void layoutChildren() {
+        Insets padding = getPadding();
+        layoutInArea(prompt, padding.getLeft(), padding.getTop(), Utils.prefWidth(prompt), Utils.prefHeight(prompt));
     }
 }
