@@ -1,42 +1,12 @@
 package engine.math;
 
 import org.joml.AABBd;
-import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AABBs {
-    public static AABBd translate(AABBd aabBd, Vector3d translate) {
-        return translate(aabBd, translate, aabBd);
-    }
-
-    public static AABBd translate(AABBd aabBd, Vector3f translate) {
-        return translate(aabBd, translate, aabBd);
-    }
-
-    public static AABBd translate(AABBd aabBd, Vector3f translate, AABBd result) {
-        result.minX = aabBd.minX + translate.x;
-        result.minY = aabBd.minY + translate.y;
-        result.minZ = aabBd.minZ + translate.z;
-
-        result.maxX = aabBd.maxX + translate.x;
-        result.maxY = aabBd.maxY + translate.y;
-        result.maxZ = aabBd.maxZ + translate.z;
-        return result;
-    }
-
-    public static AABBd translate(AABBd aabBd, Vector3d translate, AABBd result) {
-        result.minX = aabBd.minX + translate.x;
-        result.minY = aabBd.minY + translate.y;
-        result.minZ = aabBd.minZ + translate.z;
-
-        result.maxX = aabBd.maxX + translate.x;
-        result.maxY = aabBd.maxY + translate.y;
-        result.maxZ = aabBd.maxZ + translate.z;
-        return result;
-    }
 
     @SuppressWarnings("unchecked")
     public static List<BlockPos>[] around(AABBd aabb, Vector3f movement) {

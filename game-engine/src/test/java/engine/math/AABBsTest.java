@@ -59,14 +59,4 @@ class AABBsTest {
         Assertions.assertEquals(0, around[2].size());
         System.out.println(around[0]);
     }
-
-    @Test
-    void xCrossing() {
-        AABBd src = new AABBd(-0.4, -0.5, -0.4, 0.4, 0.5, 0.4);
-        AABBs.translate(src, new Vector3f(0.55F, 0, 0.3F));
-        List<BlockPos>[] around = AABBs.around(src, new Vector3f(0.1F, 0, 0));
-        Assertions.assertEquals(4, around[0].size());
-        Assertions.assertEquals(0, around[1].size());
-        Assertions.assertEquals(0, around[2].size());
-    }
 }

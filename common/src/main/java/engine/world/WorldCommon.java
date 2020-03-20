@@ -368,7 +368,7 @@ public class WorldCommon implements World {
 //                 directionY = motion.y == -0 ? 0 : Float.compare(motion.y, 0),
 //                 directionZ = motion.z == -0 ? 0 : Float.compare(motion.z, 0);
 
-                AABBd entityBox = AABBs.translate(box, position.add(direction, new Vector3d()), new AABBd());
+                AABBd entityBox = box.translate(position.add(direction, new Vector3d()), new AABBd());
                 List<BlockPos>[] around = AABBs.around(entityBox, motion);
                 for (List<BlockPos> ls : around) {
                     ls.add(localPos);
@@ -382,7 +382,7 @@ public class WorldCommon implements World {
                         AABBd[] blockBoxes = block.getShape().getBoundingBoxes(world, pos, block);
                         if (blockBoxes.length != 0)
                             for (AABBd blockBoxLocal : blockBoxes) {
-                                AABBd blockBox = AABBs.translate(blockBoxLocal,
+                                AABBd blockBox = blockBoxLocal.translate(
                                         new Vector3f(pos.x(), pos.y(), pos.z()), new AABBd());
                                 if (blockBox.testAABB(entityBox)) {
                                     xFix = Math.min(xFix, Math.min(Math.abs(blockBox.maxX - entityBox.minX),
@@ -398,7 +398,7 @@ public class WorldCommon implements World {
                                 .getBoundingBoxes(world, pos, block);
                         if (blockBoxes.length != 0)
                             for (AABBd blockBox : blockBoxes) {
-                                AABBd translated = AABBs.translate(blockBox,
+                                AABBd translated = blockBox.translate(
                                         new Vector3f(pos.x(), pos.y(), pos.z()), new AABBd());
                                 if (translated.testAABB(entityBox)) {
                                     yFix = Math.min(yFix, Math.min(Math.abs(translated.maxY - entityBox.minY),
@@ -414,7 +414,7 @@ public class WorldCommon implements World {
                                 .getBoundingBoxes(world, pos, block);
                         if (blockBoxes.length != 0)
                             for (AABBd blockBox : blockBoxes) {
-                                AABBd translated = AABBs.translate(blockBox,
+                                AABBd translated = blockBox.translate(
                                         new Vector3f(pos.x(), pos.y(), pos.z()), new AABBd());
                                 if (translated.testAABB(entityBox)) {
                                     zFix = Math.min(zFix, Math.min(Math.abs(translated.maxZ - entityBox.minZ),
