@@ -11,6 +11,7 @@ import engine.graphics.shader.ShaderResource;
 import engine.graphics.shader.UniformBlock;
 import engine.graphics.shader.UniformTexture;
 import engine.graphics.viewport.Viewport;
+import org.joml.FrustumIntersection;
 import org.joml.Matrix4fc;
 import org.lwjgl.system.MemoryStack;
 
@@ -64,17 +65,20 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
     public void draw(FrameContext frameContext, Drawer drawer, Renderer renderer) {
         Scene3D scene = viewport.getScene();
         ShaderResource resource = drawer.getShaderResource();
+        FrustumIntersection frustum = viewport.getFrustum();
         LightManager lightManager = scene.getLightManager();
         lightManager.setup(viewport.getCamera());
         uniformLight.set(lightManager);
-        scene.getRenderQueue().getGeometryList(RenderType.OPAQUE).forEach(geometry -> {
-            uniformMatrices.set(new Matrices(
-                    viewport.getProjectionMatrix(),
-                    viewport.getViewMatrix(),
-                    geometry.getWorldTransform().toTransformMatrix()));
-            uniformTexture.set(geometry.getTexture());
-            resource.refresh();
-            renderer.drawMesh(geometry.getMesh());
-        });
+        scene.getRenderQueue().getGeometryList(RenderType.OPAQUE).stream()
+                .filter(geometry -> geometry.getBoundingVolume().test(frustum))
+                .forEach(geometry -> {
+                    uniformMatrices.set(new Matrices(
+                            viewport.getProjectionMatrix(),
+                            viewport.getViewMatrix(),
+                            geometry.getWorldTransform().toTransformMatrix()));
+                    uniformTexture.set(geometry.getTexture());
+                    resource.refresh();
+                    renderer.drawMesh(geometry.getMesh());
+                });
     }
 }

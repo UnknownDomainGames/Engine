@@ -69,7 +69,7 @@ public class BoundingVolume {
         } else if (boundingType == Type.Sphere) {
             return intersection.testSphere(sphere.x, sphere.y, sphere.z, sphere.r);
         } else {
-            return false;
+            return true;
         }
     }
 }

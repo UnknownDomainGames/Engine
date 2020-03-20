@@ -17,7 +17,7 @@ public abstract class BaseViewport implements Viewport {
 
     private Scene3D scene;
 
-    private Camera camera = new Camera();
+    private Camera camera;
 
     protected final Matrix4f projectionMatrix = new Matrix4f();
     protected final Matrix4f projectionViewMatrix = new Matrix4f();
@@ -25,6 +25,10 @@ public abstract class BaseViewport implements Viewport {
     protected final FrustumIntersection frustum = new FrustumIntersection();
 
     private RenderGraph renderGraph;
+
+    public BaseViewport() {
+        setCamera(new Camera());
+    }
 
     @Override
     public int getWidth() {
