@@ -103,11 +103,11 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             if (getRuntimeEnvironment() == RuntimeEnvironment.ENGINE_DEVELOPMENT) {
                 engineAssetSource = new CompositeAssetSource(
                         ClassPathUtils.getDirectoriesInClassPath(),
-                        "assets",
+                        "asset",
                         getClass().getClassLoader());
             } else {
                 FileSystem fileSystem = FileSystems.newFileSystem(engineJarPath, getClass().getClassLoader());
-                engineAssetSource = new FileSystemAssetSource(fileSystem, "assets");
+                engineAssetSource = new FileSystemAssetSource(fileSystem, "asset");
             }
         } catch (URISyntaxException | IOException e) {
             // TODO: Crash report

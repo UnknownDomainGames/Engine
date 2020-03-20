@@ -23,10 +23,10 @@ public class PackedAssetSource extends FileSystemAssetSource {
         Path root;
         if (Files.isDirectory(path)) {
             fileSystem = FileSystems.getDefault();
-            root = path.resolve("assets");
+            root = path.resolve("asset");
         } else {
             fileSystem = FileSystems.newFileSystem(path, PackedAssetSource.class.getClassLoader());
-            root = fileSystem.getPath("assets");
+            root = fileSystem.getPath("asset");
         }
 
         Path assetMetadataPath = root.resolve("assetpack.json");

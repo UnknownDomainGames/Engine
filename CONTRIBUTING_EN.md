@@ -10,6 +10,7 @@ Other：
 4. If the input parameters and return value can't be `null`, please add `@javax.annotation.Nonnull`, and use `Validate.notNull()` to check the input parameters.
 5. Any class that need to be thread safe shold mark as `@ThreadSafe`.
 6. When useing JOML, use it own class（class with letter c e.g. `Vector3fc`，`Matrix4fc`）for input parameters.
+7. Folder, directory, and package names are named in singular form.
 
 ## Commit message format
 

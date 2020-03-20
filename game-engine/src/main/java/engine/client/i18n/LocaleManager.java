@@ -60,7 +60,7 @@ public class LocaleManager {
     }
 
     private void register(Locale locale, ModContainer mod) {
-        try (var stream = mod.getAssets().openStream("assets", mod.getId(), "lang", locale.toLanguageTag().concat(".lang")).orElseThrow();
+        try (var stream = mod.getAssets().openStream("asset", mod.getId(), "lang", locale.toLanguageTag().concat(".lang")).orElseThrow();
              var reader = new BufferedReader(new InputStreamReader(stream, Charset.forName("UTF-8").newDecoder()))) {
             reader.lines().forEach(line -> LocaleManager.this.addTranslation(locale, line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1)));
         } catch (IOException e) {
@@ -76,7 +76,7 @@ public class LocaleManager {
     }
 
     public void register(ModContainer mod) {
-        mod.getAssets().list("assets", mod.getId(), "lang").forEach(path -> {
+        mod.getAssets().list("asset", mod.getId(), "lang").forEach(path -> {
             if (path.getFileName().toString().endsWith(".lang")) {
                 String filename = path.getFileName().toString();
                 var lang = filename.substring(0, filename.lastIndexOf("."));

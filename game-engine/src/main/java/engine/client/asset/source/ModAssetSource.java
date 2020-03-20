@@ -10,7 +10,7 @@ import static java.util.Objects.requireNonNull;
 public class ModAssetSource extends CompositeAssetSource {
 
     public static ModAssetSource create(@Nonnull ModContainer modContainer) throws IOException {
-        return new ModAssetSource(requireNonNull(modContainer), "assets");
+        return new ModAssetSource(requireNonNull(modContainer), "asset");
     }
 
     private final ModContainer modContainer;
