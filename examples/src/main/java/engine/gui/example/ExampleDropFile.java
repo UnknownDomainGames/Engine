@@ -20,7 +20,7 @@ public class ExampleDropFile extends GUIApplication {
     public void start(Stage primaryStage) throws Exception {
         FlowPane flowPane = new FlowPane();
         flowPane.alignment().set(Pos.CENTER);
-        flowPane.getSize().setPrefSize(300, 200);
+        flowPane.setPrefSize(300, 200);
 
         HBox hBox = new HBox();
         hBox.spacing().set(5);

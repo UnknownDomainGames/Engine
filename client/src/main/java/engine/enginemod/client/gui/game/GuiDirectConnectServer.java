@@ -27,8 +27,7 @@ public class GuiDirectConnectServer extends FlowPane {
         var addressFieldGroup = new VBox();
         var lblAddress = new Text("Address");
         var txtboxAddress = new TextField();
-        txtboxAddress.getSize().prefHeight().set(23.0f);
-        txtboxAddress.getSize().prefWidth().set(200f);
+        txtboxAddress.setPrefSize(200, 23);
         addressFieldGroup.getChildren().addAll(lblAddress, txtboxAddress);
         var hbox = new HBox();
         hbox.spacing().set(10f);

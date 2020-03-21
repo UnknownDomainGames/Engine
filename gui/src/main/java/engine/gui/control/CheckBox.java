@@ -22,7 +22,7 @@ public class CheckBox extends Button {
         setBackground(Background.fromColor(Color.WHITE));
         setBorder(new Border(Color.BLACK, 3));
         setPadding(new Insets(2));
-        getSize().setPrefSize(24, 24);
+        setPrefSize(24, 24);
         text().set("");
         addEventHandler(MouseActionEvent.MOUSE_CLICKED, event -> switchState());
     }

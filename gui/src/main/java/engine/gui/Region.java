@@ -9,15 +9,14 @@ import engine.math.Math2;
 
 public class Region extends Parent {
 
-    private final Size size = new Size();
-
-    public final Size getSize() {
-        return size;
-    }
+    public static final int USE_PARENT_VALUE = Size.USE_PARENT_VALUE;
+    public static final int USE_COMPUTE_VALUE = Size.USE_COMPUTE_VALUE;
 
     private MutableObjectValue<Background> background;
     private MutableObjectValue<Border> border;
     private MutableObjectValue<Insets> padding;
+
+    private final Size size = new Size();
 
     public final MutableObjectValue<Background> background() {
         if (background == null) {
@@ -62,6 +61,46 @@ public class Region extends Parent {
 
     public final void setPadding(Insets padding) {
         padding().set(padding);
+    }
+
+    public final Size getSize() {
+        return size;
+    }
+
+    public final float getMinWidth() {
+        return size.getMinWidth();
+    }
+
+    public final float getMinHeight() {
+        return size.getMinHeight();
+    }
+
+    public final void setMinSize(float width, float height) {
+        size.setMinSize(width, height);
+    }
+
+    public final float getPrefWidth() {
+        return size.getPrefWidth();
+    }
+
+    public final float getPrefHeight() {
+        return size.getPrefHeight();
+    }
+
+    public final void setPrefSize(float width, float height) {
+        size.setPrefSize(width, height);
+    }
+
+    public final float getMaxWidth() {
+        return size.getMaxWidth();
+    }
+
+    public final float getMaxHeight() {
+        return size.getMaxHeight();
+    }
+
+    public final void setMaxSize(float width, float height) {
+        size.setMaxSize(width, height);
     }
 
     public static void positionInArea(Node child, float areaX, float areaY, float areaWidth, float areaHeight,
@@ -135,17 +174,17 @@ public class Region extends Parent {
 
     @Override
     public float minWidth() {
-        return getSize().minWidth().get();
+        return getMinWidth();
     }
 
     @Override
     public float minHeight() {
-        return getSize().minHeight().get();
+        return getMinHeight();
     }
 
     @Override
     public final float prefWidth() {
-        float width = getSize().prefWidth().get();
+        float width = getPrefWidth();
         if (width == Size.USE_COMPUTE_VALUE) {
             return computeWidth();
         } else if (width == Size.USE_PARENT_VALUE) {
@@ -160,7 +199,7 @@ public class Region extends Parent {
 
     @Override
     public final float prefHeight() {
-        float height = getSize().prefHeight().get();
+        float height = getPrefHeight();
         if (height == Size.USE_COMPUTE_VALUE) {
             return computeHeight();
         } else if (height == Size.USE_PARENT_VALUE) {
@@ -175,12 +214,12 @@ public class Region extends Parent {
 
     @Override
     public float maxWidth() {
-        return getSize().maxWidth().get();
+        return getMaxWidth();
     }
 
     @Override
     public float maxHeight() {
-        return getSize().maxHeight().get();
+        return getMaxHeight();
     }
 
     @Override

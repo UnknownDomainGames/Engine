@@ -30,7 +30,7 @@ public class ExampleVBox extends GUIApplication {
         vBox.getChildren().addAll(button1, button2, button3, text);
         FlowPane flowPane = new FlowPane();
         flowPane.alignment().set(Pos.CENTER);
-        flowPane.getSize().setPrefSize(300, 300);
+        flowPane.setPrefSize(300, 300);
         flowPane.getChildren().add(vBox);
 
         Scene scene = new Scene(flowPane);

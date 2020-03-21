@@ -32,7 +32,7 @@ public class ExampleFileChooser extends GUIApplication {
         TextField textField = new TextField();
         textField.setBorder(new Border(Color.WHITE));
         textField.promptText().set("Enter...");
-        textField.getSize().setPrefSize(200, 24);
+        textField.setPrefSize(200, 24);
 
         Button save = new Button("Save");
         save.setBorder(new Border(Color.WHITE));

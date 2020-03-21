@@ -22,7 +22,7 @@ public class ExampleTextField extends GUIApplication {
         TextField textField = new TextField();
         textField.setBorder(new Border(Color.WHITE));
         textField.promptText().set("Enter...");
-        textField.getSize().setPrefSize(200, 24);
+        textField.setPrefSize(200, 24);
 
         flowPane.getChildren().add(textField);
 

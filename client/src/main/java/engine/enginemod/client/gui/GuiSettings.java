@@ -121,8 +121,7 @@ public class GuiSettings extends AnchorPane {
         setLeftAnchor(vb, (this.getWidth() - vb.getWidth()) / 2);
         var butBack = new Button("Return without Saving");
         var butSave = new Button("Save and Return");
-        butBack.getSize().minHeight().set(25);
-        butSave.getSize().minHeight().set(25);
+        butBack.setMinSize(25, 25);
         butBack.setOnMouseClicked(event -> {
             settings.getDisplaySettings().setDisplayMode(baksettings.getDisplaySettings().getDisplayMode());
             settings.getDisplaySettings().setResolutionHeight(baksettings.getDisplaySettings().getResolutionHeight());

@@ -22,7 +22,7 @@ public class GuiChat extends AnchorPane {
         AnchorPane.setLeftAnchor(textField, 3f);
         AnchorPane.setRightAnchor(textField, 3f);
         AnchorPane.setBottomAnchor(textField, 3f);
-        textField.getSize().prefHeight().set(23.0f);
+        textField.setPrefSize(USE_COMPUTE_VALUE, 23.0f);
         this.getChildren().add(textField);
         this.setBackground(Background.NOTHING);
         setOnKeyPressed(event -> {
