@@ -26,6 +26,9 @@ Please read our contribution guide: [English(en_US)](https://github.com/UnknownD
 
 You can learn about what we are doing in [Projects](https://github.com/UnknownDomainGame/PanguEngine/projects).
 
+## 捐助（Support）
+如果你喜欢本项目并想捐助本项目，你可以在下列链接捐助我们：[爱发电](https://afdian.net/@mouse)
+
 ## 相关链接（Links）
 - [Wiki](https://github.com/UnknownDomainGame/PanguEngine/wiki)
 - [项目简介（Introducing Project）](https://github.com/UnknownDomainGame/PanguEngine/wiki/Introducing-Project)
