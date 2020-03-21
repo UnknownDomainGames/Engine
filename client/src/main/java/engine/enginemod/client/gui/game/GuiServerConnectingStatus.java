@@ -5,12 +5,12 @@ import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
 import engine.Platform;
 import engine.graphics.GraphicsManager;
 import engine.gui.control.Button;
-import engine.gui.control.Label;
 import engine.gui.layout.BorderPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.Insets;
 import engine.gui.misc.Pos;
+import engine.gui.text.Text;
 import engine.server.network.ConnectionStatus;
 import engine.server.network.NetworkClient;
 import engine.server.network.packet.PacketHandshake;
@@ -21,8 +21,8 @@ import java.net.UnknownHostException;
 
 public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickable*/ {
 
-    private Label lblStatus;
-    private Label lblReason;
+    private Text lblStatus;
+    private Text lblReason;
 
     private Button button;
 
@@ -31,13 +31,12 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
     private boolean isCancelled = false;
     private MutableBooleanValue isFailed = new SimpleMutableBooleanValue(false);
 
-    public GuiServerConnectingStatus(String ip, int port){
+    public GuiServerConnectingStatus(String ip, int port) {
         var vbox = new VBox();
         vbox.alignment().set(Pos.HPos.CENTER);
         vbox.setPadding(new Insets(200, 0, 0, 0));
-        lblStatus = new Label();
-        lblStatus.text().set("Connecting");
-        lblReason = new Label();
+        lblStatus = new Text("Connecting");
+        lblReason = new Text();
         vbox.getChildren().add(lblStatus);
         button = new Button("disconnect");
         button.setOnMouseClicked(e -> {
@@ -90,14 +89,14 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
             } catch (UnknownHostException ex) {
                 if (isCancelled) return;
                 Platform.getLogger().error("Cannot connect to server", ex);
-                lblStatus.text().set("Disconnected");
-                lblReason.text().set("Unknown host");
+                lblStatus.setText("Disconnected");
+                lblReason.setText("Unknown host");
                 isFailed.set(true);
             } catch (Exception ex) {
                 if (isCancelled) return;
                 Platform.getLogger().error("Cannot connect to server", ex);
-                lblStatus.text().set("Disconnected");
-                lblReason.text().set(ex.getMessage());
+                lblStatus.setText("Disconnected");
+                lblReason.setText(ex.getMessage());
                 isFailed.set(true);
             }
         }, "Connector");

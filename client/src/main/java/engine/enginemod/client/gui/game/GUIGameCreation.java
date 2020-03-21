@@ -8,12 +8,12 @@ import engine.game.GameData;
 import engine.graphics.font.Font;
 import engine.gui.Scene;
 import engine.gui.control.Button;
-import engine.gui.control.Label;
 import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
 import engine.gui.misc.Pos;
+import engine.gui.text.Text;
 import engine.util.Color;
 import engine.util.Files2;
 
@@ -30,9 +30,9 @@ public class GUIGameCreation extends FlowPane {
         vBox.alignment().set(Pos.HPos.CENTER);
         getChildren().add(vBox);
 
-        Label text = new Label();
-        text.text().set(I18n.translate("engine.gui.game_creation.text.name"));
-        text.font().set(new Font(Font.getDefaultFont(), 20));
+        Text text = new Text();
+        text.setText(I18n.translate("engine.gui.game_creation.text.name"));
+        text.setFont(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
         Button buttonCreate = new Button("New Game");

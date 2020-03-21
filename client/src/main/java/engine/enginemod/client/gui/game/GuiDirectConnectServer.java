@@ -3,13 +3,13 @@ package engine.enginemod.client.gui.game;
 import engine.Platform;
 import engine.gui.Scene;
 import engine.gui.control.Button;
-import engine.gui.control.Label;
 import engine.gui.control.TextField;
 import engine.gui.layout.FlowPane;
 import engine.gui.layout.HBox;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.Pos;
+import engine.gui.text.Text;
 import engine.util.Color;
 
 public class GuiDirectConnectServer extends FlowPane {
@@ -21,10 +21,10 @@ public class GuiDirectConnectServer extends FlowPane {
         vbox.alignment().set(Pos.HPos.CENTER);
         vmain.getChildren().add(vbox);
         getChildren().add(vmain);
-        var label1 = new Label("Connect to server");
+        var label1 = new Text("Connect to server");
 
         var addressFieldGroup = new VBox();
-        var lblAddress = new Label("Address");
+        var lblAddress = new Text("Address");
         var txtboxAddress = new TextField();
         txtboxAddress.getSize().prefHeight().set(23.0f);
         txtboxAddress.getSize().prefWidth().set(200f);

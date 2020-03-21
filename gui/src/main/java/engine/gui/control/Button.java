@@ -12,7 +12,7 @@ import engine.gui.text.Text;
 import engine.gui.util.Utils;
 import engine.util.Color;
 
-public class Button extends Label {
+public class Button extends Labeled {
 
     private final MutableObjectValue<Background> background = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLACK));
     private final MutableObjectValue<Background> hoveredBg = new SimpleMutableObjectValue<>(Background.fromColor(Color.BLUE));
