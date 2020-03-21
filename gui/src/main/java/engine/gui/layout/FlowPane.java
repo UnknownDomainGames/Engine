@@ -5,8 +5,8 @@ import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
+import engine.gui.Parent;
 import engine.gui.misc.*;
-import engine.gui.util.Utils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -45,8 +45,8 @@ public class FlowPane extends Pane {
         var tmpsize = 0f;
         var tmpgroup = new MutablePair<List<Node>, Float>(new ArrayList<>(), 0f);
         for (var child : getChildren()) {
-            float pw = Utils.prefWidth(child);
-            float ph = Utils.prefHeight(child);
+            float pw = Parent.prefWidth(child);
+            float ph = Parent.prefHeight(child);
             if (orientation.get() == Orientation.VERTICAL) {
                 if (tmpsize + ph > getHeight()) {
                     tmpsize = ph + spacing;
@@ -116,8 +116,8 @@ public class FlowPane extends Pane {
                 x = (float) (Math.max(getWidth() - padding.getLeft() - padding.getRight() - group.getLeft().stream().mapToDouble(Node::prefWidth).reduce(0, Double::sum) - spacing * (group.getLeft().size() - 1), 0) / 2 + padding.getLeft());
             }
             for (var child : group.getLeft()) {
-                float pw = Utils.prefWidth(child);
-                float ph = Utils.prefHeight(child);
+                float pw = Parent.prefWidth(child);
+                float ph = Parent.prefHeight(child);
                 float x1;
                 if (alignment.get().getHPos() == HPos.RIGHT) {
                     x1 = x - pw;

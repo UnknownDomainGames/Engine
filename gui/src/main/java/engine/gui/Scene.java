@@ -5,7 +5,6 @@ import engine.gui.event.*;
 import engine.gui.input.*;
 import engine.gui.internal.SceneHelper;
 import engine.gui.stage.Stage;
-import engine.gui.util.Utils;
 import engine.input.KeyCode;
 import engine.input.Modifiers;
 import engine.input.MouseButton;
@@ -77,8 +76,8 @@ public class Scene implements EventTarget {
 
     private void preferredSize() {
         Parent root = getRoot();
-        float width = root.getLayoutX() + Utils.prefWidth(root);
-        float height = root.getLayoutY() + Utils.prefHeight(root);
+        float width = root.getLayoutX() + Parent.prefWidth(root);
+        float height = root.getLayoutY() + Parent.prefHeight(root);
         setSize(width, height);
     }
 

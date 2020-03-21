@@ -4,11 +4,11 @@ import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableDoubleValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
+import engine.gui.Parent;
 import engine.gui.layout.BorderPane;
 import engine.gui.misc.HPos;
 import engine.gui.misc.Pos;
 import engine.gui.misc.VPos;
-import engine.gui.util.Utils;
 
 public class ScrollPane extends BorderPane {
     private final VSlider vScroll;
@@ -108,8 +108,8 @@ public class ScrollPane extends BorderPane {
         var content = getContent();
         if (content != null) {
             layoutInArea(content, hScroll.disabled().get() ? 0 : hScroll.value().getFloat(), vScroll.disabled().get() ? 0 : -vScroll.value().getFloat(),
-                    Utils.prefWidth(content),
-                    Utils.prefHeight(content), 0/*ignore baseline*/,
+                    Parent.prefWidth(content),
+                    Parent.prefHeight(content), 0/*ignore baseline*/,
                     getNodeMargin(content),
                     HPos.CENTER,
                     VPos.CENTER);

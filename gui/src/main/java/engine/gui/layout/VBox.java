@@ -5,9 +5,9 @@ import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
+import engine.gui.Parent;
 import engine.gui.misc.HPos;
 import engine.gui.misc.Insets;
-import engine.gui.util.Utils;
 
 public class VBox extends Pane {
 
@@ -31,7 +31,7 @@ public class VBox extends Pane {
     public float computeWidth() {
         float width = 0;
         for (Node node : getChildren()) {
-            width = Math.max(Math.max(width, node.getWidth()), Utils.prefWidth(node));
+            width = Math.max(Math.max(width, node.getWidth()), Parent.prefWidth(node));
         }
         Insets padding = getPadding();
         return padding.getLeft() + width + padding.getRight();
@@ -41,7 +41,7 @@ public class VBox extends Pane {
     public float computeHeight() {
         float height = 0, spacing = spacing().get();
         for (Node node : getChildren()) {
-            height += Math.max(node.getHeight(), Utils.prefHeight(node));
+            height += Math.max(node.getHeight(), Parent.prefHeight(node));
         }
         Insets padding = getPadding();
         return padding.getTop() + height + ((getChildren().size() == 0) ? 0 : spacing * (getChildren().size() - 1)) + padding.getBottom();
@@ -52,8 +52,8 @@ public class VBox extends Pane {
         Insets padding = getPadding();
         float x, y = padding.getTop(), spacing = spacing().get(), w = getWidth() - padding.getLeft() - padding.getRight();
         for (Node node : getChildren()) {
-            float prefWidth = Utils.prefWidth(node);
-            float prefHeight = Utils.prefHeight(node);
+            float prefWidth = Parent.prefWidth(node);
+            float prefHeight = Parent.prefHeight(node);
             x = alignment.get() == HPos.RIGHT ? w - prefWidth : alignment.get() == HPos.CENTER ? (w - prefWidth) / 2 : 0;
             x += padding.getLeft();
             layoutInArea(node, snap(x, true), snap(y, true), prefWidth, prefHeight);

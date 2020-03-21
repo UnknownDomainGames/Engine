@@ -3,13 +3,13 @@ package engine.gui.control;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
+import engine.gui.Parent;
 import engine.gui.event.EventHandler;
 import engine.gui.input.ActionEvent;
 import engine.gui.input.MouseActionEvent;
 import engine.gui.misc.Background;
 import engine.gui.misc.Insets;
 import engine.gui.text.Text;
-import engine.gui.util.Utils;
 import engine.util.Color;
 
 public class Button extends Labeled {
@@ -102,9 +102,9 @@ public class Button extends Labeled {
                 }
                 x = (float) Math.floor(x + 0.5f);
                 y = (float) Math.floor(y + 0.5f);
-                layoutInArea(child, snap(getPadding().getLeft() + x, true), snap(getPadding().getTop() + y, true), Utils.prefWidth(child), Utils.prefHeight(child));
+                layoutInArea(child, snap(getPadding().getLeft() + x, true), snap(getPadding().getTop() + y, true), Parent.prefWidth(child), Parent.prefHeight(child));
             } else { //Although we only have Text inside, we still layout others in case acting as a child
-                layoutInArea(child, child.getLayoutX(), child.getLayoutY(), Utils.prefWidth(child), Utils.prefHeight(child));
+                layoutInArea(child, child.getLayoutX(), child.getLayoutY(), Parent.prefWidth(child), Parent.prefHeight(child));
             }
         }
     }

@@ -1,8 +1,8 @@
 package engine.gui.layout;
 
 import engine.gui.Node;
+import engine.gui.Parent;
 import engine.gui.misc.Insets;
-import engine.gui.util.Utils;
 
 public class AnchorPane extends Pane {
     public static final String TOP_ANCHOR = "anchor-top";
@@ -84,14 +84,14 @@ public class AnchorPane extends Pane {
         if (left != null && right != null) {
             return areaWidth - left - right;
         }
-        return Utils.prefWidth(node);
+        return Parent.prefWidth(node);
     }
 
     private float computeChildHeight(Node node, Float top, Float bottom, float areaHeight) {
         if (top != null && bottom != null) {
             return areaHeight - top - bottom;
         }
-        return Utils.prefHeight(node);
+        return Parent.prefHeight(node);
     }
 
     @Override

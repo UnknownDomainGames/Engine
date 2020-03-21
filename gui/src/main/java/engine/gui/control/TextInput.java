@@ -2,6 +2,7 @@ package engine.gui.control;
 
 import com.github.mouse0w0.observable.value.*;
 import engine.graphics.font.Font;
+import engine.gui.Parent;
 import engine.gui.input.Clipboard;
 import engine.gui.input.KeyEvent;
 import engine.gui.input.MouseActionEvent;
@@ -11,7 +12,6 @@ import engine.gui.misc.Border;
 import engine.gui.misc.IndexRange;
 import engine.gui.misc.Insets;
 import engine.gui.text.Text;
-import engine.gui.util.Utils;
 import engine.input.Modifiers;
 import engine.math.Math2;
 import engine.util.Color;
@@ -449,6 +449,6 @@ public abstract class TextInput extends Control {
     @Override
     protected void layoutChildren() {
         Insets padding = getPadding();
-        layoutInArea(prompt, padding.getLeft(), padding.getTop(), Utils.prefWidth(prompt), Utils.prefHeight(prompt));
+        layoutInArea(prompt, padding.getLeft(), padding.getTop(), Parent.prefWidth(prompt), Parent.prefHeight(prompt));
     }
 }

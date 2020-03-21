@@ -4,7 +4,6 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.ValueChangeListener;
-import engine.gui.util.Utils;
 
 import java.util.LinkedList;
 
@@ -53,7 +52,7 @@ public abstract class Parent extends Node {
         float minX = 0, maxX = 0;
         for (Node child : getChildren()) {
             float childMinX = child.getLayoutX();
-            float childMaxX = childMinX + Math.max(Utils.prefWidth(child), child.getWidth());
+            float childMaxX = childMinX + Math.max(prefWidth(child), child.getWidth());
             if (minX > childMinX) {
                 minX = childMinX;
             }
@@ -69,7 +68,7 @@ public abstract class Parent extends Node {
         float minY = 0, maxY = 0;
         for (Node child : getChildren()) {
             float childMinY = child.getLayoutY();
-            float childMaxY = childMinY + Math.max(Utils.prefHeight(child), child.getHeight());
+            float childMaxY = childMinY + Math.max(prefHeight(child), child.getHeight());
             if (minY > childMinY) {
                 minY = childMinY;
             }
@@ -142,7 +141,7 @@ public abstract class Parent extends Node {
 
     protected void layoutChildren() {
         for (Node node : getChildren()) {
-            layoutInArea(node, node.getLayoutX(), node.getLayoutY(), Utils.prefWidth(node), Utils.prefHeight(node));
+            layoutInArea(node, node.getLayoutX(), node.getLayoutY(), prefWidth(node), prefHeight(node));
         }
     }
 
@@ -150,4 +149,17 @@ public abstract class Parent extends Node {
         node.resize(width, height);
         node.relocate(x, y);
     }
+
+    protected static float prefWidth(Node node) {
+        return middleValue(node.prefWidth(), node.minWidth(), node.maxWidth());
+    }
+
+    protected static float prefHeight(Node node) {
+        return middleValue(node.prefHeight(), node.minHeight(), node.maxHeight());
+    }
+
+    private static float middleValue(float arg0, float arg1, float arg2) {
+        return Math.min(Math.max(arg0, arg1), Math.max(arg1, arg2));
+    }
+
 }
