@@ -57,4 +57,12 @@ public class Math2 {
     public static double clamp(double val, double min, double max) {
         return Math.min(max, Math.max(val, min));
     }
+
+    public static float second(float arg0, float arg1, float arg2) {
+        return Math.min(Math.max(arg0, arg1), Math.max(arg1, arg2));
+    }
+
+    public static double second(double arg0, double arg1, double arg2) {
+        return Math.min(Math.max(arg0, arg1), Math.max(arg1, arg2));
+    }
 }

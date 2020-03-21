@@ -4,6 +4,7 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.ValueChangeListener;
+import engine.math.Math2;
 
 import java.util.LinkedList;
 
@@ -151,15 +152,10 @@ public abstract class Parent extends Node {
     }
 
     protected static float prefWidth(Node node) {
-        return middleValue(node.prefWidth(), node.minWidth(), node.maxWidth());
+        return Math2.second(node.prefWidth(), node.minWidth(), node.maxWidth());
     }
 
     protected static float prefHeight(Node node) {
-        return middleValue(node.prefHeight(), node.minHeight(), node.maxHeight());
+        return Math2.second(node.prefHeight(), node.minHeight(), node.maxHeight());
     }
-
-    private static float middleValue(float arg0, float arg1, float arg2) {
-        return Math.min(Math.max(arg0, arg1), Math.max(arg1, arg2));
-    }
-
 }
