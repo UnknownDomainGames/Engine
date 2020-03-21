@@ -9,8 +9,9 @@ import engine.math.Math2;
 
 public class Region extends Parent {
 
-    public static final int USE_PARENT_VALUE = Size.USE_PARENT_VALUE;
-    public static final int USE_COMPUTE_VALUE = Size.USE_COMPUTE_VALUE;
+    public static final float USE_COMPUTED_VALUE = Size.USE_COMPUTED_VALUE;
+    public static final float USE_PERF_VALUE = Size.USE_PERF_VALUE;
+    public static final float USE_PARENT_VALUE = Size.USE_PARENT_VALUE;
 
     private MutableObjectValue<Background> background;
     private MutableObjectValue<Border> border;
@@ -174,20 +175,32 @@ public class Region extends Parent {
 
     @Override
     public float minWidth() {
-        return getMinWidth();
+        float minWidth = getMinWidth();
+        if (minWidth == USE_COMPUTED_VALUE) {
+            minWidth = super.minWidth();
+        } else if (minWidth == USE_PERF_VALUE) {
+            minWidth = prefWidth();
+        }
+        return minWidth < 0 ? 0 : minWidth;
     }
 
     @Override
     public float minHeight() {
-        return getMinHeight();
+        float minHeight = getMinHeight();
+        if (minHeight == USE_COMPUTED_VALUE) {
+            minHeight = super.minHeight();
+        } else if (minHeight == USE_PERF_VALUE) {
+            minHeight = prefHeight();
+        }
+        return minHeight < 0 ? 0 : minHeight;
     }
 
     @Override
     public final float prefWidth() {
         float width = getPrefWidth();
-        if (width == Size.USE_COMPUTE_VALUE) {
+        if (width == USE_COMPUTED_VALUE) {
             return computeWidth();
-        } else if (width == Size.USE_PARENT_VALUE) {
+        } else if (width == USE_PARENT_VALUE) {
             return (parent().isPresent() ? getParent().getWidth() : 0);
         }
         return width;
@@ -200,9 +213,9 @@ public class Region extends Parent {
     @Override
     public final float prefHeight() {
         float height = getPrefHeight();
-        if (height == Size.USE_COMPUTE_VALUE) {
+        if (height == USE_COMPUTED_VALUE) {
             return computeHeight();
-        } else if (height == Size.USE_PARENT_VALUE) {
+        } else if (height == USE_PARENT_VALUE) {
             return (parent().isPresent() ? getParent().getHeight() : 0);
         }
         return height;
@@ -214,12 +227,24 @@ public class Region extends Parent {
 
     @Override
     public float maxWidth() {
-        return getMaxWidth();
+        float maxWidth = getMaxWidth();
+        if (maxWidth == USE_COMPUTED_VALUE) {
+            maxWidth = super.maxWidth();
+        } else if (maxWidth == USE_PERF_VALUE) {
+            maxWidth = prefWidth();
+        }
+        return maxWidth < 0 ? 0 : maxWidth;
     }
 
     @Override
     public float maxHeight() {
-        return getMaxHeight();
+        float maxHeight = getMaxHeight();
+        if (maxHeight == USE_COMPUTED_VALUE) {
+            maxHeight = super.maxHeight();
+        } else if (maxHeight == USE_PERF_VALUE) {
+            maxHeight = prefHeight();
+        }
+        return maxHeight < 0 ? 0 : maxHeight;
     }
 
     @Override
