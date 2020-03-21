@@ -28,12 +28,12 @@ public class PlayingAnimation {
             var property = child.getAnimatingProperty();
             var next = child.getNextFrame(progress);
             if(progress > child.getDuration()){
-                property.setValue(next.getValue());
+                property.set(next.getValue());
                 continue;
             }
             var pre = child.getPreviousFrame(progress);
             var t = (progress - pre.getTimestamp()) / (next.getTimestamp() - pre.getTimestamp());
-            property.setValue(next.getInterpolation().interpolate(pre.getValue(), next.getValue(), t));
+            property.set(next.getInterpolation().interpolate(pre.getValue(), next.getValue(), t));
         }
         if(progress > animation.getDuration()){
             if(!looping){

@@ -16,7 +16,7 @@ public class GuiDirectConnectServer extends FlowPane {
     public GuiDirectConnectServer(){
         alignment().set(Pos.CENTER);
         var vmain = new VBox();
-        vmain.alignment().setValue(Pos.HPos.CENTER);
+        vmain.alignment().set(Pos.HPos.CENTER);
         var vbox = new VBox();
         vbox.alignment().set(Pos.HPos.CENTER);
         vmain.getChildren().add(vbox);
@@ -53,6 +53,6 @@ public class GuiDirectConnectServer extends FlowPane {
         });
         hbox.getChildren().addAll(butConnect, butBack);
         vbox.getChildren().addAll(label1, addressFieldGroup, hbox);
-        background().setValue(Background.fromColor(Color.fromRGB(0x7f7f7f)));
+        setBackground(Background.fromColor(Color.fromRGB(0x7f7f7f)));
     }
 }

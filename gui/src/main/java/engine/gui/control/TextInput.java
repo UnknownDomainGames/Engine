@@ -36,9 +36,9 @@ public abstract class TextInput extends Control {
     private Text prompt;
 
     public TextInput() {
-        background().setValue(Background.fromColor(Color.fromARGB(0x000000c8)));
-        border().setValue(new Border(Color.WHITE, 2));
-        padding().setValue(new Insets(3f));
+        setBackground(Background.fromColor(Color.fromARGB(0x000000c8)));
+        setBorder(new Border(Color.WHITE, 2));
+        setPadding(new Insets(3f));
         caret().addChangeListener((observable, oldValue, newValue) -> updatePointer());
 
         addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
@@ -221,7 +221,7 @@ public abstract class TextInput extends Control {
             anchor += adjusted;
             caret += adjusted;
         }
-        text().setValue(content);
+        text().set(content);
         selectRange(anchor, caret);
         return adjusted;
     }
@@ -233,7 +233,7 @@ public abstract class TextInput extends Control {
     private void selectRange(int anchor, int caret) {
         this.anchor.set(Math2.clamp(anchor, 0, length()));
         this.caret.set(Math2.clamp(caret, 0, length()));
-        this.selection.setValue(IndexRange.ofOrderless(this.anchor.get(), this.caret.get()));
+        this.selection.set(IndexRange.ofOrderless(this.anchor.get(), this.caret.get()));
     }
 
     private void rangeCheck(int start, int end) {

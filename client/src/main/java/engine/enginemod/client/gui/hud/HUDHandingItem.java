@@ -35,7 +35,7 @@ public final class HUDHandingItem extends HUDControl {
         if (player != null) {
             Entity entity = player.getControlledEntity();
             entity.getComponent(TwoHands.class).ifPresent(twoHands ->
-                    mainHandItem.itemStack().setValue(twoHands.getMainHand()));
+                    mainHandItem.itemStack().set(twoHands.getMainHand()));
         }
     }
 }

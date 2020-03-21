@@ -30,13 +30,13 @@ public class Button extends Label {
         disableBg.addChangeListener((observable, oldValue, newValue) -> handleBackground());
         text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         handleBackground();
-        padding().setValue(new Insets(0, 5, 5, 5));
+        setPadding(new Insets(0, 5, 5, 5));
         addEventHandler(MouseActionEvent.MOUSE_PRESSED, event -> new ActionEvent(ActionEvent.ACTION, Button.this).fireEvent());
     }
 
     public Button(String text) {
         this();
-        this.text().setValue(text);
+        this.text().set(text);
     }
 
     public MutableObjectValue<Background> hoverBackground() {
@@ -57,13 +57,13 @@ public class Button extends Label {
 
     protected void handleBackground() {
         if (isDisabled()) {
-            super.background().setValue(disabledBackground().get());
+            super.setBackground(disabledBackground().get());
         } else if (isPressed()) {
-            super.background().setValue(pressBackground().get());
+            super.setBackground(pressBackground().get());
         } else if (isHover()) {
-            super.background().setValue(hoverBackground().get());
+            super.setBackground(hoverBackground().get());
         } else {
-            super.background().setValue(buttonBackground().get());
+            super.setBackground(buttonBackground().get());
         }
     }
 

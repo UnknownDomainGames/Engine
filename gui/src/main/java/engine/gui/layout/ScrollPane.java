@@ -1,6 +1,9 @@
 package engine.gui.layout;
 
-import com.github.mouse0w0.observable.value.*;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
+import com.github.mouse0w0.observable.value.ObservableDoubleValue;
+import com.github.mouse0w0.observable.value.ObservableValue;
+import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
 import engine.gui.control.HSlider;
 import engine.gui.control.VSlider;
@@ -21,13 +24,13 @@ public class ScrollPane extends BorderPane {
         hScroll.sliderThickness().set(20f);
         vScroll.step().set(1);
         hScroll.step().set(1);
-        bottom().setValue(hScroll);
-        right().setValue(vScroll);
+        bottom().set(hScroll);
+        right().set(vScroll);
         setAlignment(hScroll, Pos.BOTTOM_LEFT);
         setAlignment(vScroll, Pos.TOP_RIGHT);
         content.addChangeListener((observable, oldValue, newValue) -> {
-            if(oldValue != null) getChildren().remove(oldValue);
-            if(newValue != null) getChildren().add(newValue);
+            if (oldValue != null) getChildren().remove(oldValue);
+            if (newValue != null) getChildren().add(newValue);
             update();
             if (newValue != null) {
                 newValue.width().addChangeListener((observable1, o, n) -> update());
@@ -79,8 +82,8 @@ public class ScrollPane extends BorderPane {
     }
 
     public void setContent(Node content) {
-        this.content.setValue(content);
-//        center().setValue(content);
+        this.content.set(content);
+//        center().set(content);
     }
 
     public ObservableValue<Node> content() {

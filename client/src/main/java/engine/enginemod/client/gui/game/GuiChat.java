@@ -17,14 +17,14 @@ public class GuiChat extends AnchorPane {
         this.game = game;
         textField = new TextField();
         textField.forceFocus();
-        textField.border().setValue(new Border(Color.BLACK, 0f));
-        textField.background().setValue(Background.fromColor(Color.fromARGB(0x80000000)));
+        textField.setBorder(new Border(Color.BLACK, 0f));
+        textField.setBackground(Background.fromColor(Color.fromARGB(0x80000000)));
         AnchorPane.setLeftAnchor(textField, 3f);
         AnchorPane.setRightAnchor(textField, 3f);
         AnchorPane.setBottomAnchor(textField, 3f);
         textField.getSize().prefHeight().set(23.0f);
         this.getChildren().add(textField);
-        this.background().setValue(Background.NOTHING);
+        this.setBackground(Background.NOTHING);
         setOnKeyPressed(event -> {
             if (event.getKey() == KeyCode.ENTER) {
                 String text = textField.text().get();

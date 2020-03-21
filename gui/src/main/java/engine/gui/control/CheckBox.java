@@ -19,26 +19,26 @@ public class CheckBox extends Button {
     private MutableObjectValue<Color> contentColor = new SimpleMutableObjectValue<>(Color.BLACK);
 
     public CheckBox() {
-        background().setValue(Background.fromColor(Color.WHITE));
-        border().setValue(new Border(Color.BLACK, 3));
-        padding().setValue(new Insets(2));
+        setBackground(Background.fromColor(Color.WHITE));
+        setBorder(new Border(Color.BLACK, 3));
+        setPadding(new Insets(2));
         getSize().setPrefSize(24, 24);
-        text().setValue("");
+        text().set("");
         addEventHandler(MouseActionEvent.MOUSE_CLICKED, event -> switchState());
     }
 
     public CheckBox(Boolean state) {
         this();
-        this.state.setValue(state);
+        this.state.set(state);
     }
 
     private void switchState() {
         if (allowIntermediate.get() && state.get() != null && !state.get()) {
-            state.setValue(null);
+            state.set(null);
         } else if (state.get() == null) {
-            state.setValue(true);
+            state.set(true);
         } else {
-            state.setValue(!state.get());
+            state.set(!state.get());
         }
     }
 
@@ -74,10 +74,10 @@ public class CheckBox extends Button {
         }
 
         public Texted(String str) {
-            text.setValue(new Text(str));
-            checkBox.setValue(new CheckBox());
+            text.set(new Text(str));
+            checkBox.set(new CheckBox());
             setMargin(checkBox.get(), new Insets(3));
-            center().setValue(checkBox.get());
+            center().set(checkBox.get());
             processTextPos();
             contentPos.addChangeListener((observable, oldValue, newValue) -> processTextPos());
         }
@@ -109,16 +109,16 @@ public class CheckBox extends Button {
                     case CENTER:
                         break;
                     case TOP_CENTER:
-                        top().setValue(null);
+                        top().set(null);
                         break;
                     case CENTER_LEFT:
-                        left().setValue(null);
+                        left().set(null);
                         break;
                     case CENTER_RIGHT:
-                        right().setValue(null);
+                        right().set(null);
                         break;
                     case BOTTOM_CENTER:
-                        bottom().setValue(null);
+                        bottom().set(null);
                         break;
                 }
             }
@@ -133,16 +133,16 @@ public class CheckBox extends Button {
                 case CENTER:
                     break;
                 case TOP_CENTER:
-                    top().setValue(text1);
+                    top().set(text1);
                     break;
                 case CENTER_LEFT:
-                    left().setValue(text1);
+                    left().set(text1);
                     break;
                 case CENTER_RIGHT:
-                    right().setValue(text1);
+                    right().set(text1);
                     break;
                 case BOTTOM_CENTER:
-                    bottom().setValue(text1);
+                    bottom().set(text1);
                     break;
             }
         }

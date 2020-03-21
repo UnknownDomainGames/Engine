@@ -41,21 +41,21 @@ public class GuiSettings extends AnchorPane {
                 && mode.getRefreshRate() == (settings.getDisplaySettings().getFrameRate() == -1 ? screen.getVideoMode().getRefreshRate() : settings.getDisplaySettings().getFrameRate()))
                 .findFirst().ifPresentOrElse(videoMode -> videoModeIndex = screen.getVideoModes().indexOf(videoMode),
                 () -> videoModeIndex = screen.getVideoModes().indexOf(screen.getVideoMode()));
-        butRes.text().setValue(String.format("%dx%d, %dHz", Platform.getEngineClient().getGraphicsManager().getWindow().getWidth(), Platform.getEngineClient().getGraphicsManager().getWindow().getHeight(), settings.getDisplaySettings().getDisplayMode() != DisplayMode.FULLSCREEN ? 60 : screen.getVideoMode().getRefreshRate()));
+        butRes.text().set(String.format("%dx%d, %dHz", Platform.getEngineClient().getGraphicsManager().getWindow().getWidth(), Platform.getEngineClient().getGraphicsManager().getWindow().getHeight(), settings.getDisplaySettings().getDisplayMode() != DisplayMode.FULLSCREEN ? 60 : screen.getVideoMode().getRefreshRate()));
         butRes.setOnMouseClicked(event -> {
             videoModeIndex = (GuiSettings.this.videoModeIndex + 1) % screen.getVideoModes().size();
             settings.getDisplaySettings().setResolutionWidth(screen.getVideoModes().get(videoModeIndex).getWidth());
             settings.getDisplaySettings().setResolutionHeight(screen.getVideoModes().get(videoModeIndex).getHeight());
             settings.getDisplaySettings().setFrameRate(screen.getVideoModes().get(videoModeIndex).getRefreshRate());
-            butRes.text().setValue(String.format("%dx%d, %dHz", settings.getDisplaySettings().getResolutionWidth(), settings.getDisplaySettings().getResolutionHeight(), settings.getDisplaySettings().getFrameRate()));
+            butRes.text().set(String.format("%dx%d, %dHz", settings.getDisplaySettings().getResolutionWidth(), settings.getDisplaySettings().getResolutionHeight(), settings.getDisplaySettings().getFrameRate()));
         });
         butRes.disabled().set(settings.getDisplaySettings().getDisplayMode() != DisplayMode.FULLSCREEN);
         var butDisplayMode = new Button();
-        butDisplayMode.text().setValue(settings.getDisplaySettings().getDisplayMode().name());
+        butDisplayMode.text().set(settings.getDisplaySettings().getDisplayMode().name());
         butDisplayMode.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.MOUSE_BUTTON_PRIMARY) {
                 settings.getDisplaySettings().setDisplayMode(DisplayMode.values()[(settings.getDisplaySettings().getDisplayMode().ordinal() + 1) % DisplayMode.values().length]);
-                butDisplayMode.text().setValue(settings.getDisplaySettings().getDisplayMode().name());
+                butDisplayMode.text().set(settings.getDisplaySettings().getDisplayMode().name());
                 if (settings.getDisplaySettings().getDisplayMode() == DisplayMode.FULLSCREEN) {
                     butRes.disabled().set(false);
                     if (settings.getDisplaySettings().getResolutionWidth() == -1 || settings.getDisplaySettings().getResolutionHeight() == -1 || settings.getDisplaySettings().getFrameRate() == -1) {
@@ -63,13 +63,13 @@ public class GuiSettings extends AnchorPane {
                         settings.getDisplaySettings().setResolutionHeight(screen.getVideoMode().getHeight());
                         settings.getDisplaySettings().setFrameRate(screen.getVideoMode().getRefreshRate());
                     }
-                    butRes.text().setValue(String.format("%dx%d, %dHz", settings.getDisplaySettings().getResolutionWidth(), settings.getDisplaySettings().getResolutionHeight(), settings.getDisplaySettings().getFrameRate()));
+                    butRes.text().set(String.format("%dx%d, %dHz", settings.getDisplaySettings().getResolutionWidth(), settings.getDisplaySettings().getResolutionHeight(), settings.getDisplaySettings().getFrameRate()));
                 } else {
                     butRes.disabled().set(true);
                     settings.getDisplaySettings().setResolutionWidth(settings.getDisplaySettings().getDisplayMode() == DisplayMode.WINDOWED ? -1 : screen.getVideoMode().getWidth());
                     settings.getDisplaySettings().setResolutionHeight(settings.getDisplaySettings().getDisplayMode() == DisplayMode.WINDOWED ? -1 : screen.getVideoMode().getHeight());
                     settings.getDisplaySettings().setFrameRate(60);
-                    butRes.text().setValue(String.format("%dx%d, %dHz", Platform.getEngineClient().getGraphicsManager().getWindow().getWidth(), Platform.getEngineClient().getGraphicsManager().getWindow().getHeight(), 60));
+                    butRes.text().set(String.format("%dx%d, %dHz", Platform.getEngineClient().getGraphicsManager().getWindow().getWidth(), Platform.getEngineClient().getGraphicsManager().getWindow().getHeight(), 60));
                 }
             }
         });
@@ -138,8 +138,8 @@ public class GuiSettings extends AnchorPane {
             var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
             guiManager.showLast();
         });
-        butSave.border().setValue(new Border(Color.WHITE, 2));
-        butBack.border().setValue(new Border(Color.WHITE, 2));
+        butSave.setBorder(new Border(Color.WHITE, 2));
+        butBack.setBorder(new Border(Color.WHITE, 2));
         var hb5 = new HBox();
         hb5.getChildren().addAll(butSave, butBack);
         setBottomAnchor(hb5, 10f);

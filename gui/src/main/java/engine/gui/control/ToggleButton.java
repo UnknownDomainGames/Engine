@@ -26,10 +26,10 @@ public class ToggleButton extends Button {
 
     public ToggleButton(String text, boolean selected) {
         super();
-        border().setValue(selected ? onColor : offColor);
-        this.selected.addChangeListener((ob, o, n) -> border().setValue(n ? onColor : offColor));
+        setBorder(selected ? onColor : offColor);
+        this.selected.addChangeListener((ob, o, n) -> setBorder(n ? onColor : offColor));
         this.selected.set(selected);
-        this.text().setValue(text);
+        this.text().set(text);
         addEventHandler(MouseActionEvent.MOUSE_CLICKED, this::onClicked);
     }
 

@@ -1,6 +1,6 @@
 package engine.client.sound;
 
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.Platform;
 import engine.client.asset.AssetURL;
@@ -31,9 +31,9 @@ public class EngineSoundManager implements ALSoundManager {
 
     private ALSoundListener listener;
 
-    private final Map<AssetURL, MutableValue<ALSound>> soundMap = new HashMap<>();
+    private final Map<AssetURL, MutableObjectValue<ALSound>> soundMap = new HashMap<>();
 
-    private final Map<String, MutableValue<ALSoundSource>> soundSourceMap = new HashMap<>();
+    private final Map<String, MutableObjectValue<ALSoundSource>> soundSourceMap = new HashMap<>();
 
     private Matrix4fc cameraMatrix;
 
@@ -81,12 +81,12 @@ public class EngineSoundManager implements ALSoundManager {
     }
 
     @Override
-    public MutableValue<ALSoundSource> getSoundSource(String name) {
+    public MutableObjectValue<ALSoundSource> getSoundSource(String name) {
         return soundSourceMap.get(name);
     }
 
     @Override
-    public MutableValue<ALSound> getSound(AssetURL url) {
+    public MutableObjectValue<ALSound> getSound(AssetURL url) {
         return soundMap.computeIfAbsent(url, key -> new SimpleMutableObjectValue<>(getSoundDirect(key)));
 
     }
@@ -130,7 +130,7 @@ public class EngineSoundManager implements ALSoundManager {
     }
 
     public void reload() {
-        for (Map.Entry<AssetURL, MutableValue<ALSound>> value : soundMap.entrySet()) {
+        for (Map.Entry<AssetURL, MutableObjectValue<ALSound>> value : soundMap.entrySet()) {
             var nativePath = Platform.getEngineClient().getAssetManager().getSourceManager().getPath(value.getKey().toFileLocation());
             if (nativePath.isPresent()) {
                 try (var channel = Files.newByteChannel(nativePath.get(), StandardOpenOption.READ)) {

@@ -1,21 +1,20 @@
 package engine.graphics.animation;
 
-import com.github.mouse0w0.observable.value.MutableValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Animation<T> {
-    private MutableValue<T> animatingProperty;
+    private MutableObjectValue<T> animatingProperty;
     private Map<Double, AnimationKeyframe<T>> keyframes = new HashMap<>();
 
     public double getDuration() {
         return keyframes.keySet().stream().max(Comparator.naturalOrder()).orElse(0.0);
     }
 
-    public MutableValue<T> getAnimatingProperty() {
+    public MutableObjectValue<T> getAnimatingProperty() {
         return animatingProperty;
     }
 

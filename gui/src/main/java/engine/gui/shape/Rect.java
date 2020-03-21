@@ -20,7 +20,7 @@ public class Rect extends Shape {
     }
 
     public Rect(Vector2f size) {
-        this.size.setValue(size);
+        this.size.set(size);
     }
 
     public MutableObjectValue<Vector2fc> rectSize() {

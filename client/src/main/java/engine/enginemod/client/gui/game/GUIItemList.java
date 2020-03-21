@@ -31,7 +31,7 @@ public final class GUIItemList extends AnchorPane {
 
     public GUIItemList() {
         var vBox = new VBox();
-        vBox.background().setValue(Background.fromColor(Color.fromARGB(0x7f000000)));
+        vBox.setBackground(Background.fromColor(Color.fromARGB(0x7f000000)));
         vBox.spacing().set(5f);
         AnchorPane.setBottomAnchor(vBox, 50f);
         AnchorPane.setTopAnchor(vBox, 50f);

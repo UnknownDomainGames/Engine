@@ -40,7 +40,7 @@ public class ListView<T> extends Control {
             needsLayout();
         });
 //        padding().addChangeListener((observable, oldValue, newValue) -> layoutInArea(scrollPane));
-        border().addChangeListener((observable, oldValue, newValue) -> padding().setValue(newValue.getInsets()));
+        border().addChangeListener((observable, oldValue, newValue) -> setPadding(newValue.getInsets()));
         updateContentPane();
     }
 

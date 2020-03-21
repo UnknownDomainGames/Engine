@@ -12,12 +12,12 @@ public class ItemSlot extends Button {
     public ItemSlot() {
         itemView = new ItemView();
         this.getChildren().add(itemView);
-        itemstack.addChangeListener((observable, oldValue, newValue) -> itemView.itemStack().setValue(newValue));
+        itemstack.addChangeListener((observable, oldValue, newValue) -> itemView.itemStack().set(newValue));
     }
 
     public ItemSlot(ItemStack stack) {
         this();
-        itemstack.setValue(stack);
+        itemstack.set(stack);
     }
 
     public MutableObjectValue<ItemStack> itemStack() {

@@ -28,8 +28,8 @@ public class ProgressBar extends Control {
         barLength.addChangeListener((observable, oldValue, newValue) -> rebuild());
         barThickness.addChangeListener((observable, oldValue, newValue) -> rebuild());
         this.getChildren().addAll(back, progressRect);
-        backgroundColor().setValue(Color.WHITE);
-        progressColor().setValue(Color.GREEN);
+        backgroundColor().set(Color.WHITE);
+        progressColor().set(Color.GREEN);
     }
 
     public MutableDoubleValue value() {
@@ -60,18 +60,18 @@ public class ProgressBar extends Control {
     }
 
     private void resizeBack(float width, float height) {
-        back.rectSize().setValue(new Vector2f(width, height));
+        back.rectSize().set(new Vector2f(width, height));
     }
 
     private void resizeProgressRect(float width, float height) {
-        progressRect.rectSize().setValue(new Vector2f(width, height));
+        progressRect.rectSize().set(new Vector2f(width, height));
     }
 
-    public MutableValue<Color> backgroundColor() {
+    public MutableObjectValue<Color> backgroundColor() {
         return back.fillColor();
     }
 
-    public MutableValue<Color> progressColor() {
+    public MutableObjectValue<Color> progressColor() {
         return progressRect.fillColor();
     }
 }

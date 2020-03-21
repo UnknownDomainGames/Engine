@@ -105,7 +105,7 @@ public class Scene implements EventTarget {
         }
 
         this.root.set(root);
-        root.scene.setValue(this);
+        root.scene.set(this);
         updateRoot();
     }
 

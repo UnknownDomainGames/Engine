@@ -17,7 +17,7 @@ public class Label extends Control {
 
     public Label(String text) {
         this();
-        text().setValue(text);
+        text().set(text);
     }
 
     public final MutableObjectValue<Font> font() {

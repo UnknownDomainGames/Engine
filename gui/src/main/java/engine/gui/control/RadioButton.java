@@ -24,13 +24,13 @@ public class RadioButton extends ToggleButton {
 
     public RadioButton(boolean selected) {
         super(selected);
-        background().setValue(Background.fromColor(Color.WHITE));
+        setBackground(Background.fromColor(Color.WHITE));
         border().addChangeListener((observable, oldValue, newValue) -> {
             setOffColor(newValue);
             setOnColor(newValue);
         });
-        border().setValue(new Border(Color.BLACK, 3));
-        padding().setValue(new Insets(5));
+        setBorder(new Border(Color.BLACK, 3));
+        setPadding(new Insets(5));
         getSize().setPrefSize(24, 24);
         addEventHandler(MouseActionEvent.MOUSE_CLICKED, this::onClicked);
     }
@@ -64,10 +64,10 @@ public class RadioButton extends ToggleButton {
         }
 
         public Texted(String str) {
-            text.setValue(new Text(str));
-            radioButton.setValue(new RadioButton());
+            text.set(new Text(str));
+            radioButton.set(new RadioButton());
             setMargin(radioButton.get(), new Insets(3));
-            center().setValue(radioButton.get());
+            center().set(radioButton.get());
             processTextPos();
             contentPos.addChangeListener((observable, oldValue, newValue) -> processTextPos());
         }
@@ -99,16 +99,16 @@ public class RadioButton extends ToggleButton {
                     case CENTER:
                         break;
                     case TOP_CENTER:
-                        top().setValue(null);
+                        top().set(null);
                         break;
                     case CENTER_LEFT:
-                        left().setValue(null);
+                        left().set(null);
                         break;
                     case CENTER_RIGHT:
-                        right().setValue(null);
+                        right().set(null);
                         break;
                     case BOTTOM_CENTER:
-                        bottom().setValue(null);
+                        bottom().set(null);
                         break;
                 }
             }
@@ -123,16 +123,16 @@ public class RadioButton extends ToggleButton {
                 case CENTER:
                     break;
                 case TOP_CENTER:
-                    top().setValue(text1);
+                    top().set(text1);
                     break;
                 case CENTER_LEFT:
-                    left().setValue(text1);
+                    left().set(text1);
                     break;
                 case CENTER_RIGHT:
-                    right().setValue(text1);
+                    right().set(text1);
                     break;
                 case BOTTOM_CENTER:
-                    bottom().setValue(text1);
+                    bottom().set(text1);
                     break;
             }
         }

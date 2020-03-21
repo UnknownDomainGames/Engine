@@ -33,10 +33,10 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
 
     public GuiServerConnectingStatus(String ip, int port){
         var vbox = new VBox();
-        vbox.alignment().setValue(Pos.HPos.CENTER);
+        vbox.alignment().set(Pos.HPos.CENTER);
         vbox.setPadding(new Insets(200, 0, 0, 0));
         lblStatus = new Label();
-        lblStatus.text().setValue("Connecting");
+        lblStatus.text().set("Connecting");
         lblReason = new Label();
         vbox.getChildren().add(lblStatus);
         button = new Button("disconnect");
@@ -53,26 +53,26 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
         button.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         vbox.getChildren().add(button);
         isFailed.addChangeListener((observable, oldValue, newValue) -> {
-            button.text().setValue("Back");
+            button.text().set("Back");
             vbox.getChildren().remove(button);
             vbox.getChildren().add(lblReason);
             vbox.getChildren().add(button);
         });
-        background().setValue(Background.fromColor(Color.fromRGB(0x7f7f7f)));
+        setBackground(Background.fromColor(Color.fromRGB(0x7f7f7f)));
         setAlignment(vbox, Pos.CENTER);
-        center().setValue(vbox);
+        center().set(vbox);
 //        addEventHandler(PacketReceivedEvent.class, event -> {
 //            if(event.getPacket() instanceof PacketDisconnect){
 //                Platform.getLogger().warn("Disconnected from server");
-//                lblStatus.text().setValue("Disconnected");
-//                lblReason.text().setValue(((PacketDisconnect) event.getPacket()).getReason());
+//                lblStatus.text().set("Disconnected");
+//                lblReason.text().set(((PacketDisconnect) event.getPacket()).getReason());
 //                isFailed.set(true);
 //            }
 //        });
 //        addEventHandler(NetworkDisconnectedEvent.class, event ->{
 //            Platform.getLogger().warn("Disconnected from server: {}", event.getReason());
-//            lblStatus.text().setValue("Disconnected");
-//            lblReason.text().setValue(event.getReason());
+//            lblStatus.text().set("Disconnected");
+//            lblReason.text().set(event.getReason());
 //            isFailed.set(true);
 //        });
         connect(ip, port);
@@ -88,16 +88,16 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
                 networkClient.run(address, port);
                 networkClient.send(new PacketHandshake(ConnectionStatus.LOGIN));
             } catch (UnknownHostException ex) {
-                if(isCancelled) return;
+                if (isCancelled) return;
                 Platform.getLogger().error("Cannot connect to server", ex);
-                lblStatus.text().setValue("Disconnected");
-                lblReason.text().setValue("Unknown host");
+                lblStatus.text().set("Disconnected");
+                lblReason.text().set("Unknown host");
                 isFailed.set(true);
             } catch (Exception ex) {
-                if(isCancelled) return;
+                if (isCancelled) return;
                 Platform.getLogger().error("Cannot connect to server", ex);
-                lblStatus.text().setValue("Disconnected");
-                lblReason.text().setValue(ex.getMessage());
+                lblStatus.text().set("Disconnected");
+                lblReason.text().set(ex.getMessage());
                 isFailed.set(true);
             }
         }, "Connector");
@@ -110,8 +110,8 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
     public void update(GraphicsManager context) {
 //        if(networkClient != null && networkClient.getHandler() != null) {
 //            if(!networkClient.getHandler().isChannelOpen()){
-//                lblStatus.text().setValue("Disconnected");
-//                lblReason.text().setValue("event.getReason()");
+//                lblStatus.text().set("Disconnected");
+//                lblReason.text().set("event.getReason()");
 //                isFailed.set(true);
 //            }
 //        }

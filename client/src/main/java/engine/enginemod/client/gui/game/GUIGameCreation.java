@@ -27,16 +27,16 @@ public class GUIGameCreation extends FlowPane {
 
         VBox vBox = new VBox();
         vBox.spacing().set(5);
-        vBox.alignment().setValue(Pos.HPos.CENTER);
+        vBox.alignment().set(Pos.HPos.CENTER);
         getChildren().add(vBox);
 
         Label text = new Label();
-        text.text().setValue(I18n.translate("engine.gui.game_creation.text.name"));
-        text.font().setValue(new Font(Font.getDefaultFont(), 20));
+        text.text().set(I18n.translate("engine.gui.game_creation.text.name"));
+        text.font().set(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
         Button buttonCreate = new Button("New Game");
-        buttonCreate.border().setValue(new Border(Color.WHITE));
+        buttonCreate.setBorder(new Border(Color.WHITE));
         buttonCreate.setOnMouseClicked(event -> {
             var engine = Platform.getEngineClient();
             engine.getGraphicsManager().getGUIManager().close();
@@ -47,7 +47,7 @@ public class GUIGameCreation extends FlowPane {
         vBox.getChildren().add(buttonCreate);
 
         Button buttonLoad = new Button("Load Game");
-        buttonLoad.border().setValue(new Border(Color.WHITE));
+        buttonLoad.setBorder(new Border(Color.WHITE));
         buttonLoad.setOnMouseClicked(event -> {
             var engine = Platform.getEngineClient();
             engine.getGraphicsManager().getGUIManager().close();

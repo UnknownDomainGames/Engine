@@ -54,8 +54,8 @@ public class VSlider extends Region {
         sliderLength.addChangeListener((observable, oldValue, newValue) -> rebuild());
         sliderThickness.addChangeListener((observable, oldValue, newValue) -> rebuild());
         this.getChildren().addAll(back, slider);
-        backBg().setValue(Color.BLUE);
-        sliderBg().setValue(Color.WHITE);
+        backBg().set(Color.BLUE);
+        sliderBg().set(Color.WHITE);
         addEventHandler(MouseActionEvent.MOUSE_PRESSED, this::onPressed);
         addEventHandler(MouseActionEvent.MOUSE_RELEASED, this::onReleased);
         addEventHandler(MouseEvent.MOUSE_MOVED, this::onMoved);
@@ -128,18 +128,18 @@ public class VSlider extends Region {
     }
 
     private void resizeBack(float width, float height) {
-        back.rectSize().setValue(new Vector2f(width, height));
+        back.rectSize().set(new Vector2f(width, height));
     }
 
     private void resizeSlider(float width, float height) {
-        slider.rectSize().setValue(new Vector2f(width, height));
+        slider.rectSize().set(new Vector2f(width, height));
     }
 
-    public MutableValue<Color> backBg() {
+    public MutableObjectValue<Color> backBg() {
         return back.fillColor();
     }
 
-    public MutableValue<Color> sliderBg() {
+    public MutableObjectValue<Color> sliderBg() {
         return slider.fillColor();
     }
 
