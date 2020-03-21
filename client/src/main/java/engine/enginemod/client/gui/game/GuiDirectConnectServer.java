@@ -8,6 +8,7 @@ import engine.gui.layout.FlowPane;
 import engine.gui.layout.HBox;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
+import engine.gui.misc.HPos;
 import engine.gui.misc.Pos;
 import engine.gui.text.Text;
 import engine.util.Color;
@@ -16,9 +17,9 @@ public class GuiDirectConnectServer extends FlowPane {
     public GuiDirectConnectServer(){
         alignment().set(Pos.CENTER);
         var vmain = new VBox();
-        vmain.alignment().set(Pos.HPos.CENTER);
+        vmain.alignment().set(HPos.CENTER);
         var vbox = new VBox();
-        vbox.alignment().set(Pos.HPos.CENTER);
+        vbox.alignment().set(HPos.CENTER);
         vmain.getChildren().add(vbox);
         getChildren().add(vmain);
         var label1 = new Text("Connect to server");

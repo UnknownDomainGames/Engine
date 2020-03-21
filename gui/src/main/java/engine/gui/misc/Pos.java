@@ -61,27 +61,19 @@ public enum Pos {
      */
     BASELINE_RIGHT(VPos.BASELINE, HPos.RIGHT);
 
-    private final VPos vpos;
-    private final HPos hpos;
+    private final VPos vPos;
+    private final HPos hPos;
 
-    Pos(VPos v, HPos h) {
-        vpos = v;
-        hpos = h;
+    Pos(VPos vPos, HPos hPos) {
+        this.vPos = vPos;
+        this.hPos = hPos;
     }
 
-    public HPos getHpos() {
-        return hpos;
+    public HPos getHPos() {
+        return hPos;
     }
 
-    public VPos getVpos() {
-        return vpos;
-    }
-
-    public enum HPos {
-        LEFT, CENTER, RIGHT
-    }
-
-    public enum VPos {
-        TOP, CENTER, BOTTOM, BASELINE
+    public VPos getVPos() {
+        return vPos;
     }
 }

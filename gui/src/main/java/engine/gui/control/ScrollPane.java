@@ -6,7 +6,9 @@ import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
 import engine.gui.layout.BorderPane;
+import engine.gui.misc.HPos;
 import engine.gui.misc.Pos;
+import engine.gui.misc.VPos;
 import engine.gui.util.Utils;
 
 public class ScrollPane extends BorderPane {
@@ -106,8 +108,8 @@ public class ScrollPane extends BorderPane {
                     Utils.prefWidth(c),
                     Utils.prefHeight(c), 0/*ignore baseline*/,
                     getNodeMargin(c),
-                    Pos.HPos.CENTER,
-                    Pos.VPos.CENTER);
+                    HPos.CENTER,
+                    VPos.CENTER);
 //            update();
         }
     }

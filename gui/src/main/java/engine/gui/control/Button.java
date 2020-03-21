@@ -75,7 +75,7 @@ public class Button extends Labeled {
                 var aw = this.prefWidth() - getPadding().getLeft() - getPadding().getRight();
                 var ah = this.prefHeight() - getPadding().getTop() - getPadding().getBottom();
                 float x = 0, y = 0;
-                switch (align.getHpos()) {
+                switch (align.getHPos()) {
                     case LEFT:
                         x = 0;
                         break;
@@ -86,7 +86,7 @@ public class Button extends Labeled {
                         x = aw - child.prefWidth();
                         break;
                 }
-                switch (align.getVpos()) {
+                switch (align.getVPos()) {
                     case TOP:
                         y = 0;
                         break;

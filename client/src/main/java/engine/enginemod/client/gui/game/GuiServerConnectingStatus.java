@@ -8,6 +8,7 @@ import engine.gui.control.Button;
 import engine.gui.layout.BorderPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
+import engine.gui.misc.HPos;
 import engine.gui.misc.Insets;
 import engine.gui.misc.Pos;
 import engine.gui.text.Text;
@@ -33,7 +34,7 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
 
     public GuiServerConnectingStatus(String ip, int port) {
         var vbox = new VBox();
-        vbox.alignment().set(Pos.HPos.CENTER);
+        vbox.alignment().set(HPos.CENTER);
         vbox.setPadding(new Insets(200, 0, 0, 0));
         lblStatus = new Text("Connecting");
         lblReason = new Text();

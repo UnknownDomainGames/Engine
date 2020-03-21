@@ -65,7 +65,7 @@ public class Region extends Parent {
     }
 
     public static void positionInArea(Node child, float areaX, float areaY, float areaWidth, float areaHeight,
-                                      float areaBaselineOffset, Insets margin, Pos.HPos halignment, Pos.VPos valignment, boolean isSnapToPixel) {
+                                      float areaBaselineOffset, Insets margin, HPos halignment, VPos valignment, boolean isSnapToPixel) {
         Insets childMargin = margin != null ? margin : Insets.EMPTY;
 
         position(child, areaX, areaY, areaWidth, areaHeight, areaBaselineOffset,
@@ -83,7 +83,7 @@ public class Region extends Parent {
     private static void position(Node child, float areaX, float areaY, float areaWidth, float areaHeight,
                                  float areaBaselineOffset,
                                  float topMargin, float rightMargin, float bottomMargin, float leftMargin,
-                                 Pos.HPos hpos, Pos.VPos vpos, boolean isSnapToPixel) {
+                                 HPos hpos, VPos vpos, boolean isSnapToPixel) {
         final float xoffset = leftMargin + computeXOffset(areaWidth - leftMargin - rightMargin,
                 child.getWidth(), hpos);
         final float yoffset;
@@ -106,7 +106,7 @@ public class Region extends Parent {
         child.relocate(x, y);
     }
 
-    static float computeXOffset(float width, float contentWidth, Pos.HPos hpos) {
+    static float computeXOffset(float width, float contentWidth, HPos hpos) {
         switch (hpos) {
             case LEFT:
                 return 0;
@@ -119,7 +119,7 @@ public class Region extends Parent {
         }
     }
 
-    static float computeYOffset(float height, float contentHeight, Pos.VPos vpos) {
+    static float computeYOffset(float height, float contentHeight, VPos vpos) {
         switch (vpos) {
             case BASELINE:
             case TOP:
@@ -188,7 +188,7 @@ public class Region extends Parent {
         return RegionRenderer.INSTANCE;
     }
 
-    protected void layoutInArea(Node c, float areaX, float areaY, float areaWidth, float areaHeight, int areaBaselineOffset, Insets margin, Pos.HPos hAlign, Pos.VPos vAlign) {
+    protected void layoutInArea(Node c, float areaX, float areaY, float areaWidth, float areaHeight, int areaBaselineOffset, Insets margin, HPos hAlign, VPos vAlign) {
         Insets childMargin = margin != null ? margin : Insets.EMPTY;
 
         float top = childMargin.getTop();

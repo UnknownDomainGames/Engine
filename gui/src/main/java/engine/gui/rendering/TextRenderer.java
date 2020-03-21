@@ -54,7 +54,7 @@ public final class TextRenderer implements ComponentRenderer<Text> {
         float y = 0;
         for (LineMesh mesh : meshes) {
             var y1 = y + (lineHeight * leading - lineHeight) / 2;
-            switch (alignment.getHpos()) {
+            switch (alignment.getHPos()) {
                 case RIGHT:
                     graphics.drawText(mesh.mesh, text.getWidth() - mesh.width, y1);
                     break;

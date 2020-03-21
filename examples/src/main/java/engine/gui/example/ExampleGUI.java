@@ -6,6 +6,7 @@ import engine.gui.control.Button;
 import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Border;
+import engine.gui.misc.HPos;
 import engine.gui.misc.Pos;
 import engine.gui.stage.Stage;
 import engine.gui.text.Text;
@@ -25,7 +26,7 @@ public class ExampleGUI extends GUIApplication {
         flowPane.alignment().set(Pos.CENTER);
 
         VBox vBox = new VBox();
-        vBox.alignment().set(Pos.HPos.CENTER);
+        vBox.alignment().set(HPos.CENTER);
         vBox.spacing().set(5);
 
         Text text = new Text("Hello World");

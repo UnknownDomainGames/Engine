@@ -8,6 +8,7 @@ import engine.gui.layout.HBox;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Border;
 import engine.gui.misc.Bounds;
+import engine.gui.misc.HPos;
 import engine.gui.misc.Pos;
 import engine.gui.stage.Popup;
 import engine.gui.stage.Stage;
@@ -36,7 +37,7 @@ public class ExamplePopup extends GUIApplication {
             Popup popup = new Popup();
 
             VBox vBox = new VBox();
-            vBox.alignment().set(Pos.HPos.CENTER);
+            vBox.alignment().set(HPos.CENTER);
             vBox.setBorder(new Border(Color.WHITE));
             Text text = new Text("Hello Popup");
             Button hidePopup = new Button("Hide Popup");

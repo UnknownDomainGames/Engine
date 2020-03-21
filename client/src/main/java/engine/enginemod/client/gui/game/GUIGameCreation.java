@@ -12,6 +12,7 @@ import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
+import engine.gui.misc.HPos;
 import engine.gui.misc.Pos;
 import engine.gui.text.Text;
 import engine.util.Color;
@@ -27,7 +28,7 @@ public class GUIGameCreation extends FlowPane {
 
         VBox vBox = new VBox();
         vBox.spacing().set(5);
-        vBox.alignment().set(Pos.HPos.CENTER);
+        vBox.alignment().set(HPos.CENTER);
         getChildren().add(vBox);
 
         Text text = new Text();

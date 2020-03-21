@@ -5,20 +5,20 @@ import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
+import engine.gui.misc.HPos;
 import engine.gui.misc.Insets;
-import engine.gui.misc.Pos;
 import engine.gui.util.Utils;
 
 public class VBox extends Pane {
 
     private final MutableFloatValue spacing = new SimpleMutableFloatValue();
-    private final MutableObjectValue<Pos.HPos> alignment = new SimpleMutableObjectValue<>();
+    private final MutableObjectValue<HPos> alignment = new SimpleMutableObjectValue<>();
 
     public final MutableFloatValue spacing() {
         return spacing;
     }
 
-    public final MutableObjectValue<Pos.HPos> alignment() {
+    public final MutableObjectValue<HPos> alignment() {
         return alignment;
     }
 
@@ -54,7 +54,7 @@ public class VBox extends Pane {
         for (Node node : getChildren()) {
             float prefWidth = Utils.prefWidth(node);
             float prefHeight = Utils.prefHeight(node);
-            x = alignment.get() == Pos.HPos.RIGHT ? w - prefWidth : alignment.get() == Pos.HPos.CENTER ? (w - prefWidth) / 2 : 0;
+            x = alignment.get() == HPos.RIGHT ? w - prefWidth : alignment.get() == HPos.CENTER ? (w - prefWidth) / 2 : 0;
             x += padding.getLeft();
             layoutInArea(node, snap(x, true), snap(y, true), prefWidth, prefHeight);
             y += prefHeight + spacing;

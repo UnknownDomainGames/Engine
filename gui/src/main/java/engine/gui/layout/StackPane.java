@@ -89,8 +89,8 @@ public class StackPane extends Pane {
         for (Node child : getChildren()) {
             var childAlignment = getAlignment(child);
             layoutInArea(child, insideX, insideY, insideWidth, insideHeight, 0, Insets.EMPTY,
-                    childAlignment != null ? childAlignment.getHpos() : paneAlignment().get().getHpos(),
-                    childAlignment != null ? childAlignment.getVpos() : paneAlignment().get().getVpos());
+                    childAlignment != null ? childAlignment.getHPos() : paneAlignment().get().getHPos(),
+                    childAlignment != null ? childAlignment.getVPos() : paneAlignment().get().getVPos());
         }
     }
 }
