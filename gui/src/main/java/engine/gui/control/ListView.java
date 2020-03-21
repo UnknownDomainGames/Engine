@@ -7,7 +7,6 @@ import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
 import engine.gui.layout.HBox;
 import engine.gui.layout.Pane;
-import engine.gui.layout.ScrollPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Orientation;
 import engine.gui.text.Text;

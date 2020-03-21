@@ -1,12 +1,11 @@
-package engine.gui.layout;
+package engine.gui.control;
 
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableDoubleValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
-import engine.gui.control.HSlider;
-import engine.gui.control.VSlider;
+import engine.gui.layout.BorderPane;
 import engine.gui.misc.Pos;
 import engine.gui.util.Utils;
 

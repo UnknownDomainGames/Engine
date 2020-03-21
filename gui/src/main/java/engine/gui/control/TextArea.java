@@ -2,7 +2,6 @@ package engine.gui.control;
 
 import engine.graphics.font.FontManager;
 import engine.gui.input.KeyEvent;
-import engine.gui.layout.ScrollPane;
 import engine.gui.text.WrapText;
 import engine.input.KeyCode;
 
