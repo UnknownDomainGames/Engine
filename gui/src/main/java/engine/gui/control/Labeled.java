@@ -21,8 +21,8 @@ public class Labeled extends Control {
         if (graphic == null) {
             graphic = new SimpleMutableObjectValue<>();
             graphic.addChangeListener((observable, oldValue, newValue) -> {
-                getChildren().remove(oldValue);
-                getChildren().add(newValue);
+                if (oldValue != null) getChildren().remove(oldValue);
+                if (newValue != null) getChildren().add(newValue);
             });
         }
         return graphic;
