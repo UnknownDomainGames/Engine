@@ -100,7 +100,7 @@ public class Scene implements EventTarget {
 
     public void setRoot(Parent root) {
         Validate.notNull(root);
-        if (root.parent().get() != null) {
+        if (root.getParent() != null) {
             throw new IllegalStateException(root + " is already inside a container and cannot be set as root");
         }
 

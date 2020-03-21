@@ -97,8 +97,8 @@ public class VSlider extends Region {
         }
         resizeBack(sliderThickness.get(), sliderLength.get());
         resizeSlider(sliderThickness.get(), sliderLength.get() * (float) (step.get() / (max.get() - min.get())));
-        slider.layoutX().set(back.getLayoutX());
-        slider.layoutY().set((float) (((back.getHeight() - slider.getHeight()) * (flip.get() ? 1 - ((value.get() - min.get()) / (max.get() - min.get())) : ((value.get() - min.get()) / (max.get() - min.get()))))));
+        slider.setLayoutX(back.getLayoutX());
+        slider.setLayoutY((float) (((back.getHeight() - slider.getHeight()) * (flip.get() ? 1 - ((value.get() - min.get()) / (max.get() - min.get())) : ((value.get() - min.get()) / (max.get() - min.get()))))));
     }
 
     private void onPressed(MouseActionEvent e) {

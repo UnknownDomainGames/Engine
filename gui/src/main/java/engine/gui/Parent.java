@@ -90,10 +90,10 @@ public abstract class Parent extends Node {
                 ((Parent) child).needsLayout();
             }
         }
-        Parent parent = parent().get();
+        Parent parent = getParent();
         while (parent != null && parent.layoutState == LayoutState.CLEAN){
             parent.layoutState = LayoutState.NEED_LAYOUT;
-            parent = parent.parent().get();
+            parent = parent.getParent();
         }
     }
 

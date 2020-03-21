@@ -143,7 +143,7 @@ public abstract class TextInput extends Control {
     protected abstract int getNearestMousePos(float posX, float posY);
 
     protected void onMouseMove(MouseEvent event) {
-        if (pressed().get()) {
+        if (isPressed()) {
             selectPositionCaret(getNearestMousePos(event.getX(), event.getY()));
         }
     }
@@ -343,7 +343,7 @@ public abstract class TextInput extends Control {
 
     public boolean backspace() {
         boolean failed = true;
-        if (editable.get() && !disabled().get()) {
+        if (editable.get()) {
             final String original = text.get();
             final int caret = this.caret.get();
             final int anchor = this.anchor.get();
@@ -362,7 +362,7 @@ public abstract class TextInput extends Control {
 
     public boolean delete() {
         boolean failed = true;
-        if (editable.get() && !disabled().get()) {
+        if (editable.get()) {
             final int textLength = length();
             final String original = text.get();
             final int caret = this.caret.get();

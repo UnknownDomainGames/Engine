@@ -90,8 +90,8 @@ public class HSlider extends Region {
         }
         resizeBack(sliderLength.get(), sliderThickness.get());
         resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
-        slider.layoutX().set((float) ((back.rectSize().get().x() - slider.rectSize().get().x()) * ((value.get() - min.get()) / (max.get() - min.get()))));
-        slider.layoutY().set(back.getLayoutY());
+        slider.setLayoutX((float) ((back.rectSize().get().x() - slider.rectSize().get().x()) * ((value.get() - min.get()) / (max.get() - min.get()))));
+        slider.setLayoutY(back.getLayoutY());
     }
 
     private void onMousePressed(MouseActionEvent e) {

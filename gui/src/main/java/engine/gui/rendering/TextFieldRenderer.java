@@ -73,7 +73,7 @@ public final class TextFieldRenderer extends RegionRenderer<TextField> {
                 graphics.drawText(textMesh, selectionStart, selectionEnd, offset, 0);
             }
         }
-        if (textField.focused().get() && System.currentTimeMillis() % 1000 < 500) {
+        if (textField.isFocused() && System.currentTimeMillis() % 1000 < 500) {
             if (textField.selection().isPresent() && textField.selection().get().isInRange(textField.caret().get())) {
                 graphics.setColor(frontColor.difference(selectionColor));
             }
