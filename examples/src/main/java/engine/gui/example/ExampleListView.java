@@ -21,7 +21,7 @@ public class ExampleListView extends GUIApplication {
         ListView<String> listView = new ListView<>();
         listView.setPrefSize(Region.USE_PARENT_VALUE, Region.USE_PARENT_VALUE);
         for (int i = 0; i < 100; i++) {
-            listView.items().add("Hello World");
+            listView.items().add("Hello World " + i);
         }
 
         flowPane.getChildren().add(listView);

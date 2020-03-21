@@ -2,7 +2,6 @@ package engine.gui.control;
 
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableDoubleValue;
-import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
 import engine.gui.layout.BorderPane;
@@ -51,24 +50,25 @@ public class ScrollPane extends BorderPane {
     }
 
     private void update() {
-        if (content.isPresent()) {
-            if (content.get().getWidth() > getWidth()) {
+        Node content = getContent();
+        if (content != null) {
+            if (content.getWidth() > getWidth()) {
                 hScroll.setDisabled(false);
                 vScroll.setVisible(true);
-                var delta = content.get().getWidth() - getWidth();
+                var delta = content.getWidth() - getWidth();
                 hScroll.max().set(delta);
-                hScroll.step().set(delta / 10.0f);
+                hScroll.step().set(getWidth() / content.getWidth() * delta);
             } else {
                 hScroll.setDisabled(true);
                 hScroll.setVisible(false);
                 hScroll.max().set(1);
             }
-            if (content.get().getHeight() > getHeight()) {
+            if (content.getHeight() > getHeight()) {
                 vScroll.setDisabled(false);
                 vScroll.setVisible(true);
-                var delta = content.get().getHeight() - getHeight();
+                var delta = content.getHeight() - getHeight();
                 vScroll.max().set(delta);
-                vScroll.step().set(delta / 10.0f);
+                vScroll.step().set(getHeight() / content.getHeight() * delta);
             } else {
                 vScroll.setDisabled(true);
                 vScroll.setVisible(false);
@@ -82,32 +82,35 @@ public class ScrollPane extends BorderPane {
         }
     }
 
+    public MutableObjectValue<Node> content() {
+        return content;
+    }
+
+    public Node getContent() {
+        return content.get();
+    }
+
     public void setContent(Node content) {
         this.content.set(content);
-//        center().set(content);
     }
 
-    public ObservableValue<Node> content() {
-        return content.toUnmodifiable();
-    }
-
-    public ObservableDoubleValue xOffset(){
+    public ObservableDoubleValue xOffset() {
         return hScroll.value().toUnmodifiable();
     }
 
-    public ObservableDoubleValue yOffset(){
+    public ObservableDoubleValue yOffset() {
         return vScroll.value().toUnmodifiable();
     }
 
     @Override
     protected void layoutChildren() {
         super.layoutChildren();
-        if (content.isPresent()) {
-            var c = content.get();
-            layoutInArea(c, hScroll.disabled().get() ? 0 : hScroll.value().getFloat(), vScroll.disabled().get() ? 0 : -vScroll.value().getFloat(),
-                    Utils.prefWidth(c),
-                    Utils.prefHeight(c), 0/*ignore baseline*/,
-                    getNodeMargin(c),
+        var content = getContent();
+        if (content != null) {
+            layoutInArea(content, hScroll.disabled().get() ? 0 : hScroll.value().getFloat(), vScroll.disabled().get() ? 0 : -vScroll.value().getFloat(),
+                    Utils.prefWidth(content),
+                    Utils.prefHeight(content), 0/*ignore baseline*/,
+                    getNodeMargin(content),
                     HPos.CENTER,
                     VPos.CENTER);
 //            update();
