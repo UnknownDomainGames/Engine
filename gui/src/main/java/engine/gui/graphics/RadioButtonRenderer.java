@@ -1,4 +1,4 @@
-package engine.gui.rendering;
+package engine.gui.graphics;
 
 import engine.gui.control.RadioButton;
 import engine.gui.misc.Insets;

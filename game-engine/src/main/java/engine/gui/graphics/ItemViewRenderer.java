@@ -1,4 +1,4 @@
-package engine.gui.rendering;
+package engine.gui.graphics;
 
 import engine.graphics.item.ItemRenderManager;
 import engine.graphics.util.DrawMode;

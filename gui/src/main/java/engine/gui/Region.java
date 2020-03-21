@@ -2,9 +2,9 @@ package engine.gui;
 
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.NonNullMutableObjectValue;
+import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.RegionRenderer;
 import engine.gui.misc.*;
-import engine.gui.rendering.ComponentRenderer;
-import engine.gui.rendering.RegionRenderer;
 import engine.math.Math2;
 
 public class Region extends Parent {

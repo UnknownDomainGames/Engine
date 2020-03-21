@@ -4,9 +4,9 @@ import com.github.mouse0w0.observable.value.*;
 import engine.graphics.font.Font;
 import engine.graphics.font.FontManager;
 import engine.gui.Node;
+import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.TextRenderer;
 import engine.gui.misc.Pos;
-import engine.gui.rendering.ComponentRenderer;
-import engine.gui.rendering.TextRenderer;
 import engine.util.Color;
 
 public class Text extends Node {

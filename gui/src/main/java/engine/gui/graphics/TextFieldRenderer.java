@@ -1,4 +1,4 @@
-package engine.gui.rendering;
+package engine.gui.graphics;
 
 import com.google.common.base.Strings;
 import engine.graphics.font.Font;

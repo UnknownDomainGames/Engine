@@ -1,4 +1,4 @@
-package engine.gui.rendering;
+package engine.gui.graphics;
 
 import engine.graphics.font.TextMesh;
 import engine.graphics.mesh.Mesh;

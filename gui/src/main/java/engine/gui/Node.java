@@ -4,10 +4,10 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
 import engine.gui.event.*;
+import engine.gui.graphics.ComponentRenderer;
 import engine.gui.input.*;
 import engine.gui.misc.Bounds;
 import engine.gui.misc.Point;
-import engine.gui.rendering.ComponentRenderer;
 import engine.gui.stage.Stage;
 import engine.input.MouseButton;
 

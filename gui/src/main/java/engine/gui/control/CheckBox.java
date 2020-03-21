@@ -1,14 +1,14 @@
 package engine.gui.control;
 
 import com.github.mouse0w0.observable.value.*;
+import engine.gui.graphics.CheckBoxRenderer;
+import engine.gui.graphics.ComponentRenderer;
 import engine.gui.input.MouseActionEvent;
 import engine.gui.layout.BorderPane;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
 import engine.gui.misc.Insets;
 import engine.gui.misc.Pos;
-import engine.gui.rendering.CheckBoxRenderer;
-import engine.gui.rendering.ComponentRenderer;
 import engine.gui.text.Text;
 import engine.util.Color;
 

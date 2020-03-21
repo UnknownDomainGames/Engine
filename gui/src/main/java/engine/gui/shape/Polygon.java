@@ -1,6 +1,6 @@
 package engine.gui.shape;
 
-import engine.gui.rendering.ComponentRenderer;
+import engine.gui.graphics.ComponentRenderer;
 
 import java.util.ArrayList;
 import java.util.List;

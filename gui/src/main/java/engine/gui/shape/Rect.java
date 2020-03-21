@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.value.MutableFloatValue;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import engine.gui.rendering.ComponentRenderer;
+import engine.gui.graphics.ComponentRenderer;
 import engine.util.Color;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;

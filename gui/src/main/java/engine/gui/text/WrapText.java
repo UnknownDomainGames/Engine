@@ -3,8 +3,8 @@ package engine.gui.text;
 import com.github.mouse0w0.observable.value.MutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import engine.graphics.font.FontManager;
-import engine.gui.rendering.ComponentRenderer;
-import engine.gui.rendering.WrapTextRenderer;
+import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.WrapTextRenderer;
 
 public class WrapText extends Text {
 

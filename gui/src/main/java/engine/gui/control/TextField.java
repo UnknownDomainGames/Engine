@@ -1,8 +1,8 @@
 package engine.gui.control;
 
 import engine.graphics.font.FontManager;
-import engine.gui.rendering.ComponentRenderer;
-import engine.gui.rendering.TextFieldRenderer;
+import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.TextFieldRenderer;
 
 public class TextField extends TextInput {
 

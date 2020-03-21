@@ -5,8 +5,8 @@ import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
-import engine.gui.rendering.ComponentRenderer;
-import engine.gui.rendering.ItemViewRenderer;
+import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.ItemViewRenderer;
 import engine.item.ItemStack;
 
 public class ItemView extends Node {
