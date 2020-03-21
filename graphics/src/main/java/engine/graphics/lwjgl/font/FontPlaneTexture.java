@@ -23,7 +23,7 @@ import static org.lwjgl.stb.STBTruetype.*;
 public final class FontPlaneTexture {
     private Texture2D texture;
     private Font font;
-    private NativeTTFontInfo fontInfo;
+    private TTFontInfo fontInfo;
 
     private ArrayList<Character.UnicodeBlock> blocks;
     private Map<Character, CharQuad> charQuads;
@@ -42,7 +42,7 @@ public final class FontPlaneTexture {
         return texture;
     }
 
-    public NativeTTFontInfo getFontInfo() {
+    public TTFontInfo getFontInfo() {
         return fontInfo;
     }
 
@@ -69,7 +69,7 @@ public final class FontPlaneTexture {
         return charQuads.get(ch);
     }
 
-    public void bakeTexture(Font font, NativeTTFontInfo fontInfo) {
+    public void bakeTexture(Font font, TTFontInfo fontInfo) {
         if (texture != null) {
             texture.dispose();
         }

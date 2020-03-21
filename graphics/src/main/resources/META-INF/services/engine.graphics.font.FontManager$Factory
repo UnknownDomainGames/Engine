@@ -1,1 +1,1 @@
-engine.graphics.lwjgl.font.STBFontManager$Factory
+engine.graphics.lwjgl.font.STBTTFontManager$Factory

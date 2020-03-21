@@ -6,16 +6,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class NativeTTFont {
+public final class TTFont {
 
-    private final NativeTTFontInfo fontInfo;
+    private final TTFontInfo fontInfo;
     private final Font font;
 
     private final float scaleForPixelHeight;
 
     private final List<FontPlaneTexture> planeTextures;
 
-    public NativeTTFont(NativeTTFontInfo fontInfo, Font font, float scaleForPixelHeight, FontPlaneTexture... planes) {
+    public TTFont(TTFontInfo fontInfo, Font font, float scaleForPixelHeight, FontPlaneTexture... planes) {
         this.fontInfo = fontInfo;
         this.font = font;
         this.scaleForPixelHeight = scaleForPixelHeight;
@@ -35,7 +35,7 @@ public final class NativeTTFont {
         return planeTextures;
     }
 
-    public NativeTTFontInfo getFontInfo() {
+    public TTFontInfo getFontInfo() {
         return fontInfo;
     }
 

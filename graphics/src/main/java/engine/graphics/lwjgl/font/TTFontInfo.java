@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetFontOffsetForIndex;
 import static org.lwjgl.stb.STBTruetype.stbtt_InitFont;
 
-public final class NativeTTFontInfo {
+public final class TTFontInfo {
 
     private Path fontFile;
     private ByteBuffer fontData;
@@ -168,8 +168,8 @@ public final class NativeTTFontInfo {
             return this;
         }
 
-        public NativeTTFontInfo build() {
-            NativeTTFontInfo fontInfo = new NativeTTFontInfo();
+        public TTFontInfo build() {
+            TTFontInfo fontInfo = new TTFontInfo();
             fontInfo.fontFile = this.fontFile;
             fontInfo.fontData = this.fontData;
 
