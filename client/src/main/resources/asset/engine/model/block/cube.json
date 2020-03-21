@@ -1,0 +1,50 @@
+{
+  "Cubes": [
+    {
+      "From": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "To": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "Faces": {
+        "Up": {
+          "Texture": "$Top",
+          "CullFaces": "UP"
+        },
+        "Down": {
+          "Texture": "$Bottom",
+          "CullFaces": "DOWN"
+        },
+        "North": {
+          "Texture": "$North",
+          "CullFaces": "NORTH"
+        },
+        "South": {
+          "Texture": "$South",
+          "CullFaces": "SOUTH"
+        },
+        "East": {
+          "Texture": "$East",
+          "CullFaces": "EAST"
+        },
+        "West": {
+          "Texture": "$West",
+          "CullFaces": "WEST"
+        }
+      }
+    }
+  ],
+  "FullFaces": [
+    "UP",
+    "DOWN",
+    "NORTH",
+    "SOUTH",
+    "EAST",
+    "WEST"
+  ]
+}

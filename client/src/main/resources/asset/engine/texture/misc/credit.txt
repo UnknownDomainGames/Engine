@@ -1,0 +1,4 @@
+skybox.png: KIIRA (https://opengameart.org/content/sky-box-sunny-day)
+skybox_evening.png: (http://www.custommapmakers.org/skyboxes.php) (Original name: Hw red)
+skybox_steel.png: (http://www.custommapmakers.org/skyboxes.php) (Original name: Mp Blackgold)
+skybox_debug.png: cvrunmin
