@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-public class VertexElement {
+public final class VertexElement {
 
     public static final String NAME_POSITION = "Position";
     public static final String NAME_COLOR = "Color";

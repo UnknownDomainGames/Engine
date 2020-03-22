@@ -2,7 +2,6 @@ package engine.graphics.gl.mesh;
 
 import engine.graphics.gl.buffer.GLVertexBuffer;
 import engine.graphics.gl.util.GLHelper;
-import engine.graphics.vertex.VertexElement;
 import engine.graphics.vertex.VertexFormat;
 import org.lwjgl.opengl.GL20C;
 import org.lwjgl.opengl.GL30C;
@@ -35,16 +34,12 @@ public final class GLVertexArrayHelper {
         GL30C.glBindVertexArray(vertexArray);
         buffer.bind();
         final int stride = format.getBytes();
-        int offset = 0;
-        int index = firstIndex;
-        for (VertexElement element : format.getElements()) {
-            for (int i = 0, size = element.getIndexCount(); i < size; i++, index++) {
-                GL20C.glEnableVertexAttribArray(index);
-                GL20C.nglVertexAttribPointer(index, element.getComponentCount(),
-                        toGLDataType(element.getType()), element.isNormalized(), stride, offset + i * 16);
-                GL33C.glVertexAttribDivisor(index, element.getDivisor());
-            }
-            offset += element.getBytes();
+        for (VertexFormat.Entry entry : format.getEntries()) {
+            final int index = firstIndex + entry.getIndex();
+            GL20C.glEnableVertexAttribArray(index);
+            GL20C.nglVertexAttribPointer(index, entry.getSize(), toGLDataType(entry.getType()),
+                    entry.isNormalized(), stride, entry.getOffset());
+            GL33C.glVertexAttribDivisor(index, entry.getDivisor());
         }
 //        }
     }
