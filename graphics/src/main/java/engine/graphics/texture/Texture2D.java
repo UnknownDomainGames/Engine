@@ -21,6 +21,14 @@ public interface Texture2D extends Texture {
 
     int getHeight();
 
+    void upload(int level, ReadOnlyImage image);
+
+    void upload(int level, int offsetX, int offsetY, ReadOnlyImage image);
+
+    void upload(int level, int width, int height, ByteBuffer pixels);
+
+    void upload(int level, int offsetX, int offsetY, int width, int height, ByteBuffer pixels);
+
     interface Builder {
         Builder format(ColorFormat format);
 

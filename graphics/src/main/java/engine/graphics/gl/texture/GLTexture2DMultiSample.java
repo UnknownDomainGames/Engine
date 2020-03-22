@@ -1,10 +1,13 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLHelper;
+import engine.graphics.image.ReadOnlyImage;
 import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.Texture2D;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.opengl.GL45;
+
+import java.nio.ByteBuffer;
 
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 
@@ -41,6 +44,26 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
     @Override
     public int getHeight() {
         return height;
+    }
+
+    @Override
+    public void upload(int level, ReadOnlyImage image) {
+        throw new UnsupportedOperationException("upload");
+    }
+
+    @Override
+    public void upload(int level, int offsetX, int offsetY, ReadOnlyImage image) {
+        throw new UnsupportedOperationException("upload");
+    }
+
+    @Override
+    public void upload(int level, int width, int height, ByteBuffer pixels) {
+        throw new UnsupportedOperationException("upload");
+    }
+
+    @Override
+    public void upload(int level, int offsetX, int offsetY, int width, int height, ByteBuffer pixels) {
+        throw new UnsupportedOperationException("upload");
     }
 
     @Override
