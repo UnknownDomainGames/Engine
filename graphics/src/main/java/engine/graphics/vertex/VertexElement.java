@@ -82,6 +82,10 @@ public final class VertexElement {
         return divisor;
     }
 
+    public boolean isInstanced() {
+        return divisor > 0;
+    }
+
     public boolean isNormalized() {
         return normalized;
     }

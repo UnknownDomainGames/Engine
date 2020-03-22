@@ -77,7 +77,7 @@ public final class VertexFormat {
             index += element.getIndexCount();
             bytes += element.getBytes();
             hash = hash * 31 + element.hashCode();
-            instanced |= element.getDivisor() > 0;
+            instanced |= element.isInstanced();
             switch (element.getName()) {
                 case NAME_POSITION:
                     positionElement = i;
