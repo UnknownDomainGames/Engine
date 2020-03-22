@@ -26,6 +26,10 @@ public final class Size {
         return minWidth == null ? USE_COMPUTED_VALUE : minWidth.get();
     }
 
+    public void setMinWidth(float minWidth) {
+        minWidth().set(minWidth);
+    }
+
     public MutableFloatValue minHeight() {
         if (minHeight == null) {
             minHeight = new SimpleMutableFloatValue(USE_COMPUTED_VALUE);
@@ -35,6 +39,10 @@ public final class Size {
 
     public float getMinHeight() {
         return minHeight == null ? USE_COMPUTED_VALUE : minHeight.get();
+    }
+
+    public void setMinHeight(float minHeight) {
+        minHeight().set(minHeight);
     }
 
     public void setMinSize(float width, float height) {
@@ -53,6 +61,10 @@ public final class Size {
         return prefWidth == null ? USE_COMPUTED_VALUE : prefWidth.get();
     }
 
+    public void setPrefWidth(float prefWidth) {
+        prefWidth().set(prefWidth);
+    }
+
     public MutableFloatValue prefHeight() {
         if (prefHeight == null) {
             prefHeight = new SimpleMutableFloatValue(USE_COMPUTED_VALUE);
@@ -62,6 +74,10 @@ public final class Size {
 
     public float getPrefHeight() {
         return prefHeight == null ? USE_COMPUTED_VALUE : prefHeight.get();
+    }
+
+    public void setPrefHeight(float prefHeight) {
+        prefHeight().set(prefHeight);
     }
 
     public void setPrefSize(float width, float height) {
@@ -80,6 +96,10 @@ public final class Size {
         return maxWidth == null ? USE_COMPUTED_VALUE : maxWidth.get();
     }
 
+    public void setMaxWidth(float maxWidth) {
+        maxWidth().set(maxWidth);
+    }
+
     public MutableFloatValue maxHeight() {
         if (maxHeight == null) {
             maxHeight = new SimpleMutableFloatValue(USE_COMPUTED_VALUE);
@@ -91,8 +111,12 @@ public final class Size {
         return maxHeight == null ? USE_COMPUTED_VALUE : maxHeight.get();
     }
 
+    public void setMaxHeight(float maxHeight) {
+        maxHeight().set(maxHeight);
+    }
+
     public void setMaxSize(float width, float height) {
-        maxWidth().set(width);
-        maxHeight().set(height);
+        setMaxWidth(width);
+        setMaxHeight(height);
     }
 }

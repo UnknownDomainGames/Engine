@@ -68,39 +68,63 @@ public class Region extends Parent {
         return size;
     }
 
-    public final float getMinWidth() {
+    public float getMinWidth() {
         return size.getMinWidth();
     }
 
-    public final float getMinHeight() {
+    public void setMinWidth(float minWidth) {
+        size.setMinWidth(minWidth);
+    }
+
+    public float getMinHeight() {
         return size.getMinHeight();
     }
 
-    public final void setMinSize(float width, float height) {
+    public void setMinHeight(float minHeight) {
+        size.setMinHeight(minHeight);
+    }
+
+    public void setMinSize(float width, float height) {
         size.setMinSize(width, height);
     }
 
-    public final float getPrefWidth() {
+    public float getPrefWidth() {
         return size.getPrefWidth();
     }
 
-    public final float getPrefHeight() {
+    public void setPrefWidth(float prefWidth) {
+        size.setPrefWidth(prefWidth);
+    }
+
+    public float getPrefHeight() {
         return size.getPrefHeight();
     }
 
-    public final void setPrefSize(float width, float height) {
+    public void setPrefHeight(float prefHeight) {
+        size.setPrefHeight(prefHeight);
+    }
+
+    public void setPrefSize(float width, float height) {
         size.setPrefSize(width, height);
     }
 
-    public final float getMaxWidth() {
+    public float getMaxWidth() {
         return size.getMaxWidth();
     }
 
-    public final float getMaxHeight() {
+    public void setMaxWidth(float maxWidth) {
+        size.setMaxWidth(maxWidth);
+    }
+
+    public float getMaxHeight() {
         return size.getMaxHeight();
     }
 
-    public final void setMaxSize(float width, float height) {
+    public void setMaxHeight(float maxHeight) {
+        size.setMaxHeight(maxHeight);
+    }
+
+    public void setMaxSize(float width, float height) {
         size.setMaxSize(width, height);
     }
 
