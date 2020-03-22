@@ -49,4 +49,14 @@ public class Math2Test {
         assertEquals(0, loop(-360, 360));
         assertEquals(270, loop(-360 - 90, 360));
     }
+
+    @Test
+    void testCeilDiv() {
+        assertEquals(1, ceilDiv(3, 3));
+        assertEquals(1, ceilDiv(2, 3));
+        assertEquals(2, ceilDiv(4, 3));
+        assertEquals(-1, ceilDiv(-3, 3));
+        assertEquals(-1, ceilDiv(-4, 3));
+        assertEquals(0, ceilDiv(-2, 3));
+    }
 }

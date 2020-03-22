@@ -138,7 +138,7 @@ public class LogicalDevice {
             var vertexAttr = VkVertexInputAttributeDescription.callocStack(state.getFormat().getElements().length, stack);
             vertexInputState.pVertexAttributeDescriptions(vertexAttr);
             int offset = 0;
-            for (int i = 0; i < state.getFormat().getElementCount(); i++) {
+            for (int i = 0; i < state.getFormat().getIndexCount(); i++) {
                 var attr = vertexAttr.get();
                 attr.binding(0).location(i).offset(offset).format();
                 offset += state.getFormat().getElements()[i].getBytes();

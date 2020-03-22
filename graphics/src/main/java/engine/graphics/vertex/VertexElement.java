@@ -1,6 +1,7 @@
 package engine.graphics.vertex;
 
 import engine.graphics.util.DataType;
+import engine.math.Math2;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -29,26 +30,32 @@ public class VertexElement {
     private final String name;
     private final int componentCount;
     private final int bytes;
+    private final int indexCount;
+    private final int divisor;
     private final boolean normalized;
-
-    public VertexElement(@Nonnull DataType type, int componentCount) {
-        this(type, NAME_UNKNOWN, componentCount, false);
-    }
-
-    public VertexElement(@Nonnull DataType type, int componentCount, boolean normalized) {
-        this(type, NAME_UNKNOWN, componentCount, normalized);
-    }
+    private final int hash;
 
     public VertexElement(@Nonnull DataType type, @Nonnull String name, int componentCount) {
-        this(type, name, componentCount, false);
+        this(type, name, componentCount, 0, false);
     }
 
     public VertexElement(@Nonnull DataType type, @Nonnull String name, int componentCount, boolean normalized) {
+        this(type, name, componentCount, 0, normalized);
+    }
+
+    public VertexElement(@Nonnull DataType type, @Nonnull String name, int componentCount, int divisor) {
+        this(type, name, componentCount, divisor, false);
+    }
+
+    public VertexElement(@Nonnull DataType type, @Nonnull String name, int componentCount, int divisor, boolean normalized) {
         this.type = notNull(type);
         this.name = notNull(name);
         this.componentCount = componentCount;
         this.bytes = componentCount * type.getBytes();
+        this.indexCount = Math2.ceilDiv(componentCount, 4);
+        this.divisor = divisor;
         this.normalized = normalized;
+        this.hash = Objects.hash(type, name, componentCount, divisor, normalized);
     }
 
     public DataType getType() {
@@ -67,6 +74,14 @@ public class VertexElement {
         return bytes;
     }
 
+    public int getIndexCount() {
+        return indexCount;
+    }
+
+    public int getDivisor() {
+        return divisor;
+    }
+
     public boolean isNormalized() {
         return normalized;
     }
@@ -77,6 +92,7 @@ public class VertexElement {
                 "type=" + type +
                 ", name='" + name + '\'' +
                 ", componentCount=" + componentCount +
+                ", divisor=" + divisor +
                 ", normalized=" + normalized +
                 '}';
     }
@@ -94,6 +110,6 @@ public class VertexElement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, name, componentCount, normalized);
+        return hash;
     }
 }

@@ -6,6 +6,7 @@ import engine.graphics.vertex.VertexElement;
 import engine.graphics.vertex.VertexFormat;
 import org.lwjgl.opengl.GL20C;
 import org.lwjgl.opengl.GL30C;
+import org.lwjgl.opengl.GL33C;
 import org.lwjgl.opengl.GL45C;
 
 import static engine.graphics.gl.util.GLHelper.toGLDataType;
@@ -33,15 +34,18 @@ public final class GLVertexArrayHelper {
 //        } else {
         GL30C.glBindVertexArray(vertexArray);
         buffer.bind();
-        VertexElement[] elements = format.getElements();
-        int stride = format.getBytes(), offset = 0;
-        for (int i = 0, index = firstIndex, size = elements.length; i < size; i++, index++) {
-            VertexElement element = elements[i];
-            GL20C.glEnableVertexAttribArray(index);
-            GL20C.glVertexAttribPointer(index, element.getComponentCount(),
-                    toGLDataType(element.getType()), element.isNormalized(), stride, offset);
-            offset += element.getBytes();
+        final int stride = format.getBytes();
+        int offset = 0;
+        int index = firstIndex;
+        for (VertexElement element : format.getElements()) {
+            for (int i = 0, size = element.getIndexCount(); i < size; i++, index++) {
+                GL20C.glEnableVertexAttribArray(index);
+                GL20C.nglVertexAttribPointer(index, element.getComponentCount(),
+                        toGLDataType(element.getType()), element.isNormalized(), stride, offset + i * 16);
+                GL33C.glVertexAttribDivisor(index, element.getDivisor());
             }
+            offset += element.getBytes();
+        }
 //        }
     }
 
@@ -50,7 +54,7 @@ public final class GLVertexArrayHelper {
     }
 
     public static void disableVertexFormat(int vertexArray, int first, VertexFormat format) {
-        disableVertexFormat(vertexArray, first, format.getElementCount());
+        disableVertexFormat(vertexArray, first, format.getIndexCount());
     }
 
     public static void disableVertexFormat(int vertexArray, int first, int count) {

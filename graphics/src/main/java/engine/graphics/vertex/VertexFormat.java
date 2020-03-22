@@ -50,7 +50,9 @@ public class VertexFormat {
     }
 
     private final VertexElement[] elements;
+    private final int indexCount;
     private final int bytes;
+    private final int hash;
 
     private int positionElement = -1;
     private int colorElement = -1;
@@ -63,10 +65,14 @@ public class VertexFormat {
 
     public VertexFormat(VertexElement... elements) {
         this.elements = elements;
+        int indexCount = 0;
         int bytes = 0;
+        int hash = 0;
         for (int i = 0; i < elements.length; i++) {
             VertexElement element = elements[i];
+            indexCount += element.getIndexCount();
             bytes += element.getBytes();
+            hash = hash * 31 + element.hashCode();
             switch (element.getName()) {
                 case NAME_POSITION:
                     positionElement = i;
@@ -89,7 +95,9 @@ public class VertexFormat {
                     break;
             }
         }
+        this.indexCount = indexCount;
         this.bytes = bytes;
+        this.hash = hash;
     }
 
     public VertexElement[] getElements() {
@@ -98,6 +106,10 @@ public class VertexFormat {
 
     public int getElementCount() {
         return elements.length;
+    }
+
+    public int getIndexCount() {
+        return indexCount;
     }
 
     public int getBytes() {
@@ -136,6 +148,8 @@ public class VertexFormat {
     public String toString() {
         return "VertexFormat{" +
                 "elements=" + Arrays.toString(elements) +
+                ", indexCount=" + indexCount +
+                ", bytes=" + bytes +
                 '}';
     }
 
@@ -149,6 +163,6 @@ public class VertexFormat {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(elements);
+        return hash;
     }
 }

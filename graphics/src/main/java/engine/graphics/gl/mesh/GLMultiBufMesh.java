@@ -21,12 +21,12 @@ import java.util.List;
 import static engine.graphics.gl.mesh.GLVertexArrayHelper.bindElementBuffer;
 import static engine.graphics.gl.mesh.GLVertexArrayHelper.enableVertexFormat;
 
-public final class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
+public class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
 
     private Attribute[] attributes;
     private MeshIndices indices;
 
-    public static MultiBufMesh.Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -154,7 +154,7 @@ public final class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
         }
     }
 
-    private static class Builder implements MultiBufMesh.Builder {
+    public static class Builder implements MultiBufMesh.Builder {
 
         private List<MeshAttribute> attributes = new ArrayList<>();
         private MeshIndices indices;
@@ -230,7 +230,7 @@ public final class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
             for (MeshAttribute attribute : attributes) {
                 attribute.mesh = mesh;
                 enableVertexFormat(mesh.id, attribute.buffer, attribute.format, index);
-                index += attribute.format.getElementCount();
+                index += attribute.format.getIndexCount();
             }
             mesh.attributes = attributes.toArray(Attribute[]::new);
             if (indices != null) {

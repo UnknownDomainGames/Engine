@@ -32,6 +32,20 @@ public class Math2 {
         return mod == 0 ? value : value + interval - mod;
     }
 
+    public static int ceilDiv(int x, int y) {
+        int r = x / y;
+        return (x ^ y) > 0 && (r * y != x) ? r + 1 : r;
+    }
+
+    public static long ceilDiv(long x, int y) {
+        return ceilDiv(x, (long) y);
+    }
+
+    public static long ceilDiv(long x, long y) {
+        long r = x / y;
+        return (x ^ y) > 0 && (r * y != x) ? r + 1 : r;
+    }
+
     public static float loop(float value, float interval) {
         if (value < 0) {
             value = loop(-value, interval);
