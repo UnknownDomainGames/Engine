@@ -38,8 +38,8 @@ public final class Size {
     }
 
     public void setMinSize(float width, float height) {
-        minHeight.set(width);
-        minHeight.set(height);
+        setMinWidth(width);
+        setMinHeight(height);
     }
 
     public MutableFloatValue prefWidth() {
@@ -65,8 +65,8 @@ public final class Size {
     }
 
     public void setPrefSize(float width, float height) {
-        prefWidth.set(width);
-        prefHeight.set(height);
+        setPrefWidth(width);
+        setPrefHeight(height);
     }
 
     public MutableFloatValue maxWidth() {
