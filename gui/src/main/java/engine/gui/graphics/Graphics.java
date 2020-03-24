@@ -29,25 +29,6 @@ public interface Graphics {
 
     void fillQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4);
 
-    void drawRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight);
-
-    void fillRoundRect(float x, float y, float width, float height, float arcWidth, float arcHeight);
-
-    /**
-     * Draw a quadratic Belzier curve
-     */
-    void drawQuadCurve(float startX, float startY, float endX, float endY, float px, float py);
-
-    /**
-     * Draw a Belazier curve
-     */
-    void drawCurve(float startX, float startY, float endX, float endY, float px1, float py1, float px2, float py2);
-
-    /**
-     * Draw a elliptical arc
-     */
-    void drawArc(float startX, float startY, float endX, float endY, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag);
-
     // TODO: void drawPolygon(Polygon polygon);
 
     // TODO: void fillPolygon(Polygon polygon);
