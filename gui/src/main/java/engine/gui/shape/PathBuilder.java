@@ -1,22 +1,38 @@
-package engine.graphics.geometry;
+package engine.gui.shape;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 public class PathBuilder {
-    private ByteBuffer buffer;
+    private FloatBuffer buffer;
 
     private float startX;
     private float startY;
     private float prevX;
     private float prevY;
 
+    public FloatBuffer getBuffer() {
+        return buffer;
+    }
+
+    public float[] get(float[] dst) {
+        return get(0, dst);
+    }
+
+    public float[] get(int index, float[] dst) {
+        buffer.get(dst, index, buffer.position());
+        return dst;
+    }
+
     public PathBuilder heap() {
-        buffer = buffer == null ? ByteBuffer.allocate(256) : ByteBuffer.allocate(buffer.capacity()).put(buffer);
+        buffer = buffer == null ? ByteBuffer.allocate(256).asFloatBuffer() :
+                ByteBuffer.allocate(buffer.capacity()).asFloatBuffer().put(buffer);
         return this;
     }
 
     public PathBuilder direct() {
-        buffer = buffer == null ? ByteBuffer.allocateDirect(256) : ByteBuffer.allocateDirect(buffer.capacity()).put(buffer);
+        buffer = buffer == null ? ByteBuffer.allocateDirect(256).asFloatBuffer() :
+                ByteBuffer.allocateDirect(buffer.capacity()).asFloatBuffer().put(buffer);
         return this;
     }
 
@@ -26,9 +42,9 @@ public class PathBuilder {
         if (oldCapacity >= capacity) return this;
         int newCapacity = Math.max(capacity, oldCapacity << 1 + oldCapacity);
         if (buffer.isDirect()) {
-            buffer = ByteBuffer.allocateDirect(newCapacity).put(buffer);
+            buffer = ByteBuffer.allocateDirect(newCapacity).asFloatBuffer().put(buffer);
         } else {
-            buffer = ByteBuffer.allocate(newCapacity).put(buffer);
+            buffer = ByteBuffer.allocate(newCapacity).asFloatBuffer().put(buffer);
         }
         return this;
     }
@@ -47,6 +63,9 @@ public class PathBuilder {
         return this;
     }
 
+    /**
+     * Draw a quadratic Belzier curve
+     */
     public PathBuilder quadTo(float x, float y, float px, float py) {
         //TODO: optimization
         float step = (Math.abs(prevX - px) + Math.abs(px - x) + Math.abs(prevY - py) + Math.abs(py - y)) / 12f;
@@ -60,6 +79,9 @@ public class PathBuilder {
         return this;
     }
 
+    /**
+     * Draw a Belazier curve
+     */
     public PathBuilder curveTo(float x, float y, float px0, float py0, float px1, float py1) {
         //TODO: optimization
         float step = (Math.abs(prevX - px0) + Math.abs(px0 - px1) + Math.abs(px1 - x) +
@@ -75,6 +97,9 @@ public class PathBuilder {
         return this;
     }
 
+    /**
+     * Draw a elliptical arc
+     */
     // https://stackoverflow.com/questions/43946153/approximating-svg-elliptical-arc-in-canvas-with-javascript
     public PathBuilder arcTo(float x, float y, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
         float phi = (float) Math.toRadians(xAxisRotation);
@@ -174,11 +199,7 @@ public class PathBuilder {
     }
 
     private void append(float x, float y) {
-        ensureCapacity(buffer.capacity() + 8);
-        buffer.putFloat(x).putFloat(y);
-    }
-
-    private ByteBuffer build() {
-        return buffer.flip();
+        ensureCapacity(buffer.capacity() + 2);
+        buffer.put(x).put(y);
     }
 }
