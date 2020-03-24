@@ -4,6 +4,9 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 public class PathBuilder {
+
+    private static final float tessTol = 1;
+
     private FloatBuffer buffer;
 
     private float startX;
@@ -64,15 +67,21 @@ public class PathBuilder {
     }
 
     /**
-     * Draw a quadratic Belzier curve
+     * Draw a quadratic Bezier curve
      */
     public PathBuilder quadTo(float x, float y, float px, float py) {
-        //TODO: optimization
-        float step = (Math.abs(prevX - px) + Math.abs(px - x) + Math.abs(prevY - py) + Math.abs(py - y)) / 12f;
-        for (float f = step; f < 1f; f += step) {
-            float f2 = 1 - f;
-            append(prevX * f2 * f2 + px * f2 * f * 2 + x * f * f, prevY * f2 * f2 + py * f2 * f * 2 + y * f * f);
-        }
+        float px0 = prevX + 2.0f / 3.0f * (px - prevX);
+        float py0 = prevY + 2.0f / 3.0f * (py - prevY);
+        float px1 = x + 2.0f / 3.0f * (px - x);
+        float py1 = y + 2.0f / 3.0f * (py - y);
+        return curveTo(x, y, px0, py0, px1, py1);
+    }
+
+    /**
+     * Draw a Bezier curve
+     */
+    public PathBuilder curveTo(float x, float y, float px0, float py0, float px1, float py1) {
+        tesselateBezier(prevX, prevY, px0, py0, px1, py1, x, y, 0);
         prevX = x;
         prevY = y;
         append(x, y);
@@ -80,21 +89,45 @@ public class PathBuilder {
     }
 
     /**
-     * Draw a Belazier curve
+     * Tesselate bezier curve.
+     * <br/>
+     * Copy from <a href="https://github.com/memononen/nanovg">nanovg</a> and modified by Mouse0w0. These code licensed
+     * under zLib license.
      */
-    public PathBuilder curveTo(float x, float y, float px0, float py0, float px1, float py1) {
-        //TODO: optimization
-        float step = (Math.abs(prevX - px0) + Math.abs(px0 - px1) + Math.abs(px1 - x) +
-                Math.abs(prevY - py0) + Math.abs(py0 - py1) + Math.abs(py1 - y)) / 36f;
-        for (float f = step; f < 1f; f += step) {
-            float f2 = 1 - f;
-            append(prevX * f2 * f2 * f2 + px0 * f2 * f2 * f * 3 + px1 * f2 * f * f * 3 + x * f * f * f,
-                    prevY * f2 * f2 * f2 + py0 * f2 * f2 * f * 3 + py1 * f2 * f * f * 3 + y * f * f * f);
+    private void tesselateBezier(float x1, float y1, float x2, float y2,
+                                 float x3, float y3, float x4, float y4,
+                                 int level) {
+        float x12, y12, x23, y23, x34, y34, x123, y123, x234, y234, x1234, y1234;
+        float dx, dy, d2, d3;
+
+        if (level > 10) return;
+
+        x12 = (x1 + x2) * 0.5f;
+        y12 = (y1 + y2) * 0.5f;
+        x23 = (x2 + x3) * 0.5f;
+        y23 = (y2 + y3) * 0.5f;
+        x34 = (x3 + x4) * 0.5f;
+        y34 = (y3 + y4) * 0.5f;
+        x123 = (x12 + x23) * 0.5f;
+        y123 = (y12 + y23) * 0.5f;
+
+        dx = x4 - x1;
+        dy = y4 - y1;
+        d2 = Math.abs(((x2 - x4) * dy - (y2 - y4) * dx));
+        d3 = Math.abs(((x3 - x4) * dy - (y3 - y4) * dx));
+
+        if ((d2 + d3) * (d2 + d3) < tessTol * (dx * dx + dy * dy)) {
+            append(x4, y4);
+            return;
         }
-        prevX = x;
-        prevY = y;
-        append(x, y);
-        return this;
+
+        x234 = (x23 + x34) * 0.5f;
+        y234 = (y23 + y34) * 0.5f;
+        x1234 = (x123 + x234) * 0.5f;
+        y1234 = (y123 + y234) * 0.5f;
+
+        tesselateBezier(x1, y1, x12, y12, x123, y123, x1234, y1234, level + 1);
+        tesselateBezier(x1234, y1234, x234, y234, x34, y34, x4, y4, level + 1);
     }
 
     /**
