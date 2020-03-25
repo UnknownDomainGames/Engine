@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.value.MutableFloatValue;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.NodeRenderer;
 import engine.util.Color;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -50,8 +50,8 @@ public class Rect extends Shape {
     }
 
     @Override
-    protected ComponentRenderer createDefaultRenderer() {
-        return (ComponentRenderer<Rect>) (component, graphics) -> {
+    protected NodeRenderer createDefaultRenderer() {
+        return (NodeRenderer<Rect>) (component, graphics) -> {
             if (strokeSize.get() > 0) {
                 graphics.popClipRect();
                 graphics.pushClipRect(component.getLayoutX() - component.strokeSize.get(), component.getLayoutY() - component.strokeSize.get(), component.getWidth() + component.strokeSize.get() * 2, component.getHeight() + component.strokeSize.get() * 2);
