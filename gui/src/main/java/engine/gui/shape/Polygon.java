@@ -84,6 +84,7 @@ public class Polygon extends Shape {
             else if (point.getY() > maxY) maxY = point.getY();
             path.lineTo(point.getX(), point.getY());
         }
+        path.closePath();
     }
 
     @Override

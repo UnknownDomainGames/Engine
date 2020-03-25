@@ -13,6 +13,6 @@ public final class PolygonRenderer implements NodeRenderer<Polygon> {
 
     @Override
     public void render(Polygon polygon, Graphics graphics) {
-        graphics.draw(PolygonHelper.getPath2D(polygon), 0, 0);
+        graphics.fill(PolygonHelper.getPath2D(polygon), 0, 0);
     }
 }
