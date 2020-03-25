@@ -9,6 +9,7 @@ import engine.gui.Node;
 import engine.gui.image.Image;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
+import engine.gui.shape.Path2D;
 import engine.util.Color;
 import org.joml.Matrix4fc;
 import org.joml.Vector2fc;
@@ -19,6 +20,10 @@ public interface Graphics {
 
     void setColor(Color color);
 
+    void draw(Path2D path, float x, float y);
+
+    void fill(Path2D path, float x, float y);
+
     void drawLine(float x1, float y1, float x2, float y2);
 
     void drawRect(float x, float y, float width, float height);
@@ -28,10 +33,6 @@ public interface Graphics {
     void drawQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4);
 
     void fillQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4);
-
-    // TODO: void drawPolygon(Polygon polygon);
-
-    // TODO: void fillPolygon(Polygon polygon);
 
     void drawText(TextMesh mesh, float x, float y);
 

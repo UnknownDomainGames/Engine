@@ -15,6 +15,7 @@ import engine.gui.graphics.Graphics;
 import engine.gui.image.Image;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
+import engine.gui.shape.Path2D;
 import engine.math.Math2;
 import engine.util.Color;
 import org.joml.*;
@@ -22,6 +23,7 @@ import org.lwjgl.system.MemoryStack;
 
 import java.lang.Math;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.Stack;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -106,6 +108,30 @@ public final class GraphicsImpl implements Graphics {
     @Override
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    @Override
+    public void draw(Path2D path, float x, float y) {
+        buffer.begin(VertexFormat.POSITION_COLOR);
+        buffer.setTranslation(x, y, 0);
+        FloatBuffer points = path.getBuffer();
+        for (int i = 0; i < points.position(); i += 2) {
+            buffer.pos(points.get(i), points.get(i + 1), 0).color(color).endVertex();
+        }
+        buffer.finish();
+        renderer.drawStreamed(DrawMode.LINE_STRIP, this.buffer);
+    }
+
+    @Override
+    public void fill(Path2D path, float x, float y) {
+        buffer.begin(VertexFormat.POSITION_COLOR);
+        buffer.setTranslation(x, y, 0);
+        FloatBuffer points = path.getBuffer();
+        for (int i = 0; i < points.position(); i += 2) {
+            buffer.pos(points.get(i), points.get(i + 1), 0).color(color).endVertex();
+        }
+        buffer.finish();
+        renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
     }
 
     @Override
