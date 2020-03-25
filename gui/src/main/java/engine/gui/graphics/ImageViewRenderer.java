@@ -8,8 +8,8 @@ public class ImageViewRenderer implements NodeRenderer<ImageView> {
     public static final ImageViewRenderer INSTANCE = new ImageViewRenderer();
 
     @Override
-    public void render(ImageView component, Graphics graphics) {
-        Image image = component.getImage();
+    public void render(ImageView node, Graphics graphics) {
+        Image image = node.getImage();
         if (image == null) {
             return;
         }

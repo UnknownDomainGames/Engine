@@ -14,13 +14,13 @@ public class ItemViewRenderer implements NodeRenderer<ItemView> {
     public static final ItemViewRenderer INSTANCE = new ItemViewRenderer();
 
     @Override
-    public void render(ItemView component, Graphics graphics) {
-        component.itemStack().ifPresent(itemStack -> {
+    public void render(ItemView node, Graphics graphics) {
+        node.itemStack().ifPresent(itemStack -> {
             VertexDataBuf buf = VertexDataBuf.currentThreadBuffer();
             buf.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
             ItemRenderManager.instance().generateMesh(buf, itemStack, 0);
             buf.finish();
-            float size = component.size().get();
+            float size = node.size().get();
             Matrix4f modelMatrix = new Matrix4f();
             if (itemStack.getItem() instanceof BlockItem) {
                 modelMatrix.translate(size * 0.5f, size * 0.5f, 0)
