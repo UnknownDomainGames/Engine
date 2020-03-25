@@ -4,7 +4,7 @@ import engine.gui.control.CheckBox;
 import engine.gui.misc.Insets;
 import org.joml.Vector2f;
 
-public class CheckBoxRenderer implements ComponentRenderer<CheckBox> {
+public class CheckBoxRenderer implements NodeRenderer<CheckBox> {
     @Override
     public void render(CheckBox component, Graphics graphics) {
         graphics.drawBackground(component.getBackground(), component);

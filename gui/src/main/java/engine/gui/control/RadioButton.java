@@ -3,7 +3,7 @@ package engine.gui.control;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
-import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.NodeRenderer;
 import engine.gui.graphics.RadioButtonRenderer;
 import engine.gui.input.MouseActionEvent;
 import engine.gui.layout.BorderPane;
@@ -45,7 +45,7 @@ public class RadioButton extends ToggleButton {
 //    }
 
     @Override
-    protected ComponentRenderer createDefaultRenderer() {
+    protected NodeRenderer createDefaultRenderer() {
         return new RadioButtonRenderer();
     }
 

@@ -2,7 +2,7 @@ package engine.gui.control;
 
 import com.github.mouse0w0.observable.value.*;
 import engine.gui.graphics.CheckBoxRenderer;
-import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.NodeRenderer;
 import engine.gui.input.MouseActionEvent;
 import engine.gui.layout.BorderPane;
 import engine.gui.misc.Background;
@@ -48,7 +48,7 @@ public class CheckBox extends Button {
     }
 
     @Override
-    protected ComponentRenderer createDefaultRenderer() {
+    protected NodeRenderer createDefaultRenderer() {
         return new CheckBoxRenderer();
     }
 

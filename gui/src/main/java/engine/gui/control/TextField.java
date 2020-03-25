@@ -1,7 +1,7 @@
 package engine.gui.control;
 
 import engine.graphics.font.FontManager;
-import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.NodeRenderer;
 import engine.gui.graphics.TextFieldRenderer;
 
 public class TextField extends TextInput {
@@ -43,7 +43,7 @@ public class TextField extends TextInput {
     }
 
     @Override
-    protected ComponentRenderer createDefaultRenderer() {
+    protected NodeRenderer createDefaultRenderer() {
         return new TextFieldRenderer(this);
     }
 

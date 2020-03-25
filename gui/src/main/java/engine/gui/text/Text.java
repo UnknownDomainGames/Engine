@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.value.*;
 import engine.graphics.font.Font;
 import engine.graphics.font.FontManager;
 import engine.gui.Node;
-import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.NodeRenderer;
 import engine.gui.graphics.TextRenderer;
 import engine.gui.misc.Pos;
 import engine.util.Color;
@@ -107,7 +107,7 @@ public class Text extends Node {
     }
 
     @Override
-    protected ComponentRenderer createDefaultRenderer() {
+    protected NodeRenderer createDefaultRenderer() {
         return new TextRenderer(this);
     }
 }

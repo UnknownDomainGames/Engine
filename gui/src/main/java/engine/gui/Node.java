@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableMap;
 import com.github.mouse0w0.observable.value.*;
 import engine.gui.event.*;
-import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.NodeRenderer;
 import engine.gui.input.*;
 import engine.gui.misc.Bounds;
 import engine.gui.misc.Point;
@@ -31,7 +31,7 @@ public abstract class Node implements EventTarget {
     private MutableBooleanValue visible;
     private MutableBooleanValue disabled;
 
-    private ComponentRenderer renderer;
+    private NodeRenderer renderer;
 
     private EventHandlerManager eventHandlerManager = new EventHandlerManager();
 
@@ -201,13 +201,13 @@ public abstract class Node implements EventTarget {
         return x >= getLayoutX() && x <= getLayoutX() + getWidth() && y >= getLayoutY() && y <= getLayoutY() + getHeight();
     }
 
-    public ComponentRenderer getRenderer() {
+    public NodeRenderer getRenderer() {
         if (renderer == null)
             renderer = createDefaultRenderer();
         return renderer;
     }
 
-    protected abstract ComponentRenderer createDefaultRenderer();
+    protected abstract NodeRenderer createDefaultRenderer();
 
     private ObservableMap<Object, Object> properties;
 

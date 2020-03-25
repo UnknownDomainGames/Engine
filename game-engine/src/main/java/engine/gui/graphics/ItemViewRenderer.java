@@ -9,7 +9,7 @@ import engine.gui.control.ItemView;
 import engine.item.BlockItem;
 import org.joml.Matrix4f;
 
-public class ItemViewRenderer implements ComponentRenderer<ItemView> {
+public class ItemViewRenderer implements NodeRenderer<ItemView> {
 
     public static final ItemViewRenderer INSTANCE = new ItemViewRenderer();
 

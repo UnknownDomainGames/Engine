@@ -3,7 +3,7 @@ package engine.gui.graphics;
 import engine.gui.control.RadioButton;
 import engine.gui.misc.Insets;
 
-public class RadioButtonRenderer implements ComponentRenderer<RadioButton> {
+public class RadioButtonRenderer implements NodeRenderer<RadioButton> {
     @Override
     public void render(RadioButton component, Graphics graphics) {
         graphics.drawBackground(component.getBackground(), component);

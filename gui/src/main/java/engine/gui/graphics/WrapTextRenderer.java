@@ -9,7 +9,7 @@ import engine.gui.text.WrapText;
 
 import java.util.stream.Collectors;
 
-public final class WrapTextRenderer implements ComponentRenderer<WrapText> {
+public final class WrapTextRenderer implements NodeRenderer<WrapText> {
 
     private WrapText wrapText;
 

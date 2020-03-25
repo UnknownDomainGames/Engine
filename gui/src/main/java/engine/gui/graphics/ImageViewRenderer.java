@@ -3,7 +3,7 @@ package engine.gui.graphics;
 import engine.gui.image.Image;
 import engine.gui.image.ImageView;
 
-public class ImageViewRenderer implements ComponentRenderer<ImageView> {
+public class ImageViewRenderer implements NodeRenderer<ImageView> {
 
     public static final ImageViewRenderer INSTANCE = new ImageViewRenderer();
 

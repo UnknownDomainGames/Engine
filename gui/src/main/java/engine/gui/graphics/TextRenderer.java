@@ -9,7 +9,7 @@ import engine.gui.text.Text;
 
 import java.util.stream.Collectors;
 
-public final class TextRenderer implements ComponentRenderer<Text> {
+public final class TextRenderer implements NodeRenderer<Text> {
 
     private Text text;
 

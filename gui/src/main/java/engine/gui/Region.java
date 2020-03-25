@@ -2,7 +2,7 @@ package engine.gui;
 
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.NonNullMutableObjectValue;
-import engine.gui.graphics.ComponentRenderer;
+import engine.gui.graphics.NodeRenderer;
 import engine.gui.graphics.RegionRenderer;
 import engine.gui.misc.*;
 import engine.math.Math2;
@@ -272,7 +272,7 @@ public class Region extends Parent {
     }
 
     @Override
-    protected ComponentRenderer createDefaultRenderer() {
+    protected NodeRenderer createDefaultRenderer() {
         return RegionRenderer.INSTANCE;
     }
 

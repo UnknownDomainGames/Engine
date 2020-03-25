@@ -3,7 +3,7 @@ package engine.gui.graphics;
 import engine.gui.Node;
 import engine.gui.Region;
 
-public class RegionRenderer<E extends Region> implements ComponentRenderer<E> {
+public class RegionRenderer<E extends Region> implements NodeRenderer<E> {
 
     public static final RegionRenderer INSTANCE = new RegionRenderer();
 
