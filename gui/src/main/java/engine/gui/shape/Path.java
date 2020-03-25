@@ -1,65 +1,40 @@
 package engine.gui.shape;
 
-import engine.gui.graphics.ComponentRenderer;
-import org.joml.Vector2f;
-import org.joml.Vector2fc;
+import engine.gui.graphics.NodeRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Path extends Shape {
+    private List<PathElement> elements = new ArrayList<>();
 
-    public static abstract class Point {
-    }
-
-    public static class LinearPoint extends Point {
-        private Vector2fc coord;
-
-        public LinearPoint(float x, float y) {
-            coord = new Vector2f(x, y);
-        }
-
-        public Vector2fc getCoordinate() {
-            return coord;
-        }
-    }
-
-
-    private List<Point> points = new ArrayList<>();
-
-    public List<Point> getPoints() {
-        return points;
-    }
-
-    public int getLength() {
-        return points.size();
+    public List<PathElement> getPathElements() {
+        return elements;
     }
 
     public void moveTo(float x, float y) {
-        points.clear();
-        points.add(new LinearPoint(x, y));
+        elements.clear();
+        elements.add(new MoveTo(x, y));
     }
 
     public void lineTo(float x, float y) {
-        points.add(new LinearPoint(x, y));
+        elements.add(new LineTo(x, y));
     }
 
-    //TODO: we should store the following commands for GraphicsImpl, except close()!
-
-    public void quadTo() {
-        //TODO: quad. bezier line: Qx1 y1, x,y, where (x1,y1) is control point
+    public void quadTo(float px, float py, float x, float y) {
+        elements.add(new QuadTo(px, py, x, y));
     }
 
-    public void curveTo() {
-        //TODO: curve: Cx1 y1, x2 y2, x y, where (x1,y1) and (x2,y2) are control points
+    public void curveTo(float px0, float py0, float px1, float py1, float x, float y) {
+        elements.add(new CurveTo(px0, py0, px1, py1, x, y));
     }
 
-    public void arcTo() {
-        //TODO: Arx ry x-axis-rotation large-arc-flag sweep-flag x y
+    public void arcTo(float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag, float x, float y) {
+        elements.add(new ArcTo(radiusX, radiusY, xAxisRotation, largeArcFlag, sweepFlag, x, y));
     }
 
-    public void close() {
-        points.add(points.get(0));
+    public void closePath() {
+        elements.add(new ClosePath());
     }
 
     @Override
@@ -73,7 +48,7 @@ public class Path extends Shape {
     }
 
     @Override
-    protected ComponentRenderer createDefaultRenderer() {
+    protected NodeRenderer createDefaultRenderer() {
         return null;
     }
 }
