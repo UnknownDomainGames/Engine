@@ -1,18 +1,20 @@
 package engine.gui.shape;
 
+import engine.graphics.vertex.VertexDataBuf;
+
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-public class PathBuilder {
+public class Path2D {
 
-    private static final float tessTol = 1;
+    private static final float tessTol = 1f;
 
     private FloatBuffer buffer;
 
-    private float startX;
-    private float startY;
-    private float prevX;
-    private float prevY;
+    private float moveX;
+    private float moveY;
+    private float currX;
+    private float currY;
 
     public FloatBuffer getBuffer() {
         return buffer;
@@ -27,19 +29,30 @@ public class PathBuilder {
         return dst;
     }
 
-    public PathBuilder heap() {
-        buffer = buffer == null ? ByteBuffer.allocate(256).asFloatBuffer() :
-                ByteBuffer.allocate(buffer.capacity()).asFloatBuffer().put(buffer);
+    public VertexDataBuf get(VertexDataBuf buf) {
+        for (int i = 0; i < buffer.position(); i += 2) {
+            buf.pos(buffer.get(i), buffer.get(i + 1), 0);
+        }
+        return buf;
+    }
+
+    public Path2D heap() {
+        buffer = buffer == null ? FloatBuffer.allocate(64) :
+                FloatBuffer.allocate(buffer.capacity()).put(buffer);
         return this;
     }
 
-    public PathBuilder direct() {
-        buffer = buffer == null ? ByteBuffer.allocateDirect(256).asFloatBuffer() :
-                ByteBuffer.allocateDirect(buffer.capacity()).asFloatBuffer().put(buffer);
+    public boolean isDirect() {
+        return buffer != null && buffer.isDirect();
+    }
+
+    public Path2D direct() {
+        buffer = buffer == null ? ByteBuffer.allocateDirect(64 * Float.BYTES).asFloatBuffer() :
+                ByteBuffer.allocateDirect(buffer.capacity() * Float.BYTES).asFloatBuffer().put(buffer);
         return this;
     }
 
-    public PathBuilder ensureCapacity(int capacity) {
+    public Path2D ensureCapacity(int capacity) {
         if (buffer == null) throw new IllegalStateException("No initialize buffer");
         int oldCapacity = buffer.capacity();
         if (oldCapacity >= capacity) return this;
@@ -47,21 +60,29 @@ public class PathBuilder {
         if (buffer.isDirect()) {
             buffer = ByteBuffer.allocateDirect(newCapacity).asFloatBuffer().put(buffer);
         } else {
-            buffer = ByteBuffer.allocate(newCapacity).asFloatBuffer().put(buffer);
+            buffer = FloatBuffer.allocate(newCapacity).put(buffer);
         }
         return this;
     }
 
-    public PathBuilder moveTo(float x, float y) {
-        startX = prevX = x;
-        startY = prevY = y;
+    public float getCurrentX() {
+        return currX;
+    }
+
+    public float getCurrentY() {
+        return currY;
+    }
+
+    public Path2D moveTo(float x, float y) {
+        moveX = currX = x;
+        moveY = currY = y;
         append(x, y);
         return this;
     }
 
-    public PathBuilder lineTo(float x, float y) {
-        prevX = x;
-        prevY = y;
+    public Path2D lineTo(float x, float y) {
+        currX = x;
+        currY = y;
         append(x, y);
         return this;
     }
@@ -69,9 +90,9 @@ public class PathBuilder {
     /**
      * Draw a quadratic Bezier curve
      */
-    public PathBuilder quadTo(float x, float y, float px, float py) {
-        float px0 = prevX + 2.0f / 3.0f * (px - prevX);
-        float py0 = prevY + 2.0f / 3.0f * (py - prevY);
+    public Path2D quadTo(float px, float py, float x, float y) {
+        float px0 = currX + 2.0f / 3.0f * (px - currX);
+        float py0 = currY + 2.0f / 3.0f * (py - currY);
         float px1 = x + 2.0f / 3.0f * (px - x);
         float py1 = y + 2.0f / 3.0f * (py - y);
         return curveTo(x, y, px0, py0, px1, py1);
@@ -80,10 +101,10 @@ public class PathBuilder {
     /**
      * Draw a Bezier curve
      */
-    public PathBuilder curveTo(float x, float y, float px0, float py0, float px1, float py1) {
-        tesselateBezier(prevX, prevY, px0, py0, px1, py1, x, y, 0);
-        prevX = x;
-        prevY = y;
+    public Path2D curveTo(float px0, float py0, float px1, float py1, float x, float y) {
+        tesselateBezier(currX, currY, px0, py0, px1, py1, x, y, 0);
+        currX = x;
+        currY = y;
         append(x, y);
         return this;
     }
@@ -134,13 +155,13 @@ public class PathBuilder {
      * Draw a elliptical arc
      */
     // https://stackoverflow.com/questions/43946153/approximating-svg-elliptical-arc-in-canvas-with-javascript
-    public PathBuilder arcTo(float x, float y, float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag) {
+    public Path2D arcTo(float radiusX, float radiusY, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag, float x, float y) {
         float phi = (float) Math.toRadians(xAxisRotation);
         float rX = Math.abs(radiusX);
         float rY = Math.abs(radiusY);
 
-        float dx2 = (prevX - x) / 2;
-        float dy2 = (prevY - y) / 2;
+        float dx2 = (currX - x) / 2;
+        float dy2 = (currY - y) / 2;
 
         float x1p = (float) (Math.cos(phi) * dx2 + Math.sin(phi) * dy2);
         float y1p = (float) (-Math.sin(phi) * dx2 + Math.cos(phi) * dy2);
@@ -167,8 +188,8 @@ public class PathBuilder {
         float cxp = q * rX * y1p / rY;
         float cyp = -q * rY * x1p / rX;
 
-        float cx = (float) (Math.cos(phi) * cxp - Math.sin(phi) * cyp + (prevX + x) / 2);
-        float cy = (float) (Math.sin(phi) * cxp + Math.cos(phi) * cyp + (prevY + y) / 2);
+        float cx = (float) (Math.cos(phi) * cxp - Math.sin(phi) * cyp + (currX + x) / 2);
+        float cy = (float) (Math.sin(phi) * cxp + Math.cos(phi) * cyp + (currY + y) / 2);
 
         float theta = angle(1, 0, (x1p - cxp) / rX, (y1p - cyp) / rY);
 
@@ -224,11 +245,15 @@ public class PathBuilder {
         return (float) angle;
     }
 
-    public PathBuilder close() {
-        prevX = startX;
-        prevY = startY;
-        append(startX, startY);
+    public Path2D closePath() {
+        currX = moveX;
+        currY = moveY;
+        append(moveX, moveY);
         return this;
+    }
+
+    public void reset() {
+        buffer.clear();
     }
 
     private void append(float x, float y) {
