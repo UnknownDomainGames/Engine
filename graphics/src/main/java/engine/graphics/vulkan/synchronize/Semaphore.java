@@ -24,7 +24,11 @@ public class Semaphore {
     public Semaphore(LogicalDevice device, long handle){
         this.device = device;
         this.handle = handle;
-        disposable = VulkanCleaner.registerSemaphore(this);
+        disposable = VulkanCleaner.registerSemaphore(this, device, handle);
+    }
+
+    public LogicalDevice getDevice() {
+        return device;
     }
 
     public long getHandle() {
@@ -49,8 +53,12 @@ public class Semaphore {
 
     public void dispose(){
         checkReleased();
-        vkDestroySemaphore(device.getNativeDevice(), handle, null);
+        dispose(device, handle);
         handle = 0;
         released = true;
+    }
+
+    public static void dispose(LogicalDevice device, long handle){
+        vkDestroySemaphore(device.getNativeDevice(), handle, null);
     }
 }
