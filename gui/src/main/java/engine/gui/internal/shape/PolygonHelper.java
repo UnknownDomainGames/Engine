@@ -19,10 +19,10 @@ public abstract class PolygonHelper {
     }
 
     public static Path2D getPath2D(Polygon polygon) {
-        return polygonAccessor.getPathMesh(polygon);
+        return polygonAccessor.getPath2D(polygon);
     }
 
     public interface PolygonAccessor {
-        Path2D getPathMesh(Polygon polygon);
+        Path2D getPath2D(Polygon polygon);
     }
 }
