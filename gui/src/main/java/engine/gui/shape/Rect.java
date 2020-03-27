@@ -3,6 +3,7 @@ package engine.gui.shape;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.graphics.NodeRenderer;
+import engine.gui.graphics.shape.RectRenderer;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
@@ -17,7 +18,7 @@ public class Rect extends Shape {
         this.size.set(size);
     }
 
-    public MutableObjectValue<Vector2fc> rectSize() {
+    public final MutableObjectValue<Vector2fc> rectSize() {
         return size;
     }
 
@@ -33,16 +34,6 @@ public class Rect extends Shape {
 
     @Override
     protected NodeRenderer createDefaultRenderer() {
-        return (NodeRenderer<Rect>) (component, graphics) -> {
-            float strokeWidth = getStrokeWidth();
-            if (strokeWidth > 0) {
-                graphics.popClipRect();
-                graphics.pushClipRect(component.getLayoutX() - strokeWidth, component.getLayoutY() - strokeWidth, component.getWidth() + strokeWidth * 2, component.getHeight() + strokeWidth * 2);
-                graphics.setColor(component.getStrokeColor());
-                graphics.fillRect(0, 0, component.getWidth() + strokeWidth * 2, component.getHeight() + strokeWidth * 2);
-            }
-            graphics.setColor(component.getFillColor());
-            graphics.fillRect(strokeWidth, strokeWidth, component.getWidth(), component.getHeight());
-        };
+        return RectRenderer.INSTANCE;
     }
 }
