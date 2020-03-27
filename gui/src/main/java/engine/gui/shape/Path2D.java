@@ -257,7 +257,7 @@ public class Path2D {
     }
 
     private void append(float x, float y) {
-        ensureCapacity(buffer.capacity() + 2);
+        ensureCapacity(buffer.position() + 2);
         buffer.put(x).put(y);
     }
 }
