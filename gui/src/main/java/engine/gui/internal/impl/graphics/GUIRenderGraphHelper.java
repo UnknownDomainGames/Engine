@@ -3,7 +3,6 @@ package engine.gui.internal.impl.graphics;
 import engine.graphics.graph.*;
 import engine.graphics.texture.ColorFormat;
 import engine.graphics.util.BlendMode;
-import engine.graphics.util.CullMode;
 import engine.gui.stage.Stage;
 
 import static engine.graphics.graph.ColorOutputInfo.colorOutput;
@@ -33,7 +32,6 @@ public final class GUIRenderGraphHelper {
             {
                 RenderPassInfo guiPass = RenderPassInfo.renderPass();
                 guiPass.setName("gui");
-                guiPass.setCullMode(CullMode.CULL_BACK);
                 guiPass.addColorOutputs(colorOutput()
                         .setColorBuffer("color")
                         .setClear(true)
