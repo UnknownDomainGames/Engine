@@ -7,6 +7,7 @@ import engine.gui.misc.Point;
 import engine.gui.misc.Pos;
 import engine.gui.shape.Polygon;
 import engine.gui.stage.Stage;
+import engine.util.Color;
 
 public class ExamplePolygon extends GUIApplication {
     public static void main(String[] args) {
@@ -19,6 +20,7 @@ public class ExamplePolygon extends GUIApplication {
         flowPane.alignment().set(Pos.CENTER);
 
         Polygon polygon = new Polygon(new Point(0, 0), new Point(100, 0), new Point(100, 100), new Point(0, 100));
+        polygon.setFillColor(Color.WHITE);
 
         flowPane.getChildren().add(polygon);
 

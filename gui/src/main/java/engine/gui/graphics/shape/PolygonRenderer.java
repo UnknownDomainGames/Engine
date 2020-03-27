@@ -13,6 +13,13 @@ public final class PolygonRenderer implements NodeRenderer<Polygon> {
 
     @Override
     public void render(Polygon polygon, Graphics graphics) {
+        graphics.setColor(polygon.getFillColor());
         graphics.fill(PolygonHelper.getPath2D(polygon), 0, 0);
+
+        float strokeWidth = polygon.getStrokeWidth();
+        if (strokeWidth < 0) return;
+        // TODO: support stroke width
+        graphics.setColor(polygon.getStrokeColor());
+        graphics.draw(PolygonHelper.getPath2D(polygon), 0, 0);
     }
 }
