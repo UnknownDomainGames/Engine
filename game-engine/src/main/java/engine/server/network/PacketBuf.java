@@ -13,6 +13,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class PacketBuf extends ByteBuf {
 
@@ -52,12 +53,23 @@ public class PacketBuf extends ByteBuf {
     }
 
     public PacketBuf writeVarInt(int input) {
-        while((input & -128) != 0) {
+        while ((input & -128) != 0) {
             this.writeByte(input & 127 | 128);
             input >>>= 7;
         }
 
         this.writeByte(input);
+        return this;
+    }
+
+    public String readString() {
+        var len = readVarInt();
+        return readCharSequence(len, StandardCharsets.UTF_8).toString();
+    }
+
+    public PacketBuf writeString(String string) {
+        writeVarInt(string.length());
+        writeCharSequence(string, StandardCharsets.UTF_8);
         return this;
     }
 

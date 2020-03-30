@@ -33,7 +33,7 @@ public class GameData {
         return new GameData(gameBasePath, config);
     }
 
-    private GameData(Path gameBasePath, Config gameData) {
+    protected GameData(Path gameBasePath, Config gameData) {
         this.gameBasePath = gameBasePath;
         this.gameData = gameData;
         this.name = gameData.getString("Name");

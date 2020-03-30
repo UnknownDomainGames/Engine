@@ -42,7 +42,7 @@ public class NetworkServer {
                         }
                         ch.pipeline().addLast("decoder", new PacketDecoder())
                                 .addLast("encoder", new PacketEncoder());
-                        var handler = new NetworkHandler(Side.DEDICATED_SERVER);
+                        var handler = new NetworkHandler(Side.SERVER);
                         handlers.add(handler);
                         ch.pipeline().addLast("handler", handler);
                     }
@@ -62,7 +62,7 @@ public class NetworkServer {
 
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
-                        var handler = new NetworkHandler(Side.DEDICATED_SERVER);
+                        var handler = new NetworkHandler(Side.SERVER);
                         handlers.add(handler);
                         ch.pipeline().addLast("handler", handler);
                     }

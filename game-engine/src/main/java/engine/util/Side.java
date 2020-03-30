@@ -1,6 +1,6 @@
 package engine.util;
 
 public enum Side {
-    DEDICATED_SERVER,
+    SERVER,
     CLIENT
 }

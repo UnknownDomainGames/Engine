@@ -74,19 +74,33 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if(cause instanceof TimeoutException){
             closeChannel("Connection timed out");
-        }
-        else{
+        } else {
             Platform.getLogger().warn("exception thrown in connection", cause);
             closeChannel(cause.getMessage());
         }
     }
 
-    public boolean isChannelOpen(){
+    public boolean isChannelOpen() {
         return channel != null && channel.isOpen();
     }
 
-    public void sendPacket(Packet packet){
-        channel.writeAndFlush(packet);
+    // This method will not send packet immediately
+    public void pendPacket(Packet packet) {
+        if (channel != null) {
+
+            channel.write(packet);
+        }
+    }
+
+    public void sendPendingPackets() {
+        if (channel != null) {
+            channel.flush();
+        }
+    }
+
+    public void sendPacket(Packet packet) {
+        pendPacket(packet);
+        sendPendingPackets();
     }
 
 }

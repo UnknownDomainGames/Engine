@@ -47,7 +47,7 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
 
     @Override
     public Side getSide() {
-        return Side.DEDICATED_SERVER;
+        return Side.SERVER;
     }
 
     @Override
@@ -99,7 +99,7 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
         }
         logger.info("Starting game for world");
         Path gameBasePath = this.getRunPath().resolve("game");
-        startGame(new GameServerFullAsync(this, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default")));
+        startGame(new GameServerFullAsync(this, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default"), nettyServer));
         ticker.run();
     }
 

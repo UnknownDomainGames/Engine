@@ -12,8 +12,11 @@ import engine.gui.misc.HPos;
 import engine.gui.misc.Insets;
 import engine.gui.misc.Pos;
 import engine.gui.text.Text;
+import engine.server.event.NetworkDisconnectedEvent;
+import engine.server.event.PacketReceivedEvent;
 import engine.server.network.ConnectionStatus;
 import engine.server.network.NetworkClient;
+import engine.server.network.packet.PacketDisconnect;
 import engine.server.network.packet.PacketHandshake;
 import engine.util.Color;
 
@@ -61,20 +64,18 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
         setBackground(Background.fromColor(Color.fromRGB(0x7f7f7f)));
         setAlignment(vbox, Pos.CENTER);
         center().set(vbox);
-//        addEventHandler(PacketReceivedEvent.class, event -> {
-//            if(event.getPacket() instanceof PacketDisconnect){
-//                Platform.getLogger().warn("Disconnected from server");
-//                lblStatus.text().set("Disconnected");
-//                lblReason.text().set(((PacketDisconnect) event.getPacket()).getReason());
-//                isFailed.set(true);
-//            }
-//        });
-//        addEventHandler(NetworkDisconnectedEvent.class, event ->{
-//            Platform.getLogger().warn("Disconnected from server: {}", event.getReason());
-//            lblStatus.text().set("Disconnected");
-//            lblReason.text().set(event.getReason());
-//            isFailed.set(true);
-//        });
+        Platform.getEngine().getEventBus().<PacketReceivedEvent<PacketDisconnect>, PacketDisconnect>addGenericListener(PacketDisconnect.class, event -> {
+            Platform.getLogger().warn("Disconnected from server");
+            lblStatus.text().set("Disconnected");
+            lblReason.text().set(event.getPacket().getReason());
+            isFailed.set(true);
+        });
+        Platform.getEngine().getEventBus().<NetworkDisconnectedEvent>addListener(event -> {
+            Platform.getLogger().warn("Disconnected from server: {}", event.getReason());
+            lblStatus.text().set("Disconnected");
+            lblReason.text().set(event.getReason());
+            isFailed.set(true);
+        });
         connect(ip, port);
     }
 
@@ -102,7 +103,10 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
             }
         }, "Connector");
         connector.setUncaughtExceptionHandler((thread, e) -> {
-
+            Platform.getLogger().error("Cannot connect to server", e);
+            lblStatus.text().set("Disconnected");
+            lblReason.text().set(String.format("Connector met unexpected exception:%s", e.getMessage()));
+            isFailed.set(true);
         });
         connector.start();
     }

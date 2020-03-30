@@ -27,6 +27,7 @@ import engine.graphics.gl.util.GLHelper;
 import engine.gui.EngineGUIPlatform;
 import engine.logic.Ticker;
 import engine.mod.ModContainer;
+import engine.player.Profile;
 import engine.util.ClassPathUtils;
 import engine.util.RuntimeEnvironment;
 import engine.util.Side;
@@ -56,8 +57,15 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private EngineSettings settings;
 
-    public EngineClientImpl(Path runPath) {
+    private Profile playerProfile;
+
+    public EngineClientImpl(Path runPath, Profile profile) {
         super(runPath);
+        this.playerProfile = profile;
+    }
+
+    public Profile getPlayerProfile() {
+        return playerProfile;
     }
 
     @Override

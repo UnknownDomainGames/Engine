@@ -3,17 +3,21 @@ package engine.client.launch;
 import engine.Engine;
 import engine.Platform;
 import engine.client.EngineClientImpl;
+import engine.player.Profile;
 
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.UUID;
 
 public class Bootstrap {
 
     public static void main(String[] args) {
         System.out.println(ManagementFactory.getRuntimeMXBean().getPid());
 
-        Engine engine = new EngineClientImpl(Path.of("run"));
+        var playerName = "Ifor";
+        Engine engine = new EngineClientImpl(Path.of("run"), new Profile(UUID.nameUUIDFromBytes(playerName.getBytes(StandardCharsets.UTF_8)), playerName));
         injectEngine(engine);
         engine.initEngine();
         engine.runEngine();

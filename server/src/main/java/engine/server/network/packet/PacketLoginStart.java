@@ -12,6 +12,14 @@ public class PacketLoginStart implements Packet {
 
     private Profile profile;
 
+    public PacketLoginStart() {
+
+    }
+
+    public PacketLoginStart(Profile profile) {
+        this.profile = profile;
+    }
+
     @Override
     public void write(PacketBuf buf) throws IOException {
         var uuid = profile.getUuid();

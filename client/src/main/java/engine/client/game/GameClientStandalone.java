@@ -23,7 +23,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
 
     public GameClientStandalone(EngineClient engineClient, Path storagePath, GameData data) {
-        super(engineClient, storagePath, data);
+        super(engineClient, storagePath, data, null);
         this.engineClient = engineClient;
     }
 
