@@ -7,6 +7,11 @@ public class AnimationKeyframe<T> {
     private T value;
     private Interpolation<T> interpolation;
 
+    public AnimationKeyframe(T value, Interpolation<T> interpolation) {
+        this.value = value;
+        this.interpolation = interpolation;
+    }
+
     public T getValue() {
         return value;
     }
