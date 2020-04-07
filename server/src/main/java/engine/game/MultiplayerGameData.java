@@ -8,13 +8,13 @@ import java.nio.file.Path;
 /**
  * A GameData variant received from server side
  */
-public class RemoteGameData extends GameData {
-    protected RemoteGameData(Config gameData) {
+public class MultiplayerGameData extends GameData {
+    protected MultiplayerGameData(Config gameData) {
         super(Path.of(""), gameData);
     }
 
-    public static RemoteGameData fromPacket(PacketGameData packet) {
-        return new RemoteGameData(packet.getGameDataConfig());
+    public static MultiplayerGameData fromPacket(PacketGameData packet) {
+        return new MultiplayerGameData(packet.getGameDataConfig());
     }
 
     @Override

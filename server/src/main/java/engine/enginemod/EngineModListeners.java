@@ -48,6 +48,8 @@ public final class EngineModListeners {
     public static void registerPacket(ModRegistrationEvent.Register<PacketProvider> event){
         event.register(new PacketProvider.Builder().type(PacketRaw.class).name("raw").build());
         event.register(new PacketProvider.Builder().type(PacketHandshake.class).name("handshake").build());
+        event.register(new PacketProvider.Builder().type(PacketGameData.class).name("game-data").build());
+        event.register(new PacketProvider.Builder().type(PacketChunkData.class).name("chunk-data").build());
         event.register(new PacketProvider.Builder().type(PacketDisconnect.class).name("disconnect").build());
         event.register(new PacketProvider.Builder().type(PacketSyncRegistry.class).name("registry-sync").build());
     }

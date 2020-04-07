@@ -8,7 +8,6 @@ import engine.event.block.cause.BlockChangeCause;
 import engine.game.Game;
 import engine.math.BlockPos;
 import engine.registry.Registries;
-import engine.server.network.NetworkHandler;
 import engine.world.World;
 import engine.world.WorldCreationSetting;
 import engine.world.WorldProvider;
@@ -40,7 +39,7 @@ public class WorldClient implements World, Runnable {
 
     protected boolean isClient = true;
 
-    public WorldClient(Game game, NetworkHandler handler, WorldProvider provider) {
+    public WorldClient(Game game, WorldProvider provider) {
         this.game = game;
         this.worldProvider = provider;
         this.chunkManager = new WorldClientChunkManager(this);
@@ -78,7 +77,7 @@ public class WorldClient implements World, Runnable {
 
     @Override
     public String getName() {
-        return null;
+        return "World from server";
     }
 
     @Override

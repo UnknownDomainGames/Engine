@@ -3,27 +3,30 @@ package engine.enginemod.client.gui.game;
 import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
 import engine.Platform;
+import engine.client.game.GameClientMultiplayer;
+import engine.game.MultiplayerGameData;
 import engine.graphics.GraphicsManager;
 import engine.gui.control.Button;
-import engine.gui.layout.BorderPane;
+import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.HPos;
-import engine.gui.misc.Insets;
 import engine.gui.misc.Pos;
 import engine.gui.text.Text;
+import engine.gui.text.WrapText;
 import engine.server.event.NetworkDisconnectedEvent;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.ConnectionStatus;
 import engine.server.network.NetworkClient;
 import engine.server.network.packet.PacketDisconnect;
+import engine.server.network.packet.PacketGameData;
 import engine.server.network.packet.PacketHandshake;
 import engine.util.Color;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickable*/ {
+public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable*/ {
 
     private Text lblStatus;
     private Text lblReason;
@@ -36,11 +39,12 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
     private MutableBooleanValue isFailed = new SimpleMutableBooleanValue(false);
 
     public GuiServerConnectingStatus(String ip, int port) {
+        alignment().set(Pos.CENTER);
         var vbox = new VBox();
+        getChildren().add(vbox);
         vbox.alignment().set(HPos.CENTER);
-        vbox.setPadding(new Insets(200, 0, 0, 0));
         lblStatus = new Text("Connecting");
-        lblReason = new Text();
+        lblReason = new WrapText();
         vbox.getChildren().add(lblStatus);
         button = new Button("disconnect");
         button.setOnMouseClicked(e -> {
@@ -48,7 +52,9 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
             if (networkClient != null) {
                 networkClient.close();
             }
-            var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
+            var engineClient = Platform.getEngineClient();
+//            engineClient.getEventBus().unregister();
+            var guiManager = engineClient.getGraphicsManager().getGUIManager();
             guiManager.showLast();
         });
         lblStatus.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
@@ -62,13 +68,17 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
             vbox.getChildren().add(button);
         });
         setBackground(Background.fromColor(Color.fromRGB(0x7f7f7f)));
-        setAlignment(vbox, Pos.CENTER);
-        center().set(vbox);
         Platform.getEngine().getEventBus().<PacketReceivedEvent<PacketDisconnect>, PacketDisconnect>addGenericListener(PacketDisconnect.class, event -> {
             Platform.getLogger().warn("Disconnected from server");
             lblStatus.text().set("Disconnected");
             lblReason.text().set(event.getPacket().getReason());
             isFailed.set(true);
+        });
+        Platform.getEngine().getEventBus().<PacketReceivedEvent<PacketGameData>, PacketGameData>addGenericListener(PacketGameData.class, event -> {
+            lblStatus.text().set("Initializing game");
+            var game = new GameClientMultiplayer(Platform.getEngineClient(), MultiplayerGameData.fromPacket(event.getPacket()));
+            Platform.getEngine().startGame(game);
+            Platform.getEngineClient().getGraphicsManager().getGUIManager().close();
         });
         Platform.getEngine().getEventBus().<NetworkDisconnectedEvent>addListener(event -> {
             Platform.getLogger().warn("Disconnected from server: {}", event.getReason());
@@ -87,7 +97,8 @@ public class GuiServerConnectingStatus extends BorderPane/* implements GuiTickab
                 var address = InetAddress.getByName(ip);
                 networkClient = new NetworkClient();
                 networkClient.run(address, port);
-                networkClient.send(new PacketHandshake(ConnectionStatus.LOGIN));
+//                networkClient.send(new PacketHandshake(ConnectionStatus.LOGIN));
+                networkClient.send(new PacketHandshake(ConnectionStatus.GAMEPLAY)); //TODO: we should go to login status first
             } catch (UnknownHostException ex) {
                 if (isCancelled) return;
                 Platform.getLogger().error("Cannot connect to server", ex);

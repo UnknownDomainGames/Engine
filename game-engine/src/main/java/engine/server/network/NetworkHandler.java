@@ -4,13 +4,19 @@ import engine.Platform;
 import engine.server.event.NetworkDisconnectedEvent;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.packet.Packet;
+import engine.server.network.packet.PacketDisconnect;
 import engine.util.Side;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.local.LocalChannel;
 import io.netty.channel.local.LocalServerChannel;
 import io.netty.handler.timeout.TimeoutException;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+
+import javax.annotation.Nullable;
 
 public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
@@ -68,7 +74,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
         Platform.getEngine().getEventBus().post(new PacketReceivedEvent(this, packet));
     }
 
-
+    private boolean exceptionMet = false;
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
@@ -76,7 +82,13 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
             closeChannel("Connection timed out");
         } else {
             Platform.getLogger().warn("exception thrown in connection", cause);
-            closeChannel(cause.getMessage());
+            if (!exceptionMet) {
+                exceptionMet = true;
+                sendPacket(new PacketDisconnect(cause.getMessage()), future -> closeChannel(cause.getMessage()));
+            } else {
+                Platform.getLogger().warn("this exception is an double failure");
+                closeChannel(cause.getMessage());
+            }
         }
     }
 
@@ -86,9 +98,17 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     // This method will not send packet immediately
     public void pendPacket(Packet packet) {
+        pendPacket(packet, null);
+    }
+
+    public void pendPacket(Packet packet, @Nullable GenericFutureListener<Future<? super Void>> future) {
         if (channel != null) {
 
-            channel.write(packet);
+            var channelFuture = channel.write(packet);
+            if (future != null) {
+                channelFuture.addListener(future);
+            }
+            channelFuture.addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         }
     }
 
@@ -100,6 +120,11 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     public void sendPacket(Packet packet) {
         pendPacket(packet);
+        sendPendingPackets();
+    }
+
+    public void sendPacket(Packet packet, @Nullable GenericFutureListener<Future<? super Void>> future) {
+        pendPacket(packet, future);
         sendPendingPackets();
     }
 

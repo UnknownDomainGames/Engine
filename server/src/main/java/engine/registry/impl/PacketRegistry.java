@@ -49,11 +49,13 @@ public class PacketRegistry extends IdAutoIncreaseRegistry<PacketProvider> {
     }
 
     public int getId(Packet packet, boolean remapped){
-        int id = getEntries().stream()
+        var optional = getEntries().stream()
                 .filter(entry -> entry.getValue().getPacketType() == packet.getClass())
-                .findFirst().map(entry-> getValue(entry.getKey()).getId()).get();
-        if(remapped){
-            return mapping.getOrDefault(id,id);
+                .findFirst();
+        if (optional.isEmpty()) return 0;
+        int id = optional.map(entry -> getValue(entry.getKey()).getId()).get();
+        if (remapped) {
+            return mapping.getOrDefault(id, id);
         }
         return id;
     }
@@ -63,12 +65,14 @@ public class PacketRegistry extends IdAutoIncreaseRegistry<PacketProvider> {
         return getId(obj, true);
     }
 
-    public int getId(PacketProvider obj, boolean remapped){
-        int id = getEntries().stream()
+    public int getId(PacketProvider obj, boolean remapped) {
+        var optional = getEntries().stream()
                 .filter(entry -> entry.getValue().getClass() == obj.getClass())
-                .findFirst().map(entry-> getValue(entry.getKey()).getId()).get();
-        if(remapped){
-            return mapping.getOrDefault(id,id);
+                .findFirst();
+        if (optional.isEmpty()) return 0;
+        int id = optional.map(entry -> getValue(entry.getKey()).getId()).get();
+        if (remapped) {
+            return mapping.getOrDefault(id, id);
         }
         return id;
     }
