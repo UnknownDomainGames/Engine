@@ -1,0 +1,11 @@
+package engine.graphics.shader;
+
+
+public enum ShaderType {
+    VERTEX_SHADER,
+    TESSELLATION_CONTROL_SHADER,
+    TESSELLATION_EVALUATION_SHADER,
+    GEOMETRY_SHADER,
+    FRAGMENT_SHADER,
+    COMPUTE_SHADER
+}

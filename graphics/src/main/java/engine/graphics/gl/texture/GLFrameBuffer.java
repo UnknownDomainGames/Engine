@@ -52,7 +52,7 @@ public class GLFrameBuffer implements FrameBuffer {
     }
 
     @Override
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -137,7 +137,7 @@ public class GLFrameBuffer implements FrameBuffer {
 
     public static void copy(FrameBuffer src, Vector4ic srcRect, FrameBuffer dest, Vector4ic destRect, int mask, int filter) {
         if (isSupportARBDirectStateAccess()) {
-            GL45.glBlitNamedFramebuffer(src.getId(), dest.getId(), srcRect.x(), srcRect.y(), srcRect.z(), srcRect.w(),
+            GL45.glBlitNamedFramebuffer((int) src.getId(), (int) dest.getId(), srcRect.x(), srcRect.y(), srcRect.z(), srcRect.w(),
                     destRect.x(), destRect.y(), destRect.z(), destRect.w(), mask, filter);
         } else {
             src.bindReadOnly();

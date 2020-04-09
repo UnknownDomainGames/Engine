@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 
 public interface FrameBuffer {
 
-    int getId();
+    long getId();
 
     int getWidth();
 

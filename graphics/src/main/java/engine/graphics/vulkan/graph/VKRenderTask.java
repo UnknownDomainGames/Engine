@@ -1,39 +1,48 @@
 package engine.graphics.vulkan.graph;
 
-import engine.graphics.graph.RenderGraph;
-import engine.graphics.graph.RenderPass;
-import engine.graphics.graph.RenderTask;
-import engine.graphics.graph.RenderTaskInfo;
+import engine.graphics.graph.*;
 import engine.graphics.texture.Texture2D;
-import engine.util.SortedList;
+import engine.graphics.vulkan.CommandBuffer;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 public class VKRenderTask implements RenderTask {
 
     private final RenderTaskInfo info;
     private final VKRenderGraph renderGraph;
 
-    private final Map<String, VKRenderTaskAttachment> attachments = new HashMap<>();
-    private final Map<String, VKRenderGraphPass> passes = new HashMap<>();
+    private final Map<String, VKRenderTaskAttachment> attachments;
+    private final List<BiConsumer<FrameContext, RenderTask>> setups;
+    private final Map<String, VKRenderGraphPass> passes;
     private final List<VKRenderGraphPass> sortedPasses;
     private final VKRenderGraphPass finalPass;
 
     public VKRenderTask(RenderTaskInfo info, VKRenderGraph renderGraph) {
         this.info = info;
         this.renderGraph = renderGraph;
-        info.getRenderBuffers().forEach(renderBufferInfo ->
-                attachments.put(renderBufferInfo.getName(), new VKRenderTaskAttachment(renderBufferInfo, this)));
-        info.getPasses().forEach(renderPassInfo ->
-                passes.put(renderPassInfo.getName(), new VKRenderGraphPass(renderPassInfo, this)));
-        this.sortedPasses = SortedList.copyOf(passes.values(), (o1, o2) -> {
-            if (o1.getInfo().getDependencies().contains(o2.getInfo().getName())) return 1;
-            if (o2.getInfo().getDependencies().contains(o1.getInfo().getName())) return -1;
-            return 0;
-        });
+        this.attachments = info.getRenderBuffers().stream().collect(Collectors.toUnmodifiableMap(RenderBufferInfo::getName, bufferInfo -> new VKRenderTaskAttachment(bufferInfo, this)));
+        this.setups = List.copyOf(info.getSetups());
+        this.passes = info.getPasses().stream().collect(Collectors.toUnmodifiableMap(RenderPassInfo::getName, passinfo -> new VKRenderGraphPass(passinfo, this)));
         this.finalPass = passes.get(info.getFinalPass());
+        this.sortedPasses = sortPasses(passes.values());
+    }
+
+    private List<VKRenderGraphPass> sortPasses(Collection<VKRenderGraphPass> passes) {
+        List<VKRenderGraphPass> sortedPasses = new ArrayList<>(passes.size());
+        List<VKRenderGraphPass> needSortPasses = new LinkedList<>(passes);
+        while (!needSortPasses.isEmpty()) {
+            var iterator = needSortPasses.listIterator();
+            while (iterator.hasNext()) {
+                var pass = iterator.next();
+                if (needSortPasses.stream().noneMatch($ -> pass.getDependencies().contains($.getName()))) {
+                    sortedPasses.add(pass);
+                    iterator.remove();
+                }
+            }
+        }
+        return List.copyOf(sortedPasses);
     }
 
     @Override
@@ -54,5 +63,21 @@ public class VKRenderTask implements RenderTask {
     @Override
     public Texture2D getRenderBuffer(String name) {
         return null;
+    }
+
+    public void draw(Frame frame, CommandBuffer cmdBuffer, Map<String, Object> args) {
+        int width = frame.getOutputWidth();
+        int height = frame.getOutputHeight();
+        if (frame.isResized()) {
+//            attachments.values().forEach(renderBuffer -> renderBuffer.resize(width, height));
+        }
+        FrameContext frameContext = new FrameContext(frame, args);
+        setups.forEach(consumer -> consumer.accept(frameContext, this));
+        sortedPasses.forEach(pass -> pass.draw(frameContext, cmdBuffer));
+    }
+
+    public void dispose() {
+        passes.values().forEach(VKRenderGraphPass::dispose);
+//        attachments.values().forEach(VKRenderTaskAttachment::dispose);
     }
 }

@@ -4,6 +4,7 @@ import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import com.google.gson.JsonParser;
+import engine.graphics.shader.ShaderType;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class ShaderManager {
             throw new RuntimeException();
         }
         try (input) {
-            return CompiledShader.compile(type, IOUtils.toString(input, StandardCharsets.UTF_8));
+            return CompiledShader.compile(GLShaderType.valueOf(type), IOUtils.toString(input, StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -3,10 +3,14 @@ package engine.graphics.vulkan.graph;
 import engine.graphics.display.Window;
 import engine.graphics.graph.*;
 import engine.graphics.texture.FrameBuffer;
+import engine.graphics.vulkan.CommandBuffer;
+import org.apache.commons.lang3.Validate;
 
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.Validate.notNull;
 
 public class VKRenderGraph implements RenderGraph {
     private final RenderGraphInfo info;
@@ -17,6 +21,9 @@ public class VKRenderGraph implements RenderGraph {
     private int frameNumber = 0;
     private long lastFrameStartTime;
 
+    private int width;
+    private int height;
+    private boolean resized;
     private Window window;
 
     public VKRenderGraph(RenderGraphInfo info) {
@@ -43,27 +50,53 @@ public class VKRenderGraph implements RenderGraph {
 
     @Override
     public void dispatchTask(String name, Frame frame, Map<String, Object> args, Consumer<RenderTask> callback) {
-
+        Validate.notNull(frame, "Frame cannot be null");
+        VKRenderTask task = tasks.get(name);
+        if (task == null) throw new IllegalArgumentException("Failed to found render task: " + name);
+//        task.draw(frame, args == null ? Map.of() : args);
+        if (callback != null) callback.accept(task);
     }
 
     @Override
     public int getWidth() {
-        return 0;
+        return width;
     }
 
     @Override
     public int getHeight() {
-        return 0;
+        return height;
     }
 
     @Override
     public void setSize(int width, int height) {
-
+        this.width = width;
+        this.height = height;
+        this.resized = true;
     }
 
     @Override
     public FrameBuffer getOutputFrameBuffer() {
         return null;
+    }
+
+    public void draw(float timeToLastUpdate, CommandBuffer mainCmdBuf) {
+        window.prepareDraw();
+        if (window != null && window.isResized()) {
+            setSize(window.getWidth(), window.getHeight());
+        }
+
+        frameNumber++;
+        long frameStartTime = System.nanoTime();
+        long currentTimeMillis = System.currentTimeMillis();
+        float timeLastFrame = (frameStartTime - lastFrameStartTime) / 1e9f;
+        Frame frame = new Frame(frameNumber, currentTimeMillis, timeLastFrame, timeToLastUpdate, width, height, resized);
+        mainTask.draw(frame, mainCmdBuf, Map.of());
+        lastFrameStartTime = frameStartTime;
+        resized = false;
+    }
+
+    public void dispose() {
+        tasks.values().forEach(VKRenderTask::dispose);
     }
 
     @Override
@@ -73,11 +106,11 @@ public class VKRenderGraph implements RenderGraph {
 
     @Override
     public void bindWindow(Window window) {
-
+        this.window = notNull(window);
     }
 
     @Override
     public void unbindWindow() {
-
+        this.window = null;
     }
 }

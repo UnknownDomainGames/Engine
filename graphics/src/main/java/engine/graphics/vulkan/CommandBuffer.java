@@ -2,6 +2,7 @@ package engine.graphics.vulkan;
 
 import engine.graphics.vulkan.buffer.VulkanBuffer;
 import engine.graphics.vulkan.util.VulkanUtils;
+import org.joml.Vector4ic;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -90,16 +91,25 @@ public class CommandBuffer {
         }
     }
 
-    public void fill(VulkanBuffer buf, long size, long offset, int data){
+    public void fill(VulkanBuffer buf, long size, long offset, int data) {
         vkCmdFillBuffer(vkbuffer, buf.getHandle(), offset, size, data);
     }
 
-    public static class CmdCopyRegion{
+    public void setScissor(Vector4ic scissor) {
+        try (var stack = MemoryStack.stackPush()) {
+            var buf = VkRect2D.callocStack(1, stack);
+            buf.get(0).offset().x(scissor.x()).y(scissor.y());
+            buf.get(0).extent().width(scissor.z()).height(scissor.w());
+            vkCmdSetScissor(vkbuffer, 0, buf);
+        }
+    }
+
+    public static class CmdCopyRegion {
         private long srcOffset;
         private long dstOffset;
         private long size;
 
-        public CmdCopyRegion srcOffset(long value){
+        public CmdCopyRegion srcOffset(long value) {
             this.srcOffset = value;
             return this;
         }

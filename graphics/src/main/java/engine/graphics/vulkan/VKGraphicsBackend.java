@@ -15,6 +15,7 @@ import engine.graphics.util.Cleaner;
 import engine.graphics.util.GPUInfo;
 import engine.graphics.vulkan.device.LogicalDevice;
 import engine.graphics.vulkan.device.PhysicalDevice;
+import engine.graphics.vulkan.graph.VKRenderGraph;
 import engine.graphics.vulkan.pipeline.PipelineStage;
 import engine.graphics.vulkan.synchronize.Semaphore;
 import engine.graphics.vulkan.util.GPUInfoVk;
@@ -50,6 +51,7 @@ public class VKGraphicsBackend implements GraphicsBackend {
     private GLFWVulkanWindow primaryWindow;
     private VKResourceFactory resourceFactory;
 
+    private final List<VKRenderGraph> renderGraphs = new ArrayList<>();
     private final List<RunnableFuture<?>> pendingTasks = new ArrayList<>();
 
     public VKGraphicsBackend() {
@@ -73,7 +75,10 @@ public class VKGraphicsBackend implements GraphicsBackend {
 
     @Override
     public void removeRenderGraph(RenderGraph renderGraph) {
-
+        VKRenderGraph graph = (VKRenderGraph) renderGraph;
+        if (renderGraphs.remove(graph)) {
+            graph.dispose();
+        }
     }
 
     @Override
@@ -98,7 +103,9 @@ public class VKGraphicsBackend implements GraphicsBackend {
 
     @Override
     public RenderGraph loadRenderGraph(RenderGraphInfo renderGraph) {
-        throw new UnsupportedOperationException(); // TODO: render graph
+        var vkgraph = new VKRenderGraph(renderGraph);
+        renderGraphs.add(vkgraph);
+        return vkgraph;
     }
 
     @Override
@@ -127,7 +134,7 @@ public class VKGraphicsBackend implements GraphicsBackend {
     }
 
     @Override
-    public void render(float tpf) {
+    public void render(float timeFromLastUpdate) {
         Cleaner.clean();
         runPendingTasks();
         var imageAcquireSemaphore = Semaphore.createSemaphore(device);
@@ -135,7 +142,7 @@ public class VKGraphicsBackend implements GraphicsBackend {
         int nextImage = swapchain.acquireNextImage(imageAcquireSemaphore, null);
         var cmdBuf = commandPool.createCommandBuffer();
         cmdBuf.beginCommandBuffer();
-        // TODO: render graph
+        renderGraphs.forEach(graph -> graph.draw(timeFromLastUpdate, cmdBuf));
         cmdBuf.endCommandBuffer();
         queue.submit(cmdBuf, List.of(imageAcquireSemaphore), List.of(PipelineStage.COLOR_ATTACHMENT_OUTPUT), List.of(renderCompleteSemaphore), null);
         queue.present(swapchain, nextImage, List.of(renderCompleteSemaphore));

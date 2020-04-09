@@ -1,7 +1,7 @@
 package engine.graphics.vulkan.pipeline;
 
 import engine.graphics.shader.ShaderModuleInfo;
-import engine.graphics.vulkan.shader.ShaderType;
+import engine.graphics.vulkan.shader.VKShaderType;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ public class Descriptor {
     private String name;
     private ShaderModuleInfo.VariableType type;
     private ShaderModuleInfo.LayoutVariableQualifier layout;
-    private List<ShaderType> stageReferred;
+    private List<VKShaderType> stageReferred;
 
-    public Descriptor(String name, ShaderModuleInfo.VariableType type, ShaderModuleInfo.LayoutVariableQualifier layout, List<ShaderType> stageReferred) {
+    public Descriptor(String name, ShaderModuleInfo.VariableType type, ShaderModuleInfo.LayoutVariableQualifier layout, List<VKShaderType> stageReferred) {
         this.name = name;
         this.type = type;
         this.layout = layout;
@@ -30,7 +30,7 @@ public class Descriptor {
         return layout;
     }
 
-    public List<ShaderType> getStageReferred() {
+    public List<VKShaderType> getStageReferred() {
         return stageReferred;
     }
 
@@ -38,7 +38,7 @@ public class Descriptor {
         private String name;
         private ShaderModuleInfo.VariableType type;
         private ShaderModuleInfo.LayoutVariableQualifier layout;
-        private List<ShaderType> stageReferred;
+        private List<VKShaderType> stageReferred;
 
         public Builder setName(String name) {
             this.name = name;
@@ -55,7 +55,7 @@ public class Descriptor {
             return this;
         }
 
-        public Builder setStageReferred(List<ShaderType> stageReferred) {
+        public Builder setStageReferred(List<VKShaderType> stageReferred) {
             this.stageReferred = stageReferred;
             return this;
         }
@@ -72,7 +72,7 @@ public class Descriptor {
             return layout;
         }
 
-        public List<ShaderType> getStageReferred() {
+        public List<VKShaderType> getStageReferred() {
             return stageReferred;
         }
 

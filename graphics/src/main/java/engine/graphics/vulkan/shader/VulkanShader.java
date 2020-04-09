@@ -12,27 +12,31 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static engine.graphics.vulkan.util.VulkanUtils.translateVulkanResult;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.vulkan.VK10.*;
 
 public class VulkanShader {
 
     private long moduleHandle;
 
-    private ShaderType stage;
+    private final LogicalDevice device;
+
+    private VKShaderType stage;
 
     private ShaderModuleInfo descriptor;
 
-    private VulkanShader(long module, ShaderType stage){
+    private VulkanShader(LogicalDevice device, long module, VKShaderType stage, ShaderModuleInfo descriptor) {
+        this.device = device;
         this.moduleHandle = module;
         this.stage = stage;
+        this.descriptor = descriptor;
     }
 
     public long getModuleHandle() {
         return moduleHandle;
     }
 
-    public ShaderType getStage() {
+    public VKShaderType getStage() {
         return stage;
     }
 
@@ -40,7 +44,7 @@ public class VulkanShader {
         return descriptor;
     }
 
-    public static VulkanShader createShader(Path sourcePath, LogicalDevice device, ShaderType stage){
+    public static VulkanShader createShader(Path sourcePath, LogicalDevice device, VKShaderType stage) {
         byte[] src;
         try {
             src = Files.readAllBytes(sourcePath);
@@ -51,8 +55,8 @@ public class VulkanShader {
         return createShader(compiledCode, device, stage);
     }
 
-    public static VulkanShader createShader(ByteBuffer compiledCode, LogicalDevice device, ShaderType stage){
-        try(var stack = MemoryStack.stackPush()) {
+    public static VulkanShader createShader(ByteBuffer compiledCode, LogicalDevice device, VKShaderType stage) {
+        try (var stack = MemoryStack.stackPush()) {
             int err;
             var moduleCreateInfo = VkShaderModuleCreateInfo.callocStack(stack)
                     .sType(VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO)
@@ -65,11 +69,11 @@ public class VulkanShader {
                 throw new AssertionError("Failed to create shader module: " + translateVulkanResult(err));
             }
             long shaderModule = pShaderModule.get(0);
-            return new VulkanShader(shaderModule, stage);
+            return new VulkanShader(device, shaderModule, stage, new ShaderModuleInfo());
         }
     }
 
     public void free(){
-//        vkDestroyShaderModule();
+        vkDestroyShaderModule(device.getNativeDevice(), moduleHandle, null);
     }
 }

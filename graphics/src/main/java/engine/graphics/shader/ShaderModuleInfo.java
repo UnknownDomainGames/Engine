@@ -2,7 +2,6 @@ package engine.graphics.shader;
 
 
 
-import engine.graphics.gl.shader.ShaderType;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,9 +10,9 @@ public class CompiledShader {
     private static final Logger LOGGER = LoggerFactory.getLogger(CompiledShader.class);
 
     private int id;
-    private final ShaderType type;
+    private final GLShaderType type;
 
-    public static CompiledShader compile(ShaderType type, String source) {
+    public static CompiledShader compile(GLShaderType type, String source) {
         int id = glCreateShader(type.gl);
         glShaderSource(id, source);
         glCompileShader(id);
@@ -22,7 +22,7 @@ public class CompiledShader {
         return new CompiledShader(id, type);
     }
 
-    private CompiledShader(int id, ShaderType type) {
+    private CompiledShader(int id, GLShaderType type) {
         this.id = id;
         this.type = type;
     }
@@ -31,7 +31,7 @@ public class CompiledShader {
         return id;
     }
 
-    public ShaderType getType() {
+    public GLShaderType getType() {
         return type;
     }
 

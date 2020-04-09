@@ -14,8 +14,9 @@ public class Pipeline {
     private final LogicalDevice device;
 
     private PipelineState state;
+    private PipelineLayout layout;
 
-    public Pipeline(LogicalDevice device, long handle, PipelineState state) {
+    public Pipeline(LogicalDevice device, long handle, PipelineState state, PipelineLayout layout) {
         this.device = device;
         this.handle = handle;
         state.parent = this;

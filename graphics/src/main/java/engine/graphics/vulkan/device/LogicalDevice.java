@@ -6,9 +6,7 @@ import engine.graphics.vulkan.CommandPool;
 import engine.graphics.vulkan.Queue;
 import engine.graphics.vulkan.VKDrawMode;
 import engine.graphics.vulkan.buffer.VulkanBuffer;
-import engine.graphics.vulkan.pipeline.Descriptor;
-import engine.graphics.vulkan.pipeline.Pipeline;
-import engine.graphics.vulkan.pipeline.PipelineState;
+import engine.graphics.vulkan.pipeline.*;
 import engine.graphics.vulkan.render.RenderPass;
 import engine.graphics.vulkan.synchronize.VulkanFence;
 import engine.graphics.vulkan.texture.VKColorFormat;
@@ -237,6 +235,7 @@ public class LogicalDevice {
             var pPipelineLayoutCreateInfo = VkPipelineLayoutCreateInfo.callocStack(stack)
                     .sType(VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO)
                     .pSetLayouts(setLayouts);
+            var sets = new ArrayList<DescriptorSet>();
 
             for (var entry : descriptorSets.entrySet()) {
                 var set = entry.getKey();
@@ -247,19 +246,20 @@ public class LogicalDevice {
                     var binding = bindings.get();
                     var layoutQualifier = variable.getLayout();
                     binding.binding(layoutQualifier.getBinding());
-                    if(variable.getType() instanceof ShaderModuleInfo.StructVariableType) {
+                    if (variable.getType() instanceof ShaderModuleInfo.StructVariableType) {
                         binding.descriptorType(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
-                    }
-                    else if (variable.getType() instanceof ShaderModuleInfo.OpaqueVariableType){
-                        if("sampler".equals(variable.getType().getType())) {
+                    } else if (variable.getType() instanceof ShaderModuleInfo.OpaqueVariableType) {
+                        if ("sampler".equals(variable.getType().getType())) {
                             binding.descriptorType(VK_DESCRIPTOR_TYPE_SAMPLER);
                         }
                     }
                 }
 
-                var layoutptr = stack.mallocLong(1);
-                VK10.vkCreateDescriptorSetLayout(getNativeDevice(), setLayoutInfo, null, layoutptr);
-                setLayouts.put(layoutptr.get(0));
+                var l1 = stack.mallocLong(1);
+                VK10.vkCreateDescriptorSetLayout(getNativeDevice(), setLayoutInfo, null, l1);
+                var layoutPointer = l1.get(0);
+                setLayouts.put(layoutPointer);
+                sets.add(new DescriptorSet(layoutPointer, List.copyOf(variables)));
             }
 
             var pPipelineLayout = stack.mallocLong(1);
@@ -274,7 +274,7 @@ public class LogicalDevice {
             if(err != VK_SUCCESS){
                 return null;
             }
-            return new Pipeline(this, ptrs.get(0), state.build());
+            return new Pipeline(this, ptrs.get(0), state.build(), new PipelineLayout(layout, sets));
         }
     }
 

@@ -1,6 +1,6 @@
 package engine.graphics.vulkan.util;
 
-import engine.graphics.vulkan.shader.ShaderType;
+import engine.graphics.vulkan.shader.VKShaderType;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryStack;
 
@@ -102,7 +102,7 @@ public class VulkanUtils {
         }
     }
 
-    public static ByteBuffer compileShaderCode(byte[] codeSrc, ShaderType vulkanStage) {
+    public static ByteBuffer compileShaderCode(byte[] codeSrc, VKShaderType vulkanStage) {
         ByteBuffer src = BufferUtils.createByteBuffer(codeSrc.length);
         src.put(codeSrc);
         src.flip();
