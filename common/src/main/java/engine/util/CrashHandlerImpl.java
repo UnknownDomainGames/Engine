@@ -49,7 +49,7 @@ public class CrashHandlerImpl implements CrashHandler {
     public synchronized void crash(@Nonnull Thread thread, @Nonnull Throwable cause, @Nonnull Map<String, Consumer<StringBuilder>> details) {
         engine.getLogger().error("/////////////// CRASH ///////////////");
         engine.getLogger().error("Thread: {}", thread.getName());
-        engine.getLogger().error(cause.getMessage(), cause);
+        engine.getLogger().error(cause.getMessage() == null ? "(no message is provided from exception)" : cause.getMessage(), cause);
         Path crashReportFile = crashReportPath.resolve("Crash_" + now().format(FILE_SAFE_DATE_TIME) + "_" + engine.getSide() + ".txt").toAbsolutePath();
         try {
             if (!Files.exists(crashReportFile.getParent())) {

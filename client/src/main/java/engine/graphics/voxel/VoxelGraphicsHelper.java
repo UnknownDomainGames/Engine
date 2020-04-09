@@ -74,7 +74,9 @@ public final class VoxelGraphicsHelper {
 
     @Listener
     public static void onGameMarkedTermination(GameTerminationEvent.Marked event) {
-        renderer.dispose();
-        renderer = null;
+        if (renderer != null) {
+            renderer.dispose();
+            renderer = null;
+        }
     }
 }

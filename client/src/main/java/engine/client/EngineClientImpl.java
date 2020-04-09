@@ -241,7 +241,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     @Override
     public boolean isPlaying() {
-        return game != null && !game.isTerminated();
+        return game != null && game.isReadyToPlay() && !game.isTerminated();
     }
 
     @Override

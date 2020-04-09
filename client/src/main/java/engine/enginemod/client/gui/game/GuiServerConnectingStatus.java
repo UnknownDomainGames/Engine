@@ -4,8 +4,10 @@ import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
 import engine.Platform;
 import engine.client.game.GameClientMultiplayer;
+import engine.event.Listener;
 import engine.game.MultiplayerGameData;
 import engine.graphics.GraphicsManager;
+import engine.gui.Scene;
 import engine.gui.control.Button;
 import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
@@ -15,9 +17,11 @@ import engine.gui.misc.Pos;
 import engine.gui.text.Text;
 import engine.gui.text.WrapText;
 import engine.server.event.NetworkDisconnectedEvent;
+import engine.server.event.NetworkingStartEvent;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.ConnectionStatus;
 import engine.server.network.NetworkClient;
+import engine.server.network.packet.PacketAlive;
 import engine.server.network.packet.PacketDisconnect;
 import engine.server.network.packet.PacketGameData;
 import engine.server.network.packet.PacketHandshake;
@@ -38,7 +42,7 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
     private boolean isCancelled = false;
     private MutableBooleanValue isFailed = new SimpleMutableBooleanValue(false);
 
-    public GuiServerConnectingStatus(String ip, int port) {
+    private GuiServerConnectingStatus() {
         alignment().set(Pos.CENTER);
         var vbox = new VBox();
         getChildren().add(vbox);
@@ -52,9 +56,8 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
             if (networkClient != null) {
                 networkClient.close();
             }
-            var engineClient = Platform.getEngineClient();
-//            engineClient.getEventBus().unregister();
-            var guiManager = engineClient.getGraphicsManager().getGUIManager();
+            Platform.getEngine().getEventBus().unregister(this);
+            var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
             guiManager.showLast();
         });
         lblStatus.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
@@ -68,25 +71,53 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
             vbox.getChildren().add(button);
         });
         setBackground(Background.fromColor(Color.fromRGB(0x7f7f7f)));
-        Platform.getEngine().getEventBus().<PacketReceivedEvent<PacketDisconnect>, PacketDisconnect>addGenericListener(PacketDisconnect.class, event -> {
-            Platform.getLogger().warn("Disconnected from server");
-            lblStatus.text().set("Disconnected");
-            lblReason.text().set(event.getPacket().getReason());
-            isFailed.set(true);
+    }
+
+    public GuiServerConnectingStatus(String ip, int port) {
+        this();
+        Platform.getEngine().getEventBus().register(this);
+        connect(ip, port);
+    }
+
+    @Listener
+    public void onNetworkingStart(NetworkingStartEvent e) {
+        var bus = e.getNetworkingEventBus();
+        bus.<PacketReceivedEvent<PacketAlive>, PacketAlive>addGenericListener(PacketAlive.class, event -> {
+            if (!event.getPacket().isPong()) {
+                networkClient.send(new PacketAlive(true));
+            }
         });
-        Platform.getEngine().getEventBus().<PacketReceivedEvent<PacketGameData>, PacketGameData>addGenericListener(PacketGameData.class, event -> {
+        bus.<PacketReceivedEvent<PacketDisconnect>, PacketDisconnect>addGenericListener(PacketDisconnect.class, event -> {
+            Platform.getLogger().warn("Disconnected from server");
+            if (!Platform.getEngineClient().getGraphicsManager().getGUIManager().isShowing() ||
+                    !(Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get() instanceof GuiServerConnectingStatus)) { //Disconnected in game
+                var root = new GuiServerConnectingStatus();
+                root.lblStatus.setText("Disconnected");
+                root.isFailed.set(true);
+                root.lblReason.text().set(event.getPacket().getReason());
+                Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(root));
+            } else {
+                var root = ((GuiServerConnectingStatus) Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get());
+                root.lblStatus.text().set("Disconnected");
+                root.isFailed.set(true);
+                root.lblReason.text().set(event.getPacket().getReason());
+            }
+        });
+        bus.<PacketReceivedEvent<PacketGameData>, PacketGameData>addGenericListener(PacketGameData.class, event -> {
+            Platform.getEngine().getEventBus().unregister(this); //TODO: not supposed to be done here
             lblStatus.text().set("Initializing game");
-            var game = new GameClientMultiplayer(Platform.getEngineClient(), MultiplayerGameData.fromPacket(event.getPacket()));
+            var game = new GameClientMultiplayer(Platform.getEngineClient(), networkClient, MultiplayerGameData.fromPacket(event.getPacket()));
             Platform.getEngine().startGame(game);
             Platform.getEngineClient().getGraphicsManager().getGUIManager().close();
         });
-        Platform.getEngine().getEventBus().<NetworkDisconnectedEvent>addListener(event -> {
+        bus.<NetworkDisconnectedEvent>addListener(event -> {
             Platform.getLogger().warn("Disconnected from server: {}", event.getReason());
+            Platform.getEngine().getCurrentGame().terminate();
+            networkClient.close();
             lblStatus.text().set("Disconnected");
-            lblReason.text().set(event.getReason());
             isFailed.set(true);
+            lblReason.text().set(event.getReason());
         });
-        connect(ip, port);
     }
 
     private void connect(final String ip, final int port){

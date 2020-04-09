@@ -139,6 +139,7 @@ public class GameServerFullAsync extends GameBase {
     protected void finishStage() {
         super.finishStage();
         data.getWorlds().forEach(this::loadWorld);
+        markReady();
     }
 
     @Override
@@ -172,5 +173,10 @@ public class GameServerFullAsync extends GameBase {
         List.copyOf(worlds.values()).forEach(World::unload);
         // TODO: unload mod/resource here
         super.tryTerminate();
+    }
+
+    //TODO: move to api
+    public void tick() {
+        networkServer.tick();
     }
 }

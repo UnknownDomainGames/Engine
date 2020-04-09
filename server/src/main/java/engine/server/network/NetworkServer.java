@@ -1,6 +1,12 @@
 package engine.server.network;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import engine.Platform;
+import engine.event.EventBus;
+import engine.event.SimpleEventBus;
+import engine.event.asm.AsmEventListenerFactory;
+import engine.server.event.NetworkingStartEvent;
+import engine.util.LazyObject;
 import engine.util.Side;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -19,15 +25,24 @@ import java.util.List;
 public class NetworkServer {
     private ChannelFuture future;
 
+    private EventBus eventBus;
+
+    //NetworkHandler will handle their own client only. Therefore we want a list of them instead of only one instance
     private List<NetworkHandler> handlers = Collections.synchronizedList(new ArrayList<>());
 
-    public void run(int port){
+    public static final LazyObject<NioEventLoopGroup> DEFAULT_SERVER_ACCEPTOR_POOL = new LazyObject<>(() -> new NioEventLoopGroup(1, new ThreadFactoryBuilder().setNameFormat("Netty Server Acceptor #%d").setDaemon(true).build()));
+    public static final LazyObject<NioEventLoopGroup> DEFAULT_SERVER_WORKER_POOL = new LazyObject<>(() -> new NioEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("Netty Server Handler #%d").setDaemon(true).build()));
+
+    public void run(int port) {
         run(null, port);
     }
-    public void run(@Nullable InetAddress address, int port){
+
+    public void run(@Nullable InetAddress address, int port) {
         Platform.getLogger().debug(String.format("Start launching netty server at %s:%d", address == null ? "*" : address.getHostAddress(), port));
-        var bossGroup = new NioEventLoopGroup();
-        var workerGroup = new NioEventLoopGroup();
+        var bossGroup = DEFAULT_SERVER_ACCEPTOR_POOL.get();
+        var workerGroup = DEFAULT_SERVER_WORKER_POOL.get();
+        eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+        Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
         future = new ServerBootstrap()
                 .group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
@@ -42,7 +57,7 @@ public class NetworkServer {
                         }
                         ch.pipeline().addLast("decoder", new PacketDecoder())
                                 .addLast("encoder", new PacketEncoder());
-                        var handler = new NetworkHandler(Side.SERVER);
+                        var handler = new NetworkHandler(Side.SERVER, eventBus);
                         handlers.add(handler);
                         ch.pipeline().addLast("handler", handler);
                     }
@@ -51,10 +66,12 @@ public class NetworkServer {
         Platform.getLogger().debug(String.format("Launched netty server at %s:%d", address == null ? "*" : address.getHostAddress(), port));
     }
 
-    public SocketAddress runLocal(){
+    public SocketAddress runLocal() {
         Platform.getLogger().debug("Start launching netty local server");
-        var bossGroup = new NioEventLoopGroup();
-        var workerGroup = new NioEventLoopGroup();
+        var bossGroup = DEFAULT_SERVER_ACCEPTOR_POOL.get();
+        var workerGroup = DEFAULT_SERVER_WORKER_POOL.get();
+        eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+        Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
         future = new ServerBootstrap()
                 .group(bossGroup, workerGroup)
                 .channel(LocalServerChannel.class)
@@ -62,7 +79,7 @@ public class NetworkServer {
 
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
-                        var handler = new NetworkHandler(Side.SERVER);
+                        var handler = new NetworkHandler(Side.SERVER, eventBus);
                         handlers.add(handler);
                         ch.pipeline().addLast("handler", handler);
                     }
@@ -71,13 +88,17 @@ public class NetworkServer {
         return future.channel().localAddress();
     }
 
-    public void tick(){
+    public void tick() {
         for (NetworkHandler handler : handlers) {
-
+            handler.tick();
         }
     }
 
-    public void shutdown(){
+    public void shutdown() {
         future.channel().close().syncUninterruptibly();
+    }
+
+    public EventBus getEventBus() {
+        return eventBus;
     }
 }

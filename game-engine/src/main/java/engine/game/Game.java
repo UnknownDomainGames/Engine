@@ -63,6 +63,8 @@ public interface Game {
 
     void terminate();
 
+    boolean isReadyToPlay();
+
     boolean isMarkedTermination();
 
     boolean isTerminated();

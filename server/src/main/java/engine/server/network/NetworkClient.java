@@ -1,6 +1,13 @@
 package engine.server.network;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import engine.Platform;
+import engine.event.EventBus;
+import engine.event.SimpleEventBus;
+import engine.event.asm.AsmEventListenerFactory;
+import engine.server.event.NetworkingStartEvent;
 import engine.server.network.packet.Packet;
+import engine.util.LazyObject;
 import engine.util.Side;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -14,10 +21,17 @@ import java.net.SocketAddress;
 
 public class NetworkClient {
     private ChannelFuture future;
+    private EventBus eventBus;
+
     private NetworkHandler handler;
     private NioEventLoopGroup workerGroup;
-    public void run(InetAddress address, int port){
-        workerGroup = new NioEventLoopGroup();
+    public static final LazyObject<NioEventLoopGroup> DEFAULT_CLIENT_WORKER_POOL = new LazyObject<>(() -> new NioEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("Netty Client Handler #%d").setDaemon(true).build()));
+    public static final LazyObject<DefaultEventLoopGroup> LOCAL_CLIENT_WORKER_POOL = new LazyObject<>(() -> new DefaultEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("Netty Client Handler #%d").setDaemon(true).build()));
+
+    public void run(InetAddress address, int port) {
+        workerGroup = DEFAULT_CLIENT_WORKER_POOL.get();
+        eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+        Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
         var channelFuture = new Bootstrap()
                 .group(workerGroup)
                 .channel(NioSocketChannel.class)
@@ -32,7 +46,7 @@ public class NetworkClient {
                         }
                         ch.pipeline().addLast("timeout", new ReadTimeoutHandler(10)).addLast("decoder", new PacketDecoder())
                                 .addLast("encoder", new PacketEncoder());
-                        handler = new NetworkHandler(Side.CLIENT);
+                        handler = new NetworkHandler(Side.CLIENT, eventBus);
                         ch.pipeline().addLast("handler", handler);
                     }
                 })
@@ -40,8 +54,10 @@ public class NetworkClient {
         future = channelFuture;
     }
 
-    public void runLocal(SocketAddress localServerAddress){
-        var workerGroup = new NioEventLoopGroup();
+    public void runLocal(SocketAddress localServerAddress) {
+        var workerGroup = LOCAL_CLIENT_WORKER_POOL.get();
+        eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+        Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
         var channelFuture = new Bootstrap()
                 .group(workerGroup)
                 .channel(LocalChannel.class)
@@ -49,7 +65,7 @@ public class NetworkClient {
 
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
-                        handler = new NetworkHandler(Side.CLIENT);
+                        handler = new NetworkHandler(Side.CLIENT, eventBus);
                         ch.pipeline().addLast("handler", handler);
                     }
                 })
@@ -57,7 +73,7 @@ public class NetworkClient {
         future = channelFuture;
     }
 
-    public void send(Packet msg){
+    public void send(Packet msg) {
         future.channel().writeAndFlush(msg);
     }
 
@@ -65,10 +81,14 @@ public class NetworkClient {
         return handler;
     }
 
-    public void close(){
-        if(handler.isChannelOpen()){
+    public void tick() {
+        handler.tick();
+    }
+
+    public void close() {
+        if (handler != null && handler.isChannelOpen()) {
             handler.closeChannel();
         }
-        workerGroup.shutdownGracefully();
+        future.channel().close().syncUninterruptibly();
     }
 }

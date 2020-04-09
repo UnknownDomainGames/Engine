@@ -3,7 +3,6 @@ package engine.server;
 import configuration.parser.ConfigParseException;
 import engine.EngineBase;
 import engine.enginemod.EngineModListeners;
-import engine.enginemod.ServerHandlingListeners;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
 import engine.game.GameData;
@@ -88,7 +87,6 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
         nettyServer = new NetworkServer();
         var ipStr = serverConfig.getServerIp();
         var port = serverConfig.getServerPort();
-        getEventBus().register(ServerHandlingListeners.class);
         logger.info("Starting server at {}:{}", ipStr.isEmpty() ? "*" : ipStr, port);
         try {
             nettyServer.run(ipStr.isEmpty() ? null : InetAddress.getByName(ipStr), port);
@@ -147,6 +145,6 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
 
     @Override
     public boolean isPlaying() {
-        return game != null && !game.isTerminated();
+        return game != null && game.isReadyToPlay() && !game.isTerminated();
     }
 }

@@ -12,14 +12,21 @@ import engine.event.mod.ModRegistrationEvent;
 import engine.item.Item;
 import engine.registry.game.BlockRegistry;
 import engine.registry.impl.*;
+import engine.server.event.NetworkingStartEvent;
 import engine.server.network.packet.*;
 import engine.world.WorldProvider;
+import engine.world.provider.FlatWorldProvider;
 
 public final class EngineModListeners {
 
     @Listener
     public static void onPreInit(ModLifecycleEvent.PreInitialization event) {
         Platform.getEngine().getEventBus().register(EngineModListeners.class);
+    }
+
+    @Listener
+    public static void onNetworkingStart(NetworkingStartEvent event) {
+        event.getNetworkingEventBus().register(ServerHandlingListeners.class);
     }
 
     @Listener
@@ -30,6 +37,11 @@ public final class EngineModListeners {
         e.addRegistry(Item.class, SimpleItemRegistry::new);
         e.addRegistry(EntityProvider.class, SimpleEntityRegistry::new);
         e.addRegistry(PacketProvider.class, PacketRegistry::new);
+    }
+
+    @Listener
+    public static void registerWorldProvider(ModRegistrationEvent.Register<WorldProvider> event) {
+        event.register(new FlatWorldProvider().name("flat"));
     }
 
     @Listener
@@ -48,6 +60,7 @@ public final class EngineModListeners {
     public static void registerPacket(ModRegistrationEvent.Register<PacketProvider> event){
         event.register(new PacketProvider.Builder().type(PacketRaw.class).name("raw").build());
         event.register(new PacketProvider.Builder().type(PacketHandshake.class).name("handshake").build());
+        event.register(new PacketProvider.Builder().type(PacketAlive.class).name("alive").build());
         event.register(new PacketProvider.Builder().type(PacketGameData.class).name("game-data").build());
         event.register(new PacketProvider.Builder().type(PacketChunkData.class).name("chunk-data").build());
         event.register(new PacketProvider.Builder().type(PacketDisconnect.class).name("disconnect").build());

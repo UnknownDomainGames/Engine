@@ -47,11 +47,9 @@ import engine.player.Player;
 import engine.registry.Registries;
 import engine.registry.impl.IdAutoIncreaseRegistry;
 import engine.registry.impl.NonIdRegistry;
-import engine.world.WorldProvider;
 import engine.world.hit.BlockHitResult;
 import engine.world.hit.EntityHitResult;
 import engine.world.hit.HitResult;
-import engine.world.provider.FlatWorldProvider;
 
 public final class EngineModClientListeners {
 
@@ -67,11 +65,6 @@ public final class EngineModClientListeners {
     public static void constructRegistry(ModRegistrationEvent.Construction e) {
         e.addRegistry(KeyBinding.class, () -> new IdAutoIncreaseRegistry<>(KeyBinding.class));
         e.addRegistry(HUDControl.class, () -> new NonIdRegistry<>(HUDControl.class));
-    }
-
-    @Listener
-    public static void registerWorldProvider(ModRegistrationEvent.Register<WorldProvider> event) {
-        event.register(new FlatWorldProvider().name("flat"));
     }
 
     @Listener

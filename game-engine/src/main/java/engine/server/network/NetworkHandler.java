@@ -1,9 +1,11 @@
 package engine.server.network;
 
 import engine.Platform;
+import engine.event.EventBus;
 import engine.server.event.NetworkDisconnectedEvent;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.packet.Packet;
+import engine.server.network.packet.PacketAlive;
 import engine.server.network.packet.PacketDisconnect;
 import engine.util.Side;
 import io.netty.channel.Channel;
@@ -25,9 +27,16 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     private final Side instanceSide;
     private ConnectionStatus status;
 
-    public NetworkHandler(Side side){
+    private final EventBus eventBus;
+
+    public NetworkHandler(Side side) {
+        this(side, null);
+    }
+
+    public NetworkHandler(Side side, EventBus bus) {
         instanceSide = side;
         status = ConnectionStatus.HANDSHAKE;
+        this.eventBus = bus != null ? bus : Platform.getEngine().getEventBus();
     }
 
     public Side getSide() {
@@ -59,9 +68,14 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     }
 
     public void closeChannel(String reason){
-        if(this.channel != null && this.channel.isOpen()){
+        if(this.channel != null && this.channel.isOpen()) {
             this.channel.close().awaitUninterruptibly();
-            Platform.getEngine().getEventBus().post(new NetworkDisconnectedEvent(reason));
+            var event = new NetworkDisconnectedEvent(reason);
+            var mainBus = Platform.getEngine().getEventBus();
+            if (eventBus != mainBus) {
+                eventBus.post(event);
+            }
+            mainBus.post(event);
         }
     }
 
@@ -71,25 +85,37 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Packet packet) throws Exception {
-        Platform.getEngine().getEventBus().post(new PacketReceivedEvent(this, packet));
+        packetInCounter++;
+        if (packet instanceof PacketAlive && !((PacketAlive) packet).isPong()) {
+            sendPacket(new PacketAlive(true));
+        }
+        eventBus.post(new PacketReceivedEvent(this, packet));
     }
 
     private boolean exceptionMet = false;
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if(cause instanceof TimeoutException){
-            closeChannel("Connection timed out");
-        } else {
-            Platform.getLogger().warn("exception thrown in connection", cause);
-            if (!exceptionMet) {
-                exceptionMet = true;
-                sendPacket(new PacketDisconnect(cause.getMessage()), future -> closeChannel(cause.getMessage()));
+        if (channel.isOpen()) {
+            if (cause instanceof TimeoutException) {
+                closeChannel("Connection timed out");
             } else {
-                Platform.getLogger().warn("this exception is an double failure");
-                closeChannel(cause.getMessage());
+                if (!exceptionMet) {
+                    exceptionMet = true;
+                    Platform.getLogger().warn("exception thrown in connection", cause);
+
+                    sendPacket(new PacketDisconnect(cause.getMessage()), future -> closeChannel(cause.getMessage()));
+                    setAutoRead(false);
+                } else {
+                    Platform.getLogger().warn("DOUBLE FAILURE! exception thrown in connection", cause);
+                    closeChannel(cause.getMessage());
+                }
             }
         }
+    }
+
+    public void setAutoRead(boolean flag) {
+        channel.config().setAutoRead(flag);
     }
 
     public boolean isChannelOpen() {
@@ -103,7 +129,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     public void pendPacket(Packet packet, @Nullable GenericFutureListener<Future<? super Void>> future) {
         if (channel != null) {
-
+            packetOutCounter++;
             var channelFuture = channel.write(packet);
             if (future != null) {
                 channelFuture.addListener(future);
@@ -126,6 +152,24 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     public void sendPacket(Packet packet, @Nullable GenericFutureListener<Future<? super Void>> future) {
         pendPacket(packet, future);
         sendPendingPackets();
+    }
+
+    private int packetOutCounter;
+    private int packetInCounter;
+    private int tick;
+    private float packetOutAverage;
+    private float packetInAverage;
+
+    public void tick() {
+        if (tick++ % 20 == 0) {
+            this.packetOutAverage = packetOutAverage * 0.75f + packetOutCounter * 0.25f;
+            this.packetInAverage = packetInAverage * 0.75f + packetInCounter * 0.25f;
+            packetOutCounter = 0;
+            packetInCounter = 0;
+            if (packetOutAverage == 0) {
+                sendPacket(new PacketAlive(false));
+            }
+        }
     }
 
 }

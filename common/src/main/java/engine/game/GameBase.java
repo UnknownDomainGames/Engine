@@ -27,6 +27,7 @@ public abstract class GameBase implements Game {
 
     protected boolean markedTermination = false;
     protected boolean terminated = false;
+    protected boolean isReady = false;
 
     public GameBase(Engine engine, Path storagePath, GameData data) {
         this.engine = engine;
@@ -125,6 +126,15 @@ public abstract class GameBase implements Game {
         markedTermination = true;
         logger.info(marker, "Marked game terminated!");
         eventBus.post(new GameTerminationEvent.Marked(this));
+    }
+
+    protected void markReady() {
+        isReady = true;
+    }
+
+    @Override
+    public boolean isReadyToPlay() {
+        return isReady;
     }
 
     protected void tryTerminate() {
