@@ -4,6 +4,8 @@ import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.ValueChangeListener;
+import engine.gui.graphics.NodeRenderer;
+import engine.gui.graphics.ParentRenderer;
 import engine.math.Math2;
 
 import java.util.LinkedList;
@@ -157,5 +159,10 @@ public abstract class Parent extends Node {
 
     protected static float prefHeight(Node node) {
         return Math2.second(node.prefHeight(), node.minHeight(), node.maxHeight());
+    }
+
+    @Override
+    protected NodeRenderer createDefaultRenderer() {
+        return ParentRenderer.INSTANCE;
     }
 }
