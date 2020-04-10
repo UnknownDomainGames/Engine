@@ -58,7 +58,7 @@ public class SimpleEventBus implements EventBus {
     @Override
     public void register(Object target) {
         if (registeredListeners.containsKey(target)) {
-            return;
+            throw new IllegalStateException("Listener has been registered");
         }
 
         if (target instanceof Class) {
@@ -151,7 +151,12 @@ public class SimpleEventBus implements EventBus {
 
     @Override
     public <T extends Event> void addListener(Order order, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer) {
-        getListenerList(eventType).register(new RegisteredListener(eventType, null, order, receiveCancelled, null, event -> consumer.accept(eventType.cast(event))));
+        if (registeredListeners.containsKey(consumer)) {
+            throw new IllegalStateException("Listener has been registered");
+        }
+        RegisteredListener listener = new RegisteredListener(eventType, null, order, receiveCancelled, null, event -> consumer.accept(eventType.cast(event)));
+        registeredListeners.put(listener, List.of(listener));
+        getListenerList(eventType).register(listener);
     }
 
     @Override
@@ -171,7 +176,12 @@ public class SimpleEventBus implements EventBus {
 
     @Override
     public <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Order order, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer) {
-        getListenerList(eventType).register(new RegisteredListener(eventType, null, order, receiveCancelled, genericType, event -> consumer.accept(eventType.cast(event))));
+        if (registeredListeners.containsKey(consumer)) {
+            throw new IllegalStateException("Listener has been registered");
+        }
+        RegisteredListener listener = new RegisteredListener(eventType, null, order, receiveCancelled, genericType, event -> consumer.accept(eventType.cast(event)));
+        registeredListeners.put(listener, List.of(listener));
+        getListenerList(eventType).register(listener);
     }
 
     public static Builder builder() {
