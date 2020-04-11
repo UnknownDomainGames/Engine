@@ -16,6 +16,8 @@ public class Path2D {
     private float currX;
     private float currY;
 
+    private boolean closed;
+
     public FloatBuffer getBuffer() {
         return buffer;
     }
@@ -74,6 +76,8 @@ public class Path2D {
     }
 
     public Path2D moveTo(float x, float y) {
+        buffer.clear();
+        closed = false;
         moveX = currX = x;
         moveY = currY = y;
         append(x, y);
@@ -245,9 +249,14 @@ public class Path2D {
         return (float) angle;
     }
 
+    public boolean isClosed() {
+        return closed;
+    }
+
     public Path2D closePath() {
         currX = moveX;
         currY = moveY;
+        closed = true;
         append(moveX, moveY);
         return this;
     }

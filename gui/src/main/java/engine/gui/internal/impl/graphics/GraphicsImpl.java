@@ -114,7 +114,7 @@ public final class GraphicsImpl implements Graphics {
     public void draw(Path2D path, float x, float y) {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         FloatBuffer points = path.getBuffer();
-        for (int i = 0; i < points.position(); i += 2) {
+        for (int i = 0, size = points.position(); i < size; i += 2) {
             putVertex(buffer, x + points.get(i), y + points.get(i + 1));
         }
         buffer.finish();
@@ -123,13 +123,16 @@ public final class GraphicsImpl implements Graphics {
 
     @Override
     public void fill(Path2D path, float x, float y) {
+        if (!path.isClosed()) {
+            throw new IllegalStateException("Cannot fill open path");
+        }
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         FloatBuffer points = path.getBuffer();
-        for (int i = 0; i < points.position(); i += 2) {
+        for (int i = 0, size = points.position() - 2; i < size; i += 2) {
             putVertex(buffer, x + points.get(i), y + points.get(i + 1));
         }
         buffer.finish();
-        renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
+        renderer.drawStreamed(DrawMode.TRIANGLE_FAN, buffer);
     }
 
     @Override
