@@ -6,7 +6,7 @@ import engine.EngineBase;
 import engine.Platform;
 import engine.client.asset.AssetManager;
 import engine.client.asset.EngineAssetManager;
-import engine.client.asset.reloading.AssetReloadListener;
+import engine.client.asset.reloading.AssetReloadHandler;
 import engine.client.asset.source.AssetSource;
 import engine.client.asset.source.CompositeAssetSource;
 import engine.client.asset.source.FileSystemAssetSource;
@@ -142,11 +142,11 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         soundManager = new EngineSoundManager();
         soundManager.init();
         addShutdownListener(soundManager::dispose);
-        assetManager.getReloadManager().addListener(AssetReloadListener.builder().name("Sound").runnable(soundManager::reload).build());
+        assetManager.getReloadManager().addHandler(AssetReloadHandler.builder().name("Sound").runnable(soundManager::reload).build());
 
         logger.info("Initializing internalization!");
         localeManager = LocaleManager.INSTANCE;
-        assetManager.getReloadManager().addListener(AssetReloadListener.builder().name("I18n").runnable(() -> {
+        assetManager.getReloadManager().addHandler(AssetReloadHandler.builder().name("I18n").runnable(() -> {
             localeManager.reset();
             for (ModContainer mod : EngineClientImpl.this.getModManager().getLoadedMods()) {
                 localeManager.register(mod);

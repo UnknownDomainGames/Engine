@@ -6,7 +6,7 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-public final class AssetReloadListener implements KeyComparable<String, AssetReloadListener> {
+public final class AssetReloadHandler implements KeyComparable<String, AssetReloadHandler> {
 
     private final String name;
     private final Runnable runnable;
@@ -17,11 +17,15 @@ public final class AssetReloadListener implements KeyComparable<String, AssetRel
         return new Builder();
     }
 
-    private AssetReloadListener(String name, Runnable runnable, Set<String> before, Set<String> after) {
+    private AssetReloadHandler(String name, Runnable runnable, Set<String> before, Set<String> after) {
         this.name = notNull(name);
         this.runnable = notNull(runnable);
         this.before = before;
         this.after = after;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void onReload() {
@@ -72,8 +76,8 @@ public final class AssetReloadListener implements KeyComparable<String, AssetRel
             return this;
         }
 
-        public AssetReloadListener build() {
-            return new AssetReloadListener(name, runnable, before, after);
+        public AssetReloadHandler build() {
+            return new AssetReloadHandler(name, runnable, before, after);
         }
     }
 }

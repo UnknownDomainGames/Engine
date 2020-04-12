@@ -2,7 +2,7 @@ package engine.graphics.voxel;
 
 import engine.client.asset.AssetManager;
 import engine.client.asset.AssetType;
-import engine.client.asset.reloading.AssetReloadListener;
+import engine.client.asset.reloading.AssetReloadHandler;
 import engine.event.Listener;
 import engine.event.Order;
 import engine.event.engine.EngineEvent;
@@ -32,10 +32,10 @@ public final class VoxelGraphicsHelper {
         textureAtlas = new TextureAtlasImpl();
         VoxelGraphics.setVoxelTextureAtlas(textureAtlas);
         AssetManager assetManager = manager.getEngine().getAssetManager();
-        assetManager.getReloadManager().addListener(
-                AssetReloadListener.builder().name("VoxelTexture").after("Texture").runnable(textureAtlas::reload).build());
-        assetManager.getReloadManager().addListener(
-                AssetReloadListener.builder().name("VoxelTextureCleanCache").after("VoxelTexture").runnable(textureAtlas::cleanCache).build());
+        assetManager.getReloadManager().addHandler(
+                AssetReloadHandler.builder().name("VoxelTexture").after("Texture").runnable(textureAtlas::reload).build());
+        assetManager.getReloadManager().addHandler(
+                AssetReloadHandler.builder().name("VoxelTextureCleanCache").after("VoxelTexture").runnable(textureAtlas::cleanCache).build());
 
         blockRenderManager = new BlockRenderManagerImpl();
         BlockRenderManager.Internal.setInstance(blockRenderManager);

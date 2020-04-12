@@ -3,7 +3,7 @@ package engine.graphics.model.voxel;
 import engine.client.asset.*;
 import engine.client.asset.exception.AssetLoadException;
 import engine.client.asset.exception.AssetNotFoundException;
-import engine.client.asset.reloading.AssetReloadListener;
+import engine.client.asset.reloading.AssetReloadHandler;
 import engine.client.asset.source.AssetSourceManager;
 import engine.graphics.model.BakedModel;
 import engine.graphics.model.voxel.block.BlockModelLoader;
@@ -37,10 +37,10 @@ public class ModelManager implements AssetProvider<BakedModel> {
         this.source = manager.getSourceManager();
         this.type = type;
         this.textureAtlas = VoxelGraphicsHelper.getVoxelTextureAtlas();
-        manager.getReloadManager().addListener(
-                AssetReloadListener.builder().name("ReloadVoxelModel").before("VoxelTexture").runnable(this::reloadModels).build());
-        manager.getReloadManager().addListener(
-                AssetReloadListener.builder().name("BakeVoxelModel").before("VoxelTextureCleanCache").after("VoxelTexture").runnable(this::bakeModels).build());
+        manager.getReloadManager().addHandler(
+                AssetReloadHandler.builder().name("ReloadVoxelModel").before("VoxelTexture").runnable(this::reloadModels).build());
+        manager.getReloadManager().addHandler(
+                AssetReloadHandler.builder().name("BakeVoxelModel").before("VoxelTextureCleanCache").after("VoxelTexture").runnable(this::bakeModels).build());
     }
 
     @Override

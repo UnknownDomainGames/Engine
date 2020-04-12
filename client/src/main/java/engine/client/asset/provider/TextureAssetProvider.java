@@ -3,7 +3,7 @@ package engine.client.asset.provider;
 import com.google.common.collect.Maps;
 import engine.client.asset.*;
 import engine.client.asset.exception.AssetLoadException;
-import engine.client.asset.reloading.AssetReloadListener;
+import engine.client.asset.reloading.AssetReloadHandler;
 import engine.client.asset.source.AssetSourceManager;
 import engine.graphics.image.BufferedImage;
 import engine.graphics.texture.Texture2D;
@@ -37,7 +37,7 @@ public final class TextureAssetProvider implements AssetProvider<Texture2D> {
     public void init(AssetManager manager, AssetType<Texture2D> type) {
         this.type = type;
         this.sourceManager = manager.getSourceManager();
-        manager.getReloadManager().addListener(AssetReloadListener.builder().name("Texture").runnable(this::reload).build());
+        manager.getReloadManager().addHandler(AssetReloadHandler.builder().name("Texture").runnable(this::reload).build());
     }
 
     @Override
