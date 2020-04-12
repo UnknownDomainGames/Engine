@@ -1,57 +1,59 @@
 package engine.client.asset.reloading;
 
-import engine.util.KeyComparable;
-
 import java.util.Set;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-public final class AssetReloadHandler implements KeyComparable<String, AssetReloadHandler> {
+public final class AssetReloadHandler implements Comparable<AssetReloadHandler> {
 
     private final String name;
     private final Runnable runnable;
-    private final Set<String> before;
-    private final Set<String> after;
+    private final Set<String> beforeNodes;
+    private final Set<String> afterNodes;
 
     public static Builder builder() {
         return new Builder();
     }
 
-    private AssetReloadHandler(String name, Runnable runnable, Set<String> before, Set<String> after) {
+    private AssetReloadHandler(String name, Runnable runnable, Set<String> beforeNodes, Set<String> afterNodes) {
         this.name = notNull(name);
         this.runnable = notNull(runnable);
-        this.before = before;
-        this.after = after;
+        this.beforeNodes = beforeNodes;
+        this.afterNodes = afterNodes;
+    }
+
+    public void doReload() {
+        runnable.run();
     }
 
     public String getName() {
         return name;
     }
 
-    public void onReload() {
-        runnable.run();
+    public Set<String> beforeNodes() {
+        return beforeNodes;
+    }
+
+    public Set<String> afterNodes() {
+        return afterNodes;
     }
 
     @Override
-    public String key() {
-        return name;
-    }
+    public int compareTo(AssetReloadHandler o) {
+        if (afterNodes().contains(o.getName()) || o.beforeNodes().contains(getName()))
+            return 1;
 
-    @Override
-    public Set<String> beforeThis() {
-        return before;
-    }
+        if (beforeNodes().contains(o.getName()) || o.afterNodes().contains(getName()))
+            return -1;
 
-    @Override
-    public Set<String> afterThis() {
-        return after;
+        return 0;
     }
 
     public static final class Builder {
         private String name;
         private Runnable runnable;
-        private Set<String> before = Set.of();
-        private Set<String> after = Set.of();
+        private Set<String> beforeNodes = Set.of();
+        private Set<String> afterNodes = Set.of();
 
         private Builder() {
         }
@@ -66,18 +68,18 @@ public final class AssetReloadHandler implements KeyComparable<String, AssetRelo
             return this;
         }
 
-        public Builder before(String... before) {
-            this.before = Set.of(before);
+        public Builder before(String... beforeNodes) {
+            this.beforeNodes = Set.of(beforeNodes);
             return this;
         }
 
-        public Builder after(String... after) {
-            this.after = Set.of(after);
+        public Builder after(String... afterNodes) {
+            this.afterNodes = Set.of(afterNodes);
             return this;
         }
 
         public AssetReloadHandler build() {
-            return new AssetReloadHandler(name, runnable, before, after);
+            return new AssetReloadHandler(name, runnable, beforeNodes, afterNodes);
         }
     }
 }

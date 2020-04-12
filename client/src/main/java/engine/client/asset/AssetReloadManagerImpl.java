@@ -11,12 +11,12 @@ public class AssetReloadManagerImpl implements AssetReloadManager {
     private final List<AssetReloadHandler> handlers = SortedList.create();
 
     @Override
-    public void addHandler(AssetReloadHandler listener) {
-        handlers.add(listener);
+    public void addHandler(AssetReloadHandler handler) {
+        handlers.add(handler);
     }
 
     @Override
     public void reload() {
-        handlers.forEach(AssetReloadHandler::onReload);
+        handlers.forEach(AssetReloadHandler::doReload);
     }
 }
