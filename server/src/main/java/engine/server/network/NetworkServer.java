@@ -14,12 +14,14 @@ import io.netty.channel.local.LocalAddress;
 import io.netty.channel.local.LocalServerChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 
 import javax.annotation.Nullable;
 import java.net.InetAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class NetworkServer {
@@ -55,8 +57,8 @@ public class NetworkServer {
                         } catch (ChannelException var3) {
 
                         }
-                        ch.pipeline().addLast("decoder", new PacketDecoder())
-                                .addLast("encoder", new PacketEncoder());
+                        ch.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("splitter", new PacketStreamSplitter()).addLast("decoder", new PacketDecoder())
+                                .addLast("size_prepender", new PacketSizePrepender()).addLast("encoder", new PacketEncoder());
                         var handler = new NetworkHandler(Side.SERVER, eventBus);
                         handlers.add(handler);
                         ch.pipeline().addLast("handler", handler);
@@ -89,8 +91,16 @@ public class NetworkServer {
     }
 
     public void tick() {
-        for (NetworkHandler handler : handlers) {
-            handler.tick();
+        synchronized (handlers) {
+            for (Iterator<NetworkHandler> iterator = handlers.iterator(); iterator.hasNext(); ) {
+                NetworkHandler handler = iterator.next();
+                if (handler.isChannelOpen()) {
+                    handler.tick();
+                } else {
+                    handler.postDisconnect();
+                    iterator.remove();
+                }
+            }
         }
     }
 

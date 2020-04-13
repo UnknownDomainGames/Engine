@@ -25,8 +25,8 @@ public final class HUDHandingItem extends HUDControl {
 
     @Override
     public void onVisibleChanged(boolean visible) {
-        if (visible) Platform.getEngineClient().getEventBus().register(this);
-        else Platform.getEngineClient().getEventBus().unregister(this);
+        if (!this.isVisible() && visible) Platform.getEngineClient().getEventBus().register(this);
+        else if (this.isVisible() && !visible) Platform.getEngineClient().getEventBus().unregister(this);
     }
 
     @Listener

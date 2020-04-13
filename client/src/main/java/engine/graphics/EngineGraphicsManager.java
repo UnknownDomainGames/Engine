@@ -162,7 +162,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
 
         if (engine.isPlaying()) {
             var player = engine.getCurrentGame().getClientPlayer();
-            if (player != null) {
+            if (player != null && player.getEntityController() != null) {
                 player.getEntityController().updateCamera(viewport.getCamera(), timeToLastUpdate);
             }
         }

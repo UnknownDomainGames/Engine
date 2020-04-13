@@ -44,8 +44,9 @@ public class NetworkClient {
                         } catch (ChannelException var3) {
 
                         }
-                        ch.pipeline().addLast("timeout", new ReadTimeoutHandler(10)).addLast("decoder", new PacketDecoder())
-                                .addLast("encoder", new PacketEncoder());
+                        ch.pipeline().addLast("timeout", new ReadTimeoutHandler(30))
+                                .addLast("splitter", new PacketStreamSplitter()).addLast("decoder", new PacketDecoder())
+                                .addLast("size_prepender", new PacketSizePrepender()).addLast("encoder", new PacketEncoder());
                         handler = new NetworkHandler(Side.CLIENT, eventBus);
                         ch.pipeline().addLast("handler", handler);
                     }
@@ -86,9 +87,11 @@ public class NetworkClient {
     }
 
     public void close() {
-        if (handler != null && handler.isChannelOpen()) {
-            handler.closeChannel();
+//        if (handler != null && handler.isChannelOpen()) {
+//            handler.closeChannel();
+//        }
+        if (future != null && future.channel().isOpen()) {
+            future.channel().close().syncUninterruptibly();
         }
-        future.channel().close().syncUninterruptibly();
     }
 }

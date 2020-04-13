@@ -18,13 +18,12 @@ public class PacketAlive implements Packet {
 
     @Override
     public void write(PacketBuf buf) throws IOException {
-//        buf.writeBoolean(pong);
-        buf.writeVarInt(pong ? 1 : 0); //TODO somehow cannot write boolean only
+        buf.writeBoolean(pong);
     }
 
     @Override
     public void read(PacketBuf buf) throws IOException {
-        pong = buf.readVarInt() == 1;
+        pong = buf.readBoolean();
     }
 
     public boolean isPong() {

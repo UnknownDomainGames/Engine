@@ -71,7 +71,7 @@ public final class EngineGUIManager implements GUIManager {
 
     @Override
     public void close() {
-        show(null);
+        showInternal(null);
     }
 
     @Override

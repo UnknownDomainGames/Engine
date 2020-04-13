@@ -3,22 +3,22 @@ package engine.client.world;
 import engine.block.Block;
 import engine.client.world.chunk.WorldClientChunkManager;
 import engine.component.Component;
+import engine.component.ComponentAgent;
 import engine.entity.Entity;
 import engine.event.block.cause.BlockChangeCause;
 import engine.game.Game;
 import engine.math.BlockPos;
 import engine.registry.Registries;
-import engine.world.World;
-import engine.world.WorldCreationSetting;
-import engine.world.WorldProvider;
-import engine.world.WorldSetting;
+import engine.world.*;
 import engine.world.chunk.Chunk;
 import engine.world.chunk.ChunkConstants;
+import engine.world.collision.DefaultCollisionManager;
 import engine.world.hit.BlockHitResult;
 import engine.world.hit.EntityHitResult;
 import engine.world.hit.HitResult;
 import org.joml.AABBd;
 import org.joml.Vector3dc;
+import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 import javax.annotation.Nonnull;
@@ -35,6 +35,9 @@ public class WorldClient implements World, Runnable {
     private final Game game;
     private final WorldProvider worldProvider;
     private WorldClientChunkManager chunkManager;
+    private final DefaultEntityManager entityManager;
+    private final CollisionManager collisionManager;
+    private final ComponentAgent componentAgent = new ComponentAgent();
     private long gameTick;
 
     protected boolean isClient = true;
@@ -43,6 +46,8 @@ public class WorldClient implements World, Runnable {
         this.game = game;
         this.worldProvider = provider;
         this.chunkManager = new WorldClientChunkManager(this);
+        this.collisionManager = new DefaultCollisionManager(this);
+        this.entityManager = new DefaultEntityManager(this);
     }
 
     @Override
@@ -50,7 +55,7 @@ public class WorldClient implements World, Runnable {
 
     }
 
-    protected void tick() {
+    public void tick() {
 
         tickChunks();
         gameTick++;
@@ -92,22 +97,22 @@ public class WorldClient implements World, Runnable {
 
     @Override
     public <T extends Entity> T spawnEntity(Class<T> entityType, double x, double y, double z) {
-        return null;
+        return entityManager.spawnEntity(entityType, x, y, z);
     }
 
     @Override
     public <T extends Entity> T spawnEntity(Class<T> entityType, Vector3dc position) {
-        return null;
+        return entityManager.spawnEntity(entityType, position);
     }
 
     @Override
     public Entity spawnEntity(String providerName, double x, double y, double z) {
-        return null;
+        return entityManager.spawnEntity(providerName, x, y, z);
     }
 
     @Override
     public Entity spawnEntity(String provider, Vector3dc position) {
-        return null;
+        return entityManager.spawnEntity(provider, position);
     }
 
     @Override
@@ -122,52 +127,67 @@ public class WorldClient implements World, Runnable {
 
     @Override
     public BlockHitResult raycastBlock(Vector3fc from, Vector3fc dir, float distance) {
-        return null;
+        return collisionManager.raycastBlock(from, dir, distance);
     }
 
     @Override
     public BlockHitResult raycastBlock(Vector3fc from, Vector3fc dir, float distance, Set<Block> ignore) {
-        return null;
+        return collisionManager.raycastBlock(from, dir, distance, ignore);
     }
 
     @Override
     public HitResult raycast(Vector3fc from, Vector3fc dir, float distance) {
-        return null;
+        BlockHitResult blockHitResult = raycastBlock(from, dir, distance);
+
+        float newDistance;
+        if (blockHitResult.isSuccess()) {
+            BlockPos pos = blockHitResult.getPos();
+            newDistance = from.distance(new Vector3f(pos).add(blockHitResult.getHitPoint()));
+        } else {
+            newDistance = distance;
+        }
+
+        EntityHitResult entityHitResult = raycastEntity(from, dir, newDistance);
+        if (entityHitResult.isSuccess()) {
+            return entityHitResult;
+        }
+
+        return blockHitResult;
     }
 
     @Override
     public List<Entity> getEntities() {
-        return null;
+        return entityManager.getEntities();
     }
 
     @Override
     public List<Entity> getEntities(Predicate<Entity> predicate) {
-        return null;
+        return entityManager.getEntities(predicate);
     }
 
     @Override
     public <T extends Entity> List<T> getEntitiesWithType(Class<T> entityType) {
-        return null;
+        return entityManager.getEntitiesWithType(entityType);
     }
 
     @Override
     public List<Entity> getEntitiesWithBoundingBox(AABBd boundingBox) {
-        return null;
+        return entityManager.getEntitiesWithBoundingBox(boundingBox);
     }
 
     @Override
     public List<Entity> getEntitiesWithBoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-        return null;
+        return entityManager.getEntitiesWithBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
     @Override
     public List<Entity> getEntitiesWithSphere(double centerX, double centerY, double centerZ, double radius) {
-        return null;
+        return entityManager.getEntitiesWithSphere(centerX, centerY, centerZ, radius);
     }
 
     @Override
     public EntityHitResult raycastEntity(Vector3fc from, Vector3fc dir, float distance) {
-        return null;
+        return entityManager.raycastEntity(from, dir, distance);
     }
 
     @Override
@@ -226,27 +246,29 @@ public class WorldClient implements World, Runnable {
 
     @Override
     public <C extends Component> Optional<C> getComponent(@Nonnull Class<C> type) {
-        return Optional.empty();
+        return componentAgent.getComponent(type);
     }
 
     @Override
     public <C extends Component> boolean hasComponent(@Nonnull Class<C> type) {
-        return false;
+        return componentAgent.hasComponent(type);
     }
 
     @Override
     public <C extends Component> World setComponent(@Nonnull Class<C> type, @Nullable C value) {
-        return null;
+        this.componentAgent.setComponent(type, value);
+        return this;
     }
 
     @Override
     public <C extends Component> World removeComponent(@Nonnull Class<C> type) {
-        return null;
+        this.componentAgent.removeComponent(type);
+        return this;
     }
 
     @Nonnull
     @Override
     public Set<Class<?>> getComponents() {
-        return null;
+        return componentAgent.getComponents();
     }
 }

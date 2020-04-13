@@ -55,6 +55,7 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
             isCancelled = true;
             if (networkClient != null) {
                 networkClient.close();
+                networkClient = null;
             }
             Platform.getEngine().getEventBus().unregister(this);
             var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
@@ -105,18 +106,35 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
         });
         bus.<PacketReceivedEvent<PacketGameData>, PacketGameData>addGenericListener(PacketGameData.class, event -> {
             Platform.getEngine().getEventBus().unregister(this); //TODO: not supposed to be done here
-            lblStatus.text().set("Initializing game");
-            var game = new GameClientMultiplayer(Platform.getEngineClient(), networkClient, MultiplayerGameData.fromPacket(event.getPacket()));
-            Platform.getEngine().startGame(game);
-            Platform.getEngineClient().getGraphicsManager().getGUIManager().close();
+            if (event.getHandler().isChannelOpen()) {
+                lblStatus.text().set("Initializing game");
+                var game = new GameClientMultiplayer(Platform.getEngineClient(), networkClient, MultiplayerGameData.fromPacket(event.getPacket()));
+                Platform.getEngine().startGame(game);
+                Platform.getEngineClient().getGraphicsManager().getGUIManager().close();
+            }
         });
         bus.<NetworkDisconnectedEvent>addListener(event -> {
-            Platform.getLogger().warn("Disconnected from server: {}", event.getReason());
-            Platform.getEngine().getCurrentGame().terminate();
+            if (Platform.getEngine().getCurrentGame() != null) {
+                Platform.getEngine().getCurrentGame().terminate();
+            }
             networkClient.close();
-            lblStatus.text().set("Disconnected");
-            isFailed.set(true);
-            lblReason.text().set(event.getReason());
+            if (!event.getReason().equals("")) {
+                Platform.getLogger().warn("(NetworkDisconnectedEvent)Disconnected from server: {}", event.getReason());
+                if (Platform.getEngine().isPlaying() && !Platform.getEngineClient().getGraphicsManager().getGUIManager().isShowing() ||
+                        !(Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get() instanceof GuiServerConnectingStatus)) { //Disconnected in game
+                    var root = new GuiServerConnectingStatus();
+                    root.lblStatus.setText("Disconnected");
+                    root.isFailed.set(true);
+                    root.lblReason.text().set(event.getReason());
+                    Platform.getEngineClient().getGraphicsManager().getGUIManager().close();
+                    Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(root));
+                } else {
+                    var root = ((GuiServerConnectingStatus) Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get());
+                    root.lblStatus.text().set("Disconnected");
+                    root.isFailed.set(true);
+                    root.lblReason.text().set(event.getReason());
+                }
+            }
         });
     }
 

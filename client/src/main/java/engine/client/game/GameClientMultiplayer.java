@@ -142,6 +142,7 @@ public class GameClientMultiplayer extends GameBase implements GameClient {
             tryTerminate();
         }
         networkClient.tick();
+        worlds.values().forEach(world -> ((WorldClient) world).tick());
     }
 
     @Override
