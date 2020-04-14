@@ -1,13 +1,13 @@
 package engine.mod.annotation.processing;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import engine.mod.Dependency;
 import engine.mod.DependencyType;
 import engine.mod.InstallationType;
 import engine.mod.ModMetadata;
 import engine.mod.annotation.Mod;
 import engine.mod.metadata.ModMetadataUtils;
-import engine.util.JsonUtils;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -77,7 +77,7 @@ public class ModProcessor extends AbstractProcessor {
                     .dependencies(createDependencyList((List<AnnotationMirror>) values.get("dependencies")))
                     .elements(createElementMap((List<AnnotationMirror>) values.get("customElements")))
                     .build();
-            writer.append(ModMetadataUtils.toJson(metadata).toString());
+            ModMetadataUtils.toJson(metadata, writer);
         } catch (IOException e) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
             e.printStackTrace();
@@ -103,7 +103,7 @@ public class ModProcessor extends AbstractProcessor {
             return map;
         for (AnnotationMirror element : elements) {
             Map<String, Object> values = getAnnotationValues(element);
-            map.put((String) values.get("key"), JsonUtils.parser().parse((String) values.get("value")));
+            map.put((String) values.get("key"), JsonParser.parseString((String) values.get("value")));
         }
         return map;
     }

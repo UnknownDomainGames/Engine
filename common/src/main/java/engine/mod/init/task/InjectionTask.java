@@ -2,6 +2,7 @@ package engine.mod.init.task;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Stage;
@@ -12,7 +13,6 @@ import engine.mod.ModContainer;
 import engine.mod.annotation.ConfigPath;
 import engine.mod.annotation.DataPath;
 import engine.mod.init.ModInitializer;
-import engine.util.JsonUtils;
 import engine.util.RuntimeEnvironment;
 import engine.util.Side;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ public class InjectionTask implements ModInitializationTask {
             }
 
             try (Reader reader = new InputStreamReader(stream.get())) {
-                JsonArray items = JsonUtils.parser().parse(reader).getAsJsonArray();
+                JsonArray items = JsonParser.parseReader(reader).getAsJsonArray();
                 Guice.createInjector(
                         Platform.getRuntimeEnvironment() == RuntimeEnvironment.DEPLOYMENT ? Stage.PRODUCTION : Stage.DEVELOPMENT,
                         new AbstractModule() {

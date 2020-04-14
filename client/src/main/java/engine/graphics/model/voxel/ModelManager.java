@@ -1,5 +1,6 @@
 package engine.graphics.model.voxel;
 
+import com.google.gson.JsonParser;
 import engine.client.asset.*;
 import engine.client.asset.exception.AssetLoadException;
 import engine.client.asset.exception.AssetNotFoundException;
@@ -10,7 +11,6 @@ import engine.graphics.model.voxel.block.BlockModelLoader;
 import engine.graphics.model.voxel.item.ItemGenerateModelLoader;
 import engine.graphics.texture.TextureAtlas;
 import engine.graphics.voxel.VoxelGraphicsHelper;
-import engine.util.JsonUtils;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -71,7 +71,7 @@ public class ModelManager implements AssetProvider<BakedModel> {
     private Model loadModel(AssetURL url) {
         var path = source.getPath(url.toFileLocation(type)).orElseThrow(() -> new AssetNotFoundException(url.toFileLocation(type)));
         try (var reader = Files.newBufferedReader(path)) {
-            var json = JsonUtils.parser().parse(reader).getAsJsonObject();
+            var json = JsonParser.parseReader(reader).getAsJsonObject();
             for (var loader : loaders) {
                 if (loader.isAccepts(url, json)) {
                     var model = loader.load(url, json, this::getModel);

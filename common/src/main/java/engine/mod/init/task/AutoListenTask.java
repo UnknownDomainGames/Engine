@@ -1,10 +1,10 @@
 package engine.mod.init.task;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import engine.mod.ModContainer;
 import engine.mod.annotation.AutoListen;
 import engine.mod.init.ModInitializer;
-import engine.util.JsonUtils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,7 +23,7 @@ public class AutoListenTask implements ModInitializationTask {
 
 
             try (var reader = new InputStreamReader(stream.get())) {
-                listeners = JsonUtils.parser().parse(reader).getAsJsonArray();
+                listeners = JsonParser.parseReader(reader).getAsJsonArray();
             }
 
         } catch (IOException e) {

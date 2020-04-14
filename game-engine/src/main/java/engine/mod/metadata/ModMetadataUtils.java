@@ -16,8 +16,8 @@ public final class ModMetadataUtils {
             .registerTypeAdapter(Dependency.class, new DependencyPersistence())
             .create();
 
-    public static JsonObject toJson(ModMetadata descriptor) {
-        return GSON.toJsonTree(descriptor).getAsJsonObject();
+    public static void toJson(ModMetadata metadata, Appendable writer) {
+        GSON.toJson(metadata, writer);
     }
 
     public static ModMetadata fromJson(JsonObject jsonObject) {

@@ -1,10 +1,10 @@
 package engine.mod.impl;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import engine.mod.ModMetadata;
 import engine.mod.exception.InvalidModMetadataException;
 import engine.mod.metadata.ModMetadataUtils;
-import engine.util.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class ModMetadataFinder {
         for (Path source : sources) {
             if (Files.isDirectory(source)) {
                 try (Reader reader = new InputStreamReader(Files.newInputStream(source.resolve(fileName)))) {
-                    jo = JsonUtils.parser().parse(reader).getAsJsonObject();
+                    jo = JsonParser.parseReader(reader).getAsJsonObject();
                 } catch (IOException e) {
                     throw new InvalidModMetadataException(sources, e);
                 }
@@ -46,7 +46,7 @@ public class ModMetadataFinder {
                     }
 
                     try (Reader reader = new InputStreamReader(jarFile.getInputStream(jarEntry))) {
-                        jo = JsonUtils.parser().parse(reader).getAsJsonObject();
+                        jo = JsonParser.parseReader(reader).getAsJsonObject();
                     }
                 } catch (IOException e) {
                     throw new InvalidModMetadataException(sources, e);
