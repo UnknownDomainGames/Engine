@@ -13,10 +13,13 @@ import java.nio.file.Path;
 
 import static java.util.Objects.requireNonNull;
 
-public class PackedAssetSource extends FileSystemAssetSource {
+public final class AssetBundleSource extends FileSystemAssetSource {
+
+    private final Path source;
+    private final AssetBundleMetadata metadata;
 
     @Nonnull
-    public static PackedAssetSource create(@Nonnull Path path) throws IOException {
+    public static AssetBundleSource create(@Nonnull Path path) throws IOException {
         requireNonNull(path);
 
         FileSystem fileSystem;
@@ -25,22 +28,19 @@ public class PackedAssetSource extends FileSystemAssetSource {
             fileSystem = FileSystems.getDefault();
             root = path.resolve("asset");
         } else {
-            fileSystem = FileSystems.newFileSystem(path, PackedAssetSource.class.getClassLoader());
+            fileSystem = FileSystems.newFileSystem(path, Thread.currentThread().getContextClassLoader());
             root = fileSystem.getPath("asset");
         }
 
-        Path assetMetadataPath = root.resolve("assetpack.json");
-        PackedAssetMetadata metadata;
+        Path assetMetadataPath = root.resolve("asset_bundle.json");
+        AssetBundleMetadata metadata;
         try (Reader reader = new InputStreamReader(Files.newInputStream(assetMetadataPath))) {
-            metadata = PackedAssetMetadata.fromJson(JsonUtils.parser().parse(reader).getAsJsonObject());
+            metadata = JsonUtils.gson().fromJson(reader, AssetBundleMetadata.class);
         }
-        return new PackedAssetSource(fileSystem, root.toString(), path, metadata);
+        return new AssetBundleSource(fileSystem, root.toString(), path, metadata);
     }
 
-    private final Path source;
-    private final PackedAssetMetadata metadata;
-
-    public PackedAssetSource(@Nonnull FileSystem fileSystem, String root, Path source, PackedAssetMetadata metadata) {
+    public AssetBundleSource(@Nonnull FileSystem fileSystem, String root, Path source, AssetBundleMetadata metadata) {
         super(fileSystem, root);
         this.source = source;
         this.metadata = metadata;
@@ -50,7 +50,7 @@ public class PackedAssetSource extends FileSystemAssetSource {
         return source;
     }
 
-    public PackedAssetMetadata getMetadata() {
+    public AssetBundleMetadata getMetadata() {
         return metadata;
     }
 }
