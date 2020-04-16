@@ -1,6 +1,8 @@
-package engine.gui.graphics;
+package engine.gui.graphics.control;
 
 import engine.gui.control.RadioButton;
+import engine.gui.graphics.Graphics;
+import engine.gui.graphics.NodeRenderer;
 import engine.gui.misc.Insets;
 
 public class RadioButtonRenderer implements NodeRenderer<RadioButton> {

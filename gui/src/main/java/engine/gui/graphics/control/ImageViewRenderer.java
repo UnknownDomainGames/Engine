@@ -1,5 +1,7 @@
-package engine.gui.graphics;
+package engine.gui.graphics.control;
 
+import engine.gui.graphics.Graphics;
+import engine.gui.graphics.NodeRenderer;
 import engine.gui.image.Image;
 import engine.gui.image.ImageView;
 

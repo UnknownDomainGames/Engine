@@ -2,7 +2,7 @@ package engine.gui.control;
 
 import engine.graphics.font.FontManager;
 import engine.gui.graphics.NodeRenderer;
-import engine.gui.graphics.TextFieldRenderer;
+import engine.gui.graphics.control.TextFieldRenderer;
 
 public class TextField extends TextInput {
 

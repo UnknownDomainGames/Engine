@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.value.MutableFloatValue;
 import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 import engine.graphics.font.FontManager;
 import engine.gui.graphics.NodeRenderer;
-import engine.gui.graphics.WrapTextRenderer;
+import engine.gui.graphics.text.WrapTextRenderer;
 
 public class WrapText extends Text {
 

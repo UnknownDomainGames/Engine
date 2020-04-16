@@ -4,7 +4,7 @@ import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.graphics.NodeRenderer;
-import engine.gui.graphics.RadioButtonRenderer;
+import engine.gui.graphics.control.RadioButtonRenderer;
 import engine.gui.input.MouseActionEvent;
 import engine.gui.layout.BorderPane;
 import engine.gui.misc.Background;

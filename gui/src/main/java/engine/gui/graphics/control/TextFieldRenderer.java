@@ -1,10 +1,12 @@
-package engine.gui.graphics;
+package engine.gui.graphics.control;
 
 import com.google.common.base.Strings;
 import engine.graphics.font.Font;
 import engine.graphics.font.FontManager;
 import engine.graphics.font.TextMesh;
 import engine.gui.control.TextField;
+import engine.gui.graphics.Graphics;
+import engine.gui.graphics.RegionRenderer;
 import engine.util.Color;
 
 public final class TextFieldRenderer extends RegionRenderer<TextField> {

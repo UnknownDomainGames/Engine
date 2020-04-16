@@ -4,8 +4,8 @@ import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import com.github.mouse0w0.observable.value.ValueChangeListener;
 import engine.gui.Node;
-import engine.gui.graphics.ImageViewRenderer;
 import engine.gui.graphics.NodeRenderer;
+import engine.gui.graphics.control.ImageViewRenderer;
 
 public class ImageView extends Node {
 

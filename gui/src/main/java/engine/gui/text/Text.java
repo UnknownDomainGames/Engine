@@ -5,7 +5,7 @@ import engine.graphics.font.Font;
 import engine.graphics.font.FontManager;
 import engine.gui.Node;
 import engine.gui.graphics.NodeRenderer;
-import engine.gui.graphics.TextRenderer;
+import engine.gui.graphics.text.TextRenderer;
 import engine.gui.misc.Pos;
 import engine.util.Color;
 

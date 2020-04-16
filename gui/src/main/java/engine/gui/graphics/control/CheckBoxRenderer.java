@@ -1,6 +1,8 @@
-package engine.gui.graphics;
+package engine.gui.graphics.control;
 
 import engine.gui.control.CheckBox;
+import engine.gui.graphics.Graphics;
+import engine.gui.graphics.NodeRenderer;
 import engine.gui.misc.Insets;
 import org.joml.Vector2f;
 
