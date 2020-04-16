@@ -1,9 +1,6 @@
 package engine.gui.layout;
 
-import com.github.mouse0w0.observable.value.MutableFloatValue;
-import com.github.mouse0w0.observable.value.MutableObjectValue;
-import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
-import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
+import com.github.mouse0w0.observable.value.*;
 import engine.gui.Node;
 import engine.gui.Parent;
 import engine.gui.misc.HPos;
@@ -11,20 +8,58 @@ import engine.gui.misc.Insets;
 
 public class VBox extends Pane {
 
-    private final MutableFloatValue spacing = new SimpleMutableFloatValue();
-    private final MutableObjectValue<HPos> alignment = new SimpleMutableObjectValue<>();
+    private MutableFloatValue spacing;
+    private MutableObjectValue<HPos> alignment;
+    private MutableBooleanValue fillWidth;
+
+    public VBox() {
+    }
 
     public final MutableFloatValue spacing() {
+        if (spacing == null) {
+            spacing = new SimpleMutableFloatValue();
+            spacing.addChangeListener((observable, oldValue, newValue) -> needsLayout());
+        }
         return spacing;
     }
 
+    public final float getSpacing() {
+        return spacing == null ? 0 : spacing.get();
+    }
+
+    public void setSpacing(float spacing) {
+        spacing().set(spacing);
+    }
+
     public final MutableObjectValue<HPos> alignment() {
+        if (alignment == null) {
+            alignment = new NonNullMutableObjectValue<>(HPos.LEFT);
+            alignment.addChangeListener((observable, oldValue, newValue) -> needsLayout());
+        }
         return alignment;
     }
 
-    public VBox() {
-        spacing.addChangeListener((observable, oldValue, newValue) -> needsLayout());
-        alignment.addChangeListener((observable, oldValue, newValue) -> needsLayout());
+    public final HPos getAlignment() {
+        return alignment == null ? HPos.LEFT : alignment.get();
+    }
+
+    public final void setAlignment(HPos pos) {
+        alignment().set(pos);
+    }
+
+    public final MutableBooleanValue fillWidth() {
+        if (fillWidth == null) {
+            fillWidth = new SimpleMutableBooleanValue();
+        }
+        return fillWidth;
+    }
+
+    public final boolean isFillWidth() {
+        return fillWidth != null && fillWidth.get();
+    }
+
+    public final void setFillWidth(boolean fillWidth) {
+        fillWidth().set(fillWidth);
     }
 
     @Override
@@ -50,13 +85,16 @@ public class VBox extends Pane {
     @Override
     protected void layoutChildren() {
         Insets padding = getPadding();
-        float x, y = padding.getTop(), spacing = spacing().get(), w = getWidth() - padding.getLeft() - padding.getRight();
+        float left = padding.getLeft();
+        float y = padding.getTop();
+        float spacing = getSpacing();
+        float contentWidth = getWidth() - padding.getLeft() - padding.getRight();
+        boolean fillWidth = isFillWidth();
         for (Node node : getChildren()) {
-            float prefWidth = Parent.prefWidth(node);
+            float prefWidth = fillWidth ? contentWidth : Parent.prefWidth(node);
             float prefHeight = Parent.prefHeight(node);
-            x = alignment.get() == HPos.RIGHT ? w - prefWidth : alignment.get() == HPos.CENTER ? (w - prefWidth) / 2 : 0;
-            x += padding.getLeft();
-            layoutInArea(node, snap(x, true), snap(y, true), prefWidth, prefHeight);
+            float x = alignment.get() == HPos.RIGHT ? contentWidth - prefWidth : alignment.get() == HPos.CENTER ? (contentWidth - prefWidth) / 2 : 0;
+            layoutInArea(node, snap(left + x, true), snap(y, true), prefWidth, prefHeight);
             y += prefHeight + spacing;
         }
     }
