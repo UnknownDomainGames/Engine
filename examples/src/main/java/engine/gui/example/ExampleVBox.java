@@ -26,7 +26,8 @@ public class ExampleVBox extends GUIApplication {
         button3.setOnAction(event -> text.setText("Center"));
 
         VBox vBox = new VBox();
-        vBox.spacing().set(10);
+        vBox.setSpacing(10);
+        vBox.setFillWidth(true);
         vBox.getChildren().addAll(button1, button2, button3, text);
         FlowPane flowPane = new FlowPane();
         flowPane.alignment().set(Pos.CENTER);

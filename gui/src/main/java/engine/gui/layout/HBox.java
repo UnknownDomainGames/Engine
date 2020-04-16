@@ -88,10 +88,11 @@ public class HBox extends Pane {
         float contentHeight = getHeight() - padding.getTop() - padding.getBottom();
         boolean fillHeight = isFillHeight();
         for (Node node : getChildren()) {
+            VPos alignment = getAlignment();
             float prefWidth = Parent.prefWidth(node);
             float prefHeight = fillHeight ? contentHeight : Parent.prefHeight(node);
-            float y = alignment.get() == VPos.BOTTOM ?
-                    contentHeight - prefHeight : alignment.get() == VPos.CENTER ? (contentHeight - prefHeight) / 2 : 0;
+            float y = alignment == VPos.BOTTOM ?
+                    contentHeight - prefHeight : alignment == VPos.CENTER ? (contentHeight - prefHeight) / 2 : 0;
             layoutInArea(node, snap(x, true), snap(top + y, true), prefWidth, prefHeight);
             x += prefWidth + spacing;
         }

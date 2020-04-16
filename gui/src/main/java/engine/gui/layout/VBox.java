@@ -91,9 +91,10 @@ public class VBox extends Pane {
         float contentWidth = getWidth() - padding.getLeft() - padding.getRight();
         boolean fillWidth = isFillWidth();
         for (Node node : getChildren()) {
+            HPos alignment = getAlignment();
             float prefWidth = fillWidth ? contentWidth : Parent.prefWidth(node);
             float prefHeight = Parent.prefHeight(node);
-            float x = alignment.get() == HPos.RIGHT ? contentWidth - prefWidth : alignment.get() == HPos.CENTER ? (contentWidth - prefWidth) / 2 : 0;
+            float x = alignment == HPos.RIGHT ? contentWidth - prefWidth : alignment == HPos.CENTER ? (contentWidth - prefWidth) / 2 : 0;
             layoutInArea(node, snap(left + x, true), snap(y, true), prefWidth, prefHeight);
             y += prefHeight + spacing;
         }
