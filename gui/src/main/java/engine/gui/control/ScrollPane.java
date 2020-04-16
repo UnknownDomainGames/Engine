@@ -7,21 +7,20 @@ import engine.gui.Node;
 import engine.gui.Parent;
 import engine.gui.layout.BorderPane;
 import engine.gui.misc.HPos;
+import engine.gui.misc.Orientation;
 import engine.gui.misc.Pos;
 import engine.gui.misc.VPos;
 
 public class ScrollPane extends BorderPane {
-    private final VSlider vScroll;
-    private final HSlider hScroll;
+    private final ScrollBar vScroll;
+    private final ScrollBar hScroll;
 
     private final MutableObjectValue<Node> content = new SimpleMutableObjectValue<>();
 
     public ScrollPane() {
         super();
-        vScroll = new VSlider();
-        hScroll = new HSlider();
-        vScroll.sliderThickness().set(20f);
-        hScroll.sliderThickness().set(20f);
+        vScroll = new ScrollBar(Orientation.VERTICAL);
+        hScroll = new ScrollBar(Orientation.HORIZONTAL);
         vScroll.step().set(1);
         hScroll.step().set(1);
         bottom().set(hScroll);
@@ -55,30 +54,22 @@ public class ScrollPane extends BorderPane {
             if (content.getWidth() > getWidth()) {
                 hScroll.setDisabled(false);
                 vScroll.setVisible(true);
-                var delta = content.getWidth() - getWidth();
-                hScroll.max().set(delta);
-                hScroll.step().set(getWidth() / content.getWidth() * delta);
+                hScroll.step().set(getWidth() / content.getWidth());
             } else {
                 hScroll.setDisabled(true);
                 hScroll.setVisible(false);
-                hScroll.max().set(1);
             }
             if (content.getHeight() > getHeight()) {
                 vScroll.setDisabled(false);
                 vScroll.setVisible(true);
-                var delta = content.getHeight() - getHeight();
-                vScroll.max().set(delta);
-                vScroll.step().set(getHeight() / content.getHeight() * delta);
+                vScroll.step().set(getHeight() / content.getHeight());
             } else {
                 vScroll.setDisabled(true);
                 vScroll.setVisible(false);
-                vScroll.max().set(1);
             }
         } else {
             hScroll.setDisabled(true);
-            hScroll.max().set(1);
             vScroll.setDisabled(true);
-            vScroll.max().set(1);
         }
     }
 
@@ -107,13 +98,14 @@ public class ScrollPane extends BorderPane {
         super.layoutChildren();
         var content = getContent();
         if (content != null) {
-            layoutInArea(content, hScroll.disabled().get() ? 0 : hScroll.value().getFloat(), vScroll.disabled().get() ? 0 : -vScroll.value().getFloat(),
+            var x = hScroll.disabled().get() ? 0 : hScroll.value().getFloat() * (content.getWidth() - getWidth());
+            var y = vScroll.disabled().get() ? 0 : -vScroll.value().getFloat() * (content.getHeight() - getHeight());
+            layoutInArea(content, x, y,
                     Parent.prefWidth(content),
                     Parent.prefHeight(content), 0/*ignore baseline*/,
                     getNodeMargin(content),
                     HPos.CENTER,
                     VPos.CENTER);
-//            update();
         }
     }
 }

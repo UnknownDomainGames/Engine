@@ -108,10 +108,9 @@ public class VSlider extends Region {
             } else if (e.getY() < slider.getLayoutY()) {
                 value.set(value.get() - step.get() * (flip.get() ? -1 : 1));
             }
+            if (slider.contains(e.getX(), e.getY()))
+                select = true;
         }
-//        if (slider.contains(e.getX(), e.getY()))
-        if(e.getTarget().equals(slider))
-            select = true;
     }
 
     private void onMoved(MouseEvent e) {
