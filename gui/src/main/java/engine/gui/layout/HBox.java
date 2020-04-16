@@ -1,17 +1,62 @@
 package engine.gui.layout;
 
-import com.github.mouse0w0.observable.value.MutableFloatValue;
-import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
+import com.github.mouse0w0.observable.value.*;
 import engine.gui.Node;
 import engine.gui.Parent;
 import engine.gui.misc.Insets;
+import engine.gui.misc.VPos;
 
 public class HBox extends Pane {
 
-    private final MutableFloatValue spacing = new SimpleMutableFloatValue();
+    private MutableFloatValue spacing;
+    private MutableObjectValue<VPos> alignment;
+    private MutableBooleanValue fillHeight;
 
     public final MutableFloatValue spacing() {
+        if (spacing == null) {
+            spacing = new SimpleMutableFloatValue();
+            spacing.addChangeListener((observable, oldValue, newValue) -> needsLayout());
+        }
         return spacing;
+    }
+
+    public final float getSpacing() {
+        return spacing == null ? 0 : spacing.get();
+    }
+
+    public void setSpacing(float spacing) {
+        spacing().set(spacing);
+    }
+
+    public final MutableObjectValue<VPos> alignment() {
+        if (alignment == null) {
+            alignment = new NonNullMutableObjectValue<>(VPos.TOP);
+            alignment.addChangeListener((observable, oldValue, newValue) -> needsLayout());
+        }
+        return alignment;
+    }
+
+    public final VPos getAlignment() {
+        return alignment == null ? VPos.TOP : alignment.get();
+    }
+
+    public final void setAlignment(VPos pos) {
+        alignment().set(pos);
+    }
+
+    public final MutableBooleanValue fillHeight() {
+        if (fillHeight == null) {
+            fillHeight = new SimpleMutableBooleanValue();
+        }
+        return fillHeight;
+    }
+
+    public final boolean isFillHeight() {
+        return fillHeight != null && fillHeight.get();
+    }
+
+    public final void setFillHeight(boolean fillHeight) {
+        fillHeight().set(fillHeight);
     }
 
     @Override
@@ -37,11 +82,17 @@ public class HBox extends Pane {
     @Override
     protected void layoutChildren() {
         Insets padding = getPadding();
-        float x = padding.getLeft(), y = padding.getTop(), spacing = spacing().get();
+        float x = padding.getLeft();
+        float top = padding.getTop();
+        float spacing = getSpacing();
+        float contentHeight = getHeight() - padding.getTop() - padding.getBottom();
+        boolean fillHeight = isFillHeight();
         for (Node node : getChildren()) {
             float prefWidth = Parent.prefWidth(node);
-            float prefHeight = Parent.prefHeight(node);
-            layoutInArea(node, x, y, prefWidth, prefHeight);
+            float prefHeight = fillHeight ? contentHeight : Parent.prefHeight(node);
+            float y = alignment.get() == VPos.BOTTOM ?
+                    contentHeight - prefHeight : alignment.get() == VPos.CENTER ? (contentHeight - prefHeight) / 2 : 0;
+            layoutInArea(node, snap(x, true), snap(top + y, true), prefWidth, prefHeight);
             x += prefWidth + spacing;
         }
     }
