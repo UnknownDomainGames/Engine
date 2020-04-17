@@ -89,7 +89,10 @@ public final class STBTTFontManager extends FontManager {
 
     private List<Path> findLocalTTFonts() {
         try {
-            Predicate<Path> typefaceFilter = path -> path.getFileName().toString().endsWith(".ttf") || path.getFileName().toString().endsWith(".ttc");
+            Predicate<Path> typefaceFilter = path -> {
+                String lowerCaseFileName = path.getFileName().toString().toLowerCase();
+                return lowerCaseFileName.endsWith(".ttf") || lowerCaseFileName.endsWith(".ttc");
+            };
             List<Path> fonts;
             if (SystemUtils.IS_OS_LINUX) {
                 fonts = Files.walk(Path.of("/usr/share/fonts/WindowsFonts"))
