@@ -10,6 +10,7 @@ public class Font {
     public static final String BOLD = "Bold";
     public static final String ITALIC = "Italic";
     public static final String BOLD_ITALIC = "Bold Italic";
+    public static final String LIGHT = "Light";
 
     private final String family;
     private final String style;
