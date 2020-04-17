@@ -49,12 +49,11 @@ public final class BufferUtils {
         return createByteBuffer(newCapacity).put(buffer.flip());
     }
 
-    public static byte[] toBytes(ByteBuffer buffer) {
+    public static byte[] getRemainingBytes(ByteBuffer buffer) {
         if (!buffer.isDirect()) return buffer.array();
 
-        int capacity = buffer.capacity();
-        byte[] bytes = new byte[capacity];
-        buffer.get(bytes, 0, capacity);
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
         return bytes;
     }
 }

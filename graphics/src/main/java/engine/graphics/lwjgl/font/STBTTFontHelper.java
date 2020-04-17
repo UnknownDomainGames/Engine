@@ -37,7 +37,7 @@ public final class STBTTFontHelper {
             int name = ttGetUShort(data + loc + 6);
             int length = ttGetUShort(data + loc + 8);
             long stringPtr = data + stringOffset + ttGetUShort(data + loc + 10);
-            byte[] bytes = BufferUtils.toBytes(memByteBuffer(stringPtr, length).order(ByteOrder.BIG_ENDIAN));
+            byte[] bytes = BufferUtils.getRemainingBytes(memByteBuffer(stringPtr, length).order(ByteOrder.BIG_ENDIAN));
             String string = new String(bytes, StandardCharsets.UTF_16BE);
             entries.add(new TTFontNameEntry(platform, encoding, language, name, string));
         }
