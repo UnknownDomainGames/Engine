@@ -9,6 +9,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.lwjgl.stb.STBTTFontinfo;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
+import org.lwjgl.system.dyncall.DynCall;
+import org.lwjgl.system.windows.User32;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,8 +63,7 @@ public final class STBTTFontManager extends FontManager {
 
     private STBTTFontManager() {
         initLocalFonts();
-        Font defaultFont = new Font("Arial", Font.REGULAR, 16);
-        setDefaultFont(defaultFont);
+        setDefaultFont(getSystemDefaultFont());
     }
 
     private void initLocalFonts() {
@@ -114,6 +116,35 @@ public final class STBTTFontManager extends FontManager {
         } catch (IOException e) {
             LOGGER.warn("Cannot collect local font.", e);
             return List.of();
+        }
+    }
+
+    private Font getSystemDefaultFont() {
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            return new Font("Arial", Font.REGULAR, 16);
+        }
+
+        long systemParametersInfoW = User32.getLibrary().getFunctionAddress("SystemParametersInfoW");
+        if (systemParametersInfoW == MemoryUtil.NULL) {
+            return new Font("Arial", Font.REGULAR, 16);
+        }
+
+        long callVM = MemoryUtil.NULL;
+        try (MemoryStack stack = stackPush()) {
+            int sizeLOGFONT = Integer.BYTES * 5 + Byte.BYTES * 8 + Character.BYTES * 32;
+            ByteBuffer structLOGFONT = stack.malloc(sizeLOGFONT);
+            callVM = DynCall.dcNewCallVM(Integer.BYTES * 3 + Long.BYTES);
+            DynCall.dcArgInt(callVM, 0x001F); // SPI_GETICONTITLELOGFONT
+            DynCall.dcArgInt(callVM, sizeLOGFONT);
+            DynCall.dcArgPointer(callVM, MemoryUtil.memAddress(structLOGFONT));
+            DynCall.dcArgInt(callVM, 0);
+            DynCall.dcCallBool(callVM, systemParametersInfoW);
+            String defaultFontFamily = MemoryUtil.memUTF16Safe(structLOGFONT.position(Integer.BYTES * 5 + Byte.BYTES * 8)).trim();
+            return new Font(defaultFontFamily, Font.REGULAR, 16);
+        } finally {
+            if (callVM != MemoryUtil.NULL) {
+                DynCall.dcFree(callVM);
+            }
         }
     }
 
