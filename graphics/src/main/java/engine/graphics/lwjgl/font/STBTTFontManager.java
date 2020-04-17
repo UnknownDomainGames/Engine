@@ -393,7 +393,7 @@ public final class STBTTFontManager extends FontManager {
 
         for (int i = 0; i < fontCount; i++) {
             STBTTFontinfo stbFontInfo = STBTTFontinfo.create();
-            if (!stbtt_InitFont(stbFontInfo, fontData)) {
+            if (!stbtt_InitFont(stbFontInfo, fontData, stbtt_GetFontOffsetForIndex(fontData, i))) {
                 throw new IllegalStateException("Failed in initializing ttf font info");
             }
 
