@@ -11,7 +11,6 @@ import engine.gui.misc.Background;
 import engine.gui.misc.Border;
 import engine.gui.misc.IndexRange;
 import engine.gui.misc.Insets;
-import engine.gui.text.Text;
 import engine.input.Modifiers;
 import engine.math.Math2;
 import engine.util.Color;

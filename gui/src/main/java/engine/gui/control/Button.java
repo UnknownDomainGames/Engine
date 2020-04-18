@@ -9,7 +9,6 @@ import engine.gui.input.ActionEvent;
 import engine.gui.input.MouseActionEvent;
 import engine.gui.misc.Background;
 import engine.gui.misc.Insets;
-import engine.gui.text.Text;
 import engine.util.Color;
 
 public class Button extends Labeled {

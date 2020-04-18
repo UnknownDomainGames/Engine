@@ -2,11 +2,11 @@ package engine.gui.example;
 
 import engine.gui.Scene;
 import engine.gui.application.GUIApplication;
+import engine.gui.control.Text;
 import engine.gui.layout.FlowPane;
 import engine.gui.layout.HBox;
 import engine.gui.misc.Pos;
 import engine.gui.stage.Stage;
-import engine.gui.text.Text;
 
 import java.io.IOException;
 import java.nio.file.Files;

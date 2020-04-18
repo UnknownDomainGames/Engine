@@ -3,11 +3,11 @@ package engine.gui.example;
 import engine.gui.Scene;
 import engine.gui.application.GUIApplication;
 import engine.gui.control.Button;
+import engine.gui.control.Text;
 import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Pos;
 import engine.gui.stage.Stage;
-import engine.gui.text.Text;
 
 public class ExampleVBox extends GUIApplication {
     public static void main(String[] args) {

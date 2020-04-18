@@ -9,7 +9,6 @@ import engine.gui.layout.HBox;
 import engine.gui.layout.Pane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Orientation;
-import engine.gui.text.Text;
 
 import java.util.ArrayList;
 import java.util.function.Function;

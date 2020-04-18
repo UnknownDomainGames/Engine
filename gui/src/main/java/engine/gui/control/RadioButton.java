@@ -11,7 +11,6 @@ import engine.gui.misc.Background;
 import engine.gui.misc.Border;
 import engine.gui.misc.Insets;
 import engine.gui.misc.Pos;
-import engine.gui.text.Text;
 import engine.util.Color;
 
 public class RadioButton extends ToggleButton {

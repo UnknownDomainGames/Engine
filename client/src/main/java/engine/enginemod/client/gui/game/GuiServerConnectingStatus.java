@@ -9,13 +9,12 @@ import engine.game.MultiplayerGameData;
 import engine.graphics.GraphicsManager;
 import engine.gui.Scene;
 import engine.gui.control.Button;
+import engine.gui.control.Text;
 import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.HPos;
 import engine.gui.misc.Pos;
-import engine.gui.text.Text;
-import engine.gui.text.WrapText;
 import engine.server.event.NetworkDisconnectedEvent;
 import engine.server.event.NetworkingStartEvent;
 import engine.server.event.PacketReceivedEvent;
@@ -48,7 +47,7 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
         getChildren().add(vbox);
         vbox.alignment().set(HPos.CENTER);
         lblStatus = new Text("Connecting");
-        lblReason = new WrapText();
+        lblReason = new Text();
         vbox.getChildren().add(lblStatus);
         button = new Button("disconnect");
         button.setOnMouseClicked(e -> {

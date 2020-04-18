@@ -2,22 +2,21 @@ package engine.gui.control;
 
 import engine.graphics.font.FontManager;
 import engine.gui.input.KeyEvent;
-import engine.gui.text.WrapText;
 import engine.input.KeyCode;
 
 public class TextArea extends TextInput {
 
     private ScrollPane scrollPane;
-    private WrapText wrapText;
+    private Text text;
 
     public TextArea() {
         super();
 //        removeEventHandler(KeyEvent.KEY_PRESSED, super::onKeyPressed);
 //        addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
         scrollPane = new ScrollPane();
-        wrapText = new WrapText();
-        wrapText.text().bindBidirectional(this.text());
-        scrollPane.setContent(wrapText);
+        text = new Text();
+        text.text().bindBidirectional(this.text());
+        scrollPane.setContent(text);
         width().addChangeListener((observable, o, n) -> scrollPane.getSize().prefWidth().set(n));
         height().addChangeListener((observable, o, n) -> scrollPane.getSize().prefHeight().set(n));
         this.getChildren().add(scrollPane);

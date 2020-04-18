@@ -8,13 +8,13 @@ import engine.game.GameData;
 import engine.graphics.font.Font;
 import engine.gui.Scene;
 import engine.gui.control.Button;
+import engine.gui.control.Text;
 import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
 import engine.gui.misc.HPos;
 import engine.gui.misc.Pos;
-import engine.gui.text.Text;
 import engine.util.Color;
 import engine.util.Files2;
 

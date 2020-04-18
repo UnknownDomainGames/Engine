@@ -4,7 +4,6 @@ import com.github.mouse0w0.observable.value.*;
 import engine.graphics.font.Font;
 import engine.gui.Node;
 import engine.gui.misc.Pos;
-import engine.gui.text.Text;
 import engine.util.Color;
 
 public class Labeled extends Control {
@@ -100,7 +99,7 @@ public class Labeled extends Control {
         text.setTextAlignment(alignment);
     }
 
-    public final MutableDoubleValue leading() {
+    public final MutableFloatValue leading() {
         return text.leading();
     }
 
@@ -108,7 +107,7 @@ public class Labeled extends Control {
         return text.getLeading();
     }
 
-    public final void setLeading(double leading) {
+    public final void setLeading(float leading) {
         text.setLeading(leading);
     }
 

@@ -7,12 +7,12 @@ import engine.graphics.display.DisplayMode;
 import engine.graphics.font.Font;
 import engine.gui.control.Button;
 import engine.gui.control.HSlider;
+import engine.gui.control.Text;
 import engine.gui.layout.AnchorPane;
 import engine.gui.layout.HBox;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
-import engine.gui.text.Text;
 import engine.input.MouseButton;
 import engine.util.Color;
 
