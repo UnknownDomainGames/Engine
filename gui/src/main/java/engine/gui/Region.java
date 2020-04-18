@@ -272,6 +272,22 @@ public class Region extends Parent {
     }
 
     @Override
+    protected void layoutChildren() {
+        Insets padding = getPadding();
+        float x = padding.getLeft();
+        float y = padding.getTop();
+        float w = getWidth() - x - padding.getRight();
+        float h = getHeight() - y - padding.getBottom();
+        layoutChildren(x, y, w, h);
+    }
+
+    protected void layoutChildren(float contentX, float contentY, float contentWidth, float contentHeight) {
+        for (Node node : getChildren()) {
+            layoutInArea(node, contentX + node.getLayoutX(), contentY + node.getLayoutY(), prefWidth(node), prefHeight(node));
+        }
+    }
+
+    @Override
     protected NodeRenderer createDefaultRenderer() {
         return RegionRenderer.INSTANCE;
     }
