@@ -1,6 +1,6 @@
 package engine.graphics.entity;
 
-import engine.client.event.rendering.RegisterEntityRendererEvent;
+import engine.client.event.graphics.RegisterEntityRendererEvent;
 import engine.entity.Entity;
 import engine.graphics.GraphicsManager;
 

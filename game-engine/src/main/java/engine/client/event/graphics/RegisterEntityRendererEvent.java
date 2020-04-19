@@ -1,4 +1,4 @@
-package engine.client.event.rendering;
+package engine.client.event.graphics;
 
 import engine.entity.Entity;
 import engine.event.Event;

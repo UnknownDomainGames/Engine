@@ -3,7 +3,7 @@ package engine.enginemod.client.gui.hud;
 import engine.Platform;
 import engine.block.Block;
 import engine.client.EngineClient;
-import engine.client.event.rendering.RenderEvent;
+import engine.client.event.graphics.RenderEvent;
 import engine.client.hud.HUDControl;
 import engine.entity.Entity;
 import engine.event.Listener;

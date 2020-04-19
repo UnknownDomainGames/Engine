@@ -1,7 +1,7 @@
 package engine.enginemod.client.gui.hud;
 
 import engine.Platform;
-import engine.client.event.rendering.RenderEvent;
+import engine.client.event.graphics.RenderEvent;
 import engine.client.hud.HUDControl;
 import engine.entity.Entity;
 import engine.entity.component.TwoHands;

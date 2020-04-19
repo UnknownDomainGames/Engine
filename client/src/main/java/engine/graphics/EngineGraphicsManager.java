@@ -3,7 +3,7 @@ package engine.graphics;
 import engine.client.EngineClient;
 import engine.client.asset.AssetType;
 import engine.client.asset.provider.TextureAssetProvider;
-import engine.client.event.rendering.RenderEvent;
+import engine.client.event.graphics.RenderEvent;
 import engine.client.hud.HUDManager;
 import engine.graphics.backend.GraphicsBackend;
 import engine.graphics.display.Window;

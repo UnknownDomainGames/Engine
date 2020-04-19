@@ -5,7 +5,7 @@ import engine.block.AirBlock;
 import engine.block.Block;
 import engine.block.component.ActivateBehavior;
 import engine.block.component.ClickBehavior;
-import engine.client.event.rendering.RegisterEntityRendererEvent;
+import engine.client.event.graphics.RegisterEntityRendererEvent;
 import engine.client.game.GameClient;
 import engine.client.hud.HUDControl;
 import engine.client.hud.HUDManager;
