@@ -94,7 +94,7 @@ public final class Asset<T> {
     @Override
     public String toString() {
         return "Asset{" +
-                "path=" + url +
+                "url=" + url +
                 ", type=" + type +
                 '}';
     }
