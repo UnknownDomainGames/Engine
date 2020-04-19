@@ -2,7 +2,6 @@ package engine.client;
 
 import engine.Engine;
 import engine.client.asset.AssetManager;
-import engine.client.asset.source.AssetSource;
 import engine.client.game.GameClient;
 import engine.client.settings.EngineSettings;
 import engine.client.sound.SoundManager;
@@ -15,8 +14,6 @@ public interface EngineClient extends Engine {
     boolean isClientThread();
 
     AssetManager getAssetManager();
-
-    AssetSource getEngineAssetSource();
 
     GraphicsManager getGraphicsManager();
 

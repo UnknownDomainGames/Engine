@@ -8,7 +8,6 @@ import engine.client.asset.AssetManager;
 import engine.client.asset.AssetType;
 import engine.client.asset.EngineAssetManager;
 import engine.client.asset.reloading.AssetReloadHandler;
-import engine.client.asset.source.AssetSource;
 import engine.client.asset.source.CompositeAssetSource;
 import engine.client.asset.source.FileSystemAssetSource;
 import engine.client.game.GameClient;
@@ -45,7 +44,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private Thread clientThread;
 
-    private AssetSource engineAssetSource;
     private EngineAssetManager assetManager;
     private ALSoundManager soundManager;
     private EngineGraphicsManager graphicsManager;
@@ -108,25 +106,22 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         super.resourceStage();
 
         logger.info("Initializing asset!");
+        assetManager = new EngineAssetManager();
         try {
             Path engineJarPath = Path.of(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
             if (getRuntimeEnvironment() == RuntimeEnvironment.ENGINE_DEVELOPMENT) {
-                engineAssetSource = new CompositeAssetSource(
+                assetManager.getSourceManager().getSources().add(new CompositeAssetSource(
                         ClassPathUtils.getDirectoriesInClassPath(),
                         "asset",
-                        getClass().getClassLoader());
+                        getClass().getClassLoader()));
             } else {
                 FileSystem fileSystem = FileSystems.newFileSystem(engineJarPath, getClass().getClassLoader());
-                engineAssetSource = new FileSystemAssetSource(fileSystem, "asset");
+                assetManager.getSourceManager().getSources().add(new FileSystemAssetSource(fileSystem, "asset"));
             }
         } catch (URISyntaxException | IOException e) {
-            // TODO: Crash report
-            logger.error("Cannot init engine.", e);
+            getCrashHandler().crash(e);
         }
-
-        assetManager = new EngineAssetManager();
-        assetManager.getSourceManager().getSources().add(engineAssetSource);
-        shutdownListeners.add(() -> assetManager.dispose());
+        shutdownListeners.add(assetManager::dispose);
 
         logger.info("Initializing graphics!");
         graphicsManager = new EngineGraphicsManager(this, clientThread);
@@ -258,11 +253,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     @Override
     public boolean isClientThread() {
         return Thread.currentThread() == clientThread;
-    }
-
-    @Override
-    public AssetSource getEngineAssetSource() {
-        return engineAssetSource;
     }
 
     @Override
