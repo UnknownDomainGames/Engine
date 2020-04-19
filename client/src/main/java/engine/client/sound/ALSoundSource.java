@@ -2,11 +2,12 @@ package engine.client.sound;
 
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
+import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.openal.AL10.*;
-import static org.lwjgl.system.MemoryStack.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 public final class ALSoundSource implements SoundSource {
 
@@ -75,15 +76,14 @@ public final class ALSoundSource implements SoundSource {
     }
 
     @Override
-    public Vector3f getPosition() {
-        stackPush();
-        FloatBuffer a = stackMallocFloat(1);
-        FloatBuffer a1 = stackMallocFloat(1);
-        FloatBuffer a2 = stackMallocFloat(1);
-        alGetSource3f(id, AL_POSITION, a, a1, a2);
-        Vector3f v = new Vector3f(a.get(), a1.get(), a2.get());
-        stackPop();
-        return v;
+    public Vector3fc getPosition() {
+        try (MemoryStack stack = stackPush()) {
+            FloatBuffer x = stack.callocFloat(1);
+            FloatBuffer y = stack.callocFloat(1);
+            FloatBuffer z = stack.callocFloat(1);
+            alGetSource3f(id, AL_POSITION, x, y, z);
+            return new Vector3f(x.get(), y.get(), z.get());
+        }
     }
 
     @Override
@@ -103,15 +103,14 @@ public final class ALSoundSource implements SoundSource {
     }
 
     @Override
-    public Vector3f getSpeed() {
-        stackPush();
-        FloatBuffer a = stackMallocFloat(1);
-        FloatBuffer a1 = stackMallocFloat(1);
-        FloatBuffer a2 = stackMallocFloat(1);
-        alGetSource3f(id, AL_VELOCITY, a, a1, a2);
-        Vector3f v = new Vector3f(a.get(), a1.get(), a2.get());
-        stackPop();
-        return v;
+    public Vector3fc getSpeed() {
+        try (MemoryStack stack = stackPush()) {
+            FloatBuffer x = stack.callocFloat(1);
+            FloatBuffer y = stack.callocFloat(1);
+            FloatBuffer z = stack.callocFloat(1);
+            alGetSource3f(id, AL_VELOCITY, x, y, z);
+            return new Vector3f(x.get(), y.get(), z.get());
+        }
     }
 
     @Override

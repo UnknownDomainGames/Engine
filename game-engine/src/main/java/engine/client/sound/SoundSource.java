@@ -1,6 +1,5 @@
 package engine.client.sound;
 
-import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 public interface SoundSource {
@@ -22,7 +21,7 @@ public interface SoundSource {
 
     SoundSource position(float x, float y, float z);
 
-    Vector3f getPosition();
+    Vector3fc getPosition();
 
     SoundSource position(Vector3fc pos);
 
@@ -30,7 +29,7 @@ public interface SoundSource {
 
     SoundSource speed(Vector3fc speed);
 
-    Vector3f getSpeed();
+    Vector3fc getSpeed();
 
     SoundSource gain(float gain);
 
