@@ -109,8 +109,6 @@ public final class EngineGraphicsManager implements GraphicsManager {
         viewport.setScene(scene);
 
         initTextureAssetProvider();
-        VoxelGraphicsHelper.initialize(this);
-        initScene();
         guiPlatform = new EngineGUIPlatform();
         hudManager = new EngineHUDManager(guiPlatform.getHUDStage());
         guiManager = new EngineGUIManager(window, guiPlatform.getGUIStage(), hudManager);
@@ -123,7 +121,8 @@ public final class EngineGraphicsManager implements GraphicsManager {
         window.show();
     }
 
-    private void initScene() {
+    public void initScene() {
+        VoxelGraphicsHelper.initialize(this);
         scene.addNode(new SkyBox());
         Geometry selectedBlock = new SelectedBlock();
         selectedBlock.setController((node, tpf) -> {

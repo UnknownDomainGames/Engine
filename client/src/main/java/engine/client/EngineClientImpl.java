@@ -5,6 +5,7 @@ import configuration.parser.ConfigParseException;
 import engine.EngineBase;
 import engine.Platform;
 import engine.client.asset.AssetManager;
+import engine.client.asset.AssetType;
 import engine.client.asset.EngineAssetManager;
 import engine.client.asset.reloading.AssetReloadHandler;
 import engine.client.asset.source.AssetSource;
@@ -15,7 +16,8 @@ import engine.client.i18n.LocaleManager;
 import engine.client.input.keybinding.KeyBindingManager;
 import engine.client.settings.EngineSettings;
 import engine.client.sound.ALSoundManager;
-import engine.client.sound.EngineSoundManager;
+import engine.client.sound.Sound;
+import engine.client.sound.SoundManager;
 import engine.enginemod.EngineModClientListeners;
 import engine.enginemod.EngineModListeners;
 import engine.event.engine.EngineEvent;
@@ -45,7 +47,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private AssetSource engineAssetSource;
     private EngineAssetManager assetManager;
-    private EngineSoundManager soundManager;
+    private ALSoundManager soundManager;
     private EngineGraphicsManager graphicsManager;
     private LocaleManager localeManager;
 
@@ -133,18 +135,21 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         graphicsManager.getWindow().addWindowCloseCallback(window -> Platform.getEngine().terminate());
         addShutdownListener(graphicsManager::dispose);
 
+        soundManager = new ALSoundManager();
+        assetManager.register(AssetType.builder(Sound.class)
+                .name("Sound")
+                .provider(soundManager)
+                .parentLocation("sound")
+                .extensionName(".ogg")
+                .build());
+        addShutdownListener(soundManager::dispose);
+
         logger.info("Initializing input!");
         keyBindingManager = new KeyBindingManager(this);
         EngineGUIPlatform guiPlatform = EngineGUIPlatform.getInstance();
         guiPlatform.getStageHelper().enableInput(guiPlatform.getGUIStage());
 
-        logger.info("Initializing audio context!");
-        soundManager = new EngineSoundManager();
-        soundManager.init();
-        addShutdownListener(soundManager::dispose);
-        assetManager.getReloadManager().addHandler(AssetReloadHandler.builder().name("Sound").runnable(soundManager::reload).build());
-
-        logger.info("Initializing internalization!");
+        logger.info("Initializing I18n!");
         localeManager = LocaleManager.INSTANCE;
         assetManager.getReloadManager().addHandler(AssetReloadHandler.builder().name("I18n").runnable(() -> {
             localeManager.reset();
@@ -153,6 +158,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             }
         }).build());
 
+        graphicsManager.initScene();
         assetManager.reload();
     }
 
@@ -195,7 +201,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         }
 
         // TODO: Remove it.
-        soundManager.updateListener(graphicsManager.getViewport().getCamera());
+        soundManager.getListener().camera(graphicsManager.getViewport().getCamera());
 
         if (isMarkedTermination()) {
             if (isPlaying()) {
@@ -270,7 +276,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     @Override
-    public ALSoundManager getSoundManager() {
+    public SoundManager getSoundManager() {
         return soundManager;
     }
 

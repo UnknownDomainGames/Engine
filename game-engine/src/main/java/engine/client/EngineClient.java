@@ -5,7 +5,7 @@ import engine.client.asset.AssetManager;
 import engine.client.asset.source.AssetSource;
 import engine.client.game.GameClient;
 import engine.client.settings.EngineSettings;
-import engine.client.sound.ALSoundManager;
+import engine.client.sound.SoundManager;
 import engine.graphics.GraphicsManager;
 
 public interface EngineClient extends Engine {
@@ -20,7 +20,7 @@ public interface EngineClient extends Engine {
 
     GraphicsManager getGraphicsManager();
 
-    ALSoundManager getSoundManager();
+    SoundManager getSoundManager();
 
     @Override
     GameClient getCurrentGame();
