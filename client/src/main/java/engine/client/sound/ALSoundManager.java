@@ -60,7 +60,7 @@ public final class ALSoundManager implements SoundManager, AssetProvider<Sound> 
     }
 
     public void init(String device) throws IllegalStateException {
-        LOGGER.info("Initialing audio device: " + device);
+        LOGGER.info("Initializing audio device: " + device);
         this.device = alcOpenDevice(device);
         if (this.device == 0L) {
             throw new IllegalStateException(String.format("Fail to open OpenAL device \"%s\"", device));
