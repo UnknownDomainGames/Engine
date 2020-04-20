@@ -10,7 +10,6 @@ import engine.game.GameServerFullAsync;
 import engine.player.Profile;
 import engine.world.World;
 import engine.world.WorldCommon;
-import engine.world.hit.HitResult;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -66,11 +65,6 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
             return clientPlayer.getWorld();
         }
         throw new IllegalStateException("The world hasn't initialize");
-    }
-
-    @Override
-    public HitResult getHitResult() {
-        return null;
     }
 
     @Override

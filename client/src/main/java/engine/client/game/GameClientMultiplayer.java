@@ -20,7 +20,6 @@ import engine.world.exception.WorldAlreadyLoadedException;
 import engine.world.exception.WorldLoadException;
 import engine.world.exception.WorldNotExistsException;
 import engine.world.exception.WorldProviderNotFoundException;
-import engine.world.hit.HitResult;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
@@ -129,11 +128,6 @@ public class GameClientMultiplayer extends GameBase implements GameClient {
             return clientPlayer.getWorld();
         }
         throw new IllegalStateException("The world hasn't initialize");
-    }
-
-    @Override
-    public HitResult getHitResult() {
-        return null;
     }
 
     @Override
