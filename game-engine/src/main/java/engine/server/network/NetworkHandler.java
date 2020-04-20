@@ -57,7 +57,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     }
 
     public SocketAddress getLocalAddress() {
-        return channel.remoteAddress();
+        return channel.localAddress();
     }
 
     public void setStatus(ConnectionStatus status) {
@@ -117,7 +117,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
                 sendPacket(new PacketAlive(true));
             }
         }
-        eventBus.post(new PacketReceivedEvent(this, packet));
+        eventBus.post(new PacketReceivedEvent<>(this, packet));
     }
 
     private boolean exceptionMet = false;
