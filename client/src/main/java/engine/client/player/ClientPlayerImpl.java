@@ -26,6 +26,12 @@ public class ClientPlayerImpl extends PlayerImpl implements ClientPlayer {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+
+    }
+
+    @Override
     public EntityController getEntityController() {
         return entityController;
     }

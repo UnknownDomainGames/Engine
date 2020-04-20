@@ -45,6 +45,12 @@ public class PlayerImpl implements Player {
 //        }
 //    }
 
+
+    @Override
+    public void tick() {
+
+    }
+
     @Nonnull
     @Override
     public Entity getControlledEntity() {
@@ -78,6 +84,10 @@ public class PlayerImpl implements Player {
     @Override
     public Profile getProfile() {
         return profile;
+    }
+
+    public NetworkHandler getNetworkHandler() {
+        return handler;
     }
 
     @Nonnull

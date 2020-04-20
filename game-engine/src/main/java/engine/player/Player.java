@@ -40,4 +40,6 @@ public interface Player {
     Entity controlEntity(@Nonnull Entity entity);
 
     boolean isControllingEntity();
+
+    void tick();
 }

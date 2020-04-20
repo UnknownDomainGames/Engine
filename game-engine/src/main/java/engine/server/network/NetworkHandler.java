@@ -20,6 +20,7 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 import javax.annotation.Nullable;
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -49,6 +50,14 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     public ConnectionStatus getStatus() {
         return status;
+    }
+
+    public SocketAddress getRemoteAddress() {
+        return channel.remoteAddress();
+    }
+
+    public SocketAddress getLocalAddress() {
+        return channel.remoteAddress();
     }
 
     public void setStatus(ConnectionStatus status) {
