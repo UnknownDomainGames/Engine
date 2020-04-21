@@ -54,6 +54,14 @@ public abstract class Node implements EventTarget {
         return parent.get();
     }
 
+    public final void toFront() {
+        parent().ifPresent(parent -> parent.toFront(this));
+    }
+
+    public final void toBack() {
+        parent().ifPresent(parent -> parent.toBack(this));
+    }
+
     public void resize(float width, float height) {
         this.width.set(width);
         this.height.set(height);

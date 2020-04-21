@@ -8,11 +8,13 @@ import engine.gui.graphics.NodeRenderer;
 import engine.gui.graphics.ParentRenderer;
 import engine.math.Math2;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Parent extends Node {
 
-    private final ObservableList<Node> children = ObservableCollections.observableList(new LinkedList<>());
+    private final List<Node> internalChildren = new ArrayList<>();
+    private final ObservableList<Node> children = ObservableCollections.observableList(internalChildren);
     private final ObservableList<Node> unmodifiableChildren = ObservableCollections.unmodifiableObservableList(children);
 
     public Parent() {
@@ -48,6 +50,21 @@ public abstract class Parent extends Node {
 
     public final ObservableList<Node> getUnmodifiableChildren() {
         return unmodifiableChildren;
+    }
+
+    public final void toFront(Node node) {
+        int lastChild = internalChildren.size() - 1;
+        if (internalChildren.get(lastChild) != node) {
+            internalChildren.remove(node);
+            internalChildren.add(node);
+        }
+    }
+
+    public final void toBack(Node node) {
+        if (internalChildren.get(0) != node) {
+            internalChildren.remove(node);
+            internalChildren.add(0, node);
+        }
     }
 
     @Override
@@ -93,17 +110,17 @@ public abstract class Parent extends Node {
             }
         }
         Parent parent = getParent();
-        while (parent != null && parent.layoutState == LayoutState.CLEAN){
+        while (parent != null && parent.layoutState == LayoutState.CLEAN) {
             parent.layoutState = LayoutState.NEED_LAYOUT;
             parent = parent.getParent();
         }
     }
 
     // Tell that this Parent does not need layouting anymore
-    public void revokeNeedsLayout(){
+    public void revokeNeedsLayout() {
         var flag = LayoutState.CLEAN;
         for (Node child : children) {
-            if(child instanceof Parent && ((Parent) child).isNeedsLayout()){
+            if (child instanceof Parent && ((Parent) child).isNeedsLayout()) {
                 flag = LayoutState.DIRTY_BRANCH;
                 break;
             }
