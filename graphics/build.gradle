@@ -4,7 +4,7 @@ dependencies {
     compile 'com.github.oshi:oshi-core:4.4.2'
     compile 'org.joml:joml:1.9.20'
 
-    compile 'com.github.Mouse0w0:Observable:1.2.5'
+    compile 'com.github.Mouse0w0:Observable:1.3.0'
 
     compile "org.lwjgl:lwjgl:$lwjglVersion"
     implementation "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
