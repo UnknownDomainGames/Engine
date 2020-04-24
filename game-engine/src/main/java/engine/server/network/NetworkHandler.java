@@ -200,14 +200,20 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     private int tick;
     private float packetOutAverage;
     private float packetInAverage;
+    private static final int RANGE_SECONDS_COUNTED_FOR_AVERAGE = 5;
 
     public void tick() {
         if (tick++ % 20 == 0) {
-            this.packetOutAverage = packetOutAverage * 0.75f + packetOutCounter * 0.25f;
-            this.packetInAverage = packetInAverage * 0.75f + packetInCounter * 0.25f;
+            // The algorithm of calculating average is as follows:
+            // 1. multiply the old average by RANGE_SECONDS_COUNTED_FOR_AVERAGE to become total packet in/out in previous 5 seconds
+            // 2. throw away 1-sec component in the total packet in/out
+            // 3. add up counter into it
+            // 4. divide that by RANGE_SECONDS_COUNTED_FOR_AVERAGE
+            this.packetOutAverage = (packetOutAverage * (RANGE_SECONDS_COUNTED_FOR_AVERAGE - 1) + packetOutCounter) / (float) RANGE_SECONDS_COUNTED_FOR_AVERAGE;
+            this.packetInAverage = (packetInAverage * (RANGE_SECONDS_COUNTED_FOR_AVERAGE - 1) + packetInCounter) / (float) RANGE_SECONDS_COUNTED_FOR_AVERAGE;
             packetOutCounter = 0;
             packetInCounter = 0;
-            if (Math.round(packetOutAverage * 4.0f) == 0) {
+            if (Math.round(packetOutAverage * RANGE_SECONDS_COUNTED_FOR_AVERAGE) == 0) {
                 sendPacket(new PacketAlive(false));
             }
         }
