@@ -1,12 +1,12 @@
 package engine.graphics;
 
+import engine.graphics.material.Material;
 import engine.graphics.math.BoundingVolume;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.queue.RenderQueue;
 import engine.graphics.queue.RenderType;
 import engine.graphics.texture.Texture;
 import engine.graphics.texture.Texture2D;
-import org.apache.commons.lang3.Validate;
 
 public class Geometry extends Node3D {
 
@@ -16,6 +16,7 @@ public class Geometry extends Node3D {
 
     private Mesh mesh;
     private Texture texture = Texture2D.white();
+    private Material material;
 
     private BoundingVolume boundingVolume = new BoundingVolume();
 
@@ -72,7 +73,15 @@ public class Geometry extends Node3D {
     }
 
     public void setTexture(Texture texture) {
-        this.texture = Validate.notNull(texture);
+        this.texture = texture;
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 
     public BoundingVolume getBoundingVolume() {
