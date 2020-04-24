@@ -1,99 +1,79 @@
 package engine.graphics.material;
 
-import engine.graphics.shader.ShaderResource;
 import engine.graphics.texture.Texture2D;
-import org.joml.Vector3f;
+import engine.util.Color;
 
-public class Material {
-    private Vector3f ambient = new Vector3f(0.1f);
-    private Vector3f diffuse = new Vector3f(1f);
-    private Vector3f specular = new Vector3f(1f);
-    private float shininess;
-    private Texture2D diffuseUV;
-    private Texture2D specularUV;
-    private Texture2D normalUV;
-    private Texture2D alphaUV;
+public final class Material {
+    private Color ambient = Color.fromGray(0.1f);
+    private Color diffuse = Color.WHITE;
+    private Color specular = Color.WHITE;
+    private float reflectance;
+    private Texture2D diffuseMap;
+    private Texture2D specularMap;
+    private Texture2D normalMap;
+    private Texture2D alphaMap;
 
-    public void bind(ShaderResource proxy, String fieldName) {
-//        proxy.setUniform(fieldName + ".ambient", ambient);
-//        proxy.setUniform(fieldName + ".diffuseColor", diffuse);
-//        proxy.setUniform(fieldName + ".specularColor", specular);
-//        proxy.setUniform(fieldName + ".diffuse", 1);
-//        proxy.setUniform(fieldName + ".specular", 2);
-//        proxy.setUniform(fieldName + ".normalUV", 3);
-//        proxy.setUniform(fieldName + ".alphaUV", 4);
-//        proxy.setUniform(fieldName + ".shininess", shininess);
-//        if (diffuseUV != null) {
-//            proxy.setUniform(fieldName + ".diffuseUseUV", true);
-//            GL15.glActiveTexture(GL15.GL_TEXTURE1);
-//            diffuseUV.bind();
-//            GL15.glActiveTexture(GL13.GL_TEXTURE0);
-//        } else {
-//            proxy.setUniform(fieldName + ".diffuseUseUV", false);
-//        }
-//        if (specularUV != null) {
-//            proxy.setUniform(fieldName + ".specularUseUV", true);
-//            GL15.glActiveTexture(GL15.GL_TEXTURE2);
-//            specularUV.bind();
-//            GL15.glActiveTexture(GL13.GL_TEXTURE0);
-//        } else {
-//            proxy.setUniform(fieldName + ".specularUseUV", false);
-//        }
-//        if (normalUV != null) {
-//            proxy.setUniform(fieldName + ".normalUseUV", true);
-//            GL15.glActiveTexture(GL15.GL_TEXTURE3);
-//            normalUV.bind();
-//            GL15.glActiveTexture(GL13.GL_TEXTURE0);
-//        } else {
-//            proxy.setUniform(fieldName + ".normalUseUV", false);
-//        }
-//        if (alphaUV != null) {
-//            proxy.setUniform(fieldName + ".alphaUseUV", true);
-//            GL15.glActiveTexture(GL15.GL_TEXTURE4);
-//            alphaUV.bind();
-//            GL15.glActiveTexture(GL13.GL_TEXTURE0);
-//        } else {
-//            proxy.setUniform(fieldName + ".alphaUseUV", false);
-//        }
+    public Color getAmbient() {
+        return ambient;
     }
 
-    public Material setDiffuseColor(Vector3f diffuse) {
-        this.diffuse = diffuse;
-        return this;
-    }
-
-    public Material setAmbientColor(Vector3f ambient) {
+    public void setAmbient(Color ambient) {
         this.ambient = ambient;
-        return this;
     }
 
-    public Material setDiffuseUV(Texture2D diffuseUV) {
-        this.diffuseUV = diffuseUV;
-        return this;
+    public Color getDiffuse() {
+        return diffuse;
     }
 
-    public Material setSpecularUV(Texture2D specularUV) {
-        this.specularUV = specularUV;
-        return this;
+    public void setDiffuse(Color diffuse) {
+        this.diffuse = diffuse;
     }
 
-    public Material setNormalUV(Texture2D normalUV) {
-        this.normalUV = normalUV;
-        return this;
+    public Color getSpecular() {
+        return specular;
     }
 
-    public Material setAlphaUV(Texture2D alphaUV) {
-        this.alphaUV = alphaUV;
-        return this;
-    }
-
-    public Material setSpecularColor(Vector3f specular) {
+    public void setSpecular(Color specular) {
         this.specular = specular;
-        return this;
     }
 
-    public Material setShininess(float shininess) {
-        this.shininess = shininess;
-        return this;
+    public float getReflectance() {
+        return reflectance;
+    }
+
+    public void setReflectance(float reflectance) {
+        this.reflectance = reflectance;
+    }
+
+    public Texture2D getDiffuseMap() {
+        return diffuseMap;
+    }
+
+    public void setDiffuseMap(Texture2D diffuseMap) {
+        this.diffuseMap = diffuseMap;
+    }
+
+    public Texture2D getSpecularMap() {
+        return specularMap;
+    }
+
+    public void setSpecularMap(Texture2D specularMap) {
+        this.specularMap = specularMap;
+    }
+
+    public Texture2D getNormalMap() {
+        return normalMap;
+    }
+
+    public void setNormalMap(Texture2D normalMap) {
+        this.normalMap = normalMap;
+    }
+
+    public Texture2D getAlphaMap() {
+        return alphaMap;
+    }
+
+    public void setAlphaMap(Texture2D alphaMap) {
+        this.alphaMap = alphaMap;
     }
 }

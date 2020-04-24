@@ -5,8 +5,8 @@ import engine.graphics.image.BufferedImage;
 import engine.graphics.material.Material;
 import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.Texture2D;
+import engine.util.Color;
 import org.apache.commons.io.FilenameUtils;
-import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -63,14 +63,14 @@ public class AssimpMaterial {
         ib.flip();
         aiGetMaterialFloatArray(mMaterial, AI_MATKEY_SHININESS, aiTextureType_NONE, 0, buf, ib);
         referenceMat = new Material();
-        referenceMat.setAmbientColor(new Vector3f(mAmbientColor.r(), mAmbientColor.g(), mAmbientColor.b()));
-        referenceMat.setDiffuseColor(new Vector3f(mDiffuseColor.r(), mDiffuseColor.g(), mDiffuseColor.b()));
-        referenceMat.setSpecularColor(new Vector3f(mSpecularColor.r(), mSpecularColor.g(), mSpecularColor.b()));
-        referenceMat.setShininess(buf.get(0));
-        referenceMat.setDiffuseUV(diffuseTexture);
-        referenceMat.setSpecularUV(specularTexture);
-        referenceMat.setNormalUV(normalTexture);
-        referenceMat.setAlphaUV(alphaTexture);
+        referenceMat.setAmbient(new Color(mAmbientColor.r(), mAmbientColor.g(), mAmbientColor.b()));
+        referenceMat.setDiffuse(new Color(mDiffuseColor.r(), mDiffuseColor.g(), mDiffuseColor.b()));
+        referenceMat.setSpecular(new Color(mSpecularColor.r(), mSpecularColor.g(), mSpecularColor.b()));
+        referenceMat.setReflectance(buf.get(0));
+        referenceMat.setDiffuseMap(diffuseTexture);
+        referenceMat.setSpecularMap(specularTexture);
+        referenceMat.setNormalMap(normalTexture);
+        referenceMat.setAlphaMap(alphaTexture);
     }
 
     private Texture2D loadTexture(int textureType, String url) {
