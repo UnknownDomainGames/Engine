@@ -95,11 +95,6 @@ public class VKTexture implements Texture {
     }
 
     @Override
-    public void bind() {
-
-    }
-
-    @Override
     public void dispose() {
         if (!isDisposed()) {
             VK10.vkDestroyImage(device.getNativeDevice(), handle, null);

@@ -10,8 +10,6 @@ public interface Texture {
 
     int getSamples();
 
-    void bind();
-
     void dispose();
 
     boolean isDisposed();
