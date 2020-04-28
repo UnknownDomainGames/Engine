@@ -3,19 +3,19 @@ package engine.registry.impl;
 import engine.registry.Name;
 import engine.registry.Registrable;
 import engine.registry.RegistrationException;
-import io.netty.util.collection.IntObjectHashMap;
-import io.netty.util.collection.IntObjectMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
 @NotThreadSafe
 public abstract class IdRegistry<T extends Registrable<T>> extends NonIdRegistry<T> {
 
-    protected final IntObjectMap<T> idToObject = new IntObjectHashMap<>();
+    protected T[] idToObject;
 
     public IdRegistry(Class<T> entryType) {
         this(entryType, entryType.getSimpleName().toLowerCase());
@@ -23,6 +23,7 @@ public abstract class IdRegistry<T extends Registrable<T>> extends NonIdRegistry
 
     public IdRegistry(Class<T> entryType, String name) {
         super(entryType, name);
+        this.idToObject = (T[]) Array.newInstance(entryType, 128);
     }
 
     @Nonnull
@@ -52,12 +53,12 @@ public abstract class IdRegistry<T extends Registrable<T>> extends NonIdRegistry
 
     @Override
     public Name getKey(int id) {
-        return idToObject.get(id).getName();
+        return idToObject[id].getName();
     }
 
     @Override
     public T getValue(int id) {
-        return idToObject.get(id);
+        return idToObject[id];
     }
 
     @Override
@@ -67,20 +68,39 @@ public abstract class IdRegistry<T extends Registrable<T>> extends NonIdRegistry
 
     private static Field idField;
 
-    protected void setId(T entry, int id) {
-        if (idField == null) {
-            try {
-                idField = Registrable.Impl.class.getDeclaredField("id");
-                idField.setAccessible(true);
-            } catch (NoSuchFieldException e) {
-                throw new RegistrationException("Cannot init id.", e);
-            }
+    static {
+        try {
+            idField = Registrable.Impl.class.getDeclaredField("id");
+            idField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new Error("Failed to initialize idField", e);
         }
+    }
+
+    protected final void ensureIdCapacity(int capacity) {
+        int oldLength = idToObject.length;
+        if (oldLength < capacity) {
+            int newLength = Math.max(oldLength << 1 + oldLength, capacity);
+            idToObject = Arrays.copyOf(idToObject, newLength);
+        }
+    }
+
+    protected final void setId(T entry, int id) {
         try {
             idField.setInt(entry, id);
-            idToObject.put(id, entry);
         } catch (IllegalAccessException e) {
-            throw new RegistrationException("Cannot init id.", e);
+            throw new RegistrationException("Failed to set id.", e);
         }
+        ensureIdCapacity(id + 1);
+        idToObject[id] = entry;
+    }
+
+    protected final void setIdUnsafe(T entry, int id) {
+        try {
+            idField.setInt(entry, id);
+        } catch (IllegalAccessException e) {
+            throw new RegistrationException("Failed to set id.", e);
+        }
+        idToObject[id] = entry;
     }
 }

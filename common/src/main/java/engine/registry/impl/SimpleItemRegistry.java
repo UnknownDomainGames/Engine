@@ -66,7 +66,7 @@ public class SimpleItemRegistry extends IdBakeRegistry<Item> implements ItemRegi
                     entries.remove(0);
                 }
             }
-            idToObject.clear();
+            ensureIdCapacity(list1.size());
             for (int i = 0; i < list1.size(); i++) {
                 setId(list1.get(i), i);
             }

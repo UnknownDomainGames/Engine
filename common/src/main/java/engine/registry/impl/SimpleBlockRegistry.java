@@ -56,7 +56,7 @@ public class SimpleBlockRegistry extends IdAutoIncreaseRegistry<Block> implement
                     entries.remove(0);
                 }
             }
-            idToObject.clear();
+            ensureIdCapacity(list1.size());
             for (int i = 0; i < list1.size(); i++) {
                 setId(list1.get(i), i);
             }
