@@ -11,7 +11,11 @@ import engine.event.mod.ModLifecycleEvent;
 import engine.event.mod.ModRegistrationEvent;
 import engine.item.Item;
 import engine.registry.game.BlockRegistry;
-import engine.registry.impl.*;
+import engine.registry.game.BlockRegistryImpl;
+import engine.registry.game.EntityRegistryImpl;
+import engine.registry.game.ItemRegistryImpl;
+import engine.registry.impl.IdAutoIncreaseRegistry;
+import engine.registry.impl.PacketRegistry;
 import engine.server.event.NetworkingStartEvent;
 import engine.server.network.packet.*;
 import engine.world.WorldProvider;
@@ -33,9 +37,9 @@ public final class EngineModListeners {
     public static void constructRegistry(ModRegistrationEvent.Construction e) {
         // TODO: move to common.
         e.addRegistry(WorldProvider.class, () -> new IdAutoIncreaseRegistry<>(WorldProvider.class));
-        e.addRegistry(Block.class, SimpleBlockRegistry::new);
-        e.addRegistry(Item.class, SimpleItemRegistry::new);
-        e.addRegistry(EntityProvider.class, SimpleEntityRegistry::new);
+        e.addRegistry(Block.class, BlockRegistryImpl::new);
+        e.addRegistry(Item.class, ItemRegistryImpl::new);
+        e.addRegistry(EntityProvider.class, EntityRegistryImpl::new);
         e.addRegistry(PacketProvider.class, PacketRegistry::new);
     }
 

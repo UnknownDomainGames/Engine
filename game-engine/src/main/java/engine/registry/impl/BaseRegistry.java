@@ -13,17 +13,17 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-public class NonIdRegistry<T extends Registrable<T>> implements Registry<T> {
+public class BaseRegistry<T extends Registrable<T>> implements Registry<T> {
     private final Class<T> entryType;
     private final String name;
 
     protected final BiMap<String, T> nameToObject = HashBiMap.create();
 
-    public NonIdRegistry(Class<T> entryType) {
+    public BaseRegistry(Class<T> entryType) {
         this(entryType, entryType.getSimpleName().toLowerCase());
     }
 
-    public NonIdRegistry(Class<T> entryType, String name) {
+    public BaseRegistry(Class<T> entryType, String name) {
         this.entryType = entryType;
         this.name = name;
     }
