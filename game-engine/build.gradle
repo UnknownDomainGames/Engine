@@ -3,6 +3,7 @@ dependencies {
     compile project(':graphics3d')
 
     compile 'com.google.inject:guice:4.2.2'
+    compile 'it.unimi.dsi:fastutil:8.3.1'
     compile 'com.github.Mouse0w0.Configuration:configuration-api:1.2.0'
     compile 'io.netty:netty-all:4.1.48.Final'
 }
