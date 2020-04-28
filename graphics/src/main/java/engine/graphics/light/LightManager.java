@@ -1,19 +1,19 @@
 package engine.graphics.light;
 
 import engine.graphics.camera.Camera;
-import engine.graphics.shader.UniformBlock;
+import engine.graphics.util.Struct;
 import org.joml.Matrix4fc;
 import org.joml.Vector3fc;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
-import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class LightManager implements UniformBlock.Value {
+public class LightManager implements Struct {
 
     public static final int MAX_DIRECTIONAL_LIGHTS = 1;
     public static final int MAX_POINT_LIGHTS = 16;
@@ -89,12 +89,13 @@ public class LightManager implements UniformBlock.Value {
     }
 
     @Override
-    public ByteBuffer get(MemoryStack stack) {
-        return get(0, stack.calloc(BUFFER_CAPACITY));
+    public int sizeof() {
+        return BUFFER_CAPACITY;
     }
 
     @Override
     public ByteBuffer get(int index, ByteBuffer buffer) {
+        MemoryUtil.memSet(buffer, 0);
         for (int i = 0, size = Math.min(directionalLights.size(), MAX_DIRECTIONAL_LIGHTS); i < size; i++) {
             directionalLights.get(i).get(i * 32, buffer);
         }

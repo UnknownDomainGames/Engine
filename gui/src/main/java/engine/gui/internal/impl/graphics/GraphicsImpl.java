@@ -8,6 +8,7 @@ import engine.graphics.shader.UniformBlock;
 import engine.graphics.shader.UniformTexture;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.DrawMode;
+import engine.graphics.util.Struct;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
 import engine.gui.Node;
@@ -19,7 +20,6 @@ import engine.gui.shape.Path2D;
 import engine.math.Math2;
 import engine.util.Color;
 import org.joml.*;
-import org.lwjgl.system.MemoryStack;
 
 import java.lang.Math;
 import java.nio.ByteBuffer;
@@ -54,7 +54,7 @@ public final class GraphicsImpl implements Graphics {
 
     private Color color;
 
-    private static class States implements UniformBlock.Value {
+    private static class States implements Struct {
         Matrix4fc projMatrix;
         Matrix4fc modelMatrix;
         Vector4fc clipRect;
@@ -62,8 +62,8 @@ public final class GraphicsImpl implements Graphics {
         boolean enableGamma;
 
         @Override
-        public ByteBuffer get(MemoryStack stack) {
-            return get(stack.malloc(152));
+        public int sizeof() {
+            return 152;
         }
 
         @Override

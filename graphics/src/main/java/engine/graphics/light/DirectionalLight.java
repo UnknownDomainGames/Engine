@@ -5,7 +5,6 @@ import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4f;
-import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 
@@ -14,8 +13,9 @@ public class DirectionalLight extends Light {
 
     private final Vector3f viewDirection = new Vector3f();
 
-    public ByteBuffer get(MemoryStack stack) {
-        return get(stack.malloc(28));
+    @Override
+    public int sizeof() {
+        return 28;
     }
 
     @Override

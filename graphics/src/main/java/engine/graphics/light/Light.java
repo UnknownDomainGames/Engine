@@ -1,10 +1,10 @@
 package engine.graphics.light;
 
-import engine.graphics.shader.UniformBlock;
+import engine.graphics.util.Struct;
 import engine.util.Color;
 import org.joml.Matrix4fc;
 
-public abstract class Light implements UniformBlock.Value {
+public abstract class Light implements Struct {
     protected Color color;
     protected float intensity;
 

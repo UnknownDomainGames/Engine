@@ -4,7 +4,6 @@ import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4f;
-import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 
@@ -22,8 +21,8 @@ public class SpotLight extends Light {
     private float outerCutoffAngle; // in Radian
 
     @Override
-    public ByteBuffer get(MemoryStack stack) {
-        return get(stack.malloc(60));
+    public int sizeof() {
+        return 60;
     }
 
     @Override

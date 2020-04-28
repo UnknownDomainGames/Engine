@@ -5,7 +5,6 @@ import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.joml.Vector4f;
-import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 
@@ -18,8 +17,8 @@ public class PointLight extends Light {
     private float kquadratic;
 
     @Override
-    public ByteBuffer get(MemoryStack stack) {
-        return get(stack.malloc(40));
+    public int sizeof() {
+        return 40;
     }
 
     @Override

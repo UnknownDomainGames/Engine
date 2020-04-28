@@ -1,24 +1,12 @@
 package engine.graphics.shader;
 
-import org.lwjgl.system.MemoryStack;
-
-import java.nio.ByteBuffer;
+import engine.graphics.util.Struct;
 
 public interface UniformBlock {
 
     String getName();
 
-    Value get();
+    Struct get();
 
-    void set(Value value);
-
-    interface Value {
-        ByteBuffer get(MemoryStack stack);
-
-        default ByteBuffer get(ByteBuffer buffer) {
-            return get(0, buffer);
-        }
-
-        ByteBuffer get(int index, ByteBuffer buffer);
-    }
+    void set(Struct value);
 }

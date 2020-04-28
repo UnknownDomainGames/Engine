@@ -8,10 +8,10 @@ import engine.graphics.graph.Renderer;
 import engine.graphics.queue.RenderType;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.shader.UniformBlock;
+import engine.graphics.util.Struct;
 import engine.graphics.viewport.Viewport;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
-import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 
@@ -20,7 +20,7 @@ public class ShadowOpaqueDrawDispatcher implements DrawDispatcher {
 
     private UniformBlock uniformMatrices;
 
-    private static class Matrices implements UniformBlock.Value {
+    private static class Matrices implements Struct {
         private Matrix4fc proj;
         private Matrix4fc modelView;
 
@@ -30,8 +30,8 @@ public class ShadowOpaqueDrawDispatcher implements DrawDispatcher {
         }
 
         @Override
-        public ByteBuffer get(MemoryStack stack) {
-            return get(stack.malloc(128));
+        public int sizeof() {
+            return 128;
         }
 
         @Override
