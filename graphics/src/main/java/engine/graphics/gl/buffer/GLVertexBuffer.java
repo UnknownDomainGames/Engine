@@ -182,7 +182,7 @@ public final class GLVertexBuffer {
         }
     }
 
-    public void uploadSubData(ByteBuffer buffer, long offset) {
+    public void uploadSubData(long offset, ByteBuffer buffer) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferSubData(id, offset, buffer);
         } else if (GLHelper.isSupportEXTDirectStateAccess()) {
@@ -193,7 +193,7 @@ public final class GLVertexBuffer {
         }
     }
 
-    public void uploadSubData(ShortBuffer buffer, long offset) {
+    public void uploadSubData(long offset, ShortBuffer buffer) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferSubData(id, offset, buffer);
         } else if (GLHelper.isSupportEXTDirectStateAccess()) {
@@ -204,7 +204,7 @@ public final class GLVertexBuffer {
         }
     }
 
-    public void uploadSubData(IntBuffer buffer, long offset) {
+    public void uploadSubData(long offset, IntBuffer buffer) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferSubData(id, offset, buffer);
         } else if (GLHelper.isSupportEXTDirectStateAccess()) {
@@ -215,7 +215,7 @@ public final class GLVertexBuffer {
         }
     }
 
-    public void uploadSubData(LongBuffer buffer, long offset) {
+    public void uploadSubData(long offset, LongBuffer buffer) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferSubData(id, offset, buffer);
         }
@@ -226,7 +226,7 @@ public final class GLVertexBuffer {
         }
     }
 
-    public void uploadSubData(FloatBuffer buffer, long offset) {
+    public void uploadSubData(long offset, FloatBuffer buffer) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferSubData(id, offset, buffer);
         } else if (GLHelper.isSupportEXTDirectStateAccess()) {
@@ -237,7 +237,7 @@ public final class GLVertexBuffer {
         }
     }
 
-    public void uploadSubData(DoubleBuffer buffer, long offset) {
+    public void uploadSubData(long offset, DoubleBuffer buffer) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferSubData(id, offset, buffer);
         } else if (GLHelper.isSupportEXTDirectStateAccess()) {
@@ -248,7 +248,7 @@ public final class GLVertexBuffer {
         }
     }
 
-    public void uploadSubData(short[] data, long offset) {
+    public void uploadSubData(long offset, short[] data) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferSubData(id, offset, data);
         } else if (GLHelper.isSupportEXTDirectStateAccess()) {
@@ -259,7 +259,7 @@ public final class GLVertexBuffer {
         }
     }
 
-    public void uploadSubData(int[] data, long offset) {
+    public void uploadSubData(long offset, int[] data) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferSubData(id, offset, data);
         } else if (GLHelper.isSupportEXTDirectStateAccess()) {
@@ -270,7 +270,7 @@ public final class GLVertexBuffer {
         }
     }
 
-    public void uploadSubData(long[] data, long offset) {
+    public void uploadSubData(long offset, long[] data) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferSubData(id, offset, data);
         }
@@ -281,7 +281,7 @@ public final class GLVertexBuffer {
         }
     }
 
-    public void uploadSubData(float[] data, long offset) {
+    public void uploadSubData(long offset, float[] data) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferSubData(id, offset, data);
         } else if (GLHelper.isSupportEXTDirectStateAccess()) {
@@ -292,7 +292,7 @@ public final class GLVertexBuffer {
         }
     }
 
-    public void uploadSubData(double[] data, long offset) {
+    public void uploadSubData(long offset, double[] data) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferSubData(id, offset, data);
         } else if (GLHelper.isSupportEXTDirectStateAccess()) {
