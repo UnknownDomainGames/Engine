@@ -5,5 +5,6 @@ dependencies {
     compile 'commons-io:commons-io:2.6'
     compile 'org.ow2.asm:asm-commons:7.3.1'
     compile 'net.jodah:typetools:0.6.2'
+    compile 'it.unimi.dsi:fastutil:8.3.1'
     compile 'org.slf4j:slf4j-api:1.7.30'
 }
