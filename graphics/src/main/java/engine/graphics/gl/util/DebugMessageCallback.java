@@ -53,7 +53,7 @@ public abstract class DebugMessageCallback {
     public void invoke(int source, int type, int id, int severity, int length, long message, long userParam) {
         Source enumSource = Source.values()[source - GL_DEBUG_SOURCE_API];
         Type enumType = type == GL_DEBUG_TYPE_MARKER ? Type.MARKER : Type.values()[type - GL_DEBUG_TYPE_ERROR];
-        Severity enumSeverity = type == GL_DEBUG_SEVERITY_NOTIFICATION ?
+        Severity enumSeverity = severity == GL_DEBUG_SEVERITY_NOTIFICATION ?
                 Severity.NOTIFICATION : Severity.values()[severity - GL_DEBUG_SEVERITY_HIGH];
         String stringMessage = MemoryUtil.memUTF8Safe(message, length);
         invoke(enumSource, enumType, id, enumSeverity, stringMessage, userParam);
