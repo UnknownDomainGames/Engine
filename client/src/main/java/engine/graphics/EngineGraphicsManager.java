@@ -27,6 +27,7 @@ import engine.gui.GUIManager;
 import engine.gui.internal.impl.graphics.StageDrawDispatcher;
 import engine.math.BlockPos;
 import engine.util.Color;
+import engine.util.RuntimeEnvironment;
 
 import static engine.graphics.graph.ColorOutputInfo.colorOutput;
 import static engine.graphics.graph.DepthOutputInfo.depthOutput;
@@ -99,6 +100,9 @@ public final class EngineGraphicsManager implements GraphicsManager {
     private void initialize() {
         Internal.setInstance(this);
 
+        System.setProperty(GraphicsEngine.DEBUG_PROPERTY,
+                "false".equals(System.getProperty(GraphicsEngine.DEBUG_PROPERTY, "false")) ||
+                        getEngine().getRuntimeEnvironment() != RuntimeEnvironment.DEPLOYMENT ? "true" : "false");
         GraphicsEngine.start(new GraphicsEngine.Settings());
 
         GraphicsBackend backend = GraphicsEngine.getGraphicsBackend();

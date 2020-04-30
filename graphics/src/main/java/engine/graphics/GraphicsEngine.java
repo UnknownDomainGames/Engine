@@ -15,9 +15,11 @@ import java.util.ServiceLoader;
 
 public final class GraphicsEngine {
 
+    public static final String DEBUG_PROPERTY = "graphics.debug";
+
     private static final Logger LOGGER = LoggerFactory.getLogger("Graphics");
 
-    public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("graphics.debug", "false"));
+    private static boolean debug = true;
 
     private static Settings settings;
     private static GraphicsBackend graphicsBackend;
@@ -31,13 +33,21 @@ public final class GraphicsEngine {
         return animationManager;
     }
 
+    public static Settings getSettings() {
+        return settings;
+    }
+
     public static boolean isDebug() {
-        return settings.debug;
+        return debug;
     }
 
     public static void start(Settings settings) {
         if (graphicsBackend != null) {
             throw new IllegalArgumentException("Graphics engine has been started.");
+        }
+        debug = Boolean.parseBoolean(System.getProperty(DEBUG_PROPERTY, "false"));
+        if (debug) {
+            LOGGER.info("Graphics debug enable!");
         }
         GraphicsEngine.settings = settings;
         initEnvironment();
@@ -80,15 +90,9 @@ public final class GraphicsEngine {
     }
 
     public static class Settings {
-        private boolean debug = DEBUG;
         private String backend = "opengl";
         private String imageLoader = "stb";
         private String fontManager = "stb";
-
-        public Settings setDebug(boolean debug) {
-            this.debug = debug;
-            return this;
-        }
 
         public Settings setGraphicsBackend(String backend) {
             this.backend = backend;
