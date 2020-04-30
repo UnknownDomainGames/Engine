@@ -3,9 +3,7 @@ package engine.graphics.gl.util;
 import engine.graphics.util.DataType;
 import engine.graphics.util.DepthCompareMode;
 import engine.graphics.util.GPUVendor;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.opengl.*;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.GL_COMPARE_R_TO_TEXTURE;
@@ -178,6 +176,16 @@ public final class GLHelper {
                 return GL_GEQUAL;
             default:
                 throw new IllegalArgumentException();
+        }
+    }
+
+    public static void setDebugMessageCallback(DebugMessageCallback callback) throws UnsupportedOperationException {
+        if (capabilities.OpenGL43) {
+            GL43.glDebugMessageCallback(callback::invoke, 0);
+        } else if (capabilities.GL_ARB_debug_output) {
+            ARBDebugOutput.glDebugMessageCallbackARB(callback::invoke, 0);
+        } else {
+            throw new UnsupportedOperationException("Unsupported debug message callback.");
         }
     }
 

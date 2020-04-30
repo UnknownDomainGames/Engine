@@ -16,9 +16,7 @@ import engine.graphics.graph.RenderGraphInfo;
 import engine.graphics.util.Cleaner;
 import engine.graphics.util.GPUInfo;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.ARBDebugOutput;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL43;
 import org.lwjgl.opengl.GLCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,22 +173,19 @@ public final class GLGraphicsBackend implements GraphicsBackend {
     }
 
     private void initDebugMessageCallback() {
-        DebugMessageCallback callback = new DebugMessageCallback() {
-            @Override
-            public void invoke(Source source, Type type, int id, Severity severity, String message, long userParam) {
-                LOGGER.debug("OpenGL Debug Message:\n" +
-                        "\tSource: " + source + "\n" +
-                        "\tType: " + type + "\n" +
-                        "\tId: " + id + "\n" +
-                        "\tSeverity: " + severity + "\n" +
-                        "\tMessage: " + message);
-            }
-        };
-        if (capabilities.OpenGL43) {
-            GL43.glDebugMessageCallback(callback::invoke, 0);
-        } else if (capabilities.GL_ARB_debug_output) {
-            ARBDebugOutput.glDebugMessageCallbackARB(callback::invoke, 0);
-        } else {
+        try {
+            GLHelper.setDebugMessageCallback(new DebugMessageCallback() {
+                @Override
+                public void invoke(Source source, Type type, int id, Severity severity, String message, long userParam) {
+                    LOGGER.debug("OpenGL Debug Message:\n" +
+                            "\tSource: " + source + "\n" +
+                            "\tType: " + type + "\n" +
+                            "\tId: " + id + "\n" +
+                            "\tSeverity: " + severity + "\n" +
+                            "\tMessage: " + message);
+                }
+            });
+        } catch (UnsupportedOperationException e) {
             LOGGER.warn("Unsupported debug message callback.");
         }
     }
