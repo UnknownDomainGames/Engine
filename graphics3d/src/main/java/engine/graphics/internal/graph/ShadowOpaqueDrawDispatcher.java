@@ -18,6 +18,8 @@ import java.nio.ByteBuffer;
 public class ShadowOpaqueDrawDispatcher implements DrawDispatcher {
     private final Viewport viewport;
 
+    private final Matrix4f tempMatrix4f = new Matrix4f();
+
     private UniformBlock uniformMatrices;
 
     private static class Matrices implements Struct {
@@ -57,9 +59,10 @@ public class ShadowOpaqueDrawDispatcher implements DrawDispatcher {
         ShaderResource resource = drawer.getShaderResource();
         Scene3D scene = viewport.getScene();
         scene.getRenderQueue().getGeometryList(RenderType.OPAQUE).forEach(geometry -> {
+            Matrix4f transformMatrix = geometry.getWorldTransform().getTransformMatrix(tempMatrix4f);
             uniformMatrices.set(new Matrices(
                     viewport.getProjectionMatrix(),
-                    viewport.getViewMatrix().mul(geometry.getWorldTransform().toTransformMatrix(), new Matrix4f())));
+                    viewport.getViewMatrix().mul(transformMatrix, transformMatrix)));
             resource.refresh();
             renderer.drawMesh(geometry.getMesh());
         });

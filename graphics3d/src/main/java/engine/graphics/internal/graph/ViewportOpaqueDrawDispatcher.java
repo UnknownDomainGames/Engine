@@ -13,12 +13,15 @@ import engine.graphics.shader.UniformTexture;
 import engine.graphics.util.Struct;
 import engine.graphics.viewport.Viewport;
 import org.joml.FrustumIntersection;
+import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 
 import java.nio.ByteBuffer;
 
 public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
     private final Viewport viewport;
+
+    private final Matrix4f tempMatrix4f = new Matrix4f();
 
     private UniformBlock uniformMatrices;
     private UniformBlock uniformLight;
@@ -75,7 +78,7 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
                     uniformMatrices.set(new Matrices(
                             viewport.getProjectionMatrix(),
                             viewport.getViewMatrix(),
-                            geometry.getWorldTransform().toTransformMatrix()));
+                            geometry.getWorldTransform().getTransformMatrix(tempMatrix4f)));
                     uniformTexture.set(geometry.getTexture());
                     resource.refresh();
                     renderer.drawMesh(geometry.getMesh());

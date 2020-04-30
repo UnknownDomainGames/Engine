@@ -98,8 +98,12 @@ public class Transform {
         scale.mul(parent.scale);
     }
 
-    public Matrix4f toTransformMatrix() {
-        return new Matrix4f().scale(this.scale).rotate(rotation).translate(this.translation);
+    public Matrix4f getTransformMatrix() {
+        return getTransformMatrix(new Matrix4f());
+    }
+
+    public Matrix4f getTransformMatrix(Matrix4f matrix4f) {
+        return matrix4f.identity().scale(scale).rotate(rotation).translate(translation);
     }
 
     @Override
