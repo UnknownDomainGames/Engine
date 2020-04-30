@@ -35,6 +35,8 @@ public final class GLGraphicsBackend implements GraphicsBackend {
 
     public static final String BACKEND_NAME = "opengl";
 
+    public static final String OPENGL_DEBUG_PROPERTY = "opengl.debug";
+
     public static final Logger LOGGER = LoggerFactory.getLogger("Graphics");
 
     private Thread renderingThread;
@@ -165,7 +167,9 @@ public final class GLGraphicsBackend implements GraphicsBackend {
         GLHelper.setup(capabilities, gpuInfo.getVendor());
         printGLInfo();
 
-        initDebugMessageCallback();
+        if (Boolean.parseBoolean(System.getProperty(OPENGL_DEBUG_PROPERTY, "false"))) {
+            initDebugMessageCallback();
+        }
 
         resourceFactory = new GLResourceFactory(renderingThread);
     }
