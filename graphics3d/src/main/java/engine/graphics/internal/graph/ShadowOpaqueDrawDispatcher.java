@@ -60,7 +60,7 @@ public class ShadowOpaqueDrawDispatcher implements DrawDispatcher {
         Scene3D scene = viewport.getScene();
         scene.getRenderQueue().getGeometryList(RenderType.OPAQUE).forEach(geometry -> {
             Matrix4f transformMatrix = geometry.getWorldTransform().getTransformMatrix(tempMatrix4f);
-            uniformMatrices.set(new Matrices(
+            uniformMatrices.set(new Matrices( // TODO: optimize it
                     viewport.getProjectionMatrix(),
                     viewport.getViewMatrix().mul(transformMatrix, transformMatrix)));
             resource.refresh();
