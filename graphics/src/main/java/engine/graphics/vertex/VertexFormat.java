@@ -38,13 +38,12 @@ public final class VertexFormat {
     private final int hash;
     private final boolean instanced;
 
-    private int positionElement = -1;
-    private int colorElement = -1;
-    private int texCoordElement = -1;
-    private int normalElement = -1;
-    private int tangentElement = -1;
-    private int bitangentElement = -1;
-
+    private boolean usingPosition;
+    private boolean usingColor;
+    private boolean usingTexCoord;
+    private boolean usingNormal;
+    private boolean usingTangent;
+    private boolean usingBitangent;
     private boolean usingAlpha;
 
     public static VertexFormat of(VertexElement... elements) {
@@ -66,44 +65,48 @@ public final class VertexFormat {
         return new VertexFormat(newElements);
     }
 
-    public VertexFormat(VertexElement... elements) {
+    private VertexFormat(VertexElement... elements) {
         this.elements = elements;
-        int index = 0;
+        this.instanced = elements.length != 0 && elements[0].isInstanced();
+        int indexCount = 0;
         int bytes = 0;
         int hash = 0;
-        boolean instanced = false;
-        for (int i = 0; i < elements.length; i++) {
-            VertexElement element = elements[i];
-            index += element.getIndexCount();
+        for (VertexElement element : elements) {
+            if (element.isInstanced() != instanced) {
+                throw new IllegalArgumentException("Cannot have both instanced and vertex elements");
+            }
+            indexCount += element.getIndexCount();
             bytes += element.getBytes();
             hash = hash * 31 + element.hashCode();
-            instanced |= element.isInstanced();
-            switch (element.getName()) {
-                case NAME_POSITION:
-                    positionElement = i;
-                    break;
-                case NAME_COLOR:
-                    colorElement = i;
-                    usingAlpha |= element.getComponentCount() == 4;
-                    break;
-                case NAME_TEX_COORD:
-                    texCoordElement = i;
-                    break;
-                case NAME_NORMAL:
-                    normalElement = i;
-                    break;
-                case NAME_TANGENT:
-                    tangentElement = i;
-                    break;
-                case NAME_BITANGENT:
-                    bitangentElement = i;
-                    break;
-            }
+            checkElement(element);
         }
-        this.entries = initEntries(elements, index);
+        this.entries = initEntries(elements, indexCount);
         this.bytes = bytes;
         this.hash = hash;
-        this.instanced = instanced;
+    }
+
+    private void checkElement(VertexElement element) {
+        switch (element.getName()) {
+            case NAME_POSITION:
+                usingPosition = true;
+                break;
+            case NAME_COLOR:
+                usingColor = true;
+                usingAlpha |= element.getComponentCount() == 4;
+                break;
+            case NAME_TEX_COORD:
+                usingTexCoord = true;
+                break;
+            case NAME_NORMAL:
+                usingNormal = true;
+                break;
+            case NAME_TANGENT:
+                usingTangent = true;
+                break;
+            case NAME_BITANGENT:
+                usingBitangent = true;
+                break;
+        }
     }
 
     private Entry[] initEntries(VertexElement[] elements, int count) {
@@ -140,11 +143,11 @@ public final class VertexFormat {
     }
 
     public boolean isUsingPosition() {
-        return positionElement != -1;
+        return usingPosition;
     }
 
     public boolean isUsingColor() {
-        return colorElement != -1;
+        return usingColor;
     }
 
     public boolean isUsingAlpha() {
@@ -152,19 +155,19 @@ public final class VertexFormat {
     }
 
     public boolean isUsingTexCoord() {
-        return texCoordElement != -1;
+        return usingTexCoord;
     }
 
     public boolean isUsingNormal() {
-        return normalElement != -1;
+        return usingNormal;
     }
 
     public boolean isUsingTangent() {
-        return tangentElement != -1;
+        return usingTangent;
     }
 
     public boolean isUsingBitangent() {
-        return bitangentElement != -1;
+        return usingBitangent;
     }
 
     @Override
