@@ -6,8 +6,6 @@ import engine.event.game.GameCreateEvent;
 import engine.event.game.GameStartEvent;
 import engine.event.game.GameTerminationEvent;
 import org.slf4j.Logger;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -15,13 +13,11 @@ import java.nio.file.Path;
 public abstract class GameBase implements Game {
 
     protected final Engine engine;
+    protected final Logger logger;
 
     protected final Path storagePath;
 
     protected final GameData data;
-
-    protected final Logger logger;
-    protected final Marker marker = MarkerFactory.getMarker("Game");
 
     protected EventBus eventBus;
 
@@ -86,7 +82,7 @@ public abstract class GameBase implements Game {
 
     @Override
     public void init() {
-        logger.info(marker, "Initializing Game.");
+        logger.info("Initializing Game.");
 
         doCreatePreInit();
         eventBus.post(new GameStartEvent.Pre(this));
@@ -108,7 +104,7 @@ public abstract class GameBase implements Game {
         if (data.isCreated()) {
             return;
         }
-        logger.info(marker, "First Initialize Game.");
+        logger.info("First Initialize Game.");
         eventBus.post(new GameCreateEvent.Pre(this));
     }
 
@@ -124,7 +120,7 @@ public abstract class GameBase implements Game {
     @Override
     public synchronized void terminate() {
         markedTermination = true;
-        logger.info(marker, "Marked game terminated!");
+        logger.info("Marked game terminated!");
         eventBus.post(new GameTerminationEvent.Marked(this));
     }
 
