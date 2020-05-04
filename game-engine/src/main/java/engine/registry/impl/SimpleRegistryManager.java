@@ -1,6 +1,9 @@
 package engine.registry.impl;
 
-import engine.registry.*;
+import engine.registry.Registrable;
+import engine.registry.RegistrationException;
+import engine.registry.Registry;
+import engine.registry.RegistryManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nonnull;
@@ -41,7 +44,7 @@ public class SimpleRegistryManager implements RegistryManager {
     @Override
     public <T extends Registrable<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier) {
         if (registries.containsKey(type)) {
-            throw new RegistryException("Registry has been registered");
+            throw new IllegalStateException("Registry has been registered");
         }
         registries.put(type, supplier.get());
     }
