@@ -6,7 +6,6 @@ import engine.graphics.gl.util.GLHelper;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.util.Cleaner;
 import engine.graphics.util.DrawMode;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL45;
 
@@ -25,9 +24,7 @@ public abstract class GLMesh implements Mesh {
         disposable = GLCleaner.registerVertexArray(this, id);
     }
 
-    protected abstract boolean hasIndices();
-
-    protected abstract int getIndicesType();
+    public abstract void draw(int start, int count);
 
     public int getId() {
         return id;
@@ -45,13 +42,6 @@ public abstract class GLMesh implements Mesh {
 
     public void bind() {
         GL30.glBindVertexArray(id);
-    }
-
-    public void draw(int first, int count) {
-        bind();
-        if (hasIndices()) GL11.glDrawElements(drawMode.gl, vertexCount, getIndicesType(), 0);
-        else GL11.glDrawArrays(drawMode.gl, first, count);
-
     }
 
     @Override

@@ -1,7 +1,6 @@
 package engine.graphics.mesh;
 
 import engine.graphics.GraphicsEngine;
-import engine.graphics.util.DataType;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
@@ -9,35 +8,20 @@ import engine.graphics.vertex.VertexFormat;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.Collection;
 
 public interface MultiBufMesh extends Mesh {
     static Builder builder() {
         return GraphicsEngine.getGraphicsBackend().getResourceFactory().createMultiBufMeshBuilder();
     }
 
-    Attribute[] getAttributes();
+    Collection<Attribute> getAttributeMap();
 
     Attribute getAttribute(VertexFormat format);
 
     Indices getIndices();
 
-    interface Attribute {
-        VertexFormat getFormat();
-
-        void uploadData(VertexDataBuf buf);
-
-        void uploadData(ByteBuffer buffer);
-    }
-
-    interface Indices {
-        DataType getType();
-
-        void uploadData(ByteBuffer buffer);
-
-        void uploadData(ShortBuffer buffer);
-
-        void uploadData(IntBuffer buffer);
-    }
+    void update();
 
     interface Builder {
         Builder setStatic();
