@@ -3,8 +3,9 @@ package engine.registry.impl;
 import engine.registry.Name;
 import engine.registry.Registrable;
 import engine.registry.RegistrationException;
-import io.netty.util.collection.IntObjectHashMap;
-import io.netty.util.collection.IntObjectMap;
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -15,7 +16,7 @@ import java.util.Map;
 @NotThreadSafe
 public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<T> {
 
-    protected final IntObjectMap<T> idToObject = new IntObjectHashMap<>();
+    protected final Int2ObjectMap<T> idToObject = new Int2ObjectOpenHashMap<>(Hash.DEFAULT_INITIAL_SIZE, Hash.FAST_LOAD_FACTOR);
 
     public IdRegistry(Class<T> entryType) {
         this(entryType, entryType.getSimpleName().toLowerCase());
