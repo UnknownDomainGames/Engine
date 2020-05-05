@@ -50,7 +50,7 @@ public final class GUIPauseMenu extends FlowPane {
             var engine = Platform.getEngineClient();
             engine.getCurrentGame().terminate();
             GUIManager guiManager = engine.getGraphicsManager().getGUIManager();
-            guiManager.show(new Scene(new GUIGameCreation()));
+            guiManager.show(new Scene(new GUIMainMenu()));
         });
         vBox.getChildren().add(terminateGame);
     }

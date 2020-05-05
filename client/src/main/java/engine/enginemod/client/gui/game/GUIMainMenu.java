@@ -13,26 +13,25 @@ import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
-import engine.gui.misc.HPos;
 import engine.gui.misc.Pos;
 import engine.util.Color;
 import engine.util.Files2;
 
 import java.nio.file.Path;
 
-public class GUIGameCreation extends FlowPane {
+public class GUIMainMenu extends FlowPane {
 
-    public GUIGameCreation() {
+    public GUIMainMenu() {
         alignment().set(Pos.CENTER);
         setBackground(new Background(Color.fromRGB(0xAAAAAA)));
 
         VBox vBox = new VBox();
-        vBox.spacing().set(5);
-        vBox.alignment().set(HPos.CENTER);
+        vBox.setSpacing(5);
+        vBox.setFillWidth(true);
         getChildren().add(vBox);
 
         Text text = new Text();
-        text.setText(I18n.translate("engine.gui.game_creation.text.name"));
+        text.setText(I18n.translate("engine.gui.main_menu.title"));
         text.setFont(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 

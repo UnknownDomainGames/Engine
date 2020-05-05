@@ -12,8 +12,8 @@ import engine.client.hud.HUDManager;
 import engine.client.input.controller.MotionType;
 import engine.client.input.keybinding.Key;
 import engine.client.input.keybinding.KeyBinding;
-import engine.enginemod.client.gui.game.GUIGameCreation;
 import engine.enginemod.client.gui.game.GUIItemList;
+import engine.enginemod.client.gui.game.GUIMainMenu;
 import engine.enginemod.client.gui.game.GUIPauseMenu;
 import engine.enginemod.client.gui.game.GuiChat;
 import engine.enginemod.client.gui.hud.HUDDebug;
@@ -262,7 +262,7 @@ public final class EngineModClientListeners {
         var renderContext = Platform.getEngineClient().getGraphicsManager();
         var guiManager = renderContext.getGUIManager();
 
-        var scene = new Scene(new GUIGameCreation());
+        var scene = new Scene(new GUIMainMenu());
         guiManager.show(scene);
     }
 
