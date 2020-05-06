@@ -3,20 +3,19 @@ package engine.registry.impl;
 import engine.registry.Name;
 import engine.registry.Registrable;
 import engine.registry.RegistrationException;
-import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
 @NotThreadSafe
 public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<T> {
 
-    protected final Int2ObjectMap<T> idToObject = new Int2ObjectOpenHashMap<>(Hash.DEFAULT_INITIAL_SIZE, Hash.FAST_LOAD_FACTOR);
+    protected T[] idToObject;
 
     public IdRegistry(Class<T> entryType) {
         this(entryType, entryType.getSimpleName().toLowerCase());
@@ -24,6 +23,7 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
 
     public IdRegistry(Class<T> entryType, String name) {
         super(entryType, name);
+        this.idToObject = (T[]) Array.newInstance(entryType, 128);
     }
 
     @Nonnull
@@ -53,12 +53,12 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
 
     @Override
     public Name getKey(int id) {
-        return getValue(id).getName();
+        return idToObject[id].getName();
     }
 
     @Override
     public T getValue(int id) {
-        return idToObject.get(id);
+        return idToObject[id];
     }
 
     @Override
@@ -77,12 +77,30 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
         }
     }
 
+    protected final void ensureCapacity(int capacity) {
+        int oldLength = idToObject.length;
+        if (oldLength < capacity) {
+            int newLength = Math.max(oldLength << 1 + oldLength, capacity);
+            idToObject = Arrays.copyOf(idToObject, newLength);
+        }
+    }
+
     protected final void setId(T entry, int id) {
         try {
             idField.setInt(entry, id);
         } catch (IllegalAccessException e) {
             throw new RegistrationException("Failed to set id.", e);
         }
-        idToObject.put(id, entry);
+        ensureCapacity(id + 1);
+        idToObject[id] = entry;
+    }
+
+    protected final void setIdUnsafe(T entry, int id) {
+        try {
+            idField.setInt(entry, id);
+        } catch (IllegalAccessException e) {
+            throw new RegistrationException("Failed to set id.", e);
+        }
+        idToObject[id] = entry;
     }
 }
