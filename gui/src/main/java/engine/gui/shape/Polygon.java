@@ -20,7 +20,7 @@ public class Polygon extends Shape {
     private float maxX;
     private float maxY;
 
-    private Path2D path = new Path2D().heap();
+    private Path2D path = Path2D.heap();
 
     static {
         PolygonHelper.setPolygonAccessor(Polygon::getPath2D);
