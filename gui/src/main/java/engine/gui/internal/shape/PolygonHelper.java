@@ -1,6 +1,6 @@
 package engine.gui.internal.shape;
 
-import engine.gui.shape.Path2D;
+import engine.graphics.shape.Path2D;
 import engine.gui.shape.Polygon;
 
 public abstract class PolygonHelper {

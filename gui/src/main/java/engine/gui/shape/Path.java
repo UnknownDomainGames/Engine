@@ -1,14 +1,16 @@
 package engine.gui.shape;
 
+import com.github.mouse0w0.observable.collection.ObservableCollections;
+import com.github.mouse0w0.observable.collection.ObservableList;
+import engine.graphics.shape.Path2D;
 import engine.gui.graphics.NodeRenderer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Path extends Shape {
-    private List<PathElement> elements = new ArrayList<>();
+    private ObservableList<PathElement> elements = ObservableCollections.observableArrayList();
 
-    public List<PathElement> getPathElements() {
+    private Path2D path2D;
+
+    public ObservableList<PathElement> getPathElements() {
         return elements;
     }
 

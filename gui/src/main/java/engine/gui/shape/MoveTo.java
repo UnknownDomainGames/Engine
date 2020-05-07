@@ -1,5 +1,7 @@
 package engine.gui.shape;
 
+import engine.graphics.shape.Path2D;
+
 public class MoveTo extends PathElement {
     private final float x;
     private final float y;

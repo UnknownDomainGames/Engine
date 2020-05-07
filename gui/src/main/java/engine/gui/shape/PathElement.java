@@ -2,6 +2,7 @@ package engine.gui.shape;
 
 import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
+import engine.graphics.shape.Path2D;
 
 public abstract class PathElement {
 

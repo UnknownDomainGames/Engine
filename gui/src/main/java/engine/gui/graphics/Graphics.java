@@ -2,6 +2,7 @@ package engine.gui.graphics;
 
 import engine.graphics.font.TextMesh;
 import engine.graphics.mesh.Mesh;
+import engine.graphics.shape.Path2D;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
@@ -9,7 +10,6 @@ import engine.gui.Node;
 import engine.gui.image.Image;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
-import engine.gui.shape.Path2D;
 import engine.util.Color;
 import org.joml.Matrix4fc;
 import org.joml.Vector2fc;

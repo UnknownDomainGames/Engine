@@ -1,5 +1,7 @@
 package engine.gui.shape;
 
+import engine.graphics.shape.Path2D;
+
 public class CurveTo extends PathElement {
     private final float px0;
     private final float py0;

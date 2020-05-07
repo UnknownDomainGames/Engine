@@ -1,5 +1,7 @@
 package engine.gui.shape;
 
+import engine.graphics.shape.Path2D;
+
 public class ArcTo extends PathElement {
 
     private final float radiusX;

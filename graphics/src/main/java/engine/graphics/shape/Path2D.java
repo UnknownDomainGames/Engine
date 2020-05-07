@@ -1,13 +1,11 @@
-package engine.gui.shape;
+package engine.graphics.shape;
 
 import engine.graphics.vertex.VertexDataBuf;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-public class Path2D {
-
-    private static final float tessTol = 1f;
+public abstract class Path2D {
 
     private FloatBuffer buffer;
 
@@ -18,8 +16,42 @@ public class Path2D {
 
     private boolean closed;
 
+    private float tessTol = 1f;
+
+    public static Path2D heap() {
+        return new Heap();
+    }
+
+    public static Path2D direct() {
+        return new Direct();
+    }
+
+    private static final class Heap extends Path2D {
+        @Override
+        protected FloatBuffer createBuffer(int capacity) {
+            return FloatBuffer.allocate(capacity);
+        }
+    }
+
+    private static final class Direct extends Path2D {
+        @Override
+        protected FloatBuffer createBuffer(int capacity) {
+            return ByteBuffer.allocateDirect(capacity * Float.BYTES).asFloatBuffer();
+        }
+    }
+
+    public Path2D() {
+        buffer = createBuffer(64);
+    }
+
+    protected abstract FloatBuffer createBuffer(int capacity);
+
     public FloatBuffer getBuffer() {
         return buffer;
+    }
+
+    public boolean isDirect() {
+        return buffer != null && buffer.isDirect();
     }
 
     public float[] get(float[] dst) {
@@ -38,33 +70,24 @@ public class Path2D {
         return buf;
     }
 
-    public Path2D heap() {
-        buffer = buffer == null ? FloatBuffer.allocate(64) :
-                FloatBuffer.allocate(buffer.capacity()).put(buffer);
-        return this;
-    }
-
-    public boolean isDirect() {
-        return buffer != null && buffer.isDirect();
-    }
-
-    public Path2D direct() {
-        buffer = buffer == null ? ByteBuffer.allocateDirect(64 * Float.BYTES).asFloatBuffer() :
-                ByteBuffer.allocateDirect(buffer.capacity() * Float.BYTES).asFloatBuffer().put(buffer);
-        return this;
-    }
-
     public Path2D ensureCapacity(int capacity) {
         if (buffer == null) throw new IllegalStateException("No initialize buffer");
         int oldCapacity = buffer.capacity();
         if (oldCapacity >= capacity) return this;
         int newCapacity = Math.max(capacity, oldCapacity << 1 + oldCapacity);
-        if (buffer.isDirect()) {
-            buffer = ByteBuffer.allocateDirect(newCapacity).asFloatBuffer().put(buffer);
-        } else {
-            buffer = FloatBuffer.allocate(newCapacity).put(buffer);
-        }
+        buffer = createBuffer(newCapacity).put(buffer);
         return this;
+    }
+
+    /**
+     * @return Tessellation tolerance.
+     */
+    public float getTessTol() {
+        return tessTol;
+    }
+
+    public void setTessTol(float tessTol) {
+        this.tessTol = tessTol;
     }
 
     public float getCurrentX() {
@@ -99,14 +122,14 @@ public class Path2D {
         float py0 = currY + 2.0f / 3.0f * (py - currY);
         float px1 = x + 2.0f / 3.0f * (px - x);
         float py1 = y + 2.0f / 3.0f * (py - y);
-        return curveTo(x, y, px0, py0, px1, py1);
+        return curveTo(px0, py0, px1, py1, x, y);
     }
 
     /**
      * Draw a Bezier curve
      */
     public Path2D curveTo(float px0, float py0, float px1, float py1, float x, float y) {
-        tesselateBezier(currX, currY, px0, py0, px1, py1, x, y, 0);
+        tessellateBezier(currX, currY, px0, py0, px1, py1, x, y, 0);
         currX = x;
         currY = y;
         append(x, y);
@@ -114,14 +137,14 @@ public class Path2D {
     }
 
     /**
-     * Tesselate bezier curve.
+     * Tessellate bezier curve.
      * <br/>
      * Copy from <a href="https://github.com/memononen/nanovg">nanovg</a> and modified by Mouse0w0. These code licensed
      * under zLib license.
      */
-    private void tesselateBezier(float x1, float y1, float x2, float y2,
-                                 float x3, float y3, float x4, float y4,
-                                 int level) {
+    private void tessellateBezier(float x1, float y1, float x2, float y2,
+                                  float x3, float y3, float x4, float y4,
+                                  int level) {
         float x12, y12, x23, y23, x34, y34, x123, y123, x234, y234, x1234, y1234;
         float dx, dy, d2, d3;
 
@@ -151,8 +174,8 @@ public class Path2D {
         x1234 = (x123 + x234) * 0.5f;
         y1234 = (y123 + y234) * 0.5f;
 
-        tesselateBezier(x1, y1, x12, y12, x123, y123, x1234, y1234, level + 1);
-        tesselateBezier(x1234, y1234, x234, y234, x34, y34, x4, y4, level + 1);
+        tessellateBezier(x1, y1, x12, y12, x123, y123, x1234, y1234, level + 1);
+        tessellateBezier(x1234, y1234, x234, y234, x34, y34, x4, y4, level + 1);
     }
 
     /**

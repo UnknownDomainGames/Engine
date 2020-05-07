@@ -2,6 +2,7 @@ package engine.gui.shape;
 
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
+import engine.graphics.shape.Path2D;
 import engine.gui.graphics.NodeRenderer;
 import engine.gui.graphics.shape.PolygonRenderer;
 import engine.gui.internal.shape.PolygonHelper;
