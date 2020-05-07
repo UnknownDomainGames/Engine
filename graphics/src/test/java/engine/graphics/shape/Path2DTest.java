@@ -9,7 +9,7 @@ public class Path2DTest {
     public static void main(String[] args) {
         Path2D path = Path2D.heap();
         path.moveTo(150, 350);
-        path.arcTo(50, 50, 90, false, false, 100, 300);
+        path.arcTo(50, 50, 90, false, true, 100, 300);
         path.lineTo(100, 150);
         path.quadTo(250, -50, 400, 150);
         path.lineTo(400, 300);

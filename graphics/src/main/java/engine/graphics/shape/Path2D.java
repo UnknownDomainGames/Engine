@@ -178,6 +178,9 @@ public abstract class Path2D {
         tessellateBezier(x1234, y1234, x234, y234, x34, y34, x4, y4, level + 1);
     }
 
+    private static final float PIx2 = (float) (2 * Math.PI);
+    private static final float PI_4 = (float) (Math.PI / 4);
+
     /**
      * Draw a elliptical arc
      */
@@ -192,6 +195,8 @@ public abstract class Path2D {
 
         float x1p = (float) (Math.cos(phi) * dx2 + Math.sin(phi) * dy2);
         float y1p = (float) (-Math.sin(phi) * dx2 + Math.cos(phi) * dy2);
+
+        if (x1p == 0 && y1p == 0) return this;
 
         float rxs = rX * rX;
         float rys = rY * rY;
@@ -224,25 +229,30 @@ public abstract class Path2D {
                 (x1p - cxp) / rX, (y1p - cyp) / rY,
                 (-x1p - cxp) / rX, (-y1p - cyp) / rY);
 
-        delta = (float) (delta - Math.PI * 2 * Math.floor(delta / (Math.PI * 2)));
+        delta = (float) (delta - PIx2 * Math.floor(delta / PIx2));
 
-        if (!sweepFlag)
-            delta -= 2 * Math.PI;
+        if (!sweepFlag && delta > 0)
+            delta -= PIx2;
 
-        float n2 = delta;
+        if (sweepFlag && delta < 0)
+            delta += PIx2;
 
-        float internal = (float) (Math.PI / 4);
+        float ratio = Math.abs(delta) / PI_4;
+        if (Math.abs(1f - ratio) < 0.00001f) ratio = 1f;
+
+        int segments = (int) Math.ceil(Math.abs(ratio));
+        float step = delta / ratio;
+
         float prevN = theta;
-        while (prevN + internal < n2) {
-            float nextN = prevN + internal;
-            arcCurveTo(radiusX, radiusY, x, y, phi, cx, cy, prevN, nextN);
+        for (int i = 0; i < segments; i++) {
+            float nextN = prevN + step;
+            arcCurveTo(radiusX, radiusY, phi, cx, cy, prevN, nextN);
             prevN = nextN;
         }
-        arcCurveTo(radiusX, radiusY, x, y, phi, cx, cy, prevN, n2);
         return this;
     }
 
-    private void arcCurveTo(float radiusX, float radiusY, float x, float y, float phi, float cx, float cy, float prevN, float nextN) {
+    private void arcCurveTo(float radiusX, float radiusY, float phi, float cx, float cy, float prevN, float nextN) {
         Vector2f en1 = computeArcE(prevN, cx, cy, radiusX, radiusY, phi);
         Vector2f en2 = computeArcE(nextN, cx, cy, radiusX, radiusY, phi);
         Vector2f edn1 = computeArcEd(prevN, radiusX, radiusY, phi);
