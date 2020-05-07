@@ -8,8 +8,12 @@ public class Path2DTest {
 
     public static void main(String[] args) {
         Path2D path = Path2D.heap();
-        path.moveTo(100, 350);
-        path.quadTo(250, 50, 400, 350);
+        path.moveTo(150, 350);
+        path.arcTo(50, 50, 90, false, false, 100, 300);
+        path.lineTo(100, 150);
+        path.quadTo(250, -50, 400, 150);
+        path.lineTo(400, 300);
+        path.curveTo(400, 350, 400, 350, 350, 350);
         path.closePath();
 
         JFrame frame = new JFrame();
@@ -23,9 +27,14 @@ public class Path2DTest {
                 super.paint(g);
                 g.setColor(Color.BLACK);
                 FloatBuffer buffer = path.getBuffer();
-                for (int i = 0, size = buffer.limit(); i < size; i += 2) {
-                    g.fillRect(Math.round(buffer.get(i)), Math.round(buffer.get(i + 1)), 1, 1);
+                int half = buffer.position() / 2;
+                int[] xs = new int[half];
+                int[] ys = new int[half];
+                for (int i = 0; i < half; i++) {
+                    xs[i] = Math.round(buffer.get(i * 2));
+                    ys[i] = Math.round(buffer.get(i * 2 + 1));
                 }
+                g.drawPolygon(xs, ys, half);
             }
         };
         panel.setSize(500, 500);

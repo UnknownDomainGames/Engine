@@ -1,6 +1,7 @@
 package engine.graphics.shape;
 
 import engine.graphics.vertex.VertexDataBuf;
+import org.joml.Vector2f;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -71,11 +72,10 @@ public abstract class Path2D {
     }
 
     public Path2D ensureCapacity(int capacity) {
-        if (buffer == null) throw new IllegalStateException("No initialize buffer");
         int oldCapacity = buffer.capacity();
         if (oldCapacity >= capacity) return this;
         int newCapacity = Math.max(capacity, oldCapacity << 1 + oldCapacity);
-        buffer = createBuffer(newCapacity).put(buffer);
+        buffer = createBuffer(newCapacity).put(buffer.flip());
         return this;
     }
 
@@ -218,9 +218,9 @@ public abstract class Path2D {
         float cx = (float) (Math.cos(phi) * cxp - Math.sin(phi) * cyp + (currX + x) / 2);
         float cy = (float) (Math.sin(phi) * cxp + Math.cos(phi) * cyp + (currY + y) / 2);
 
-        float theta = angle(1, 0, (x1p - cxp) / rX, (y1p - cyp) / rY);
+        float theta = computeArcAngle(1, 0, (x1p - cxp) / rX, (y1p - cyp) / rY);
 
-        float delta = angle(
+        float delta = computeArcAngle(
                 (x1p - cxp) / rX, (y1p - cyp) / rY,
                 (-x1p - cxp) / rX, (-y1p - cyp) / rY);
 
@@ -229,40 +229,50 @@ public abstract class Path2D {
         if (!sweepFlag)
             delta -= 2 * Math.PI;
 
-        float n1 = theta,
-                n2 = delta;
+        float n2 = delta;
 
-        // E(n)
-        // cx +acosθcosη−bsinθsinη
-        // cy +asinθcosη+bcosθsinη
-
-        float[] en1 = E(n1, cx, cy, radiusX, radiusY, phi);
-        float[] en2 = E(n2, cx, cy, radiusX, radiusY, phi);
-        float[] edn1 = Ed(n1, radiusX, radiusY, phi);
-        float[] edn2 = Ed(n2, radiusX, radiusY, phi);
-
-        float alpha = (float) (Math.sin(n2 - n1) * (Math.sqrt(4 + 3 * Math.pow(Math.tan((n2 - n1) / 2), 2)) - 1) / 3);
-
-        curveTo(x, y, en1[0] + alpha * edn1[0], en1[1] + alpha * edn1[1], en2[0] - alpha * edn2[0], en2[1] - alpha * edn2[1]);
+        float internal = (float) (Math.PI / 4);
+        float prevN = theta;
+        while (prevN + internal < n2) {
+            float nextN = prevN + internal;
+            arcCurveTo(radiusX, radiusY, x, y, phi, cx, cy, prevN, nextN);
+            prevN = nextN;
+        }
+        arcCurveTo(radiusX, radiusY, x, y, phi, cx, cy, prevN, n2);
         return this;
     }
 
-    private float[] E(float n, float cx, float cy, float rx, float ry, float phi) {
+    private void arcCurveTo(float radiusX, float radiusY, float x, float y, float phi, float cx, float cy, float prevN, float nextN) {
+        Vector2f en1 = computeArcE(prevN, cx, cy, radiusX, radiusY, phi);
+        Vector2f en2 = computeArcE(nextN, cx, cy, radiusX, radiusY, phi);
+        Vector2f edn1 = computeArcEd(prevN, radiusX, radiusY, phi);
+        Vector2f edn2 = computeArcEd(nextN, radiusX, radiusY, phi);
+
+        float alpha = (float) (Math.sin(nextN - prevN) * (Math.sqrt(4 + 3 * Math.pow(Math.tan((nextN - prevN) / 2), 2)) - 1) / 3);
+
+        curveTo(en1.x + alpha * edn1.x, en1.y + alpha * edn1.y,
+                en2.x - alpha * edn2.x, en2.y - alpha * edn2.y, en2.x, en2.y);
+    }
+
+    // E(n)
+    // cx +acosθcosη−bsinθsinη
+    // cy +asinθcosη+bcosθsinη
+    private Vector2f computeArcE(float n, float cx, float cy, float rx, float ry, float phi) {
         float enx = (float) (cx + rx * Math.cos(phi) * Math.cos(n) - ry * Math.sin(phi) * Math.sin(n));
         float eny = (float) (cy + rx * Math.sin(phi) * Math.cos(n) + ry * Math.cos(phi) * Math.sin(n));
-        return new float[]{enx, eny};
+        return new Vector2f(enx, eny);
     }
 
     // E'(n)
     // −acosθsinη−bsinθcosη
     // −asinθsinη+bcosθcosη
-    private float[] Ed(float n, float rx, float ry, float phi) {
+    private Vector2f computeArcEd(float n, float rx, float ry, float phi) {
         float ednx = (float) (-1 * rx * Math.cos(phi) * Math.sin(n) - ry * Math.sin(phi) * Math.cos(n));
         float edny = (float) (-1 * rx * Math.sin(phi) * Math.sin(n) + ry * Math.cos(phi) * Math.cos(n));
-        return new float[]{ednx, edny};
+        return new Vector2f(ednx, edny);
     }
 
-    private float angle(float ux, float uy, float vx, float vy) {
+    private float computeArcAngle(float ux, float uy, float vx, float vy) {
         float dot = ux * vx + uy * vy;
         double len = Math.sqrt(ux * ux + uy * uy) * Math.sqrt(vx * vx + vy * vy);
 
