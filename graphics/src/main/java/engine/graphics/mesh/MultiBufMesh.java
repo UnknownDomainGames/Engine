@@ -15,7 +15,7 @@ public interface MultiBufMesh extends Mesh {
         return GraphicsEngine.getGraphicsBackend().getResourceFactory().createMultiBufMeshBuilder();
     }
 
-    Collection<Attribute> getAttributeMap();
+    Collection<Attribute> getAttributes();
 
     Attribute getAttribute(VertexFormat format);
 

@@ -22,8 +22,8 @@ import static engine.graphics.gl.mesh.GLVertexArrayHelper.enableVertexFormat;
 
 public class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
 
-    private List<Attribute> attributes;
-    private GLIndices indices;
+    protected List<Attribute> attributes;
+    protected GLIndices indices;
 
     public static Builder builder() {
         return new Builder();
@@ -38,12 +38,12 @@ public class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
         }
     }
 
-    private boolean isDrawIndexed() {
+    protected final boolean isDrawIndexed() {
         return indices != null;
     }
 
     @Override
-    public Collection<Attribute> getAttributeMap() {
+    public Collection<Attribute> getAttributes() {
         return attributes;
     }
 
