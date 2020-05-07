@@ -1,5 +1,6 @@
 package engine.graphics.backend;
 
+import engine.graphics.mesh.InstancedMesh;
 import engine.graphics.mesh.MultiBufMesh;
 import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.texture.Sampler;
@@ -19,4 +20,6 @@ public interface ResourceFactory {
     MultiBufMesh.Builder createMultiBufMeshBuilder();
 
     SingleBufMesh.Builder createSingleBufMeshBuilder();
+
+    <E> InstancedMesh.Builder<E> createInstancedMeshBuilder();
 }

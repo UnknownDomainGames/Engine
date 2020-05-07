@@ -1,6 +1,7 @@
 package engine.graphics.vulkan;
 
 import engine.graphics.backend.ResourceFactory;
+import engine.graphics.mesh.InstancedMesh;
 import engine.graphics.mesh.MultiBufMesh;
 import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.texture.Sampler;
@@ -43,6 +44,11 @@ public class VKResourceFactory implements ResourceFactory {
 
     @Override
     public SingleBufMesh.Builder createSingleBufMeshBuilder() {
+        return null;
+    }
+
+    @Override
+    public <E> InstancedMesh.Builder<E> createInstancedMeshBuilder() {
         return null;
     }
 }

@@ -1,5 +1,6 @@
 package engine.graphics.mesh;
 
+import engine.graphics.GraphicsEngine;
 import engine.graphics.util.DrawMode;
 import engine.graphics.util.StructDefinition;
 import engine.graphics.vertex.VertexDataBuf;
@@ -10,6 +11,9 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 public interface InstancedMesh<E> extends MultiBufMesh {
+    static <E> Builder<E> builder() {
+        return GraphicsEngine.getGraphicsBackend().getResourceFactory().createInstancedMeshBuilder();
+    }
 
     InstancedAttribute<E> getInstancedAttribute();
 
