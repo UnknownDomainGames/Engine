@@ -7,10 +7,11 @@ import engine.event.world.WorldCreateEvent;
 import engine.event.world.WorldLoadEvent;
 import engine.event.world.WorldUnloadEvent;
 import engine.player.Player;
-import engine.player.PlayerImpl;
 import engine.player.Profile;
 import engine.registry.Registries;
 import engine.server.network.NetworkServer;
+import engine.server.player.PlayerManager;
+import engine.server.player.ServerPlayer;
 import engine.world.World;
 import engine.world.WorldCommon;
 import engine.world.WorldCreationSetting;
@@ -29,28 +30,34 @@ import java.util.*;
  */
 public class GameServerFullAsync extends GameBase {
 
-    protected final Set<Player> players = new HashSet<>();
     protected final Map<String, World> worlds = new HashMap<>();
     private final NetworkServer networkServer;
+    private final PlayerManager playerManager;
 //    protected List<Thread> worldThreads;
 
     public GameServerFullAsync(Engine engine, Path storagePath, GameData data, NetworkServer networkServer) {
         super(engine, storagePath, data);
         this.networkServer = networkServer;
+        this.playerManager = new PlayerManager(this);
     }
 
     @Nonnull
     @Override
     public Player joinPlayer(Profile profile, Entity controlledEntity) {
-        Player player = new PlayerImpl(profile, controlledEntity);
-        players.add(player);
+        var player = new ServerPlayer(profile, controlledEntity);
+//        players.add(player);
+        playerManager.joinPlayer(player);
         return player;
     }
 
     @Nonnull
     @Override
     public Collection<Player> getPlayers() {
-        return List.copyOf(players);
+        return List.copyOf(playerManager.getPlayer());
+    }
+
+    public PlayerManager getPlayerManager() {
+        return playerManager;
     }
 
     @Nonnull
