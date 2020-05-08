@@ -9,6 +9,7 @@ import java.io.IOException;
 
 public class PacketChunkData implements Packet {
 
+    private String worldName;
     private int chunkX;
     private int chunkY;
     private int chunkZ;
@@ -17,6 +18,7 @@ public class PacketChunkData implements Packet {
     public PacketChunkData(){}
 
     public PacketChunkData(CubicChunk chunk) {
+        this.worldName = chunk.getWorld().getName();
         this.chunkX = chunk.getX();
         this.chunkY = chunk.getY();
         this.chunkZ = chunk.getZ();
@@ -30,6 +32,7 @@ public class PacketChunkData implements Packet {
 
     @Override
     public void write(PacketBuf buf) throws IOException {
+        buf.writeString(worldName);
         buf.writeVarInt(chunkX);
         buf.writeVarInt(chunkY);
         buf.writeVarInt(chunkZ);
@@ -38,6 +41,7 @@ public class PacketChunkData implements Packet {
 
     @Override
     public void read(PacketBuf buf) throws IOException {
+        worldName = buf.readString();
         chunkX = buf.readVarInt();
         chunkY = buf.readVarInt();
         chunkZ = buf.readVarInt();
@@ -45,6 +49,10 @@ public class PacketChunkData implements Packet {
             buf.readBytes(income, buf.readableBytes());
             rawData = income.toByteArray();
         }
+    }
+
+    public String getWorldName() {
+        return worldName;
     }
 
     public int getChunkX() {

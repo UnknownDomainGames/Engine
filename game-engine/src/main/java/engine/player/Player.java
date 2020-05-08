@@ -1,6 +1,7 @@
 package engine.player;
 
 import engine.entity.Entity;
+import engine.server.network.NetworkHandler;
 import engine.world.World;
 
 import javax.annotation.Nonnull;
@@ -14,6 +15,8 @@ public interface Player {
 
     @Nonnull
     Profile getProfile();
+
+    NetworkHandler getNetworkHandler();
 
     /**
      * @return the binding world of this player

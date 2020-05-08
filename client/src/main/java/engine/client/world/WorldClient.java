@@ -192,7 +192,7 @@ public class WorldClient implements World, Runnable {
 
     @Override
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
-        return chunkManager.loadChunk(chunkX, chunkY, chunkZ);
+        return chunkManager.getOrLoadChunk(chunkX, chunkY, chunkZ);
     }
 
     @Override
@@ -218,7 +218,7 @@ public class WorldClient implements World, Runnable {
     @Nonnull
     @Override
     public Block getBlock(int x, int y, int z) {
-        Chunk chunk = chunkManager.loadChunk(x >> ChunkConstants.CHUNK_X_BITS, y >> ChunkConstants.CHUNK_Y_BITS, z >> ChunkConstants.CHUNK_Z_BITS);
+        Chunk chunk = chunkManager.getOrLoadChunk(x >> ChunkConstants.CHUNK_X_BITS, y >> ChunkConstants.CHUNK_Y_BITS, z >> ChunkConstants.CHUNK_Z_BITS);
         return chunk != null ? chunk.getBlock(x, y, z) : Registries.getBlockRegistry().air();
     }
 
@@ -270,5 +270,9 @@ public class WorldClient implements World, Runnable {
     @Override
     public Set<Class<?>> getComponents() {
         return componentAgent.getComponents();
+    }
+
+    public WorldClientChunkManager getChunkManager() {
+        return chunkManager;
     }
 }

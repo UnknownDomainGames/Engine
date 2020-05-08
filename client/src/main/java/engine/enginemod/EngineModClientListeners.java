@@ -18,6 +18,7 @@ import engine.enginemod.client.gui.game.GUIPauseMenu;
 import engine.enginemod.client.gui.game.GuiChat;
 import engine.enginemod.client.gui.hud.HUDDebug;
 import engine.enginemod.client.gui.hud.HUDHandingItem;
+import engine.enginemod.client.network.ClientPacketEventsHandler;
 import engine.entity.Entity;
 import engine.entity.component.TwoHands;
 import engine.entity.item.ItemEntity;
@@ -59,6 +60,7 @@ public final class EngineModClientListeners {
     @Listener
     public static void onPreInit(ModLifecycleEvent.PreInitialization event) {
         Platform.getEngine().getEventBus().register(EngineModClientListeners.class);
+        Platform.getEngine().getEventBus().register(ClientPacketEventsHandler.class);
     }
 
     @Listener

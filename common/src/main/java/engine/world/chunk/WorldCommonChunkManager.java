@@ -3,6 +3,9 @@ package engine.world.chunk;
 import engine.event.world.chunk.ChunkLoadEvent;
 import engine.event.world.chunk.ChunkUnloadEvent;
 import engine.logic.Tickable;
+import engine.math.Math2;
+import engine.player.Player;
+import engine.server.network.packet.PacketChunkData;
 import engine.world.WorldCommon;
 import engine.world.chunk.storage.RegionBasedChunkStorage;
 import engine.world.gen.ChunkGenerator;
@@ -117,6 +120,48 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
 
     public ChunkGenerator getChunkGenerator() {
         return generator;
+    }
+
+    public void handlePlayerJoin(Player player) {
+        if (!player.isControllingEntity()) return; // We cannot do anything if the player does not control an entity
+        var position = ChunkPos.fromWorldPos(player.getControlledEntity().getPosition());
+        var x = position.x();
+        var y = position.y();
+        var z = position.z();
+
+        // First: send the nearby 27 chunks to the client
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                for (int k = -1; k <= 1; k++) {
+                    this.sendChunkData(player, x + i, y + j, z + k);
+                }
+            }
+        }
+
+        // Then: send all the remaining chunks
+        int dx;
+        for (int i = 0; -viewDistance <= (dx = Math2.alternativeSignNaturalNumber(i)) && dx <= viewDistance; i++) {
+            var zBoundSquared = viewDistanceSquared - dx * dx;
+            var zBound = (int) Math.sqrt(zBoundSquared);
+            int dz;
+            for (int k = 0; -zBound <= (dz = Math2.alternativeSignNaturalNumber(k)) && dz <= zBound; k++) {
+                var yBoundSquared = zBoundSquared - dz * dz;
+                var yBound = (int) Math.sqrt(yBoundSquared);
+                int dy;
+                for (int j = 0; -yBound <= (dy = Math2.alternativeSignNaturalNumber(j)) && dy <= yBound; j++) {
+                    if (Math.max(Math.max(Math.abs(dx), Math.abs(dy)), Math.abs(dz)) <= 1) {
+                        // This chunk has already sent at the first step
+                        continue;
+                    }
+                    this.sendChunkData(player, dx, dy, dz);
+                }
+            }
+        }
+    }
+
+    private void sendChunkData(Player player, int x, int y, int z) {
+        getChunk(x, y, z).filter(chunk -> chunk instanceof CubicChunk)
+                .ifPresent(chunk -> player.getNetworkHandler().sendPacket(new PacketChunkData((CubicChunk) chunk)));
     }
 
     @Override

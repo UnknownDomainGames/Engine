@@ -79,4 +79,8 @@ public class Math2 {
     public static double second(double arg0, double arg1, double arg2) {
         return Math.min(Math.max(arg0, arg1), Math.max(arg1, arg2));
     }
+
+    public static int alternativeSignNaturalNumber(int i) {
+        return i * ((i - 1) % 2 == 0 ? 1 : -1);
+    }
 }
