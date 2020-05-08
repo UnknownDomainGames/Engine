@@ -12,6 +12,7 @@ import engine.player.Profile;
 import engine.registry.Registries;
 import engine.server.network.NetworkServer;
 import engine.world.World;
+import engine.world.WorldCommon;
 import engine.world.WorldCreationSetting;
 import engine.world.exception.WorldAlreadyLoadedException;
 import engine.world.exception.WorldLoadException;
@@ -177,6 +178,11 @@ public class GameServerFullAsync extends GameBase {
 
     //TODO: move to api
     public void tick() {
+        if (isMarkedTermination()) {
+            tryTerminate();
+        }
+
         networkServer.tick();
+        getWorlds().forEach(world -> ((WorldCommon) world).tick());
     }
 }

@@ -5,9 +5,6 @@ import engine.Platform;
 import engine.server.EngineServerImpl;
 import joptsimple.OptionParser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 
@@ -28,18 +25,6 @@ public class EngineBootstrap {
         injectEngine(engine);
         engine.initEngine();
         engine.runEngine();
-        var in = new BufferedReader(new InputStreamReader(System.in));
-        try {
-            while(true){
-                var s = in.readLine();
-                if("/stop".equals(s)){
-                    engine.terminate();
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            Platform.getLogger().warn("Cannot read console input!", e);
-        }
     }
 
     private static void injectEngine(Engine engine) {

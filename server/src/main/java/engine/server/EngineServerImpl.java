@@ -2,6 +2,7 @@ package engine.server;
 
 import configuration.parser.ConfigParseException;
 import engine.EngineBase;
+import engine.Platform;
 import engine.enginemod.EngineModListeners;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
@@ -11,6 +12,9 @@ import engine.logic.Ticker;
 import engine.server.network.NetworkServer;
 import engine.util.Side;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
@@ -18,6 +22,7 @@ import java.util.Objects;
 
 public class EngineServerImpl extends EngineBase implements EngineServer {
     private Thread serverThread;
+    private Thread consoleReadingThread;
     private Ticker ticker;
     private NetworkServer nettyServer;
     private ServerConfig serverConfig;
@@ -53,13 +58,33 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
     protected void constructionStage() {
         super.constructionStage();
 
+        consoleReadingThread = new Thread("Console reader") {
+            @Override
+            public void run() {
+                var in = new BufferedReader(new InputStreamReader(System.in));
+                String input;
+                try {
+                    while (!EngineServerImpl.this.isMarkedTermination() && (input = in.readLine()) != null) {
+                        if ("/stop".equals(input)) {
+                            EngineServerImpl.this.terminate();
+                        }
+                    }
+                } catch (IOException e) {
+                    Platform.getLogger().warn("Cannot read console input!", e);
+                }
+            }
+        };
+        consoleReadingThread.setDaemon(true);
+        consoleReadingThread.setUncaughtExceptionHandler((t, e) -> Platform.getLogger().error("Caught exception while reading console input!", e));
+        consoleReadingThread.start();
+
         logger.info("Initializing server engine!");
         serverThread = Thread.currentThread();
         if (serverConfig == null || !configPath.equals(Path.of(""))) {
             try {
                 serverConfig = new ServerConfig(configPath);
                 serverConfig.load();
-            }catch (ConfigParseException e){
+            } catch (ConfigParseException e) {
                 logger.warn("Cannot parse server config! Try creating new one", e);
                 serverConfig = new ServerConfig();
                 serverConfig.save();
@@ -115,8 +140,7 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
         game.init();
     }
 
-    public void serverTick(){
-        nettyServer.tick();
+    public void serverTick() {
         if (isMarkedTermination()) {
             if (isPlaying()) {
                 game.terminate();
@@ -124,6 +148,8 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
                 tryTerminate();
             }
         }
+        nettyServer.tick();
+        ((GameServerFullAsync) game).tick();
     }
 
     private void tryTerminate() {
@@ -136,6 +162,7 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
 
         ticker.stop();
         shutdownListeners.forEach(Runnable::run);
+        consoleReadingThread.interrupt();
         logger.info("Engine terminated!");
     }
 
