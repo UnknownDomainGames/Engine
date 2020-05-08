@@ -22,6 +22,10 @@ public interface RegionConstants {
                 toUnsigned(chunkZ >> REGION_Z_BITS);
     }
 
+    static int toRegionCoordinate(int coord) {
+        return coord >> REGION_X_BITS; // Assumption: the bit offset of all axis are the same
+    }
+
     private static long toUnsigned(int value) {
         return value & 0x1fffff;
     }
