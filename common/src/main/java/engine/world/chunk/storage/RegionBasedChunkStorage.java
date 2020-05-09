@@ -72,7 +72,7 @@ public class RegionBasedChunkStorage implements ChunkStorage {
     }
 
     private String getCorrespondingRegionFileName(int chunkX, int chunkY, int chunkZ) {
-        return toRegionCoordinate(chunkX) + '_' + toRegionCoordinate(chunkY) + '_' + toRegionCoordinate(chunkZ) + ".region";
+        return toRegionCoordinate(chunkX) + "_" + toRegionCoordinate(chunkY) + "_" + toRegionCoordinate(chunkZ) + ".region";
     }
 
     @Override

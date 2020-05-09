@@ -70,11 +70,11 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     }
 
     private synchronized Chunk loadChunk(long index, int x, int y, int z) {
-        if (!shouldChunkOnline(x, y, z, ChunkPos.of(0, 0, 0))) {
-            Chunk chunk = new AirChunk(world, x, y, z);
-            chunkMap.put(index, chunk);
-            return chunk;
-        }
+//        if (!shouldChunkOnline(x, y, z, ChunkPos.of(0, 0, 0))) {
+//            Chunk chunk = new AirChunk(world, x, y, z);
+//            chunkMap.put(index, chunk);
+//            return chunk;
+//        }
 
         Chunk chunk = chunkStorage.load(x, y, z);
         if (chunk == null) { //Chunk has not been created
@@ -160,8 +160,10 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     }
 
     private void sendChunkData(Player player, int x, int y, int z) {
-        getChunk(x, y, z).filter(chunk -> chunk instanceof CubicChunk)
-                .ifPresent(chunk -> player.getNetworkHandler().sendPacket(new PacketChunkData((CubicChunk) chunk)));
+        var chunk = getOrLoadChunk(x,y,z);
+        player.getNetworkHandler().sendPacket(new PacketChunkData(((CubicChunk) chunk)));
+//        getChunk(x, y, z).filter(chunk -> chunk instanceof CubicChunk)
+//                .ifPresent(chunk -> player.getNetworkHandler().sendPacket(new PacketChunkData((CubicChunk) chunk)));
     }
 
     @Override
