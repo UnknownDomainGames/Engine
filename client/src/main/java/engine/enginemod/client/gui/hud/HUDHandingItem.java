@@ -31,7 +31,7 @@ public final class HUDHandingItem extends HUDControl {
 
     @Listener
     public void update(RenderEvent.Pre event) {
-        Player player = Platform.getEngineClient().getCurrentGame().getClientPlayer();
+        Player player = Platform.getEngineClient().getClientGame().getClientPlayer();
         if (player != null) {
             Entity entity = player.getControlledEntity();
             entity.getComponent(TwoHands.class).ifPresent(twoHands ->

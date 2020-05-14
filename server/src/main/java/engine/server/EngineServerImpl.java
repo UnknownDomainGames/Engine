@@ -3,11 +3,12 @@ package engine.server;
 import configuration.parser.ConfigParseException;
 import engine.EngineBase;
 import engine.Platform;
+import engine.client.game.ClientGame;
 import engine.enginemod.EngineModListeners;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
 import engine.game.GameData;
-import engine.game.GameServerFullAsync;
+import engine.game.LogicGame;
 import engine.logic.Ticker;
 import engine.server.network.NetworkServer;
 import engine.util.Side;
@@ -28,12 +29,13 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
     private ServerConfig serverConfig;
     private final Path configPath;
     private Game game;
+
     public EngineServerImpl(Path runPath, Path configPath) {
         super(runPath);
         this.configPath = configPath;
     }
 
-    public EngineServerImpl(Path runPath, ServerConfig serverConfig){
+    public EngineServerImpl(Path runPath, ServerConfig serverConfig) {
         super(runPath);
         this.configPath = Path.of("");
         this.serverConfig = serverConfig;
@@ -98,7 +100,8 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
     protected void finishStage() {
         super.finishStage();
 
-        ticker = new Ticker(this::serverTick, partial -> {}, 20);
+        ticker = new Ticker(this::serverTick, partial -> {
+        }, 20);
     }
 
     @Override
@@ -122,22 +125,32 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
         }
         logger.info("Starting game for world");
         Path gameBasePath = this.getRunPath().resolve("game");
-        startGame(new GameServerFullAsync(this, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default"), nettyServer));
+        runGame(new LogicGame(this, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default"), nettyServer));
         ticker.run();
     }
 
     @Override
-    public Game getCurrentGame() {
+    public Game getGame() {
         return game;
     }
 
     @Override
-    public void startGame(Game game) {
-        if(isPlaying()){
+    public void runGame(Game game) {
+        if (isPlaying()) {
             throw new IllegalStateException("Game is running");
         }
         this.game = Objects.requireNonNull(game);
         game.init();
+    }
+
+    @Override
+    public ClientGame getClientGame() {
+        throw new UnsupportedOperationException("Get client game");
+    }
+
+    @Override
+    public void runClientGame(ClientGame game) {
+        throw new UnsupportedOperationException("Run client game");
     }
 
     public void serverTick() {
@@ -149,7 +162,7 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
             }
         }
         nettyServer.tick();
-        ((GameServerFullAsync) game).tick();
+        ((LogicGame) game).tick();
     }
 
     private void tryTerminate() {

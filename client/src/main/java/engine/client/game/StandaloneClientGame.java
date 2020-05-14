@@ -6,7 +6,7 @@ import engine.client.player.ClientPlayerImpl;
 import engine.entity.Entity;
 import engine.event.game.GameTerminationEvent;
 import engine.game.GameData;
-import engine.game.GameServerFullAsync;
+import engine.game.LogicGame;
 import engine.player.Player;
 import engine.player.Profile;
 import engine.world.World;
@@ -17,14 +17,14 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
-public class GameClientStandalone extends GameServerFullAsync implements GameClient {
+public class StandaloneClientGame extends LogicGame implements ClientGame {
 
     private final EngineClient engineClient;
 
     private ClientPlayer clientPlayer;
     protected final Set<Player> players = new HashSet<>();
 
-    public GameClientStandalone(EngineClient engineClient, Path storagePath, GameData data) {
+    public StandaloneClientGame(EngineClient engineClient, Path storagePath, GameData data) {
         super(engineClient, storagePath, data, null);
         this.engineClient = engineClient;
     }

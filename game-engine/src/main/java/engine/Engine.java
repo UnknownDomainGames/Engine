@@ -1,5 +1,6 @@
 package engine;
 
+import engine.client.game.ClientGame;
 import engine.event.EventBus;
 import engine.game.Game;
 import engine.mod.ModManager;
@@ -47,9 +48,13 @@ public interface Engine {
 
     void runEngine();
 
-    Game getCurrentGame();
+    Game getGame();
 
-    void startGame(Game game);
+    void runGame(Game game);
+
+    ClientGame getClientGame();
+
+    void runClientGame(ClientGame game);
 
     boolean isPlaying();
 

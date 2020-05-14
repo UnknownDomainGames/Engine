@@ -3,7 +3,7 @@ package engine.enginemod.client.gui.game;
 import com.github.mouse0w0.observable.value.MutableBooleanValue;
 import com.github.mouse0w0.observable.value.SimpleMutableBooleanValue;
 import engine.Platform;
-import engine.client.game.GameClientMultiplayer;
+import engine.client.game.MultiPlayerClientGame;
 import engine.event.Listener;
 import engine.game.MultiplayerGameData;
 import engine.graphics.GraphicsManager;
@@ -107,14 +107,14 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
             Platform.getEngine().getEventBus().unregister(this); //TODO: not supposed to be done here
             if (event.getHandler().isChannelOpen()) {
                 lblStatus.text().set("Initializing game");
-                var game = new GameClientMultiplayer(Platform.getEngineClient(), networkClient, MultiplayerGameData.fromPacket(event.getPacket()));
-                Platform.getEngine().startGame(game);
+                var game = new MultiPlayerClientGame(Platform.getEngineClient(), networkClient, MultiplayerGameData.fromPacket(event.getPacket()));
+                Platform.getEngine().runGame(game);
                 Platform.getEngineClient().getGraphicsManager().getGUIManager().close();
             }
         });
         bus.<NetworkDisconnectedEvent>addListener(event -> {
-            if (Platform.getEngine().getCurrentGame() != null) {
-                Platform.getEngine().getCurrentGame().terminate();
+            if (Platform.getEngine().getGame() != null) {
+                Platform.getEngine().getGame().terminate();
             }
             networkClient.close();
             if (!event.getReason().equals("")) {

@@ -7,7 +7,7 @@ import engine.world.World;
 
 import javax.annotation.Nonnull;
 
-public interface GameClient extends Game {
+public interface ClientGame extends Game {
 
     @Nonnull
     @Override

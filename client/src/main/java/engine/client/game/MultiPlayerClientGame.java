@@ -8,7 +8,7 @@ import engine.client.world.WorldClient;
 import engine.entity.Entity;
 import engine.event.game.GameTerminationEvent;
 import engine.event.world.WorldLoadEvent;
-import engine.game.GameBase;
+import engine.game.BaseGame;
 import engine.game.GameData;
 import engine.player.Player;
 import engine.player.Profile;
@@ -26,14 +26,14 @@ import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.*;
 
-public class GameClientMultiplayer extends GameBase implements GameClient {
+public class MultiPlayerClientGame extends BaseGame implements ClientGame {
     private ClientPlayer clientPlayer;
     protected final Set<Player> players = new HashSet<>();
     protected final Map<String, World> worlds = new HashMap<>();
     private final EngineClient engineClient;
     private final NetworkClient networkClient;
 
-    public GameClientMultiplayer(EngineClient engine, NetworkClient networkClient, GameData data) {
+    public MultiPlayerClientGame(EngineClient engine, NetworkClient networkClient, GameData data) {
         super(engine, Path.of(""), data);
         this.engineClient = engine;
         this.networkClient = networkClient;

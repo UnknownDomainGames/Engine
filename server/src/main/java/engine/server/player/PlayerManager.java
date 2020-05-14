@@ -5,7 +5,7 @@ import configuration.io.ConfigIOUtils;
 import engine.Platform;
 import engine.entity.CameraEntity;
 import engine.entity.Entity;
-import engine.game.GameServerFullAsync;
+import engine.game.LogicGame;
 import engine.player.Profile;
 import engine.server.network.NetworkHandler;
 import engine.server.network.packet.PacketGameData;
@@ -17,11 +17,11 @@ import java.util.Set;
 
 public class PlayerManager {
 
-    private GameServerFullAsync gameServer;
+    private LogicGame gameServer;
 
     protected final Set<ServerPlayer> players = new HashSet<>();
 
-    public PlayerManager(GameServerFullAsync gameServer) {
+    public PlayerManager(LogicGame gameServer) {
         this.gameServer = gameServer;
     }
 

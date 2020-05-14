@@ -28,14 +28,14 @@ import java.util.*;
 /**
  * Each world host in an independent thread.
  */
-public class GameServerFullAsync extends GameBase {
+public class LogicGame extends BaseGame {
 
     protected final Map<String, World> worlds = new HashMap<>();
     private final NetworkServer networkServer;
     private final PlayerManager playerManager;
 //    protected List<Thread> worldThreads;
 
-    public GameServerFullAsync(Engine engine, Path storagePath, GameData data, NetworkServer networkServer) {
+    public LogicGame(Engine engine, Path storagePath, GameData data, NetworkServer networkServer) {
         super(engine, storagePath, data);
         this.networkServer = networkServer;
         this.playerManager = new PlayerManager(this);

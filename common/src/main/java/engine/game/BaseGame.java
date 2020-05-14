@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 
-public abstract class GameBase implements Game {
+public abstract class BaseGame implements Game {
 
     protected final Engine engine;
     protected final Logger logger;
@@ -25,7 +25,7 @@ public abstract class GameBase implements Game {
     protected boolean terminated = false;
     protected boolean isReady = false;
 
-    public GameBase(Engine engine, Path storagePath, GameData data) {
+    public BaseGame(Engine engine, Path storagePath, GameData data) {
         this.engine = engine;
         this.logger = engine.getLogger();
         this.eventBus = engine.getEventBus();

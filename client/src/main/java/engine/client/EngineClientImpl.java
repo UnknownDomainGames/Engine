@@ -10,7 +10,7 @@ import engine.client.asset.EngineAssetManager;
 import engine.client.asset.reloading.AssetReloadHandler;
 import engine.client.asset.source.CompositeAssetSource;
 import engine.client.asset.source.FileSystemAssetSource;
-import engine.client.game.GameClient;
+import engine.client.game.ClientGame;
 import engine.client.i18n.LocaleManager;
 import engine.client.input.keybinding.KeyBindingManager;
 import engine.client.settings.EngineSettings;
@@ -51,7 +51,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private Ticker ticker;
 
-    private GameClient game;
+    private ClientGame game;
 
     private KeyBindingManager keyBindingManager;
 
@@ -189,6 +189,11 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         ticker.run();
     }
 
+    @Override
+    public Game getGame() {
+        return null;
+    }
+
     private void clientTick() {
         if (isPlaying()) {
             game.clientTick();
@@ -222,22 +227,27 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     @Override
-    public void startGame(Game game) {
+    public void runGame(Game game) {
         if (isPlaying()) {
             throw new IllegalStateException("Game is running");
         }
 
-        if (!(game instanceof GameClient)) {
+        if (!(game instanceof ClientGame)) {
             throw new IllegalArgumentException("Game must be GameClient");
         }
 
-        this.game = (GameClient) Objects.requireNonNull(game);
+        this.game = (ClientGame) Objects.requireNonNull(game);
         game.init();
     }
 
     @Override
-    public GameClient getCurrentGame() {
+    public ClientGame getClientGame() {
         return game;
+    }
+
+    @Override
+    public void runClientGame(ClientGame game) {
+
     }
 
     @Override

@@ -11,7 +11,7 @@ public class ChunkPacketsHandler {
     @Listener
     public static void onChunkDataReceived(PacketReceivedEvent<PacketChunkData> event) {
         if (Platform.getEngineClient().isPlaying()) {
-            Platform.getEngineClient().getCurrentGame().getWorld(event.getPacket().getWorldName())
+            Platform.getEngineClient().getClientGame().getWorld(event.getPacket().getWorldName())
                     .ifPresent(world -> ((WorldClient) world).getChunkManager().loadChunkFromPacket(event.getPacket()));
         }
     }

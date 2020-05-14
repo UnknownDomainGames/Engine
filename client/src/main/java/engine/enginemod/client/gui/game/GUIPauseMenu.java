@@ -48,7 +48,7 @@ public final class GUIPauseMenu extends FlowPane {
         Button terminateGame = new Button("Terminate");
         terminateGame.setOnMouseClicked(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
-            engine.getCurrentGame().terminate();
+            engine.getClientGame().terminate();
             GUIManager guiManager = engine.getGraphicsManager().getGUIManager();
             guiManager.show(new Scene(new GUIMainMenu()));
         });
