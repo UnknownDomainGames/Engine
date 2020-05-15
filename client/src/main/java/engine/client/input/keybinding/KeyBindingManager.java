@@ -3,7 +3,7 @@ package engine.client.input.keybinding;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
-import engine.client.EngineClient;
+import engine.client.ClientEngine;
 import engine.event.Listener;
 import engine.event.game.GameStartEvent;
 import engine.event.game.GameTerminationEvent;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class KeyBindingManager implements Tickable, KeyBindingConfig {
 
-    private final EngineClient engine;
+    private final ClientEngine engine;
     /**
      * Mappes the key binding index to the KeyBinding objects.
      */
@@ -35,7 +35,7 @@ public class KeyBindingManager implements Tickable, KeyBindingConfig {
      */
     private Registry<KeyBinding> registry;
 
-    public KeyBindingManager(EngineClient engine) {
+    public KeyBindingManager(ClientEngine engine) {
         this.engine = engine;
         engine.getEventBus().register(this);
         Window window = engine.getGraphicsManager().getWindow();

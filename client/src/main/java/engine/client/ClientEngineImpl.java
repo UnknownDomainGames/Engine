@@ -40,7 +40,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public class EngineClientImpl extends EngineBase implements EngineClient {
+public class ClientEngineImpl extends EngineBase implements ClientEngine {
 
     private Thread clientThread;
 
@@ -59,7 +59,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private Profile playerProfile;
 
-    public EngineClientImpl(Path runPath, Profile profile) {
+    public ClientEngineImpl(Path runPath, Profile profile) {
         super(runPath);
         this.playerProfile = profile;
     }
@@ -71,6 +71,16 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     @Override
     public Side getSide() {
         return Side.CLIENT;
+    }
+
+    @Override
+    public Thread getLogicalThread() {
+        return null;
+    }
+
+    @Override
+    public boolean isLogicalThread() {
+        return false;
     }
 
     @Override
@@ -148,7 +158,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         localeManager = LocaleManager.INSTANCE;
         assetManager.getReloadManager().addHandler(AssetReloadHandler.builder().name("I18n").runnable(() -> {
             localeManager.reset();
-            for (ModContainer mod : EngineClientImpl.this.getModManager().getLoadedMods()) {
+            for (ModContainer mod : ClientEngineImpl.this.getModManager().getLoadedMods()) {
                 localeManager.register(mod);
             }
         }).build());
@@ -190,7 +200,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     @Override
-    public Game getGame() {
+    public Game getLogicalGame() {
         return null;
     }
 
@@ -227,7 +237,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     @Override
-    public void runGame(Game game) {
+    public void runLogicalGame(Game game) {
         if (isPlaying()) {
             throw new IllegalStateException("Game is running");
         }

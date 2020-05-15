@@ -1,6 +1,6 @@
 package engine;
 
-import engine.client.EngineClient;
+import engine.client.ClientEngine;
 import engine.util.RuntimeEnvironment;
 import org.slf4j.Logger;
 
@@ -37,11 +37,11 @@ public class Platform {
         return engine.getLogger();
     }
 
-    public static EngineClient getEngineClient() {
+    public static ClientEngine getEngineClient() {
         if (isServer()) {
             throw new UnsupportedOperationException("Cannot get EngineClient on server.");
         }
-        return (EngineClient) engine;
+        return (ClientEngine) engine;
     }
 
     public static RuntimeEnvironment getRuntimeEnvironment() {

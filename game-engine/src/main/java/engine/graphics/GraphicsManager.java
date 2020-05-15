@@ -1,6 +1,6 @@
 package engine.graphics;
 
-import engine.client.EngineClient;
+import engine.client.ClientEngine;
 import engine.client.hud.HUDManager;
 import engine.graphics.display.Window;
 import engine.graphics.graph.RenderGraph;
@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 public interface GraphicsManager {
 
-    EngineClient getEngine();
+    ClientEngine getEngine();
 
     Thread getRenderThread();
 

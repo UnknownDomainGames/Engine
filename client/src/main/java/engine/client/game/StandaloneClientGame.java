@@ -1,12 +1,12 @@
 package engine.client.game;
 
-import engine.client.EngineClient;
+import engine.client.ClientEngine;
 import engine.client.player.ClientPlayer;
 import engine.client.player.ClientPlayerImpl;
 import engine.entity.Entity;
 import engine.event.game.GameTerminationEvent;
 import engine.game.GameData;
-import engine.game.LogicGame;
+import engine.game.LogicalGame;
 import engine.player.Player;
 import engine.player.Profile;
 import engine.world.World;
@@ -17,22 +17,22 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
-public class StandaloneClientGame extends LogicGame implements ClientGame {
+public class StandaloneClientGame extends LogicalGame implements ClientGame {
 
-    private final EngineClient engineClient;
+    private final ClientEngine clientEngine;
 
     private ClientPlayer clientPlayer;
     protected final Set<Player> players = new HashSet<>();
 
-    public StandaloneClientGame(EngineClient engineClient, Path storagePath, GameData data) {
-        super(engineClient, storagePath, data, null);
-        this.engineClient = engineClient;
+    public StandaloneClientGame(ClientEngine clientEngine, Path storagePath, GameData data) {
+        super(clientEngine, storagePath, data, null);
+        this.clientEngine = clientEngine;
     }
 
     @Nonnull
     @Override
-    public EngineClient getEngine() {
-        return engineClient;
+    public ClientEngine getEngine() {
+        return clientEngine;
     }
 
     @Nonnull

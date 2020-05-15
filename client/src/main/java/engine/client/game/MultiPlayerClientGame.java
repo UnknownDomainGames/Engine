@@ -1,7 +1,7 @@
 package engine.client.game;
 
 import com.google.common.base.Strings;
-import engine.client.EngineClient;
+import engine.client.ClientEngine;
 import engine.client.player.ClientPlayer;
 import engine.client.player.ClientPlayerImpl;
 import engine.client.world.WorldClient;
@@ -30,19 +30,19 @@ public class MultiPlayerClientGame extends BaseGame implements ClientGame {
     private ClientPlayer clientPlayer;
     protected final Set<Player> players = new HashSet<>();
     protected final Map<String, World> worlds = new HashMap<>();
-    private final EngineClient engineClient;
+    private final ClientEngine clientEngine;
     private final NetworkClient networkClient;
 
-    public MultiPlayerClientGame(EngineClient engine, NetworkClient networkClient, GameData data) {
+    public MultiPlayerClientGame(ClientEngine engine, NetworkClient networkClient, GameData data) {
         super(engine, Path.of(""), data);
-        this.engineClient = engine;
+        this.clientEngine = engine;
         this.networkClient = networkClient;
     }
 
     @Nonnull
     @Override
-    public EngineClient getEngine() {
-        return engineClient;
+    public ClientEngine getEngine() {
+        return clientEngine;
     }
 
     @Override

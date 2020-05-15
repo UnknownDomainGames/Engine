@@ -1,6 +1,6 @@
 package engine.client.game;
 
-import engine.client.EngineClient;
+import engine.client.ClientEngine;
 import engine.client.player.ClientPlayer;
 import engine.game.Game;
 import engine.world.World;
@@ -11,7 +11,7 @@ public interface ClientGame extends Game {
 
     @Nonnull
     @Override
-    EngineClient getEngine();
+    ClientEngine getEngine();
 
     @Nonnull
     ClientPlayer getClientPlayer();

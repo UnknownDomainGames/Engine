@@ -1,6 +1,6 @@
 package engine.graphics;
 
-import engine.client.EngineClient;
+import engine.client.ClientEngine;
 import engine.client.asset.AssetType;
 import engine.client.asset.provider.TextureAssetProvider;
 import engine.client.event.graphics.RenderEvent;
@@ -34,7 +34,7 @@ import static engine.graphics.graph.DepthOutputInfo.depthOutput;
 
 public final class EngineGraphicsManager implements GraphicsManager {
 
-    private final EngineClient engine;
+    private final ClientEngine engine;
 
     private Thread renderThread;
     private Window window;
@@ -46,14 +46,14 @@ public final class EngineGraphicsManager implements GraphicsManager {
     private EngineGUIManager guiManager;
     private EngineHUDManager hudManager;
 
-    public EngineGraphicsManager(EngineClient engine, Thread renderThread) {
+    public EngineGraphicsManager(ClientEngine engine, Thread renderThread) {
         this.engine = engine;
         this.renderThread = renderThread;
         initialize();
     }
 
     @Override
-    public EngineClient getEngine() {
+    public ClientEngine getEngine() {
         return engine;
     }
 

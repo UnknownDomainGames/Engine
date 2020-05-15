@@ -1,6 +1,6 @@
 package engine.client.input.keybinding;
 
-import engine.client.EngineClient;
+import engine.client.ClientEngine;
 import engine.input.Modifiers;
 import engine.registry.Registrable;
 
@@ -23,15 +23,15 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
     /**
      * Handles Single press of the key
      */
-    private final Consumer<EngineClient> startHandler;
+    private final Consumer<ClientEngine> startHandler;
     /**
      * Handles keeping of the key
      */
-    private final BiConsumer<EngineClient, Integer> keepHandler;
+    private final BiConsumer<ClientEngine, Integer> keepHandler;
     /**
      * Handles release of the key
      */
-    private final BiConsumer<EngineClient, Integer> endHandler;
+    private final BiConsumer<ClientEngine, Integer> endHandler;
 
     private Key key;
     private Modifiers modifier;
@@ -46,7 +46,7 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
      */
     private int timeElapsed;
 
-    protected KeyBinding(Key defaultKey, Modifiers defaultModifier, ActionMode defaultActionMode, boolean allowChangeActionMode, boolean allowInScreen, Consumer<EngineClient> startHandler, BiConsumer<EngineClient, Integer> keepHandler, BiConsumer<EngineClient, Integer> endHandler) {
+    protected KeyBinding(Key defaultKey, Modifiers defaultModifier, ActionMode defaultActionMode, boolean allowChangeActionMode, boolean allowInScreen, Consumer<ClientEngine> startHandler, BiConsumer<ClientEngine, Integer> keepHandler, BiConsumer<ClientEngine, Integer> endHandler) {
         this.defaultKey = defaultKey;
         this.defaultModifier = defaultModifier;
         this.defaultActionMode = defaultActionMode;
@@ -130,20 +130,20 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
         this.pressed = pressed;
     }
 
-    public void onKeyStart(EngineClient context) {
+    public void onKeyStart(ClientEngine context) {
         if (startHandler != null) {
             startHandler.accept(context);
         }
     }
 
-    public void onKeyKeep(EngineClient context) {
+    public void onKeyKeep(ClientEngine context) {
         if (keepHandler != null) {
             keepHandler.accept(context, timeElapsed);
         }
         timeElapsed++;
     }
 
-    public void onKeyEnd(EngineClient context) {
+    public void onKeyEnd(ClientEngine context) {
         if (endHandler != null) {
             endHandler.accept(context, timeElapsed);
         }
@@ -160,9 +160,9 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
         private ActionMode defaultActionMode = ActionMode.PRESS;
         private boolean allowChangeActionMode = false;
         private boolean allowInScreen = false;
-        private Consumer<EngineClient> startHandler;
-        private BiConsumer<EngineClient, Integer> keepHandler;
-        private BiConsumer<EngineClient, Integer> endHandler;
+        private Consumer<ClientEngine> startHandler;
+        private BiConsumer<ClientEngine, Integer> keepHandler;
+        private BiConsumer<ClientEngine, Integer> endHandler;
         private String name;
 
         public Builder key(Key defaultKey) {
@@ -190,17 +190,17 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
             return this;
         }
 
-        public Builder startHandler(Consumer<EngineClient> startHandler) {
+        public Builder startHandler(Consumer<ClientEngine> startHandler) {
             this.startHandler = startHandler;
             return this;
         }
 
-        public Builder keepHandler(BiConsumer<EngineClient, Integer> keepHandler) {
+        public Builder keepHandler(BiConsumer<ClientEngine, Integer> keepHandler) {
             this.keepHandler = keepHandler;
             return this;
         }
 
-        public Builder endHandler(BiConsumer<EngineClient, Integer> endHandler) {
+        public Builder endHandler(BiConsumer<ClientEngine, Integer> endHandler) {
             this.endHandler = endHandler;
             return this;
         }

@@ -2,7 +2,7 @@ package engine.server.launch;
 
 import engine.Engine;
 import engine.Platform;
-import engine.server.EngineServerImpl;
+import engine.server.LogicalEngine;
 import joptsimple.OptionParser;
 
 import java.lang.reflect.Field;
@@ -21,7 +21,7 @@ public class EngineBootstrap {
             configPath = parsed.valueOf(configArg);
         }
 
-        var engine = new EngineServerImpl(Path.of(parsed.valueOf(runArg)), Path.of(configPath));
+        var engine = new LogicalEngine(Path.of(parsed.valueOf(runArg)), Path.of(configPath));
         injectEngine(engine);
         engine.start();
     }

@@ -2,7 +2,7 @@ package engine.client.launch;
 
 import engine.Engine;
 import engine.Platform;
-import engine.client.EngineClientImpl;
+import engine.client.ClientEngineImpl;
 import engine.player.Profile;
 
 import java.lang.management.ManagementFactory;
@@ -17,7 +17,7 @@ public class Bootstrap {
         System.out.println(ManagementFactory.getRuntimeMXBean().getPid());
 
         var playerName = "Ifor";
-        Engine engine = new EngineClientImpl(Path.of("run"), new Profile(UUID.nameUUIDFromBytes(playerName.getBytes(StandardCharsets.UTF_8)), playerName));
+        Engine engine = new ClientEngineImpl(Path.of("run"), new Profile(UUID.nameUUIDFromBytes(playerName.getBytes(StandardCharsets.UTF_8)), playerName));
         injectEngine(engine);
         engine.start();
     }

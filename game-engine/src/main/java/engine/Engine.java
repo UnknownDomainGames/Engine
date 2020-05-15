@@ -47,9 +47,17 @@ public interface Engine {
 
     boolean isMarkedTermination();
 
-    Game getGame();
+    Thread getLogicalThread();
 
-    void runGame(Game game);
+    boolean isLogicalThread();
+
+    Game getLogicalGame();
+
+    void runLogicalGame(Game game);
+
+    Thread getClientThread();
+
+    boolean isClientThread();
 
     ClientGame getClientGame();
 

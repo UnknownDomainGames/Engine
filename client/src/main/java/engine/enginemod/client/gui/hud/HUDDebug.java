@@ -2,7 +2,7 @@ package engine.enginemod.client.gui.hud;
 
 import engine.Platform;
 import engine.block.Block;
-import engine.client.EngineClient;
+import engine.client.ClientEngine;
 import engine.client.event.graphics.RenderEvent;
 import engine.client.hud.HUDControl;
 import engine.entity.Entity;
@@ -75,7 +75,7 @@ public final class HUDDebug extends HUDControl {
 
     @Listener
     public void update(RenderEvent.Pre event) {
-        EngineClient engine = Platform.getEngineClient();
+        ClientEngine engine = Platform.getEngineClient();
         Entity player = engine.getClientGame().getClientPlayer().getControlledEntity();
         GraphicsManager manager = engine.getGraphicsManager();
 
