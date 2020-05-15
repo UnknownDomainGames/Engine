@@ -105,8 +105,8 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
     }
 
     @Override
-    public void runEngine() {
-        super.runEngine();
+    public void runStage() {
+        super.runStage();
 
         addShutdownListener(ticker::stop);
 

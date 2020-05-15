@@ -23,8 +23,7 @@ public class EngineBootstrap {
 
         var engine = new EngineServerImpl(Path.of(parsed.valueOf(runArg)), Path.of(configPath));
         injectEngine(engine);
-        engine.initEngine();
-        engine.runEngine();
+        engine.start();
     }
 
     private static void injectEngine(Engine engine) {

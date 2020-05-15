@@ -41,12 +41,11 @@ public interface Engine {
 
     CrashHandler getCrashHandler();
 
-    /**
-     * Initialize the Engine. Load all mods and complete registration
-     */
-    void initEngine();
+    void start();
 
-    void runEngine();
+    void terminate();
+
+    boolean isMarkedTermination();
 
     Game getGame();
 
@@ -57,10 +56,6 @@ public interface Engine {
     void runClientGame(ClientGame game);
 
     boolean isPlaying();
-
-    void terminate();
-
-    boolean isMarkedTermination();
 
     void addShutdownListener(Runnable runnable);
 

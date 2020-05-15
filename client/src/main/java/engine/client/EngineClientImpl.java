@@ -178,8 +178,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     @Override
-    public void runEngine() {
-        super.runEngine();
+    public void runStage() {
+        super.runStage();
 
         addShutdownListener(ticker::stop);
 

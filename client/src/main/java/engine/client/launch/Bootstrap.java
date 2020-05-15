@@ -19,8 +19,7 @@ public class Bootstrap {
         var playerName = "Ifor";
         Engine engine = new EngineClientImpl(Path.of("run"), new Profile(UUID.nameUUIDFromBytes(playerName.getBytes(StandardCharsets.UTF_8)), playerName));
         injectEngine(engine);
-        engine.initEngine();
-        engine.runEngine();
+        engine.start();
     }
 
     private static void injectEngine(Engine engine) {

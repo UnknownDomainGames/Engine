@@ -89,7 +89,7 @@ public abstract class EngineBase implements Engine {
     }
 
     @Override
-    public void initEngine() {
+    public synchronized void start() {
         if (initialized) {
             throw new IllegalStateException("Engine has been initialized.");
         }
@@ -102,6 +102,7 @@ public abstract class EngineBase implements Engine {
         resourceStage();
         modStage();
         finishStage();
+        runStage();
     }
 
     protected void constructionStage() {
@@ -218,8 +219,7 @@ public abstract class EngineBase implements Engine {
         logger.info("Loaded Mods: [" + StringUtils.join(modManager.getLoadedMods().stream().map(modContainer -> modContainer.getId() + "(" + modContainer.getVersion() + ")").iterator(), ", ") + "]");
     }
 
-    @Override
-    public void runEngine() {
+    protected void runStage() {
         if (running) {
             throw new IllegalStateException("Engine is running.");
         }
