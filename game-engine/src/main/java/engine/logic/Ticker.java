@@ -1,34 +1,53 @@
 package engine.logic;
 
-public class Ticker implements Runnable {
+public final class Ticker implements Runnable {
 
     public static final int LOGIC_TICK = 20;
     public static final int CLIENT_TICK = 20; // 暂时用常量
 
-    protected final Tickable fixed;
-    protected final Tickable.Partial dynamic;
-    protected final int tickPerSecond;
-    protected final double interval;
+    private final Tickable fixed;
+    private final Tickable.Partial dynamic;
+    private final int tickPerSecond;
+    private final double interval;
 
-    protected boolean stopped = false;
+    private Runnable onStopped;
 
-    public Ticker(Tickable task, int tickPerSecond) {
-        this.fixed = task;
+    private boolean stopped = false;
+
+    public Ticker(Tickable fixed, int tickPerSecond) {
+        this.fixed = fixed;
         this.dynamic = partial -> {
             try {
                 Thread.sleep((long) ((getInterval() - partial / tickPerSecond) * 1000));
-            } catch (InterruptedException ignored) {
+            } catch (InterruptedException e) {
+                stop();
             }
         };
         this.tickPerSecond = tickPerSecond;
         this.interval = 1D / tickPerSecond;
     }
 
-    public Ticker(Tickable task, Tickable.Partial dynamic, int tickPerSecond) {
-        this.fixed = task;
+    public Ticker(Tickable fixed, Tickable.Partial dynamic, int tickPerSecond) {
+        this.fixed = fixed;
         this.dynamic = dynamic;
         this.tickPerSecond = tickPerSecond;
         this.interval = 1D / tickPerSecond;
+    }
+
+    public int getTickPerSecond() {
+        return tickPerSecond;
+    }
+
+    public double getInterval() {
+        return interval;
+    }
+
+    public Runnable getOnStopped() {
+        return onStopped;
+    }
+
+    public void setOnStopped(Runnable onStopped) {
+        this.onStopped = onStopped;
     }
 
     public void stop() {
@@ -37,17 +56,6 @@ public class Ticker implements Runnable {
 
     public boolean isStopped() {
         return stopped;
-    }
-
-    public double getInterval() {
-        return interval;
-    }
-
-    /**
-     * @return current time in second
-     */
-    protected double getCurrentTime() {
-        return System.nanoTime() / 1e9D;
     }
 
     public void run() {
@@ -69,5 +77,13 @@ public class Ticker implements Runnable {
                 dynamic.tick((float) (lag * tickPerSecond));
             }
         }
+        if (onStopped != null) onStopped.run();
+    }
+
+    /**
+     * @return current time in second
+     */
+    private double getCurrentTime() {
+        return System.nanoTime() / 1e9D;
     }
 }
