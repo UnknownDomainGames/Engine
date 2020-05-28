@@ -80,7 +80,7 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
     protected final void ensureCapacity(int capacity) {
         int oldLength = idToObject.length;
         if (oldLength < capacity) {
-            int newLength = Math.max(oldLength << 1 + oldLength, capacity);
+            int newLength = Math.max(oldLength << 1, capacity);
             idToObject = Arrays.copyOf(idToObject, newLength);
         }
     }

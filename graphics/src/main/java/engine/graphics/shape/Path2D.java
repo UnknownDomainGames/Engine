@@ -74,7 +74,7 @@ public abstract class Path2D {
     public Path2D ensureCapacity(int capacity) {
         int oldCapacity = buffer.capacity();
         if (oldCapacity >= capacity) return this;
-        int newCapacity = Math.max(capacity, oldCapacity << 1 + oldCapacity);
+        int newCapacity = Math.max(capacity, oldCapacity << 1);
         buffer = createBuffer(newCapacity).put(buffer.flip());
         return this;
     }
