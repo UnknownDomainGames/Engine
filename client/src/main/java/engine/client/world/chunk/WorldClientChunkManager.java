@@ -87,6 +87,10 @@ public class WorldClientChunkManager implements ChunkManager {
 
     }
 
+    public void tick() {
+
+    }
+
     @Override
     public Collection<Chunk> getLoadedChunks() {
         return chunkMap.values();
