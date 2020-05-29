@@ -16,10 +16,7 @@ import engine.world.collision.DefaultCollisionManager;
 import engine.world.hit.BlockHitResult;
 import engine.world.hit.EntityHitResult;
 import engine.world.hit.HitResult;
-import org.joml.AABBd;
-import org.joml.Vector3dc;
-import org.joml.Vector3f;
-import org.joml.Vector3fc;
+import org.joml.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,13 +53,18 @@ public class WorldClient implements World, Runnable {
     }
 
     public void tick() {
-
-        tickChunks();
+        tickEntityMotion();
+        chunkManager.tick();
+        entityManager.tick();
         gameTick++;
     }
 
-    protected void tickChunks() {
-//        chunkManager.getChunks().forEach(this::tickChunk);
+    protected void tickEntityMotion() {
+        for (Entity entity : this.getEntities()) {
+            Vector3d position = entity.getPosition();
+            Vector3f motion = entity.getMotion();
+            position.add(motion);
+        }
     }
 
     @Override
