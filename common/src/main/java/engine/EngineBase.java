@@ -8,7 +8,7 @@ import engine.mod.ModManager;
 import engine.mod.impl.EngineModManager;
 import engine.registry.Registries;
 import engine.registry.RegistryManager;
-import engine.registry.impl.SimpleRegistryManager;
+import engine.registry.game.SimpleRegistryManager;
 import engine.util.ClassPathUtils;
 import engine.util.CrashHandlerImpl;
 import engine.util.LoggerUtils;
