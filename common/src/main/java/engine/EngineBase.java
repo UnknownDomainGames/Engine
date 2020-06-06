@@ -6,9 +6,9 @@ import engine.event.asm.AsmEventListenerFactory;
 import engine.event.engine.EngineEvent;
 import engine.mod.ModManager;
 import engine.mod.impl.EngineModManager;
+import engine.registry.EngineRegistryManager;
 import engine.registry.Registries;
 import engine.registry.RegistryManager;
-import engine.registry.game.SimpleRegistryManager;
 import engine.util.ClassPathUtils;
 import engine.util.CrashHandlerImpl;
 import engine.util.LoggerUtils;
@@ -111,7 +111,7 @@ public abstract class EngineBase implements Engine {
         initExceptionHandler();
 
         eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
-        registryManager = new SimpleRegistryManager(new HashMap<>());
+        registryManager = new EngineRegistryManager(new HashMap<>());
         modManager = new EngineModManager(this, getRunPath().resolve("config"), getRunPath().resolve("data"));
     }
 
