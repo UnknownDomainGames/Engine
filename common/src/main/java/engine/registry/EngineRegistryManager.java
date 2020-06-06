@@ -1,9 +1,5 @@
-package engine.registry.impl;
+package engine.registry;
 
-import engine.registry.Registrable;
-import engine.registry.RegistrationException;
-import engine.registry.Registry;
-import engine.registry.RegistryManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import javax.annotation.Nonnull;
@@ -15,11 +11,11 @@ import java.util.function.Supplier;
 
 import static java.lang.String.format;
 
-public class SimpleRegistryManager implements RegistryManager {
+public final class EngineRegistryManager implements RegistryManager {
 
     private final Map<Class<?>, Registry<?>> registries;
 
-    public SimpleRegistryManager(Map<Class<?>, Registry<?>> registries) {
+    public EngineRegistryManager(Map<Class<?>, Registry<?>> registries) {
         this.registries = registries;
     }
 
