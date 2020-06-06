@@ -5,7 +5,7 @@ import configuration.io.ConfigIOUtils;
 import engine.Platform;
 import engine.entity.CameraEntity;
 import engine.entity.Entity;
-import engine.game.LogicalGame;
+import engine.game.ServerGame;
 import engine.player.Profile;
 import engine.server.network.NetworkHandler;
 import engine.server.network.packet.PacketGameData;
@@ -15,28 +15,24 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class PlayerManager {
+public final class PlayerManager {
 
-    private LogicalGame gameServer;
+    private ServerGame game;
 
     protected final Set<ServerPlayer> players = new HashSet<>();
 
-    public PlayerManager(LogicalGame gameServer) {
-        this.gameServer = gameServer;
+    public PlayerManager(ServerGame game) {
+        this.game = game;
     }
 
     public void onPlayerConnect(NetworkHandler networkHandler, ServerPlayer player) {
-
-//        gameServer.joinPlayer(player.getProfile(), player.getControlledEntity());
-//        players.add(player);
-
         String playerAddress = "local";
         if (networkHandler.getRemoteAddress() != null) {
             playerAddress = networkHandler.getRemoteAddress().toString();
         }
         Platform.getLogger().info("{}[{}] joined the server at ({})", player.getProfile().getName(), playerAddress, player.getControlledEntity().getPosition());
         players.add(player);
-        networkHandler.sendPacket(new PacketGameData(gameServer.getData()));
+        networkHandler.sendPacket(new PacketGameData(game.getData()));
         ((WorldCommon) player.getWorld()).getChunkManager().handlePlayerJoin(player);
     }
 
@@ -51,7 +47,7 @@ public class PlayerManager {
         var optionalConfig = loadPlayerData(profile);
         if (optionalConfig.isPresent()) {
             var config = optionalConfig.get();
-            var optionalWorld = gameServer.getWorld(config.getString("world"));
+            var optionalWorld = game.getWorld(config.getString("world"));
             if (optionalWorld.isPresent()) {
                 var world = optionalWorld.get();
                 var posX = config.getDouble("posX");
@@ -61,7 +57,7 @@ public class PlayerManager {
                 playerEntity.getRotation().set(config.getFloat("yaw"), config.getFloat("pitch"), 0);
             } else {
                 //TODO: find default spawning world
-                var o2 = gameServer.getWorlds().stream().findFirst();
+                var o2 = game.getWorlds().stream().findFirst();
                 if (o2.isEmpty()) {
                     playerEntity = null;
                 } else {
@@ -71,7 +67,7 @@ public class PlayerManager {
                 }
             }
         } else {
-            var o2 = gameServer.getWorlds().stream().findFirst();
+            var o2 = game.getWorlds().stream().findFirst();
             if (o2.isEmpty()) {
                 playerEntity = null;
             } else {
@@ -88,7 +84,7 @@ public class PlayerManager {
     }
 
     public Optional<Config> loadPlayerData(Profile profile) {
-        var path = gameServer.getStoragePath().resolve("player").resolve(profile.getUuid().toString() + ".json");
+        var path = game.getStoragePath().resolve("player").resolve(profile.getUuid().toString() + ".json");
         if (!path.toFile().exists()) {
             return Optional.empty();
         }
@@ -97,7 +93,7 @@ public class PlayerManager {
 
     public void savePlayerData(ServerPlayer player) {
         if (!player.isControllingEntity()) return;
-        var path = gameServer.getStoragePath().resolve("player").resolve(player.getProfile().getUuid().toString() + ".json");
+        var path = game.getStoragePath().resolve("player").resolve(player.getProfile().getUuid().toString() + ".json");
         var config = new Config();
         config.set("world", player.getWorld().getName());
         var position = player.getControlledEntity().getPosition();

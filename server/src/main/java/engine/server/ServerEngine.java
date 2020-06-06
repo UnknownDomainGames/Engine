@@ -1,18 +1,19 @@
 package engine.server;
 
 import configuration.parser.ConfigParseException;
-import engine.EngineBase;
+import engine.BaseEngine;
 import engine.Platform;
 import engine.client.game.ClientGame;
 import engine.enginemod.EngineModListeners;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
 import engine.game.GameData;
-import engine.game.LogicalGame;
+import engine.game.ServerGame;
 import engine.logic.Ticker;
 import engine.server.network.NetworkServer;
 import engine.util.Side;
 
+import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,8 +22,8 @@ import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public final class LogicalEngine extends EngineBase {
-    private Thread logicalThread;
+public class ServerEngine extends BaseEngine {
+    private Thread serverThread;
     private Thread consoleReadingThread;
     private Ticker ticker;
     private NetworkServer nettyServer;
@@ -30,12 +31,12 @@ public final class LogicalEngine extends EngineBase {
     private final Path configPath;
     private Game game;
 
-    public LogicalEngine(Path runPath, Path configPath) {
+    public ServerEngine(Path runPath, Path configPath) {
         super(runPath);
         this.configPath = configPath;
     }
 
-    public LogicalEngine(Path runPath, ServerConfig serverConfig) {
+    public ServerEngine(Path runPath, ServerConfig serverConfig) {
         super(runPath);
         this.configPath = Path.of("");
         this.serverConfig = serverConfig;
@@ -47,13 +48,13 @@ public final class LogicalEngine extends EngineBase {
     }
 
     @Override
-    public Thread getLogicalThread() {
-        return logicalThread;
+    public Thread getServerThread() {
+        return serverThread;
     }
 
     @Override
-    public boolean isLogicalThread() {
-        return Thread.currentThread() == logicalThread;
+    public boolean isServerThread() {
+        return Thread.currentThread() == serverThread;
     }
 
     @Override
@@ -66,9 +67,9 @@ public final class LogicalEngine extends EngineBase {
                 var in = new BufferedReader(new InputStreamReader(System.in));
                 String input;
                 try {
-                    while (!LogicalEngine.this.isMarkedTermination() && (input = in.readLine()) != null) {
+                    while (!ServerEngine.this.isMarkedTermination() && (input = in.readLine()) != null) {
                         if ("/stop".equals(input)) {
-                            LogicalEngine.this.terminate();
+                            ServerEngine.this.terminate();
                         }
                     }
                 } catch (IOException e) {
@@ -81,7 +82,7 @@ public final class LogicalEngine extends EngineBase {
         consoleReadingThread.start();
 
         logger.info("Initializing server engine!");
-        logicalThread = Thread.currentThread();
+        serverThread = Thread.currentThread();
         if (serverConfig == null || !configPath.equals(Path.of(""))) {
             try {
                 serverConfig = new ServerConfig(configPath);
@@ -125,17 +126,17 @@ public final class LogicalEngine extends EngineBase {
         }
         logger.info("Starting game for world");
         Path gameBasePath = this.getRunPath().resolve("game");
-        runLogicalGame(new LogicalGame(this, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default"), nettyServer));
+        runServerGame(new ServerGame(this, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default"), nettyServer));
         ticker.run();
     }
 
     @Override
-    public Game getLogicalGame() {
+    public Game getServerGame() {
         return game;
     }
 
     @Override
-    public void runLogicalGame(Game game) {
+    public void runServerGame(@Nonnull Game game) {
         if (isPlaying()) {
             throw new IllegalStateException("Game is running");
         }
@@ -159,7 +160,7 @@ public final class LogicalEngine extends EngineBase {
     }
 
     @Override
-    public void runClientGame(ClientGame game) {
+    public void runClientGame(@Nonnull ClientGame game) {
         throw new UnsupportedOperationException("client");
     }
 
@@ -172,7 +173,7 @@ public final class LogicalEngine extends EngineBase {
             }
         }
         nettyServer.tick();
-        ((LogicalGame) game).tick();
+        game.update();
     }
 
     private void tryTerminate() {
@@ -195,6 +196,6 @@ public final class LogicalEngine extends EngineBase {
 
     @Override
     public boolean isPlaying() {
-        return game != null && game.isReadyToPlay() && !game.isTerminated();
+        return game != null && !game.isTerminated();
     }
 }

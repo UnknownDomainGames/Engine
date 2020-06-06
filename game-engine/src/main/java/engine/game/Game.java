@@ -63,8 +63,6 @@ public interface Game {
 
     void terminate();
 
-    boolean isReadyToPlay();
-
     boolean isMarkedTermination();
 
     boolean isTerminated();
@@ -75,4 +73,6 @@ public interface Game {
     // ########## Internal Methods ##########
 
     void doUnloadWorld(World world);
+
+    void update();
 }

@@ -18,6 +18,4 @@ public interface ClientGame extends Game {
 
     @Nonnull
     World getClientWorld();
-
-    void clientTick();
 }

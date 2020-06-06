@@ -2,7 +2,7 @@ package engine.client;
 
 import configuration.io.ConfigLoadException;
 import configuration.parser.ConfigParseException;
-import engine.EngineBase;
+import engine.BaseEngine;
 import engine.Platform;
 import engine.client.asset.AssetManager;
 import engine.client.asset.AssetType;
@@ -32,26 +32,29 @@ import engine.player.Profile;
 import engine.util.ClassPathUtils;
 import engine.util.RuntimeEnvironment;
 import engine.util.Side;
+import org.apache.commons.lang3.Validate;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.util.Objects;
 
-public class ClientEngineImpl extends EngineBase implements ClientEngine {
-
-    private Thread clientThread;
+public final class ClientEngineImpl extends BaseEngine implements ClientEngine {
 
     private EngineAssetManager assetManager;
     private ALSoundManager soundManager;
     private EngineGraphicsManager graphicsManager;
     private LocaleManager localeManager;
 
-    private Ticker ticker;
+    private Thread serverThread;
+    private Ticker serverTicker;
+    private Game serverGame;
 
-    private ClientGame game;
+    private Thread clientThread;
+    private Ticker clientTicker;
+    private ClientGame clientGame;
 
     private KeyBindingManager keyBindingManager;
 
@@ -71,16 +74,6 @@ public class ClientEngineImpl extends EngineBase implements ClientEngine {
     @Override
     public Side getSide() {
         return Side.CLIENT;
-    }
-
-    @Override
-    public Thread getLogicalThread() {
-        return null;
-    }
-
-    @Override
-    public boolean isLogicalThread() {
-        return false;
     }
 
     @Override
@@ -184,29 +177,23 @@ public class ClientEngineImpl extends EngineBase implements ClientEngine {
     @Override
     protected void finishStage() {
         super.finishStage();
-        ticker = new Ticker(this::clientTick, partial -> graphicsManager.doRender(partial), Ticker.CLIENT_TICK);
+
+        eventBus.post(new EngineEvent.Ready(this));
+        logger.info("Engine initialized!");
     }
 
     @Override
     public void runStage() {
         super.runStage();
 
-        addShutdownListener(ticker::stop);
-
-        logger.info("Finishing initialization!");
-        eventBus.post(new EngineEvent.Ready(this));
-
-        ticker.run();
-    }
-
-    @Override
-    public Game getLogicalGame() {
-        return null;
+        clientTicker = new Ticker(this::clientTick, partial -> graphicsManager.doRender(partial), Ticker.CLIENT_TICK);
+        addShutdownListener(clientTicker::stop);
+        clientTicker.run();
     }
 
     private void clientTick() {
         if (isPlaying()) {
-            game.clientTick();
+            clientGame.update();
             keyBindingManager.tick();
         }
 
@@ -214,55 +201,54 @@ public class ClientEngineImpl extends EngineBase implements ClientEngine {
         soundManager.getListener().camera(graphicsManager.getViewport().getCamera());
 
         if (isMarkedTermination()) {
-            if (isPlaying()) {
-                game.terminate();
-            } else {
-                tryTerminate();
-            }
+            tryTerminate();
         }
+    }
+
+    @Override
+    public synchronized void terminate() {
+        super.terminate();
+        if (isPlaying()) clientGame.terminate();
+        if (serverGame != null && !serverGame.isTerminated()) serverGame.terminate();
     }
 
     private void tryTerminate() {
         logger.info("Engine terminating!");
         if (isPlaying()) {
-            game.terminate();
-            game.clientTick();
+            clientGame.terminate();
+            clientGame.update();
         }
-
         eventBus.post(new EngineEvent.PreTermination(this));
-
-        ticker.stop();
         shutdownListeners.forEach(Runnable::run);
         logger.info("Engine terminated!");
     }
 
     @Override
-    public void runLogicalGame(Game game) {
-        if (isPlaying()) {
-            throw new IllegalStateException("Game is running");
+    public Thread getServerThread() {
+        return serverThread;
+    }
+
+    @Override
+    public boolean isServerThread() {
+        return Thread.currentThread() == serverThread;
+    }
+
+    @Override
+    public Game getServerGame() {
+        return serverGame;
+    }
+
+    @Override
+    public void runServerGame(@Nonnull Game game) {
+        if (serverGame != null && !serverGame.isTerminated()) {
+            throw new IllegalStateException("Server game is running");
         }
 
-        if (!(game instanceof ClientGame)) {
-            throw new IllegalArgumentException("Game must be GameClient");
-        }
-
-        this.game = (ClientGame) Objects.requireNonNull(game);
+        serverGame = Validate.notNull(game);
         game.init();
-    }
-
-    @Override
-    public ClientGame getClientGame() {
-        return game;
-    }
-
-    @Override
-    public void runClientGame(ClientGame game) {
-
-    }
-
-    @Override
-    public boolean isPlaying() {
-        return game != null && game.isReadyToPlay() && !game.isTerminated();
+        serverTicker = new Ticker(game::update, Ticker.LOGIC_TICK);
+        serverThread = new Thread(serverTicker, "Server Thread");
+        serverThread.start();
     }
 
     @Override
@@ -273,6 +259,26 @@ public class ClientEngineImpl extends EngineBase implements ClientEngine {
     @Override
     public boolean isClientThread() {
         return Thread.currentThread() == clientThread;
+    }
+
+    @Override
+    public ClientGame getClientGame() {
+        return clientGame;
+    }
+
+    @Override
+    public void runClientGame(@Nonnull ClientGame game) {
+        if (isPlaying()) {
+            throw new IllegalStateException("Client game is running");
+        }
+
+        clientGame = Validate.notNull(game);
+        game.init();
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return clientGame != null && !clientGame.isTerminated();
     }
 
     @Override

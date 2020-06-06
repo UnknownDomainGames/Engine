@@ -108,13 +108,13 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
             if (event.getHandler().isChannelOpen()) {
                 lblStatus.text().set("Initializing game");
                 var game = new MultiPlayerClientGame(Platform.getEngineClient(), networkClient, MultiplayerGameData.fromPacket(event.getPacket()));
-                Platform.getEngine().runLogicalGame(game);
+                Platform.getEngine().runServerGame(game);
                 Platform.getEngineClient().getGraphicsManager().getGUIManager().close();
             }
         });
         bus.<NetworkDisconnectedEvent>addListener(event -> {
-            if (Platform.getEngine().getLogicalGame() != null) {
-                Platform.getEngine().getLogicalGame().terminate();
+            if (Platform.getEngine().getServerGame() != null) {
+                Platform.getEngine().getServerGame().terminate();
             }
             networkClient.close();
             if (!event.getReason().equals("")) {

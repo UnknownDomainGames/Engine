@@ -2,7 +2,7 @@ package engine.enginemod;
 
 import engine.Platform;
 import engine.event.Listener;
-import engine.game.LogicalGame;
+import engine.game.ServerGame;
 import engine.player.Profile;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.ConnectionStatus;
@@ -26,7 +26,7 @@ public class ServerHandlingListeners {
             }
             if (event.getPacket().getWantedStatus() == ConnectionStatus.GAMEPLAY) { //TODO: Handshake status should not go to Gameplay directly
                 event.getHandler().setStatus(ConnectionStatus.GAMEPLAY);
-                var playerManager = ((LogicalGame) Platform.getEngine().getLogicalGame()).getPlayerManager();
+                var playerManager = ((ServerGame) Platform.getEngine().getServerGame()).getPlayerManager();
                 playerManager.onPlayerConnect(event.getHandler(), playerManager.createPlayer(event.getHandler(), new Profile(UUID.randomUUID(), "Player")));
 //                event.getHandler().closeChannel();
             }

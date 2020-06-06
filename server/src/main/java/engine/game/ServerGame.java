@@ -28,14 +28,13 @@ import java.util.*;
 /**
  * Each world host in an independent thread.
  */
-public class LogicalGame extends BaseGame {
+public class ServerGame extends BaseGame {
 
     protected final Map<String, World> worlds = new HashMap<>();
     private final NetworkServer networkServer;
     private final PlayerManager playerManager;
-//    protected List<Thread> worldThreads;
 
-    public LogicalGame(Engine engine, Path storagePath, GameData data, NetworkServer networkServer) {
+    public ServerGame(Engine engine, Path storagePath, GameData data, NetworkServer networkServer) {
         super(engine, storagePath, data);
         this.networkServer = networkServer;
         this.playerManager = new PlayerManager(this);
@@ -45,7 +44,6 @@ public class LogicalGame extends BaseGame {
     @Override
     public Player joinPlayer(Profile profile, Entity controlledEntity) {
         var player = new ServerPlayer(profile, controlledEntity);
-//        players.add(player);
         playerManager.joinPlayer(player);
         return player;
     }
@@ -82,11 +80,6 @@ public class LogicalGame extends BaseGame {
         this.data.getWorlds().put(name, providerName);
         this.data.save();
         getEventBus().post(new WorldLoadEvent(world));
-
-//        Thread thread = new Thread((Runnable) world);
-//        thread.setName("World Thread - " + name);
-//        this.worldThreads.add(thread);
-
         return world;
     }
 
@@ -138,29 +131,16 @@ public class LogicalGame extends BaseGame {
     }
 
     @Override
-    protected void constructStage() {
-        super.constructStage();
-//        this.worldThreads = Lists.newArrayList();
-    }
-
-    @Override
     protected void finishStage() {
         super.finishStage();
         data.getWorlds().forEach(this::loadWorld);
-        markReady();
     }
 
     @Override
-    public void init() {
-        super.init();
-//        for (Thread thread : this.worldThreads) {
-//            thread.start();
-//        }
-    }
-
-    @Override
-    public void terminate() {
-        super.terminate();
+    protected void tryTerminate() {
+        List.copyOf(worlds.values()).forEach(World::unload);
+        // TODO: unload mod/resource here
+        super.tryTerminate();
     }
 
     @Override
@@ -174,22 +154,12 @@ public class LogicalGame extends BaseGame {
     }
 
     @Override
-    protected void tryTerminate() {
-//        for (World worldCommon : worlds.values()) {
-//            ((WorldCommon) worldCommon).stop();
-//        }
-        List.copyOf(worlds.values()).forEach(World::unload);
-        // TODO: unload mod/resource here
-        super.tryTerminate();
-    }
+    public void update() {
+        networkServer.tick();
+        getWorlds().forEach(world -> ((WorldCommon) world).tick());
 
-    //TODO: move to api
-    public void tick() {
         if (isMarkedTermination()) {
             tryTerminate();
         }
-
-        networkServer.tick();
-        getWorlds().forEach(world -> ((WorldCommon) world).tick());
     }
 }

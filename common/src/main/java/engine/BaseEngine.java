@@ -30,7 +30,7 @@ import java.util.List;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.SystemUtils.*;
 
-public abstract class EngineBase implements Engine {
+public abstract class BaseEngine implements Engine {
 
     protected final Logger logger = LoggerFactory.getLogger("Engine");
 
@@ -49,7 +49,7 @@ public abstract class EngineBase implements Engine {
     private boolean running = false;
     private boolean markedTermination = false;
 
-    protected EngineBase(Path runPath) {
+    protected BaseEngine(Path runPath) {
         this.runPath = runPath.toAbsolutePath();
     }
 

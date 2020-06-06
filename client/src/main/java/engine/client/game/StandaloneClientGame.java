@@ -6,7 +6,7 @@ import engine.client.player.ClientPlayerImpl;
 import engine.entity.Entity;
 import engine.event.game.GameTerminationEvent;
 import engine.game.GameData;
-import engine.game.LogicalGame;
+import engine.game.ServerGame;
 import engine.player.Player;
 import engine.player.Profile;
 import engine.world.World;
@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
-public class StandaloneClientGame extends LogicalGame implements ClientGame {
+public class StandaloneClientGame extends ServerGame implements ClientGame {
 
     private final ClientEngine clientEngine;
 

@@ -1,10 +1,12 @@
 package engine.enginemod.client.gui.game;
 
 import engine.Platform;
+import engine.client.ClientEngine;
 import engine.client.game.StandaloneClientGame;
 import engine.client.i18n.I18n;
 import engine.enginemod.client.gui.GuiSettings;
 import engine.game.GameData;
+import engine.game.ServerGame;
 import engine.graphics.font.Font;
 import engine.gui.Scene;
 import engine.gui.control.Button;
@@ -14,6 +16,7 @@ import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
 import engine.gui.misc.Pos;
+import engine.server.network.NetworkServer;
 import engine.util.Color;
 import engine.util.Files2;
 
@@ -42,7 +45,7 @@ public class GUIMainMenu extends FlowPane {
             engine.getGraphicsManager().getGUIManager().close();
             Path gameBasePath = engine.getRunPath().resolve("game");
             Files2.deleteDirectoryIfPresent(gameBasePath);
-            engine.runLogicalGame(new StandaloneClientGame(engine, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default")));
+            runGame(engine, gameBasePath);
         });
         vBox.getChildren().add(buttonCreate);
 
@@ -52,7 +55,7 @@ public class GUIMainMenu extends FlowPane {
             var engine = Platform.getEngineClient();
             engine.getGraphicsManager().getGUIManager().close();
             Path gameBasePath = engine.getRunPath().resolve("game");
-            engine.runLogicalGame(new StandaloneClientGame(engine, gameBasePath, GameData.createFromGame(gameBasePath)));
+            engine.runServerGame(new StandaloneClientGame(engine, gameBasePath, GameData.createFromGame(gameBasePath)));
         });
         vBox.getChildren().add(buttonLoad);
 
@@ -71,4 +74,13 @@ public class GUIMainMenu extends FlowPane {
         });
         vBox.getChildren().add(butCS);
     }
+
+    private void runGame(ClientEngine engine, Path gameBasePath) {
+        NetworkServer networkServer = new NetworkServer();
+        networkServer.runLocal();
+        GameData gameData = GameData.createFromCurrentEnvironment(gameBasePath, "default");
+        engine.runServerGame(new ServerGame(engine, gameBasePath, gameData, networkServer));
+        engine.runClientGame(new StandaloneClientGame(engine, gameBasePath, gameData));
+    }
+
 }

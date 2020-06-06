@@ -50,7 +50,6 @@ public class MultiPlayerClientGame extends BaseGame implements ClientGame {
         logger.info("Finishing Game Initialization!");
         super.finishStage();
         data.getWorlds().forEach((name, name2) -> loadWorld(name));
-        markReady();
         logger.info("Game Ready!");
     }
 
@@ -131,12 +130,13 @@ public class MultiPlayerClientGame extends BaseGame implements ClientGame {
     }
 
     @Override
-    public void clientTick() {
+    public void update() {
+        networkClient.tick();
+        worlds.values().forEach(world -> ((WorldClient) world).tick());
+
         if (isMarkedTermination()) {
             tryTerminate();
         }
-        networkClient.tick();
-        worlds.values().forEach(world -> ((WorldClient) world).tick());
     }
 
     @Override

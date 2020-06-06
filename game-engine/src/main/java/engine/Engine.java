@@ -10,6 +10,7 @@ import engine.util.RuntimeEnvironment;
 import engine.util.Side;
 import org.slf4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.nio.file.Path;
 
 /**
@@ -47,13 +48,13 @@ public interface Engine {
 
     boolean isMarkedTermination();
 
-    Thread getLogicalThread();
+    Thread getServerThread();
 
-    boolean isLogicalThread();
+    boolean isServerThread();
 
-    Game getLogicalGame();
+    Game getServerGame();
 
-    void runLogicalGame(Game game);
+    void runServerGame(@Nonnull Game game);
 
     Thread getClientThread();
 
@@ -61,7 +62,7 @@ public interface Engine {
 
     ClientGame getClientGame();
 
-    void runClientGame(ClientGame game);
+    void runClientGame(@Nonnull ClientGame game);
 
     boolean isPlaying();
 
