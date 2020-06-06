@@ -40,7 +40,7 @@ public class NetworkServer {
     }
 
     public void run(@Nullable InetAddress address, int port) {
-        Platform.getLogger().debug(String.format("Start launching netty server at %s:%d", address == null ? "*" : address.getHostAddress(), port));
+        Platform.getLogger().debug("Start launching server at {}:{}", address == null ? "*" : address.getHostAddress(), port);
         var bossGroup = DEFAULT_SERVER_ACCEPTOR_POOL.get();
         var workerGroup = DEFAULT_SERVER_WORKER_POOL.get();
         eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
@@ -54,22 +54,24 @@ public class NetworkServer {
                     protected void initChannel(Channel ch) throws Exception {
                         try {
                             ch.config().setOption(ChannelOption.TCP_NODELAY, true);
-                        } catch (ChannelException var3) {
-
+                        } catch (ChannelException ignored) {
                         }
-                        ch.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("splitter", new PacketStreamSplitter()).addLast("decoder", new PacketDecoder())
-                                .addLast("size_prepender", new PacketSizePrepender()).addLast("encoder", new PacketEncoder());
                         var handler = new NetworkHandler(Side.SERVER, eventBus);
+                        ch.pipeline().addLast("timeout", new ReadTimeoutHandler(30))
+                                .addLast("splitter", new PacketStreamSplitter())
+                                .addLast("decoder", new PacketDecoder())
+                                .addLast("size_prepender", new PacketSizePrepender())
+                                .addLast("encoder", new PacketEncoder())
+                                .addLast("handler", handler);
                         handlers.add(handler);
-                        ch.pipeline().addLast("handler", handler);
                     }
                 }).option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true).bind(port).syncUninterruptibly();
-        Platform.getLogger().debug(String.format("Launched netty server at %s:%d", address == null ? "*" : address.getHostAddress(), port));
+        Platform.getLogger().info("Launched server at {}:{}", address == null ? "*" : address.getHostAddress(), port);
     }
 
     public SocketAddress runLocal() {
-        Platform.getLogger().debug("Start launching netty local server");
+        Platform.getLogger().debug("Start launching local server");
         var bossGroup = DEFAULT_SERVER_ACCEPTOR_POOL.get();
         var workerGroup = DEFAULT_SERVER_WORKER_POOL.get();
         eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
@@ -86,7 +88,7 @@ public class NetworkServer {
                         ch.pipeline().addLast("handler", handler);
                     }
                 }).bind(LocalAddress.ANY).syncUninterruptibly();
-        Platform.getLogger().debug("Launched netty local server at %s:%d");
+        Platform.getLogger().info("Launched local server");
         return future.channel().localAddress();
     }
 
