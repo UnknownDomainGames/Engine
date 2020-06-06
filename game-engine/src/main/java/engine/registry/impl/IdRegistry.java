@@ -38,7 +38,7 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
 
     @Override
     public int getId(T obj) {
-        return obj == null ? -1 : obj.getId();
+        return obj != null ? obj.getId() : -1;
     }
 
     @Override
@@ -53,7 +53,7 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
 
     @Override
     public Name getKey(int id) {
-        return idToObject[id].getName();
+        return getValue(id).getName();
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
         }
     }
 
-    protected final void ensureCapacity(int capacity) {
+    protected void ensureCapacity(int capacity) {
         int oldLength = idToObject.length;
         if (oldLength < capacity) {
             int newLength = Math.max(oldLength << 1, capacity);
@@ -85,17 +85,12 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
         }
     }
 
-    protected final void setId(T entry, int id) {
-        try {
-            idField.setInt(entry, id);
-        } catch (IllegalAccessException e) {
-            throw new RegistrationException("Failed to set id.", e);
-        }
+    protected void setId(T entry, int id) {
         ensureCapacity(id + 1);
-        idToObject[id] = entry;
+        setIdUnsafe(entry, id);
     }
 
-    protected final void setIdUnsafe(T entry, int id) {
+    protected void setIdUnsafe(T entry, int id) {
         try {
             idField.setInt(entry, id);
         } catch (IllegalAccessException e) {
