@@ -1,7 +1,5 @@
 package engine.client.sound;
 
-import com.github.mouse0w0.observable.value.MutableObjectValue;
-import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.client.asset.*;
 import engine.client.asset.exception.AssetLoadException;
 import engine.client.asset.exception.AssetNotFoundException;
@@ -39,7 +37,7 @@ public final class ALSoundManager implements SoundManager, AssetProvider<Sound> 
     private AssetSourceManager sourceManager;
     private final Set<Asset<Sound>> audios = new HashSet<>();
 
-    private final Map<String, MutableObjectValue<SoundSource>> audioSourceMap = new HashMap<>();
+    private final Map<String, SoundSource> audioSourceMap = new HashMap<>();
 
     private SoundListener listener;
 
@@ -80,12 +78,12 @@ public final class ALSoundManager implements SoundManager, AssetProvider<Sound> 
     public SoundSource createSoundSource(String name) {
         SoundSource source = new ALSoundSource(false, false);
         source.createSource();
-        audioSourceMap.put(name, new SimpleMutableObjectValue<>(source));
+        audioSourceMap.put(name, source);
         return source;
     }
 
     @Override
-    public MutableObjectValue<SoundSource> getSoundSource(String name) {
+    public SoundSource getSoundSource(String name) {
         return audioSourceMap.get(name);
     }
 
@@ -157,7 +155,7 @@ public final class ALSoundManager implements SoundManager, AssetProvider<Sound> 
     }
 
     public void dispose() {
-        audioSourceMap.values().forEach(source -> source.ifPresent(SoundSource::dispose));
+        audioSourceMap.values().forEach(SoundSource::dispose);
         audios.forEach(Asset::dispose);
         listener = null;
         if (context != 0) {
