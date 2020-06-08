@@ -3,7 +3,7 @@ package engine.annotation;
 import java.lang.annotation.*;
 
 /**
- * Annotate any experimental code library.
+ * Annotate any experimental code.
  */
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.CONSTRUCTOR, ElementType.TYPE, ElementType.METHOD,
