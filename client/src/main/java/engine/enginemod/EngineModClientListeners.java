@@ -46,7 +46,6 @@ import engine.item.component.ClickEntityBehavior;
 import engine.player.Player;
 import engine.registry.Registries;
 import engine.registry.impl.BaseRegistry;
-import engine.registry.impl.IdAutoIncreaseRegistry;
 import engine.world.hit.BlockHitResult;
 import engine.world.hit.EntityHitResult;
 import engine.world.hit.HitResult;
@@ -63,7 +62,7 @@ public final class EngineModClientListeners {
 
     @Listener
     public static void constructRegistry(ModRegistrationEvent.Construction e) {
-        e.addRegistry(KeyBinding.class, () -> new IdAutoIncreaseRegistry<>(KeyBinding.class));
+        e.addRegistry(KeyBinding.class, () -> new BaseRegistry<>(KeyBinding.class));
         e.addRegistry(HUDControl.class, () -> new BaseRegistry<>(HUDControl.class));
     }
 
