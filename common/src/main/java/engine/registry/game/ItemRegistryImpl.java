@@ -19,7 +19,7 @@ public final class ItemRegistryImpl extends IdAutoIncreaseRegistry<Item> impleme
     protected final BiMap<Block, BlockItem> blockToCorrItem = HashBiMap.create();
 
     public ItemRegistryImpl() {
-        super(Item.class, "id");
+        super(Item.class);
     }
 
     @Override

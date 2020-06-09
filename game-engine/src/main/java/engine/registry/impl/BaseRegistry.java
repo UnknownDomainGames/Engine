@@ -15,7 +15,7 @@ import static org.apache.commons.lang3.Validate.notNull;
 
 public class BaseRegistry<T extends Registrable<T>> implements Registry<T> {
     private final Class<T> entryType;
-    private final String name;
+    private final Name name;
 
     protected final BiMap<String, T> nameToObject = HashBiMap.create();
 
@@ -24,6 +24,10 @@ public class BaseRegistry<T extends Registrable<T>> implements Registry<T> {
     }
 
     public BaseRegistry(Class<T> entryType, String name) {
+        this(entryType, Name.of(name));
+    }
+
+    public BaseRegistry(Class<T> entryType, Name name) {
         this.entryType = entryType;
         this.name = name;
     }
@@ -49,7 +53,7 @@ public class BaseRegistry<T extends Registrable<T>> implements Registry<T> {
 
     @Nonnull
     @Override
-    public String getRegistryName() {
+    public Name getRegistryName() {
         return name;
     }
 

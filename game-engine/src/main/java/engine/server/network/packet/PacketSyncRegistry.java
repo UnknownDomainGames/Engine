@@ -1,16 +1,16 @@
 package engine.server.network.packet;
 
+import engine.registry.Name;
 import engine.registry.Registry;
 import engine.server.network.PacketBuf;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PacketSyncRegistry implements Packet {
 
-    private String registryName;
+    private Name registryName;
     private Map<String, Integer> idMap;
 
     public PacketSyncRegistry(){}
@@ -25,31 +25,27 @@ public class PacketSyncRegistry implements Packet {
 
     @Override
     public void write(PacketBuf buf) throws IOException {
-        buf.writeVarInt(registryName.length());
-        buf.writeCharSequence(registryName, StandardCharsets.UTF_8);
+        buf.writeString(registryName.toString());
         buf.writeVarInt(idMap.size());
         for (var entry : idMap.entrySet()) {
-            buf.writeVarInt(entry.getKey().length());
-            buf.writeCharSequence(entry.getKey(), StandardCharsets.UTF_8);
+            buf.writeString(entry.getKey());
             buf.writeVarInt(entry.getValue());
         }
     }
 
     @Override
     public void read(PacketBuf buf) throws IOException {
-        var length = buf.readVarInt();
-        registryName = buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
+        registryName = Name.fromString(buf.readString());
         var size = buf.readVarInt();
         idMap = new HashMap<>();
         for (int i = 0; i < size; i++) {
-            length = buf.readVarInt();
-            var key = buf.readCharSequence(length, StandardCharsets.UTF_8).toString();
+            var key = buf.readString();
             var value = buf.readVarInt();
             idMap.put(key,value);
         }
     }
 
-    public String getRegistryName() {
+    public Name getRegistryName() {
         return registryName;
     }
 
