@@ -16,7 +16,7 @@ public interface Registry<T extends Registrable<T>> {
     Class<T> getEntryType();
 
     @Nonnull
-    String getRegistryName();
+    Name getRegistryName();
 
     @Nonnull
     T register(@Nonnull T obj) throws RegistrationException;

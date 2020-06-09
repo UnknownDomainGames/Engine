@@ -18,7 +18,8 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
     protected T[] idToObject;
 
     public IdRegistry(Class<T> entryType) {
-        this(entryType, entryType.getSimpleName().toLowerCase());
+        super(entryType);
+        this.idToObject = (T[]) Array.newInstance(entryType, 128);
     }
 
     public IdRegistry(Class<T> entryType, String name) {
