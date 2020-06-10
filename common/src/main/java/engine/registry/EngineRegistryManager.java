@@ -1,15 +1,9 @@
 package engine.registry;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Supplier;
-
-import static java.lang.String.format;
 
 public final class EngineRegistryManager implements RegistryManager {
 
@@ -17,6 +11,14 @@ public final class EngineRegistryManager implements RegistryManager {
 
     public EngineRegistryManager(Map<Class<?>, Registry<?>> registries) {
         this.registries = registries;
+    }
+
+    @Override
+    public <T extends Registrable<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier) {
+        if (registries.containsKey(type)) {
+            throw new IllegalStateException("Registry has been registered");
+        }
+        registries.put(type, supplier.get());
     }
 
     @Override
@@ -31,23 +33,7 @@ public final class EngineRegistryManager implements RegistryManager {
     }
 
     @Override
-    public <T extends Registrable<T>> T register(@NonNull T obj) {
-        return getRegistry(obj.getEntryType())
-                .orElseThrow(() -> new RegistrationException(format("Not found registry \"%s\"", obj.getEntryType().getSimpleName())))
-                .register(obj);
-    }
-
-    @Override
-    public <T extends Registrable<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier) {
-        if (registries.containsKey(type)) {
-            throw new IllegalStateException("Registry has been registered");
-        }
-        registries.put(type, supplier.get());
-    }
-
-    @Nonnull
-    @Override
-    public Collection<Entry<Class<?>, Registry<?>>> getEntries() {
-        return registries.entrySet();
+    public Collection<Registry<?>> getRegistries() {
+        return registries.values();
     }
 }

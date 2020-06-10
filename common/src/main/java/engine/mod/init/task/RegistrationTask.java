@@ -1,12 +1,14 @@
 package engine.mod.init.task;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gson.reflect.TypeToken;
+import engine.Platform;
 import engine.event.mod.ModRegistrationEvent;
 import engine.mod.ModContainer;
 import engine.mod.annotation.RegObject;
 import engine.mod.annotation.data.AutoRegisterItem;
 import engine.mod.init.ModInitializer;
-import engine.registry.Name;
 import engine.registry.Registrable;
 import engine.registry.Registry;
 import engine.registry.RegistryManager;
@@ -14,36 +16,40 @@ import engine.util.JsonUtils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
 public class RegistrationTask implements ModInitializationTask {
 
+    private final Multimap<Class<?>, Registrable<?>> autoRegistrableEntries = HashMultimap.create();
+
     @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void run(ModInitializer initializer, ModContainer mod) {
         var registryManager = initializer.getEngine().getRegistryManager();
         mod.getEventBus().post(new ModRegistrationEvent.Construction(mod, registryManager));
         var pre = new ModRegistrationEvent.Pre(mod, registryManager);
         mod.getEventBus().post(pre);
-        initializer.getEngine().getEventBus().post(pre);
-        for (Map.Entry<Class<?>, Registry<?>> registry : registryManager.getEntries()) {
-            mod.getEventBus().post(new ModRegistrationEvent.Register<>(registry.getValue()));
+        collectAutoRegistrable(mod);
+        for (Registry registry : registryManager.getRegistries()) {
+            mod.getEventBus().post(new ModRegistrationEvent.Register<>(registry));
+            autoRegistrableEntries.get(registry.getEntryType()).forEach(registry::register);
         }
-        doAutoRegister(registryManager, mod);
         var post = new ModRegistrationEvent.Post(mod, registryManager);
         mod.getEventBus().post(post);
-        initializer.getEngine().getEventBus().post(post);
         doInjectRegisteredObject(registryManager, mod);
     }
 
-    private void doAutoRegister(RegistryManager registryManager, ModContainer mod) {
+    private void collectAutoRegistrable(ModContainer mod) {
+        autoRegistrableEntries.clear();
         for (var item : loadAutoRegisterItems(mod)) {
             switch (item.getKind()) {
                 case CLASS:
-                    doAutoRegisterClass(registryManager, mod, item);
+                    collectAutoRegistrableFromClass(mod, item);
                     break;
                 case FIELD:
-                    doAutoRegisterField(registryManager, mod, item);
+                    collectAutoRegistrableFromField(mod, item);
                     break;
             }
         }
@@ -69,34 +75,36 @@ public class RegistrationTask implements ModInitializationTask {
         return List.of();
     }
 
-    private void doAutoRegisterClass(RegistryManager registryManager, ModContainer mod, AutoRegisterItem item) {
+    private void collectAutoRegistrableFromClass(ModContainer mod, AutoRegisterItem item) {
         try {
             var clazz = Class.forName(item.getOwner(), true, mod.getClassLoader());
             for (var field : clazz.getDeclaredFields()) {
-                if (!Registrable.class.isAssignableFrom(field.getType()))
-                    continue;
-
-                field.setAccessible(true);
-                registryManager.register((Registrable) field.get(null));
+                if (Registrable.class.isAssignableFrom(field.getType())) {
+                    collectAutoRegistrableFromField(field);
+                }
             }
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-            // TODO: crash report
+            Platform.getEngine().getCrashHandler().crash(e);
         }
     }
 
-    private void doAutoRegisterField(RegistryManager registryManager, ModContainer mod, AutoRegisterItem item) {
+    private void collectAutoRegistrableFromField(ModContainer mod, AutoRegisterItem item) {
         try {
             var clazz = Class.forName(item.getOwner(), true, mod.getClassLoader());
             var field = clazz.getDeclaredField(item.getField());
-            field.setAccessible(true);
-            registryManager.register((Registrable) field.get(null));
+            collectAutoRegistrableFromField(field);
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-            // TODO: crash report
+            Platform.getEngine().getCrashHandler().crash(e);
         }
     }
 
+    private void collectAutoRegistrableFromField(Field field) throws IllegalAccessException {
+        field.setAccessible(true);
+        Registrable<?> registrable = (Registrable<?>) field.get(null);
+        autoRegistrableEntries.put(registrable.getEntryType(), registrable);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void doInjectRegisteredObject(RegistryManager registryManager, ModContainer mod) {
         for (var entry : loadRegObjectItems(mod).entrySet()) {
             try {
@@ -106,17 +114,16 @@ public class RegistrationTask implements ModInitializationTask {
                     var annotation = field.getAnnotation(RegObject.class);
                     var registry = findRegistry(registryManager, (Class<? extends Registrable>) field.getType());
                     field.setAccessible(true);
-                    field.set(null, registry.getValue(Name.fromString(annotation.value())));
+                    field.set(null, registry.getValue(annotation.value()));
                 }
             } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-                // TODO: crash report
+                Platform.getEngine().getCrashHandler().crash(e);
             }
         }
     }
 
-    private Registry<?> findRegistry(RegistryManager registryManager, Class<? extends Registrable> type) {
-        return (Registry<?>) registryManager.getRegistry(type).orElseThrow();
+    private <T extends Registrable<T>> Registry<T> findRegistry(RegistryManager registryManager, Class<T> type) {
+        return registryManager.getRegistry(type).orElseThrow();
     }
 
     private Map<String, List<String>> loadRegObjectItems(ModContainer mod) {
