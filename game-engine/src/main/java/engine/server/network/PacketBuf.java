@@ -73,6 +73,14 @@ public class PacketBuf extends ByteBuf {
         return this;
     }
 
+    public <T extends Enum<T>> T readEnum(Class<T> type) {
+        return type.getEnumConstants()[readVarInt()];
+    }
+
+    public void writeEnum(Enum<?> em) {
+        writeVarInt(em.ordinal());
+    }
+
     @Override
     public int capacity() {
         return backingBuffer.capacity();
