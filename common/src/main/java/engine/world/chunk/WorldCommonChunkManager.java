@@ -139,21 +139,21 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
         }
 
         // Then: send all the remaining chunks
-        int dx;
-        for (int i = 0; -viewDistance <= (dx = Math2.alternativeSignNaturalNumber(i)) && dx <= viewDistance; i++) {
+        int dx = 0;
+        for (int i = 0; -viewDistance <= (dx += Math2.alternativeSignNaturalNumber(i)) && dx <= viewDistance; i++) {
             var zBoundSquared = viewDistanceSquared - dx * dx;
             var zBound = (int) Math.sqrt(zBoundSquared);
-            int dz;
-            for (int k = 0; -zBound <= (dz = Math2.alternativeSignNaturalNumber(k)) && dz <= zBound; k++) {
+            int dz = 0;
+            for (int k = 0; -zBound <= (dz += Math2.alternativeSignNaturalNumber(k)) && dz <= zBound; k++) {
                 var yBoundSquared = zBoundSquared - dz * dz;
                 var yBound = (int) Math.sqrt(yBoundSquared);
-                int dy;
-                for (int j = 0; -yBound <= (dy = Math2.alternativeSignNaturalNumber(j)) && dy <= yBound; j++) {
+                int dy = 0;
+                for (int j = 0; -yBound <= (dy += Math2.alternativeSignNaturalNumber(j)) && dy <= yBound; j++) {
                     if (Math.max(Math.max(Math.abs(dx), Math.abs(dy)), Math.abs(dz)) <= 1) {
                         // This chunk has already sent at the first step
                         continue;
                     }
-                    this.sendChunkData(player, dx, dy, dz);
+                    this.sendChunkData(player, x + dx, y + dy, z + dz);
                 }
             }
         }
