@@ -141,7 +141,7 @@ public class SimpleEventBus implements EventBus {
 
     @Override
     public <T extends Event> void addListener(Order order, Consumer<T> consumer) {
-        addListener(Order.DEFAULT, false, consumer);
+        addListener(order, false, consumer);
     }
 
     @Override
