@@ -3,6 +3,8 @@ package engine.gui.control;
 import com.github.mouse0w0.observable.collection.ListChangeListener;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.*;
+import engine.gui.misc.Background;
+import engine.util.Color;
 
 import java.util.Objects;
 
@@ -117,6 +119,14 @@ public class ListCell<T> extends Labeled {
                 updateSelection();
             }
         });
+    }
+
+    @Override
+    public float computeWidth() {
+        if (parent().isPresent()) {
+            return parent().get().getWidth();
+        }
+        return super.computeWidth();
     }
 
     private boolean initializedEmpty;

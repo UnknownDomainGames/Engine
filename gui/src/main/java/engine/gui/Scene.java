@@ -143,7 +143,8 @@ public class Scene implements EventTarget {
 
     private void raycast(Parent parent, float x, float y, List<Node> results, boolean keepParent) {
         boolean noMatchingChild = true;
-        for (Node node : parent.getUnmodifiableChildren()) {
+        for (ListIterator<Node> iterator = parent.getUnmodifiableChildren().listIterator(parent.getUnmodifiableChildren().size()); iterator.hasPrevious(); ) {
+            Node node = iterator.previous();
             if (!node.isVisible() || node.isDisabled() || !node.contains(x, y)) continue;
 
             noMatchingChild = false;
