@@ -29,7 +29,7 @@ public class ScrollPane extends BorderPane {
         setAlignment(vScroll, Pos.TOP_RIGHT);
         content.addChangeListener((observable, oldValue, newValue) -> {
             if (oldValue != null) getChildren().remove(oldValue);
-            if (newValue != null) getChildren().add(newValue);
+            if (newValue != null) getChildren().add(0, newValue);
             update();
             if (newValue != null) {
                 newValue.width().addChangeListener((observable1, o, n) -> update());
