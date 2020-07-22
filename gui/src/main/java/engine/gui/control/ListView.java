@@ -1,5 +1,6 @@
 package engine.gui.control;
 
+import com.github.mouse0w0.observable.collection.ListChangeListener;
 import com.github.mouse0w0.observable.collection.ObservableCollections;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
@@ -49,6 +50,8 @@ public class ListView<T> extends Control {
     private MutableObjectValue<ObservableList<T>> items = new SimpleMutableObjectValue<>(ObservableCollections.observableList(new ArrayList<>()));
 
     private MutableObjectValue<SelectionModel<T>> selectionModel = new SimpleMutableObjectValue<>(new SingleSelectionModel<>(items()));
+
+    private MutableObjectValue<FocusModel<T>> focusModel = new SimpleMutableObjectValue<>(new ListViewFocusModel<>(this));
 
     private ScrollPane scrollPane;
     private Pane contentPane;
@@ -204,5 +207,50 @@ public class ListView<T> extends Control {
         }
         contentChildren.addAll(cells);
         super.layoutChildren();
+    }
+
+    static class ListViewFocusModel<T> extends FocusModel<T> {
+
+        private final ListView<T> listView;
+
+        private int itemCount;
+
+        private final ListChangeListener<T> listChangeListener = change -> {
+            updateItemCount();
+        };
+
+        public ListViewFocusModel(ListView<T> listView) {
+            if (listView == null) {
+                throw new IllegalArgumentException("listView");
+            }
+            this.listView = listView;
+            listView.observableItems().addChangeListener((observable, oldValue, newValue) -> {
+                if (oldValue != null) oldValue.removeChangeListener(listChangeListener);
+                if (newValue != null) newValue.addChangeListener(listChangeListener);
+                updateItemCount();
+            });
+            if (listView.items() != null) {
+                listView.items().addChangeListener(listChangeListener);
+            }
+        }
+
+        @Override
+        protected int getItemCount() {
+            return itemCount;
+        }
+
+        private void updateItemCount() {
+            if (listView == null) itemCount = -1;
+            else {
+                itemCount = listView.items() != null ? -1 : listView.items().size();
+            }
+        }
+
+        @Override
+        protected T getItem(int index) {
+            if (itemCount == -1) return null;
+            if (index < 0 || itemCount >= index) return null;
+            return listView.items().get(index);
+        }
     }
 }

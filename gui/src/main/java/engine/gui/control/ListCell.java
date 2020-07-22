@@ -119,6 +119,36 @@ public class ListCell<T> extends Labeled {
                 updateSelection();
             }
         });
+
+        setOnMouseEntered(event -> {
+            if (!selected().get())
+                if (parent().isPresent() ? contains(parent().get().relativePos(event.getScreenX(), event.getScreenY())) : contains(event.getX(), event.getY())) {
+                    background().set(Background.fromColor(Color.BLUE));
+                }
+        });
+
+        setOnMouseExited(event -> {
+            if (!selected().get()) {
+                background().set(Background.NOTHING);
+            }
+        });
+
+        selected().addChangeListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                background().set(Background.fromColor(Color.fromRGB(0xffff00)));
+            }
+            if (!newValue) {
+                background().set(Background.NOTHING);
+            }
+        });
+
+        setOnMouseClicked(event -> {
+            if (owner.isPresent()) {
+                if (owner.get().selectionModel().isPresent()) {
+                    owner.get().selectionModel().get().select(index.get());
+                }
+            }
+        });
     }
 
     @Override
