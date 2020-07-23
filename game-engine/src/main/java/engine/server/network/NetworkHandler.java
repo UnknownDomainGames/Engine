@@ -31,7 +31,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     //which is THIS handler located
     private final Side instanceSide;
     private ConnectionStatus status;
-
+    private NetworkHandlerContext context;
     private final EventBus eventBus;
 
     public NetworkHandler(Side side) {
@@ -41,6 +41,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     public NetworkHandler(Side side, EventBus bus) {
         instanceSide = side;
         status = ConnectionStatus.HANDSHAKE;
+        context = new HandshakeNetworkHandlerContext();
         this.eventBus = bus != null ? bus : Platform.getEngine().getEventBus();
     }
 
@@ -60,8 +61,15 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
         return channel.localAddress();
     }
 
-    public void setStatus(ConnectionStatus status) {
+    public void setStatus(ConnectionStatus status, NetworkHandlerContext context) {
+        if (context.isSideDepends() && context.getContextSide() != instanceSide) {
+            throw new IllegalArgumentException("mismatched network side!");
+        }
+        if (context.getConnectionStatus() != status) {
+            throw new IllegalArgumentException("mismatched connection status");
+        }
         this.status = status;
+        this.context = context;
     }
 
     @Override
@@ -106,6 +114,10 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     public boolean isLocal() {
         return this.channel instanceof LocalChannel || this.channel instanceof LocalServerChannel;
+    }
+
+    public NetworkHandlerContext getContext() {
+        return context;
     }
 
     @Override
