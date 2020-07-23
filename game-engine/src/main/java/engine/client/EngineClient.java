@@ -6,6 +6,7 @@ import engine.client.game.GameClient;
 import engine.client.settings.EngineSettings;
 import engine.client.sound.SoundManager;
 import engine.graphics.GraphicsManager;
+import engine.player.Profile;
 
 public interface EngineClient extends Engine {
 
@@ -18,6 +19,8 @@ public interface EngineClient extends Engine {
     GraphicsManager getGraphicsManager();
 
     SoundManager getSoundManager();
+
+    Profile getPlayerProfile();
 
     @Override
     GameClient getCurrentGame();

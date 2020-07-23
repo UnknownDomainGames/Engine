@@ -6,17 +6,15 @@ import engine.server.network.PacketBuf;
 import java.io.IOException;
 import java.util.UUID;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-public class PacketLoginStart implements Packet {
+public class PacketLoginProfile implements Packet {
 
     private Profile profile;
 
-    public PacketLoginStart() {
+    public PacketLoginProfile() {
 
     }
 
-    public PacketLoginStart(Profile profile) {
+    public PacketLoginProfile(Profile profile) {
         this.profile = profile;
     }
 
@@ -25,13 +23,15 @@ public class PacketLoginStart implements Packet {
         var uuid = profile.getUuid();
         buf.writeLong(uuid.getMostSignificantBits());
         buf.writeLong(uuid.getLeastSignificantBits());
-        String name = profile.getName();
-        buf.writeVarInt(name.length());
-        buf.writeCharSequence(name, UTF_8);
+        buf.writeString(profile.getName());
     }
 
     @Override
     public void read(PacketBuf buf) throws IOException {
-        profile = new Profile(new UUID(buf.readLong(), buf.readLong()), buf.readCharSequence(buf.readVarInt(), UTF_8).toString());
+        profile = new Profile(new UUID(buf.readLong(), buf.readLong()), buf.readString());
+    }
+
+    public Profile getProfile() {
+        return profile;
     }
 }

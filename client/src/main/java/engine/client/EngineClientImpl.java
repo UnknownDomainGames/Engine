@@ -29,6 +29,10 @@ import engine.gui.EngineGUIPlatform;
 import engine.logic.Ticker;
 import engine.mod.ModContainer;
 import engine.player.Profile;
+import engine.server.ServerConfig;
+import engine.server.network.ConnectionStatus;
+import engine.server.network.NetworkClient;
+import engine.server.network.packet.PacketHandshake;
 import engine.util.ClassPathUtils;
 import engine.util.RuntimeEnvironment;
 import engine.util.Side;
@@ -64,6 +68,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         this.playerProfile = profile;
     }
 
+    @Override
     public Profile getPlayerProfile() {
         return playerProfile;
     }

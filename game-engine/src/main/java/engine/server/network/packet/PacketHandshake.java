@@ -23,8 +23,7 @@ public class PacketHandshake implements Packet {
 
     @Override
     public void write(PacketBuf buf) throws IOException {
-        buf.writeVarInt(Platform.getVersion().length());
-        buf.writeCharSequence(Platform.getVersion(), StandardCharsets.US_ASCII);
+        buf.writeString(Platform.getVersion());
         buf.writeVarInt(nextStatus.ordinal());
         var modlist = Platform.getEngine().getModManager().getLoadedMods().stream().map(container -> container.getId() + ":" + container.getVersion().toString()).collect(Collectors.toList());
         buf.writeVarInt(modlist.size());
@@ -37,13 +36,12 @@ public class PacketHandshake implements Packet {
 
     @Override
     public void read(PacketBuf buf) throws IOException {
-        var len = buf.readVarInt();
-        engineVersion = buf.readCharSequence(len, StandardCharsets.US_ASCII).toString();
+        engineVersion = buf.readString();
         nextStatus = ConnectionStatus.values()[buf.readVarInt()];
         mods = new ArrayList<>();
         var size = buf.readVarInt();
         for (int i = 0; i < size; i++) {
-            len = buf.readVarInt();
+            int len = buf.readVarInt();
             mods.add(buf.readCharSequence(len, StandardCharsets.UTF_8).toString());
         }
     }
