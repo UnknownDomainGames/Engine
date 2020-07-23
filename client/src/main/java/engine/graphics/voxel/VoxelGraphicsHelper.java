@@ -1,5 +1,6 @@
 package engine.graphics.voxel;
 
+import engine.client.EngineClient;
 import engine.client.asset.AssetManager;
 import engine.client.asset.AssetType;
 import engine.client.asset.reloading.AssetReloadHandler;
@@ -60,9 +61,11 @@ public final class VoxelGraphicsHelper {
 
     @Listener
     public static void onEngineReady(EngineEvent.Ready event) {
-        blockRenderManager.init();
-        itemRenderManager.init();
-        AssetManager.instance().reload();
+        if (event.getEngine() instanceof EngineClient) { //TODO: remove this if integrated server no longer use "Engine" type
+            blockRenderManager.init();
+            itemRenderManager.init();
+            AssetManager.instance().reload();
+        }
     }
 
     @Listener(order = Order.LAST)

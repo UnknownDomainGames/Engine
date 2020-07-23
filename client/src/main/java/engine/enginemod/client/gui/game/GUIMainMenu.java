@@ -41,7 +41,9 @@ public class GUIMainMenu extends FlowPane {
             var engine = Platform.getEngineClient();
             engine.getGraphicsManager().getGUIManager().close();
             Path gameBasePath = engine.getRunPath().resolve("game");
-            Files2.deleteDirectoryIfPresent(gameBasePath);
+            Files2.deleteDirectoryIfPresent(gameBasePath.resolve("default"));
+//            GameData.createFromCurrentEnvironment(gameBasePath, "default"); //For creating directory and gamedata
+//            ((EngineClientImpl) engine).playIntegratedGame("default");
             engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default")));
         });
         vBox.getChildren().add(buttonCreate);
@@ -52,7 +54,8 @@ public class GUIMainMenu extends FlowPane {
             var engine = Platform.getEngineClient();
             engine.getGraphicsManager().getGUIManager().close();
             Path gameBasePath = engine.getRunPath().resolve("game");
-            engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromGame(gameBasePath)));
+//            ((EngineClientImpl) engine).playIntegratedGame("default");
+            engine.startGame(new GameClientStandalone(engine, gameBasePath, GameData.createFromExistingGame(gameBasePath, "default")));
         });
         vBox.getChildren().add(buttonLoad);
 

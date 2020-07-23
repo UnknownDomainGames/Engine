@@ -1,6 +1,7 @@
 package engine.enginemod.client.gui.game;
 
 import engine.Platform;
+import engine.client.EngineClientImpl;
 import engine.graphics.GraphicsManager;
 import engine.graphics.font.Font;
 import engine.gui.GUIManager;
@@ -49,6 +50,9 @@ public final class GUIPauseMenu extends FlowPane {
         terminateGame.setOnMouseClicked(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
             engine.getCurrentGame().terminate();
+            if (((EngineClientImpl) engine).isIntegratedServerRunning()) {
+                ((EngineClientImpl) engine).stopIntegratedGame();
+            }
             GUIManager guiManager = engine.getGraphicsManager().getGUIManager();
             guiManager.show(new Scene(new GUIMainMenu()));
         });

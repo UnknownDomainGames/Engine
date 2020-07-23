@@ -226,6 +226,37 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         logger.info("Engine terminated!");
     }
 
+    private EngineServerIntegrated integratedServer;
+
+    public void playIntegratedGame(String gameName) {
+        if (isPlaying()) {
+            game.terminate();
+        }
+        var serverConfig = new ServerConfig();
+        serverConfig.setGame(gameName);
+        integratedServer = new EngineServerIntegrated(this, serverConfig);
+        new Thread(() -> {
+            integratedServer.initEngine();
+            integratedServer.runEngine();
+        }, "Integrated Server").start();
+        while (!integratedServer.isPlaying()) {
+            //TODO: show progress
+        }
+        var socketAddress = integratedServer.getNettyServer().runLocal();
+        var nettyClient = new NetworkClient();
+        nettyClient.runLocal(socketAddress);
+        nettyClient.send(new PacketHandshake(ConnectionStatus.LOGIN));
+    }
+
+    public boolean isIntegratedServerRunning() {
+        return integratedServer != null && integratedServer.isMarkedTermination();
+    }
+
+    public void stopIntegratedGame() {
+        integratedServer.terminate();
+        integratedServer = null;
+    }
+
     @Override
     public void startGame(Game game) {
         if (isPlaying()) {

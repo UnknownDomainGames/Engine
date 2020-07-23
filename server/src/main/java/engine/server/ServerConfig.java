@@ -10,6 +10,7 @@ public class ServerConfig {
     private final Path configPath;
     private String serverIp;
     private int serverPort;
+    private String game;
 
     public ServerConfig(){
         this(Path.of("server.json"));
@@ -23,18 +24,21 @@ public class ServerConfig {
     public void resetToDefault(){
         serverIp = "";
         serverPort = 18104;
+        game = "default";
     }
 
     public void load(){
         var config = ConfigIOUtils.load(configPath.toAbsolutePath());
         serverIp = config.getString("server-ip", "");
         serverPort = config.getInt("server-port", 18104);
+        game = config.getString("game", "default");
     }
 
     public void save(){
         var config = new Config();
         config.set("server-ip", serverIp);
         config.set("server-port", serverPort);
+        config.set("game", game);
         config.save(configPath.toAbsolutePath());
     }
 
@@ -44,5 +48,13 @@ public class ServerConfig {
 
     public int getServerPort() {
         return serverPort;
+    }
+
+    public String getGame() {
+        return game;
+    }
+
+    public void setGame(String game) {
+        this.game = game;
     }
 }
