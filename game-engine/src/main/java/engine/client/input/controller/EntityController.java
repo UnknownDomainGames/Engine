@@ -12,10 +12,17 @@ public interface EntityController {
 
     void onInputMove(MotionType motionType, boolean state);
 
+    void onAttack();
+
+    void onPickBlock();
+
+    void onInteract();
+
     /**
      * Handle client cursor move
-     * @param x x-pos of the cursor
-     * @param y y-pos of the cursor
+     *
+     * @param x          x-pos of the cursor
+     * @param y          y-pos of the cursor
      * @param cursorLock true if the cursor is invisible, i.e. the cursor is locked into the focused window
      */
     void onCursorMove(double x, double y, boolean cursorLock);
