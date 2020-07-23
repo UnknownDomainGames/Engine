@@ -28,8 +28,8 @@ public class GameData {
         return gameData;
     }
 
-    public static GameData createFromGame(Path gameBasePath) {
-        Config config = ConfigIOUtils.load(gameBasePath.resolve("game.json"));
+    public static GameData createFromExistingGame(Path gameBasePath, String name) {
+        Config config = ConfigIOUtils.load(gameBasePath.resolve(name).resolve("game.json"));
         return new GameData(gameBasePath, config);
     }
 

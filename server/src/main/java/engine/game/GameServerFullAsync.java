@@ -35,8 +35,8 @@ public class GameServerFullAsync extends GameBase {
     private final PlayerManager playerManager;
 //    protected List<Thread> worldThreads;
 
-    public GameServerFullAsync(Engine engine, Path storagePath, GameData data, NetworkServer networkServer) {
-        super(engine, storagePath, data);
+    public GameServerFullAsync(Engine engine, Path storageBasePath, GameData data, NetworkServer networkServer) {
+        super(engine, storageBasePath, data);
         this.networkServer = networkServer;
         this.playerManager = new PlayerManager(this);
     }
