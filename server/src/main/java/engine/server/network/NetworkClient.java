@@ -19,7 +19,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 import java.net.InetAddress;
 import java.net.SocketAddress;
 
-public class NetworkClient {
+public class NetworkClient implements NetworkEndpoint {
     private ChannelFuture future;
     private EventBus eventBus;
 
@@ -28,6 +28,7 @@ public class NetworkClient {
     public static final LazyObject<NioEventLoopGroup> DEFAULT_CLIENT_WORKER_POOL = new LazyObject<>(() -> new NioEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("Netty Client Handler #%d").setDaemon(true).build()));
     public static final LazyObject<DefaultEventLoopGroup> LOCAL_CLIENT_WORKER_POOL = new LazyObject<>(() -> new DefaultEventLoopGroup(new ThreadFactoryBuilder().setNameFormat("Netty Client Handler #%d").setDaemon(true).build()));
 
+    @Override
     public void run(InetAddress address, int port) {
         workerGroup = DEFAULT_CLIENT_WORKER_POOL.get();
         eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
@@ -48,6 +49,7 @@ public class NetworkClient {
                                 .addLast("splitter", new PacketStreamSplitter()).addLast("decoder", new PacketDecoder())
                                 .addLast("size_prepender", new PacketSizePrepender()).addLast("encoder", new PacketEncoder());
                         handler = new NetworkHandler(Side.CLIENT, eventBus);
+                        ((HandshakeNetworkHandlerContext) handler.getContext()).setEndpoint(NetworkClient.this);
                         ch.pipeline().addLast("handler", handler);
                     }
                 })
@@ -67,6 +69,7 @@ public class NetworkClient {
                     @Override
                     protected void initChannel(Channel ch) throws Exception {
                         handler = new NetworkHandler(Side.CLIENT, eventBus);
+                        ((HandshakeNetworkHandlerContext) handler.getContext()).setEndpoint(NetworkClient.this);
                         ch.pipeline().addLast("handler", handler);
                     }
                 })
@@ -82,10 +85,12 @@ public class NetworkClient {
         return handler;
     }
 
+    @Override
     public void tick() {
         handler.tick();
     }
 
+    @Override
     public void close() {
 //        if (handler != null && handler.isChannelOpen()) {
 //            handler.closeChannel();

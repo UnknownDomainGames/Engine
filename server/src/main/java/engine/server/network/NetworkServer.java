@@ -24,11 +24,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class NetworkServer {
-    private ChannelFuture future;
-
+public class NetworkServer implements NetworkEndpoint {
     private EventBus eventBus;
 
+    private List<ChannelFuture> channels = Collections.synchronizedList(new ArrayList<>());
     //NetworkHandler will handle their own client only. Therefore we want a list of them instead of only one instance
     private List<NetworkHandler> handlers = Collections.synchronizedList(new ArrayList<>());
 
@@ -43,50 +42,61 @@ public class NetworkServer {
         Platform.getLogger().debug(String.format("Start launching netty server at %s:%d", address == null ? "*" : address.getHostAddress(), port));
         var bossGroup = DEFAULT_SERVER_ACCEPTOR_POOL.get();
         var workerGroup = DEFAULT_SERVER_WORKER_POOL.get();
-        eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
-        Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
-        future = new ServerBootstrap()
-                .group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<>() {
+        if (eventBus == null) {
+            eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+            Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
+        }
+        synchronized (channels) {
+            channels.add(new ServerBootstrap()
+                    .group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new ChannelInitializer<>() {
 
-                    @Override
-                    protected void initChannel(Channel ch) throws Exception {
-                        try {
-                            ch.config().setOption(ChannelOption.TCP_NODELAY, true);
-                        } catch (ChannelException var3) {
+                        @Override
+                        protected void initChannel(Channel ch) throws Exception {
+                            try {
+                                ch.config().setOption(ChannelOption.TCP_NODELAY, true);
+                            } catch (ChannelException var3) {
 
+                            }
+                            ch.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("splitter", new PacketStreamSplitter()).addLast("decoder", new PacketDecoder())
+                                    .addLast("size_prepender", new PacketSizePrepender()).addLast("encoder", new PacketEncoder());
+                            var handler = new NetworkHandler(Side.SERVER, eventBus);
+                            ((HandshakeNetworkHandlerContext) handler.getContext()).setEndpoint(NetworkServer.this);
+                            handlers.add(handler);
+                            ch.pipeline().addLast("handler", handler);
                         }
-                        ch.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("splitter", new PacketStreamSplitter()).addLast("decoder", new PacketDecoder())
-                                .addLast("size_prepender", new PacketSizePrepender()).addLast("encoder", new PacketEncoder());
-                        var handler = new NetworkHandler(Side.SERVER, eventBus);
-                        handlers.add(handler);
-                        ch.pipeline().addLast("handler", handler);
-                    }
-                }).option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, true).bind(port).syncUninterruptibly();
-        Platform.getLogger().debug(String.format("Launched netty server at %s:%d", address == null ? "*" : address.getHostAddress(), port));
+                    }).option(ChannelOption.SO_BACKLOG, 128)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true).bind(port).syncUninterruptibly());
+            Platform.getLogger().debug(String.format("Launched netty server at %s:%d", address == null ? "*" : address.getHostAddress(), port));
+        }
     }
 
     public SocketAddress runLocal() {
         Platform.getLogger().debug("Start launching netty local server");
         var bossGroup = DEFAULT_SERVER_ACCEPTOR_POOL.get();
         var workerGroup = DEFAULT_SERVER_WORKER_POOL.get();
-        eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
-        Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
-        future = new ServerBootstrap()
-                .group(bossGroup, workerGroup)
-                .channel(LocalServerChannel.class)
-                .childHandler(new ChannelInitializer<>() {
+        if (eventBus == null) {
+            eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+            Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
+        }
+        ChannelFuture future;
+        synchronized (channels) {
+            future = new ServerBootstrap()
+                    .group(bossGroup, workerGroup)
+                    .channel(LocalServerChannel.class)
+                    .childHandler(new ChannelInitializer<>() {
 
-                    @Override
-                    protected void initChannel(Channel ch) throws Exception {
-                        var handler = new NetworkHandler(Side.SERVER, eventBus);
-                        handlers.add(handler);
-                        ch.pipeline().addLast("handler", handler);
-                    }
-                }).bind(LocalAddress.ANY).syncUninterruptibly();
-        Platform.getLogger().debug("Launched netty local server at %s:%d");
+                        @Override
+                        protected void initChannel(Channel ch) throws Exception {
+                            var handler = new NetworkHandler(Side.SERVER, eventBus);
+                            ((HandshakeNetworkHandlerContext) handler.getContext()).setEndpoint(NetworkServer.this);
+                            handlers.add(handler);
+                            ch.pipeline().addLast("handler", handler);
+                        }
+                    }).bind(LocalAddress.ANY).syncUninterruptibly();
+            Platform.getLogger().debug("Launched netty local server at %s:%d");
+        }
         return future.channel().localAddress();
     }
 
@@ -104,8 +114,15 @@ public class NetworkServer {
         }
     }
 
-    public void shutdown() {
-        future.channel().close().syncUninterruptibly();
+    public void close() {
+        for (Iterator<ChannelFuture> iterator = channels.iterator(); iterator.hasNext(); ) {
+            ChannelFuture channel = iterator.next();
+            try {
+                channel.channel().close().sync();
+            } catch (InterruptedException e) {
+                Platform.getLogger().error("Interrupted whilst closing network channel", e);
+            }
+        }
     }
 
     public EventBus getEventBus() {
