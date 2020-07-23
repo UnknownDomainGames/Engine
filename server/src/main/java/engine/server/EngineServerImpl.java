@@ -1,5 +1,6 @@
 package engine.server;
 
+import configuration.io.ConfigLoadException;
 import configuration.parser.ConfigParseException;
 import engine.EngineBase;
 import engine.Platform;
@@ -84,7 +85,7 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
             try {
                 serverConfig = new ServerConfig(configPath);
                 serverConfig.load();
-            } catch (ConfigParseException e) {
+            } catch (ConfigParseException | ConfigLoadException e) {
                 logger.warn("Cannot parse server config! Try creating new one", e);
                 serverConfig = new ServerConfig();
                 serverConfig.save();
