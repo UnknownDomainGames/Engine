@@ -25,20 +25,12 @@ public class PreGamePacketHandler {
     }
 
     @Listener
-    public static void onDisconnectedBeforePlay(PacketReceivedEvent<PacketDisconnect> event) {
-        Platform.getLogger().warn("Disconnected from server");
-        if (Platform.getEngineClient().getGraphicsManager().getGUIManager().isShowing() &&
-                Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get() instanceof GuiServerConnectingStatus) {
-            var root = ((GuiServerConnectingStatus) Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get());
-            root.setStatus(true, event.getPacket().getReason());
+    public static void onDisconnected(PacketReceivedEvent<PacketDisconnect> event) {
+        Platform.getLogger().warn("Disconnected from server: {}", event.getPacket().getReason());
+        if (Platform.getEngine().getCurrentGame() != null) {
+            Platform.getEngine().getCurrentGame().terminate();
         }
-//        else { //Disconnected in game
-//            var root = new GuiServerConnectingStatus();
-//            root.lblStatus.setText("Disconnected");
-//            root.isFailed.set(true);
-//            root.lblReason.text().set(event.getPacket().getReason());
-//            Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(root));
-//        }
+        GuiServerConnectingStatus.launchDisconnectedScreen(event.getPacket().getReason());
     }
 
     @Listener

@@ -19,7 +19,6 @@ import engine.server.event.NetworkingStartEvent;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.ConnectionStatus;
 import engine.server.network.NetworkClient;
-import engine.server.network.packet.PacketDisconnect;
 import engine.server.network.packet.PacketGameData;
 import engine.server.network.packet.PacketHandshake;
 import engine.util.Color;
@@ -83,22 +82,6 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
     @Listener
     public void onNetworkingStart(NetworkingStartEvent e) {
         var bus = e.getNetworkingEventBus();
-        bus.<PacketReceivedEvent<PacketDisconnect>, PacketDisconnect>addGenericListener(PacketDisconnect.class, event -> {
-            Platform.getLogger().warn("Disconnected from server");
-            if (!Platform.getEngineClient().getGraphicsManager().getGUIManager().isShowing() ||
-                    !(Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get() instanceof GuiServerConnectingStatus)) { //Disconnected in game
-                var root = new GuiServerConnectingStatus();
-                root.lblStatus.setText("Disconnected");
-                root.isFailed.set(true);
-                root.lblReason.text().set(event.getPacket().getReason());
-                Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(root));
-            } else {
-//                var root = ((GuiServerConnectingStatus) Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get());
-//                root.lblStatus.text().set("Disconnected");
-//                root.isFailed.set(true);
-//                root.lblReason.text().set(event.getPacket().getReason());
-            }
-        });
         bus.<PacketReceivedEvent<PacketGameData>, PacketGameData>addGenericListener(PacketGameData.class, Order.EARLY, event -> {
             Platform.getEngine().getEventBus().unregister(this); //TODO: not supposed to be done here
             if (event.getHandler().isChannelOpen()) {
@@ -115,21 +98,7 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
                 networkClient.close();
             }
             if (!event.getReason().equals("")) {
-                Platform.getLogger().warn("(NetworkDisconnectedEvent)Disconnected from server: {}", event.getReason());
-                if (Platform.getEngine().isPlaying() && !Platform.getEngineClient().getGraphicsManager().getGUIManager().isShowing() ||
-                        !(Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get() instanceof GuiServerConnectingStatus)) { //Disconnected in game
-                    var root = new GuiServerConnectingStatus();
-                    root.lblStatus.setText("Disconnected");
-                    root.isFailed.set(true);
-                    root.lblReason.text().set(event.getReason());
-                    Platform.getEngineClient().getGraphicsManager().getGUIManager().close();
-                    Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(root));
-                } else {
-                    var root = ((GuiServerConnectingStatus) Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get());
-                    root.lblStatus.text().set("Disconnected");
-                    root.isFailed.set(true);
-                    root.lblReason.text().set(event.getReason());
-                }
+                launchDisconnectedScreen(event.getReason());
             }
         });
     }
@@ -183,5 +152,20 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
 //                isFailed.set(true);
 //            }
 //        }
+    }
+
+    public static void launchDisconnectedScreen(String reason) {
+        if (!Platform.getEngineClient().getGraphicsManager().getGUIManager().isShowing() ||
+                !(Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get() instanceof GuiServerConnectingStatus)) { //Disconnected in game
+            var root = new GuiServerConnectingStatus();
+            root.lblStatus.setText("Disconnected");
+            root.setStatus(true, reason);
+            Platform.getEngineClient().getGraphicsManager().getGUIManager().close();
+            Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(root));
+        } else {
+            var root = ((GuiServerConnectingStatus) Platform.getEngineClient().getGraphicsManager().getGUIManager().getShowingScene().root().get());
+            root.lblStatus.text().set("Disconnected");
+            root.setStatus(true, reason);
+        }
     }
 }
