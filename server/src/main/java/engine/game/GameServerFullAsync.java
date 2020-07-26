@@ -178,6 +178,10 @@ public class GameServerFullAsync extends GameBase {
 //        for (World worldCommon : worlds.values()) {
 //            ((WorldCommon) worldCommon).stop();
 //        }
+        if (playerManager != null) {
+            playerManager.saveAllPlayers();
+            playerManager.disconnectAllPlayers();
+        }
         List.copyOf(worlds.values()).forEach(World::unload);
         // TODO: unload mod/resource here
         super.tryTerminate();
@@ -191,5 +195,9 @@ public class GameServerFullAsync extends GameBase {
 
         networkServer.tick();
         getWorlds().forEach(world -> ((WorldCommon) world).tick());
+    }
+
+    public NetworkServer getNetworkServer() {
+        return networkServer;
     }
 }

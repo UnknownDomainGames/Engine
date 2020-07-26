@@ -1,17 +1,22 @@
 package engine.world.chunk;
 
+import com.google.common.collect.Sets;
 import engine.event.world.chunk.ChunkLoadEvent;
 import engine.event.world.chunk.ChunkUnloadEvent;
 import engine.logic.Tickable;
 import engine.math.Math2;
+import engine.math.SphereIterator;
 import engine.player.Player;
 import engine.server.network.packet.PacketChunkData;
+import engine.server.network.packet.PacketUnloadChunk;
 import engine.world.WorldCommon;
 import engine.world.chunk.storage.RegionBasedChunkStorage;
 import engine.world.gen.ChunkGenerator;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import org.apache.commons.lang3.Validate;
+import org.joml.Vector3dc;
+import org.joml.Vector3i;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -159,8 +164,27 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
         }
     }
 
+    public void handlePlayerMove(Player player, Vector3dc prevPos) {
+        if (!player.isControllingEntity()) return; // We cannot do anything if the player does not control an entity
+        var chunkPos = ChunkPos.fromWorldPos(player.getControlledEntity().getPosition());
+        var prevChunkPos = ChunkPos.fromWorldPos(prevPos);
+        var newArea = Sets.newHashSet(SphereIterator.getCoordinatesWithinSphere(viewDistance, chunkPos));
+        var oldArea = Sets.newHashSet(SphereIterator.getCoordinatesWithinSphere(viewDistance, prevChunkPos));
+        // The following terms "unload" and "load" is in client's view but not server's view
+        for (Vector3i shouldUnload : Sets.difference(oldArea, newArea)) {
+            sendUnloadNotice(player, shouldUnload.x, shouldUnload.y, shouldUnload.z);
+        }
+        for (Vector3i shouldLoad : Sets.difference(newArea, oldArea)) {
+            sendChunkData(player, shouldLoad.x, shouldLoad.y, shouldLoad.z);
+        }
+    }
+
+    private void sendUnloadNotice(Player player, int x, int y, int z) {
+        player.getNetworkHandler().sendPacket(new PacketUnloadChunk(world.getName(), x, y, z));
+    }
+
     private void sendChunkData(Player player, int x, int y, int z) {
-        var chunk = getOrLoadChunk(x,y,z);
+        var chunk = getOrLoadChunk(x, y, z);
         player.getNetworkHandler().sendPacket(new PacketChunkData(((CubicChunk) chunk)));
 //        getChunk(x, y, z).filter(chunk -> chunk instanceof CubicChunk)
 //                .ifPresent(chunk -> player.getNetworkHandler().sendPacket(new PacketChunkData((CubicChunk) chunk)));

@@ -8,6 +8,8 @@ import engine.graphics.display.callback.CursorCallback;
 import engine.player.PlayerImpl;
 import engine.player.Profile;
 import engine.server.network.NetworkHandler;
+import engine.server.network.packet.PacketPlayerMove;
+import org.joml.Vector3d;
 
 import javax.annotation.Nonnull;
 
@@ -25,10 +27,47 @@ public class ClientPlayerImpl extends PlayerImpl implements ClientPlayer {
         super(profile, handler, controlledEntity);
     }
 
+    private int tickSinceLastPositionSent = 0;
+    public double lastX;
+    public double lastY;
+    public double lastZ;
+    public float lastYaw;
+    public float lastPitch;
+
+
     @Override
     public void tick() {
         super.tick();
+        if (getControlledEntity() != null) {
+            var dx = getControlledEntity().getPosition().x - lastX;
+            var dy = getControlledEntity().getPosition().y - lastY;
+            var dz = getControlledEntity().getPosition().z - lastZ;
+            var dYaw = getControlledEntity().getRotation().x - lastYaw;
+            var dPitch = getControlledEntity().getRotation().y - lastPitch;
+            ++tickSinceLastPositionSent;
+            boolean shouldUpdatePos = dx * dx + dy * dy + dz * dz >= 0.03 * 0.03 || tickSinceLastPositionSent >= 20;
+            boolean shouldUpdateView = dYaw * dYaw > 0 || dPitch * dPitch > 0;
+            //TODO: onGround status cannot be determined until physics system is implemented
+            if (shouldUpdatePos && shouldUpdateView) {
+                getNetworkHandler().sendPacket(PacketPlayerMove.update(getControlledEntity().getPosition(), new Vector3d(lastX, lastY, lastZ), getControlledEntity().getRotation(), false /*TODO*/));
+            } else if (shouldUpdatePos) {
+                getNetworkHandler().sendPacket(PacketPlayerMove.updatePosition(getControlledEntity().getPosition(), new Vector3d(lastX, lastY, lastZ), false));
+            } else if (shouldUpdateView) {
+                getNetworkHandler().sendPacket(PacketPlayerMove.updateLookAt(getControlledEntity().getRotation(), false));
+            }
 
+            if (shouldUpdatePos) {
+                lastX = getControlledEntity().getPosition().x;
+                lastY = getControlledEntity().getPosition().y;
+                lastZ = getControlledEntity().getPosition().z;
+                tickSinceLastPositionSent = 0;
+            }
+
+            if (shouldUpdateView) {
+                lastYaw = getControlledEntity().getRotation().x;
+                lastPitch = getControlledEntity().getRotation().y;
+            }
+        }
     }
 
     @Override

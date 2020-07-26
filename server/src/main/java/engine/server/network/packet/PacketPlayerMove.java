@@ -17,6 +17,10 @@ public class PacketPlayerMove implements Packet {
     private double posY;
     private double posZ;
 
+    private double lastPosX;
+    private double lastPosY;
+    private double lastPosZ;
+
     private float yaw;
     private float pitch;
 
@@ -36,11 +40,14 @@ public class PacketPlayerMove implements Packet {
         flag = POSITION_CHANGE_MASK;
     }
 
-    public static PacketPlayerMove updatePosition(Vector3dc pos, boolean onGround) {
+    public static PacketPlayerMove updatePosition(Vector3dc pos, Vector3dc lastPos, boolean onGround) {
         var p = new PacketPlayerMove();
         p.posX = pos.x();
         p.posY = pos.y();
         p.posZ = pos.z();
+        p.lastPosX = lastPos.x();
+        p.lastPosY = lastPos.y();
+        p.lastPosZ = lastPos.z();
         p.onGround = onGround;
         p.flag = POSITION_CHANGE_MASK;
         return p;
@@ -55,11 +62,14 @@ public class PacketPlayerMove implements Packet {
         return p;
     }
 
-    public static PacketPlayerMove update(Vector3dc pos, Vector3fc lookat, boolean onGround) {
+    public static PacketPlayerMove update(Vector3dc pos, Vector3dc lastPos, Vector3fc lookat, boolean onGround) {
         var p = new PacketPlayerMove();
         p.posX = pos.x();
         p.posY = pos.y();
         p.posZ = pos.z();
+        p.lastPosX = lastPos.x();
+        p.lastPosY = lastPos.y();
+        p.lastPosZ = lastPos.z();
         p.yaw = lookat.x();
         p.pitch = lookat.y();
         p.onGround = onGround;
@@ -75,6 +85,9 @@ public class PacketPlayerMove implements Packet {
             buf.writeDouble(posX);
             buf.writeDouble(posY);
             buf.writeDouble(posZ);
+            buf.writeDouble(lastPosX);
+            buf.writeDouble(lastPosY);
+            buf.writeDouble(lastPosZ);
         }
         if ((flag & LOOK_CHANGE_MASK) != 0) {
             buf.writeFloat(yaw);
@@ -90,6 +103,9 @@ public class PacketPlayerMove implements Packet {
             posX = buf.readDouble();
             posY = buf.readDouble();
             posZ = buf.readDouble();
+            lastPosX = buf.readDouble();
+            lastPosY = buf.readDouble();
+            lastPosZ = buf.readDouble();
         }
         if ((flag & LOOK_CHANGE_MASK) != 0) {
             yaw = buf.readFloat();
@@ -109,12 +125,32 @@ public class PacketPlayerMove implements Packet {
         return posZ;
     }
 
+    public double getLastPosX() {
+        return lastPosX;
+    }
+
+    public double getLastPosY() {
+        return lastPosY;
+    }
+
+    public double getLastPosZ() {
+        return lastPosZ;
+    }
+
     public float getYaw() {
         return yaw;
     }
 
     public float getPitch() {
         return pitch;
+    }
+
+    public boolean hasPositionUpdated() {
+        return (flag & POSITION_CHANGE_MASK) != 0;
+    }
+
+    public boolean hasLookUpdated() {
+        return (flag & LOOK_CHANGE_MASK) != 0;
     }
 
     public boolean isOnGround() {

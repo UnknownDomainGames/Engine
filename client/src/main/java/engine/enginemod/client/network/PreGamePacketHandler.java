@@ -2,7 +2,9 @@ package engine.enginemod.client.network;
 
 import engine.Platform;
 import engine.client.game.GameClientMultiplayer;
+import engine.client.input.controller.EntityCameraController;
 import engine.enginemod.client.gui.game.GuiServerConnectingStatus;
+import engine.entity.CameraEntity;
 import engine.event.Listener;
 import engine.game.MultiplayerGameData;
 import engine.server.event.PacketReceivedEvent;
@@ -49,6 +51,11 @@ public class PreGamePacketHandler {
             event.getHandler().setStatus(ConnectionStatus.GAMEPLAY, context);
             var game = new GameClientMultiplayer(Platform.getEngineClient(), networkClient, MultiplayerGameData.fromPacket(event.getPacket()));
             Platform.getEngine().startGame(game);
+            //TODO: move client player join to separate position
+            game.getWorld("default").map(world -> world.spawnEntity(CameraEntity.class, 0, 6, 0))
+                    .map(cameraEntity -> game.joinPlayer(Platform.getEngineClient().getPlayerProfile(), cameraEntity));
+            game.getClientPlayer().setEntityController(new EntityCameraController());
+
         }
     }
 

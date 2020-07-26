@@ -72,6 +72,10 @@ public final class EngineModListeners {
         event.register(new PacketProvider.Builder().type(PacketSyncRegistry.class).name("registry-sync").build());
         event.register(new PacketProvider.Builder().type(PacketGameData.class).name("game-data").build());
         event.register(new PacketProvider.Builder().type(PacketChunkData.class).name("chunk-data").build());
+        event.register(new PacketProvider.Builder().type(PacketUnloadChunk.class).name("chunk-unload").build());
+        event.register(new PacketProvider.Builder().type(PacketPlayerMove.class).name("player-move").build());
+        event.register(new PacketProvider.Builder().type(PacketPlayerPosView.class).name("player-posview").build());
+        event.register(new PacketProvider.Builder().type(PacketPlayerPosView.Confirmed.class).name("player-posview-confirm").build());
     }
 
 }

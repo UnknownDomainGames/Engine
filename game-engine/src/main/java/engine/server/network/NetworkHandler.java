@@ -93,6 +93,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     public void closeChannel(String reason) {
         if (this.channel != null && this.channel.isOpen()) {
             disconnectionReason = reason;
+            this.channel.config().setAutoRead(false);
             this.channel.close().awaitUninterruptibly();
             postDisconnect();
         }
@@ -103,7 +104,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     public void postDisconnect() {
         if (!disconnected) {
             disconnected = true;
-            var event = new NetworkDisconnectedEvent(disconnectionReason);
+            var event = new NetworkDisconnectedEvent(this, disconnectionReason);
             var mainBus = Platform.getEngine().getEventBus();
             if (eventBus != mainBus) {
                 eventBus.post(event);

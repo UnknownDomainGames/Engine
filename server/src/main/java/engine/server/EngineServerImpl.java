@@ -155,6 +155,7 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
 
     private void tryTerminate() {
         logger.info("Engine terminating!");
+        nettyServer.close();
         if (isPlaying()) {
             game.terminate();
         }

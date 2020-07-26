@@ -5,14 +5,24 @@ import configuration.io.ConfigIOUtils;
 import engine.Platform;
 import engine.entity.CameraEntity;
 import engine.entity.Entity;
+import engine.event.Listener;
 import engine.game.GameServerFullAsync;
 import engine.player.Profile;
+import engine.server.event.NetworkDisconnectedEvent;
+import engine.server.event.PacketReceivedEvent;
+import engine.server.network.ConnectionStatus;
 import engine.server.network.NetworkHandler;
+import engine.server.network.ServerGameplayNetworkHandlerContext;
+import engine.server.network.packet.PacketDisconnect;
 import engine.server.network.packet.PacketGameData;
+import engine.server.network.packet.PacketPlayerMove;
+import engine.server.network.packet.PacketPlayerPosView;
 import engine.world.WorldCommon;
+import org.joml.Vector3d;
 
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 public class PlayerManager {
@@ -23,6 +33,8 @@ public class PlayerManager {
 
     public PlayerManager(GameServerFullAsync gameServer) {
         this.gameServer = gameServer;
+        Platform.getEngine().getEventBus().register(this);
+        gameServer.getNetworkServer().getEventBus().register(this);
     }
 
     public void onPlayerConnect(NetworkHandler networkHandler, ServerPlayer player) {
@@ -38,6 +50,7 @@ public class PlayerManager {
         players.add(player);
         networkHandler.sendPacket(new PacketGameData(gameServer.getData()));
         ((WorldCommon) player.getWorld()).getChunkManager().handlePlayerJoin(player);
+        handlePlayerPosViewSyncing(player);
     }
 
     public void joinPlayer(ServerPlayer player) {
@@ -108,5 +121,65 @@ public class PlayerManager {
         config.set("yaw", player.getControlledEntity().getRotation().x);
         config.set("pitch", player.getControlledEntity().getRotation().y);
         config.save(path);
+    }
+
+    public void saveAllPlayers() {
+        for (ServerPlayer player : players) {
+            savePlayerData(player);
+        }
+    }
+
+    public void disconnectAllPlayers() {
+        for (ServerPlayer player : players) {
+            var reason = "Server close";
+            player.getNetworkHandler().sendPacket(new PacketDisconnect(reason), future -> player.getNetworkHandler().closeChannel(reason));
+        }
+    }
+
+    @Listener
+    public void onPlayerDisconnected(NetworkDisconnectedEvent event) {
+        if (event.getHandler().getStatus() == ConnectionStatus.GAMEPLAY) {
+            var player = ((ServerGameplayNetworkHandlerContext) event.getHandler().getContext()).getPlayer();
+            savePlayerData(player);
+            players.remove(player);
+        }
+    }
+
+    @Listener
+    public void onPlayerMove(PacketReceivedEvent<PacketPlayerMove> event) {
+        if (event.getHandler().getStatus() == ConnectionStatus.GAMEPLAY) {
+            var player = ((ServerGameplayNetworkHandlerContext) event.getHandler().getContext()).getPlayer();
+            if (player.getControlledEntity() != null) {
+                if (event.getPacket().hasPositionUpdated()) {
+                    var dx = event.getPacket().getLastPosX() - player.getControlledEntity().getPosition().x;
+                    var dy = event.getPacket().getLastPosY() - player.getControlledEntity().getPosition().y;
+                    var dz = event.getPacket().getLastPosZ() - player.getControlledEntity().getPosition().z;
+                    if (dx * dx + dy * dy + dz * dz >= 0.5 * 0.5) { //TODO: adjust the constant to the most suitable one
+                        // Client pos and server pos has significant distance, sync back with client
+                        handlePlayerPosViewSyncing(player);
+                        return;
+                    }
+                    var posX = event.getPacket().getPosX();
+                    var posY = event.getPacket().getPosY();
+                    var posZ = event.getPacket().getPosZ();
+                    var distX = posX - event.getPacket().getLastPosX();
+                    var distY = posY - event.getPacket().getLastPosY();
+                    var distZ = posZ - event.getPacket().getLastPosZ();
+                    var prev = player.getControlledEntity().getPosition().get(new Vector3d());
+                    player.getControlledEntity().getPosition().set(posX, posY, posZ);
+                    ((WorldCommon) player.getWorld()).getChunkManager().handlePlayerMove(player, prev);
+                }
+
+                if (event.getPacket().hasLookUpdated()) {
+                    player.getControlledEntity().getRotation().set(event.getPacket().getYaw(), event.getPacket().getPitch(), 0);
+                }
+            }
+        }
+    }
+
+    public void handlePlayerPosViewSyncing(ServerPlayer player) {
+        var networkHandler = player.getNetworkHandler();
+        var packet = new PacketPlayerPosView(player.getControlledEntity().getPosition().x, player.getControlledEntity().getPosition().y, player.getControlledEntity().getPosition().z, player.getControlledEntity().getRotation().x, player.getControlledEntity().getRotation().y, 0, new Random().nextInt());
+        networkHandler.sendPacket(packet);
     }
 }
