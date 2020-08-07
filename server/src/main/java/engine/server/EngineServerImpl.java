@@ -4,6 +4,7 @@ import configuration.io.ConfigLoadException;
 import configuration.parser.ConfigParseException;
 import engine.EngineBase;
 import engine.Platform;
+import engine.client.game.GameClient;
 import engine.enginemod.EngineModListeners;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
@@ -128,13 +129,18 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
     }
 
     @Override
-    public Game getCurrentGame() {
+    public Game getCurrentLogicGame() {
         return game;
     }
 
     @Override
+    public GameClient getCurrentClientGame() {
+        throw new UnsupportedOperationException("Cannot get client game from delegated server");
+    }
+
+    @Override
     public void startGame(Game game) {
-        if(isPlaying()){
+        if (isPlaying()) {
             throw new IllegalStateException("Game is running");
         }
         this.game = Objects.requireNonNull(game);

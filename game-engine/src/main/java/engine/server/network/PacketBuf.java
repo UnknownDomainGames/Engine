@@ -1,6 +1,5 @@
 package engine.server.network;
 
-import engine.Platform;
 import engine.item.ItemStack;
 import engine.math.BlockPos;
 import engine.registry.Registries;
@@ -124,14 +123,12 @@ public class PacketBuf extends ByteBuf {
         return null;
     }
 
-    private BlockHitResult readBlockHitResult() {
+    private BlockHitResult.Postponed readBlockHitResult() {
         var worldName = readString();
-        //FIXME: getting world in PacketBuffer is not a good idea
-        var optional = Platform.getEngine().getCurrentGame().getWorld(worldName);
         var blockPos = readBlockPos();
         var direction = readEnum(Direction.class);
         var hitPt = new Vector3f(readFloat(), readFloat(), readFloat());
-        return new BlockHitResult(optional.orElse(null), blockPos, optional.map(world -> world.getBlock(blockPos)).orElse(null), hitPt, direction);
+        return new BlockHitResult.Postponed(worldName, blockPos, hitPt, direction);
     }
 
     public void writeItemStack(ItemStack stack) {

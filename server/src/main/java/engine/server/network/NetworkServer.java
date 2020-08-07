@@ -42,10 +42,7 @@ public class NetworkServer implements NetworkEndpoint {
         Platform.getLogger().debug(String.format("Start launching netty server at %s:%d", address == null ? "*" : address.getHostAddress(), port));
         var bossGroup = DEFAULT_SERVER_ACCEPTOR_POOL.get();
         var workerGroup = DEFAULT_SERVER_WORKER_POOL.get();
-        if (eventBus == null) {
-            eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
-            Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
-        }
+        prepareNetworkEventBus();
         synchronized (channels) {
             channels.add(new ServerBootstrap()
                     .group(bossGroup, workerGroup)
@@ -76,10 +73,7 @@ public class NetworkServer implements NetworkEndpoint {
         Platform.getLogger().debug("Start launching netty local server");
         var bossGroup = DEFAULT_SERVER_ACCEPTOR_POOL.get();
         var workerGroup = DEFAULT_SERVER_WORKER_POOL.get();
-        if (eventBus == null) {
-            eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
-            Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
-        }
+        prepareNetworkEventBus();
         ChannelFuture future;
         synchronized (channels) {
             future = new ServerBootstrap()
@@ -98,6 +92,13 @@ public class NetworkServer implements NetworkEndpoint {
             Platform.getLogger().debug("Launched netty local server at %s:%d");
         }
         return future.channel().localAddress();
+    }
+
+    public void prepareNetworkEventBus() {
+        if (eventBus == null) {
+            eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+            Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
+        }
     }
 
     public void tick() {

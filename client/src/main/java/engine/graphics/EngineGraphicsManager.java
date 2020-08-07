@@ -131,7 +131,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
         Geometry selectedBlock = new SelectedBlock();
         selectedBlock.setController((node, tpf) -> {
             if (!getEngine().isPlaying()) return;
-            var player = getEngine().getCurrentGame().getClientPlayer();
+            var player = getEngine().getCurrentClientGame().getClientPlayer();
             if (player == null) return;
             var camera = getViewport().getCamera();
             var hit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFront(), 10);
@@ -164,7 +164,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
         }
 
         if (engine.isPlaying()) {
-            var player = engine.getCurrentGame().getClientPlayer();
+            var player = engine.getCurrentClientGame().getClientPlayer();
             if (player != null && player.getEntityController() != null) {
                 player.getEntityController().updateCamera(viewport.getCamera(), timeToLastUpdate);
             }

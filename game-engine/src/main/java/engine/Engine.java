@@ -1,5 +1,6 @@
 package engine;
 
+import engine.client.game.GameClient;
 import engine.event.EventBus;
 import engine.game.Game;
 import engine.mod.ModManager;
@@ -47,7 +48,9 @@ public interface Engine {
 
     void runEngine();
 
-    Game getCurrentGame();
+    GameClient getCurrentClientGame();
+
+    Game getCurrentLogicGame();
 
     void startGame(Game game);
 

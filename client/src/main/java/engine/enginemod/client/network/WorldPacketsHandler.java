@@ -9,7 +9,7 @@ import engine.server.network.packet.s2c.PacketBlockUpdate;
 public class WorldPacketsHandler {
     @Listener
     public static void onBlockUpdate(PacketReceivedEvent<PacketBlockUpdate> event) {
-        Platform.getEngine().getCurrentGame().getWorld(event.getPacket().getWorldName()).ifPresent(world ->
+        Platform.getEngine().getCurrentClientGame().getWorld(event.getPacket().getWorldName()).ifPresent(world ->
                 world.setBlock(event.getPacket().getPos(), event.getPacket().getBlock(), new BlockChangeCause.WorldSyncCause(), false));
     }
 }

@@ -240,6 +240,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             integratedServer.runEngine();
         }, "Integrated Server").start();
         while (!integratedServer.isPlaying()) {
+            Platform.getLogger().debug("waiting for server readyaaaa");
             //TODO: show progress
         }
         var socketAddress = integratedServer.getNettyServer().runLocal();
@@ -272,8 +273,13 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     @Override
-    public GameClient getCurrentGame() {
+    public GameClient getCurrentClientGame() {
         return game;
+    }
+
+    @Override
+    public Game getCurrentLogicGame() {
+        return integratedServer != null ? integratedServer.getCurrentLogicGame() : null;
     }
 
     @Override

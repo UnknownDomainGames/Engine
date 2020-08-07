@@ -13,7 +13,7 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
 
     public void init(GraphicsManager context) {
         EntityRenderManagerImpl.Internal.setInstance(this);
-        context.getEngine().getCurrentGame().getEventBus().post(new RegisterEntityRendererEvent(this::register));
+        context.getEngine().getCurrentClientGame().getEventBus().post(new RegisterEntityRendererEvent(this::register));
         renderers.values().forEach(entityRenderer -> entityRenderer.init(context));
     }
 

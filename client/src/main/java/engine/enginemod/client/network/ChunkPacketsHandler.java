@@ -12,7 +12,7 @@ public class ChunkPacketsHandler {
     @Listener
     public static void onChunkDataReceived(PacketReceivedEvent<PacketChunkData> event) {
         if (Platform.getEngineClient().isPlaying()) {
-            Platform.getEngineClient().getCurrentGame().getWorld(event.getPacket().getWorldName())
+            Platform.getEngineClient().getCurrentClientGame().getWorld(event.getPacket().getWorldName())
                     .ifPresent(world -> ((WorldClient) world).getChunkManager().loadChunkFromPacket(event.getPacket()));
         }
     }
@@ -20,7 +20,7 @@ public class ChunkPacketsHandler {
     @Listener
     public static void onReceiveChunkUnloadNotice(PacketReceivedEvent<PacketUnloadChunk> event) {
         if (Platform.getEngine().isPlaying()) {
-            Platform.getEngine().getCurrentGame().getWorld(event.getPacket().getName())
+            Platform.getEngine().getCurrentClientGame().getWorld(event.getPacket().getName())
                     .ifPresent(world -> ((WorldClient) world).getChunkManager().getChunk(event.getPacket().getX(), event.getPacket().getY(), event.getPacket().getZ())
                             .ifPresent(chunk -> ((WorldClient) world).getChunkManager().unloadChunk(chunk)));
         }

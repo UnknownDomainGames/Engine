@@ -1,6 +1,7 @@
 package engine.client;
 
 import engine.EngineBase;
+import engine.client.game.GameClient;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
 import engine.game.GameData;
@@ -78,6 +79,7 @@ public class EngineServerIntegrated extends EngineBase implements EngineServer {
         logger.info("Finishing initialization!");
         eventBus.post(new EngineEvent.Ready(this));
         nettyServer = new NetworkServer();
+        nettyServer.prepareNetworkEventBus();
         // NOTE: delay server binding to client connection
         logger.info("Starting game for world");
         Path gameBasePath = this.getRunPath().resolve("game");
@@ -86,8 +88,13 @@ public class EngineServerIntegrated extends EngineBase implements EngineServer {
     }
 
     @Override
-    public Game getCurrentGame() {
+    public Game getCurrentLogicGame() {
         return game;
+    }
+
+    @Override
+    public GameClient getCurrentClientGame() {
+        return parent != null ? parent.getCurrentClientGame() : null;
     }
 
     @Override

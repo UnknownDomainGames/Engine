@@ -24,6 +24,7 @@ import engine.server.network.packet.c2s.PacketPlayerMove;
 import engine.server.network.packet.s2c.PacketBlockUpdate;
 import engine.server.network.packet.s2c.PacketGameData;
 import engine.server.network.packet.s2c.PacketPlayerPosView;
+import engine.util.Side;
 import engine.world.WorldCommon;
 import engine.world.hit.BlockHitResult;
 import org.joml.Vector3d;
@@ -146,7 +147,7 @@ public class PlayerManager {
 
     @Listener
     public void onPlayerDisconnected(NetworkDisconnectedEvent event) {
-        if (event.getHandler().getStatus() == ConnectionStatus.GAMEPLAY) {
+        if (event.getHandler().getStatus() == ConnectionStatus.GAMEPLAY && event.getHandler().getSide() == Side.SERVER) {
             var player = ((ServerGameplayNetworkHandlerContext) event.getHandler().getContext()).getPlayer();
             savePlayerData(player);
             players.remove(player);
@@ -202,13 +203,17 @@ public class PlayerManager {
             case INTERACT_BLOCK:
                 var cause = new BlockInteractCause.PlayerCause(player);
                 var blockHitResult = ((BlockHitResult) event.getPacket().getHitResult());
+                if (blockHitResult instanceof BlockHitResult.Postponed) {
+                    blockHitResult = ((BlockHitResult.Postponed) blockHitResult).build(gameServer);
+                }
                 gameServer.getEngine().getEventBus().post(new BlockInteractEvent.Activate(blockHitResult, cause));
+                BlockHitResult finalBlockHitResult = blockHitResult;
                 blockHitResult.getBlock().getComponent(ActivateBehavior.class).ifPresent(activateBehavior ->
-                        activateBehavior.onActivated(blockHitResult, cause));
+                        activateBehavior.onActivated(finalBlockHitResult, cause));
                 player.getControlledEntity().getComponent(TwoHands.class).ifPresent(twoHands ->
                         twoHands.getMainHand().ifNonEmpty(itemStack ->
                                 itemStack.getItem().getComponent(ActivateBlockBehavior.class).ifPresent(activateBlockBehavior ->
-                                        activateBlockBehavior.onActivate(itemStack, blockHitResult, cause))));
+                                        activateBlockBehavior.onActivate(itemStack, finalBlockHitResult, cause))));
                 event.getHandler().sendPacket(new PacketBlockUpdate(blockHitResult.getWorld(), blockHitResult.getPos()));
                 event.getHandler().sendPacket(new PacketBlockUpdate(blockHitResult.getWorld(), blockHitResult.getPos().offset(blockHitResult.getDirection())));
                 break;

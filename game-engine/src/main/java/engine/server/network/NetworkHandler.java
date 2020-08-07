@@ -226,7 +226,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
             this.packetInAverage = (packetInAverage * (RANGE_SECONDS_COUNTED_FOR_AVERAGE - 1) + packetInCounter) / (float) RANGE_SECONDS_COUNTED_FOR_AVERAGE;
             packetOutCounter = 0;
             packetInCounter = 0;
-            if (Math.round(packetOutAverage * RANGE_SECONDS_COUNTED_FOR_AVERAGE) == 0) {
+            if (!isLocal() && Math.round(packetOutAverage * RANGE_SECONDS_COUNTED_FOR_AVERAGE) == 0) {
                 sendPacket(new PacketAlive(false));
             }
         }

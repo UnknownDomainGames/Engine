@@ -76,7 +76,7 @@ public final class HUDDebug extends HUDControl {
     @Listener
     public void update(RenderEvent.Pre event) {
         EngineClient engine = Platform.getEngineClient();
-        Entity player = engine.getCurrentGame().getClientPlayer().getControlledEntity();
+        Entity player = engine.getCurrentClientGame().getClientPlayer().getControlledEntity();
         GraphicsManager manager = engine.getGraphicsManager();
 
         fps.setText("FPS: " + manager.getFPS());
@@ -93,7 +93,7 @@ public final class HUDDebug extends HUDControl {
         gpuMemory.setText(format("GPU Memory: %d MB / %d MB", (gpuInfo.getTotalMemory() - gpuInfo.getFreeMemory()) / 1024, gpuInfo.getTotalMemory() / 1024));
 
         Camera camera = manager.getViewport().getCamera();
-        HitResult hitResult = manager.getEngine().getCurrentGame().getClientWorld().raycast(camera.getPosition(), camera.getFront(), 10);
+        HitResult hitResult = manager.getEngine().getCurrentClientGame().getClientWorld().raycast(camera.getPosition(), camera.getFront(), 10);
         if (hitResult.isFailure()) {
             this.hitResult.setVisible(false);
         } else if (hitResult instanceof EntityHitResult) {

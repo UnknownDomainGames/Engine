@@ -257,7 +257,7 @@ public class WorldCommon implements World {
 
     @Nonnull
     @Override
-    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
+    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause, boolean shouldNotify) {
         Block oldBlock = getBlock(pos);
         BlockChangeEvent pre, post;
         if (block == AirBlock.AIR) {
@@ -278,7 +278,9 @@ public class WorldCommon implements World {
             block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
 
             getGame().getEventBus().post(post);
-            notifyNeighborChanged(pos, block, cause);
+            if (shouldNotify) {
+                notifyNeighborChanged(pos, block, cause);
+            }
         }
         return oldBlock;
     }

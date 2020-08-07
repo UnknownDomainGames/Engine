@@ -60,66 +60,66 @@ public final class EngineModClientListeners {
                 KeyBinding.builder()
                         .name("player.move.forward")
                         .key(Key.KEY_W)
-                        .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.FORWARD, true))
-                        .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.FORWARD, false))
+                        .startHandler(c -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.FORWARD, true))
+                        .endHandler((c, i) -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.FORWARD, false))
                         .build());
         event.register(
                 KeyBinding.builder()
                         .name("player.move.backward")
                         .key(Key.KEY_S)
-                        .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.BACKWARD, true))
-                        .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.BACKWARD, false))
+                        .startHandler(c -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.BACKWARD, true))
+                        .endHandler((c, i) -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.BACKWARD, false))
                         .build());
         event.register(KeyBinding.builder()
                 .name("player.move.left")
                 .key(Key.KEY_A)
-                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.LEFT, true))
-                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.LEFT, false))
+                .startHandler(c -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.LEFT, true))
+                .endHandler((c, i) -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.LEFT, false))
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.move.right")
                 .key(Key.KEY_D)
-                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.RIGHT, true))
-                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.RIGHT, false))
+                .startHandler(c -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.RIGHT, true))
+                .endHandler((c, i) -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.RIGHT, false))
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.move.jump")
                 .key(Key.KEY_SPACE)
-                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.UP, true))
-                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.UP, false))
+                .startHandler(c -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.UP, true))
+                .endHandler((c, i) -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.UP, false))
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.move.sneak")
                 .key(Key.KEY_LEFT_SHIFT)
-                .startHandler(c -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.DOWN, true))
-                .endHandler((c, i) -> c.getCurrentGame().getClientPlayer().getEntityController().onInputMove(MotionType.DOWN, false))
+                .startHandler(c -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.DOWN, true))
+                .endHandler((c, i) -> c.getCurrentClientGame().getClientPlayer().getEntityController().onInputMove(MotionType.DOWN, false))
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.mouse.left")
                 .key(Key.MOUSE_BUTTON_LEFT)
                 .startHandler(c -> {
-                    c.getCurrentGame().getClientPlayer().getEntityController().onAttack();
+                    c.getCurrentClientGame().getClientPlayer().getEntityController().onAttack();
                 })
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.mouse.right")
                 .key(Key.MOUSE_BUTTON_RIGHT)
                 .startHandler(c -> {
-                    c.getCurrentGame().getClientPlayer().getEntityController().onInteract();
+                    c.getCurrentClientGame().getClientPlayer().getEntityController().onInteract();
                 })
                 .build());
         event.register(KeyBinding.builder()
                 .name("player.mouse.middle")
                 .key(Key.MOUSE_BUTTON_3)
                 .startHandler(c -> {
-                    c.getCurrentGame().getClientPlayer().getEntityController().onPickBlock();
+                    c.getCurrentClientGame().getClientPlayer().getEntityController().onPickBlock();
                 })
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.chat")
                 .key(Key.KEY_ENTER)
                 .startHandler(c -> {
-                    Scene scene = new Scene(new GuiChat(c.getCurrentGame()));
+                    Scene scene = new Scene(new GuiChat(c.getCurrentClientGame()));
                     c.getGraphicsManager().getGUIManager().show(scene);
                 })
                 .build());

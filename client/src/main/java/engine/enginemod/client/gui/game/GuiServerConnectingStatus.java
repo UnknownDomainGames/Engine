@@ -92,8 +92,8 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
             }
         });
         Platform.getEngine().getEventBus().<NetworkDisconnectedEvent>addListener(event -> {
-            if (Platform.getEngine().getCurrentGame() != null) {
-                Platform.getEngine().getCurrentGame().terminate();
+            if (Platform.getEngine().getCurrentClientGame() != null) {
+                Platform.getEngine().getCurrentClientGame().terminate();
             } else {
                 networkClient.close();
             }

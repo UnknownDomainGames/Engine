@@ -44,7 +44,7 @@ public final class GUIItemList extends AnchorPane {
         for (Map.Entry<String, Item> entry : Registries.getItemRegistry().getEntries()) {
             ItemView itemView = new ItemView(new ItemStack(entry.getValue()));
             itemView.setOnMouseClicked(event -> {
-                var player = Platform.getEngineClient().getCurrentGame().getClientPlayer();
+                var player = Platform.getEngineClient().getCurrentClientGame().getClientPlayer();
                 player.getControlledEntity()
                         .getComponent(TwoHands.class)
                         .ifPresent(twoHands -> {

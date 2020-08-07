@@ -15,7 +15,7 @@ public class PlayerRelatedPacketHandler {
     @Listener
     public static void onPlayerPosView(PacketReceivedEvent<PacketPlayerPosView> event) {
         if (Platform.getEngine().isPlaying()) {
-            var game = Platform.getEngine().getCurrentGame();
+            var game = Platform.getEngine().getCurrentClientGame();
             if (game instanceof GameClient) {
                 var player = ((GameClient) game).getClientPlayer();
                 if (player.getControlledEntity() != null) {

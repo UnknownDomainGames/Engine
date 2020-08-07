@@ -47,7 +47,7 @@ public class ServerHandlingListeners {
             if (event.getHandler().isLocal() || true /* TODO: check if server shall request Online mode */) {
                 event.getHandler().sendPacket(new PacketLoginSuccess(((ServerLoginNetworkHandlerContext) event.getHandler().getContext()).getProfile()));
                 //TODO: straight to game_prepare
-                var playerManager = ((GameServerFullAsync) Platform.getEngine().getCurrentGame()).getPlayerManager();
+                var playerManager = ((GameServerFullAsync) Platform.getEngine().getCurrentLogicGame()).getPlayerManager();
                 var player = playerManager.createPlayer(event.getHandler(), ((ServerLoginNetworkHandlerContext) event.getHandler().getContext()).getProfile());
                 event.getHandler().sendPacket(new PacketSyncRegistry(Registries.getBlockRegistry()));
                 event.getHandler().sendPacket(new PacketSyncRegistry(Registries.getItemRegistry()));
