@@ -1,14 +1,23 @@
 package engine.client.world;
 
+import engine.block.AirBlock;
 import engine.block.Block;
+import engine.block.component.DestroyBehavior;
+import engine.block.component.NeighborChangeListener;
+import engine.block.component.PlaceBehavior;
 import engine.client.world.chunk.WorldClientChunkManager;
 import engine.component.Component;
 import engine.component.ComponentAgent;
 import engine.entity.Entity;
+import engine.event.block.BlockChangeEvent;
+import engine.event.block.BlockDestroyEvent;
+import engine.event.block.BlockPlaceEvent;
+import engine.event.block.BlockReplaceEvent;
 import engine.event.block.cause.BlockChangeCause;
 import engine.game.Game;
 import engine.math.BlockPos;
 import engine.registry.Registries;
+import engine.util.Direction;
 import engine.world.*;
 import engine.world.chunk.Chunk;
 import engine.world.chunk.ChunkConstants;
@@ -27,10 +36,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static engine.world.chunk.ChunkConstants.*;
+
 public class WorldClient implements World, Runnable {
 
     private final Game game;
     private final WorldProvider worldProvider;
+    private String name;
     private WorldClientChunkManager chunkManager;
     private final DefaultEntityManager entityManager;
     private final CollisionManager collisionManager;
@@ -39,9 +51,10 @@ public class WorldClient implements World, Runnable {
 
     protected boolean isClient = true;
 
-    public WorldClient(Game game, WorldProvider provider) {
+    public WorldClient(Game game, WorldProvider provider, String name) {
         this.game = game;
         this.worldProvider = provider;
+        this.name = name;
         this.chunkManager = new WorldClientChunkManager(this);
         this.collisionManager = new DefaultCollisionManager(this);
         this.entityManager = new DefaultEntityManager(this);
@@ -84,7 +97,7 @@ public class WorldClient implements World, Runnable {
 
     @Override
     public String getName() {
-        return "World from server";
+        return name;
     }
 
     @Override
@@ -234,10 +247,44 @@ public class WorldClient implements World, Runnable {
         return getBlock(x, y, z) == Registries.getBlockRegistry().air();
     }
 
+    //TODO: check if this implementation shall modify or not
     @Nonnull
     @Override
-    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
-        return getBlock(pos.x(), pos.y(), pos.z());
+    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause, boolean shouldNotify) {
+        Block oldBlock = getBlock(pos);
+        BlockChangeEvent pre, post;
+        if (block == AirBlock.AIR) {
+            pre = new BlockDestroyEvent.Pre(this, pos, oldBlock, block, cause);
+            post = new BlockDestroyEvent.Post(this, pos, oldBlock, block, cause);
+        } else if (oldBlock == AirBlock.AIR) {
+            pre = new BlockPlaceEvent.Pre(this, pos, oldBlock, block, cause);
+            post = new BlockPlaceEvent.Post(this, pos, oldBlock, block, cause);
+        } else {
+            pre = new BlockReplaceEvent.Pre(this, pos, oldBlock, block, cause);
+            post = new BlockReplaceEvent.Post(this, pos, oldBlock, block, cause);
+        }
+        if (!getGame().getEventBus().post(pre)) {
+            chunkManager.getOrLoadChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS)
+                    .setBlock(pos, block, cause);
+
+            oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
+            block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
+
+            getGame().getEventBus().post(post);
+            if (shouldNotify) {
+                notifyNeighborChanged(pos, block, cause);
+            }
+        }
+        return oldBlock;
+    }
+
+    protected void notifyNeighborChanged(BlockPos pos, Block block, BlockChangeCause cause) {
+        for (Direction direction : Direction.values()) {
+            BlockPos neighborPos = pos.offset(direction);
+            Block neighbor = getBlock(neighborPos);
+            neighbor.getComponent(NeighborChangeListener.class)
+                    .ifPresent(listener -> listener.onNeighborChanged(this, neighborPos, neighbor, direction.opposite(), pos, block, cause));
+        }
     }
 
     @Nonnull

@@ -13,6 +13,7 @@ public class ClientPacketEventsHandler {
         bus.register(ChunkPacketsHandler.class);
         bus.register(PlayerRelatedPacketHandler.class);
         bus.register(PreGamePacketHandler.class);
+        bus.register(WorldPacketsHandler.class);
         bus.<PacketReceivedEvent<PacketAlive>, PacketAlive>addGenericListener(PacketAlive.class, e1 -> {
             if (!e1.getPacket().isPong()) {
                 e1.getHandler().sendPacket(new PacketAlive(true));

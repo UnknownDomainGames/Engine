@@ -14,6 +14,7 @@ import engine.input.KeyCode;
 import engine.item.Item;
 import engine.item.ItemStack;
 import engine.registry.Registries;
+import engine.server.network.packet.c2s.PacketTwoHandComponentChange;
 import engine.util.Color;
 
 import java.util.Map;
@@ -42,9 +43,15 @@ public final class GUIItemList extends AnchorPane {
         var hBox = new HBox();
         for (Map.Entry<String, Item> entry : Registries.getItemRegistry().getEntries()) {
             ItemView itemView = new ItemView(new ItemStack(entry.getValue()));
-            itemView.setOnMouseClicked(event -> Platform.getEngineClient().getCurrentGame().getClientPlayer().getControlledEntity()
-                    .getComponent(TwoHands.class)
-                    .ifPresent(twoHands -> twoHands.setMainHand(itemView.itemStack().get())));
+            itemView.setOnMouseClicked(event -> {
+                var player = Platform.getEngineClient().getCurrentGame().getClientPlayer();
+                player.getControlledEntity()
+                        .getComponent(TwoHands.class)
+                        .ifPresent(twoHands -> {
+                            twoHands.setMainHand(itemView.getItemStack());
+                            player.getNetworkHandler().sendPacket(new PacketTwoHandComponentChange.Builder().setMainHand(itemView.getItemStack()).build());
+                        });
+            });
             itemView.size().set(40);
             hBox.getChildren().add(itemView);
         }

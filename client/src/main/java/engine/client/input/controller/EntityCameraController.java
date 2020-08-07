@@ -21,6 +21,7 @@ import engine.item.component.ClickBlockBehavior;
 import engine.item.component.ClickEntityBehavior;
 import engine.math.Math2;
 import engine.registry.Registries;
+import engine.server.network.packet.c2s.PacketPlayerAction;
 import engine.world.hit.BlockHitResult;
 import engine.world.hit.EntityHitResult;
 import engine.world.hit.HitResult;
@@ -151,6 +152,7 @@ public class EntityCameraController implements EntityController {
                     twoHands.getMainHand().ifNonEmpty(itemStack ->
                             itemStack.getItem().getComponent(ClickBlockBehavior.class).ifPresent(clickBlockBehavior ->
                                     clickBlockBehavior.onClicked(itemStack, blockHitResult, cause))));
+            player.getNetworkHandler().sendPacket(new PacketPlayerAction(PacketPlayerAction.Action.START_BREAK_BLOCK, blockHitResult));
             // TODO: Remove it
             player.getWorld().destroyBlock(blockHitResult.getPos(), new BlockChangeCause.PlayerCause(player));
         } else if (hitResult instanceof EntityHitResult) {
@@ -179,6 +181,7 @@ public class EntityCameraController implements EntityController {
             return;
         }
         if (hitResult instanceof BlockHitResult) {
+            // TODO: sync holding item to server before doing anything
             var blockHitResult = (BlockHitResult) hitResult;
             var cause = new BlockInteractCause.PlayerCause(player);
             game.getEngine().getEventBus().post(new BlockInteractEvent.Activate(blockHitResult, cause));
@@ -188,6 +191,7 @@ public class EntityCameraController implements EntityController {
                     twoHands.getMainHand().ifNonEmpty(itemStack ->
                             itemStack.getItem().getComponent(ActivateBlockBehavior.class).ifPresent(activateBlockBehavior ->
                                     activateBlockBehavior.onActivate(itemStack, blockHitResult, cause))));
+            player.getNetworkHandler().sendPacket(new PacketPlayerAction(PacketPlayerAction.Action.INTERACT_BLOCK, blockHitResult));
         } else if (hitResult instanceof EntityHitResult) {
             var entityHitResult = (EntityHitResult) hitResult;
             var cause = new EntityInteractCause.PlayerCause(player);

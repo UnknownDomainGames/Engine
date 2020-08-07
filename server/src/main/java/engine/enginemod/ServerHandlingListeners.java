@@ -1,8 +1,10 @@
 package engine.enginemod;
 
 import engine.Platform;
+import engine.entity.component.TwoHands;
 import engine.event.Listener;
 import engine.game.GameServerFullAsync;
+import engine.registry.Registries;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.ConnectionStatus;
 import engine.server.network.ServerGameplayNetworkHandlerContext;
@@ -47,11 +49,29 @@ public class ServerHandlingListeners {
                 //TODO: straight to game_prepare
                 var playerManager = ((GameServerFullAsync) Platform.getEngine().getCurrentGame()).getPlayerManager();
                 var player = playerManager.createPlayer(event.getHandler(), ((ServerLoginNetworkHandlerContext) event.getHandler().getContext()).getProfile());
+                event.getHandler().sendPacket(new PacketSyncRegistry(Registries.getBlockRegistry()));
+                event.getHandler().sendPacket(new PacketSyncRegistry(Registries.getItemRegistry()));
+                event.getHandler().sendPacket(new PacketSyncRegistry(Registries.getRegistryManager().getRegistry(PacketProvider.class).get()));
                 event.getHandler().setStatus(ConnectionStatus.GAMEPLAY, new ServerGameplayNetworkHandlerContext(player));
                 playerManager.onPlayerConnect(event.getHandler(), player);
             } else {
                 //TODO: login
             }
+        }
+    }
+
+    @Listener
+    public static void onTwoHandComponentChanged(PacketReceivedEvent<PacketTwoHandComponentChange> event) {
+        if (event.getHandler().getStatus() == ConnectionStatus.GAMEPLAY) {
+            ((ServerGameplayNetworkHandlerContext) event.getHandler().getContext()).getPlayer().getControlledEntity().getComponent(TwoHands.class)
+                    .ifPresent(twoHands -> {
+                        if (event.getPacket().isMainHandChanged()) {
+                            twoHands.setMainHand(event.getPacket().getMainHand());
+                        }
+                        if (event.getPacket().isOffHandChanged()) {
+                            twoHands.setOffHand(event.getPacket().getOffHand());
+                        }
+                    });
         }
     }
 }

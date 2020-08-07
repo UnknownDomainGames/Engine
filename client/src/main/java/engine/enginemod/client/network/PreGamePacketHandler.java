@@ -7,6 +7,10 @@ import engine.enginemod.client.gui.game.GuiServerConnectingStatus;
 import engine.entity.CameraEntity;
 import engine.event.Listener;
 import engine.game.MultiplayerGameData;
+import engine.registry.Registries;
+import engine.registry.Registry;
+import engine.registry.game.BlockRegistry;
+import engine.registry.game.ItemRegistry;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.*;
 import engine.server.network.packet.PacketDisconnect;
@@ -14,6 +18,8 @@ import engine.server.network.packet.PacketSyncRegistry;
 import engine.server.network.packet.c2s.PacketLoginProfile;
 import engine.server.network.packet.s2c.PacketGameData;
 import engine.server.network.packet.s2c.PacketLoginRequest;
+
+import java.util.Objects;
 
 public class PreGamePacketHandler {
 
@@ -32,6 +38,19 @@ public class PreGamePacketHandler {
             Platform.getEngine().getCurrentGame().terminate();
         }
         GuiServerConnectingStatus.launchDisconnectedScreen(event.getPacket().getReason());
+    }
+
+    @Listener
+    public static void onRegistrySync(PacketReceivedEvent<PacketSyncRegistry> event) {
+        for (Registry<?> registry : Registries.getRegistryManager().getRegistries()) {
+            if (Objects.equals(registry.getRegistryName(), event.getPacket().getRegistryName())) {
+                if (registry instanceof BlockRegistry) {
+                    ((BlockRegistry) registry).handleRegistrySync(event.getPacket());
+                } else if (registry instanceof ItemRegistry) {
+                    ((ItemRegistry) registry).handleRegistrySync(event.getPacket());
+                }
+            }
+        }
     }
 
     @Listener

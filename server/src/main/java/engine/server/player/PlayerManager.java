@@ -3,10 +3,15 @@ package engine.server.player;
 import configuration.Config;
 import configuration.io.ConfigIOUtils;
 import engine.Platform;
+import engine.block.component.ActivateBehavior;
 import engine.entity.CameraEntity;
 import engine.entity.Entity;
+import engine.entity.component.TwoHands;
 import engine.event.Listener;
+import engine.event.block.BlockInteractEvent;
+import engine.event.block.cause.BlockInteractCause;
 import engine.game.GameServerFullAsync;
+import engine.item.component.ActivateBlockBehavior;
 import engine.player.Profile;
 import engine.server.event.NetworkDisconnectedEvent;
 import engine.server.event.PacketReceivedEvent;
@@ -20,6 +25,7 @@ import engine.server.network.packet.s2c.PacketBlockUpdate;
 import engine.server.network.packet.s2c.PacketGameData;
 import engine.server.network.packet.s2c.PacketPlayerPosView;
 import engine.world.WorldCommon;
+import engine.world.hit.BlockHitResult;
 import org.joml.Vector3d;
 
 import java.util.HashSet;
@@ -176,6 +182,36 @@ public class PlayerManager {
                     player.getControlledEntity().getRotation().set(event.getPacket().getYaw(), event.getPacket().getPitch(), 0);
                 }
             }
+        }
+    }
+
+    @Listener
+    public void handlePlayerAction(PacketReceivedEvent<PacketPlayerAction> event) {
+        if (event.getHandler().getStatus() != ConnectionStatus.GAMEPLAY) {
+            Platform.getLogger().error("Receiving PlayerAction Packet while not in gameplay status!");
+            return;
+        }
+        var player = ((ServerGameplayNetworkHandlerContext) event.getHandler().getContext()).getPlayer();
+        switch (event.getPacket().getAction()) {
+            case START_BREAK_BLOCK:
+                break;
+            case STOP_BREAK_BLOCK:
+                break;
+            case INTERRUPTED:
+                break;
+            case INTERACT_BLOCK:
+                var cause = new BlockInteractCause.PlayerCause(player);
+                var blockHitResult = ((BlockHitResult) event.getPacket().getHitResult());
+                gameServer.getEngine().getEventBus().post(new BlockInteractEvent.Activate(blockHitResult, cause));
+                blockHitResult.getBlock().getComponent(ActivateBehavior.class).ifPresent(activateBehavior ->
+                        activateBehavior.onActivated(blockHitResult, cause));
+                player.getControlledEntity().getComponent(TwoHands.class).ifPresent(twoHands ->
+                        twoHands.getMainHand().ifNonEmpty(itemStack ->
+                                itemStack.getItem().getComponent(ActivateBlockBehavior.class).ifPresent(activateBlockBehavior ->
+                                        activateBlockBehavior.onActivate(itemStack, blockHitResult, cause))));
+                event.getHandler().sendPacket(new PacketBlockUpdate(blockHitResult.getWorld(), blockHitResult.getPos()));
+                event.getHandler().sendPacket(new PacketBlockUpdate(blockHitResult.getWorld(), blockHitResult.getPos().offset(blockHitResult.getDirection())));
+                break;
         }
     }
 

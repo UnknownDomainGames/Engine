@@ -94,7 +94,7 @@ public class GameClientMultiplayer extends GameBase implements GameClient {
             throw new WorldProviderNotFoundException(providerName);
         }
 
-        var world = new WorldClient(this, provider);
+        var world = new WorldClient(this, provider, name);
         this.worlds.put(name, world);
         getEventBus().post(new WorldLoadEvent(world));
         return world;

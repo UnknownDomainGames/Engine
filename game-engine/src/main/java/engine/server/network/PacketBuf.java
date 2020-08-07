@@ -1,8 +1,16 @@
 package engine.server.network;
 
+import engine.Platform;
+import engine.item.ItemStack;
+import engine.math.BlockPos;
+import engine.registry.Registries;
+import engine.util.Direction;
+import engine.world.hit.BlockHitResult;
+import engine.world.hit.HitResult;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ByteProcessor;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,6 +87,70 @@ public class PacketBuf extends ByteBuf {
 
     public void writeEnum(Enum<?> em) {
         writeVarInt(em.ordinal());
+    }
+
+    public void writeBlockPos(BlockPos pos) {
+        writeVarInt(pos.x());
+        writeVarInt(pos.y());
+        writeVarInt(pos.z());
+    }
+
+    public BlockPos readBlockPos() {
+        return BlockPos.of(readVarInt(), readVarInt(), readVarInt());
+    }
+
+    public void writeHitResult(HitResult result) {
+        if (result.getType() == HitResult.Type.BLOCK) {
+            writeByte(1);
+            writeBlockHitResult(((BlockHitResult) result));
+        }
+    }
+
+    private void writeBlockHitResult(BlockHitResult result) {
+        writeString(result.getWorld().getName());
+        writeBlockPos(result.getPos());
+        writeEnum(result.getDirection());
+        var hitPoint = result.getHitPoint();
+        writeFloat(hitPoint.x());
+        writeFloat(hitPoint.y());
+        writeFloat(hitPoint.z());
+    }
+
+    public HitResult readHitResult() {
+        var head = readByte();
+        if (head == 1) {
+            return readBlockHitResult();
+        }
+        return null;
+    }
+
+    private BlockHitResult readBlockHitResult() {
+        var worldName = readString();
+        //FIXME: getting world in PacketBuffer is not a good idea
+        var optional = Platform.getEngine().getCurrentGame().getWorld(worldName);
+        var blockPos = readBlockPos();
+        var direction = readEnum(Direction.class);
+        var hitPt = new Vector3f(readFloat(), readFloat(), readFloat());
+        return new BlockHitResult(optional.orElse(null), blockPos, optional.map(world -> world.getBlock(blockPos)).orElse(null), hitPt, direction);
+    }
+
+    public void writeItemStack(ItemStack stack) {
+        if (stack.isEmpty()) {
+            writeBoolean(false);
+        } else {
+            writeBoolean(true);
+            writeVarInt(Registries.getItemRegistry().getId(stack.getItem()));
+            writeVarInt(stack.getAmount());
+        }
+    }
+
+    public ItemStack readItemStack() {
+        if (readBoolean()) {
+            var item = Registries.getItemRegistry().getValue(readVarInt());
+            return new ItemStack(item, readVarInt());
+        } else {
+            return ItemStack.EMPTY;
+        }
     }
 
     @Override
