@@ -10,9 +10,10 @@ import engine.game.MultiplayerGameData;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.*;
 import engine.server.network.packet.PacketDisconnect;
-import engine.server.network.packet.PacketGameData;
-import engine.server.network.packet.PacketLoginProfile;
-import engine.server.network.packet.PacketLoginRequest;
+import engine.server.network.packet.PacketSyncRegistry;
+import engine.server.network.packet.c2s.PacketLoginProfile;
+import engine.server.network.packet.s2c.PacketGameData;
+import engine.server.network.packet.s2c.PacketLoginRequest;
 
 public class PreGamePacketHandler {
 

@@ -1,7 +1,8 @@
-package engine.server.network.packet;
+package engine.server.network.packet.c2s;
 
 import engine.player.Profile;
 import engine.server.network.PacketBuf;
+import engine.server.network.packet.Packet;
 
 import java.io.IOException;
 import java.util.UUID;

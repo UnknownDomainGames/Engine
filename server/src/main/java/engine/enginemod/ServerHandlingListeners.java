@@ -8,9 +8,12 @@ import engine.server.network.ConnectionStatus;
 import engine.server.network.ServerGameplayNetworkHandlerContext;
 import engine.server.network.ServerLoginNetworkHandlerContext;
 import engine.server.network.packet.PacketHandshake;
-import engine.server.network.packet.PacketLoginProfile;
-import engine.server.network.packet.PacketLoginRequest;
-import engine.server.network.packet.PacketLoginSuccess;
+import engine.server.network.packet.PacketProvider;
+import engine.server.network.packet.PacketSyncRegistry;
+import engine.server.network.packet.c2s.PacketLoginProfile;
+import engine.server.network.packet.c2s.PacketTwoHandComponentChange;
+import engine.server.network.packet.s2c.PacketLoginRequest;
+import engine.server.network.packet.s2c.PacketLoginSuccess;
 
 public class ServerHandlingListeners {
 

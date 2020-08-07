@@ -1,6 +1,7 @@
-package engine.server.network.packet;
+package engine.server.network.packet.c2s;
 
 import engine.server.network.PacketBuf;
+import engine.server.network.packet.Packet;
 import org.joml.Vector3dc;
 import org.joml.Vector3fc;
 

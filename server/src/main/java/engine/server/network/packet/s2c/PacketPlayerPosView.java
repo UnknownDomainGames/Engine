@@ -1,6 +1,7 @@
-package engine.server.network.packet;
+package engine.server.network.packet.s2c;
 
 import engine.server.network.PacketBuf;
+import engine.server.network.packet.Packet;
 
 public class PacketPlayerPosView implements Packet {
 

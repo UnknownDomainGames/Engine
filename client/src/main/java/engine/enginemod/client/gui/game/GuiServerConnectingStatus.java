@@ -19,8 +19,8 @@ import engine.server.event.NetworkingStartEvent;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.ConnectionStatus;
 import engine.server.network.NetworkClient;
-import engine.server.network.packet.PacketGameData;
 import engine.server.network.packet.PacketHandshake;
+import engine.server.network.packet.s2c.PacketGameData;
 import engine.util.Color;
 
 import java.net.InetAddress;

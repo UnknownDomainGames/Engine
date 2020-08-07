@@ -5,8 +5,8 @@ import engine.client.game.GameClient;
 import engine.client.player.ClientPlayerImpl;
 import engine.event.Listener;
 import engine.server.event.PacketReceivedEvent;
-import engine.server.network.packet.PacketPlayerMove;
-import engine.server.network.packet.PacketPlayerPosView;
+import engine.server.network.packet.c2s.PacketPlayerMove;
+import engine.server.network.packet.s2c.PacketPlayerPosView;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 

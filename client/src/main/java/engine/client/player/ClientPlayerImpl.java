@@ -8,7 +8,7 @@ import engine.graphics.display.callback.CursorCallback;
 import engine.player.PlayerImpl;
 import engine.player.Profile;
 import engine.server.network.NetworkHandler;
-import engine.server.network.packet.PacketPlayerMove;
+import engine.server.network.packet.c2s.PacketPlayerMove;
 import org.joml.Vector3d;
 
 import javax.annotation.Nonnull;

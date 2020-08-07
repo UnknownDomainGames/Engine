@@ -1,7 +1,7 @@
 package engine.game;
 
 import configuration.Config;
-import engine.server.network.packet.PacketGameData;
+import engine.server.network.packet.s2c.PacketGameData;
 
 import java.nio.file.Path;
 

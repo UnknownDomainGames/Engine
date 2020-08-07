@@ -14,9 +14,11 @@ import engine.server.network.ConnectionStatus;
 import engine.server.network.NetworkHandler;
 import engine.server.network.ServerGameplayNetworkHandlerContext;
 import engine.server.network.packet.PacketDisconnect;
-import engine.server.network.packet.PacketGameData;
-import engine.server.network.packet.PacketPlayerMove;
-import engine.server.network.packet.PacketPlayerPosView;
+import engine.server.network.packet.c2s.PacketPlayerAction;
+import engine.server.network.packet.c2s.PacketPlayerMove;
+import engine.server.network.packet.s2c.PacketBlockUpdate;
+import engine.server.network.packet.s2c.PacketGameData;
+import engine.server.network.packet.s2c.PacketPlayerPosView;
 import engine.world.WorldCommon;
 import org.joml.Vector3d;
 
