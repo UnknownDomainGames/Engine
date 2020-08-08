@@ -71,6 +71,7 @@ public final class VoxelGraphicsHelper {
     @Listener(order = Order.LAST)
     public static void onControlEntity(PlayerControlEntityEvent.Post event) {
         World world = event.getNewEntity().getWorld();
+        if (world.isLogicSide()) return;
         if (renderer != null && renderer.isEqualsWorld(world)) return;
         renderer = new ChunkRenderer(GraphicsManager.instance(), world);
     }

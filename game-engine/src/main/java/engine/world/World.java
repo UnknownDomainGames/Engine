@@ -54,4 +54,6 @@ public interface World extends BlockGetter, BlockSetter, EntityManager, GameObje
     boolean isUnloaded();
 
     void save();
+
+    boolean isLogicSide();
 }

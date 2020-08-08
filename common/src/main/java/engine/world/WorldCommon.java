@@ -439,4 +439,9 @@ public class WorldCommon implements World {
             }
         }
     }
+
+    @Override
+    public boolean isLogicSide() {
+        return true;
+    }
 }

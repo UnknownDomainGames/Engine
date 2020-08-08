@@ -232,6 +232,9 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         if (isPlaying()) {
             game.terminate();
         }
+        if (isIntegratedServerRunning()) {
+            stopIntegratedGame();
+        }
         var serverConfig = new ServerConfig();
         serverConfig.setGame(gameName);
         integratedServer = new EngineServerIntegrated(this, serverConfig);
@@ -250,7 +253,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     public boolean isIntegratedServerRunning() {
-        return integratedServer != null && integratedServer.isMarkedTermination();
+        return integratedServer != null && !integratedServer.isMarkedTermination();
     }
 
     public void stopIntegratedGame() {

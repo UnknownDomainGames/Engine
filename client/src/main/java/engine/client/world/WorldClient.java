@@ -49,8 +49,6 @@ public class WorldClient implements World, Runnable {
     private final ComponentAgent componentAgent = new ComponentAgent();
     private long gameTick;
 
-    protected boolean isClient = true;
-
     public WorldClient(Game game, WorldProvider provider, String name) {
         this.game = game;
         this.worldProvider = provider;
@@ -323,5 +321,10 @@ public class WorldClient implements World, Runnable {
 
     public WorldClientChunkManager getChunkManager() {
         return chunkManager;
+    }
+
+    @Override
+    public boolean isLogicSide() {
+        return false;
     }
 }
