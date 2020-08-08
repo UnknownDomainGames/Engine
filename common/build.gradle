@@ -4,6 +4,7 @@ dependencies {
         exclude group: 'org.l33tlabs.twl'
     }
 
+    implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
     implementation 'ch.qos.logback:logback-classic:1.2.3'
 
     implementation 'com.github.Mouse0w0.Configuration:configuration-toml4j:1.2.0'

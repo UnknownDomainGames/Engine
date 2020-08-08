@@ -1,7 +1,7 @@
 package engine.server.network;
 
 import engine.Platform;
-import engine.registry.impl.PacketRegistry;
+import engine.registry.game.PacketRegistry;
 import engine.server.network.packet.Packet;
 import engine.server.network.packet.PacketProvider;
 import engine.server.network.packet.PacketRaw;

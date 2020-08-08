@@ -4,14 +4,17 @@ import configuration.Config;
 import configuration.io.ConfigIOUtils;
 import engine.Platform;
 import engine.block.component.ActivateBehavior;
+import engine.block.component.ClickBehavior;
 import engine.entity.CameraEntity;
 import engine.entity.Entity;
 import engine.entity.component.TwoHands;
 import engine.event.Listener;
 import engine.event.block.BlockInteractEvent;
+import engine.event.block.cause.BlockChangeCause;
 import engine.event.block.cause.BlockInteractCause;
 import engine.game.GameServerFullAsync;
 import engine.item.component.ActivateBlockBehavior;
+import engine.item.component.ClickBlockBehavior;
 import engine.player.Profile;
 import engine.server.event.NetworkDisconnectedEvent;
 import engine.server.event.PacketReceivedEvent;
@@ -195,25 +198,41 @@ public class PlayerManager {
         var player = ((ServerGameplayNetworkHandlerContext) event.getHandler().getContext()).getPlayer();
         switch (event.getPacket().getAction()) {
             case START_BREAK_BLOCK:
+                var hit = ((BlockHitResult) event.getPacket().getHitResult());
+                if (hit instanceof BlockHitResult.Postponed) {
+                    hit = ((BlockHitResult.Postponed) hit).build(gameServer);
+                }
+                var cause = new BlockInteractCause.PlayerCause(player);
+                gameServer.getEngine().getEventBus().post(new BlockInteractEvent.Click(hit, cause));
+                BlockHitResult finalHit = hit;
+                hit.getBlock().getComponent(ClickBehavior.class).ifPresent(clickBehavior ->
+                        clickBehavior.onClicked(finalHit, cause));
+                player.getControlledEntity().getComponent(TwoHands.class).ifPresent(twoHands ->
+                        twoHands.getMainHand().ifNonEmpty(itemStack ->
+                                itemStack.getItem().getComponent(ClickBlockBehavior.class).ifPresent(clickBlockBehavior ->
+                                        clickBlockBehavior.onClicked(itemStack, finalHit, cause))));
+//                player.getNetworkHandler().sendPacket(new PacketPlayerAction(PacketPlayerAction.Action.START_BREAK_BLOCK, blockHitResult));
+                // TODO: Extract to separate method
+                player.getWorld().destroyBlock(hit.getPos(), new BlockChangeCause.PlayerCause(player));
                 break;
             case STOP_BREAK_BLOCK:
                 break;
             case INTERRUPTED:
                 break;
             case INTERACT_BLOCK:
-                var cause = new BlockInteractCause.PlayerCause(player);
+                var cause1 = new BlockInteractCause.PlayerCause(player);
                 var blockHitResult = ((BlockHitResult) event.getPacket().getHitResult());
                 if (blockHitResult instanceof BlockHitResult.Postponed) {
                     blockHitResult = ((BlockHitResult.Postponed) blockHitResult).build(gameServer);
                 }
-                gameServer.getEngine().getEventBus().post(new BlockInteractEvent.Activate(blockHitResult, cause));
+                gameServer.getEngine().getEventBus().post(new BlockInteractEvent.Activate(blockHitResult, cause1));
                 BlockHitResult finalBlockHitResult = blockHitResult;
                 blockHitResult.getBlock().getComponent(ActivateBehavior.class).ifPresent(activateBehavior ->
-                        activateBehavior.onActivated(finalBlockHitResult, cause));
+                        activateBehavior.onActivated(finalBlockHitResult, cause1));
                 player.getControlledEntity().getComponent(TwoHands.class).ifPresent(twoHands ->
                         twoHands.getMainHand().ifNonEmpty(itemStack ->
                                 itemStack.getItem().getComponent(ActivateBlockBehavior.class).ifPresent(activateBlockBehavior ->
-                                        activateBlockBehavior.onActivate(itemStack, finalBlockHitResult, cause))));
+                                        activateBlockBehavior.onActivate(itemStack, finalBlockHitResult, cause1))));
                 event.getHandler().sendPacket(new PacketBlockUpdate(blockHitResult.getWorld(), blockHitResult.getPos()));
                 event.getHandler().sendPacket(new PacketBlockUpdate(blockHitResult.getWorld(), blockHitResult.getPos().offset(blockHitResult.getDirection())));
                 break;

@@ -3,7 +3,7 @@ package engine.client.world.chunk;
 import engine.client.world.WorldClient;
 import engine.event.world.chunk.ChunkLoadEvent;
 import engine.event.world.chunk.ChunkUnloadEvent;
-import engine.server.network.packet.PacketChunkData;
+import engine.server.network.packet.s2c.PacketChunkData;
 import engine.world.chunk.*;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;

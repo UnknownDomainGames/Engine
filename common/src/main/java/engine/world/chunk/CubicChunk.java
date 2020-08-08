@@ -114,7 +114,8 @@ public class CubicChunk implements Chunk {
             nonAirBlockCount--;
         }
 
-        return blockStorage.setBlock(x, y, z, block);
+        var block1 = blockStorage.setBlock(x, y, z, block);
+        return block1;
     }
 
     @Override

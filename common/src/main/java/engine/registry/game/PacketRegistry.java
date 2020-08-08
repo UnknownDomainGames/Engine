@@ -1,4 +1,4 @@
-package engine.registry.impl;
+package engine.registry.game;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -6,6 +6,7 @@ import engine.Platform;
 import engine.event.Listener;
 import engine.registry.Name;
 import engine.registry.RegistrationException;
+import engine.registry.impl.IdAutoIncreaseRegistry;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.packet.Packet;
 import engine.server.network.packet.PacketProvider;

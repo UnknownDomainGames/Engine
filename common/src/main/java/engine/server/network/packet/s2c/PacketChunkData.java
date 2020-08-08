@@ -1,6 +1,7 @@
-package engine.server.network.packet;
+package engine.server.network.packet.s2c;
 
 import engine.server.network.PacketBuf;
+import engine.server.network.packet.Packet;
 import engine.world.chunk.CubicChunk;
 
 import java.io.ByteArrayOutputStream;
@@ -15,7 +16,8 @@ public class PacketChunkData implements Packet {
     private int chunkZ;
     private byte[] rawData;
 
-    public PacketChunkData(){}
+    public PacketChunkData() {
+    }
 
     public PacketChunkData(CubicChunk chunk) {
         this.worldName = chunk.getWorld().getName();

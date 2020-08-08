@@ -4,8 +4,8 @@ import engine.Platform;
 import engine.client.world.WorldClient;
 import engine.event.Listener;
 import engine.server.event.PacketReceivedEvent;
-import engine.server.network.packet.PacketChunkData;
-import engine.server.network.packet.PacketUnloadChunk;
+import engine.server.network.packet.s2c.PacketChunkData;
+import engine.server.network.packet.s2c.PacketUnloadChunk;
 
 public class ChunkPacketsHandler {
 
