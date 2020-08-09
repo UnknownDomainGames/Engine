@@ -2,8 +2,10 @@ package engine.world.chunk;
 
 import engine.block.Block;
 import engine.event.block.cause.BlockChangeCause;
+import engine.game.GameServerFullAsync;
 import engine.math.BlockPos;
 import engine.registry.Registries;
+import engine.server.network.packet.s2c.PacketBlockUpdate;
 import engine.world.World;
 import org.joml.Vector3i;
 import org.joml.Vector3ic;
@@ -115,6 +117,10 @@ public class CubicChunk implements Chunk {
         }
 
         var block1 = blockStorage.setBlock(x, y, z, block);
+        var world1 = getWorld();
+        if (world1.getGame() instanceof GameServerFullAsync) {
+            ((GameServerFullAsync) world1.getGame()).getNetworkServer().sendToAll(new PacketBlockUpdate(world1, BlockPos.of(x, y, z)));
+        }
         return block1;
     }
 

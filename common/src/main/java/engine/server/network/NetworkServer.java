@@ -6,6 +6,7 @@ import engine.event.EventBus;
 import engine.event.SimpleEventBus;
 import engine.event.asm.AsmEventListenerFactory;
 import engine.server.event.NetworkingStartEvent;
+import engine.server.network.packet.Packet;
 import engine.util.LazyObject;
 import engine.util.Side;
 import io.netty.bootstrap.ServerBootstrap;
@@ -124,6 +125,10 @@ public class NetworkServer implements NetworkEndpoint {
                 Platform.getLogger().error("Interrupted whilst closing network channel", e);
             }
         }
+    }
+
+    public void sendToAll(Packet packet) {
+        handlers.forEach(networkHandler -> networkHandler.sendPacket(packet));
     }
 
     public EventBus getEventBus() {
