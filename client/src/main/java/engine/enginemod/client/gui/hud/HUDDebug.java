@@ -76,6 +76,7 @@ public final class HUDDebug extends HUDControl {
     @Listener
     public void update(RenderEvent.Pre event) {
         EngineClient engine = Platform.getEngineClient();
+        if (engine.getCurrentClientGame() == null) return;
         Entity player = engine.getCurrentClientGame().getClientPlayer().getControlledEntity();
         GraphicsManager manager = engine.getGraphicsManager();
 
