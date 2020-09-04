@@ -19,6 +19,7 @@ import engine.client.sound.Sound;
 import engine.client.sound.SoundManager;
 import engine.enginemod.EngineModClientListeners;
 import engine.enginemod.EngineModListeners;
+import engine.enginemod.client.gui.game.GuiGameLoading;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
 import engine.graphics.EngineGraphicsManager;
@@ -26,6 +27,7 @@ import engine.graphics.GraphicsEngine;
 import engine.graphics.GraphicsManager;
 import engine.graphics.gl.util.GLHelper;
 import engine.gui.EngineGUIPlatform;
+import engine.gui.Scene;
 import engine.logic.Ticker;
 import engine.mod.ModContainer;
 import engine.player.Profile;
@@ -235,6 +237,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         if (isIntegratedServerRunning()) {
             stopIntegratedGame();
         }
+        var guiGameLoading = new GuiGameLoading();
+        graphicsManager.getGUIManager().show(new Scene(guiGameLoading));
         var serverConfig = new ServerConfig();
         serverConfig.setGame(gameName);
         integratedServer = new EngineServerIntegrated(this, serverConfig);
@@ -243,8 +247,12 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             integratedServer.runEngine();
         }, "Integrated Server").start();
         while (!integratedServer.isPlaying()) {
-            Platform.getLogger().debug("waiting for server readyaaaa");
-            //TODO: show progress
+            guiGameLoading.updateProgress();
+            graphicsManager.doRender(0);
+            try {
+                Thread.sleep(16L);
+            } catch (InterruptedException ignored) {
+            }
         }
         var socketAddress = integratedServer.getNettyServer().runLocal();
         var nettyClient = new NetworkClient();

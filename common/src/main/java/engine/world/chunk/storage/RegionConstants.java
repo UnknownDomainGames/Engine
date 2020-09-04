@@ -6,9 +6,9 @@ public interface RegionConstants {
     int REGION_Y_BITS = 4;
     int REGION_Z_BITS = 4;
 
-    int REGION_X_SIZE = 16;
-    int REGION_Y_SIZE = 16;
-    int REGION_Z_SIZE = 16;
+    int REGION_X_SIZE = 1 << REGION_X_BITS;
+    int REGION_Y_SIZE = 1 << REGION_Y_BITS;
+    int REGION_Z_SIZE = 1 << REGION_Z_BITS;
 
     int REGION_MAX_X = REGION_X_SIZE - 1;
     int REGION_MAX_Y = REGION_Y_SIZE - 1;

@@ -4,6 +4,8 @@ import configuration.Config;
 import configuration.io.ConfigIOUtils;
 import engine.Platform;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,6 +82,13 @@ public class GameData {
         gameData.set("Worlds", worlds);
         gameData.set("Dependencies", dependencies);
         gameData.set("Registries", registries);
-        gameData.save(gameBasePath.resolve("game.json"));
+        var path = gameBasePath.resolve(name);
+        if (Files.notExists(path)) {
+            try {
+                Files.createDirectory(path);
+            } catch (IOException e) {
+            }
+        }
+        gameData.save(path.resolve("game.json"));
     }
 }

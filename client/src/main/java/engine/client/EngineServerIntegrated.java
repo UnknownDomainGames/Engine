@@ -137,7 +137,7 @@ public class EngineServerIntegrated implements EngineServer {
         // NOTE: delay server binding to client connection
         logger.info("Starting game for world");
         Path gameBasePath = this.getRunPath().resolve("game");
-        startGame(new GameServerFullAsync(this, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, serverConfig.getGame()), nettyServer));
+        startGame(new GameServerFullAsync(this, gameBasePath, GameData.createFromExistingGame(gameBasePath, serverConfig.getGame()), nettyServer));
         ticker.run();
     }
 
