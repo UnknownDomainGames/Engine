@@ -237,7 +237,7 @@ public class WorldClient implements World, Runnable {
 
     @Override
     public int getBlockId(int x, int y, int z) {
-        return getBlock(x, y, z).getId();
+        return Registries.getBlockRegistry().getId(getBlock(x, y, z));
     }
 
     @Override

@@ -42,11 +42,6 @@ public abstract class HUDControl extends Control implements Registrable<HUDContr
         return name;
     }
 
-    @Override
-    public int getId() {
-        return 0;
-    }
-
     public MutableObjectValue<Node> content() {
         if (content == null) {
             content = new SimpleMutableObjectValue<>();

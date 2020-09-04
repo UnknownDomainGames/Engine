@@ -28,14 +28,14 @@ public interface Registrable<T> {
      */
     Name getName();
 
-    int getId();
+//    int getId();
 
     abstract class Impl<T extends Registrable<T>> implements Registrable<T> {
         private final TypeToken<T> token = new TypeToken<T>(getClass()) {
         };
         private Name name;
 
-        private int id;
+//        private int id;
 
         @SuppressWarnings("unchecked")
         @Override
@@ -63,9 +63,9 @@ public interface Registrable<T> {
             return (T) this;
         }
 
-        @Override
-        public final int getId() {
-            return id;
-        }
+//        @Override
+//        public final int getId() {
+//            return id;
+//        }
     }
 }

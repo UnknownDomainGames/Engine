@@ -4,6 +4,7 @@ import engine.block.AirBlock;
 import engine.block.Block;
 import engine.event.block.cause.BlockChangeCause;
 import engine.math.BlockPos;
+import engine.registry.Registries;
 import engine.world.World;
 import org.joml.Vector3i;
 import org.joml.Vector3ic;
@@ -80,7 +81,7 @@ public class AirChunk implements Chunk {
 
     @Override
     public int getBlockId(int x, int y, int z) {
-        return AirBlock.AIR.getId();
+        return Registries.getBlockRegistry().getId(AirBlock.AIR);
     }
 
     @Override

@@ -1,13 +1,13 @@
 package engine.registry.game;
 
 import engine.block.Block;
-import engine.registry.impl.IdAutoIncreaseRegistry;
+import engine.registry.impl.SynchronizableIdRegistry;
 import engine.server.network.packet.PacketSyncRegistry;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public final class BlockRegistryImpl extends IdAutoIncreaseRegistry<Block> implements BlockRegistry {
+public final class BlockRegistryImpl extends SynchronizableIdRegistry<Block> implements BlockRegistry {
 
     private Block air;
 

@@ -5,14 +5,14 @@ import com.google.common.collect.HashBiMap;
 import engine.entity.Entity;
 import engine.entity.EntityProvider;
 import engine.registry.RegistrationException;
-import engine.registry.impl.IdAutoIncreaseRegistry;
+import engine.registry.impl.SynchronizableIdRegistry;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public final class EntityRegistryImpl extends IdAutoIncreaseRegistry<EntityProvider> implements EntityRegistry {
+public final class EntityRegistryImpl extends SynchronizableIdRegistry<EntityProvider> implements EntityRegistry {
 
     protected final BiMap<Class<? extends Entity>, EntityProvider> clazzToObject = HashBiMap.create();
 

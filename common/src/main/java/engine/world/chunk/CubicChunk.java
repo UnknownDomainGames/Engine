@@ -94,7 +94,7 @@ public class CubicChunk implements Chunk {
     @Override
     public int getBlockId(int x, int y, int z) {
         if (blockStorage == null) {
-            return Registries.getBlockRegistry().air().getId();
+            return Registries.getBlockRegistry().getId(Registries.getBlockRegistry().air());
         }
 
         return blockStorage.getBlockId(x, y, z);
@@ -102,7 +102,13 @@ public class CubicChunk implements Chunk {
 
     @Override
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
-        return setBlock(pos.x(), pos.y(), pos.z(), block);
+        var block1 = setBlock(pos.x(), pos.y(), pos.z(), block);
+        var world1 = getWorld();
+        if (!(cause instanceof BlockChangeCause.WorldGenCause))
+            if (world1.getGame() instanceof GameServerFullAsync) {
+                ((GameServerFullAsync) world1.getGame()).getNetworkServer().sendToAll(new PacketBlockUpdate(world1, pos));
+            }
+        return block1;
     }
 
     protected Block setBlock(int x, int y, int z, Block block) {
@@ -117,10 +123,6 @@ public class CubicChunk implements Chunk {
         }
 
         var block1 = blockStorage.setBlock(x, y, z, block);
-        var world1 = getWorld();
-        if (world1.getGame() instanceof GameServerFullAsync) {
-            ((GameServerFullAsync) world1.getGame()).getNetworkServer().sendToAll(new PacketBlockUpdate(world1, BlockPos.of(x, y, z)));
-        }
         return block1;
     }
 

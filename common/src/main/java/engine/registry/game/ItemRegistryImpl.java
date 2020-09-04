@@ -6,13 +6,13 @@ import engine.block.Block;
 import engine.item.BlockItem;
 import engine.item.Item;
 import engine.registry.RegistrationException;
-import engine.registry.impl.IdAutoIncreaseRegistry;
+import engine.registry.impl.SynchronizableIdRegistry;
 import engine.server.network.packet.PacketSyncRegistry;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-public final class ItemRegistryImpl extends IdAutoIncreaseRegistry<Item> implements ItemRegistry {
+public final class ItemRegistryImpl extends SynchronizableIdRegistry<Item> implements ItemRegistry {
 
     protected final BiMap<Block, BlockItem> blockToCorrItem = HashBiMap.create();
 

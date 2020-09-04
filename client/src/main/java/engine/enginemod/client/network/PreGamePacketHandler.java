@@ -9,8 +9,7 @@ import engine.event.Listener;
 import engine.game.MultiplayerGameData;
 import engine.registry.Registries;
 import engine.registry.Registry;
-import engine.registry.game.BlockRegistry;
-import engine.registry.game.ItemRegistry;
+import engine.registry.SynchronizableRegistry;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.*;
 import engine.server.network.packet.PacketDisconnect;
@@ -44,10 +43,8 @@ public class PreGamePacketHandler {
     public static void onRegistrySync(PacketReceivedEvent<PacketSyncRegistry> event) {
         for (Registry<?> registry : Registries.getRegistryManager().getRegistries()) {
             if (Objects.equals(registry.getRegistryName(), event.getPacket().getRegistryName())) {
-                if (registry instanceof BlockRegistry) {
-                    ((BlockRegistry) registry).handleRegistrySync(event.getPacket());
-                } else if (registry instanceof ItemRegistry) {
-                    ((ItemRegistry) registry).handleRegistrySync(event.getPacket());
+                if (registry instanceof SynchronizableRegistry) {
+                    ((SynchronizableRegistry<?>) registry).sync(event.getPacket().getIdMap());
                 }
             }
         }

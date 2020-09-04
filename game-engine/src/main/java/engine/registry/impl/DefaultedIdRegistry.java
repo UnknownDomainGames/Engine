@@ -51,7 +51,7 @@ public class DefaultedIdRegistry<T extends Registrable<T>> extends IdRegistry<T>
 
     @Override
     public int getId(T obj) {
-        return obj != null ? obj.getId() : defaultId;
+        return obj != null ? super.getId(obj) : defaultId;
     }
 
     @Override

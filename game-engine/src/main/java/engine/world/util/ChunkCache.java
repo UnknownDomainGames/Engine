@@ -67,7 +67,7 @@ public class ChunkCache implements BlockGetter {
         int chunkZ = (z >> CHUNK_Z_BITS) - this.chunkZ;
         if (chunkX >= 0 && chunkX < chunks.length && chunkY >= 0 && chunkY < chunks[chunkX].length && chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {
             Chunk chunk = chunks[chunkX][chunkY][chunkZ];
-            return chunk == null ? Registries.getBlockRegistry().air().getId() : chunk.getBlockId(x, y, z); // FIXME:
+            return chunk == null ? Registries.getBlockRegistry().getId(Registries.getBlockRegistry().air()) : chunk.getBlockId(x, y, z); // FIXME:
         }
         return world.getBlockId(x, y, z);
     }

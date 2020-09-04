@@ -247,7 +247,7 @@ public class WorldCommon implements World {
     @Override
     public int getBlockId(int x, int y, int z) {
         Chunk chunk = chunkManager.getOrLoadChunk(x >> CHUNK_X_BITS, y >> CHUNK_Y_BITS, z >> CHUNK_Z_BITS);
-        return chunk == null ? Registries.getBlockRegistry().air().getId() : chunk.getBlockId(x, y, z);
+        return chunk == null ? Registries.getBlockRegistry().getId(Registries.getBlockRegistry().air()) : chunk.getBlockId(x, y, z);
     }
 
     @Override
