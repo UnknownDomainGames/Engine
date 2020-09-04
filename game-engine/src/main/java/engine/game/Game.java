@@ -37,11 +37,13 @@ public interface Game {
     @Nonnull
     Engine getEngine();
 
+    Path getStoragePath();
+
     @Nonnull
     GameData getData();
 
     @Nonnull
-    Path getStoragePath();
+    Path getStorageBasePath();
 
     @Nonnull
     Player joinPlayer(Profile profile, Entity controlledEntity);

@@ -1,5 +1,6 @@
 package engine.graphics.voxel;
 
+import engine.client.EngineClient;
 import engine.client.asset.AssetManager;
 import engine.client.asset.AssetType;
 import engine.client.asset.reloading.AssetReloadHandler;
@@ -60,14 +61,17 @@ public final class VoxelGraphicsHelper {
 
     @Listener
     public static void onEngineReady(EngineEvent.Ready event) {
-        blockRenderManager.init();
-        itemRenderManager.init();
-        AssetManager.instance().reload();
+        if (event.getEngine() instanceof EngineClient) { //TODO: remove this if integrated server no longer use "Engine" type
+            blockRenderManager.init();
+            itemRenderManager.init();
+            AssetManager.instance().reload();
+        }
     }
 
     @Listener(order = Order.LAST)
     public static void onControlEntity(PlayerControlEntityEvent.Post event) {
         World world = event.getNewEntity().getWorld();
+        if (world.isLogicSide()) return;
         if (renderer != null && renderer.isEqualsWorld(world)) return;
         renderer = new ChunkRenderer(GraphicsManager.instance(), world);
     }

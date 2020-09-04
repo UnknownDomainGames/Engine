@@ -8,7 +8,12 @@ import javax.annotation.Nonnull;
 
 public interface BlockSetter {
     @Nonnull
-    Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause);
+    default Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
+        return setBlock(pos, block, cause, true);
+    }
+
+    @Nonnull
+    Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause, boolean shouldNotify);
 
     @Nonnull
     Block destroyBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause);

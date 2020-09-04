@@ -7,15 +7,16 @@ import engine.registry.RegistrationException;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 @NotThreadSafe
 public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<T> {
 
     protected T[] idToObject;
+    protected Map<String, Integer> nameToId = new HashMap<>();
 
     public IdRegistry(Class<T> entryType) {
         super(entryType);
@@ -39,7 +40,7 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
 
     @Override
     public int getId(T obj) {
-        return obj != null ? obj.getId() : -1;
+        return obj != null ? nameToId.getOrDefault(obj.getName().getUniqueName(), 0) : -1;
     }
 
     @Override
@@ -67,16 +68,16 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
         return nameToObject.entrySet();
     }
 
-    private static Field idField;
-
-    static {
-        try {
-            idField = Registrable.Impl.class.getDeclaredField("id");
-            idField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            throw new Error("Failed to initialize idField", e);
-        }
-    }
+//    private static Field idField;
+//
+//    static {
+//        try {
+//            idField = Registrable.Impl.class.getDeclaredField("id");
+//            idField.setAccessible(true);
+//        } catch (NoSuchFieldException e) {
+//            throw new Error("Failed to initialize idField", e);
+//        }
+//    }
 
     protected void ensureCapacity(int capacity) {
         int oldLength = idToObject.length;
@@ -88,15 +89,16 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
 
     protected void setId(T entry, int id) {
         ensureCapacity(id + 1);
+        nameToId.put(entry.getName().getUniqueName(), id);
         setIdUnsafe(entry, id);
     }
 
     protected void setIdUnsafe(T entry, int id) {
-        try {
-            idField.setInt(entry, id);
-        } catch (IllegalAccessException e) {
-            throw new RegistrationException("Failed to set id.", e);
-        }
+//        try {
+//            idField.setInt(entry, id);
+//        } catch (IllegalAccessException e) {
+//            throw new RegistrationException("Failed to set id.", e);
+//        }
         idToObject[id] = entry;
     }
 }

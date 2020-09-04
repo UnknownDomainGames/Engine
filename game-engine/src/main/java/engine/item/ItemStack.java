@@ -54,6 +54,13 @@ public final class ItemStack {
         }
     }
 
+    public ItemStack clone() {
+        if (item == null) {
+            return ItemStack.EMPTY;
+        }
+        return new ItemStack(item, amount);
+    }
+
     public boolean isItemEquals(Item item) {
         return this.item == item;
     }

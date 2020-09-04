@@ -247,7 +247,7 @@ public class WorldCommon implements World {
     @Override
     public int getBlockId(int x, int y, int z) {
         Chunk chunk = chunkManager.getOrLoadChunk(x >> CHUNK_X_BITS, y >> CHUNK_Y_BITS, z >> CHUNK_Z_BITS);
-        return chunk == null ? Registries.getBlockRegistry().air().getId() : chunk.getBlockId(x, y, z);
+        return chunk == null ? Registries.getBlockRegistry().getId(Registries.getBlockRegistry().air()) : chunk.getBlockId(x, y, z);
     }
 
     @Override
@@ -257,7 +257,7 @@ public class WorldCommon implements World {
 
     @Nonnull
     @Override
-    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
+    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause, boolean shouldNotify) {
         Block oldBlock = getBlock(pos);
         BlockChangeEvent pre, post;
         if (block == AirBlock.AIR) {
@@ -278,7 +278,9 @@ public class WorldCommon implements World {
             block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
 
             getGame().getEventBus().post(post);
-            notifyNeighborChanged(pos, block, cause);
+            if (shouldNotify) {
+                notifyNeighborChanged(pos, block, cause);
+            }
         }
         return oldBlock;
     }
@@ -436,5 +438,10 @@ public class WorldCommon implements World {
                 // if (Math.abs(motion.y) <= 0.01f) motion.y = 0; // physics update
             }
         }
+    }
+
+    @Override
+    public boolean isLogicSide() {
+        return true;
     }
 }

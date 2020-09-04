@@ -55,6 +55,7 @@ public final class DrawableChunk extends Geometry {
     }
 
     public void executeBake() {
+        if (chunk == null) return; // stop baking if there is nothing to bake
         drawing = true;
         ChunkBaker.execute(new ChunkBaker.Task(this, distanceSqChunkToCamera()));
     }

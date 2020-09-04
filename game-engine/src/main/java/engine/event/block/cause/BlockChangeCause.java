@@ -48,4 +48,13 @@ public interface BlockChangeCause extends Cause {
             return "WorldGenBlockChange";
         }
     }
+
+
+    class WorldSyncCause implements BlockChangeCause {
+
+        @Override
+        public String getName() {
+            return "WorldSyncBlockChange";
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package engine.gui;
 
 import engine.Platform;
+import engine.client.game.GameClient;
 import engine.client.hud.HUDControl;
 import engine.client.hud.HUDManager;
 import engine.event.Listener;
@@ -72,10 +73,11 @@ public final class EngineHUDManager implements HUDManager {
 
     @Listener
     public void onGameReady(GameStartEvent.Post event) {
-        Registries.getRegistryManager().getRegistry(HUDControl.class).ifPresent(registry -> {
-            hudControls = registry;
-            contentPane.getChildren().addAll(registry.getValues());
-        });
+        if (event.getGame() instanceof GameClient)
+            Registries.getRegistryManager().getRegistry(HUDControl.class).ifPresent(registry -> {
+                hudControls = registry;
+                contentPane.getChildren().addAll(registry.getValues());
+            });
     }
 
     @Listener

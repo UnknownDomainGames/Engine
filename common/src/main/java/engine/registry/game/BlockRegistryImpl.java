@@ -1,15 +1,13 @@
 package engine.registry.game;
 
 import engine.block.Block;
-import engine.event.Listener;
-import engine.registry.impl.IdAutoIncreaseRegistry;
-import engine.server.event.PacketReceivedEvent;
+import engine.registry.impl.SynchronizableIdRegistry;
 import engine.server.network.packet.PacketSyncRegistry;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public final class BlockRegistryImpl extends IdAutoIncreaseRegistry<Block> implements BlockRegistry {
+public final class BlockRegistryImpl extends SynchronizableIdRegistry<Block> implements BlockRegistry {
 
     private Block air;
 
@@ -31,13 +29,11 @@ public final class BlockRegistryImpl extends IdAutoIncreaseRegistry<Block> imple
         this.air = Objects.requireNonNull(air);
     }
 
-    @Listener
-    public void onMappingPacketReceived(PacketReceivedEvent<PacketSyncRegistry> event) {
-        if (event.getPacket().getRegistryName().equals(getRegistryName())) {
-            event.getPacket().getIdMap().forEach((key, value) -> {
-                Block block = getValue(key);
-                if (block != null) setId(block, value);
-            });
-        }
+    @Override
+    public void handleRegistrySync(PacketSyncRegistry packet) {
+        packet.getIdMap().forEach((key, value) -> {
+            Block block = getValue(key);
+            if (block != null) setId(block, value);
+        });
     }
 }

@@ -31,7 +31,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     //which is THIS handler located
     private final Side instanceSide;
     private ConnectionStatus status;
-
+    private NetworkHandlerContext context;
     private final EventBus eventBus;
 
     public NetworkHandler(Side side) {
@@ -41,6 +41,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     public NetworkHandler(Side side, EventBus bus) {
         instanceSide = side;
         status = ConnectionStatus.HANDSHAKE;
+        context = new HandshakeNetworkHandlerContext();
         this.eventBus = bus != null ? bus : Platform.getEngine().getEventBus();
     }
 
@@ -60,8 +61,15 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
         return channel.localAddress();
     }
 
-    public void setStatus(ConnectionStatus status) {
+    public void setStatus(ConnectionStatus status, NetworkHandlerContext context) {
+        if (context.isSideDepends() && context.getContextSide() != instanceSide) {
+            throw new IllegalArgumentException("mismatched network side!");
+        }
+        if (context.getConnectionStatus() != status) {
+            throw new IllegalArgumentException("mismatched connection status");
+        }
         this.status = status;
+        this.context = context;
     }
 
     @Override
@@ -85,6 +93,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     public void closeChannel(String reason) {
         if (this.channel != null && this.channel.isOpen()) {
             disconnectionReason = reason;
+            this.channel.config().setAutoRead(false);
             this.channel.close().awaitUninterruptibly();
             postDisconnect();
         }
@@ -95,7 +104,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     public void postDisconnect() {
         if (!disconnected) {
             disconnected = true;
-            var event = new NetworkDisconnectedEvent(disconnectionReason);
+            var event = new NetworkDisconnectedEvent(this, disconnectionReason);
             var mainBus = Platform.getEngine().getEventBus();
             if (eventBus != mainBus) {
                 eventBus.post(event);
@@ -106,6 +115,10 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
 
     public boolean isLocal() {
         return this.channel instanceof LocalChannel || this.channel instanceof LocalServerChannel;
+    }
+
+    public NetworkHandlerContext getContext() {
+        return context;
     }
 
     @Override
@@ -213,7 +226,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
             this.packetInAverage = (packetInAverage * (RANGE_SECONDS_COUNTED_FOR_AVERAGE - 1) + packetInCounter) / (float) RANGE_SECONDS_COUNTED_FOR_AVERAGE;
             packetOutCounter = 0;
             packetInCounter = 0;
-            if (Math.round(packetOutAverage * RANGE_SECONDS_COUNTED_FOR_AVERAGE) == 0) {
+            if (!isLocal() && Math.round(packetOutAverage * RANGE_SECONDS_COUNTED_FOR_AVERAGE) == 0) {
                 sendPacket(new PacketAlive(false));
             }
         }

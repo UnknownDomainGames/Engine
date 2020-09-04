@@ -2,8 +2,10 @@ package engine.world.chunk;
 
 import engine.block.Block;
 import engine.event.block.cause.BlockChangeCause;
+import engine.game.GameServerFullAsync;
 import engine.math.BlockPos;
 import engine.registry.Registries;
+import engine.server.network.packet.s2c.PacketBlockUpdate;
 import engine.world.World;
 import org.joml.Vector3i;
 import org.joml.Vector3ic;
@@ -92,7 +94,7 @@ public class CubicChunk implements Chunk {
     @Override
     public int getBlockId(int x, int y, int z) {
         if (blockStorage == null) {
-            return Registries.getBlockRegistry().air().getId();
+            return Registries.getBlockRegistry().getId(Registries.getBlockRegistry().air());
         }
 
         return blockStorage.getBlockId(x, y, z);
@@ -100,7 +102,13 @@ public class CubicChunk implements Chunk {
 
     @Override
     public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
-        return setBlock(pos.x(), pos.y(), pos.z(), block);
+        var block1 = setBlock(pos.x(), pos.y(), pos.z(), block);
+        var world1 = getWorld();
+        if (!(cause instanceof BlockChangeCause.WorldGenCause))
+            if (world1.getGame() instanceof GameServerFullAsync) {
+                ((GameServerFullAsync) world1.getGame()).getNetworkServer().sendToAll(new PacketBlockUpdate(world1, pos));
+            }
+        return block1;
     }
 
     protected Block setBlock(int x, int y, int z, Block block) {
@@ -114,7 +122,8 @@ public class CubicChunk implements Chunk {
             nonAirBlockCount--;
         }
 
-        return blockStorage.setBlock(x, y, z, block);
+        var block1 = blockStorage.setBlock(x, y, z, block);
+        return block1;
     }
 
     @Override

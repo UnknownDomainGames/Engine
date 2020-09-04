@@ -6,9 +6,9 @@ public interface RegionConstants {
     int REGION_Y_BITS = 4;
     int REGION_Z_BITS = 4;
 
-    int REGION_X_SIZE = 16;
-    int REGION_Y_SIZE = 16;
-    int REGION_Z_SIZE = 16;
+    int REGION_X_SIZE = 1 << REGION_X_BITS;
+    int REGION_Y_SIZE = 1 << REGION_Y_BITS;
+    int REGION_Z_SIZE = 1 << REGION_Z_BITS;
 
     int REGION_MAX_X = REGION_X_SIZE - 1;
     int REGION_MAX_Y = REGION_Y_SIZE - 1;
@@ -20,6 +20,10 @@ public interface RegionConstants {
         return (toUnsigned(chunkX >> REGION_X_BITS) << 42) |
                 (toUnsigned(chunkY >> REGION_Y_BITS) << 21) |
                 toUnsigned(chunkZ >> REGION_Z_BITS);
+    }
+
+    static int toRegionCoordinate(int coord) {
+        return coord >> REGION_X_BITS; // Assumption: the bit offset of all axis are the same
     }
 
     private static long toUnsigned(int value) {

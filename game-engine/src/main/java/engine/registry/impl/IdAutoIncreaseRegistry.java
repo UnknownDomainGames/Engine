@@ -11,11 +11,11 @@ public class IdAutoIncreaseRegistry<T extends Registrable<T>> extends IdRegistry
 
     private final AtomicInteger nextId = new AtomicInteger(0);
 
-    public IdAutoIncreaseRegistry(Class entryType) {
+    public IdAutoIncreaseRegistry(Class<T> entryType) {
         super(entryType);
     }
 
-    public IdAutoIncreaseRegistry(Class entryType, String name) {
+    public IdAutoIncreaseRegistry(Class<T> entryType, String name) {
         super(entryType, name);
     }
 

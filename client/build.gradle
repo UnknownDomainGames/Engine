@@ -4,7 +4,7 @@ mainClassName = 'engine.client.launch.Bootstrap'
 
 dependencies {
     compile project(':game-engine')
-    compile project(':server')
+    compile project(':common')
 
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
 }

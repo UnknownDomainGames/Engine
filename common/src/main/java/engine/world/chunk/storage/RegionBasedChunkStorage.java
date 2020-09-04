@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static engine.world.chunk.storage.RegionConstants.getRegionIndex;
+import static engine.world.chunk.storage.RegionConstants.toRegionCoordinate;
 
 public class RegionBasedChunkStorage implements ChunkStorage {
 
@@ -50,7 +51,7 @@ public class RegionBasedChunkStorage implements ChunkStorage {
         long regionIndex = getRegionIndex(chunkX, chunkY, chunkZ);
         try {
             byte[] data = regionFileCache.get(regionIndex, () -> {
-                Path regionFile = storagePath.resolve(regionIndex + ".region");
+                Path regionFile = storagePath.resolve(getCorrespondingRegionFileName(chunkX, chunkY, chunkZ));
                 if (!Files.exists(regionFile)) {
                     Files.createFile(regionFile);
                 }
@@ -70,6 +71,10 @@ public class RegionBasedChunkStorage implements ChunkStorage {
         }
     }
 
+    private String getCorrespondingRegionFileName(int chunkX, int chunkY, int chunkZ) {
+        return toRegionCoordinate(chunkX) + "_" + toRegionCoordinate(chunkY) + "_" + toRegionCoordinate(chunkZ) + ".region";
+    }
+
     @Override
     public void save(Chunk chunk) {
         if (closed) {
@@ -85,7 +90,7 @@ public class RegionBasedChunkStorage implements ChunkStorage {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ((CubicChunk) chunk).write(new DataOutputStream(byteArrayOutputStream));
             regionFileCache.get(regionIndex, () -> {
-                Path regionFile = storagePath.resolve(regionIndex + ".region");
+                Path regionFile = storagePath.resolve(getCorrespondingRegionFileName(chunk.getX(), chunk.getY(), chunk.getZ()));
                 if (!Files.exists(regionFile)) {
                     Files.createFile(regionFile);
                 }

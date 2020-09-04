@@ -7,22 +7,25 @@ import engine.entity.Entity;
 import engine.event.game.GameTerminationEvent;
 import engine.game.GameData;
 import engine.game.GameServerFullAsync;
+import engine.player.Player;
 import engine.player.Profile;
 import engine.world.World;
 import engine.world.WorldCommon;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GameClientStandalone extends GameServerFullAsync implements GameClient {
 
     private final EngineClient engineClient;
 
     private ClientPlayer clientPlayer;
+    protected final Set<Player> players = new HashSet<>();
 
-
-    public GameClientStandalone(EngineClient engineClient, Path storagePath, GameData data) {
-        super(engineClient, storagePath, data, null);
+    public GameClientStandalone(EngineClient engineClient, Path storageBasePath, GameData data) {
+        super(engineClient, storageBasePath, data, null);
         this.engineClient = engineClient;
     }
 

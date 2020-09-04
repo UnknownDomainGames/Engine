@@ -15,6 +15,13 @@ public abstract class GameBase implements Game {
     protected final Engine engine;
     protected final Logger logger;
 
+    /**
+     * storageBasePath stores the root path of stored games
+     */
+    protected final Path storageBasePath;
+    /**
+     * storagePath stores the directory of this game
+     */
     protected final Path storagePath;
 
     protected final GameData data;
@@ -25,12 +32,13 @@ public abstract class GameBase implements Game {
     protected boolean terminated = false;
     protected boolean isReady = false;
 
-    public GameBase(Engine engine, Path storagePath, GameData data) {
+    public GameBase(Engine engine, Path storageBasePath, GameData data) {
         this.engine = engine;
         this.logger = engine.getLogger();
         this.eventBus = engine.getEventBus();
-        this.storagePath = storagePath;
+        this.storageBasePath = storageBasePath;
         this.data = data;
+        this.storagePath = storageBasePath.resolve(data.getName());
     }
 
     /**
@@ -58,6 +66,11 @@ public abstract class GameBase implements Game {
     }
 
     @Nonnull
+    @Override
+    public Path getStorageBasePath() {
+        return storageBasePath;
+    }
+
     @Override
     public Path getStoragePath() {
         return storagePath;

@@ -1,6 +1,7 @@
 package engine.world.hit;
 
 import engine.block.Block;
+import engine.game.Game;
 import engine.math.BlockPos;
 import engine.util.Direction;
 import engine.world.World;
@@ -62,5 +63,24 @@ public class BlockHitResult extends HitResult {
     public void ifSuccess(Consumer<BlockHitResult> consumer) {
         if (isSuccess())
             consumer.accept(this);
+    }
+
+    public static class Postponed extends BlockHitResult {
+        private String worldName;
+
+        public Postponed(String worldName, BlockPos pos, Vector3fc hitPoint, Direction direction) {
+            super(null, pos, null, hitPoint, direction);
+            this.worldName = worldName;
+        }
+
+        public String getWorldName() {
+            return worldName;
+        }
+
+        public BlockHitResult build(Game game) {
+            var worldOptional = game.getWorld(worldName);
+            var blockOptional = worldOptional.map(world1 -> world1.getBlock(getPos()));
+            return new BlockHitResult(worldOptional.orElse(null), getPos(), blockOptional.orElse(null), getHitPoint(), getDirection());
+        }
     }
 }

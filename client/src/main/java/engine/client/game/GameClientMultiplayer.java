@@ -60,7 +60,7 @@ public class GameClientMultiplayer extends GameBase implements GameClient {
         if (clientPlayer != null) {
             throw new IllegalStateException("Cannot join player twice on client game");
         }
-        clientPlayer = new ClientPlayerImpl(profile, controlledEntity);
+        clientPlayer = new ClientPlayerImpl(profile, networkClient.getHandler(), controlledEntity);
         return clientPlayer;
     }
 
@@ -94,7 +94,7 @@ public class GameClientMultiplayer extends GameBase implements GameClient {
             throw new WorldProviderNotFoundException(providerName);
         }
 
-        var world = new WorldClient(this, provider);
+        var world = new WorldClient(this, provider, name);
         this.worlds.put(name, world);
         getEventBus().post(new WorldLoadEvent(world));
         return world;
@@ -137,6 +137,9 @@ public class GameClientMultiplayer extends GameBase implements GameClient {
         }
         networkClient.tick();
         worlds.values().forEach(world -> ((WorldClient) world).tick());
+        if (clientPlayer != null) {
+            clientPlayer.tick();
+        }
     }
 
     @Override

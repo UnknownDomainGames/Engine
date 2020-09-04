@@ -86,6 +86,7 @@ public class PlayerImpl implements Player {
         return profile;
     }
 
+    @Override
     public NetworkHandler getNetworkHandler() {
         return handler;
     }

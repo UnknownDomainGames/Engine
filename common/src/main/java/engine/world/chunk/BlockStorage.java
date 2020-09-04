@@ -23,7 +23,7 @@ public class BlockStorage {
     }
 
     public Block setBlock(int x, int y, int z, Block block) {
-        return Registries.getBlockRegistry().getValue(data.getAndSet(getPosIndex(x, y, z), block.getId()));
+        return Registries.getBlockRegistry().getValue(data.getAndSet(getPosIndex(x, y, z), Registries.getBlockRegistry().getId(block)));
     }
 
     private int getPosIndex(int x, int y, int z) {

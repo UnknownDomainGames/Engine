@@ -3,8 +3,8 @@ package engine.world.chunk;
 import com.google.common.base.MoreObjects;
 import engine.math.Vector3iBase;
 import engine.util.Direction;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
+import org.joml.Vector3dc;
+import org.joml.Vector3fc;
 
 import static engine.world.chunk.ChunkConstants.*;
 
@@ -18,12 +18,12 @@ public abstract class ChunkPos extends Vector3iBase {
         return of(x >> CHUNK_X_BITS, y >> CHUNK_Y_BITS, z >> CHUNK_Z_BITS);
     }
 
-    public static ChunkPos fromWorldPos(Vector3f vector3f) {
-        return fromBlock((int) Math.floor(vector3f.x), (int) Math.floor(vector3f.y), (int) Math.floor(vector3f.z));
+    public static ChunkPos fromWorldPos(Vector3fc vector3f) {
+        return fromBlock((int) Math.floor(vector3f.x()), (int) Math.floor(vector3f.y()), (int) Math.floor(vector3f.z()));
     }
 
-    public static ChunkPos fromWorldPos(Vector3d vector3d) {
-        return fromBlock((int) Math.floor(vector3d.x), (int) Math.floor(vector3d.y), (int) Math.floor(vector3d.z));
+    public static ChunkPos fromWorldPos(Vector3dc vector3d) {
+        return fromBlock((int) Math.floor(vector3d.x()), (int) Math.floor(vector3d.y()), (int) Math.floor(vector3d.z()));
     }
 
     public abstract ChunkPos toUnmodifiable();

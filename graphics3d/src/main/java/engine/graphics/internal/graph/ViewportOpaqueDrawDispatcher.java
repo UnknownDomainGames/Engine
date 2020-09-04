@@ -73,7 +73,7 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
         lightManager.setup(viewport.getCamera());
         uniformLight.set(lightManager);
         scene.getRenderQueue().getGeometryList(RenderType.OPAQUE).stream()
-                .filter(geometry -> geometry.getBoundingVolume().test(frustum))
+                .filter(geometry -> geometry != null && geometry.getBoundingVolume().test(frustum))
                 .forEach(geometry -> {
                     uniformMatrices.set(new Matrices( // TODO: optimize it
                             viewport.getProjectionMatrix(),

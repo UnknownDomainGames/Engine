@@ -119,7 +119,7 @@ public class ListCell<T> extends Labeled {
                 updateSelection();
             }
         });
-
+        //TODO: stylize
         setOnMouseEntered(event -> {
             if (!selected().get())
                 if (parent().isPresent() ? contains(parent().get().relativePos(event.getScreenX(), event.getScreenY())) : contains(event.getX(), event.getY())) {
@@ -135,7 +135,7 @@ public class ListCell<T> extends Labeled {
 
         selected().addChangeListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                background().set(Background.fromColor(Color.fromRGB(0xffff00)));
+                background().set(Background.fromColor(Color.fromRGB(0x007fff)));
             }
             if (!newValue) {
                 background().set(Background.NOTHING);

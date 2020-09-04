@@ -25,13 +25,14 @@ public final class HUDHandingItem extends HUDControl {
 
     @Override
     public void onVisibleChanged(boolean visible) {
-        if (!this.isVisible() && visible) Platform.getEngineClient().getEventBus().register(this);
-        else if (this.isVisible() && !visible) Platform.getEngineClient().getEventBus().unregister(this);
+        if (visible) Platform.getEngineClient().getEventBus().register(this);
+        else Platform.getEngineClient().getEventBus().unregister(this);
     }
 
     @Listener
     public void update(RenderEvent.Pre event) {
-        Player player = Platform.getEngineClient().getCurrentGame().getClientPlayer();
+        if (!Platform.getEngine().isPlaying()) return;
+        Player player = Platform.getEngineClient().getCurrentClientGame().getClientPlayer();
         if (player != null) {
             Entity entity = player.getControlledEntity();
             entity.getComponent(TwoHands.class).ifPresent(twoHands ->

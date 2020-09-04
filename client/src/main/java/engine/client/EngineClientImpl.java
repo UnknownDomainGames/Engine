@@ -19,6 +19,7 @@ import engine.client.sound.Sound;
 import engine.client.sound.SoundManager;
 import engine.enginemod.EngineModClientListeners;
 import engine.enginemod.EngineModListeners;
+import engine.enginemod.client.gui.game.GuiGameLoading;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
 import engine.graphics.EngineGraphicsManager;
@@ -26,9 +27,14 @@ import engine.graphics.GraphicsEngine;
 import engine.graphics.GraphicsManager;
 import engine.graphics.gl.util.GLHelper;
 import engine.gui.EngineGUIPlatform;
+import engine.gui.Scene;
 import engine.logic.Ticker;
 import engine.mod.ModContainer;
 import engine.player.Profile;
+import engine.server.ServerConfig;
+import engine.server.network.ConnectionStatus;
+import engine.server.network.NetworkClient;
+import engine.server.network.packet.PacketHandshake;
 import engine.util.ClassPathUtils;
 import engine.util.RuntimeEnvironment;
 import engine.util.Side;
@@ -64,6 +70,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         this.playerProfile = profile;
     }
 
+    @Override
     public Profile getPlayerProfile() {
         return playerProfile;
     }
@@ -221,6 +228,47 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         logger.info("Engine terminated!");
     }
 
+    private EngineServerIntegrated integratedServer;
+
+    public void playIntegratedGame(String gameName) {
+        if (isPlaying()) {
+            game.terminate();
+        }
+        if (isIntegratedServerRunning()) {
+            stopIntegratedGame();
+        }
+        var guiGameLoading = new GuiGameLoading();
+        graphicsManager.getGUIManager().show(new Scene(guiGameLoading));
+        var serverConfig = new ServerConfig();
+        serverConfig.setGame(gameName);
+        integratedServer = new EngineServerIntegrated(this, serverConfig);
+        new Thread(() -> {
+            integratedServer.initEngine();
+            integratedServer.runEngine();
+        }, "Integrated Server").start();
+        while (!integratedServer.isPlaying()) {
+            guiGameLoading.updateProgress();
+            graphicsManager.doRender(0);
+            try {
+                Thread.sleep(16L);
+            } catch (InterruptedException ignored) {
+            }
+        }
+        var socketAddress = integratedServer.getNettyServer().runLocal();
+        var nettyClient = new NetworkClient();
+        nettyClient.runLocal(socketAddress);
+        nettyClient.send(new PacketHandshake(ConnectionStatus.LOGIN));
+    }
+
+    public boolean isIntegratedServerRunning() {
+        return integratedServer != null && !integratedServer.isMarkedTermination();
+    }
+
+    public void stopIntegratedGame() {
+        integratedServer.terminate();
+        integratedServer = null;
+    }
+
     @Override
     public void startGame(Game game) {
         if (isPlaying()) {
@@ -236,8 +284,13 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     @Override
-    public GameClient getCurrentGame() {
+    public GameClient getCurrentClientGame() {
         return game;
+    }
+
+    @Override
+    public Game getCurrentLogicGame() {
+        return integratedServer != null ? integratedServer.getCurrentLogicGame() : null;
     }
 
     @Override
