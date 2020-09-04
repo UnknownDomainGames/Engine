@@ -31,6 +31,7 @@ public final class HUDHandingItem extends HUDControl {
 
     @Listener
     public void update(RenderEvent.Pre event) {
+        if (!Platform.getEngine().isPlaying()) return;
         Player player = Platform.getEngineClient().getCurrentClientGame().getClientPlayer();
         if (player != null) {
             Entity entity = player.getControlledEntity();
