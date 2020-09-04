@@ -170,8 +170,8 @@ public abstract class Node implements EventTarget {
         return disabled != null && disabled.get();
     }
 
-    public final void setDisabled(boolean visible) {
-        visible().set(visible);
+    public final void setDisabled(boolean disabled) {
+        disabled().set(disabled);
     }
 
     public final void requestParentLayout() {
