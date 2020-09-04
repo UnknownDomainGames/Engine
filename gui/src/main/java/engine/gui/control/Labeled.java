@@ -113,12 +113,20 @@ public class Labeled extends Control {
 
     @Override
     public float computeWidth() {
-        return text.prefWidth() + getPadding().getLeft() + getPadding().getRight();
+        if (graphic != null && graphic.isPresent() && text.getText() == null) {
+            return graphic.get().prefWidth() + getPadding().getLeft() + getPadding().getRight();
+        } else {
+            return text.prefWidth() + getPadding().getLeft() + getPadding().getRight();
+        }
     }
 
     @Override
     public float computeHeight() {
-        return text.prefHeight() + getPadding().getTop() + getPadding().getBottom();
+        if (graphic != null && graphic.isPresent() && text.getText() == null) {
+            return graphic.get().prefHeight() + getPadding().getTop() + getPadding().getBottom();
+        } else {
+            return text.prefHeight() + getPadding().getTop() + getPadding().getBottom();
+        }
     }
 
     @Override

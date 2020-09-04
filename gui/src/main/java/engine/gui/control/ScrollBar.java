@@ -105,27 +105,33 @@ public class ScrollBar extends Region {
                     value.set(value.get() - step.get());
                 }
             }
-            if (slider.contains(e.getX(), e.getY())) {
-                anchorX = e.getX();
-                anchorY = e.getY();
-                select = true;
-            }
+        }
+        if (e.getTarget() == slider || slider.contains(e.getX(), e.getY())) {
+            anchorX = e.getTarget() == slider ? slider.getLayoutX() + e.getX() : e.getX();
+            anchorY = e.getTarget() == slider ? slider.getLayoutY() + e.getY() : e.getY();
+            select = true;
         }
     }
 
     private void onMouseMove(MouseEvent event) {
         if (!select) return;
+        var x = event.getX();
+        var y = event.getY();
+        if (event.getTarget() == slider) {
+            x = slider.getLayoutX() + x;
+            y = slider.getLayoutY() + y;
+        }
         if (orientation.get() == Orientation.HORIZONTAL) {
-            var deltaPos = event.getX() - anchorX;
+            var deltaPos = x - anchorX;
             var dx = deltaPos / (back.rectSize().get().x() - slider.rectSize().get().x());
             value.set(value.get() + dx);
         } else {
-            var deltaPos = event.getY() - anchorY;
+            var deltaPos = y - anchorY;
             var dy = deltaPos / (back.rectSize().get().y() - slider.rectSize().get().y());
             value.set(value.get() + dy);
         }
-        anchorX = event.getX();
-        anchorY = event.getY();
+        anchorX = x;
+        anchorY = y;
     }
 
     private void onMouseReleased(MouseActionEvent event) {

@@ -69,6 +69,10 @@ public class ListView<T> extends Control {
         updateContentPane();
     }
 
+    public MutableObjectValue<Function<ListView<T>, ListCell<T>>> cellFactory() {
+        return cellFactory;
+    }
+
     public final MutableObjectValue<Orientation> orientation() {
         if (orientation == null) {
             orientation = new SimpleMutableObjectValue<>(Orientation.VERTICAL);
@@ -206,7 +210,7 @@ public class ListView<T> extends Control {
             }
         }
         contentChildren.addAll(cells);
-        super.layoutChildren();
+        layoutInArea(scrollPane, 0, 0, getWidth(), getHeight());
     }
 
     static class ListViewFocusModel<T> extends FocusModel<T> {

@@ -243,6 +243,7 @@ public class Scene implements EventTarget {
                 pressedButton.addPressedNode(node);
                 var pos = node.relativePos(cursorX, cursorY);
                 new MouseActionEvent(MouseActionEvent.MOUSE_PRESSED, node, pos.getX(), pos.getY(), cursorX, cursorY, button, modifier, 0).fireEvent();
+                break;
             }
         } else {
             for (Node node : pressedButton.getPressedNodes()) {
