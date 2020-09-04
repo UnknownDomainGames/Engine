@@ -1,6 +1,7 @@
 package engine.graphics;
 
 import engine.graphics.animation.AnimationManager;
+import engine.graphics.animation.RealtimeAnimationManager;
 import engine.graphics.backend.GraphicsBackend;
 import engine.graphics.backend.GraphicsBackendFactory;
 import engine.graphics.font.FontManager;
@@ -61,7 +62,7 @@ public final class GraphicsEngine {
                 .create();
         LOGGER.info("Graphics backend: {}", settings.backend);
         graphicsBackend.init();
-        animationManager = new AnimationManager();
+        animationManager = new RealtimeAnimationManager();
         FontManager.initialize(settings.fontManager);
     }
 
