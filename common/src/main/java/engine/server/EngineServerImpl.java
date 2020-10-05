@@ -8,7 +8,7 @@ import engine.client.game.GameClient;
 import engine.enginemod.EngineModListeners;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
-import engine.game.GameData;
+import engine.game.GameDataStorage;
 import engine.game.GameServerFullAsync;
 import engine.logic.Ticker;
 import engine.server.network.NetworkServer;
@@ -123,8 +123,12 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
             return;
         }
         logger.info("Starting game for world");
-        Path gameBasePath = this.getRunPath().resolve("game");
-        startGame(new GameServerFullAsync(this, gameBasePath, GameData.createFromCurrentEnvironment(gameBasePath, "default"), nettyServer));
+        Path gameBasePath = this.getRunPath().resolve("games");
+        var gameStorage = new GameDataStorage(gameBasePath);
+        if (!gameStorage.getGames().containsKey(serverConfig.getGame())) {
+            gameStorage.createGameData(serverConfig.getGame());
+        }
+        startGame(new GameServerFullAsync(this, gameBasePath, gameStorage.getGames().get(serverConfig.getGame()), nettyServer));
         ticker.run();
     }
 
