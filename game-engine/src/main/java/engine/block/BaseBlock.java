@@ -1,5 +1,6 @@
 package engine.block;
 
+import engine.block.state.BlockStateManager;
 import engine.component.Component;
 import engine.component.ComponentAgent;
 import engine.registry.Registrable;
@@ -13,8 +14,23 @@ import java.util.Set;
 public class BaseBlock extends Registrable.Impl<Block> implements Block {
 
     private final ComponentAgent components = new ComponentAgent();
+    private final BlockStateManager stateManager;
 
     private BlockShape shape = BlockShape.NORMAL_CUBE;
+
+    public BaseBlock() {
+        var builder = new BlockStateManager.Builder(this);
+        initStateProperties(builder);
+        this.stateManager = builder.build();
+    }
+
+    protected void initStateProperties(BlockStateManager.Builder builder) {
+
+    }
+
+    public BlockStateManager getStateManager() {
+        return stateManager;
+    }
 
     @Nonnull
     @Override
