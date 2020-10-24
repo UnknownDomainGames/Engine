@@ -5,6 +5,21 @@ import engine.block.Block;
 
 import java.util.*;
 
+/**
+ * State
+ * <p>
+ * represents a finite set of variants of a unit
+ * <p>
+ * Given the finite property of <code>State</code>, all properties of the unit have to be exhaustive,
+ * i.e. all possibility of properties can be listed
+ * <p>
+ * In design, only those which share the same or nearly the same behaviours should use <code>State</code>.
+ * Should unit that have distinct behaviours use separate classes and/or registry units.
+ * <p>
+ * Example 1: Stone Block A and Stone Block B only have visual difference. They could use <code>State</code>
+ * <p>
+ * Example 2: Stone Block A1 has behaviour 1 and Stone Block A2 has behaviour 2. They should be designed as 2 distinct Block.
+ */
 public class BlockState {
     protected Block owner;
 
