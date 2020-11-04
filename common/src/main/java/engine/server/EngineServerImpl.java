@@ -11,6 +11,7 @@ import engine.game.Game;
 import engine.game.GameDataStorage;
 import engine.game.GameServerFullAsync;
 import engine.logic.Ticker;
+import engine.registry.Registries;
 import engine.server.network.NetworkServer;
 import engine.util.Side;
 
@@ -100,7 +101,10 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
     protected void finishStage() {
         super.finishStage();
 
-        ticker = new Ticker(this::serverTick, partial -> {}, 20);
+        Registries.getBlockRegistry().reconstructStateId(); //TODO: any better place?
+
+        ticker = new Ticker(this::serverTick, partial -> {
+        }, 20);
     }
 
     @Override
