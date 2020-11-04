@@ -1,4 +1,4 @@
-package engine.block.state;
+package engine.state;
 
 import com.google.common.collect.ImmutableSet;
 

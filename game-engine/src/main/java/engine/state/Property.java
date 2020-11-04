@@ -1,4 +1,4 @@
-package engine.block.state;
+package engine.state;
 
 import java.util.Collection;
 import java.util.Objects;

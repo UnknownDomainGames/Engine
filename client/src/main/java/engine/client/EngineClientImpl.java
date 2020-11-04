@@ -31,6 +31,7 @@ import engine.gui.Scene;
 import engine.logic.Ticker;
 import engine.mod.ModContainer;
 import engine.player.Profile;
+import engine.registry.Registries;
 import engine.server.ServerConfig;
 import engine.server.network.ConnectionStatus;
 import engine.server.network.NetworkClient;
@@ -181,6 +182,9 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     @Override
     protected void finishStage() {
         super.finishStage();
+
+        Registries.getBlockRegistry().reconstructStateId(); //TODO: any better place?
+
         ticker = new Ticker(this::clientTick, partial -> graphicsManager.doRender(partial), Ticker.CLIENT_TICK);
     }
 

@@ -17,6 +17,7 @@ import engine.server.network.packet.PacketSyncRegistry;
 import engine.server.network.packet.c2s.PacketLoginProfile;
 import engine.server.network.packet.s2c.PacketGameData;
 import engine.server.network.packet.s2c.PacketLoginRequest;
+import engine.state.StateIncludedRegistry;
 
 import java.util.Objects;
 
@@ -45,6 +46,9 @@ public class PreGamePacketHandler {
             if (Objects.equals(registry.getRegistryName(), event.getPacket().getRegistryName())) {
                 if (registry instanceof SynchronizableRegistry) {
                     ((SynchronizableRegistry<?>) registry).sync(event.getPacket().getIdMap());
+                    if (registry instanceof StateIncludedRegistry) {
+                        ((StateIncludedRegistry<?>) registry).reconstructStateId();
+                    }
                 }
             }
         }

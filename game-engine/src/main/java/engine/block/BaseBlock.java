@@ -1,9 +1,10 @@
 package engine.block;
 
-import engine.block.state.BlockStateManager;
+import engine.block.state.BlockState;
 import engine.component.Component;
 import engine.component.ComponentAgent;
 import engine.registry.Registrable;
+import engine.state.StateManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,21 +15,22 @@ import java.util.Set;
 public class BaseBlock extends Registrable.Impl<Block> implements Block {
 
     private final ComponentAgent components = new ComponentAgent();
-    private final BlockStateManager stateManager;
+    private final StateManager<Block, BlockState> stateManager;
 
     private BlockShape shape = BlockShape.NORMAL_CUBE;
 
     public BaseBlock() {
-        var builder = new BlockStateManager.Builder(this);
+        var builder = new StateManager.Builder<Block, BlockState>(this);
         initStateProperties(builder);
-        this.stateManager = builder.build();
+        this.stateManager = builder.build(BlockState::new);
     }
 
-    protected void initStateProperties(BlockStateManager.Builder builder) {
+    protected void initStateProperties(StateManager.Builder<Block, BlockState> builder) {
 
     }
 
-    public BlockStateManager getStateManager() {
+    @Override
+    public StateManager<Block, BlockState> getStateManager() {
         return stateManager;
     }
 

@@ -1,19 +1,19 @@
-package engine.block.state;
+package engine.state;
 
 import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.Lists;
-import engine.block.Block;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BlockStateManager {
-    private final Block owner;
+public class StateManager<O, S extends State<O, S>> {
+    private final O owner;
     private final ImmutableSortedMap<String, Property<?>> properties;
-    private final List<BlockState> states;
+    private final List<S> states;
 
-    protected BlockStateManager(Block owner, Map<String, Property<?>> properties) {
+    protected StateManager(O owner, Map<String, Property<?>> properties, BiFunction<O, Map<Property, Comparable>, S> stateSupplier) {
         this.owner = owner;
         this.properties = ImmutableSortedMap.copyOf(properties);
 
@@ -28,32 +28,32 @@ public class BlockStateManager {
             }));
         }
 
-        var possibleStatesMap = new HashMap<Map<Property, Comparable>, BlockState>();
-        var possibleStatesList = new ArrayList<BlockState>();
+        var possibleStatesMap = new HashMap<Map<Property, Comparable>, State>();
+        var possibleStatesList = new ArrayList<S>();
 
         possibleStatesStream.forEach(list -> {
             var map = list.stream().collect(Collectors.toMap(Property.PropertyValue::getProperty, Property.PropertyValue::getValue));
-            var state = new BlockState(owner, map);
+            var state = stateSupplier.apply(owner, map);
             possibleStatesMap.put(map, state);
             possibleStatesList.add(state);
         });
 
-        for (BlockState state : possibleStatesList) {
+        for (State state : possibleStatesList) {
             state.createSibling(possibleStatesMap);
         }
 
         states = List.copyOf(possibleStatesList);
     }
 
-    public Block getOwner() {
+    public O getOwner() {
         return owner;
     }
 
-    public List<BlockState> getStates() {
+    public List<S> getStates() {
         return states;
     }
 
-    public BlockState getDefaultState() {
+    public S getDefaultState() {
         return states.get(0);
     }
 
@@ -61,15 +61,15 @@ public class BlockStateManager {
         return properties.values();
     }
 
-    public static class Builder {
-        private final Block owner;
+    public static class Builder<O, S extends State<O, S>> {
+        private final O owner;
         private final Map<String, Property<?>> properties = new HashMap<>();
 
-        public Builder(Block owner) {
+        public Builder(O owner) {
             this.owner = owner;
         }
 
-        public Builder add(Property<?>... properties) {
+        public Builder<O, S> add(Property<?>... properties) {
             for (Property<?> property : properties) {
                 validate(property);
                 this.properties.put(property.getPropertyName(), property);
@@ -83,8 +83,8 @@ public class BlockStateManager {
             }
         }
 
-        public BlockStateManager build() {
-            return new BlockStateManager(owner, properties);
+        public StateManager<O, S> build(BiFunction<O, Map<Property, Comparable>, S> stateSupplier) {
+            return new StateManager<>(owner, properties, stateSupplier);
         }
     }
 }
