@@ -3,6 +3,7 @@ package engine.registry.game;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.item.BlockItem;
 import engine.item.Item;
 import engine.registry.RegistrationException;
@@ -21,7 +22,7 @@ public final class ItemRegistryImpl extends SynchronizableIdRegistry<Item> imple
     }
 
     @Override
-    public Optional<BlockItem> getBlockItem(Block block) {
+    public Optional<BlockItem> getBlockItem(BlockState block) {
         return Optional.ofNullable(blockToCorrItem.get(block));
     }
 

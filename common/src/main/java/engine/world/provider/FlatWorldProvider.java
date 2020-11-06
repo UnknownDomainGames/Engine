@@ -2,7 +2,7 @@ package engine.world.provider;
 
 import configuration.Config;
 import configuration.io.ConfigIOUtils;
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.game.Game;
 import engine.registry.Registries;
 import engine.world.BaseWorldProvider;
@@ -25,8 +25,8 @@ public class FlatWorldProvider extends BaseWorldProvider {
         Config config = new Config();
         config.set("name", name);
         List<String> layers = new ArrayList<>();
-        for (Block block : setting.getLayers()) {
-            layers.add(block.getName().getUniqueName());
+        for (BlockState block : setting.getLayers()) {
+            layers.add(block.toStorageString());
         }
         config.set("layers", layers);
         config.save(storagePath.resolve("world.json"));
@@ -39,9 +39,11 @@ public class FlatWorldProvider extends BaseWorldProvider {
         Config config = ConfigIOUtils.load(storagePath.resolve("world.json"));
         String name = config.getString("name");
         List<Object> layers = config.getList("layers", List.of());
-        Block[] blocks = new Block[layers.size()];
+        BlockState[] blocks = new BlockState[layers.size()];
         for (int i = 0; i < layers.size(); i++) {
-            blocks[i] = Registries.getBlockRegistry().getValue((String) layers.get(i));
+            var s = (String) layers.get(i);
+            var block = Registries.getBlockRegistry().getValue(BlockState.getBlockNameFromStorageString(s));
+            blocks[i] = block.getDefaultState().fromStorageString(s);
         }
         FlatWorldCreationSetting creationSetting = new FlatWorldCreationSetting();
         creationSetting.layers(blocks);

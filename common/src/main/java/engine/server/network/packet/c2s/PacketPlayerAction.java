@@ -2,6 +2,7 @@ package engine.server.network.packet.c2s;
 
 import engine.server.network.PacketBuf;
 import engine.server.network.packet.Packet;
+import engine.world.hit.BlockHitResult;
 import engine.world.hit.HitResult;
 
 import java.io.IOException;
@@ -17,6 +18,9 @@ public class PacketPlayerAction implements Packet {
     public PacketPlayerAction(Action action, HitResult hitResult) {
         this.action = action;
         this.hitResult = hitResult;
+        if(hitResult instanceof BlockHitResult){
+            this.hitResult = ((BlockHitResult) hitResult).simplify();
+        }
     }
 
     @Override

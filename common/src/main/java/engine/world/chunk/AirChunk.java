@@ -1,10 +1,9 @@
 package engine.world.chunk;
 
 import engine.block.AirBlock;
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.event.block.cause.BlockChangeCause;
 import engine.math.BlockPos;
-import engine.registry.Registries;
 import engine.world.World;
 import org.joml.Vector3i;
 import org.joml.Vector3ic;
@@ -75,18 +74,13 @@ public class AirChunk implements Chunk {
     }
 
     @Override
-    public Block getBlock(int x, int y, int z) {
-        return AirBlock.AIR;
+    public BlockState getBlock(int x, int y, int z) {
+        return AirBlock.AIR.getDefaultState();
     }
 
     @Override
-    public int getBlockId(int x, int y, int z) {
-        return Registries.getBlockRegistry().getId(AirBlock.AIR);
-    }
-
-    @Override
-    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause) {
-        return AirBlock.AIR;
+    public BlockState setBlock(@Nonnull BlockPos pos, @Nonnull BlockState block, @Nonnull BlockChangeCause cause) {
+        return AirBlock.AIR.getDefaultState();
     }
 
     @Override

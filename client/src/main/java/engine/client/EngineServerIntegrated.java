@@ -1,5 +1,6 @@
 package engine.client;
 
+import engine.Platform;
 import engine.client.game.GameClient;
 import engine.event.EventBus;
 import engine.event.engine.EngineEvent;
@@ -13,15 +14,23 @@ import engine.server.EngineServer;
 import engine.server.ServerConfig;
 import engine.server.network.NetworkServer;
 import engine.util.CrashHandler;
+import engine.util.CrashHandlerImpl;
 import engine.util.RuntimeEnvironment;
 import engine.util.Side;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryUsage;
+import java.lang.management.RuntimeMXBean;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+
+import static java.lang.String.format;
+import static org.apache.commons.lang3.SystemUtils.*;
 
 public class EngineServerIntegrated implements EngineServer {
 
@@ -36,6 +45,7 @@ public class EngineServerIntegrated implements EngineServer {
     private boolean initialized;
     private boolean running;
     private boolean markedTermination;
+    private CrashHandlerImpl crashHandler;
 
     public EngineServerIntegrated(EngineClient parent, ServerConfig serverConfig) {
         this.parent = parent;
@@ -89,7 +99,55 @@ public class EngineServerIntegrated implements EngineServer {
 
     @Override
     public CrashHandler getCrashHandler() {
-        return parent.getCrashHandler();
+        return crashHandler;
+    }
+
+    protected void initExceptionHandler() {
+        crashHandler = new CrashHandlerImpl(this, getRunPath().resolve("crashreport"));
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            logger.error("Caught unhandled exception!!! Engine will terminate!");
+            crashHandler.crash(t, e);
+        });
+        crashHandler.addReportDetail("Engine Version",
+                builder -> builder.append(Platform.getVersion()));
+        crashHandler.addReportDetail("Engine Side",
+                builder -> builder.append(getSide()));
+        crashHandler.addReportDetail("Runtime Environment",
+                builder -> builder.append(getRuntimeEnvironment()));
+        crashHandler.addReportDetail("Loaded Mods",
+                builder -> {
+                    if (getModManager() == null)
+                        builder.append("[]");
+                    else
+                        builder.append("[").append(StringUtils.join(getModManager().getLoadedMods().stream().map(modContainer -> modContainer.getId() + "(" + modContainer.getVersion() + ")").iterator(), ", ")).append("]");
+                });
+        crashHandler.addReportDetail("Operating System",
+                builder -> builder.append(format("%s (%s) version %s", OS_NAME, OS_ARCH, OS_VERSION)));
+        crashHandler.addReportDetail("Java Version",
+                builder -> builder.append(format("%s (%s), %s", JAVA_VERSION, JAVA_VM_VERSION, JAVA_VERSION)));
+        crashHandler.addReportDetail("JVM Information",
+                builder -> builder.append(format("%s (%s), %s", JAVA_VM_NAME, JAVA_VM_INFO, JAVA_VM_VENDOR)));
+        crashHandler.addReportDetail("Heap Memory Usage",
+                builder -> {
+                    MemoryUsage heapMemoryUsage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+                    long usedMemory = heapMemoryUsage.getUsed() >> 20;
+                    long totalMemory = heapMemoryUsage.getCommitted() >> 20;
+                    long maxMemory = heapMemoryUsage.getMax() >> 20;
+                    builder.append(format("%d MB / %d MB (Max: %d MB)", usedMemory, totalMemory, maxMemory));
+                });
+        crashHandler.addReportDetail("Non Heap Memory Usage",
+                builder -> {
+                    MemoryUsage nonHeapMemoryUsage = ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage();
+                    long usedMemory = nonHeapMemoryUsage.getUsed() >> 20;
+                    long maxMemory = nonHeapMemoryUsage.getMax() >> 20;
+                    builder.append(format("%d MB / %d MB", usedMemory, maxMemory));
+                });
+        crashHandler.addReportDetail("JVM Flags",
+                builder -> {
+                    RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+                    List<String> jvmFlags = runtimeMXBean.getInputArguments();
+                    builder.append(format("(%s totals) %s", jvmFlags.size(), String.join(" ", jvmFlags)));
+                });
     }
 
     @Override
@@ -107,6 +165,7 @@ public class EngineServerIntegrated implements EngineServer {
     protected void constructionStage() {
         logger.info("Initializing engine!");
 
+        initExceptionHandler();
         serverThread = Thread.currentThread();
     }
 

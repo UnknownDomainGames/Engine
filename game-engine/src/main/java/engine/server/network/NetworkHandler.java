@@ -91,11 +91,13 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     private String disconnectionReason;
 
     public void closeChannel(String reason) {
-        if (this.channel != null && this.channel.isOpen()) {
-            disconnectionReason = reason;
-            this.channel.config().setAutoRead(false);
-            this.channel.close().awaitUninterruptibly();
-            postDisconnect();
+        if (this.channel != null) {
+            if (this.channel.isOpen()) {
+                disconnectionReason = reason;
+                this.channel.config().setAutoRead(false);
+                this.channel.close().awaitUninterruptibly();
+                postDisconnect();
+            }
         }
     }
 
@@ -198,7 +200,7 @@ public class NetworkHandler extends SimpleChannelInboundHandler<Packet> {
     }
 
     private void sendPacketInternal(Packet packet, GenericFutureListener<Future<? super Void>> future) {
-        if (channel != null) {
+        if (channel != null && channel.isOpen()) {
             packetOutCounter++;
             var channelFuture = channel.writeAndFlush(packet);
             if (future != null) {

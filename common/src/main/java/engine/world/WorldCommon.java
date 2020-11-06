@@ -5,6 +5,7 @@ import engine.block.Block;
 import engine.block.component.DestroyBehavior;
 import engine.block.component.NeighborChangeListener;
 import engine.block.component.PlaceBehavior;
+import engine.block.state.BlockState;
 import engine.component.Component;
 import engine.component.ComponentAgent;
 import engine.entity.Entity;
@@ -239,31 +240,25 @@ public class WorldCommon implements World {
 
     @Nonnull
     @Override
-    public Block getBlock(int x, int y, int z) {
+    public BlockState getBlock(int x, int y, int z) {
         Chunk chunk = chunkManager.getOrLoadChunk(x >> CHUNK_X_BITS, y >> CHUNK_Y_BITS, z >> CHUNK_Z_BITS);
-        return chunk == null ? Registries.getBlockRegistry().air() : chunk.getBlock(x, y, z);
-    }
-
-    @Override
-    public int getBlockId(int x, int y, int z) {
-        Chunk chunk = chunkManager.getOrLoadChunk(x >> CHUNK_X_BITS, y >> CHUNK_Y_BITS, z >> CHUNK_Z_BITS);
-        return chunk == null ? Registries.getBlockRegistry().getId(Registries.getBlockRegistry().air()) : chunk.getBlockId(x, y, z);
+        return chunk == null ? Registries.getBlockRegistry().air().getDefaultState() : chunk.getBlock(x, y, z);
     }
 
     @Override
     public boolean isAirBlock(int x, int y, int z) {
-        return getBlock(x, y, z) == Registries.getBlockRegistry().air();
+        return getBlock(x, y, z).getPrototype() == Registries.getBlockRegistry().air();
     }
 
     @Nonnull
     @Override
-    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause, boolean shouldNotify) {
-        Block oldBlock = getBlock(pos);
+    public BlockState setBlock(@Nonnull BlockPos pos, @Nonnull BlockState block, @Nonnull BlockChangeCause cause, boolean shouldNotify) {
+        BlockState oldBlock = getBlock(pos);
         BlockChangeEvent pre, post;
-        if (block == AirBlock.AIR) {
+        if (block.getPrototype() == AirBlock.AIR) {
             pre = new BlockDestroyEvent.Pre(this, pos, oldBlock, block, cause);
             post = new BlockDestroyEvent.Post(this, pos, oldBlock, block, cause);
-        } else if (oldBlock == AirBlock.AIR) {
+        } else if (oldBlock == AirBlock.AIR.getDefaultState()) {
             pre = new BlockPlaceEvent.Pre(this, pos, oldBlock, block, cause);
             post = new BlockPlaceEvent.Post(this, pos, oldBlock, block, cause);
         } else {
@@ -274,8 +269,8 @@ public class WorldCommon implements World {
             chunkManager.getOrLoadChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS)
                     .setBlock(pos, block, cause);
 
-            oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
-            block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
+            oldBlock.getPrototype().getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
+            block.getPrototype().getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
 
             getGame().getEventBus().post(post);
             if (shouldNotify) {
@@ -285,19 +280,19 @@ public class WorldCommon implements World {
         return oldBlock;
     }
 
-    protected void notifyNeighborChanged(BlockPos pos, Block block, BlockChangeCause cause) {
+    protected void notifyNeighborChanged(BlockPos pos, BlockState block, BlockChangeCause cause) {
         for (Direction direction : Direction.values()) {
             BlockPos neighborPos = pos.offset(direction);
-            Block neighbor = getBlock(neighborPos);
-            neighbor.getComponent(NeighborChangeListener.class)
+            BlockState neighbor = getBlock(neighborPos);
+            neighbor.getPrototype().getComponent(NeighborChangeListener.class)
                     .ifPresent(listener -> listener.onNeighborChanged(this, neighborPos, neighbor, direction.opposite(), pos, block, cause));
         }
     }
 
     @Nonnull
     @Override
-    public Block destroyBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
-        return setBlock(pos, Registries.getBlockRegistry().air(), cause);
+    public BlockState destroyBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
+        return setBlock(pos, Registries.getBlockRegistry().air().getDefaultState(), cause);
     }
 
     @Override
@@ -380,8 +375,8 @@ public class WorldCommon implements World {
                 double xFix = Integer.MAX_VALUE, yFix = Integer.MAX_VALUE, zFix = Integer.MAX_VALUE;
                 if (faceX.size() != 0) {
                     for (BlockPos pos : faceX) {
-                        Block block = world.getBlock(pos);
-                        AABBd[] blockBoxes = block.getShape().getBoundingBoxes(world, pos, block);
+                        BlockState block = world.getBlock(pos);
+                        AABBd[] blockBoxes = block.getPrototype().getShape().getBoundingBoxes(world, pos, block.getPrototype());
                         if (blockBoxes.length != 0)
                             for (AABBd blockBoxLocal : blockBoxes) {
                                 AABBd blockBox = blockBoxLocal.translate(
@@ -395,9 +390,9 @@ public class WorldCommon implements World {
                 }
                 if (faceY.size() != 0) {
                     for (BlockPos pos : faceY) {
-                        Block block = world.getBlock(pos);
-                        AABBd[] blockBoxes = block.getShape()
-                                .getBoundingBoxes(world, pos, block);
+                        BlockState block = world.getBlock(pos);
+                        AABBd[] blockBoxes = block.getPrototype().getShape()
+                                .getBoundingBoxes(world, pos, block.getPrototype());
                         if (blockBoxes.length != 0)
                             for (AABBd blockBox : blockBoxes) {
                                 AABBd translated = blockBox.translate(
@@ -411,9 +406,9 @@ public class WorldCommon implements World {
                 }
                 if (faceZ.size() != 0) {
                     for (BlockPos pos : faceZ) {
-                        Block block = world.getBlock(pos);
-                        AABBd[] blockBoxes = block.getShape()
-                                .getBoundingBoxes(world, pos, block);
+                        BlockState block = world.getBlock(pos);
+                        AABBd[] blockBoxes = block.getPrototype().getShape()
+                                .getBoundingBoxes(world, pos, block.getPrototype());
                         if (blockBoxes.length != 0)
                             for (AABBd blockBox : blockBoxes) {
                                 AABBd translated = blockBox.translate(

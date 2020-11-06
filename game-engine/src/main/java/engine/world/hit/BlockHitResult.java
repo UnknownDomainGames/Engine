@@ -1,6 +1,6 @@
 package engine.world.hit;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.game.Game;
 import engine.math.BlockPos;
 import engine.util.Direction;
@@ -19,11 +19,11 @@ public class BlockHitResult extends HitResult {
 
     private final World world;
     private final BlockPos pos;
-    private final Block block;
+    private final BlockState block;
     private final Vector3fc hitPoint;
     private final Direction direction;
 
-    public BlockHitResult(World world, BlockPos pos, Block block, Vector3fc hitPoint, Direction direction) {
+    public BlockHitResult(World world, BlockPos pos, BlockState block, Vector3fc hitPoint, Direction direction) {
         this(Type.BLOCK, world, pos, block, hitPoint, direction);
     }
 
@@ -31,7 +31,7 @@ public class BlockHitResult extends HitResult {
         this(Type.MISS, null, null, null, null, null);
     }
 
-    private BlockHitResult(Type type, World world, BlockPos pos, Block block, Vector3fc hitPoint, Direction direction) {
+    private BlockHitResult(Type type, World world, BlockPos pos, BlockState block, Vector3fc hitPoint, Direction direction) {
         super(type);
         this.world = world;
         this.pos = pos;
@@ -48,7 +48,7 @@ public class BlockHitResult extends HitResult {
         return pos;
     }
 
-    public Block getBlock() {
+    public BlockState getBlock() {
         return block;
     }
 
@@ -65,10 +65,14 @@ public class BlockHitResult extends HitResult {
             consumer.accept(this);
     }
 
-    public static class Postponed extends BlockHitResult {
-        private String worldName;
+    public Simplified simplify(){
+        return new Simplified(world.getName(), pos,hitPoint, direction);
+    }
 
-        public Postponed(String worldName, BlockPos pos, Vector3fc hitPoint, Direction direction) {
+    public static class Simplified extends BlockHitResult {
+        private final String worldName;
+
+        public Simplified(String worldName, BlockPos pos, Vector3fc hitPoint, Direction direction) {
             super(null, pos, null, hitPoint, direction);
             this.worldName = worldName;
         }
@@ -81,6 +85,11 @@ public class BlockHitResult extends HitResult {
             var worldOptional = game.getWorld(worldName);
             var blockOptional = worldOptional.map(world1 -> world1.getBlock(getPos()));
             return new BlockHitResult(worldOptional.orElse(null), getPos(), blockOptional.orElse(null), getHitPoint(), getDirection());
+        }
+
+        @Override
+        public Simplified simplify() {
+            return this; //prevent creating another simplified version
         }
     }
 }

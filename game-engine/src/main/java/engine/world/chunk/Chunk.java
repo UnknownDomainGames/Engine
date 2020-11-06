@@ -1,6 +1,6 @@
 package engine.world.chunk;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.event.block.cause.BlockChangeCause;
 import engine.math.BlockPos;
 import engine.world.World;
@@ -38,19 +38,19 @@ public interface Chunk {
      * @param z z-coordinate of the block related to chunk coordinate system
      * @return the block in the specified path
      */
-    Block getBlock(int x, int y, int z);
+    BlockState getBlock(int x, int y, int z);
 
-    default Block getBlock(@Nonnull BlockPos pos) {
+    default BlockState getBlock(@Nonnull BlockPos pos) {
         return getBlock(pos.x(), pos.y(), pos.z());
     }
 
-    int getBlockId(int x, int y, int z);
+//    int getBlockId(int x, int y, int z);
 
-    default int getBlockId(@Nonnull BlockPos pos) {
-        return getBlockId(pos.x(), pos.y(), pos.z());
-    }
+//    default int getBlockId(@Nonnull BlockPos pos) {
+//        return getBlockId(pos.x(), pos.y(), pos.z());
+//    }
 
-    Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause);
+    BlockState setBlock(@Nonnull BlockPos pos, @Nonnull BlockState block, @Nonnull BlockChangeCause cause);
 
     boolean isAirChunk();
 }

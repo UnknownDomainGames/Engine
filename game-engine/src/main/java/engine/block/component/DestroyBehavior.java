@@ -1,6 +1,6 @@
 package engine.block.component;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.component.Component;
 import engine.event.block.cause.BlockChangeCause;
 import engine.item.ItemStack;
@@ -13,22 +13,22 @@ import java.util.List;
 import java.util.Map;
 
 public interface DestroyBehavior extends Component {
-    default boolean canDestroy(World world, BlockPos blockPos, Block block, BlockChangeCause cause) {
+    default boolean canDestroy(World world, BlockPos blockPos, BlockState block, BlockChangeCause cause) {
         return true;
     }
 
-    void onDestroyed(World world, BlockPos blockPos, Block block, BlockChangeCause cause);
+    void onDestroyed(World world, BlockPos blockPos, BlockState block, BlockChangeCause cause);
 
-    default boolean canDropItem(World world, BlockPos pos, Block block, BlockChangeCause cause) {
+    default boolean canDropItem(World world, BlockPos pos, BlockState block, BlockChangeCause cause) {
         return true;
     }
 
-    default List<ItemStack> getDropItems(World world, BlockPos pos, Block block, BlockChangeCause cause) {
+    default List<ItemStack> getDropItems(World world, BlockPos pos, BlockState block, BlockChangeCause cause) {
         var item = Registries.getItemRegistry().getBlockItem(block);
         return item.map(blockItem -> List.of(new ItemStack(blockItem, 1))).orElseGet(List::of);
     }
 
-    default DestroyableProperty getProperty(World world, BlockPos blockPos, Block block) {
+    default DestroyableProperty getProperty(World world, BlockPos blockPos, BlockState block) {
         return DEFAULT_PROPERTY;
     }
 

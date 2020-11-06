@@ -25,7 +25,7 @@ public class PacketChunkData implements Packet {
         this.chunkY = chunk.getY();
         this.chunkZ = chunk.getZ();
         try (var income = new ByteArrayOutputStream()) {
-            chunk.write(new DataOutputStream(income));
+            chunk.writeBlockContent(new DataOutputStream(income));
             rawData = income.toByteArray();
         } catch (IOException e) {
 

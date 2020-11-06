@@ -5,6 +5,7 @@ import engine.block.Block;
 import engine.block.component.DestroyBehavior;
 import engine.block.component.NeighborChangeListener;
 import engine.block.component.PlaceBehavior;
+import engine.block.state.BlockState;
 import engine.client.world.chunk.WorldClientChunkManager;
 import engine.component.Component;
 import engine.component.ComponentAgent;
@@ -230,31 +231,26 @@ public class WorldClient implements World, Runnable {
 
     @Nonnull
     @Override
-    public Block getBlock(int x, int y, int z) {
+    public BlockState getBlock(int x, int y, int z) {
         Chunk chunk = chunkManager.getOrLoadChunk(x >> ChunkConstants.CHUNK_X_BITS, y >> ChunkConstants.CHUNK_Y_BITS, z >> ChunkConstants.CHUNK_Z_BITS);
-        return chunk != null ? chunk.getBlock(x, y, z) : Registries.getBlockRegistry().air();
-    }
-
-    @Override
-    public int getBlockId(int x, int y, int z) {
-        return Registries.getBlockRegistry().getId(getBlock(x, y, z));
+        return chunk != null ? chunk.getBlock(x, y, z) : Registries.getBlockRegistry().air().getDefaultState();
     }
 
     @Override
     public boolean isAirBlock(int x, int y, int z) {
-        return getBlock(x, y, z) == Registries.getBlockRegistry().air();
+        return getBlock(x, y, z).getPrototype() == Registries.getBlockRegistry().air();
     }
 
     //TODO: check if this implementation shall modify or not
     @Nonnull
     @Override
-    public Block setBlock(@Nonnull BlockPos pos, @Nonnull Block block, @Nonnull BlockChangeCause cause, boolean shouldNotify) {
-        Block oldBlock = getBlock(pos);
+    public BlockState setBlock(@Nonnull BlockPos pos, @Nonnull BlockState block, @Nonnull BlockChangeCause cause, boolean shouldNotify) {
+        BlockState oldBlock = getBlock(pos);
         BlockChangeEvent pre, post;
-        if (block == AirBlock.AIR) {
+        if (block.getPrototype() == AirBlock.AIR) {
             pre = new BlockDestroyEvent.Pre(this, pos, oldBlock, block, cause);
             post = new BlockDestroyEvent.Post(this, pos, oldBlock, block, cause);
-        } else if (oldBlock == AirBlock.AIR) {
+        } else if (oldBlock == AirBlock.AIR.getDefaultState()) {
             pre = new BlockPlaceEvent.Pre(this, pos, oldBlock, block, cause);
             post = new BlockPlaceEvent.Post(this, pos, oldBlock, block, cause);
         } else {
@@ -265,8 +261,8 @@ public class WorldClient implements World, Runnable {
             chunkManager.getOrLoadChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS)
                     .setBlock(pos, block, cause);
 
-            oldBlock.getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
-            block.getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
+            oldBlock.getPrototype().getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
+            block.getPrototype().getComponent(PlaceBehavior.class).ifPresent(placeBehavior -> placeBehavior.onPlaced(this, pos, block, cause));
 
             getGame().getEventBus().post(post);
             if (shouldNotify) {
@@ -276,18 +272,18 @@ public class WorldClient implements World, Runnable {
         return oldBlock;
     }
 
-    protected void notifyNeighborChanged(BlockPos pos, Block block, BlockChangeCause cause) {
+    protected void notifyNeighborChanged(BlockPos pos, BlockState block, BlockChangeCause cause) {
         for (Direction direction : Direction.values()) {
             BlockPos neighborPos = pos.offset(direction);
-            Block neighbor = getBlock(neighborPos);
-            neighbor.getComponent(NeighborChangeListener.class)
+            BlockState neighbor = getBlock(neighborPos);
+            neighbor.getPrototype().getComponent(NeighborChangeListener.class)
                     .ifPresent(listener -> listener.onNeighborChanged(this, neighborPos, neighbor, direction.opposite(), pos, block, cause));
         }
     }
 
     @Nonnull
     @Override
-    public Block destroyBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
+    public BlockState destroyBlock(@Nonnull BlockPos pos, @Nonnull BlockChangeCause cause) {
         return getBlock(pos.x(), pos.y(), pos.z());
     }
 

@@ -1,6 +1,7 @@
 package engine.graphics.voxel.chunk;
 
-import engine.block.Block;
+import engine.Platform;
+import engine.block.state.BlockState;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.block.BlockRenderManager;
 import engine.graphics.vertex.VertexDataBuf;
@@ -65,19 +66,19 @@ public final class ChunkBaker {
             try {
                 drawableChunk.clearDirty();
                 Chunk chunk = drawableChunk.getChunk();
-                if (chunk.isAirChunk()) return;
-
                 BlockRenderManager blockRenderManager = BlockRenderManager.instance();
                 VertexDataBuf buf = dataBufPool.get();
-                buf.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
-                BlockGetter blockCache = createChunkCache(chunk.getWorld(), chunk);
-                BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunk(chunk);
-                while (blockPosIterator.hasNext()) {
-                    BlockPos pos = blockPosIterator.next();
-                    Block block = blockCache.getBlock(pos);
-                    blockRenderManager.generateMesh(block, blockCache, pos, buf);
+                if (chunk != null && !chunk.isAirChunk()) {
+                    buf.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
+                    BlockGetter blockCache = createChunkCache(chunk.getWorld(), chunk);
+                    BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunk(chunk);
+                    while (blockPosIterator.hasNext()) {
+                        BlockPos pos = blockPosIterator.next();
+                        BlockState block = blockCache.getBlock(pos);
+                        blockRenderManager.generateMesh(block, blockCache, pos, buf);
+                    }
+                    buf.finish();
                 }
-                buf.finish();
 
                 GraphicsEngine.getGraphicsBackend().submitTask(() -> {
                     drawableChunk.finishBake(buf);
@@ -86,6 +87,7 @@ public final class ChunkBaker {
                     if (drawableChunk.isDirty()) drawableChunk.executeBake();
                 });
             } catch (InterruptedException ignored) {
+                Platform.getLogger().warn("DEBUG",ignored);
             }
         }
 

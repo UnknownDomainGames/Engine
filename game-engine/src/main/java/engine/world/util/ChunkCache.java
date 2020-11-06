@@ -1,6 +1,6 @@
 package engine.world.util;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.registry.Registries;
 import engine.world.BlockGetter;
 import engine.world.World;
@@ -47,7 +47,7 @@ public class ChunkCache implements BlockGetter {
     }
 
     @Nonnull
-    public Block getBlock(int x, int y, int z) {
+    public BlockState getBlock(int x, int y, int z) {
         int chunkX = (x >> CHUNK_X_BITS) - this.chunkX;
         int chunkY = (y >> CHUNK_Y_BITS) - this.chunkY;
         int chunkZ = (z >> CHUNK_Z_BITS) - this.chunkZ;
@@ -55,25 +55,13 @@ public class ChunkCache implements BlockGetter {
                 chunkY >= 0 && chunkY < chunks[chunkX].length &&
                 chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {
             Chunk chunk = chunks[chunkX][chunkY][chunkZ];
-            return chunk == null ? Registries.getBlockRegistry().air() : chunk.getBlock(x, y, z); // FIXME:
+            return chunk == null ? Registries.getBlockRegistry().air().getDefaultState() : chunk.getBlock(x, y, z); // FIXME:
         }
         return world.getBlock(x, y, z);
     }
 
     @Override
-    public int getBlockId(int x, int y, int z) {
-        int chunkX = (x >> CHUNK_X_BITS) - this.chunkX;
-        int chunkY = (y >> CHUNK_Y_BITS) - this.chunkY;
-        int chunkZ = (z >> CHUNK_Z_BITS) - this.chunkZ;
-        if (chunkX >= 0 && chunkX < chunks.length && chunkY >= 0 && chunkY < chunks[chunkX].length && chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {
-            Chunk chunk = chunks[chunkX][chunkY][chunkZ];
-            return chunk == null ? Registries.getBlockRegistry().getId(Registries.getBlockRegistry().air()) : chunk.getBlockId(x, y, z); // FIXME:
-        }
-        return world.getBlockId(x, y, z);
-    }
-
-    @Override
     public boolean isAirBlock(int x, int y, int z) {
-        return getBlock(x, y, z) == Registries.getBlockRegistry().air();
+        return getBlock(x, y, z) == Registries.getBlockRegistry().air().getDefaultState();
     }
 }

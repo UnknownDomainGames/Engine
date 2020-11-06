@@ -1,6 +1,6 @@
 package engine.world.impl;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.world.WorldCreationSetting;
 
 public class FlatWorldCreationSetting implements WorldCreationSetting {
@@ -9,13 +9,13 @@ public class FlatWorldCreationSetting implements WorldCreationSetting {
         return new FlatWorldCreationSetting();
     }
 
-    private Block[] layers;
+    private BlockState[] layers;
 
-    public Block[] getLayers() {
+    public BlockState[] getLayers() {
         return this.layers;
     }
 
-    public FlatWorldCreationSetting layers(Block[] layers) {
+    public FlatWorldCreationSetting layers(BlockState[] layers) {
         this.layers = layers;
         return this;
     }

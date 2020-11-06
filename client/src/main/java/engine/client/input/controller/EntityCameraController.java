@@ -146,7 +146,7 @@ public class EntityCameraController implements EntityController {
             var blockHitResult = (BlockHitResult) hitResult;
             var cause = new BlockInteractCause.PlayerCause(player);
             game.getEngine().getEventBus().post(new BlockInteractEvent.Click(blockHitResult, cause));
-            blockHitResult.getBlock().getComponent(ClickBehavior.class).ifPresent(clickBehavior ->
+            blockHitResult.getBlock().getPrototype().getComponent(ClickBehavior.class).ifPresent(clickBehavior ->
                     clickBehavior.onClicked(blockHitResult, cause));
             entity.getComponent(TwoHands.class).ifPresent(twoHands ->
                     twoHands.getMainHand().ifNonEmpty(itemStack ->
@@ -185,7 +185,7 @@ public class EntityCameraController implements EntityController {
             var blockHitResult = (BlockHitResult) hitResult;
             var cause = new BlockInteractCause.PlayerCause(player);
             game.getEngine().getEventBus().post(new BlockInteractEvent.Activate(blockHitResult, cause));
-            blockHitResult.getBlock().getComponent(ActivateBehavior.class).ifPresent(activateBehavior ->
+            blockHitResult.getBlock().getPrototype().getComponent(ActivateBehavior.class).ifPresent(activateBehavior ->
                     activateBehavior.onActivated(blockHitResult, cause));
             entity.getComponent(TwoHands.class).ifPresent(twoHands ->
                     twoHands.getMainHand().ifNonEmpty(itemStack ->

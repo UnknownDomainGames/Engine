@@ -106,7 +106,12 @@ public class PacketBuf extends ByteBuf {
     }
 
     private void writeBlockHitResult(BlockHitResult result) {
-        writeString(result.getWorld().getName());
+        if(result instanceof BlockHitResult.Simplified){
+            writeString(((BlockHitResult.Simplified) result).getWorldName());
+        }
+        else {
+            writeString(result.getWorld().getName());
+        }
         writeBlockPos(result.getPos());
         writeEnum(result.getDirection());
         var hitPoint = result.getHitPoint();
@@ -123,12 +128,12 @@ public class PacketBuf extends ByteBuf {
         return null;
     }
 
-    private BlockHitResult.Postponed readBlockHitResult() {
+    private BlockHitResult.Simplified readBlockHitResult() {
         var worldName = readString();
         var blockPos = readBlockPos();
         var direction = readEnum(Direction.class);
         var hitPt = new Vector3f(readFloat(), readFloat(), readFloat());
-        return new BlockHitResult.Postponed(worldName, blockPos, hitPt, direction);
+        return new BlockHitResult.Simplified(worldName, blockPos, hitPt, direction);
     }
 
     public void writeItemStack(ItemStack stack) {

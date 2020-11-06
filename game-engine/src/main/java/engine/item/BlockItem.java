@@ -21,7 +21,7 @@ public class BlockItem extends BaseItem {
     protected void initComponent() {
         setComponent(ActivateBlockBehavior.class, (itemStack, hit, cause) -> {
             if (cause instanceof BlockInteractCause.PlayerCause) {
-                hit.ifSuccess($ -> hit.getWorld().setBlock(hit.getPos().offset(hit.getDirection()), block,
+                hit.ifSuccess($ -> hit.getWorld().setBlock(hit.getPos().offset(hit.getDirection()), block.getDefaultState(),
                         new BlockChangeCause.PlayerCause(((BlockInteractCause.PlayerCause) cause).getPlayer())));
             }
         });

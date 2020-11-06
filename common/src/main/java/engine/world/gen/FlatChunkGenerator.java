@@ -1,6 +1,6 @@
 package engine.world.gen;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.event.block.cause.BlockChangeCause;
 import engine.math.BlockPos;
 import engine.world.chunk.Chunk;
@@ -9,9 +9,9 @@ import static engine.world.chunk.ChunkConstants.*;
 
 public class FlatChunkGenerator implements ChunkGenerator {
 
-    private final Block[] layers;
+    private final BlockState[] layers;
 
-    public FlatChunkGenerator(Block[] layers) {
+    public FlatChunkGenerator(BlockState[] layers) {
         this.layers = layers;
     }
 

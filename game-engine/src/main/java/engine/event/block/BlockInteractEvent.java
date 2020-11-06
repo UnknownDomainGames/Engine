@@ -1,6 +1,6 @@
 package engine.event.block;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.event.action.InteractEvent;
 import engine.event.block.cause.BlockInteractCause;
 import engine.math.BlockPos;
@@ -28,7 +28,7 @@ public abstract class BlockInteractEvent implements InteractEvent {
         return blockHit.getPos();
     }
 
-    public Block getBlock() {
+    public BlockState getBlock() {
         return blockHit.getBlock();
     }
 

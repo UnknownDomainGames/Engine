@@ -1,6 +1,6 @@
 package engine.graphics.block;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.math.BlockPos;
 import engine.util.Direction;
@@ -10,13 +10,13 @@ import java.util.function.Supplier;
 
 public interface BlockRenderManager {
 
-    boolean canRenderFace(BlockGetter world, BlockPos pos, Block block, Direction direction);
+    boolean canRenderFace(BlockGetter world, BlockPos pos, BlockState block, Direction direction);
 
-    boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, Block block, Direction direction);
+    boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, BlockState block, Direction direction);
 
-    void generateMesh(Block block, BlockGetter world, BlockPos pos, VertexDataBuf buffer);
+    void generateMesh(BlockState block, BlockGetter world, BlockPos pos, VertexDataBuf buffer);
 
-    void generateMesh(Block block, VertexDataBuf buffer);
+    void generateMesh(BlockState block, VertexDataBuf buffer);
 
     static BlockRenderManager instance() {
         return BlockRenderManager.Internal.instance.get();

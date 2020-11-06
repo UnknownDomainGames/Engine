@@ -20,7 +20,7 @@ import java.util.*;
  * Example 2: Stone Block A1 has behaviour 1 and Stone Block A2 has behaviour 2. They should be designed as 2 distinct Block.
  */
 public class State<O, S extends State<O, S>> {
-    protected final HashMap<Property<?>, Comparable<?>> properties;
+    protected final HashMap<Property, Comparable> properties;
     protected O owner;
     private Map<Property.PropertyValue<?>, S> sibling;
 
@@ -29,16 +29,24 @@ public class State<O, S extends State<O, S>> {
         this.properties = new HashMap<>(properties);
     }
 
-    public Collection<Property<?>> getProperties() {
+    public Collection<Property> getProperties() {
         return Collections.unmodifiableCollection(properties.keySet());
     }
 
-    public ImmutableMap<Property<?>, Comparable<?>> getPropertiesWithValue() {
+    public ImmutableMap<Property, Comparable> getPropertiesWithValue() {
         return ImmutableMap.copyOf(properties);
     }
 
     public boolean contains(Property<?> property) {
         return this.properties.containsKey(property);
+    }
+
+    public boolean contains(String propertyName){
+        return getProperties().stream().anyMatch(property -> property.getPropertyName().equals(propertyName));
+    }
+
+    public Optional<Property> getProperty(String name){
+        return getProperties().stream().filter(property -> property.getPropertyName().equals(name)).findFirst();
     }
 
     public <T extends Comparable<T>> T get(Property<T> property) {
@@ -74,12 +82,12 @@ public class State<O, S extends State<O, S>> {
             throw new IllegalStateException("Sibling map already created");
         }
         sibling = new HashMap<>();
-        for (Map.Entry<Property<?>, Comparable<?>> entry : properties.entrySet()) {
-            for (Comparable<?> possibleValue : entry.getKey().getPossibleValues()) {
+        for (Map.Entry<Property, Comparable> entry : properties.entrySet()) {
+            for (var possibleValue : entry.getKey().getPossibleValues()) {
                 if (entry.getValue() != possibleValue) {
                     var k = new HashMap<>(properties);
-                    k.put(entry.getKey(), possibleValue);
-                    sibling.put(new Property.PropertyValue(entry.getKey(), possibleValue), possibleStatesMap.get(k));
+                    k.put(entry.getKey(), (Comparable) possibleValue);
+                    sibling.put(new Property.PropertyValue(entry.getKey(), (Comparable) possibleValue), possibleStatesMap.get(k));
                 }
             }
         }

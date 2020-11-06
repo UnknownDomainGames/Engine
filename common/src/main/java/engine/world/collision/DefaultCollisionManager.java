@@ -40,11 +40,11 @@ public class DefaultCollisionManager implements CollisionManager {
         while (iterator.hasNext()) {
             var pos = iterator.next();
             var block = world.getBlock(pos);
-            if (ignore.contains(block))
+            if (ignore.contains(block.getPrototype()))
                 continue;
             var local = from.sub(pos.x(), pos.y(), pos.z(), new Vector3f());
             var result = new Vector2d();
-            if (block.getShape().intersectRay(world, pos, block,
+            if (block.getPrototype().getShape().intersectRay(world, pos, block.getPrototype(),
                     local.x, local.y, local.z,
                     rayOffset.x, rayOffset.y, rayOffset.z,
                     result)) {

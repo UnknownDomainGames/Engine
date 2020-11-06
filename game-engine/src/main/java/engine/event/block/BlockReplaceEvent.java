@@ -1,6 +1,6 @@
 package engine.event.block;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.event.Cancellable;
 import engine.event.block.cause.BlockChangeCause;
 import engine.math.BlockPos;
@@ -12,7 +12,7 @@ public interface BlockReplaceEvent extends BlockChangeEvent {
 
         private boolean cancelled;
 
-        public Pre(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
+        public Pre(World world, BlockPos pos, BlockState oldBlock, BlockState newBlock, BlockChangeCause cause) {
             super(world, pos, oldBlock, newBlock, cause);
         }
 
@@ -28,7 +28,7 @@ public interface BlockReplaceEvent extends BlockChangeEvent {
     }
 
     class Post extends BlockChangeEvent.Post implements BlockReplaceEvent {
-        public Post(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
+        public Post(World world, BlockPos pos, BlockState oldBlock, BlockState newBlock, BlockChangeCause cause) {
             super(world, pos, oldBlock, newBlock, cause);
         }
     }

@@ -1,6 +1,6 @@
 package engine.event.block;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.event.Cancellable;
 import engine.event.Event;
 import engine.event.block.cause.BlockChangeCause;
@@ -13,9 +13,9 @@ public interface BlockChangeEvent extends Event {
 
     BlockPos getPos();
 
-    Block getOldBlock();
+    BlockState getOldBlock();
 
-    Block getNewBlock();
+    BlockState getNewBlock();
 
     BlockChangeCause getCause();
 
@@ -23,11 +23,11 @@ public interface BlockChangeEvent extends Event {
 
         private final World world;
         private final BlockPos pos;
-        private final Block oldBlock;
-        private final Block newBlock;
+        private final BlockState oldBlock;
+        private final BlockState newBlock;
         private final BlockChangeCause cause;
 
-        private Base(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
+        private Base(World world, BlockPos pos, BlockState oldBlock, BlockState newBlock, BlockChangeCause cause) {
             this.world = world;
             this.pos = pos;
             this.oldBlock = oldBlock;
@@ -43,11 +43,11 @@ public interface BlockChangeEvent extends Event {
             return pos;
         }
 
-        public Block getOldBlock() {
+        public BlockState getOldBlock() {
             return oldBlock;
         }
 
-        public Block getNewBlock() {
+        public BlockState getNewBlock() {
             return newBlock;
         }
 
@@ -60,7 +60,7 @@ public interface BlockChangeEvent extends Event {
 
         private boolean cancelled;
 
-        protected Pre(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
+        protected Pre(World world, BlockPos pos, BlockState oldBlock, BlockState newBlock, BlockChangeCause cause) {
             super(world, pos, oldBlock, newBlock, cause);
         }
 
@@ -76,7 +76,7 @@ public interface BlockChangeEvent extends Event {
     }
 
     class Post extends BlockChangeEvent.Base {
-        protected Post(World world, BlockPos pos, Block oldBlock, Block newBlock, BlockChangeCause cause) {
+        protected Post(World world, BlockPos pos, BlockState oldBlock, BlockState newBlock, BlockChangeCause cause) {
             super(world, pos, oldBlock, newBlock, cause);
         }
     }

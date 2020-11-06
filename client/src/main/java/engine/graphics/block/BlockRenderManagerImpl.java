@@ -2,6 +2,7 @@ package engine.graphics.block;
 
 import engine.Platform;
 import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.client.asset.Asset;
 import engine.client.asset.AssetTypes;
 import engine.graphics.model.BakedModel;
@@ -16,7 +17,7 @@ import java.util.Map;
 
 public final class BlockRenderManagerImpl implements BlockRenderManager {
 
-    private final Map<Block, Asset<BakedModel>> blockModelMap = new HashMap<>();
+    private final Map<BlockState, Asset<BakedModel>> blockModelMap = new HashMap<>();
 
     public void init() {
         Registries.getBlockRegistry().getValues().forEach(this::registerBlockRenderer);
@@ -25,26 +26,28 @@ public final class BlockRenderManagerImpl implements BlockRenderManager {
     private void registerBlockRenderer(Block block) {
         block.getComponent(BlockDisplay.class).ifPresent(blockDisplay -> {
             if (blockDisplay.isVisible()) {
-                blockModelMap.put(block, Platform.getEngineClient().getAssetManager().create(AssetTypes.VOXEL_MODEL, blockDisplay.getModelUrl()));
+                for (BlockState state : block.getStateManager().getStates()) {
+                    blockModelMap.put(state, Platform.getEngineClient().getAssetManager().create(AssetTypes.VOXEL_MODEL, blockDisplay.getVariantModelUrls().getOrDefault(state, blockDisplay.getModelUrl())));
+                }
             }
         });
     }
 
     @Override
-    public boolean canRenderFace(BlockGetter world, BlockPos pos, Block block, Direction direction) {
+    public boolean canRenderFace(BlockGetter world, BlockPos pos, BlockState block, Direction direction) {
         var neighborPos = pos.offset(direction);
         var neighborBlock = world.getBlock(neighborPos);
         return canRenderNeighborBlockFace(world, neighborPos, neighborBlock, direction.opposite());
     }
 
     @Override
-    public boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, Block block, Direction direction) {
+    public boolean canRenderNeighborBlockFace(BlockGetter world, BlockPos pos, BlockState block, Direction direction) {
         Asset<BakedModel> model = blockModelMap.get(block);
         return model == null || !model.get().isFullFace(direction);
     }
 
     @Override
-    public void generateMesh(Block block, BlockGetter world, BlockPos pos, VertexDataBuf buffer) {
+    public void generateMesh(BlockState block, BlockGetter world, BlockPos pos, VertexDataBuf buffer) {
         Asset<BakedModel> model = blockModelMap.get(block);
         if (model == null) {
             return;
@@ -64,7 +67,7 @@ public final class BlockRenderManagerImpl implements BlockRenderManager {
     }
 
     @Override
-    public void generateMesh(Block block, VertexDataBuf buffer) {
+    public void generateMesh(BlockState block, VertexDataBuf buffer) {
         Asset<BakedModel> model = blockModelMap.get(block);
         if (model == null) {
             return;

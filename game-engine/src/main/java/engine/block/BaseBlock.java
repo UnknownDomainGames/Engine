@@ -18,11 +18,13 @@ public class BaseBlock extends Registrable.Impl<Block> implements Block {
     private final StateManager<Block, BlockState> stateManager;
 
     private BlockShape shape = BlockShape.NORMAL_CUBE;
+    private BlockState defaultState;
 
     public BaseBlock() {
         var builder = new StateManager.Builder<Block, BlockState>(this);
         initStateProperties(builder);
         this.stateManager = builder.build(BlockState::new);
+        defaultState = stateManager.getDefaultState();
     }
 
     protected void initStateProperties(StateManager.Builder<Block, BlockState> builder) {
@@ -32,6 +34,11 @@ public class BaseBlock extends Registrable.Impl<Block> implements Block {
     @Override
     public StateManager<Block, BlockState> getStateManager() {
         return stateManager;
+    }
+
+    @Override
+    public BlockState getDefaultState() {
+        return defaultState;
     }
 
     @Nonnull

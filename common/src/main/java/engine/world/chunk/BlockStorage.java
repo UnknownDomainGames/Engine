@@ -1,6 +1,6 @@
 package engine.world.chunk;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.registry.Registries;
 import engine.util.NibbleArray;
 
@@ -14,16 +14,12 @@ public class BlockStorage {
         this.data = new NibbleArray(8, BLOCK_COUNT);
     }
 
-    public Block getBlock(int x, int y, int z) {
-        return Registries.getBlockRegistry().getValue(getBlockId(x, y, z));
+    public BlockState getBlock(int x, int y, int z) {
+        return Registries.getBlockRegistry().getStateFromId(data.get(getPosIndex(x, y, z)));
     }
 
-    public int getBlockId(int x, int y, int z) {
-        return data.get(getPosIndex(x, y, z));
-    }
-
-    public Block setBlock(int x, int y, int z, Block block) {
-        return Registries.getBlockRegistry().getValue(data.getAndSet(getPosIndex(x, y, z), Registries.getBlockRegistry().getId(block)));
+    public BlockState setBlock(int x, int y, int z, BlockState block) {
+        return Registries.getBlockRegistry().getStateFromId(data.getAndSet(getPosIndex(x, y, z), Registries.getBlockRegistry().getStateId(block)));
     }
 
     private int getPosIndex(int x, int y, int z) {

@@ -1,6 +1,6 @@
 package engine.graphics.item;
 
-import engine.block.Block;
+import engine.block.state.BlockState;
 import engine.graphics.block.BlockRenderManager;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.item.BlockItem;
@@ -14,7 +14,7 @@ public class BlockItemRenderer implements ItemRenderer {
 
     @Override
     public void generateMesh(VertexDataBuf buffer, ItemStack itemStack, float partial) {
-        Block block = ((BlockItem) itemStack.getItem()).getBlock();
+        BlockState block = ((BlockItem) itemStack.getItem()).getBlock().getDefaultState();
         BlockRenderManager.instance().generateMesh(block, buffer);
     }
 

@@ -53,7 +53,7 @@ public class WorldClientChunkManager implements ChunkManager {
         long index = ChunkConstants.getChunkIndex(packet.getChunkX(), packet.getChunkY(), packet.getChunkZ());
         var chunk = new CubicChunk(world, packet.getChunkX(), packet.getChunkY(), packet.getChunkZ());
         try (var stream = new ByteArrayInputStream(packet.getRawData())) {
-            chunk.read(new DataInputStream(stream));
+            chunk.readBlockContent(new DataInputStream(stream));
         } catch (IOException e) {
 
         }

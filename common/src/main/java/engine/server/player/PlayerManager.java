@@ -199,13 +199,13 @@ public class PlayerManager {
         switch (event.getPacket().getAction()) {
             case START_BREAK_BLOCK:
                 var hit = ((BlockHitResult) event.getPacket().getHitResult());
-                if (hit instanceof BlockHitResult.Postponed) {
-                    hit = ((BlockHitResult.Postponed) hit).build(gameServer);
+                if (hit instanceof BlockHitResult.Simplified) {
+                    hit = ((BlockHitResult.Simplified) hit).build(gameServer);
                 }
                 var cause = new BlockInteractCause.PlayerCause(player);
                 gameServer.getEngine().getEventBus().post(new BlockInteractEvent.Click(hit, cause));
                 BlockHitResult finalHit = hit;
-                hit.getBlock().getComponent(ClickBehavior.class).ifPresent(clickBehavior ->
+                hit.getBlock().getPrototype().getComponent(ClickBehavior.class).ifPresent(clickBehavior ->
                         clickBehavior.onClicked(finalHit, cause));
                 player.getControlledEntity().getComponent(TwoHands.class).ifPresent(twoHands ->
                         twoHands.getMainHand().ifNonEmpty(itemStack ->
@@ -222,12 +222,12 @@ public class PlayerManager {
             case INTERACT_BLOCK:
                 var cause1 = new BlockInteractCause.PlayerCause(player);
                 var blockHitResult = ((BlockHitResult) event.getPacket().getHitResult());
-                if (blockHitResult instanceof BlockHitResult.Postponed) {
-                    blockHitResult = ((BlockHitResult.Postponed) blockHitResult).build(gameServer);
+                if (blockHitResult instanceof BlockHitResult.Simplified) {
+                    blockHitResult = ((BlockHitResult.Simplified) blockHitResult).build(gameServer);
                 }
                 gameServer.getEngine().getEventBus().post(new BlockInteractEvent.Activate(blockHitResult, cause1));
                 BlockHitResult finalBlockHitResult = blockHitResult;
-                blockHitResult.getBlock().getComponent(ActivateBehavior.class).ifPresent(activateBehavior ->
+                blockHitResult.getBlock().getPrototype().getComponent(ActivateBehavior.class).ifPresent(activateBehavior ->
                         activateBehavior.onActivated(finalBlockHitResult, cause1));
                 player.getControlledEntity().getComponent(TwoHands.class).ifPresent(twoHands ->
                         twoHands.getMainHand().ifNonEmpty(itemStack ->

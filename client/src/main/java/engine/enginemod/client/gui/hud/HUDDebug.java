@@ -107,7 +107,7 @@ public final class HUDDebug extends HUDControl {
             hitPos.setText(String.format("Hit Entity Point: %.2f, %.2f, %.2f", hitPoint.x(), hitPoint.y(), hitPoint.z()));
         } else if (hitResult instanceof BlockHitResult) {
             this.hitResult.setVisible(true);
-            Block block = ((BlockHitResult) hitResult).getBlock();
+            Block block = ((BlockHitResult) hitResult).getBlock().getPrototype();
             hitBlockOrEntity.setText(String.format("Hit Block: %s", block.getName()));
             BlockPos pos = ((BlockHitResult) hitResult).getPos();
             hitBlockOrEntityPos.setText(String.format("Hit Block Position: %d, %d, %d", pos.x(), pos.y(), pos.z()));
