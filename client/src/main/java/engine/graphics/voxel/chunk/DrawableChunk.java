@@ -75,6 +75,10 @@ public final class DrawableChunk extends Geometry {
         drawing = false;
     }
 
+    public void terminateBake() {
+        drawing = false;
+    }
+
     public boolean isDisposed() {
         return renderer.isDisposed();
     }

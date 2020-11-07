@@ -248,6 +248,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
                 RenderPassInfo guiPass = RenderPassInfo.renderPass();
                 guiPass.setName("gui");
                 guiPass.dependsOn("opaque");
+                guiPass.setCullMode(CullMode.CULL_BACK);
                 guiPass.addColorOutputs(colorOutput()
                         .setColorBuffer("color")
                         .setBlendMode(BlendMode.MIX));
