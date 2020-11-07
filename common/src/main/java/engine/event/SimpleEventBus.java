@@ -11,11 +11,12 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class SimpleEventBus implements EventBus {
 
-    private final Map<Class<?>, ListenerList> listenerLists = new HashMap<>();
+    private final Map<Class<?>, ListenerList> listenerLists = new ConcurrentHashMap<>();
     private final Map<Object, List<RegisteredListener>> registeredListeners = new HashMap<>();
 
     private final EventExceptionHandler eventExceptionHandler;
