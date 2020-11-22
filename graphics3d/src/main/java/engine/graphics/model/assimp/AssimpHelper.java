@@ -1,14 +1,14 @@
 package engine.graphics.model.assimp;
 
-import org.apache.commons.io.IOUtils;
 import org.joml.Matrix4f;
 import org.lwjgl.assimp.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.lwjgl.assimp.Assimp.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -24,11 +24,29 @@ public class AssimpHelper {
                 AIFile aiFile = AIFile.create();
                 final ByteBuffer data;
                 String fileNameUtf8 = memUTF8(fileName);
-                try (var channel = FileChannel.open(Path.of(fileNameUtf8))){
-                    data = ByteBuffer.allocateDirect((int) channel.size());
-                    channel.read(data);
-                } catch (IOException e) {
-                    throw new RuntimeException("Could not open file: " + fileNameUtf8);
+                if (Files.isReadable(Paths.get(fileNameUtf8))) {
+                    try (var channel = FileChannel.open(Path.of(fileNameUtf8))) {
+                        data = ByteBuffer.allocateDirect((int) channel.size());
+                        channel.read(data);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Could not open file: " + fileNameUtf8, e);
+                    }
+                } else {
+                    var url = AssimpHelper.class.getResource(fileNameUtf8);
+                    if (url == null && !fileNameUtf8.startsWith("/")) {
+                        url = AssimpHelper.class.getResource("/" + fileNameUtf8);
+                    }
+                    if (url == null) {
+                        throw new RuntimeException("Could not open file: " + fileNameUtf8);
+                    }
+                    try (var resourceAsStream = url.openStream()) {
+                        var bytes = resourceAsStream.readAllBytes();
+                        data = ByteBuffer.allocateDirect(bytes.length);
+                        data.put(bytes);
+                        data.flip();
+                    } catch (IOException e) {
+                        throw new RuntimeException("Could not open file: " + fileNameUtf8, e);
+                    }
                 }
                 AIFileReadProcI fileReadProc = new AIFileReadProc() {
                     public long invoke(long pFile, long pBuffer, long size, long count) {

@@ -1,9 +1,12 @@
 package engine.graphics.material;
 
 import engine.graphics.texture.Texture2D;
+import engine.graphics.util.Struct;
 import engine.util.Color;
 
-public final class Material {
+import java.nio.ByteBuffer;
+
+public final class Material implements Struct {
     private Color ambient = Color.fromGray(0.1f);
     private Color diffuse = Color.WHITE;
     private Color specular = Color.WHITE;
@@ -75,5 +78,23 @@ public final class Material {
 
     public void setAlphaMap(Texture2D alphaMap) {
         this.alphaMap = alphaMap;
+    }
+
+    @Override
+    public int sizeof() {
+        return 68;
+    }
+
+    @Override
+    public ByteBuffer get(int index, ByteBuffer buffer) {
+        buffer.putInt(index, diffuseMap != null ? 1 : 0);
+        buffer.putInt(index + 4, specularMap != null ? 1 : 0);
+        buffer.putInt(index + 8, normalMap != null ? 1 : 0);
+        buffer.putInt(index + 12, alphaMap != null ? 1 : 0);
+        ambient.get(index + 16, buffer);
+        diffuse.get(index + 32, buffer);
+        specular.get(index + 48, buffer);
+        buffer.putFloat(index + 64 - 4, reflectance);
+        return buffer;
     }
 }

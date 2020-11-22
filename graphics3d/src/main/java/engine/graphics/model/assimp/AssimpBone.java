@@ -25,27 +25,22 @@ public class AssimpBone {
         this.transform = matrix4f;
     }
 
-    public static void processBones(AIMesh aiMesh, List<AssimpBone> boneList, List<Integer> boneIds,
+    public static void processBones(AssimpModel assimpModel, AIMesh aiMesh, List<Integer> boneIds,
                                     List<Float> weights) {
         Map<Integer, List<VertexWeight>> weightSet = new HashMap<>();
         int numBones = aiMesh.mNumBones();
         PointerBuffer aiBones = aiMesh.mBones();
         for (int i = 0; i < numBones; i++) {
             AIBone aiBone = AIBone.create(aiBones.get(i));
-            int id = boneList.size();
-            var bone = new AssimpBone(id, aiBone.mName().dataString(), AssimpHelper.generalizeNativeMatrix(aiBone.mOffsetMatrix()));
-            boneList.add(bone);
+            int id = assimpModel.getBones().size();
+            var bone = assimpModel.getBones().computeIfAbsent(aiBone.mName().dataString(), key -> new AssimpBone(id, aiBone.mName().dataString(), AssimpHelper.generalizeNativeMatrix(aiBone.mOffsetMatrix())));
             int numWeights = aiBone.mNumWeights();
             AIVertexWeight.Buffer aiWeights = aiBone.mWeights();
             for (int j = 0; j < numWeights; j++) {
                 AIVertexWeight aiWeight = aiWeights.get(j);
                 VertexWeight vw = new VertexWeight(bone.getBoneId(), aiWeight.mVertexId(),
                         aiWeight.mWeight());
-                List<VertexWeight> vertexWeightList = weightSet.get(vw.getVertexId());
-                if (vertexWeightList == null) {
-                    vertexWeightList = new ArrayList<>();
-                    weightSet.put(vw.getVertexId(), vertexWeightList);
-                }
+                List<VertexWeight> vertexWeightList = weightSet.computeIfAbsent(vw.getVertexId(), k -> new ArrayList<>());
                 vertexWeightList.add(vw);
             }
         }

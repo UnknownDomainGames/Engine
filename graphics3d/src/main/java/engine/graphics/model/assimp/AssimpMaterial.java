@@ -6,7 +6,6 @@ import engine.graphics.material.Material;
 import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.Texture2D;
 import engine.util.Color;
-import org.apache.commons.io.FilenameUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -15,8 +14,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import static org.lwjgl.assimp.Assimp.*;
@@ -45,17 +46,20 @@ public class AssimpMaterial {
         AIColor4D mAmbientColor = AIColor4D.create();
         if (aiGetMaterialColor(mMaterial, AI_MATKEY_COLOR_AMBIENT,
                 aiTextureType_NONE, 0, mAmbientColor) != 0) {
-            throw new IllegalStateException(aiGetErrorString());
+            mAmbientColor.close();
+            mAmbientColor = null;
         }
         AIColor4D mDiffuseColor = AIColor4D.create();
         if (aiGetMaterialColor(mMaterial, AI_MATKEY_COLOR_DIFFUSE,
                 aiTextureType_NONE, 0, mDiffuseColor) != 0) {
-            throw new IllegalStateException(aiGetErrorString());
+            mDiffuseColor.close();
+            mDiffuseColor = null;
         }
         AIColor4D mSpecularColor = AIColor4D.create();
         if (aiGetMaterialColor(mMaterial, AI_MATKEY_COLOR_SPECULAR,
                 aiTextureType_NONE, 0, mSpecularColor) != 0) {
-            throw new IllegalStateException(aiGetErrorString());
+            mSpecularColor.close();
+            mSpecularColor = null;
         }
         FloatBuffer buf = BufferUtils.createFloatBuffer(1);
         IntBuffer ib = BufferUtils.createIntBuffer(1);
@@ -63,9 +67,9 @@ public class AssimpMaterial {
         ib.flip();
         aiGetMaterialFloatArray(mMaterial, AI_MATKEY_SHININESS, aiTextureType_NONE, 0, buf, ib);
         referenceMat = new Material();
-        referenceMat.setAmbient(new Color(mAmbientColor.r(), mAmbientColor.g(), mAmbientColor.b()));
-        referenceMat.setDiffuse(new Color(mDiffuseColor.r(), mDiffuseColor.g(), mDiffuseColor.b()));
-        referenceMat.setSpecular(new Color(mSpecularColor.r(), mSpecularColor.g(), mSpecularColor.b()));
+        referenceMat.setAmbient(mAmbientColor == null ? Color.WHITE : new Color(mAmbientColor.r(), mAmbientColor.g(), mAmbientColor.b()));
+        referenceMat.setDiffuse(mDiffuseColor == null ? Color.WHITE : new Color(mDiffuseColor.r(), mDiffuseColor.g(), mDiffuseColor.b()));
+        referenceMat.setSpecular(mSpecularColor == null ? Color.WHITE : new Color(mSpecularColor.r(), mSpecularColor.g(), mSpecularColor.b()));
         referenceMat.setReflectance(buf.get(0));
         referenceMat.setDiffuseMap(diffuseTexture);
         referenceMat.setSpecularMap(specularTexture);
@@ -97,23 +101,65 @@ public class AssimpMaterial {
                     return GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder().format(ColorFormat.RGBA8).build(buf1, width, height);
                 }
             } else {
-                //Promise: Loader now only search in texture/model/[FILENAME] folder
-                try (var channel = Files.newByteChannel(Path.of("texture", "model", FilenameUtils.getBaseName(url), s))) {
-                    var buffer = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
-                    channel.read(buffer);
-                    buffer.flip();
-                    var builder = GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder();
-                    return builder.build(BufferedImage.load(buffer));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (Files.isReadable(Paths.get(s))) {
+                    try (var channel = FileChannel.open(Path.of(s))) {
+                        var buffer = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
+                        channel.read(buffer);
+                        buffer.flip();
+                        var builder = GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder();
+                        return builder.build(BufferedImage.load(buffer));
+                    } catch (IOException e) {
+                        throw new RuntimeException("Could not open file: " + s, e);
+                    }
+                } else {
+                    var url1 = AssimpMaterial.class.getResource(s);
+                    if (url1 == null && !s.startsWith("/")) {
+                        url1 = AssimpHelper.class.getResource("/" + s);
+                    }
+                    if (url1 == null) {
+                        throw new RuntimeException("Could not open file: " + s);
+                    }
+                    try (var resourceAsStream = url1.openStream()) {
+                        var bytes = resourceAsStream.readAllBytes();
+                        var buffer = ByteBuffer.allocateDirect(bytes.length);
+                        buffer.put(bytes);
+                        buffer.flip();
+                        var builder = GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder();
+                        return builder.build(BufferedImage.load(buffer));
+                    } catch (IOException e) {
+                        throw new RuntimeException("Could not open file: " + s, e);
+                    }
                 }
-
+//                if(Paths.get(s).isAbsolute()){
+//                    Logger.getLogger("Assimp").warning("absolute path should not be allowed!");
+//                    try (var channel = Files.newByteChannel(Path.of(s))) {
+//                        var buffer = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
+//                        channel.read(buffer);
+//                        buffer.flip();
+//                        var builder = GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder();
+//                        return builder.build(BufferedImage.load(buffer));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                else {
+//                    //Promise: Loader now only search in texture/model/[FILENAME] folder
+//                    try (var channel = Files.newByteChannel(Path.of("texture", "model", FilenameUtils.getBaseName(url), s))) {
+//                        var buffer = ByteBuffer.allocateDirect(Math.toIntExact(channel.size()));
+//                        channel.read(buffer);
+//                        buffer.flip();
+//                        var builder = GraphicsEngine.getGraphicsBackend().getResourceFactory().createTexture2DBuilder();
+//                        return builder.build(BufferedImage.load(buffer));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
             }
         }
         return null;
     }
 
-    Material getEngineMaterial() {
+    public Material getEngineMaterial() {
         return referenceMat;
     }
 

@@ -9,8 +9,10 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static org.lwjgl.assimp.Assimp.aiReleaseImport;
@@ -21,16 +23,22 @@ public class AssimpModel extends Node3D {
     private AIScene assimpScene;
     private Map<String, AssimpMesh> meshes;
     private Map<String, AssimpMaterial> materials;
+    private final AssimpNode rootNode;
+
+    private final Map<String, AssimpBone> bones;
 
     public AssimpModel(AIScene assimpScene, String filename) {
         this.assimpScene = assimpScene;
+        this.bones = new HashMap<>();
+        var root = assimpScene.mRootNode();
+        rootNode = AssimpNode.processNodesHierarchy(root, null);
         var materials = new ArrayList<AssimpMaterial>();
         int materialCount = assimpScene.mNumMaterials();
         var materialBuf = assimpScene.mMaterials();
         for (int i = 0; i < materialCount; i++) {
             materials.add(new AssimpMaterial(assimpScene, AIMaterial.create(materialBuf.get(i)), filename));
         }
-        try(var stack = MemoryStack.stackPush()) {
+        try (var stack = MemoryStack.stackPush()) {
             final IntBuffer c = stack.mallocInt(1);
             c.put(0);
             this.materials = materials.stream().collect(Collectors.toMap(mat -> {
@@ -46,26 +54,30 @@ public class AssimpModel extends Node3D {
             PointerBuffer meshesBuffer = assimpScene.mMeshes();
             var meshes = new ArrayList<AssimpMesh>();
             for (int i = 0; i < meshCount; ++i) {
-                var mesh = new AssimpMesh(AIMesh.create(meshesBuffer.get(i)));
-                mesh.assignMaterialName(materials.get(mesh.getRawMesh().mMaterialIndex()).getName());
+                var mesh = new AssimpMesh(this, AIMesh.create(meshesBuffer.get(i)));
+                var assimpMaterial = materials.get(mesh.getRawMesh().mMaterialIndex());
+                mesh.assignMaterialName(assimpMaterial.getName());
+                mesh.setMaterial(assimpMaterial.getEngineMaterial());
                 addChild(mesh);
                 meshes.add(mesh);
             }
             c.put(0, 0);
-            this.meshes = meshes.stream().collect(Collectors.toMap(mesh -> {
-                if (mesh.getName().isBlank()) {
-                    String s = String.format("Mesh_#%d", c.get(0));
-                    c.put(0, c.get(0) + 1);
-                    return s;
+            this.meshes = new HashMap<>();
+            for (List<AssimpMesh> value : meshes.stream().collect(Collectors.groupingBy(AssimpMesh::getName)).values()) {
+                if (value.size() > 1) {
+                    var atomInt = new AtomicInteger(1);
+                    for (AssimpMesh mesh : value) {
+                        var s = (mesh.getName().isBlank() ? "Mesh_" : mesh.getName()) + "#" + atomInt.getAndIncrement();
+                        this.meshes.put(s, mesh);
+                    }
+                } else {
+                    this.meshes.put(value.get(0).getName(), value.get(0));
                 }
-                return mesh.getName();
-            }, mesh -> mesh));
-            List<AssimpBone> allbones = meshes.stream().flatMap(mesh -> mesh.getBones().stream()).collect(Collectors.toList());
-            var root = assimpScene.mRootNode();
-            var transforMatrix = AssimpHelper.generalizeNativeMatrix(root.mTransformation());
-            var rootNode = AssimpNode.processNodesHierachy(root, null);
-            animations = AssimpAnimation.processAnimations(assimpScene, allbones, rootNode, transforMatrix);
-            animations.entrySet().stream().findFirst().ifPresentOrElse(entry -> currentAnimation = entry.getValue(), () -> currentAnimation = AssimpAnimation.buildDefaultAnimation(allbones.size()));
+            }
+            var transformMatrix = AssimpHelper.generalizeNativeMatrix(root.mTransformation()).invert();
+            var boneList = new ArrayList<>(bones.values());
+            animations = AssimpAnimation.processAnimations(assimpScene, boneList, rootNode, transformMatrix);
+            animations.entrySet().stream().findFirst().ifPresentOrElse(entry -> currentAnimation = entry.getValue(), () -> currentAnimation = AssimpAnimation.buildDefaultAnimation(rootNode, boneList, transformMatrix));
         }
     }
 
@@ -74,6 +86,18 @@ public class AssimpModel extends Node3D {
         assimpScene = null;
         meshes = null;
         materials = null;
+    }
+
+    public AssimpNode getRootNode() {
+        return rootNode;
+    }
+
+    public Map<String, AssimpBone> getBones() {
+        return bones;
+    }
+
+    public Map<String, AssimpMaterial> getMaterials() {
+        return materials;
     }
 
     public void setCurrentAnimation(AssimpAnimation currentAnimation) {

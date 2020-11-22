@@ -27,7 +27,7 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
     private UniformBlock uniformLight;
     private UniformTexture uniformTexture;
 
-    private static class Matrices implements Struct {
+    public static class Matrices implements Struct {
         private Matrix4fc projMatrix;
         private Matrix4fc viewMatrix;
         private Matrix4fc modelMatrix;

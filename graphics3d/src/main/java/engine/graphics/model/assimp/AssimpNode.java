@@ -13,15 +13,18 @@ public class AssimpNode {
 
     private final List<Matrix4f> transformations;
 
+    private final Matrix4f transformation;
+
     private final String name;
 
     private final AssimpNode parent;
 
-    public AssimpNode(String name, AssimpNode parent) {
+    public AssimpNode(String name, AssimpNode parent, Matrix4f transformation) {
         children = new ArrayList<>();
         transformations = new ArrayList<>();
         this.name = name;
         this.parent = parent;
+        this.transformation = transformation;
     }
 
     public static Matrix4f getParentTransforms(AssimpNode node, int framePos) {
@@ -43,15 +46,15 @@ public class AssimpNode {
         }
     }
 
-    public static AssimpNode processNodesHierachy(AINode aiNode, AssimpNode parent) {
+    public static AssimpNode processNodesHierarchy(AINode aiNode, AssimpNode parent) {
         var name = aiNode.mName().dataString();
-        AssimpNode node = new AssimpNode(name, parent);
+        AssimpNode node = new AssimpNode(name, parent, AssimpHelper.generalizeNativeMatrix(aiNode.mTransformation()));
 
         int childCount = aiNode.mNumChildren();
         var childPointer = aiNode.mChildren();
         for (int i = 0; i < childCount; i++) {
             var childNode = AINode.create(childPointer.get(i));
-            var node1 = processNodesHierachy(childNode, node);
+            var node1 = processNodesHierarchy(childNode, node);
             node.addChild(node1);
         }
         return node;
@@ -82,6 +85,36 @@ public class AssimpNode {
 
             node.addTransformation(transfMat);
         }
+    }
+
+    public static Matrix4f buildTransformationMatrixByFrame(AINodeAnim aiNodeAnim, int frame) {
+        AIVectorKey.Buffer positionKeys = aiNodeAnim.mPositionKeys();
+        AIVectorKey.Buffer scalingKeys = aiNodeAnim.mScalingKeys();
+        AIQuatKey.Buffer rotationKeys = aiNodeAnim.mRotationKeys();
+
+        Matrix4f mat = new Matrix4f();
+        int nPos = aiNodeAnim.mNumPositionKeys();
+        if (nPos > 0) {
+            AIVectorKey aiVecKey = positionKeys.get(Math.min(nPos - 1, frame));
+            AIVector3D vec = aiVecKey.mValue();
+            mat.translate(vec.x(), vec.y(), vec.z());
+        }
+        int nRot = aiNodeAnim.mNumRotationKeys();
+        if (nRot > 0) {
+            AIQuatKey quatKey = rotationKeys.get(Math.min(nRot - 1, frame));
+            AIQuaternion aiQuat = quatKey.mValue();
+            Quaternionf quat = new Quaternionf(aiQuat.x(), aiQuat.y(), aiQuat.z(), aiQuat.w());
+            mat.rotate(quat);
+        }
+
+        int nScale = aiNodeAnim.mNumScalingKeys();
+        if (nScale > 0) {
+            AIVectorKey aiVecKey = scalingKeys.get(Math.min(nScale - 1, frame));
+            AIVector3D vec = aiVecKey.mValue();
+            mat.scale(vec.x(), vec.y(), vec.z());
+        }
+
+        return mat;
     }
 
     public void addChild(AssimpNode node1) {
@@ -122,6 +155,10 @@ public class AssimpNode {
 
     public List<Matrix4f> getTransformations() {
         return transformations;
+    }
+
+    public Matrix4f getTransformation() {
+        return transformation;
     }
 
     public String getName() {

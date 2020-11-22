@@ -1,0 +1,4 @@
+{
+    "Vertex": "assimp_model.vert",
+    "Fragment": "assimp_model.frag"
+}

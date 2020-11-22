@@ -1,17 +1,17 @@
 package engine.graphics.model.assimp;
 
 import engine.graphics.Geometry;
-import engine.graphics.GraphicsEngine;
 import engine.graphics.mesh.MultiBufMesh;
+import engine.graphics.queue.RenderType;
+import engine.graphics.util.DataType;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexElement;
 import engine.graphics.vertex.VertexFormat;
 import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
@@ -23,6 +23,12 @@ import java.util.List;
 public class AssimpMesh extends Geometry {
 
     public static final int MAX_WEIGHTS = 4;
+
+    public static final VertexElement BONE = new VertexElement(DataType.FLOAT, "Bones", 4);
+    public static final VertexElement WEIGHT = new VertexElement(DataType.FLOAT, "Weights", 4);
+    public static final RenderType ASSIMP_MODEL = RenderType.create("AssimpModel");
+
+    private final AssimpModel parent;
 
     private final AIMesh mesh;
     private final String name;
@@ -37,9 +43,9 @@ public class AssimpMesh extends Geometry {
     private final int elementCount;
     private final IntBuffer elementArrayBuffer;
 
-    private final List<AssimpBone> bones;
-
-    public AssimpMesh(AIMesh mesh) {
+    public AssimpMesh(AssimpModel assimpModel, AIMesh mesh) {
+        super(ASSIMP_MODEL);
+        this.parent = assimpModel;
         this.mesh = mesh;
         name = mesh.mName().dataString();
         var aivertex = mesh.mVertices();
@@ -90,10 +96,9 @@ public class AssimpMesh extends Geometry {
 
         elementArrayBuffer.flip();
 
-        bones = new ArrayList<>();
         List<Integer> boneid = new ArrayList<>();
         List<Float> weights = new ArrayList<>();
-        AssimpBone.processBones(mesh, bones, boneid, weights);
+        AssimpBone.processBones(assimpModel, mesh, boneid, weights);
         boneBuf = MemoryUtil.memAllocInt(weights.size());
         boneBuf.put(boneid.stream().mapToInt(Integer::intValue).toArray()).flip();
 
@@ -101,50 +106,29 @@ public class AssimpMesh extends Geometry {
         weightBuf.put(ArrayUtils.toPrimitive(weights.<Float>toArray(new Float[0]))).flip();
         var builder = MultiBufMesh.builder().drawMode(DrawMode.TRIANGLES)
                 .attribute(VertexFormat.POSITION, vertexBuf).indices(elementArrayBuffer);
-        if(texBuf != null){
+        if (texBuf != null) {
             builder.attribute(VertexFormat.TEX_COORD, MemoryUtil.memByteBuffer(texBuf));
         }
-        if(normalBuf != null){
+        if (normalBuf != null) {
             builder.attribute(VertexFormat.NORMAL, normalBuf);
         }
-        if(tangentBuf != null){
+        if (tangentBuf != null) {
             builder.attribute(VertexFormat.TANGENT, tangentBuf);
+        }
+        if (weightBuf != null) {
+            builder.attribute(VertexFormat.of(WEIGHT), MemoryUtil.memByteBuffer(weightBuf));
+        }
+        if (boneBuf != null) {
+            builder.attribute(VertexFormat.of(BONE), MemoryUtil.memByteBuffer(boneBuf));
         }
         setMesh(builder.setStatic().build());
 
     }
 
-    public void refreshMesh() {
-
+    public AssimpModel getMeshParent() {
+        return parent;
     }
-//
-//    public int getVertexBufferId() {
-//        return vertexBuf;
-//    }
-//
-//    public int getTexCoordBufferId() {
-//        return texBuf;
-//    }
-//
-//    public int getNormalBufferId() {
-//        return normalBuf;
-//    }
-//
-//    public int getTangentBufferId() {
-//        return tangentBuf;
-//    }
-//
-//    public int getBoneIdBufferId() {
-//        return boneBuf;
-//    }
-//
-//    public int getVertexWeightBufferId() {
-//        return weightBuf;
-//    }
-//
-//    public int getElementArrayBufferId() {
-//        return elementArrayBuffer;
-//    }
+
 
     public int getElementCount() {
         return elementCount;
@@ -158,10 +142,6 @@ public class AssimpMesh extends Geometry {
         return name;
     }
 
-    public List<AssimpBone> getBones() {
-        return bones;
-    }
-
     void assignMaterialName(String matName) {
         this.matName = matName;
     }
@@ -169,4 +149,5 @@ public class AssimpMesh extends Geometry {
     public String getMaterialName() {
         return matName;
     }
+
 }
