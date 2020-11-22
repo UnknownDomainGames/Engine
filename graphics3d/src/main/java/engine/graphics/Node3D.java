@@ -199,7 +199,7 @@ public class Node3D {
         if (parent != null) {
             worldTransform.applyParent(parent.worldTransform);
         }
-        getUnmodifiableChildren().forEach(node -> refreshTransform());
+        getUnmodifiableChildren().forEach(Node3D::refreshTransform);
     }
 
     public Controller getController() {
