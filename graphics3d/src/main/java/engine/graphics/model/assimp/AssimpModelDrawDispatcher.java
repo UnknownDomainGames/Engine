@@ -1,18 +1,24 @@
 package engine.graphics.model.assimp;
 
 import engine.graphics.Scene3D;
+import engine.graphics.gl.buffer.GLVertexBuffer;
+import engine.graphics.gl.texture.GLTextureBuffer;
 import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Drawer;
 import engine.graphics.graph.FrameContext;
 import engine.graphics.graph.Renderer;
-import engine.graphics.internal.graph.ViewportOpaqueDrawDispatcher;
+import engine.graphics.internal.graph.Matrices;
 import engine.graphics.light.LightManager;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.shader.UniformBlock;
+import engine.graphics.shader.UniformImage;
 import engine.graphics.shader.UniformTexture;
+import engine.graphics.texture.Texture2D;
 import engine.graphics.viewport.Viewport;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL33;
+import org.lwjgl.opengl.GL42;
 
 public class AssimpModelDrawDispatcher implements DrawDispatcher {
     private final Viewport viewport;
@@ -25,8 +31,21 @@ public class AssimpModelDrawDispatcher implements DrawDispatcher {
     private UniformBlock uniformBones;
     private UniformBlock uniformMaterial;
 
+    private UniformImage uniformListBuffer;
+    private UniformImage listHeader;
+    private Texture2D headerImage;
+    private GLTextureBuffer linkedListBuffer;
+    private GLVertexBuffer atomicCounter;
+
     public AssimpModelDrawDispatcher(Viewport viewport) {
         this.viewport = viewport;
+    }
+
+    public AssimpModelDrawDispatcher(Viewport viewport, Texture2D headerImage, GLTextureBuffer linkedListBuffer, GLVertexBuffer atomicCounter) {
+        this.viewport = viewport;
+        this.headerImage = headerImage;
+        this.linkedListBuffer = linkedListBuffer;
+        this.atomicCounter = atomicCounter;
     }
 
     @Override
@@ -41,6 +60,9 @@ public class AssimpModelDrawDispatcher implements DrawDispatcher {
         this.uniformNormalUV = resource.getUniformTexture("normalUV");
         this.uniformAlphaUV = resource.getUniformTexture("alphaUV");
 //      this.uniformTexture = resource.getUniformTexture("u_Texture");
+        listHeader = resource.getUniformImage("linkedListHeader");
+        uniformListBuffer = resource.getUniformImage("linkedListBuffer");
+        uniformListBuffer.getBinding().setCanRead(false);
     }
 
     @Override
@@ -51,10 +73,19 @@ public class AssimpModelDrawDispatcher implements DrawDispatcher {
         LightManager lightManager = scene.getLightManager();
         lightManager.setup(viewport.getCamera());
         uniformLight.set(lightManager);
+        if (headerImage != null) {
+            listHeader.set(headerImage);
+        }
+        if (linkedListBuffer != null) {
+            uniformListBuffer.set(linkedListBuffer);
+        }
+        if (atomicCounter != null) {
+            GL33.glBindBufferBase(GL42.GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounter.getId());
+        }
         scene.getRenderQueue().getGeometryList(AssimpMesh.ASSIMP_MODEL).stream()
                 .filter(geometry -> geometry != null && geometry.getBoundingVolume().test(frustum))
                 .forEach(geometry -> {
-                    uniformMatrices.set(new ViewportOpaqueDrawDispatcher.Matrices( // TODO: optimize it
+                    uniformMatrices.set(new Matrices( // TODO: optimize it
                             viewport.getProjectionMatrix(),
                             viewport.getViewMatrix(),
                             geometry.getWorldTransform().getTransformMatrix(new Matrix4f())));

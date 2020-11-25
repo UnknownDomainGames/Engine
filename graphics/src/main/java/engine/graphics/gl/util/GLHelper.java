@@ -181,9 +181,16 @@ public final class GLHelper {
 
     public static void setDebugMessageCallback(DebugMessageCallback callback) throws UnsupportedOperationException {
         if (capabilities.OpenGL43) {
+            GL11.glEnable(GL43.GL_DEBUG_OUTPUT);
             GL43.glDebugMessageCallback(callback::invoke, 0);
+            GL43.glDebugMessageControl(DebugMessageCallback.Source.API.gl, DebugMessageCallback.Type.ERROR.gl, DebugMessageCallback.Severity.HIGH.gl, (int[]) null, true);
+        } else if (capabilities.GL_KHR_debug) {
+            GL11.glEnable(KHRDebug.GL_DEBUG_OUTPUT);
+            KHRDebug.glDebugMessageCallback(callback::invoke, 0);
+            KHRDebug.glDebugMessageControl(DebugMessageCallback.Source.API.gl, DebugMessageCallback.Type.ERROR.gl, DebugMessageCallback.Severity.HIGH.gl, (int[]) null, true);
         } else if (capabilities.GL_ARB_debug_output) {
             ARBDebugOutput.glDebugMessageCallbackARB(callback::invoke, 0);
+            ARBDebugOutput.glDebugMessageControlARB(ARBDebugOutput.GL_DEBUG_SOURCE_API_ARB, ARBDebugOutput.GL_DEBUG_TYPE_ERROR_ARB, ARBDebugOutput.GL_DEBUG_SEVERITY_HIGH_ARB, (int[]) null, true);
         } else {
             throw new UnsupportedOperationException("Unsupported debug message callback.");
         }

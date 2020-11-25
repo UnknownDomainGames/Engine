@@ -50,6 +50,7 @@ public final class GLTextureBinding implements TextureBinding {
 
     public void bind() {
         GLTexture glTexture = (GLTexture) texture;
+        if (texture == GLTexture2D.EMPTY) return;
         if (GLHelper.isOpenGL45()) {
             GL45.glBindTextureUnit(unit, glTexture.getId());
         } else {

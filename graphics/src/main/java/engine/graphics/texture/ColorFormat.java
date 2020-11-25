@@ -15,6 +15,8 @@ public enum ColorFormat {
     RGB16F,
     RED32F,
     RED16F,
+    RGBA32UI,
+    RED32UI,
     RED16UI,
     RED8UI,
     DEPTH32,

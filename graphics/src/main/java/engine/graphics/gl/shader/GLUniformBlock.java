@@ -17,9 +17,13 @@ public final class GLUniformBlock implements UniformBlock {
     private Struct value;
 
     public GLUniformBlock(String name, int binding) {
+        this(name, binding, GLBufferUsage.STREAM_DRAW);
+    }
+
+    public GLUniformBlock(String name, int binding, GLBufferUsage drawMode) {
         this.name = name;
         this.binding = binding;
-        this.buffer = new GLVertexBuffer(GLBufferType.UNIFORM_BUFFER, GLBufferUsage.STREAM_DRAW);
+        this.buffer = new GLVertexBuffer(GLBufferType.UNIFORM_BUFFER, drawMode);
     }
 
     @Override

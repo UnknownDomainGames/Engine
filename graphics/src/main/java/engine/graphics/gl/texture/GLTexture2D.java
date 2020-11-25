@@ -9,9 +9,11 @@ import engine.graphics.texture.WrapMode;
 import engine.util.Color;
 import org.joml.Vector2ic;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL45;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -87,17 +89,31 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
 
     @Override
     public void upload(int level, int offsetX, int offsetY, int width, int height, ByteBuffer pixels) {
-        if (pixels == null) return;
-        if (GLHelper.isSupportARBDirectStateAccess()) {
-            GL45.glTextureSubImage2D(id, level, 0, 0, width, height,
-                    format.format, format.type, pixels);
-            if (mipmap) GL45.glGenerateTextureMipmap(id);
+        if (pixels == null) {
+            if (GL11.glGetInteger(GL21.GL_PIXEL_UNPACK_BUFFER_BINDING) == 0) return;
+            if (GLHelper.isSupportARBDirectStateAccess()) {
+                GL45.nglTextureSubImage2D(id, level, 0, 0, width, height,
+                        format.format, format.type, MemoryUtil.NULL);
+                if (mipmap) GL45.glGenerateTextureMipmap(id);
+            } else {
+                bind();
+                GL11.nglTexSubImage2D(GL11.GL_TEXTURE_2D, level,
+                        offsetX, offsetY, width, height,
+                        format.format, format.type, MemoryUtil.NULL);
+                if (mipmap) GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+            }
         } else {
-            bind();
-            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, level,
-                    offsetX, offsetY, width, height,
-                    format.format, format.type, pixels);
-            if (mipmap) GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+            if (GLHelper.isSupportARBDirectStateAccess()) {
+                GL45.glTextureSubImage2D(id, level, 0, 0, width, height,
+                        format.format, format.type, pixels);
+                if (mipmap) GL45.glGenerateTextureMipmap(id);
+            } else {
+                bind();
+                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, level,
+                        offsetX, offsetY, width, height,
+                        format.format, format.type, pixels);
+                if (mipmap) GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+            }
         }
     }
 

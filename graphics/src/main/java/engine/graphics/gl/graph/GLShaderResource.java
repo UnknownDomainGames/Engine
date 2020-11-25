@@ -1,13 +1,7 @@
 package engine.graphics.gl.graph;
 
-import engine.graphics.gl.shader.GLTextureBinding;
-import engine.graphics.gl.shader.GLUniformBlock;
-import engine.graphics.gl.shader.GLUniformTexture;
-import engine.graphics.gl.shader.ShaderProgram;
-import engine.graphics.shader.ShaderResource;
-import engine.graphics.shader.TextureBinding;
-import engine.graphics.shader.UniformBlock;
-import engine.graphics.shader.UniformTexture;
+import engine.graphics.gl.shader.*;
+import engine.graphics.shader.*;
 import org.lwjgl.opengl.GL31;
 
 import java.util.ArrayList;
@@ -18,8 +12,10 @@ public class GLShaderResource implements ShaderResource {
     private final ShaderProgram shader;
 
     private final List<GLTextureBinding> textureBindings = new ArrayList<>();
+    private final List<GLImageBinding> imageBindings = new ArrayList<>();
     private final List<GLUniformBlock> blocks = new ArrayList<>();
     private final List<GLUniformTexture> textures = new ArrayList<>();
+    private final List<GLUniformImage> images = new ArrayList<>();
 
     public GLShaderResource(ShaderProgram shader) {
         this.shader = shader;
@@ -38,9 +34,28 @@ public class GLShaderResource implements ShaderResource {
     }
 
     @Override
+    public ImageBinding createImageBinding() {
+        var binding = new GLImageBinding(imageBindings.size());
+        imageBindings.add(binding);
+        return binding;
+    }
+
+    @Override
+    public ImageBinding getImageBinding(int unit) {
+        return imageBindings.get(unit);
+    }
+
+    @Override
     public UniformTexture getUniformTexture(String name) {
         var texture = new GLUniformTexture(name, shader.getUniformLocation(name), createTextureBinding());
         textures.add(texture);
+        return texture;
+    }
+
+    @Override
+    public UniformImage getUniformImage(String name) {
+        var texture = new GLUniformImage(name, shader.getUniformLocation(name), createImageBinding());
+        images.add(texture);
         return texture;
     }
 
@@ -60,7 +75,9 @@ public class GLShaderResource implements ShaderResource {
     @Override
     public void refresh() {
         textureBindings.forEach(GLTextureBinding::bind);
+        imageBindings.forEach(GLImageBinding::bind);
         textures.forEach(GLUniformTexture::bind);
         blocks.forEach(GLUniformBlock::bind);
+        images.forEach(GLUniformImage::bind);
     }
 }

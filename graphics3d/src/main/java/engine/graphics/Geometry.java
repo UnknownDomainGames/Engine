@@ -28,8 +28,8 @@ public class Geometry extends Node3D {
         this.renderType = renderType;
         scene().addChangeListener((observable, oldValue, newValue) -> {
             if (visible) {
-                if (oldValue != null) oldValue.getRenderQueue().remove(this, renderType);
-                if (newValue != null) newValue.getRenderQueue().add(this, renderType);
+                if (oldValue != null) oldValue.getRenderQueue().remove(this, this.renderType);
+                if (newValue != null) newValue.getRenderQueue().add(this, this.renderType);
             }
         });
     }

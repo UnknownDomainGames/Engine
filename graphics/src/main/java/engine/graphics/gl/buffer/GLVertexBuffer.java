@@ -61,6 +61,18 @@ public final class GLVertexBuffer {
         GL15.glBindBuffer(type.gl, 0);
     }
 
+    public void allocateSize(long size) {
+        if (GLHelper.isSupportARBDirectStateAccess()) {
+            GL45.glNamedBufferData(id, size, usage.gl);
+        } else if (GLHelper.isSupportEXTDirectStateAccess()) {
+            EXTDirectStateAccess.glNamedBufferDataEXT(id, size, usage.gl);
+        } else {
+            bind();
+            GL15.glBufferData(type.gl, size, usage.gl);
+            unbind();
+        }
+    }
+
     public void uploadData(ByteBuffer buffer) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45.glNamedBufferData(id, buffer, usage.gl);

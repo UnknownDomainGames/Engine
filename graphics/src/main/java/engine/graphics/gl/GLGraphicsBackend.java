@@ -177,12 +177,19 @@ public final class GLGraphicsBackend implements GraphicsBackend {
             GLHelper.setDebugMessageCallback(new DebugMessageCallback() {
                 @Override
                 public void invoke(Source source, Type type, int id, Severity severity, String message, long userParam) {
-                    LOGGER.debug("OpenGL Debug Message:\n" +
-                            "\tSource: " + source + "\n" +
-                            "\tType: " + type + "\n" +
-                            "\tId: " + id + "\n" +
-                            "\tSeverity: " + severity + "\n" +
-                            "\tMessage: " + message);
+                    var msg = "GL " + source + (type == Type.ERROR ? "" : " " + type) + " (" + id + ") " + message;
+                    switch (severity) {
+                        case HIGH:
+                            LOGGER.error(msg);
+                            break;
+                        case MEDIUM:
+                            LOGGER.warn(msg);
+                            break;
+                        case LOW:
+                        case NOTIFICATION:
+                            LOGGER.info(msg);
+                            break;
+                    }
                 }
             });
         } catch (UnsupportedOperationException e) {

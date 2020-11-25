@@ -1,9 +1,6 @@
 #version 420 core
 
-#define ALPHA_THRESHOLD 0.1f
-
-layout(early_fragment_tests) in;
-
+uniform sampler2D u_Texture;
 layout (binding = 0, std140) uniform Matrices {
     mat4 proj;
     mat4 view;
@@ -40,37 +37,21 @@ struct SpotLight {
 #define MAX_DIR_LIGHTS 1
 #define MAX_POINT_LIGHTS 16
 #define MAX_SPOT_LIGHTS 16
-layout (binding=2, std140) uniform Light {
+layout (std140) uniform Light {
     DirLight dirLights[MAX_DIR_LIGHTS];
     PointLight pointLights[MAX_POINT_LIGHTS];
     SpotLight spotLights[MAX_SPOT_LIGHTS];
     vec4 ambientLight;
 } light;
 
-layout (binding=3, std140) uniform Material {
-    bool diffuseUseUV;
-    bool specularUseUV;
-    bool normalUseUV;
-    bool alphaUseUV;
-    vec3 ambient;
-    vec3 diffuseColor;
-    vec3 specularColor;
-    float shininess;
-} material;
-
-layout (binding=0) uniform sampler2D diffuseUV;
-layout (binding=1) uniform sampler2D specularUV;
-layout (binding=2) uniform sampler2D normalUV;
-layout (binding=3) uniform sampler2D alphaUV;
-
-layout (binding = 0, r32ui) uniform uimage2D linkedListHeader;
-layout (binding = 1, rgba32ui) uniform writeonly uimageBuffer linkedListBuffer;
-layout (binding = 0, offset = 0) uniform atomic_uint listCounter;
-
 layout (location = 0) in vec4 v_Color;
 layout (location = 1) in vec2 v_TexCoord;
 layout (location = 2) in vec3 mv_Position;
 layout (location = 3) in vec3 mv_Normal;
+
+layout (binding = 0, r32ui) uniform uimage2D linkedListHeader;
+layout (binding = 1, rgba32ui) uniform writeonly uimageBuffer linkedListBuffer;
+layout (binding = 0, offset = 0) uniform atomic_uint listCounter;
 
 out vec4 fragColor;
 
@@ -78,14 +59,6 @@ vec4 texColor;
 
 const float reflectance = 0.2;
 const float specularPower = 10;
-
-//TODO: move to separate file
-vec3 blendMultiply(vec3 base, vec3 blend){
-    return blend * base;
-}
-vec3 blendMultiply(vec3 base, vec3 blend, float opacity){
-    return opacity * blendMultiply(base, blend) + (1.0f-opacity) * base;
-}
 
 vec4 computeLightColor(vec3 lightColor, float lightIntensity, vec3 position, vec3 lightDirection, vec3 normal)
 {
@@ -95,12 +68,7 @@ vec4 computeLightColor(vec3 lightColor, float lightIntensity, vec3 position, vec
     vec3 to_light_src_dir = -normalize(lightDirection);
     // 漫反射光
     float diffuseFactor = max(dot(normal, to_light_src_dir), 0.0);
-    if (material.diffuseUseUV){
-        diffuseColor = v_Color * vec4(blendMultiply(vec3(texture(diffuseUV, v_TexCoord)), material.diffuseColor, 1.0) * lightColor * lightIntensity * diffuseFactor, 1.0);
-    }
-    else {
-        diffuseColor = v_Color * vec4(material.diffuseColor, 1.0) * vec4(lightColor, 1.0) * lightIntensity * diffuseFactor;
-    }
+    diffuseColor = texColor * vec4(lightColor, 1.0) * lightIntensity * diffuseFactor;
     //    return diffuseColor;
     mat3 tmp;
     tmp[0] = matrices.view[0].xyz;
@@ -117,12 +85,7 @@ vec4 computeLightColor(vec3 lightColor, float lightIntensity, vec3 position, vec
     //    vec3 reflected_light = normalize(to_light_src_dir + camera_direction);
     //    float specularFactor = max(dot(normal, reflected_light), 0.0);
     specularFactor = pow(specularFactor, specularPower);
-    if (material.specularUseUV){
-        specularColor = v_Color * vec4(blendMultiply(vec3(texture(specularUV, v_TexCoord)), material.specularColor, 1.0) * lightIntensity * specularFactor * reflectance * lightColor, 1.0);
-    }
-    else {
-        specularColor = v_Color * vec4(material.specularColor, 1.0) * lightIntensity * specularFactor * reflectance * vec4(lightColor, 1.0);
-    }
+    specularColor = texColor * lightIntensity * specularFactor * reflectance * vec4(lightColor, 1.0);
 
     return diffuseColor + specularColor;
 }
@@ -166,12 +129,7 @@ vec4 computeSpotLight(SpotLight light, vec3 position, vec3 normal)
 }
 
 void main() {
-    if (material.diffuseUseUV){
-        texColor = v_Color * vec4(blendMultiply(vec3(texture(diffuseUV, v_TexCoord)), material.ambient, 1.0), 1.0);
-    }
-    else {
-        texColor = v_Color * vec4(material.ambient, 1.0);
-    }
+    texColor = v_Color * texture(u_Texture, v_TexCoord);
 
     vec4 lightColor = vec4(0.0, 0.0, 0.0, 0.0);
 
@@ -192,10 +150,8 @@ void main() {
             lightColor += computeSpotLight(light.spotLights[i], mv_Position, mv_Normal);
         }
     }
+
     fragColor = texColor * light.ambientLight + lightColor;
-    if (material.alphaUseUV){
-        fragColor.a = texture(alphaUV, v_TexCoord).a;
-    }
 
     uint index = atomicCounterIncrement(listCounter);
 
@@ -208,7 +164,4 @@ void main() {
 
     imageStore(linkedListBuffer, int(index), item);
     discard;
-    //    if (fragColor.a < ALPHA_THRESHOLD){
-    //        discard;
-    //    }
 }

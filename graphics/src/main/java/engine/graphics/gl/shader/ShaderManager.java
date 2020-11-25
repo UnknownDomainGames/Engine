@@ -18,7 +18,6 @@ import java.util.Map;
 public class ShaderManager {
 
     private static final Map<String, MutableObjectValue<ShaderProgram>> registeredShader = new HashMap<>();
-    private static final JsonParser JSON_PARSER = new JsonParser();
 
     private static final ShaderResourceLoader loader = ClassPathShaderResourceLoader.DEFAULT;
 
@@ -38,12 +37,26 @@ public class ShaderManager {
 
         List<CompiledShader> shaders = new ArrayList<>();
         try (var reader = new InputStreamReader(input)) {
-            var jsonShader = JSON_PARSER.parse(reader).getAsJsonObject();
+            var jsonShader = JsonParser.parseReader(reader).getAsJsonObject();
             if (jsonShader.has("Vertex")) {
-                shaders.add(loadShader(ShaderType.VERTEX_SHADER, jsonShader.get("Vertex").getAsString(), loader));
+                var element = jsonShader.get("Vertex");
+                String vertex;
+                if (element.isJsonObject()) {
+                    vertex = element.getAsJsonObject().get("gl").getAsString();
+                } else {
+                    vertex = element.getAsString();
+                }
+                shaders.add(loadShader(ShaderType.VERTEX_SHADER, vertex, loader));
             }
             if (jsonShader.has("Fragment")) {
-                shaders.add(loadShader(ShaderType.FRAGMENT_SHADER, jsonShader.get("Fragment").getAsString(), loader));
+                var element = jsonShader.get("Fragment");
+                String fragment;
+                if (element.isJsonObject()) {
+                    fragment = element.getAsJsonObject().get("gl").getAsString();
+                } else {
+                    fragment = element.getAsString();
+                }
+                shaders.add(loadShader(ShaderType.FRAGMENT_SHADER, fragment, loader));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

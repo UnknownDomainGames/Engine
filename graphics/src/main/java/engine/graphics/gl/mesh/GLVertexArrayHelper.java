@@ -69,6 +69,8 @@ public final class GLVertexArrayHelper {
         } else {
             GL30C.glBindVertexArray(vertexArray);
             buffer.bind();
+            GL30C.glBindVertexArray(0);
+//            buffer.unbind();
         }
     }
 
