@@ -3,6 +3,7 @@ package engine.graphics.block;
 import engine.block.state.BlockState;
 import engine.client.asset.AssetURL;
 import engine.component.Component;
+import engine.graphics.queue.RenderType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +12,7 @@ public class BlockDisplay implements Component {
 
     private AssetURL modelUrl;
     private Map<BlockState, AssetURL> variantModelUrls = new HashMap<>();
+    private RenderType renderType = RenderType.OPAQUE;
     private boolean visible = true;
 
     public AssetURL getModelUrl() {
@@ -28,6 +30,17 @@ public class BlockDisplay implements Component {
 
     public BlockDisplay variant(BlockState state, String url) {
         variantModelUrls.put(state, AssetURL.fromString(url));
+        return this;
+    }
+
+    public RenderType getRenderType() {
+        return renderType;
+    }
+
+    public BlockDisplay renderType(RenderType type) {
+        if (type == RenderType.OPAQUE || type == RenderType.TRANSPARENT || type == RenderType.TRANSLUCENT) {
+            this.renderType = type;
+        }
         return this;
     }
 

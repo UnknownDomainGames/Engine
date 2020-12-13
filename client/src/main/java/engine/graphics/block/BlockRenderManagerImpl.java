@@ -6,6 +6,7 @@ import engine.block.state.BlockState;
 import engine.client.asset.Asset;
 import engine.client.asset.AssetTypes;
 import engine.graphics.model.BakedModel;
+import engine.graphics.queue.RenderType;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.math.BlockPos;
 import engine.registry.Registries;
@@ -18,6 +19,7 @@ import java.util.Map;
 public final class BlockRenderManagerImpl implements BlockRenderManager {
 
     private final Map<BlockState, Asset<BakedModel>> blockModelMap = new HashMap<>();
+    private final Map<Block, RenderType> blockRenderTypeMap = new HashMap<>();
 
     public void init() {
         Registries.getBlockRegistry().getValues().forEach(this::registerBlockRenderer);
@@ -25,6 +27,7 @@ public final class BlockRenderManagerImpl implements BlockRenderManager {
 
     private void registerBlockRenderer(Block block) {
         block.getComponent(BlockDisplay.class).ifPresent(blockDisplay -> {
+            blockRenderTypeMap.put(block, blockDisplay.getRenderType());
             if (blockDisplay.isVisible()) {
                 for (BlockState state : block.getStateManager().getStates()) {
                     blockModelMap.put(state, Platform.getEngineClient().getAssetManager().create(AssetTypes.VOXEL_MODEL, blockDisplay.getVariantModelUrls().getOrDefault(state, blockDisplay.getModelUrl())));
@@ -35,8 +38,13 @@ public final class BlockRenderManagerImpl implements BlockRenderManager {
 
     @Override
     public boolean canRenderFace(BlockGetter world, BlockPos pos, BlockState block, Direction direction) {
+        var renderType = blockRenderTypeMap.get(block.getPrototype());
+        //TODO: need discussion
+        if (renderType == RenderType.TRANSPARENT || renderType == RenderType.TRANSLUCENT) return true;
         var neighborPos = pos.offset(direction);
         var neighborBlock = world.getBlock(neighborPos);
+        renderType = blockRenderTypeMap.get(neighborBlock.getPrototype());
+        if (renderType == RenderType.TRANSPARENT || renderType == RenderType.TRANSLUCENT) return true;
         return canRenderNeighborBlockFace(world, neighborPos, neighborBlock, direction.opposite());
     }
 
@@ -78,5 +86,9 @@ public final class BlockRenderManagerImpl implements BlockRenderManager {
 
     public void dispose() {
         blockModelMap.values().forEach(Asset::dispose);
+    }
+
+    public Map<Block, RenderType> getBlockRenderTypeMap() {
+        return blockRenderTypeMap;
     }
 }

@@ -7,16 +7,28 @@ import engine.client.event.graphics.RenderEvent;
 import engine.client.hud.HUDManager;
 import engine.graphics.backend.GraphicsBackend;
 import engine.graphics.display.Window;
+import engine.graphics.gl.buffer.GLBufferType;
+import engine.graphics.gl.buffer.GLBufferUsage;
+import engine.graphics.gl.buffer.GLVertexBuffer;
+import engine.graphics.gl.texture.GLColorFormat;
+import engine.graphics.gl.texture.GLTextureBuffer;
 import engine.graphics.graph.*;
 import engine.graphics.internal.graph.ShadowOpaqueDrawDispatcher;
 import engine.graphics.internal.graph.ViewportOpaqueDrawDispatcher;
 import engine.graphics.internal.graph.ViewportSkyDrawDispatcher;
+import engine.graphics.internal.graph.ViewportTransparentDrawDispatcher;
 import engine.graphics.light.DirectionalLight;
+import engine.graphics.shader.ShaderResource;
+import engine.graphics.shader.UniformImage;
 import engine.graphics.sky.SkyBox;
 import engine.graphics.texture.ColorFormat;
+import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.BlendMode;
 import engine.graphics.util.CullMode;
+import engine.graphics.util.DrawMode;
+import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexFormat;
 import engine.graphics.viewport.PerspectiveViewport;
 import engine.graphics.voxel.VoxelGraphicsHelper;
 import engine.graphics.voxel.shape.SelectedBlock;
@@ -28,6 +40,8 @@ import engine.gui.internal.impl.graphics.StageDrawDispatcher;
 import engine.math.BlockPos;
 import engine.util.Color;
 import engine.util.RuntimeEnvironment;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL42;
 
 import static engine.graphics.graph.ColorOutputInfo.colorOutput;
 import static engine.graphics.graph.DepthOutputInfo.depthOutput;
@@ -180,6 +194,18 @@ public final class EngineGraphicsManager implements GraphicsManager {
         RenderGraphInfo renderGraph = RenderGraphInfo.renderGraph();
         renderGraph.setMainTask("main");
         {
+            var linkedListHeaderImage = Texture2D.builder().format(ColorFormat.RED32UI).minFilter(FilterMode.NEAREST).magFilter(FilterMode.NEAREST)
+                    .build(1920, 1080);//TODO: get client screen max size
+            //TODO: generalize all the buffers below
+            var headerClearBuffer = new GLVertexBuffer(GLBufferType.PIXEL_UNPACK_BUFFER, GLBufferUsage.STATIC_DRAW);
+            headerClearBuffer.allocateSize(1920 * 1080 * 4);
+            var atomicCounterBuffer = new GLVertexBuffer(GLBufferType.ATOMIC_COUNTER_BUFFER, GLBufferUsage.DYNAMIC_COPY);
+            atomicCounterBuffer.allocateSize(4);
+
+            var linkedListBuffer = new GLVertexBuffer(GLBufferType.TEXTURE_BUFFER, GLBufferUsage.DYNAMIC_COPY);
+            linkedListBuffer.allocateSize(1920 * 1080 * 3 * 16);
+            var linkedListMimicImage = new GLTextureBuffer(GLColorFormat.RGBA32UI, linkedListBuffer);
+
             RenderTaskInfo mainTask = RenderTaskInfo.renderTask();
             mainTask.setName("main");
             mainTask.setFinalPass("gui");
@@ -187,6 +213,17 @@ public final class EngineGraphicsManager implements GraphicsManager {
                 Frame frame = frameContext.getFrame();
                 if (frame.isResized()) viewport.setSize(frame.getOutputWidth(), frame.getOutputHeight());
                 viewport.getScene().doUpdate(frame.getTimeToLastUpdate());
+
+                atomicCounterBuffer.bind();
+                var mapBuffer = GL15.glMapBuffer(GL42.GL_ATOMIC_COUNTER_BUFFER, GL15.GL_WRITE_ONLY);
+                mapBuffer.putInt(0);
+                mapBuffer.flip();
+                GL15.glUnmapBuffer(GL42.GL_ATOMIC_COUNTER_BUFFER);
+                atomicCounterBuffer.unbind();
+//                atomicCounterBuffer.uploadData(new int[]{0});
+                headerClearBuffer.bind();
+                linkedListHeaderImage.upload(0, 0, 0, frame.getOutputWidth(), frame.getOutputHeight(), null);
+                headerClearBuffer.unbind();
             });
             {
                 RenderBufferInfo colorBuffer = RenderBufferInfo.renderBuffer();
@@ -245,9 +282,65 @@ public final class EngineGraphicsManager implements GraphicsManager {
                     opaquePass.addDrawers(sceneDrawer);
                 }
 
+                RenderPassInfo transparentPass = RenderPassInfo.renderPass();
+                transparentPass.setName("transparent");
+                transparentPass.dependsOn("opaque");
+                transparentPass.setCullMode(CullMode.CULL_BACK);
+                transparentPass.addColorOutputs(colorOutput().setColorBuffer("color"));
+                transparentPass.setDepthOutput(depthOutput().setDepthBuffer("depth").setWritable(false));
+                {
+                    DrawerInfo sceneDrawer = DrawerInfo.drawer();
+                    sceneDrawer.setShader("transparent");
+                    sceneDrawer.setDrawDispatcher(new ViewportTransparentDrawDispatcher(viewport, linkedListHeaderImage, linkedListMimicImage, atomicCounterBuffer));
+                    transparentPass.addDrawers(sceneDrawer);
+                }
+
+                RenderPassInfo transparentDrawOITPass = RenderPassInfo.renderPass();
+                transparentDrawOITPass.setName("oitDraw");
+                transparentDrawOITPass.dependsOn("assimp", "transparent");
+                transparentDrawOITPass.addColorOutputs(colorOutput().setColorBuffer("color").setBlendMode(BlendMode.MIX));
+                transparentDrawOITPass.setDepthOutput(depthOutput().setDepthBuffer("depth"));
+                {
+                    DrawerInfo sceneDrawer = DrawerInfo.drawer();
+                    sceneDrawer.setShader("OITDraw");
+                    sceneDrawer.setDrawDispatcher(new DrawDispatcher() {
+
+                        private UniformImage uniformListBuffer;
+                        private UniformImage listHeader;
+
+                        @Override
+                        public void init(Drawer drawer) {
+                            ShaderResource resource = drawer.getShaderResource();
+                            listHeader = resource.getUniformImage("linkedListHeader");
+                            uniformListBuffer = resource.getUniformImage("linkedListBuffer");
+                            uniformListBuffer.getBinding().setCanWrite(false);
+                        }
+
+                        @Override
+                        public void draw(FrameContext frameContext, Drawer drawer, Renderer renderer) {
+                            ShaderResource resource = drawer.getShaderResource();
+                            listHeader.set(linkedListHeaderImage);
+                            uniformListBuffer.set(linkedListMimicImage);
+                            resource.refresh();
+                            var dataBuf = VertexDataBuf.currentThreadBuffer();
+                            dataBuf.begin(VertexFormat.POSITION);
+                            dataBuf.pos(-1, -1, 0).endVertex();
+                            dataBuf.pos(1, -1, 0).endVertex();
+                            dataBuf.pos(-1, 1, 0).endVertex();
+
+                            dataBuf.pos(-1, 1, 0).endVertex();
+                            dataBuf.pos(1, -1, 0).endVertex();
+                            dataBuf.pos(1, 1, 0).endVertex();
+                            dataBuf.finish();
+                            renderer.drawStreamed(DrawMode.TRIANGLES, dataBuf);
+                        }
+                    });
+                    transparentDrawOITPass.addDrawers(sceneDrawer);
+                }
+
                 RenderPassInfo guiPass = RenderPassInfo.renderPass();
                 guiPass.setName("gui");
-                guiPass.dependsOn("opaque");
+                guiPass.dependsOn("oitDraw");
                 guiPass.setCullMode(CullMode.CULL_BACK);
                 guiPass.addColorOutputs(colorOutput()
                         .setColorBuffer("color")
@@ -264,7 +357,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
                     guiPass.addDrawers(hudDrawer, guiDrawer);
                 }
 
-                mainTask.addPasses(skyPass, opaquePass, guiPass);
+                mainTask.addPasses(skyPass, opaquePass, transparentPass, transparentDrawOITPass, guiPass);
             }
             renderGraph.addTasks(mainTask);
         }
