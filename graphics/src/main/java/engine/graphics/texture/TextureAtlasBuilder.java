@@ -154,8 +154,8 @@ public class TextureAtlasBuilder {
             }
 
             if (children == null) return;
-            float midU = (maxU - minU) / 2 + minU;
-            float midV = (maxV - minV) / 2 + minV;
+            float midU = (maxU + minU) / 2;
+            float midV = (maxV + minV) / 2;
             resizeChildUv(children[TOP_LEFT], minU, minV, midU, midV);
             resizeChildUv(children[TOP_RIGHT], midU, minV, maxU, midV);
             resizeChildUv(children[BOTTOM_LEFT], minU, midV, midU, maxV);
