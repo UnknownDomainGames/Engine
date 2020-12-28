@@ -1,5 +1,6 @@
 package engine.graphics.model.assimp;
 
+import engine.graphics.animation.Animation;
 import engine.graphics.util.Struct;
 import org.joml.Matrix4f;
 import org.lwjgl.PointerBuffer;
@@ -12,28 +13,36 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class AssimpAnimation {
+public class AssimpAnimation implements Animation {
     private int currentFrame;
 
     private List<AnimatedFrame> frames;
 
     private String name;
 
-    private double duration;
+    private double durationInTick;
+
+    private double ticksPerSecond;
 
     public AssimpAnimation(String name, List<AnimatedFrame> frames, double duration) {
+        this(name, frames, duration, 25);
+    }
+
+    public AssimpAnimation(String name, List<AnimatedFrame> frames, double duration, double tps) {
         this.name = name;
         this.frames = frames;
         currentFrame = 0;
-        this.duration = duration;
+        this.durationInTick = duration;
+        if (tps == 0) tps = 20;
+        this.ticksPerSecond = tps;
     }
 
     public AnimatedFrame getCurrentFrame() {
         return this.frames.get(currentFrame);
     }
 
-    public double getDuration() {
-        return this.duration;
+    public double getDurationInTick() {
+        return this.durationInTick;
     }
 
     public List<AnimatedFrame> getFrames() {
@@ -80,7 +89,7 @@ public class AssimpAnimation {
             }
 
             List<AnimatedFrame> frames = buildAnimationFrames(aiAnimation, maxFrames, boneList, rootNode, rootTransformationInverted);
-            var animation = new AssimpAnimation(aiAnimation.mName().dataString(), frames, aiAnimation.mDuration());
+            var animation = new AssimpAnimation(aiAnimation.mName().dataString(), frames, aiAnimation.mDuration(), aiAnimation.mTicksPerSecond());
             animations.put(animation.getName(), animation);
         }
         return animations;
@@ -139,6 +148,17 @@ public class AssimpAnimation {
             frame.setMatrix(i, new Matrix4f());
         }
         return frame;
+    }
+
+    @Override
+    public double getDuration() {
+        return ticksPerSecond * durationInTick;
+    }
+
+    @Override
+    public void animate(double progress, double delta) {
+        var nextTick = (int) Math.floor((progress + delta) / ticksPerSecond);
+        currentFrame = Math.min(frames.size() - 1, nextTick);
     }
 
     public static class AnimatedFrame {

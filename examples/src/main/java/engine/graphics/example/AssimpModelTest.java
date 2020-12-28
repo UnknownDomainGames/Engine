@@ -1,5 +1,6 @@
 package engine.graphics.example;
 
+import engine.graphics.GraphicsEngine;
 import engine.graphics.application.Application3D;
 import engine.graphics.display.Window;
 import engine.graphics.gl.buffer.GLBufferType;
@@ -73,6 +74,7 @@ public class AssimpModelTest extends Application3D {
         box3.setRenderType(RenderType.TRANSLUCENT);
         var assimpTest = AssimpHelper.loadModel("/boblamp.fbx");
         assimpTest.getMaterials().values().forEach(mat -> mat.getEngineMaterial().setAmbient(Color.WHITE));
+        GraphicsEngine.getAnimationManager().play("assimp-test", true, assimpTest.getCurrentAnimation());
         mainScene.addNode(lineX, lineY, lineZ, box, box2, box3);
         mainScene.addNode(assimpTest);
         mainScene.getLightManager().setAmbientLight(1, 1, 1);

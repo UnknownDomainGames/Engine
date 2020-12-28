@@ -10,9 +10,15 @@ public abstract class AnimationManager {
     protected List<String> pausedAnimation = new ArrayList<>();
     private boolean globalPause = false;
 
-    public boolean play(String identifier, AnimationGroup animation, boolean isLoop) {
+    public boolean play(String identifier, boolean isLoop, Animation... animations) {
+        return play(identifier, isLoop, new AnimationGroup(animations));
+    }
+
+    public boolean play(String identifier, boolean isLoop, AnimationGroup animation) {
         if (isAnimationPlaying(identifier)) return false;
         var playing = new PlayingAnimation(animation, isLoop);
+        if (playingAnimations.containsKey(identifier))
+            return false;
         playingAnimations.put(identifier, playing);
         return true;
     }
