@@ -57,6 +57,9 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
             Platform.getEngine().getEventBus().unregister(this);
             var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
             guiManager.showLast();
+            if (!guiManager.isShowing()) {
+                guiManager.show(new Scene(new GUIMainMenu()));
+            }
         });
         lblStatus.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         lblReason.text().addChangeListener((observable, oldValue, newValue) -> requestParentLayout());

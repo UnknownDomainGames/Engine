@@ -134,4 +134,8 @@ public class NetworkServer implements NetworkEndpoint {
     public EventBus getEventBus() {
         return eventBus;
     }
+
+    public List<NetworkHandler> getHandlers() {
+        return handlers;
+    }
 }

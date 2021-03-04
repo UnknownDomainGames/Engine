@@ -13,7 +13,6 @@ import engine.server.network.NetworkServer;
 import engine.server.player.PlayerManager;
 import engine.server.player.ServerPlayer;
 import engine.world.World;
-import engine.world.WorldCommon;
 import engine.world.WorldCreationSetting;
 import engine.world.exception.WorldAlreadyLoadedException;
 import engine.world.exception.WorldLoadException;
@@ -194,7 +193,7 @@ public class GameServerFullAsync extends GameBase {
         }
 
         networkServer.tick();
-        getWorlds().forEach(world -> ((WorldCommon) world).tick());
+        getWorlds().forEach(World::tick);
     }
 
     public NetworkServer getNetworkServer() {

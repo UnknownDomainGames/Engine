@@ -237,6 +237,7 @@ public class EngineServerIntegrated implements EngineServer {
             game.terminate();
         }
 
+        nettyServer.close();
         getEventBus().post(new EngineEvent.PreTermination(this));
 
         ticker.stop();

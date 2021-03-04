@@ -5,28 +5,28 @@ import engine.client.input.controller.EntityController;
 import engine.entity.Entity;
 import engine.graphics.GraphicsManager;
 import engine.graphics.display.callback.CursorCallback;
-import engine.player.PlayerImpl;
 import engine.player.Profile;
 import engine.server.event.PacketReceivedEvent;
 import engine.server.network.NetworkHandler;
 import engine.server.network.packet.c2s.PacketPlayerMove;
 import engine.server.network.packet.s2c.PacketPlayerPosView;
+import engine.server.player.ServerPlayer;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;
 
-public class ClientPlayerImpl extends PlayerImpl implements ClientPlayer {
+public class ClientServerPlayer extends ServerPlayer implements ClientPlayer {
 
     private EntityController entityController;
 
     private CursorCallback cursorCallback;
 
-    public ClientPlayerImpl(Profile profile, Entity controlledEntity) {
+    public ClientServerPlayer(Profile profile, Entity controlledEntity) {
         super(profile, controlledEntity);
     }
 
-    public ClientPlayerImpl(Profile profile, NetworkHandler handler, Entity controlledEntity) {
+    public ClientServerPlayer(Profile profile, NetworkHandler handler, Entity controlledEntity) {
         super(profile, handler, controlledEntity);
     }
 
@@ -143,6 +143,5 @@ public class ClientPlayerImpl extends PlayerImpl implements ClientPlayer {
     public Entity controlEntity(@Nonnull Entity entity) {
         return super.controlEntity(entity);
     }
-
 
 }

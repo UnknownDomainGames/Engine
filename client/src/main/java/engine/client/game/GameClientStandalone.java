@@ -2,15 +2,15 @@ package engine.client.game;
 
 import engine.client.EngineClient;
 import engine.client.player.ClientPlayer;
-import engine.client.player.ClientPlayerImpl;
+import engine.client.player.ClientServerPlayer;
 import engine.entity.Entity;
 import engine.event.game.GameTerminationEvent;
 import engine.game.GameData;
 import engine.game.GameServerFullAsync;
 import engine.player.Player;
 import engine.player.Profile;
+import engine.server.network.*;
 import engine.world.World;
-import engine.world.WorldCommon;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
@@ -21,12 +21,21 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
 
     private final EngineClient engineClient;
 
-    private ClientPlayer clientPlayer;
+    private final NetworkClient networkClient;
+    private ClientServerPlayer clientPlayer;
     protected final Set<Player> players = new HashSet<>();
 
-    public GameClientStandalone(EngineClient engineClient, Path storageBasePath, GameData data) {
-        super(engineClient, storageBasePath, data, null);
+    public GameClientStandalone(EngineClient engineClient, Path storageBasePath, GameData data, NetworkServer networkServer) {
+        super(engineClient, storageBasePath, data, networkServer);
         this.engineClient = engineClient;
+        networkClient = new NetworkClient();
+        networkClient.runLocal(networkServer.runLocal());
+    }
+
+    public static GameClientStandalone create(EngineClient engineClient, Path storageBasePath, GameData data) {
+        var nettyServer = new NetworkServer();
+        nettyServer.prepareNetworkEventBus();
+        return new GameClientStandalone(engineClient, storageBasePath, data, nettyServer);
     }
 
     @Nonnull
@@ -41,8 +50,12 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         if (clientPlayer != null) {
             throw new IllegalStateException("Cannot join player twice on client game");
         }
-        clientPlayer = new ClientPlayerImpl(profile, controlledEntity);
+        clientPlayer = new ClientServerPlayer(profile, networkClient.getHandler(), controlledEntity);
         players.add(clientPlayer);
+        getNetworkServer().getHandlers().forEach(s -> s.setStatus(ConnectionStatus.GAMEPLAY, new ServerGameplayNetworkHandlerContext(clientPlayer)));
+        var context = new ClientGameplayNetworkHandlerContext();
+        context.setClient(networkClient);
+        networkClient.getHandler().setStatus(ConnectionStatus.GAMEPLAY, context);
         return clientPlayer;
     }
 
@@ -93,7 +106,8 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
             tryTerminate();
         }
 
-        getWorlds().forEach(world -> ((WorldCommon) world).tick());
+        getWorlds().forEach(World::tick);
+        clientPlayer.tick();
         // TODO upload particle physics here
     }
 
@@ -102,6 +116,10 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
         logger.info("Game terminating!");
         engine.getEventBus().post(new GameTerminationEvent.Pre(this));
         super.tryTerminate();
+        if (networkClient.getHandler().isChannelOpen()) {
+            networkClient.getHandler().closeChannel();
+        }
+        getNetworkServer().close();
         engine.getEventBus().post(new GameTerminationEvent.Post(this));
         logger.info("Game terminated.");
     }
