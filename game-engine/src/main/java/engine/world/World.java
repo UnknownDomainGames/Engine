@@ -5,6 +5,7 @@ import engine.component.GameObject;
 import engine.game.Game;
 import engine.math.BlockPos;
 import engine.world.chunk.Chunk;
+import engine.world.chunk.ChunkManager;
 import engine.world.hit.BlockHitResult;
 import engine.world.hit.HitResult;
 import org.joml.Vector3fc;
@@ -45,6 +46,8 @@ public interface World extends BlockGetter, BlockSetter, EntityManager, GameObje
         return getChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS);
     }
 
+    void tick();
+
     Chunk getChunk(int chunkX, int chunkY, int chunkZ);
 
     Collection<Chunk> getLoadedChunks();
@@ -54,6 +57,8 @@ public interface World extends BlockGetter, BlockSetter, EntityManager, GameObje
     boolean isUnloaded();
 
     void save();
+
+    ChunkManager getChunkManager();
 
     boolean isLogicSide();
 }

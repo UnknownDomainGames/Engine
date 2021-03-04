@@ -15,6 +15,6 @@ public class ImageViewRenderer implements NodeRenderer<ImageView> {
         if (image == null) {
             return;
         }
-        graphics.drawImage(image, 0, 0, image.getWidth(), image.getHeight());
+        graphics.drawImage(image, 0, 0, node.prefWidth(), node.prefHeight());
     }
 }

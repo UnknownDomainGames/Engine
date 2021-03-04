@@ -3,11 +3,13 @@ package engine.client.world.chunk;
 import engine.client.world.WorldClient;
 import engine.event.world.chunk.ChunkLoadEvent;
 import engine.event.world.chunk.ChunkUnloadEvent;
+import engine.player.Player;
 import engine.server.network.packet.s2c.PacketChunkData;
 import engine.world.chunk.*;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import org.apache.commons.lang3.Validate;
+import org.joml.Vector3dc;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -88,6 +90,16 @@ public class WorldClientChunkManager implements ChunkManager {
     }
 
     public void tick() {
+
+    }
+
+    @Override
+    public void handlePlayerJoin(Player player) {
+
+    }
+
+    @Override
+    public void handlePlayerMove(Player player, Vector3dc prevPos) {
 
     }
 

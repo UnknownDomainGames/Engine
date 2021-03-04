@@ -7,10 +7,7 @@ import engine.logic.Tickable;
 import engine.math.Math2;
 import engine.math.SphereIterator;
 import engine.player.Player;
-import engine.server.network.packet.s2c.PacketChunkData;
-import engine.server.network.packet.s2c.PacketUnloadChunk;
-import engine.world.WorldCommon;
-import engine.world.chunk.storage.RegionBasedChunkStorage;
+import engine.world.WorldCommonDebug;
 import engine.world.gen.ChunkGenerator;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
@@ -23,10 +20,9 @@ import java.util.Optional;
 
 import static engine.world.chunk.ChunkConstants.getChunkIndex;
 
-public class WorldCommonChunkManager implements ChunkManager, Tickable {
+public class DebugChunkManager implements ChunkManager, Tickable {
 
-    private final WorldCommon world;
-    private final ChunkStorage chunkStorage;
+    private final WorldCommonDebug world;
     private final ChunkGenerator generator;
 
     private final LongObjectMap<Chunk> chunkMap;
@@ -34,9 +30,8 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     private int viewDistance;
     private int viewDistanceSquared;
 
-    public WorldCommonChunkManager(WorldCommon world, ChunkGenerator generator) {
+    public DebugChunkManager(WorldCommonDebug world, ChunkGenerator generator) {
         this.world = world;
-        this.chunkStorage = new RegionBasedChunkStorage(world, world.getStoragePath().resolve("chunk"));
         this.chunkMap = new LongObjectHashMap<>();
         this.generator = generator;
         setViewDistance(12);
@@ -67,14 +62,19 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     @Override
     public Chunk getOrLoadChunk(int x, int y, int z) {
         long index = getChunkIndex(x, y, z);
-        return chunkMap.computeIfAbsent(index, key -> loadChunk(index, x, y, z));
+        return chunkMap.computeIfAbsent(index, key -> loadChunk(index, x, y, z, false));
+    }
+
+    private Chunk getOrLoadChunkInternal(int x, int y, int z) {
+        long index = getChunkIndex(x, y, z);
+        return chunkMap.computeIfAbsent(index, key -> loadChunk(index, x, y, z, true));
     }
 
     private boolean shouldChunkOnline(int x, int y, int z, ChunkPos pos) {
         return pos.distanceSquared(x, 0, z) <= viewDistanceSquared;
     }
 
-    private synchronized Chunk loadChunk(long index, int x, int y, int z) {
+    private synchronized Chunk loadChunk(long index, int x, int y, int z, boolean shouldCreate) {
         if (y < 0) { //Not buildable below 0
             return new AirChunk(world, x, y, z);
         }
@@ -84,10 +84,14 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
 //            return chunk;
 //        }
 
-        Chunk chunk = chunkStorage.load(x, y, z);
+        Chunk chunk = null;
         if (chunk == null) { //Chunk has not been created
-            chunk = new CubicChunk(world, x, y, z);
-            generator.generate(chunk);
+            if (shouldCreate) {
+                chunk = new CubicChunk(world, x, y, z);
+                generator.generate(chunk);
+            } else {
+                return new AirChunk(world, x, y, z);
+            }
         }
         chunkMap.put(index, chunk);
         world.getGame().getEventBus().post(new ChunkLoadEvent(chunk));
@@ -105,7 +109,7 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
 
     private synchronized void unloadChunk(long index, Chunk chunk) {
         Validate.notNull(chunk);
-        chunkStorage.save(chunk);
+//        chunkStorage.save(chunk);
         world.getGame().getEventBus().post(new ChunkUnloadEvent(chunk));
     }
 
@@ -113,12 +117,12 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     public void unloadAll() {
         chunkMap.forEach(this::unloadChunk);
         chunkMap.clear();
-        chunkStorage.close();
+//        chunkStorage.close();
     }
 
     @Override
     public void saveAll() {
-        chunkMap.values().forEach(chunkStorage::save);
+//        chunkMap.values().forEach(chunkStorage::save);
     }
 
     @Override
@@ -130,7 +134,6 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
         return generator;
     }
 
-    @Override
     public void handlePlayerJoin(Player player) {
         if (!player.isControllingEntity()) return; // We cannot do anything if the player does not control an entity
         var position = ChunkPos.fromWorldPos(player.getControlledEntity().getPosition());
@@ -168,7 +171,6 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
         }
     }
 
-    @Override
     public void handlePlayerMove(Player player, Vector3dc prevPos) {
         if (!player.isControllingEntity()) return; // We cannot do anything if the player does not control an entity
         var chunkPos = ChunkPos.fromWorldPos(player.getControlledEntity().getPosition());
@@ -185,13 +187,14 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     }
 
     private void sendUnloadNotice(Player player, int x, int y, int z) {
-        player.getNetworkHandler().sendPacket(new PacketUnloadChunk(world.getName(), x, y, z));
+        getChunk(x, y, z).ifPresent(this::unloadChunk);
+//        player.getNetworkHandler().sendPacket(new PacketUnloadChunk(world.getName(), x, y, z));
     }
 
     private void sendChunkData(Player player, int x, int y, int z) {
-        var chunk = getOrLoadChunk(x, y, z);
-        if (chunk instanceof CubicChunk)
-            player.getNetworkHandler().sendPacket(new PacketChunkData(((CubicChunk) chunk)));
+        var chunk = getOrLoadChunkInternal(x, y, z);
+//        if (chunk instanceof CubicChunk)
+//            player.getNetworkHandler().sendPacket(new PacketChunkData(((CubicChunk) chunk)));
 //        getChunk(x, y, z).filter(chunk -> chunk instanceof CubicChunk)
 //                .ifPresent(chunk -> player.getNetworkHandler().sendPacket(new PacketChunkData((CubicChunk) chunk)));
     }

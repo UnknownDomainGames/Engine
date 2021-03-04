@@ -10,6 +10,8 @@ import javax.annotation.Nonnull;
 
 public interface Chunk {
 
+    ChunkStatus getStatus();
+
     @Nonnull
     World getWorld();
 

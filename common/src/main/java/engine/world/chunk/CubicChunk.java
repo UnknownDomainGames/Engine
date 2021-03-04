@@ -44,6 +44,11 @@ public class CubicChunk implements Chunk {
         this.center = min.add(CHUNK_X_SIZE >> 1, CHUNK_Y_SIZE >> 1, CHUNK_Z_SIZE >> 1, new Vector3i());
     }
 
+    @Override
+    public ChunkStatus getStatus() {
+        return null; //TODO
+    }
+
     @Nonnull
     @Override
     public World getWorld() {

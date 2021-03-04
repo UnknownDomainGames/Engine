@@ -30,6 +30,13 @@ public final class Image {
         this(url, smooth, false);
     }
 
+    public Image(ReadOnlyImage image, boolean smooth) {
+        this.url = "";
+        this.smooth = smooth;
+        this.backgroundLoading = false;
+        finishImage(image);
+    }
+
     public Image(String url, boolean smooth, boolean backgroundLoading) {
         this.url = url;
         this.smooth = smooth;

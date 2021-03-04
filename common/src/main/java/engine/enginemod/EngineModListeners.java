@@ -21,6 +21,7 @@ import engine.server.network.packet.c2s.PacketTwoHandComponentChange;
 import engine.server.network.packet.s2c.*;
 import engine.world.WorldProvider;
 import engine.world.provider.FlatWorldProvider;
+import engine.world.provider.TestWorldProvider;
 
 public final class EngineModListeners {
 
@@ -47,6 +48,7 @@ public final class EngineModListeners {
     @Listener
     public static void registerWorldProvider(ModRegistrationEvent.Register<WorldProvider> event) {
         event.register(new FlatWorldProvider().name("flat"));
+        event.register(new TestWorldProvider().name("debug"));
     }
 
     @Listener

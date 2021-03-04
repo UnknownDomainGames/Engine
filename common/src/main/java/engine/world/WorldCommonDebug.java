@@ -20,7 +20,7 @@ import engine.math.BlockPos;
 import engine.registry.Registries;
 import engine.util.Direction;
 import engine.world.chunk.Chunk;
-import engine.world.chunk.WorldCommonChunkManager;
+import engine.world.chunk.DebugChunkManager;
 import engine.world.collision.DefaultCollisionManager;
 import engine.world.gen.ChunkGenerator;
 import engine.world.hit.BlockHitResult;
@@ -40,7 +40,7 @@ import java.util.function.Predicate;
 
 import static engine.world.chunk.ChunkConstants.*;
 
-public class WorldCommon implements World {
+public class WorldCommonDebug implements World {
 
     private final Game game;
     private final WorldProvider provider;
@@ -54,7 +54,7 @@ public class WorldCommon implements World {
     private final CollisionManager collisionManager;
     private final DefaultEntityManager entityManager;
 
-    private WorldCommonChunkManager chunkManager;
+    private DebugChunkManager chunkManager;
 
     //    private final Ticker ticker;
     private long gameTick;
@@ -62,13 +62,13 @@ public class WorldCommon implements World {
 
     private boolean unloaded = false;
 
-    public WorldCommon(Game game, WorldProvider provider, Path storagePath, String name, WorldCreationSetting creationSetting, ChunkGenerator chunkGenerator) {
+    public WorldCommonDebug(Game game, WorldProvider provider, WorldCreationSetting creationSetting, ChunkGenerator chunkGenerator) {
         this.game = game;
         this.provider = provider;
-        this.storagePath = storagePath;
-        this.name = name;
+        this.storagePath = Path.of("");
+        this.name = "Debug";
         this.creationSetting = creationSetting;
-        this.chunkManager = new WorldCommonChunkManager(this, chunkGenerator);
+        this.chunkManager = new DebugChunkManager(this, chunkGenerator);
 //        this.ticker = new Ticker(this::tick, Ticker.LOGIC_TICK); // TODO: make tps configurable
         this.collisionManager = new DefaultCollisionManager(this);
         this.entityManager = new DefaultEntityManager(this);
@@ -298,7 +298,7 @@ public class WorldCommon implements World {
 
     @Override
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
-        return chunkManager.getOrLoadChunk(chunkX, chunkY, chunkZ);
+        return chunkManager.getChunk(chunkX, chunkY, chunkZ).orElse(null);
     }
 
     @Override
@@ -340,13 +340,13 @@ public class WorldCommon implements World {
 //    }
 
     @Override
-    public WorldCommonChunkManager getChunkManager() {
+    public DebugChunkManager getChunkManager() {
         return chunkManager;
     }
 
-    public void setChunkManager(WorldCommonChunkManager chunkManager) {
-        this.chunkManager = chunkManager;
-    }
+//    public void setChunkManager(WorldCommonChunkManager chunkManager) {
+//        this.chunkManager = chunkManager;
+//    }
 
     static final class PhysicsSystem {
         public void tick(World world) {
@@ -439,6 +439,6 @@ public class WorldCommon implements World {
 
     @Override
     public boolean isLogicSide() {
-        return true;
+        return false;
     }
 }

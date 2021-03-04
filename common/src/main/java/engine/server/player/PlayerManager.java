@@ -28,7 +28,6 @@ import engine.server.network.packet.s2c.PacketBlockUpdate;
 import engine.server.network.packet.s2c.PacketGameData;
 import engine.server.network.packet.s2c.PacketPlayerPosView;
 import engine.util.Side;
-import engine.world.WorldCommon;
 import engine.world.hit.BlockHitResult;
 import org.joml.Vector3d;
 
@@ -61,7 +60,7 @@ public class PlayerManager {
         Platform.getLogger().info("{}[{}] joined the server at ({})", player.getProfile().getName(), playerAddress, player.getControlledEntity().getPosition());
         players.add(player);
         networkHandler.sendPacket(new PacketGameData(gameServer.getData()));
-        ((WorldCommon) player.getWorld()).getChunkManager().handlePlayerJoin(player);
+        player.getWorld().getChunkManager().handlePlayerJoin(player);
         handlePlayerPosViewSyncing(player);
     }
 
@@ -179,7 +178,7 @@ public class PlayerManager {
                     var distZ = posZ - event.getPacket().getLastPosZ();
                     var prev = player.getControlledEntity().getPosition().get(new Vector3d());
                     player.getControlledEntity().getPosition().set(posX, posY, posZ);
-                    ((WorldCommon) player.getWorld()).getChunkManager().handlePlayerMove(player, prev);
+                    player.getWorld().getChunkManager().handlePlayerMove(player, prev);
                 }
 
                 if (event.getPacket().hasLookUpdated()) {
