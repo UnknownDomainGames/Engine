@@ -17,6 +17,7 @@ import engine.util.CrashHandler;
 import engine.util.CrashHandlerImpl;
 import engine.util.RuntimeEnvironment;
 import engine.util.Side;
+import engine.world.chunk.ChunkStatusListener;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.SystemUtils.*;
@@ -41,15 +43,23 @@ public class EngineServerIntegrated implements EngineServer {
     private Ticker ticker;
     private NetworkServer nettyServer;
     private ServerConfig serverConfig;
+    private final Supplier<ChunkStatusListener> chunkStatusListenerSupplier;
     private Game game;
+    private GameData passThroughGameData;
     private boolean initialized;
     private boolean running;
     private boolean markedTermination;
     private CrashHandlerImpl crashHandler;
 
-    public EngineServerIntegrated(EngineClient parent, ServerConfig serverConfig) {
+    public EngineServerIntegrated(EngineClient parent, ServerConfig serverConfig, Supplier<ChunkStatusListener> chunkStatusListenerSupplier) {
         this.parent = parent;
         this.serverConfig = serverConfig;
+        this.chunkStatusListenerSupplier = chunkStatusListenerSupplier;
+    }
+
+    public EngineServerIntegrated(EngineClient parent, ServerConfig serverConfig, GameData gameData, Supplier<ChunkStatusListener> chunkStatusListenerSupplier) {
+        this(parent, serverConfig, chunkStatusListenerSupplier);
+        this.passThroughGameData = gameData;
     }
 
     @Override
@@ -196,7 +206,7 @@ public class EngineServerIntegrated implements EngineServer {
         // NOTE: delay server binding to client connection
         logger.info("Starting game for world");
         Path gameBasePath = this.getRunPath().resolve("game");
-        startGame(new GameServerFullAsync(this, gameBasePath, GameData.createFromExistingGame(gameBasePath, serverConfig.getGame()), nettyServer));
+        startGame(new GameServerFullAsync(this, gameBasePath, passThroughGameData != null ? passThroughGameData : GameData.createFromExistingGame(gameBasePath, serverConfig.getGame()), nettyServer, chunkStatusListenerSupplier));
         ticker.run();
     }
 

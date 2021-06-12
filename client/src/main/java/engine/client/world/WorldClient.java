@@ -205,8 +205,8 @@ public class WorldClient implements World, Runnable {
     }
 
     @Override
-    public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
-        return chunkManager.getOrLoadChunk(chunkX, chunkY, chunkZ);
+    public Chunk getChunk(int chunkX, int chunkY, int chunkZ, boolean shouldLoadWhenNonexist) {
+        return shouldLoadWhenNonexist ? chunkManager.getOrLoadChunk(chunkX, chunkY, chunkZ) : chunkManager.getChunk(chunkX, chunkY, chunkZ).orElse(null);
     }
 
     @Override
@@ -232,7 +232,7 @@ public class WorldClient implements World, Runnable {
     @Nonnull
     @Override
     public BlockState getBlock(int x, int y, int z) {
-        Chunk chunk = chunkManager.getOrLoadChunk(x >> ChunkConstants.CHUNK_X_BITS, y >> ChunkConstants.CHUNK_Y_BITS, z >> ChunkConstants.CHUNK_Z_BITS);
+        Chunk chunk = this.getChunk(x >> ChunkConstants.CHUNK_X_BITS, y >> ChunkConstants.CHUNK_Y_BITS, z >> ChunkConstants.CHUNK_Z_BITS, false);
         return chunk != null ? chunk.getBlock(x, y, z) : Registries.getBlockRegistry().air().getDefaultState();
     }
 
@@ -258,7 +258,7 @@ public class WorldClient implements World, Runnable {
             post = new BlockReplaceEvent.Post(this, pos, oldBlock, block, cause);
         }
         if (!getGame().getEventBus().post(pre)) {
-            chunkManager.getOrLoadChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS)
+            getChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS, true)
                     .setBlock(pos, block, cause);
 
             oldBlock.getPrototype().getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));

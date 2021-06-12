@@ -1,6 +1,7 @@
 package engine.world.chunk;
 
 import engine.player.Player;
+import engine.world.gen.ChunkGenerator;
 import org.joml.Vector3dc;
 
 import java.util.Collection;
@@ -26,6 +27,8 @@ public interface ChunkManager {
     void unloadAll();
 
     void saveAll();
+
+    ChunkGenerator getChunkGenerator();
 
     void handlePlayerJoin(Player player);
 

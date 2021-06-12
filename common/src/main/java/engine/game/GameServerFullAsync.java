@@ -14,15 +14,18 @@ import engine.server.player.PlayerManager;
 import engine.server.player.ServerPlayer;
 import engine.world.World;
 import engine.world.WorldCreationSetting;
+import engine.world.chunk.ChunkStatusListener;
 import engine.world.exception.WorldAlreadyLoadedException;
 import engine.world.exception.WorldLoadException;
 import engine.world.exception.WorldNotExistsException;
 import engine.world.exception.WorldProviderNotFoundException;
+import engine.world.gen.NodeBasedChunkGenerator;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Each world host in an independent thread.
@@ -31,12 +34,14 @@ public class GameServerFullAsync extends GameBase {
 
     protected final Map<String, World> worlds = new HashMap<>();
     private final NetworkServer networkServer;
+    private final Supplier<ChunkStatusListener> chunkStatusListenerSupplier;
     private final PlayerManager playerManager;
 //    protected List<Thread> worldThreads;
 
-    public GameServerFullAsync(Engine engine, Path storageBasePath, GameData data, NetworkServer networkServer) {
+    public GameServerFullAsync(Engine engine, Path storageBasePath, GameData data, NetworkServer networkServer, Supplier<ChunkStatusListener> chunkStatusListenerSupplier) {
         super(engine, storageBasePath, data);
         this.networkServer = networkServer;
+        this.chunkStatusListenerSupplier = chunkStatusListenerSupplier;
         this.playerManager = new PlayerManager(this);
     }
 
@@ -75,6 +80,9 @@ public class GameServerFullAsync extends GameBase {
         }
 
         var world = provider.create(this, storagePath.resolve("world").resolve(name), name, creationConfig);
+        if (world.getChunkManager().getChunkGenerator() instanceof NodeBasedChunkGenerator) { //TODO: generalize
+            ((NodeBasedChunkGenerator) world.getChunkManager().getChunkGenerator()).setChunkStatusListener(chunkStatusListenerSupplier.get());
+        }
         getEventBus().post(new WorldCreateEvent(world));
 
         this.worlds.put(name, world);

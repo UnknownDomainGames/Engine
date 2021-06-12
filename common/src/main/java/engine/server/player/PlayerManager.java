@@ -59,7 +59,7 @@ public class PlayerManager {
         }
         Platform.getLogger().info("{}[{}] joined the server at ({})", player.getProfile().getName(), playerAddress, player.getControlledEntity().getPosition());
         players.add(player);
-        networkHandler.sendPacket(new PacketGameData(gameServer.getData()));
+        networkHandler.sendPacket(new PacketGameData(gameServer.getData(), player.getWorld().getName()));
         player.getWorld().getChunkManager().handlePlayerJoin(player);
         handlePlayerPosViewSyncing(player);
     }

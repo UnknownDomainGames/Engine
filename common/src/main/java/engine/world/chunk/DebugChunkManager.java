@@ -8,6 +8,7 @@ import engine.math.Math2;
 import engine.math.SphereIterator;
 import engine.player.Player;
 import engine.world.WorldCommonDebug;
+import engine.world.gen.ChunkGenExecutor;
 import engine.world.gen.ChunkGenerator;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
@@ -16,6 +17,7 @@ import org.joml.Vector3dc;
 import org.joml.Vector3i;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Optional;
 
 import static engine.world.chunk.ChunkConstants.getChunkIndex;
@@ -35,9 +37,10 @@ public class DebugChunkManager implements ChunkManager, Tickable {
         this.chunkMap = new LongObjectHashMap<>();
         this.generator = generator;
         setViewDistance(12);
+        ChunkGenExecutor.start();
     }
 
-//    @Override
+    //    @Override
 //    public boolean shouldChunkUnload(Chunk chunk, Player player) {
 //        int viewDistanceSquared = 36864; //TODO game config
 //        return !world.getCriticalChunks().contains(ChunkConstants.getChunkIndex(chunk.getX(), chunk.getY(), chunk.getZ()))
@@ -62,19 +65,14 @@ public class DebugChunkManager implements ChunkManager, Tickable {
     @Override
     public Chunk getOrLoadChunk(int x, int y, int z) {
         long index = getChunkIndex(x, y, z);
-        return chunkMap.computeIfAbsent(index, key -> loadChunk(index, x, y, z, false));
-    }
-
-    private Chunk getOrLoadChunkInternal(int x, int y, int z) {
-        long index = getChunkIndex(x, y, z);
-        return chunkMap.computeIfAbsent(index, key -> loadChunk(index, x, y, z, true));
+        return chunkMap.computeIfAbsent(index, key -> loadChunk(index, x, y, z));
     }
 
     private boolean shouldChunkOnline(int x, int y, int z, ChunkPos pos) {
         return pos.distanceSquared(x, 0, z) <= viewDistanceSquared;
     }
 
-    private synchronized Chunk loadChunk(long index, int x, int y, int z, boolean shouldCreate) {
+    private synchronized Chunk loadChunk(long index, int x, int y, int z) {
         if (y < 0) { //Not buildable below 0
             return new AirChunk(world, x, y, z);
         }
@@ -84,17 +82,16 @@ public class DebugChunkManager implements ChunkManager, Tickable {
 //            return chunk;
 //        }
 
-        Chunk chunk = null;
-        if (chunk == null) { //Chunk has not been created
-            if (shouldCreate) {
-                chunk = new CubicChunk(world, x, y, z);
-                generator.generate(chunk);
-            } else {
-                return new AirChunk(world, x, y, z);
-            }
-        }
-        chunkMap.put(index, chunk);
-        world.getGame().getEventBus().post(new ChunkLoadEvent(chunk));
+        Chunk chunk;
+        //Chunk has not been created
+        chunk = new CubicChunk(world, x, y, z);
+        generator.generateAsync(chunk).thenRun(() -> {
+            chunkMap.put(index, chunk);
+            world.getGame().getEventBus().post(new ChunkLoadEvent(chunk));
+        }).join();
+
+//        chunkMap.put(index, chunk);
+//        world.getGame().getEventBus().post(new ChunkLoadEvent(chunk));
         return chunk;
     }
 
@@ -115,8 +112,9 @@ public class DebugChunkManager implements ChunkManager, Tickable {
 
     @Override
     public void unloadAll() {
-        chunkMap.forEach(this::unloadChunk);
+        new HashMap<>(chunkMap).forEach(this::unloadChunk);
         chunkMap.clear();
+        ChunkGenExecutor.stop();
 //        chunkStorage.close();
     }
 
@@ -192,7 +190,7 @@ public class DebugChunkManager implements ChunkManager, Tickable {
     }
 
     private void sendChunkData(Player player, int x, int y, int z) {
-        var chunk = getOrLoadChunkInternal(x, y, z);
+        var chunk = getOrLoadChunk(x, y, z);
 //        if (chunk instanceof CubicChunk)
 //            player.getNetworkHandler().sendPacket(new PacketChunkData(((CubicChunk) chunk)));
 //        getChunk(x, y, z).filter(chunk -> chunk instanceof CubicChunk)

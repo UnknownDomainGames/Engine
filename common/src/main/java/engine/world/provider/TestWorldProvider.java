@@ -35,13 +35,14 @@ public class TestWorldProvider extends BaseWorldProvider {
             int cz = chunk.getZ();
             if (cy < 0) //not making negative-Y chunks
                 return;
+            var yOffset = cy * CHUNK_Y_SIZE;
             for (int j = 0; j < CHUNK_Y_SIZE; j++) {
 //                if (j + cy * CHUNK_Y_SIZE >= 5) {
 //                    break;
 //                }
                 for (int i = 0; i < CHUNK_X_SIZE; i++) {
                     for (int k = 0; k < CHUNK_Z_SIZE; k++) {
-                        if (j < sampler.sample(cx + i, cz + k) * noiseScaleY + seaLevel) {
+                        if (j + yOffset < sampler.sample(cx + i, cz + k) * noiseScaleY + seaLevel) {
                             chunk.setBlock(BlockPos.of(i, j, k), Registries.getBlockRegistry().getValue(1).getDefaultState(), new BlockChangeCause.WorldGenCause());
                         }
                     }
@@ -54,6 +55,34 @@ public class TestWorldProvider extends BaseWorldProvider {
     @Nonnull
     @Override
     public World load(@Nonnull Game game, @Nonnull Path storagePath) {
-        return null;
+        var info = new NodeBasedChunkGeneratorInfo();
+        var sampler = new OctaveOpenSimplexNoiseSampler(0, IntStream.range(0, 16).boxed().collect(Collectors.toList()));
+        var seaLevel = 20;
+        var noiseScaleY = 5;
+        info.addNodes(new ChunkGeneratorNodeInfo(new ChunkStatus.Builder().name("layers").build(), (chunk, ctx) -> {
+            int cx = chunk.getX();
+            int cy = chunk.getY();
+            int cz = chunk.getZ();
+            if (cy < 0) //not making negative-Y chunks
+                return;
+            var xOffset = cx * CHUNK_X_SIZE;
+            var yOffset = cy * CHUNK_Y_SIZE;
+            var zOffset = cz * CHUNK_Z_SIZE;
+            for (int j = 0; j < CHUNK_Y_SIZE; j++) {
+//                if (j + cy * CHUNK_Y_SIZE >= 5) {
+//                    break;
+//                }
+                for (int i = 0; i < CHUNK_X_SIZE; i++) {
+                    for (int k = 0; k < CHUNK_Z_SIZE; k++) {
+                        if (j + yOffset < sampler.sample((xOffset + i) / 64.0, (zOffset + k) / 64.0) * noiseScaleY + seaLevel) {
+                            chunk.setBlock(BlockPos.of(i, j, k), Registries.getBlockRegistry().getValue(1).getDefaultState(), new BlockChangeCause.WorldGenCause());
+                        }
+                    }
+                }
+            }
+        }));
+        WorldCreationSetting creationSetting = new WorldCreationSetting() {
+        };
+        return new WorldCommonDebug(game, this, creationSetting, new NodeBasedChunkGenerator(info, creationSetting));
     }
 }

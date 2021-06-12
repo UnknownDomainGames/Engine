@@ -1,19 +1,17 @@
 package engine.world.gen;
 
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ChunkGenExecutor {
-    private static ThreadPoolExecutor executor;
+    private static ExecutorService executor;
 
     public static void start() {
         int threadCount = Runtime.getRuntime().availableProcessors();
-        executor = new ThreadPoolExecutor(threadCount, threadCount,
-                0L, TimeUnit.MILLISECONDS,
-                new PriorityBlockingQueue<>(), new ThreadFactory() {
+        executor = Executors.newFixedThreadPool(threadCount, new ThreadFactory() {
             private final AtomicInteger poolNumber = new AtomicInteger(0);
 
             @Override
@@ -24,10 +22,14 @@ public class ChunkGenExecutor {
     }
 
     public static void stop() {
-        executor.shutdownNow();
+        executor.shutdown();
     }
 
-//    public static void execute(Task task) {
+    public static Executor getExecutor() {
+        return executor;
+    }
+
+    //    public static void execute(Task task) {
 //        executor.execute(task);
 //    }
 }

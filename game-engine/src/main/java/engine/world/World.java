@@ -43,12 +43,12 @@ public interface World extends BlockGetter, BlockSetter, EntityManager, GameObje
     HitResult raycast(Vector3fc from, Vector3fc dir, float distance);
 
     default Chunk getChunk(@Nonnull BlockPos pos) {
-        return getChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS);
+        return getChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS, true);
     }
 
     void tick();
 
-    Chunk getChunk(int chunkX, int chunkY, int chunkZ);
+    Chunk getChunk(int chunkX, int chunkY, int chunkZ, boolean shouldLoadWhenNonexist);
 
     Collection<Chunk> getLoadedChunks();
 

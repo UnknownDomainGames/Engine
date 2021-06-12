@@ -242,7 +242,7 @@ public class WorldCommonDebug implements World {
     @Nonnull
     @Override
     public BlockState getBlock(int x, int y, int z) {
-        Chunk chunk = chunkManager.getOrLoadChunk(x >> CHUNK_X_BITS, y >> CHUNK_Y_BITS, z >> CHUNK_Z_BITS);
+        Chunk chunk = getChunk(x >> CHUNK_X_BITS, y >> CHUNK_Y_BITS, z >> CHUNK_Z_BITS, false);
         return chunk == null ? Registries.getBlockRegistry().air().getDefaultState() : chunk.getBlock(x, y, z);
     }
 
@@ -267,7 +267,7 @@ public class WorldCommonDebug implements World {
             post = new BlockReplaceEvent.Post(this, pos, oldBlock, block, cause);
         }
         if (!getGame().getEventBus().post(pre)) {
-            chunkManager.getOrLoadChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS)
+            getChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS, true)
                     .setBlock(pos, block, cause);
 
             oldBlock.getPrototype().getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));
@@ -297,8 +297,8 @@ public class WorldCommonDebug implements World {
     }
 
     @Override
-    public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
-        return chunkManager.getChunk(chunkX, chunkY, chunkZ).orElse(null);
+    public Chunk getChunk(int chunkX, int chunkY, int chunkZ, boolean shouldLoadWhenNonexist) {
+        return shouldLoadWhenNonexist ? chunkManager.getOrLoadChunk(chunkX, chunkY, chunkZ) : chunkManager.getChunk(chunkX, chunkY, chunkZ).orElse(null);
     }
 
     @Override

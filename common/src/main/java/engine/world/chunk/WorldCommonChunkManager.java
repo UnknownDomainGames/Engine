@@ -126,6 +126,7 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
         return chunkMap.values();
     }
 
+    @Override
     public ChunkGenerator getChunkGenerator() {
         return generator;
     }

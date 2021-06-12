@@ -13,8 +13,10 @@ public class ChunkGeneratorNode {
     }
 
     public final CompletableFuture<Chunk> processAsync(Chunk chunk, GeneratorContext context) {
-        process(chunk, context);
-        return CompletableFuture.completedFuture(chunk);
+        return CompletableFuture.supplyAsync(() -> {
+            process(chunk, context);
+            return chunk;
+        }, ChunkGenExecutor.getExecutor());
     }
 
     public void process(Chunk chunk, GeneratorContext context) {

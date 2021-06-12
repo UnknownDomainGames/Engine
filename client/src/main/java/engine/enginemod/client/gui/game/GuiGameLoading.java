@@ -2,8 +2,11 @@ package engine.enginemod.client.gui.game;
 
 import engine.gui.control.Text;
 import engine.gui.layout.FlowPane;
+import engine.world.chunk.ChunkPos;
+import engine.world.chunk.ChunkStatus;
+import engine.world.chunk.ChunkStatusListener;
 
-public class GuiGameLoading extends FlowPane {
+public class GuiGameLoading extends FlowPane implements ChunkStatusListener {
 
     private final Text text2;
     private String[] strings = {"/", "|", "\\", "|"};
@@ -18,5 +21,20 @@ public class GuiGameLoading extends FlowPane {
     public void updateProgress() {
         index = ++index % strings.length;
         text2.setText(strings[index]);
+    }
+
+    @Override
+    public void updateGraphCenter(ChunkPos pos) {
+
+    }
+
+    @Override
+    public void onChunkStatusUpdate(ChunkPos pos, ChunkStatus status) {
+
+    }
+
+    @Override
+    public void stop() {
+
     }
 }

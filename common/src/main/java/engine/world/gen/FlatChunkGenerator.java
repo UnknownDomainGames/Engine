@@ -5,6 +5,8 @@ import engine.event.block.cause.BlockChangeCause;
 import engine.math.BlockPos;
 import engine.world.chunk.Chunk;
 
+import java.util.concurrent.CompletableFuture;
+
 import static engine.world.chunk.ChunkConstants.*;
 
 public class FlatChunkGenerator implements ChunkGenerator {
@@ -32,5 +34,11 @@ public class FlatChunkGenerator implements ChunkGenerator {
                 }
             }
         }
+    }
+
+    @Override
+    public CompletableFuture<Chunk> generateAsync(Chunk chunk) {
+        generate(chunk);
+        return CompletableFuture.completedFuture(chunk);
     }
 }

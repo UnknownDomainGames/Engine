@@ -20,7 +20,7 @@ public class ChunkCache implements BlockGetter {
         for (int x = fromX; x <= toX; x++) {
             for (int y = fromY; y <= toY; y++) {
                 for (int z = fromZ; z <= toZ; z++) {
-                    chunks[x - fromX][y - fromY][z - fromZ] = world.getChunk(x, y, z);
+                    chunks[x - fromX][y - fromY][z - fromZ] = world.getChunk(x, y, z, false);
                 }
             }
         }
@@ -57,7 +57,8 @@ public class ChunkCache implements BlockGetter {
             Chunk chunk = chunks[chunkX][chunkY][chunkZ];
             return chunk == null ? Registries.getBlockRegistry().air().getDefaultState() : chunk.getBlock(x, y, z); // FIXME:
         }
-        return world.getBlock(x, y, z);
+        return Registries.getBlockRegistry().air().getDefaultState();
+//        return world.getBlock(x, y, z);
     }
 
     @Override

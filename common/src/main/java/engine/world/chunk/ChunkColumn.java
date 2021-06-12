@@ -28,7 +28,7 @@ public class ChunkColumn {
         if (chunkCache.containsKey(chunkY)) {
             return chunkCache.get(chunkY);
         }
-        var chunk = world.getChunk(chunkX, chunkY, chunkZ);
+        var chunk = world.getChunk(chunkX, chunkY, chunkZ, false);
         chunkCache.putIfAbsent(chunkY, chunk);
         return chunk;
     }

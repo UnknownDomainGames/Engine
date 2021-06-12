@@ -132,7 +132,8 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
         if (!gameStorage.getGames().containsKey(serverConfig.getGame())) {
             gameStorage.createGameData(serverConfig.getGame());
         }
-        startGame(new GameServerFullAsync(this, gameBasePath, gameStorage.getGames().get(serverConfig.getGame()), nettyServer));
+        //TODO: chunkstatuslistener
+        startGame(new GameServerFullAsync(this, gameBasePath, gameStorage.getGames().get(serverConfig.getGame()), nettyServer, () -> null));
         ticker.run();
     }
 

@@ -26,7 +26,7 @@ public class GameClientStandalone extends GameServerFullAsync implements GameCli
     protected final Set<Player> players = new HashSet<>();
 
     public GameClientStandalone(EngineClient engineClient, Path storageBasePath, GameData data, NetworkServer networkServer) {
-        super(engineClient, storageBasePath, data, networkServer);
+        super(engineClient, storageBasePath, data, networkServer, () -> null);
         this.engineClient = engineClient;
         networkClient = new NetworkClient();
         networkClient.runLocal(networkServer.runLocal());

@@ -22,6 +22,7 @@ import engine.enginemod.EngineModListeners;
 import engine.enginemod.client.gui.game.GuiGameLoading;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
+import engine.game.GameData;
 import engine.graphics.EngineGraphicsManager;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.GraphicsManager;
@@ -40,6 +41,7 @@ import engine.util.ClassPathUtils;
 import engine.util.RuntimeEnvironment;
 import engine.util.Side;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
@@ -235,6 +237,10 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     private EngineServerIntegrated integratedServer;
 
     public void playIntegratedGame(String gameName) {
+        this.playIntegratedGame(gameName, null);
+    }
+
+    public void playIntegratedGame(String gameName, @Nullable GameData gameData) {
         if (isPlaying()) {
             game.terminate();
         }
@@ -245,7 +251,11 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         graphicsManager.getGUIManager().show(new Scene(guiGameLoading));
         var serverConfig = new ServerConfig();
         serverConfig.setGame(gameName);
-        integratedServer = new EngineServerIntegrated(this, serverConfig);
+        if (gameData != null) {
+            integratedServer = new EngineServerIntegrated(this, serverConfig, gameData, () -> guiGameLoading);
+        } else {
+            integratedServer = new EngineServerIntegrated(this, serverConfig, () -> guiGameLoading);
+        }
         new Thread(() -> {
             integratedServer.initEngine();
             integratedServer.runEngine();
@@ -253,10 +263,10 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         while (!integratedServer.isPlaying()) {
             guiGameLoading.updateProgress();
             graphicsManager.doRender(0);
-            try {
-                Thread.sleep(16L);
-            } catch (InterruptedException ignored) {
-            }
+//            try {
+//                Thread.sleep(16L);
+//            } catch (InterruptedException ignored) {
+//            }
         }
         var socketAddress = integratedServer.getNettyServer().runLocal();
         var nettyClient = new NetworkClient();

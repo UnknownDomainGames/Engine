@@ -1,8 +1,10 @@
 package engine.enginemod.client.gui.game;
 
 import engine.Platform;
+import engine.client.EngineClientImpl;
 import engine.client.i18n.I18n;
 import engine.enginemod.client.gui.GuiSettings;
+import engine.game.GameData;
 import engine.graphics.font.Font;
 import engine.gui.Scene;
 import engine.gui.control.Button;
@@ -55,5 +57,25 @@ public class GUIMainMenu extends FlowPane {
         Button buttonExit = new Button("Exit");
         buttonExit.setOnMouseClicked(event -> Platform.getEngine().terminate());
         vBox.getChildren().add(buttonExit);
+
+        var butTest = new Button("Test WorldGen");
+        butTest.setOnMouseClicked(event -> {
+            var gameData = GameData.createFromCurrentEnvironment(Path.of(""), "DEBUG");
+            gameData.getWorlds().put("Debug", "engine:debug");
+            ((EngineClientImpl) Platform.getEngineClient()).playIntegratedGame("DEBUG", gameData);
+//            var game = GameClientStandalone.create(Platform.getEngineClient(), Path.of(""), GameData.createFromCurrentEnvironment(Path.of(""), "DEBUG"));
+//            Platform.getEngineClient().getGraphicsManager().getGUIManager().close();
+//            Platform.getEngine().startGame(game);
+//            game.createWorld("engine:debug", "Debug", new WorldCreationSetting() {
+//            });
+//            game.getWorld("Debug")
+//                    .map(world -> world.spawnEntity(CameraEntity.class, 0, 6, 0))
+//                    .ifPresent(entity -> {
+//                        var player = game.joinPlayer(new Profile(UUID.randomUUID(), "default"), entity);
+//                        entity.getWorld().getChunkManager().handlePlayerJoin(player);
+//                    });
+//            game.getClientPlayer().setEntityController(new EntityCameraController());
+        });
+        vBox.getChildren().add(butTest);
     }
 }

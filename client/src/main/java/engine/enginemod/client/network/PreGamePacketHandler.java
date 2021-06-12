@@ -65,7 +65,9 @@ public class PreGamePacketHandler {
             var game = new GameClientMultiplayer(Platform.getEngineClient(), networkClient, MultiplayerGameData.fromPacket(event.getPacket()));
             Platform.getEngine().startGame(game);
             //TODO: move client player join to separate position
-            game.getWorld("default").map(world -> world.spawnEntity(CameraEntity.class, 0, 6, 0))
+            var location = event.getPacket().getPlayerWorldLocation();
+            if (location.isEmpty()) location = "default";
+            game.getWorld(location).map(world -> world.spawnEntity(CameraEntity.class, 0, 6, 0))
                     .map(cameraEntity -> game.joinPlayer(Platform.getEngineClient().getPlayerProfile(), cameraEntity));
             game.getClientPlayer().setEntityController(new EntityCameraController());
 

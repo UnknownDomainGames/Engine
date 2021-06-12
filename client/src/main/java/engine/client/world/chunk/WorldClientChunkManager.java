@@ -6,6 +6,7 @@ import engine.event.world.chunk.ChunkUnloadEvent;
 import engine.player.Player;
 import engine.server.network.packet.s2c.PacketChunkData;
 import engine.world.chunk.*;
+import engine.world.gen.ChunkGenerator;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
 import org.apache.commons.lang3.Validate;
@@ -62,6 +63,11 @@ public class WorldClientChunkManager implements ChunkManager {
         chunkMap.put(index, chunk);
         world.getGame().getEventBus().post(new ChunkLoadEvent(chunk));
         return chunk;
+    }
+
+    @Override
+    public ChunkGenerator getChunkGenerator() {
+        throw new UnsupportedOperationException("Client-side have no generator");
     }
 
     @Override
