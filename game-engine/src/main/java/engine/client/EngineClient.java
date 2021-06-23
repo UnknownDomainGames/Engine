@@ -22,4 +22,8 @@ public interface EngineClient extends Engine {
     Profile getPlayerProfile();
 
     EngineSettings getSettings();
+
+    boolean isGamePaused();
+
+    void setGamePauseState(boolean paused);
 }

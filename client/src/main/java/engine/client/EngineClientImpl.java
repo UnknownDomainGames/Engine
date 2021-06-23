@@ -19,6 +19,8 @@ import engine.client.sound.Sound;
 import engine.client.sound.SoundManager;
 import engine.enginemod.EngineModClientListeners;
 import engine.enginemod.EngineModListeners;
+import engine.enginemod.client.gui.game.GUIMainMenu;
+import engine.enginemod.client.gui.game.GUIPauseMenu;
 import engine.enginemod.client.gui.game.GuiGameLoading;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
@@ -29,6 +31,11 @@ import engine.graphics.GraphicsManager;
 import engine.graphics.gl.util.GLHelper;
 import engine.gui.EngineGUIPlatform;
 import engine.gui.Scene;
+import engine.gui.control.Text;
+import engine.gui.layout.FlowPane;
+import engine.gui.misc.Background;
+import engine.gui.misc.Orientation;
+import engine.gui.misc.Pos;
 import engine.logic.Ticker;
 import engine.mod.ModContainer;
 import engine.player.Profile;
@@ -38,6 +45,7 @@ import engine.server.network.ConnectionStatus;
 import engine.server.network.NetworkClient;
 import engine.server.network.packet.PacketHandshake;
 import engine.util.ClassPathUtils;
+import engine.util.Color;
 import engine.util.RuntimeEnvironment;
 import engine.util.Side;
 
@@ -48,6 +56,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class EngineClientImpl extends EngineBase implements EngineClient {
 
@@ -235,9 +244,28 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     private EngineServerIntegrated integratedServer;
+    private boolean paused;
 
     public void playIntegratedGame(String gameName) {
         this.playIntegratedGame(gameName, null);
+    }
+
+    @Override
+    public boolean isGamePaused() {
+        return paused;
+    }
+
+    @Override
+    public void setGamePauseState(boolean paused) {
+        boolean old = this.paused;
+        this.paused = paused;
+        if (this.paused && !old) {
+            // PLAY -> PAUSE
+            this.getGraphicsManager().getGUIManager().show(GUIPauseMenu.create());
+        }
+        if (!this.paused && old) {
+            // PAUSE -> PLAY
+        }
     }
 
     public void playIntegratedGame(String gameName, @Nullable GameData gameData) {
@@ -245,7 +273,8 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             game.terminate();
         }
         if (isIntegratedServerRunning()) {
-            stopIntegratedGame();
+            integratedServer.terminate();
+            integratedServer = null;
         }
         var guiGameLoading = new GuiGameLoading();
         graphicsManager.getGUIManager().show(new Scene(guiGameLoading));
@@ -279,8 +308,41 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     }
 
     public void stopIntegratedGame() {
-        integratedServer.terminate();
-        integratedServer = null;
+        var pane = new FlowPane() {
+            Text text2;
+            String[] strings = {"/", "|", "\\", "|"};
+            int index = 0;
+
+            {
+                alignment().set(Pos.CENTER);
+                orientation().set(Orientation.VERTICAL);
+                setBackground(new Background(Color.fromRGB(0xAAAAAA)));
+
+                var text1 = new Text("Terminating Game...");
+                text2 = new Text(strings[index]);
+                this.getChildren().addAll(text1, text2);
+
+            }
+
+            void tick() {
+                index = ++index % (strings.length * 10);
+                text2.setText(strings[index / 10]);
+            }
+        };
+        getGraphicsManager().getGUIManager().show(new Scene(pane));
+        CompletableFuture.runAsync(() -> {
+            while (!getCurrentClientGame().isTerminated()) {
+                pane.tick();
+            }
+        }).thenRun(() -> {
+            integratedServer.terminate();
+            while (!integratedServer.isTerminated()) {
+                pane.tick();
+            }
+            integratedServer = null;
+            this.paused = false;
+            getGraphicsManager().getGUIManager().show(new Scene(new GUIMainMenu()));
+        });
     }
 
     @Override

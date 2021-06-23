@@ -149,6 +149,7 @@ public class GameClientMultiplayer extends GameBase implements GameClient {
         super.tryTerminate();
         if (networkClient.getHandler().isChannelOpen()) {
             networkClient.getHandler().closeChannel();
+            networkClient.close();
         }
         engine.getEventBus().post(new GameTerminationEvent.Post(this));
         logger.info("Game terminated.");

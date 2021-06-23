@@ -12,7 +12,6 @@ import engine.client.input.keybinding.Key;
 import engine.client.input.keybinding.KeyBinding;
 import engine.enginemod.client.gui.game.GUIItemList;
 import engine.enginemod.client.gui.game.GUIMainMenu;
-import engine.enginemod.client.gui.game.GUIPauseMenu;
 import engine.enginemod.client.gui.game.GuiChat;
 import engine.enginemod.client.gui.hud.HUDDebug;
 import engine.enginemod.client.gui.hud.HUDHandingItem;
@@ -131,7 +130,7 @@ public final class EngineModClientListeners {
         event.register(KeyBinding.builder()
                 .name("game.menu")
                 .key(Key.KEY_ESCAPE)
-                .startHandler(c -> c.getGraphicsManager().getGUIManager().show(GUIPauseMenu.create()))
+                .startHandler(c -> c.setGamePauseState(true))
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.screenshot")

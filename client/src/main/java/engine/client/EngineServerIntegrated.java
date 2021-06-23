@@ -49,6 +49,8 @@ public class EngineServerIntegrated implements EngineServer {
     private boolean initialized;
     private boolean running;
     private boolean markedTermination;
+    private boolean paused;
+    private boolean terminated;
     private CrashHandlerImpl crashHandler;
 
     public EngineServerIntegrated(EngineClient parent, ServerConfig serverConfig, Supplier<ChunkStatusListener> chunkStatusListenerSupplier) {
@@ -231,14 +233,22 @@ public class EngineServerIntegrated implements EngineServer {
 
     public void serverTick() {
         if (isMarkedTermination()) {
-            if (isPlaying()) {
+            if (isPlaying() && !game.isMarkedTermination()) {
                 game.terminate();
-            } else {
+            } else if (game.isTerminated()) {
                 tryTerminate();
             }
         }
-        nettyServer.tick();
-        ((GameServerFullAsync) game).tick();
+        boolean oldPaused = this.paused;
+        this.paused = parent.isGamePaused();
+        if (!oldPaused && this.paused) {
+
+        }
+//        nettyServer.tick();
+        // need to tick if marked termination even if game is paused
+        if (game.isMarkedTermination() || !this.paused) {
+            ((GameServerFullAsync) game).tick();
+        }
     }
 
     private void tryTerminate() {
@@ -253,6 +263,11 @@ public class EngineServerIntegrated implements EngineServer {
         ticker.stop();
         shutdownListeners.forEach(Runnable::run);
         logger.info("Engine terminated!");
+        this.terminated = true;
+    }
+
+    public boolean isTerminated() {
+        return terminated;
     }
 
     public NetworkServer getNettyServer() {

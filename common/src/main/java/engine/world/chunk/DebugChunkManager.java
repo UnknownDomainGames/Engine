@@ -10,14 +10,13 @@ import engine.player.Player;
 import engine.world.WorldCommonDebug;
 import engine.world.gen.ChunkGenExecutor;
 import engine.world.gen.ChunkGenerator;
-import io.netty.util.collection.LongObjectHashMap;
-import io.netty.util.collection.LongObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import org.apache.commons.lang3.Validate;
 import org.joml.Vector3dc;
 import org.joml.Vector3i;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Optional;
 
 import static engine.world.chunk.ChunkConstants.getChunkIndex;
@@ -27,16 +26,18 @@ public class DebugChunkManager implements ChunkManager, Tickable {
     private final WorldCommonDebug world;
     private final ChunkGenerator generator;
 
-    private final LongObjectMap<Chunk> chunkMap;
+    private final Long2ObjectMap<Chunk> chunkMap;
+    private final Long2ObjectMap<ChunkColumn> chunkColumnMap;
 
     private int viewDistance;
     private int viewDistanceSquared;
 
     public DebugChunkManager(WorldCommonDebug world, ChunkGenerator generator) {
         this.world = world;
-        this.chunkMap = new LongObjectHashMap<>();
+        this.chunkMap = new Long2ObjectAVLTreeMap<>();
+        this.chunkColumnMap = new Long2ObjectAVLTreeMap<>();
         this.generator = generator;
-        setViewDistance(12);
+        setViewDistance(6);
         ChunkGenExecutor.start();
     }
 
@@ -62,6 +63,10 @@ public class DebugChunkManager implements ChunkManager, Tickable {
         return Optional.ofNullable(chunkMap.get(chunkIndex));
     }
 
+    public ChunkColumn getChunkColumn(int x, int z) {
+        return chunkColumnMap.get(ChunkConstants.getChunkIndex(x, 0, z));
+    }
+
     @Override
     public Chunk getOrLoadChunk(int x, int y, int z) {
         long index = getChunkIndex(x, y, z);
@@ -85,6 +90,7 @@ public class DebugChunkManager implements ChunkManager, Tickable {
         Chunk chunk;
         //Chunk has not been created
         chunk = new CubicChunk(world, x, y, z);
+        chunkColumnMap.computeIfAbsent(getChunkIndex(x, 0, z), key -> new ChunkColumn(world, x, z));
         generator.generateAsync(chunk).thenRun(() -> {
             chunkMap.put(index, chunk);
             world.getGame().getEventBus().post(new ChunkLoadEvent(chunk));
@@ -112,7 +118,7 @@ public class DebugChunkManager implements ChunkManager, Tickable {
 
     @Override
     public void unloadAll() {
-        new HashMap<>(chunkMap).forEach(this::unloadChunk);
+        chunkMap.forEach(this::unloadChunk);
         chunkMap.clear();
         ChunkGenExecutor.stop();
 //        chunkStorage.close();

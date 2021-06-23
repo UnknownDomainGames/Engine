@@ -3,6 +3,7 @@ package engine.game;
 import com.google.common.base.Strings;
 import engine.Engine;
 import engine.entity.Entity;
+import engine.event.game.GameTerminationEvent;
 import engine.event.world.WorldCreateEvent;
 import engine.event.world.WorldLoadEvent;
 import engine.event.world.WorldUnloadEvent;
@@ -185,19 +186,24 @@ public class GameServerFullAsync extends GameBase {
 //        for (World worldCommon : worlds.values()) {
 //            ((WorldCommon) worldCommon).stop();
 //        }
+        logger.info("Game terminating!");
+        engine.getEventBus().post(new GameTerminationEvent.Pre(this));
         if (playerManager != null) {
             playerManager.saveAllPlayers();
             playerManager.disconnectAllPlayers();
         }
+        super.tryTerminate();
         List.copyOf(worlds.values()).forEach(World::unload);
         // TODO: unload mod/resource here
-        super.tryTerminate();
+        engine.getEventBus().post(new GameTerminationEvent.Post(this));
+        logger.info("Game terminated.");
     }
 
     //TODO: move to api
     public void tick() {
         if (isMarkedTermination()) {
             tryTerminate();
+            return;
         }
 
         networkServer.tick();

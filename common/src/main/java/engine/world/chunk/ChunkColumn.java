@@ -1,8 +1,7 @@
 package engine.world.chunk;
 
 import engine.world.World;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import engine.world.gen.Heightmap;
 
 /**
  * Chunk Column
@@ -16,20 +15,22 @@ public class ChunkColumn {
     private final int chunkX;
     private final int chunkZ;
 
-    private Int2ObjectMap<Chunk> chunkCache = new Int2ObjectOpenHashMap<>();
+    private final Heightmap heightmap;
 
     public ChunkColumn(World world, int chunkX, int chunkZ) {
         this.world = world;
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
+
+        //TODO: see if we need more types of height map / postpone their initialization
+        heightmap = Heightmap.create(this, Heightmap.NOT_AIR_PREDICATE);
     }
 
     public Chunk getChunk(int chunkY) {
-        if (chunkCache.containsKey(chunkY)) {
-            return chunkCache.get(chunkY);
-        }
-        var chunk = world.getChunk(chunkX, chunkY, chunkZ, false);
-        chunkCache.putIfAbsent(chunkY, chunk);
-        return chunk;
+        return world.getChunk(chunkX, chunkY, chunkZ, false);
+    }
+
+    public Heightmap getHeightmap() {
+        return heightmap;
     }
 }

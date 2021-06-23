@@ -100,7 +100,7 @@ public class GuiServerConnectingStatus extends FlowPane/* implements GuiTickable
             } else {
                 networkClient.close();
             }
-            if (!event.getReason().equals("")) {
+            if (Platform.getEngineClient().getCurrentLogicGame() == null && !event.getReason().equals("")) {
                 launchDisconnectedScreen(event.getReason());
             }
         });

@@ -22,10 +22,15 @@ public final class GUIPauseMenu extends FlowPane {
         Scene scene = new Scene(new GUIPauseMenu());
         scene.setOnKeyPressed(event -> {
             if (event.getKey() == KeyCode.ESCAPE) {
-                GraphicsManager.instance().getGUIManager().close();
+                returnToGame();
             }
         });
         return scene;
+    }
+
+    private static void returnToGame() {
+        Platform.getEngineClient().setGamePauseState(false);
+        GraphicsManager.instance().getGUIManager().close();
     }
 
     private GUIPauseMenu() {
@@ -43,7 +48,7 @@ public final class GUIPauseMenu extends FlowPane {
         vBox.getChildren().add(text);
 
         Button backtoGame = new Button("Back To Game");
-        backtoGame.setOnMouseClicked(event -> Platform.getEngineClient().getGraphicsManager().getGUIManager().close());
+        backtoGame.setOnMouseClicked(event -> returnToGame());
         vBox.getChildren().add(backtoGame);
 
         Button terminateGame = new Button("Terminate");
@@ -52,9 +57,11 @@ public final class GUIPauseMenu extends FlowPane {
             engine.getCurrentClientGame().terminate();
             if (((EngineClientImpl) engine).isIntegratedServerRunning()) {
                 ((EngineClientImpl) engine).stopIntegratedGame();
+                // move gui handling to method
+            } else {
+                GUIManager guiManager = engine.getGraphicsManager().getGUIManager();
+                guiManager.show(new Scene(new GUIMainMenu()));
             }
-            GUIManager guiManager = engine.getGraphicsManager().getGUIManager();
-            guiManager.show(new Scene(new GUIMainMenu()));
         });
         vBox.getChildren().add(terminateGame);
     }
