@@ -63,6 +63,7 @@ jobs:
 
       - name: Upload Release
         uses: fnkr/github-action-ghr@v1
+        if: github.event_name == 'release'
         env:
           GHR_PATH: client/build/distributions/
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
