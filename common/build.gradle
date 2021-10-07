@@ -1,5 +1,5 @@
 dependencies {
-    compile(project(':game-engine')) {
+    implementation(project(':game-engine')) {
         exclude group: 'org.lwjgl'
         exclude group: 'org.l33tlabs.twl'
     }

@@ -28,7 +28,7 @@ apply plugin: "org.sonarqube"
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
 
     group 'com.panguengine'
     version engineVersion
@@ -48,6 +48,13 @@ subprojects {
             url "https://oss.sonatype.org/content/repositories/releases/"
         }
         mavenLocal()
+    }
+
+    configurations {
+        apiElements.extendsFrom implementation
+    }
+    configurations.each {
+        println it
     }
 
     dependencies {

@@ -3,8 +3,8 @@ apply plugin: "application"
 mainClassName = 'engine.client.launch.Bootstrap'
 
 dependencies {
-    compile project(':game-engine')
-    compile project(':common')
+    implementation project(':game-engine')
+    implementation project(':common')
 
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
 }

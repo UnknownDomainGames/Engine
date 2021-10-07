@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':graphics')
+    implementation project(':graphics')
 
     implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion"
     runtimeOnly "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:$lwjglNatives"
