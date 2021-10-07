@@ -11,6 +11,10 @@ dependencies {
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
 }
 
+application {
+    mainClassName project.mainClassName
+}
+
 jar {
     def gitVersion = 'git rev-parse --short HEAD'.execute().text.trim();
     manifest.attributes([
