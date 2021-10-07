@@ -1,16 +1,15 @@
 dependencies {
-    apiElements project(':base')
-    implementation project(':base')
+    api project(':base')
 
     implementation 'com.github.oshi:oshi-core:4.4.2'
-    implementation 'org.joml:joml:1.9.20'
-    implementation 'com.github.Mouse0w0:Observable:1.3.0'
+    api 'org.joml:joml:1.9.20'
+    api 'com.github.Mouse0w0:Observable:1.3.0'
 
     implementation "org.lwjgl:lwjgl:$lwjglVersion"
     runtimeOnly "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
 
     String[] lwjglModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'vulkan', 'shaderc', 'vma']
     String[] lwjglNativeModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'shaderc', 'vma']
-    for (module in lwjglModules) implementation "org.lwjgl:lwjgl-$module:$lwjglVersion"
+    for (module in lwjglModules) api "org.lwjgl:lwjgl-$module:$lwjglVersion"
     for (module in lwjglNativeModules) runtimeOnly("org.lwjgl:lwjgl-$module:$lwjglVersion:$lwjglNatives")
 }

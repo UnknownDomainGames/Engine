@@ -1,4 +1,4 @@
-apply plugin: "application"
+apply plugin: 'application'
 
 mainClassName = 'engine.client.launch.Bootstrap'
 

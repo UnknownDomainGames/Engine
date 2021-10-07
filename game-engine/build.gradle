@@ -1,10 +1,10 @@
 dependencies {
-    implementation project(':gui')
-    implementation project(':graphics3d')
+    api project(':gui')
+    api project(':graphics3d')
 
-    implementation 'com.google.inject:guice:4.2.2'
-    implementation 'com.github.Mouse0w0.Configuration:configuration-api:1.2.0'
-    implementation 'io.netty:netty-all:4.1.48.Final'
+    api 'com.google.inject:guice:4.2.2'
+    api 'com.github.Mouse0w0.Configuration:configuration-api:1.2.0'
+    api 'io.netty:netty-all:4.1.48.Final'
 }
 
 //jar {

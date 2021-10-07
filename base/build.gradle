@@ -1,10 +1,10 @@
 dependencies {
-    implementation 'com.google.guava:guava:28.2-jre'
-    implementation 'org.apache.commons:commons-lang3:3.9'
-    implementation 'it.unimi.dsi:fastutil:8.3.1'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'commons-io:commons-io:2.6'
-    implementation 'org.ow2.asm:asm-commons:7.3.1'
-    implementation 'net.jodah:typetools:0.6.2'
-    implementation 'org.slf4j:slf4j-api:1.7.30'
+    api 'com.google.guava:guava:28.2-jre'
+    api 'org.apache.commons:commons-lang3:3.9'
+    api 'it.unimi.dsi:fastutil:8.3.1'
+    api 'com.google.code.gson:gson:2.8.6'
+    api 'commons-io:commons-io:2.6'
+    api 'org.ow2.asm:asm-commons:7.3.1'
+    api 'net.jodah:typetools:0.6.2'
+    api 'org.slf4j:slf4j-api:1.7.30'
 }
