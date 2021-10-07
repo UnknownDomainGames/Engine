@@ -64,5 +64,5 @@ jobs:
       - name: Upload Release
         uses: fnkr/github-action-ghr@v1
         env:
-          GHR_PATH: client/build/distributions/*
+          GHR_PATH: client/build/distributions/
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
