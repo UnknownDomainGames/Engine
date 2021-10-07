@@ -31,12 +31,6 @@ subprojects {
         maven {
             url 'https://jitpack.io'
         }
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
-        maven {
-            url "https://oss.sonatype.org/content/repositories/releases/"
-        }
         mavenLocal()
     }
 
@@ -56,7 +50,9 @@ subprojects {
 
     jar {
 //        archiveBaseName.set("pangu-" + project.name)
-        from rootProject.file('LICENSE')
+        from(rootProject.file('LICENSE')) {
+            into "${project.name}-LICENSE"
+        }
     }
 
 }
