@@ -8,8 +8,6 @@ on:
     types:
       - created
 
-concurrency: ci
-
 jobs:
   build:
     name: Build
