@@ -61,8 +61,8 @@ jobs:
           path: artifact_jars/*
 
       - name: Upload Release
-        uses: fnkr/github-action-ghr@v1
+        uses: planet-code/upload-to-release-action@1.0.0
         if: github.event_name == 'release'
-        env:
-          GHR_PATH: client/build/distributions
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          asset-path: client/build/distributions
