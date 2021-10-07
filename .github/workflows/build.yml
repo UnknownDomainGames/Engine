@@ -14,13 +14,13 @@ jobs:
       fail-fast: false
       matrix:
         lwjgl_natives:
-          - natives-windows
-          - natives-windows-x86
-          - natives-windows-arm64
-          - natives-linux
-          - natives-linux-arm64
-          - natives-linux-arm32
-          - natives-macos
+          - windows
+          - windows-x86
+          - windows-arm64
+          - linux
+          - linux-arm64
+          - linux-arm32
+          - macos
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
