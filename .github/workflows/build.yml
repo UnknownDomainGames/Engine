@@ -35,7 +35,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
-          path: client/build/distributions
+          path: client/build/distributions/*
 
       - name: Upload Release
         uses: fnkr/github-action-ghr@v1

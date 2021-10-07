@@ -1,3 +1,7 @@
+plugins {
+    id "org.sonarqube" version "3.3"
+}
+
 import org.gradle.internal.os.OperatingSystem
 
 switch (OperatingSystem.current()) {
@@ -12,29 +16,15 @@ switch (OperatingSystem.current()) {
         break
 }
 
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2"
-    }
-}
-
-apply plugin: "org.sonarqube"
-
 subprojects {
+
     apply plugin: 'java'
-    apply plugin: 'java-library'
     apply plugin: 'maven-publish'
 
     group 'com.panguengine'
     version engineVersion
 
-    sourceCompatibility = targetCompatibility = 11
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
 
     repositories {
         jcenter()
@@ -69,4 +59,5 @@ subprojects {
 //        archiveBaseName.set("pangu-" + project.name)
         from rootProject.file('LICENSE')
     }
+
 }

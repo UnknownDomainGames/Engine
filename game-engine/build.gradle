@@ -1,3 +1,7 @@
+plugins {
+    id 'java-library'
+}
+
 dependencies {
     api project(':gui')
     api project(':graphics3d')
