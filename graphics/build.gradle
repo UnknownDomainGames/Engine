@@ -5,11 +5,11 @@ plugins {
 dependencies {
     api project(':base')
 
-    implementation 'com.github.oshi:oshi-core:5.8.2'
+    api 'com.github.oshi:oshi-core:5.8.2'
     api 'org.joml:joml:1.9.20'
     api 'com.github.Mouse0w0:Observable:1.4.0'
 
-    implementation "org.lwjgl:lwjgl:$lwjglVersion"
+    api "org.lwjgl:lwjgl:$lwjglVersion"
     runtimeOnly "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
 
     def lwjglModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'vulkan', 'shaderc', 'vma']

@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(':game-engine')) {
+    api(project(':game-engine')) {
         exclude group: 'org.lwjgl'
         exclude group: 'org.l33tlabs.twl'
     }
