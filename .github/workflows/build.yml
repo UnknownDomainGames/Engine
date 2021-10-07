@@ -33,10 +33,17 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build
 
-      - name: Upload Artifact
+      - name: Upload Artifact ZIP
         uses: actions/upload-artifact@v2.2.4
         with:
-          path: client/build/distributions/*
+          name: client-${{ matrix.host_os }}.zip
+          path: client/build/distributions/*.zip
+
+      - name: Upload Artifact TAR
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: client-${{ matrix.host_os }}.tar
+          path: client/build/distributions/*.tar
 
       - name: Upload Release
         uses: fnkr/github-action-ghr@v1
