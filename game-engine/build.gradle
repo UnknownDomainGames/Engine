@@ -8,7 +8,7 @@ dependencies {
 
     api 'com.google.inject:guice:4.2.2'
     api 'com.github.Mouse0w0.Configuration:configuration-api:1.2.0'
-    api 'io.netty:netty-all:4.1.48.Final'
+    api 'io.netty:netty-all:4.1.68.Final'
 }
 
 //jar {
