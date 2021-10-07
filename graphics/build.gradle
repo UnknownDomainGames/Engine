@@ -15,5 +15,5 @@ dependencies {
     def lwjglModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'vulkan', 'shaderc', 'vma']
     def lwjglNativeModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'shaderc', 'vma']
     for (module in lwjglModules) api "org.lwjgl:lwjgl-$module:$lwjglVersion"
-    for (module in lwjglNativeModules) runtimeOnly("org.lwjgl:lwjgl-$module:$lwjglVersion:$lwjglNatives")
+    for (module in lwjglNativeModules) runtimeOnly "org.lwjgl:lwjgl-$module:$lwjglVersion:$lwjglNatives"
 }

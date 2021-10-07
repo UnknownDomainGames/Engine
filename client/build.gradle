@@ -16,7 +16,7 @@ application {
 }
 
 jar {
-    def gitVersion = 'git rev-parse --short HEAD'.execute().text.trim();
+    def gitVersion = 'git rev-parse --short HEAD'.execute().text.trim()
     manifest.attributes([
             "Main-Class"              : mainClassName,
             "Implementation-Title"    : rootProject.name,
