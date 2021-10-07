@@ -4,16 +4,20 @@ plugins {
 
 import org.gradle.internal.os.OperatingSystem
 
-switch (OperatingSystem.current()) {
-    case OperatingSystem.WINDOWS:
-        project.ext.lwjglNativesName = 'windows'
-        break
-    case OperatingSystem.LINUX:
-        project.ext.lwjglNativesName = 'linux'
-        break
-    case OperatingSystem.MAC_OS:
-        project.ext.lwjglNativesName = 'macos'
-        break
+if (System.getenv('FORCE_LWJGL_NATIVE')) {
+    project.ext.lwjglNativesName = System.getenv('FORCE_LWJGL_NATIVE')
+} else {
+    switch (OperatingSystem.current()) {
+        case OperatingSystem.WINDOWS:
+            project.ext.lwjglNativesName = 'windows'
+            break
+        case OperatingSystem.LINUX:
+            project.ext.lwjglNativesName = 'linux'
+            break
+        case OperatingSystem.MAC_OS:
+            project.ext.lwjglNativesName = 'macos'
+            break
+    }
 }
 project.ext.lwjglNatives = "natives-$lwjglNativesName"
 
