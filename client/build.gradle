@@ -27,4 +27,10 @@ jar {
     ])
 }
 
+distZip {
+    classifier lwjglNativesName
+}
 
+distTar {
+    classifier lwjglNativesName
+}

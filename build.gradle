@@ -6,15 +6,16 @@ import org.gradle.internal.os.OperatingSystem
 
 switch (OperatingSystem.current()) {
     case OperatingSystem.WINDOWS:
-        project.ext.lwjglNatives = "natives-windows"
+        project.ext.lwjglNativesName = 'windows'
         break
     case OperatingSystem.LINUX:
-        project.ext.lwjglNatives = "natives-linux"
+        project.ext.lwjglNativesName = 'linux'
         break
     case OperatingSystem.MAC_OS:
-        project.ext.lwjglNatives = "natives-macos"
+        project.ext.lwjglNativesName = 'macos'
         break
 }
+project.ext.lwjglNatives = "natives-$lwjglNativesName"
 
 subprojects {
 
