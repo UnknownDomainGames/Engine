@@ -27,6 +27,7 @@ subprojects {
     sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
 
     repositories {
+        mavenCentral()
         maven {
             name 'JitPack'
             url 'https://jitpack.io'
