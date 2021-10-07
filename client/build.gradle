@@ -13,6 +13,9 @@ dependencies {
 
 application {
     mainClass.set project.mainClassName
+    applicationDefaultJvmArgs = [
+            '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
+    ]
 }
 
 jar {
