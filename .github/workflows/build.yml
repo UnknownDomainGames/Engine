@@ -16,7 +16,6 @@ jobs:
         lwjgl_natives:
           - windows
           - windows-x86
-          - windows-arm64
           - linux
           - linux-arm64
           - linux-arm32
