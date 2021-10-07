@@ -11,6 +11,7 @@ jobs:
   build:
     name: Build
     strategy:
+      fail-fast: false
       matrix:
         host_os:
           - ubuntu-latest
