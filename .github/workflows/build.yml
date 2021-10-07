@@ -24,6 +24,7 @@ jobs:
           - linux-arm32
           - macos
     runs-on: ubuntu-latest
+    concurrency: ci
     steps:
       - uses: actions/checkout@v2
 
