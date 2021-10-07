@@ -12,7 +12,7 @@ dependencies {
 }
 
 application {
-    mainClassName project.mainClassName
+    mainClass.set project.mainClassName
 }
 
 jar {
