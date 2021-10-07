@@ -1,0 +1,45 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    name: Build
+    strategy:
+      matrix:
+        host_os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v2.3.1
+        with:
+          java-version: 11
+          distribution: adopt
+          cache: gradle
+
+      - name: Build with Gradle
+        run: |
+          gradlew build
+          chmod +x ./gradlew
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          path: path/to/artifact/world.txt
+
+      - name: Upload Release
+        uses: fnkr/github-action-ghr@v1
+        if: github.event_name == 'release'
+        env:
+          GHR_PATH: build/libs
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
