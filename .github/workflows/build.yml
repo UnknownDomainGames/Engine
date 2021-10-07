@@ -29,8 +29,8 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          gradlew build
           chmod +x ./gradlew
+          ./gradlew build
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2.2.4
