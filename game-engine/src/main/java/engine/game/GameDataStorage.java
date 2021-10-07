@@ -7,10 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameDataStorage {
@@ -52,6 +49,8 @@ public class GameDataStorage {
 
     public static List<GameData> gatherGameData(Path storageBasePath) {
         try {
+            if (!storageBasePath.toFile().exists())
+                return new ArrayList<>();
             return Files.list(storageBasePath)
                     .filter(Files::isDirectory)
                     .filter(path -> Files.exists(path.resolve("game.json")))
