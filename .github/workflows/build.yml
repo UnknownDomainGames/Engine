@@ -35,11 +35,11 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2.2.4
         with:
-          path: path/to/artifact/world.txt
+          path: client/build/distributions
 
       - name: Upload Release
         uses: fnkr/github-action-ghr@v1
         if: github.event_name == 'release'
         env:
-          GHR_PATH: build/libs
+          GHR_PATH: client/build/distributions
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
