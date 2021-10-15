@@ -1,10 +1,10 @@
 # Pangu Engine
-![](https://img.shields.io/badge/Java-11-blue.svg)
-![](https://img.shields.io/github/contributors/UnknownDomainGame/PanguEngine.svg)
-![](https://img.shields.io/github/license/UnknownDomainGame/PanguEngine.svg)
-[![](https://api.codeclimate.com/v1/badges/811191d64c6508954327/maintainability)](https://codeclimate.com/github/UnknownDomainGame/NullEngine/maintainability)
-[![](https://api.codacy.com/project/badge/Grade/cd2c9f15a88a42b886a59f6410f0ca05)](https://app.codacy.com/app/Mouse0w0/NullEngine?utm_source=github.com&utm_medium=referral&utm_content=UnknownDomainGame/PanguEngine&utm_campaign=Badge_Grade_Dashboard)
-[![Join Discord](https://img.shields.io/discord/556150394057916426)](http://discord.gg/KRGMBw3)
+![Java Version](https://img.shields.io/badge/Java-11-blue)
+[![All Contributors](https://img.shields.io/github/contributors/UnknownDomainGame/PanguEngine)](https://github.com/UnknownDomainGames/PanguEngine/graphs/contributors)
+[![License](https://img.shields.io/github/license/UnknownDomainGame/PanguEngine)](https://github.com/UnknownDomainGames/PanguEngine/blob/dev/LICENSE)
+[![Discord Onlines](https://img.shields.io/discord/556150394057916426)](http://discord.gg/KRGMBw3)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/UnknownDomainGames/PanguEngine/Build)](https://github.com/UnknownDomainGames/PanguEngine/actions/workflows/build.yml)
+[![Latest Version](https://img.shields.io/github/v/release/UnknownDomainGames/PanguEngine?include_prereleases)](https://github.com/UnknownDomainGames/PanguEngine/releases/latest)
 
 基于Java的3D游戏引擎。专注于创建体素沙盒游戏。
 

@@ -1,5 +1,9 @@
+plugins {
+    id 'java-library'
+}
+
 dependencies {
-    compile(project(':game-engine')) {
+    api(project(':game-engine')) {
         exclude group: 'org.lwjgl'
         exclude group: 'org.l33tlabs.twl'
     }

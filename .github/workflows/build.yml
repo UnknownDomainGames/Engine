@@ -1,0 +1,68 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    name: Build
+    strategy:
+      fail-fast: false
+      matrix:
+        lwjgl_natives:
+          - windows
+          - windows-x86
+          - linux
+          - linux-arm64
+          - linux-arm32
+          - macos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v2.3.1
+        with:
+          java-version: 11
+          distribution: adopt
+          cache: gradle
+
+      - name: Build with Gradle
+        env:
+          FORCE_LWJGL_NATIVE: ${{ matrix.lwjgl_natives }}
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build
+
+          mkdir artifact_jars
+          cp **/build/libs/* artifact_jars/
+
+      - name: Upload Artifact ZIP
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: client-${{ matrix.lwjgl_natives }}.zip
+          path: client/build/distributions/*.zip
+
+      - name: Upload Artifact TAR
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: client-${{ matrix.lwjgl_natives }}.tar
+          path: client/build/distributions/*.tar
+
+      - name: Upload Artifact JARs
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: Other Libraries
+          path: artifact_jars/*
+
+      - name: Upload Release
+        uses: fnkr/github-action-ghr@v1
+        if: github.event_name == 'release'
+        env:
+          GHR_PATH: client/build/distributions/
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

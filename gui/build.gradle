@@ -1,5 +1,9 @@
+plugins {
+    id 'java-library'
+}
+
 dependencies {
-    compile project(':graphics')
+    api project(':graphics')
 
     implementation "org.lwjgl:lwjgl-tinyfd:$lwjglVersion"
     runtimeOnly "org.lwjgl:lwjgl-tinyfd:$lwjglVersion:$lwjglNatives"

@@ -1,16 +1,19 @@
+plugins {
+    id 'java-library'
+}
+
 dependencies {
-    compile project(':base')
+    api project(':base')
 
-    compile 'com.github.oshi:oshi-core:4.4.2'
-    compile 'org.joml:joml:1.9.20'
+    api 'com.github.oshi:oshi-core:5.8.2'
+    api 'org.joml:joml:1.9.20'
+    api 'com.github.Mouse0w0:Observable:1.4.0'
 
-    compile 'com.github.Mouse0w0:Observable:1.3.0'
+    api "org.lwjgl:lwjgl:$lwjglVersion"
+    runtimeOnly "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
 
-    compile "org.lwjgl:lwjgl:$lwjglVersion"
-    implementation "org.lwjgl:lwjgl:$lwjglVersion:$lwjglNatives"
-
-    String[] lwjglModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'vulkan', 'shaderc', 'vma']
-    String[] lwjglNativeModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'shaderc', 'vma']
-    for (module in lwjglModules) compile("org.lwjgl:lwjgl-$module:$lwjglVersion")
-    for (module in lwjglNativeModules) implementation("org.lwjgl:lwjgl-$module:$lwjglVersion:$lwjglNatives")
+    def lwjglModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'vulkan', 'shaderc', 'vma']
+    def lwjglNativeModules = ['assimp', 'glfw', 'openal', 'opengl', 'stb', 'shaderc', 'vma']
+    for (module in lwjglModules) api "org.lwjgl:lwjgl-$module:$lwjglVersion"
+    for (module in lwjglNativeModules) runtimeOnly "org.lwjgl:lwjgl-$module:$lwjglVersion:$lwjglNatives"
 }

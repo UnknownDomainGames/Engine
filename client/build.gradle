@@ -1,16 +1,25 @@
-apply plugin: "application"
+plugins {
+    id 'application'
+}
 
 mainClassName = 'engine.client.launch.Bootstrap'
 
 dependencies {
-    compile project(':game-engine')
-    compile project(':common')
+    implementation project(':game-engine')
+    implementation project(':common')
 
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
 }
 
+application {
+    mainClass.set project.mainClassName
+    applicationDefaultJvmArgs = [
+            '--add-opens', 'java.base/java.lang=ALL-UNNAMED'
+    ]
+}
+
 jar {
-    String gitVersion = 'git rev-parse --short HEAD'.execute().text.trim();
+    def gitVersion = 'git rev-parse --short HEAD'.execute().text.trim()
     manifest.attributes([
             "Main-Class"              : mainClassName,
             "Implementation-Title"    : rootProject.name,
@@ -21,4 +30,10 @@ jar {
     ])
 }
 
+distZip {
+    classifier lwjglNativesName
+}
 
+distTar {
+    classifier lwjglNativesName
+}
