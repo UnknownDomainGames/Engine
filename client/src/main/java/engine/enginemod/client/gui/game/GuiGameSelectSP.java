@@ -2,6 +2,7 @@ package engine.enginemod.client.gui.game;
 
 import engine.Platform;
 import engine.client.EngineClientImpl;
+import engine.client.i18n.I18n;
 import engine.game.GameData;
 import engine.game.GameDataStorage;
 import engine.gui.Scene;
@@ -20,7 +21,7 @@ public class GuiGameSelectSP extends BorderPane {
     public GuiGameSelectSP(Path gameStorageBasePath) {
         setBackground(new Background(Color.fromRGB(0x666666)));
         padding().set(new Insets(5));
-        var title = new Label("Play Singleplayer Game");
+        var title = new Label(I18n.translate("engine.gui.game_select_single_player.title"));
         title.setFontSize(24);
         var titleWrapper = new VBox();
         titleWrapper.alignment().set(HPos.CENTER);
@@ -54,24 +55,24 @@ public class GuiGameSelectSP extends BorderPane {
         var funcBox = new HBox();
         funcBox.alignment().set(VPos.CENTER);
         bottom().set(funcBox);
-        var butPlay = new Button("Play");
+        var butPlay = new Button(I18n.translate("engine.gui.game_select_single_player.play"));
         butPlay.setOnMouseClicked(event -> {
             var engine = Platform.getEngineClient();
             ((EngineClientImpl) engine).playIntegratedGame(gameListView.selectionModel().get().selectedItem().get().getName());
         });
-        var butCreate = new Button("Create");
+        var butCreate = new Button(I18n.translate("engine.gui.create"));
         butCreate.setOnMouseClicked(event -> {
             var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
             guiManager.show(new Scene(new GuiCreateWorld(storage)));
         });
-        var butDelete = new Button("Delete");
+        var butDelete = new Button(I18n.translate("engine.gui.delete"));
         butDelete.setOnMouseClicked(event -> {
             var popup = new Popup();
             VBox vBox = new VBox();
             vBox.alignment().set(HPos.CENTER);
             vBox.setBorder(new Border(Color.WHITE));
-            Text text = new Text("Warning");
-            Text info = new Text("Are you sure you want to delete this game?");
+            Text text = new Text(I18n.translate("engine.gui.warning"));
+            Text info = new Text(I18n.translate("engine.gui.game_select_single_player.delete.warning.info"));
 
             var wrapping = new VBox();
             var lbl3 = new Label("[PH] GameData");
@@ -87,8 +88,8 @@ public class GuiGameSelectSP extends BorderPane {
             wrapping.border().set(new Border(Color.WHITE, 2));
 
             HBox func = new HBox();
-            Button butConfirm = new Button("Confirm");
-            Button butCancel = new Button("Cancel");
+            Button butConfirm = new Button(I18n.translate("engine.gui.confirm"));
+            Button butCancel = new Button(I18n.translate("engine.gui.cancel"));
             func.getChildren().addAll(butConfirm, butCancel);
             butCancel.setOnAction(event1 -> popup.hide());
             vBox.getChildren().add(text);
@@ -112,7 +113,7 @@ public class GuiGameSelectSP extends BorderPane {
         });
         butPlay.setDisabled(true);
         butDelete.setDisabled(true);
-        var butBack = new Button("Back");
+        var butBack = new Button(I18n.translate("engine.gui.back"));
         butBack.addEventHandler(MouseActionEvent.MOUSE_PRESSED, event -> {
             var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
             guiManager.showLast();

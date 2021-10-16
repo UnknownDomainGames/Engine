@@ -34,7 +34,7 @@ public class GUIMainMenu extends FlowPane {
         text.setFont(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
-        Button butSP = new Button("Singleplayer");
+        Button butSP = new Button(I18n.translate("engine.gui.main_menu.single_player"));
         butSP.setBorder(new Border(Color.WHITE));
         butSP.setOnMouseClicked(event -> {
             var engine = Platform.getEngineClient();
@@ -43,18 +43,18 @@ public class GUIMainMenu extends FlowPane {
         });
         vBox.getChildren().add(butSP);
 
-        var butMP = new Button("Multiplayer");
+        var butMP = new Button(I18n.translate("engine.gui.main_menu.multi_player"));
         butMP.setOnMouseClicked(e -> {
             Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiDirectConnectServer()));
         });
         vBox.getChildren().add(butMP);
 
-        var buttonSettings = new Button("Settings");
+        var buttonSettings = new Button(I18n.translate("engine.gui.main_menu.settings"));
         buttonSettings.setOnMouseClicked(event ->
                 Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiSettings())));
         vBox.getChildren().add(buttonSettings);
 
-        Button buttonExit = new Button("Exit");
+        Button buttonExit = new Button(I18n.translate("engine.gui.main_menu.exit"));
         buttonExit.setOnMouseClicked(event -> Platform.getEngine().terminate());
         vBox.getChildren().add(buttonExit);
 

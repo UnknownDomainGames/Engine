@@ -9,7 +9,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class LocaleManager {
 
@@ -35,7 +34,7 @@ public class LocaleManager {
         if (!localeMap.containsKey(locale)) {
             return key;
         }
-        return localeMap.get(locale).get(key);
+        return localeMap.get(locale).getOrDefault(key, key);
     }
 
     public void setLocale(Locale locale) {
@@ -81,7 +80,11 @@ public class LocaleManager {
                 var lang = filename.substring(0, filename.lastIndexOf("."));
                 Locale locale = I18n.deserializeLocaleCode(lang);
                 try (var reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-                    reader.lines().forEach(line -> LocaleManager.this.addTranslation(locale, line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1)));
+                    reader.lines().forEach(line -> {
+                        if (!line.isEmpty()) {
+                            LocaleManager.this.addTranslation(locale, line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1));
+                        }
+                    });
                 } catch (IOException e) {
                     Platform.getLogger().warn(String.format("cannot read language file %s.lang from mod %s", lang, mod.getId()), e);
                 }

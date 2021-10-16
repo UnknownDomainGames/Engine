@@ -2,6 +2,7 @@ package engine.enginemod.client.gui;
 
 import com.github.mouse0w0.observable.value.ValueChangeListener;
 import engine.Platform;
+import engine.client.i18n.I18n;
 import engine.client.settings.EngineSettings;
 import engine.enginemod.client.gui.game.GUILanguageList;
 import engine.enginemod.client.gui.game.GuiGameSelectSP;
@@ -31,11 +32,11 @@ public class GuiSettings extends AnchorPane {
         baksettings.getDisplaySettings().setResolutionWidth(settings.getDisplaySettings().getResolutionWidth());
         baksettings.getDisplaySettings().setUiScale(settings.getDisplaySettings().getUiScale());
         baksettings.getDisplaySettings().setHudScale(settings.getDisplaySettings().getHudScale());
-        var title = new Text("Engine Settings");
+        var title = new Text(I18n.translate("engine.gui.settings.title"));
         title.setFont(new Font(Font.getDefaultFont(), 20.0f));
         //Display settings
-        var lblDisplayMode = new Text("Display Mode");
-        var lblRes = new Text("Resolution");
+        var lblDisplayMode = new Text(I18n.translate("engine.gui.settings.display_mode"));
+        var lblRes = new Text(I18n.translate("engine.gui.settings.resolution"));
         var butRes = new Button();
         var screen = Platform.getEngineClient().getGraphicsManager().getWindow().getScreen();
         screen.
@@ -76,7 +77,7 @@ public class GuiSettings extends AnchorPane {
                 }
             }
         });
-        var lblUiScale = new Text("UI Scale");
+        var lblUiScale = new Text(I18n.translate("engine.gui.settings.ui_scale"));
         var sliderUiScale = new HSlider();
         sliderUiScale.max().set(200);
         sliderUiScale.min().set(50);
@@ -89,7 +90,7 @@ public class GuiSettings extends AnchorPane {
             lblUiScaleVal.setText(String.valueOf(i));
             settings.getDisplaySettings().setUiScale(i);
         });
-        var lblHudScale = new Text("HUD Scale");
+        var lblHudScale = new Text(I18n.translate("engine.gui.settings.hud_scale"));
         var sliderHudScale = new HSlider();
         sliderHudScale.max().set(200);
         sliderHudScale.min().set(50);
@@ -102,7 +103,7 @@ public class GuiSettings extends AnchorPane {
             lblHudScaleVal.setText(String.valueOf(i));
             settings.getDisplaySettings().setHudScale(i);
         });
-        var btnLanguage = new Button("Language");
+        var btnLanguage = new Button(I18n.translate("engine.gui.settings.language"));
         btnLanguage.setOnAction(event -> Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GUILanguageList())));
         var hb1 = new HBox();
         hb1.spacing().set(10f);
@@ -127,8 +128,8 @@ public class GuiSettings extends AnchorPane {
         setLeftAnchor(title, (this.getWidth() - title.getWidth()) / 2);
         setTopAnchor(vb, title.getHeight() + 20f);
         setLeftAnchor(vb, (this.getWidth() - vb.getWidth()) / 2);
-        var butBack = new Button("Return without Saving");
-        var butSave = new Button("Save and Return");
+        var butBack = new Button(I18n.translate("engine.gui.settings.discard"));
+        var butSave = new Button(I18n.translate("engine.gui.settings.save"));
         butBack.setMinSize(25, 25);
         butBack.setOnMouseClicked(event -> {
             settings.getDisplaySettings().setDisplayMode(baksettings.getDisplaySettings().getDisplayMode());

@@ -24,7 +24,7 @@ public class GUILanguageList extends BorderPane {
         setBackground(new Background(Color.fromRGB(0x666666)));
         padding().set(new Insets(5));
         { // Title
-            var text = new Label("Select Language");
+            var text = new Label(I18n.translate("engine.gui.settings.language.title"));
             text.setFontSize(24);
             var wrapper = new VBox();
             wrapper.alignment().set(HPos.CENTER);
@@ -40,8 +40,8 @@ public class GUILanguageList extends BorderPane {
                 protected void updateItem(Locale item, boolean empty) {
                     super.updateItem(item, empty);
                     if (!empty) {
-                        setText(LocaleManager.INSTANCE.translate("engine.gui.lang.text.display.name", item)
-                                + " (" + LocaleManager.INSTANCE.translate("engine.gui.lang.text.display.country", item) + ")");
+                        setText(LocaleManager.INSTANCE.translate("engine.gui.lang.display.name", item)
+                                + " (" + LocaleManager.INSTANCE.translate("engine.gui.lang.display.country", item) + ")");
                     } else {
                         setText("");
                     }

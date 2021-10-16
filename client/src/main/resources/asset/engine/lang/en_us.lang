@@ -1,6 +1,38 @@
+engine.gui.lang.display.name=English
+engine.gui.lang.display.country=US
+
 engine.gui.confirm=Confirm
 engine.gui.cancel=Cancel
+engine.gui.warning=Warning
+engine.gui.back=Back
+engine.gui.create=Create
+engine.gui.delete=Delete
+
 engine.gui.main_menu.title=Game Creation
-engine.gui.lang.text.name=en_us
-engine.gui.lang.text.display.name=English
-engine.gui.lang.text.display.country=US
+engine.gui.main_menu.single_player=Single Player
+engine.gui.main_menu.multi_player=Multi Player
+engine.gui.main_menu.settings=Settings
+engine.gui.main_menu.exit=Exit
+
+engine.gui.game_select_single_player.title=Play Single Player Game
+engine.gui.game_select_single_player.play=Play
+engine.gui.game_select_single_player.delete.warning.info=Are you sure you want to delete this game?
+
+engine.gui.create_world.title=Create New World
+engine.gui.create_world.name=Name
+engine.gui.create_world.already_exist=Game with the same name has already exist
+engine.gui.create_world.invalid_name=Invalid game name
+
+engine.gui.direct_connect_server.title=Connect to Server
+engine.gui.direct_connect_server.address=Address
+engine.gui.direct_connect_server.connect=Connect
+
+engine.gui.settings.title=Engine Settings
+engine.gui.settings.display_mode=Display Mode
+engine.gui.settings.resolution=Resolution
+engine.gui.settings.ui_scale=UI Scale
+engine.gui.settings.hud_scale=HUD Scale
+engine.gui.settings.language=Language
+engine.gui.settings.language.title=Select Language
+engine.gui.settings.discard=Discard
+engine.gui.settings.save=Save

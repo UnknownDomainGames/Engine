@@ -2,6 +2,7 @@ package engine.enginemod.client.gui.game;
 
 import engine.Platform;
 import engine.client.EngineClientImpl;
+import engine.client.i18n.I18n;
 import engine.game.GameDataStorage;
 import engine.gui.control.Button;
 import engine.gui.control.Text;
@@ -21,10 +22,10 @@ public class GuiCreateWorld extends FlowPane {
         var vmain = new VBox();
         vmain.alignment().set(HPos.CENTER);
         getChildren().add(vmain);
-        var label1 = new Text("Create New Game");
+        var label1 = new Text(I18n.translate("engine.gui.create_world.title"));
 
         var nameGrp = new VBox();
-        var lblName = new Text("Name");
+        var lblName = new Text(I18n.translate("engine.gui.create_world.name"));
         var txtboxName = new TextField();
         txtboxName.setPrefSize(300, 23);
         var lblErrMsg = new Text("[PH]");
@@ -33,7 +34,7 @@ public class GuiCreateWorld extends FlowPane {
         nameGrp.getChildren().addAll(lblName, txtboxName, lblErrMsg);
         var hbox = new HBox();
         hbox.spacing().set(10f);
-        var butCreate = new Button("Create");
+        var butCreate = new Button(I18n.translate("engine.gui.create"));
         butCreate.setDisabled(true);
         butCreate.setOnMouseClicked(e -> {
             storage.createGameData(txtboxName.text().get());
@@ -50,14 +51,14 @@ public class GuiCreateWorld extends FlowPane {
                 lblErrMsg.setVisible(true);
                 if (newValue != null) {
                     if (GameDataStorage.isValidFilename(newValue)) {
-                        lblErrMsg.setText("Game with the same name has already exist");
+                        lblErrMsg.setText(I18n.translate("engine.gui.create_world.already_exist"));
                     } else {
-                        lblErrMsg.setText("Invalid game name");
+                        lblErrMsg.setText(I18n.translate("engine.gui.create_world.invalid_name"));
                     }
                 }
             }
         });
-        var butBack = new Button("Back");
+        var butBack = new Button(I18n.translate("engine.gui.back"));
         butBack.setOnMouseClicked(e -> {
             var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
             guiManager.showLast();
