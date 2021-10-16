@@ -54,10 +54,7 @@ subprojects {
     }
 
     jar {
-//        archiveBaseName.set("pangu-" + project.name)
-        from(rootProject.file('LICENSE')) {
-            into "${project.name}-LICENSE"
-        }
+        from rootProject.file('LICENSE')
     }
 
     compileJava {
