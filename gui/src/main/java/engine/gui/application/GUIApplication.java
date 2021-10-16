@@ -5,6 +5,7 @@ import engine.gui.stage.Stage;
 
 public abstract class GUIApplication {
 
+    @SuppressWarnings("unchecked")
     public static void launch(String[] args) {
         StackTraceElement[] stackElements = Thread.currentThread().getStackTrace();
         for (int i = 2; i < stackElements.length; i++) {

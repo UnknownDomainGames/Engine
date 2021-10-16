@@ -13,6 +13,7 @@ public final class AssetTypes {
     public static final AssetType<BakedModel> VOXEL_MODEL = getType("VoxelModel");
     public static final AssetType<Sound> SOUND = getType("Sound");
 
+    @SuppressWarnings("unchecked")
     private static <T> AssetType<T> getType(String name) {
         Optional<AssetType<?>> type = Platform.getEngineClient().getAssetManager().getType(name);
         if (type.isEmpty()) {

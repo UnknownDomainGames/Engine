@@ -12,7 +12,7 @@ public class ParentRenderer<E extends Parent> implements NodeRenderer<E> {
         for (Node child : parent.getUnmodifiableChildren()) {
             if (!child.isVisible()) continue;
             graphics.pushClipRect(child.getLayoutX(), child.getLayoutY(), child.getWidth(), child.getHeight());
-            child.getRenderer().render(child, graphics);
+            child.render(graphics);
             graphics.popClipRect();
         }
     }

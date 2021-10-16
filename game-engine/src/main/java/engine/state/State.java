@@ -19,6 +19,7 @@ import java.util.*;
  * <p>
  * Example 2: Stone Block A1 has behaviour 1 and Stone Block A2 has behaviour 2. They should be designed as 2 distinct Block.
  */
+@SuppressWarnings("rawtypes")
 public class State<O, S extends State<O, S>> {
     protected final HashMap<Property, Comparable> properties;
     protected O owner;
@@ -61,6 +62,7 @@ public class State<O, S extends State<O, S>> {
         return comparable == null ? Optional.empty() : Optional.of(property.getType().cast(comparable));
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Comparable<T>> S with(Property<T> property, T value) {
         if (!properties.containsKey(property)) {
             throw new IllegalArgumentException(this.owner + " does not have property " + property);
@@ -77,6 +79,7 @@ public class State<O, S extends State<O, S>> {
         return state;
     }
 
+    @SuppressWarnings("unchecked")
     public void createSibling(HashMap<Map<Property, Comparable>, S> possibleStatesMap) {
         if (sibling != null) {
             throw new IllegalStateException("Sibling map already created");

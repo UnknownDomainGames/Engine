@@ -80,6 +80,7 @@ public class ModelJsonUtils {
         return list;
     }
 
+    @SuppressWarnings("unchecked")
     public static <E> E[] array(JsonElement json, Class<E> type, Function<JsonElement, E> mapper) {
         if (json == null) {
             return (E[]) Array.newInstance(type, 0);

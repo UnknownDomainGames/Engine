@@ -5,6 +5,7 @@ import engine.event.Event;
 import engine.event.GenericEvent;
 import engine.mod.ModContainer;
 import engine.registry.Registrable;
+import engine.registry.RegistrationException;
 import engine.registry.Registry;
 import engine.registry.RegistryManager;
 
@@ -47,6 +48,7 @@ public abstract class ModRegistrationEvent implements Event {
             return mod;
         }
 
+        @SuppressWarnings("deprecation") // Waiting to remove.
         public <T extends Registrable<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier) {
             manager.addRegistry(type, supplier);
         }
@@ -98,8 +100,9 @@ public abstract class ModRegistrationEvent implements Event {
             return registry.register(obj);
         }
 
-        public void registerAll(@Nonnull T... objs) {
-            registry.registerAll(objs);
+        @SuppressWarnings("unchecked") // for varargs heap pollution
+        public void registerAll(@Nonnull T... objects) throws RegistrationException {
+            registry.registerAll(objects);
         }
     }
 }

@@ -12,6 +12,8 @@ import engine.event.player.PlayerControlEntityEvent;
 import engine.graphics.GraphicsManager;
 import engine.graphics.block.BlockRenderManager;
 import engine.graphics.block.BlockRenderManagerImpl;
+import engine.graphics.entity.EntityRenderManager;
+import engine.graphics.entity.EntityRenderManagerImpl;
 import engine.graphics.item.ItemRenderManager;
 import engine.graphics.item.ItemRenderManagerImpl;
 import engine.graphics.model.BakedModel;
@@ -23,13 +25,17 @@ import engine.world.World;
 
 public final class VoxelGraphicsHelper {
 
+    private static GraphicsManager manager;
+
     private static BlockRenderManagerImpl blockRenderManager;
     private static ItemRenderManagerImpl itemRenderManager;
+    private static EntityRenderManagerImpl entityRenderManager;
     private static TextureAtlasImpl textureAtlas;
 
     private static ChunkRenderer renderer;
 
     public static void initialize(GraphicsManager manager) {
+        VoxelGraphicsHelper.manager = manager;
         textureAtlas = new TextureAtlasImpl();
         VoxelGraphics.setVoxelTextureAtlas(textureAtlas);
         AssetManager assetManager = manager.getEngine().getAssetManager();
@@ -43,6 +49,9 @@ public final class VoxelGraphicsHelper {
 
         itemRenderManager = new ItemRenderManagerImpl();
         ItemRenderManager.Internal.setInstance(itemRenderManager);
+
+        entityRenderManager = new EntityRenderManagerImpl();
+        EntityRenderManager.Internal.setInstance(entityRenderManager);
 
         assetManager.register(AssetType
                 .builder(BakedModel.class)
@@ -64,6 +73,7 @@ public final class VoxelGraphicsHelper {
         if (event.getEngine() instanceof EngineClient) { //TODO: remove this if integrated server no longer use "Engine" type
             blockRenderManager.init();
             itemRenderManager.init();
+            entityRenderManager.init(manager);
             AssetManager.instance().reload();
         }
     }

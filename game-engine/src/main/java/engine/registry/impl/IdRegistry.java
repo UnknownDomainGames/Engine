@@ -18,11 +18,13 @@ public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<
     protected T[] idToObject;
     protected Map<String, Integer> nameToId = new HashMap<>();
 
+    @SuppressWarnings("unchecked")
     public IdRegistry(Class<T> entryType) {
         super(entryType);
         this.idToObject = (T[]) Array.newInstance(entryType, 128);
     }
 
+    @SuppressWarnings("unchecked")
     public IdRegistry(Class<T> entryType, String name) {
         super(entryType, name);
         this.idToObject = (T[]) Array.newInstance(entryType, 128);

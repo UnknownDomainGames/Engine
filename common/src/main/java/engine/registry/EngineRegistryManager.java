@@ -13,6 +13,7 @@ public final class EngineRegistryManager implements RegistryManager {
         this.registries = registries;
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     @Override
     public <T extends Registrable<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier) {
         if (registries.containsKey(type)) {

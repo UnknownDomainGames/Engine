@@ -147,7 +147,7 @@ public class Text extends Node {
     }
 
     @Override
-    protected NodeRenderer createDefaultRenderer() {
+    protected NodeRenderer<Text> createDefaultRenderer() {
         return new TextRenderer(this);
     }
 }

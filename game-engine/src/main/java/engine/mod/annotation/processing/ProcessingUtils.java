@@ -1,5 +1,6 @@
 package engine.mod.annotation.processing;
 
+import javax.annotation.Nullable;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
@@ -14,7 +15,8 @@ import java.util.*;
 
 public class ProcessingUtils {
 
-    public static FileObject createFile(ProcessingEnvironment processingEnv, JavaFileManager.Location location, String relativeName) {
+    public static @Nullable
+    FileObject createFile(ProcessingEnvironment processingEnv, JavaFileManager.Location location, String relativeName) {
         try {
             return processingEnv.getFiler().createResource(location, "", relativeName);
         } catch (IOException e) {

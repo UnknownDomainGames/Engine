@@ -6,6 +6,7 @@ import engine.graphics.entity.EntityRenderer;
 
 import java.util.function.BiConsumer;
 
+@SuppressWarnings("rawtypes")
 public class RegisterEntityRendererEvent implements Event {
 
     private final BiConsumer<Class, EntityRenderer> registrationHandler;

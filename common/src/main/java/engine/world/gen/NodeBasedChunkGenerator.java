@@ -43,6 +43,7 @@ public class NodeBasedChunkGenerator implements ChunkGenerator {
         return List.copyOf(closedList);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void generate(Chunk chunk) {
         GeneratorContext context = new GeneratorContext(chunk.getWorld(), setting);
@@ -59,6 +60,7 @@ public class NodeBasedChunkGenerator implements ChunkGenerator {
         });
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public CompletableFuture<Chunk> generateAsync(Chunk chunk) {
         GeneratorContext context = new GeneratorContext(chunk.getWorld(), setting);

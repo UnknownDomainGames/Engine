@@ -10,10 +10,14 @@ public interface RegistryManager {
 
     Collection<Registry<?>> getRegistries();
 
+    /*
+     @TODO: Remove addRegistry
+     used by ModRegistrationEvent.Construction.addRegistry
+     */
     /**
-     * @param type
-     * @param supplier
-     * @param <T>
+     * @param type The type of the registry contained
+     * @param supplier The provider of the registry
+     * @param <T> The type of the registry contained
      * @deprecated Provide for {@link engine.event.mod.ModRegistrationEvent.Construction}. Waiting to remove.
      */
     @Deprecated

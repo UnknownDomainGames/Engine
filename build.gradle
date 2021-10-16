@@ -60,6 +60,10 @@ subprojects {
         }
     }
 
+    compileJava {
+        options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+    }
+
     publishing {
         publications {
             maven(MavenPublication) {

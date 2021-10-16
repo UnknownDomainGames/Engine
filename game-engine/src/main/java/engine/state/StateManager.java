@@ -8,6 +8,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class StateManager<O, S extends State<O, S>> {
     private final O owner;
     private final ImmutableSortedMap<String, Property<?>> properties;
