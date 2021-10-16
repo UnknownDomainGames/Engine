@@ -4,7 +4,6 @@ import engine.Platform;
 import engine.client.EngineClientImpl;
 import engine.game.GameData;
 import engine.game.GameDataStorage;
-import engine.graphics.font.Font;
 import engine.gui.Scene;
 import engine.gui.control.*;
 import engine.gui.input.MouseActionEvent;
@@ -22,7 +21,7 @@ public class GuiGameSelectSP extends BorderPane {
         setBackground(new Background(Color.fromRGB(0x666666)));
         padding().set(new Insets(5));
         var title = new Label("Play Singleplayer Game");
-        title.setFont(new Font(title.getFont(), 24));
+        title.setFontSize(24);
         var titleWrapper = new VBox();
         titleWrapper.alignment().set(HPos.CENTER);
         titleWrapper.getChildren().add(title);
@@ -36,7 +35,7 @@ public class GuiGameSelectSP extends BorderPane {
 
                 var wrapping = new VBox();
                 var title = new Label("[PH] GameData");
-                title.setFont(new Font(title.getFont(), 16));
+                title.setFontSize(16);
                 var desc = new Label("Nothing is here in this dimension...");
                 desc.color().set(Color.fromGray(0.67f));
                 wrapping.getChildren().addAll(title, desc);
@@ -76,7 +75,7 @@ public class GuiGameSelectSP extends BorderPane {
 
             var wrapping = new VBox();
             var lbl3 = new Label("[PH] GameData");
-            lbl3.setFont(new Font(lbl3.getFont(), 16));
+            lbl3.setFontSize(16);
             var desc = new Label("Nothing is here in this dimension...");
             desc.color().set(Color.fromGray(0.67f));
             wrapping.getChildren().addAll(lbl3, desc);

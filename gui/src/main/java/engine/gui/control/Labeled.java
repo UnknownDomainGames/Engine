@@ -43,6 +43,10 @@ public class Labeled extends Control {
         return alignment;
     }
 
+    public final void setFontSize(float fontSize) {
+        setFont(new Font(getFont(), fontSize));
+    }
+
     public final Pos getAlignment() {
         return alignment == null ? Pos.CENTER_LEFT : alignment.get();
     }
