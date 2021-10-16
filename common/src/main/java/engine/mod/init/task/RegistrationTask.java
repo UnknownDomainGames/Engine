@@ -59,7 +59,7 @@ public class RegistrationTask implements ModInitializationTask {
         try {
             var stream = mod.getAssets().openStream("META-INF", "data", "AutoRegister.json");
             if (stream.isEmpty()) {
-                mod.getLogger().debug("Not found \"AutoRegister.json\" file, skip AutoRegister stage.");
+                mod.getLogger().debug("File \"AutoRegister.json\" not found, skip AutoRegister stage.");
                 return List.of();
             }
 
@@ -130,7 +130,7 @@ public class RegistrationTask implements ModInitializationTask {
         try {
             var stream = mod.getAssets().openStream("META-INF", "data", "RegObject.json");
             if (stream.isEmpty()) {
-                mod.getLogger().debug("Not found \"RegObject.json\" file, skip inject registered object.");
+                mod.getLogger().debug("File \"RegObject.json\" not found, skip inject registered object.");
                 return Map.of();
             }
 
