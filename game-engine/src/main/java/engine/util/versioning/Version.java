@@ -29,8 +29,8 @@ import java.util.*;
  * @author <a href="mailto:hboutemy@apache.org">Herve Boutemy</a>
  * @version $Id$
  */
-@SuppressWarnings("unchecked")
-public class Version implements Comparable<Version> {
+public class Version
+        implements Comparable {
     private String value;
 
     private String canonical;
@@ -38,15 +38,15 @@ public class Version implements Comparable<Version> {
     private ListItem items;
 
     private interface Item {
-        int INTEGER_ITEM = 0;
-        int STRING_ITEM = 1;
-        int LIST_ITEM = 2;
+        public static final int INTEGER_ITEM = 0;
+        public static final int STRING_ITEM = 1;
+        public static final int LIST_ITEM = 2;
 
-        int compareTo(Item item);
+        public int compareTo(Item item);
 
-        int getType();
+        public int getType();
 
-        boolean isNull();
+        public boolean isNull();
     }
 
     /**
@@ -122,9 +122,9 @@ public class Version implements Comparable<Version> {
          * A comparable for the empty-string qualifier. This one is used to determine if a given qualifier makes the
          * version older than one without a qualifier, or more recent.
          */
-        private static final Comparable RELEASE_VERSION_INDEX = String.valueOf(_QUALIFIERS.indexOf(""));
+        private static Comparable RELEASE_VERSION_INDEX = String.valueOf(_QUALIFIERS.indexOf(""));
 
-        private final String value;
+        private String value;
 
         public StringItem(String value, boolean followedByDigit) {
             if (followedByDigit && value.length() == 1) {
@@ -355,8 +355,8 @@ public class Version implements Comparable<Version> {
         return isDigit ? new IntegerItem(buf) : new StringItem(buf, false);
     }
 
-    public int compareTo(Version o) {
-        return items.compareTo(o.items);
+    public int compareTo(Object o) {
+        return items.compareTo(((Version) o).items);
     }
 
     public String toString() {
