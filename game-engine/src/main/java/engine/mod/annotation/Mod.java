@@ -31,7 +31,7 @@ public @interface Mod {
 
     String url() default "";
 
-    String icon() default "";
+    String logo() default "";
 
     String[] authors() default {};
 

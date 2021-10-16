@@ -26,14 +26,14 @@ public class ModMetadata {
     private final String description;
     private final String license;
     private final String url;
-    private final String icon;
+    private final String logo;
     private final List<String> authors;
     private final List<String> credits;
     private final List<String> permissions;
     private final List<Dependency> dependencies;
     private final Map<String, JsonElement> elements;
 
-    protected ModMetadata(String id, Version version, String mainClass, String name, InstallationType installationType, String description, String license, String url, String icon, List<String> authors, List<String> credits, List<String> permissions, List<Dependency> dependencies, Map<String, JsonElement> elements) {
+    protected ModMetadata(String id, Version version, String mainClass, String name, InstallationType installationType, String description, String license, String url, String logo, List<String> authors, List<String> credits, List<String> permissions, List<Dependency> dependencies, Map<String, JsonElement> elements) {
         this.id = id;
         this.version = version;
         this.mainClass = mainClass;
@@ -42,7 +42,7 @@ public class ModMetadata {
         this.description = description;
         this.license = license;
         this.url = url;
-        this.icon = icon;
+        this.logo = logo;
         this.authors = authors;
         this.credits = credits;
         this.permissions = permissions;
@@ -86,8 +86,8 @@ public class ModMetadata {
         return url;
     }
 
-    public String getIconFile() {
-        return icon;
+    public String getLogoFile() {
+        return logo;
     }
 
     public List<String> getAuthors() {
@@ -134,7 +134,7 @@ public class ModMetadata {
                 .description(mod.description())
                 .license(mod.license())
                 .url(mod.url())
-                .icon(mod.icon())
+                .logo(mod.logo())
                 .authors(mod.authors())
                 .credits(mod.credits())
                 .permissions(mod.permissions())
@@ -154,7 +154,7 @@ public class ModMetadata {
         private String description = "";
         private String license = "";
         private String url = "";
-        private String icon = "";
+        private String logo = "";
         private List<String> authors = List.of();
         private List<String> credits = List.of();
         private List<String> permissions = List.of();
@@ -206,8 +206,8 @@ public class ModMetadata {
             return this;
         }
 
-        public Builder icon(String icon) {
-            this.icon = icon;
+        public Builder logo(String logo) {
+            this.logo = logo;
             return this;
         }
 
@@ -257,7 +257,7 @@ public class ModMetadata {
         }
 
         public ModMetadata build() {
-            return new ModMetadata(id, version, mainClass, name, installationType, description, license, url, icon, authors, credits, permissions, dependencies, elements);
+            return new ModMetadata(id, version, mainClass, name, installationType, description, license, url, logo, authors, credits, permissions, dependencies, elements);
         }
     }
 }
