@@ -144,9 +144,14 @@ public final class EngineGraphicsManager implements GraphicsManager {
         scene.addNode(new SkyBox());
         Geometry selectedBlock = new SelectedBlock();
         selectedBlock.setController((node, tpf) -> {
-            if (!getEngine().isPlaying()) return;
+            if (!getEngine().isPlaying()) {
+                return;
+            }
             var player = getEngine().getCurrentClientGame().getClientPlayer();
-            if (player == null) return;
+            //noinspection ConstantConditions
+            if (player == null) { // null for GameClientMultiplayer(tested when starting game with only a mod directory)
+                return;
+            }
             var camera = getViewport().getCamera();
             var hit = player.getWorld().raycastBlock(camera.getPosition(), camera.getFront(), 10);
             selectedBlock.setVisible(hit.isSuccess());

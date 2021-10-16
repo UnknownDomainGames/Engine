@@ -1,5 +1,7 @@
 package engine.registry;
 
+import org.apache.commons.lang3.Validate;
+
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map.Entry;
@@ -21,9 +23,16 @@ public interface Registry<T extends Registrable<T>> {
     @Nonnull
     T register(@Nonnull T obj) throws RegistrationException;
 
-    default void registerAll(@Nonnull T... objs) throws RegistrationException {
-        for (T obj : objs)
-            register(obj);
+    @SuppressWarnings("unchecked") // for varargs heap pollution
+    default void registerAll(@Nonnull T... objects) throws RegistrationException {
+        for (T object : objects) {
+            Validate.notNull(object);
+            if (!getEntryType().isInstance(object)) {
+                throw new RegistrationException("Registry required " + getEntryType().getName()
+                        + " but got target object(Class: " + object.getClass().getName() + ", ToString:" + object + ")");
+            }
+            register(object);
+        }
     }
 
     boolean containsValue(T value);

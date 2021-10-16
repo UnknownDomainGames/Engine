@@ -34,12 +34,14 @@ public class SortedList<E> extends AbstractList<E> {
         return copyOf(coll, Comparable::compareTo);
     }
 
+    @SafeVarargs
     public static <E> SortedList<E> of(Comparator<E> comparator, E... elements) {
         var sortedList = create(comparator);
         Collections.addAll(sortedList, elements);
         return sortedList;
     }
 
+    @SafeVarargs
     public static <E extends Comparable<E>> SortedList<E> of(E... elements) {
         return of(Comparable::compareTo, elements);
     }

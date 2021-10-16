@@ -32,6 +32,6 @@ public final class StageDrawDispatcher implements DrawDispatcher {
 
         Frame frame = frameContext.getFrame();
         graphics.setup(renderer, frame.getOutputWidth(), frame.getOutputHeight(), stage.getScaleX(), stage.getScaleY());
-        root.getRenderer().render(root, graphics);
+        root.render(graphics);
     }
 }

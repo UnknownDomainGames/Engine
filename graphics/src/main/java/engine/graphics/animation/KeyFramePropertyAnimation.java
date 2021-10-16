@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 public class KeyFramePropertyAnimation<T> implements Animation {
-    private MutableValue<T> animatingProperty;
-    private Map<Double, AnimationKeyframe<T>> keyframes = new HashMap<>();
+    private final MutableValue<T> animatingProperty;
+    private final Map<Double, AnimationKeyframe<T>> keyframes = new HashMap<>();
 
     public KeyFramePropertyAnimation(MutableValue<T> prop) {
         this.animatingProperty = prop;
@@ -22,15 +22,16 @@ public class KeyFramePropertyAnimation<T> implements Animation {
         return keyframes.keySet().stream().max(Comparator.naturalOrder()).orElse(0.0);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void animate(double progress, double delta) {
         var property = this.getAnimatingProperty();
-        List<ValueChangeListener> l = null;
+        List<ValueChangeListener<T>> l = null;
         if (property instanceof ObservableValueBase) {
             try {
                 var f = ObservableValueBase.class.getDeclaredField("changeListeners");
                 f.setAccessible(true);
-                l = (List<ValueChangeListener>) f.get(property);
+                l = (List<ValueChangeListener<T>>) f.get(property);
                 if (l.size() != 0) {
                     l.forEach(property::removeChangeListener);
                 }
@@ -70,7 +71,7 @@ public class KeyFramePropertyAnimation<T> implements Animation {
     public AnimationKeyframe<T> getPreviousFrame(double progress) {
         if (keyframes.size() == 0) return null;
         var keyframe = keyframes.keySet().parallelStream().filter(d -> progress > d).max(Comparator.naturalOrder()).orElse(0.0);
-        if (keyframe == 0.0 && !keyframes.containsKey(0.0)) { //When time=0 has not set a keyframe, use the first keyframe instead
+        if (keyframe == 0.0 && !keyframes.containsKey(0.0)) { // When time=0 has not set a keyframe, use the first keyframe instead
             return keyframes.entrySet().stream().min(Comparator.comparingDouble(Map.Entry::getKey)).get().getValue();
         }
         return keyframes.get(keyframe);

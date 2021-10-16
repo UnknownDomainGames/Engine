@@ -26,6 +26,7 @@ import java.util.Optional;
 
 public class InjectionTask implements ModInitializationTask {
 
+    @SuppressWarnings("unchecked")
     @Override
     public void run(ModInitializer initializer, ModContainer mod) {
         try {
@@ -47,7 +48,7 @@ public class InjectionTask implements ModInitializationTask {
                                 bind(RuntimeEnvironment.class).toInstance(initializer.getEngine().getRuntimeEnvironment());
 
                                 bind(ModContainer.class).toInstance(mod);
-                                bind((Class) mod.getInstance().getClass()).toInstance(mod.getInstance());
+                                bind((Class<Object>) mod.getInstance().getClass()).toInstance(mod.getInstance());
                                 bind(Logger.class).toInstance(mod.getLogger());
                                 bind(ModAssets.class).toInstance(mod.getAssets());
                                 bind(Path.class).annotatedWith(ConfigPath.class).toInstance(mod.getConfigPath());

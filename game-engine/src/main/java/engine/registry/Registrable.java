@@ -56,6 +56,7 @@ public interface Registrable<T> {
             return (T) this;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public final T name(Name name) {
             if (this.name != null) throw new Error("Duplicated register " + name);

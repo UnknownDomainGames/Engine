@@ -145,6 +145,7 @@ public class SimpleEventBus implements EventBus {
         addListener(order, false, consumer);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Event> void addListener(Order order, boolean receiveCancelled, Consumer<T> consumer) {
         addListener(order, receiveCancelled, (Class<T>) TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass()), consumer);
@@ -170,6 +171,7 @@ public class SimpleEventBus implements EventBus {
         addGenericListener(genericType, order, false, consumer);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Order order, boolean receiveCancelled, Consumer<T> consumer) {
         addGenericListener(genericType, order, receiveCancelled, (Class<T>) TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass()), consumer);

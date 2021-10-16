@@ -38,6 +38,7 @@ public class PacketDisconnect implements Packet {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void read(PacketBuf buf) throws IOException {
         var len = buf.readVarInt();
@@ -45,7 +46,7 @@ public class PacketDisconnect implements Packet {
         if(buf.readBoolean()){
             len = buf.readVarInt();
             var str = buf.readCharSequence(len, StandardCharsets.UTF_8).toString();
-            extra = new Gson().fromJson(str, Map.class);
+            extra = new Gson().fromJson(str, Map.class); // @TODO: use singleton Gson instance
         }
         else{
             extra = new HashMap<>();

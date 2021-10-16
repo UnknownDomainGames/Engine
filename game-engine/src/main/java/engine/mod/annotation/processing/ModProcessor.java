@@ -52,6 +52,7 @@ public class ModProcessor extends AbstractProcessor {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     private void saveMetadata(TypeElement element) {
         Map<String, Object> values = getAnnotationValues(element, Mod.class);
         if (!(boolean) values.getOrDefault("generateMetadata", true)) {
@@ -59,6 +60,9 @@ public class ModProcessor extends AbstractProcessor {
         }
 
         FileObject fileObject = createFile(processingEnv, StandardLocation.CLASS_OUTPUT, "metadata.json");
+        if(fileObject == null) {
+            return;
+        }
 
         try (Writer writer = fileObject.openWriter()) {
             ModMetadata metadata = ModMetadata.builder()

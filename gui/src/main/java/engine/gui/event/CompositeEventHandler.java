@@ -20,6 +20,7 @@ public class CompositeEventHandler<T extends Event> implements EventHandler<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     void onRawEvent(Event event) {
         onEvent((T) event);
     }

@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class BasicEventHandlerManager implements EventDispatcher {
 
-    private final Map<EventType<?>, CompositeEventHandler<?>> eventHandlers = new HashMap<>();
+    private final Map<EventType<? extends Event>, CompositeEventHandler<? extends Event>> eventHandlers = new HashMap<>();
 
     public <T extends Event> void addEventHandler(EventType<T> eventType, EventHandler<T> eventHandler) {
         getOrCreateEventHandler(eventType).getEventHandlers().add(eventHandler);
@@ -15,11 +15,13 @@ public class BasicEventHandlerManager implements EventDispatcher {
         getOrCreateEventHandler(eventType).getEventHandlers().remove(eventHandler);
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Event> EventHandler<T> getEventHandler(EventType<T> eventType) {
         return (EventHandler<T>) eventHandlers.get(eventType);
     }
 
-    private <T extends Event> CompositeEventHandler getOrCreateEventHandler(EventType<T> eventType) {
+    @SuppressWarnings("unchecked")
+    private <T extends Event> CompositeEventHandler<T> getOrCreateEventHandler(EventType<T> eventType) {
         CompositeEventHandler<T> eventHandler = (CompositeEventHandler<T>) eventHandlers.get(eventType);
         if (eventHandler == null) {
             eventHandler = new CompositeEventHandler<>();

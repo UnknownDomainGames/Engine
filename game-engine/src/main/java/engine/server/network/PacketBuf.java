@@ -9,8 +9,10 @@ import engine.world.hit.HitResult;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ByteProcessor;
+import org.apache.commons.lang3.Validate;
 import org.joml.Vector3f;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,10 +26,10 @@ import java.nio.charset.StandardCharsets;
 
 public class PacketBuf extends ByteBuf {
 
-    private ByteBuf backingBuffer;
+    private final ByteBuf backingBuffer;
 
-    public PacketBuf(ByteBuf wrapped){
-        this.backingBuffer = wrapped;
+    public PacketBuf(@Nonnull ByteBuf wrapped){
+        this.backingBuffer = Validate.notNull(wrapped);
     }
 
     public static int getVarIntSize(int input) {
@@ -175,11 +177,13 @@ public class PacketBuf extends ByteBuf {
         return backingBuffer.alloc();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public ByteOrder order() {
         return backingBuffer.order();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public ByteBuf order(ByteOrder endianness) {
         return backingBuffer.order(endianness);

@@ -11,9 +11,9 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
 
     private final Map<Class<? extends Entity>, EntityRenderer<?>> renderers = new HashMap<>();
 
+    @SuppressWarnings({"unchecked", "RedundantSuppression"})
     public void init(GraphicsManager context) {
-        EntityRenderManagerImpl.Internal.setInstance(this);
-        context.getEngine().getCurrentClientGame().getEventBus().post(new RegisterEntityRendererEvent(this::register));
+        context.getEngine().getEventBus().post(new RegisterEntityRendererEvent(this::register));
         renderers.values().forEach(entityRenderer -> entityRenderer.init(context));
     }
 
@@ -24,6 +24,7 @@ public class EntityRenderManagerImpl implements EntityRenderManager {
         renderers.put(entityType, renderer);
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void render(Entity entity, float partial) {
         EntityRenderer renderer = renderers.get(entity.getClass());

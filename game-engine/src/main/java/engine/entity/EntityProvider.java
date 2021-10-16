@@ -4,16 +4,18 @@ import engine.registry.Registrable;
 import engine.world.World;
 import org.apache.commons.lang3.Validate;
 
+import javax.annotation.Nonnull;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
+@SuppressWarnings("rawtypes")
 public class EntityProvider extends Registrable.Impl<EntityProvider> {
 
     private final Class<? extends Entity> entityType;
-    private final EntityFactory factory;
-    private final EntitySerializer serializer;
+    private final @Nonnull EntityFactory factory;
+    private final @Nonnull EntitySerializer serializer;
 
-    public EntityProvider(Class<? extends Entity> entityType, EntityFactory factory, EntitySerializer serializer) {
+    public EntityProvider(@Nonnull Class<? extends Entity> entityType, @Nonnull EntityFactory factory, EntitySerializer serializer) {
         this.entityType = Validate.notNull(entityType);
         this.factory = Validate.notNull(factory);
         this.serializer = serializer;
@@ -23,11 +25,11 @@ public class EntityProvider extends Registrable.Impl<EntityProvider> {
         return entityType;
     }
 
-    public EntityFactory getFactory() {
+    public @Nonnull EntityFactory getFactory() {
         return factory;
     }
 
-    public EntitySerializer getSerializer() {
+    public @Nonnull EntitySerializer getSerializer() {
         return serializer;
     }
 
@@ -39,6 +41,7 @@ public class EntityProvider extends Registrable.Impl<EntityProvider> {
         return serializer.load(world, dis, this);
     }
 
+    @SuppressWarnings("unchecked")
     public void save(World world, DataOutputStream dos, Entity entity) {
         serializer.save(world, dos, this, entity);
     }

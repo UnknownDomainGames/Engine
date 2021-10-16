@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class BlockState extends State<Block, BlockState> {
 
     public BlockState(Block owner, Map<Property, Comparable> properties) {

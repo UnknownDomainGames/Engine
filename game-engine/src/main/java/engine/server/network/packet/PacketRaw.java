@@ -19,11 +19,12 @@ public final class PacketRaw implements Packet {
         buf.writeCharSequence(str, StandardCharsets.UTF_8);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void read(PacketBuf buf) throws IOException {
         var len = buf.readVarInt();
         var str = buf.readCharSequence(len, StandardCharsets.UTF_8).toString();
-        content = new Gson().fromJson(str, Map.class);
+        content = new Gson().fromJson(str, Map.class); // @TODO: use singleton Gson instance
     }
 
     public Map<String, Object> getContent() {

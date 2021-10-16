@@ -35,7 +35,7 @@ public class DefaultEntityManager implements EntityManager, Tickable {
     @Override
     public <T extends Entity> T spawnEntity(Class<T> entityType, double x, double y, double z) {
         var provider = Registries.getEntityRegistry().getValue(entityType);
-        return (T) spawnEntity(provider, x, y, z);
+        return spawnEntity(provider, x, y, z);
     }
 
     @Override
@@ -68,12 +68,13 @@ public class DefaultEntityManager implements EntityManager, Tickable {
         eventBus.post(new EntityDestroyEvent(entity));
     }
 
-    private Entity spawnEntity(EntityProvider provider, double x, double y, double z) {
+    @SuppressWarnings("unchecked")
+    private <T extends Entity> T spawnEntity(EntityProvider provider, double x, double y, double z) {
         Validate.notNull(provider, "Entity provider is not found");
         var entity = provider.createEntity(nextId.getAndIncrement(), world, x, y, z);
         eventBus.post(new EntityCreateEvent(entity));
         spawnEntity(entity);
-        return entity;
+        return (T) entity;
     }
 
     private void spawnEntity(Entity entity) {

@@ -19,6 +19,7 @@ public class ComponentAgent implements GameObject<ComponentAgent> {
         this.components = components;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <C extends Component> Optional<C> getComponent(@Nonnull Class<C> type) {
         return (Optional<C>) components.getOrDefault(type, Optional.empty());
