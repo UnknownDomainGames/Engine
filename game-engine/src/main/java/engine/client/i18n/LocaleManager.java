@@ -6,19 +6,18 @@ import engine.mod.ModContainer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class LocaleManager {
 
-    public static final Pattern STANDARD_LANG_NAME = Pattern.compile("(\\w+)_(\\w+)");
-    private final Locale defaultLocale = Locale.US;
+    public static final Locale DEFAULT_LOCALE = Locale.US;
 
-    private Locale currentLocale = defaultLocale;
+    private Locale currentLocale = DEFAULT_LOCALE;
 
-    private Map<Locale, Map<String, String>> localeMap = new HashMap<>();
+    private final Map<Locale, Map<String, String>> localeMap = new HashMap<>();
 
     public static final LocaleManager INSTANCE = new LocaleManager();
 
@@ -27,7 +26,7 @@ public class LocaleManager {
 
     public String translate(String key) {
         if (!localeMap.containsKey(currentLocale)) {
-            return translate(key, defaultLocale);
+            return translate(key, DEFAULT_LOCALE);
         }
         return translate(key, currentLocale);
     }
@@ -61,7 +60,7 @@ public class LocaleManager {
 
     private void register(Locale locale, ModContainer mod) {
         try (var stream = mod.getAssets().openStream("asset", mod.getId(), "lang", locale.toLanguageTag().concat(".lang")).orElseThrow();
-             var reader = new BufferedReader(new InputStreamReader(stream, Charset.forName("UTF-8").newDecoder()))) {
+             var reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8.newDecoder()))) {
             reader.lines().forEach(line -> LocaleManager.this.addTranslation(locale, line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1)));
         } catch (IOException e) {
             Platform.getLogger().warn(String.format("cannot read language file of locale %s from mod %s", locale, mod.getId()), e);
@@ -80,25 +79,14 @@ public class LocaleManager {
             if (path.getFileName().toString().endsWith(".lang")) {
                 String filename = path.getFileName().toString();
                 var lang = filename.substring(0, filename.lastIndexOf("."));
-                Locale locale = getLocaleFromLangFilename(lang);
-                try (var reader = Files.newBufferedReader(path, Charset.forName("UTF-8"))) {
+                Locale locale = I18n.deserializeLocaleCode(lang);
+                try (var reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
                     reader.lines().forEach(line -> LocaleManager.this.addTranslation(locale, line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1)));
                 } catch (IOException e) {
                     Platform.getLogger().warn(String.format("cannot read language file %s.lang from mod %s", lang, mod.getId()), e);
                 }
             }
         });
-    }
-
-    private Locale getLocaleFromLangFilename(String lang) {
-        var builder = new Locale.Builder();
-        var match = STANDARD_LANG_NAME.matcher(lang);
-        if (!match.matches()) {
-            throw new IllegalArgumentException(String.format("Language filename should at least match format <language>_<region>! Found: %s", lang));
-        }
-        builder.setLanguage(match.group(1).toLowerCase());
-        builder.setRegion(match.group(2).toUpperCase());
-        return builder.build();
     }
 
     public void reset() {
@@ -111,6 +99,14 @@ public class LocaleManager {
             throw new IllegalArgumentException(String.format("cannot get mod container of mod %s", modid));
         }
         return optional.get();
+    }
+
+    public Set<Locale> getAllLocales() {
+        return localeMap.keySet();
+    }
+
+    public Map<Locale, Map<String, String>> getLocaleMap() {
+        return localeMap;
     }
 
 }

@@ -1,2 +1,6 @@
+engine.gui.confirm=确认
+engine.gui.cancel=取消
 engine.gui.main_menu.title=游戏创建
 engine.gui.lang.text.name=zh_cn
+engine.gui.lang.text.display.name=简体中文
+engine.gui.lang.text.display.country=中国

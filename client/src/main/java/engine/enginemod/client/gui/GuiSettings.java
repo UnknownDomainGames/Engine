@@ -3,8 +3,11 @@ package engine.enginemod.client.gui;
 import com.github.mouse0w0.observable.value.ValueChangeListener;
 import engine.Platform;
 import engine.client.settings.EngineSettings;
+import engine.enginemod.client.gui.game.GUILanguageList;
+import engine.enginemod.client.gui.game.GuiGameSelectSP;
 import engine.graphics.display.DisplayMode;
 import engine.graphics.font.Font;
+import engine.gui.Scene;
 import engine.gui.control.Button;
 import engine.gui.control.HSlider;
 import engine.gui.control.Text;
@@ -99,6 +102,8 @@ public class GuiSettings extends AnchorPane {
             lblHudScaleVal.setText(String.valueOf(i));
             settings.getDisplaySettings().setHudScale(i);
         });
+        var btnLanguage = new Button("Language");
+        btnLanguage.setOnAction(event -> Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GUILanguageList())));
         var hb1 = new HBox();
         hb1.spacing().set(10f);
         hb1.getChildren().addAll(lblDisplayMode, butDisplayMode);
@@ -111,8 +116,11 @@ public class GuiSettings extends AnchorPane {
         var hb4 = new HBox();
         hb4.spacing().set(10f);
         hb4.getChildren().addAll(lblHudScale, sliderHudScale, lblHudScaleVal);
+        var hb5 = new HBox();
+        hb5.spacing().set(10f);
+        hb5.getChildren().addAll(btnLanguage);
         var vb = new VBox();
-        vb.getChildren().addAll(hb1, hb2, hb3, hb4);
+        vb.getChildren().addAll(hb1, hb2, hb3, hb4, hb5);
 
         //All
         setTopAnchor(title, 10f);
@@ -139,20 +147,20 @@ public class GuiSettings extends AnchorPane {
         });
         butSave.setBorder(new Border(Color.WHITE, 2));
         butBack.setBorder(new Border(Color.WHITE, 2));
-        var hb5 = new HBox();
-        hb5.getChildren().addAll(butSave, butBack);
-        setBottomAnchor(hb5, 10f);
-        setBottomAnchor(vb, hb5.getHeight() + 20f);
-        setRightAnchor(hb5, 10f);
-        this.getChildren().addAll(title, vb, hb5);
+        var hb6 = new HBox();
+        hb6.getChildren().addAll(butSave, butBack);
+        setBottomAnchor(hb6, 10f);
+        setBottomAnchor(vb, hb6.getHeight() + 20f);
+        setRightAnchor(hb6, 10f);
+        this.getChildren().addAll(title, vb, hb6);
         ValueChangeListener<Float> sizeChangeListener = (observable, oldValue, newValue) -> {
             setTopAnchor(title, 10f);
             setLeftAnchor(title, (this.getWidth() - title.getWidth()) / 2);
             setTopAnchor(vb, title.getHeight() + 20f);
             setLeftAnchor(vb, (this.getWidth() - vb.getWidth()) / 2);
-            setBottomAnchor(hb5, 10f);
-            setBottomAnchor(vb, hb5.getHeight() + 20f);
-            setRightAnchor(hb5, 10f);
+            setBottomAnchor(hb6, 10f);
+            setBottomAnchor(vb, hb6.getHeight() + 20f);
+            setRightAnchor(hb6, 10f);
             layoutChildren();
         };
         width().addChangeListener(sizeChangeListener);

@@ -1,2 +1,6 @@
+engine.gui.confirm=Confirm
+engine.gui.cancel=Cancel
 engine.gui.main_menu.title=Game Creation
 engine.gui.lang.text.name=en_us
+engine.gui.lang.text.display.name=English
+engine.gui.lang.text.display.country=US
