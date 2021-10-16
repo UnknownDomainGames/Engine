@@ -54,4 +54,8 @@ public final class Dependency {
     public String toString() {
         return id + ":" + versionRange + ":" + type;
     }
+
+    public static Dependency fromAnnotation(engine.mod.annotation.Dependency dependency) {
+        return new Dependency(dependency.id(), dependency.version(), dependency.type());
+    }
 }

@@ -32,7 +32,7 @@ public class InjectionTask implements ModInitializationTask {
         try {
             Optional<InputStream> stream = mod.getAssets().openStream("META-INF", "data", "Inject.json");
             if (stream.isEmpty()) {
-                mod.getLogger().debug("Not found \"Inject.json\" file, skip Inject stage.");
+                mod.getLogger().debug("File \"Inject.json\" not found, skip Inject stage.");
                 return;
             }
 

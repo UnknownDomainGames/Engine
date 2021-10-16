@@ -1,0 +1,6 @@
+engine.mod.annotation.processor.ModProcessor
+engine.mod.annotation.processor.AutoListenProcessor
+engine.mod.annotation.processor.AutoRegisterProcessor
+engine.mod.annotation.processor.InjectProcessor
+engine.mod.annotation.processor.ListenerValidator
+engine.mod.annotation.processor.RegObjectProcessor

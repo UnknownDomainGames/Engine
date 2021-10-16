@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A annotation for injecting registered object to annotated static field.
+ * An annotation for injecting registered object to annotated static field.
  *
  * @see engine.event.mod.ModRegistrationEvent.Post
  */

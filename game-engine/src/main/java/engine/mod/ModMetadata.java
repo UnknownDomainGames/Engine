@@ -1,13 +1,15 @@
 package engine.mod;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.SerializedName;
+import engine.mod.annotation.CustomElement;
+import engine.mod.annotation.Mod;
 import engine.util.versioning.Version;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static engine.mod.InstallationType.CLIENT_REQUIRED;
 
@@ -24,14 +26,14 @@ public class ModMetadata {
     private final String description;
     private final String license;
     private final String url;
-    private final String logo;
+    private final String icon;
     private final List<String> authors;
     private final List<String> credits;
     private final List<String> permissions;
     private final List<Dependency> dependencies;
     private final Map<String, JsonElement> elements;
 
-    protected ModMetadata(String id, Version version, String mainClass, String name, InstallationType installationType, String description, String license, String url, String logo, List<String> authors, List<String> credits, List<String> permissions, List<Dependency> dependencies, Map<String, JsonElement> elements) {
+    protected ModMetadata(String id, Version version, String mainClass, String name, InstallationType installationType, String description, String license, String url, String icon, List<String> authors, List<String> credits, List<String> permissions, List<Dependency> dependencies, Map<String, JsonElement> elements) {
         this.id = id;
         this.version = version;
         this.mainClass = mainClass;
@@ -40,7 +42,7 @@ public class ModMetadata {
         this.description = description;
         this.license = license;
         this.url = url;
-        this.logo = logo;
+        this.icon = icon;
         this.authors = authors;
         this.credits = credits;
         this.permissions = permissions;
@@ -84,8 +86,8 @@ public class ModMetadata {
         return url;
     }
 
-    public String getLogoFile() {
-        return logo;
+    public String getIconFile() {
+        return icon;
     }
 
     public List<String> getAuthors() {
@@ -116,6 +118,33 @@ public class ModMetadata {
         return new Builder();
     }
 
+    public static ModMetadata fromAnnotation(Mod mod, String mainClass) {
+        Map<String, JsonElement> elements = new HashMap<>();
+        {
+            for (CustomElement element : mod.customElements()) {
+                elements.put(element.key(), new JsonPrimitive(element.value()));
+            }
+        }
+        return builder()
+                .id(mod.id())
+                .version(mod.version())
+                .mainClass(mainClass)
+                .name(mod.name())
+                .installationType(mod.installationType())
+                .description(mod.description())
+                .license(mod.license())
+                .url(mod.url())
+                .icon(mod.icon())
+                .authors(mod.authors())
+                .credits(mod.credits())
+                .permissions(mod.permissions())
+                .dependencies(Arrays.stream(mod.dependencies())
+                        .map(Dependency::fromAnnotation)
+                        .collect(Collectors.toList()))
+                .elements(elements)
+                .build();
+    }
+
     public static class Builder {
         private String id = "";
         private Version version = DEFAULT_VERSION;
@@ -125,7 +154,7 @@ public class ModMetadata {
         private String description = "";
         private String license = "";
         private String url = "";
-        private String logo = "";
+        private String icon = "";
         private List<String> authors = List.of();
         private List<String> credits = List.of();
         private List<String> permissions = List.of();
@@ -177,8 +206,8 @@ public class ModMetadata {
             return this;
         }
 
-        public Builder logo(String logo) {
-            this.logo = logo;
+        public Builder icon(String icon) {
+            this.icon = icon;
             return this;
         }
 
@@ -228,7 +257,7 @@ public class ModMetadata {
         }
 
         public ModMetadata build() {
-            return new ModMetadata(id, version, mainClass, name, installationType, description, license, url, logo, authors, credits, permissions, dependencies, elements);
+            return new ModMetadata(id, version, mainClass, name, installationType, description, license, url, icon, authors, credits, permissions, dependencies, elements);
         }
     }
 }

@@ -1,0 +1,8 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    implementation project(':base')
+    implementation project(':game-engine')
+}

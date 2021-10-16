@@ -21,7 +21,7 @@ public class ModMetadataFinder {
     private final String fileName;
 
     public ModMetadataFinder() {
-        this("metadata.json");
+        this(ModMetadataUtils.METADATA_NAME);
     }
 
     public ModMetadataFinder(String fileName) {
