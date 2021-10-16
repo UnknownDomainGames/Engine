@@ -10,7 +10,3 @@ dependencies {
     api 'com.github.Mouse0w0.Configuration:configuration-api:1.2.0'
     api 'io.netty:netty-all:4.1.68.Final'
 }
-
-//jar {
-//    from configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
-//}

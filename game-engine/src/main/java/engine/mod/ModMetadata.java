@@ -1,13 +1,15 @@
 package engine.mod;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.SerializedName;
+import engine.mod.annotation.CustomElement;
+import engine.mod.annotation.Mod;
 import engine.util.versioning.Version;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static engine.mod.InstallationType.CLIENT_REQUIRED;
 
@@ -114,6 +116,33 @@ public class ModMetadata {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public static ModMetadata fromAnnotation(Mod mod, String mainClass) {
+        Map<String, JsonElement> elements = new HashMap<>();
+        {
+            for (CustomElement element : mod.customElements()) {
+                elements.put(element.key(), new JsonPrimitive(element.value()));
+            }
+        }
+        return builder()
+                .id(mod.id())
+                .version(mod.version())
+                .mainClass(mainClass)
+                .name(mod.name())
+                .installationType(mod.installationType())
+                .description(mod.description())
+                .license(mod.license())
+                .url(mod.url())
+                .logo(mod.logo())
+                .authors(mod.authors())
+                .credits(mod.credits())
+                .permissions(mod.permissions())
+                .dependencies(Arrays.stream(mod.dependencies())
+                        .map(Dependency::fromAnnotation)
+                        .collect(Collectors.toList()))
+                .elements(elements)
+                .build();
     }
 
     public static class Builder {

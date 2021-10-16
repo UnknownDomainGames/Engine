@@ -1,5 +1,8 @@
 package engine.mod.annotation.data;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class AutoRegisterItem {
 
     public enum Kind {
@@ -7,21 +10,26 @@ public class AutoRegisterItem {
         FIELD
     }
 
-    private Kind kind;
-    private String owner;
-    private String type;
-    private String field;
+    private final Kind kind;
+    private final String owner;
+    private final @Nullable
+    String type;
+    private final @Nullable
+    String field;
 
-    public AutoRegisterItem(String owner, String type, String field) {
-        this.kind = Kind.FIELD;
+    private AutoRegisterItem(Kind kind, String owner, @Nullable String type, @Nullable String field) {
+        this.kind = kind;
         this.owner = owner;
         this.type = type;
         this.field = field;
     }
 
+    public AutoRegisterItem(String owner, @Nonnull String type, @Nonnull String field) {
+        this(Kind.FIELD, owner, type, field);
+    }
+
     public AutoRegisterItem(String owner) {
-        this.kind = Kind.CLASS;
-        this.owner = owner;
+        this(Kind.CLASS, owner, null, null);
     }
 
     public Kind getKind() {

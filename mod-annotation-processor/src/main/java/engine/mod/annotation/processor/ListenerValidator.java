@@ -1,12 +1,9 @@
-package engine.mod.annotation.processing;
+package engine.mod.annotation.processor;
 
 import engine.event.Event;
 import engine.event.Listener;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedSourceVersion;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeKind;
@@ -15,17 +12,13 @@ import javax.tools.Diagnostic;
 import java.util.List;
 import java.util.Set;
 
-import static engine.mod.annotation.processing.ProcessingUtils.hasModifier;
+import static engine.mod.annotation.processor.ProcessorUtils.hasModifier;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
-public class ListenerProcessor extends AbstractProcessor {
+@SupportedAnnotationTypes("engine.event.Listener")
+public class ListenerValidator extends AbstractProcessor {
 
     private TypeMirror eventTypeMirror;
-
-    @Override
-    public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(Listener.class.getName());
-    }
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
