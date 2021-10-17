@@ -41,35 +41,35 @@ public class GuiMainMenu extends BorderPane {
 
             { // Single Player
                 Button button = new Button(I18n.translate("engine.gui.main_menu.single_player"));
-                button.setOnMouseClicked(event ->
+                button.setOnAction(event ->
                         Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiGameSelectSP())));
                 vLayout.getChildren().add(button);
             }
 
             { // Multi Player
                 Button button = new Button(I18n.translate("engine.gui.main_menu.multi_player"));
-                button.setOnMouseClicked(event ->
+                button.setOnAction(event ->
                         Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiDirectConnectServer())));
                 vLayout.getChildren().add(button);
             }
 
             { // Settings
                 Button button = new Button(I18n.translate("engine.gui.main_menu.settings"));
-                button.setOnMouseClicked(event ->
+                button.setOnAction(event ->
                         Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiSettings())));
                 vLayout.getChildren().add(button);
             }
 
             { // Exit
                 Button button = new Button(I18n.translate("engine.gui.main_menu.exit"));
-                button.setOnMouseClicked(event ->
+                button.setOnAction(event ->
                         Platform.getEngine().terminate());
                 vLayout.getChildren().add(button);
             }
 
             { // Test WorldGen
                 Button button = new Button(I18n.translate("Test WorldGen"));
-                button.setOnMouseClicked(event -> {
+                button.setOnAction(event -> {
                     var gameData = GameData.createFromCurrentEnvironment(Path.of(""), "DEBUG");
                     gameData.getWorlds().put("Debug", "engine:debug");
                     ((EngineClientImpl) Platform.getEngineClient()).playIntegratedGame("DEBUG", gameData);
