@@ -18,6 +18,10 @@ import engine.util.Color;
 import java.nio.file.Path;
 
 public class GuiGameSelectSP extends BorderPane {
+    public GuiGameSelectSP() {
+        this(Platform.getEngineClient().getRunPath().resolve("game"));
+    }
+
     public GuiGameSelectSP(Path gameStorageBasePath) {
         setBackground(new Background(Color.fromRGB(0x666666)));
         padding().set(new Insets(5));

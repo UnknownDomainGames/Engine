@@ -5,65 +5,78 @@ import engine.client.EngineClientImpl;
 import engine.client.i18n.I18n;
 import engine.enginemod.client.gui.GuiSettings;
 import engine.game.GameData;
-import engine.graphics.font.Font;
 import engine.gui.Scene;
 import engine.gui.control.Button;
 import engine.gui.control.Text;
+import engine.gui.layout.BorderPane;
 import engine.gui.layout.FlowPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Background;
-import engine.gui.misc.Border;
 import engine.gui.misc.Pos;
 import engine.util.Color;
 
 import java.nio.file.Path;
 
-public class GUIMainMenu extends FlowPane {
+public class GUIMainMenu extends BorderPane {
 
     public GUIMainMenu() {
-        alignment().set(Pos.CENTER);
         setBackground(new Background(Color.fromRGB(0xAAAAAA)));
 
-        VBox vBox = new VBox();
-        vBox.setSpacing(5);
-        vBox.setFillWidth(true);
-        getChildren().add(vBox);
+        { // Center Buttons
+            var flowLayout = new FlowPane();
+            flowLayout.alignment().set(Pos.CENTER);
 
-        Text text = new Text();
-        text.setText(I18n.translate("engine.gui.main_menu.title"));
-        text.setFont(new Font(Font.getDefaultFont(), 20));
-        vBox.getChildren().add(text);
+            var vLayout = new VBox();
+            vLayout.setSpacing(5);
+            vLayout.setFillWidth(true);
 
-        Button butSP = new Button(I18n.translate("engine.gui.main_menu.single_player"));
-        butSP.setBorder(new Border(Color.WHITE));
-        butSP.setOnMouseClicked(event -> {
-            var engine = Platform.getEngineClient();
-            Path gameBasePath = engine.getRunPath().resolve("game");
-            engine.getGraphicsManager().getGUIManager().show(new Scene(new GuiGameSelectSP(gameBasePath)));
-        });
-        vBox.getChildren().add(butSP);
+            flowLayout.getChildren().add(vLayout);
+            center().set(flowLayout);
 
-        var butMP = new Button(I18n.translate("engine.gui.main_menu.multi_player"));
-        butMP.setOnMouseClicked(e -> {
-            Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiDirectConnectServer()));
-        });
-        vBox.getChildren().add(butMP);
+            { // Title
+                Text text = new Text(I18n.translate("engine.gui.main_menu.title"));
+                text.setFontSize(20);
+                vLayout.getChildren().add(text);
+            }
 
-        var buttonSettings = new Button(I18n.translate("engine.gui.main_menu.settings"));
-        buttonSettings.setOnMouseClicked(event ->
-                Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiSettings())));
-        vBox.getChildren().add(buttonSettings);
+            { // Single Player
+                Button button = new Button(I18n.translate("engine.gui.main_menu.single_player"));
+                button.setOnMouseClicked(event ->
+                        Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiGameSelectSP())));
+                vLayout.getChildren().add(button);
+            }
 
-        Button buttonExit = new Button(I18n.translate("engine.gui.main_menu.exit"));
-        buttonExit.setOnMouseClicked(event -> Platform.getEngine().terminate());
-        vBox.getChildren().add(buttonExit);
+            { // Multi Player
+                Button button = new Button(I18n.translate("engine.gui.main_menu.multi_player"));
+                button.setOnMouseClicked(event ->
+                        Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiDirectConnectServer())));
+                vLayout.getChildren().add(button);
+            }
 
-        var butTest = new Button("Test WorldGen");
-        butTest.setOnMouseClicked(event -> {
-            var gameData = GameData.createFromCurrentEnvironment(Path.of(""), "DEBUG");
-            gameData.getWorlds().put("Debug", "engine:debug");
-            ((EngineClientImpl) Platform.getEngineClient()).playIntegratedGame("DEBUG", gameData);
-        });
-        vBox.getChildren().add(butTest);
+            { // Settings
+                Button button = new Button(I18n.translate("engine.gui.main_menu.settings"));
+                button.setOnMouseClicked(event ->
+                        Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiSettings())));
+                vLayout.getChildren().add(button);
+            }
+
+            { // Exit
+                Button button = new Button(I18n.translate("engine.gui.main_menu.exit"));
+                button.setOnMouseClicked(event ->
+                        Platform.getEngine().terminate());
+                vLayout.getChildren().add(button);
+            }
+
+            { // Test WorldGen
+                Button button = new Button(I18n.translate("Test WorldGen"));
+                button.setOnMouseClicked(event -> {
+                    var gameData = GameData.createFromCurrentEnvironment(Path.of(""), "DEBUG");
+                    gameData.getWorlds().put("Debug", "engine:debug");
+                    ((EngineClientImpl) Platform.getEngineClient()).playIntegratedGame("DEBUG", gameData);
+                });
+                vLayout.getChildren().add(button);
+            }
+        }
+
     }
 }
