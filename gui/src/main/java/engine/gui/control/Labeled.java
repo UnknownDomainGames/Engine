@@ -10,7 +10,7 @@ public class Labeled extends Control {
 
     private MutableObjectValue<Node> graphic;
     private MutableObjectValue<Pos> alignment;
-    private Text text = new Text();
+    private final Text text = new Text();
 
     public Labeled() {
         getChildren().add(text);
@@ -44,7 +44,7 @@ public class Labeled extends Control {
     }
 
     public final void setFontSize(float fontSize) {
-        setFont(new Font(getFont(), fontSize));
+        text.setFontSize(fontSize);
     }
 
     public final Pos getAlignment() {

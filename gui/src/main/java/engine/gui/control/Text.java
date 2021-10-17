@@ -69,6 +69,10 @@ public class Text extends Node {
         return font;
     }
 
+    public final void setFontSize(float fontSize) {
+        setFont(new Font(getFont(), fontSize));
+    }
+
     public final Font getFont() {
         return font == null ? Font.getDefaultFont() : font.get();
     }
