@@ -58,6 +58,10 @@ subprojects {
         from rootProject.file('LICENSE')
     }
 
+    java {
+        withSourcesJar()
+    }
+
     compileJava {
         options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
     }
