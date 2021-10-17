@@ -1,6 +1,3 @@
-engine.gui.lang.display.name=English
-engine.gui.lang.display.country=US
-
 engine.gui.confirm=Confirm
 engine.gui.cancel=Cancel
 engine.gui.warning=Warning

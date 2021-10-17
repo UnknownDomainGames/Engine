@@ -1,0 +1,12 @@
+[
+  {
+    "code": "en_us",
+    "name": "English",
+    "region": "US"
+  },
+  {
+    "code": "zh_cn",
+    "name": "简体中文",
+    "region": "中国"
+  }
+]

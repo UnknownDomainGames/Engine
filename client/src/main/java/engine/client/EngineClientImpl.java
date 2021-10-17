@@ -165,12 +165,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
         logger.info("Initializing I18n!");
         localeManager = LocaleManager.INSTANCE;
-        assetManager.getReloadManager().addHandler(AssetReloadHandler.builder().name("I18n").runnable(() -> {
-            localeManager.reset();
-            for (ModContainer mod : EngineClientImpl.this.getModManager().getLoadedMods()) {
-                localeManager.register(mod);
-            }
-        }).build());
+        assetManager.getReloadManager().addHandler(AssetReloadHandler.builder().name("I18n").runnable(localeManager::reloadAssets).build());
 
         graphicsManager.initScene();
         assetManager.reload();

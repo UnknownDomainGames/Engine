@@ -31,7 +31,6 @@ public class EngineSettings {
         displaySettings = new DisplaySettings();
         displaySettings.load(config.getConfig(KEY_DISPLAY));
         language = config.getString(KEY_LANGUAGE);
-        LocaleManager.INSTANCE.setLocale(I18n.findLocale(language));
         lastPath = path;
     }
 
@@ -49,7 +48,6 @@ public class EngineSettings {
 
     public void apply() {
         displaySettings.apply();
-        LocaleManager.INSTANCE.setLocale(I18n.findLocale(language));
     }
 
     public DisplaySettings getDisplaySettings() {

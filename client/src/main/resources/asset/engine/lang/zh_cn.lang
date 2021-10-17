@@ -1,6 +1,3 @@
-engine.gui.lang.display.name=简体中文
-engine.gui.lang.display.country=中国
-
 engine.gui.confirm=确认
 engine.gui.cancel=取消
 engine.gui.warning=警告

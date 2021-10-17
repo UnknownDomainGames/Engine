@@ -2,6 +2,7 @@ package engine.enginemod.client.gui.game;
 
 import engine.Platform;
 import engine.client.i18n.I18n;
+import engine.client.i18n.LocaleDefinition;
 import engine.client.i18n.LocaleManager;
 import engine.gui.Scene;
 import engine.gui.control.Button;
@@ -15,8 +16,6 @@ import engine.gui.misc.Background;
 import engine.gui.misc.HPos;
 import engine.gui.misc.Insets;
 import engine.util.Color;
-
-import java.util.Locale;
 
 public class GuiLanguageList extends BorderPane {
 
@@ -32,23 +31,22 @@ public class GuiLanguageList extends BorderPane {
             top().set(wrapper);
         }
 
-        ListView<Locale> list;
+        ListView<LocaleDefinition> list;
         { // List
             list = new ListView<>();
             list.cellFactory().set(listView -> new ListCell<>() {
                 @Override
-                protected void updateItem(Locale item, boolean empty) {
+                protected void updateItem(LocaleDefinition item, boolean empty) {
                     super.updateItem(item, empty);
                     if (!empty) {
-                        setText(LocaleManager.INSTANCE.translate("engine.gui.lang.display.name", item)
-                                + " (" + LocaleManager.INSTANCE.translate("engine.gui.lang.display.country", item) + ")");
+                        setText(item.getName() + " (" + item.getRegion() + ")");
                     } else {
                         setText("");
                     }
                 }
             });
-            list.items().addAll(LocaleManager.INSTANCE.getAllLocales());
-            list.selectionModel().get().select(LocaleManager.INSTANCE.getLocale());
+            list.items().addAll(LocaleManager.INSTANCE.getLocaleDefinitions().values());
+            list.selectionModel().get().select(LocaleManager.INSTANCE.getCurrentLocale());
             center().set(list);
         }
 
@@ -58,12 +56,15 @@ public class GuiLanguageList extends BorderPane {
                 var button = new Button(I18n.translate("engine.gui.confirm"));
                 button.setOnAction(event -> {
                     var currentSelection = list.selectionModel().get().selectedItem().get();
-                    if (!LocaleManager.INSTANCE.getLocale().equals(currentSelection)) {
+                    if (!LocaleManager.INSTANCE.getCurrentLocale().equals(currentSelection)) {
                         // Locale changed
                         LocaleManager.INSTANCE.setLocale(currentSelection);
                         var settings = Platform.getEngineClient().getSettings();
-                        settings.setLanguage(I18n.serializeLocaleCode(currentSelection));
+                        settings.setLanguage(currentSelection.getCode());
                         settings.save();
+                    }
+                    { // Reload assets
+                        Platform.getEngineClient().getAssetManager().reload();
                     }
                     { // Close window
                         var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();

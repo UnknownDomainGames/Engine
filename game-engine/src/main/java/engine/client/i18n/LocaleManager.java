@@ -1,115 +1,134 @@
 package engine.client.i18n;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonSyntaxException;
 import engine.Platform;
+import engine.client.event.i18n.I18NPostFindDefinitionsEvent;
+import engine.client.event.i18n.I18NPreFindDefinitionsEvent;
+import engine.client.event.i18n.I18nPostLoadLocaleEvent;
+import engine.client.event.i18n.I18nPreLoadLocaleEvent;
 import engine.mod.ModContainer;
+import engine.util.JsonUtils;
 
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LocaleManager {
 
-    public static final Locale DEFAULT_LOCALE = Locale.US;
-
-    private Locale currentLocale = DEFAULT_LOCALE;
-
-    private final Map<Locale, Map<String, String>> localeMap = new HashMap<>();
-
+    public static final String DEFAULT_LOCALE = "en_us";
     public static final LocaleManager INSTANCE = new LocaleManager();
+
+    private LocaleDefinition defaultLocale;
+    private LocaleDefinition currentLocale = null;
+
+    private final Map<String, LocaleDefinition> localeDefinitions = new HashMap<>();
+    private final Map<String, String> localeMap = new HashMap<>();
 
     private LocaleManager() {
     }
 
     public String translate(String key) {
-        if (!localeMap.containsKey(currentLocale)) {
-            return translate(key, DEFAULT_LOCALE);
-        }
-        return translate(key, currentLocale);
+        return localeMap.getOrDefault(key, key);
     }
 
-    public String translate(String key, Locale locale) {
-        if (!localeMap.containsKey(locale)) {
-            return key;
-        }
-        return localeMap.get(locale).getOrDefault(key, key);
+    public @Nullable
+    LocaleDefinition getLocaleDefinition(String code) {
+        return localeDefinitions.get(code);
     }
 
-    public void setLocale(Locale locale) {
-        currentLocale = locale;
-    }
-
-    public Locale getLocale() {
-        return currentLocale;
-    }
-
-    public void addTranslation(Locale targetLocale, String key, String value) {
-        if (!localeMap.containsKey(targetLocale)) {
-            localeMap.put(targetLocale, new HashMap<>());
-        }
-        localeMap.get(targetLocale).put(key, value);
-    }
-
-    private void register(Locale locale, String modid) {
-        var mod = checkModId(modid);
-        register(locale, mod);
-    }
-
-    private void register(Locale locale, ModContainer mod) {
-        try (var stream = mod.getAssets().openStream("asset", mod.getId(), "lang", locale.toLanguageTag().concat(".lang")).orElseThrow();
-             var reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8.newDecoder()))) {
-            reader.lines().forEach(line -> LocaleManager.this.addTranslation(locale, line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1)));
-        } catch (IOException e) {
-            Platform.getLogger().warn(String.format("cannot read language file of locale %s from mod %s", locale, mod.getId()), e);
-        } catch (NoSuchElementException e) {
-            Platform.getLogger().warn(String.format("cannot find language file %s.lang from mod %s", locale.toString(), mod.getId()));
+    public void reloadAssets() {
+        clear();
+        findLocaleDefinitions();
+        load(defaultLocale);
+        { // Load current locale
+            if (currentLocale == null) {
+                currentLocale = getLocaleDefinition(Platform.getEngineClient().getSettings().getLanguage());
+            } else {
+                currentLocale = getLocaleDefinition(currentLocale.getCode()); // Re-bind
+            }
+            if (currentLocale == null) {
+                currentLocale = defaultLocale;
+            }
+            if (currentLocale != defaultLocale) {
+                load(currentLocale);
+            }
         }
     }
 
-    public void register(String modid) {
-        var mod = checkModId(modid);
-        register(mod);
+    public void clear() {
+        localeDefinitions.clear();
+        localeMap.clear();
     }
 
-    public void register(ModContainer mod) {
-        mod.getAssets().list("asset", mod.getId(), "lang").forEach(path -> {
-            if (path.getFileName().toString().endsWith(".lang")) {
-                String filename = path.getFileName().toString();
-                var lang = filename.substring(0, filename.lastIndexOf("."));
-                Locale locale = I18n.deserializeLocaleCode(lang);
-                try (var reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-                    reader.lines().forEach(line -> {
-                        if (!line.isEmpty()) {
-                            LocaleManager.this.addTranslation(locale, line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1));
-                        }
-                    });
-                } catch (IOException e) {
-                    Platform.getLogger().warn(String.format("cannot read language file %s.lang from mod %s", lang, mod.getId()), e);
+    public void findLocaleDefinitions() {
+        var engine = Platform.getEngine();
+        engine.getEventBus().post(new I18NPreFindDefinitionsEvent());
+        engine.getModManager().getLoadedMods().forEach(this::findLocaleDefinitions);
+        defaultLocale = getLocaleDefinition(DEFAULT_LOCALE);
+        engine.getEventBus().post(new I18NPostFindDefinitionsEvent());
+    }
+
+    public void findLocaleDefinitions(ModContainer mod) {
+        mod.getAssets().get("asset", mod.getId(), "lang", "locales.json").ifPresent(langFile -> {
+            try {
+                var definitions = JsonUtils.gson().fromJson(Files.readString(langFile, StandardCharsets.UTF_8), JsonArray.class);
+                for (var definition : definitions) {
+                    LocaleDefinition localeDefinition = JsonUtils.gson().fromJson(definition, LocaleDefinition.class);
+                    localeDefinitions.put(localeDefinition.getCode(), localeDefinition);
                 }
+            } catch (IOException | JsonSyntaxException e) {
+                Platform.getLogger().warn("Error finding locale definitions in " + mod.getId(), e);
             }
         });
     }
 
-    public void reset() {
-        localeMap.clear();
+    public void load(LocaleDefinition locale) {
+        var engine = Platform.getEngine();
+        engine.getEventBus().post(new I18nPreLoadLocaleEvent(locale));
+        engine.getModManager().getLoadedMods().forEach(mod -> load(locale, mod));
+        engine.getEventBus().post(new I18nPostLoadLocaleEvent(locale));
     }
 
-    private ModContainer checkModId(String modid) {
-        Optional<ModContainer> optional = Platform.getEngine().getModManager().getMod(modid);
-        if (optional.isEmpty()) {
-            throw new IllegalArgumentException(String.format("cannot get mod container of mod %s", modid));
-        }
-        return optional.get();
+    private void load(LocaleDefinition locale, ModContainer mod) {
+        mod.getAssets().get("asset", mod.getId(), "lang", locale.getCode() + ".lang").ifPresent(langFile -> {
+            try (var reader = Files.newBufferedReader(langFile, StandardCharsets.UTF_8)) {
+                loadFrom(reader);
+            } catch (IOException e) {
+                Platform.getLogger().warn(String.format("Error loading language data for %s in %s", locale.getCode(), mod.getId()), e);
+            }
+        });
     }
 
-    public Set<Locale> getAllLocales() {
-        return localeMap.keySet();
+    private void loadFrom(BufferedReader reader) {
+        reader.lines().forEach(line -> {
+            if (!line.isEmpty()) {
+                localeMap.put(line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1));
+            }
+        });
     }
 
-    public Map<Locale, Map<String, String>> getLocaleMap() {
+    public void setLocale(LocaleDefinition locale) {
+        currentLocale = locale;
+    }
+
+    public LocaleDefinition getDefaultLocale() {
+        return defaultLocale;
+    }
+
+    public LocaleDefinition getCurrentLocale() {
+        return currentLocale;
+    }
+
+    public Map<String, LocaleDefinition> getLocaleDefinitions() {
+        return localeDefinitions;
+    }
+
+    public Map<String, String> getLocaleMap() {
         return localeMap;
     }
-
 }
