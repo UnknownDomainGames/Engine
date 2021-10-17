@@ -11,7 +11,6 @@ public class Region extends Parent {
 
     public static final float USE_COMPUTED_VALUE = Size.USE_COMPUTED_VALUE;
     public static final float USE_PERF_VALUE = Size.USE_PERF_VALUE;
-    public static final float USE_PARENT_VALUE = Size.USE_PARENT_VALUE;
 
     private MutableObjectValue<Background> background;
     private MutableObjectValue<Border> border;
@@ -224,8 +223,6 @@ public class Region extends Parent {
         float width = getPrefWidth();
         if (width == USE_COMPUTED_VALUE) {
             return computeWidth();
-        } else if (width == USE_PARENT_VALUE) {
-            return (parent().isPresent() ? getParent().getWidth() : 0);
         }
         return width;
     }
@@ -239,8 +236,6 @@ public class Region extends Parent {
         float height = getPrefHeight();
         if (height == USE_COMPUTED_VALUE) {
             return computeHeight();
-        } else if (height == USE_PARENT_VALUE) {
-            return (parent().isPresent() ? getParent().getHeight() : 0);
         }
         return height;
     }

@@ -4,7 +4,6 @@ import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.ObservableDoubleValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
-import engine.gui.Parent;
 import engine.gui.layout.BorderPane;
 import engine.gui.misc.HPos;
 import engine.gui.misc.Orientation;
@@ -101,8 +100,8 @@ public class ScrollPane extends BorderPane {
             var x = hScroll.disabled().get() ? 0 : hScroll.value().getFloat() * (content.getWidth() - getWidth());
             var y = vScroll.disabled().get() ? 0 : -vScroll.value().getFloat() * (content.getHeight() - getHeight());
             layoutInArea(content, x, y,
-                    Parent.prefWidth(content),
-                    Parent.prefHeight(content), 0/*ignore baseline*/,
+                    getWidth(),
+                    getHeight(), 0/*ignore baseline*/,
                     getNodeMargin(content),
                     HPos.CENTER,
                     VPos.CENTER);

@@ -6,7 +6,6 @@ import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
 public final class Size {
     public static final float USE_COMPUTED_VALUE = -1;
     public static final float USE_PERF_VALUE = -2;
-    public static final float USE_PARENT_VALUE = -3;
 
     private MutableFloatValue minWidth;
     private MutableFloatValue minHeight;

@@ -10,7 +10,6 @@ import engine.gui.layout.HBox;
 import engine.gui.layout.Pane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Orientation;
-import engine.gui.misc.Size;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -93,10 +92,8 @@ public class ListView<T> extends Control {
         Pane newContentPane;
         if (getOrientation() == Orientation.HORIZONTAL) {
             newContentPane = new HBox();
-            newContentPane.getSize().setPrefHeight(Size.USE_PARENT_VALUE);
         } else {
             newContentPane = new VBox();
-            newContentPane.getSize().setPrefWidth(Size.USE_PARENT_VALUE);
         }
         if (contentPane != null) {
             newContentPane.getChildren().addAll(contentPane.getChildren());
