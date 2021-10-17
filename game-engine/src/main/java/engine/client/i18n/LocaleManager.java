@@ -106,7 +106,7 @@ public class LocaleManager {
 
     private void loadFrom(BufferedReader reader) {
         reader.lines().forEach(line -> {
-            if (!line.isEmpty()) {
+            if (!line.isEmpty() && !line.startsWith("#")) {
                 localeMap.put(line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1));
             }
         });
