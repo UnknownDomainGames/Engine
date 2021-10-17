@@ -199,6 +199,7 @@ public class EngineModManager implements ModManager {
 
     private void collectWorkspaceMods(List<ModCandidate> collectedMods) {
         try {
+            // TODO: support multi-module project
             var sources = getDirectoriesInClassPath();
             var metadata = modMetadataFinder.find(sources);
             collectedMods.add(new ModCandidate(sources, metadata));

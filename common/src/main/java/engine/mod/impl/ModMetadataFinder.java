@@ -33,7 +33,9 @@ public class ModMetadataFinder {
 
         for (Path source : sources) {
             if (Files.isDirectory(source)) {
-                try (Reader reader = new InputStreamReader(Files.newInputStream(source.resolve(fileName)))) {
+                Path metadataFile = source.resolve(fileName);
+                if (Files.notExists(metadataFile)) continue;
+                try (Reader reader = Files.newBufferedReader(metadataFile)) {
                     jo = JsonParser.parseReader(reader).getAsJsonObject();
                 } catch (IOException e) {
                     throw new InvalidModMetadataException(sources, e);

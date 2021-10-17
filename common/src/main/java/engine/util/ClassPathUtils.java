@@ -25,7 +25,7 @@ public class ClassPathUtils {
         List<Path> paths = new ArrayList<>();
         for (String path : SystemUtils.JAVA_CLASS_PATH.split(File.pathSeparator)) {
             Path file = Path.of(path);
-            if (!Files.isDirectory(file)) {
+            if (Files.isRegularFile(file)) {
                 paths.add(file);
             }
         }
