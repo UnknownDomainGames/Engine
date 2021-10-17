@@ -43,6 +43,7 @@ void main() {
     }
 
     vec4 color = unpackUnorm4x8(fragList[0].y);
+    float depth = uintBitsToFloat(fragList[fragCount - 1].z);
 
     for (uint i = 1; i < fragCount; i++)
     {
@@ -51,4 +52,5 @@ void main() {
     }
 
     fragColor = color;
+    gl_FragDepth = depth;
 }
