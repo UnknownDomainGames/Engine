@@ -16,10 +16,10 @@ import engine.gui.misc.Pos;
 import engine.input.KeyCode;
 import engine.util.Color;
 
-public final class GUIPauseMenu extends FlowPane {
+public final class GuiPauseMenu extends FlowPane {
 
     public static Scene create() {
-        Scene scene = new Scene(new GUIPauseMenu());
+        Scene scene = new Scene(new GuiPauseMenu());
         scene.setOnKeyPressed(event -> {
             if (event.getKey() == KeyCode.ESCAPE) {
                 returnToGame();
@@ -33,7 +33,7 @@ public final class GUIPauseMenu extends FlowPane {
         GraphicsManager.instance().getGUIManager().close();
     }
 
-    private GUIPauseMenu() {
+    private GuiPauseMenu() {
         alignment().set(Pos.CENTER);
         setBackground(new Background(Color.fromARGB(0x7FAAAAAA)));
 
@@ -60,7 +60,7 @@ public final class GUIPauseMenu extends FlowPane {
                 // move gui handling to method
             } else {
                 GUIManager guiManager = engine.getGraphicsManager().getGUIManager();
-                guiManager.show(new Scene(new GUIMainMenu()));
+                guiManager.show(new Scene(new GuiMainMenu()));
             }
         });
         vBox.getChildren().add(terminateGame);

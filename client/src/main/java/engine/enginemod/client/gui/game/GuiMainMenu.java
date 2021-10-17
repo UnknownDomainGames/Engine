@@ -17,9 +17,9 @@ import engine.util.Color;
 
 import java.nio.file.Path;
 
-public class GUIMainMenu extends BorderPane {
+public class GuiMainMenu extends BorderPane {
 
-    public GUIMainMenu() {
+    public GuiMainMenu() {
         setBackground(new Background(Color.fromRGB(0xAAAAAA)));
 
         { // Center Buttons

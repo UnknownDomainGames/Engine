@@ -4,8 +4,7 @@ import com.github.mouse0w0.observable.value.ValueChangeListener;
 import engine.Platform;
 import engine.client.i18n.I18n;
 import engine.client.settings.EngineSettings;
-import engine.enginemod.client.gui.game.GUILanguageList;
-import engine.enginemod.client.gui.game.GuiGameSelectSP;
+import engine.enginemod.client.gui.game.GuiLanguageList;
 import engine.graphics.display.DisplayMode;
 import engine.graphics.font.Font;
 import engine.gui.Scene;
@@ -104,7 +103,7 @@ public class GuiSettings extends AnchorPane {
             settings.getDisplaySettings().setHudScale(i);
         });
         var btnLanguage = new Button(I18n.translate("engine.gui.settings.language"));
-        btnLanguage.setOnAction(event -> Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GUILanguageList())));
+        btnLanguage.setOnAction(event -> Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiLanguageList())));
         var hb1 = new HBox();
         hb1.spacing().set(10f);
         hb1.getChildren().addAll(lblDisplayMode, butDisplayMode);

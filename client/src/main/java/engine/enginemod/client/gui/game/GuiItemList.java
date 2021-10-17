@@ -19,9 +19,9 @@ import engine.util.Color;
 
 import java.util.Map;
 
-public final class GUIItemList extends AnchorPane {
+public final class GuiItemList extends AnchorPane {
     public static Scene create() {
-        Scene scene = new Scene(new GUIItemList());
+        Scene scene = new Scene(new GuiItemList());
         scene.setOnKeyPressed(event -> {
             if (event.getKey() == KeyCode.ESCAPE) {
                 GraphicsManager.instance().getGUIManager().close();
@@ -30,7 +30,7 @@ public final class GUIItemList extends AnchorPane {
         return scene;
     }
 
-    public GUIItemList() {
+    public GuiItemList() {
         var vBox = new VBox();
         vBox.setBackground(Background.fromColor(Color.fromARGB(0x7f000000)));
         vBox.spacing().set(5f);

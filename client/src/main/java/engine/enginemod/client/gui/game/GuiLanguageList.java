@@ -18,9 +18,9 @@ import engine.util.Color;
 
 import java.util.Locale;
 
-public class GUILanguageList extends BorderPane {
+public class GuiLanguageList extends BorderPane {
 
-    public GUILanguageList() {
+    public GuiLanguageList() {
         setBackground(new Background(Color.fromRGB(0x666666)));
         padding().set(new Insets(5));
         { // Title
@@ -68,7 +68,7 @@ public class GUILanguageList extends BorderPane {
                     { // Close window
                         var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
                         guiManager.close();
-                        guiManager.show(new Scene(new GUIMainMenu()));
+                        guiManager.show(new Scene(new GuiMainMenu()));
                     }
                 });
                 layout.getChildren().add(button);
@@ -78,7 +78,7 @@ public class GUILanguageList extends BorderPane {
                 button.setOnAction(event -> {
                     var guiManager = Platform.getEngineClient().getGraphicsManager().getGUIManager();
                     guiManager.close();
-                    guiManager.show(new Scene(new GUIMainMenu()));
+                    guiManager.show(new Scene(new GuiMainMenu()));
                 });
                 layout.getChildren().add(button);
             }

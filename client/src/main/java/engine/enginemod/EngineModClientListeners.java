@@ -10,8 +10,8 @@ import engine.client.hud.HUDManager;
 import engine.client.input.controller.MotionType;
 import engine.client.input.keybinding.Key;
 import engine.client.input.keybinding.KeyBinding;
-import engine.enginemod.client.gui.game.GUIItemList;
-import engine.enginemod.client.gui.game.GUIMainMenu;
+import engine.enginemod.client.gui.game.GuiItemList;
+import engine.enginemod.client.gui.game.GuiMainMenu;
 import engine.enginemod.client.gui.game.GuiChat;
 import engine.enginemod.client.gui.hud.HUDDebug;
 import engine.enginemod.client.gui.hud.HUDHandingItem;
@@ -125,7 +125,7 @@ public final class EngineModClientListeners {
         event.register(KeyBinding.builder()
                 .name("game.inventory")
                 .key(Key.KEY_E)
-                .startHandler(c -> c.getGraphicsManager().getGUIManager().show(GUIItemList.create()))
+                .startHandler(c -> c.getGraphicsManager().getGUIManager().show(GuiItemList.create()))
                 .build());
         event.register(KeyBinding.builder()
                 .name("game.menu")
@@ -166,7 +166,7 @@ public final class EngineModClientListeners {
             var renderContext = Platform.getEngineClient().getGraphicsManager();
             var guiManager = renderContext.getGUIManager();
 
-            var scene = new Scene(new GUIMainMenu());
+            var scene = new Scene(new GuiMainMenu());
             guiManager.show(scene);
         }
     }

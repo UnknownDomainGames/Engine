@@ -19,8 +19,8 @@ import engine.client.sound.Sound;
 import engine.client.sound.SoundManager;
 import engine.enginemod.EngineModClientListeners;
 import engine.enginemod.EngineModListeners;
-import engine.enginemod.client.gui.game.GUIMainMenu;
-import engine.enginemod.client.gui.game.GUIPauseMenu;
+import engine.enginemod.client.gui.game.GuiMainMenu;
+import engine.enginemod.client.gui.game.GuiPauseMenu;
 import engine.enginemod.client.gui.game.GuiGameLoading;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
@@ -261,7 +261,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         this.paused = paused;
         if (this.paused && !old) {
             // PLAY -> PAUSE
-            this.getGraphicsManager().getGUIManager().show(GUIPauseMenu.create());
+            this.getGraphicsManager().getGUIManager().show(GuiPauseMenu.create());
         }
         if (!this.paused && old) {
             // PAUSE -> PLAY
@@ -341,7 +341,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
             }
             integratedServer = null;
             this.paused = false;
-            getGraphicsManager().getGUIManager().show(new Scene(new GUIMainMenu()));
+            getGraphicsManager().getGUIManager().show(new Scene(new GuiMainMenu()));
         });
     }
 
