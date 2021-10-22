@@ -1,4 +1,4 @@
-# Contributing to NullEngine
+# Contributing to Engine
 
 ## Code Style
 This project use [Google Java Style](https://google.github.io/styleguide/javaguide.html) as Standard Code Style.

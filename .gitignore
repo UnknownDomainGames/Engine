@@ -452,7 +452,7 @@ manifest.mf
 # visual studio code
 .vscode/
 
-# null engine run path
+# engine run path
 run/
 
 # log

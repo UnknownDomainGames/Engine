@@ -1,4 +1,4 @@
-# Contributing to NullEngine
+# Contributing to Engine
 
 ## 代码规范
 本项目代码规范基于[Google Java 编程风格指南](http://hawstein.com/2014/01/20/google-java-style/)。
