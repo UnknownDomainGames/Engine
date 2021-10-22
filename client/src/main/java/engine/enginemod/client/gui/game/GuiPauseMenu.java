@@ -2,6 +2,7 @@ package engine.enginemod.client.gui.game;
 
 import engine.Platform;
 import engine.client.EngineClientImpl;
+import engine.client.i18n.I18n;
 import engine.graphics.GraphicsManager;
 import engine.graphics.font.Font;
 import engine.gui.GUIManager;
@@ -43,15 +44,15 @@ public final class GuiPauseMenu extends FlowPane {
         getChildren().add(vBox);
 
         Text text = new Text();
-        text.setText("Game Menu");
+        text.setText(I18n.translate("engine.gui.pause_menu.title"));
         text.setFont(new Font(Font.getDefaultFont(), 20));
         vBox.getChildren().add(text);
 
-        Button backtoGame = new Button("Back To Game");
-        backtoGame.setOnMouseClicked(event -> returnToGame());
-        vBox.getChildren().add(backtoGame);
+        Button backToGame = new Button(I18n.translate("engine.gui.pause_menu.back"));
+        backToGame.setOnMouseClicked(event -> returnToGame());
+        vBox.getChildren().add(backToGame);
 
-        Button terminateGame = new Button("Terminate");
+        Button terminateGame = new Button(I18n.translate("engine.gui.pause_menu.terminate"));
         terminateGame.setOnMouseClicked(mouseClickEvent -> {
             var engine = Platform.getEngineClient();
             engine.getCurrentClientGame().terminate();

@@ -167,11 +167,6 @@ public class GameServerFullAsync extends GameBase {
     }
 
     @Override
-    public void terminate() {
-        super.terminate();
-    }
-
-    @Override
     public void doUnloadWorld(World world) {
         if (!world.isUnloaded()) {
             throw new IllegalStateException("World is not unloaded");

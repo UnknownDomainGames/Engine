@@ -11,6 +11,7 @@ import engine.client.asset.reloading.AssetReloadHandler;
 import engine.client.asset.source.CompositeAssetSource;
 import engine.client.asset.source.FileSystemAssetSource;
 import engine.client.game.GameClient;
+import engine.client.i18n.I18n;
 import engine.client.i18n.LocaleManager;
 import engine.client.input.keybinding.KeyBindingManager;
 import engine.client.settings.EngineSettings;
@@ -313,7 +314,7 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
                 orientation().set(Orientation.VERTICAL);
                 setBackground(new Background(Color.fromRGB(0xAAAAAA)));
 
-                var text1 = new Text("Terminating Game...");
+                var text1 = new Text(I18n.translate("engine.gui.terminating"));
                 text2 = new Text(strings[index]);
                 this.getChildren().addAll(text1, text2);
 

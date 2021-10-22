@@ -5,6 +5,8 @@ engine.gui.back=Back
 engine.gui.create=Create
 engine.gui.delete=Delete
 
+engine.gui.terminating=Terminating Game...
+
 engine.gui.main_menu.title=Game Creation
 engine.gui.main_menu.single_player=Single Player
 engine.gui.main_menu.multi_player=Multi Player
@@ -33,3 +35,7 @@ engine.gui.settings.language=Language
 engine.gui.settings.language.title=Select Language
 engine.gui.settings.discard=Discard
 engine.gui.settings.save=Save
+
+engine.gui.pause_menu.title=Game Menu
+engine.gui.pause_menu.back=Back To Game
+engine.gui.pause_menu.terminate=Terminate
