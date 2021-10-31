@@ -1,5 +1,25 @@
+plugins {
+    id 'application'
+}
+
+mainClassName = 'engine.server.launch.Bootstrap'
+
 dependencies {
-    api project(':common')
+    implementation project(':common')
 
     implementation 'net.sf.jopt-simple:jopt-simple:5.0.4'
+}
+
+application {
+    mainClass.set project.mainClassName
+    applicationDefaultJvmArgs = [
+    ]
+}
+
+distributions {
+    main {
+        contents {
+            from rootProject.file('LICENSE')
+        }
+    }
 }
