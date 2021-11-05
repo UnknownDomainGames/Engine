@@ -161,7 +161,7 @@ public class GLFWWindow implements Window {
     }
 
     private void relocate(int x, int y) {
-        if (x == -32000 || y == -32000) return;
+        if (x == -32000 || y == -32000) return; // window iconified.
         this.x = x;
         this.y = y;
         this.screen = GLFWContext.getScreen(x, y);
