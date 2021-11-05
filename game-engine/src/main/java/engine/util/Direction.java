@@ -21,7 +21,7 @@ public enum Direction {
     }
 
     public Direction opposite() {
-        return values()[opposite];
+        return valueOf(opposite);
     }
 
     public static Direction valueOf(int index) {

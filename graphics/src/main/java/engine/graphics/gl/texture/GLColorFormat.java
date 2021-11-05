@@ -30,13 +30,15 @@ public enum GLColorFormat {
     DEPTH24(ColorFormat.DEPTH24, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT),
     DEPTH24_STENCIL8(ColorFormat.DEPTH24_STENCIL8, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_FLOAT);
 
+    private static final GLColorFormat[] VALUES = values();
+
     public final ColorFormat peer;
     public final int internalFormat;
     public final int format;
     public final int type;
 
     public static GLColorFormat valueOf(ColorFormat format) {
-        return values()[format.ordinal()];
+        return VALUES[format.ordinal()];
     }
 
     GLColorFormat(ColorFormat peer, int internalFormat, int format, int type) {

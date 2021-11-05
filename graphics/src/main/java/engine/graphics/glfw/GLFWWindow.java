@@ -601,13 +601,13 @@ public class GLFWWindow implements Window {
     protected void initCallbacks() {
         glfwSetKeyCallback(pointer, (window, key, scancode, action, mods) -> {
             KeyCode _key = KeyCode.valueOf(key);
-            Action _action = Action.values()[action];
+            Action _action = Action.valueOf(action);
             Modifiers modifiers = Modifiers.of(mods);
             keyCallbacks.forEach(callback -> callback.invoke(this, _key, scancode, _action, modifiers));
         });
         glfwSetMouseButtonCallback(pointer, (window, button, action, mods) -> {
             MouseButton _button = MouseButton.valueOf(button);
-            Action _action = Action.values()[action];
+            Action _action = Action.valueOf(action);
             Modifiers modifiers = Modifiers.of(mods);
             mouseCallbacks.forEach(callback -> callback.invoke(this, _button, _action, modifiers));
         });

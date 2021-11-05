@@ -15,11 +15,13 @@ public enum GLShaderType {
     FRAGMENT_SHADER(ShaderType.FRAGMENT_SHADER, GL20.GL_FRAGMENT_SHADER),
     COMPUTE_SHADER(ShaderType.COMPUTE_SHADER, GL43.GL_COMPUTE_SHADER);
 
-    private ShaderType peer;
+    private static final GLShaderType[] VALUES = values();
+
+    public final ShaderType peer;
     public final int gl;
 
     public static GLShaderType valueOf(ShaderType type) {
-        return values()[type.ordinal()];
+        return VALUES[type.ordinal()];
     }
 
     GLShaderType(ShaderType peer, int gl) {

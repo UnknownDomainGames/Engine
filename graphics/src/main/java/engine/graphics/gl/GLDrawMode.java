@@ -20,11 +20,13 @@ public enum GLDrawMode {
     TRIANGLE_STRIP_ADJACENCY(DrawMode.TRIANGLE_STRIP_ADJACENCY, GL32.GL_TRIANGLE_STRIP_ADJACENCY),
     PATCHES(DrawMode.PATCHES, GL40.GL_PATCHES);
 
+    private static final GLDrawMode[] VALUES = values();
+
     public final DrawMode peer;
     public final int gl;
 
     public static GLDrawMode valueOf(DrawMode drawMode) {
-        return values()[drawMode.ordinal()];
+        return VALUES[drawMode.ordinal()];
     }
 
     GLDrawMode(DrawMode peer, int gl) {
