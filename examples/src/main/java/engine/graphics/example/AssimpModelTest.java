@@ -81,7 +81,7 @@ public class AssimpModelTest extends Application3D {
 
         window.setSize(854, 480);
         window.centerOnScreen();
-        window.getCursor().disableCursor();
+        window.disableCursor();
         System.out.println("Hello World!");
     }
 

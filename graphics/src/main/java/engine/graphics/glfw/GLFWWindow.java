@@ -11,6 +11,7 @@ import engine.input.KeyCode;
 import engine.input.Modifiers;
 import engine.input.MouseButton;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.Validate;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.system.MemoryUtil;
@@ -25,6 +26,9 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class GLFWWindow implements Window {
+
+    private static final int[] GLFW_CURSOR_STATES = new int[]{GLFW_CURSOR_NORMAL, GLFW_CURSOR_HIDDEN, GLFW_CURSOR_DISABLED};
+    private static final int[] GLFW_CURSOR_SHAPES = new int[]{0, GLFW_ARROW_CURSOR, GLFW_IBEAM_CURSOR, GLFW_CROSSHAIR_CURSOR, GLFW_HAND_CURSOR, GLFW_HRESIZE_CURSOR, GLFW_VRESIZE_CURSOR};
 
     protected long pointer;
     protected Cleaner.Disposable disposable;
@@ -57,7 +61,10 @@ public class GLFWWindow implements Window {
     private boolean iconified = false;
     private boolean maximized = false;
 
-    protected Cursor cursor;
+    private CursorState cursorState = CursorState.NORMAL;
+    private CursorShape cursorShape = CursorShape.NORMAL;
+
+    private long cursorPointer = MemoryUtil.NULL;
 
     private final List<KeyCallback> keyCallbacks = new LinkedList<>();
     private final List<MouseCallback> mouseCallbacks = new LinkedList<>();
@@ -106,7 +113,6 @@ public class GLFWWindow implements Window {
         checkCreated();
         disposable = createDisposable(pointer);
         if (parent == null) glfwMakeContextCurrent(pointer);
-        cursor = new GLFWCursor(pointer);
         initCallbacks();
         notifyResized();
     }
@@ -302,11 +308,6 @@ public class GLFWWindow implements Window {
     }
 
     @Override
-    public Cursor getCursor() {
-        return cursor;
-    }
-
-    @Override
     public void show() {
         if (pointer == NULL) init();
 
@@ -466,6 +467,38 @@ public class GLFWWindow implements Window {
     }
 
     // ================= Window Attributes End =================
+
+    // ================= Window Cursor Start =================
+    @Override
+    public CursorState getCursorState() {
+        return cursorState;
+    }
+
+    @Override
+    public void setCursorState(CursorState state) {
+        this.cursorState = Validate.notNull(state);
+        glfwSetInputMode(pointer, GLFW_CURSOR, GLFW_CURSOR_STATES[state.ordinal()]);
+    }
+
+    @Override
+    public CursorShape getCursorShape() {
+        return cursorShape;
+    }
+
+    @Override
+    public void setCursorShape(CursorShape shape) {
+        cursorShape = Validate.notNull(shape);
+        if (cursorPointer != MemoryUtil.NULL) {
+            glfwDestroyCursor(cursorPointer);
+        }
+        if (shape == CursorShape.NORMAL) {
+            cursorPointer = MemoryUtil.NULL;
+        } else {
+            cursorPointer = glfwCreateStandardCursor(GLFW_CURSOR_SHAPES[shape.ordinal()]);
+        }
+        glfwSetCursor(pointer, cursorPointer);
+    }
+    // ================= Window Cursor End =================
 
     // ================= Window Callbacks Start =================
     @Override

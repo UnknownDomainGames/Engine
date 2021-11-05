@@ -45,8 +45,6 @@ public interface Window {
 
     void setIcon(ReadOnlyImage... icons);
 
-    Cursor getCursor();
-
     void show();
 
     void hide();
@@ -94,6 +92,28 @@ public interface Window {
 
     void restore();
     // ================= Window Attributes End =================
+
+    // ================= Window Cursor Start =================
+    CursorState getCursorState();
+
+    void setCursorState(CursorState state);
+
+    default void showCursor() {
+        setCursorState(CursorState.NORMAL);
+    }
+
+    default void hideCursor() {
+        setCursorState(CursorState.HIDDEN);
+    }
+
+    default void disableCursor() {
+        setCursorState(CursorState.DISABLED);
+    }
+
+    CursorShape getCursorShape();
+
+    void setCursorShape(CursorShape shape);
+    // ================= Window Cursor End =================
 
     // ================= Window Callbacks Start =================
     void addKeyCallback(KeyCallback callback);

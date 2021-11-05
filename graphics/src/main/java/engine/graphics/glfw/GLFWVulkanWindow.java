@@ -122,7 +122,6 @@ public class GLFWVulkanWindow extends GLFWWindow {
         height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
         initCallbacks();
         centerOnScreen();
-        cursor = new GLFWCursor(pointer);
         notifyResized();
     }
 

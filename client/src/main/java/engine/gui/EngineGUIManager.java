@@ -51,10 +51,10 @@ public final class EngineGUIManager implements GUIManager {
         stage.setScene(scene);
         if (scene == null) {
             hudManager.setVisible(true);
-            GraphicsEngine.getGraphicsBackend().runLater(() -> window.getCursor().disableCursor());
+            GraphicsEngine.getGraphicsBackend().runLater(window::disableCursor);
         } else {
             hudManager.setVisible(false);
-            GraphicsEngine.getGraphicsBackend().runLater(() -> window.getCursor().showCursor());
+            GraphicsEngine.getGraphicsBackend().runLater(window::showCursor);
         }
     }
 
