@@ -109,20 +109,20 @@ public class VKGraphicsBackend implements GraphicsBackend {
     }
 
     @Override
-    public Future<Void> submitTask(Runnable runnable) {
-        FutureTask<Void> task = new FutureTask<>(runnable, null);
-        submitTask(task);
+    public Future<?> runLater(Runnable runnable) {
+        FutureTask<?> task = new FutureTask<>(runnable, null);
+        runLater(task);
         return task;
     }
 
     @Override
-    public <V> Future<V> submitTask(Callable<V> callable) {
+    public <V> Future<V> runLater(Callable<V> callable) {
         FutureTask<V> task = new FutureTask<>(callable);
-        submitTask(task);
+        runLater(task);
         return task;
     }
 
-    private void submitTask(RunnableFuture<?> task) {
+    private void runLater(RunnableFuture<?> task) {
         if (Thread.currentThread() == renderingThread) {
             task.run();
             return;

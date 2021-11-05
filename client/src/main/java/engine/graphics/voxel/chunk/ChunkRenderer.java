@@ -58,7 +58,7 @@ public final class ChunkRenderer {
     public void onChunkLoad(ChunkLoadEvent event) {
         Chunk chunk = event.getChunk();
         if (isEqualsWorld(chunk.getWorld())) {
-            GraphicsEngine.getGraphicsBackend().submitTask(() -> addChunk(chunk));
+            GraphicsEngine.getGraphicsBackend().runLater(() -> addChunk(chunk));
         }
     }
 
@@ -80,7 +80,7 @@ public final class ChunkRenderer {
     public void onChunkUnload(ChunkUnloadEvent event) {
         Chunk chunk = event.getChunk();
         if (isEqualsWorld(chunk.getWorld())) {
-            GraphicsEngine.getGraphicsBackend().submitTask(() -> removeChunk(chunk));
+            GraphicsEngine.getGraphicsBackend().runLater(() -> removeChunk(chunk));
         }
     }
 

@@ -91,7 +91,7 @@ public final class ChunkBaker {
                 }
                 bufs.values().forEach(VertexDataBuf::finish);
 
-                GraphicsEngine.getGraphicsBackend().submitTask(() -> {
+                GraphicsEngine.getGraphicsBackend().runLater(() -> {
                     drawableChunk.finishBake(bufs);
                     bufs.values().forEach(buf -> dataBufPool.free(buf));
                     if (drawableChunk.isDisposed()) return;

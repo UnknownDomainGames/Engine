@@ -29,9 +29,9 @@ public interface GraphicsBackend {
 
     void removeRenderGraph(RenderGraph renderGraph);
 
-    Future<Void> submitTask(Runnable runnable);
+    Future<?> runLater(Runnable runnable);
 
-    <V> Future<V> submitTask(Callable<V> callable);
+    <V> Future<V> runLater(Callable<V> callable);
 
     void render(float tpf);
 
