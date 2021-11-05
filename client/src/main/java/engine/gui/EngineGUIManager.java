@@ -1,6 +1,7 @@
 package engine.gui;
 
 import engine.client.hud.HUDManager;
+import engine.graphics.GraphicsEngine;
 import engine.graphics.display.Window;
 import engine.gui.stage.Stage;
 import engine.util.UndoHistory;
@@ -50,10 +51,10 @@ public final class EngineGUIManager implements GUIManager {
         stage.setScene(scene);
         if (scene == null) {
             hudManager.setVisible(true);
-            window.getCursor().disableCursor();
+            GraphicsEngine.getGraphicsBackend().runLater(() -> window.getCursor().disableCursor());
         } else {
             hudManager.setVisible(false);
-            window.getCursor().showCursor();
+            GraphicsEngine.getGraphicsBackend().runLater(() -> window.getCursor().showCursor());
         }
     }
 
