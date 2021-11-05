@@ -11,7 +11,6 @@ import engine.input.KeyCode;
 import engine.input.Modifiers;
 import engine.input.MouseButton;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.commons.lang3.Validate;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.system.MemoryUtil;
@@ -64,7 +63,7 @@ public class GLFWWindow implements Window {
     private CursorState cursorState = CursorState.NORMAL;
     private CursorShape cursorShape = CursorShape.NORMAL;
 
-    private long cursorPointer = MemoryUtil.NULL;
+    private long cursorPointer;
 
     private final List<KeyCallback> keyCallbacks = new LinkedList<>();
     private final List<MouseCallback> mouseCallbacks = new LinkedList<>();
@@ -476,7 +475,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void setCursorState(CursorState state) {
-        this.cursorState = Validate.notNull(state);
+        this.cursorState = notNull(state);
         glfwSetInputMode(pointer, GLFW_CURSOR, GLFW_CURSOR_STATES[state.ordinal()]);
     }
 
@@ -487,12 +486,12 @@ public class GLFWWindow implements Window {
 
     @Override
     public void setCursorShape(CursorShape shape) {
-        cursorShape = Validate.notNull(shape);
-        if (cursorPointer != MemoryUtil.NULL) {
+        cursorShape = notNull(shape);
+        if (cursorPointer != NULL) {
             glfwDestroyCursor(cursorPointer);
         }
         if (shape == CursorShape.NORMAL) {
-            cursorPointer = MemoryUtil.NULL;
+            cursorPointer = NULL;
         } else {
             cursorPointer = glfwCreateStandardCursor(GLFW_CURSOR_SHAPES[shape.ordinal()]);
         }
