@@ -6,11 +6,11 @@ import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture2D;
 import engine.math.Math2;
 import org.joml.Vector4f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.stb.STBTTPackContext;
 import org.lwjgl.stb.STBTTPackRange;
 import org.lwjgl.stb.STBTTPackedchar;
+import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -76,16 +76,18 @@ public final class FontPlaneTexture {
         this.font = font;
         this.fontInfo = fontInfo;
         charQuads.clear();
-        var blockSize = blocks.stream().mapToInt(UnicodeBlockWrapper::getBlockSize).sum();
-        int bitmapSize = getBitmapSize(font.getSize(), blockSize);
+
+        int bitmapSize = getBitmapSize(font.getSize());
         ByteBuffer bitmap = ByteBuffer.allocateDirect(bitmapSize * bitmapSize);
-        try (var context = STBTTPackContext.malloc()) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            var context = STBTTPackContext.mallocStack(stack);
+
             var ranges = STBTTPackRange.malloc(blocks.size());
             for (Character.UnicodeBlock block : blocks) {
                 var range = STBTTPackRange.malloc();
-                var blockSize1 = UnicodeBlockWrapper.getBlockSize(block);
-                var charBuffer = STBTTPackedchar.malloc(blockSize1);
-                range.set(font.getSize(), UnicodeBlockWrapper.getRange(block).lowerEndpoint(), null, blockSize1, charBuffer, (byte) 1, (byte) 1);
+                var blockSize = UnicodeBlockWrapper.getBlockSize(block);
+                var charBuffer = STBTTPackedchar.malloc(blockSize);
+                range.set(font.getSize(), UnicodeBlockWrapper.getRange(block).lowerEndpoint(), null, blockSize, charBuffer, (byte) 1, (byte) 1);
                 ranges.put(range);
             }
             ranges.flip();
@@ -94,27 +96,31 @@ public final class FontPlaneTexture {
             stbtt_PackEnd(context);
 
             texture = Texture2D.builder().format(ColorFormat.RED8).magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR).build(bitmap, bitmapSize, bitmapSize);
-            STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack();
+
+            STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
+            FloatBuffer posX = stack.mallocFloat(1);
+            FloatBuffer posY = stack.mallocFloat(1);
             for (int i = 0; i < blocks.size(); i++) {
-                FloatBuffer posX = BufferUtils.createFloatBuffer(1);
-                FloatBuffer posY = BufferUtils.createFloatBuffer(1);
-                posY.put(0, font.getSize());
                 var startPoint = UnicodeBlockWrapper.getRange(blocks.get(i)).lowerEndpoint();
                 var cdata = ranges.get(i).chardata_for_range();
                 for (int j = 0; j < UnicodeBlockWrapper.getBlockSize(blocks.get(i)); j++) {
+                    posX.put(0, 0);
+                    posY.put(0, font.getSize());
                     stbtt_GetPackedQuad(cdata, bitmapSize, bitmapSize, j, posX, posY, stbQuad, false);
                     var quads = new Vector4f(stbQuad.x0(), stbQuad.y0(), stbQuad.x1(), stbQuad.y1());
                     var tex = new Vector4f(stbQuad.s0(), stbQuad.t0(), stbQuad.s1(), stbQuad.t1());
                     charQuads.put((char) (startPoint + j), new CharQuad((char) (startPoint + j), quads, tex, posX.get(0)));
-                    posX.put(0, 0);
-                    posY.put(0, font.getSize());
                 }
             }
         }
         dirty = false;
     }
 
-    private int getBitmapSize(float size, int countOfChar) {
+    private int getBitmapSize(float size) {
+        int countOfChar = 0;
+        for (Character.UnicodeBlock block : blocks) {
+            countOfChar += UnicodeBlockWrapper.getBlockSize(block);
+        }
         return Math2.ceilPowerOfTwo((int) Math.ceil(size * Math.sqrt(countOfChar)));
     }
 
