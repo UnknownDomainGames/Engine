@@ -1,15 +1,13 @@
 package engine.state;
 
-public interface StateIncludedRegistry<S extends State> {
+import engine.registry.Registrable;
+import engine.registry.Registry;
 
-    /**
-     * (Re)construct a id-to-state mapping for the registry
-     * should call this just after register process is done
-     * Client side should additionally call this after registry synchronization
-     */
-    void reconstructStateId();
+public interface StateIncludedRegistry<T extends Registrable<T>, S extends State<T, S>> extends Registry<T> {
 
     int getStateId(S state);
+
+    void setStateId(S state, int id);
 
     S getStateFromId(int id);
 }

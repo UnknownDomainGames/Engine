@@ -101,8 +101,6 @@ public class EngineServerImpl extends EngineBase implements EngineServer {
     protected void finishStage() {
         super.finishStage();
 
-        Registries.getBlockRegistry().reconstructStateId(); //TODO: any better place?
-
         ticker = new Ticker(this::serverTick, partial -> {
         }, 20);
     }

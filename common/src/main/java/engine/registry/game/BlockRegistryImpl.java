@@ -1,22 +1,18 @@
 package engine.registry.game;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import engine.block.Block;
 import engine.block.state.BlockState;
-import engine.registry.impl.SynchronizableIdRegistry;
-import engine.server.network.packet.PacketSyncRegistry;
+import engine.registry.impl.SynchronizableStateIdRegistry;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public final class BlockRegistryImpl extends SynchronizableIdRegistry<Block> implements BlockRegistry {
+public final class BlockRegistryImpl extends SynchronizableStateIdRegistry<Block, BlockState> implements BlockRegistry {
 
     private Block air;
 
     public BlockRegistryImpl() {
-        super(Block.class);
+        super(Block.class, BlockState.class);
     }
 
     @Nonnull
@@ -34,38 +30,13 @@ public final class BlockRegistryImpl extends SynchronizableIdRegistry<Block> imp
     }
 
     @Override
-    public void handleRegistrySync(PacketSyncRegistry packet) {
-        packet.getIdMap().forEach((key, value) -> {
-            Block block = getValue(key);
-            if (block != null) setId(block, value);
-        });
-    }
-
-    private BiMap<Integer, BlockState> stateIdMap;
-
-    @Override
-    public void reconstructStateId() {
-        if (stateIdMap == null) {
-            stateIdMap = HashBiMap.create();
-        }
-        stateIdMap.clear();
-        AtomicInteger i = new AtomicInteger();
-        getValues().forEach(block -> block.getStateManager().getStates().forEach(state -> stateIdMap.put(i.getAndIncrement(), state)));
+    public String serializeState(BlockState state) {
+        return state.toStorageString();
     }
 
     @Override
-    public int getStateId(BlockState state) {
-        if (stateIdMap == null) {
-            throw new IllegalStateException("try getting state id before mapping is constructed");
-        }
-        return stateIdMap.inverse().get(state);
+    public BlockState deserializeState(String state) {
+        return getValue(BlockState.getBlockNameFromStorageString(state)).getStateManager().getDefaultState().fromStorageString(state);
     }
 
-    @Override
-    public BlockState getStateFromId(int id) {
-        if (stateIdMap == null) {
-            throw new IllegalStateException("try getting state before mapping is constructed");
-        }
-        return stateIdMap.get(id);
-    }
 }

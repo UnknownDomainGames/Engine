@@ -190,8 +190,6 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
     protected void finishStage() {
         super.finishStage();
 
-        Registries.getBlockRegistry().reconstructStateId(); //TODO: any better place?
-
         ticker = new Ticker(this::clientTick, partial -> graphicsManager.doRender(partial), Ticker.CLIENT_TICK);
     }
 

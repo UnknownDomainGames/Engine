@@ -20,7 +20,7 @@ import engine.server.network.packet.s2c.PacketLoginSuccess;
 public class ServerHandlingListeners {
 
     @Listener
-    public static void onClientHandshake(PacketReceivedEvent<PacketHandshake> event){
+    public static void onClientHandshake(PacketReceivedEvent<PacketHandshake> event) {
         if (event.getHandler().getStatus() == ConnectionStatus.HANDSHAKE) {
             if (event.getPacket().getWantedStatus() == ConnectionStatus.LOGIN) {
                 if (!event.getHandler().isLocal()) {
@@ -49,9 +49,9 @@ public class ServerHandlingListeners {
                 //TODO: straight to game_prepare
                 var playerManager = ((GameServerFullAsync) Platform.getEngine().getCurrentLogicGame()).getPlayerManager();
                 var player = playerManager.createPlayer(event.getHandler(), ((ServerLoginNetworkHandlerContext) event.getHandler().getContext()).getProfile());
-                event.getHandler().sendPacket(new PacketSyncRegistry(Registries.getBlockRegistry()));
-                event.getHandler().sendPacket(new PacketSyncRegistry(Registries.getItemRegistry()));
-                event.getHandler().sendPacket(new PacketSyncRegistry(Registries.getRegistryManager().getRegistry(PacketProvider.class).get()));
+                event.getHandler().sendPacket(new PacketSyncRegistry(Registries.getBlockRegistry(), PacketSyncRegistry.Target.STATE_ID));
+                event.getHandler().sendPacket(new PacketSyncRegistry(Registries.getItemRegistry(), PacketSyncRegistry.Target.REGISTRY_ID));
+                event.getHandler().sendPacket(new PacketSyncRegistry(Registries.getRegistryManager().getRegistry(PacketProvider.class).get(), PacketSyncRegistry.Target.REGISTRY_ID));
                 event.getHandler().setStatus(ConnectionStatus.GAMEPLAY, new ServerGameplayNetworkHandlerContext(player));
                 playerManager.onPlayerConnect(event.getHandler(), player);
             } else {

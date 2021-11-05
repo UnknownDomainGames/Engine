@@ -31,10 +31,8 @@ public class SynchronizableIdRegistry<T extends Registrable<T>> extends IdAutoIn
     }
 
     @Override
-    public void sync(Map<String, Integer> map) {
-        if (getEntries().size() != map.size())
-            throw new IllegalArgumentException("Sync map size does not match with size of registered objects");
-        syncedMapping.putAll(map);
+    public void sync(String key, int id) {
+        syncedMapping.put(key, id);
     }
 
     @Override
