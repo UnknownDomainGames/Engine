@@ -23,20 +23,20 @@ public final class STBTTFontHelper {
         if (nm == NULL) return new TTFontNameTable(List.of());
 
         List<TTFontNameEntry> entries = new ArrayList<>();
-        int count = ttGetUShort(data + nm + 2);
-        long stringOffset = nm + ttGetUShort(data + nm + 4);
+        int count = memGetUShort(data + nm + 2);
+        long stringOffset = nm + memGetUShort(data + nm + 4);
         for (int i = 0; i < count; i++) {
             long loc = nm + 6 + 12 * i;
-            int platform = ttGetUShort(data + loc);
-            int encoding = ttGetUShort(data + loc + 2);
+            int platform = memGetUShort(data + loc);
+            int encoding = memGetUShort(data + loc + 2);
             if (encoding != STBTTFontManager.ENCODING_ID) {
                 // No need to load others encoding.
                 continue;
             }
-            int language = ttGetUShort(data + loc + 4);
-            int name = ttGetUShort(data + loc + 6);
-            int length = ttGetUShort(data + loc + 8);
-            long stringPtr = data + stringOffset + ttGetUShort(data + loc + 10);
+            int language = memGetUShort(data + loc + 4);
+            int name = memGetUShort(data + loc + 6);
+            int length = memGetUShort(data + loc + 8);
+            long stringPtr = data + stringOffset + memGetUShort(data + loc + 10);
             byte[] bytes = BufferUtils.getRemainingBytes(memByteBuffer(stringPtr, length).order(ByteOrder.BIG_ENDIAN));
             String string = new String(bytes, StandardCharsets.UTF_16BE);
             entries.add(new TTFontNameEntry(platform, encoding, language, name, string));
@@ -44,20 +44,13 @@ public final class STBTTFontHelper {
         return new TTFontNameTable(List.copyOf(entries));
     }
 
-    public static long stbtt__find_table(STBTTFontinfo fontInfo, String table) {
-        long address = fontInfo.address();
-        long data = memGetLong(address + 8);
-        int fontStart = memGetInt(address + 16);
-        return stbtt__find_table(data, fontStart, table);
-    }
-
     private static long stbtt__find_table(long data, int fontStart, String table) {
-        int num_tables = ttGetUShort(data + fontStart + 4);
+        int num_tables = memGetUShort(data + fontStart + 4);
         long tabledir = fontStart + 12;
         for (int i = 0; i < num_tables; i++) {
             long loc = tabledir + 16 * i;
             if (stbtt_tag(data + loc, table)) {
-                return ttGetUInt(data + loc + 8);
+                return memGetUInt(data + loc + 8);
             }
         }
         return NULL;
@@ -71,12 +64,13 @@ public final class STBTTFontHelper {
         return memGetByte(ptr) & 0xff;
     }
 
-    private static int ttGetUShort(long ptr) {
+    private static int memGetUShort(long ptr) {
         return (memGetUByte(ptr) << 8) + memGetUByte(ptr + 1);
     }
 
-    private static long ttGetUInt(long ptr) {
-        return (((long) memGetUByte(ptr)) << 24L) + (memGetUByte(ptr + 1) << 16L) + (memGetUByte(ptr + 2) << 8L) + memGetUByte(ptr + 3);
+    private static long memGetUInt(long ptr) {
+        return ((long) memGetUByte(ptr) << 24) + ((long) memGetUByte(ptr + 1) << 16) +
+                ((long) memGetUByte(ptr + 2) << 8) + memGetUByte(ptr + 3);
     }
 
 //    struct stbtt_fontinfo
