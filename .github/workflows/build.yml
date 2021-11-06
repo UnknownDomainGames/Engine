@@ -9,8 +9,8 @@ on:
       - created
 
 jobs:
-  build:
-    name: Build
+  build_client:
+    name: Build Client
     strategy:
       fail-fast: false
       matrix:
@@ -37,10 +37,7 @@ jobs:
           FORCE_LWJGL_NATIVE: ${{ matrix.lwjgl_natives }}
         run: |
           chmod +x ./gradlew
-          ./gradlew build
-
-          mkdir artifact_jars
-          cp **/build/libs/* artifact_jars/
+          ./gradlew :client:build
 
       - name: Upload Artifact ZIP
         uses: actions/upload-artifact@v2.2.4
@@ -54,15 +51,49 @@ jobs:
           name: client-${{ matrix.lwjgl_natives }}.tar
           path: client/build/distributions/*.tar
 
-      - name: Upload Artifact JARs
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: Other Libraries
-          path: artifact_jars/*
-
       - name: Upload Release
         uses: fnkr/github-action-ghr@v1
         if: github.event_name == 'release'
         env:
           GHR_PATH: client/build/distributions/
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+  build_server:
+    name: Build Server
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v2.3.1
+        with:
+          java-version: 11
+          distribution: adopt
+          cache: gradle
+
+      - name: Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew :server:build
+
+      - name: Upload Artifact ZIP
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: server.zip
+          path: server/build/distributions/*.zip
+
+      - name: Upload Artifact TAR
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: server.tar
+          path: server/build/distributions/*.tar
+
+      - name: Upload Release
+        uses: fnkr/github-action-ghr@v1
+        if: github.event_name == 'release'
+        env:
+          GHR_PATH: server/build/distributions/
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
