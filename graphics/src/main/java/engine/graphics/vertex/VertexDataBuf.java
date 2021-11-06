@@ -17,9 +17,9 @@ public abstract class VertexDataBuf {
 
     protected ByteBuffer byteBuffer;
 
-    protected float translationX;
-    protected float translationY;
-    protected float translationZ;
+    protected float transX;
+    protected float transY;
+    protected float transZ;
 
     private VertexFormat vertexFormat;
 
@@ -74,7 +74,6 @@ public abstract class VertexDataBuf {
         }
         vertexFormat = notNull(format);
         byteBuffer.clear();
-        setTranslation(0, 0, 0);
         ensureRemaining(format.getBytes());
         ready = false;
     }
@@ -226,17 +225,17 @@ public abstract class VertexDataBuf {
     }
 
     public VertexDataBuf setTranslation(float x, float y, float z) {
-        translationX = x;
-        translationY = y;
-        translationZ = z;
+        transX = x;
+        transY = y;
+        transZ = z;
         return this;
     }
 
     public VertexDataBuf pos(float x, float y, float z) {
         if (vertexFormat.isUsingPosition()) {
-            byteBuffer.putFloat(x + translationX);
-            byteBuffer.putFloat(y + translationY);
-            byteBuffer.putFloat(z + translationZ);
+            byteBuffer.putFloat(x + transX);
+            byteBuffer.putFloat(y + transY);
+            byteBuffer.putFloat(z + transZ);
         }
         return this;
     }
