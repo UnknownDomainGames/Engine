@@ -5,7 +5,7 @@ plugins {
 dependencies {
     api project(':base')
 
-    api 'com.github.oshi:oshi-core:5.8.2'
+    api 'com.github.oshi:oshi-core:5.8.3'
     api 'org.joml:joml:1.9.20'
     api 'com.github.Mouse0w0:Observable:1.4.0'
 
