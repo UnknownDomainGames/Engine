@@ -46,6 +46,7 @@ public final class GLRenderer implements Renderer {
 
     @Override
     public void drawMesh(Mesh mesh, int first, int count) {
+        if (count == 0) return;
         ((GLMesh) mesh).draw(first, count);
     }
 
@@ -56,6 +57,7 @@ public final class GLRenderer implements Renderer {
 
     @Override
     public void drawStreamed(DrawMode drawMode, VertexDataBuf buf, int first, int count) {
+        if (count == 0) return;
         streamedMesh.uploadData(buf);
         streamedMesh.setDrawMode(drawMode);
         streamedMesh.draw(first, count);
