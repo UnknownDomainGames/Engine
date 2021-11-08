@@ -6,9 +6,9 @@ import engine.graphics.graph.*;
 import engine.graphics.texture.FrameBuffer;
 import engine.graphics.util.BlendMode;
 import engine.graphics.util.CullMode;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL40;
+import org.lwjgl.opengl.GL11C;
+import org.lwjgl.opengl.GL30C;
+import org.lwjgl.opengl.GL40C;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,18 +105,18 @@ public final class GLRenderPass implements RenderPass {
             ColorOutput colorOutput = colorOutputs[i];
             ColorOutputInfo info = colorOutput.info;
             GLRenderBufferProxy renderBuffer = colorOutput.renderBuffer;
-            if (resized) frameBuffer.attach(GL30.GL_COLOR_ATTACHMENT0 + i, renderBuffer.getTexture());
-            drawbuffers[i] = GL30.GL_COLOR_ATTACHMENT0 + i;
-            if (info.isClear()) GL30.glClearBufferfv(GL11.GL_COLOR, i, info.getClearColor().toRGBAFloatArray());
+            if (resized) frameBuffer.attach(GL30C.GL_COLOR_ATTACHMENT0 + i, renderBuffer.getTexture());
+            drawbuffers[i] = GL30C.GL_COLOR_ATTACHMENT0 + i;
+            if (info.isClear()) GL30C.glClearBufferfv(GL11C.GL_COLOR, i, info.getClearColor().toRGBAFloatArray());
             setupBufferBlend(i, colorOutput.info.getBlendMode());
         }
-        GL30.glDrawBuffers(drawbuffers);
+        GL30C.glDrawBuffers(drawbuffers);
 
         if (depthOutput != null) {
             DepthOutputInfo info = depthOutput.info;
             GLRenderBufferProxy renderBuffer = depthOutput.renderBuffer;
-            if (resized) frameBuffer.attach(GL30.GL_DEPTH_ATTACHMENT, renderBuffer.getTexture());
-            if (info.isClear()) GL30.glClearBufferfv(GL11.GL_DEPTH, 0, new float[]{info.getClearValue()});
+            if (resized) frameBuffer.attach(GL30C.GL_DEPTH_ATTACHMENT, renderBuffer.getTexture());
+            if (info.isClear()) GL30C.glClearBufferfv(GL11C.GL_DEPTH, 0, new float[]{info.getClearValue()});
         }
     }
 
@@ -124,34 +124,34 @@ public final class GLRenderPass implements RenderPass {
         if (!enableBlend) return;
         switch (blendMode) {
             case DISABLED:
-                GL40.glBlendFunci(buffer, GL11.GL_ONE, GL11.GL_ZERO);
+                GL40C.glBlendFunci(buffer, GL11C.GL_ONE, GL11C.GL_ZERO);
                 break;
             case MIX:
-                GL40.glBlendFunci(buffer, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GL40C.glBlendFunci(buffer, GL11C.GL_SRC_ALPHA, GL11C.GL_ONE_MINUS_SRC_ALPHA);
                 break;
         }
     }
 
     private void setupViewport() {
-        GL11.glViewport(0, 0, frameBuffer.getWidth(), frameBuffer.getHeight());
+        GL11C.glViewport(0, 0, frameBuffer.getWidth(), frameBuffer.getHeight());
     }
 
     private void setupCullMode(CullMode cullMode) {
         switch (cullMode) {
             case DISABLED:
-                GL11.glDisable(GL11.GL_CULL_FACE);
+                GL11C.glDisable(GL11C.GL_CULL_FACE);
                 break;
             case CULL_FRONT:
-                GL11.glEnable(GL11.GL_CULL_FACE);
-                GL11.glCullFace(GL11.GL_FRONT);
+                GL11C.glEnable(GL11C.GL_CULL_FACE);
+                GL11C.glCullFace(GL11C.GL_FRONT);
                 break;
             case CULL_BACK:
-                GL11.glEnable(GL11.GL_CULL_FACE);
-                GL11.glCullFace(GL11.GL_BACK);
+                GL11C.glEnable(GL11C.GL_CULL_FACE);
+                GL11C.glCullFace(GL11C.GL_BACK);
                 break;
             case CULL_ALL:
-                GL11.glEnable(GL11.GL_CULL_FACE);
-                GL11.glCullFace(GL11.GL_FRONT_AND_BACK);
+                GL11C.glEnable(GL11C.GL_CULL_FACE);
+                GL11C.glCullFace(GL11C.GL_FRONT_AND_BACK);
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -160,19 +160,19 @@ public final class GLRenderPass implements RenderPass {
 
     private void setupDepthTest(DepthOutputInfo depthOutput) {
         if (depthOutput != null && depthOutput.isEnable()) {
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-            GL11.glDepthMask(depthOutput.isWritable());
-            GL11.glDepthFunc(GLHelper.toGLCompareFunc(depthOutput.getCompareMode()));
+            GL11C.glEnable(GL11C.GL_DEPTH_TEST);
+            GL11C.glDepthMask(depthOutput.isWritable());
+            GL11C.glDepthFunc(GLHelper.toGLCompareFunc(depthOutput.getCompareMode()));
         } else {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11C.glDisable(GL11C.GL_DEPTH_TEST);
         }
     }
 
     private void setupBlend() {
         if (enableBlend) {
-            GL11.glEnable(GL11.GL_BLEND);
+            GL11C.glEnable(GL11C.GL_BLEND);
         } else {
-            GL11.glDisable(GL11.GL_BLEND);
+            GL11C.glDisable(GL11C.GL_BLEND);
         }
     }
 

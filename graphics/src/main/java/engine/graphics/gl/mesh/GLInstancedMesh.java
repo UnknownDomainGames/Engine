@@ -8,7 +8,7 @@ import engine.graphics.util.DrawMode;
 import engine.graphics.util.StructDefinition;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
-import org.lwjgl.opengl.GL31;
+import org.lwjgl.opengl.GL31C;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -31,9 +31,9 @@ public final class GLInstancedMesh<E> extends GLMultiBufMesh implements Instance
     public void draw(int start, int count) {
         bind();
         if (isDrawIndexed()) {
-            GL31.glDrawElementsInstanced(drawMode.gl, count, indices.getGLType(), start, instancedAttribute.size());
+            GL31C.glDrawElementsInstanced(drawMode.gl, count, indices.getGLType(), start, instancedAttribute.size());
         } else {
-            GL31.glDrawArraysInstanced(drawMode.gl, start, count, instancedAttribute.size());
+            GL31C.glDrawArraysInstanced(drawMode.gl, start, count, instancedAttribute.size());
         }
     }
 

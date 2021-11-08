@@ -4,12 +4,10 @@ import engine.graphics.gl.util.GLHelper;
 import engine.graphics.image.ReadOnlyImage;
 import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.Texture2D;
-import org.lwjgl.opengl.GL32;
-import org.lwjgl.opengl.GL45;
+import org.lwjgl.opengl.GL32C;
+import org.lwjgl.opengl.GL45C;
 
 import java.nio.ByteBuffer;
-
-import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 
 public final class GLTexture2DMultiSample extends GLTexture implements Texture2D, GLFrameBuffer.Attachable {
 
@@ -24,15 +22,15 @@ public final class GLTexture2DMultiSample extends GLTexture implements Texture2D
     }
 
     private GLTexture2DMultiSample(GLColorFormat format, int width, int height, int samples, boolean fixedSampleLocations) {
-        super(GL_TEXTURE_2D_MULTISAMPLE, format);
+        super(GL32C.GL_TEXTURE_2D_MULTISAMPLE, format);
         this.width = width;
         this.height = height;
         this.samples = samples;
         this.fixedSampleLocations = fixedSampleLocations;
         if (GLHelper.isSupportARBDirectStateAccess()) {
-            GL45.glTexStorage2DMultisample(id, this.samples, format.internalFormat, width, height, this.fixedSampleLocations);
+            GL45C.glTexStorage2DMultisample(id, this.samples, format.internalFormat, width, height, this.fixedSampleLocations);
         } else {
-            GL32.glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, this.samples, format.internalFormat, width, height, this.fixedSampleLocations);
+            GL32C.glTexImage2DMultisample(GL32C.GL_TEXTURE_2D_MULTISAMPLE, this.samples, format.internalFormat, width, height, this.fixedSampleLocations);
         }
     }
 

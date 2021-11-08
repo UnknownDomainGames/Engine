@@ -1,16 +1,17 @@
 package engine.graphics.gl.texture;
 
 import engine.graphics.gl.util.GLCleaner;
+import engine.graphics.gl.util.GLHelper;
 import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.FrameBuffer;
 import engine.graphics.util.Cleaner;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL32;
-import org.lwjgl.opengl.GL45;
+import org.lwjgl.opengl.GL11C;
+import org.lwjgl.opengl.GL30C;
+import org.lwjgl.opengl.GL32C;
+import org.lwjgl.opengl.GL45C;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -18,7 +19,6 @@ import java.util.Map;
 
 import static engine.graphics.gl.texture.GLTexture.toGLFilterMode;
 import static engine.graphics.gl.util.GLHelper.getMask;
-import static engine.graphics.gl.util.GLHelper.isSupportARBDirectStateAccess;
 
 public class GLFrameBuffer implements FrameBuffer {
 
@@ -37,10 +37,10 @@ public class GLFrameBuffer implements FrameBuffer {
     }
 
     public GLFrameBuffer() {
-        if (isSupportARBDirectStateAccess()) {
-            this.id = GL45.glCreateFramebuffers();
+        if (GLHelper.isSupportARBDirectStateAccess()) {
+            this.id = GL45C.glCreateFramebuffers();
         } else {
-            this.id = GL30.glGenFramebuffers();
+            this.id = GL30C.glGenFramebuffers();
         }
         this.disposable = GLCleaner.registerFrameBuffer(this, id);
         this.attachments = new HashMap<>();
@@ -71,11 +71,11 @@ public class GLFrameBuffer implements FrameBuffer {
     }
 
     public void attach(int attachment, Attachable attachable) {
-        if (isSupportARBDirectStateAccess()) {
-            GL45.glNamedFramebufferTexture(id, attachment, attachable.getId(), 0);
+        if (GLHelper.isSupportARBDirectStateAccess()) {
+            GL45C.glNamedFramebufferTexture(id, attachment, attachable.getId(), 0);
         } else {
             bind();
-            GL32.glFramebufferTexture(GL30.GL_FRAMEBUFFER, attachment, attachable.getId(), 0);
+            GL32C.glFramebufferTexture(GL30C.GL_FRAMEBUFFER, attachment, attachable.getId(), 0);
         }
         attachments.put(attachment, attachable);
         if (attachable.getWidth() < width) width = attachable.getWidth();
@@ -90,17 +90,17 @@ public class GLFrameBuffer implements FrameBuffer {
 
     @Override
     public void bind() {
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, id);
+        GL30C.glBindFramebuffer(GL30C.GL_FRAMEBUFFER, id);
     }
 
     @Override
     public void bindReadOnly() {
-        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, id);
+        GL30C.glBindFramebuffer(GL30C.GL_READ_FRAMEBUFFER, id);
     }
 
     @Override
     public void bindDrawOnly() {
-        GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, id);
+        GL30C.glBindFramebuffer(GL30C.GL_DRAW_FRAMEBUFFER, id);
     }
 
     @Override
@@ -127,7 +127,7 @@ public class GLFrameBuffer implements FrameBuffer {
     public void readPixels(int x, int y, int width, int height, ColorFormat format, ByteBuffer pixels) {
         GLColorFormat glFormat = GLColorFormat.valueOf(format);
         bindReadOnly();
-        GL11.glReadPixels(x, y, width, height, glFormat.format, glFormat.type, pixels);
+        GL11C.glReadPixels(x, y, width, height, glFormat.format, glFormat.type, pixels);
     }
 
     public static void copy(FrameBuffer src, Vector4ic srcRect, FrameBuffer dest, Vector4ic destRect,
@@ -136,13 +136,13 @@ public class GLFrameBuffer implements FrameBuffer {
     }
 
     public static void copy(FrameBuffer src, Vector4ic srcRect, FrameBuffer dest, Vector4ic destRect, int mask, int filter) {
-        if (isSupportARBDirectStateAccess()) {
-            GL45.glBlitNamedFramebuffer((int) src.getId(), (int) dest.getId(), srcRect.x(), srcRect.y(), srcRect.z(), srcRect.w(),
+        if (GLHelper.isSupportARBDirectStateAccess()) {
+            GL45C.glBlitNamedFramebuffer((int) src.getId(), (int) dest.getId(), srcRect.x(), srcRect.y(), srcRect.z(), srcRect.w(),
                     destRect.x(), destRect.y(), destRect.z(), destRect.w(), mask, filter);
         } else {
             src.bindReadOnly();
             dest.bindDrawOnly();
-            GL30.glBlitFramebuffer(srcRect.x(), srcRect.y(), srcRect.z(), srcRect.w(),
+            GL30C.glBlitFramebuffer(srcRect.x(), srcRect.y(), srcRect.z(), srcRect.w(),
                     destRect.x(), destRect.y(), destRect.z(), destRect.w(), mask, filter);
         }
     }

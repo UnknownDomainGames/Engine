@@ -40,8 +40,8 @@ import engine.gui.internal.impl.graphics.StageDrawDispatcher;
 import engine.math.BlockPos;
 import engine.util.Color;
 import engine.util.RuntimeEnvironment;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL42;
+import org.lwjgl.opengl.GL15C;
+import org.lwjgl.opengl.GL42C;
 
 import static engine.graphics.graph.ColorOutputInfo.colorOutput;
 import static engine.graphics.graph.DepthOutputInfo.depthOutput;
@@ -220,10 +220,10 @@ public final class EngineGraphicsManager implements GraphicsManager {
                 viewport.getScene().doUpdate(frame.getTimeToLastUpdate());
 
                 atomicCounterBuffer.bind();
-                var mapBuffer = GL15.glMapBuffer(GL42.GL_ATOMIC_COUNTER_BUFFER, GL15.GL_WRITE_ONLY);
+                var mapBuffer = GL15C.glMapBuffer(GL42C.GL_ATOMIC_COUNTER_BUFFER, GL15C.GL_WRITE_ONLY);
                 mapBuffer.putInt(0);
                 mapBuffer.flip();
-                GL15.glUnmapBuffer(GL42.GL_ATOMIC_COUNTER_BUFFER);
+                GL15C.glUnmapBuffer(GL42C.GL_ATOMIC_COUNTER_BUFFER);
                 atomicCounterBuffer.unbind();
 //                atomicCounterBuffer.uploadData(new int[]{0});
                 headerClearBuffer.bind();

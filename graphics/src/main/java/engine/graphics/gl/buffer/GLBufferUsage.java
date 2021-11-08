@@ -1,6 +1,6 @@
 package engine.graphics.gl.buffer;
 
-import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL15C.*;
 
 public enum GLBufferUsage {
     STREAM_DRAW(GL_STREAM_DRAW),

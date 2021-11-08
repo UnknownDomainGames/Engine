@@ -5,10 +5,7 @@ import engine.graphics.util.DepthCompareMode;
 import engine.graphics.util.GPUVendor;
 import org.lwjgl.opengl.*;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.GL_COMPARE_R_TO_TEXTURE;
-import static org.lwjgl.opengl.GL30.GL_HALF_FLOAT;
-import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
+import static org.lwjgl.opengl.GL14.GL_COMPARE_R_TO_TEXTURE;
 
 public final class GLHelper {
 
@@ -92,32 +89,32 @@ public final class GLHelper {
 
     public static int getMask(boolean color, boolean depth, boolean stencil) {
         int mask = 0;
-        if (color) mask |= GL_COLOR_BUFFER_BIT;
-        if (depth) mask |= GL_DEPTH_BUFFER_BIT;
-        if (stencil) mask |= GL_STENCIL_BUFFER_BIT;
+        if (color) mask |= GL11C.GL_COLOR_BUFFER_BIT;
+        if (depth) mask |= GL11C.GL_DEPTH_BUFFER_BIT;
+        if (stencil) mask |= GL11C.GL_STENCIL_BUFFER_BIT;
         return mask;
     }
 
     public static int toGLDataType(DataType type) {
         switch (type) {
             case BYTE:
-                return GL_BYTE;
+                return GL11C.GL_BYTE;
             case UNSIGNED_BYTE:
-                return GL_UNSIGNED_BYTE;
+                return GL11C.GL_UNSIGNED_BYTE;
             case SHORT:
-                return GL_SHORT;
+                return GL11C.GL_SHORT;
             case UNSIGNED_SHORT:
-                return GL_UNSIGNED_SHORT;
+                return GL11C.GL_UNSIGNED_SHORT;
             case INT:
-                return GL_INT;
+                return GL11C.GL_INT;
             case UNSIGNED_INT:
-                return GL_UNSIGNED_INT;
+                return GL11C.GL_UNSIGNED_INT;
             case FLOAT:
-                return GL_FLOAT;
+                return GL11C.GL_FLOAT;
             case DOUBLE:
-                return GL_DOUBLE;
+                return GL11C.GL_DOUBLE;
             case HALF_FLOAT:
-                return GL_HALF_FLOAT;
+                return GL30C.GL_HALF_FLOAT;
             default:
                 throw new IllegalArgumentException();
         }
@@ -129,21 +126,21 @@ public final class GLHelper {
 
     public static String getFriendlyErrorMessage(int error) {
         switch (error) {
-            case GL_NO_ERROR:
+            case GL11C.GL_NO_ERROR:
                 return "NO_ERROR";
-            case GL_INVALID_ENUM:
+            case GL11C.GL_INVALID_ENUM:
                 return "INVALID_ENUM";
-            case GL_INVALID_VALUE:
+            case GL11C.GL_INVALID_VALUE:
                 return "INVALID_VALUE";
-            case GL_INVALID_OPERATION:
+            case GL11C.GL_INVALID_OPERATION:
                 return "INVALID_OPERATION";
-            case GL_STACK_OVERFLOW:
+            case GL11C.GL_STACK_OVERFLOW:
                 return "STACK_OVERFLOW";
-            case GL_STACK_UNDERFLOW:
+            case GL11C.GL_STACK_UNDERFLOW:
                 return "STACK_UNDERFLOW";
-            case GL_OUT_OF_MEMORY:
+            case GL11C.GL_OUT_OF_MEMORY:
                 return "OUT_OF_MEMORY";
-            case GL_INVALID_FRAMEBUFFER_OPERATION:
+            case GL30C.GL_INVALID_FRAMEBUFFER_OPERATION:
                 return "INVALID_FRAMEBUFFER_OPERATION";
             default:
                 throw new IllegalArgumentException("Unknown error code");
@@ -151,29 +148,29 @@ public final class GLHelper {
     }
 
     public static int toGLCompareMode(DepthCompareMode depthCompareMode) {
-        return depthCompareMode != DepthCompareMode.NONE ? GL_COMPARE_R_TO_TEXTURE : GL_NONE;
+        return depthCompareMode != DepthCompareMode.NONE ? GL_COMPARE_R_TO_TEXTURE : GL11C.GL_NONE;
     }
 
     public static int toGLCompareFunc(DepthCompareMode depthCompareMode) {
         switch (depthCompareMode) {
             case NONE:
-                return GL_NONE;
+                return GL11C.GL_NONE;
             case LESS_OR_EQUAL:
-                return GL_LEQUAL;
+                return GL11C.GL_LEQUAL;
             case LESS:
-                return GL_LESS;
+                return GL11C.GL_LESS;
             case EQUAL:
-                return GL_EQUAL;
+                return GL11C.GL_EQUAL;
             case NEVER:
-                return GL_NEVER;
+                return GL11C.GL_NEVER;
             case ALWAYS:
-                return GL_ALWAYS;
+                return GL11C.GL_ALWAYS;
             case GREATER:
-                return GL_GREATER;
+                return GL11C.GL_GREATER;
             case NOT_EQUAL:
-                return GL_NOTEQUAL;
+                return GL11C.GL_NOTEQUAL;
             case GREATER_OR_EQUAL:
-                return GL_GEQUAL;
+                return GL11C.GL_GEQUAL;
             default:
                 throw new IllegalArgumentException();
         }

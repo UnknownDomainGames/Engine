@@ -8,7 +8,7 @@ import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL11C;
 
 public final class GLRenderer implements Renderer {
 
@@ -32,10 +32,10 @@ public final class GLRenderer implements Renderer {
     @Override
     public void setScissor(Vector4ic scissor) {
         if (scissor == null) {
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            GL11C.glDisable(GL11C.GL_SCISSOR_TEST);
         } else {
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor(scissor.x(), scissor.y(), scissor.z(), scissor.w());
+            GL11C.glEnable(GL11C.GL_SCISSOR_TEST);
+            GL11C.glScissor(scissor.x(), scissor.y(), scissor.z(), scissor.w());
         }
     }
 

@@ -17,8 +17,8 @@ import engine.graphics.texture.Texture2D;
 import engine.graphics.viewport.Viewport;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL33;
-import org.lwjgl.opengl.GL42;
+import org.lwjgl.opengl.GL33C;
+import org.lwjgl.opengl.GL42C;
 
 import java.util.stream.Stream;
 
@@ -70,7 +70,7 @@ public class ViewportTransparentDrawDispatcher implements DrawDispatcher {
             uniformListBuffer.set(linkedListBuffer);
         }
         if (atomicCounter != null) {
-            GL33.glBindBufferBase(GL42.GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounter.getId());
+            GL33C.glBindBufferBase(GL42C.GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounter.getId());
         }
         Stream.concat(
                 scene.getRenderQueue().getGeometryList(RenderType.TRANSPARENT).stream(),

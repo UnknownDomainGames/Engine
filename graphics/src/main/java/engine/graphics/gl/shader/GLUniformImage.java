@@ -3,7 +3,7 @@ package engine.graphics.gl.shader;
 import engine.graphics.shader.ImageBinding;
 import engine.graphics.shader.UniformImage;
 import engine.graphics.texture.Texture;
-import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL20C;
 
 public class GLUniformImage implements UniformImage {
     private final String name;
@@ -42,6 +42,6 @@ public class GLUniformImage implements UniformImage {
     }
 
     public void bind() {
-        GL20.glUniform1i(location, binding.getUnit());
+        GL20C.glUniform1i(location, binding.getUnit());
     }
 }

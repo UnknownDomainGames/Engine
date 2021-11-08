@@ -8,7 +8,7 @@ import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL11C;
 
 import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
@@ -32,7 +32,7 @@ public final class GLSingleBufMesh extends GLMesh implements SingleBufMesh {
     @Override
     public void draw(int start, int count) {
         bind();
-        GL11.glDrawArrays(drawMode.gl, start, count);
+        GL11C.glDrawArrays(drawMode.gl, start, count);
     }
 
     public GLVertexBuffer getVertexBuffer() {

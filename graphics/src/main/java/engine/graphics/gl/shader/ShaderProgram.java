@@ -3,11 +3,10 @@ package engine.graphics.gl.shader;
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.util.Cleaner;
 import org.joml.*;
+import org.lwjgl.opengl.GL11C;
+import org.lwjgl.opengl.GL20C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.lwjgl.opengl.GL11.GL_TRUE;
-import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderProgram {
 
@@ -17,24 +16,24 @@ public class ShaderProgram {
     private Cleaner.Disposable disposable;
 
     public ShaderProgram(CompiledShader... shaders) {
-        id = glCreateProgram();
+        id = GL20C.glCreateProgram();
         disposable = GLCleaner.registerProgram(this, id);
 
         for (CompiledShader shader : shaders) {
-            glAttachShader(this.id, shader.getId());
+            GL20C.glAttachShader(this.id, shader.getId());
         }
 
-        glLinkProgram(id);
-        if (glGetProgrami(id, GL_LINK_STATUS) != GL_TRUE) {
-            LOGGER.warn("Error initializing shader program (id: {}), log: {}", id, glGetProgramInfoLog(id));
+        GL20C.glLinkProgram(id);
+        if (GL20C.glGetProgrami(id, GL20C.GL_LINK_STATUS) != GL11C.GL_TRUE) {
+            LOGGER.warn("Error initializing shader program (id: {}), log: {}", id, GL20C.glGetProgramInfoLog(id));
         }
 
         use();
-        glValidateProgram(id);
-        if (glGetProgrami(id, GL_VALIDATE_STATUS) != GL_TRUE) {
-            LOGGER.warn("Error initializing shader program (id: {}), log: {}", id, glGetProgramInfoLog(id));
+        GL20C.glValidateProgram(id);
+        if (GL20C.glGetProgrami(id, GL20C.GL_VALIDATE_STATUS) != GL11C.GL_TRUE) {
+            LOGGER.warn("Error initializing shader program (id: {}), log: {}", id, GL20C.glGetProgramInfoLog(id));
         }
-        glUseProgram(0);
+        GL20C.glUseProgram(0);
 
         for (CompiledShader shader : shaders) {
             shader.dispose();
@@ -46,7 +45,7 @@ public class ShaderProgram {
     }
 
     public void use() {
-        glUseProgram(id);
+        GL20C.glUseProgram(id);
     }
 
     public void dispose() {
@@ -54,7 +53,7 @@ public class ShaderProgram {
             return;
         }
 
-        glUseProgram(0);
+        GL20C.glUseProgram(0);
         disposable.dispose();
         id = 0;
     }
@@ -64,7 +63,7 @@ public class ShaderProgram {
     }
 
     public int getUniformLocation(String name) {
-        return glGetUniformLocation(id, name);
+        return GL20C.glGetUniformLocation(id, name);
     }
 
     public void setUniform(String name, int value) {

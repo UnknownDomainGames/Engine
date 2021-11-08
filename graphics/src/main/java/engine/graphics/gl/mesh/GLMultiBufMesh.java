@@ -8,7 +8,7 @@ import engine.graphics.mesh.MultiBufMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.vertex.VertexFormat;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL11C;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -32,9 +32,9 @@ public class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
     public void draw(int start, int count) {
         bind();
         if (isDrawIndexed()) {
-            GL11.glDrawElements(drawMode.gl, count, indices.getGLType(), start);
+            GL11C.glDrawElements(drawMode.gl, count, indices.getGLType(), start);
         } else {
-            GL11.glDrawArrays(drawMode.gl, start, count);
+            GL11C.glDrawArrays(drawMode.gl, start, count);
         }
     }
 

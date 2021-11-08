@@ -1,43 +1,42 @@
 package engine.graphics.gl.shader;
 
 import org.joml.*;
+import org.lwjgl.opengl.GL20C;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
 
-import static org.lwjgl.opengl.GL20.*;
-
 public class Uniforms {
 
     public static void setUniform(int location, int value) {
-        glUniform1i(location, value);
+        GL20C.glUniform1i(location, value);
     }
 
     public static void setUniform(int location, float value) {
-        glUniform1f(location, value);
+        GL20C.glUniform1f(location, value);
     }
 
     public static void setUniform(int location, boolean value) {
-        glUniform1i(location, value ? 1 : 0);
+        GL20C.glUniform1i(location, value ? 1 : 0);
     }
 
     public static void setUniform(int location, Vector2fc value) {
-        glUniform2f(location, value.x(), value.y());
+        GL20C.glUniform2f(location, value.x(), value.y());
     }
 
     public static void setUniform(int location, Vector3fc value) {
-        glUniform3f(location, value.x(), value.y(), value.z());
+        GL20C.glUniform3f(location, value.x(), value.y(), value.z());
     }
 
     public static void setUniform(int location, Vector4fc value) {
-        glUniform4f(location, value.x(), value.y(), value.z(), value.w());
+        GL20C.glUniform4f(location, value.x(), value.y(), value.z(), value.w());
     }
 
     public static void setUniform(int location, Matrix3fc value) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(3 * 3);
             value.get(buffer);
-            glUniformMatrix3fv(location, false, buffer);
+            GL20C.glUniformMatrix3fv(location, false, buffer);
         }
     }
 
@@ -45,7 +44,7 @@ public class Uniforms {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(3 * 2);
             value.get(buffer);
-            glUniformMatrix3fv(location, false, buffer);
+            GL20C.glUniformMatrix3fv(location, false, buffer);
         }
     }
 
@@ -53,7 +52,7 @@ public class Uniforms {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(4 * 4);
             value.get(buffer);
-            glUniformMatrix4fv(location, false, buffer);
+            GL20C.glUniformMatrix4fv(location, false, buffer);
         }
     }
 
@@ -61,7 +60,7 @@ public class Uniforms {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(4 * 3);
             value.get(buffer);
-            glUniformMatrix4fv(location, false, buffer);
+            GL20C.glUniformMatrix4fv(location, false, buffer);
         }
     }
 
@@ -72,7 +71,7 @@ public class Uniforms {
             for (int i = 0; i < length; i++) {
                 values[i].get(16 * i, buffer);
             }
-            glUniformMatrix4fv(location, false, buffer);
+            GL20C.glUniformMatrix4fv(location, false, buffer);
         }
     }
 }

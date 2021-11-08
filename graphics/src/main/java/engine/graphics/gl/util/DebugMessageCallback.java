@@ -2,7 +2,7 @@ package engine.graphics.gl.util;
 
 import org.lwjgl.system.MemoryUtil;
 
-import static org.lwjgl.opengl.GL43.*;
+import static org.lwjgl.opengl.GL43C.*;
 
 public abstract class DebugMessageCallback {
 

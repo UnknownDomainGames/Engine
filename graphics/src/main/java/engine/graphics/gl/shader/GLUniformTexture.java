@@ -4,7 +4,7 @@ import engine.graphics.shader.TextureBinding;
 import engine.graphics.shader.UniformTexture;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.Texture;
-import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL20C;
 
 public final class GLUniformTexture implements UniformTexture {
     private final String name;
@@ -53,6 +53,6 @@ public final class GLUniformTexture implements UniformTexture {
     }
 
     public void bind() {
-        GL20.glUniform1i(location, binding.getUnit());
+        GL20C.glUniform1i(location, binding.getUnit());
     }
 }

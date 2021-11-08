@@ -8,10 +8,10 @@ import engine.graphics.texture.Texture2D;
 import engine.graphics.texture.WrapMode;
 import engine.util.Color;
 import org.joml.Vector2ic;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL21;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL45;
+import org.lwjgl.opengl.GL11C;
+import org.lwjgl.opengl.GL21C;
+import org.lwjgl.opengl.GL30C;
+import org.lwjgl.opengl.GL45C;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
@@ -42,21 +42,21 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
     }
 
     private GLTexture2D(GLColorFormat format, int width, int height, boolean mipmap) {
-        super(GL11.GL_TEXTURE_2D, format);
+        super(GL11C.GL_TEXTURE_2D, format);
         this.width = width;
         this.height = height;
         this.mipmap = mipmap;
         if (GLHelper.isSupportARBDirectStateAccess()) {
-            GL45.glTextureStorage2D(id, 1, format.internalFormat, width, height);
+            GL45C.glTextureStorage2D(id, 1, format.internalFormat, width, height);
         } else {
             bind();
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format.internalFormat,
+            GL11C.glTexImage2D(GL11C.GL_TEXTURE_2D, 0, format.internalFormat,
                     width, height, 0, format.format, format.type, (ByteBuffer) null);
         }
     }
 
     private GLTexture2D() {
-        super(GL11.GL_TEXTURE_2D);
+        super(GL11C.GL_TEXTURE_2D);
         this.width = 0;
         this.height = 0;
         this.mipmap = false;
@@ -90,29 +90,29 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
     @Override
     public void upload(int level, int offsetX, int offsetY, int width, int height, ByteBuffer pixels) {
         if (pixels == null) {
-            if (GL11.glGetInteger(GL21.GL_PIXEL_UNPACK_BUFFER_BINDING) == 0) return;
+            if (GL11C.glGetInteger(GL21C.GL_PIXEL_UNPACK_BUFFER_BINDING) == 0) return;
             if (GLHelper.isSupportARBDirectStateAccess()) {
-                GL45.nglTextureSubImage2D(id, level, 0, 0, width, height,
+                GL45C.nglTextureSubImage2D(id, level, 0, 0, width, height,
                         format.format, format.type, MemoryUtil.NULL);
-                if (mipmap) GL45.glGenerateTextureMipmap(id);
+                if (mipmap) GL45C.glGenerateTextureMipmap(id);
             } else {
                 bind();
-                GL11.nglTexSubImage2D(GL11.GL_TEXTURE_2D, level,
+                GL11C.nglTexSubImage2D(GL11C.GL_TEXTURE_2D, level,
                         offsetX, offsetY, width, height,
                         format.format, format.type, MemoryUtil.NULL);
-                if (mipmap) GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+                if (mipmap) GL30C.glGenerateMipmap(GL11C.GL_TEXTURE_2D);
             }
         } else {
             if (GLHelper.isSupportARBDirectStateAccess()) {
-                GL45.glTextureSubImage2D(id, level, 0, 0, width, height,
+                GL45C.glTextureSubImage2D(id, level, 0, 0, width, height,
                         format.format, format.type, pixels);
-                if (mipmap) GL45.glGenerateTextureMipmap(id);
+                if (mipmap) GL45C.glGenerateTextureMipmap(id);
             } else {
                 bind();
-                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, level,
+                GL11C.glTexSubImage2D(GL11C.GL_TEXTURE_2D, level,
                         offsetX, offsetY, width, height,
                         format.format, format.type, pixels);
-                if (mipmap) GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+                if (mipmap) GL30C.glGenerateMipmap(GL11C.GL_TEXTURE_2D);
             }
         }
     }
@@ -143,25 +143,25 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
 
         @Override
         public Builder magFilter(FilterMode mode) {
-            parameterMap.put(GL11.GL_TEXTURE_MAG_FILTER, toGLFilterMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_MAG_FILTER, toGLFilterMode(mode));
             return this;
         }
 
         @Override
         public Builder minFilter(FilterMode mode) {
-            parameterMap.put(GL11.GL_TEXTURE_MIN_FILTER, toGLFilterMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_MIN_FILTER, toGLFilterMode(mode));
             return this;
         }
 
         @Override
         public Builder wrapS(WrapMode mode) {
-            parameterMap.put(GL11.GL_TEXTURE_WRAP_S, toGLWrapMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_WRAP_S, toGLWrapMode(mode));
             return this;
         }
 
         @Override
         public Builder wrapT(WrapMode mode) {
-            parameterMap.put(GL11.GL_TEXTURE_WRAP_T, toGLWrapMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_WRAP_T, toGLWrapMode(mode));
             return this;
         }
 
@@ -203,7 +203,7 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
             parameterMap.forEach(texture::setTextureParameteri);
             if (borderColor != null) {
                 try (MemoryStack stack = MemoryStack.stackPush()) {
-                    texture.setTextureParameterfv(GL11.GL_TEXTURE_BORDER_COLOR,
+                    texture.setTextureParameterfv(GL11C.GL_TEXTURE_BORDER_COLOR,
                             borderColor.get(stack.mallocFloat(4)));
                 }
             }

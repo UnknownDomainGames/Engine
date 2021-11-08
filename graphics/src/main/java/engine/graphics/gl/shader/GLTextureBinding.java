@@ -7,10 +7,10 @@ import engine.graphics.gl.util.GLHelper;
 import engine.graphics.shader.TextureBinding;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.Texture;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL33;
-import org.lwjgl.opengl.GL45;
+import org.lwjgl.opengl.GL11C;
+import org.lwjgl.opengl.GL13C;
+import org.lwjgl.opengl.GL33C;
+import org.lwjgl.opengl.GL45C;
 
 public final class GLTextureBinding implements TextureBinding {
     private final int unit;
@@ -52,11 +52,11 @@ public final class GLTextureBinding implements TextureBinding {
         GLTexture glTexture = (GLTexture) texture;
         if (texture == GLTexture2D.EMPTY) return;
         if (GLHelper.isOpenGL45()) {
-            GL45.glBindTextureUnit(unit, glTexture.getId());
+            GL45C.glBindTextureUnit(unit, glTexture.getId());
         } else {
-            GL13.glActiveTexture(GL13.GL_TEXTURE0 + unit);
-            GL11.glBindTexture(glTexture.getTarget(), glTexture.getId());
+            GL13C.glActiveTexture(GL13C.GL_TEXTURE0 + unit);
+            GL11C.glBindTexture(glTexture.getTarget(), glTexture.getId());
         }
-        GL33.glBindSampler(unit, sampler.getId());
+        GL33C.glBindSampler(unit, sampler.getId());
     }
 }

@@ -6,8 +6,8 @@ import engine.graphics.gl.util.GLHelper;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.util.Cleaner;
 import engine.graphics.util.DrawMode;
-import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL45;
+import org.lwjgl.opengl.GL30C;
+import org.lwjgl.opengl.GL45C;
 
 public abstract class GLMesh implements Mesh {
     protected int id;
@@ -17,9 +17,9 @@ public abstract class GLMesh implements Mesh {
 
     public GLMesh() {
         if (GLHelper.isSupportARBDirectStateAccess()) {
-            id = GL45.glCreateVertexArrays();
+            id = GL45C.glCreateVertexArrays();
         } else {
-            id = GL30.glGenVertexArrays();
+            id = GL30C.glGenVertexArrays();
         }
         disposable = GLCleaner.registerVertexArray(this, id);
     }
@@ -41,7 +41,7 @@ public abstract class GLMesh implements Mesh {
     }
 
     public void bind() {
-        GL30.glBindVertexArray(id);
+        GL30C.glBindVertexArray(id);
     }
 
     @Override
