@@ -347,9 +347,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
                 guiPass.setName("gui");
                 guiPass.dependsOn("oitDraw");
                 guiPass.setCullMode(CullMode.CULL_BACK);
-                guiPass.addColorOutputs(colorOutput()
-                        .setColorBuffer("color")
-                        .setBlendMode(BlendMode.MIX));
+                guiPass.addColorOutputs(colorOutput().setColorBuffer("color").setBlendMode(BlendMode.MIX));
                 {
                     DrawerInfo hudDrawer = DrawerInfo.drawer();
                     hudDrawer.setShader("gui");
