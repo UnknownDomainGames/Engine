@@ -58,7 +58,6 @@ public class VKSampler implements Sampler {
 
     private static int toVkAddressMode(WrapMode mode) {
         switch (mode) {
-            case CLAMP:
             case CLAMP_TO_EDGE:
                 return (VK10.VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
             case CLAMP_TO_BORDER:

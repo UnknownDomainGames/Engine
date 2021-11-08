@@ -42,8 +42,6 @@ public abstract class GLTexture implements Texture {
 
     public static int toGLWrapMode(WrapMode wrapMode) {
         switch (wrapMode) {
-            case CLAMP:
-                return GL11.GL_CLAMP;
             case REPEAT:
                 return GL11C.GL_REPEAT;
             case CLAMP_TO_EDGE:
