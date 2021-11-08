@@ -63,7 +63,8 @@ public class DepthOutputInfo {
         return compareMode;
     }
 
-    public void setCompareMode(DepthCompareMode compareMode) {
+    public DepthOutputInfo setCompareMode(DepthCompareMode compareMode) {
         this.compareMode = compareMode;
+        return this;
     }
 }
