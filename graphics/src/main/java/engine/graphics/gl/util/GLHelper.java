@@ -68,23 +68,23 @@ public final class GLHelper {
     }
 
     public static String getVendor() {
-        return GL11.glGetString(GL11.GL_VENDOR);
+        return GL11C.glGetString(GL11C.GL_VENDOR);
     }
 
     public static String getRenderer() {
-        return GL11.glGetString(GL11.GL_RENDERER);
+        return GL11C.glGetString(GL11C.GL_RENDERER);
     }
 
     public static String getVersion() {
-        return GL11.glGetString(GL11.GL_VERSION);
+        return GL11C.glGetString(GL11C.GL_VERSION);
     }
 
     public static String getExtensions() {
-        return GL11.glGetString(GL11.GL_EXTENSIONS);
+        return GL11C.glGetString(GL11C.GL_EXTENSIONS);
     }
 
     public static String getShadingLanguageVersion() {
-        return GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION);
+        return GL11C.glGetString(GL20C.GL_SHADING_LANGUAGE_VERSION);
     }
 
     public static int getMask(boolean color, boolean depth, boolean stencil) {
@@ -121,7 +121,7 @@ public final class GLHelper {
     }
 
     public static String getErrorMessage() {
-        return getFriendlyErrorMessage(GL11.glGetError());
+        return getFriendlyErrorMessage(GL11C.glGetError());
     }
 
     public static String getFriendlyErrorMessage(int error) {
@@ -178,11 +178,11 @@ public final class GLHelper {
 
     public static void setDebugMessageCallback(DebugMessageCallback callback) throws UnsupportedOperationException {
         if (capabilities.OpenGL43) {
-            GL11.glEnable(GL43.GL_DEBUG_OUTPUT);
+            GL11C.glEnable(GL43.GL_DEBUG_OUTPUT);
             GL43.glDebugMessageCallback(callback::invoke, 0);
             GL43.glDebugMessageControl(DebugMessageCallback.Source.API.gl, DebugMessageCallback.Type.ERROR.gl, DebugMessageCallback.Severity.HIGH.gl, (int[]) null, true);
         } else if (capabilities.GL_KHR_debug) {
-            GL11.glEnable(KHRDebug.GL_DEBUG_OUTPUT);
+            GL11C.glEnable(KHRDebug.GL_DEBUG_OUTPUT);
             KHRDebug.glDebugMessageCallback(callback::invoke, 0);
             KHRDebug.glDebugMessageControl(DebugMessageCallback.Source.API.gl, DebugMessageCallback.Type.ERROR.gl, DebugMessageCallback.Severity.HIGH.gl, (int[]) null, true);
         } else if (capabilities.GL_ARB_debug_output) {

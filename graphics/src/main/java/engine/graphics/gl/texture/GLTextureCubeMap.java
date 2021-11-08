@@ -19,17 +19,17 @@ public final class GLTextureCubeMap extends GLTexture implements TextureCubeMap 
     }
 
     private GLTextureCubeMap(GLColorFormat format, int length) {
-        super(GL13.GL_TEXTURE_CUBE_MAP, format);
+        super(GL13C.GL_TEXTURE_CUBE_MAP, format);
         this.length = length;
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45C.glTextureStorage2D(id, 0, format.internalFormat, length, length);
         } else if (GLHelper.isSupportARBTextureStorage()) {
             bind();
-            GL42C.glTexStorage2D(GL13.GL_TEXTURE_CUBE_MAP, 0, format.internalFormat, length, length);
+            GL42C.glTexStorage2D(GL13C.GL_TEXTURE_CUBE_MAP, 0, format.internalFormat, length, length);
         } else {
             bind();
-            for (int i = GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X; i <= GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z; i++)
-                GL11.glTexImage2D(i, 0, format.internalFormat, length, length, 0,
+            for (int i = GL13C.GL_TEXTURE_CUBE_MAP_POSITIVE_X; i <= GL13C.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z; i++)
+                GL11C.glTexImage2D(i, 0, format.internalFormat, length, length, 0,
                         format.format, format.type, (ByteBuffer) null);
         }
     }
@@ -61,31 +61,31 @@ public final class GLTextureCubeMap extends GLTexture implements TextureCubeMap 
 
         @Override
         public Builder magFilter(FilterMode mode) {
-            parameterMap.put(GL11.GL_TEXTURE_MAG_FILTER, toGLFilterMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_MAG_FILTER, toGLFilterMode(mode));
             return this;
         }
 
         @Override
         public Builder minFilter(FilterMode mode) {
-            parameterMap.put(GL11.GL_TEXTURE_MIN_FILTER, toGLFilterMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_MIN_FILTER, toGLFilterMode(mode));
             return this;
         }
 
         @Override
         public Builder wrapS(WrapMode mode) {
-            parameterMap.put(GL11.GL_TEXTURE_WRAP_S, toGLWrapMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_WRAP_S, toGLWrapMode(mode));
             return this;
         }
 
         @Override
         public Builder wrapT(WrapMode mode) {
-            parameterMap.put(GL11.GL_TEXTURE_WRAP_T, toGLWrapMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_WRAP_T, toGLWrapMode(mode));
             return this;
         }
 
         @Override
         public Builder wrapR(WrapMode mode) {
-            parameterMap.put(GL12.GL_TEXTURE_WRAP_R, toGLWrapMode(mode));
+            parameterMap.put(GL12C.GL_TEXTURE_WRAP_R, toGLWrapMode(mode));
             return this;
         }
 
