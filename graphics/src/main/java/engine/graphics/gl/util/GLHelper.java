@@ -5,8 +5,6 @@ import engine.graphics.util.DepthCompareMode;
 import engine.graphics.util.GPUVendor;
 import org.lwjgl.opengl.*;
 
-import static org.lwjgl.opengl.GL14.GL_COMPARE_R_TO_TEXTURE;
-
 public final class GLHelper {
 
     private static GLCapabilities capabilities;
@@ -148,7 +146,7 @@ public final class GLHelper {
     }
 
     public static int toGLCompareMode(DepthCompareMode depthCompareMode) {
-        return depthCompareMode != DepthCompareMode.NONE ? GL_COMPARE_R_TO_TEXTURE : GL11C.GL_NONE;
+        return depthCompareMode != DepthCompareMode.NONE ? GL30C.GL_COMPARE_REF_TO_TEXTURE : GL11C.GL_NONE;
     }
 
     public static int toGLCompareFunc(DepthCompareMode depthCompareMode) {
@@ -178,9 +176,9 @@ public final class GLHelper {
 
     public static void setDebugMessageCallback(DebugMessageCallback callback) throws UnsupportedOperationException {
         if (capabilities.OpenGL43) {
-            GL11C.glEnable(GL43.GL_DEBUG_OUTPUT);
-            GL43.glDebugMessageCallback(callback::invoke, 0);
-            GL43.glDebugMessageControl(DebugMessageCallback.Source.API.gl, DebugMessageCallback.Type.ERROR.gl, DebugMessageCallback.Severity.HIGH.gl, (int[]) null, true);
+            GL11C.glEnable(GL43C.GL_DEBUG_OUTPUT);
+            GL43C.glDebugMessageCallback(callback::invoke, 0);
+            GL43C.glDebugMessageControl(DebugMessageCallback.Source.API.gl, DebugMessageCallback.Type.ERROR.gl, DebugMessageCallback.Severity.HIGH.gl, (int[]) null, true);
         } else if (capabilities.GL_KHR_debug) {
             GL11C.glEnable(KHRDebug.GL_DEBUG_OUTPUT);
             KHRDebug.glDebugMessageCallback(callback::invoke, 0);
