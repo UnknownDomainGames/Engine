@@ -7,9 +7,9 @@ import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuf;
 import engine.graphics.voxel.VoxelGraphicsHelper;
 import engine.world.chunk.Chunk;
-import org.joml.AABBf;
 import org.joml.Vector3fc;
 import org.joml.Vector3ic;
+import org.joml.primitives.AABBf;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -12,6 +12,7 @@ import engine.registry.Registries;
 import engine.world.hit.EntityHitResult;
 import org.apache.commons.lang3.Validate;
 import org.joml.*;
+import org.joml.primitives.AABBd;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -136,16 +137,16 @@ public class DefaultEntityManager implements EntityManager, Tickable {
     @Override
     public List<Entity> getEntitiesWithSphere(double centerX, double centerY, double centerZ, double radius) {
         double radiusSquared = radius * radius;
-        return getEntities(entity -> testSphere(entity, centerX, centerY, centerZ, radiusSquared));
+        return getEntities(entity -> intersectsSphere(entity, centerX, centerY, centerZ, radiusSquared));
     }
 
-    private boolean testSphere(Entity entity, double centerX, double centerY, double centerZ, double radiusSquared) {
+    private boolean intersectsSphere(Entity entity, double centerX, double centerY, double centerZ, double radiusSquared) {
         Vector3d position = entity.getPosition();
         if (entity.hasCollision()) {
             double localX = centerX - position.x();
             double localY = centerY - position.y();
             double localZ = centerZ - position.z();
-            return entity.getBoundingBox().testSphere(localX, localY, localZ, radiusSquared);
+            return entity.getBoundingBox().intersectsSphere(localX, localY, localZ, radiusSquared);
         } else {
             return position.distanceSquared(centerX, centerY, centerZ) <= radiusSquared;
         }
@@ -164,7 +165,7 @@ public class DefaultEntityManager implements EntityManager, Tickable {
 
             Vector3d pos = entity.getPosition();
             Vector3f local = from.sub((float) pos.x(), (float) pos.y(), (float) pos.z(), new Vector3f());
-            if (entity.getBoundingBox().intersectRay(local.x, local.y, local.z,
+            if (entity.getBoundingBox().intersectsRay(local.x, local.y, local.z,
                     rayOffset.x, rayOffset.y, rayOffset.z, result)) {
                 Vector3f hitPoint = local.add(rayOffset.mul((float) result.x, new Vector3f()));
                 return new EntityHitResult(entity, hitPoint);

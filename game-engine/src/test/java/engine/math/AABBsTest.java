@@ -1,7 +1,7 @@
 package engine.math;
 
-import org.joml.AABBd;
 import org.joml.Vector3f;
+import org.joml.primitives.AABBd;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -2,9 +2,9 @@ package engine.world;
 
 import engine.entity.Entity;
 import engine.world.hit.EntityHitResult;
-import org.joml.AABBd;
 import org.joml.Vector3dc;
 import org.joml.Vector3fc;
+import org.joml.primitives.AABBd;
 
 import java.util.List;
 import java.util.function.Predicate;

@@ -1,8 +1,8 @@
 package engine.graphics.math;
 
-import org.joml.AABBf;
 import org.joml.FrustumIntersection;
-import org.joml.Spheref;
+import org.joml.primitives.AABBf;
+import org.joml.primitives.Spheref;
 
 public class BoundingVolume {
 

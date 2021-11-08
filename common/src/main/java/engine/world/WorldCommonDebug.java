@@ -26,11 +26,14 @@ import engine.world.gen.ChunkGenerator;
 import engine.world.hit.BlockHitResult;
 import engine.world.hit.EntityHitResult;
 import engine.world.hit.HitResult;
-import org.joml.*;
+import org.joml.Vector3d;
+import org.joml.Vector3dc;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
+import org.joml.primitives.AABBd;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.Math;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
@@ -383,7 +386,7 @@ public class WorldCommonDebug implements World {
                             for (AABBd blockBoxLocal : blockBoxes) {
                                 AABBd blockBox = blockBoxLocal.translate(
                                         new Vector3f(pos.x(), pos.y(), pos.z()), new AABBd());
-                                if (blockBox.testAABB(entityBox)) {
+                                if (blockBox.intersectsAABB(entityBox)) {
                                     xFix = Math.min(xFix, Math.min(Math.abs(blockBox.maxX - entityBox.minX),
                                             Math.abs(blockBox.minX - entityBox.maxX)));
                                 }
@@ -399,7 +402,7 @@ public class WorldCommonDebug implements World {
                             for (AABBd blockBox : blockBoxes) {
                                 AABBd translated = blockBox.translate(
                                         new Vector3f(pos.x(), pos.y(), pos.z()), new AABBd());
-                                if (translated.testAABB(entityBox)) {
+                                if (translated.intersectsAABB(entityBox)) {
                                     yFix = Math.min(yFix, Math.min(Math.abs(translated.maxY - entityBox.minY),
                                             Math.abs(translated.minY - entityBox.maxY)));
                                 }
@@ -415,7 +418,7 @@ public class WorldCommonDebug implements World {
                             for (AABBd blockBox : blockBoxes) {
                                 AABBd translated = blockBox.translate(
                                         new Vector3f(pos.x(), pos.y(), pos.z()), new AABBd());
-                                if (translated.testAABB(entityBox)) {
+                                if (translated.intersectsAABB(entityBox)) {
                                     zFix = Math.min(zFix, Math.min(Math.abs(translated.maxZ - entityBox.minZ),
                                             Math.abs(translated.minZ - entityBox.maxZ)));
                                 }

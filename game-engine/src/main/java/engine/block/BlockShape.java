@@ -2,21 +2,21 @@ package engine.block;
 
 import engine.math.BlockPos;
 import engine.world.World;
-import org.joml.AABBd;
-import org.joml.Rayd;
 import org.joml.Vector2d;
+import org.joml.primitives.AABBd;
+import org.joml.primitives.Rayd;
 
 public interface BlockShape {
 
     BlockShape NORMAL_CUBE = new Impl(new AABBd(0, 0, 0, 1, 1, 1));
     BlockShape EMPTY = new Impl() {
         @Override
-        public boolean intersectRay(World world, BlockPos pos, Block block, Rayd ray, Vector2d result) {
+        public boolean intersectsRay(World world, BlockPos pos, Block block, Rayd ray, Vector2d result) {
             return false;
         }
 
         @Override
-        public boolean intersectRay(World world, BlockPos pos, Block block, double originX, double originY, double originZ, double dirX, double dirY, double dirZ, Vector2d result) {
+        public boolean intersectsRay(World world, BlockPos pos, Block block, double originX, double originY, double originZ, double dirX, double dirY, double dirZ, Vector2d result) {
             return false;
         }
     };
@@ -29,9 +29,9 @@ public interface BlockShape {
 
     AABBd[] getBoundingBoxes(World world, BlockPos pos, Block block);
 
-    boolean intersectRay(World world, BlockPos pos, Block block, double originX, double originY, double originZ, double dirX, double dirY, double dirZ, Vector2d result);
+    boolean intersectsRay(World world, BlockPos pos, Block block, double originX, double originY, double originZ, double dirX, double dirY, double dirZ, Vector2d result);
 
-    boolean intersectRay(World world, BlockPos pos, Block block, Rayd ray, Vector2d result);
+    boolean intersectsRay(World world, BlockPos pos, Block block, Rayd ray, Vector2d result);
 
     class Impl implements BlockShape {
 
@@ -52,10 +52,10 @@ public interface BlockShape {
         }
 
         @Override
-        public boolean intersectRay(World world, BlockPos pos, Block block, double originX, double originY, double originZ, double dirX, double dirY, double dirZ, Vector2d result) {
+        public boolean intersectsRay(World world, BlockPos pos, Block block, double originX, double originY, double originZ, double dirX, double dirY, double dirZ, Vector2d result) {
             AABBd[] boundingBoxes = getBoundingBoxes(world, pos, block);
             for (int i = 0; i < boundingBoxes.length; i++) {
-                if (boundingBoxes[i].intersectRay(originX, originY, originZ, dirX, dirY, dirZ, result)) {
+                if (boundingBoxes[i].intersectsRay(originX, originY, originZ, dirX, dirY, dirZ, result)) {
                     return true;
                 }
             }
@@ -63,10 +63,10 @@ public interface BlockShape {
         }
 
         @Override
-        public boolean intersectRay(World world, BlockPos pos, Block block, Rayd ray, Vector2d result) {
+        public boolean intersectsRay(World world, BlockPos pos, Block block, Rayd ray, Vector2d result) {
             AABBd[] boundingBoxes = getBoundingBoxes(world, pos, block);
             for (int i = 0; i < boundingBoxes.length; i++) {
-                if (boundingBoxes[i].intersectRay(ray, result)) {
+                if (boundingBoxes[i].intersectsRay(ray, result)) {
                     return true;
                 }
             }

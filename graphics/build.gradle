@@ -6,7 +6,8 @@ dependencies {
     api project(':base')
 
     api 'com.github.oshi:oshi-core:5.8.3'
-    api 'org.joml:joml:1.9.20'
+    api 'org.joml:joml:1.10.2'
+    api 'org.joml:joml-primitives:1.10.0'
     api 'com.github.Mouse0w0:Observable:1.4.0'
 
     api "org.lwjgl:lwjgl:$lwjglVersion"

@@ -39,7 +39,10 @@ public abstract class Vector3iBase implements Vector3ic {
 
     @Override
     public Vector3i sub(Vector3ic v, Vector3i dest) {
-        return sub(v.x(), v.y(), v.z(), dest);
+        dest.x = x() - v.x();
+        dest.y = y() - v.y();
+        dest.z = z() - v.z();
+        return dest;
     }
 
     @Override
@@ -52,9 +55,13 @@ public abstract class Vector3iBase implements Vector3ic {
 
     @Override
     public Vector3i add(Vector3ic v, Vector3i dest) {
-        return add(v.x(), v.y(), v.z(), dest);
+        dest.x = x() + v.x();
+        dest.y = y() + v.y();
+        dest.z = z() + v.z();
+        return dest;
     }
 
+    @Override
     public Vector3i add(int x, int y, int z, Vector3i dest) {
         dest.x = this.x() + x;
         dest.y = this.y() + y;
@@ -64,13 +71,21 @@ public abstract class Vector3iBase implements Vector3ic {
 
     @Override
     public Vector3i mul(int scalar, Vector3i dest) {
-        return mul(scalar, scalar, scalar, dest);
+        dest.x = this.x() * scalar;
+        dest.y = this.y() * scalar;
+        dest.z = this.z() * scalar;
+        return dest;
     }
 
+    @Override
     public Vector3i mul(Vector3ic v, Vector3i dest) {
-        return mul(v.x(), v.y(), v.z(), dest);
+        dest.x = x() * v.x();
+        dest.y = y() * v.y();
+        dest.z = z() * v.z();
+        return dest;
     }
 
+    @Override
     public Vector3i mul(int x, int y, int z, Vector3i dest) {
         dest.x = this.x() * x;
         dest.y = this.y() * y;
@@ -78,26 +93,49 @@ public abstract class Vector3iBase implements Vector3ic {
         return dest;
     }
 
+    @Override
+    public Vector3i div(float scalar, Vector3i dest) {
+        float invscalar = 1.0f / scalar;
+        dest.x = (int) (x() * invscalar);
+        dest.y = (int) (y() * invscalar);
+        dest.z = (int) (z() * invscalar);
+        return dest;
+    }
+
+    @Override
+    public Vector3i div(int scalar, Vector3i dest) {
+        dest.x = x() / scalar;
+        dest.y = y() / scalar;
+        dest.z = z() / scalar;
+        return dest;
+    }
+
+    @Override
     public long lengthSquared() {
         return Vector3i.lengthSquared(x(), y(), z());
     }
 
+    @Override
     public double length() {
         return Math.sqrt(lengthSquared());
     }
 
+    @Override
     public double distance(Vector3ic v) {
         return distance(v.x(), v.y(), v.z());
     }
 
+    @Override
     public double distance(int x, int y, int z) {
         return Math.sqrt(distanceSquared(x, y, z));
     }
 
+    @Override
     public long gridDistance(Vector3ic v) {
         return Math.abs(v.x() - x()) + Math.abs(v.y() - y()) + Math.abs(v.z() - z());
     }
 
+    @Override
     public long gridDistance(int x, int y, int z) {
         return Math.abs(x - x()) + Math.abs(y - y()) + Math.abs(z - z());
     }
@@ -161,6 +199,14 @@ public abstract class Vector3iBase implements Vector3ic {
     @Override
     public int minComponent() {
         return 3;
+    }
+
+    @Override
+    public Vector3i absolute(Vector3i dest) {
+        dest.x = Math.abs(this.x());
+        dest.y = Math.abs(this.y());
+        dest.z = Math.abs(this.z());
+        return dest;
     }
 
     @Override

@@ -3,7 +3,7 @@ package engine.entity.item;
 import engine.entity.BaseEntity;
 import engine.item.ItemStack;
 import engine.world.World;
-import org.joml.AABBd;
+import org.joml.primitives.AABBd;
 
 public class ItemEntity extends BaseEntity {
 
