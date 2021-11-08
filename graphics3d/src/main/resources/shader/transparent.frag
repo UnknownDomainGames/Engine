@@ -1,5 +1,7 @@
 #version 420 core
 
+layout(early_fragment_tests) in;
+
 uniform sampler2D u_Texture;
 layout (binding = 0, std140) uniform Matrices {
     mat4 proj;
