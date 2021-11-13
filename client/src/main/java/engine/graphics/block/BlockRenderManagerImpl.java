@@ -80,7 +80,6 @@ public final class BlockRenderManagerImpl implements BlockRenderManager {
         if (model == null) {
             return;
         }
-        buffer.setTranslation(-0.5f, -0.5f, -0.5f);
         model.get().putVertexes(buffer, 0);
     }
 

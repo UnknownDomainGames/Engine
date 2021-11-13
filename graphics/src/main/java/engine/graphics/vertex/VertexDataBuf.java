@@ -30,6 +30,7 @@ public abstract class VertexDataBuf {
         return new Direct(initialCapacity);
     }
 
+    @Deprecated
     public static VertexDataBuf currentThreadBuffer() {
         return threadLocalBuffer.get();
     }
