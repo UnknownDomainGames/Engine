@@ -3,7 +3,6 @@
 layout (std140) uniform States {
     mat4 projMatrix;
     mat4 modelMatrix;
-    vec4 clipRect;
     bool renderText;
     bool enableGamma;
 } states;

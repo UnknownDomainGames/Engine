@@ -17,26 +17,23 @@ import engine.gui.graphics.Graphics;
 import engine.gui.image.Image;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
-import engine.math.Math2;
 import engine.util.Color;
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Vector2fc;
+import org.joml.primitives.Rectanglei;
 
-import java.lang.Math;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.Stack;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
+import static org.joml.Matrix4fc.PROPERTY_TRANSLATION;
+import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL12C.GL_CLAMP_TO_EDGE;
 
 public final class GraphicsImpl implements Graphics {
 
     private final VertexDataBuf buffer = VertexDataBuf.create(4096);
     private final GUIResourceFactory resourceFactory = new GUIResourceFactory();
-
-    private final Stack<Vector4fc> clipRect = new Stack<>();
-
-    private final Matrix4fc identityMatrix4f = new Matrix4f();
 
     private final ShaderResource resource;
 
@@ -54,25 +51,33 @@ public final class GraphicsImpl implements Graphics {
 
     private Color color;
 
+    private final Matrix4f transform = new Matrix4f();
+    private boolean simpleTransform = false;
+    private float transX = 0;
+    private float transY = 0;
+    private float transZ = 0;
+
+    private final Rectanglei viewport = new Rectanglei();
+    private final Rectanglei clipRect = new Rectanglei();
+    private final Rectanglei finalClipRect = new Rectanglei();
+
     private static class States implements Struct {
-        Matrix4fc projMatrix;
-        Matrix4fc modelMatrix;
-        Vector4fc clipRect;
+        final Matrix4f projMatrix = new Matrix4f();
+        final Matrix4f modelMatrix = new Matrix4f();
         boolean renderText;
         boolean enableGamma;
 
         @Override
         public int sizeof() {
-            return 152;
+            return 136;
         }
 
         @Override
         public ByteBuffer get(int index, ByteBuffer buffer) {
             projMatrix.get(0, buffer);
             modelMatrix.get(64, buffer);
-            clipRect.get(128, buffer);
-            buffer.putInt(144, renderText ? 1 : 0);
-            buffer.putInt(148, enableGamma ? 1 : 0);
+            buffer.putInt(128, renderText ? 1 : 0);
+            buffer.putInt(132, enableGamma ? 1 : 0);
             return buffer;
         }
     }
@@ -92,12 +97,11 @@ public final class GraphicsImpl implements Graphics {
         this.frameHeight = frameHeight;
         this.scaleX = scaleX;
         this.scaleY = scaleY;
-        states.projMatrix = new Matrix4f().setOrtho2D(0, frameWidth, frameHeight, 0).scale(scaleX, scaleY, 1);
-        setModelMatrix(identityMatrix4f);
-        resetClipRect();
-        pushClipRect(0, 0, frameWidth / scaleX, frameHeight / scaleY);
+        this.viewport.setMin(0, 0).setMax(frameWidth, frameHeight);
+        this.states.projMatrix.setOrtho(0, frameWidth, frameHeight, 0, 32767, -32768);
         this.uniformTexture.set(whiteTexture);
         this.resource.refresh();
+        updateTransform();
     }
 
     @Override
@@ -108,6 +112,116 @@ public final class GraphicsImpl implements Graphics {
     @Override
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    @Override
+    public Matrix4f getTransformNoClone() {
+        return transform;
+    }
+
+    @Override
+    public Matrix4f getTransform() {
+        return new Matrix4f(transform);
+    }
+
+    @Override
+    public Matrix4f getTransform(Matrix4f dest) {
+        return dest.set(transform);
+    }
+
+    @Override
+    public void setTransform(Matrix4fc m) {
+        transform.set(m);
+        updateTransform();
+    }
+
+    @Override
+    public void transform(Matrix4fc m) {
+        transform.mul(m);
+        updateTransform();
+    }
+
+    @Override
+    public void translate(float x, float y) {
+        transform.translate(x, y, 0);
+        updateTransform();
+    }
+
+    @Override
+    public void translate(float x, float y, float z) {
+        transform.translate(x, y, z);
+        updateTransform();
+    }
+
+    @Override
+    public void scale(float x, float y) {
+        transform.scale(x, y, 1);
+        updateTransform();
+    }
+
+    @Override
+    public void scale(float x, float y, float z) {
+        transform.scale(x, y, z);
+        updateTransform();
+    }
+
+    private void updateTransform() {
+        if ((transform.properties() & PROPERTY_TRANSLATION) != 0) {
+            if (!simpleTransform) {
+                simpleTransform = true;
+                states.modelMatrix.identity();
+                resource.refresh();
+            }
+            transX = transform.m30();
+            transY = transform.m31();
+            transZ = transform.m32();
+            buffer.setTranslation(transX, transY, transZ);
+        } else {
+            if (simpleTransform) {
+                simpleTransform = false;
+                transX = transY = transZ = 0;
+                buffer.setTranslation(0, 0, 0);
+            }
+            states.modelMatrix.set(transform);
+            resource.refresh();
+        }
+    }
+
+    @Override
+    public Rectanglei getClipRectNoClone() {
+        return clipRect;
+    }
+
+    @Override
+    public Rectanglei getClipRect() {
+        return new Rectanglei(clipRect);
+    }
+
+    @Override
+    public Rectanglei getClipRect(Rectanglei dest) {
+        return dest.set(clipRect);
+    }
+
+    @Override
+    public void setClipRect(Rectanglei dest) {
+        finalClipRect.set(viewport);
+        if (dest != null) {
+            clipRect.set(dest);
+            finalClipRect.intersection(clipRect);
+            int x = finalClipRect.minX, y = frameHeight - finalClipRect.maxY,
+                    width = finalClipRect.lengthX(), height = finalClipRect.lengthY();
+            renderer.setScissor(x, y, width, height);
+        } else {
+            clipRect.set(viewport);
+            renderer.setScissor(null);
+        }
+    }
+
+    @Override
+    public void resetClipRect() {
+        finalClipRect.set(viewport);
+        clipRect.set(viewport);
+        renderer.setScissor(null);
     }
 
     @Override
@@ -136,48 +250,51 @@ public final class GraphicsImpl implements Graphics {
     }
 
     @Override
-    public void drawLine(float x1, float y1, float x2, float y2) {
+    public void drawQuad(float x1, float y1, float x2, float y2) {
+        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
+        putVertex(buffer, x1, y1);
+        putVertex(buffer, x1, y2);
+        putVertex(buffer, x2, y2);
+        putVertex(buffer, x2, y1);
+        putVertex(buffer, x1, y1);
+        buffer.finish();
+        renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
+    }
+
+    @Override
+    public void fillQuad(float x1, float y1, float x2, float y2) {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         putVertex(buffer, x1, y1);
         putVertex(buffer, x2, y2);
+        putVertex(buffer, x2, y1);
+        putVertex(buffer, x1, y1);
+        putVertex(buffer, x1, y2);
+        putVertex(buffer, x2, y2);
         buffer.finish();
-        renderer.drawStreamed(DrawMode.LINES, buffer);
+        renderer.drawStreamed(DrawMode.TRIANGLES, buffer);
     }
 
     @Override
     public void drawRect(float x, float y, float width, float height) {
-        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
-        float x2 = x + width, y2 = y + height;
-        quads(buffer, x, y, x2, y, x2, y2, x, y2);
-        putVertex(buffer, x, y);
-        buffer.finish();
-        renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
+        drawQuad(x, y, x + width, y + height);
     }
 
     @Override
     public void fillRect(float x, float y, float width, float height) {
-        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
-        float x2 = x + width, y2 = y + height;
-        quads(buffer, x, y, x, y2, x2, y, x2, y2);
-        buffer.finish();
-        renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
-    }
-
-    @Override
-    public void drawQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4) {
-        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
-        quads(buffer, p1.x(), p1.y(), p2.x(), p2.y(), p3.x(), p3.y(), p4.x(), p4.y());
-        putVertex(buffer, p1.x(), p1.y());
-        buffer.finish();
-        renderer.drawStreamed(DrawMode.LINE_STRIP, buffer);
+        fillQuad(x, y, x + width, y + height);
     }
 
     @Override
     public void fillQuad(Vector2fc p1, Vector2fc p2, Vector2fc p3, Vector2fc p4) {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
-        quads(buffer, p1.x(), p1.y(), p4.x(), p4.y(), p2.x(), p2.y(), p3.x(), p3.y());
+        putVertex(buffer, p1.x(), p1.y());
+        putVertex(buffer, p2.x(), p2.y());
+        putVertex(buffer, p3.x(), p3.y());
+        putVertex(buffer, p2.x(), p2.y());
+        putVertex(buffer, p4.x(), p4.y());
+        putVertex(buffer, p3.x(), p3.y());
         buffer.finish();
-        renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
+        renderer.drawStreamed(DrawMode.TRIANGLES, buffer);
     }
 
     @Override
@@ -191,10 +308,11 @@ public final class GraphicsImpl implements Graphics {
         uniformTexture.set(mesh.getTexture());
         resource.refresh();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
-        buffer.setTranslation(x, y, 0);
+        translate(x, y);
         mesh.put(buffer, color, beginIndex, endIndex);
         buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLES, buffer);
+        translate(-x, -y);
         setRenderText(false);
         uniformTexture.set(whiteTexture);
         resource.refresh();
@@ -299,93 +417,33 @@ public final class GraphicsImpl implements Graphics {
 
             drawTexture(texture, x, y, width, height);
         } else {
+            if (background.getColor() == Color.TRANSPARENT) {
+                return;
+            }
             setColor(background.getColor());
             fillRect(x, y, width, height);
         }
     }
 
     @Override
-    public void drawMesh(Mesh mesh, Texture2D texture, Matrix4fc modelMatrix) {
+    public void drawMesh(Mesh mesh, Texture2D texture) {
         uniformTexture.set(texture);
-        setModelMatrix(modelMatrix);
         resource.refresh();
         renderer.drawMesh(mesh);
-        setModelMatrix(identityMatrix4f);
         uniformTexture.set(whiteTexture);
         resource.refresh();
     }
 
     @Override
-    public void drawStreamedMesh(DrawMode drawMode, VertexDataBuf mesh, Texture2D texture, Matrix4fc modelMatrix) {
+    public void drawStreamedMesh(DrawMode drawMode, VertexDataBuf mesh, Texture2D texture) {
         uniformTexture.set(texture);
-        setModelMatrix(modelMatrix);
         resource.refresh();
         renderer.drawStreamed(drawMode, mesh);
-        setModelMatrix(identityMatrix4f);
         uniformTexture.set(whiteTexture);
         resource.refresh();
-    }
-
-    public void resetClipRect() {
-        clipRect.clear();
-    }
-
-    @Override
-    public void pushClipRect(float x, float y, float width, float height) {
-        if (clipRect.isEmpty()) {
-            clipRect.push(new Vector4f(x, y, x + width, y + height));
-        } else {
-            Vector4fc parent = clipRect.peek();
-            float newX = parent.x() + x, newY = parent.y() + y;
-            float newZ = newX + width, newW = newY + height;
-            clipRect.push(new Vector4f(newX, newY, Math.min(newZ, parent.z()), Math.min(newW, parent.w())));
-        }
-        updateClipRect();
-    }
-
-    @Override
-    public void popClipRect() {
-        clipRect.pop();
-        updateClipRect();
-    }
-
-    private void updateClipRect() {
-        states.clipRect = clipRect.peek();
-        resource.refresh();
-        Vector4fc scissor = clipRect.stream().reduce((parent, child) -> {
-            var newX = Math2.clamp(child.x(), parent.x(), parent.z());
-            var newY = Math2.clamp(child.y(), parent.y(), parent.w());
-            var newZ = Math2.clamp(child.z(), parent.x(), parent.z());
-            var newW = Math2.clamp(child.w(), parent.y(), parent.w());
-            return new Vector4f(newX, newY, newZ, newW);
-        }).get();
-        float height = scissor.w() - scissor.y();
-        renderer.setScissor((int) (scissor.x() * scaleX), (int) (frameHeight - (scissor.y() + height) * scaleY),
-                (int) Math.ceil((scissor.z() - scissor.x()) * scaleX), (int) Math.ceil(height * scaleY));
-    }
-
-    private void setModelMatrix(Matrix4fc modelMatrix) {
-        states.modelMatrix = modelMatrix;
-    }
-
-    @Override
-    public void enableGamma() {
-        states.enableGamma = true;
-    }
-
-    @Override
-    public void disableGamma() {
-        states.enableGamma = false;
     }
 
     private void putVertex(VertexDataBuf buffer, float x, float y) {
         buffer.pos(x, y, 0).color(color).endVertex();
-    }
-
-    private void quads(VertexDataBuf buffer, float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) {
-        putVertex(buffer, x0, y0);
-        putVertex(buffer, x1, y1);
-        putVertex(buffer, x2, y2);
-        putVertex(buffer, x3, y3);
     }
 }

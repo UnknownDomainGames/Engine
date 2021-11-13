@@ -5,7 +5,7 @@ import engine.gui.graphics.NodeRenderer;
 import engine.gui.image.Image;
 import engine.gui.image.ImageView;
 
-public class ImageViewRenderer implements NodeRenderer<ImageView> {
+public class ImageViewRenderer extends NodeRenderer<ImageView> {
 
     public static final ImageViewRenderer INSTANCE = new ImageViewRenderer();
 

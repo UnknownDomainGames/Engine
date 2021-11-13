@@ -6,7 +6,7 @@ import engine.gui.graphics.NodeRenderer;
 import engine.gui.misc.Insets;
 import org.joml.Vector2f;
 
-public class CheckBoxRenderer implements NodeRenderer<CheckBox> {
+public class CheckBoxRenderer extends NodeRenderer<CheckBox> {
     @Override
     public void render(CheckBox node, Graphics graphics) {
         graphics.drawBackground(node.getBackground(), node);
@@ -18,10 +18,8 @@ public class CheckBoxRenderer implements NodeRenderer<CheckBox> {
             if (node.state().get() == null) {
                 width = node.getWidth() - insets.getRight() - insets.getLeft();
                 height = node.getWidth() - insets.getTop() - insets.getBottom();
-                graphics.pushClipRect(insets.getLeft(), insets.getTop(), width, height);
                 graphics.setColor(node.contentColor().get());
-                graphics.fillRect(0, 0, width, height);
-                graphics.popClipRect();
+                graphics.fillRect(insets.getLeft(), insets.getTop(), width, height);
             } else {
                 width = node.getWidth();
                 height = node.getWidth();

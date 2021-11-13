@@ -9,7 +9,7 @@ import engine.gui.graphics.Graphics;
 import engine.gui.graphics.NodeRenderer;
 import engine.gui.misc.Pos;
 
-public final class TextRenderer implements NodeRenderer<Text> {
+public final class TextRenderer extends NodeRenderer<Text> {
 
     private final Text textNode;
 

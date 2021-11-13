@@ -3,7 +3,6 @@
 layout (std140) uniform States {
     mat4 projMatrix;
     mat4 modelMatrix;
-    vec4 clipRect;
     bool renderText;
     bool enableGamma;
 } states;
@@ -17,8 +16,7 @@ out vec2 v_TexCoord;
 
 void main()
 {
-    vec4 worldPos = states.modelMatrix * vec4(a_Position.xyz, 1.0);
-    gl_Position = states.projMatrix * vec4(worldPos.xy + states.clipRect.xy, 0.0, 1.0);
+    gl_Position = states.projMatrix * states.modelMatrix * vec4(a_Position.xyz, 1.0);
     v_Color = a_Color;
     v_TexCoord = a_TexCoord;
 }

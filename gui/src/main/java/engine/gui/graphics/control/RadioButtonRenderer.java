@@ -5,7 +5,7 @@ import engine.gui.graphics.Graphics;
 import engine.gui.graphics.NodeRenderer;
 import engine.gui.misc.Insets;
 
-public class RadioButtonRenderer implements NodeRenderer<RadioButton> {
+public class RadioButtonRenderer extends NodeRenderer<RadioButton> {
     @Override
     public void render(RadioButton node, Graphics graphics) {
         graphics.drawBackground(node.getBackground(), node);
@@ -14,10 +14,8 @@ public class RadioButtonRenderer implements NodeRenderer<RadioButton> {
             Insets insets = node.getPadding();
             float width = node.getWidth() - insets.getRight() - insets.getLeft();
             float height = node.getWidth() - insets.getTop() - insets.getBottom();
-            graphics.pushClipRect(insets.getLeft(), insets.getTop(), width, height);
             graphics.setColor(node.contentColor().get());
-            graphics.fillRect(0, 0, width, height);
-            graphics.popClipRect();
+            graphics.fillRect(insets.getLeft(), insets.getTop(), width, height);
         }
     }
 }

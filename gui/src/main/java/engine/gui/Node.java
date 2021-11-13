@@ -212,8 +212,8 @@ public abstract class Node implements EventTarget {
     }
 
     @SuppressWarnings("unchecked")
-    public void render(Graphics graphics) {
-        getRenderer().render(this, graphics);
+    public void doRender(Graphics graphics) {
+        getRenderer().doRender(this, graphics);
     }
 
     @SuppressWarnings("rawtypes")

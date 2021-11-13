@@ -5,7 +5,7 @@ import engine.gui.graphics.NodeRenderer;
 import engine.gui.internal.shape.PolygonHelper;
 import engine.gui.shape.Polygon;
 
-public final class PolygonRenderer implements NodeRenderer<Polygon> {
+public final class PolygonRenderer extends NodeRenderer<Polygon> {
     public static final PolygonRenderer INSTANCE = new PolygonRenderer();
 
     private PolygonRenderer() {
