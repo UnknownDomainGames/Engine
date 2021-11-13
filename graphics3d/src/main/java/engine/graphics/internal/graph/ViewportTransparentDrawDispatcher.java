@@ -73,9 +73,9 @@ public class ViewportTransparentDrawDispatcher implements DrawDispatcher {
             GL33C.glBindBufferBase(GL42C.GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounter.getId());
         }
         Stream.concat(
-                scene.getRenderQueue().getGeometryList(RenderType.TRANSPARENT).stream(),
-                scene.getRenderQueue().getGeometryList(RenderType.TRANSLUCENT).stream())
-                .filter(geometry -> geometry != null && geometry.getBoundingVolume().test(frustum))
+                        scene.getRenderQueue().getGeometryList(RenderType.TRANSPARENT).stream(),
+                        scene.getRenderQueue().getGeometryList(RenderType.TRANSLUCENT).stream())
+                .filter(geometry -> geometry.shouldRender(frustum))
                 .forEach(geometry -> {
                     uniformMatrices.set(new Matrices( // TODO: optimize it
                             viewport.getProjectionMatrix(),

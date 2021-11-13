@@ -1,12 +1,13 @@
 package engine.graphics;
 
+import engine.graphics.bounds.BoundingVolume;
 import engine.graphics.material.Material;
-import engine.graphics.math.BoundingVolume;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.queue.RenderQueue;
 import engine.graphics.queue.RenderType;
 import engine.graphics.texture.Texture;
 import engine.graphics.texture.Texture2D;
+import org.joml.FrustumIntersection;
 
 public class Geometry extends Node3D {
 
@@ -18,7 +19,7 @@ public class Geometry extends Node3D {
     private Texture texture = Texture2D.white();
     private Material material;
 
-    private BoundingVolume boundingVolume = new BoundingVolume();
+    private BoundingVolume bounds;
 
     public Geometry() {
         this(RenderType.OPAQUE);
@@ -84,7 +85,15 @@ public class Geometry extends Node3D {
         this.material = material;
     }
 
-    public BoundingVolume getBoundingVolume() {
-        return boundingVolume;
+    public BoundingVolume getBounds() {
+        return bounds;
+    }
+
+    public void setBounds(BoundingVolume bounds) {
+        this.bounds = bounds;
+    }
+
+    public boolean shouldRender(FrustumIntersection frustum) {
+        return bounds == null || bounds.test(frustum);
     }
 }

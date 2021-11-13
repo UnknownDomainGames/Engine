@@ -83,7 +83,7 @@ public class AssimpModelDrawDispatcher implements DrawDispatcher {
             GL33C.glBindBufferBase(GL42C.GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounter.getId());
         }
         scene.getRenderQueue().getGeometryList(AssimpMesh.ASSIMP_MODEL).stream()
-                .filter(geometry -> geometry != null && geometry.getBoundingVolume().test(frustum))
+                .filter(geometry -> geometry.shouldRender(frustum))
                 .forEach(geometry -> {
                     uniformMatrices.set(new Matrices( // TODO: optimize it
                             viewport.getProjectionMatrix(),
