@@ -66,7 +66,7 @@ public class NetworkServer implements NetworkEndpoint {
                         }
                     }).option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true).bind(port).syncUninterruptibly());
-            Platform.getLogger().debug(String.format("Launched netty server at %s:%d", address == null ? "*" : address.getHostAddress(), port));
+            Platform.getLogger().debug("Launched netty server at {}:{}", address == null ? "*" : address.getHostAddress(), port);
         }
     }
 
@@ -90,7 +90,7 @@ public class NetworkServer implements NetworkEndpoint {
                             ch.pipeline().addLast("handler", handler);
                         }
                     }).bind(LocalAddress.ANY).syncUninterruptibly();
-            Platform.getLogger().debug("Launched netty local server at %s:%d");
+            Platform.getLogger().debug("Launched netty local server");
         }
         return future.channel().localAddress();
     }
