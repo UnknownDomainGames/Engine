@@ -1,6 +1,7 @@
 package engine.graphics.voxel.chunk;
 
 import engine.graphics.Geometry;
+import engine.graphics.bounds.BoundingBox;
 import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.queue.RenderType;
 import engine.graphics.util.DrawMode;
@@ -9,7 +10,6 @@ import engine.graphics.voxel.VoxelGraphicsHelper;
 import engine.world.chunk.Chunk;
 import org.joml.Vector3fc;
 import org.joml.Vector3ic;
-import org.joml.primitives.AABBf;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +17,7 @@ import java.util.Map;
 public final class DrawableChunk extends Geometry {
 
     private final ChunkRenderer renderer;
+    private final BoundingBox boundingBox = new BoundingBox();
 
     private Chunk chunk;
 
@@ -27,6 +28,7 @@ public final class DrawableChunk extends Geometry {
 
     public DrawableChunk(ChunkRenderer renderer) {
         this.renderer = renderer;
+        setBounds(boundingBox);
         setTexture(VoxelGraphicsHelper.getVoxelTextureAtlas().getTexture());
         setVisible(false);
     }
@@ -37,9 +39,8 @@ public final class DrawableChunk extends Geometry {
 
     public void setChunk(Chunk chunk) {
         this.chunk = chunk;
-        Vector3ic min = chunk.getMin();
-        Vector3ic max = chunk.getMax();
-        getBoundingVolume().setBox(new AABBf(min.x(), min.y(), min.z(), max.x(), max.y(), max.z()));
+        Vector3ic min = chunk.getMin(), max = chunk.getMax();
+        boundingBox.setMin(min.x(), min.y(), min.z()).setMax(max.x(), max.y(), max.z());
     }
 
     public void reset() {
@@ -79,6 +80,7 @@ public final class DrawableChunk extends Geometry {
             pieces.computeIfAbsent(type, key -> {
                 var piece = new DrawableChunkPiece(key);
                 piece.setTexture(this.getTexture());
+                piece.setBounds(boundingBox);
                 DrawableChunk.this.addChild(piece);
                 return piece;
             }).uploadData(vertexDataBuf);
