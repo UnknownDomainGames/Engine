@@ -16,8 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.lwjgl.glfw.GLFW.glfwInit;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.*;
 
 public final class GLFWContext {
 
@@ -32,6 +31,8 @@ public final class GLFWContext {
 
     private static ObservableList<Window> showingWindows = ObservableCollections.observableList(new ArrayList<>());
     private static ObservableList<Window> unmodifiableShowingWindows = ObservableCollections.unmodifiableObservableList(showingWindows);
+
+    private static long contextCurrent;
 
     public static Screen getPrimaryScreen() {
         return primaryScreen;
@@ -114,6 +115,13 @@ public final class GLFWContext {
 
     static void refreshScreen(Screen screen) {
         ((GLFWScreen) screen).refresh();
+    }
+
+    static void makeContextCurrent(long pointer) {
+        if (contextCurrent != pointer) {
+            contextCurrent = pointer;
+            glfwMakeContextCurrent(pointer);
+        }
     }
 
     private GLFWContext() {

@@ -349,7 +349,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void prepareDraw() {
-        glfwMakeContextCurrent(pointer);
+        GLFWContext.makeContextCurrent(pointer);
     }
 
     @Override
