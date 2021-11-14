@@ -9,7 +9,6 @@ import engine.graphics.texture.WrapMode;
 import engine.util.Color;
 import org.joml.Vector2ic;
 import org.lwjgl.opengl.GL11C;
-import org.lwjgl.opengl.GL21C;
 import org.lwjgl.opengl.GL30C;
 import org.lwjgl.opengl.GL45C;
 import org.lwjgl.system.MemoryStack;
@@ -90,15 +89,13 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
     @Override
     public void upload(int level, int offsetX, int offsetY, int width, int height, ByteBuffer pixels) {
         if (pixels == null) {
-            if (GL11C.glGetInteger(GL21C.GL_PIXEL_UNPACK_BUFFER_BINDING) == 0) return;
             if (GLHelper.isSupportARBDirectStateAccess()) {
-                GL45C.nglTextureSubImage2D(id, level, 0, 0, width, height,
+                GL45C.nglTextureSubImage2D(id, level, offsetX, offsetY, width, height,
                         format.format, format.type, MemoryUtil.NULL);
                 if (mipmap) GL45C.glGenerateTextureMipmap(id);
             } else {
                 bind();
-                GL11C.nglTexSubImage2D(GL11C.GL_TEXTURE_2D, level,
-                        offsetX, offsetY, width, height,
+                GL11C.nglTexSubImage2D(GL11C.GL_TEXTURE_2D, level, offsetX, offsetY, width, height,
                         format.format, format.type, MemoryUtil.NULL);
                 if (mipmap) GL30C.glGenerateMipmap(GL11C.GL_TEXTURE_2D);
             }
@@ -207,7 +204,9 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
                             borderColor.get(stack.mallocFloat(4)));
                 }
             }
-            texture.upload(0, width, height, pixelBuffer);
+            if (pixelBuffer != null) {
+                texture.upload(0, width, height, pixelBuffer);
+            }
             return texture;
         }
     }
