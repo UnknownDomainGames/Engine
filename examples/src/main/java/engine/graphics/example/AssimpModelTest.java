@@ -32,8 +32,6 @@ import engine.input.Action;
 import engine.input.KeyCode;
 import engine.util.Color;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL15C;
-import org.lwjgl.opengl.GL42C;
 
 import java.lang.management.ManagementFactory;
 
@@ -113,14 +111,9 @@ public class AssimpModelTest extends Application3D {
                 Frame frame = frameContext.getFrame();
                 if (frame.isResized()) viewport.setSize(frame.getOutputWidth(), frame.getOutputHeight());
                 viewport.getScene().doUpdate(frame.getTimeToLastUpdate());
-                atomicCounterBuffer.bind();
-                var mapBuffer = GL15C.glMapBuffer(GL42C.GL_ATOMIC_COUNTER_BUFFER, GL15C.GL_WRITE_ONLY);
-                mapBuffer.putInt(0);
-                mapBuffer.flip();
-                GL15C.glUnmapBuffer(GL42C.GL_ATOMIC_COUNTER_BUFFER);
-                atomicCounterBuffer.unbind();
-//                atomicCounterBuffer.uploadData(new int[]{0});
-                headerClearBuffer.bind();
+
+                atomicCounterBuffer.uploadData(new int[]{0});
+
                 linkedListHeaderImage.upload(0, 0, 0, frame.getOutputWidth(), frame.getOutputHeight(), null);
                 headerClearBuffer.unbind();
             });
