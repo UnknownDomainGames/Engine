@@ -325,10 +325,10 @@ public class GLFWWindow implements Window {
         if (showing) {
             glfwShowWindow(pointer);
             setFocused(true);
-            GLFWContext.onShowedWindow(this);
+            GLFWContext.onShowWindow(this);
         } else {
             glfwHideWindow(pointer);
-            GLFWContext.onHidedWindow(this);
+            GLFWContext.onHideWindow(this);
         }
     }
 

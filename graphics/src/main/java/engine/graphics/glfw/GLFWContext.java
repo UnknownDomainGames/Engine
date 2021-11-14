@@ -105,11 +105,11 @@ public final class GLFWContext {
         return unmodifiableShowingWindows;
     }
 
-    static void onShowedWindow(GLFWWindow window) {
+    static void onShowWindow(GLFWWindow window) {
         showingWindows.add(window);
     }
 
-    static void onHidedWindow(GLFWWindow window) {
+    static void onHideWindow(GLFWWindow window) {
         showingWindows.remove(window);
     }
 
