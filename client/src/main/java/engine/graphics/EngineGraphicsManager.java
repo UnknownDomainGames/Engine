@@ -373,7 +373,6 @@ public final class EngineGraphicsManager implements GraphicsManager {
         long time = System.currentTimeMillis();
         if (time - lastUpdateFps > 1000) {
             fps = frameCount;
-            System.out.println("FPS: " + fps);
             frameCount = 0; // reset the FPS counter
             lastUpdateFps += 1000; // add one second
         }
