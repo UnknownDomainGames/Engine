@@ -237,9 +237,7 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf pos(float x, float y, float z) {
         if (vertexFormat.isUsingPosition()) {
-            byteBuffer.putFloat(x + transX);
-            byteBuffer.putFloat(y + transY);
-            byteBuffer.putFloat(z + transZ);
+            byteBuffer.putFloat(x + transX).putFloat(y + transY).putFloat(z + transZ);
         }
         return this;
     }
@@ -273,9 +271,7 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf rgb(float r, float g, float b) {
         if (vertexFormat.isUsingColor()) {
-            byteBuffer.putFloat(r);
-            byteBuffer.putFloat(g);
-            byteBuffer.putFloat(b);
+            byteBuffer.putFloat(r).putFloat(g).putFloat(b);
             if (vertexFormat.isUsingAlpha()) {
                 byteBuffer.putFloat(1f);
             }
@@ -285,9 +281,7 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf rgba(float r, float g, float b, float a) {
         if (vertexFormat.isUsingColor()) {
-            byteBuffer.putFloat(r);
-            byteBuffer.putFloat(g);
-            byteBuffer.putFloat(b);
+            byteBuffer.putFloat(r).putFloat(g).putFloat(b);
             if (vertexFormat.isUsingAlpha()) {
                 byteBuffer.putFloat(a);
             }
@@ -309,8 +303,7 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf tex(float u, float v) {
         if (vertexFormat.isUsingTexCoord()) {
-            byteBuffer.putFloat(u);
-            byteBuffer.putFloat(v);
+            byteBuffer.putFloat(u).putFloat(v);
         }
         return this;
     }
@@ -325,9 +318,7 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf normal(float nx, float ny, float nz) {
         if (vertexFormat.isUsingNormal()) {
-            byteBuffer.putFloat(nx);
-            byteBuffer.putFloat(ny);
-            byteBuffer.putFloat(nz);
+            byteBuffer.putFloat(nx).putFloat(ny).putFloat(nz);
         }
         return this;
     }
@@ -359,9 +350,7 @@ public abstract class VertexDataBuf {
 
     public VertexDataBuf bitangent(float bx, float by, float bz) {
         if (vertexFormat.isUsingBitangent()) {
-            byteBuffer.putFloat(bx);
-            byteBuffer.putFloat(by);
-            byteBuffer.putFloat(bz);
+            byteBuffer.putFloat(bx).putFloat(by).putFloat(bz);
         }
         return this;
     }
