@@ -81,7 +81,7 @@ public abstract class VertexDataBuf {
 
     public void finish() {
         if (ready) {
-            throw new IllegalStateException("Buffer ready");
+            throw new IllegalStateException("Buffer is ready");
         }
         byteBuffer.flip();
         if (byteBuffer.limit() % vertexFormat.getBytes() != 0) {
