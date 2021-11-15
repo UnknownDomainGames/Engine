@@ -42,6 +42,10 @@ public final class ItemStack {
         return item == null || amount <= 0;
     }
 
+    public boolean isNotEmpty() {
+        return item != null && amount > 0;
+    }
+
     public void ifEmpty(Consumer<ItemStack> consumer) {
         if (isEmpty()) {
             consumer.accept(this);

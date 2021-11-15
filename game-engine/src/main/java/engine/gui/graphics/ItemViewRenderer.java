@@ -17,7 +17,7 @@ public class ItemViewRenderer extends NodeRenderer<ItemView> {
     @Override
     public void render(ItemView node, Graphics graphics) {
         ItemStack itemStack = node.getItemStack();
-        if (itemStack != null) {
+        if (itemStack.isNotEmpty()) {
             VertexDataBuf buf = VertexDataBuf.currentThreadBuffer();
             buf.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
             ItemRenderManager.instance().generateMesh(buf, itemStack, 0);
