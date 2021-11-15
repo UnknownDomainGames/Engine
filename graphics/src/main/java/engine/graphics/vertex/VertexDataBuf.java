@@ -172,55 +172,55 @@ public abstract class VertexDataBuf {
     }
 
     public VertexDataBuf put(short[] src, int offset, int length) {
-        ensureRemaining(length * Short.BYTES);
+        ensureRemaining(length << 1);
         byteBuffer.asShortBuffer().put(src, offset, length);
         return this;
     }
 
     public VertexDataBuf put(int[] src, int offset, int length) {
-        ensureRemaining(length * Integer.BYTES);
+        ensureRemaining(length << 2);
         byteBuffer.asIntBuffer().put(src, offset, length);
         return this;
     }
 
     public VertexDataBuf put(float[] src, int offset, int length) {
-        ensureRemaining(length * Float.BYTES);
+        ensureRemaining(length << 2);
         byteBuffer.asFloatBuffer().put(src, offset, length);
         return this;
     }
 
     public VertexDataBuf put(double[] src, int offset, int length) {
-        ensureRemaining(length * Double.BYTES);
+        ensureRemaining(length << 3);
         byteBuffer.asDoubleBuffer().put(src, offset, length);
         return this;
     }
 
     public VertexDataBuf put(ByteBuffer src) {
-        ensureRemaining(src.limit());
+        ensureRemaining(src.remaining());
         byteBuffer.put(src);
         return this;
     }
 
     public VertexDataBuf put(ShortBuffer src) {
-        ensureRemaining(src.limit() * Short.BYTES);
+        ensureRemaining(src.remaining() << 1);
         byteBuffer.asShortBuffer().put(src);
         return this;
     }
 
     public VertexDataBuf put(IntBuffer src) {
-        ensureRemaining(src.limit() * Integer.BYTES);
+        ensureRemaining(src.remaining() << 2);
         byteBuffer.asIntBuffer().put(src);
         return this;
     }
 
     public VertexDataBuf put(FloatBuffer src) {
-        ensureRemaining(src.limit() * Float.BYTES);
+        ensureRemaining(src.remaining() << 2);
         byteBuffer.asFloatBuffer().put(src);
         return this;
     }
 
     public VertexDataBuf put(DoubleBuffer src) {
-        ensureRemaining(src.limit() * Double.BYTES);
+        ensureRemaining(src.remaining() << 3);
         byteBuffer.asDoubleBuffer().put(src);
         return this;
     }
