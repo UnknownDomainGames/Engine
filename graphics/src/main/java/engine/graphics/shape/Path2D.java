@@ -1,6 +1,6 @@
 package engine.graphics.shape;
 
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import org.joml.Vector2f;
 
 import java.nio.ByteBuffer;
@@ -64,11 +64,11 @@ public abstract class Path2D {
         return dst;
     }
 
-    public VertexDataBuf get(VertexDataBuf buf) {
-        for (int i = 0; i < buffer.position(); i += 2) {
-            buf.pos(buffer.get(i), buffer.get(i + 1), 0);
+    public VertexDataBuffer get(VertexDataBuffer buffer) {
+        for (int i = 0; i < this.buffer.position(); i += 2) {
+            buffer.pos(this.buffer.get(i), this.buffer.get(i + 1), 0);
         }
-        return buf;
+        return buffer;
     }
 
     public Path2D ensureCapacity(int capacity) {

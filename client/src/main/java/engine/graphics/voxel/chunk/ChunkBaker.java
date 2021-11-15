@@ -5,8 +5,8 @@ import engine.graphics.GraphicsEngine;
 import engine.graphics.block.BlockRenderManager;
 import engine.graphics.block.BlockRenderManagerImpl;
 import engine.graphics.queue.RenderType;
-import engine.graphics.vertex.VertexDataBuf;
-import engine.graphics.vertex.VertexDataBufPool;
+import engine.graphics.vertex.VertexDataBuffer;
+import engine.graphics.vertex.VertexDataBufferPool;
 import engine.graphics.vertex.VertexFormat;
 import engine.math.BlockPos;
 import engine.world.BlockGetter;
@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class ChunkBaker {
 
     private static ThreadPoolExecutor executor;
-    private static VertexDataBufPool dataBufPool;
+    private static VertexDataBufferPool dataBufPool;
 
     public static void start() {
         int threadCount = Runtime.getRuntime().availableProcessors();
@@ -39,7 +39,7 @@ public final class ChunkBaker {
                 return new Thread(r, "Chunk Baker " + poolNumber.getAndIncrement());
             }
         });
-        dataBufPool = VertexDataBufPool.create(0x200000, threadCount * 8);
+        dataBufPool = VertexDataBufferPool.create(0x200000, threadCount * 8);
     }
 
     public static void stop() {
@@ -73,7 +73,7 @@ public final class ChunkBaker {
                     return;
                 }
                 BlockRenderManager blockRenderManager = BlockRenderManager.instance();
-                var bufs = new HashMap<RenderType, VertexDataBuf>();
+                var bufs = new HashMap<RenderType, VertexDataBuffer>();
                 bufs.put(RenderType.OPAQUE, dataBufPool.get());
                 bufs.put(RenderType.TRANSLUCENT, dataBufPool.get());
 //                bufs.put(RenderType.TRANSPARENT, dataBufPool.get()); //TODO: when transparent and translucent handles differently, use it
@@ -89,7 +89,7 @@ public final class ChunkBaker {
                     if (!bufs.containsKey(renderType)) continue;
                     blockRenderManager.generateMesh(block, blockCache, pos, bufs.get(renderType));
                 }
-                bufs.values().forEach(VertexDataBuf::finish);
+                bufs.values().forEach(VertexDataBuffer::finish);
 
                 GraphicsEngine.getGraphicsBackend().runLater(() -> {
                     drawableChunk.finishBake(bufs);

@@ -2,7 +2,7 @@ package engine.graphics.mesh;
 
 import engine.graphics.GraphicsEngine;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 
 import javax.annotation.Nonnull;
@@ -17,7 +17,7 @@ public interface SingleBufMesh extends Mesh {
 
     void setDrawMode(DrawMode drawMode);
 
-    void uploadData(@Nonnull VertexDataBuf buffer);
+    void uploadData(@Nonnull VertexDataBuffer buffer);
 
     void uploadData(@Nonnull VertexFormat format, @Nonnull ByteBuffer buffer);
 
@@ -32,7 +32,7 @@ public interface SingleBufMesh extends Mesh {
 
         SingleBufMesh build();
 
-        SingleBufMesh build(@Nonnull VertexDataBuf buffer);
+        SingleBufMesh build(@Nonnull VertexDataBuffer buffer);
 
         SingleBufMesh build(@Nonnull VertexFormat format, @Nonnull ByteBuffer buffer);
     }

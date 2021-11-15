@@ -4,7 +4,7 @@ import engine.graphics.gl.buffer.GLBufferType;
 import engine.graphics.gl.buffer.GLBufferUsage;
 import engine.graphics.gl.buffer.GLVertexBuffer;
 import engine.graphics.mesh.Attribute;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 
 import java.nio.ByteBuffer;
@@ -37,9 +37,9 @@ class GLAttribute implements Attribute {
     }
 
     @Override
-    public void uploadData(VertexDataBuf buf) {
-        if (!format.equals(buf.getVertexFormat())) throw new IllegalArgumentException("vertex format");
-        uploadData(buf.getByteBuffer());
+    public void uploadData(VertexDataBuffer buffer) {
+        if (!format.equals(buffer.getVertexFormat())) throw new IllegalArgumentException("vertex format");
+        uploadData(buffer.getByteBuffer());
     }
 
     @Override
@@ -49,9 +49,9 @@ class GLAttribute implements Attribute {
     }
 
     @Override
-    public void uploadSubData(long offset, VertexDataBuf buf) {
-        if (!format.equals(buf.getVertexFormat())) throw new IllegalArgumentException("vertex format");
-        uploadSubData(offset, buf.getByteBuffer());
+    public void uploadSubData(long offset, VertexDataBuffer buffer) {
+        if (!format.equals(buffer.getVertexFormat())) throw new IllegalArgumentException("vertex format");
+        uploadSubData(offset, buffer.getByteBuffer());
     }
 
     @Override

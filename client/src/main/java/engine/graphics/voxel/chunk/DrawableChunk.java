@@ -5,7 +5,7 @@ import engine.graphics.bounds.BoundingBox;
 import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.queue.RenderType;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.voxel.VoxelGraphicsHelper;
 import engine.world.chunk.Chunk;
 import org.joml.Vector3fc;
@@ -72,11 +72,11 @@ public final class DrawableChunk extends Geometry {
         return position.distanceSquared(center.x(), center.y(), center.z());
     }
 
-    public void finishBake(HashMap<RenderType, VertexDataBuf> buf) {
+    public void finishBake(HashMap<RenderType, VertexDataBuffer> buffers) {
         if (pieces == null) {
             pieces = new HashMap<>();
         }
-        buf.forEach((type, vertexDataBuf) -> {
+        buffers.forEach((type, vertexDataBuf) -> {
             pieces.computeIfAbsent(type, key -> {
                 var piece = new DrawableChunkPiece(key);
                 piece.setTexture(this.getTexture());
@@ -106,8 +106,8 @@ public final class DrawableChunk extends Geometry {
             setMesh(mesh = SingleBufMesh.builder().setDynamic().drawMode(DrawMode.TRIANGLES).build());
         }
 
-        public void uploadData(VertexDataBuf buf) {
-            mesh.uploadData(buf);
+        public void uploadData(VertexDataBuffer buffer) {
+            mesh.uploadData(buffer);
         }
 
         public RenderType getType() {

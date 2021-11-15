@@ -9,35 +9,35 @@ import java.util.Queue;
 import java.util.Set;
 
 @ThreadSafe
-public abstract class VertexDataBufPool {
+public abstract class VertexDataBufferPool {
 
-    private final Set<VertexDataBuf> buffers = Sets.newConcurrentHashSet();
-    private final Queue<VertexDataBuf> availableBuffers = new PriorityQueue<>(11, Comparator.comparingInt(o -> -o.getByteBuffer().capacity()));
+    private final Set<VertexDataBuffer> buffers = Sets.newConcurrentHashSet();
+    private final Queue<VertexDataBuffer> availableBuffers = new PriorityQueue<>(11, Comparator.comparingInt(o -> -o.getByteBuffer().capacity()));
 
     private final int bufferInitialCapacity;
     private final int poolCapacity;
 
-    public static VertexDataBufPool create(int bufferInitialCapacity, int poolCapacity) {
+    public static VertexDataBufferPool create(int bufferInitialCapacity, int poolCapacity) {
         return new DirectBufferPool(bufferInitialCapacity, poolCapacity);
     }
 
-    public static VertexDataBufPool create() {
+    public static VertexDataBufferPool create() {
         return create(4096, Integer.MAX_VALUE);
     }
 
-    protected VertexDataBufPool(int bufferInitialCapacity, int poolCapacity) {
+    protected VertexDataBufferPool(int bufferInitialCapacity, int poolCapacity) {
         this.bufferInitialCapacity = bufferInitialCapacity;
         this.poolCapacity = poolCapacity;
     }
 
-    public VertexDataBuf get() throws InterruptedException {
+    public VertexDataBuffer get() throws InterruptedException {
         return get(bufferInitialCapacity);
     }
 
-    public VertexDataBuf get(int capacity) throws InterruptedException {
+    public VertexDataBuffer get(int capacity) throws InterruptedException {
         while (true) {
             synchronized (availableBuffers) {
-                VertexDataBuf buffer = availableBuffers.poll();
+                VertexDataBuffer buffer = availableBuffers.poll();
                 if (buffer != null) {
                     return buffer;
                 }
@@ -53,9 +53,9 @@ public abstract class VertexDataBufPool {
         }
     }
 
-    protected abstract VertexDataBuf createBuffer(int initialCapacity);
+    protected abstract VertexDataBuffer createBuffer(int initialCapacity);
 
-    public void free(VertexDataBuf buffer) {
+    public void free(VertexDataBuffer buffer) {
         if (!buffers.contains(buffer)) {
             throw new IllegalArgumentException("The buffer doesn't belong to this pool.");
         }
@@ -72,15 +72,15 @@ public abstract class VertexDataBufPool {
         }
     }
 
-    private static class DirectBufferPool extends VertexDataBufPool {
+    private static class DirectBufferPool extends VertexDataBufferPool {
 
         private DirectBufferPool(int bufferInitialCapacity, int poolCapacity) {
             super(bufferInitialCapacity, poolCapacity);
         }
 
         @Override
-        protected VertexDataBuf createBuffer(int initialCapacity) {
-            return VertexDataBuf.create(initialCapacity);
+        protected VertexDataBuffer createBuffer(int initialCapacity) {
+            return VertexDataBuffer.create(initialCapacity);
         }
     }
 

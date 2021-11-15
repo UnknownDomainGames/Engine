@@ -3,7 +3,7 @@ package engine.graphics.mesh;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.util.DrawMode;
 import engine.graphics.util.StructDefinition;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 
 import java.nio.ByteBuffer;
@@ -26,7 +26,7 @@ public interface InstancedMesh<E> extends MultiBufMesh {
 
         Builder<E> drawMode(DrawMode drawMode);
 
-        Builder<E> attribute(VertexDataBuf buf);
+        Builder<E> attribute(VertexDataBuffer buffer);
 
         Builder<E> attribute(VertexFormat format, ByteBuffer buffer);
 

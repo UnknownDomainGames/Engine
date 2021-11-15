@@ -3,7 +3,7 @@ package engine.graphics.shape;
 import engine.graphics.Geometry;
 import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 import engine.util.Color;
 import org.joml.Vector3fc;
@@ -22,7 +22,7 @@ public class Line extends Geometry {
     }
 
     public void refreshMesh() {
-        VertexDataBuf buffer = VertexDataBuf.currentThreadBuffer();
+        VertexDataBuffer buffer = VertexDataBuffer.currentThreadBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
         buffer.pos(from).color(color).endVertex();
         buffer.pos(to).color(color).endVertex();

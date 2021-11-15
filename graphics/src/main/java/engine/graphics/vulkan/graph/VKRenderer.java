@@ -3,7 +3,7 @@ package engine.graphics.vulkan.graph;
 import engine.graphics.graph.Renderer;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vulkan.CommandBuffer;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
@@ -37,12 +37,12 @@ public class VKRenderer implements Renderer {
     }
 
     @Override
-    public void drawStreamed(DrawMode drawMode, VertexDataBuf buf) {
-        drawStreamed(drawMode, buf, 0, buf.getVertexCount());
+    public void drawStreamed(DrawMode drawMode, VertexDataBuffer buffer) {
+        drawStreamed(drawMode, buffer, 0, buffer.getVertexCount());
     }
 
     @Override
-    public void drawStreamed(DrawMode drawMode, VertexDataBuf buf, int first, int count) {
+    public void drawStreamed(DrawMode drawMode, VertexDataBuffer buffer, int first, int count) {
 
     }
 }

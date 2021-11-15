@@ -2,7 +2,7 @@ package engine.graphics.graph;
 
 import engine.graphics.mesh.Mesh;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import org.joml.Vector4ic;
 
 public interface Renderer {
@@ -15,7 +15,7 @@ public interface Renderer {
 
     void drawMesh(Mesh mesh, int first, int count);
 
-    void drawStreamed(DrawMode drawMode, VertexDataBuf buf);
+    void drawStreamed(DrawMode drawMode, VertexDataBuffer buffer);
 
-    void drawStreamed(DrawMode drawMode, VertexDataBuf buf, int first, int count);
+    void drawStreamed(DrawMode drawMode, VertexDataBuffer buffer, int first, int count);
 }

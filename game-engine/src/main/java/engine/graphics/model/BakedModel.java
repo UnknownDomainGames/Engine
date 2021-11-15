@@ -1,7 +1,7 @@
 package engine.graphics.model;
 
 import engine.graphics.math.Transform;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.util.Direction;
 
 public interface BakedModel {
@@ -10,7 +10,7 @@ public interface BakedModel {
      * @param coveredFace {@link ModelUtils#toDirectionInt(Direction...)}
      * @return
      */
-    void putVertexes(VertexDataBuf buffer, int coveredFace);
+    void putVertexes(VertexDataBuffer buffer, int coveredFace);
 
     boolean isFullFace(Direction direction);
 

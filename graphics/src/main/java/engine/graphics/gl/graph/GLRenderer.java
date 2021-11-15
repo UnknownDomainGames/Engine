@@ -5,7 +5,7 @@ import engine.graphics.gl.mesh.GLSingleBufMesh;
 import engine.graphics.graph.Renderer;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import org.joml.Vector4i;
 import org.joml.Vector4ic;
 import org.lwjgl.opengl.GL11C;
@@ -51,14 +51,14 @@ public final class GLRenderer implements Renderer {
     }
 
     @Override
-    public void drawStreamed(DrawMode drawMode, VertexDataBuf buf) {
-        drawStreamed(drawMode, buf, 0, buf.getVertexCount());
+    public void drawStreamed(DrawMode drawMode, VertexDataBuffer buffer) {
+        drawStreamed(drawMode, buffer, 0, buffer.getVertexCount());
     }
 
     @Override
-    public void drawStreamed(DrawMode drawMode, VertexDataBuf buf, int first, int count) {
+    public void drawStreamed(DrawMode drawMode, VertexDataBuffer buffer, int first, int count) {
         if (count == 0) return;
-        streamedMesh.uploadData(buf);
+        streamedMesh.uploadData(buffer);
         streamedMesh.setDrawMode(drawMode);
         streamedMesh.draw(first, count);
     }

@@ -6,7 +6,7 @@ import engine.graphics.gl.buffer.GLBufferUsage;
 import engine.graphics.gl.buffer.GLVertexBuffer;
 import engine.graphics.mesh.SingleBufMesh;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11C;
 
@@ -55,7 +55,7 @@ public final class GLSingleBufMesh extends GLMesh implements SingleBufMesh {
     }
 
     @Override
-    public void uploadData(@Nonnull VertexDataBuf buffer) {
+    public void uploadData(@Nonnull VertexDataBuffer buffer) {
         uploadData(buffer.getVertexFormat(), buffer.getByteBuffer(), buffer.getVertexCount());
     }
 
@@ -126,7 +126,7 @@ public final class GLSingleBufMesh extends GLMesh implements SingleBufMesh {
         }
 
         @Override
-        public GLSingleBufMesh build(@Nonnull VertexDataBuf buffer) {
+        public GLSingleBufMesh build(@Nonnull VertexDataBuffer buffer) {
             GLSingleBufMesh mesh = build();
             mesh.uploadData(buffer);
             return mesh;

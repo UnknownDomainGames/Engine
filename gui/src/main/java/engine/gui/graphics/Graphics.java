@@ -5,7 +5,7 @@ import engine.graphics.mesh.Mesh;
 import engine.graphics.shape.Path2D;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.gui.Node;
 import engine.gui.image.Image;
 import engine.gui.misc.Background;
@@ -87,5 +87,5 @@ public interface Graphics {
 
     void drawMesh(Mesh mesh, Texture2D texture);
 
-    void drawStreamedMesh(DrawMode drawMode, VertexDataBuf mesh, Texture2D texture);
+    void drawStreamedMesh(DrawMode drawMode, VertexDataBuffer buffer, Texture2D texture);
 }

@@ -7,7 +7,7 @@ import engine.client.asset.Asset;
 import engine.client.asset.AssetTypes;
 import engine.graphics.model.BakedModel;
 import engine.graphics.queue.RenderType;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.math.BlockPos;
 import engine.registry.Registries;
 import engine.util.Direction;
@@ -55,7 +55,7 @@ public final class BlockRenderManagerImpl implements BlockRenderManager {
     }
 
     @Override
-    public void generateMesh(BlockState block, BlockGetter world, BlockPos pos, VertexDataBuf buffer) {
+    public void generateMesh(BlockState block, BlockGetter world, BlockPos pos, VertexDataBuffer buffer) {
         Asset<BakedModel> model = blockModelMap.get(block);
         if (model == null) {
             return;
@@ -75,7 +75,7 @@ public final class BlockRenderManagerImpl implements BlockRenderManager {
     }
 
     @Override
-    public void generateMesh(BlockState block, VertexDataBuf buffer) {
+    public void generateMesh(BlockState block, VertexDataBuffer buffer) {
         Asset<BakedModel> model = blockModelMap.get(block);
         if (model == null) {
             return;

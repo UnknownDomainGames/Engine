@@ -10,7 +10,7 @@ import engine.graphics.shape.Path2D;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.DrawMode;
 import engine.graphics.util.Struct;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 import engine.gui.Node;
 import engine.gui.graphics.Graphics;
@@ -32,7 +32,7 @@ import static org.lwjgl.opengl.GL12C.GL_CLAMP_TO_EDGE;
 
 public final class GraphicsImpl implements Graphics {
 
-    private final VertexDataBuf buffer = VertexDataBuf.create(4096);
+    private final VertexDataBuffer buffer = VertexDataBuffer.create(4096);
     private final GUIResourceFactory resourceFactory = new GUIResourceFactory();
 
     private final ShaderResource resource;
@@ -435,15 +435,15 @@ public final class GraphicsImpl implements Graphics {
     }
 
     @Override
-    public void drawStreamedMesh(DrawMode drawMode, VertexDataBuf mesh, Texture2D texture) {
+    public void drawStreamedMesh(DrawMode drawMode, VertexDataBuffer buffer, Texture2D texture) {
         uniformTexture.set(texture);
         resource.refresh();
-        renderer.drawStreamed(drawMode, mesh);
+        renderer.drawStreamed(drawMode, buffer);
         uniformTexture.set(whiteTexture);
         resource.refresh();
     }
 
-    private void putVertex(VertexDataBuf buffer, float x, float y) {
+    private void putVertex(VertexDataBuffer buffer, float x, float y) {
         buffer.pos(x, y, 0).color(color).endVertex();
     }
 }

@@ -6,7 +6,7 @@ import engine.graphics.mesh.InstancedAttribute;
 import engine.graphics.mesh.InstancedMesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.util.StructDefinition;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 import org.lwjgl.opengl.GL31C;
 
@@ -71,8 +71,8 @@ public final class GLInstancedMesh<E> extends GLMultiBufMesh implements Instance
         }
 
         @Override
-        public Builder<E> attribute(VertexDataBuf buf) {
-            return attribute(buf.getVertexFormat(), buf.getByteBuffer());
+        public Builder<E> attribute(VertexDataBuffer buffer) {
+            return attribute(buffer.getVertexFormat(), buffer.getByteBuffer());
         }
 
         @Override

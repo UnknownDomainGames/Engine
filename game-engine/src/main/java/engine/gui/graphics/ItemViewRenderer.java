@@ -2,7 +2,7 @@ package engine.gui.graphics;
 
 import engine.graphics.item.ItemRenderManager;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 import engine.graphics.voxel.VoxelGraphics;
 import engine.gui.control.ItemView;
@@ -18,10 +18,10 @@ public class ItemViewRenderer extends NodeRenderer<ItemView> {
     public void render(ItemView node, Graphics graphics) {
         ItemStack itemStack = node.getItemStack();
         if (itemStack.isNotEmpty()) {
-            VertexDataBuf buf = VertexDataBuf.currentThreadBuffer();
-            buf.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
-            ItemRenderManager.instance().generateMesh(buf, itemStack, 0);
-            buf.finish();
+            VertexDataBuffer buffer = VertexDataBuffer.currentThreadBuffer();
+            buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
+            ItemRenderManager.instance().generateMesh(buffer, itemStack, 0);
+            buffer.finish();
             float size = node.size().get();
             Matrix4f oldMatrix = graphics.getTransform(new Matrix4f());
             Matrix4f modelMatrix = graphics.getTransform(new Matrix4f());
@@ -36,7 +36,7 @@ public class ItemViewRenderer extends NodeRenderer<ItemView> {
                         .scale(size, -size, 1);
             }
             graphics.setTransform(modelMatrix);
-            graphics.drawStreamedMesh(DrawMode.TRIANGLES, buf, VoxelGraphics.getVoxelTextureAtlas().getTexture());
+            graphics.drawStreamedMesh(DrawMode.TRIANGLES, buffer, VoxelGraphics.getVoxelTextureAtlas().getTexture());
             graphics.setTransform(oldMatrix);
         }
     }

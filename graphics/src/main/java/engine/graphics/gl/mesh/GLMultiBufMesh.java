@@ -6,7 +6,7 @@ import engine.graphics.mesh.Attribute;
 import engine.graphics.mesh.Indices;
 import engine.graphics.mesh.MultiBufMesh;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 import org.lwjgl.opengl.GL11C;
 
@@ -119,8 +119,8 @@ public class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
         }
 
         @Override
-        public Builder attribute(VertexDataBuf buf) {
-            return attribute(buf.getVertexFormat(), buf.getByteBuffer());
+        public Builder attribute(VertexDataBuffer buffer) {
+            return attribute(buffer.getVertexFormat(), buffer.getByteBuffer());
         }
 
         @Override

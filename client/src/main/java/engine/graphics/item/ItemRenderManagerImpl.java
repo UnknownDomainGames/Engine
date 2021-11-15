@@ -2,7 +2,7 @@ package engine.graphics.item;
 
 import engine.graphics.graph.Renderer;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 import engine.item.BlockItem;
 import engine.item.Item;
@@ -38,7 +38,7 @@ public final class ItemRenderManagerImpl implements ItemRenderManager {
         if (itemStack.isEmpty())
             return;
 
-        VertexDataBuf buffer = VertexDataBuf.currentThreadBuffer();
+        VertexDataBuffer buffer = VertexDataBuffer.currentThreadBuffer();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
         generateMesh(buffer, itemStack, partial);
         buffer.finish();
@@ -46,7 +46,7 @@ public final class ItemRenderManagerImpl implements ItemRenderManager {
     }
 
     @Override
-    public void generateMesh(VertexDataBuf buffer, ItemStack itemStack, float partial) {
+    public void generateMesh(VertexDataBuffer buffer, ItemStack itemStack, float partial) {
         var render = itemRendererMap.get(itemStack.getItem());
         if (render == null) return;
         render.generateMesh(buffer, itemStack, partial);

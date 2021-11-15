@@ -27,7 +27,7 @@ import engine.graphics.texture.Texture2D;
 import engine.graphics.util.BlendMode;
 import engine.graphics.util.CullMode;
 import engine.graphics.util.DrawMode;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 import engine.graphics.viewport.PerspectiveViewport;
 import engine.graphics.voxel.VoxelGraphicsHelper;
@@ -320,17 +320,17 @@ public final class EngineGraphicsManager implements GraphicsManager {
                             listHeader.set(linkedListHeaderImage);
                             uniformListBuffer.set(linkedListMimicImage);
                             resource.refresh();
-                            var dataBuf = VertexDataBuf.currentThreadBuffer();
-                            dataBuf.begin(VertexFormat.POSITION);
-                            dataBuf.pos(-1, -1, 0).endVertex();
-                            dataBuf.pos(1, -1, 0).endVertex();
-                            dataBuf.pos(-1, 1, 0).endVertex();
+                            var buffer = VertexDataBuffer.currentThreadBuffer();
+                            buffer.begin(VertexFormat.POSITION);
+                            buffer.pos(-1, -1, 0).endVertex();
+                            buffer.pos(1, -1, 0).endVertex();
+                            buffer.pos(-1, 1, 0).endVertex();
 
-                            dataBuf.pos(-1, 1, 0).endVertex();
-                            dataBuf.pos(1, -1, 0).endVertex();
-                            dataBuf.pos(1, 1, 0).endVertex();
-                            dataBuf.finish();
-                            renderer.drawStreamed(DrawMode.TRIANGLES, dataBuf);
+                            buffer.pos(-1, 1, 0).endVertex();
+                            buffer.pos(1, -1, 0).endVertex();
+                            buffer.pos(1, 1, 0).endVertex();
+                            buffer.finish();
+                            renderer.drawStreamed(DrawMode.TRIANGLES, buffer);
                         }
                     });
                     transparentDrawOITPass.addDrawers(sceneDrawer);

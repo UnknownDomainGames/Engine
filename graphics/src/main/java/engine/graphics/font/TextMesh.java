@@ -1,7 +1,7 @@
 package engine.graphics.font;
 
 import engine.graphics.texture.Texture2D;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.util.Color;
 import org.joml.Vector4fc;
 
@@ -50,13 +50,13 @@ public class TextMesh {
         return height;
     }
 
-    public void put(VertexDataBuf buf, Color color) {
-        put(buf, color, 0, quads.length);
+    public void put(VertexDataBuffer buffer, Color color) {
+        put(buffer, color, 0, quads.length);
     }
 
-    public void put(VertexDataBuf buf, Color color, int beginIndex, int endIndex) {
+    public void put(VertexDataBuffer buffer, Color color, int beginIndex, int endIndex) {
         for (int i = beginIndex; i < endIndex; i++) {
-            quads[i].put(buf, color);
+            quads[i].put(buffer, color);
         }
     }
 
@@ -86,14 +86,14 @@ public class TextMesh {
             return y1 - y0;
         }
 
-        public void put(VertexDataBuf buf, Color color) {
-            buf.pos(x0, y0, 0).color(color).tex(texCoord.x(), texCoord.y()).endVertex();
-            buf.pos(x0, y1, 0).color(color).tex(texCoord.x(), texCoord.w()).endVertex();
-            buf.pos(x1, y0, 0).color(color).tex(texCoord.z(), texCoord.y()).endVertex();
+        public void put(VertexDataBuffer buffer, Color color) {
+            buffer.pos(x0, y0, 0).color(color).tex(texCoord.x(), texCoord.y()).endVertex();
+            buffer.pos(x0, y1, 0).color(color).tex(texCoord.x(), texCoord.w()).endVertex();
+            buffer.pos(x1, y0, 0).color(color).tex(texCoord.z(), texCoord.y()).endVertex();
 
-            buf.pos(x1, y0, 0).color(color).tex(texCoord.z(), texCoord.y()).endVertex();
-            buf.pos(x0, y1, 0).color(color).tex(texCoord.x(), texCoord.w()).endVertex();
-            buf.pos(x1, y1, 0).color(color).tex(texCoord.z(), texCoord.w()).endVertex();
+            buffer.pos(x1, y0, 0).color(color).tex(texCoord.z(), texCoord.y()).endVertex();
+            buffer.pos(x0, y1, 0).color(color).tex(texCoord.x(), texCoord.w()).endVertex();
+            buffer.pos(x1, y1, 0).color(color).tex(texCoord.z(), texCoord.w()).endVertex();
         }
     }
 }

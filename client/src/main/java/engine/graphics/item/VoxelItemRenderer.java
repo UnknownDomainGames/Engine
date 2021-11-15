@@ -5,7 +5,7 @@ import engine.client.asset.Asset;
 import engine.client.asset.AssetTypes;
 import engine.client.asset.AssetURL;
 import engine.graphics.model.BakedModel;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.item.ItemStack;
 
 public class VoxelItemRenderer implements ItemRenderer {
@@ -21,7 +21,7 @@ public class VoxelItemRenderer implements ItemRenderer {
     }
 
     @Override
-    public void generateMesh(VertexDataBuf buffer, ItemStack itemStack, float partial) {
+    public void generateMesh(VertexDataBuffer buffer, ItemStack itemStack, float partial) {
         model.get().putVertexes(buffer, 0);
     }
 

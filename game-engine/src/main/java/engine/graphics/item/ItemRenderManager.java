@@ -1,7 +1,7 @@
 package engine.graphics.item;
 
 import engine.graphics.graph.Renderer;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.item.ItemStack;
 
 import java.util.function.Supplier;
@@ -13,7 +13,7 @@ public interface ItemRenderManager {
 
     void render(Renderer renderer, ItemStack itemStack, float partial);
 
-    void generateMesh(VertexDataBuf buffer, ItemStack itemStack, float partial);
+    void generateMesh(VertexDataBuffer buffer, ItemStack itemStack, float partial);
 
     class Internal {
         private static Supplier<ItemRenderManager> instance = () -> {

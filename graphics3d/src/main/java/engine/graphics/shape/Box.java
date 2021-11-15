@@ -2,7 +2,7 @@ package engine.graphics.shape;
 
 import engine.graphics.Geometry;
 import engine.graphics.mesh.MultiBufMesh;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 import engine.util.Color;
 import org.joml.Vector3f;
@@ -60,17 +60,17 @@ public class Box extends Geometry {
         var max = new Vector3f();
         from.min(to, min);
         from.max(to, max);
-        VertexDataBuf buf = VertexDataBuf.currentThreadBuffer();
-        buf.begin(VertexFormat.POSITION_COLOR_ALPHA);
-        buf.pos(min).color(color).endVertex();
-        buf.pos(min.x, min.y, max.z).color(color).endVertex();
-        buf.pos(min.x, max.y, min.z).color(color).endVertex();
-        buf.pos(min.x, max.y, max.z).color(color).endVertex();
-        buf.pos(max.x, min.y, min.z).color(color).endVertex();
-        buf.pos(max.x, min.y, max.z).color(color).endVertex();
-        buf.pos(max.x, max.y, min.z).color(color).endVertex();
-        buf.pos(max).color(color).endVertex();
-        buf.finish();
-        setMesh(MultiBufMesh.builder().attribute(buf).indices(indices).build());
+        VertexDataBuffer buffer = VertexDataBuffer.currentThreadBuffer();
+        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA);
+        buffer.pos(min).color(color).endVertex();
+        buffer.pos(min.x, min.y, max.z).color(color).endVertex();
+        buffer.pos(min.x, max.y, min.z).color(color).endVertex();
+        buffer.pos(min.x, max.y, max.z).color(color).endVertex();
+        buffer.pos(max.x, min.y, min.z).color(color).endVertex();
+        buffer.pos(max.x, min.y, max.z).color(color).endVertex();
+        buffer.pos(max.x, max.y, min.z).color(color).endVertex();
+        buffer.pos(max).color(color).endVertex();
+        buffer.finish();
+        setMesh(MultiBufMesh.builder().attribute(buffer).indices(indices).build());
     }
 }

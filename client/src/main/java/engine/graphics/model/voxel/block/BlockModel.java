@@ -7,7 +7,7 @@ import engine.graphics.model.DisplayType;
 import engine.graphics.model.ModelUtils;
 import engine.graphics.model.voxel.Model;
 import engine.graphics.texture.TextureAtlasRegion;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.util.Direction;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -116,7 +116,7 @@ public final class BlockModel implements Model {
         }
 
         @Override
-        public void putVertexes(VertexDataBuf buffer, int coveredFace) {
+        public void putVertexes(VertexDataBuffer buffer, int coveredFace) {
             for (var vertexes : this.vertexes.entrySet()) {
                 if (ModelUtils.checkCullFace(coveredFace, vertexes.getKey())) {
                     continue;

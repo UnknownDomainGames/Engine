@@ -7,7 +7,7 @@ import engine.graphics.math.Transform;
 import engine.graphics.model.DisplayType;
 import engine.graphics.model.voxel.Model;
 import engine.graphics.texture.TextureAtlasRegion;
-import engine.graphics.vertex.VertexDataBuf;
+import engine.graphics.vertex.VertexDataBuffer;
 import engine.util.Direction;
 
 import java.util.ArrayList;
@@ -160,7 +160,7 @@ public class ItemGenerateModel implements Model {
         }
 
         @Override
-        public void putVertexes(VertexDataBuf buffer, int coveredFace) {
+        public void putVertexes(VertexDataBuffer buffer, int coveredFace) {
             for (var vertex : this.vertexes) {
                 buffer.pos(vertex, 0).rgba(1, 1, 1, 1).tex(vertex, 3).normal(vertex, 5).endVertex();
             }
