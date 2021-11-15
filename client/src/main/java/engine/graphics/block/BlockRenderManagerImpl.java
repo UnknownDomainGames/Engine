@@ -67,7 +67,7 @@ public final class BlockRenderManagerImpl implements BlockRenderManager {
         for (var direction : Direction.values()) {
             mutablePos.set(pos);
             if (!canRenderFace(world, mutablePos, block, direction)) {
-                coveredFace |= 1 << direction.index;
+                coveredFace |= direction.mask;
             }
         }
 

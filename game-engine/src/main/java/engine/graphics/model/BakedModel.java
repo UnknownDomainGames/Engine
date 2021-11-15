@@ -7,8 +7,8 @@ import engine.util.Direction;
 public interface BakedModel {
 
     /**
+     * @param buffer      the buffer
      * @param coveredFace {@link ModelUtils#toDirectionInt(Direction...)}
-     * @return
      */
     void putVertexes(VertexDataBuffer buffer, int coveredFace);
 

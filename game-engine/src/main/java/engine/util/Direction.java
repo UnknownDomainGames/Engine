@@ -10,11 +10,13 @@ public enum Direction {
 
     public final int index;
     public final int opposite;
+    public final int mask;
     public final int offsetX, offsetY, offsetZ;
 
     Direction(int index, int opposite, int offsetX, int offsetY, int offsetZ) {
         this.index = index;
         this.opposite = opposite;
+        this.mask = 1 << index;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
         this.offsetZ = offsetZ;

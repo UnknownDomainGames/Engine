@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static engine.graphics.model.ModelUtils.toDirectionInt;
-
 public class ModelJsonUtils {
 
     public static Vector3f vector3f(JsonElement json) {
@@ -114,12 +112,11 @@ public class ModelJsonUtils {
 
     public static int cullFaces(JsonElement json) {
         if (json == null) return 0;
-        if (json.isJsonPrimitive()) return toDirectionInt(Direction.valueOf(json.getAsString().toUpperCase()));
+        if (json.isJsonPrimitive()) return Direction.valueOf(json.getAsString().toUpperCase()).mask;
         if (json.isJsonArray()) {
-            var array = json.getAsJsonArray();
             int result = 0;
-            for (var element : array) {
-                result |= toDirectionInt(Direction.valueOf(element.getAsString().toUpperCase()));
+            for (var element : json.getAsJsonArray()) {
+                result |= Direction.valueOf(element.getAsString().toUpperCase()).mask;
             }
             return result;
         }
