@@ -67,11 +67,11 @@ public abstract class VertexDataBuf {
     }
 
     public void begin(@Nonnull VertexFormat format) {
+        if (byteBuffer == null) {
+            throw new IllegalStateException("Buffer is disposed");
+        }
         if (!ready) {
             throw new IllegalStateException("Buffer not ready");
-        }
-        if (isDisposed()) {
-            throw new IllegalStateException("Buffer has been disposed");
         }
         vertexFormat = notNull(format);
         byteBuffer.clear();
@@ -112,6 +112,9 @@ public abstract class VertexDataBuf {
     }
 
     public void dispose() {
+        if (byteBuffer == null) {
+            return;
+        }
         freeBuffer(byteBuffer);
         byteBuffer = null;
     }
