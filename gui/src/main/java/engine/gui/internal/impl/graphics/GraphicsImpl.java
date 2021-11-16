@@ -99,7 +99,7 @@ public final class GraphicsImpl implements Graphics {
         this.scaleY = scaleY;
         this.viewport.setMin(0, 0).setMax(frameWidth, frameHeight);
         this.states.projMatrix.setOrtho(0, frameWidth, frameHeight, 0, 32767, -32768);
-        this.uniformTexture.set(whiteTexture);
+        this.uniformTexture.setTexture(whiteTexture);
         this.resource.refresh();
         updateTransform();
     }
@@ -305,7 +305,7 @@ public final class GraphicsImpl implements Graphics {
     @Override
     public void drawText(TextMesh mesh, int beginIndex, int endIndex, float x, float y) {
         setRenderText(true);
-        uniformTexture.set(mesh.getTexture());
+        uniformTexture.setTexture(mesh.getTexture());
         resource.refresh();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
         translate(x, y);
@@ -314,7 +314,7 @@ public final class GraphicsImpl implements Graphics {
         renderer.drawStreamed(DrawMode.TRIANGLES, buffer);
         translate(-x, -y);
         setRenderText(false);
-        uniformTexture.set(whiteTexture);
+        uniformTexture.setTexture(whiteTexture);
         resource.refresh();
     }
 
@@ -335,11 +335,11 @@ public final class GraphicsImpl implements Graphics {
         buffer.pos(x, y2, 0).rgba(1, 1, 1, 1).tex(minU, maxV).endVertex();
         buffer.pos(x2, y, 0).rgba(1, 1, 1, 1).tex(maxU, minV).endVertex();
         buffer.pos(x2, y2, 0).rgba(1, 1, 1, 1).tex(maxU, maxV).endVertex();
-        uniformTexture.set(texture);
+        uniformTexture.setTexture(texture);
         resource.refresh();
         buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
-        uniformTexture.set(whiteTexture);
+        uniformTexture.setTexture(whiteTexture);
         resource.refresh();
     }
 
@@ -427,19 +427,19 @@ public final class GraphicsImpl implements Graphics {
 
     @Override
     public void drawMesh(Mesh mesh, Texture2D texture) {
-        uniformTexture.set(texture);
+        uniformTexture.setTexture(texture);
         resource.refresh();
         renderer.drawMesh(mesh);
-        uniformTexture.set(whiteTexture);
+        uniformTexture.setTexture(whiteTexture);
         resource.refresh();
     }
 
     @Override
     public void drawStreamedMesh(DrawMode drawMode, VertexDataBuffer buffer, Texture2D texture) {
-        uniformTexture.set(texture);
+        uniformTexture.setTexture(texture);
         resource.refresh();
         renderer.drawStreamed(drawMode, buffer);
-        uniformTexture.set(whiteTexture);
+        uniformTexture.setTexture(whiteTexture);
         resource.refresh();
     }
 

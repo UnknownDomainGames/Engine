@@ -50,7 +50,7 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
                             viewport.getProjectionMatrix(),
                             viewport.getViewMatrix(),
                             geometry.getWorldTransform().getTransformMatrix(tempMatrix4f)));
-                    uniformTexture.set(geometry.getTexture());
+                    uniformTexture.setTexture(geometry.getTexture());
                     resource.refresh();
                     renderer.drawMesh(geometry.getMesh());
                 });

@@ -58,7 +58,7 @@ public class ViewportSkyDrawDispatcher implements DrawDispatcher {
         ShaderResource resource = drawer.getShaderResource();
         uniformMatrices.set(new Matrices(viewport.getProjectionMatrix(), viewport.getViewMatrix()));
         viewport.getScene().getRenderQueue().getGeometryList(RenderType.SKY).forEach(geometry -> {
-            uniformTexture.set(geometry.getTexture());
+            uniformTexture.setTexture(geometry.getTexture());
             resource.refresh();
             renderer.drawMesh(geometry.getMesh());
         });

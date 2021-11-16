@@ -43,13 +43,13 @@ public final class GLUniformTexture implements UniformTexture {
     }
 
     @Override
-    public void set(Texture texture) {
-        binding.set(texture);
+    public void setTexture(Texture texture) {
+        binding.setTexture(texture);
     }
 
     @Override
-    public void set(Texture texture, Sampler sampler) {
-        binding.set(texture, sampler);
+    public void setSampler(Sampler sampler) {
+        binding.setSampler(sampler);
     }
 
     public void bind() {

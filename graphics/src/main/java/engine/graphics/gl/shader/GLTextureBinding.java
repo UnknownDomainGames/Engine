@@ -38,19 +38,18 @@ public final class GLTextureBinding implements TextureBinding {
     }
 
     @Override
-    public void set(Texture texture) {
-        set(texture, GLSampler.DEFAULT);
+    public void setTexture(Texture texture) {
+        this.texture = texture != null ? texture : GLTexture2D.EMPTY;
     }
 
     @Override
-    public void set(Texture texture, Sampler sampler) {
-        this.texture = texture == null ? GLTexture2D.EMPTY : texture;
-        this.sampler = sampler == null ? GLSampler.DEFAULT : sampler;
+    public void setSampler(Sampler sampler) {
+        this.sampler = sampler != null ? sampler : GLSampler.DEFAULT;
     }
 
     public void bind() {
         GLTexture glTexture = (GLTexture) texture;
-        if (texture == GLTexture2D.EMPTY) return;
+        if (texture == null) return;
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45C.glBindTextureUnit(unit, glTexture.getId());
         } else {

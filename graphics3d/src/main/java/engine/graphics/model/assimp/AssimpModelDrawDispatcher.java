@@ -96,16 +96,16 @@ public class AssimpModelDrawDispatcher implements DrawDispatcher {
                     uniformMaterial.set(material);
                     var u = material.getDiffuseMap();
                     if (u != null) {
-                        uniformDiffuseUV.set(u);
+                        uniformDiffuseUV.setTexture(u);
                     }
                     if ((u = material.getSpecularMap()) != null) {
-                        uniformSpecularUV.set(u);
+                        uniformSpecularUV.setTexture(u);
                     }
                     if ((u = material.getNormalMap()) != null) {
-                        uniformNormalUV.set(u);
+                        uniformNormalUV.setTexture(u);
                     }
                     if ((u = material.getAlphaMap()) != null) {
-                        uniformAlphaUV.set(u);
+                        uniformAlphaUV.setTexture(u);
                     }
                     resource.refresh();
                     renderer.drawMesh(geometry.getMesh());

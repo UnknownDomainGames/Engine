@@ -15,7 +15,7 @@ public interface UniformTexture {
 
     Sampler getSampler();
 
-    void set(Texture texture);
+    void setTexture(Texture texture);
 
-    void set(Texture texture, Sampler sampler);
+    void setSampler(Sampler sampler);
 }
