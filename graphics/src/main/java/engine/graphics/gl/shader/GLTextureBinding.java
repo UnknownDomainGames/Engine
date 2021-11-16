@@ -51,7 +51,7 @@ public final class GLTextureBinding implements TextureBinding {
     public void bind() {
         GLTexture glTexture = (GLTexture) texture;
         if (texture == GLTexture2D.EMPTY) return;
-        if (GLHelper.isOpenGL45()) {
+        if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45C.glBindTextureUnit(unit, glTexture.getId());
         } else {
             GL13C.glActiveTexture(GL13C.GL_TEXTURE0 + unit);

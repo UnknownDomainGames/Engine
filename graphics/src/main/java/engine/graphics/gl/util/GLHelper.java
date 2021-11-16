@@ -31,30 +31,6 @@ public final class GLHelper {
         }
     }
 
-    public static boolean isOpenGL45() {
-        return capabilities.OpenGL45;
-    }
-
-    public static boolean isOpenGL44() {
-        return capabilities.OpenGL44;
-    }
-
-    public static boolean isOpenGL43() {
-        return capabilities.OpenGL43;
-    }
-
-    public static boolean isOpenGL42() {
-        return capabilities.OpenGL42;
-    }
-
-    public static boolean isOpenGL41() {
-        return capabilities.OpenGL41;
-    }
-
-    public static boolean isOpenGL40() {
-        return capabilities.OpenGL40;
-    }
-
     public static boolean isSupportARBDirectStateAccess() {
         return GL_ARB_direct_state_access;
     }
