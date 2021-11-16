@@ -152,7 +152,8 @@ public final class GLHelper {
     public static int toGLCompareFunc(DepthCompareMode depthCompareMode) {
         switch (depthCompareMode) {
             case NONE:
-                return GL11C.GL_NONE;
+            case ALWAYS:
+                return GL11C.GL_ALWAYS;
             case LESS_OR_EQUAL:
                 return GL11C.GL_LEQUAL;
             case LESS:
@@ -161,8 +162,6 @@ public final class GLHelper {
                 return GL11C.GL_EQUAL;
             case NEVER:
                 return GL11C.GL_NEVER;
-            case ALWAYS:
-                return GL11C.GL_ALWAYS;
             case GREATER:
                 return GL11C.GL_GREATER;
             case NOT_EQUAL:
