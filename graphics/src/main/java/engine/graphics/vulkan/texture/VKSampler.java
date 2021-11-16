@@ -129,41 +129,6 @@ public class VKSampler implements Sampler {
     }
 
     @Override
-    public Sampler setMagFilter(FilterMode filterMode) {
-        return this;
-    }
-
-    @Override
-    public Sampler setMinFilter(FilterMode filterMode) {
-        return this;
-    }
-
-    @Override
-    public Sampler setWrapMode(WrapMode wrapMode) {
-        return this;
-    }
-
-    @Override
-    public Sampler setMinLod(float min) {
-        return this;
-    }
-
-    @Override
-    public Sampler setMaxLod(float max) {
-        return this;
-    }
-
-    @Override
-    public Sampler setBorderColor(Color color) {
-        return this;
-    }
-
-    @Override
-    public Sampler setDepthCompareMode(DepthCompareMode depthCompareMode) {
-        return this;
-    }
-
-    @Override
     public void dispose() {
         if (isReleased) return;
         VK10.vkDestroySampler(device.getNativeDevice(), handle, null);
