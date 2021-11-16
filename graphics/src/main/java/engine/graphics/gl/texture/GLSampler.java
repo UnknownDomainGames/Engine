@@ -84,31 +84,31 @@ public final class GLSampler implements Sampler {
 
         @Override
         public Builder magFilter(FilterMode filterMode) {
-            this.magFilter = GLTexture.toGLFilterMode(filterMode);
+            this.magFilter = GLHelper.toGLFilterMode(filterMode);
             return this;
         }
 
         @Override
         public Builder minFilter(FilterMode filterMode) {
-            this.minFilter = GLTexture.toGLFilterMode(filterMode);
+            this.minFilter = GLHelper.toGLFilterMode(filterMode);
             return this;
         }
 
         @Override
         public Builder wrapS(WrapMode wrapMode) {
-            this.wrapS = GLTexture.toGLWrapMode(wrapMode);
+            this.wrapS = GLHelper.toGLWrapMode(wrapMode);
             return this;
         }
 
         @Override
         public Builder wrapT(WrapMode wrapMode) {
-            this.wrapT = GLTexture.toGLWrapMode(wrapMode);
+            this.wrapT = GLHelper.toGLWrapMode(wrapMode);
             return this;
         }
 
         @Override
         public Builder wrapR(WrapMode wrapMode) {
-            this.wrapR = GLTexture.toGLWrapMode(wrapMode);
+            this.wrapR = GLHelper.toGLWrapMode(wrapMode);
             return this;
         }
 

@@ -140,25 +140,25 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
 
         @Override
         public Builder magFilter(FilterMode mode) {
-            parameterMap.put(GL11C.GL_TEXTURE_MAG_FILTER, toGLFilterMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_MAG_FILTER, GLHelper.toGLFilterMode(mode));
             return this;
         }
 
         @Override
         public Builder minFilter(FilterMode mode) {
-            parameterMap.put(GL11C.GL_TEXTURE_MIN_FILTER, toGLFilterMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_MIN_FILTER, GLHelper.toGLFilterMode(mode));
             return this;
         }
 
         @Override
         public Builder wrapS(WrapMode mode) {
-            parameterMap.put(GL11C.GL_TEXTURE_WRAP_S, toGLWrapMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_WRAP_S, GLHelper.toGLWrapMode(mode));
             return this;
         }
 
         @Override
         public Builder wrapT(WrapMode mode) {
-            parameterMap.put(GL11C.GL_TEXTURE_WRAP_T, toGLWrapMode(mode));
+            parameterMap.put(GL11C.GL_TEXTURE_WRAP_T, GLHelper.toGLWrapMode(mode));
             return this;
         }
 

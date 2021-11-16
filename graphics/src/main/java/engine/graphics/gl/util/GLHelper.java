@@ -1,5 +1,7 @@
 package engine.graphics.gl.util;
 
+import engine.graphics.texture.FilterMode;
+import engine.graphics.texture.WrapMode;
 import engine.graphics.util.DataType;
 import engine.graphics.util.DepthCompareMode;
 import engine.graphics.util.GPUVendor;
@@ -168,6 +170,40 @@ public final class GLHelper {
                 return GL11C.GL_NOTEQUAL;
             case GREATER_OR_EQUAL:
                 return GL11C.GL_GEQUAL;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    public static int toGLFilterMode(FilterMode filterMode) {
+        switch (filterMode) {
+            case LINEAR:
+                return GL11C.GL_LINEAR;
+            case NEAREST:
+                return GL11C.GL_NEAREST;
+            case LINEAR_MIPMAP_LINEAR:
+                return GL11C.GL_LINEAR_MIPMAP_LINEAR;
+            case LINEAR_MIPMAP_NEAREST:
+                return GL11C.GL_LINEAR_MIPMAP_NEAREST;
+            case NEAREST_MIPMAP_LINEAR:
+                return GL11C.GL_NEAREST_MIPMAP_LINEAR;
+            case NEAREST_MIPMAP_NEAREST:
+                return GL11C.GL_NEAREST_MIPMAP_NEAREST;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    public static int toGLWrapMode(WrapMode wrapMode) {
+        switch (wrapMode) {
+            case REPEAT:
+                return GL11C.GL_REPEAT;
+            case CLAMP_TO_EDGE:
+                return GL12C.GL_CLAMP_TO_EDGE;
+            case CLAMP_TO_BORDER:
+                return GL13C.GL_CLAMP_TO_BORDER;
+            case MIRRORED_REPEAT:
+                return GL14C.GL_MIRRORED_REPEAT;
             default:
                 throw new IllegalArgumentException();
         }

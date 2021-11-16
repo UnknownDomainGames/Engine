@@ -3,12 +3,11 @@ package engine.graphics.gl.texture;
 import engine.graphics.gl.util.GLCleaner;
 import engine.graphics.gl.util.GLHelper;
 import engine.graphics.texture.ColorFormat;
-import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.Texture;
-import engine.graphics.texture.WrapMode;
 import engine.graphics.util.Cleaner;
 import org.apache.commons.lang3.Validate;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.GL11C;
+import org.lwjgl.opengl.GL45C;
 
 import java.nio.FloatBuffer;
 
@@ -20,40 +19,6 @@ public abstract class GLTexture implements Texture {
     protected Cleaner.Disposable disposable;
 
     protected final GLColorFormat format;
-
-    public static int toGLFilterMode(FilterMode filterMode) {
-        switch (filterMode) {
-            case LINEAR:
-                return GL11C.GL_LINEAR;
-            case NEAREST:
-                return GL11C.GL_NEAREST;
-            case LINEAR_MIPMAP_LINEAR:
-                return GL11C.GL_LINEAR_MIPMAP_LINEAR;
-            case LINEAR_MIPMAP_NEAREST:
-                return GL11C.GL_LINEAR_MIPMAP_NEAREST;
-            case NEAREST_MIPMAP_LINEAR:
-                return GL11C.GL_NEAREST_MIPMAP_LINEAR;
-            case NEAREST_MIPMAP_NEAREST:
-                return GL11C.GL_NEAREST_MIPMAP_NEAREST;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
-
-    public static int toGLWrapMode(WrapMode wrapMode) {
-        switch (wrapMode) {
-            case REPEAT:
-                return GL11C.GL_REPEAT;
-            case CLAMP_TO_EDGE:
-                return GL12C.GL_CLAMP_TO_EDGE;
-            case CLAMP_TO_BORDER:
-                return GL13C.GL_CLAMP_TO_BORDER;
-            case MIRRORED_REPEAT:
-                return GL14C.GL_MIRRORED_REPEAT;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
 
     public GLTexture(int target, GLColorFormat format) {
         this.target = target;

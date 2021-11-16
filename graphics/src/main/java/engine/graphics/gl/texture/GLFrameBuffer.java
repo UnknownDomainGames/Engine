@@ -17,8 +17,8 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import static engine.graphics.gl.texture.GLTexture.toGLFilterMode;
 import static engine.graphics.gl.util.GLHelper.getMask;
+import static engine.graphics.gl.util.GLHelper.toGLFilterMode;
 
 public class GLFrameBuffer implements FrameBuffer {
 
