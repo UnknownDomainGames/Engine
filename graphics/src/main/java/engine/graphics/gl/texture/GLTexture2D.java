@@ -20,7 +20,7 @@ import java.util.Map;
 
 public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBuffer.Attachable {
 
-    public static final GLTexture2D EMPTY = new GLTexture2D();
+    public static final GLTexture2D NONE = new GLTexture2D();
 
     private final int width;
     private final int height;

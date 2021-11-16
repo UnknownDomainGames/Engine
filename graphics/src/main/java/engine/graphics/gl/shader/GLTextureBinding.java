@@ -15,8 +15,8 @@ import org.lwjgl.opengl.GL45C;
 public final class GLTextureBinding implements TextureBinding {
     private final int unit;
 
-    private Texture texture = GLTexture2D.EMPTY;
-    private Sampler sampler = GLSampler.DEFAULT;
+    private Texture texture = GLTexture2D.NONE;
+    private Sampler sampler = GLSampler.NONE;
 
     public GLTextureBinding(int unit) {
         this.unit = unit;
@@ -39,12 +39,12 @@ public final class GLTextureBinding implements TextureBinding {
 
     @Override
     public void setTexture(Texture texture) {
-        this.texture = texture != null ? texture : GLTexture2D.EMPTY;
+        this.texture = texture != null ? texture : GLTexture2D.NONE;
     }
 
     @Override
     public void setSampler(Sampler sampler) {
-        this.sampler = sampler != null ? sampler : GLSampler.DEFAULT;
+        this.sampler = sampler != null ? sampler : GLSampler.NONE;
     }
 
     public void bind() {

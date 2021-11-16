@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL42C;
 public class GLImageBinding implements ImageBinding {
     private final int unit;
 
-    private Texture texture = GLTexture2D.EMPTY;
+    private Texture texture = GLTexture2D.NONE;
     private boolean canRead = true;
     private boolean canWrite = true;
 

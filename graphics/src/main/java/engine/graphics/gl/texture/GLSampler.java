@@ -12,7 +12,7 @@ import org.lwjgl.opengl.*;
 
 public final class GLSampler implements Sampler {
 
-    public static final Sampler DEFAULT = new GLSampler();
+    public static final Sampler NONE = new GLSampler();
 
     private int id;
     private Cleaner.Disposable disposable;
