@@ -33,7 +33,7 @@ public class VKResourceFactory implements ResourceFactory {
     }
 
     @Override
-    public Sampler createSampler() {
+    public Sampler.Builder createSamplerBuilder() {
         return null;
     }
 

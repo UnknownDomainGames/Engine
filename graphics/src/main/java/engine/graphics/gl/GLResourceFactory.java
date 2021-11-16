@@ -41,8 +41,8 @@ final class GLResourceFactory implements ResourceFactory {
     }
 
     @Override
-    public Sampler createSampler() {
-        return new GLSampler();
+    public Sampler.Builder createSamplerBuilder() {
+        return GLSampler.builder();
     }
 
     @Override

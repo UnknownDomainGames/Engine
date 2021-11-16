@@ -9,81 +9,52 @@ import engine.graphics.util.Cleaner;
 import engine.graphics.util.DepthCompareMode;
 import engine.util.Color;
 import org.lwjgl.opengl.*;
-import org.lwjgl.system.MemoryStack;
-
-import java.nio.FloatBuffer;
 
 public final class GLSampler implements Sampler {
 
-    public static final Sampler DEFAULT = new GLSampler(null);
+    public static final Sampler DEFAULT = new GLSampler();
 
     private int id;
     private Cleaner.Disposable disposable;
 
-    public GLSampler() {
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    private GLSampler(Builder builder) {
         if (GLHelper.isSupportARBDirectStateAccess()) {
             id = GL45C.glCreateSamplers();
         } else {
             id = GL33C.glGenSamplers();
         }
         disposable = GLCleaner.registerSampler(this, id);
+        GL33C.glSamplerParameteri(id, GL11C.GL_TEXTURE_MAG_FILTER, builder.magFilter);
+        GL33C.glSamplerParameteri(id, GL11C.GL_TEXTURE_MIN_FILTER, builder.minFilter);
+        GL33C.glSamplerParameteri(id, GL11C.GL_TEXTURE_WRAP_S, builder.wrapS);
+        GL33C.glSamplerParameteri(id, GL11C.GL_TEXTURE_WRAP_T, builder.wrapT);
+        GL33C.glSamplerParameteri(id, GL12C.GL_TEXTURE_WRAP_R, builder.wrapR);
+        if (builder.minLod != -1000f) {
+            GL33C.glSamplerParameterf(id, GL12C.GL_TEXTURE_MIN_LOD, builder.minLod);
+        }
+        if (builder.maxLod != 1000f) {
+            GL33C.glSamplerParameterf(id, GL12C.GL_TEXTURE_MAX_LOD, builder.maxLod);
+        }
+        if (builder.borderColor != Color.TRANSPARENT) {
+            GL33C.glSamplerParameterfv(id, GL12C.GL_TEXTURE_BORDER_COLOR, builder.borderColor.toRGBAFloatArray());
+        }
+        if (builder.compareMode != GL11C.GL_NONE) {
+            GL33C.glSamplerParameteri(id, GL14C.GL_TEXTURE_COMPARE_MODE, builder.compareMode);
+            GL33C.glSamplerParameteri(id, GL14C.GL_TEXTURE_COMPARE_FUNC, builder.compareFunc);
+        }
     }
 
-    private GLSampler(Void arg0) {
+    private GLSampler() {
         this.id = 0;
     }
 
     @Override
     public int getId() {
         return id;
-    }
-
-    @Override
-    public Sampler setMagFilter(FilterMode filterMode) {
-        setSamplerParameteri(GL11C.GL_TEXTURE_MAG_FILTER, GLTexture.toGLFilterMode(filterMode));
-        return this;
-    }
-
-    @Override
-    public Sampler setMinFilter(FilterMode filterMode) {
-        setSamplerParameteri(GL11C.GL_TEXTURE_MIN_FILTER, GLTexture.toGLFilterMode(filterMode));
-        return this;
-    }
-
-    @Override
-    public Sampler setWrapMode(WrapMode wrapMode) {
-        int glWrapMode = GLTexture.toGLWrapMode(wrapMode);
-        setSamplerParameteri(GL11C.GL_TEXTURE_WRAP_S, glWrapMode);
-        setSamplerParameteri(GL11C.GL_TEXTURE_WRAP_T, glWrapMode);
-        setSamplerParameteri(GL12C.GL_TEXTURE_WRAP_R, glWrapMode);
-        return this;
-    }
-
-    @Override
-    public Sampler setMinLod(float min) {
-        GL33C.glSamplerParameterf(id, GL12C.GL_TEXTURE_MIN_LOD, min);
-        return this;
-    }
-
-    @Override
-    public Sampler setMaxLod(float max) {
-        GL33C.glSamplerParameterf(id, GL12C.GL_TEXTURE_MAX_LOD, max);
-        return this;
-    }
-
-    @Override
-    public Sampler setBorderColor(Color color) {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            setSamplerParameterfv(GL11C.GL_TEXTURE_BORDER_COLOR, color.get(stack.mallocFloat(4)));
-        }
-        return this;
-    }
-
-    @Override
-    public Sampler setDepthCompareMode(DepthCompareMode depthCompareMode) {
-        setSamplerParameteri(GL14C.GL_TEXTURE_COMPARE_MODE, GLHelper.toGLCompareMode(depthCompareMode));
-        setSamplerParameteri(GL14C.GL_TEXTURE_COMPARE_FUNC, GLHelper.toGLCompareFunc(depthCompareMode));
-        return this;
     }
 
     @Override
@@ -99,11 +70,76 @@ public final class GLSampler implements Sampler {
         return id == 0;
     }
 
-    private void setSamplerParameteri(int pname, int param) {
-        GL33C.glSamplerParameteri(id, pname, param);
-    }
+    public static final class Builder implements Sampler.Builder {
+        private int magFilter = GL11C.GL_LINEAR;
+        private int minFilter = GL11C.GL_NEAREST_MIPMAP_LINEAR;
+        private int wrapS = GL11C.GL_REPEAT;
+        private int wrapT = GL11C.GL_REPEAT;
+        private int wrapR = GL11C.GL_REPEAT;
+        private float minLod = -1000f;
+        private float maxLod = 1000f;
+        private Color borderColor = Color.TRANSPARENT;
+        private int compareMode = GL11C.GL_NONE;
+        private int compareFunc = GL11C.GL_ALWAYS;
 
-    private void setSamplerParameterfv(int pname, FloatBuffer params) {
-        GL33C.glSamplerParameterfv(id, pname, params);
+        @Override
+        public Builder magFilter(FilterMode filterMode) {
+            this.magFilter = GLTexture.toGLFilterMode(filterMode);
+            return this;
+        }
+
+        @Override
+        public Builder minFilter(FilterMode filterMode) {
+            this.minFilter = GLTexture.toGLFilterMode(filterMode);
+            return this;
+        }
+
+        @Override
+        public Builder wrapS(WrapMode wrapMode) {
+            this.wrapS = GLTexture.toGLWrapMode(wrapMode);
+            return this;
+        }
+
+        @Override
+        public Builder wrapT(WrapMode wrapMode) {
+            this.wrapT = GLTexture.toGLWrapMode(wrapMode);
+            return this;
+        }
+
+        @Override
+        public Builder wrapR(WrapMode wrapMode) {
+            this.wrapR = GLTexture.toGLWrapMode(wrapMode);
+            return this;
+        }
+
+        @Override
+        public Builder minLod(float min) {
+            this.minLod = min;
+            return this;
+        }
+
+        @Override
+        public Builder maxLod(float max) {
+            this.maxLod = max;
+            return this;
+        }
+
+        @Override
+        public Builder borderColor(Color color) {
+            this.borderColor = color;
+            return this;
+        }
+
+        @Override
+        public Builder depthCompareMode(DepthCompareMode depthCompareMode) {
+            this.compareMode = GLHelper.toGLCompareMode(depthCompareMode);
+            this.compareFunc = GLHelper.toGLCompareFunc(depthCompareMode);
+            return this;
+        }
+
+        @Override
+        public GLSampler build() {
+            return new GLSampler(this);
+        }
     }
 }

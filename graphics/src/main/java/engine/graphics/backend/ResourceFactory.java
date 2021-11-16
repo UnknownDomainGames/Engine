@@ -15,7 +15,7 @@ public interface ResourceFactory {
 
     TextureCubeMap.Builder createTextureCubeMapBuilder();
 
-    Sampler createSampler();
+    Sampler.Builder createSamplerBuilder();
 
     MultiBufMesh.Builder createMultiBufMeshBuilder();
 
