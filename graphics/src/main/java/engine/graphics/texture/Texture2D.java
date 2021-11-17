@@ -40,9 +40,9 @@ public interface Texture2D extends Texture {
 
         Builder wrapT(WrapMode mode);
 
-        Builder generateMipmap();
-
         Builder borderColor(Color color);
+
+        Builder generateMipmap();
 
         Texture2D build();
 
