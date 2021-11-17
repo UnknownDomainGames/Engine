@@ -39,7 +39,7 @@ public final class GLSampler implements Sampler {
         if (builder.maxLod != 1000f) {
             GL33C.glSamplerParameterf(id, GL12C.GL_TEXTURE_MAX_LOD, builder.maxLod);
         }
-        if (builder.borderColor != Color.TRANSPARENT) {
+        if (builder.borderColor != null) {
             GL33C.glSamplerParameterfv(id, GL12C.GL_TEXTURE_BORDER_COLOR, builder.borderColor.toRGBAFloatArray());
         }
         if (builder.compareMode != GL11C.GL_NONE) {
@@ -78,7 +78,7 @@ public final class GLSampler implements Sampler {
         private int wrapR = GL11C.GL_REPEAT;
         private float minLod = -1000f;
         private float maxLod = 1000f;
-        private Color borderColor = Color.TRANSPARENT;
+        private Color borderColor;
         private int compareMode = GL11C.GL_NONE;
         private int compareFunc = GL11C.GL_ALWAYS;
 
