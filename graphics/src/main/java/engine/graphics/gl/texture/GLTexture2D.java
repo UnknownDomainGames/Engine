@@ -10,6 +10,7 @@ import engine.util.Color;
 import org.joml.Vector2ic;
 import org.lwjgl.opengl.GL11C;
 import org.lwjgl.opengl.GL30C;
+import org.lwjgl.opengl.GL42C;
 import org.lwjgl.opengl.GL45C;
 import org.lwjgl.system.MemoryUtil;
 
@@ -61,8 +62,12 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
             if (builder.borderColor != null) {
                 GL11C.glTexParameterfv(GL11C.GL_TEXTURE_2D, GL11C.GL_TEXTURE_BORDER_COLOR, builder.borderColor.toRGBAFloatArray());
             }
-            GL11C.glTexImage2D(GL11C.GL_TEXTURE_2D, 0, format.internalFormat,
-                    width, height, 0, format.format, format.type, (ByteBuffer) null);
+            if (GLHelper.isSupportARBTextureStorage()) {
+                GL42C.glTexStorage2D(GL11C.GL_TEXTURE_2D, 1, format.internalFormat, width, height);
+            } else {
+                GL11C.nglTexImage2D(GL11C.GL_TEXTURE_2D, 0, format.internalFormat,
+                        width, height, 0, format.format, format.type, MemoryUtil.NULL);
+            }
         }
     }
 
