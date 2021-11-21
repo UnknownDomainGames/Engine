@@ -12,7 +12,7 @@ public class NibbleArray {
     private final int length;
 
     public NibbleArray(int bitsPreEntry, int length) {
-        Validate.inclusiveBetween(1L, 31L, bitsPreEntry); // TODO: Support 32bits.
+        Validate.inclusiveBetween(1L, 32L, bitsPreEntry);
         this.bitsPreEntry = bitsPreEntry;
         this.maxEntryValue = (1L << bitsPreEntry) - 1;
         this.length = length;
@@ -32,10 +32,10 @@ public class NibbleArray {
     }
 
     public int get(int index) {
+        rangeCheck(index);
         int bitStartIndex = index * bitsPreEntry;
         int arrayStartIndex = bitStartIndex >>> 6; // bitStartIndex / 64
         int arrayEndIndex = (bitStartIndex + bitsPreEntry - 1) >>> 6;
-        Validate.inclusiveBetween(0, array.length - 1, arrayEndIndex);
         int offset = bitStartIndex & 63; // bitStartIndex % 64
 
         if (arrayStartIndex == arrayEndIndex) {
@@ -46,11 +46,10 @@ public class NibbleArray {
     }
 
     public void set(int index, int value) {
-        Validate.inclusiveBetween(0, maxEntryValue, value);
+        rangeCheck(index);
         int bitStartIndex = index * bitsPreEntry;
         int arrayStartIndex = bitStartIndex >>> 6; // bitStartIndex / 64
         int arrayEndIndex = (bitStartIndex + bitsPreEntry - 1) >>> 6;
-        Validate.inclusiveBetween(0, array.length - 1, arrayEndIndex);
         int offset = bitStartIndex & 63; // bitStartIndex % 64
 
         array[arrayStartIndex] = array[arrayStartIndex] & ~(maxEntryValue << offset) | (long) value << offset;
@@ -63,11 +62,10 @@ public class NibbleArray {
     }
 
     public int getAndSet(int index, int value) {
-        Validate.inclusiveBetween(0, maxEntryValue, value);
+        rangeCheck(index);
         int bitStartIndex = index * bitsPreEntry;
         int arrayStartIndex = bitStartIndex >>> 6; // bitStartIndex / 64
         int arrayEndIndex = (bitStartIndex + bitsPreEntry - 1) >>> 6;
-        Validate.inclusiveBetween(0, array.length - 1, arrayEndIndex);
         int offset = bitStartIndex & 63; // bitStartIndex % 64
 
         long oldValue = array[arrayStartIndex] >>> offset;
@@ -93,5 +91,11 @@ public class NibbleArray {
 
     public long[] getBackingArray() {
         return array;
+    }
+
+    private void rangeCheck(int index) {
+        if (index < 0 || index >= length) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + length);
+        }
     }
 }
