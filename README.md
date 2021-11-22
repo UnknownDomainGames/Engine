@@ -10,6 +10,8 @@
 
 A 3D game engine based on Java. Focus on creating voxel sandbox game.
 
+[项目简介（Introducing Project）](https://github.com/UnknownDomainGames/PanguEngine/wiki/Introducing-Project)
+
 ## 安装（Install）
 ```
 $ git clone https://github.com/UnknownDomainGame/PanguEngine.git
@@ -31,7 +33,7 @@ You can learn about what we are doing in [Projects](https://github.com/UnknownDo
 
 ## 相关链接（Links）
 - [Wiki](https://github.com/UnknownDomainGames/PanguEngine/wiki)
-- [项目简介（Introducing Project）](https://github.com/UnknownDomainGames/PanguEngine/wiki/Introducing-Project)
 - [示例模组（Example Mod）](https://github.com/UnknownDomainGames/ExampleMod)
+- [基石模组（Foundation Mod）](https://github.com/UnknownDomainGames/Foundation)
 - 交流QQ群（QQ group for communication）：[965101316](https://jq.qq.com/?_wv=1027&k=5exnX2o)
 - Discord：http://discord.gg/KRGMBw3
