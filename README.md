@@ -6,9 +6,9 @@
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/UnknownDomainGames/PanguEngine/Build)](https://github.com/UnknownDomainGames/PanguEngine/actions/workflows/build.yml)
 [![Latest Version](https://img.shields.io/github/v/release/UnknownDomainGames/PanguEngine?include_prereleases)](https://github.com/UnknownDomainGames/PanguEngine/releases/latest)
 
-基于Java的3D游戏引擎。专注于创建体素沙盒游戏。
+用模组构建你的游戏。
 
-A 3D game engine based on Java. Focus on creating voxel sandbox game.
+Build your game with mods. 
 
 [项目简介（Introducing Project）](https://github.com/UnknownDomainGames/PanguEngine/wiki/Introducing-Project)
 
