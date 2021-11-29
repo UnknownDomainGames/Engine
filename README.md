@@ -6,9 +6,9 @@
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/UnknownDomainGames/PanguEngine/Build)](https://github.com/UnknownDomainGames/PanguEngine/actions/workflows/build.yml)
 [![Latest Version](https://img.shields.io/github/v/release/UnknownDomainGames/PanguEngine?include_prereleases)](https://github.com/UnknownDomainGames/PanguEngine/releases/latest)
 
-用模组构建你的游戏。
+**用模组构建你的游戏。**
 
-Build your game with mods. 
+**Build your game with mods.**
 
 [项目简介（Introducing Project）](https://github.com/UnknownDomainGames/PanguEngine/wiki/Introducing-Project)
 
