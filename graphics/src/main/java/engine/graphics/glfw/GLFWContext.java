@@ -8,6 +8,7 @@ import engine.graphics.display.Window;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.system.MemoryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public final class GLFWContext {
     private static ObservableList<Window> showingWindows = ObservableCollections.observableList(new ArrayList<>());
     private static ObservableList<Window> unmodifiableShowingWindows = ObservableCollections.unmodifiableObservableList(showingWindows);
 
-    private static long contextCurrent;
+    private static final ThreadLocal<Long> contextCurrent = ThreadLocal.withInitial(() -> MemoryUtil.NULL);
 
     public static Screen getPrimaryScreen() {
         return primaryScreen;
@@ -118,8 +119,8 @@ public final class GLFWContext {
     }
 
     static void makeContextCurrent(long pointer) {
-        if (contextCurrent != pointer) {
-            contextCurrent = pointer;
+        if (contextCurrent.get() != pointer) {
+            contextCurrent.set(pointer);
             glfwMakeContextCurrent(pointer);
         }
     }
