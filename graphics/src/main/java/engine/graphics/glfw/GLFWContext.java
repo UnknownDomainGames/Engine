@@ -54,8 +54,8 @@ public final class GLFWContext {
     public static Screen getScreen(double x, double y) {
         for (Screen screen : getScreens()) {
             VideoMode videoMode = screen.getVideoMode();
-            int screenMinX = screen.getPosX();
-            int screenMinY = screen.getPosY();
+            int screenMinX = screen.getWorkareaX();
+            int screenMinY = screen.getWorkareaY();
             int screenMaxX = screenMinX + videoMode.getWidth();
             int screenMaxY = screenMinY + videoMode.getHeight();
             if (x >= screenMinX && x < screenMaxX && y >= screenMinY && y < screenMaxY) {

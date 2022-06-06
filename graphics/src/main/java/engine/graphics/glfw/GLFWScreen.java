@@ -15,14 +15,16 @@ public class GLFWScreen implements Screen {
     private final long pointer;
     private String name;
 
+    private int workareaX;
+    private int workareaY;
+    private int workareaWidth;
+    private int workareaHeight;
+
     private int physicsWidth;
     private int physicsHeight;
 
     private float scaleX;
     private float scaleY;
-
-    private int posX;
-    private int posY;
 
     private VideoMode videoMode;
     private final List<VideoMode> videoModes;
@@ -40,6 +42,26 @@ public class GLFWScreen implements Screen {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public int getWorkareaX() {
+        return workareaX;
+    }
+
+    @Override
+    public int getWorkareaY() {
+        return workareaY;
+    }
+
+    @Override
+    public int getWorkareaWidth() {
+        return workareaWidth;
+    }
+
+    @Override
+    public int getWorkareaHeight() {
+        return workareaHeight;
     }
 
     @Override
@@ -63,16 +85,6 @@ public class GLFWScreen implements Screen {
     }
 
     @Override
-    public int getPosX() {
-        return posX;
-    }
-
-    @Override
-    public int getPosY() {
-        return posY;
-    }
-
-    @Override
     public VideoMode getVideoMode() {
         return videoMode;
     }
@@ -85,24 +97,28 @@ public class GLFWScreen implements Screen {
     public void refresh() {
         name = GLFW.glfwGetMonitorName(pointer);
         try (MemoryStack memoryStack = MemoryStack.stackPush()) {
-            IntBuffer width = memoryStack.mallocInt(1);
-            IntBuffer height = memoryStack.mallocInt(1);
-            GLFW.glfwGetMonitorPhysicalSize(pointer, width, height);
+            IntBuffer workareaX = memoryStack.mallocInt(1);
+            IntBuffer workareaY = memoryStack.mallocInt(1);
+            IntBuffer workareaWidth = memoryStack.mallocInt(1);
+            IntBuffer workareaHeight = memoryStack.mallocInt(1);
+            GLFW.glfwGetMonitorWorkarea(pointer, workareaX, workareaY, workareaWidth, workareaHeight);
+            IntBuffer physicsWidth = memoryStack.mallocInt(1);
+            IntBuffer physicsHeight = memoryStack.mallocInt(1);
+            GLFW.glfwGetMonitorPhysicalSize(pointer, physicsWidth, physicsHeight);
             FloatBuffer xScale = memoryStack.mallocFloat(1);
             FloatBuffer yScale = memoryStack.mallocFloat(1);
             GLFW.glfwGetMonitorContentScale(pointer, xScale, yScale);
-            IntBuffer xPos = memoryStack.mallocInt(1);
-            IntBuffer yPos = memoryStack.mallocInt(1);
-            GLFW.glfwGetMonitorPos(pointer, xPos, yPos);
 
             GLFWVidMode vidMode = GLFW.glfwGetVideoMode(pointer);
             GLFWVidMode.Buffer vidModes = GLFW.glfwGetVideoModes(pointer);
-            this.physicsWidth = width.get();
-            this.physicsHeight = height.get();
+            this.workareaX = workareaX.get();
+            this.workareaY = workareaY.get();
+            this.workareaWidth = workareaWidth.get();
+            this.workareaHeight = workareaHeight.get();
+            this.physicsWidth = physicsWidth.get();
+            this.physicsHeight = physicsHeight.get();
             this.scaleX = xScale.get();
             this.scaleY = yScale.get();
-            this.posX = xPos.get();
-            this.posY = yPos.get();
             this.videoMode = createVideoMode(vidMode);
             this.videoModes.clear();
             this.videoModes.addAll(createVideoModes(vidModes));

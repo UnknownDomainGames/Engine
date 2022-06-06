@@ -26,6 +26,14 @@ public interface Screen {
 
     String getName();
 
+    int getWorkareaX();
+
+    int getWorkareaY();
+
+    int getWorkareaWidth();
+
+    int getWorkareaHeight();
+
     int getPhysicsWidth();
 
     int getPhysicsHeight();
@@ -33,10 +41,6 @@ public interface Screen {
     float getScaleX();
 
     float getScaleY();
-
-    int getPosX();
-
-    int getPosY();
 
     VideoMode getVideoMode();
 

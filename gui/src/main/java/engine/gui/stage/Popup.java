@@ -150,8 +150,8 @@ public class Popup extends Stage {
         if (isAutoFix()) {
             Screen screen = getScreen();
             VideoMode videoMode = screen.getVideoMode();
-            float screenMinX = screen.getPosX();
-            float screenMinY = screen.getPosY();
+            float screenMinX = screen.getWorkareaX();
+            float screenMinY = screen.getWorkareaY();
             float screenMaxX = screenMinX + videoMode.getWidth();
             float screenMaxY = screenMinY + videoMode.getHeight();
             if (anchorXFactor <= 0.5) {
