@@ -87,19 +87,13 @@ public final class GLFWContext {
         Map<String, Screen> nameToScreen = new HashMap<>();
         for (int i = 0; i < pointerBuffer.capacity(); i++) {
             long pointer = pointerBuffer.get();
-            Screen screen = createScreen(pointer);
+            Screen screen = new GLFWScreen(pointer);
             pointerToScreen.put(pointer, screen);
             nameToScreen.put(screen.getName(), screen);
         }
         GLFWContext.pointerToScreen = Map.copyOf(pointerToScreen);
         GLFWContext.nameToScreen = Map.copyOf(nameToScreen);
         GLFWContext.primaryScreen = getScreen(GLFW.glfwGetPrimaryMonitor());
-    }
-
-    private static Screen createScreen(long pointer) {
-        var screen = new GLFWScreen(pointer);
-        screen.refresh();
-        return screen;
     }
 
     public static ObservableList<Window> getShowingWindows() {
@@ -114,8 +108,8 @@ public final class GLFWContext {
         showingWindows.remove(window);
     }
 
-    static void refreshScreen(Screen screen) {
-        ((GLFWScreen) screen).refresh();
+    static void refreshScale(Screen screen) {
+        ((GLFWScreen) screen).refreshScale();
     }
 
     static void makeContextCurrent(long pointer) {

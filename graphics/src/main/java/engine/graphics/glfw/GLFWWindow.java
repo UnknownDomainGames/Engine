@@ -662,7 +662,7 @@ public class GLFWWindow implements Window {
                 cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
         glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> relocate(xpos, ypos));
         glfwSetWindowSizeCallback(pointer, (window, width, height) -> resize(width, height));
-        glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> GLFWContext.refreshScreen(screen)));
+        glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> GLFWContext.refreshScale(screen)));
         glfwSetDropCallback(pointer, (window, count, names) -> {
             Path[] paths = new Path[count];
             PointerBuffer buffer = MemoryUtil.memPointerBuffer(names, count);
