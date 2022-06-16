@@ -62,7 +62,11 @@ public class ShaderManager {
             throw new RuntimeException(e);
         }
 
-        return new ShaderProgram(shaders.toArray(CompiledShader[]::new));
+        ShaderProgram program = new ShaderProgram(shaders.toArray(CompiledShader[]::new));
+        for (CompiledShader shader : shaders) {
+            shader.dispose();
+        }
+        return program;
     }
 
     private static CompiledShader loadShader(ShaderType type, String name, ShaderResourceLoader loader) {

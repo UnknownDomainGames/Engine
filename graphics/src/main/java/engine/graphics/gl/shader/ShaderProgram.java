@@ -28,15 +28,9 @@ public class ShaderProgram {
             LOGGER.warn("Error initializing shader program (id: {}), log: {}", id, GL20C.glGetProgramInfoLog(id));
         }
 
-        use();
         GL20C.glValidateProgram(id);
         if (GL20C.glGetProgrami(id, GL20C.GL_VALIDATE_STATUS) != GL11C.GL_TRUE) {
             LOGGER.warn("Error initializing shader program (id: {}), log: {}", id, GL20C.glGetProgramInfoLog(id));
-        }
-        GL20C.glUseProgram(0);
-
-        for (CompiledShader shader : shaders) {
-            shader.dispose();
         }
     }
 
@@ -53,7 +47,6 @@ public class ShaderProgram {
             return;
         }
 
-        GL20C.glUseProgram(0);
         disposable.dispose();
         id = 0;
     }
