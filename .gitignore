@@ -15,4 +15,5 @@
 .vscode
 
 # Engine
-run
+client/run
+server/run
