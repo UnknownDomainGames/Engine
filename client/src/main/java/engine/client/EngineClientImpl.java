@@ -20,9 +20,9 @@ import engine.client.sound.Sound;
 import engine.client.sound.SoundManager;
 import engine.enginemod.EngineModClientListeners;
 import engine.enginemod.EngineModListeners;
+import engine.enginemod.client.gui.game.GuiGameLoading;
 import engine.enginemod.client.gui.game.GuiMainMenu;
 import engine.enginemod.client.gui.game.GuiPauseMenu;
-import engine.enginemod.client.gui.game.GuiGameLoading;
 import engine.event.engine.EngineEvent;
 import engine.game.Game;
 import engine.game.GameData;
@@ -38,9 +38,7 @@ import engine.gui.misc.Background;
 import engine.gui.misc.Orientation;
 import engine.gui.misc.Pos;
 import engine.logic.Ticker;
-import engine.mod.ModContainer;
 import engine.player.Profile;
-import engine.registry.Registries;
 import engine.server.ServerConfig;
 import engine.server.network.ConnectionStatus;
 import engine.server.network.NetworkClient;
@@ -100,13 +98,20 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
         logger.info("Initializing client engine!");
         clientThread = Thread.currentThread();
 
-        settings = new EngineSettings();
-        try {
-            settings.load(getRunPath().resolve("config/engine.json"));
-        } catch (ConfigParseException | ConfigLoadException e) {
-            logger.debug("Cannot load or not found engine configuration file! Try to create new one!", e);
+        var settingsFile = getRunPath().resolve("config/engine.json");
+        if (settingsFile.toFile().exists()) {
+            try {
+                settings = new EngineSettings();
+                settings.load(settingsFile);
+            } catch (ConfigParseException | ConfigLoadException e) {
+                logger.debug("Cannot load or not found engine configuration file!", e);
+                settings = null;
+            }
+        }
+        if (settings == null) {
+            logger.info("Creating new configuration file");
             settings = new EngineSettings();
-            settings.save(getRunPath().resolve("config/engine.json"));
+            settings.save(settingsFile);
         }
 
         // TODO: Remove it
