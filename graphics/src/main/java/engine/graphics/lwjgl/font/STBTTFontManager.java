@@ -38,22 +38,6 @@ public final class STBTTFontManager extends FontManager {
 
     public static final Logger LOGGER = LoggerFactory.getLogger("Font");
 
-    public static final int PLATFORM_ID;
-    public static final int ENCODING_ID;
-    public static final int LANGUAGE_ID;
-
-    static {
-        if (SystemUtils.IS_OS_WINDOWS) {
-            PLATFORM_ID = STBTT_PLATFORM_ID_MICROSOFT;
-            ENCODING_ID = STBTT_MS_EID_UNICODE_BMP;
-            LANGUAGE_ID = STBTT_MS_LANG_ENGLISH;
-        } else {
-            PLATFORM_ID = STBTT_PLATFORM_ID_UNICODE;
-            ENCODING_ID = STBTT_UNICODE_EID_UNICODE_2_0_BMP;
-            LANGUAGE_ID = 0;
-        }
-    }
-
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("engine.font.debug", "false"));
 
     private final List<Font> availableFonts = new ArrayList<>();
@@ -196,15 +180,13 @@ public final class STBTTFontManager extends FontManager {
 
     @Override
     public String getFontFamily(Font font, Locale locale) {
-        String family = getFontInfo(font).getNameTable()
-                .getFontNameString(PLATFORM_ID, ENCODING_ID, LCIDHelper.INSTANCE.getLanguageID(locale), 1);
+        String family = findFirstFontNameString(getFontInfo(font).getNameTable(), TTFontNameTable.FAMILY);
         return family != null ? family : font.getFamily();
     }
 
     @Override
     public String getFontName(Font font, Locale locale) {
-        String fullName = getFontInfo(font).getNameTable()
-                .getFontNameString(PLATFORM_ID, ENCODING_ID, LCIDHelper.INSTANCE.getLanguageID(locale), 4);
+        String fullName = findFirstFontNameString(getFontInfo(font).getNameTable(), TTFontNameTable.FULL);
         return fullName != null ? fullName : font.getName();
     }
 
@@ -434,8 +416,8 @@ public final class STBTTFontManager extends FontManager {
 
             TTFontNameTable nameTable = STBTTFontHelper.getFontNameTable(stbFontInfo);
 
-            String family = nameTable.getFontNameString(PLATFORM_ID, ENCODING_ID, LANGUAGE_ID, 1);
-            String style = nameTable.getFontNameString(PLATFORM_ID, ENCODING_ID, LANGUAGE_ID, 2);
+            String family = findFirstFontNameString(nameTable, TTFontNameTable.FAMILY);
+            String style = findFirstFontNameString(nameTable, TTFontNameTable.STYLE);
 
             if (family == null || style == null) {
                 throw new FontLoadException("Failed to find font family or style");
@@ -503,6 +485,15 @@ public final class STBTTFontManager extends FontManager {
         var counter = stbtt_FindGlyphIndex(font.getFontInfo().getSTBFontInfo(), 0x1A);
         var ci = stbtt_FindGlyphIndex(font.getFontInfo().getSTBFontInfo(), character);
         return counter != ci;
+    }
+
+    private static String findFirstFontNameString(TTFontNameTable nameTable, int nameId) {
+        for (TTFontNameEntry entry : nameTable.getEntries()) {
+            if (entry.getName() == nameId) {
+                return entry.getString();
+            }
+        }
+        return null;
     }
 
     public static final class Factory implements FontManager.Factory {

@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public final class STBTTFontHelper {
@@ -28,12 +29,16 @@ public final class STBTTFontHelper {
         for (int i = 0; i < count; i++) {
             long loc = nm + 6 + 12 * i;
             int platform = memGetUShort(data + loc);
-            int encoding = memGetUShort(data + loc + 2);
-            if (encoding != STBTTFontManager.ENCODING_ID) {
-                // No need to load others encoding.
+            if (platform != STBTT_PLATFORM_ID_UNICODE && platform != STBTT_PLATFORM_ID_MICROSOFT) {
+                // No need to load other platforms.
                 continue;
             }
+            int encoding = memGetUShort(data + loc + 2);
             int language = memGetUShort(data + loc + 4);
+            if (language != 0 && language != STBTT_MS_LANG_ENGLISH) {
+                // No need to load other languages.
+                continue;
+            }
             int name = memGetUShort(data + loc + 6);
             int length = memGetUShort(data + loc + 8);
             long stringPtr = data + stringOffset + memGetUShort(data + loc + 10);
