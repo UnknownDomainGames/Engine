@@ -107,6 +107,7 @@ public class GLFWWindow implements Window {
         screen = parent != null ? parent.getScreen() : GLFWContext.getPrimaryScreen();
         var minWindowSize = 1;
         if (SystemUtils.IS_OS_LINUX) {
+            // 1 causes "Bad Parameters" on X11
             minWindowSize = 2;
         }
         width = (int) Math.max(width * getContentScaleX(), minWindowSize);

@@ -13,15 +13,40 @@ import engine.util.JsonUtils;
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 public class LocaleManager {
 
     public static final String DEFAULT_LOCALE = "en_us";
     public static final LocaleManager INSTANCE = new LocaleManager();
+
+    private static final Function<String, String> loadConvert;
+
+    static {
+        try {
+            var methodLoadConvert = Properties.class.getDeclaredMethod("loadConvert", char[].class, int.class, int.class, StringBuilder.class);
+            methodLoadConvert.setAccessible(true);
+            var properties = new Properties();
+            var buffer = new StringBuilder();
+            loadConvert = (str) -> {
+                var chars = str.toCharArray();
+                try {
+                    return methodLoadConvert.invoke(properties, chars, 0, chars.length, buffer).toString();
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                }
+            };
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private LocaleDefinition defaultLocale;
     private LocaleDefinition currentLocale = null;
@@ -105,9 +130,22 @@ public class LocaleManager {
     }
 
     private void loadFrom(BufferedReader reader) {
+        AtomicInteger lineNumberCounter = new AtomicInteger();
         reader.lines().forEach(line -> {
-            if (!line.isEmpty() && !line.startsWith("#")) {
-                localeMap.put(line.substring(0, line.indexOf("=")), line.substring(line.indexOf("=") + 1));
+            var lineNumber = lineNumberCounter.incrementAndGet();
+            try {
+                line = line.stripLeading();
+                if (line.isEmpty() || line.startsWith("#"))
+                    return;
+                var separator = line.indexOf("=");
+                if (separator == -1)
+                    throw new IllegalArgumentException("Line without separator(\"=\"): " + line);
+                var key = line.substring(0, separator);
+                var value = line.substring(separator + 1);
+                value = loadConvert.apply(value);
+                localeMap.put(key, value);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Invalid line " + lineNumber, e);
             }
         });
     }
