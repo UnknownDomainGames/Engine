@@ -65,6 +65,10 @@ public class Font {
         return size;
     }
 
+    public Font withSize(float size) {
+        return new Font(family, style, size);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -90,7 +94,7 @@ public class Font {
         return "Font{" +
                 "family='" + family + '\'' +
                 ", style='" + style + '\'' +
-                ", getSize=" + size +
+                ", size=" + size +
                 '}';
     }
 }

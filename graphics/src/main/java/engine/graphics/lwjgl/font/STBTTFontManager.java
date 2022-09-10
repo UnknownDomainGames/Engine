@@ -2,6 +2,7 @@ package engine.graphics.lwjgl.font;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
 import com.google.common.collect.Table;
 import engine.graphics.font.*;
 import engine.graphics.util.BufferUtils;
@@ -97,7 +98,7 @@ public final class STBTTFontManager extends FontManager {
             };
             List<Path> fonts;
             if (SystemUtils.IS_OS_LINUX) {
-                fonts = Files.walk(Path.of("/usr/share/fonts/WindowsFonts"))
+                fonts = Streams.concat(Files.walk(Path.of("/usr/share/fonts/")), Files.walk(Path.of("/usr/local/share/fonts/")))
                         .filter(typefaceFilter)
                         .collect(Collectors.toList());
             } else if (SystemUtils.IS_OS_WINDOWS) {
@@ -154,8 +155,11 @@ public final class STBTTFontManager extends FontManager {
     }
 
     public void setDefaultFont(Font defaultFont) {
-        if (!isAvailableFont(defaultFont))
-            throw new IllegalStateException("Failed to set default font cause by " + defaultFont + " is unavailable");
+        if (!isAvailableFont(defaultFont)) {
+            var fallbackFont = availableFonts.get(0).withSize(defaultFont.getSize());
+            LOGGER.error("Failed to set default font, {} is unavailable, fallback to {}", defaultFont, fallbackFont);
+            defaultFont = fallbackFont;
+        }
         this.defaultFont = defaultFont;
     }
 
