@@ -107,8 +107,12 @@ public class GLFWWindow implements Window {
         screen = parent != null ? parent.getScreen() : GLFWContext.getPrimaryScreen();
         width *= getContentScaleX();
         height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
-        width = Math.max(width, 1);
-        height = Math.max(height, 1);
+        var minWindowSize = 1;
+        if (SystemUtils.IS_OS_LINUX) {
+            minWindowSize = 2;
+        }
+        width = Math.max(width, minWindowSize);
+        height = Math.max(height, minWindowSize);
         initWindowHint();
         pointer = glfwCreateWindow(width, height, title, NULL, parent == null ? NULL : getRootWindow().getPointer());
         checkCreated();
