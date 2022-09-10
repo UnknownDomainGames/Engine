@@ -41,12 +41,14 @@ jobs:
 
       - name: Upload Artifact ZIP
         uses: actions/upload-artifact@v2.2.4
+        if: false
         with:
           name: client-${{ matrix.lwjgl_natives }}.zip
           path: client/build/distributions/*.zip
 
       - name: Upload Artifact TAR
         uses: actions/upload-artifact@v2.2.4
+        if: false
         with:
           name: client-${{ matrix.lwjgl_natives }}.tar
           path: client/build/distributions/*.tar
@@ -81,12 +83,14 @@ jobs:
 
       - name: Upload Artifact ZIP
         uses: actions/upload-artifact@v2.2.4
+        if: false
         with:
           name: server.zip
           path: server/build/distributions/*.zip
 
       - name: Upload Artifact TAR
         uses: actions/upload-artifact@v2.2.4
+        if: false
         with:
           name: server.tar
           path: server/build/distributions/*.tar
