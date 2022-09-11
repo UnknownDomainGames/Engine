@@ -48,6 +48,7 @@ public abstract class TextInput extends Control {
         prompt = new Text();
         promptText().bindBidirectional(prompt.text());
         getChildren().add(prompt);
+        font().bind(prompt.font());
         text().addChangeListener((observable, oldValue, newValue) -> prompt.setVisible(length() == 0));
     }
 
