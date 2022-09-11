@@ -10,14 +10,13 @@ import engine.input.Action;
 import engine.input.KeyCode;
 import engine.input.Modifiers;
 import engine.input.MouseButton;
+import engine.util.LinearGrowthList;
 import org.apache.commons.lang3.SystemUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.apache.commons.lang3.Validate.notNull;
@@ -65,19 +64,19 @@ public class GLFWWindow implements Window {
 
     private long cursorPointer;
 
-    private final List<KeyCallback> keyCallbacks = new LinkedList<>();
-    private final List<MouseCallback> mouseCallbacks = new LinkedList<>();
-    private final List<CursorCallback> cursorCallbacks = new LinkedList<>();
-    private final List<ScrollCallback> scrollCallbacks = new LinkedList<>();
-    private final List<CharModsCallback> charModsCallbacks = new LinkedList<>();
-    private final List<WindowCloseCallback> windowCloseCallbacks = new LinkedList<>();
-    private final List<WindowFocusCallback> windowFocusCallbacks = new LinkedList<>();
-    private final List<WindowIconifyCallback> windowIconifyCallbacks = new LinkedList<>();
-    private final List<WindowMaximizeCallback> windowMaximizeCallbacks = new LinkedList<>();
-    private final List<CursorEnterCallback> cursorEnterCallbacks = new LinkedList<>();
-    private final List<WindowSizeCallback> windowSizeCallbacks = new LinkedList<>();
-    private final List<WindowPosCallback> windowPosCallbacks = new LinkedList<>();
-    private final List<DropCallback> dropCallbacks = new LinkedList<>();
+    private final List<KeyCallback> keyCallbacks = new LinearGrowthList<>();
+    private final List<MouseCallback> mouseCallbacks = new LinearGrowthList<>();
+    private final List<CursorCallback> cursorCallbacks = new LinearGrowthList<>();
+    private final List<ScrollCallback> scrollCallbacks = new LinearGrowthList<>();
+    private final List<CharModsCallback> charModsCallbacks = new LinearGrowthList<>();
+    private final List<WindowCloseCallback> windowCloseCallbacks = new LinearGrowthList<>();
+    private final List<WindowFocusCallback> windowFocusCallbacks = new LinearGrowthList<>();
+    private final List<WindowIconifyCallback> windowIconifyCallbacks = new LinearGrowthList<>();
+    private final List<WindowMaximizeCallback> windowMaximizeCallbacks = new LinearGrowthList<>();
+    private final List<CursorEnterCallback> cursorEnterCallbacks = new LinearGrowthList<>();
+    private final List<WindowSizeCallback> windowSizeCallbacks = new LinearGrowthList<>();
+    private final List<WindowPosCallback> windowPosCallbacks = new LinearGrowthList<>();
+    private final List<DropCallback> dropCallbacks = new LinearGrowthList<>();
 
     public GLFWWindow() {
         this(null);
@@ -657,7 +656,7 @@ public class GLFWWindow implements Window {
             charModsCallbacks.forEach(callback -> callback.invoke(this, (char) codepoint, modifiers));
         });
         glfwSetWindowCloseCallback(pointer, window -> {
-            new ArrayList<>(windowCloseCallbacks).forEach(callback -> callback.invoke(this));
+            windowCloseCallbacks.forEach(callback -> callback.invoke(this));
             if (doCloseImmediately) {
                 dispose();
             }
