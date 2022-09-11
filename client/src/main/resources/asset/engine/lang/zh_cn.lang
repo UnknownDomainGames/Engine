@@ -4,6 +4,7 @@ engine.gui.warning=警告
 engine.gui.back=返回
 engine.gui.create=创建
 engine.gui.delete=删除
+engine.gui.reset=重置
 
 engine.gui.terminating=停止游戏...
 
@@ -33,6 +34,10 @@ engine.gui.settings.ui_scale=UI缩放
 engine.gui.settings.hud_scale=HUD缩放
 engine.gui.settings.language=语言
 engine.gui.settings.language.title=选择语言
+engine.gui.settings.font=字体
+engine.gui.settings.font.title=选择字体
+engine.gui.settings.font.size=大小
+engine.gui.settings.font.default_preview=测试内容
 engine.gui.settings.discard=放弃
 engine.gui.settings.save=保存
 

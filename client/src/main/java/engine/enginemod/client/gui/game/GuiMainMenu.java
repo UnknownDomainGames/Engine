@@ -3,7 +3,7 @@ package engine.enginemod.client.gui.game;
 import engine.Platform;
 import engine.client.EngineClientImpl;
 import engine.client.i18n.I18n;
-import engine.enginemod.client.gui.GuiSettings;
+import engine.enginemod.client.gui.settings.GuiSettings;
 import engine.game.GameData;
 import engine.gui.Scene;
 import engine.gui.control.Button;

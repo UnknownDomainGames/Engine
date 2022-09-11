@@ -4,7 +4,10 @@ import configuration.Config;
 import engine.graphics.GraphicsManager;
 import engine.graphics.display.DisplayMode;
 import engine.graphics.display.Window;
+import engine.graphics.font.Font;
+import engine.graphics.font.FontManager;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public final class DisplaySettings {
@@ -18,6 +21,8 @@ public final class DisplaySettings {
     private boolean vSync = false;
     private int uiScale = 100;
     private int hudScale = 100;
+    @Nullable
+    private Font font;
 
     public DisplayMode getDisplayMode() {
         return displayMode;
@@ -75,6 +80,15 @@ public final class DisplaySettings {
         this.hudScale = hudScale;
     }
 
+    @Nullable
+    public Font getFont() {
+        return font;
+    }
+
+    public void setFont(@Nullable Font font) {
+        this.font = font;
+    }
+
     public void load(Config config) {
         try {
             displayMode = DisplayMode.valueOf(config.getString("display_mode", "windowed").toUpperCase());
@@ -86,6 +100,11 @@ public final class DisplaySettings {
         frameRate = config.getInt("frame_rate", 60);
         uiScale = config.getInt("ui_scale", 100);
         hudScale = config.getInt("hud_scale", 100);
+        if (config.has("font")) {
+            font = new Font(config.getString("font.family"), config.getString("font.style"), config.getFloat("font.size"));
+        } else {
+            font = null;
+        }
     }
 
     public Map<String, Object> save() {
@@ -96,6 +115,11 @@ public final class DisplaySettings {
         config.set("frame_rate", frameRate);
         config.set("ui_scale", uiScale);
         config.set("hud_scale", hudScale);
+        if (font != null) {
+            config.set("font.family", font.getFamily());
+            config.set("font.style", font.getStyle());
+            config.set("font.size", font.getSize());
+        }
         return config.getRoot();
     }
 
@@ -107,5 +131,6 @@ public final class DisplaySettings {
         graphicsManager.getGUIManager().setScale(uiScalePercentage, uiScalePercentage);
         float hudScalePercentage = getHudScalePercentage();
         graphicsManager.getHUDManager().setScale(hudScalePercentage, hudScalePercentage);
+        FontManager.instance().setDefaultFont(font);
     }
 }

@@ -2,8 +2,6 @@ package engine.client.settings;
 
 import configuration.Config;
 import configuration.io.ConfigIOUtils;
-import engine.client.i18n.I18n;
-import engine.client.i18n.LocaleManager;
 
 import java.nio.file.Path;
 

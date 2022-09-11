@@ -1,10 +1,9 @@
-package engine.enginemod.client.gui;
+package engine.enginemod.client.gui.settings;
 
 import com.github.mouse0w0.observable.value.ValueChangeListener;
 import engine.Platform;
 import engine.client.i18n.I18n;
 import engine.client.settings.EngineSettings;
-import engine.enginemod.client.gui.game.GuiLanguageList;
 import engine.graphics.display.DisplayMode;
 import engine.graphics.font.Font;
 import engine.gui.Scene;
@@ -104,6 +103,8 @@ public class GuiSettings extends AnchorPane {
         });
         var btnLanguage = new Button(I18n.translate("engine.gui.settings.language"));
         btnLanguage.setOnAction(event -> Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiLanguageList())));
+        var btnFont = new Button(I18n.translate("engine.gui.settings.font"));
+        btnFont.setOnAction(event -> Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiFontList())));
         var hb1 = new HBox();
         hb1.spacing().set(10f);
         hb1.getChildren().addAll(lblDisplayMode, butDisplayMode);
@@ -118,7 +119,7 @@ public class GuiSettings extends AnchorPane {
         hb4.getChildren().addAll(lblHudScale, sliderHudScale, lblHudScaleVal);
         var hb5 = new HBox();
         hb5.spacing().set(10f);
-        hb5.getChildren().addAll(btnLanguage);
+        hb5.getChildren().addAll(btnLanguage, btnFont);
         var vb = new VBox();
         vb.getChildren().addAll(hb1, hb2, hb3, hb4, hb5);
 

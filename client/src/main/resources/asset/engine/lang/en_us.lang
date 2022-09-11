@@ -4,6 +4,7 @@ engine.gui.warning=Warning
 engine.gui.back=Back
 engine.gui.create=Create
 engine.gui.delete=Delete
+engine.gui.reset=Reset
 
 engine.gui.terminating=Terminating Game...
 
@@ -33,6 +34,10 @@ engine.gui.settings.ui_scale=UI Scale
 engine.gui.settings.hud_scale=HUD Scale
 engine.gui.settings.language=Language
 engine.gui.settings.language.title=Select Language
+engine.gui.settings.font=Font
+engine.gui.settings.font.title=Select Font
+engine.gui.settings.font.size=Size
+engine.gui.settings.font.default_preview=Test Content
 engine.gui.settings.discard=Discard
 engine.gui.settings.save=Save
 

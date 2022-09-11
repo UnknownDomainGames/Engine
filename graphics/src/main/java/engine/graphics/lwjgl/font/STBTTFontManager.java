@@ -16,6 +16,7 @@ import org.lwjgl.system.windows.User32;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -48,7 +49,7 @@ public final class STBTTFontManager extends FontManager {
 
     private STBTTFontManager() {
         initLocalFonts();
-        setDefaultFont(getSystemDefaultFont());
+        setDefaultFont(null);
     }
 
     private void initLocalFonts() {
@@ -138,7 +139,11 @@ public final class STBTTFontManager extends FontManager {
         return defaultFont;
     }
 
-    public void setDefaultFont(Font defaultFont) {
+    @Override
+    public void setDefaultFont(@Nullable Font defaultFont) {
+        if (defaultFont == null) {
+            defaultFont = getSystemDefaultFont();
+        }
         if (!isAvailableFont(defaultFont)) {
             var fallbackFont = availableFonts.get(0).withSize(defaultFont.getSize());
             LOGGER.error("Failed to set default font, {} is unavailable, fallback to {}", defaultFont, fallbackFont);

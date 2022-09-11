@@ -1,5 +1,6 @@
 package engine.graphics.font;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -24,6 +25,8 @@ public abstract class FontManager {
     public static FontManager instance() {
         return instance;
     }
+
+    public abstract void setDefaultFont(@Nullable Font defaultFont);
 
     public abstract Font getDefaultFont();
 
