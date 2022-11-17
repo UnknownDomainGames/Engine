@@ -81,7 +81,7 @@ public class LinearGrowthList<E> extends AbstractList<E> implements RandomAccess
                 break;
             default:
                 E[] array = asArray();
-                myElem = Arrays.copyOf(array, size + 1);
+                myElem = array = Arrays.copyOf(array, size + 1);
                 array[size] = element;
                 break;
         }
@@ -103,7 +103,7 @@ public class LinearGrowthList<E> extends AbstractList<E> implements RandomAccess
                 break;
             default:
                 E[] array = asArray();
-                myElem = Arrays.copyOf(array, size + 1);
+                myElem = array = Arrays.copyOf(array, size + 1);
                 int moved = size - index;
                 if (moved > 0) {
                     System.arraycopy(array, index, array, index + 1, moved);
