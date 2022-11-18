@@ -17,9 +17,6 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.ByteBuffer;
 
 public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBuffer.Attachable {
-
-    public static final GLTexture2D NONE = new GLTexture2D();
-
     private final int width;
     private final int height;
 
@@ -69,13 +66,6 @@ public final class GLTexture2D extends GLTexture implements Texture2D, GLFrameBu
                         width, height, 0, format.format, format.type, MemoryUtil.NULL);
             }
         }
-    }
-
-    private GLTexture2D() {
-        super(GL11C.GL_TEXTURE_2D);
-        this.width = 0;
-        this.height = 0;
-        this.mipmap = false;
     }
 
     @Override

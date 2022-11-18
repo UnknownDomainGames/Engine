@@ -2,7 +2,6 @@ package engine.graphics.gl.shader;
 
 import engine.graphics.gl.texture.GLSampler;
 import engine.graphics.gl.texture.GLTexture;
-import engine.graphics.gl.texture.GLTexture2D;
 import engine.graphics.gl.util.GLHelper;
 import engine.graphics.shader.TextureBinding;
 import engine.graphics.texture.Sampler;
@@ -15,7 +14,7 @@ import org.lwjgl.opengl.GL45C;
 public final class GLTextureBinding implements TextureBinding {
     private final int unit;
 
-    private Texture texture = GLTexture2D.NONE;
+    private Texture texture = GLTexture.NONE;
     private Sampler sampler = GLSampler.NONE;
 
     public GLTextureBinding(int unit) {
@@ -39,7 +38,7 @@ public final class GLTextureBinding implements TextureBinding {
 
     @Override
     public void setTexture(Texture texture) {
-        this.texture = texture != null ? texture : GLTexture2D.NONE;
+        this.texture = texture != null ? texture : GLTexture.NONE;
     }
 
     @Override
@@ -49,7 +48,6 @@ public final class GLTextureBinding implements TextureBinding {
 
     public void bind() {
         GLTexture glTexture = (GLTexture) texture;
-        if (texture == null) return;
         if (GLHelper.isSupportARBDirectStateAccess()) {
             GL45C.glBindTextureUnit(unit, glTexture.getId());
         } else {

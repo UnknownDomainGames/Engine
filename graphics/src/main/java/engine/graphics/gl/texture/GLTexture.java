@@ -11,14 +11,15 @@ import org.lwjgl.opengl.GL45C;
 
 import java.nio.FloatBuffer;
 
-public abstract class GLTexture implements Texture {
+public class GLTexture implements Texture {
+
+    public static final GLTexture NONE = new GLTexture();
 
     protected final int target;
+    protected final GLColorFormat format;
 
     protected int id;
     protected Cleaner.Disposable disposable;
-
-    protected final GLColorFormat format;
 
     public GLTexture(int target, GLColorFormat format) {
         this.target = target;
@@ -27,10 +28,10 @@ public abstract class GLTexture implements Texture {
         this.disposable = GLCleaner.registerTexture(this, id);
     }
 
-    public GLTexture(int target) {
-        this.target = target;
+    private GLTexture() {
+        this.target = 0;
         this.id = 0;
-        this.format = GLColorFormat.RGB8;
+        this.format = GLColorFormat.RGBA8;
     }
 
     public int getTarget() {
