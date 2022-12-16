@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import engine.Platform;
 import engine.event.EventBus;
 import engine.event.SimpleEventBus;
-import engine.event.asm.AsmEventListenerFactory;
 import engine.server.event.NetworkingStartEvent;
 import engine.server.network.packet.Packet;
 import engine.util.LazyObject;
@@ -97,7 +96,7 @@ public class NetworkServer implements NetworkEndpoint {
 
     public void prepareNetworkEventBus() {
         if (eventBus == null) {
-            eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+            eventBus = new SimpleEventBus();
             Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
         }
     }

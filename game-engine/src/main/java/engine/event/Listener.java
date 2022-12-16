@@ -16,12 +16,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface Listener {
 
     /**
-     * A order of event handler for deciding when it will be call.
+     * A order of event handle for deciding when it will be call.
+     *
+     * @return the order.
      */
     Order order() default Order.DEFAULT;
 
     /**
-     * @return True if you want to receive cancelled event, false if not.
+     * @return true if you want to receive cancelled event, false if not.
      */
     boolean receiveCancelled() default false;
 }

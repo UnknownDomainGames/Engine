@@ -3,7 +3,6 @@ package engine.mod.impl;
 import engine.Engine;
 import engine.Platform;
 import engine.event.SimpleEventBus;
-import engine.event.reflect.ReflectEventListenerFactory;
 import engine.mod.ModContainer;
 import engine.mod.ModLoader;
 import engine.mod.ModManager;
@@ -136,7 +135,7 @@ public class EngineModManager implements ModManager {
             }
             modAssets.setMod(engineMod);
             engineMod.setAssets(modAssets);
-            engineMod.setEventBus(SimpleEventBus.builder().eventListenerFactory(ReflectEventListenerFactory.instance()).build());
+            engineMod.setEventBus(new SimpleEventBus());
             engineMod.setConfigPath(modConfigsPath.resolve(engineMod.getId()));
             engineMod.setDataPath(modDatasPath.resolve(engineMod.getId()));
             loadedModContainers.put(engineMod.getId(), engineMod);

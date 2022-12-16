@@ -1,40 +1,40 @@
 package engine.event;
 
-import engine.event.misc.EventExceptionHandler;
-import engine.event.misc.EventListenerFactory;
-import engine.event.misc.ListenerList;
-import engine.event.misc.RegisteredListener;
 import net.jodah.typetools.TypeResolver;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class SimpleEventBus implements EventBus {
+    private final Map<Class<?>, ListenerList> listenerLists = new HashMap<>();
+    private final Map<Object, ListenerWrapper[]> ownerToListeners = new HashMap<>();
+    private final EventExceptionHandler exceptionHandler;
 
-    private final Map<Class<?>, ListenerList> listenerLists = new ConcurrentHashMap<>();
-    private final Map<Object, List<RegisteredListener>> registeredListeners = new HashMap<>();
+    public SimpleEventBus() {
+        this.exceptionHandler = EventExceptionHandler.PRINT;
+    }
 
-    private final EventExceptionHandler eventExceptionHandler;
-    private final EventListenerFactory eventListenerFactory;
-
-    public SimpleEventBus(EventExceptionHandler eventExceptionHandler, EventListenerFactory eventListenerFactory) {
-        this.eventExceptionHandler = eventExceptionHandler;
-        this.eventListenerFactory = eventListenerFactory;
+    public SimpleEventBus(EventExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
     public boolean post(Event event) {
         ListenerList listenerList = getListenerList(event.getClass());
-        for (RegisteredListener listener : listenerList.getListeners()) {
+        for (ListenerWrapper listener : listenerList) {
             try {
                 listener.post(event);
-            } catch (Exception e) {
-                eventExceptionHandler.handle(listenerList, listener, event, e);
+            } catch (Throwable t) {
+                exceptionHandler.handle(event, t);
             }
         }
         return event.isCancellable() && ((Cancellable) event).isCancelled();
@@ -45,7 +45,7 @@ public class SimpleEventBus implements EventBus {
     }
 
     private ListenerList createListenerList(Class<?> eventType) {
-        ListenerList listenerList = new ListenerList(eventType);
+        ListenerList listenerList = new ListenerList();
         for (Map.Entry<Class<?>, ListenerList> entry : listenerLists.entrySet()) {
             if (entry.getKey().isAssignableFrom(eventType)) {
                 listenerList.addParent(entry.getValue());
@@ -58,7 +58,7 @@ public class SimpleEventBus implements EventBus {
 
     @Override
     public void register(Object target) {
-        if (registeredListeners.containsKey(target)) {
+        if (ownerToListeners.containsKey(target)) {
             throw new IllegalStateException("Listener has been registered");
         }
 
@@ -70,24 +70,26 @@ public class SimpleEventBus implements EventBus {
     }
 
     private void registerObject(Object obj) {
-        List<RegisteredListener> listeners = new ArrayList<>();
-        Arrays.stream(obj.getClass().getMethods())
-                .filter(method -> !Modifier.isStatic(method.getModifiers()) && method.isAnnotationPresent(Listener.class))
-                .map(method -> registerListener(obj, method, false))
-                .forEach(listeners::add);
-        registeredListeners.put(obj, listeners);
+        List<ListenerWrapper> listeners = new ArrayList<>();
+        for (Method method : obj.getClass().getDeclaredMethods()) {
+            if (method.isAnnotationPresent(Listener.class) && !Modifier.isStatic(method.getModifiers())) {
+                listeners.add(registerListener(obj, method, false));
+            }
+        }
+        ownerToListeners.put(obj, listeners.toArray(new ListenerWrapper[listeners.size()]));
     }
 
     private void registerClass(Class<?> clazz) {
-        List<RegisteredListener> listeners = new ArrayList<>();
-        Arrays.stream(clazz.getMethods())
-                .filter(method -> Modifier.isStatic(method.getModifiers()) && method.isAnnotationPresent(Listener.class))
-                .map(method -> registerListener(clazz, method, true))
-                .forEach(listeners::add);
-        registeredListeners.put(clazz, listeners);
+        List<ListenerWrapper> listeners = new ArrayList<>();
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(Listener.class) && Modifier.isStatic(method.getModifiers())) {
+                listeners.add(registerListener(clazz, method, true));
+            }
+        }
+        ownerToListeners.put(clazz, listeners.toArray(new ListenerWrapper[listeners.size()]));
     }
 
-    private RegisteredListener registerListener(Object owner, Method method, boolean isStatic) {
+    private ListenerWrapper registerListener(Object owner, Method method, boolean isStatic) {
         if (method.getParameterCount() != 1) {
             throw new EventException(String.format("The count of listener method parameter must be 1. Listener: %s.%s(?)", method.getDeclaringClass().getName(), method.getName()));
         }
@@ -105,10 +107,8 @@ public class SimpleEventBus implements EventBus {
             throw new EventException(String.format("Listener method must be public. Listener: %s.%s(%s)", method.getDeclaringClass().getName(), method.getName(), eventType.getName()));
         }
 
-        Listener anno = method.getAnnotation(Listener.class);
-
+        // Get generic type.
         Type genericType = null;
-
         if (GenericEvent.class.isAssignableFrom(eventType)) {
             Type type = method.getGenericParameterTypes()[0];
             genericType = type instanceof ParameterizedType ? ((ParameterizedType) type).getActualTypeArguments()[0] : null;
@@ -117,8 +117,9 @@ public class SimpleEventBus implements EventBus {
             }
         }
 
+        Listener listenerAnno = method.getAnnotation(Listener.class);
         try {
-            RegisteredListener listener = new RegisteredListener(eventType, owner, anno.order(), anno.receiveCancelled(), genericType, eventListenerFactory.create(eventType, owner, method, isStatic));
+            ListenerWrapper listener = new ListenerWrapper(eventType, genericType, listenerAnno.order(), listenerAnno.receiveCancelled(), createInvoker(owner, method, isStatic));
             getListenerList(eventType).register(listener);
             return listener;
         } catch (Exception e) {
@@ -126,18 +127,24 @@ public class SimpleEventBus implements EventBus {
         }
     }
 
+    protected ListenerInvoker createInvoker(Object owner, Method method, boolean isStatic) throws Exception {
+        MethodHandle handle = MethodHandles.publicLookup().unreflect(method);
+        return new MethodHandleListenerInvoker(isStatic ? handle : handle.bindTo(owner));
+    }
+
     @Override
     public void unregister(Object target) {
-        if (!registeredListeners.containsKey(target)) {
-            return;
+        ListenerWrapper[] listeners = ownerToListeners.remove(target);
+        if (listeners != null) {
+            for (ListenerWrapper listener : listeners) {
+                getListenerList(listener.getEventType()).unregister(listener);
+            }
         }
-
-        registeredListeners.remove(target).forEach(listener -> getListenerList(listener.getEventType()).unregister(listener));
     }
 
     @Override
     public <T extends Event> void addListener(Consumer<T> consumer) {
-        addListener(Order.DEFAULT, consumer);
+        addListener(Order.DEFAULT, false, consumer);
     }
 
     @Override
@@ -145,7 +152,6 @@ public class SimpleEventBus implements EventBus {
         addListener(order, false, consumer);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T extends Event> void addListener(Order order, boolean receiveCancelled, Consumer<T> consumer) {
         addListener(order, receiveCancelled, (Class<T>) TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass()), consumer);
@@ -153,17 +159,17 @@ public class SimpleEventBus implements EventBus {
 
     @Override
     public <T extends Event> void addListener(Order order, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer) {
-        if (registeredListeners.containsKey(consumer)) {
-            throw new IllegalStateException("Listener has been registered");
+        if (ownerToListeners.containsKey(consumer)) {
+            throw new IllegalStateException("Listener has been registered.");
         }
-        RegisteredListener listener = new RegisteredListener(eventType, consumer, order, receiveCancelled, null, event -> consumer.accept(eventType.cast(event)));
-        registeredListeners.put(listener, List.of(listener));
+        ListenerWrapper listener = new ListenerWrapper(eventType, null, order, receiveCancelled, new ConsumeListenerInvoker<>(eventType, consumer));
         getListenerList(eventType).register(listener);
+        ownerToListeners.put(consumer, new ListenerWrapper[]{listener});
     }
 
     @Override
     public <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Consumer<T> consumer) {
-        addGenericListener(genericType, Order.DEFAULT, consumer);
+        addGenericListener(genericType, Order.DEFAULT, false, consumer);
     }
 
     @Override
@@ -171,7 +177,6 @@ public class SimpleEventBus implements EventBus {
         addGenericListener(genericType, order, false, consumer);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Order order, boolean receiveCancelled, Consumer<T> consumer) {
         addGenericListener(genericType, order, receiveCancelled, (Class<T>) TypeResolver.resolveRawArgument(Consumer.class, consumer.getClass()), consumer);
@@ -179,39 +184,11 @@ public class SimpleEventBus implements EventBus {
 
     @Override
     public <T extends GenericEvent<? extends G>, G> void addGenericListener(Class<G> genericType, Order order, boolean receiveCancelled, Class<T> eventType, Consumer<T> consumer) {
-        if (registeredListeners.containsKey(consumer)) {
-            throw new IllegalStateException("Listener has been registered");
+        if (ownerToListeners.containsKey(consumer)) {
+            throw new IllegalStateException("Listener has been registered.");
         }
-        RegisteredListener listener = new RegisteredListener(eventType, consumer, order, receiveCancelled, genericType, event -> consumer.accept(eventType.cast(event)));
-        registeredListeners.put(listener, List.of(listener));
+        ListenerWrapper listener = new ListenerWrapper(eventType, genericType, order, receiveCancelled, new ConsumeListenerInvoker<>(eventType, consumer));
         getListenerList(eventType).register(listener);
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static final class Builder {
-        private EventExceptionHandler eventExceptionHandler = (list, listener, event, e) -> {
-            throw new EventException(String.format("Cannot handle event. EventType: %s", event.getClass().getName()), e);
-        };
-        private EventListenerFactory eventListenerFactory;
-
-        private Builder() {
-        }
-
-        public Builder eventExceptionHandler(EventExceptionHandler eventExceptionHandler) {
-            this.eventExceptionHandler = eventExceptionHandler;
-            return this;
-        }
-
-        public Builder eventListenerFactory(EventListenerFactory eventListenerFactory) {
-            this.eventListenerFactory = eventListenerFactory;
-            return this;
-        }
-
-        public SimpleEventBus build() {
-            return new SimpleEventBus(eventExceptionHandler, eventListenerFactory);
-        }
+        ownerToListeners.put(consumer, new ListenerWrapper[]{listener});
     }
 }

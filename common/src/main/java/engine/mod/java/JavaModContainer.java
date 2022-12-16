@@ -2,7 +2,6 @@ package engine.mod.java;
 
 import engine.event.EventBus;
 import engine.event.SimpleEventBus;
-import engine.event.reflect.ReflectEventListenerFactory;
 import engine.mod.ModAssets;
 import engine.mod.ModContainer;
 import engine.mod.ModMetadata;
@@ -31,7 +30,7 @@ public class JavaModContainer implements ModContainer {
         this.configPath = configPath;
         this.dataPath = dataPath;
         this.assets = assets;
-        this.eventBus = SimpleEventBus.builder().eventListenerFactory(ReflectEventListenerFactory.instance()).build();
+        this.eventBus = new SimpleEventBus();
         this.logger = logger;
         this.instance = instance;
     }

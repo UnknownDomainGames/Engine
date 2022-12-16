@@ -2,7 +2,6 @@ package engine;
 
 import engine.event.EventBus;
 import engine.event.SimpleEventBus;
-import engine.event.asm.AsmEventListenerFactory;
 import engine.event.engine.EngineEvent;
 import engine.mod.ModManager;
 import engine.mod.impl.EngineModManager;
@@ -110,7 +109,7 @@ public abstract class EngineBase implements Engine {
         printSystemInfo();
         initExceptionHandler();
 
-        eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+        eventBus = new SimpleEventBus();
         registryManager = new EngineRegistryManager(new HashMap<>());
         modManager = new EngineModManager(this, getRunPath().resolve("config"), getRunPath().resolve("data"));
     }

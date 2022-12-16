@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import engine.Platform;
 import engine.event.EventBus;
 import engine.event.SimpleEventBus;
-import engine.event.asm.AsmEventListenerFactory;
 import engine.server.event.NetworkingStartEvent;
 import engine.server.network.packet.Packet;
 import engine.util.LazyObject;
@@ -31,7 +30,7 @@ public class NetworkClient implements NetworkEndpoint {
     @Override
     public void run(InetAddress address, int port) {
         workerGroup = DEFAULT_CLIENT_WORKER_POOL.get();
-        eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+        eventBus = new SimpleEventBus();
         Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
         var channelFuture = new Bootstrap()
                 .group(workerGroup)
@@ -59,7 +58,7 @@ public class NetworkClient implements NetworkEndpoint {
 
     public void runLocal(SocketAddress localServerAddress) {
         var workerGroup = LOCAL_CLIENT_WORKER_POOL.get();
-        eventBus = SimpleEventBus.builder().eventListenerFactory(AsmEventListenerFactory.create()).build();
+        eventBus = new SimpleEventBus();
         Platform.getEngine().getEventBus().post(new NetworkingStartEvent(eventBus));
         var channelFuture = new Bootstrap()
                 .group(workerGroup)

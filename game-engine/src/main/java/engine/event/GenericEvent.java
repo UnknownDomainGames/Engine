@@ -6,7 +6,6 @@ import java.lang.reflect.Type;
  * Every generic event class should implement this interface.
  */
 public interface GenericEvent<T> extends Event {
-
     Type getGenericType();
 
     abstract class Impl<T> implements GenericEvent<T> {
