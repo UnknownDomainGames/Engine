@@ -15,7 +15,7 @@ public abstract class SceneHelper {
         sceneAccessor.setStage(scene, stage);
     }
 
-    public static void setSize(Scene scene, float width, float height) {
+    public static void setSize(Scene scene, double width, double height) {
         sceneAccessor.setSize(scene, width, height);
     }
 
@@ -32,7 +32,7 @@ public abstract class SceneHelper {
     public interface SceneAccessor {
         void setStage(Scene scene, Stage stage);
 
-        void setSize(Scene scene, float width, float height);
+        void setSize(Scene scene, double width, double height);
 
         void preferredSize(Scene scene);
     }

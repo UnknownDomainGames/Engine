@@ -3,17 +3,16 @@ package engine.gui.misc;
 import java.util.Objects;
 
 public final class Bounds {
-
     public static final Bounds EMPTY = new Bounds(0, 0, 0, 0);
 
-    private final float minX;
-    private final float minY;
-    private final float maxX;
-    private final float maxY;
-    private final float width;
-    private final float height;
+    private final double minX;
+    private final double minY;
+    private final double maxX;
+    private final double maxY;
+    private final double width;
+    private final double height;
 
-    public Bounds(float minX, float minY, float width, float height) {
+    public Bounds(double minX, double minY, double width, double height) {
         this.minX = minX;
         this.minY = minY;
         this.maxX = minX + width;
@@ -22,27 +21,27 @@ public final class Bounds {
         this.height = height;
     }
 
-    public float getMinX() {
+    public double getMinX() {
         return minX;
     }
 
-    public float getMinY() {
+    public double getMinY() {
         return minY;
     }
 
-    public float getMaxX() {
+    public double getMaxX() {
         return maxX;
     }
 
-    public float getMaxY() {
+    public double getMaxY() {
         return maxY;
     }
 
-    public float getWidth() {
+    public double getWidth() {
         return width;
     }
 
-    public float getHeight() {
+    public double getHeight() {
         return height;
     }
 
@@ -54,7 +53,7 @@ public final class Bounds {
         return contains(point.getX(), point.getY());
     }
 
-    public boolean contains(float x, float y) {
+    public boolean contains(double x, double y) {
         return x >= minX && x <= maxX && y >= minY && y <= maxY;
     }
 
@@ -62,7 +61,7 @@ public final class Bounds {
         return contains(bounds.getMinX(), bounds.getMinY()) && contains(bounds.getMaxX(), bounds.getMaxY());
     }
 
-    public boolean intersects(float x, float y, float width, float height) {
+    public boolean intersects(double x, double y, double width, double height) {
         if (isEmpty() || width < 0 || height < 0) return false;
         return x + width >= minX && y + height >= minY && x < maxX && y < maxY;
     }
@@ -77,10 +76,10 @@ public final class Bounds {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Bounds bounds = (Bounds) o;
-        return Float.compare(bounds.minX, minX) == 0 &&
-                Float.compare(bounds.minY, minY) == 0 &&
-                Float.compare(bounds.width, width) == 0 &&
-                Float.compare(bounds.height, height) == 0;
+        return Double.compare(bounds.minX, minX) == 0 &&
+                Double.compare(bounds.minY, minY) == 0 &&
+                Double.compare(bounds.width, width) == 0 &&
+                Double.compare(bounds.height, height) == 0;
     }
 
     @Override

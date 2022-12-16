@@ -5,7 +5,6 @@ import java.util.Locale;
 import static org.apache.commons.lang3.Validate.notEmpty;
 
 public class Font {
-
     public static final String REGULAR = "Regular";
     public static final String BOLD = "Bold";
     public static final String ITALIC = "Italic";
@@ -15,7 +14,7 @@ public class Font {
     private final String family;
     private final String style;
     private final String fullName;
-    private final float size;
+    private final double size;
 
     private int hash = 0;
 
@@ -23,14 +22,14 @@ public class Font {
         return FontManager.instance().getDefaultFont();
     }
 
-    public Font(String family, String style, float size) {
+    public Font(String family, String style, double size) {
         this.family = notEmpty(family);
         this.style = notEmpty(style);
         this.fullName = family + " " + style;
         this.size = size;
     }
 
-    public Font(Font font, float size) {
+    public Font(Font font, double size) {
         this.family = font.family;
         this.style = font.style;
         this.fullName = font.fullName;
@@ -61,11 +60,11 @@ public class Font {
         return FontManager.instance().getFontName(this, locale);
     }
 
-    public float getSize() {
+    public double getSize() {
         return size;
     }
 
-    public Font withSize(float size) {
+    public Font withSize(double size) {
         return new Font(family, style, size);
     }
 
@@ -76,17 +75,16 @@ public class Font {
 
         Font font = (Font) o;
 
-        if (Float.compare(font.size, size) != 0) return false;
+        if (Double.compare(size, font.size) != 0) return false;
         return fullName.equals(font.fullName);
     }
 
     @Override
     public int hashCode() {
-        int h = hash;
-        if (h == 0) {
-            hash = h = 31 * fullName.hashCode() + (size != +0.0f ? Float.floatToIntBits(size) : 0);
+        if (hash == 0) {
+            hash = 31 * fullName.hashCode() + Double.hashCode(size);
         }
-        return h;
+        return hash;
     }
 
     @Override

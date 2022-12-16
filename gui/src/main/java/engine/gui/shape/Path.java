@@ -40,12 +40,12 @@ public class Path extends Shape {
     }
 
     @Override
-    public float prefWidth() {
+    public double prefWidth() {
         return 0;
     }
 
     @Override
-    public float prefHeight() {
+    public double prefHeight() {
         return 0;
     }
 

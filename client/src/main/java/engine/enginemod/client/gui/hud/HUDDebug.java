@@ -42,8 +42,8 @@ public final class HUDDebug extends HUDControl {
 
     public HUDDebug() {
         name("debug");
-        AnchorPane.setTopAnchor(this, 0f);
-        AnchorPane.setLeftAnchor(this, 0f);
+        AnchorPane.setTopAnchor(this, 0D);
+        AnchorPane.setLeftAnchor(this, 0D);
 
         VBox vBox = new VBox();
         vBox.spacing().set(5);

@@ -34,10 +34,10 @@ public final class GuiItemList extends AnchorPane {
         var vBox = new VBox();
         vBox.setBackground(Background.fromColor(Color.fromARGB(0x7f000000)));
         vBox.spacing().set(5f);
-        AnchorPane.setBottomAnchor(vBox, 50f);
-        AnchorPane.setTopAnchor(vBox, 50f);
-        AnchorPane.setLeftAnchor(vBox, 50f);
-        AnchorPane.setRightAnchor(vBox, 50f);
+        AnchorPane.setBottomAnchor(vBox, 50D);
+        AnchorPane.setTopAnchor(vBox, 50D);
+        AnchorPane.setLeftAnchor(vBox, 50D);
+        AnchorPane.setRightAnchor(vBox, 50D);
         var text = new Text("Registered Item List");
         vBox.getChildren().add(text);
         var hBox = new HBox();

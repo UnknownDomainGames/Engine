@@ -9,12 +9,12 @@ public class RectRenderer extends NodeRenderer<Rect> {
 
     @Override
     public void render(Rect rect, Graphics graphics) {
-        float strokeWidth = rect.getStrokeWidth();
+        float strokeWidth = (float) rect.getStrokeWidth();
         if (strokeWidth > 0) {
             graphics.setColor(rect.getStrokeColor());
-            graphics.fillRect(strokeWidth, strokeWidth, rect.getWidth() + strokeWidth * 2, rect.getHeight() + strokeWidth * 2);
+            graphics.fillRect(strokeWidth, strokeWidth, (float) (rect.getWidth() + strokeWidth * 2), (float) (rect.getHeight() + strokeWidth * 2));
         }
         graphics.setColor(rect.getFillColor());
-        graphics.fillRect(strokeWidth, strokeWidth, rect.getWidth(), rect.getHeight());
+        graphics.fillRect(strokeWidth, strokeWidth, (float) rect.getWidth(), (float) rect.getHeight());
     }
 }

@@ -17,6 +17,7 @@ import engine.gui.graphics.Graphics;
 import engine.gui.image.Image;
 import engine.gui.misc.Background;
 import engine.gui.misc.Border;
+import engine.gui.misc.Insets;
 import engine.util.Color;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
@@ -363,7 +364,7 @@ public final class GraphicsImpl implements Graphics {
 
     @Override
     public void drawBorder(Border border, Node node) {
-        drawBorder(border, 0, 0, node.getWidth(), node.getHeight());
+        drawBorder(border, 0, 0, (float) node.getWidth(), (float) node.getHeight());
     }
 
     @Override
@@ -373,19 +374,20 @@ public final class GraphicsImpl implements Graphics {
         }
 
         setColor(border.getColor());
-        float top = border.getInsets().getTop();
+        Insets insets = border.getInsets();
+        float top = (float) insets.getTop();
+        float bottom = (float) insets.getBottom();
+        float left = (float) insets.getLeft();
+        float right = (float) insets.getRight();
         if (top != 0) {
             fillRect(x, y, width, top);
         }
-        float bottom = border.getInsets().getBottom();
         if (bottom != 0) {
             fillRect(x, y + height - bottom, width, bottom);
         }
-        float left = border.getInsets().getLeft();
         if (left != 0) {
             fillRect(x, y, left, height);
         }
-        float right = border.getInsets().getRight();
         if (right != 0) {
             fillRect(x + width - right, y, right, height);
         }
@@ -393,7 +395,7 @@ public final class GraphicsImpl implements Graphics {
 
     @Override
     public void drawBackground(Background background, Node node) {
-        drawBackground(background, 0, 0, node.getWidth(), node.getHeight());
+        drawBackground(background, 0, 0, (float) node.getWidth(), (float) node.getHeight());
     }
 
     @Override

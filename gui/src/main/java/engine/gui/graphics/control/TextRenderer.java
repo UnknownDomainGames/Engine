@@ -33,7 +33,7 @@ public final class TextRenderer extends NodeRenderer<Text> {
             return;
         }
         Font font = textNode.getFont();
-        float textWidth = textNode.getTextWidth();
+        float textWidth = (float) textNode.getTextWidth();
         FontManager fontManager = FontManager.instance();
         meshes = text.lines()
                 .flatMap(line -> fontManager.wrapText(line, textWidth, font).stream())
@@ -49,16 +49,16 @@ public final class TextRenderer extends NodeRenderer<Text> {
 
         graphics.setColor(text.getColor());
         Pos alignment = text.getTextAlignment();
-        float leading = text.getLeading();
+        float leading = (float) text.getLeading();
         float y = 0;
         for (LineMesh mesh : meshes) {
             float y1 = y + (lineHeight * leading - lineHeight) / 2;
             switch (alignment.getHPos()) {
                 case RIGHT:
-                    graphics.drawText(mesh.mesh, text.getWidth() - mesh.width, y1);
+                    graphics.drawText(mesh.mesh, (float) (text.getWidth() - mesh.width), y1);
                     break;
                 case CENTER:
-                    graphics.drawText(mesh.mesh, (text.getWidth() - mesh.width) / 2, y1);
+                    graphics.drawText(mesh.mesh, (float) ((text.getWidth() - mesh.width) / 2), y1);
                     break;
                 case LEFT:
                     graphics.drawText(mesh.mesh, 0, y1);

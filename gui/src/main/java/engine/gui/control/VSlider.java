@@ -18,9 +18,9 @@ public class VSlider extends Region {
     private MutableDoubleValue max = new SimpleMutableDoubleValue(1);
     private MutableDoubleValue value = new SimpleMutableDoubleValue(0);
 
-    private final MutableFloatValue sliderLength = new SimpleMutableFloatValue(150);
-    private final MutableFloatValue sliderThickness = new SimpleMutableFloatValue(15);
-    private final MutableFloatValue step = new SimpleMutableFloatValue(0.01f);
+    private final MutableDoubleValue sliderLength = new SimpleMutableDoubleValue(150);
+    private final MutableDoubleValue sliderThickness = new SimpleMutableDoubleValue(15);
+    private final MutableDoubleValue step = new SimpleMutableDoubleValue(0.01f);
     /**
      * VSlider is designed to be up-to-down as default. this variable defines as if this slider uses down-to-up as min to max or not
      */
@@ -48,7 +48,7 @@ public class VSlider extends Region {
             if (newValue == 0) {
                 step.set(oldValue);
             } else {
-                resizeSlider(sliderThickness.get(), sliderLength.get() * (float) (step.get() / (max.get() - min.get())));
+                resizeSlider(sliderThickness.get(), sliderLength.get() * (step.get() / (max.get() - min.get())));
             }
         });
         sliderLength.addChangeListener((observable, oldValue, newValue) -> rebuild());
@@ -73,15 +73,15 @@ public class VSlider extends Region {
         return min;
     }
 
-    public MutableFloatValue sliderThickness() {
+    public MutableDoubleValue sliderThickness() {
         return sliderThickness;
     }
 
-    public MutableFloatValue sliderLength() {
+    public MutableDoubleValue sliderLength() {
         return sliderLength;
     }
 
-    public MutableFloatValue step() {
+    public MutableDoubleValue step() {
         return step;
     }
 
@@ -96,9 +96,9 @@ public class VSlider extends Region {
             value.set(min.get());
         }
         resizeBack(sliderThickness.get(), sliderLength.get());
-        resizeSlider(sliderThickness.get(), sliderLength.get() * (float) (step.get() / (max.get() - min.get())));
+        resizeSlider(sliderThickness.get(), sliderLength.get() * (step.get() / (max.get() - min.get())));
         slider.setLayoutX(back.getLayoutX());
-        slider.setLayoutY((float) (((back.getHeight() - slider.getHeight()) * (flip.get() ? 1 - ((value.get() - min.get()) / (max.get() - min.get())) : ((value.get() - min.get()) / (max.get() - min.get()))))));
+        slider.setLayoutY(((back.getHeight() - slider.getHeight()) * (flip.get() ? 1 - ((value.get() - min.get()) / (max.get() - min.get())) : ((value.get() - min.get()) / (max.get() - min.get())))));
     }
 
     private void onPressed(MouseActionEvent e) {
@@ -126,12 +126,12 @@ public class VSlider extends Region {
         select = false;
     }
 
-    private void resizeBack(float width, float height) {
-        back.rectSize().set(new Vector2f(width, height));
+    private void resizeBack(double width, double height) {
+        back.rectSize().set(new Vector2f((float) width, (float) height));
     }
 
-    private void resizeSlider(float width, float height) {
-        slider.rectSize().set(new Vector2f(width, height));
+    private void resizeSlider(double width, double height) {
+        slider.rectSize().set(new Vector2f((float) width, (float) height));
     }
 
     public MutableObjectValue<Color> backBg() {

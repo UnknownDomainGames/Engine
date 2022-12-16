@@ -9,8 +9,8 @@ import engine.util.Color;
 public class ToggleButton extends Button {
     private MutableBooleanValue selected = new SimpleMutableBooleanValue(false);
 
-    private Border onColor = new Border(Color.GREEN, 1f);
-    private Border offColor = new Border(Color.RED, 1f);
+    private Border onColor = new Border(Color.GREEN, 1);
+    private Border offColor = new Border(Color.RED, 1);
 
     public ToggleButton() {
         this("", false);

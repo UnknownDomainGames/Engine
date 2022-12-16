@@ -6,7 +6,6 @@ import engine.util.Color;
 import java.util.Objects;
 
 public class Background {
-
     public static final Background NOTHING = Background.fromColor(Color.TRANSPARENT);
 
     private final Color color;

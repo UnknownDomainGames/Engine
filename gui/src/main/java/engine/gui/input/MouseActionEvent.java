@@ -19,7 +19,7 @@ public class MouseActionEvent extends MouseEvent {
     private final Modifiers modifier;
     private final int clickCount;
 
-    public MouseActionEvent(EventType<? extends Event> eventType, EventTarget target, float screenX, float screenY, float x, float y, MouseButton button, Modifiers modifier, int clickCount) {
+    public MouseActionEvent(EventType<? extends Event> eventType, EventTarget target, double screenX, double screenY, double x, double y, MouseButton button, Modifiers modifier, int clickCount) {
         super(eventType, target, screenX, screenY, x, y);
         this.button = button;
         this.modifier = modifier;

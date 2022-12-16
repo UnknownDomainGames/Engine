@@ -76,16 +76,16 @@ public class StackPane extends Pane {
     @Override
     protected void layoutChildren() {
         final Insets padding = getPadding();
-        float width = getWidth();
-        float height = getHeight();
+        double width = getWidth();
+        double height = getHeight();
         width = width < minWidth() ? minWidth() : width;
         height = height < minHeight() ? minHeight() : height;
 
 
-        final float insideX = padding.getLeft();
-        final float insideY = padding.getTop();
-        final float insideWidth = width - insideX - padding.getRight();
-        final float insideHeight = height - insideY - padding.getBottom();
+        final double insideX = padding.getLeft();
+        final double insideY = padding.getTop();
+        final double insideWidth = width - insideX - padding.getRight();
+        final double insideHeight = height - insideY - padding.getBottom();
         for (Node child : getChildren()) {
             var childAlignment = getAlignment(child);
             layoutInArea(child, insideX, insideY, insideWidth, insideHeight, 0, Insets.EMPTY,

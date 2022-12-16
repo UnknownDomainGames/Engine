@@ -17,12 +17,12 @@ public class GuiChat extends AnchorPane {
         this.game = game;
         textField = new TextField();
         textField.forceFocus();
-        textField.setBorder(new Border(Color.BLACK, 0f));
+        textField.setBorder(new Border(Color.BLACK, 0));
         textField.setBackground(Background.fromColor(Color.fromARGB(0x80000000)));
-        AnchorPane.setLeftAnchor(textField, 3f);
-        AnchorPane.setRightAnchor(textField, 3f);
-        AnchorPane.setBottomAnchor(textField, 3f);
-        textField.setPrefSize(USE_COMPUTED_VALUE, 23.0f);
+        AnchorPane.setLeftAnchor(textField, 3D);
+        AnchorPane.setRightAnchor(textField, 3D);
+        AnchorPane.setBottomAnchor(textField, 3D);
+        textField.setPrefSize(USE_COMPUTED_VALUE, 23.0D);
         this.getChildren().add(textField);
         this.setBackground(Background.NOTHING);
         setOnKeyPressed(event -> {

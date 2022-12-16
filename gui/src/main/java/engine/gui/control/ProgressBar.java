@@ -1,6 +1,8 @@
 package engine.gui.control;
 
-import com.github.mouse0w0.observable.value.*;
+import com.github.mouse0w0.observable.value.MutableDoubleValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
+import com.github.mouse0w0.observable.value.SimpleMutableDoubleValue;
 import engine.gui.shape.Rect;
 import engine.util.Color;
 import org.joml.Vector2f;
@@ -13,8 +15,8 @@ public class ProgressBar extends Control {
     private MutableDoubleValue max = new SimpleMutableDoubleValue(1);
     private MutableDoubleValue progress = new SimpleMutableDoubleValue(0);
 
-    private final MutableFloatValue barLength = new SimpleMutableFloatValue(150);
-    private final MutableFloatValue barThickness = new SimpleMutableFloatValue(15);
+    private final MutableDoubleValue barLength = new SimpleMutableDoubleValue(150);
+    private final MutableDoubleValue barThickness = new SimpleMutableDoubleValue(15);
 
     public ProgressBar() {
         progress.addChangeListener((ob, o, n) -> rebuild());
@@ -40,11 +42,11 @@ public class ProgressBar extends Control {
         return max;
     }
 
-    public MutableFloatValue barThickness() {
+    public MutableDoubleValue barThickness() {
         return barThickness;
     }
 
-    public MutableFloatValue barLength() {
+    public MutableDoubleValue barLength() {
         return barLength;
     }
 
@@ -55,16 +57,16 @@ public class ProgressBar extends Control {
             progress.set(0);
         }
         resizeBack(barLength.get(), barThickness.get());
-        resizeProgressRect((float) (barLength.get() * progress.get() / max.get()), barThickness.get());
-        progressRect.relocate(0,0);
+        resizeProgressRect(barLength.get() * progress.get() / max.get(), barThickness.get());
+        progressRect.relocate(0, 0);
     }
 
-    private void resizeBack(float width, float height) {
-        back.rectSize().set(new Vector2f(width, height));
+    private void resizeBack(double width, double height) {
+        back.rectSize().set(new Vector2f((float) width, (float) height));
     }
 
-    private void resizeProgressRect(float width, float height) {
-        progressRect.rectSize().set(new Vector2f(width, height));
+    private void resizeProgressRect(double width, double height) {
+        progressRect.rectSize().set(new Vector2f((float) width, (float) height));
     }
 
     public MutableObjectValue<Color> backgroundColor() {

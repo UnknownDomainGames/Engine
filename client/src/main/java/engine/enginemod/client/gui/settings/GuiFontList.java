@@ -70,7 +70,7 @@ public class GuiFontList extends BorderPane {
                 slider.min().set(1);
                 slider.step().set(0.5f);
                 slider.value().addChangeListener((observable, oldValue, newValue) ->
-                        preview.font().set(preview.font().get().withSize((float) (double) newValue)));
+                        preview.font().set(preview.font().get().withSize(newValue)));
                 var value = new Text();
                 slider.value().addChangeListener((observable, oldValue, newValue) -> value.setText(newValue.toString()));
                 slider.value().set(FontManager.instance().getDefaultFont().getSize());

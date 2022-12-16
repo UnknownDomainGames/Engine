@@ -10,84 +10,84 @@ public class AnchorPane extends Pane {
     public static final String LEFT_ANCHOR = "anchor-left";
     public static final String RIGHT_ANCHOR = "anchor-right";
 
-    public static void setTopAnchor(Node child, Float value) {
+    public static void setTopAnchor(Node child, Double value) {
         setProperty(child, TOP_ANCHOR, value);
     }
 
-    public static void setBottomAnchor(Node child, Float value) {
+    public static void setBottomAnchor(Node child, Double value) {
         setProperty(child, BOTTOM_ANCHOR, value);
     }
 
-    public static void setLeftAnchor(Node child, Float value) {
+    public static void setLeftAnchor(Node child, Double value) {
         setProperty(child, LEFT_ANCHOR, value);
     }
 
-    public static void setRightAnchor(Node child, Float value) {
+    public static void setRightAnchor(Node child, Double value) {
         setProperty(child, RIGHT_ANCHOR, value);
     }
 
-    public static Float getTopAnchor(Node child) {
-        return (Float) getProperty(child, TOP_ANCHOR);
+    public static Double getTopAnchor(Node child) {
+        return (Double) getProperty(child, TOP_ANCHOR);
     }
 
-    public static Float getBottomAnchor(Node child) {
-        return (Float) getProperty(child, BOTTOM_ANCHOR);
+    public static Double getBottomAnchor(Node child) {
+        return (Double) getProperty(child, BOTTOM_ANCHOR);
     }
 
-    public static Float getLeftAnchor(Node child) {
-        return (Float) getProperty(child, LEFT_ANCHOR);
+    public static Double getLeftAnchor(Node child) {
+        return (Double) getProperty(child, LEFT_ANCHOR);
     }
 
-    public static Float getRightAnchor(Node child) {
-        return (Float) getProperty(child, RIGHT_ANCHOR);
+    public static Double getRightAnchor(Node child) {
+        return (Double) getProperty(child, RIGHT_ANCHOR);
     }
 
     @Override
-    public float computeWidth() {
+    public double computeWidth() {
         return computeWidth(false);
     }
 
     @Override
-    public float computeHeight() {
+    public double computeHeight() {
         return computeHeight(false);
     }
 
-    private float computeWidth(final boolean minimum) {
-        float max = 0;
+    private double computeWidth(final boolean minimum) {
+        double max = 0;
         for (Node child : getChildren()) {
             var leftA = getLeftAnchor(child);
             var rightA = getRightAnchor(child);
-            float left = leftA != null ? leftA : (0);
-            float right = rightA != null ? rightA : 0;
-            float childH = -1;
+            double left = leftA != null ? leftA : (0);
+            double right = rightA != null ? rightA : 0;
+            double childH = -1;
             max = Math.max(max, left + (minimum && leftA != null && rightA != null ? child.minWidth() : computeChildPrefAreaWidth(child, -1, null, childH, false)) + right);
         }
         final Insets padding = getPadding();
         return padding.getLeft() + max + padding.getRight();
     }
 
-    private float computeHeight(final boolean minimum) {
-        float max = 0;
+    private double computeHeight(final boolean minimum) {
+        double max = 0;
         for (Node child : getChildren()) {
             var topA = getTopAnchor(child);
             var bottomA = getBottomAnchor(child);
-            float top = topA != null ? topA : (0);
-            float bottom = bottomA != null ? bottomA : 0;
-            float childW = -1;
+            double top = topA != null ? topA : (0);
+            double bottom = bottomA != null ? bottomA : 0;
+            double childW = -1;
             max = Math.max(max, top + (minimum && topA != null && bottomA != null ? child.minHeight() : computeChildPrefAreaHeight(child, -1, null, childW)) + bottom);
         }
         final Insets padding = getPadding();
         return padding.getTop() + max + padding.getBottom();
     }
 
-    private float computeChildWidth(Node node, Float left, Float right, float areaWidth) {
+    private double computeChildWidth(Node node, Double left, Double right, double areaWidth) {
         if (left != null && right != null) {
             return areaWidth - left - right;
         }
         return Parent.prefWidth(node);
     }
 
-    private float computeChildHeight(Node node, Float top, Float bottom, float areaHeight) {
+    private double computeChildHeight(Node node, Double top, Double bottom, double areaHeight) {
         if (top != null && bottom != null) {
             return areaHeight - top - bottom;
         }
@@ -104,9 +104,9 @@ public class AnchorPane extends Pane {
             var right = getRightAnchor(child);
 
 
-            float x = 0, y = 0;
-            float w = computeChildWidth(child, left, right, getWidth());
-            float h = computeChildHeight(child, top, bottom, getHeight());
+            double x = 0, y = 0;
+            double w = computeChildWidth(child, left, right, getWidth());
+            double h = computeChildHeight(child, top, bottom, getHeight());
             if (left != null) {
                 x = left;
             } else if (right != null) {

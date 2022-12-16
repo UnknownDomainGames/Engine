@@ -77,7 +77,8 @@ public final class FontPlaneTexture {
         this.fontInfo = fontInfo;
         charQuads.clear();
 
-        int bitmapSize = getBitmapSize(font.getSize());
+        float fontSize = (float) font.getSize();
+        int bitmapSize = getBitmapSize(fontSize);
         ByteBuffer bitmap = ByteBuffer.allocateDirect(bitmapSize * bitmapSize);
         try (MemoryStack stack = MemoryStack.stackPush()) {
             var context = STBTTPackContext.mallocStack(stack);
@@ -87,7 +88,7 @@ public final class FontPlaneTexture {
                 var range = STBTTPackRange.malloc();
                 var blockSize = UnicodeBlockWrapper.getBlockSize(block);
                 var charBuffer = STBTTPackedchar.malloc(blockSize);
-                range.set(font.getSize(), UnicodeBlockWrapper.getRange(block).lowerEndpoint(), null, blockSize, charBuffer, (byte) 1, (byte) 1);
+                range.set(fontSize, UnicodeBlockWrapper.getRange(block).lowerEndpoint(), null, blockSize, charBuffer, (byte) 1, (byte) 1);
                 ranges.put(range);
             }
             ranges.flip();
@@ -105,7 +106,7 @@ public final class FontPlaneTexture {
                 var cdata = ranges.get(i).chardata_for_range();
                 for (int j = 0; j < UnicodeBlockWrapper.getBlockSize(blocks.get(i)); j++) {
                     posX.put(0, 0);
-                    posY.put(0, font.getSize());
+                    posY.put(0, fontSize);
                     stbtt_GetPackedQuad(cdata, bitmapSize, bitmapSize, j, posX, posY, stbQuad, false);
                     var quads = new Vector4f(stbQuad.x0(), stbQuad.y0(), stbQuad.x1(), stbQuad.y1());
                     var tex = new Vector4f(stbQuad.s0(), stbQuad.t0(), stbQuad.s1(), stbQuad.t1());

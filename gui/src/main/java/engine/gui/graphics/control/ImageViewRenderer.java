@@ -15,6 +15,6 @@ public class ImageViewRenderer extends NodeRenderer<ImageView> {
         if (image == null) {
             return;
         }
-        graphics.drawImage(image, 0, 0, node.prefWidth(), node.prefHeight());
+        graphics.drawImage(image, 0, 0, (float) node.prefWidth(), (float) node.prefHeight());
     }
 }

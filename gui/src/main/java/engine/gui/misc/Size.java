@@ -1,120 +1,120 @@
 package engine.gui.misc;
 
-import com.github.mouse0w0.observable.value.MutableFloatValue;
-import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
+import com.github.mouse0w0.observable.value.MutableDoubleValue;
+import com.github.mouse0w0.observable.value.SimpleMutableDoubleValue;
 
 public final class Size {
-    public static final float USE_COMPUTED_VALUE = -1;
-    public static final float USE_PERF_VALUE = -2;
+    public static final double USE_COMPUTED_VALUE = -1;
+    public static final double USE_PERF_VALUE = -2;
 
-    private MutableFloatValue minWidth;
-    private MutableFloatValue minHeight;
-    private MutableFloatValue prefWidth;
-    private MutableFloatValue prefHeight;
-    private MutableFloatValue maxWidth;
-    private MutableFloatValue maxHeight;
+    private MutableDoubleValue minWidth;
+    private MutableDoubleValue minHeight;
+    private MutableDoubleValue prefWidth;
+    private MutableDoubleValue prefHeight;
+    private MutableDoubleValue maxWidth;
+    private MutableDoubleValue maxHeight;
 
-    public MutableFloatValue minWidth() {
+    public MutableDoubleValue minWidth() {
         if (minWidth == null) {
-            minWidth = new SimpleMutableFloatValue(USE_COMPUTED_VALUE);
+            minWidth = new SimpleMutableDoubleValue(USE_COMPUTED_VALUE);
         }
         return minWidth;
     }
 
-    public float getMinWidth() {
+    public double getMinWidth() {
         return minWidth == null ? USE_COMPUTED_VALUE : minWidth.get();
     }
 
-    public void setMinWidth(float minWidth) {
+    public void setMinWidth(double minWidth) {
         minWidth().set(minWidth);
     }
 
-    public MutableFloatValue minHeight() {
+    public MutableDoubleValue minHeight() {
         if (minHeight == null) {
-            minHeight = new SimpleMutableFloatValue(USE_COMPUTED_VALUE);
+            minHeight = new SimpleMutableDoubleValue(USE_COMPUTED_VALUE);
         }
         return minHeight;
     }
 
-    public float getMinHeight() {
+    public double getMinHeight() {
         return minHeight == null ? USE_COMPUTED_VALUE : minHeight.get();
     }
 
-    public void setMinHeight(float minHeight) {
+    public void setMinHeight(double minHeight) {
         minHeight().set(minHeight);
     }
 
-    public void setMinSize(float width, float height) {
+    public void setMinSize(double width, double height) {
         setMinWidth(width);
         setMinHeight(height);
     }
 
-    public MutableFloatValue prefWidth() {
+    public MutableDoubleValue prefWidth() {
         if (prefWidth == null) {
-            prefWidth = new SimpleMutableFloatValue(USE_COMPUTED_VALUE);
+            prefWidth = new SimpleMutableDoubleValue(USE_COMPUTED_VALUE);
         }
         return prefWidth;
     }
 
-    public float getPrefWidth() {
+    public double getPrefWidth() {
         return prefWidth == null ? USE_COMPUTED_VALUE : prefWidth.get();
     }
 
-    public void setPrefWidth(float prefWidth) {
+    public void setPrefWidth(double prefWidth) {
         prefWidth().set(prefWidth);
     }
 
-    public MutableFloatValue prefHeight() {
+    public MutableDoubleValue prefHeight() {
         if (prefHeight == null) {
-            prefHeight = new SimpleMutableFloatValue(USE_COMPUTED_VALUE);
+            prefHeight = new SimpleMutableDoubleValue(USE_COMPUTED_VALUE);
         }
         return prefHeight;
     }
 
-    public float getPrefHeight() {
+    public double getPrefHeight() {
         return prefHeight == null ? USE_COMPUTED_VALUE : prefHeight.get();
     }
 
-    public void setPrefHeight(float prefHeight) {
+    public void setPrefHeight(double prefHeight) {
         prefHeight().set(prefHeight);
     }
 
-    public void setPrefSize(float width, float height) {
+    public void setPrefSize(double width, double height) {
         setPrefWidth(width);
         setPrefHeight(height);
     }
 
-    public MutableFloatValue maxWidth() {
+    public MutableDoubleValue maxWidth() {
         if (maxWidth == null) {
-            maxWidth = new SimpleMutableFloatValue(USE_COMPUTED_VALUE);
+            maxWidth = new SimpleMutableDoubleValue(USE_COMPUTED_VALUE);
         }
         return maxWidth;
     }
 
-    public float getMaxWidth() {
+    public double getMaxWidth() {
         return maxWidth == null ? USE_COMPUTED_VALUE : maxWidth.get();
     }
 
-    public void setMaxWidth(float maxWidth) {
+    public void setMaxWidth(double maxWidth) {
         maxWidth().set(maxWidth);
     }
 
-    public MutableFloatValue maxHeight() {
+    public MutableDoubleValue maxHeight() {
         if (maxHeight == null) {
-            maxHeight = new SimpleMutableFloatValue(USE_COMPUTED_VALUE);
+            maxHeight = new SimpleMutableDoubleValue(USE_COMPUTED_VALUE);
         }
         return maxHeight;
     }
 
-    public float getMaxHeight() {
+    public double getMaxHeight() {
         return maxHeight == null ? USE_COMPUTED_VALUE : maxHeight.get();
     }
 
-    public void setMaxHeight(float maxHeight) {
+    public void setMaxHeight(double maxHeight) {
         maxHeight().set(maxHeight);
     }
 
-    public void setMaxSize(float width, float height) {
+    public void setMaxSize(double width, double height) {
         setMaxWidth(width);
         setMaxHeight(height);
     }

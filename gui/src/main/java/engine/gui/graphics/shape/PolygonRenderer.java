@@ -16,7 +16,7 @@ public final class PolygonRenderer extends NodeRenderer<Polygon> {
         graphics.setColor(polygon.getFillColor());
         graphics.fill(PolygonHelper.getPath2D(polygon), 0, 0);
 
-        float strokeWidth = polygon.getStrokeWidth();
+        float strokeWidth = (float) polygon.getStrokeWidth();
         if (strokeWidth < 0) return;
         // TODO: support stroke width
         graphics.setColor(polygon.getStrokeColor());

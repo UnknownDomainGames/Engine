@@ -3,20 +3,19 @@ package engine.gui.misc;
 import java.util.Objects;
 
 public class Point {
+    private final double x;
+    private final double y;
 
-    private final float x;
-    private final float y;
-
-    public Point(float x, float y) {
+    public Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public float getX() {
+    public double getX() {
         return x;
     }
 
-    public float getY() {
+    public double getY() {
         return y;
     }
 
@@ -25,8 +24,8 @@ public class Point {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Point point = (Point) o;
-        return Float.compare(point.x, x) == 0 &&
-                Float.compare(point.y, y) == 0;
+        return Double.compare(point.x, x) == 0 &&
+                Double.compare(point.y, y) == 0;
     }
 
     @Override

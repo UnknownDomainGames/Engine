@@ -1,8 +1,8 @@
 package engine.gui.shape;
 
-import com.github.mouse0w0.observable.value.MutableFloatValue;
+import com.github.mouse0w0.observable.value.MutableDoubleValue;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
-import com.github.mouse0w0.observable.value.SimpleMutableFloatValue;
+import com.github.mouse0w0.observable.value.SimpleMutableDoubleValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Node;
 import engine.util.Color;
@@ -12,7 +12,7 @@ public abstract class Shape extends Node {
     private MutableObjectValue<Color> fillColor;
 
     private MutableObjectValue<Color> strokeColor;
-    private MutableFloatValue strokeWidth;
+    private MutableDoubleValue strokeWidth;
 
     public final MutableObjectValue<Color> fillColor() {
         if (fillColor == null) {
@@ -44,18 +44,18 @@ public abstract class Shape extends Node {
         strokeColor().set(strokeColor);
     }
 
-    public final MutableFloatValue strokeWidth() {
+    public final MutableDoubleValue strokeWidth() {
         if (strokeWidth == null) {
-            strokeWidth = new SimpleMutableFloatValue(1f);
+            strokeWidth = new SimpleMutableDoubleValue(1);
         }
         return strokeWidth;
     }
 
-    public final float getStrokeWidth() {
-        return strokeWidth == null ? 1f : strokeWidth.get();
+    public final double getStrokeWidth() {
+        return strokeWidth == null ? 1 : strokeWidth.get();
     }
 
-    public final void setStrokeWidth(float strokeWidth) {
+    public final void setStrokeWidth(double strokeWidth) {
         strokeWidth().set(strokeWidth);
     }
 }

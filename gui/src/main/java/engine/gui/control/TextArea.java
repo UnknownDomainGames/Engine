@@ -34,11 +34,11 @@ public class TextArea extends TextInput {
     }
 
     @Override
-    protected int getNearestMousePos(float posX, float posY) {
+    protected int getNearestMousePos(double posX, double posY) {
         //TODO
-        float adjustedX = posX - scrollPane.xOffset().getFloat();
+        double adjustedX = posX - scrollPane.xOffset().getFloat();
         int posExclusive = 1;
-        float x = 0;
+        double x = 0;
         while (posExclusive <= length()) {
             x += FontManager.instance().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().get());
             if (x > adjustedX)

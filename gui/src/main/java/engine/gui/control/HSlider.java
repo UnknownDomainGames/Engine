@@ -1,6 +1,8 @@
 package engine.gui.control;
 
-import com.github.mouse0w0.observable.value.*;
+import com.github.mouse0w0.observable.value.MutableDoubleValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
+import com.github.mouse0w0.observable.value.SimpleMutableDoubleValue;
 import engine.gui.Region;
 import engine.gui.input.MouseActionEvent;
 import engine.gui.input.MouseEvent;
@@ -18,9 +20,9 @@ public class HSlider extends Region {
     private MutableDoubleValue max = new SimpleMutableDoubleValue(1);
     private MutableDoubleValue value = new SimpleMutableDoubleValue(0);
 
-    private final MutableFloatValue sliderLength = new SimpleMutableFloatValue(150);
-    private final MutableFloatValue sliderThickness = new SimpleMutableFloatValue(15);
-    private final MutableFloatValue step = new SimpleMutableFloatValue(0.01f);
+    private final MutableDoubleValue sliderLength = new SimpleMutableDoubleValue(150);
+    private final MutableDoubleValue sliderThickness = new SimpleMutableDoubleValue(15);
+    private final MutableDoubleValue step = new SimpleMutableDoubleValue(0.01);
 
     private boolean select = false;
 
@@ -44,7 +46,7 @@ public class HSlider extends Region {
             if (newValue == 0) {
                 step.set(oldValue);
             } else {
-                resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
+                resizeSlider(sliderLength.get() * (step.get() / (max.get() - min.get())), sliderThickness.get());
             }
         });
         sliderLength.addChangeListener((observable, oldValue, newValue) -> rebuild());
@@ -70,15 +72,15 @@ public class HSlider extends Region {
         return min;
     }
 
-    public MutableFloatValue sliderThickness() {
+    public MutableDoubleValue sliderThickness() {
         return sliderThickness;
     }
 
-    public MutableFloatValue sliderLength() {
+    public MutableDoubleValue sliderLength() {
         return sliderLength;
     }
 
-    public MutableFloatValue step() {
+    public MutableDoubleValue step() {
         return step;
     }
 
@@ -89,8 +91,8 @@ public class HSlider extends Region {
             value.set(min.get());
         }
         resizeBack(sliderLength.get(), sliderThickness.get());
-        resizeSlider(sliderLength.get() * (float) (step.get() / (max.get() - min.get())), sliderThickness.get());
-        slider.setLayoutX((float) ((back.rectSize().get().x() - slider.rectSize().get().x()) * ((value.get() - min.get()) / (max.get() - min.get()))));
+        resizeSlider(sliderLength.get() * (step.get() / (max.get() - min.get())), sliderThickness.get());
+        slider.setLayoutX((back.rectSize().get().x() - slider.rectSize().get().x()) * ((value.get() - min.get()) / (max.get() - min.get())));
         slider.setLayoutY(back.getLayoutY());
     }
 
@@ -119,12 +121,12 @@ public class HSlider extends Region {
         select = false;
     }
 
-    private void resizeBack(float width, float height) {
-        back.rectSize().set(new Vector2f(width, height));
+    private void resizeBack(double width, double height) {
+        back.rectSize().set(new Vector2f((float) width, (float) height));
     }
 
-    private void resizeSlider(float width, float height) {
-        slider.rectSize().set(new Vector2f(width, height));
+    private void resizeSlider(double width, double height) {
+        slider.rectSize().set(new Vector2f((float) width, (float) height));
     }
 
     public MutableObjectValue<Color> backBg() {

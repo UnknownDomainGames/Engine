@@ -6,9 +6,9 @@ import engine.gui.graphics.control.TextFieldRenderer;
 
 public class TextField extends TextInput {
 
-    private float lineScrollOffset = 0;
+    private double lineScrollOffset = 0;
 
-    public float getLineScrollOffset() {
+    public double getLineScrollOffset() {
         return lineScrollOffset;
     }
 
@@ -29,10 +29,10 @@ public class TextField extends TextInput {
 //    }
 
     @Override
-    protected int getNearestMousePos(float posX, float posY) {
-        float adjustedX = posX - lineScrollOffset;
+    protected int getNearestMousePos(double posX, double posY) {
+        double adjustedX = posX - lineScrollOffset;
         int posExclusive = 1;
-        float x = 0;
+        double x = 0;
         while (posExclusive <= length()) {
             x += FontManager.instance().computeTextWidth(getTextInRange(posExclusive - 1, posExclusive), font().get());
             if (x > adjustedX)

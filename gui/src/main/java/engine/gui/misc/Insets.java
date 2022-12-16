@@ -6,35 +6,35 @@ public class Insets {
 
     public static final Insets EMPTY = new Insets(0);
 
-    private final float top;
-    private final float right;
-    private final float bottom;
-    private final float left;
+    private final double top;
+    private final double right;
+    private final double bottom;
+    private final double left;
 
-    public Insets(float topRightBottomLeft) {
+    public Insets(double topRightBottomLeft) {
         this(topRightBottomLeft, topRightBottomLeft, topRightBottomLeft, topRightBottomLeft);
     }
 
-    public Insets(float top, float right, float bottom, float left) {
+    public Insets(double top, double right, double bottom, double left) {
         this.top = top;
         this.right = right;
         this.bottom = bottom;
         this.left = left;
     }
 
-    public float getTop() {
+    public double getTop() {
         return top;
     }
 
-    public float getRight() {
+    public double getRight() {
         return right;
     }
 
-    public float getBottom() {
+    public double getBottom() {
         return bottom;
     }
 
-    public float getLeft() {
+    public double getLeft() {
         return left;
     }
 
@@ -43,10 +43,10 @@ public class Insets {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Insets insets = (Insets) o;
-        return Float.compare(insets.top, top) == 0 &&
-                Float.compare(insets.bottom, bottom) == 0 &&
-                Float.compare(insets.left, left) == 0 &&
-                Float.compare(insets.right, right) == 0;
+        return Double.compare(insets.top, top) == 0 &&
+                Double.compare(insets.bottom, bottom) == 0 &&
+                Double.compare(insets.left, left) == 0 &&
+                Double.compare(insets.right, right) == 0;
     }
 
     @Override

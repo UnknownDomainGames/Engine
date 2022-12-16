@@ -140,7 +140,7 @@ public abstract class TextInput extends Control {
         positionCaret(getNearestMousePos(event.getX(), event.getY()));
     }
 
-    protected abstract int getNearestMousePos(float posX, float posY);
+    protected abstract int getNearestMousePos(double posX, double posY);
 
     protected void onMouseMove(MouseEvent event) {
         if (isPressed()) {

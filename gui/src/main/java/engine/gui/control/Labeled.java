@@ -103,7 +103,7 @@ public class Labeled extends Control {
         text.setTextAlignment(alignment);
     }
 
-    public final MutableFloatValue leading() {
+    public final MutableDoubleValue leading() {
         return text.leading();
     }
 
@@ -116,7 +116,7 @@ public class Labeled extends Control {
     }
 
     @Override
-    public float computeWidth() {
+    public double computeWidth() {
         if (graphic != null && graphic.isPresent() && text.getText() == null) {
             return graphic.get().prefWidth() + getPadding().getLeft() + getPadding().getRight();
         } else {
@@ -125,7 +125,7 @@ public class Labeled extends Control {
     }
 
     @Override
-    public float computeHeight() {
+    public double computeHeight() {
         if (graphic != null && graphic.isPresent() && text.getText() == null) {
             return graphic.get().prefHeight() + getPadding().getTop() + getPadding().getBottom();
         } else {

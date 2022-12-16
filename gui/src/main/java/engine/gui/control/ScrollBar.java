@@ -1,6 +1,9 @@
 package engine.gui.control;
 
-import com.github.mouse0w0.observable.value.*;
+import com.github.mouse0w0.observable.value.MutableDoubleValue;
+import com.github.mouse0w0.observable.value.MutableObjectValue;
+import com.github.mouse0w0.observable.value.SimpleMutableDoubleValue;
+import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.gui.Region;
 import engine.gui.input.MouseActionEvent;
 import engine.gui.input.MouseEvent;
@@ -18,9 +21,9 @@ public class ScrollBar extends Region {
     private MutableDoubleValue max = new SimpleMutableDoubleValue(1);
     private MutableDoubleValue value = new SimpleMutableDoubleValue(0);
 
-    private final MutableFloatValue sliderLength = new SimpleMutableFloatValue(150);
-    private final MutableFloatValue sliderThickness = new SimpleMutableFloatValue(15);
-    private final MutableFloatValue step = new SimpleMutableFloatValue(0.01f);
+    private final MutableDoubleValue sliderLength = new SimpleMutableDoubleValue(150);
+    private final MutableDoubleValue sliderThickness = new SimpleMutableDoubleValue(15);
+    private final MutableDoubleValue step = new SimpleMutableDoubleValue(0.01f);
 
     private final MutableObjectValue<Orientation> orientation = new SimpleMutableObjectValue<>(Orientation.HORIZONTAL);
 
@@ -55,11 +58,11 @@ public class ScrollBar extends Region {
         return value;
     }
 
-    public MutableFloatValue sliderLength() {
+    public MutableDoubleValue sliderLength() {
         return sliderLength;
     }
 
-    public MutableFloatValue step() {
+    public MutableDoubleValue step() {
         return step;
     }
 
@@ -70,16 +73,16 @@ public class ScrollBar extends Region {
             value.set(min.get());
         }
 
-        var knobLength = sliderLength.get() * (float) (step.get() / (max.get() - min.get()));
-        float knobOffset;
+        var knobLength = sliderLength.get() * (step.get() / (max.get() - min.get()));
+        double knobOffset;
         if (orientation.get() == Orientation.HORIZONTAL) {
-            knobOffset = (float) ((back.rectSize().get().x() - slider.rectSize().get().x()) * ((value.get() - min.get()) / (max.get() - min.get())));
+            knobOffset = (back.rectSize().get().x() - slider.rectSize().get().x()) * ((value.get() - min.get()) / (max.get() - min.get()));
             resizeBack(sliderLength.get(), sliderThickness.get());
             resizeSlider(knobLength, sliderThickness.get());
             slider.setLayoutX(knobOffset);
             slider.setLayoutY(back.getLayoutY());
         } else {
-            knobOffset = (float) ((back.rectSize().get().y() - slider.rectSize().get().y()) * ((value.get() - min.get()) / (max.get() - min.get())));
+            knobOffset = (back.rectSize().get().y() - slider.rectSize().get().y()) * ((value.get() - min.get()) / (max.get() - min.get()));
             resizeBack(sliderThickness.get(), sliderLength.get());
             resizeSlider(sliderThickness.get(), knobLength);
             slider.setLayoutX(back.getLayoutX());
@@ -87,8 +90,8 @@ public class ScrollBar extends Region {
         }
     }
 
-    private float anchorX = Float.NaN;
-    private float anchorY = Float.NaN;
+    private double anchorX = Float.NaN;
+    private double anchorY = Float.NaN;
 
     private void onMousePressed(MouseActionEvent e) {
         if (e.getTarget().equals(back)) {
@@ -140,12 +143,12 @@ public class ScrollBar extends Region {
         select = false;
     }
 
-    private void resizeBack(float width, float height) {
-        back.rectSize().set(new Vector2f(width, height));
+    private void resizeBack(double width, double height) {
+        back.rectSize().set(new Vector2f((float) width, (float) height));
     }
 
-    private void resizeSlider(float width, float height) {
-        slider.rectSize().set(new Vector2f(width, height));
+    private void resizeSlider(double width, double height) {
+        slider.rectSize().set(new Vector2f((float) width, (float) height));
     }
 
     public MutableObjectValue<Color> backBg() {

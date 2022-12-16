@@ -18,8 +18,8 @@ import static engine.gui.internal.InputHelper.getDoubleClickTime;
 
 public class Scene implements EventTarget {
 
-    private final MutableFloatValue width = new SimpleMutableFloatValue();
-    private final MutableFloatValue height = new SimpleMutableFloatValue();
+    private final MutableDoubleValue width = new SimpleMutableDoubleValue();
+    private final MutableDoubleValue height = new SimpleMutableDoubleValue();
 
     final MutableObjectValue<Stage> stage = new SimpleMutableObjectValue<>();
 
@@ -37,7 +37,7 @@ public class Scene implements EventTarget {
             }
 
             @Override
-            public void setSize(Scene scene, float width, float height) {
+            public void setSize(Scene scene, double width, double height) {
                 scene.setSize(width, height);
             }
 
@@ -52,23 +52,23 @@ public class Scene implements EventTarget {
         setRoot(root);
     }
 
-    public final ObservableFloatValue width() {
+    public final ObservableDoubleValue width() {
         return width.toUnmodifiable();
     }
 
-    public final float getWidth() {
+    public final double getWidth() {
         return width.get();
     }
 
-    public final ObservableFloatValue height() {
+    public final ObservableDoubleValue height() {
         return height.toUnmodifiable();
     }
 
-    public final float getHeight() {
+    public final double getHeight() {
         return height.get();
     }
 
-    private void setSize(float width, float height) {
+    private void setSize(double width, double height) {
         this.width.set(width);
         this.height.set(height);
         updateRoot();
@@ -76,8 +76,8 @@ public class Scene implements EventTarget {
 
     private void preferredSize() {
         Parent root = getRoot();
-        float width = root.getLayoutX() + Parent.prefWidth(root);
-        float height = root.getLayoutY() + Parent.prefHeight(root);
+        double width = root.getLayoutX() + Parent.prefWidth(root);
+        double height = root.getLayoutY() + Parent.prefHeight(root);
         setSize(width, height);
     }
 
@@ -135,13 +135,13 @@ public class Scene implements EventTarget {
         return tail.append(eventHandlerManager);
     }
 
-    private List<Node> raycast(float x, float y, boolean keepParent) {
+    private List<Node> raycast(double x, double y, boolean keepParent) {
         List<Node> results = new ArrayList<>();
         raycast(getRoot(), x, y, results, keepParent);
         return results;
     }
 
-    private void raycast(Parent parent, float x, float y, List<Node> results, boolean keepParent) {
+    private void raycast(Parent parent, double x, double y, List<Node> results, boolean keepParent) {
         boolean noMatchingChild = true;
         for (ListIterator<Node> iterator = parent.getUnmodifiableChildren().listIterator(parent.getUnmodifiableChildren().size()); iterator.hasPrevious(); ) {
             Node node = iterator.previous();
@@ -160,15 +160,15 @@ public class Scene implements EventTarget {
         }
     }
 
-    private float cursorX = Float.NaN;
-    private float cursorY = Float.NaN;
+    private double cursorX = Float.NaN;
+    private double cursorY = Float.NaN;
 
     private final Set<Node> hoveredNodes = new HashSet<>();
 
     public void processCursor(double xPos, double yPos) {
         Stage stage = getStage();
-        cursorX = (float) xPos / stage.getScaleX();
-        cursorY = (float) yPos / stage.getScaleY();
+        cursorX = xPos / stage.getScaleX();
+        cursorY = yPos / stage.getScaleY();
 
         var hitNodes = raycast(cursorX, cursorY, true);
         var lostHoveredNodes = new HashSet<>(hoveredNodes);
@@ -219,7 +219,7 @@ public class Scene implements EventTarget {
     }
 
     public void processMouse(MouseButton button, Modifiers modifier, boolean pressed) {
-        if (Float.isNaN(cursorX) || Float.isNaN(cursorY)) return;
+        if (Double.isNaN(cursorX) || Double.isNaN(cursorY)) return;
 
         var hitNodes = raycast(cursorX, cursorY, false);
 

@@ -3,6 +3,7 @@ package engine.gui.control;
 import com.github.mouse0w0.observable.collection.ListChangeListener;
 import com.github.mouse0w0.observable.collection.ObservableList;
 import com.github.mouse0w0.observable.value.*;
+import engine.gui.Parent;
 import engine.gui.misc.Background;
 import engine.util.Color;
 
@@ -152,9 +153,10 @@ public class ListCell<T> extends Labeled {
     }
 
     @Override
-    public float computeWidth() {
-        if (parent().isPresent()) {
-            return parent().get().getWidth();
+    public double computeWidth() {
+        Parent parent = getParent();
+        if (parent != null) {
+            return parent.getWidth();
         }
         return super.computeWidth();
     }

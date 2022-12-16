@@ -19,11 +19,11 @@ public abstract class Node implements EventTarget {
     final MutableObjectValue<Scene> scene = new SimpleMutableObjectValue<>();
     final MutableObjectValue<Parent> parent = new SimpleMutableObjectValue<>();
 
-    private MutableFloatValue layoutX;
-    private MutableFloatValue layoutY;
+    private MutableDoubleValue layoutX;
+    private MutableDoubleValue layoutY;
 
-    private final MutableFloatValue width = new SimpleMutableFloatValue();
-    private final MutableFloatValue height = new SimpleMutableFloatValue();
+    private final MutableDoubleValue width = new SimpleMutableDoubleValue();
+    private final MutableDoubleValue height = new SimpleMutableDoubleValue();
 
     final MutableBooleanValue focused = new SimpleMutableBooleanValue(false);
     final MutableBooleanValue hover = new SimpleMutableBooleanValue(false);
@@ -64,61 +64,61 @@ public abstract class Node implements EventTarget {
         parent().ifPresent(parent -> parent.toBack(this));
     }
 
-    public void resize(float width, float height) {
+    public void resize(double width, double height) {
         this.width.set(width);
         this.height.set(height);
     }
 
-    public final MutableFloatValue layoutX() {
+    public final MutableDoubleValue layoutX() {
         if (layoutX == null) {
-            layoutX = new SimpleMutableFloatValue();
+            layoutX = new SimpleMutableDoubleValue();
             layoutX.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         }
         return layoutX;
     }
 
-    public final float getLayoutX() {
+    public final double getLayoutX() {
         return layoutX == null ? 0 : layoutX.get();
     }
 
-    public final void setLayoutX(float x) {
+    public final void setLayoutX(double x) {
         layoutX().set(x);
     }
 
-    public final MutableFloatValue layoutY() {
+    public final MutableDoubleValue layoutY() {
         if (layoutY == null) {
-            layoutY = new SimpleMutableFloatValue();
+            layoutY = new SimpleMutableDoubleValue();
             layoutY.addChangeListener((observable, oldValue, newValue) -> requestParentLayout());
         }
         return layoutY;
     }
 
-    public final float getLayoutY() {
+    public final double getLayoutY() {
         return layoutX == null ? 0 : layoutY.get();
     }
 
-    public final void setLayoutY(float y) {
+    public final void setLayoutY(double y) {
         layoutY().set(y);
     }
 
-    public final void relocate(float x, float y) {
+    public final void relocate(double x, double y) {
         setLayoutX(x);
         setLayoutY(y);
     }
 
-    public final ObservableFloatValue width() {
+    public final ObservableDoubleValue width() {
         return width;
     }
 
-    public final float getWidth() {
+    public final double getWidth() {
         return width.get();
     }
 
-    public final ObservableFloatValue height() {
+    public final ObservableDoubleValue height() {
         return height;
     }
 
-    public final float getHeight() {
+    public final double getHeight() {
         return height.get();
     }
 
@@ -183,23 +183,23 @@ public abstract class Node implements EventTarget {
         }
     }
 
-    public float minWidth() {
+    public double minWidth() {
         return prefWidth();
     }
 
-    public float minHeight() {
+    public double minHeight() {
         return prefHeight();
     }
 
-    abstract public float prefWidth();
+    abstract public double prefWidth();
 
-    abstract public float prefHeight();
+    abstract public double prefHeight();
 
-    public float maxWidth() {
+    public double maxWidth() {
         return prefWidth();
     }
 
-    public float maxHeight() {
+    public double maxHeight() {
         return prefHeight();
     }
 
@@ -207,7 +207,7 @@ public abstract class Node implements EventTarget {
         return contains(point.getX(), point.getY());
     }
 
-    public boolean contains(float x, float y) {
+    public boolean contains(double x, double y) {
         return x >= getLayoutX() && x <= getLayoutX() + getWidth() && y >= getLayoutY() && y <= getLayoutY() + getHeight();
     }
 
@@ -248,7 +248,7 @@ public abstract class Node implements EventTarget {
     }
 
     public final Bounds getBoundsInScene() {
-        float minX = 0, minY = 0;
+        double minX = 0, minY = 0;
         Node node = this;
         while (node != null) {
             minX += node.getLayoutX();
@@ -259,7 +259,7 @@ public abstract class Node implements EventTarget {
     }
 
     public final Bounds getBoundsInScreen() {
-        float minX = 0, minY = 0;
+        double minX = 0, minY = 0;
         Node node = this;
         while (node != null) {
             minX += node.getLayoutX();
@@ -267,8 +267,8 @@ public abstract class Node implements EventTarget {
             node = node.getParent();
         }
         Stage stage = getScene().getStage();
-        float scaleX = stage.getScaleX();
-        float scaleY = stage.getScaleY();
+        double scaleX = stage.getScaleX();
+        double scaleY = stage.getScaleY();
         minX = minX * scaleX + stage.getX();
         minY = minY * scaleY + stage.getY();
         return new Bounds(minX, minY, getWidth() * scaleX, getHeight() * scaleY);
@@ -278,7 +278,7 @@ public abstract class Node implements EventTarget {
         focused.set(true);
     }
 
-    public Point relativePos(float x, float y) {
+    public Point relativePos(double x, double y) {
         if (parent().isEmpty()) {
             return new Point(x - getLayoutX(), y - getLayoutY());
         } else {

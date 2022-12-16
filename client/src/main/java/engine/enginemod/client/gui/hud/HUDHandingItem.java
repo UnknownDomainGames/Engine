@@ -16,8 +16,8 @@ public final class HUDHandingItem extends HUDControl {
 
     public HUDHandingItem() {
         name("handing_item");
-        AnchorPane.setLeftAnchor(this, 0f);
-        AnchorPane.setBottomAnchor(this, 0f);
+        AnchorPane.setLeftAnchor(this, 0D);
+        AnchorPane.setBottomAnchor(this, 0D);
         mainHandItem = new ItemView();
         mainHandItem.size().set(40);
         setContent(mainHandItem);

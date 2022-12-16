@@ -1,6 +1,6 @@
 package engine.gui.control;
 
-import com.github.mouse0w0.observable.value.MutableFloatValue;
+import com.github.mouse0w0.observable.value.MutableDoubleValue;
 import com.github.mouse0w0.observable.value.MutableObjectValue;
 import com.github.mouse0w0.observable.value.SimpleMutableObjectValue;
 import engine.item.ItemStack;
@@ -24,17 +24,17 @@ public class ItemSlot extends Button {
         return itemstack;
     }
 
-    public MutableFloatValue slotLength() {
+    public MutableDoubleValue slotLength() {
         return itemView.size();
     }
 
     @Override
-    public float computeHeight() {
+    public double computeHeight() {
         return slotLength().get();
     }
 
     @Override
-    public float computeWidth() {
+    public double computeWidth() {
         return slotLength().get();
     }
 }

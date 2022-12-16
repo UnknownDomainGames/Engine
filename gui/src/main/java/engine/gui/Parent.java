@@ -68,11 +68,11 @@ public abstract class Parent extends Node {
     }
 
     @Override
-    public float prefWidth() {
-        float minX = 0, maxX = 0;
+    public double prefWidth() {
+        double minX = 0, maxX = 0;
         for (Node child : getChildren()) {
-            float childMinX = child.getLayoutX();
-            float childMaxX = childMinX + Math.max(prefWidth(child), child.getWidth());
+            double childMinX = child.getLayoutX();
+            double childMaxX = childMinX + Math.max(prefWidth(child), child.getWidth());
             if (minX > childMinX) {
                 minX = childMinX;
             }
@@ -84,11 +84,11 @@ public abstract class Parent extends Node {
     }
 
     @Override
-    public float prefHeight() {
-        float minY = 0, maxY = 0;
+    public double prefHeight() {
+        double minY = 0, maxY = 0;
         for (Node child : getChildren()) {
-            float childMinY = child.getLayoutY();
-            float childMaxY = childMinY + Math.max(prefHeight(child), child.getHeight());
+            double childMinY = child.getLayoutY();
+            double childMaxY = childMinY + Math.max(prefHeight(child), child.getHeight());
             if (minY > childMinY) {
                 minY = childMinY;
             }
@@ -165,16 +165,16 @@ public abstract class Parent extends Node {
         }
     }
 
-    protected final void layoutInArea(Node node, float x, float y, float width, float height) {
+    protected final void layoutInArea(Node node, double x, double y, double width, double height) {
         node.resize(width, height);
         node.relocate(x, y);
     }
 
-    protected static float prefWidth(Node node) {
+    protected static double prefWidth(Node node) {
         return Math2.second(node.prefWidth(), node.minWidth(), node.maxWidth());
     }
 
-    protected static float prefHeight(Node node) {
+    protected static double prefHeight(Node node) {
         return Math2.second(node.prefHeight(), node.minHeight(), node.maxHeight());
     }
 

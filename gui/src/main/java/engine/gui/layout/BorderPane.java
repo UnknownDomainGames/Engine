@@ -116,9 +116,9 @@ public class BorderPane extends Pane {
     }
 
     @Override
-    public float computeWidth() {
+    public double computeWidth() {
         var padding = getPadding();
-        float width = 0f;
+        double width = 0;
         if (padding != null) {
             width += padding.getLeft() + padding.getRight();
         }
@@ -135,9 +135,9 @@ public class BorderPane extends Pane {
     }
 
     @Override
-    public float computeHeight() {
+    public double computeHeight() {
         var padding = getPadding();
-        float height = 0f;
+        double height = 0;
         if (padding != null) {
             height += padding.getTop() + padding.getBottom();
         }
@@ -156,22 +156,22 @@ public class BorderPane extends Pane {
     @Override
     protected void layoutChildren() {
         final Insets padding = getPadding();
-        float width = getWidth();
-        float height = getHeight();
+        double width = getWidth();
+        double height = getHeight();
         width = width < minWidth() ? minWidth() : width;
         height = height < minHeight() ? minHeight() : height;
 
 
-        final float insideX = padding.getLeft();
-        final float insideY = padding.getTop();
-        final float insideWidth = width - insideX - padding.getRight();
-        final float insideHeight = height - insideY - padding.getBottom();
+        final double insideX = padding.getLeft();
+        final double insideY = padding.getTop();
+        final double insideWidth = width - insideX - padding.getRight();
+        final double insideHeight = height - insideY - padding.getBottom();
         final Node c = center().get();
         final Node r = right().get();
         final Node b = bottom().get();
         final Node l = left().get();
         final Node t = top().get();
-        float topHeight = 0;
+        double topHeight = 0;
         if (t != null) {
             Insets topMargin = getNodeMargin(t);
             //double adjustedWidth = adjustWidthByMargin(insideWidth, topMargin);
@@ -190,7 +190,7 @@ public class BorderPane extends Pane {
                     alignment != null ? alignment.getVPos() : VPos.TOP, true);
         }
 
-        float bottomHeight = 0;
+        double bottomHeight = 0;
         if (b != null) {
             Insets bottomMargin = getNodeMargin(b);
 //            double adjustedWidth = adjustWidthByMargin(insideWidth, bottomMargin);
@@ -211,7 +211,7 @@ public class BorderPane extends Pane {
                     alignment != null ? alignment.getVPos() : VPos.BOTTOM, true);
         }
 
-        float leftWidth = 0;
+        double leftWidth = 0;
         if (l != null) {
             Insets leftMargin = getNodeMargin(l);
 //            double adjustedWidth = adjustWidthByMargin(insideWidth, leftMargin);
@@ -231,7 +231,7 @@ public class BorderPane extends Pane {
                     alignment != null ? alignment.getHPos() : HPos.LEFT,
                     alignment != null ? alignment.getVPos() : VPos.TOP, true);
         }
-        float rightWidth = 0;
+        double rightWidth = 0;
         if (r != null) {
             Insets rightMargin = getNodeMargin(r);
 //            double adjustedWidth = adjustWidthByMargin(insideWidth - leftWidth, rightMargin);

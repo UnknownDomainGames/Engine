@@ -11,8 +11,8 @@ public class ImageView extends Node {
 
     private ValueChangeListener<Boolean> loadedChangeListener;
 
-    private MutableFloatValue customWidth = new SimpleMutableFloatValue();
-    private MutableFloatValue customHeight = new SimpleMutableFloatValue();
+    private MutableDoubleValue customWidth = new SimpleMutableDoubleValue();
+    private MutableDoubleValue customHeight = new SimpleMutableDoubleValue();
 
     public ImageView() {
     }
@@ -51,12 +51,12 @@ public class ImageView extends Node {
     }
 
     @Override
-    public float prefWidth() {
+    public double prefWidth() {
         return image != null && image.isPresent() ? (customWidth.get() != 0 ? customWidth.get() : image.get().getWidth()) : 0f;
     }
 
     @Override
-    public float prefHeight() {
+    public double prefHeight() {
         return image != null && image.isPresent() ? (customHeight.get() != 0 ? customHeight.get() : image.get().getHeight()) : 0f;
     }
 
@@ -65,11 +65,11 @@ public class ImageView extends Node {
         return ImageViewRenderer.INSTANCE;
     }
 
-    public MutableFloatValue getCustomWidth() {
+    public MutableDoubleValue getCustomWidth() {
         return customWidth;
     }
 
-    public MutableFloatValue getCustomHeight() {
+    public MutableDoubleValue getCustomHeight() {
         return customHeight;
     }
 }

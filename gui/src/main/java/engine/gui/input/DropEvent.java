@@ -12,14 +12,14 @@ public class DropEvent extends Event {
 
     public static final EventType<DropEvent> DROP = ANY;
 
-    private final float screenX;
-    private final float screenY;
-    private final float x;
-    private final float y;
+    private final double screenX;
+    private final double screenY;
+    private final double x;
+    private final double y;
 
     private final List<Path> paths;
 
-    public DropEvent(EventType<? extends Event> eventType, EventTarget target, float x, float y, float screenX, float screenY, List<Path> paths) {
+    public DropEvent(EventType<? extends Event> eventType, EventTarget target, double x, double y, double screenX, double screenY, List<Path> paths) {
         super(eventType, target);
         this.screenX = screenX;
         this.screenY = screenY;
@@ -28,19 +28,19 @@ public class DropEvent extends Event {
         this.paths = paths;
     }
 
-    public float getScreenX() {
+    public double getScreenX() {
         return screenX;
     }
 
-    public float getScreenY() {
+    public double getScreenY() {
         return screenY;
     }
 
-    public float getX() {
+    public double getX() {
         return x;
     }
 
-    public float getY() {
+    public double getY() {
         return y;
     }
 

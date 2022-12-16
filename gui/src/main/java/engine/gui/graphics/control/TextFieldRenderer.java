@@ -42,10 +42,10 @@ public final class TextFieldRenderer extends RegionRenderer<TextField> {
     public void render(TextField textField, Graphics graphics) {
         super.render(textField, graphics);
         Insets padding = textField.getPadding();
-        float px = padding != null ? padding.getLeft() : 0;
-        float py = padding != null ? padding.getTop() : 0;
-        float pw = padding != null ? textField.getWidth() - padding.getLeft() - padding.getRight() : textField.getWidth();
-        float ph = padding != null ? textField.getHeight() - padding.getTop() - padding.getBottom() : textField.getHeight();
+        float px = padding != null ? (float) padding.getLeft() : 0;
+        float py = padding != null ? (float) padding.getTop() : 0;
+        float pw = (float) (padding != null ? textField.getWidth() - padding.getLeft() - padding.getRight() : textField.getWidth());
+        float ph = (float) (padding != null ? textField.getHeight() - padding.getTop() - padding.getBottom() : textField.getHeight());
         Rectanglei clipRect = ClipRectHelper.setAndTransform(px, py, pw, ph, graphics.getTransformNoClone(), new Rectanglei());
         graphics.setClipRect(clipRect);
         Color frontColor = textField.fontcolor().get();
@@ -53,7 +53,7 @@ public final class TextFieldRenderer extends RegionRenderer<TextField> {
         Font font = textField.font().get();
         FontManager helper = FontManager.instance();
         float caretWidth = helper.computeTextWidth(textField.getTextInRange(0, textField.caret().get()), font);
-        float offset = px + textField.getLineScrollOffset();
+        float offset = (float) (px + textField.getLineScrollOffset());
         Color selectionColor = Color.BLUE;
         if (textMeshDirty) bakeTextMesh();
         if (textMesh != null) {

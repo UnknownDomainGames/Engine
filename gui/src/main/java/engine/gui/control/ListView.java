@@ -103,12 +103,12 @@ public class ListView<T> extends Control {
     }
 
     @Override
-    public float computeWidth() {
+    public double computeWidth() {
         return scrollPane.computeWidth();
     }
 
     @Override
-    public float computeHeight() {
+    public double computeHeight() {
         return scrollPane.computeHeight();
     }
 

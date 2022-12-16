@@ -67,13 +67,13 @@ public abstract class HUDControl extends Control implements Registrable<HUDContr
     }
 
     @Override
-    public float computeWidth() {
+    public double computeWidth() {
         Node content = getContent();
         return content == null ? 0 : content.prefWidth();
     }
 
     @Override
-    public float computeHeight() {
+    public double computeHeight() {
         Node content = getContent();
         return content == null ? 0 : content.prefHeight();
     }

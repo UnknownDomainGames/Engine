@@ -22,7 +22,7 @@ public class ItemViewRenderer extends NodeRenderer<ItemView> {
             buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
             ItemRenderManager.instance().generateMesh(buffer, itemStack, 0);
             buffer.finish();
-            float size = node.size().get();
+            float size = (float) node.size().get();
             Matrix4f oldMatrix = graphics.getTransform(new Matrix4f());
             Matrix4f modelMatrix = graphics.getTransform(new Matrix4f());
             if (itemStack.getItem() instanceof BlockItem) {

@@ -16,8 +16,8 @@ public class Text extends Node {
     private MutableObjectValue<Font> font;
     private MutableObjectValue<Color> color;
     private MutableObjectValue<Pos> textAlignment;
-    private MutableFloatValue leading;
-    private MutableFloatValue textWidth;
+    private MutableDoubleValue leading;
+    private MutableDoubleValue textWidth;
 
     public Text() {
         text().addChangeListener((observable, oldValue, newValue) -> {
@@ -69,7 +69,7 @@ public class Text extends Node {
         return font;
     }
 
-    public final void setFontSize(float fontSize) {
+    public final void setFontSize(double fontSize) {
         setFont(new Font(getFont(), fontSize));
     }
 
@@ -97,9 +97,9 @@ public class Text extends Node {
         textAlignment().set(alignment);
     }
 
-    public final MutableFloatValue leading() {
+    public final MutableDoubleValue leading() {
         if (leading == null) {
-            leading = new SimpleMutableFloatValue(1f);
+            leading = new SimpleMutableDoubleValue(1);
             leading.addChangeListener((observable, oldValue, newValue) -> {
                 requestParentLayout();
                 getRenderer().markDirty();
@@ -108,17 +108,17 @@ public class Text extends Node {
         return leading;
     }
 
-    public final float getLeading() {
-        return leading == null ? 1f : leading.get();
+    public final double getLeading() {
+        return leading == null ? 1 : leading.get();
     }
 
-    public final void setLeading(float leading) {
+    public final void setLeading(double leading) {
         leading().set(leading);
     }
 
-    public final MutableFloatValue textWidth() {
+    public final MutableDoubleValue textWidth() {
         if (textWidth == null) {
-            textWidth = new SimpleMutableFloatValue(-1);
+            textWidth = new SimpleMutableDoubleValue(-1);
             textWidth.addChangeListener((observable, oldValue, newValue) -> {
                 requestParentLayout();
                 getRenderer().markDirty();
@@ -127,22 +127,22 @@ public class Text extends Node {
         return textWidth;
     }
 
-    public final float getTextWidth() {
+    public final double getTextWidth() {
         return textWidth == null ? -1 : textWidth.get();
     }
 
-    public final void setTextWidth(float textWidth) {
+    public final void setTextWidth(double textWidth) {
         textWidth().set(textWidth);
     }
 
     @Override
-    public float prefWidth() {
+    public double prefWidth() {
         return FontManager.instance().computeTextWidth(getText(), getFont());
     }
 
     @Override
-    public float prefHeight() {
-        return FontManager.instance().computeTextHeight(getText(), getFont(), -1, (float) getLeading());
+    public double prefHeight() {
+        return FontManager.instance().computeTextHeight(getText(), getFont(), (float) getTextWidth(), (float) getLeading());
     }
 
     @Override

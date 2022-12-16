@@ -23,12 +23,12 @@ public class Rect extends Shape {
     }
 
     @Override
-    public float prefWidth() {
+    public double prefWidth() {
         return size.get().x();
     }
 
     @Override
-    public float prefHeight() {
+    public double prefHeight() {
         return size.get().y();
     }
 

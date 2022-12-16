@@ -3,7 +3,6 @@ package engine.gui.misc;
 import engine.util.Color;
 
 public class Border {
-
     public static final Border NO_BORDER = new Border(Color.BLACK, Insets.EMPTY, Insets.EMPTY);
 
     private Insets insets;
@@ -13,14 +12,14 @@ public class Border {
     private final Color color;
 
     public Border(Color color) {
-        this(color, 1.0f);
+        this(color, 1.0);
     }
 
-    public Border(Color color, float width) {
+    public Border(Color color, double width) {
         this(color, width, width, width, width);
     }
 
-    public Border(Color color, float top, float bottom, float left, float right) {
+    public Border(Color color, double top, double bottom, double left, double right) {
         this(color, new Insets(top, right, bottom, left));
     }
 

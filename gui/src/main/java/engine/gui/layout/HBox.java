@@ -8,23 +8,23 @@ import engine.gui.misc.VPos;
 
 public class HBox extends Pane {
 
-    private MutableFloatValue spacing;
+    private MutableDoubleValue spacing;
     private MutableObjectValue<VPos> alignment;
     private MutableBooleanValue fillHeight;
 
-    public final MutableFloatValue spacing() {
+    public final MutableDoubleValue spacing() {
         if (spacing == null) {
-            spacing = new SimpleMutableFloatValue();
+            spacing = new SimpleMutableDoubleValue();
             spacing.addChangeListener((observable, oldValue, newValue) -> needsLayout());
         }
         return spacing;
     }
 
-    public final float getSpacing() {
+    public final double getSpacing() {
         return spacing == null ? 0 : spacing.get();
     }
 
-    public void setSpacing(float spacing) {
+    public void setSpacing(double spacing) {
         spacing().set(spacing);
     }
 
@@ -60,8 +60,8 @@ public class HBox extends Pane {
     }
 
     @Override
-    public float computeWidth() {
-        float width = 0, spacing = spacing().get();
+    public double computeWidth() {
+        double width = 0, spacing = spacing().get();
         for (Node node : getChildren()) {
             width += Math.max(node.getWidth(), Parent.prefWidth(node));
         }
@@ -70,8 +70,8 @@ public class HBox extends Pane {
     }
 
     @Override
-    public float computeHeight() {
-        float height = 0;
+    public double computeHeight() {
+        double height = 0;
         for (Node node : getChildren()) {
             height = Math.max(Math.max(height, node.getHeight()), Parent.prefHeight(node));
         }
@@ -82,16 +82,16 @@ public class HBox extends Pane {
     @Override
     protected void layoutChildren() {
         Insets padding = getPadding();
-        float x = padding.getLeft();
-        float top = padding.getTop();
-        float spacing = getSpacing();
-        float contentHeight = getHeight() - padding.getTop() - padding.getBottom();
+        double x = padding.getLeft();
+        double top = padding.getTop();
+        double spacing = getSpacing();
+        double contentHeight = getHeight() - padding.getTop() - padding.getBottom();
         boolean fillHeight = isFillHeight();
         for (Node node : getChildren()) {
             VPos alignment = getAlignment();
-            float prefWidth = Parent.prefWidth(node);
-            float prefHeight = fillHeight ? contentHeight : Parent.prefHeight(node);
-            float y = alignment == VPos.BOTTOM ?
+            double prefWidth = Parent.prefWidth(node);
+            double prefHeight = fillHeight ? contentHeight : Parent.prefHeight(node);
+            double y = alignment == VPos.BOTTOM ?
                     contentHeight - prefHeight : alignment == VPos.CENTER ? (contentHeight - prefHeight) / 2 : 0;
             layoutInArea(node, snap(x, true), snap(top + y, true), prefWidth, prefHeight);
             x += prefWidth + spacing;

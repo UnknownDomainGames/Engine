@@ -287,14 +287,15 @@ public final class STBTTFontManager extends FontManager {
             return max * trial.size();
         }
 
-        var nativeTTFont = getNativeFont(font);
+        float size = (float) font.getSize();
+        TTFont nativeTTFont = getNativeFont(font);
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer charPointBuffer = stack.mallocInt(1);
             FloatBuffer posX = stack.floats(0);
-            FloatBuffer posY = stack.floats(0 + font.getSize());
+            FloatBuffer posY = stack.floats(size);
 
-            float maxY = (float) (nativeTTFont.getFontInfo().getAscent() - nativeTTFont.getFontInfo().getDescent()) * stbtt_ScaleForPixelHeight(nativeTTFont.getFontInfo().getSTBFontInfo(), font.getSize());
-            var plane = nativeTTFont.getPlaneTextures().get(0);
+            float maxY = (float) (nativeTTFont.getFontInfo().getAscent() - nativeTTFont.getFontInfo().getDescent()) * stbtt_ScaleForPixelHeight(nativeTTFont.getFontInfo().getSTBFontInfo(), size);
+            FontPlaneTexture plane = nativeTTFont.getPlaneTextures().get(0);
             for (int i = 0; i < text.length(); ) {
                 i += getCodePoint(text, i, charPointBuffer);
 
@@ -384,7 +385,7 @@ public final class STBTTFontManager extends FontManager {
     }
 
     private TTFont loadNativeFont(TTFontInfo info, Font font) {
-        float scale = stbtt_ScaleForPixelHeight(info.getSTBFontInfo(), font.getSize());
+        float scale = stbtt_ScaleForPixelHeight(info.getSTBFontInfo(), (float) font.getSize());
         var plane = new FontPlaneTexture();
         plane.putBlock(Character.UnicodeBlock.BASIC_LATIN);
         plane.bakeTexture(font, info);

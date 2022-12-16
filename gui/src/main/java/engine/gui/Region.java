@@ -8,9 +8,8 @@ import engine.gui.misc.*;
 import engine.math.Math2;
 
 public class Region extends Parent {
-
-    public static final float USE_COMPUTED_VALUE = Size.USE_COMPUTED_VALUE;
-    public static final float USE_PERF_VALUE = Size.USE_PERF_VALUE;
+    public static final double USE_COMPUTED_VALUE = Size.USE_COMPUTED_VALUE;
+    public static final double USE_PERF_VALUE = Size.USE_PERF_VALUE;
 
     private MutableObjectValue<Background> background;
     private MutableObjectValue<Border> border;
@@ -67,68 +66,68 @@ public class Region extends Parent {
         return size;
     }
 
-    public float getMinWidth() {
+    public double getMinWidth() {
         return size.getMinWidth();
     }
 
-    public void setMinWidth(float minWidth) {
+    public void setMinWidth(double minWidth) {
         size.setMinWidth(minWidth);
     }
 
-    public float getMinHeight() {
+    public double getMinHeight() {
         return size.getMinHeight();
     }
 
-    public void setMinHeight(float minHeight) {
+    public void setMinHeight(double minHeight) {
         size.setMinHeight(minHeight);
     }
 
-    public void setMinSize(float width, float height) {
+    public void setMinSize(double width, double height) {
         size.setMinSize(width, height);
     }
 
-    public float getPrefWidth() {
+    public double getPrefWidth() {
         return size.getPrefWidth();
     }
 
-    public void setPrefWidth(float prefWidth) {
+    public void setPrefWidth(double prefWidth) {
         size.setPrefWidth(prefWidth);
     }
 
-    public float getPrefHeight() {
+    public double getPrefHeight() {
         return size.getPrefHeight();
     }
 
-    public void setPrefHeight(float prefHeight) {
+    public void setPrefHeight(double prefHeight) {
         size.setPrefHeight(prefHeight);
     }
 
-    public void setPrefSize(float width, float height) {
+    public void setPrefSize(double width, double height) {
         size.setPrefSize(width, height);
     }
 
-    public float getMaxWidth() {
+    public double getMaxWidth() {
         return size.getMaxWidth();
     }
 
-    public void setMaxWidth(float maxWidth) {
+    public void setMaxWidth(double maxWidth) {
         size.setMaxWidth(maxWidth);
     }
 
-    public float getMaxHeight() {
+    public double getMaxHeight() {
         return size.getMaxHeight();
     }
 
-    public void setMaxHeight(float maxHeight) {
+    public void setMaxHeight(double maxHeight) {
         size.setMaxHeight(maxHeight);
     }
 
-    public void setMaxSize(float width, float height) {
+    public void setMaxSize(double width, double height) {
         size.setMaxSize(width, height);
     }
 
-    public static void positionInArea(Node child, float areaX, float areaY, float areaWidth, float areaHeight,
-                                      float areaBaselineOffset, Insets margin, HPos halignment, VPos valignment, boolean isSnapToPixel) {
+    public static void positionInArea(Node child, double areaX, double areaY, double areaWidth, double areaHeight,
+                                      double areaBaselineOffset, Insets margin, HPos halignment, VPos valignment, boolean isSnapToPixel) {
         Insets childMargin = margin != null ? margin : Insets.EMPTY;
 
         position(child, areaX, areaY, areaWidth, areaHeight, areaBaselineOffset,
@@ -139,17 +138,17 @@ public class Region extends Parent {
                 halignment, valignment, isSnapToPixel);
     }
 
-    protected static float snap(float value, boolean snapToPixel) {
+    protected static double snap(double value, boolean snapToPixel) {
         return snapToPixel ? Math.round(value) : value;
     }
 
-    private static void position(Node child, float areaX, float areaY, float areaWidth, float areaHeight,
-                                 float areaBaselineOffset,
-                                 float topMargin, float rightMargin, float bottomMargin, float leftMargin,
+    private static void position(Node child, double areaX, double areaY, double areaWidth, double areaHeight,
+                                 double areaBaselineOffset,
+                                 double topMargin, double rightMargin, double bottomMargin, double leftMargin,
                                  HPos hpos, VPos vpos, boolean isSnapToPixel) {
-        final float xoffset = leftMargin + computeXOffset(areaWidth - leftMargin - rightMargin,
+        final double xoffset = leftMargin + computeXOffset(areaWidth - leftMargin - rightMargin,
                 child.getWidth(), hpos);
-        final float yoffset;
+        final double yoffset;
         /*if (vpos == Pos.VPos.BASELINE) {
             double bo = child.getBaselineOffset();
             if (bo == BASELINE_OFFSET_SAME_AS_HEIGHT) {
@@ -163,13 +162,13 @@ public class Region extends Parent {
             yoffset = topMargin + computeYOffset(areaHeight - topMargin - bottomMargin,
                     child.getHeight(), vpos);
         }
-        final float x = snap(areaX + xoffset, isSnapToPixel);
-        final float y = snap(areaY + yoffset, isSnapToPixel);
+        final double x = snap(areaX + xoffset, isSnapToPixel);
+        final double y = snap(areaY + yoffset, isSnapToPixel);
 
         child.relocate(x, y);
     }
 
-    static float computeXOffset(float width, float contentWidth, HPos hpos) {
+    static double computeXOffset(double width, double contentWidth, HPos hpos) {
         switch (hpos) {
             case LEFT:
                 return 0;
@@ -182,7 +181,7 @@ public class Region extends Parent {
         }
     }
 
-    static float computeYOffset(float height, float contentHeight, VPos vpos) {
+    static double computeYOffset(double height, double contentHeight, VPos vpos) {
         switch (vpos) {
             case BASELINE:
             case TOP:
@@ -197,8 +196,8 @@ public class Region extends Parent {
     }
 
     @Override
-    public float minWidth() {
-        float minWidth = getMinWidth();
+    public double minWidth() {
+        double minWidth = getMinWidth();
         if (minWidth == USE_COMPUTED_VALUE) {
             minWidth = super.minWidth();
         } else if (minWidth == USE_PERF_VALUE) {
@@ -208,8 +207,8 @@ public class Region extends Parent {
     }
 
     @Override
-    public float minHeight() {
-        float minHeight = getMinHeight();
+    public double minHeight() {
+        double minHeight = getMinHeight();
         if (minHeight == USE_COMPUTED_VALUE) {
             minHeight = super.minHeight();
         } else if (minHeight == USE_PERF_VALUE) {
@@ -219,34 +218,34 @@ public class Region extends Parent {
     }
 
     @Override
-    public final float prefWidth() {
-        float width = getPrefWidth();
+    public final double prefWidth() {
+        double width = getPrefWidth();
         if (width == USE_COMPUTED_VALUE) {
             return computeWidth();
         }
         return width;
     }
 
-    public float computeWidth() {
+    public double computeWidth() {
         return super.prefWidth();
     }
 
     @Override
-    public final float prefHeight() {
-        float height = getPrefHeight();
+    public final double prefHeight() {
+        double height = getPrefHeight();
         if (height == USE_COMPUTED_VALUE) {
             return computeHeight();
         }
         return height;
     }
 
-    public float computeHeight() {
+    public double computeHeight() {
         return super.prefHeight();
     }
 
     @Override
-    public float maxWidth() {
-        float maxWidth = getMaxWidth();
+    public double maxWidth() {
+        double maxWidth = getMaxWidth();
         if (maxWidth == USE_COMPUTED_VALUE) {
             maxWidth = super.maxWidth();
         } else if (maxWidth == USE_PERF_VALUE) {
@@ -256,8 +255,8 @@ public class Region extends Parent {
     }
 
     @Override
-    public float maxHeight() {
-        float maxHeight = getMaxHeight();
+    public double maxHeight() {
+        double maxHeight = getMaxHeight();
         if (maxHeight == USE_COMPUTED_VALUE) {
             maxHeight = super.maxHeight();
         } else if (maxHeight == USE_PERF_VALUE) {
@@ -269,14 +268,14 @@ public class Region extends Parent {
     @Override
     protected void layoutChildren() {
         Insets padding = getPadding();
-        float x = padding.getLeft();
-        float y = padding.getTop();
-        float w = getWidth() - x - padding.getRight();
-        float h = getHeight() - y - padding.getBottom();
+        double x = padding.getLeft();
+        double y = padding.getTop();
+        double w = getWidth() - x - padding.getRight();
+        double h = getHeight() - y - padding.getBottom();
         layoutChildren(x, y, w, h);
     }
 
-    protected void layoutChildren(float contentX, float contentY, float contentWidth, float contentHeight) {
+    protected void layoutChildren(double contentX, double contentY, double contentWidth, double contentHeight) {
         for (Node node : getChildren()) {
             layoutInArea(node, contentX + node.getLayoutX(), contentY + node.getLayoutY(), prefWidth(node), prefHeight(node));
         }
@@ -287,13 +286,13 @@ public class Region extends Parent {
         return RegionRenderer.INSTANCE;
     }
 
-    protected void layoutInArea(Node c, float areaX, float areaY, float areaWidth, float areaHeight, int areaBaselineOffset, Insets margin, HPos hAlign, VPos vAlign) {
+    protected void layoutInArea(Node c, double areaX, double areaY, double areaWidth, double areaHeight, int areaBaselineOffset, Insets margin, HPos hAlign, VPos vAlign) {
         Insets childMargin = margin != null ? margin : Insets.EMPTY;
 
-        float top = childMargin.getTop();
-        float bottom = childMargin.getBottom();
-        float left = childMargin.getLeft();
-        float right = childMargin.getRight();
+        double top = childMargin.getTop();
+        double bottom = childMargin.getBottom();
+        double left = childMargin.getLeft();
+        double right = childMargin.getRight();
 
 //        if (valignment == VPos.BASELINE) {
 //            double bo = child.getBaselineOffset();
@@ -320,20 +319,20 @@ public class Region extends Parent {
                 top, right, bottom, left, hAlign, vAlign, true);
     }
 
-    protected float computeChildPrefAreaWidth(Node child, float baselineComplement, Insets margin, float height, boolean fillHeight) {
-        float left = margin != null ? margin.getLeft() : 0;
-        float right = margin != null ? margin.getRight() : 0;
-        float alt = -1;
+    protected double computeChildPrefAreaWidth(Node child, double baselineComplement, Insets margin, double height, boolean fillHeight) {
+        double left = margin != null ? margin.getLeft() : 0;
+        double right = margin != null ? margin.getRight() : 0;
+        double alt = -1;
         if (height != -1) {
             //TODO width depends on height
         }
         return left + Math2.clamp(child.minWidth(), child.prefWidth(), child.maxWidth()) + right;
     }
 
-    protected float computeChildPrefAreaHeight(Node child, float baselineComplement, Insets margin, float width) {
-        float top = margin != null ? margin.getTop() : 0;
-        float bottom = margin != null ? margin.getBottom() : 0;
-        float alt = -1;
+    protected double computeChildPrefAreaHeight(Node child, double baselineComplement, Insets margin, double width) {
+        double top = margin != null ? margin.getTop() : 0;
+        double bottom = margin != null ? margin.getBottom() : 0;
+        double alt = -1;
         if (false) {
             //TODO height depends on width
         }

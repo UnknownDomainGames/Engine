@@ -31,7 +31,7 @@ public class GuiSettings extends AnchorPane {
         baksettings.getDisplaySettings().setUiScale(settings.getDisplaySettings().getUiScale());
         baksettings.getDisplaySettings().setHudScale(settings.getDisplaySettings().getHudScale());
         var title = new Text(I18n.translate("engine.gui.settings.title"));
-        title.setFont(new Font(Font.getDefaultFont(), 20.0f));
+        title.setFont(new Font(Font.getDefaultFont(), 20.0));
         //Display settings
         var lblDisplayMode = new Text(I18n.translate("engine.gui.settings.display_mode"));
         var lblRes = new Text(I18n.translate("engine.gui.settings.resolution"));
@@ -79,7 +79,7 @@ public class GuiSettings extends AnchorPane {
         var sliderUiScale = new HSlider();
         sliderUiScale.max().set(200);
         sliderUiScale.min().set(50);
-        sliderUiScale.step().set(1.0f);
+        sliderUiScale.step().set(1.0);
         sliderUiScale.sliderLength().set(250);
         sliderUiScale.value().set(settings.getDisplaySettings().getUiScale());
         var lblUiScaleVal = new Text(String.valueOf(settings.getDisplaySettings().getUiScale()));
@@ -92,7 +92,7 @@ public class GuiSettings extends AnchorPane {
         var sliderHudScale = new HSlider();
         sliderHudScale.max().set(200);
         sliderHudScale.min().set(50);
-        sliderHudScale.step().set(1.0f);
+        sliderHudScale.step().set(1);
         sliderHudScale.sliderLength().set(250);
         sliderHudScale.value().set(settings.getDisplaySettings().getHudScale());
         var lblHudScaleVal = new Text(String.valueOf(settings.getDisplaySettings().getHudScale()));
@@ -106,27 +106,27 @@ public class GuiSettings extends AnchorPane {
         var btnFont = new Button(I18n.translate("engine.gui.settings.font"));
         btnFont.setOnAction(event -> Platform.getEngineClient().getGraphicsManager().getGUIManager().show(new Scene(new GuiFontList())));
         var hb1 = new HBox();
-        hb1.spacing().set(10f);
+        hb1.spacing().set(10);
         hb1.getChildren().addAll(lblDisplayMode, butDisplayMode);
         var hb2 = new HBox();
-        hb2.spacing().set(10f);
+        hb2.spacing().set(10);
         hb2.getChildren().addAll(lblRes, butRes);
         var hb3 = new HBox();
-        hb3.spacing().set(10f);
+        hb3.spacing().set(10);
         hb3.getChildren().addAll(lblUiScale, sliderUiScale, lblUiScaleVal);
         var hb4 = new HBox();
-        hb4.spacing().set(10f);
+        hb4.spacing().set(10);
         hb4.getChildren().addAll(lblHudScale, sliderHudScale, lblHudScaleVal);
         var hb5 = new HBox();
-        hb5.spacing().set(10f);
+        hb5.spacing().set(10);
         hb5.getChildren().addAll(btnLanguage, btnFont);
         var vb = new VBox();
         vb.getChildren().addAll(hb1, hb2, hb3, hb4, hb5);
 
         //All
-        setTopAnchor(title, 10f);
+        setTopAnchor(title, 10D);
         setLeftAnchor(title, (this.getWidth() - title.getWidth()) / 2);
-        setTopAnchor(vb, title.getHeight() + 20f);
+        setTopAnchor(vb, title.getHeight() + 20);
         setLeftAnchor(vb, (this.getWidth() - vb.getWidth()) / 2);
         var butBack = new Button(I18n.translate("engine.gui.settings.discard"));
         var butSave = new Button(I18n.translate("engine.gui.settings.save"));
@@ -150,18 +150,18 @@ public class GuiSettings extends AnchorPane {
         butBack.setBorder(new Border(Color.WHITE, 2));
         var hb6 = new HBox();
         hb6.getChildren().addAll(butSave, butBack);
-        setBottomAnchor(hb6, 10f);
-        setBottomAnchor(vb, hb6.getHeight() + 20f);
-        setRightAnchor(hb6, 10f);
+        setBottomAnchor(hb6, 10D);
+        setBottomAnchor(vb, hb6.getHeight() + 20);
+        setRightAnchor(hb6, 10D);
         this.getChildren().addAll(title, vb, hb6);
-        ValueChangeListener<Float> sizeChangeListener = (observable, oldValue, newValue) -> {
-            setTopAnchor(title, 10f);
+        ValueChangeListener<Double> sizeChangeListener = (observable, oldValue, newValue) -> {
+            setTopAnchor(title, 10D);
             setLeftAnchor(title, (this.getWidth() - title.getWidth()) / 2);
-            setTopAnchor(vb, title.getHeight() + 20f);
+            setTopAnchor(vb, title.getHeight() + 20);
             setLeftAnchor(vb, (this.getWidth() - vb.getWidth()) / 2);
-            setBottomAnchor(hb6, 10f);
-            setBottomAnchor(vb, hb6.getHeight() + 20f);
-            setRightAnchor(hb6, 10f);
+            setBottomAnchor(hb6, 10D);
+            setBottomAnchor(vb, hb6.getHeight() + 20);
+            setRightAnchor(hb6, 10D);
             layoutChildren();
         };
         width().addChangeListener(sizeChangeListener);

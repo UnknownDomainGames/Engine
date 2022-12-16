@@ -73,7 +73,7 @@ public class Button extends Labeled {
                 var align = ((Text) child).textAlignment().get();
                 var aw = this.prefWidth() - getPadding().getLeft() - getPadding().getRight();
                 var ah = this.prefHeight() - getPadding().getTop() - getPadding().getBottom();
-                float x = 0, y = 0;
+                double x = 0, y = 0;
                 switch (align.getHPos()) {
                     case LEFT:
                         x = 0;
@@ -99,8 +99,8 @@ public class Button extends Labeled {
                         y = (ah - ((Text) child).getFont().getSize()) / 2;
                         break;
                 }
-                x = (float) Math.floor(x + 0.5f);
-                y = (float) Math.floor(y + 0.5f);
+                x = Math.floor(x + 0.5);
+                y = Math.floor(y + 0.5);
                 layoutInArea(child, snap(getPadding().getLeft() + x, true), snap(getPadding().getTop() + y, true), Parent.prefWidth(child), Parent.prefHeight(child));
             } else { //Although we only have Text inside, we still layout others in case acting as a child
                 layoutInArea(child, child.getLayoutX(), child.getLayoutY(), Parent.prefWidth(child), Parent.prefHeight(child));

@@ -13,8 +13,8 @@ public class Popup extends Stage {
 
     private final MutableObjectValue<Node> ownerNode = new SimpleMutableObjectValue<>();
 
-    private final MutableFloatValue anchorX = new SimpleMutableFloatValue();
-    private final MutableFloatValue anchorY = new SimpleMutableFloatValue();
+    private final MutableDoubleValue anchorX = new SimpleMutableDoubleValue();
+    private final MutableDoubleValue anchorY = new SimpleMutableDoubleValue();
 
     private MutableObjectValue<AnchorLocation> anchorLocation;
 
@@ -29,19 +29,19 @@ public class Popup extends Stage {
         LEFT_BOTTOM(0, 1),
         RIGHT_BOTTOM(1, 1);
 
-        private final float xFactor;
-        private final float yFactor;
+        private final double xFactor;
+        private final double yFactor;
 
-        AnchorLocation(float xFactor, float yFactor) {
+        AnchorLocation(double xFactor, double yFactor) {
             this.xFactor = xFactor;
             this.yFactor = yFactor;
         }
 
-        public float getXFactor() {
+        public double getXFactor() {
             return xFactor;
         }
 
-        public float getYFactor() {
+        public double getYFactor() {
             return yFactor;
         }
     }
@@ -60,19 +60,19 @@ public class Popup extends Stage {
         return ownerNode.get();
     }
 
-    public final ObservableFloatValue anchorX() {
+    public final ObservableDoubleValue anchorX() {
         return anchorX.toUnmodifiable();
     }
 
-    public final float getAnchorX() {
+    public final double getAnchorX() {
         return anchorX.get();
     }
 
-    public final ObservableFloatValue anchorY() {
+    public final ObservableDoubleValue anchorY() {
         return anchorY.toUnmodifiable();
     }
 
-    public final float getAnchorY() {
+    public final double getAnchorY() {
         return anchorY.get();
     }
 
@@ -121,13 +121,13 @@ public class Popup extends Stage {
         autoFix().set(autoFix);
     }
 
-    public void show(Stage ownerStage, float anchorX, float anchorY) {
+    public void show(Stage ownerStage, double anchorX, double anchorY) {
         setOwner(ownerStage);
         updateWindowPos(anchorX, anchorY);
         show(ownerStage);
     }
 
-    public void show(Node ownerNode, float anchorX, float anchorY) {
+    public void show(Node ownerNode, double anchorX, double anchorY) {
         this.ownerNode.set(ownerNode);
         Stage ownerStage = ownerNode.getScene().getStage();
         setOwner(ownerStage);
@@ -135,25 +135,25 @@ public class Popup extends Stage {
         show(ownerStage);
     }
 
-    private void updateWindowPos(float anchorX, float anchorY) {
+    private void updateWindowPos(double anchorX, double anchorY) {
         sizeToScene();
 
         Scene scene = getScene();
         AnchorLocation anchorLocation = getAnchorLocation();
-        float anchorXFactor = anchorLocation.getXFactor();
-        float anchorYFactor = anchorLocation.getYFactor();
-        float anchorDeltaX = anchorXFactor * scene.getWidth();
-        float anchorDeltaY = anchorYFactor * scene.getHeight();
-        float windowX = anchorX - anchorDeltaX;
-        float windowY = anchorY - anchorDeltaY;
+        double anchorXFactor = anchorLocation.getXFactor();
+        double anchorYFactor = anchorLocation.getYFactor();
+        double anchorDeltaX = anchorXFactor * scene.getWidth();
+        double anchorDeltaY = anchorYFactor * scene.getHeight();
+        double windowX = anchorX - anchorDeltaX;
+        double windowY = anchorY - anchorDeltaY;
 
         if (isAutoFix()) {
             Screen screen = getScreen();
             VideoMode videoMode = screen.getVideoMode();
-            float screenMinX = screen.getWorkareaX();
-            float screenMinY = screen.getWorkareaY();
-            float screenMaxX = screenMinX + videoMode.getWidth();
-            float screenMaxY = screenMinY + videoMode.getHeight();
+            double screenMinX = screen.getWorkareaX();
+            double screenMinY = screen.getWorkareaY();
+            double screenMaxX = screenMinX + videoMode.getWidth();
+            double screenMaxY = screenMinY + videoMode.getHeight();
             if (anchorXFactor <= 0.5) {
                 // Left
                 windowX = Math.max(Math.min(windowX, screenMaxX - scene.getWidth()), screenMinX);
