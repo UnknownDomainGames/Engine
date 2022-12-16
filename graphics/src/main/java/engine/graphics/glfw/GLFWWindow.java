@@ -656,7 +656,11 @@ public class GLFWWindow implements Window {
             charModsCallbacks.forEach(callback -> callback.invoke(this, (char) codepoint, modifiers));
         });
         glfwSetWindowCloseCallback(pointer, window -> {
-            windowCloseCallbacks.forEach(callback -> callback.invoke(this));
+            // Fix concurrent modification exception by cloning list.
+            var callbacks = windowCloseCallbacks.toArray(WindowCloseCallback[]::new);
+            for (var callback : callbacks) {
+                callback.invoke(this);
+            }
             if (doCloseImmediately) {
                 dispose();
             }
