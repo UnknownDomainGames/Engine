@@ -28,7 +28,7 @@ public class ProcessorUtils {
     }
 
     public static boolean hasModifier(Element element, Modifier modifier) {
-        return element.getModifiers().stream().anyMatch(m -> modifier == m);
+        return element.getModifiers().contains(modifier);
     }
 
     public static Name getQualifiedName(TypeMirror typeMirror) {
