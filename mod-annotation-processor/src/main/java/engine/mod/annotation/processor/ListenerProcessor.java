@@ -16,7 +16,7 @@ import static engine.mod.annotation.processor.ProcessorUtils.hasModifier;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_11)
 @SupportedAnnotationTypes("engine.event.Listener")
-public class ListenerValidator extends AbstractProcessor {
+public class ListenerProcessor extends AbstractProcessor {
 
     private TypeMirror eventTypeMirror;
 
