@@ -198,17 +198,15 @@ public class AssimpModelTest extends Application3D {
                         @Override
                         public void init(Drawer drawer) {
                             ShaderResource resource = drawer.getShaderResource();
-                            listHeader = resource.getUniformImage("linkedListHeader");
-                            uniformListBuffer = resource.getUniformImage("linkedListBuffer");
-                            uniformListBuffer.getBinding().setCanWrite(false);
+                            listHeader = resource.getUniformImage("linkedListHeader", true, true);
+                            uniformListBuffer = resource.getUniformImage("linkedListBuffer", true, false);
                         }
 
                         @Override
                         public void draw(FrameContext frameContext, Drawer drawer, Renderer renderer) {
-                            ShaderResource resource = drawer.getShaderResource();
-                            listHeader.set(linkedListHeaderImage);
-                            uniformListBuffer.set(linkedListMimicImage);
-                            resource.refresh();
+                            drawer.getShaderResource().setup();
+                            listHeader.setTexture(linkedListHeaderImage);
+                            uniformListBuffer.setTexture(linkedListMimicImage);
                             var buffer = VertexDataBuffer.currentThreadBuffer();
                             buffer.begin(VertexFormat.POSITION);
                             buffer.pos(-1, -1, 0).endVertex();

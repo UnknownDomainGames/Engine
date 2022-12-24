@@ -48,6 +48,10 @@ public class GLTexture implements Texture {
         return format.peer;
     }
 
+    public GLColorFormat getGLFormat() {
+        return format;
+    }
+
     public boolean isMultiSample() {
         return false;
     }

@@ -1,47 +1,43 @@
 package engine.graphics.gl.shader;
 
-import engine.graphics.shader.ImageBinding;
+import engine.graphics.gl.texture.GLTexture;
 import engine.graphics.shader.UniformImage;
 import engine.graphics.texture.Texture;
 import org.lwjgl.opengl.GL20C;
+import org.lwjgl.opengl.GL42C;
 
-public class GLUniformImage implements UniformImage {
-    private final String name;
+public class GLUniformImage extends GLUniform implements UniformImage {
     private final int location;
-    private final ImageBinding binding;
+    private final int unit;
+    private final int access;
 
-    public GLUniformImage(String name, int location, ImageBinding binding) {
-        this.name = name;
+    private Texture texture = GLTexture.NONE;
+
+    public GLUniformImage(String name, int location, int unit, int access) {
+        super(name);
         this.location = location;
-        this.binding = binding;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public ImageBinding getBinding() {
-        return binding;
+        this.unit = unit;
+        this.access = access;
     }
 
     @Override
     public int getUnit() {
-        return binding.getUnit();
+        return unit;
     }
 
     @Override
     public Texture getTexture() {
-        return binding.getTexture();
+        return texture;
     }
 
     @Override
-    public void set(Texture texture) {
-        binding.set(texture);
+    public void setTexture(Texture texture) {
+        this.texture = texture != null ? texture : GLTexture.NONE;
+        GLTexture glTexture = (GLTexture) this.texture;
+        GL42C.glBindImageTexture(unit, glTexture.getId(), 0, false, 0, access, glTexture.getGLFormat().internalFormat);
     }
 
     public void bind() {
-        GL20C.glUniform1i(location, binding.getUnit());
+        GL20C.glUniform1i(location, unit);
     }
 }

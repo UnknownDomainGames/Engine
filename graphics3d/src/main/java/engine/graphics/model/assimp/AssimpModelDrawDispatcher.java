@@ -7,7 +7,6 @@ import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Drawer;
 import engine.graphics.graph.FrameContext;
 import engine.graphics.graph.Renderer;
-import engine.graphics.internal.graph.Matrices;
 import engine.graphics.light.LightManager;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.shader.UniformBlock;
@@ -51,49 +50,51 @@ public class AssimpModelDrawDispatcher implements DrawDispatcher {
     @Override
     public void init(Drawer drawer) {
         ShaderResource resource = drawer.getShaderResource();
-        this.uniformMatrices = resource.getUniformBlock("Matrices");
-        this.uniformBones = resource.getUniformBlock("Bones");
-        this.uniformLight = resource.getUniformBlock("Light");
-        this.uniformMaterial = resource.getUniformBlock("Material");
+        this.uniformMatrices = resource.getUniformBlock("Matrices", 192);
+        this.uniformBones = resource.getUniformBlock("Bones", 8192);
+        this.uniformLight = resource.getUniformBlock("Light", 2096);
+        this.uniformMaterial = resource.getUniformBlock("Material", 68);
         this.uniformDiffuseUV = resource.getUniformTexture("diffuseUV");
         this.uniformSpecularUV = resource.getUniformTexture("specularUV");
         this.uniformNormalUV = resource.getUniformTexture("normalUV");
         this.uniformAlphaUV = resource.getUniformTexture("alphaUV");
 //      this.uniformTexture = resource.getUniformTexture("u_Texture");
-        listHeader = resource.getUniformImage("linkedListHeader");
-        uniformListBuffer = resource.getUniformImage("linkedListBuffer");
-        uniformListBuffer.getBinding().setCanRead(false);
+        listHeader = resource.getUniformImage("linkedListHeader", true, true);
+        uniformListBuffer = resource.getUniformImage("linkedListBuffer", false, true);
     }
 
     @Override
     public void draw(FrameContext frameContext, Drawer drawer, Renderer renderer) {
+        drawer.getShaderResource().setup();
         Scene3D scene = viewport.getScene();
-        ShaderResource resource = drawer.getShaderResource();
-        FrustumIntersection frustum = viewport.getFrustum();
+
         LightManager lightManager = scene.getLightManager();
         lightManager.setup(viewport.getCamera());
-        uniformLight.set(lightManager);
+        uniformLight.set(0, lightManager);
+
         if (headerImage != null) {
-            listHeader.set(headerImage);
+            listHeader.setTexture(headerImage);
         }
         if (linkedListBuffer != null) {
-            uniformListBuffer.set(linkedListBuffer);
+            uniformListBuffer.setTexture(linkedListBuffer);
         }
         if (atomicCounter != null) {
             GL33C.glBindBufferBase(GL42C.GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounter.getId());
         }
+
+        uniformMatrices.set(0, viewport.getProjectionMatrix());
+        uniformMatrices.set(64, viewport.getViewMatrix());
+
+        FrustumIntersection frustum = viewport.getFrustum();
         scene.getRenderQueue().getGeometryList(AssimpMesh.ASSIMP_MODEL).stream()
                 .filter(geometry -> geometry.shouldRender(frustum))
                 .forEach(geometry -> {
-                    uniformMatrices.set(new Matrices( // TODO: optimize it
-                            viewport.getProjectionMatrix(),
-                            viewport.getViewMatrix(),
-                            geometry.getWorldTransform().getTransformMatrix(new Matrix4f())));
+                    uniformMatrices.set(128, geometry.getWorldTransform().getTransformMatrix(new Matrix4f()));
                     if (geometry instanceof AssimpMesh) {
-                        uniformBones.set(new AssimpAnimation.StructBones(((AssimpMesh) geometry).getMeshParent().getCurrentAnimation().getCurrentFrame().getJointMatrices()));
+                        uniformBones.set(0, new AssimpAnimation.StructBones(((AssimpMesh) geometry).getMeshParent().getCurrentAnimation().getCurrentFrame().getJointMatrices()));
                     }
                     var material = geometry.getMaterial();
-                    uniformMaterial.set(material);
+                    uniformMaterial.set(0, material);
                     var u = material.getDiffuseMap();
                     if (u != null) {
                         uniformDiffuseUV.setTexture(u);
@@ -107,7 +108,6 @@ public class AssimpModelDrawDispatcher implements DrawDispatcher {
                     if ((u = material.getAlphaMap()) != null) {
                         uniformAlphaUV.setTexture(u);
                     }
-                    resource.refresh();
                     renderer.drawMesh(geometry.getMesh());
                 });
     }

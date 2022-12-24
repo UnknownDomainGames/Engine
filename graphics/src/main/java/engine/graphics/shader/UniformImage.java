@@ -2,14 +2,10 @@ package engine.graphics.shader;
 
 import engine.graphics.texture.Texture;
 
-public interface UniformImage {
-    String getName();
-
-    ImageBinding getBinding();
-
+public interface UniformImage extends Uniform {
     int getUnit();
 
     Texture getTexture();
 
-    void set(Texture texture);
+    void setTexture(Texture texture);
 }

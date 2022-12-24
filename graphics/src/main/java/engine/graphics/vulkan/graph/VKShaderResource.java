@@ -1,6 +1,9 @@
 package engine.graphics.vulkan.graph;
 
-import engine.graphics.shader.*;
+import engine.graphics.shader.ShaderResource;
+import engine.graphics.shader.UniformBlock;
+import engine.graphics.shader.UniformImage;
+import engine.graphics.shader.UniformTexture;
 import engine.graphics.vulkan.pipeline.PipelineLayout;
 import engine.graphics.vulkan.shader.VKUniformBlock;
 
@@ -17,42 +20,22 @@ public class VKShaderResource implements ShaderResource {
     }
 
     @Override
-    public TextureBinding createTextureBinding() {
-        return null;
-    }
-
-    @Override
-    public TextureBinding getTextureBinding(int unit) {
-        return null;
-    }
-
-    @Override
-    public ImageBinding createImageBinding() {
-        return null;
-    }
-
-    @Override
-    public ImageBinding getImageBinding(int unit) {
-        return null;
-    }
-
-    @Override
-    public UniformBlock getUniformBlock(String name) {
-        return null;
-    }
-
-    @Override
     public UniformTexture getUniformTexture(String name) {
         return null;
     }
 
     @Override
-    public UniformImage getUniformImage(String name) {
+    public UniformImage getUniformImage(String name, boolean canRead, boolean canWrite) {
         return null;
     }
 
     @Override
-    public void refresh() {
+    public UniformBlock getUniformBlock(String name, long size) {
+        return null;
+    }
+
+    @Override
+    public void setup() {
 
     }
 }

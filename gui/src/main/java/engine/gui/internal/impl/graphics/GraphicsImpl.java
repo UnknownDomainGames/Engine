@@ -9,7 +9,6 @@ import engine.graphics.shader.UniformTexture;
 import engine.graphics.shape.Path2D;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.util.DrawMode;
-import engine.graphics.util.Struct;
 import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vertex.VertexFormat;
 import engine.gui.Node;
@@ -24,7 +23,6 @@ import org.joml.Matrix4fc;
 import org.joml.Vector2fc;
 import org.joml.primitives.Rectanglei;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import static org.joml.Matrix4fc.PROPERTY_TRANSLATION;
@@ -39,7 +37,8 @@ public final class GraphicsImpl implements Graphics {
     private final ShaderResource resource;
 
     private final UniformBlock uniformStates;
-    private final States states = new States();
+    private final Matrix4f projMatrix = new Matrix4f();
+    private final Matrix4f modelMatrix = new Matrix4f();
 
     private final UniformTexture uniformTexture;
     private final Texture2D whiteTexture;
@@ -62,31 +61,11 @@ public final class GraphicsImpl implements Graphics {
     private final Rectanglei clipRect = new Rectanglei();
     private final Rectanglei finalClipRect = new Rectanglei();
 
-    private static class States implements Struct {
-        final Matrix4f projMatrix = new Matrix4f();
-        final Matrix4f modelMatrix = new Matrix4f();
-        boolean renderText;
-        boolean enableGamma;
-
-        @Override
-        public int sizeof() {
-            return 136;
-        }
-
-        @Override
-        public ByteBuffer get(int index, ByteBuffer buffer) {
-            projMatrix.get(0, buffer);
-            modelMatrix.get(64, buffer);
-            buffer.putInt(128, renderText ? 1 : 0);
-            buffer.putInt(132, enableGamma ? 1 : 0);
-            return buffer;
-        }
-    }
-
     public GraphicsImpl(ShaderResource resource) {
         this.resource = resource;
-        this.uniformStates = resource.getUniformBlock("States");
-        this.uniformStates.set(states);
+        this.uniformStates = resource.getUniformBlock("States", 136);
+        this.uniformStates.set(128, 0);
+        this.uniformStates.set(132, 0);
         this.uniformTexture = resource.getUniformTexture("u_Texture");
         this.whiteTexture = Texture2D.white();
         setColor(Color.WHITE);
@@ -99,9 +78,9 @@ public final class GraphicsImpl implements Graphics {
         this.scaleX = scaleX;
         this.scaleY = scaleY;
         this.viewport.setMin(0, 0).setMax(frameWidth, frameHeight);
-        this.states.projMatrix.setOrtho(0, frameWidth, frameHeight, 0, 32767, -32768);
+        this.resource.setup();
         this.uniformTexture.setTexture(whiteTexture);
-        this.resource.refresh();
+        this.uniformStates.set(0, projMatrix.setOrtho(0, frameWidth, frameHeight, 0, 32767, -32768));
         updateTransform();
     }
 
@@ -170,8 +149,7 @@ public final class GraphicsImpl implements Graphics {
         if ((transform.properties() & PROPERTY_TRANSLATION) != 0) {
             if (!simpleTransform) {
                 simpleTransform = true;
-                states.modelMatrix.identity();
-                resource.refresh();
+                uniformStates.set(64, modelMatrix);
             }
             transX = transform.m30();
             transY = transform.m31();
@@ -183,8 +161,7 @@ public final class GraphicsImpl implements Graphics {
                 transX = transY = transZ = 0;
                 buffer.setTranslation(0, 0, 0);
             }
-            states.modelMatrix.set(transform);
-            resource.refresh();
+            uniformStates.set(64, transform);
         }
     }
 
@@ -307,7 +284,6 @@ public final class GraphicsImpl implements Graphics {
     public void drawText(TextMesh mesh, int beginIndex, int endIndex, float x, float y) {
         setRenderText(true);
         uniformTexture.setTexture(mesh.getTexture());
-        resource.refresh();
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
         translate(x, y);
         mesh.put(buffer, color, beginIndex, endIndex);
@@ -316,11 +292,10 @@ public final class GraphicsImpl implements Graphics {
         translate(-x, -y);
         setRenderText(false);
         uniformTexture.setTexture(whiteTexture);
-        resource.refresh();
     }
 
     private void setRenderText(boolean renderText) {
-        states.renderText = renderText;
+        uniformStates.set(128, renderText ? 1 : 0);
     }
 
     @Override
@@ -337,11 +312,9 @@ public final class GraphicsImpl implements Graphics {
         buffer.pos(x2, y, 0).rgba(1, 1, 1, 1).tex(maxU, minV).endVertex();
         buffer.pos(x2, y2, 0).rgba(1, 1, 1, 1).tex(maxU, maxV).endVertex();
         uniformTexture.setTexture(texture);
-        resource.refresh();
         buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
         uniformTexture.setTexture(whiteTexture);
-        resource.refresh();
     }
 
     @Override
@@ -430,19 +403,15 @@ public final class GraphicsImpl implements Graphics {
     @Override
     public void drawMesh(Mesh mesh, Texture2D texture) {
         uniformTexture.setTexture(texture);
-        resource.refresh();
         renderer.drawMesh(mesh);
         uniformTexture.setTexture(whiteTexture);
-        resource.refresh();
     }
 
     @Override
     public void drawStreamedMesh(DrawMode drawMode, VertexDataBuffer buffer, Texture2D texture) {
         uniformTexture.setTexture(texture);
-        resource.refresh();
         renderer.drawStreamed(drawMode, buffer);
         uniformTexture.setTexture(whiteTexture);
-        resource.refresh();
     }
 
     private void putVertex(VertexDataBuffer buffer, float x, float y) {

@@ -4,47 +4,124 @@ import engine.graphics.gl.buffer.GLBufferType;
 import engine.graphics.gl.buffer.GLBufferUsage;
 import engine.graphics.gl.buffer.GLVertexBuffer;
 import engine.graphics.shader.UniformBlock;
-import engine.graphics.util.CachedBuffer;
 import engine.graphics.util.Struct;
+import org.joml.*;
 import org.lwjgl.opengl.GL30C;
 import org.lwjgl.opengl.GL31C;
+import org.lwjgl.system.MemoryStack;
 
-public final class GLUniformBlock implements UniformBlock {
-    private static CachedBuffer cachedBuffer = new CachedBuffer(4096);
-
-    private final String name;
+public final class GLUniformBlock extends GLUniform implements UniformBlock {
+    private final long size;
     private final int binding;
-    private final GLVertexBuffer buffer;
+    private final GLVertexBuffer vbo;
 
-    private Struct value;
-
-    public GLUniformBlock(String name, int binding) {
-        this(name, binding, GLBufferUsage.STREAM_DRAW);
-    }
-
-    public GLUniformBlock(String name, int binding, GLBufferUsage drawMode) {
-        this.name = name;
+    public GLUniformBlock(String name, long size, int binding) {
+        super(name);
+        this.size = size;
         this.binding = binding;
-        this.buffer = new GLVertexBuffer(GLBufferType.UNIFORM_BUFFER, drawMode);
+        this.vbo = new GLVertexBuffer(GLBufferType.UNIFORM_BUFFER, GLBufferUsage.STREAM_DRAW);
+        this.vbo.allocateSize(size);
     }
 
     @Override
-    public String getName() {
-        return name;
+    public void set(long offset, int value) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, stack.malloc(4).putInt(value).flip());
+        }
     }
 
     @Override
-    public Struct get() {
-        return value;
+    public void set(long offset, float value) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, stack.malloc(4).putFloat(value).flip());
+        }
     }
 
     @Override
-    public void set(Struct value) {
-        this.value = value;
+    public void set(long offset, int x, int y) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, stack.malloc(8).putInt(x).putInt(y).flip());
+        }
+    }
+
+    @Override
+    public void set(long offset, float x, float y) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, stack.malloc(8).putFloat(x).putFloat(y).flip());
+        }
+    }
+
+    @Override
+    public void set(long offset, int x, int y, int z) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, stack.malloc(12).putInt(x).putInt(y).putInt(z).flip());
+        }
+    }
+
+    @Override
+    public void set(long offset, float x, float y, float z) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, stack.malloc(12).putFloat(x).putFloat(y).putFloat(z).flip());
+        }
+    }
+
+    @Override
+    public void set(long offset, int x, int y, int z, int w) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, stack.malloc(16).putInt(x).putInt(y).putInt(z).putInt(w).flip());
+        }
+    }
+
+    @Override
+    public void set(long offset, float x, float y, float z, float w) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, stack.malloc(16).putFloat(x).putFloat(y).putFloat(z).putFloat(w).flip());
+        }
+    }
+
+    @Override
+    public void set(long offset, Matrix2fc matrix) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, matrix.get(stack.malloc(16)));
+        }
+    }
+
+    @Override
+    public void set(long offset, Matrix3x2fc matrix) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, matrix.get(stack.malloc(24)));
+        }
+    }
+
+    @Override
+    public void set(long offset, Matrix3fc matrix) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, matrix.get(stack.malloc(36)));
+        }
+    }
+
+    @Override
+    public void set(long offset, Matrix4x3fc matrix) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, matrix.get(stack.malloc(48)));
+        }
+    }
+
+    @Override
+    public void set(long offset, Matrix4fc matrix) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, matrix.get(stack.malloc(64)));
+        }
+    }
+
+    @Override
+    public void set(long offset, Struct struct) {
+        try (var stack = MemoryStack.stackPush()) {
+            vbo.uploadSubData(offset, struct.get(stack.malloc(struct.sizeof())));
+        }
     }
 
     public void bind() {
-        buffer.uploadData(value.get(cachedBuffer.get(value.sizeof())));
-        GL30C.glBindBufferBase(GL31C.GL_UNIFORM_BUFFER, binding, buffer.getId());
+        GL30C.glBindBufferBase(GL31C.GL_UNIFORM_BUFFER, binding, vbo.getId());
     }
 }

@@ -1,58 +1,60 @@
 package engine.graphics.gl.shader;
 
-import engine.graphics.shader.TextureBinding;
+import engine.graphics.gl.texture.GLSampler;
+import engine.graphics.gl.texture.GLTexture;
+import engine.graphics.gl.util.GLHelper;
 import engine.graphics.shader.UniformTexture;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.Texture;
-import org.lwjgl.opengl.GL20C;
+import org.lwjgl.opengl.*;
 
-public final class GLUniformTexture implements UniformTexture {
-    private final String name;
+public final class GLUniformTexture extends GLUniform implements UniformTexture {
     private final int location;
-    private final TextureBinding binding;
+    private final int unit;
 
-    public GLUniformTexture(String name, int location, TextureBinding binding) {
-        this.name = name;
+    private Texture texture = GLTexture.NONE;
+    private Sampler sampler = GLSampler.NONE;
+
+    public GLUniformTexture(String name, int location, int unit) {
+        super(name);
         this.location = location;
-        this.binding = binding;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public TextureBinding getBinding() {
-        return binding;
+        this.unit = unit;
     }
 
     @Override
     public int getUnit() {
-        return binding.getUnit();
+        return unit;
     }
 
     @Override
     public Texture getTexture() {
-        return binding.getTexture();
-    }
-
-    @Override
-    public Sampler getSampler() {
-        return binding.getSampler();
+        return texture;
     }
 
     @Override
     public void setTexture(Texture texture) {
-        binding.setTexture(texture);
+        this.texture = texture != null ? texture : GLTexture.NONE;
+        GLTexture glTexture = (GLTexture) this.texture;
+        if (GLHelper.isSupportARBDirectStateAccess()) {
+            GL45C.glBindTextureUnit(unit, glTexture.getId());
+        } else {
+            GL13C.glActiveTexture(GL13C.GL_TEXTURE0 + unit);
+            GL11C.glBindTexture(glTexture.getTarget(), glTexture.getId());
+        }
+    }
+
+    @Override
+    public Sampler getSampler() {
+        return sampler;
     }
 
     @Override
     public void setSampler(Sampler sampler) {
-        binding.setSampler(sampler);
+        this.sampler = sampler != null ? sampler : GLSampler.NONE;
+        GL33C.glBindSampler(unit, sampler.getId());
     }
 
     public void bind() {
-        GL20C.glUniform1i(location, binding.getUnit());
+        GL20C.glUniform1i(location, unit);
     }
 }
