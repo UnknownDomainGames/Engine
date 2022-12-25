@@ -1,5 +1,6 @@
 package engine.graphics.internal.graph;
 
+import engine.graphics.Geometry;
 import engine.graphics.Scene3D;
 import engine.graphics.gl.buffer.GLVertexBuffer;
 import engine.graphics.gl.texture.GLTextureBuffer;
@@ -9,26 +10,24 @@ import engine.graphics.graph.FrameContext;
 import engine.graphics.graph.Renderer;
 import engine.graphics.light.LightManager;
 import engine.graphics.queue.RenderType;
-import engine.graphics.shader.ShaderResource;
-import engine.graphics.shader.UniformBlock;
-import engine.graphics.shader.UniformImage;
-import engine.graphics.shader.UniformTexture;
+import engine.graphics.shader.*;
 import engine.graphics.texture.Texture2D;
 import engine.graphics.viewport.Viewport;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 import org.lwjgl.opengl.GL33C;
 import org.lwjgl.opengl.GL42C;
-
-import java.util.stream.Stream;
 
 public class ViewportTransparentDrawDispatcher implements DrawDispatcher {
     private final Viewport viewport;
 
     private final Matrix4f tempMatrix4f = new Matrix4f();
 
-    private UniformBlock uniformMatrices;
     private UniformBlock uniformLight;
+    private Uniform uniformProjMatrix;
+    private Uniform uniformViewMatrix;
+    private Uniform uniformViewModelMatrix;
     private UniformTexture uniformTexture;
 
     private UniformImage uniformListBuffer;
@@ -47,8 +46,10 @@ public class ViewportTransparentDrawDispatcher implements DrawDispatcher {
     @Override
     public void init(Drawer drawer) {
         ShaderResource resource = drawer.getShaderResource();
-        uniformMatrices = resource.getUniformBlock("Matrices", 192);
         uniformLight = resource.getUniformBlock("Light", 2096);
+        uniformProjMatrix = resource.getUniform("projMatrix");
+        uniformViewMatrix = resource.getUniform("viewMatrix");
+        uniformViewModelMatrix = resource.getUniform("viewModelMatrix");
         uniformTexture = resource.getUniformTexture("u_Texture");
         listHeader = resource.getUniformImage("linkedListHeader", true, true);
         uniformListBuffer = resource.getUniformImage("linkedListBuffer", false, true);
@@ -59,6 +60,8 @@ public class ViewportTransparentDrawDispatcher implements DrawDispatcher {
         drawer.getShaderResource().setup();
 
         Scene3D scene = viewport.getScene();
+        Matrix4fc viewMatrix = viewport.getViewMatrix();
+        FrustumIntersection frustum = viewport.getFrustum();
 
         LightManager lightManager = scene.getLightManager();
         lightManager.setup(viewport.getCamera());
@@ -74,18 +77,22 @@ public class ViewportTransparentDrawDispatcher implements DrawDispatcher {
             GL33C.glBindBufferBase(GL42C.GL_ATOMIC_COUNTER_BUFFER, 0, atomicCounter.getId());
         }
 
-        uniformMatrices.set(0, viewport.getProjectionMatrix());
-        uniformMatrices.set(64, viewport.getViewMatrix());
+        uniformProjMatrix.set(viewport.getProjectionMatrix());
+        uniformViewMatrix.set(viewMatrix);
 
-        FrustumIntersection frustum = viewport.getFrustum();
-        Stream.concat(
-                        scene.getRenderQueue().getGeometryList(RenderType.TRANSPARENT).stream(),
-                        scene.getRenderQueue().getGeometryList(RenderType.TRANSLUCENT).stream())
-                .filter(geometry -> geometry.shouldRender(frustum))
-                .forEach(geometry -> {
-                    uniformMatrices.set(128, geometry.getWorldTransform().getTransformMatrix(tempMatrix4f));
-                    uniformTexture.setTexture(geometry.getTexture());
-                    renderer.drawMesh(geometry.getMesh());
-                });
+        for (Geometry geometry : scene.getRenderQueue().getGeometryList(RenderType.TRANSPARENT)) {
+            if (geometry.shouldRender(frustum)) {
+                uniformViewModelMatrix.set(viewMatrix.mul(geometry.getWorldTransform().getTransformMatrix(tempMatrix4f), tempMatrix4f));
+                uniformTexture.setTexture(geometry.getTexture());
+                renderer.drawMesh(geometry.getMesh());
+            }
+        }
+        for (Geometry geometry : scene.getRenderQueue().getGeometryList(RenderType.TRANSLUCENT)) {
+            if (geometry.shouldRender(frustum)) {
+                uniformViewModelMatrix.set(viewMatrix.mul(geometry.getWorldTransform().getTransformMatrix(tempMatrix4f), tempMatrix4f));
+                uniformTexture.setTexture(geometry.getTexture());
+                renderer.drawMesh(geometry.getMesh());
+            }
+        }
     }
 }

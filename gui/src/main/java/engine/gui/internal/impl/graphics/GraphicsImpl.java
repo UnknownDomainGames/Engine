@@ -4,7 +4,7 @@ import engine.graphics.font.TextMesh;
 import engine.graphics.graph.Renderer;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.shader.ShaderResource;
-import engine.graphics.shader.UniformBlock;
+import engine.graphics.shader.Uniform;
 import engine.graphics.shader.UniformTexture;
 import engine.graphics.shape.Path2D;
 import engine.graphics.texture.Texture2D;
@@ -36,7 +36,10 @@ public final class GraphicsImpl implements Graphics {
 
     private final ShaderResource resource;
 
-    private final UniformBlock uniformStates;
+    private final Uniform uniformProjMatrix;
+    private final Uniform uniformModelMatrix;
+    private final Uniform uniformRenderText;
+    private final Uniform uniformEnableGamma;
     private final Matrix4f projMatrix = new Matrix4f();
     private final Matrix4f modelMatrix = new Matrix4f();
 
@@ -63,9 +66,12 @@ public final class GraphicsImpl implements Graphics {
 
     public GraphicsImpl(ShaderResource resource) {
         this.resource = resource;
-        this.uniformStates = resource.getUniformBlock("States", 136);
-        this.uniformStates.set(128, 0);
-        this.uniformStates.set(132, 0);
+        this.uniformProjMatrix = resource.getUniform("projMatrix");
+        this.uniformModelMatrix = resource.getUniform("modelMatrix");
+        this.uniformRenderText = resource.getUniform("renderText");
+        this.uniformRenderText.set(false);
+        this.uniformEnableGamma = resource.getUniform("enableGamma");
+        this.uniformEnableGamma.set(false);
         this.uniformTexture = resource.getUniformTexture("u_Texture");
         this.whiteTexture = Texture2D.white();
         setColor(Color.WHITE);
@@ -80,7 +86,7 @@ public final class GraphicsImpl implements Graphics {
         this.viewport.setMin(0, 0).setMax(frameWidth, frameHeight);
         this.resource.setup();
         this.uniformTexture.setTexture(whiteTexture);
-        this.uniformStates.set(0, projMatrix.setOrtho(0, frameWidth, frameHeight, 0, 32767, -32768));
+        this.uniformProjMatrix.set(projMatrix.setOrtho(0, frameWidth, frameHeight, 0, 32767, -32768));
         updateTransform();
     }
 
@@ -149,7 +155,7 @@ public final class GraphicsImpl implements Graphics {
         if ((transform.properties() & PROPERTY_TRANSLATION) != 0) {
             if (!simpleTransform) {
                 simpleTransform = true;
-                uniformStates.set(64, modelMatrix);
+                uniformModelMatrix.set(modelMatrix);
             }
             transX = transform.m30();
             transY = transform.m31();
@@ -161,7 +167,7 @@ public final class GraphicsImpl implements Graphics {
                 transX = transY = transZ = 0;
                 buffer.setTranslation(0, 0, 0);
             }
-            uniformStates.set(64, transform);
+            uniformModelMatrix.set(transform);
         }
     }
 
@@ -282,7 +288,7 @@ public final class GraphicsImpl implements Graphics {
 
     @Override
     public void drawText(TextMesh mesh, int beginIndex, int endIndex, float x, float y) {
-        setRenderText(true);
+        uniformRenderText.set(true);
         uniformTexture.setTexture(mesh.getTexture());
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
         translate(x, y);
@@ -290,12 +296,8 @@ public final class GraphicsImpl implements Graphics {
         buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLES, buffer);
         translate(-x, -y);
-        setRenderText(false);
+        uniformRenderText.set(false);
         uniformTexture.setTexture(whiteTexture);
-    }
-
-    private void setRenderText(boolean renderText) {
-        uniformStates.set(128, renderText ? 1 : 0);
     }
 
     @Override

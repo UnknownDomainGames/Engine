@@ -1,11 +1,7 @@
 #version 420 core
 
+uniform mat4 viewMatrix;
 uniform sampler2D u_Texture;
-layout (binding = 0, std140) uniform Matrices {
-    mat4 proj;
-    mat4 view;
-    mat4 model;
-} matrices;
 
 struct DirLight {
     vec3 color;
@@ -37,7 +33,7 @@ struct SpotLight {
 #define MAX_DIR_LIGHTS 1
 #define MAX_POINT_LIGHTS 16
 #define MAX_SPOT_LIGHTS 16
-layout (std140) uniform Light {
+layout (binding = 0, std140) uniform Light {
     DirLight dirLights[MAX_DIR_LIGHTS];
     PointLight pointLights[MAX_POINT_LIGHTS];
     SpotLight spotLights[MAX_SPOT_LIGHTS];
@@ -67,19 +63,19 @@ vec4 computeLightColor(vec3 lightColor, float lightIntensity, vec3 position, vec
     diffuseColor = texColor * vec4(lightColor, 1.0) * lightIntensity * diffuseFactor;
     //    return diffuseColor;
     mat3 tmp;
-    tmp[0] = matrices.view[0].xyz;
-    tmp[1] = matrices.view[1].xyz;
-    tmp[2] = matrices.view[2].xyz;
-    vec3 camera_position = inverse(tmp) * -vec3(matrices.view[3].xyz);
-    vec3 frag_position = (inverse(matrices.view) * vec4(mv_Position, 1.0)).xyz;
+    tmp[0] = viewMatrix[0].xyz;
+    tmp[1] = viewMatrix[1].xyz;
+    tmp[2] = viewMatrix[2].xyz;
+    vec3 camera_position = inverse(tmp) * -vec3(viewMatrix[3].xyz);
+    vec3 frag_position = (inverse(viewMatrix) * vec4(mv_Position, 1.0)).xyz;
 
     // 镜面反射光
     vec3 camera_direction = normalize(camera_position - frag_position);
-//    vec3 camera_direction = normalize(-position);
+    //    vec3 camera_direction = normalize(-position);
     vec3 reflected_light = normalize(reflect(to_light_src_dir, normal));
     float specularFactor = max(dot(camera_direction, reflected_light), 0.0);
-//    vec3 reflected_light = normalize(to_light_src_dir + camera_direction);
-//    float specularFactor = max(dot(normal, reflected_light), 0.0);
+    //    vec3 reflected_light = normalize(to_light_src_dir + camera_direction);
+    //    float specularFactor = max(dot(normal, reflected_light), 0.0);
     specularFactor = pow(specularFactor, specularPower);
     specularColor = texColor * lightIntensity * specularFactor * reflectance * vec4(lightColor, 1.0);
 

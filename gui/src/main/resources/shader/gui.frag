@@ -1,11 +1,7 @@
 #version 330 core
 
-layout (std140) uniform States {
-    mat4 projMatrix;
-    mat4 modelMatrix;
-    bool renderText;
-    bool enableGamma;
-} states;
+uniform bool renderText;
+uniform bool enableGamma;
 uniform sampler2D u_Texture;
 
 in vec4 v_Color;
@@ -16,13 +12,13 @@ const float gamma = 2.2;
 
 void main()
 {
-    if (states.renderText) {
+    if (renderText) {
         fragColor = vec4(v_Color.rgb, texture(u_Texture, v_TexCoord).r * v_Color.a);
     } else {
         fragColor = v_Color * texture(u_Texture, v_TexCoord);
     }
 
-    if (states.enableGamma) {
+    if (enableGamma) {
         fragColor = vec4(pow(fragColor.rgb, vec3(1.0 / gamma)), fragColor.a);
     }
 }

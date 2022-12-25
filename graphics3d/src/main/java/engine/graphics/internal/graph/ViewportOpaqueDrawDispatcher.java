@@ -9,19 +9,23 @@ import engine.graphics.graph.Renderer;
 import engine.graphics.light.LightManager;
 import engine.graphics.queue.RenderType;
 import engine.graphics.shader.ShaderResource;
+import engine.graphics.shader.Uniform;
 import engine.graphics.shader.UniformBlock;
 import engine.graphics.shader.UniformTexture;
 import engine.graphics.viewport.Viewport;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
 
 public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
     private final Matrix4f tempMatrix4f = new Matrix4f();
 
     private final Viewport viewport;
 
-    private UniformBlock uniformMatrices;
     private UniformBlock uniformLight;
+    private Uniform uniformProjMatrix;
+    private Uniform uniformViewMatrix;
+    private Uniform uniformViewModelMatrix;
     private UniformTexture uniformTexture;
 
     public ViewportOpaqueDrawDispatcher(Viewport viewport) {
@@ -31,9 +35,11 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
     @Override
     public void init(Drawer drawer) {
         ShaderResource resource = drawer.getShaderResource();
-        this.uniformMatrices = resource.getUniformBlock("Matrices", 192);
-        this.uniformLight = resource.getUniformBlock("Light", 2096);
-        this.uniformTexture = resource.getUniformTexture("u_Texture");
+        uniformLight = resource.getUniformBlock("Light", 2096);
+        uniformProjMatrix = resource.getUniform("projMatrix");
+        uniformViewMatrix = resource.getUniform("viewMatrix");
+        uniformViewModelMatrix = resource.getUniform("viewModelMatrix");
+        uniformTexture = resource.getUniformTexture("u_Texture");
     }
 
     @Override
@@ -46,13 +52,15 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
         lightManager.setup(viewport.getCamera());
         uniformLight.set(0, lightManager);
 
-        uniformMatrices.set(0, viewport.getProjectionMatrix());
-        uniformMatrices.set(64, viewport.getViewMatrix());
-
         FrustumIntersection frustum = viewport.getFrustum();
+        Matrix4fc viewMatrix = viewport.getViewMatrix();
+
+        uniformProjMatrix.set(viewport.getProjectionMatrix());
+        uniformViewMatrix.set(viewMatrix);
+
         for (Geometry geometry : scene.getRenderQueue().getGeometryList(RenderType.OPAQUE)) {
             if (geometry.shouldRender(frustum)) {
-                uniformMatrices.set(128, geometry.getWorldTransform().getTransformMatrix(tempMatrix4f));
+                uniformViewModelMatrix.set(viewMatrix.mul(geometry.getWorldTransform().getTransformMatrix(tempMatrix4f), tempMatrix4f));
                 uniformTexture.setTexture(geometry.getTexture());
                 renderer.drawMesh(geometry.getMesh());
             }
