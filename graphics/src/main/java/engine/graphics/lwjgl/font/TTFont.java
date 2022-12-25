@@ -28,7 +28,12 @@ public final class TTFont {
     }
 
     public boolean isBlockLoaded(Character.UnicodeBlock block) {
-        return planeTextures.stream().anyMatch(fontPlaneTexture -> fontPlaneTexture.isBlockInList(block));
+        for (FontPlaneTexture fontPlaneTexture : planeTextures) {
+            if (fontPlaneTexture.isBlockInList(block)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<FontPlaneTexture> getPlaneTextures() {
