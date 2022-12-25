@@ -102,23 +102,20 @@ public final class GLRenderPass implements RenderPass {
         frameBuffer.bind();
 
         if (resized) frameBuffer.reset();
-        int[] drawbuffers = new int[colorOutputs.length];
         for (int i = 0; i < colorOutputs.length; i++) {
             ColorOutput colorOutput = colorOutputs[i];
             ColorOutputInfo info = colorOutput.info;
             GLRenderBufferProxy renderBuffer = colorOutput.renderBuffer;
             if (resized) frameBuffer.attach(GL30C.GL_COLOR_ATTACHMENT0 + i, renderBuffer.getTexture());
-            drawbuffers[i] = GL30C.GL_COLOR_ATTACHMENT0 + i;
-            if (info.isClear()) GL30C.glClearBufferfv(GL11C.GL_COLOR, i, info.getClearColor().toRGBAFloatArray());
+            if (info.isClear()) GL30C.glClearBufferfv(GL11C.GL_COLOR, i, info.getClearColorArray());
             setupBufferBlend(i, colorOutput.info.getBlendMode());
         }
-        GL30C.glDrawBuffers(drawbuffers);
 
         if (depthOutput != null) {
             DepthOutputInfo info = depthOutput.info;
             GLRenderBufferProxy renderBuffer = depthOutput.renderBuffer;
             if (resized) frameBuffer.attach(GL30C.GL_DEPTH_ATTACHMENT, renderBuffer.getTexture());
-            if (info.isClear()) GL30C.glClearBufferfv(GL11C.GL_DEPTH, 0, new float[]{info.getClearValue()});
+            if (info.isClear()) GL30C.glClearBufferfv(GL11C.GL_DEPTH, 0, info.getClearValueArray());
         }
     }
 

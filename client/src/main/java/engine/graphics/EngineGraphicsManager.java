@@ -194,6 +194,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
     }
 
     private RenderGraphInfo createRenderGraph() {
+        int[] oneZero = {0};
         RenderGraphInfo renderGraph = RenderGraphInfo.renderGraph();
         renderGraph.setMainTask("main");
         {
@@ -217,7 +218,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
                 if (frame.isResized()) viewport.setSize(frame.getOutputWidth(), frame.getOutputHeight());
                 viewport.getScene().doUpdate(frame.getTimeToLastUpdate());
 
-                atomicCounterBuffer.uploadData(new int[]{0});
+                atomicCounterBuffer.uploadData(oneZero);
 
                 headerClearBuffer.bind();
                 linkedListHeaderImage.upload(0, 0, 0, frame.getOutputWidth(), frame.getOutputHeight(), null);

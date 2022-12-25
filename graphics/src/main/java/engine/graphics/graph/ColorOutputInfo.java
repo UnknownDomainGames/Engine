@@ -7,6 +7,7 @@ public class ColorOutputInfo {
     private String colorBuffer;
     private boolean clear = false;
     private Color clearColor = Color.BLACK;
+    private float[] clearColorArray = {0f, 0f, 0f, 1f};
     private BlendMode blendMode = BlendMode.DISABLED;
 
     public static ColorOutputInfo colorOutput() {
@@ -35,8 +36,13 @@ public class ColorOutputInfo {
         return clearColor;
     }
 
+    public float[] getClearColorArray() {
+        return clearColorArray;
+    }
+
     public ColorOutputInfo setClearColor(Color clearColor) {
         this.clearColor = clearColor;
+        this.clearColor.get(0, clearColorArray);
         return this;
     }
 

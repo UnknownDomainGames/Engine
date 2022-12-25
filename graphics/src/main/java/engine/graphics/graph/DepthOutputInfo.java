@@ -7,6 +7,7 @@ public class DepthOutputInfo {
     private String depthBuffer;
     private boolean clear = false;
     private float clearValue = 1f;
+    private float[] clearValueArray = {1f};
     private boolean writable = true;
     private DepthCompareMode compareMode = DepthCompareMode.LESS;
 
@@ -45,8 +46,13 @@ public class DepthOutputInfo {
         return clearValue;
     }
 
+    public float[] getClearValueArray() {
+        return clearValueArray;
+    }
+
     public DepthOutputInfo setClearValue(float clearValue) {
         this.clearValue = clearValue;
+        this.clearValueArray[0] = clearValue;
         return this;
     }
 

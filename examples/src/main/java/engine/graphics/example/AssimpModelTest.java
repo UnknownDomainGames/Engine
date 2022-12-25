@@ -89,6 +89,7 @@ public class AssimpModelTest extends Application3D {
     }
 
     public static RenderGraphInfo createRenderGraph(Viewport viewport) {
+        int[] oneZero = {0};
         RenderGraphInfo renderGraph = RenderGraphInfo.renderGraph();
         renderGraph.setMainTask("main");
         {
@@ -112,7 +113,7 @@ public class AssimpModelTest extends Application3D {
                 if (frame.isResized()) viewport.setSize(frame.getOutputWidth(), frame.getOutputHeight());
                 viewport.getScene().doUpdate(frame.getTimeToLastUpdate());
 
-                atomicCounterBuffer.uploadData(new int[]{0});
+                atomicCounterBuffer.uploadData(oneZero);
 
                 linkedListHeaderImage.upload(0, 0, 0, frame.getOutputWidth(), frame.getOutputHeight(), null);
                 headerClearBuffer.unbind();
