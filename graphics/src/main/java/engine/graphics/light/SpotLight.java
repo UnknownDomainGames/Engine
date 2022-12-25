@@ -3,7 +3,6 @@ package engine.graphics.light;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.joml.Vector4f;
 
 import java.nio.ByteBuffer;
 
@@ -41,10 +40,8 @@ public class SpotLight extends Light {
 
     @Override
     public void setup(Matrix4fc viewMatrix) {
-        Vector4f pos = viewMatrix.transform(new Vector4f(position, 1f));
-        viewPosition.set(pos.x, pos.y, pos.z);
-        Vector4f dir = viewMatrix.transform(new Vector4f(direction, 0f));
-        viewDirection.set(dir.x, dir.y, dir.z).normalize();
+        position.mulPosition(viewMatrix, viewPosition);
+        direction.mulDirection(viewMatrix, viewDirection);
     }
 
     public Vector3fc getPosition() {

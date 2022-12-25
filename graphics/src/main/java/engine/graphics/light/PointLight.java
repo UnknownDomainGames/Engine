@@ -4,7 +4,6 @@ import engine.util.Color;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.joml.Vector4f;
 
 import java.nio.ByteBuffer;
 
@@ -34,8 +33,7 @@ public class PointLight extends Light {
 
     @Override
     public void setup(Matrix4fc viewMatrix) {
-        Vector4f pos = viewMatrix.transform(new Vector4f(position, 1f));
-        viewPosition.set(pos.x, pos.y, pos.z);
+        position.mulPosition(viewMatrix, viewPosition);
     }
 
     @Override

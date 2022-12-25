@@ -4,13 +4,11 @@ import engine.util.Color;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
-import org.joml.Vector4f;
 
 import java.nio.ByteBuffer;
 
 public class DirectionalLight extends Light {
     private final Vector3f direction = new Vector3f();
-
     private final Vector3f viewDirection = new Vector3f();
 
     @Override
@@ -28,8 +26,7 @@ public class DirectionalLight extends Light {
 
     @Override
     public void setup(Matrix4fc viewMatrix) {
-        Vector4f dir = viewMatrix.transform(new Vector4f(direction, 0f));
-        viewDirection.set(dir.x, dir.y, dir.z).normalize();
+        direction.mulDirection(viewMatrix, viewDirection);
     }
 
     @Override
