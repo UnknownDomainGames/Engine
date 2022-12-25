@@ -9,10 +9,10 @@ import static org.lwjgl.opengl.NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_CURRENT_AVAIL
 import static org.lwjgl.opengl.NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX;
 
 public final class GLGPUInfo implements GPUInfo {
-    private String name;
-    private GPUVendor vendor;
-    private String vendorName;
-    private int totalMemory;
+    private final String name;
+    private final GPUVendor vendor;
+    private final String vendorName;
+    private final int totalMemory;
 
     public GLGPUInfo() {
         this.name = GLHelper.getRenderer();
