@@ -4,7 +4,6 @@ import engine.graphics.graph.*;
 import engine.graphics.texture.Texture;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public final class GLRenderTask implements RenderTask {
@@ -13,7 +12,7 @@ public final class GLRenderTask implements RenderTask {
     private final GLRenderGraph renderGraph;
 
     private final Map<String, GLRenderBufferProxy> renderBuffers;
-    private final List<BiConsumer<FrameContext, RenderTask>> setups;
+    private final List<RenderTaskSetup> setups;
     private final Map<String, GLRenderPass> passes;
     private final GLRenderPass finalPass;
     private final List<GLRenderPass> sortedPasses;
@@ -74,11 +73,17 @@ public final class GLRenderTask implements RenderTask {
         int width = frame.getOutputWidth();
         int height = frame.getOutputHeight();
         if (frame.isResized()) {
-            renderBuffers.values().forEach(renderBuffer -> renderBuffer.resize(width, height));
+            for (GLRenderBufferProxy renderBuffer : renderBuffers.values()) {
+                renderBuffer.resize(width, height);
+            }
         }
         FrameContext frameContext = new FrameContext(frame, args);
-        setups.forEach(consumer -> consumer.accept(frameContext, this));
-        sortedPasses.forEach(pass -> pass.draw(frameContext));
+        for (RenderTaskSetup setup : setups) {
+            setup.setup(this, frameContext);
+        }
+        for (GLRenderPass pass : sortedPasses) {
+            pass.draw(frameContext);
+        }
     }
 
     public void dispose() {

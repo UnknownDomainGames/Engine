@@ -5,7 +5,6 @@ import engine.graphics.texture.Texture2D;
 import engine.graphics.vulkan.CommandBuffer;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 public class VKRenderTask implements RenderTask {
@@ -14,7 +13,7 @@ public class VKRenderTask implements RenderTask {
     private final VKRenderGraph renderGraph;
 
     private final Map<String, VKRenderTaskAttachment> attachments;
-    private final List<BiConsumer<FrameContext, RenderTask>> setups;
+    private final List<RenderTaskSetup> setups;
     private final Map<String, VKRenderGraphPass> passes;
     private final List<VKRenderGraphPass> sortedPasses;
     private final VKRenderGraphPass finalPass;
@@ -72,8 +71,12 @@ public class VKRenderTask implements RenderTask {
 //            attachments.values().forEach(renderBuffer -> renderBuffer.resize(width, height));
         }
         FrameContext frameContext = new FrameContext(frame, args);
-        setups.forEach(consumer -> consumer.accept(frameContext, this));
-        sortedPasses.forEach(pass -> pass.draw(frameContext, cmdBuffer));
+        for (RenderTaskSetup setup : setups) {
+            setup.setup(this, frameContext);
+        }
+        for (VKRenderGraphPass pass : sortedPasses) {
+            pass.draw(frameContext, cmdBuffer);
+        }
     }
 
     public void dispose() {

@@ -107,7 +107,7 @@ public class AssimpModelTest extends Application3D {
             RenderTaskInfo mainTask = RenderTaskInfo.renderTask();
             mainTask.setName("main");
             mainTask.setFinalPass("oitDraw");
-            mainTask.addSetup((frameContext, renderTask) -> {
+            mainTask.addSetup((task, frameContext) -> {
                 Frame frame = frameContext.getFrame();
                 if (frame.isResized()) viewport.setSize(frame.getOutputWidth(), frame.getOutputHeight());
                 viewport.getScene().doUpdate(frame.getTimeToLastUpdate());

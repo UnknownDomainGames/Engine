@@ -3,13 +3,12 @@ package engine.graphics.graph;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 public class RenderTaskInfo {
     private String name;
     private String finalPass;
     private final List<RenderBufferInfo> renderBuffers = new ArrayList<>();
-    private final List<BiConsumer<FrameContext, RenderTask>> setups = new ArrayList<>();
+    private final List<RenderTaskSetup> setups = new ArrayList<>();
     private final List<RenderPassInfo> passes = new ArrayList<>();
 
     public static RenderTaskInfo renderTask() {
@@ -43,11 +42,11 @@ public class RenderTaskInfo {
         return this;
     }
 
-    public List<BiConsumer<FrameContext, RenderTask>> getSetups() {
+    public List<RenderTaskSetup> getSetups() {
         return setups;
     }
 
-    public RenderTaskInfo addSetup(BiConsumer<FrameContext, RenderTask> setup) {
+    public RenderTaskInfo addSetup(RenderTaskSetup setup) {
         this.setups.add(setup);
         return this;
     }
