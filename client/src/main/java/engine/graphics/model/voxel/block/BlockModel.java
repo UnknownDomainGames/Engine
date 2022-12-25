@@ -50,7 +50,7 @@ public final class BlockModel implements Model {
 
         for (var cube : data.cubes) {
             var faces = cube.faces;
-            for (Direction direction : Direction.values()) {
+            for (Direction direction : Direction.VALUES) {
                 var face = faces[direction.index];
                 if (face == null)
                     continue;
@@ -67,7 +67,7 @@ public final class BlockModel implements Model {
 
         for (var cube : parent.cubes) {
             var faces = cube.faces;
-            for (Direction direction : Direction.values()) {
+            for (Direction direction : Direction.VALUES) {
                 var face = faces[direction.index];
                 if (face == null)
                     continue;

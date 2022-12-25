@@ -64,7 +64,7 @@ public final class BlockRenderManagerImpl implements BlockRenderManager {
         buffer.setTranslation(pos.x(), pos.y(), pos.z());
         var mutablePos = new BlockPos.Mutable(pos);
         byte coveredFace = 0;
-        for (var direction : Direction.values()) {
+        for (Direction direction : Direction.VALUES) {
             mutablePos.set(pos);
             if (!canRenderFace(world, mutablePos, block, direction)) {
                 coveredFace |= direction.mask;

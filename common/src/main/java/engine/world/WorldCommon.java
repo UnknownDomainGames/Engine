@@ -285,7 +285,7 @@ public class WorldCommon implements World {
     }
 
     protected void notifyNeighborChanged(BlockPos pos, BlockState block, BlockChangeCause cause) {
-        for (Direction direction : Direction.values()) {
+        for (Direction direction : Direction.VALUES) {
             BlockPos neighborPos = pos.offset(direction);
             BlockState neighbor = getBlock(neighborPos);
             neighbor.getPrototype().getComponent(NeighborChangeListener.class)

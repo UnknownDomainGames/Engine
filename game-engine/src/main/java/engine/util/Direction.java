@@ -8,6 +8,8 @@ public enum Direction {
     UP(4, 5, 0, 1, 0),
     DOWN(5, 4, 0, -1, 0);
 
+    public final static Direction[] VALUES = values();
+
     public final int index;
     public final int opposite;
     public final int mask;
