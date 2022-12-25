@@ -112,6 +112,7 @@ public class AssimpModelTest extends Application3D {
                 Frame frame = frameContext.getFrame();
                 if (frame.isResized()) viewport.setSize(frame.getOutputWidth(), frame.getOutputHeight());
                 viewport.getScene().doUpdate(frame.getTimeToLastUpdate());
+                viewport.getScene().getLightManager().update(viewport.getCamera());
 
                 atomicCounterBuffer.uploadData(oneZero);
 

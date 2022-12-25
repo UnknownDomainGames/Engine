@@ -8,7 +8,6 @@ import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Drawer;
 import engine.graphics.graph.FrameContext;
 import engine.graphics.graph.Renderer;
-import engine.graphics.light.LightManager;
 import engine.graphics.queue.RenderType;
 import engine.graphics.shader.*;
 import engine.graphics.texture.Texture2D;
@@ -63,9 +62,7 @@ public class ViewportTransparentDrawDispatcher implements DrawDispatcher {
         Matrix4fc viewMatrix = viewport.getViewMatrix();
         FrustumIntersection frustum = viewport.getFrustum();
 
-        LightManager lightManager = scene.getLightManager();
-        lightManager.update(viewport.getCamera());
-        uniformLight.set(0, lightManager);
+        uniformLight.set(0, scene.getLightManager());
 
         if (headerImage != null) {
             listHeader.setTexture(headerImage);

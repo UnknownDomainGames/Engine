@@ -7,7 +7,6 @@ import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Drawer;
 import engine.graphics.graph.FrameContext;
 import engine.graphics.graph.Renderer;
-import engine.graphics.light.LightManager;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.shader.UniformBlock;
 import engine.graphics.shader.UniformImage;
@@ -68,9 +67,7 @@ public class AssimpModelDrawDispatcher implements DrawDispatcher {
         drawer.getShaderResource().setup();
         Scene3D scene = viewport.getScene();
 
-        LightManager lightManager = scene.getLightManager();
-        lightManager.update(viewport.getCamera());
-        uniformLight.set(0, lightManager);
+        uniformLight.set(0, scene.getLightManager());
 
         if (headerImage != null) {
             listHeader.setTexture(headerImage);
