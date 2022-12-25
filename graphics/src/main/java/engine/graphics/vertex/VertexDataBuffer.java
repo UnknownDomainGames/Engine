@@ -9,8 +9,6 @@ import org.lwjgl.system.MemoryUtil;
 import javax.annotation.Nonnull;
 import java.nio.*;
 
-import static org.apache.commons.lang3.Validate.notNull;
-
 public class VertexDataBuffer {
 
     private static final ThreadLocal<VertexDataBuffer> threadLocalBuffer = ThreadLocal.withInitial(() -> create(4096));
@@ -78,13 +76,16 @@ public class VertexDataBuffer {
     }
 
     public void begin(@Nonnull VertexFormat format) {
+        if (format == null) {
+            throw new NullPointerException("Format cannot be null");
+        }
         if (byteBuffer == null) {
             throw new IllegalStateException("Buffer is disposed");
         }
         if (!ready) {
             throw new IllegalStateException("Buffer not ready");
         }
-        vertexFormat = notNull(format);
+        vertexFormat = format;
         byteBuffer.clear();
         ensureRemaining(format.getBytes());
         ready = false;
