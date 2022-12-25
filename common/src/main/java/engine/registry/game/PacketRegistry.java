@@ -24,7 +24,7 @@ public class PacketRegistry extends SynchronizableIdRegistry<PacketProvider> {
     @Nonnull
     @Override
     public PacketProvider register(@Nonnull PacketProvider obj) {
-        if(getValues().stream().anyMatch(packet -> packet.getPacketType() == obj.getPacketType()))
+        if (getValues().stream().anyMatch(packet -> packet.getPacketType() == obj.getPacketType()))
             throw new RegistrationException(String.format("Packet %s is already registered", obj.getClass().getSimpleName()));
         return super.register(obj);
     }
@@ -47,15 +47,13 @@ public class PacketRegistry extends SynchronizableIdRegistry<PacketProvider> {
     }
 
     public int getId(Packet packet, boolean remapped) {
-        var optional = getEntries().stream()
-                .filter(entry -> entry.getValue().getPacketType() == packet.getClass())
-                .findFirst();
-        return optional.map(entry -> getId(entry.getValue())).orElse(0);
-//        int id = optional.map(entry -> getValue(entry.getKey()).getId()).get();
-//        if (remapped) {
-//            return mapping.getOrDefault(id, id);
-//        }
-//        return id;
+        Class<? extends Packet> packetType = packet.getClass();
+        for (PacketProvider provider : this) {
+            if (packetType == provider.getPacketType()) {
+                return getId(provider);
+            }
+        }
+        return 0;
     }
 
 //    @Override
