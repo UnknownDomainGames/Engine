@@ -8,7 +8,8 @@ import engine.graphics.texture.Sampler;
 import engine.graphics.texture.Texture;
 import org.lwjgl.opengl.*;
 
-public final class GLUniformTexture extends GLUniform implements UniformTexture {
+public final class GLUniformTexture implements UniformTexture {
+    private final String name;
     private final int location;
     private final int unit;
 
@@ -16,9 +17,14 @@ public final class GLUniformTexture extends GLUniform implements UniformTexture 
     private Sampler sampler = GLSampler.NONE;
 
     public GLUniformTexture(String name, int location, int unit) {
-        super(name);
+        this.name = name;
         this.location = location;
         this.unit = unit;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

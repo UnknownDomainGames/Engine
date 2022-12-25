@@ -10,17 +10,23 @@ import org.lwjgl.opengl.GL30C;
 import org.lwjgl.opengl.GL31C;
 import org.lwjgl.system.MemoryStack;
 
-public final class GLUniformBlock extends GLUniform implements UniformBlock {
+public final class GLUniformBlock implements UniformBlock {
+    private final String name;
     private final long size;
     private final int binding;
     private final GLVertexBuffer vbo;
 
     public GLUniformBlock(String name, long size, int binding) {
-        super(name);
+        this.name = name;
         this.size = size;
         this.binding = binding;
-        this.vbo = new GLVertexBuffer(GLBufferType.UNIFORM_BUFFER, GLBufferUsage.STREAM_DRAW);
+        this.vbo = new GLVertexBuffer(GLBufferType.UNIFORM_BUFFER, GLBufferUsage.DYNAMIC_DRAW);
         this.vbo.allocateSize(size);
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

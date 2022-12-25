@@ -1,13 +1,7 @@
 package engine.graphics.gl.graph;
 
-import engine.graphics.gl.shader.GLUniformBlock;
-import engine.graphics.gl.shader.GLUniformImage;
-import engine.graphics.gl.shader.GLUniformTexture;
-import engine.graphics.gl.shader.ShaderProgram;
-import engine.graphics.shader.ShaderResource;
-import engine.graphics.shader.UniformBlock;
-import engine.graphics.shader.UniformImage;
-import engine.graphics.shader.UniformTexture;
+import engine.graphics.gl.shader.*;
+import engine.graphics.shader.*;
 import org.lwjgl.opengl.GL15C;
 import org.lwjgl.opengl.GL31C;
 
@@ -26,6 +20,12 @@ public class GLShaderResource implements ShaderResource {
 
     public GLShaderResource(ShaderProgram shader) {
         this.shader = shader;
+    }
+
+    @Override
+    public Uniform getUniform(String name) {
+        GLUniform uniform = new GLUniform(name, shader.getUniformLocation(name));
+        return uniform;
     }
 
     @Override

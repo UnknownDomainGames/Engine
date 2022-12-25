@@ -1,9 +1,6 @@
 package engine.graphics.vulkan.graph;
 
-import engine.graphics.shader.ShaderResource;
-import engine.graphics.shader.UniformBlock;
-import engine.graphics.shader.UniformImage;
-import engine.graphics.shader.UniformTexture;
+import engine.graphics.shader.*;
 import engine.graphics.vulkan.pipeline.PipelineLayout;
 import engine.graphics.vulkan.shader.VKUniformBlock;
 
@@ -17,6 +14,11 @@ public class VKShaderResource implements ShaderResource {
 
     public VKShaderResource(PipelineLayout state) {
         this.state = state;
+    }
+
+    @Override
+    public Uniform getUniform(String name) {
+        return null;
     }
 
     @Override

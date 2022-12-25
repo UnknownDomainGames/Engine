@@ -6,7 +6,8 @@ import engine.graphics.texture.Texture;
 import org.lwjgl.opengl.GL20C;
 import org.lwjgl.opengl.GL42C;
 
-public class GLUniformImage extends GLUniform implements UniformImage {
+public class GLUniformImage implements UniformImage {
+    private final String name;
     private final int location;
     private final int unit;
     private final int access;
@@ -14,10 +15,15 @@ public class GLUniformImage extends GLUniform implements UniformImage {
     private Texture texture = GLTexture.NONE;
 
     public GLUniformImage(String name, int location, int unit, int access) {
-        super(name);
+        this.name = name;
         this.location = location;
         this.unit = unit;
         this.access = access;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

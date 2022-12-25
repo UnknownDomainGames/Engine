@@ -3,7 +3,9 @@ package engine.graphics.shader;
 import engine.graphics.util.Struct;
 import org.joml.*;
 
-public interface UniformBlock extends Uniform {
+public interface UniformBlock {
+    String getName();
+
     void set(long offset, int value);
 
     void set(long offset, float value);

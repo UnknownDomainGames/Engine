@@ -3,7 +3,9 @@ package engine.graphics.shader;
 import engine.graphics.texture.Sampler;
 import engine.graphics.texture.Texture;
 
-public interface UniformTexture extends Uniform {
+public interface UniformTexture {
+    String getName();
+
     int getUnit();
 
     Texture getTexture();
