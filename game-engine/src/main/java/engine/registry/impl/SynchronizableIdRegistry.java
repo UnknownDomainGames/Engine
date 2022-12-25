@@ -2,9 +2,8 @@ package engine.registry.impl;
 
 import engine.registry.Registrable;
 import engine.registry.SynchronizableRegistry;
-
-import java.util.HashMap;
-import java.util.Map;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 public class SynchronizableIdRegistry<T extends Registrable<T>> extends IdAutoIncreaseRegistry<T> implements SynchronizableRegistry<T> {
     public SynchronizableIdRegistry(Class<T> entryType) {
@@ -15,7 +14,7 @@ public class SynchronizableIdRegistry<T extends Registrable<T>> extends IdAutoIn
         super(entryType, name);
     }
 
-    private final Map<String, Integer> syncedMapping = new HashMap<>();
+    private final Object2IntMap<String> syncedMapping = new Object2IntOpenHashMap<>();
 
     @Override
     public int getId(T obj) {
