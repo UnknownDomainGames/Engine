@@ -22,7 +22,7 @@ public class DirectionalLight extends Light {
     public ByteBuffer get(int index, ByteBuffer buffer) {
         color.getRGB(index, buffer);
         buffer.putFloat(index + 12, intensity);
-        direction.get(index + 16, buffer);
+        viewDirection.get(index + 16, buffer);
         return buffer;
     }
 
