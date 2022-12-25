@@ -179,6 +179,7 @@ public class DebugChunkManager implements ChunkManager, Tickable {
         if (!player.isControllingEntity()) return; // We cannot do anything if the player does not control an entity
         var chunkPos = ChunkPos.fromWorldPos(player.getControlledEntity().getPosition());
         var prevChunkPos = ChunkPos.fromWorldPos(prevPos);
+        if (chunkPos.equals(prevChunkPos)) return;
         var newArea = Sets.newHashSet(SphereIterator.getCoordinatesWithinSphere(viewDistance, chunkPos));
         var oldArea = Sets.newHashSet(SphereIterator.getCoordinatesWithinSphere(viewDistance, prevChunkPos));
         // The following terms "unload" and "load" is in client's view but not server's view
