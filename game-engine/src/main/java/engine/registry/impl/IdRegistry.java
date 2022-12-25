@@ -3,20 +3,21 @@ package engine.registry.impl;
 import engine.registry.Name;
 import engine.registry.Registrable;
 import engine.registry.RegistrationException;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 @NotThreadSafe
 public abstract class IdRegistry<T extends Registrable<T>> extends BaseRegistry<T> {
 
     protected T[] idToObject;
-    protected Map<String, Integer> nameToId = new HashMap<>();
+    protected Object2IntMap<String> nameToId = new Object2IntOpenHashMap<>();
 
     @SuppressWarnings("unchecked")
     public IdRegistry(Class<T> entryType) {

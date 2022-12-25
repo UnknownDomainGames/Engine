@@ -3,16 +3,16 @@ package engine.registry.impl;
 import engine.registry.Registrable;
 import engine.state.State;
 import engine.state.StateIncludedRegistry;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class StateIdRegistry<T extends Registrable<T>, S extends State<T, S>> extends BaseRegistry<T> implements StateIncludedRegistry<T, S> {
 
     protected S[] idToState;
-    protected Map<S, Integer> stateToId = new HashMap<>();
+    protected Object2IntMap<S> stateToId = new Object2IntOpenHashMap<>();
 
     @SuppressWarnings("unchecked")
     public StateIdRegistry(Class<T> entryType, Class<S> stateType) {
