@@ -128,7 +128,9 @@ public final class GLGraphicsBackend implements GraphicsBackend {
     public void render(float timeToLastUpdate) {
         Cleaner.clean();
         runPendingTasks();
-        renderGraphs.forEach(renderGraph -> renderGraph.draw(timeToLastUpdate));
+        for (GLRenderGraph renderGraph : renderGraphs) {
+            renderGraph.draw(timeToLastUpdate);
+        }
         GLFW.glfwPollEvents();
     }
 

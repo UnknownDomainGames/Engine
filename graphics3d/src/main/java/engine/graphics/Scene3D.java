@@ -55,6 +55,8 @@ public class Scene3D {
     }
 
     public void doUpdate(float tpf) {
-        children.forEach(child -> child.doUpdate(tpf));
+        for (Node3D child : children) {
+            child.doUpdate(tpf);
+        }
     }
 }

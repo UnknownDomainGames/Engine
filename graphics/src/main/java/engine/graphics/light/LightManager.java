@@ -83,9 +83,15 @@ public class LightManager implements Struct {
         spotLights.sort(Comparator.comparingDouble(light -> light.getPosition().distanceSquared(position)));
 
         Matrix4fc viewMatrix = camera.getViewMatrix();
-        directionalLights.forEach(directionalLight -> directionalLight.setup(viewMatrix));
-        pointLights.forEach(pointLight -> pointLight.setup(viewMatrix));
-        spotLights.forEach(spotLight -> spotLight.setup(viewMatrix));
+        for (DirectionalLight directionalLight : directionalLights) {
+            directionalLight.setup(viewMatrix);
+        }
+        for (PointLight pointLight : pointLights) {
+            pointLight.setup(viewMatrix);
+        }
+        for (SpotLight spotLight : spotLights) {
+            spotLight.setup(viewMatrix);
+        }
     }
 
     @Override

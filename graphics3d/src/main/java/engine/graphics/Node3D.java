@@ -199,7 +199,11 @@ public class Node3D {
         if (parent != null) {
             worldTransform.applyParent(parent.worldTransform);
         }
-        getUnmodifiableChildren().forEach(Node3D::refreshTransform);
+        if (children != null) {
+            for (Node3D child : children) {
+                child.refreshTransform();
+            }
+        }
     }
 
     public Controller getController() {
@@ -215,8 +219,10 @@ public class Node3D {
             controller.update(this, tpf);
         }
 
-        if (children != null && !children.isEmpty()) {
-            children.forEach(child -> child.doUpdate(tpf));
+        if (children != null) {
+            for (Node3D child : children) {
+                child.doUpdate(tpf);
+            }
         }
     }
 

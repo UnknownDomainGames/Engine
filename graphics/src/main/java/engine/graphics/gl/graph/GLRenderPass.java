@@ -93,7 +93,9 @@ public final class GLRenderPass implements RenderPass {
         setupCullMode(info.getCullMode());
         setupDepthTest(info.getDepthOutput());
         setupBlend();
-        drawers.forEach(drawer -> drawer.draw(frameContext));
+        for (GLDrawer drawer : drawers) {
+            drawer.draw(frameContext);
+        }
     }
 
     private void setupFrameBuffer(boolean resized) {
