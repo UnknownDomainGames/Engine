@@ -7,8 +7,8 @@ import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
 import engine.graphics.gl.graph.GLRenderGraph;
 import engine.graphics.gl.util.DebugMessageCallback;
+import engine.graphics.gl.util.GLGPUInfo;
 import engine.graphics.gl.util.GLHelper;
-import engine.graphics.gl.util.GPUInfoImpl;
 import engine.graphics.glfw.GLFWContext;
 import engine.graphics.glfw.GLFWWindow;
 import engine.graphics.graph.RenderGraph;
@@ -161,7 +161,7 @@ public final class GLGraphicsBackend implements GraphicsBackend {
         LOGGER.info("Initializing OpenGL context!");
 
         capabilities = GL.createCapabilities();
-        gpuInfo = new GPUInfoImpl();
+        gpuInfo = new GLGPUInfo();
         GLHelper.setup(capabilities, gpuInfo.getVendor());
         printGLInfo();
 

@@ -8,14 +8,13 @@ import static org.lwjgl.opengl.GL11C.glGetInteger;
 import static org.lwjgl.opengl.NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX;
 import static org.lwjgl.opengl.NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX;
 
-public final class GPUInfoImpl implements GPUInfo {
-
+public final class GLGPUInfo implements GPUInfo {
     private String name;
     private GPUVendor vendor;
     private String vendorName;
     private int totalMemory;
 
-    public GPUInfoImpl() {
+    public GLGPUInfo() {
         this.name = GLHelper.getRenderer();
         this.vendorName = GLHelper.getVendor();
 
