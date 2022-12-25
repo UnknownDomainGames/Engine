@@ -14,6 +14,9 @@ public class ItemViewRenderer extends NodeRenderer<ItemView> {
 
     public static final ItemViewRenderer INSTANCE = new ItemViewRenderer();
 
+    private final Matrix4f oldMatrix = new Matrix4f();
+    private final Matrix4f modelMatrix = new Matrix4f();
+
     @Override
     public void render(ItemView node, Graphics graphics) {
         ItemStack itemStack = node.getItemStack();
@@ -23,8 +26,8 @@ public class ItemViewRenderer extends NodeRenderer<ItemView> {
             ItemRenderManager.instance().generateMesh(buffer, itemStack, 0);
             buffer.finish();
             float size = (float) node.size().get();
-            Matrix4f oldMatrix = graphics.getTransform(new Matrix4f());
-            Matrix4f modelMatrix = graphics.getTransform(new Matrix4f());
+            graphics.getTransform(oldMatrix);
+            graphics.getTransform(modelMatrix);
             if (itemStack.getItem() instanceof BlockItem) {
                 modelMatrix.translate(size * 0.5f, size * 0.5f, 0)
                         .rotate((float) -Math.PI / 4f, 0, 1, 0)
