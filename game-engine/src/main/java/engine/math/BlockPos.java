@@ -31,7 +31,7 @@ public abstract class BlockPos extends Vector3iBase {
         return ((a.x() >> ChunkConstants.CHUNK_X_BITS) == (b.x() >> ChunkConstants.CHUNK_X_BITS)) && ((a.y() >> ChunkConstants.CHUNK_Y_BITS) == (b.y() >> ChunkConstants.CHUNK_Y_BITS)) && ((a.z() >> ChunkConstants.CHUNK_Z_BITS) == (b.z() >> ChunkConstants.CHUNK_Z_BITS));
     }
 
-    public abstract BlockPos toUnmodifiable();
+    public abstract BlockPos toImmutable();
 
     public abstract BlockPos add(int x, int y, int z);
 
@@ -130,7 +130,7 @@ public abstract class BlockPos extends Vector3iBase {
         }
 
         @Override
-        public BlockPos toUnmodifiable() {
+        public BlockPos toImmutable() {
             return this;
         }
 
@@ -176,7 +176,7 @@ public abstract class BlockPos extends Vector3iBase {
         }
 
         @Override
-        public BlockPos toUnmodifiable() {
+        public BlockPos toImmutable() {
             if (immutable == null) {
                 immutable = BlockPos.of(x, y, z);
             }
