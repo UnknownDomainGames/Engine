@@ -150,8 +150,13 @@ public abstract class BlockPos extends Vector3iBase {
         public int x, y, z;
         private BlockPos immutable;
 
+        public Mutable() {
+        }
+
         public Mutable(BlockPos pos) {
-            this(pos.x(), pos.y(), pos.z());
+            this.x = pos.x();
+            this.y = pos.y();
+            this.z = pos.z();
         }
 
         public Mutable(int x, int y, int z) {
