@@ -41,7 +41,12 @@ public class SimpleEventBus implements EventBus {
     }
 
     private ListenerList getListenerList(Class<?> eventType) {
-        return listenerLists.computeIfAbsent(eventType, this::createListenerList);
+        ListenerList result = listenerLists.get(eventType);
+        if (result == null) {
+            result = createListenerList(eventType);
+            listenerLists.put(eventType, result);
+        }
+        return result;
     }
 
     private ListenerList createListenerList(Class<?> eventType) {
