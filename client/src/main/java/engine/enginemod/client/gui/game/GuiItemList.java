@@ -17,8 +17,6 @@ import engine.registry.Registries;
 import engine.server.network.packet.c2s.PacketTwoHandComponentChange;
 import engine.util.Color;
 
-import java.util.Map;
-
 public final class GuiItemList extends AnchorPane {
     public static Scene create() {
         Scene scene = new Scene(new GuiItemList());
@@ -41,8 +39,8 @@ public final class GuiItemList extends AnchorPane {
         var text = new Text("Registered Item List");
         vBox.getChildren().add(text);
         var hBox = new HBox();
-        for (Map.Entry<String, Item> entry : Registries.getItemRegistry().getEntries()) {
-            ItemView itemView = new ItemView(new ItemStack(entry.getValue()));
+        for (Item item : Registries.getItemRegistry()) {
+            ItemView itemView = new ItemView(new ItemStack(item));
             itemView.setOnMouseClicked(event -> {
                 var player = Platform.getEngineClient().getCurrentClientGame().getClientPlayer();
                 player.getControlledEntity()

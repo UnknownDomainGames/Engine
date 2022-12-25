@@ -8,6 +8,7 @@ import engine.registry.Registry;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,8 +17,8 @@ import static org.apache.commons.lang3.Validate.notNull;
 public class BaseRegistry<T extends Registrable<T>> implements Registry<T> {
     private final Class<T> entryType;
     private final Name name;
-
     protected final BiMap<String, T> nameToObject = HashBiMap.create();
+
 
     public BaseRegistry(Class<T> entryType) {
         this(entryType, entryType.getSimpleName().toLowerCase());
@@ -120,5 +121,10 @@ public class BaseRegistry<T extends Registrable<T>> implements Registry<T> {
     @Override
     public Collection<Map.Entry<String, T>> getEntries() {
         return nameToObject.entrySet();
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return getValues().iterator();
     }
 }

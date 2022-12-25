@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * @param <T> The managed type
  */
-public interface Registry<T extends Registrable<T>> {
+public interface Registry<T extends Registrable<T>> extends Iterable<T> {
 
     @Nonnull
     Class<T> getEntryType();
