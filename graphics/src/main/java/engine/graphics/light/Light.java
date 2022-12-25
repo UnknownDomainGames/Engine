@@ -11,7 +11,7 @@ public abstract class Light implements Struct {
     public Light() {
     }
 
-    public abstract void setup(Matrix4fc viewMatrix);
+    public abstract void update(Matrix4fc viewMatrix);
 
     public Color getColor() {
         return color;

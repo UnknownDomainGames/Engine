@@ -64,7 +64,7 @@ public class ViewportTransparentDrawDispatcher implements DrawDispatcher {
         FrustumIntersection frustum = viewport.getFrustum();
 
         LightManager lightManager = scene.getLightManager();
-        lightManager.setup(viewport.getCamera());
+        lightManager.update(viewport.getCamera());
         uniformLight.set(0, lightManager);
 
         if (headerImage != null) {

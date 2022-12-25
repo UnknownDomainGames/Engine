@@ -39,7 +39,7 @@ public class SpotLight extends Light {
     }
 
     @Override
-    public void setup(Matrix4fc viewMatrix) {
+    public void update(Matrix4fc viewMatrix) {
         position.mulPosition(viewMatrix, viewPosition);
         direction.mulDirection(viewMatrix, viewDirection);
     }

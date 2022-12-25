@@ -77,20 +77,20 @@ public class LightManager implements Struct {
         this.ambientLight.set(value, value, value, 1f);
     }
 
-    public void setup(Camera camera) {
+    public void update(Camera camera) {
         Vector3fc position = camera.getPosition();
         pointLights.sort(Comparator.comparingDouble(light -> light.getPosition().distanceSquared(position)));
         spotLights.sort(Comparator.comparingDouble(light -> light.getPosition().distanceSquared(position)));
 
         Matrix4fc viewMatrix = camera.getViewMatrix();
         for (DirectionalLight directionalLight : directionalLights) {
-            directionalLight.setup(viewMatrix);
+            directionalLight.update(viewMatrix);
         }
         for (PointLight pointLight : pointLights) {
-            pointLight.setup(viewMatrix);
+            pointLight.update(viewMatrix);
         }
         for (SpotLight spotLight : spotLights) {
-            spotLight.setup(viewMatrix);
+            spotLight.update(viewMatrix);
         }
     }
 

@@ -49,7 +49,7 @@ public class ViewportOpaqueDrawDispatcher implements DrawDispatcher {
         Scene3D scene = viewport.getScene();
 
         LightManager lightManager = scene.getLightManager();
-        lightManager.setup(viewport.getCamera());
+        lightManager.update(viewport.getCamera());
         uniformLight.set(0, lightManager);
 
         FrustumIntersection frustum = viewport.getFrustum();

@@ -25,7 +25,7 @@ public class DirectionalLight extends Light {
     }
 
     @Override
-    public void setup(Matrix4fc viewMatrix) {
+    public void update(Matrix4fc viewMatrix) {
         direction.mulDirection(viewMatrix, viewDirection);
     }
 
