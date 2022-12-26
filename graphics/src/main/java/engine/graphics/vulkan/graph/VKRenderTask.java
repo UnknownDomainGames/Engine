@@ -64,18 +64,17 @@ public class VKRenderTask implements RenderTask {
         return null;
     }
 
-    public void draw(Frame frame, CommandBuffer cmdBuffer, Map<String, Object> args) {
+    public void draw(Frame frame, CommandBuffer cmdBuffer) {
         int width = frame.getOutputWidth();
         int height = frame.getOutputHeight();
         if (frame.isResized()) {
 //            attachments.values().forEach(renderBuffer -> renderBuffer.resize(width, height));
         }
-        FrameContext frameContext = new FrameContext(frame, args);
         for (RenderTaskSetup setup : setups) {
-            setup.setup(this, frameContext);
+            setup.setup(this, frame);
         }
         for (VKRenderGraphPass pass : sortedPasses) {
-            pass.draw(frameContext, cmdBuffer);
+            pass.draw(frame, cmdBuffer);
         }
     }
 

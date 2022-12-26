@@ -77,13 +77,13 @@ public class VKRenderGraphPass implements RenderPass {
     }
 
 
-    public void draw(FrameContext frameContext, CommandBuffer cmdBuffer) {
+    public void draw(Frame frame, CommandBuffer cmdBuffer) {
 //        setupFrameBuffer(frameContext.getFrame().isResized());
 //        setupViewport();
 //        setupCullMode(info.getCullMode());
 //        setupDepthTest(info.getDepthOutput());
 //        setupBlend();
-        drawers.forEach(drawer -> drawer.draw(frameContext, cmdBuffer));
+        drawers.forEach(drawer -> drawer.draw(frame, cmdBuffer));
     }
 
     public void dispose() {

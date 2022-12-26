@@ -1,6 +1,9 @@
 package engine.gui.internal.impl.graphics;
 
-import engine.graphics.graph.*;
+import engine.graphics.graph.DrawDispatcher;
+import engine.graphics.graph.Drawer;
+import engine.graphics.graph.Frame;
+import engine.graphics.graph.Renderer;
 import engine.gui.Parent;
 import engine.gui.Scene;
 import engine.gui.stage.Stage;
@@ -20,7 +23,7 @@ public final class StageDrawDispatcher implements DrawDispatcher {
     }
 
     @Override
-    public void draw(FrameContext frameContext, Drawer drawer, Renderer renderer) {
+    public void draw(Frame frame, Drawer drawer, Renderer renderer) {
         Scene scene = stage.getScene();
         if (scene == null) return;
         scene.update();
@@ -30,7 +33,6 @@ public final class StageDrawDispatcher implements DrawDispatcher {
             return; // Invisible root, don't need render it.
         }
 
-        Frame frame = frameContext.getFrame();
         graphics.setup(renderer, frame.getOutputWidth(), frame.getOutputHeight(), stage.getScaleX(), stage.getScaleY());
         root.doRender(graphics);
     }

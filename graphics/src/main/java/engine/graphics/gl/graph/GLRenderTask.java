@@ -69,7 +69,7 @@ public final class GLRenderTask implements RenderTask {
         return renderBuffers.get(name);
     }
 
-    public void draw(Frame frame, Map<String, Object> args) {
+    public void draw(Frame frame) {
         int width = frame.getOutputWidth();
         int height = frame.getOutputHeight();
         if (frame.isResized()) {
@@ -77,12 +77,11 @@ public final class GLRenderTask implements RenderTask {
                 renderBuffer.resize(width, height);
             }
         }
-        FrameContext frameContext = new FrameContext(frame, args);
         for (RenderTaskSetup setup : setups) {
-            setup.setup(this, frameContext);
+            setup.setup(this, frame);
         }
         for (GLRenderPass pass : sortedPasses) {
-            pass.draw(frameContext);
+            pass.draw(frame);
         }
     }
 

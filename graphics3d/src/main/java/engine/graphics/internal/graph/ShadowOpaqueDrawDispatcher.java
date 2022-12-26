@@ -4,7 +4,7 @@ import engine.graphics.Geometry;
 import engine.graphics.Scene3D;
 import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Drawer;
-import engine.graphics.graph.FrameContext;
+import engine.graphics.graph.Frame;
 import engine.graphics.graph.Renderer;
 import engine.graphics.queue.RenderType;
 import engine.graphics.shader.ShaderResource;
@@ -33,7 +33,7 @@ public class ShadowOpaqueDrawDispatcher implements DrawDispatcher {
     }
 
     @Override
-    public void draw(FrameContext frameContext, Drawer drawer, Renderer renderer) {
+    public void draw(Frame frame, Drawer drawer, Renderer renderer) {
         drawer.getShaderResource().setup();
         Scene3D scene = viewport.getScene();
         Matrix4fc viewMatrix = viewport.getViewMatrix();

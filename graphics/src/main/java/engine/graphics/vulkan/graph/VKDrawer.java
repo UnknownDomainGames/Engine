@@ -50,8 +50,8 @@ public class VKDrawer implements Drawer {
 
     }
 
-    public void draw(FrameContext frameContext, CommandBuffer cmdBuffer) {
-        drawDispatcher.draw(frameContext, this, new VKRenderer(cmdBuffer));
+    public void draw(Frame frame, CommandBuffer cmdBuffer) {
+        drawDispatcher.draw(frame, this, new VKRenderer(cmdBuffer));
     }
 
     public void dispose() {

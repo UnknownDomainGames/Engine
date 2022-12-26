@@ -3,7 +3,7 @@ package engine.graphics.internal.graph;
 import engine.graphics.Geometry;
 import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Drawer;
-import engine.graphics.graph.FrameContext;
+import engine.graphics.graph.Frame;
 import engine.graphics.graph.Renderer;
 import engine.graphics.queue.RenderType;
 import engine.graphics.shader.ShaderResource;
@@ -31,7 +31,7 @@ public class ViewportSkyDrawDispatcher implements DrawDispatcher {
     }
 
     @Override
-    public void draw(FrameContext frameContext, Drawer drawer, Renderer renderer) {
+    public void draw(Frame frame, Drawer drawer, Renderer renderer) {
         drawer.getShaderResource().setup();
         uniformProjMatrix.set(viewport.getProjectionMatrix());
         uniformViewMatrix.set(viewport.getViewMatrix());

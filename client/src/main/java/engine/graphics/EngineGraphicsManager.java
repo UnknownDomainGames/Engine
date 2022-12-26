@@ -213,8 +213,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
             RenderTaskInfo mainTask = RenderTaskInfo.renderTask();
             mainTask.setName("main");
             mainTask.setFinalPass("gui");
-            mainTask.addSetup((task, frameContext) -> {
-                Frame frame = frameContext.getFrame();
+            mainTask.addSetup((task, frame) -> {
                 if (frame.isResized()) viewport.setSize(frame.getOutputWidth(), frame.getOutputHeight());
                 viewport.getScene().doUpdate(frame.getTimeToLastUpdate());
                 viewport.getScene().getLightManager().update(viewport.getCamera());
@@ -316,7 +315,7 @@ public final class EngineGraphicsManager implements GraphicsManager {
                         }
 
                         @Override
-                        public void draw(FrameContext frameContext, Drawer drawer, Renderer renderer) {
+                        public void draw(Frame frame, Drawer drawer, Renderer renderer) {
                             drawer.getShaderResource().setup();
                             listHeader.setTexture(linkedListHeaderImage);
                             uniformListBuffer.setTexture(linkedListMimicImage);

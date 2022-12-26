@@ -50,11 +50,11 @@ public final class GLRenderGraph implements RenderGraph {
     }
 
     @Override
-    public void dispatchTask(String name, Frame frame, Map<String, Object> args, Consumer<RenderTask> callback) {
+    public void dispatchTask(String name, Frame frame, Consumer<RenderTask> callback) {
         Validate.notNull(frame, "Frame cannot be null");
         GLRenderTask task = tasks.get(name);
         if (task == null) throw new IllegalArgumentException("Failed to found render task: " + name);
-        task.draw(frame, args == null ? Map.of() : args);
+        task.draw(frame);
         if (callback != null) callback.accept(task);
     }
 
@@ -95,7 +95,7 @@ public final class GLRenderGraph implements RenderGraph {
         long currentTimeMillis = System.currentTimeMillis();
         float timeLastFrame = (frameStartTime - lastFrameStartTime) / 1e9f;
         Frame frame = new Frame(frameNumber, currentTimeMillis, timeLastFrame, timeToLastUpdate, width, height, resized);
-        mainTask.draw(frame, Map.of());
+        mainTask.draw(frame);
         lastFrameStartTime = frameStartTime;
         resized = false;
 

@@ -6,7 +6,7 @@ import engine.graphics.gl.buffer.GLVertexBuffer;
 import engine.graphics.gl.texture.GLTextureBuffer;
 import engine.graphics.graph.DrawDispatcher;
 import engine.graphics.graph.Drawer;
-import engine.graphics.graph.FrameContext;
+import engine.graphics.graph.Frame;
 import engine.graphics.graph.Renderer;
 import engine.graphics.queue.RenderType;
 import engine.graphics.shader.*;
@@ -55,7 +55,7 @@ public class ViewportTransparentDrawDispatcher implements DrawDispatcher {
     }
 
     @Override
-    public void draw(FrameContext frameContext, Drawer drawer, Renderer renderer) {
+    public void draw(Frame frame, Drawer drawer, Renderer renderer) {
         drawer.getShaderResource().setup();
 
         Scene3D scene = viewport.getScene();

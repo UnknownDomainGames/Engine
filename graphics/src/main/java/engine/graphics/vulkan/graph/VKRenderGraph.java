@@ -49,7 +49,7 @@ public class VKRenderGraph implements RenderGraph {
     }
 
     @Override
-    public void dispatchTask(String name, Frame frame, Map<String, Object> args, Consumer<RenderTask> callback) {
+    public void dispatchTask(String name, Frame frame, Consumer<RenderTask> callback) {
         Validate.notNull(frame, "Frame cannot be null");
         VKRenderTask task = tasks.get(name);
         if (task == null) throw new IllegalArgumentException("Failed to found render task: " + name);
@@ -90,7 +90,7 @@ public class VKRenderGraph implements RenderGraph {
         long currentTimeMillis = System.currentTimeMillis();
         float timeLastFrame = (frameStartTime - lastFrameStartTime) / 1e9f;
         Frame frame = new Frame(frameNumber, currentTimeMillis, timeLastFrame, timeToLastUpdate, width, height, resized);
-        mainTask.draw(frame, mainCmdBuf, Map.of());
+        mainTask.draw(frame, mainCmdBuf);
         lastFrameStartTime = frameStartTime;
         resized = false;
     }

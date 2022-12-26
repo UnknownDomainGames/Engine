@@ -48,12 +48,12 @@ public final class GLDrawer implements Drawer {
 
     @Override
     public void dispatchTask(String name, Frame frame, Map<String, Object> args, Consumer<RenderTask> callback) {
-        renderPass.getRenderTask().getRenderGraph().dispatchTask(name, frame, args, callback);
+        renderPass.getRenderTask().getRenderGraph().dispatchTask(name, frame, callback);
     }
 
-    public void draw(FrameContext frameContext) {
+    public void draw(Frame frame) {
         shader.use();
-        drawDispatcher.draw(frameContext, this, GLRenderer.getInstance());
+        drawDispatcher.draw(frame, this, GLRenderer.getInstance());
     }
 
     public void dispose() {
