@@ -3,8 +3,6 @@ package engine.graphics.graph;
 import engine.graphics.display.Window;
 import engine.graphics.texture.FrameBuffer;
 
-import java.util.function.Consumer;
-
 public interface RenderGraph {
 
     RenderGraphInfo getInfo();
@@ -12,8 +10,6 @@ public interface RenderGraph {
     RenderTask getMainTask();
 
     RenderTask getTask(String name);
-
-    void dispatchTask(String name, Frame frame, Consumer<RenderTask> callback);
 
     int getWidth();
 

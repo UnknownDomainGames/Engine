@@ -5,9 +5,6 @@ import engine.graphics.shader.ShaderResource;
 import engine.graphics.texture.FrameBuffer;
 import engine.graphics.vulkan.CommandBuffer;
 
-import java.util.Map;
-import java.util.function.Consumer;
-
 public class VKDrawer implements Drawer {
     private final DrawerInfo info;
     private final VKRenderGraphPass renderPass;
@@ -43,11 +40,6 @@ public class VKDrawer implements Drawer {
     @Override
     public FrameBuffer getFrameBuffer() {
         return renderPass.getFrameBuffer();
-    }
-
-    @Override
-    public void dispatchTask(String name, Frame frame, Map<String, Object> args, Consumer<RenderTask> callback) {
-
     }
 
     public void draw(Frame frame, CommandBuffer cmdBuffer) {

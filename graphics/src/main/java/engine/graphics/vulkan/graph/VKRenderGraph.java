@@ -4,10 +4,8 @@ import engine.graphics.display.Window;
 import engine.graphics.graph.*;
 import engine.graphics.texture.FrameBuffer;
 import engine.graphics.vulkan.CommandBuffer;
-import org.apache.commons.lang3.Validate;
 
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.Validate.notNull;
@@ -46,15 +44,6 @@ public class VKRenderGraph implements RenderGraph {
     @Override
     public RenderTask getTask(String name) {
         return tasks.get(name);
-    }
-
-    @Override
-    public void dispatchTask(String name, Frame frame, Consumer<RenderTask> callback) {
-        Validate.notNull(frame, "Frame cannot be null");
-        VKRenderTask task = tasks.get(name);
-        if (task == null) throw new IllegalArgumentException("Failed to found render task: " + name);
-//        task.draw(frame, args == null ? Map.of() : args);
-        if (callback != null) callback.accept(task);
     }
 
     @Override

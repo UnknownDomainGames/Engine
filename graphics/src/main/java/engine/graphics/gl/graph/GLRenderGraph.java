@@ -4,10 +4,8 @@ import engine.graphics.display.Window;
 import engine.graphics.graph.*;
 import engine.graphics.texture.FilterMode;
 import engine.graphics.texture.FrameBuffer;
-import org.apache.commons.lang3.Validate;
 
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static engine.graphics.gl.texture.GLFrameBuffer.getBackBuffer;
@@ -47,15 +45,6 @@ public final class GLRenderGraph implements RenderGraph {
     @Override
     public RenderTask getTask(String name) {
         return tasks.get(name);
-    }
-
-    @Override
-    public void dispatchTask(String name, Frame frame, Consumer<RenderTask> callback) {
-        Validate.notNull(frame, "Frame cannot be null");
-        GLRenderTask task = tasks.get(name);
-        if (task == null) throw new IllegalArgumentException("Failed to found render task: " + name);
-        task.draw(frame);
-        if (callback != null) callback.accept(task);
     }
 
     public Map<String, GLRenderTask> getTasks() {

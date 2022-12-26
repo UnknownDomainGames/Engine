@@ -2,12 +2,12 @@ package engine.graphics.gl.graph;
 
 import engine.graphics.gl.shader.ShaderManager;
 import engine.graphics.gl.shader.ShaderProgram;
-import engine.graphics.graph.*;
+import engine.graphics.graph.DrawDispatcher;
+import engine.graphics.graph.Drawer;
+import engine.graphics.graph.DrawerInfo;
+import engine.graphics.graph.Frame;
 import engine.graphics.shader.ShaderResource;
 import engine.graphics.texture.FrameBuffer;
-
-import java.util.Map;
-import java.util.function.Consumer;
 
 public final class GLDrawer implements Drawer {
     private final DrawerInfo info;
@@ -44,11 +44,6 @@ public final class GLDrawer implements Drawer {
     @Override
     public FrameBuffer getFrameBuffer() {
         return renderPass.getFrameBuffer();
-    }
-
-    @Override
-    public void dispatchTask(String name, Frame frame, Map<String, Object> args, Consumer<RenderTask> callback) {
-        renderPass.getRenderTask().getRenderGraph().dispatchTask(name, frame, callback);
     }
 
     public void draw(Frame frame) {
