@@ -197,7 +197,7 @@ public final class GraphicsImpl implements Graphics {
             renderer.setScissor(x, y, width, height);
         } else {
             clipRect.set(viewport);
-            renderer.setScissor(null);
+            renderer.clearScissor();
         }
     }
 
@@ -205,7 +205,7 @@ public final class GraphicsImpl implements Graphics {
     public void resetClipRect() {
         finalClipRect.set(viewport);
         clipRect.set(viewport);
-        renderer.setScissor(null);
+        renderer.clearScissor();
     }
 
     @Override

@@ -2,7 +2,6 @@ package engine.graphics.vulkan;
 
 import engine.graphics.vulkan.buffer.VulkanBuffer;
 import engine.graphics.vulkan.util.VulkanUtils;
-import org.joml.Vector4ic;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.*;
 
@@ -19,14 +18,14 @@ public class CommandBuffer {
         return vkbuffer;
     }
 
-    public CommandBuffer(VkCommandBuffer vkbuffer, CommandPool pool){
+    public CommandBuffer(VkCommandBuffer vkbuffer, CommandPool pool) {
         this.vkbuffer = vkbuffer;
         this.pool = pool;
     }
 
-    public int beginCommandBuffer(){
+    public int beginCommandBuffer() {
         checkReleased();
-        try(var stack = MemoryStack.stackPush()) {
+        try (var stack = MemoryStack.stackPush()) {
             var info = VkCommandBufferBeginInfo.callocStack(stack)
                     .sType(VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO);
             return vkBeginCommandBuffer(vkbuffer, info);
@@ -34,17 +33,17 @@ public class CommandBuffer {
     }
 
     public void checkReleased() {
-        if(released) throw new IllegalStateException("CommandBuffer already released!");
+        if (released) throw new IllegalStateException("CommandBuffer already released!");
     }
 
-    public int endCommandBuffer(){
+    public int endCommandBuffer() {
         checkReleased();
         return vkEndCommandBuffer(vkbuffer);
     }
 
-    public void submitCommandBuffer(Queue queue){
+    public void submitCommandBuffer(Queue queue) {
         checkReleased();
-        try(var stack = MemoryStack.stackPush()) {
+        try (var stack = MemoryStack.stackPush()) {
             VkSubmitInfo submitInfo = VkSubmitInfo.callocStack(stack)
                     .sType(VK_STRUCTURE_TYPE_SUBMIT_INFO);
             var pCommandBuffers = stack.mallocPointer(1)
@@ -58,12 +57,12 @@ public class CommandBuffer {
         }
     }
 
-    public void resetCommandBuffer(int flag){
+    public void resetCommandBuffer(int flag) {
         checkReleased();
         vkResetCommandBuffer(vkbuffer, flag);
     }
 
-    public void freeCommandBuffer(){
+    public void freeCommandBuffer() {
         checkReleased();
         vkFreeCommandBuffers(pool.getDevice().getNativeDevice(), pool.getCommandPoolPointer(), vkbuffer);
         vkbuffer = null;
@@ -78,9 +77,9 @@ public class CommandBuffer {
 //        vkCmdDraw(vkbuffer, model.indexCount, 1, 0, 0, 0);
 //    }
 
-    public void put(VulkanBuffer src, VulkanBuffer dst, List<CmdCopyRegion> regionList){
+    public void put(VulkanBuffer src, VulkanBuffer dst, List<CmdCopyRegion> regionList) {
         checkReleased();
-        try(var stack = MemoryStack.stackPush()) {
+        try (var stack = MemoryStack.stackPush()) {
             var regions = VkBufferCopy.callocStack(regionList.size(), stack);
             for (int i = 0; i < regionList.size(); i++) {
                 var region = regions.get(i);
@@ -95,11 +94,11 @@ public class CommandBuffer {
         vkCmdFillBuffer(vkbuffer, buf.getHandle(), offset, size, data);
     }
 
-    public void setScissor(Vector4ic scissor) {
+    public void setScissor(int x, int y, int width, int height) {
         try (var stack = MemoryStack.stackPush()) {
             var buf = VkRect2D.callocStack(1, stack);
-            buf.get(0).offset().x(scissor.x()).y(scissor.y());
-            buf.get(0).extent().width(scissor.z()).height(scissor.w());
+            buf.get(0).offset().x(x).y(y);
+            buf.get(0).extent().width(width).height(height);
             vkCmdSetScissor(vkbuffer, 0, buf);
         }
     }
@@ -118,7 +117,7 @@ public class CommandBuffer {
             return srcOffset;
         }
 
-        public CmdCopyRegion dstOffset(long value){
+        public CmdCopyRegion dstOffset(long value) {
             this.dstOffset = value;
             return this;
         }
@@ -126,7 +125,8 @@ public class CommandBuffer {
         public long dstOffset() {
             return srcOffset;
         }
-        public CmdCopyRegion size(long value){
+
+        public CmdCopyRegion size(long value) {
             this.size = value;
             return this;
         }

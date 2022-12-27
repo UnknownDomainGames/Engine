@@ -5,8 +5,6 @@ import engine.graphics.mesh.Mesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuffer;
 import engine.graphics.vulkan.CommandBuffer;
-import org.joml.Vector4i;
-import org.joml.Vector4ic;
 
 public class VKRenderer implements Renderer {
 
@@ -18,12 +16,12 @@ public class VKRenderer implements Renderer {
 
     @Override
     public void setScissor(int x, int y, int width, int height) {
-        setScissor(new Vector4i(x, y, width, height));
+        commandBuffer.setScissor(x, y, width, height);
     }
 
     @Override
-    public void setScissor(Vector4ic scissor) {
-        commandBuffer.setScissor(scissor);
+    public void clearScissor() {
+        // TODO: clear scissor.
     }
 
     @Override

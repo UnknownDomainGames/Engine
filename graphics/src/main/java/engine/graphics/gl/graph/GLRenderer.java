@@ -6,8 +6,6 @@ import engine.graphics.graph.Renderer;
 import engine.graphics.mesh.Mesh;
 import engine.graphics.util.DrawMode;
 import engine.graphics.vertex.VertexDataBuffer;
-import org.joml.Vector4i;
-import org.joml.Vector4ic;
 import org.lwjgl.opengl.GL11C;
 
 public final class GLRenderer implements Renderer {
@@ -26,17 +24,13 @@ public final class GLRenderer implements Renderer {
 
     @Override
     public void setScissor(int x, int y, int width, int height) {
-        setScissor(new Vector4i(x, y, width, height));
+        GL11C.glEnable(GL11C.GL_SCISSOR_TEST);
+        GL11C.glScissor(x, y, width, height);
     }
 
     @Override
-    public void setScissor(Vector4ic scissor) {
-        if (scissor == null) {
-            GL11C.glDisable(GL11C.GL_SCISSOR_TEST);
-        } else {
-            GL11C.glEnable(GL11C.GL_SCISSOR_TEST);
-            GL11C.glScissor(scissor.x(), scissor.y(), scissor.z(), scissor.w());
-        }
+    public void clearScissor() {
+        GL11C.glDisable(GL11C.GL_SCISSOR_TEST);
     }
 
     @Override
