@@ -19,10 +19,17 @@ public class Text extends Node {
     private MutableDoubleValue leading;
     private MutableDoubleValue textWidth;
 
+    private double width;
+    private double height;
+
     public Text() {
         text().addChangeListener((observable, oldValue, newValue) -> {
             requestParentLayout();
-            getRenderer().markDirty();
+            markDirty();
+        });
+        textWidth().addChangeListener((observable, oldValue, newValue) -> {
+            requestParentLayout();
+            markDirty();
         });
     }
 
@@ -137,12 +144,18 @@ public class Text extends Node {
 
     @Override
     public double prefWidth() {
-        return FontManager.instance().computeTextWidth(getText(), getFont());
+        if (Double.isNaN(width)) {
+            width = FontManager.instance().computeTextWidth(getText(), getFont());
+        }
+        return width;
     }
 
     @Override
     public double prefHeight() {
-        return FontManager.instance().computeTextHeight(getText(), getFont(), (float) getTextWidth(), (float) getLeading());
+        if (Double.isNaN(height)) {
+            height = FontManager.instance().computeTextHeight(getText(), getFont(), (float) getTextWidth(), (float) getLeading());
+        }
+        return height;
     }
 
     @Override
@@ -153,5 +166,11 @@ public class Text extends Node {
     @Override
     protected NodeRenderer<Text> createDefaultRenderer() {
         return new TextRenderer(this);
+    }
+
+    private void markDirty() {
+        width = Double.NaN;
+        height = Double.NaN;
+        getRenderer().markDirty();
     }
 }
