@@ -1,11 +1,9 @@
 package engine.enginemod.client.gui.hud;
 
 import engine.Platform;
-import engine.client.event.graphics.RenderEvent;
 import engine.client.hud.HUDControl;
 import engine.entity.Entity;
 import engine.entity.component.TwoHands;
-import engine.event.Listener;
 import engine.gui.control.ItemView;
 import engine.gui.layout.AnchorPane;
 import engine.player.Player;
@@ -24,13 +22,7 @@ public final class HUDHandingItem extends HUDControl {
     }
 
     @Override
-    public void onVisibleChanged(boolean visible) {
-        if (visible) Platform.getEngineClient().getEventBus().register(this);
-        else Platform.getEngineClient().getEventBus().unregister(this);
-    }
-
-    @Listener
-    public void update(RenderEvent.Pre event) {
+    public void update() {
         if (!Platform.getEngine().isPlaying()) return;
         Player player = Platform.getEngineClient().getCurrentClientGame().getClientPlayer();
         if (player != null) {

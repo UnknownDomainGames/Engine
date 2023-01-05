@@ -1,6 +1,7 @@
 package engine.gui;
 
 import engine.Platform;
+import engine.client.event.graphics.RenderEvent;
 import engine.client.game.GameClient;
 import engine.client.hud.HUDControl;
 import engine.client.hud.HUDManager;
@@ -52,8 +53,6 @@ public final class EngineHUDManager implements HUDManager {
     @Override
     public void setVisible(boolean visible) {
         contentPane.setVisible(visible);
-        getControls().stream().filter(Node::isVisible).forEach(hudControl ->
-                hudControl.onVisibleChanged(visible));
     }
 
     @Override
@@ -72,7 +71,7 @@ public final class EngineHUDManager implements HUDManager {
     }
 
     @Listener
-    public void onGameReady(GameStartEvent.Post event) {
+    public void onGameStartPost(GameStartEvent.Post event) {
         if (event.getGame() instanceof GameClient)
             Registries.getRegistryManager().getRegistry(HUDControl.class).ifPresent(registry -> {
                 hudControls = registry;
@@ -81,8 +80,15 @@ public final class EngineHUDManager implements HUDManager {
     }
 
     @Listener
-    public void onGameMarkedStop(GameTerminationEvent.Marked event) {
+    public void onGameTerminationMarked(GameTerminationEvent.Marked event) {
         contentPane.getChildren().clear();
         hudControls = null;
+    }
+
+    @Listener
+    public void onRenderPre(RenderEvent.Pre event) {
+        if (isVisible()) {
+            getControls().stream().filter(Node::isVisible).forEach(HUDControl::update);
+        }
     }
 }

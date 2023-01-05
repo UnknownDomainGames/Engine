@@ -15,7 +15,6 @@ public abstract class HUDControl extends Control implements Registrable<HUDContr
 
     public HUDControl() {
         setVisible(false);
-        visible().addChangeListener((observable, oldValue, newValue) -> onVisibleChanged(newValue));
     }
 
     @Override
@@ -63,7 +62,7 @@ public abstract class HUDControl extends Control implements Registrable<HUDContr
         content().set(content);
     }
 
-    public void onVisibleChanged(boolean visible) {
+    public void update() {
     }
 
     @Override

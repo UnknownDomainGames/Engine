@@ -3,10 +3,8 @@ package engine.enginemod.client.gui.hud;
 import engine.Platform;
 import engine.block.Block;
 import engine.client.EngineClient;
-import engine.client.event.graphics.RenderEvent;
 import engine.client.hud.HUDControl;
 import engine.entity.Entity;
-import engine.event.Listener;
 import engine.graphics.GraphicsEngine;
 import engine.graphics.GraphicsManager;
 import engine.graphics.camera.Camera;
@@ -68,13 +66,7 @@ public final class HUDDebug extends HUDControl {
     }
 
     @Override
-    public void onVisibleChanged(boolean visible) {
-        if (visible) Platform.getEngineClient().getEventBus().register(this);
-        else Platform.getEngineClient().getEventBus().unregister(this);
-    }
-
-    @Listener
-    public void update(RenderEvent.Pre event) {
+    public void update() {
         EngineClient engine = Platform.getEngineClient();
         if (engine.getCurrentClientGame() == null) return;
         Entity player = engine.getCurrentClientGame().getClientPlayer().getControlledEntity();
