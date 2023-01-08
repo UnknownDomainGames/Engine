@@ -267,11 +267,9 @@ public abstract class Node implements EventTarget {
             node = node.getParent();
         }
         Stage stage = getScene().getStage();
-        double scaleX = stage.getScaleX();
-        double scaleY = stage.getScaleY();
-        minX = minX * scaleX + stage.getX();
-        minY = minY * scaleY + stage.getY();
-        return new Bounds(minX, minY, getWidth() * scaleX, getHeight() * scaleY);
+        minX += stage.getX();
+        minY += stage.getY();
+        return new Bounds(minX, minY, getWidth(), getHeight());
     }
 
     public void forceFocus() {

@@ -105,7 +105,7 @@ public class Stage {
             }
             if (newValue != null) {
                 SceneHelper.setStage(newValue, Stage.this);
-                SceneHelper.setSize(newValue, getWidth() / getScaleX(), getHeight() / getScaleY());
+                SceneHelper.setSize(newValue, getWidth(), getHeight());
             }
         });
     }
@@ -280,14 +280,11 @@ public class Stage {
     }
 
     private void setViewport(int width, int height, float scaleX, float scaleY) {
-        float finalScaleX = scaleX * getUserScaleX();
-        float finalScaleY = scaleY * getUserScaleY();
-
         widthImpl().set(width);
         heightImpl().set(height);
-        this.scaleX.set(finalScaleX);
-        this.scaleY.set(finalScaleY);
-        scene().ifPresent(scene -> SceneHelper.setSize(scene, width / finalScaleX, height / finalScaleY));
+        this.scaleX.set(scaleX * getUserScaleX());
+        this.scaleY.set(scaleY * getUserScaleY());
+        scene().ifPresent(scene -> SceneHelper.setSize(scene, width, height));
     }
 
     public final MutableObjectValue<Scene> scene() {

@@ -167,8 +167,8 @@ public class Scene implements EventTarget {
 
     public void processCursor(double xPos, double yPos) {
         Stage stage = getStage();
-        cursorX = xPos / stage.getScaleX();
-        cursorY = yPos / stage.getScaleY();
+        cursorX = xPos;
+        cursorY = yPos;
 
         var hitNodes = raycast(cursorX, cursorY, true);
         var lostHoveredNodes = new HashSet<>(hoveredNodes);
