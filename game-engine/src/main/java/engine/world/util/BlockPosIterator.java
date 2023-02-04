@@ -36,22 +36,24 @@ public class BlockPosIterator implements Iterator<BlockPos> {
         reset();
     }
 
+    @Override
     public boolean hasNext() {
-        return pos.x() != toX || pos.y() != toY || pos.z() != toZ;
+        return pos.y() != toY || pos.z() != toZ || pos.x() != toX;
     }
 
     /**
      * @throws NoSuchElementException
      */
+    @Override
     public BlockPos next() {
         pos.add(1, 0, 0);
         if (pos.x() > toX) {
-            pos.set(fromX, pos.y() + 1, pos.z());
-        }
-        if (pos.y() > toY) {
-            pos.set(pos.x(), fromY, pos.z() + 1);
+            pos.set(fromX, pos.y(), pos.z() + 1);
         }
         if (pos.z() > toZ) {
+            pos.set(fromX, pos.y() + 1, fromZ);
+        }
+        if (pos.y() > toY) {
             throw new NoSuchElementException();
         }
         return pos;
@@ -60,5 +62,4 @@ public class BlockPosIterator implements Iterator<BlockPos> {
     public void reset() {
         pos.set(fromX - 1, fromY, fromZ);
     }
-
 }

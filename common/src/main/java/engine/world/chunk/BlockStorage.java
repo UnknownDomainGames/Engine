@@ -23,7 +23,7 @@ public class BlockStorage {
     }
 
     private int getPosIndex(int x, int y, int z) {
-        return (x & CHUNK_MAX_X) | ((y & CHUNK_MAX_Y) << CHUNK_X_BITS) | ((z & CHUNK_MAX_Z) << CHUNK_X_BITS + CHUNK_Y_BITS);
+        return ((y & CHUNK_MAX_Y) << CHUNK_X_BITS + CHUNK_Z_BITS) | ((z & CHUNK_MAX_Z) << CHUNK_X_BITS) | (x & CHUNK_MAX_X);
     }
 
     public NibbleArray getData() {

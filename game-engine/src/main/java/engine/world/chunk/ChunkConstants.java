@@ -19,7 +19,7 @@ public interface ChunkConstants {
     int BLOCK_COUNT = CHUNK_X_SIZE * CHUNK_Y_SIZE * CHUNK_Z_SIZE;
 
     static long getChunkIndex(int chunkX, int chunkY, int chunkZ) {
-        return (toUnsigned(chunkX) << 42) | (toUnsigned(chunkY) << 21) | toUnsigned(chunkZ);
+        return (toUnsigned(chunkY) << 42) | (toUnsigned(chunkZ) << 21) | toUnsigned(chunkX);
     }
 
     static long getChunkIndex(Chunk chunk) {
