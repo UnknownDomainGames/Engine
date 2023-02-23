@@ -66,31 +66,31 @@ public final class GLTextureCubeMap extends GLTexture implements TextureCubeMap 
 
         @Override
         public Builder magFilter(FilterMode mode) {
-            magFilter = GLHelper.toGLFilterMode(mode);
+            magFilter = GLHelper.glFilterMode(mode);
             return this;
         }
 
         @Override
         public Builder minFilter(FilterMode mode) {
-            minFilter = GLHelper.toGLFilterMode(mode);
+            minFilter = GLHelper.glFilterMode(mode);
             return this;
         }
 
         @Override
         public Builder wrapS(WrapMode mode) {
-            wrapS = GLHelper.toGLWrapMode(mode);
+            wrapS = GLHelper.glWrapMode(mode);
             return this;
         }
 
         @Override
         public Builder wrapT(WrapMode mode) {
-            wrapT = GLHelper.toGLWrapMode(mode);
+            wrapT = GLHelper.glWrapMode(mode);
             return this;
         }
 
         @Override
         public Builder wrapR(WrapMode mode) {
-            wrapR = GLHelper.toGLWrapMode(mode);
+            wrapR = GLHelper.glWrapMode(mode);
             return this;
         }
 

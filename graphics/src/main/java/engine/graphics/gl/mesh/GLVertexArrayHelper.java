@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL30C;
 import org.lwjgl.opengl.GL33C;
 import org.lwjgl.opengl.GL45C;
 
-import static engine.graphics.gl.util.GLHelper.toGLDataType;
+import static engine.graphics.gl.util.GLHelper.glDataType;
 
 public final class GLVertexArrayHelper {
 
@@ -37,7 +37,7 @@ public final class GLVertexArrayHelper {
         for (VertexFormat.Entry entry : format.getEntries()) {
             final int index = firstIndex + entry.getIndex();
             GL20C.glEnableVertexAttribArray(index);
-            GL20C.nglVertexAttribPointer(index, entry.getSize(), toGLDataType(entry.getType()),
+            GL20C.nglVertexAttribPointer(index, entry.getSize(), glDataType(entry.getType()),
                     entry.isNormalized(), stride, entry.getOffset());
             GL33C.glVertexAttribDivisor(index, entry.getDivisor());
         }

@@ -161,7 +161,7 @@ public final class GLRenderPass implements RenderPass {
         if (depthOutput != null && depthOutput.isEnable()) {
             GL11C.glEnable(GL11C.GL_DEPTH_TEST);
             GL11C.glDepthMask(depthOutput.isWritable());
-            GL11C.glDepthFunc(GLHelper.toGLCompareFunc(depthOutput.getCompareMode()));
+            GL11C.glDepthFunc(GLHelper.glCompareFunc(depthOutput.getCompareMode()));
         } else {
             GL11C.glDisable(GL11C.GL_DEPTH_TEST);
         }

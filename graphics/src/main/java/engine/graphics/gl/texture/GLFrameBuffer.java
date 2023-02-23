@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static engine.graphics.gl.util.GLHelper.getMask;
-import static engine.graphics.gl.util.GLHelper.toGLFilterMode;
+import static engine.graphics.gl.util.GLHelper.glFilterMode;
 
 public class GLFrameBuffer implements FrameBuffer {
 
@@ -132,7 +132,7 @@ public class GLFrameBuffer implements FrameBuffer {
 
     public static void copy(FrameBuffer src, Vector4ic srcRect, FrameBuffer dest, Vector4ic destRect,
                             boolean copyColor, boolean copyDepth, boolean copyStencil, FilterMode filterMode) {
-        copy(src, srcRect, dest, destRect, getMask(copyColor, copyDepth, copyStencil), toGLFilterMode(filterMode));
+        copy(src, srcRect, dest, destRect, getMask(copyColor, copyDepth, copyStencil), glFilterMode(filterMode));
     }
 
     public static void copy(FrameBuffer src, Vector4ic srcRect, FrameBuffer dest, Vector4ic destRect, int mask, int filter) {

@@ -71,7 +71,7 @@ public final class GLHelper {
         return mask;
     }
 
-    public static int toGLDataType(DataType type) {
+    public static int glDataType(DataType type) {
         switch (type) {
             case BYTE:
                 return GL11C.GL_BYTE;
@@ -92,42 +92,15 @@ public final class GLHelper {
             case HALF_FLOAT:
                 return GL30C.GL_HALF_FLOAT;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Unexpected data type: " + type);
         }
     }
 
-    public static String getErrorMessage() {
-        return getFriendlyErrorMessage(GL11C.glGetError());
+    public static int glCompareMode(DepthCompareMode depthCompareMode) {
+        return depthCompareMode == DepthCompareMode.NONE ? GL11C.GL_NONE : GL30C.GL_COMPARE_REF_TO_TEXTURE;
     }
 
-    public static String getFriendlyErrorMessage(int error) {
-        switch (error) {
-            case GL11C.GL_NO_ERROR:
-                return "NO_ERROR";
-            case GL11C.GL_INVALID_ENUM:
-                return "INVALID_ENUM";
-            case GL11C.GL_INVALID_VALUE:
-                return "INVALID_VALUE";
-            case GL11C.GL_INVALID_OPERATION:
-                return "INVALID_OPERATION";
-            case GL11C.GL_STACK_OVERFLOW:
-                return "STACK_OVERFLOW";
-            case GL11C.GL_STACK_UNDERFLOW:
-                return "STACK_UNDERFLOW";
-            case GL11C.GL_OUT_OF_MEMORY:
-                return "OUT_OF_MEMORY";
-            case GL30C.GL_INVALID_FRAMEBUFFER_OPERATION:
-                return "INVALID_FRAMEBUFFER_OPERATION";
-            default:
-                throw new IllegalArgumentException("Unknown error code");
-        }
-    }
-
-    public static int toGLCompareMode(DepthCompareMode depthCompareMode) {
-        return depthCompareMode != DepthCompareMode.NONE ? GL30C.GL_COMPARE_REF_TO_TEXTURE : GL11C.GL_NONE;
-    }
-
-    public static int toGLCompareFunc(DepthCompareMode depthCompareMode) {
+    public static int glCompareFunc(DepthCompareMode depthCompareMode) {
         switch (depthCompareMode) {
             case NONE:
             case ALWAYS:
@@ -147,11 +120,11 @@ public final class GLHelper {
             case GREATER_OR_EQUAL:
                 return GL11C.GL_GEQUAL;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Unexpected depth compare mode: " + depthCompareMode);
         }
     }
 
-    public static int toGLFilterMode(FilterMode filterMode) {
+    public static int glFilterMode(FilterMode filterMode) {
         switch (filterMode) {
             case LINEAR:
                 return GL11C.GL_LINEAR;
@@ -166,11 +139,11 @@ public final class GLHelper {
             case NEAREST_MIPMAP_NEAREST:
                 return GL11C.GL_NEAREST_MIPMAP_NEAREST;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Unexpected filter mode: " + filterMode);
         }
     }
 
-    public static int toGLWrapMode(WrapMode wrapMode) {
+    public static int glWrapMode(WrapMode wrapMode) {
         switch (wrapMode) {
             case REPEAT:
                 return GL11C.GL_REPEAT;
@@ -181,7 +154,7 @@ public final class GLHelper {
             case MIRRORED_REPEAT:
                 return GL14C.GL_MIRRORED_REPEAT;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Unexpected wrap mode: " + wrapMode);
         }
     }
 
@@ -199,6 +172,33 @@ public final class GLHelper {
             ARBDebugOutput.glDebugMessageControlARB(ARBDebugOutput.GL_DEBUG_SOURCE_API_ARB, ARBDebugOutput.GL_DEBUG_TYPE_ERROR_ARB, ARBDebugOutput.GL_DEBUG_SEVERITY_HIGH_ARB, (int[]) null, true);
         } else {
             throw new UnsupportedOperationException("Unsupported debug message callback.");
+        }
+    }
+
+    public static String getErrorMessage() {
+        return getErrorMessage(GL11C.glGetError());
+    }
+
+    public static String getErrorMessage(int error) {
+        switch (error) {
+            case GL11C.GL_NO_ERROR:
+                return "NO_ERROR";
+            case GL11C.GL_INVALID_ENUM:
+                return "INVALID_ENUM";
+            case GL11C.GL_INVALID_VALUE:
+                return "INVALID_VALUE";
+            case GL11C.GL_INVALID_OPERATION:
+                return "INVALID_OPERATION";
+            case GL11C.GL_STACK_OVERFLOW:
+                return "STACK_OVERFLOW";
+            case GL11C.GL_STACK_UNDERFLOW:
+                return "STACK_UNDERFLOW";
+            case GL11C.GL_OUT_OF_MEMORY:
+                return "OUT_OF_MEMORY";
+            case GL30C.GL_INVALID_FRAMEBUFFER_OPERATION:
+                return "INVALID_FRAMEBUFFER_OPERATION";
+            default:
+                return "UNKNOWN_ERROR(" + error + ")";
         }
     }
 

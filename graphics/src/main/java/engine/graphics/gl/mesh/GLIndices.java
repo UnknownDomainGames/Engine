@@ -34,7 +34,7 @@ final class GLIndices implements Indices {
         } else {
             throw new IllegalArgumentException();
         }
-        this.glType = GLHelper.toGLDataType(this.type);
+        this.glType = GLHelper.glDataType(this.type);
     }
 
     @Override

@@ -84,31 +84,31 @@ public final class GLSampler implements Sampler {
 
         @Override
         public Builder magFilter(FilterMode filterMode) {
-            this.magFilter = GLHelper.toGLFilterMode(filterMode);
+            this.magFilter = GLHelper.glFilterMode(filterMode);
             return this;
         }
 
         @Override
         public Builder minFilter(FilterMode filterMode) {
-            this.minFilter = GLHelper.toGLFilterMode(filterMode);
+            this.minFilter = GLHelper.glFilterMode(filterMode);
             return this;
         }
 
         @Override
         public Builder wrapS(WrapMode wrapMode) {
-            this.wrapS = GLHelper.toGLWrapMode(wrapMode);
+            this.wrapS = GLHelper.glWrapMode(wrapMode);
             return this;
         }
 
         @Override
         public Builder wrapT(WrapMode wrapMode) {
-            this.wrapT = GLHelper.toGLWrapMode(wrapMode);
+            this.wrapT = GLHelper.glWrapMode(wrapMode);
             return this;
         }
 
         @Override
         public Builder wrapR(WrapMode wrapMode) {
-            this.wrapR = GLHelper.toGLWrapMode(wrapMode);
+            this.wrapR = GLHelper.glWrapMode(wrapMode);
             return this;
         }
 
@@ -132,8 +132,8 @@ public final class GLSampler implements Sampler {
 
         @Override
         public Builder depthCompareMode(DepthCompareMode depthCompareMode) {
-            this.compareMode = GLHelper.toGLCompareMode(depthCompareMode);
-            this.compareFunc = GLHelper.toGLCompareFunc(depthCompareMode);
+            this.compareMode = GLHelper.glCompareMode(depthCompareMode);
+            this.compareFunc = GLHelper.glCompareFunc(depthCompareMode);
             return this;
         }
 
