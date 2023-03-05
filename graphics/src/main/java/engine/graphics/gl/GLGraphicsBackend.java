@@ -6,7 +6,6 @@ import engine.graphics.backend.ResourceFactory;
 import engine.graphics.display.Window;
 import engine.graphics.display.WindowHelper;
 import engine.graphics.gl.graph.GLRenderGraph;
-import engine.graphics.gl.util.DebugMessageCallback;
 import engine.graphics.gl.util.GLGPUInfo;
 import engine.graphics.gl.util.GLHelper;
 import engine.graphics.glfw.GLFWContext;
@@ -17,7 +16,9 @@ import engine.graphics.util.Cleaner;
 import engine.graphics.util.GPUInfo;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL43C;
 import org.lwjgl.opengl.GLCapabilities;
+import org.lwjgl.opengl.GLDebugMessageCallbackI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,7 +168,7 @@ public final class GLGraphicsBackend implements GraphicsBackend {
         GLHelper.setup(capabilities, gpuInfo.getVendor());
         printGLInfo();
 
-        if (Boolean.parseBoolean(System.getProperty(OPENGL_DEBUG_PROPERTY, "false"))) {
+        if (Boolean.getBoolean(OPENGL_DEBUG_PROPERTY)) {
             initDebugMessageCallback();
         }
 
@@ -176,21 +177,11 @@ public final class GLGraphicsBackend implements GraphicsBackend {
 
     private void initDebugMessageCallback() {
         try {
-            GLHelper.setDebugMessageCallback(new DebugMessageCallback() {
+            GLHelper.setDebugMessageCallback(new GLDebugMessageCallbackI() {
                 @Override
-                public void invoke(Source source, Type type, int id, Severity severity, String message, long userParam) {
-                    var msg = "GL " + source + (type == Type.ERROR ? "" : " " + type) + " (" + id + ") " + message;
-                    switch (severity) {
-                        case HIGH:
-                            LOGGER.error(msg);
-                            break;
-                        case MEDIUM:
-                            LOGGER.warn(msg);
-                            break;
-                        case LOW:
-                        case NOTIFICATION:
-                            LOGGER.info(msg);
-                            break;
+                public void invoke(int source, int type, int id, int severity, int length, long message, long userParam) {
+                    if (severity != GL43C.GL_DEBUG_SEVERITY_NOTIFICATION) {
+                        LOGGER.warn("[GL_DEBUG_MESSAGE|{}|{}] {}", GLHelper.getDebugSource(source), GLHelper.getDebugType(type), GLHelper.getDebugMessage(message, length));
                     }
                 }
             });

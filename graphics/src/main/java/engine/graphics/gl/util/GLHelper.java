@@ -6,6 +6,10 @@ import engine.graphics.util.DataType;
 import engine.graphics.util.DepthCompareMode;
 import engine.graphics.util.GPUVendor;
 import org.lwjgl.opengl.*;
+import org.lwjgl.system.MemoryUtil;
+
+import static org.lwjgl.opengl.GL43C.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public final class GLHelper {
 
@@ -158,21 +162,77 @@ public final class GLHelper {
         }
     }
 
-    public static void setDebugMessageCallback(DebugMessageCallback callback) throws UnsupportedOperationException {
-        if (capabilities.OpenGL43) {
+    public static void setDebugMessageCallback(GLDebugMessageCallbackI callback) throws UnsupportedOperationException {
+        if (capabilities.GL_KHR_debug) {
             GL11C.glEnable(GL43C.GL_DEBUG_OUTPUT);
-            GL43C.glDebugMessageCallback(callback::invoke, 0);
-            GL43C.glDebugMessageControl(DebugMessageCallback.Source.API.gl, DebugMessageCallback.Type.ERROR.gl, DebugMessageCallback.Severity.HIGH.gl, (int[]) null, true);
-        } else if (capabilities.GL_KHR_debug) {
-            GL11C.glEnable(KHRDebug.GL_DEBUG_OUTPUT);
-            KHRDebug.glDebugMessageCallback(callback::invoke, 0);
-            KHRDebug.glDebugMessageControl(DebugMessageCallback.Source.API.gl, DebugMessageCallback.Type.ERROR.gl, DebugMessageCallback.Severity.HIGH.gl, (int[]) null, true);
+            GL43C.glDebugMessageCallback(callback, NULL);
+            GL43C.nglDebugMessageControl(GL11C.GL_DONT_CARE, GL11C.GL_DONT_CARE, GL11C.GL_DONT_CARE, 0, NULL, true);
         } else if (capabilities.GL_ARB_debug_output) {
-            ARBDebugOutput.glDebugMessageCallbackARB(callback::invoke, 0);
-            ARBDebugOutput.glDebugMessageControlARB(ARBDebugOutput.GL_DEBUG_SOURCE_API_ARB, ARBDebugOutput.GL_DEBUG_TYPE_ERROR_ARB, ARBDebugOutput.GL_DEBUG_SEVERITY_HIGH_ARB, (int[]) null, true);
+            GL11C.glEnable(ARBDebugOutput.GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
+            ARBDebugOutput.glDebugMessageCallbackARB(callback::invoke, NULL);
+            ARBDebugOutput.nglDebugMessageControlARB(GL11C.GL_DONT_CARE, GL11C.GL_DONT_CARE, GL11C.GL_DONT_CARE, 0, NULL, true);
         } else {
             throw new UnsupportedOperationException("Unsupported debug message callback.");
         }
+    }
+
+    public static String getDebugSource(int source) {
+        switch (source) {
+            case GL_DEBUG_SOURCE_API:
+                return "API";
+            case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+                return "WINDOW_SYSTEM";
+            case GL_DEBUG_SOURCE_SHADER_COMPILER:
+                return "SHADER_COMPILER";
+            case GL_DEBUG_SOURCE_THIRD_PARTY:
+                return "THIRD_PARTY";
+            case GL_DEBUG_SOURCE_APPLICATION:
+                return "APPLICATION";
+            case GL_DEBUG_SOURCE_OTHER:
+                return "OTHER";
+            default:
+                return "UNKNOWN";
+        }
+    }
+
+    public static String getDebugType(int type) {
+        switch (type) {
+            case GL_DEBUG_TYPE_ERROR:
+                return "ERROR";
+            case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+                return "DEPRECATED_BEHAVIOR";
+            case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+                return "UNDEFINED_BEHAVIOR";
+            case GL_DEBUG_TYPE_PORTABILITY:
+                return "PORTABILITY";
+            case GL_DEBUG_TYPE_PERFORMANCE:
+                return "PERFORMANCE";
+            case GL_DEBUG_TYPE_OTHER:
+                return "OTHER";
+            case GL_DEBUG_TYPE_MARKER:
+                return "MARKER";
+            default:
+                return "UNKNOWN";
+        }
+    }
+
+    public static String getDebugSeverity(int severity) {
+        switch (severity) {
+            case GL_DEBUG_SEVERITY_HIGH:
+                return "HIGH";
+            case GL_DEBUG_SEVERITY_MEDIUM:
+                return "MEDIUM";
+            case GL_DEBUG_SEVERITY_LOW:
+                return "LOW";
+            case GL_DEBUG_SEVERITY_NOTIFICATION:
+                return "NOTIFICATION";
+            default:
+                return "UNKNOWN";
+        }
+    }
+
+    public static String getDebugMessage(long message, int length) {
+        return MemoryUtil.memUTF8Safe(message, length);
     }
 
     public static String getErrorMessage() {
