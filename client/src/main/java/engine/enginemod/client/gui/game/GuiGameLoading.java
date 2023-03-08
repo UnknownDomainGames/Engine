@@ -5,9 +5,9 @@ import engine.gui.layout.FlowPane;
 import engine.gui.misc.Background;
 import engine.gui.misc.Pos;
 import engine.util.Color;
-import engine.world.chunk.ChunkPos;
 import engine.world.chunk.ChunkStatus;
 import engine.world.chunk.ChunkStatusListener;
+import org.joml.Vector3ic;
 
 public class GuiGameLoading extends FlowPane implements ChunkStatusListener {
 
@@ -30,12 +30,12 @@ public class GuiGameLoading extends FlowPane implements ChunkStatusListener {
     }
 
     @Override
-    public void updateGraphCenter(ChunkPos pos) {
+    public void updateGraphCenter(Vector3ic pos) {
 
     }
 
     @Override
-    public void onChunkStatusUpdate(ChunkPos pos, ChunkStatus status) {
+    public void onChunkStatusUpdate(Vector3ic pos, ChunkStatus status) {
 
     }
 

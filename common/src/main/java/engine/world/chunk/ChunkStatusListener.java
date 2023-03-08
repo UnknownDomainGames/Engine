@@ -1,10 +1,12 @@
 package engine.world.chunk;
 
+import org.joml.Vector3ic;
+
 public interface ChunkStatusListener {
 
-    void updateGraphCenter(ChunkPos pos);
+    void updateGraphCenter(Vector3ic pos);
 
-    void onChunkStatusUpdate(ChunkPos pos, ChunkStatus status);
+    void onChunkStatusUpdate(Vector3ic pos, ChunkStatus status);
 
     void stop();
 }

@@ -14,13 +14,13 @@ import engine.gui.layout.AnchorPane;
 import engine.gui.layout.VBox;
 import engine.gui.misc.Insets;
 import engine.math.BlockPos;
+import engine.world.chunk.Chunk;
 import engine.world.hit.BlockHitResult;
 import engine.world.hit.EntityHitResult;
 import engine.world.hit.HitResult;
 import org.joml.Vector3d;
 import org.joml.Vector3fc;
 
-import static engine.world.chunk.ChunkConstants.*;
 import static java.lang.String.format;
 
 public final class HUDDebug extends HUDControl {
@@ -76,7 +76,7 @@ public final class HUDDebug extends HUDControl {
         playerPosition.setText(format("Player Position: %.2f, %.2f, %.2f", player.getPosition().x, player.getPosition().y, player.getPosition().z));
         playerMotion.setText(format("Player Motion: %.2f, %.2f, %.2f", player.getMotion().x, player.getMotion().y, player.getMotion().z));
         playerDirection.setText(format("Player Direction (yaw, pitch, roll): %.2f, %.2f, %.2f (%s)", player.getRotation().x, player.getRotation().y, player.getRotation().z, getDirection(player.getRotation().x)));
-        playerChunkPos.setText(format("Player At Chunk: %d, %d, %d", (int) Math.floor(player.getPosition().x) >> CHUNK_X_BITS, (int) Math.floor(player.getPosition().y) >> CHUNK_Y_BITS, (int) Math.floor(player.getPosition().z) >> CHUNK_Z_BITS));
+        playerChunkPos.setText(format("Player At Chunk: %d, %d, %d", (int) Math.floor(player.getPosition().x) >> Chunk.CHUNK_X_BITS, (int) Math.floor(player.getPosition().y) >> Chunk.CHUNK_Y_BITS, (int) Math.floor(player.getPosition().z) >> Chunk.CHUNK_Z_BITS));
         Runtime runtime = Runtime.getRuntime();
         long totalMemory = runtime.totalMemory();
         long maxMemory = runtime.maxMemory();

@@ -7,7 +7,6 @@ import org.joml.Vector3ic;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import static engine.world.chunk.ChunkConstants.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -20,7 +19,7 @@ public class BlockPosIterator implements Iterator<BlockPos> {
     public static BlockPosIterator createFromChunk(Chunk chunk) {
         Vector3ic min = chunk.getMin();
         return new BlockPosIterator(min.x(), min.y(), min.z(),
-                min.x() + CHUNK_MAX_X, min.y() + CHUNK_MAX_Y, min.z() + CHUNK_MAX_Z);
+                min.x() + Chunk.CHUNK_MAX_X, min.y() + Chunk.CHUNK_MAX_Y, min.z() + Chunk.CHUNK_MAX_Z);
     }
 
     private final int fromX, fromY, fromZ, toX, toY, toZ;

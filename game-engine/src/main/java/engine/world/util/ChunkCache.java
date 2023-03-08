@@ -8,8 +8,6 @@ import engine.world.chunk.Chunk;
 
 import javax.annotation.Nonnull;
 
-import static engine.world.chunk.ChunkConstants.*;
-
 public class ChunkCache implements BlockGetter {
 
     public static ChunkCache create(World world, int fromX, int fromY, int fromZ, int toX, int toY, int toZ) {
@@ -48,9 +46,9 @@ public class ChunkCache implements BlockGetter {
 
     @Nonnull
     public BlockState getBlock(int x, int y, int z) {
-        int chunkX = (x >> CHUNK_X_BITS) - this.chunkX;
-        int chunkY = (y >> CHUNK_Y_BITS) - this.chunkY;
-        int chunkZ = (z >> CHUNK_Z_BITS) - this.chunkZ;
+        int chunkX = (x >> Chunk.CHUNK_X_BITS) - this.chunkX;
+        int chunkY = (y >> Chunk.CHUNK_Y_BITS) - this.chunkY;
+        int chunkZ = (z >> Chunk.CHUNK_Z_BITS) - this.chunkZ;
         if (chunkX >= 0 && chunkX < chunks.length &&
                 chunkY >= 0 && chunkY < chunks[chunkX].length &&
                 chunkZ >= 0 && chunkZ < chunks[chunkX][chunkY].length) {

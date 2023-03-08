@@ -5,7 +5,10 @@ import engine.event.world.chunk.ChunkLoadEvent;
 import engine.event.world.chunk.ChunkUnloadEvent;
 import engine.player.Player;
 import engine.server.network.packet.s2c.PacketChunkData;
-import engine.world.chunk.*;
+import engine.world.chunk.AirChunk;
+import engine.world.chunk.Chunk;
+import engine.world.chunk.ChunkManager;
+import engine.world.chunk.CubicChunk;
 import engine.world.gen.ChunkGenerator;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
@@ -17,8 +20,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
-
-import static engine.world.chunk.ChunkConstants.getChunkIndex;
 
 public class WorldClientChunkManager implements ChunkManager {
 
@@ -34,18 +35,18 @@ public class WorldClientChunkManager implements ChunkManager {
 
     @Override
     public Optional<Chunk> getChunk(int x, int y, int z) {
-        long chunkIndex = getChunkIndex(x, y, z);
+        long chunkIndex = Chunk.index(x, y, z);
         return Optional.ofNullable(chunkMap.get(chunkIndex));
     }
 
     @Override
     public Chunk getOrLoadChunk(int x, int y, int z) {
-        long index = getChunkIndex(x, y, z);
+        long index = Chunk.index(x, y, z);
         return chunkMap.getOrDefault(index, blank);
     }
 
     public Chunk loadChunk(int x, int y, int z) {
-        long chunkIndex = ChunkConstants.getChunkIndex(x, y, z);
+        long chunkIndex = Chunk.index(x, y, z);
         if (!chunkMap.containsKey(chunkIndex)) {
             return blank;
         }
@@ -53,7 +54,7 @@ public class WorldClientChunkManager implements ChunkManager {
     }
 
     public Chunk loadChunkFromPacket(PacketChunkData packet) {
-        long index = ChunkConstants.getChunkIndex(packet.getChunkX(), packet.getChunkY(), packet.getChunkZ());
+        long index = Chunk.index(packet.getChunkX(), packet.getChunkY(), packet.getChunkZ());
         var chunk = new CubicChunk(world, packet.getChunkX(), packet.getChunkY(), packet.getChunkZ());
         try (var stream = new ByteArrayInputStream(packet.getRawData())) {
             chunk.readBlockContent(new DataInputStream(stream));
@@ -72,7 +73,7 @@ public class WorldClientChunkManager implements ChunkManager {
 
     @Override
     public void unloadChunk(Chunk chunk) {
-        long index = ChunkConstants.getChunkIndex(chunk);
+        long index = Chunk.index(chunk);
         if (!chunkMap.containsKey(index))
             return;
         unloadChunk(index, chunk);

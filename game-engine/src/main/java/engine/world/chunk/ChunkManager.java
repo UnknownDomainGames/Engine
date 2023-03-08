@@ -3,6 +3,7 @@ package engine.world.chunk;
 import engine.player.Player;
 import engine.world.gen.ChunkGenerator;
 import org.joml.Vector3dc;
+import org.joml.Vector3ic;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -10,13 +11,13 @@ import java.util.Optional;
 public interface ChunkManager {
     Collection<Chunk> getLoadedChunks();
 
-    default Optional<Chunk> getChunk(ChunkPos pos) {
+    default Optional<Chunk> getChunk(Vector3ic pos) {
         return getChunk(pos.x(), pos.y(), pos.z());
     }
 
     Optional<Chunk> getChunk(int x, int y, int z);
 
-    default Chunk getOrLoadChunk(ChunkPos pos) {
+    default Chunk getOrLoadChunk(Vector3ic pos) {
         return getOrLoadChunk(pos.x(), pos.y(), pos.z());
     }
 

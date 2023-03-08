@@ -17,11 +17,10 @@ import io.netty.util.collection.LongObjectMap;
 import org.apache.commons.lang3.Validate;
 import org.joml.Vector3dc;
 import org.joml.Vector3i;
+import org.joml.Vector3ic;
 
 import java.util.Collection;
 import java.util.Optional;
-
-import static engine.world.chunk.ChunkConstants.getChunkIndex;
 
 public class WorldCommonChunkManager implements ChunkManager, Tickable {
 
@@ -45,7 +44,7 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
 //    @Override
 //    public boolean shouldChunkUnload(Chunk chunk, Player player) {
 //        int viewDistanceSquared = 36864; //TODO game config
-//        return !world.getCriticalChunks().contains(ChunkConstants.getChunkIndex(chunk.getX(), chunk.getY(), chunk.getZ()))
+//        return !world.getCriticalChunks().contains(Chunk.getChunkIndex(chunk.getX(), chunk.getY(), chunk.getZ()))
 //                && player.getControlledEntity().getPosition().distanceSquared(new Vector3d(chunk.getMin().add(chunk.getMax(), new Vector3f()).div(2))) > viewDistanceSquared;
 //    }
 
@@ -60,17 +59,17 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
 
     @Override
     public Optional<Chunk> getChunk(int x, int y, int z) {
-        long chunkIndex = getChunkIndex(x, y, z);
+        long chunkIndex = Chunk.index(x, y, z);
         return Optional.ofNullable(chunkMap.get(chunkIndex));
     }
 
     @Override
     public Chunk getOrLoadChunk(int x, int y, int z) {
-        long index = getChunkIndex(x, y, z);
+        long index = Chunk.index(x, y, z);
         return chunkMap.computeIfAbsent(index, key -> loadChunk(index, x, y, z));
     }
 
-    private boolean shouldChunkOnline(int x, int y, int z, ChunkPos pos) {
+    private boolean shouldChunkOnline(int x, int y, int z, Vector3ic pos) {
         return pos.distanceSquared(x, 0, z) <= viewDistanceSquared;
     }
 
@@ -78,7 +77,7 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
         if (y < 0) { //Not buildable below 0
             return new AirChunk(world, x, y, z);
         }
-//        if (!shouldChunkOnline(x, y, z, ChunkPos.of(0, 0, 0))) {
+//        if (!shouldChunkOnline(x, y, z, new Vector3i(0, 0, 0))) {
 //            Chunk chunk = new AirChunk(world, x, y, z);
 //            chunkMap.put(index, chunk);
 //            return chunk;
@@ -96,7 +95,7 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
 
     @Override
     public void unloadChunk(Chunk chunk) {
-        long index = getChunkIndex(chunk.getX(), chunk.getY(), chunk.getZ());
+        long index = Chunk.index(chunk.getX(), chunk.getY(), chunk.getZ());
         if (!chunkMap.containsKey(index))
             return;
         unloadChunk(index, chunk);
@@ -134,7 +133,7 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     @Override
     public void handlePlayerJoin(Player player) {
         if (!player.isControllingEntity()) return; // We cannot do anything if the player does not control an entity
-        var position = ChunkPos.fromWorldPos(player.getControlledEntity().getPosition());
+        var position = Chunk.fromWorldPos(player.getControlledEntity().getPosition());
         var x = position.x();
         var y = position.y();
         var z = position.z();
@@ -172,8 +171,8 @@ public class WorldCommonChunkManager implements ChunkManager, Tickable {
     @Override
     public void handlePlayerMove(Player player, Vector3dc prevPos) {
         if (!player.isControllingEntity()) return; // We cannot do anything if the player does not control an entity
-        var chunkPos = ChunkPos.fromWorldPos(player.getControlledEntity().getPosition());
-        var prevChunkPos = ChunkPos.fromWorldPos(prevPos);
+        var chunkPos = Chunk.fromWorldPos(player.getControlledEntity().getPosition());
+        var prevChunkPos = Chunk.fromWorldPos(prevPos);
         if (chunkPos.equals(prevChunkPos)) return;
         var newArea = Sets.newHashSet(SphereIterator.getCoordinatesWithinSphere(viewDistance, chunkPos));
         var oldArea = Sets.newHashSet(SphereIterator.getCoordinatesWithinSphere(viewDistance, prevChunkPos));

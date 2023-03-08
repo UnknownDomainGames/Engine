@@ -41,8 +41,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static engine.world.chunk.ChunkConstants.*;
-
 public class WorldCommon implements World {
 
     private final Game game;
@@ -245,7 +243,7 @@ public class WorldCommon implements World {
     @Nonnull
     @Override
     public BlockState getBlock(int x, int y, int z) {
-        Chunk chunk = getChunk(x >> CHUNK_X_BITS, y >> CHUNK_Y_BITS, z >> CHUNK_Z_BITS, true);
+        Chunk chunk = getChunk(x >> Chunk.CHUNK_X_BITS, y >> Chunk.CHUNK_Y_BITS, z >> Chunk.CHUNK_Z_BITS, true);
         return chunk == null ? Registries.getBlockRegistry().air().getDefaultState() : chunk.getBlock(x, y, z);
     }
 
@@ -270,7 +268,7 @@ public class WorldCommon implements World {
             post = new BlockReplaceEvent.Post(this, pos, oldBlock, block, cause);
         }
         if (!getGame().getEventBus().post(pre)) {
-            this.getChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS, true)
+            this.getChunk(pos.x() >> Chunk.CHUNK_X_BITS, pos.y() >> Chunk.CHUNK_Y_BITS, pos.z() >> Chunk.CHUNK_Z_BITS, true)
                     .setBlock(pos, block, cause);
 
             oldBlock.getPrototype().getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));

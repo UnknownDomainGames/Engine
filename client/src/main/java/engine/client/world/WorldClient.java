@@ -21,7 +21,6 @@ import engine.registry.Registries;
 import engine.util.Direction;
 import engine.world.*;
 import engine.world.chunk.Chunk;
-import engine.world.chunk.ChunkConstants;
 import engine.world.collision.DefaultCollisionManager;
 import engine.world.hit.BlockHitResult;
 import engine.world.hit.EntityHitResult;
@@ -40,8 +39,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-
-import static engine.world.chunk.ChunkConstants.*;
 
 public class WorldClient implements World, Runnable {
 
@@ -236,7 +233,7 @@ public class WorldClient implements World, Runnable {
     @Nonnull
     @Override
     public BlockState getBlock(int x, int y, int z) {
-        Chunk chunk = this.getChunk(x >> ChunkConstants.CHUNK_X_BITS, y >> ChunkConstants.CHUNK_Y_BITS, z >> ChunkConstants.CHUNK_Z_BITS, false);
+        Chunk chunk = this.getChunk(x >> Chunk.CHUNK_X_BITS, y >> Chunk.CHUNK_Y_BITS, z >> Chunk.CHUNK_Z_BITS, false);
         return chunk != null ? chunk.getBlock(x, y, z) : Registries.getBlockRegistry().air().getDefaultState();
     }
 
@@ -262,7 +259,7 @@ public class WorldClient implements World, Runnable {
             post = new BlockReplaceEvent.Post(this, pos, oldBlock, block, cause);
         }
         if (!getGame().getEventBus().post(pre)) {
-            getChunk(pos.x() >> CHUNK_X_BITS, pos.y() >> CHUNK_Y_BITS, pos.z() >> CHUNK_Z_BITS, true)
+            getChunk(pos.x() >> Chunk.CHUNK_X_BITS, pos.y() >> Chunk.CHUNK_Y_BITS, pos.z() >> Chunk.CHUNK_Z_BITS, true)
                     .setBlock(pos, block, cause);
 
             oldBlock.getPrototype().getComponent(DestroyBehavior.class).ifPresent(destroyBehavior -> destroyBehavior.onDestroyed(this, pos, oldBlock, cause));

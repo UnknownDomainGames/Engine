@@ -10,6 +10,7 @@ import engine.world.BaseWorldProvider;
 import engine.world.World;
 import engine.world.WorldCommonDebug;
 import engine.world.WorldCreationSetting;
+import engine.world.chunk.Chunk;
 import engine.world.chunk.ChunkStatus;
 import engine.world.gen.ChunkGeneratorNodeInfo;
 import engine.world.gen.NodeBasedChunkGenerator;
@@ -19,8 +20,6 @@ import javax.annotation.Nonnull;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static engine.world.chunk.ChunkConstants.*;
 
 public class TestWorldProvider extends BaseWorldProvider {
 
@@ -39,12 +38,12 @@ public class TestWorldProvider extends BaseWorldProvider {
             int cz = chunk.getZ();
             if (cy < 0) //not making negative-Y chunks
                 return;
-            var xOffset = cx * CHUNK_X_SIZE;
-            var yOffset = cy * CHUNK_Y_SIZE;
-            var zOffset = cz * CHUNK_Z_SIZE;
-            for (int j = 0; j < CHUNK_Y_SIZE; j++) {
-                for (int i = 0; i < CHUNK_X_SIZE; i++) {
-                    for (int k = 0; k < CHUNK_Z_SIZE; k++) {
+            var xOffset = cx * Chunk.CHUNK_X_SIZE;
+            var yOffset = cy * Chunk.CHUNK_Y_SIZE;
+            var zOffset = cz * Chunk.CHUNK_Z_SIZE;
+            for (int j = 0; j < Chunk.CHUNK_Y_SIZE; j++) {
+                for (int i = 0; i < Chunk.CHUNK_X_SIZE; i++) {
+                    for (int k = 0; k < Chunk.CHUNK_Z_SIZE; k++) {
                         if (j + yOffset <= Math.floor(sampler.sample((xOffset + i) / xResolution, (zOffset + k) / zResolution) * noiseScaleY + seaLevel)) {
                             var state = Registries.getBlockRegistry().getValue(Name.of("foundation", "grass")).getDefaultState();
                             chunk.setBlock(BlockPos.of(i, j, k), state, new BlockChangeCause.WorldGenCause());

@@ -7,8 +7,6 @@ import engine.world.chunk.Chunk;
 
 import java.util.concurrent.CompletableFuture;
 
-import static engine.world.chunk.ChunkConstants.*;
-
 public class FlatChunkGenerator implements ChunkGenerator {
 
     private final BlockState[] layers;
@@ -24,13 +22,13 @@ public class FlatChunkGenerator implements ChunkGenerator {
         int cz = chunk.getZ();
         if (cy < 0) //not making negative-Y chunks
             return;
-        for (int j = 0; j < CHUNK_Y_SIZE; j++) {
-            if (j + cy * CHUNK_Y_SIZE >= layers.length) {
+        for (int j = 0; j < Chunk.CHUNK_Y_SIZE; j++) {
+            if (j + cy * Chunk.CHUNK_Y_SIZE >= layers.length) {
                 break;
             }
-            for (int i = 0; i < CHUNK_X_SIZE; i++) {
-                for (int k = 0; k < CHUNK_Z_SIZE; k++) {
-                    chunk.setBlock(BlockPos.of(i, j, k), layers[j + cy * CHUNK_Y_SIZE], new BlockChangeCause.WorldGenCause());
+            for (int i = 0; i < Chunk.CHUNK_X_SIZE; i++) {
+                for (int k = 0; k < Chunk.CHUNK_Z_SIZE; k++) {
+                    chunk.setBlock(BlockPos.of(i, j, k), layers[j + cy * Chunk.CHUNK_Y_SIZE], new BlockChangeCause.WorldGenCause());
                 }
             }
         }

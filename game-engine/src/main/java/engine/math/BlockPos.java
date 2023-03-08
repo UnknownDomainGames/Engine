@@ -2,7 +2,7 @@ package engine.math;
 
 import com.google.common.base.MoreObjects;
 import engine.util.Direction;
-import engine.world.chunk.ChunkConstants;
+import engine.world.chunk.Chunk;
 import org.joml.Vector3dc;
 import org.joml.Vector3fc;
 import org.joml.Vector3ic;
@@ -28,7 +28,7 @@ public abstract class BlockPos extends Vector3iBase {
     }
 
     public static boolean inSameChunk(BlockPos a, BlockPos b) {
-        return ((a.x() >> ChunkConstants.CHUNK_X_BITS) == (b.x() >> ChunkConstants.CHUNK_X_BITS)) && ((a.y() >> ChunkConstants.CHUNK_Y_BITS) == (b.y() >> ChunkConstants.CHUNK_Y_BITS)) && ((a.z() >> ChunkConstants.CHUNK_Z_BITS) == (b.z() >> ChunkConstants.CHUNK_Z_BITS));
+        return ((a.x() >> Chunk.CHUNK_X_BITS) == (b.x() >> Chunk.CHUNK_X_BITS)) && ((a.y() >> Chunk.CHUNK_Y_BITS) == (b.y() >> Chunk.CHUNK_Y_BITS)) && ((a.z() >> Chunk.CHUNK_Z_BITS) == (b.z() >> Chunk.CHUNK_Z_BITS));
     }
 
     public abstract BlockPos toImmutable();

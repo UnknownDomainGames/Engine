@@ -4,14 +4,12 @@ import engine.block.state.BlockState;
 import engine.registry.Registries;
 import engine.util.NibbleArray;
 
-import static engine.world.chunk.ChunkConstants.*;
-
 public class BlockStorage {
 
     private final NibbleArray data;
 
     public BlockStorage() {
-        this.data = new NibbleArray(8, BLOCK_COUNT);
+        this.data = new NibbleArray(8, Chunk.BLOCK_COUNT);
     }
 
     public BlockState getBlock(int x, int y, int z) {
@@ -23,7 +21,7 @@ public class BlockStorage {
     }
 
     private int getPosIndex(int x, int y, int z) {
-        return ((y & CHUNK_MAX_Y) << CHUNK_X_BITS + CHUNK_Z_BITS) | ((z & CHUNK_MAX_Z) << CHUNK_X_BITS) | (x & CHUNK_MAX_X);
+        return ((y & Chunk.CHUNK_MAX_Y) << Chunk.CHUNK_X_BITS + Chunk.CHUNK_Z_BITS) | ((z & Chunk.CHUNK_MAX_Z) << Chunk.CHUNK_X_BITS) | (x & Chunk.CHUNK_MAX_X);
     }
 
     public NibbleArray getData() {

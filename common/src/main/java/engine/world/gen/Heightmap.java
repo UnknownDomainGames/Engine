@@ -2,8 +2,8 @@ package engine.world.gen;
 
 import engine.block.state.BlockState;
 import engine.registry.Registries;
+import engine.world.chunk.Chunk;
 import engine.world.chunk.ChunkColumn;
-import engine.world.chunk.ChunkConstants;
 
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -27,7 +27,7 @@ public class Heightmap {
     }
 
     public static Heightmap create(ChunkColumn column, Predicate<BlockState> predicate) {
-        var heightmap = new Heightmap(ChunkConstants.CHUNK_X_SIZE, ChunkConstants.CHUNK_Z_SIZE, predicate);
+        var heightmap = new Heightmap(Chunk.CHUNK_X_SIZE, Chunk.CHUNK_Z_SIZE, predicate);
         heightmap.chunkColumn = column;
         return heightmap;
     }
@@ -50,7 +50,7 @@ public class Heightmap {
         } else if (highestPosition == y) {
             if (chunkColumn != null) {
                 for (int i = y - 1; i >= 0; i--) {
-                    var block = chunkColumn.getChunk(i / ChunkConstants.CHUNK_Y_SIZE).getBlock(x, i, z);
+                    var block = chunkColumn.getChunk(i / Chunk.CHUNK_Y_SIZE).getBlock(x, i, z);
                     if (validBlock.test(block)) {
                         setHighestPosition(x, z, i);
                         return true;
