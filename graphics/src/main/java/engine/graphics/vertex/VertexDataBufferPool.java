@@ -1,31 +1,27 @@
 package engine.graphics.vertex;
 
-import com.google.common.collect.Sets;
-
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Set;
 
 @ThreadSafe
-public abstract class VertexDataBufferPool {
-
-    private final Set<VertexDataBuffer> buffers = Sets.newConcurrentHashSet();
-    private final Queue<VertexDataBuffer> availableBuffers = new PriorityQueue<>(11, Comparator.comparingInt(o -> -o.getByteBuffer().capacity()));
-
+public final class VertexDataBufferPool {
+    private final Queue<VertexDataBuffer> queue;
     private final int bufferInitialCapacity;
     private final int poolCapacity;
+    private int poolObjectCount;
 
     public static VertexDataBufferPool create(int bufferInitialCapacity, int poolCapacity) {
-        return new DirectBufferPool(bufferInitialCapacity, poolCapacity);
+        return new VertexDataBufferPool(bufferInitialCapacity, poolCapacity);
     }
 
     public static VertexDataBufferPool create() {
-        return create(4096, Integer.MAX_VALUE);
+        return new VertexDataBufferPool(4096, Integer.MAX_VALUE);
     }
 
-    protected VertexDataBufferPool(int bufferInitialCapacity, int poolCapacity) {
+    private VertexDataBufferPool(int bufferInitialCapacity, int poolCapacity) {
+        this.queue = new PriorityQueue<>(11, Comparator.comparingInt(o -> -o.getByteBuffer().capacity()));
         this.bufferInitialCapacity = bufferInitialCapacity;
         this.poolCapacity = poolCapacity;
     }
@@ -35,53 +31,32 @@ public abstract class VertexDataBufferPool {
     }
 
     public VertexDataBuffer get(int capacity) throws InterruptedException {
-        while (true) {
-            synchronized (availableBuffers) {
-                VertexDataBuffer buffer = availableBuffers.poll();
+        synchronized (queue) {
+            while (true) {
+                VertexDataBuffer buffer = queue.poll();
                 if (buffer != null) {
                     return buffer;
                 }
 
-                if (buffers.size() < poolCapacity) {
+                if (poolObjectCount < poolCapacity) {
                     buffer = createBuffer(capacity);
-                    buffers.add(buffer);
+                    poolObjectCount++;
                     return buffer;
                 }
 
-                availableBuffers.wait();
+                queue.wait();
             }
         }
     }
 
-    protected abstract VertexDataBuffer createBuffer(int initialCapacity);
-
     public void free(VertexDataBuffer buffer) {
-        if (!buffers.contains(buffer)) {
-            throw new IllegalArgumentException("The buffer doesn't belong to this pool.");
-        }
-        synchronized (availableBuffers) {
-            availableBuffers.offer(buffer);
-            availableBuffers.notify();
+        synchronized (queue) {
+            queue.offer(buffer);
+            queue.notify();
         }
     }
 
-    public void clear() {
-        synchronized (availableBuffers) {
-            availableBuffers.clear();
-            buffers.clear();
-        }
+    private VertexDataBuffer createBuffer(int initialCapacity) {
+        return VertexDataBuffer.create(initialCapacity);
     }
-
-    private static class DirectBufferPool extends VertexDataBufferPool {
-
-        private DirectBufferPool(int bufferInitialCapacity, int poolCapacity) {
-            super(bufferInitialCapacity, poolCapacity);
-        }
-
-        @Override
-        protected VertexDataBuffer createBuffer(int initialCapacity) {
-            return VertexDataBuffer.create(initialCapacity);
-        }
-    }
-
 }
