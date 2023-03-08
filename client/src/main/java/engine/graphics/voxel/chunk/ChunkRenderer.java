@@ -18,7 +18,7 @@ import io.netty.util.collection.LongObjectMap;
 import org.joml.Vector3ic;
 
 import java.util.ArrayDeque;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Queue;
 
 public final class ChunkRenderer {
@@ -124,39 +124,43 @@ public final class ChunkRenderer {
         disposed = true;
         ChunkBaker.stop();
         Platform.getEngine().getEventBus().unregister(this);
-        List.copyOf(chunks.values()).forEach(this::removeChunk);
+        new ArrayList<>(chunks.values()).forEach(this::removeChunk);
     }
 
     @Listener(order = Order.LAST)
     public void onBlockChange(BlockChangeEvent.Post event) {
         BlockPos pos = event.getPos();
-        int chunkX = pos.x() >> Chunk.CHUNK_X_BITS,
-                chunkY = pos.y() >> Chunk.CHUNK_Y_BITS,
-                chunkZ = pos.z() >> Chunk.CHUNK_Z_BITS;
-        markChunkDirty(Chunk.indexFromWorldPos(event.getPos()));
+        int x = pos.x();
+        int y = pos.y();
+        int z = pos.z();
+        int chunkX = x >> Chunk.CHUNK_X_BITS;
+        int chunkY = y >> Chunk.CHUNK_Y_BITS;
+        int chunkZ = z >> Chunk.CHUNK_Z_BITS;
 
-        // Mark neighbor chunk dirty.
-        int chunkW = pos.x() + 1 >> Chunk.CHUNK_X_BITS;
+        markChunkDirty(Chunk.index(chunkX, chunkY, chunkZ));
+
+        // Mark neighbor chunks dirty.
+        int chunkW = (x + 1) >> Chunk.CHUNK_X_BITS;
         if (chunkW != chunkX) {
             markChunkDirty(Chunk.index(chunkW, chunkY, chunkZ));
         }
-        chunkW = pos.x() - 1 >> Chunk.CHUNK_X_BITS;
+        chunkW = (x - 1) >> Chunk.CHUNK_X_BITS;
         if (chunkW != chunkX) {
             markChunkDirty(Chunk.index(chunkW, chunkY, chunkZ));
         }
-        chunkW = pos.y() + 1 >> Chunk.CHUNK_Y_BITS;
+        chunkW = (y + 1) >> Chunk.CHUNK_Y_BITS;
         if (chunkW != chunkY) {
             markChunkDirty(Chunk.index(chunkX, chunkW, chunkZ));
         }
-        chunkW = pos.y() - 1 >> Chunk.CHUNK_Y_BITS;
+        chunkW = (y - 1) >> Chunk.CHUNK_Y_BITS;
         if (chunkW != chunkY) {
             markChunkDirty(Chunk.index(chunkX, chunkW, chunkZ));
         }
-        chunkW = pos.z() + 1 >> Chunk.CHUNK_Z_BITS;
+        chunkW = (z + 1) >> Chunk.CHUNK_Z_BITS;
         if (chunkW != chunkZ) {
             markChunkDirty(Chunk.index(chunkX, chunkY, chunkW));
         }
-        chunkW = pos.z() - 1 >> Chunk.CHUNK_Z_BITS;
+        chunkW = (z - 1) >> Chunk.CHUNK_Z_BITS;
         if (chunkW != chunkZ) {
             markChunkDirty(Chunk.index(chunkX, chunkY, chunkW));
         }
