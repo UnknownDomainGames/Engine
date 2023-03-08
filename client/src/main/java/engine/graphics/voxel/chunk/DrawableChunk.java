@@ -24,7 +24,7 @@ public final class DrawableChunk extends Geometry {
     private Map<RenderType, DrawableChunkPiece> pieces;
 
     private volatile boolean dirty;
-    private boolean drawing;
+    private boolean baking;
 
     public DrawableChunk(ChunkRenderer renderer) {
         this.renderer = renderer;
@@ -39,8 +39,9 @@ public final class DrawableChunk extends Geometry {
 
     public void setChunk(Chunk chunk) {
         this.chunk = chunk;
-        Vector3ic min = chunk.getMin(), max = chunk.getMax();
-        boundingBox.setMin(min.x(), min.y(), min.z()).setMax(max.x(), max.y(), max.z());
+        Vector3ic min = chunk.getMin();
+        Vector3ic max = chunk.getMax();
+        this.boundingBox.setMin(min.x(), min.y(), min.z()).setMax(max.x(), max.y(), max.z());
     }
 
     public void reset() {
@@ -57,12 +58,12 @@ public final class DrawableChunk extends Geometry {
 
     public void markDirty() {
         dirty = true;
-        if (!drawing) executeBake();
+        if (!baking) executeBake();
     }
 
     public void executeBake() {
         if (chunk == null) return; // stop baking if there is nothing to bake
-        drawing = true;
+        baking = true;
         ChunkBaker.execute(new ChunkBaker.Task(this, distanceSqChunkToCamera()));
     }
 
@@ -72,24 +73,24 @@ public final class DrawableChunk extends Geometry {
         return position.distanceSquared(center.x(), center.y(), center.z());
     }
 
-    public void finishBake(HashMap<RenderType, VertexDataBuffer> buffers) {
+    public void finishBake(Map<RenderType, VertexDataBuffer> buffers) {
         if (pieces == null) {
             pieces = new HashMap<>();
         }
-        buffers.forEach((type, vertexDataBuf) -> {
+        buffers.forEach((type, vertexDataBuffer) -> {
             pieces.computeIfAbsent(type, key -> {
                 var piece = new DrawableChunkPiece(key);
                 piece.setTexture(this.getTexture());
                 piece.setBounds(boundingBox);
                 DrawableChunk.this.addChild(piece);
                 return piece;
-            }).uploadData(vertexDataBuf);
+            }).uploadData(vertexDataBuffer);
         });
-        drawing = false;
+        baking = false;
     }
 
     public void terminateBake() {
-        drawing = false;
+        baking = false;
     }
 
     public boolean isDisposed() {
