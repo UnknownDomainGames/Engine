@@ -15,6 +15,7 @@ import engine.world.World;
 import engine.world.chunk.Chunk;
 import io.netty.util.collection.LongObjectHashMap;
 import io.netty.util.collection.LongObjectMap;
+import org.joml.Vector3ic;
 
 import java.util.ArrayDeque;
 import java.util.List;
@@ -61,9 +62,20 @@ public final class ChunkRenderer {
     }
 
     private void addChunk(Chunk chunk) {
-        if (disposed) return;
-        long index = Chunk.index(chunk);
-        if (chunks.containsKey(index)) return;
+        if (disposed) {
+            return;
+        }
+
+        Vector3ic chunkPos = chunk.getPos();
+        int chunkX = chunkPos.x();
+        int chunkY = chunkPos.y();
+        int chunkZ = chunkPos.z();
+        long index = Chunk.index(chunkX, chunkY, chunkZ);
+
+        if (chunks.containsKey(index)) {
+            return;
+        }
+
         DrawableChunk drawableChunk = recycleChunks.poll();
         if (drawableChunk == null) {
             drawableChunk = new DrawableChunk(this);
@@ -72,6 +84,14 @@ public final class ChunkRenderer {
         chunks.put(index, drawableChunk);
         scene.addNode(drawableChunk);
         drawableChunk.markDirty();
+
+        // Mark neighbor chunks dirty.
+        markChunkDirty(Chunk.index(chunkX + 1, chunkY, chunkZ));
+        markChunkDirty(Chunk.index(chunkX - 1, chunkY, chunkZ));
+        markChunkDirty(Chunk.index(chunkX, chunkY + 1, chunkZ));
+        markChunkDirty(Chunk.index(chunkX, chunkY - 1, chunkZ));
+        markChunkDirty(Chunk.index(chunkX, chunkY, chunkZ + 1));
+        markChunkDirty(Chunk.index(chunkX, chunkY, chunkZ - 1));
     }
 
     @Listener(order = Order.LAST)
@@ -143,6 +163,9 @@ public final class ChunkRenderer {
     }
 
     private void markChunkDirty(long index) {
-        chunks.get(index).markDirty();
+        DrawableChunk chunk = chunks.get(index);
+        if (chunk != null) {
+            chunk.markDirty();
+        }
     }
 }
