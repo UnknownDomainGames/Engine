@@ -88,7 +88,11 @@ public final class EngineHUDManager implements HUDManager {
     @Listener
     public void onRenderPre(RenderEvent.Pre event) {
         if (isVisible()) {
-            getControls().stream().filter(Node::isVisible).forEach(HUDControl::update);
+            for (HUDControl hudControl : getControls()) {
+                if (hudControl.isVisible()) {
+                    hudControl.update();
+                }
+            }
         }
     }
 }
