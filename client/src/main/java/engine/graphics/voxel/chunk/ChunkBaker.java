@@ -16,6 +16,7 @@ import engine.world.util.BlockPosIterator;
 import engine.world.util.ChunkCache;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -23,9 +24,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class ChunkBaker {
-
     private static ThreadPoolExecutor executor;
-    private static VertexDataBufferPool dataBufPool;
+    private static VertexDataBufferPool bufferPool;
 
     public static void start() {
         int threadCount = Runtime.getRuntime().availableProcessors();
@@ -39,7 +39,7 @@ public final class ChunkBaker {
                 return new Thread(r, "Chunk Baker " + poolNumber.getAndIncrement());
             }
         });
-        dataBufPool = VertexDataBufferPool.create(0x200000, threadCount * 8);
+        bufferPool = VertexDataBufferPool.create(0x200000, threadCount * 8);
     }
 
     public static void stop() {
@@ -73,11 +73,7 @@ public final class ChunkBaker {
                     return;
                 }
                 BlockRenderManager blockRenderManager = BlockRenderManager.instance();
-                var bufs = new HashMap<RenderType, VertexDataBuffer>();
-                bufs.put(RenderType.OPAQUE, dataBufPool.get());
-                bufs.put(RenderType.TRANSLUCENT, dataBufPool.get());
-//                bufs.put(RenderType.TRANSPARENT, dataBufPool.get()); //TODO: when transparent and translucent handles differently, use it
-                bufs.forEach((type, buf) -> buf.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL));
+                Map<RenderType, VertexDataBuffer> buffers = new HashMap<>();
                 BlockGetter blockCache = createChunkCache(chunk.getWorld(), chunk);
                 BlockPosIterator blockPosIterator = BlockPosIterator.createFromChunk(chunk);
                 while (blockPosIterator.hasNext()) {
@@ -86,15 +82,20 @@ public final class ChunkBaker {
                     var renderType = ((BlockRenderManagerImpl) blockRenderManager).getBlockRenderTypeMap().get(block.getPrototype());
                     if (renderType == RenderType.TRANSPARENT)
                         renderType = RenderType.TRANSLUCENT; //TODO: when transparent and translucent handles differently, remove it
-                    if (!bufs.containsKey(renderType)) continue;
-                    blockRenderManager.generateMesh(block, blockCache, pos, bufs.get(renderType));
+                    var buffer = buffers.get(renderType);
+                    if (buffer == null) {
+                        buffer = bufferPool.get();
+                        buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD_NORMAL);
+                        buffers.put(renderType, buffer);
+                    }
+                    blockRenderManager.generateMesh(block, blockCache, pos, buffer);
                 }
-                bufs.values().forEach(VertexDataBuffer::finish);
+                buffers.values().forEach(VertexDataBuffer::finish);
 
                 GraphicsEngine.getGraphicsBackend().runLater(() -> {
-                    drawableChunk.finishBake(bufs);
-                    bufs.values().forEach(buf -> dataBufPool.free(buf));
                     if (drawableChunk.isDisposed()) return;
+                    drawableChunk.finishBake(buffers);
+                    buffers.values().forEach(buf -> bufferPool.free(buf));
                     if (drawableChunk.isDirty()) drawableChunk.executeBake();
                 });
             } catch (InterruptedException ignored) {
