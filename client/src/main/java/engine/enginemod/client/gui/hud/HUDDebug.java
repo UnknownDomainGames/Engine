@@ -30,8 +30,6 @@ import static java.lang.String.format;
 public final class HUDDebug extends HUDControl {
 
     private final MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-    private final MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
-    private final MemoryUsage nonHeapMemoryUsage = memoryMXBean.getNonHeapMemoryUsage();
 
     private final Text fps;
     private final Text position;
@@ -87,6 +85,9 @@ public final class HUDDebug extends HUDControl {
         motion.setText(format("Motion: %.2f, %.2f, %.2f", player.getMotion().x, player.getMotion().y, player.getMotion().z));
         direction.setText(format("Direction (yaw, pitch, roll): %.2f, %.2f, %.2f (%s)", player.getRotation().x, player.getRotation().y, player.getRotation().z, getDirection(player.getRotation().x)));
         chunk.setText(format("Chunk: %d, %d, %d", (int) Math.floor(player.getPosition().x) >> Chunk.CHUNK_X_BITS, (int) Math.floor(player.getPosition().y) >> Chunk.CHUNK_Y_BITS, (int) Math.floor(player.getPosition().z) >> Chunk.CHUNK_Z_BITS));
+
+        MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+        MemoryUsage nonHeapMemoryUsage = memoryMXBean.getNonHeapMemoryUsage();
         heapMemory.setText(format("Memory: %d MB / %d MB (Max: %d MB)", heapMemoryUsage.getUsed() >> 20, heapMemoryUsage.getCommitted() >> 20, heapMemoryUsage.getMax() >> 20));
         nonHeapMemory.setText(format("Non-Heap Memory: %d MB / %d MB", nonHeapMemoryUsage.getUsed() >> 20, nonHeapMemoryUsage.getCommitted() >> 20));
 
