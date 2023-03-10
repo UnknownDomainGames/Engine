@@ -21,16 +21,25 @@ import engine.world.hit.HitResult;
 import org.joml.Vector3d;
 import org.joml.Vector3fc;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
+
 import static java.lang.String.format;
 
 public final class HUDDebug extends HUDControl {
 
+    private final MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+    private final MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+    private final MemoryUsage nonHeapMemoryUsage = memoryMXBean.getNonHeapMemoryUsage();
+
     private final Text fps;
-    private final Text playerPosition;
-    private final Text playerMotion;
-    private final Text playerDirection;
-    private final Text playerChunkPos;
-    private final Text memory;
+    private final Text position;
+    private final Text motion;
+    private final Text direction;
+    private final Text chunk;
+    private final Text heapMemory;
+    private final Text nonHeapMemory;
     private final Text gpuMemory;
 
     private final VBox hitResult;
@@ -49,14 +58,15 @@ public final class HUDDebug extends HUDControl {
         setContent(vBox);
 
         fps = new Text();
-        playerPosition = new Text();
-        playerMotion = new Text();
-        playerDirection = new Text();
-        playerChunkPos = new Text();
-        memory = new Text();
+        position = new Text();
+        motion = new Text();
+        direction = new Text();
+        chunk = new Text();
+        heapMemory = new Text();
+        nonHeapMemory = new Text();
         gpuMemory = new Text();
         hitResult = new VBox();
-        vBox.getChildren().addAll(fps, playerPosition, playerMotion, playerDirection, playerChunkPos, memory, gpuMemory, hitResult);
+        vBox.getChildren().addAll(fps, position, motion, direction, chunk, heapMemory, nonHeapMemory, gpuMemory, hitResult);
 
         hitBlockOrEntity = new Text();
         hitBlockOrEntityPos = new Text();
@@ -73,15 +83,13 @@ public final class HUDDebug extends HUDControl {
         GraphicsManager manager = engine.getGraphicsManager();
 
         fps.setText("FPS: " + manager.getFPS());
-        playerPosition.setText(format("Player Position: %.2f, %.2f, %.2f", player.getPosition().x, player.getPosition().y, player.getPosition().z));
-        playerMotion.setText(format("Player Motion: %.2f, %.2f, %.2f", player.getMotion().x, player.getMotion().y, player.getMotion().z));
-        playerDirection.setText(format("Player Direction (yaw, pitch, roll): %.2f, %.2f, %.2f (%s)", player.getRotation().x, player.getRotation().y, player.getRotation().z, getDirection(player.getRotation().x)));
-        playerChunkPos.setText(format("Player At Chunk: %d, %d, %d", (int) Math.floor(player.getPosition().x) >> Chunk.CHUNK_X_BITS, (int) Math.floor(player.getPosition().y) >> Chunk.CHUNK_Y_BITS, (int) Math.floor(player.getPosition().z) >> Chunk.CHUNK_Z_BITS));
-        Runtime runtime = Runtime.getRuntime();
-        long totalMemory = runtime.totalMemory();
-        long maxMemory = runtime.maxMemory();
-        long freeMemory = runtime.freeMemory();
-        memory.setText(format("Memory: %d MB / %d MB (Max: %d MB)", (totalMemory - freeMemory) / 1024 / 1024, totalMemory / 1024 / 1024, maxMemory / 1024 / 1024));
+        position.setText(format("Position: %.2f, %.2f, %.2f", player.getPosition().x, player.getPosition().y, player.getPosition().z));
+        motion.setText(format("Motion: %.2f, %.2f, %.2f", player.getMotion().x, player.getMotion().y, player.getMotion().z));
+        direction.setText(format("Direction (yaw, pitch, roll): %.2f, %.2f, %.2f (%s)", player.getRotation().x, player.getRotation().y, player.getRotation().z, getDirection(player.getRotation().x)));
+        chunk.setText(format("Chunk: %d, %d, %d", (int) Math.floor(player.getPosition().x) >> Chunk.CHUNK_X_BITS, (int) Math.floor(player.getPosition().y) >> Chunk.CHUNK_Y_BITS, (int) Math.floor(player.getPosition().z) >> Chunk.CHUNK_Z_BITS));
+        heapMemory.setText(format("Memory: %d MB / %d MB (Max: %d MB)", heapMemoryUsage.getUsed() >> 20, heapMemoryUsage.getCommitted() >> 20, heapMemoryUsage.getMax() >> 20));
+        nonHeapMemory.setText(format("Non-Heap Memory: %d MB / %d MB", nonHeapMemoryUsage.getUsed() >> 20, nonHeapMemoryUsage.getCommitted() >> 20));
+
         GPUInfo gpuInfo = GraphicsEngine.getGraphicsBackend().getGPUInfo();
         gpuMemory.setText(format("GPU Memory: %d MB / %d MB", gpuInfo.getUsedMemory() >> 20, gpuInfo.getTotalMemory() >> 20));
 
