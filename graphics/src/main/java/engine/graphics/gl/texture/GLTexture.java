@@ -9,8 +9,6 @@ import org.apache.commons.lang3.Validate;
 import org.lwjgl.opengl.GL11C;
 import org.lwjgl.opengl.GL45C;
 
-import java.nio.FloatBuffer;
-
 public class GLTexture implements Texture {
 
     public static final GLTexture NONE = new GLTexture();
@@ -76,23 +74,5 @@ public class GLTexture implements Texture {
     @Override
     public boolean isDisposed() {
         return id == 0;
-    }
-
-    public void setTextureParameteri(int pname, int param) {
-        if (GLHelper.isSupportARBDirectStateAccess()) {
-            GL45C.glTextureParameteri(id, pname, param);
-        } else {
-            GL11C.glBindTexture(target, id);
-            GL11C.glTexParameteri(target, pname, param);
-        }
-    }
-
-    public void setTextureParameterfv(int pname, FloatBuffer params) {
-        if (GLHelper.isSupportARBDirectStateAccess()) {
-            GL45C.glTextureParameterfv(id, pname, params);
-        } else {
-            GL11C.glBindTexture(target, id);
-            GL11C.glTexParameterfv(target, pname, params);
-        }
     }
 }
