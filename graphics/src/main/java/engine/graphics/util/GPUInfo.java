@@ -8,7 +8,24 @@ public interface GPUInfo {
 
     String getVendorName();
 
-    int getTotalMemory();
+    /**
+     * Total size of GPU memory.
+     *
+     * @return bytes of total memory.
+     */
+    long getTotalMemory();
 
-    int getFreeMemory();
+    /**
+     * Used size of GPU memory.
+     *
+     * @return bytes of used memory.
+     */
+    long getUsedMemory();
+
+    /**
+     * Free size of GPU memory.
+     *
+     * @return bytes of free memory.
+     */
+    long getFreeMemory();
 }

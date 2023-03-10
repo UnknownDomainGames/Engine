@@ -83,7 +83,7 @@ public final class HUDDebug extends HUDControl {
         long freeMemory = runtime.freeMemory();
         memory.setText(format("Memory: %d MB / %d MB (Max: %d MB)", (totalMemory - freeMemory) / 1024 / 1024, totalMemory / 1024 / 1024, maxMemory / 1024 / 1024));
         GPUInfo gpuInfo = GraphicsEngine.getGraphicsBackend().getGPUInfo();
-        gpuMemory.setText(format("GPU Memory: %d MB / %d MB", (gpuInfo.getTotalMemory() - gpuInfo.getFreeMemory()) / 1024, gpuInfo.getTotalMemory() / 1024));
+        gpuMemory.setText(format("GPU Memory: %d MB / %d MB", gpuInfo.getUsedMemory() >> 20, gpuInfo.getTotalMemory() >> 20));
 
         Camera camera = manager.getViewport().getCamera();
         HitResult hitResult = manager.getEngine().getCurrentClientGame().getClientWorld().raycast(camera.getPosition(), camera.getFront(), 10);

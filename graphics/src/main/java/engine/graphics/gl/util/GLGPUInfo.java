@@ -12,7 +12,7 @@ public final class GLGPUInfo implements GPUInfo {
     private final String name;
     private final GPUVendor vendor;
     private final String vendorName;
-    private final int totalMemory;
+    private final long totalMemory;
 
     public GLGPUInfo() {
         this.name = GLHelper.getRenderer();
@@ -21,11 +21,11 @@ public final class GLGPUInfo implements GPUInfo {
         String lowerVendorName = vendorName.toLowerCase();
         if (lowerVendorName.contains("nvidia")) {
             vendor = GPUVendor.NVIDIA;
-            totalMemory = glGetInteger(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX);
+            totalMemory = (long) glGetInteger(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX) << 10;
         } else if (lowerVendorName.contains("amd") || lowerVendorName.contains("ati")) {
             vendor = GPUVendor.AMD;
-            totalMemory = glGetInteger(GL_VBO_FREE_MEMORY_ATI) + glGetInteger(GL_TEXTURE_FREE_MEMORY_ATI) +
-                    glGetInteger(GL_RENDERBUFFER_FREE_MEMORY_ATI);
+            totalMemory = (long) (glGetInteger(GL_VBO_FREE_MEMORY_ATI) + glGetInteger(GL_TEXTURE_FREE_MEMORY_ATI) +
+                    glGetInteger(GL_RENDERBUFFER_FREE_MEMORY_ATI)) << 10;
         } else if (lowerVendorName.contains("intel")) {
             vendor = GPUVendor.INTEL;
             totalMemory = -1;
@@ -51,18 +51,23 @@ public final class GLGPUInfo implements GPUInfo {
     }
 
     @Override
-    public int getTotalMemory() {
+    public long getTotalMemory() {
         return totalMemory;
     }
 
     @Override
-    public int getFreeMemory() {
+    public long getUsedMemory() {
+        return getTotalMemory() - getFreeMemory();
+    }
+
+    @Override
+    public long getFreeMemory() {
         switch (vendor) {
             case NVIDIA:
-                return glGetInteger(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX);
+                return (long) glGetInteger(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX) << 10;
             case AMD:
-                return glGetInteger(GL_VBO_FREE_MEMORY_ATI) + glGetInteger(GL_TEXTURE_FREE_MEMORY_ATI) +
-                        glGetInteger(GL_RENDERBUFFER_FREE_MEMORY_ATI);
+                return (long) (glGetInteger(GL_VBO_FREE_MEMORY_ATI) + glGetInteger(GL_TEXTURE_FREE_MEMORY_ATI) +
+                        glGetInteger(GL_RENDERBUFFER_FREE_MEMORY_ATI)) << 10;
             default:
                 return -1;
         }

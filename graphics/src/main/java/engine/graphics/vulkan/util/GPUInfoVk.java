@@ -66,12 +66,17 @@ public class GPUInfoVk implements GPUInfo {
     }
 
     @Override
-    public int getTotalMemory() {
+    public long getTotalMemory() {
         return totalMemory;
     }
 
     @Override
-    public int getFreeMemory() {
+    public long getUsedMemory() {
+        return -1;
+    }
+
+    @Override
+    public long getFreeMemory() {
         return -1;
     }
 }
