@@ -197,7 +197,7 @@ public final class GLGraphicsBackend implements GraphicsBackend {
         LOGGER.info("\tGL_VERSION: {}", GLHelper.getVersion());
         LOGGER.info("\tGL_EXTENSIONS: {}", GLHelper.getExtensions());
         LOGGER.info("\tGL_SHADING_LANGUAGE_VERSION: {}", GLHelper.getShadingLanguageVersion());
-        LOGGER.info("\tGPU_TOTAL_MEMORY: {} MB", (gpuInfo.getTotalMemory()) >> 10);
+        LOGGER.info("\tGPU_TOTAL_MEMORY: {} MB", (gpuInfo.getTotalMemory()) >> 20);
         LOGGER.info("------------------------------");
     }
 

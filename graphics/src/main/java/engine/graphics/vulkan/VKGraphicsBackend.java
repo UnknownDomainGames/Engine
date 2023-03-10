@@ -230,7 +230,7 @@ public class VKGraphicsBackend implements GraphicsBackend {
         LOGGER.info("\tVK_DEVICE: {}", gpuInfo.getName());
         LOGGER.info("\tVK_VERSION: {}", "1.0.0");
         LOGGER.info("\tVK_AVAILABLE_EXTENSIONS: {}", physicalDevice.getSupportedExtensionProperties(null).stream().reduce((s, s2) -> s + ", " + s2).orElse(""));
-        LOGGER.info("\tGPU_TOTAL_MEMORY: {} MB", gpuInfo.getTotalMemory() / 1024);
+        LOGGER.info("\tGPU_TOTAL_MEMORY: {} MB", gpuInfo.getTotalMemory() >> 20);
         LOGGER.info("------------------------------");
     }
 
