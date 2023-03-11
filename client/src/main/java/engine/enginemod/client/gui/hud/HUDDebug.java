@@ -88,11 +88,11 @@ public final class HUDDebug extends HUDControl {
 
         MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
         MemoryUsage nonHeapMemoryUsage = memoryMXBean.getNonHeapMemoryUsage();
-        heapMemory.setText(format("Memory: %d MB / %d MB (Max: %d MB)", heapMemoryUsage.getUsed() >> 20, heapMemoryUsage.getCommitted() >> 20, heapMemoryUsage.getMax() >> 20));
-        nonHeapMemory.setText(format("Non-Heap Memory: %d MB / %d MB", nonHeapMemoryUsage.getUsed() >> 20, nonHeapMemoryUsage.getCommitted() >> 20));
+        heapMemory.setText(format("Memory: %d MB / %d MB (Max: %d MB)", toMiB(heapMemoryUsage.getUsed()), toMiB(heapMemoryUsage.getCommitted()), toMiB(heapMemoryUsage.getMax())));
+        nonHeapMemory.setText(format("Non-Heap Memory: %d MB / %d MB", toMiB(nonHeapMemoryUsage.getUsed()), toMiB(nonHeapMemoryUsage.getCommitted())));
 
         GPUInfo gpuInfo = GraphicsEngine.getGraphicsBackend().getGPUInfo();
-        gpuMemory.setText(format("GPU Memory: %d MB / %d MB", gpuInfo.getUsedMemory() >> 20, gpuInfo.getTotalMemory() >> 20));
+        gpuMemory.setText(format("GPU Memory: %d MB / %d MB", toMiB(gpuInfo.getUsedMemory()), toMiB(gpuInfo.getTotalMemory())));
 
         Camera camera = manager.getViewport().getCamera();
         HitResult hitResult = manager.getEngine().getCurrentClientGame().getClientWorld().raycast(camera.getPosition(), camera.getFront(), 10);
@@ -117,7 +117,11 @@ public final class HUDDebug extends HUDControl {
         }
     }
 
-    private String getDirection(float x) {
+    private static long toMiB(long bytes) {
+        return bytes >> 20;
+    }
+
+    private static String getDirection(float x) {
         float roundedX = Math.round(x * 100f) / 100f;
         if (roundedX == 0 || roundedX == 360) {
             return "E";
