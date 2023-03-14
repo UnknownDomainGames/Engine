@@ -16,7 +16,7 @@ public final class GLVertexBuffer {
     private GLBufferUsage usage;
 
     private int id;
-    private Cleaner.Disposable disposable;
+    private Cleaner.Cleanable cleanable;
 
     public GLVertexBuffer(GLBufferType type, GLBufferUsage usage) {
         this.type = type;
@@ -27,7 +27,7 @@ public final class GLVertexBuffer {
         } else {
             this.id = GL15C.glGenBuffers();
         }
-        this.disposable = GLCleaner.registerBuffer(this, id);
+        this.cleanable = GLCleaner.registerBuffer(this, id);
     }
 
     public GLVertexBuffer(GLBufferType type, GLBufferUsage usage, ByteBuffer buffer) {
@@ -317,7 +317,7 @@ public final class GLVertexBuffer {
         if (id == 0) {
             return;
         }
-        disposable.dispose();
+        cleanable.clean();
         id = 0;
     }
 

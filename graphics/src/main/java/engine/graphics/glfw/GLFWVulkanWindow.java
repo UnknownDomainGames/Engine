@@ -117,7 +117,7 @@ public class GLFWVulkanWindow extends GLFWWindow {
         initWindowHint();
         pointer = glfwCreateWindow(width, height, title, NULL, NULL);
         checkCreated();
-        disposable = createDisposable(pointer);
+        cleanable = createDisposable(pointer);
         width *= getContentScaleX();
         height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
         initCallbacks();

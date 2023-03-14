@@ -1,72 +1,45 @@
 package engine.graphics.util;
 
-import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 
 public final class Cleaner {
+    private static final ReferenceQueue<Object> QUEUE = new ReferenceQueue<>();
 
-    private static final ReferenceQueue<Object> queue = new ReferenceQueue<>();
-
-    public static Disposable register(Object obj, Runnable runnable) {
-        return new PhantomDisposable(obj, queue, runnable);
+    public static Cleanable register(Object obj, Runnable action) {
+        return new CleanableImpl(obj, QUEUE, action);
     }
 
     public static void clean() {
-        Disposable ref;
-        while ((ref = (Disposable) queue.poll()) != null) {
-            ref.dispose();
+        CleanableImpl cleanable;
+        while ((cleanable = (CleanableImpl) QUEUE.poll()) != null) {
+            cleanable.action.run();
         }
     }
 
     private Cleaner() {
     }
 
-    public interface Disposable {
-        void dispose();
+    public interface Cleanable {
+        void clean();
     }
 
-    private static final class PhantomDisposable extends PhantomReference<Object> implements Disposable {
+    private static final class CleanableImpl extends WeakReference<Object> implements Cleanable {
+        private Runnable action;
 
-        private static final PhantomDisposable list = new PhantomDisposable();
-
-        private final Runnable runnable;
-
-        private PhantomDisposable prev = this, next = this;
-
-        private PhantomDisposable() {
-            super(null, null);
-            runnable = null;
-        }
-
-        public PhantomDisposable(Object referent, ReferenceQueue<? super Object> q, Runnable runnable) {
+        public CleanableImpl(Object referent, ReferenceQueue<? super Object> q, Runnable action) {
             super(referent, q);
-            this.runnable = runnable;
-            insert();
+            this.action = action;
         }
 
         @Override
-        public void dispose() {
-            if (remove()) {
-                clear();
-                runnable.run();
+        public synchronized void clean() {
+            if (action == null) {
+                throw new IllegalStateException("Already cleaned");
             }
-        }
-
-        private void insert() {
-            prev = list;
-            next = list.next;
-            next.prev = this;
-            list.next = this;
-        }
-
-        private boolean remove() {
-            if (next == this) return false;
-
-            next.prev = prev;
-            prev.next = next;
-            prev = this;
-            next = this;
-            return true;
+            clear();
+            action.run();
+            action = null;
         }
     }
 }

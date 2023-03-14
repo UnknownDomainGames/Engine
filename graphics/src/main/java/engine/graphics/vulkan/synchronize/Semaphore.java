@@ -4,27 +4,20 @@ import engine.graphics.util.Cleaner;
 import engine.graphics.vulkan.device.LogicalDevice;
 import engine.graphics.vulkan.util.VulkanCleaner;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkSemaphoreCreateInfo;
 
-import java.nio.LongBuffer;
-
-import static engine.graphics.vulkan.util.VulkanUtils.translateVulkanResult;
-import static org.lwjgl.system.MemoryUtil.NULL;
-import static org.lwjgl.system.MemoryUtil.memFree;
 import static org.lwjgl.vulkan.VK10.*;
 
 public class Semaphore {
     private long handle;
     private LogicalDevice device;
     private boolean released = false;
-    private Cleaner.Disposable disposable;
+    private Cleaner.Cleanable cleanable;
 
     public Semaphore(LogicalDevice device, long handle){
         this.device = device;
         this.handle = handle;
-        disposable = VulkanCleaner.registerSemaphore(this, device, handle);
+        cleanable = VulkanCleaner.registerSemaphore(this, device, handle);
     }
 
     public LogicalDevice getDevice() {

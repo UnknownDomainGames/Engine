@@ -13,11 +13,11 @@ public class ShaderProgram {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShaderProgram.class);
 
     private int id;
-    private Cleaner.Disposable disposable;
+    private Cleaner.Cleanable cleanable;
 
     public ShaderProgram(CompiledShader... shaders) {
         id = GL20C.glCreateProgram();
-        disposable = GLCleaner.registerProgram(this, id);
+        cleanable = GLCleaner.registerProgram(this, id);
 
         for (CompiledShader shader : shaders) {
             GL20C.glAttachShader(this.id, shader.getId());
@@ -47,7 +47,7 @@ public class ShaderProgram {
             return;
         }
 
-        disposable.dispose();
+        cleanable.clean();
         id = 0;
     }
 

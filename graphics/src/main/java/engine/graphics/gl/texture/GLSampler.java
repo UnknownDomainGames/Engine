@@ -15,7 +15,7 @@ public final class GLSampler implements Sampler {
     public static final Sampler NONE = new GLSampler();
 
     private int id;
-    private Cleaner.Disposable disposable;
+    private Cleaner.Cleanable cleanable;
 
     public static Builder builder() {
         return new Builder();
@@ -27,7 +27,7 @@ public final class GLSampler implements Sampler {
         } else {
             id = GL33C.glGenSamplers();
         }
-        disposable = GLCleaner.registerSampler(this, id);
+        cleanable = GLCleaner.registerSampler(this, id);
         GL33C.glSamplerParameteri(id, GL11C.GL_TEXTURE_MAG_FILTER, builder.magFilter);
         GL33C.glSamplerParameteri(id, GL11C.GL_TEXTURE_MIN_FILTER, builder.minFilter);
         GL33C.glSamplerParameteri(id, GL11C.GL_TEXTURE_WRAP_S, builder.wrapS);
@@ -61,7 +61,7 @@ public final class GLSampler implements Sampler {
     public void dispose() {
         if (id == 0) return;
 
-        disposable.dispose();
+        cleanable.clean();
         id = 0;
     }
 

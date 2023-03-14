@@ -27,7 +27,7 @@ public class GLFrameBuffer implements FrameBuffer {
     private final Map<Integer, Attachable> attachments;
 
     private int id;
-    private Cleaner.Disposable disposable;
+    private Cleaner.Cleanable cleanable;
 
     private int width = Integer.MAX_VALUE;
     private int height = Integer.MAX_VALUE;
@@ -42,7 +42,7 @@ public class GLFrameBuffer implements FrameBuffer {
         } else {
             this.id = GL30C.glGenFramebuffers();
         }
-        this.disposable = GLCleaner.registerFrameBuffer(this, id);
+        this.cleanable = GLCleaner.registerFrameBuffer(this, id);
         this.attachments = new HashMap<>();
     }
 
@@ -150,7 +150,7 @@ public class GLFrameBuffer implements FrameBuffer {
     @Override
     public void dispose() {
         if (id == 0) return;
-        disposable.dispose();
+        cleanable.clean();
         id = 0;
 
         attachments.values().forEach(Attachable::dispose);

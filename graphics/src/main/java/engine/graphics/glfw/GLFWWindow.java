@@ -29,7 +29,7 @@ public class GLFWWindow implements Window {
     private static final int[] GLFW_CURSOR_SHAPES = new int[]{0, GLFW_ARROW_CURSOR, GLFW_IBEAM_CURSOR, GLFW_CROSSHAIR_CURSOR, GLFW_HAND_CURSOR, GLFW_HRESIZE_CURSOR, GLFW_VRESIZE_CURSOR};
 
     protected long pointer;
-    protected Cleaner.Disposable disposable;
+    protected Cleaner.Cleanable cleanable;
 
     private final GLFWWindow parent;
 
@@ -114,7 +114,7 @@ public class GLFWWindow implements Window {
         initWindowHint();
         pointer = glfwCreateWindow(width, height, title, NULL, parent == null ? NULL : getRootWindow().getPointer());
         checkCreated();
-        disposable = createDisposable(pointer);
+        cleanable = createDisposable(pointer);
         if (parent == null) glfwMakeContextCurrent(pointer);
         initCallbacks();
         notifyResized();
@@ -128,7 +128,7 @@ public class GLFWWindow implements Window {
         return window;
     }
 
-    protected Cleaner.Disposable createDisposable(long pointer) {
+    protected Cleaner.Cleanable createDisposable(long pointer) {
         return Cleaner.register(this, () -> glfwDestroyWindow(pointer));
     }
 
@@ -368,7 +368,7 @@ public class GLFWWindow implements Window {
         if (pointer == NULL) return;
 
         hide();
-        disposable.dispose();
+        cleanable.clean();
         pointer = NULL;
     }
 

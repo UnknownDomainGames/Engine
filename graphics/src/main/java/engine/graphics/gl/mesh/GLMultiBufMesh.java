@@ -82,7 +82,7 @@ public class GLMultiBufMesh extends GLMesh implements MultiBufMesh {
         if (id == 0) return;
         attributes.forEach(attribute -> ((GLAttribute) attribute).getBuffer().dispose());
         if (indices != null) indices.getBuffer().dispose();
-        disposable.dispose();
+        cleanable.clean();
         id = 0;
     }
 

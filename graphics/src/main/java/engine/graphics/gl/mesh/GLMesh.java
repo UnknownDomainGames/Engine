@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL45C;
 
 public abstract class GLMesh implements Mesh {
     protected int id;
-    protected Cleaner.Disposable disposable;
+    protected Cleaner.Cleanable cleanable;
     protected GLDrawMode drawMode;
     protected int vertexCount;
 
@@ -21,7 +21,7 @@ public abstract class GLMesh implements Mesh {
         } else {
             id = GL30C.glGenVertexArrays();
         }
-        disposable = GLCleaner.registerVertexArray(this, id);
+        cleanable = GLCleaner.registerVertexArray(this, id);
     }
 
     public abstract void draw(int start, int count);

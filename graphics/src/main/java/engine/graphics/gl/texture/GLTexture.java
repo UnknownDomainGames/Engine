@@ -17,13 +17,13 @@ public class GLTexture implements Texture {
     protected final GLColorFormat format;
 
     protected int id;
-    protected Cleaner.Disposable disposable;
+    protected Cleaner.Cleanable cleanable;
 
     public GLTexture(int target, GLColorFormat format) {
         this.target = target;
         this.id = GLHelper.isSupportARBDirectStateAccess() ? GL45C.glCreateTextures(target) : GL11C.glGenTextures();
         this.format = Validate.notNull(format);
-        this.disposable = GLCleaner.registerTexture(this, id);
+        this.cleanable = GLCleaner.registerTexture(this, id);
     }
 
     private GLTexture() {
@@ -67,7 +67,7 @@ public class GLTexture implements Texture {
     public void dispose() {
         if (id == 0) return;
 
-        disposable.dispose();
+        cleanable.clean();
         id = 0;
     }
 

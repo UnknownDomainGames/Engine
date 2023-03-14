@@ -82,7 +82,7 @@ public final class GLSingleBufMesh extends GLMesh implements SingleBufMesh {
     public void dispose() {
         if (id == 0) return;
         vertexBuffer.dispose();
-        disposable.dispose();
+        cleanable.clean();
         id = 0;
     }
 
