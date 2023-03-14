@@ -4,6 +4,9 @@ import java.lang.reflect.Type;
 import java.util.function.Predicate;
 
 final class ListenerWrapper {
+    private static final Predicate<Event> ALWAYS_TRUE = event -> true;
+    private static final Predicate<Event> NOT_CANCELLED = ListenerWrapper::notCancelled;
+
     private final Class<?> eventType;
     private final Type genericType;
     private final Order order;
@@ -23,13 +26,13 @@ final class ListenerWrapper {
             if (isGeneric) {
                 return this::checkGeneric;
             } else {
-                return event -> true;
+                return ALWAYS_TRUE;
             }
         } else {
             if (isGeneric) {
-                return event -> checkCancel(event) && checkGeneric(event);
+                return event -> notCancelled(event) && checkGeneric(event);
             } else {
-                return this::checkCancel;
+                return NOT_CANCELLED;
             }
         }
     }
@@ -48,11 +51,11 @@ final class ListenerWrapper {
         }
     }
 
-    private boolean checkCancel(Event event) {
+    private static boolean notCancelled(Event event) {
         return !event.isCancellable() || !((Cancellable) event).isCancelled();
     }
 
     private boolean checkGeneric(Event event) {
-        return ((GenericEvent) event).getGenericType() == genericType;
+        return ((GenericEvent<?>) event).getGenericType() == genericType;
     }
 }
