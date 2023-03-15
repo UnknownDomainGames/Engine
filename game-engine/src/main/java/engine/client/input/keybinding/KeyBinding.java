@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  *
  * @author Mouse0w0 and iTNTPiston
  */
-public class KeyBinding extends Registrable.Impl<KeyBinding> {
+public final class KeyBinding extends Registrable.Impl<KeyBinding> {
 
     private final Key defaultKey;
     private final Modifiers defaultModifier;
@@ -46,18 +46,19 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
      */
     private int timeElapsed;
 
-    protected KeyBinding(Key defaultKey, Modifiers defaultModifier, ActionMode defaultActionMode, boolean allowChangeActionMode, boolean allowInScreen, Consumer<EngineClient> startHandler, BiConsumer<EngineClient, Integer> keepHandler, BiConsumer<EngineClient, Integer> endHandler) {
-        this.defaultKey = defaultKey;
-        this.defaultModifier = defaultModifier;
-        this.defaultActionMode = defaultActionMode;
-        this.key = defaultKey;
-        this.modifier = defaultModifier;
-        this.actionMode = defaultActionMode;
-        this.allowChangeActionMode = allowChangeActionMode;
-        this.allowInScreen = allowInScreen;
-        this.startHandler = startHandler;
-        this.keepHandler = keepHandler;
-        this.endHandler = endHandler;
+    private KeyBinding(Builder builder) {
+        name(builder.name);
+        this.defaultKey = builder.defaultKey;
+        this.defaultModifier = builder.defaultModifier;
+        this.defaultActionMode = builder.defaultActionMode;
+        this.key = builder.defaultKey;
+        this.modifier = builder.defaultModifier;
+        this.actionMode = builder.defaultActionMode;
+        this.allowChangeActionMode = builder.allowChangeActionMode;
+        this.allowInScreen = builder.allowInScreen;
+        this.startHandler = builder.startHandler;
+        this.keepHandler = builder.keepHandler;
+        this.endHandler = builder.endHandler;
     }
 
     public Key getDefaultKey() {
@@ -211,9 +212,7 @@ public class KeyBinding extends Registrable.Impl<KeyBinding> {
         }
 
         public KeyBinding build() {
-            KeyBinding keyBinding = new KeyBinding(defaultKey, defaultModifier, defaultActionMode, allowChangeActionMode, allowInScreen, startHandler, keepHandler, endHandler);
-            keyBinding.name(name);
-            return keyBinding;
+            return new KeyBinding(this);
         }
     }
 }
