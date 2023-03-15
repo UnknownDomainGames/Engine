@@ -9,7 +9,7 @@ import engine.input.KeyCode;
 import engine.input.Modifiers;
 import engine.input.MouseButton;
 import engine.util.Color;
-import org.apache.commons.lang3.Validate;
+import engine.util.Validate;
 
 import java.nio.file.Path;
 import java.util.*;

@@ -1,6 +1,6 @@
 package engine.registry;
 
-import org.apache.commons.lang3.Validate;
+import engine.util.Validate;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;

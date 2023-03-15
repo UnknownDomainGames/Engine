@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 
 import static engine.graphics.gl.mesh.GLVertexArrayHelper.disableVertexFormat;
 import static engine.graphics.gl.mesh.GLVertexArrayHelper.enableVertexFormat;
-import static org.apache.commons.lang3.Validate.notNull;
+import static engine.util.Validate.notNull;
 
 public final class GLSingleBufMesh extends GLMesh implements SingleBufMesh {
 

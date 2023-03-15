@@ -1,8 +1,8 @@
 package engine.entity;
 
 import engine.registry.Registrable;
+import engine.util.Validate;
 import engine.world.World;
-import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 import java.io.DataInputStream;

@@ -1,7 +1,6 @@
 package engine.util;
 
 import engine.math.Math2;
-import org.apache.commons.lang3.Validate;
 
 public class NibbleArray {
 

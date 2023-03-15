@@ -2,7 +2,7 @@ package engine.client.asset.reloading;
 
 import java.util.Set;
 
-import static org.apache.commons.lang3.Validate.notNull;
+import static engine.util.Validate.notNull;
 
 public final class AssetReloadHandler implements Comparable<AssetReloadHandler> {
 

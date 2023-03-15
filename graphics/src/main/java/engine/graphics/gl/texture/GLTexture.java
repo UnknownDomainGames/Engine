@@ -5,7 +5,7 @@ import engine.graphics.gl.util.GLHelper;
 import engine.graphics.texture.ColorFormat;
 import engine.graphics.texture.Texture;
 import engine.graphics.util.Cleaner;
-import org.apache.commons.lang3.Validate;
+import engine.util.Validate;
 import org.lwjgl.opengl.GL11C;
 import org.lwjgl.opengl.GL45C;
 

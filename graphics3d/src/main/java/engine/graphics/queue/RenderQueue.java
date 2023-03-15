@@ -1,7 +1,7 @@
 package engine.graphics.queue;
 
 import engine.graphics.Geometry;
-import org.apache.commons.lang3.Validate;
+import engine.util.Validate;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;

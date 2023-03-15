@@ -6,8 +6,8 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static org.apache.commons.lang3.Validate.noNullElements;
-import static org.apache.commons.lang3.Validate.notNull;
+import static engine.util.Validate.noNullElements;
+import static engine.util.Validate.notNull;
 
 public class GeometryList implements Iterable<Geometry> {
 

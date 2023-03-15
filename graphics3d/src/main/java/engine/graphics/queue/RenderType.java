@@ -1,6 +1,6 @@
 package engine.graphics.queue;
 
-import static org.apache.commons.lang3.Validate.notNull;
+import static engine.util.Validate.notNull;
 
 public final class RenderType {
 

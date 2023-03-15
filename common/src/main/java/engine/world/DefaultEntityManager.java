@@ -9,8 +9,8 @@ import engine.event.entity.EntitySpawnEvent;
 import engine.event.entity.EntityTickEvent;
 import engine.logic.Tickable;
 import engine.registry.Registries;
+import engine.util.Validate;
 import engine.world.hit.EntityHitResult;
-import org.apache.commons.lang3.Validate;
 import org.joml.*;
 import org.joml.primitives.AABBd;
 

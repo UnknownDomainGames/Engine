@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static engine.graphics.gl.texture.GLFrameBuffer.getBackBuffer;
-import static org.apache.commons.lang3.Validate.notNull;
+import static engine.util.Validate.notNull;
 
 public final class GLRenderGraph implements RenderGraph {
     private final RenderGraphInfo info;

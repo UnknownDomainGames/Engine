@@ -1,8 +1,8 @@
 package engine.gui.internal.impl;
 
 import engine.gui.internal.InputHelper;
+import engine.util.Validate;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.commons.lang3.Validate;
 import org.lwjgl.system.JNI;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.system.windows.User32;
@@ -26,7 +26,7 @@ public final class InputHelperImpl extends InputHelper {
 
     @Override
     public void _setDoubleClickTime(long time) {
-        Validate.inclusiveBetween(0, 5000, time);
+        Validate.inclusiveBetween(0L, 5000L, time);
         doubleClickTime = time == 0 ? 500 : time;
     }
 }

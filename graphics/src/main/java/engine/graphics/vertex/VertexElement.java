@@ -6,7 +6,7 @@ import engine.math.Math2;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-import static org.apache.commons.lang3.Validate.notNull;
+import static engine.util.Validate.notNull;
 
 public final class VertexElement {
 

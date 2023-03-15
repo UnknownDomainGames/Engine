@@ -4,8 +4,8 @@ import engine.Platform;
 import engine.entity.Entity;
 import engine.event.player.PlayerControlEntityEvent;
 import engine.server.network.NetworkHandler;
+import engine.util.Validate;
 import engine.world.World;
-import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nonnull;
 

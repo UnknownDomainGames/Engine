@@ -4,12 +4,12 @@ import engine.item.ItemStack;
 import engine.math.BlockPos;
 import engine.registry.Registries;
 import engine.util.Direction;
+import engine.util.Validate;
 import engine.world.hit.BlockHitResult;
 import engine.world.hit.HitResult;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ByteProcessor;
-import org.apache.commons.lang3.Validate;
 import org.joml.Vector3f;
 
 import javax.annotation.Nonnull;

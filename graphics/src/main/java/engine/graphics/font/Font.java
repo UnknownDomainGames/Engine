@@ -2,7 +2,7 @@ package engine.graphics.font;
 
 import java.util.Locale;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
+import static engine.util.Validate.notEmpty;
 
 public class Font {
     public static final String REGULAR = "Regular";

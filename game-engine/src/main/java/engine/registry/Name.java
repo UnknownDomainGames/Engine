@@ -2,7 +2,7 @@ package engine.registry;
 
 import javax.annotation.Nonnull;
 
-import static org.apache.commons.lang3.Validate.notEmpty;
+import static engine.util.Validate.notEmpty;
 
 public class Name {
 
