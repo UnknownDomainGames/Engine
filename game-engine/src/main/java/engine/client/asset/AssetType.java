@@ -12,12 +12,12 @@ public final class AssetType<T> {
     private final String extensionName;
     private final AssetProvider<T> provider;
 
-    private AssetType(Class<T> type, String name, String parentLocation, String extensionName, AssetProvider<T> provider) {
-        this.type = type;
-        this.name = Strings.isNullOrEmpty(name) ? type.getSimpleName() : name;
-        this.parentLocation = parentLocation;
-        this.extensionName = extensionName;
-        this.provider = provider;
+    private AssetType(Builder<T> builder) {
+        this.type = builder.type;
+        this.name = Strings.isNullOrEmpty(builder.name) ? type.getSimpleName() : builder.name;
+        this.parentLocation = builder.parentLocation;
+        this.extensionName = builder.extensionName;
+        this.provider = builder.provider;
     }
 
     @Nonnull
@@ -103,7 +103,7 @@ public final class AssetType<T> {
         }
 
         public AssetType<T> build() {
-            return new AssetType<>(type, name, parentLocation, extensionName, provider);
+            return new AssetType<>(this);
         }
     }
 }

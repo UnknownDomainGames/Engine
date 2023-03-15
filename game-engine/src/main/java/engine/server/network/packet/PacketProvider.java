@@ -8,7 +8,7 @@ public class PacketProvider extends Registrable.Impl<PacketProvider> {
     private final Class<? extends Packet> packetType;
     private final PacketFactory factory;
 
-    public PacketProvider(Class<? extends Packet> type, PacketFactory factory){
+    public PacketProvider(Class<? extends Packet> type, PacketFactory factory) {
         this.packetType = type;
         this.factory = factory;
     }
@@ -17,11 +17,11 @@ public class PacketProvider extends Registrable.Impl<PacketProvider> {
         return packetType;
     }
 
-    public Packet create(){
+    public Packet create() {
         return factory.create();
     }
 
-    public static final class Builder{
+    public static final class Builder {
         private Class<? extends Packet> packetType;
         private PacketFactory factory;
         private String registeredName;
@@ -41,12 +41,13 @@ public class PacketProvider extends Registrable.Impl<PacketProvider> {
             return this;
         }
 
-        public PacketProvider build(){
-            if(factory == null){
+        public PacketProvider build() {
+            if (factory == null) {
                 factory = () -> {
                     try {
                         return packetType.getDeclaredConstructor().newInstance();
-                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                             NoSuchMethodException e) {
                         return null;
                     }
                 };

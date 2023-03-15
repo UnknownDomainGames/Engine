@@ -15,11 +15,11 @@ public final class AssetReloadHandler implements Comparable<AssetReloadHandler> 
         return new Builder();
     }
 
-    private AssetReloadHandler(String name, Runnable runnable, Set<String> beforeNodes, Set<String> afterNodes) {
-        this.name = notNull(name);
-        this.runnable = notNull(runnable);
-        this.beforeNodes = beforeNodes;
-        this.afterNodes = afterNodes;
+    private AssetReloadHandler(Builder builder) {
+        this.name = notNull(builder.name);
+        this.runnable = notNull(builder.runnable);
+        this.beforeNodes = builder.beforeNodes;
+        this.afterNodes = builder.afterNodes;
     }
 
     public void doReload() {
@@ -79,7 +79,7 @@ public final class AssetReloadHandler implements Comparable<AssetReloadHandler> 
         }
 
         public AssetReloadHandler build() {
-            return new AssetReloadHandler(name, runnable, beforeNodes, afterNodes);
+            return new AssetReloadHandler(this);
         }
     }
 }

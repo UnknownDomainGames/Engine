@@ -1,14 +1,14 @@
 package engine.world.chunk;
 
-public class ChunkStatus {
+public final class ChunkStatus {
     /**
      * state this chunk is just created
      */
-    public static final ChunkStatus EMPTY = new Builder().name("empty").build();
+    public static final ChunkStatus EMPTY = new ChunkStatus("empty");
     /**
      * state this chunk is ready for gameplay
      */
-    public static final ChunkStatus GAMEPLAY = new Builder().name("gameplay").build();
+    public static final ChunkStatus GAMEPLAY = new ChunkStatus("gameplay");
 
     private final String name;
 
@@ -33,19 +33,5 @@ public class ChunkStatus {
     @Override
     public int hashCode() {
         return name.hashCode();
-    }
-
-    public static class Builder {
-
-        private String name;
-
-        public Builder name(String string) {
-            this.name = string;
-            return this;
-        }
-
-        public ChunkStatus build() {
-            return new ChunkStatus(name);
-        }
     }
 }

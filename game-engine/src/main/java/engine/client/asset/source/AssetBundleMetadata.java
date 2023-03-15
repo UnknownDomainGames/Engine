@@ -16,14 +16,14 @@ public final class AssetBundleMetadata {
         return new Builder();
     }
 
-    private AssetBundleMetadata(String name, String description, String license, String logo, String url, List<String> authors, List<String> credits) {
-        this.name = name;
-        this.description = description;
-        this.license = license;
-        this.logo = logo;
-        this.url = url;
-        this.authors = authors;
-        this.credits = credits;
+    private AssetBundleMetadata(Builder builder) {
+        this.name = builder.name;
+        this.description = builder.description;
+        this.license = builder.license;
+        this.logo = builder.logo;
+        this.url = builder.url;
+        this.authors = builder.authors;
+        this.credits = builder.credits;
     }
 
     public String getName() {
@@ -102,7 +102,7 @@ public final class AssetBundleMetadata {
         }
 
         public AssetBundleMetadata build() {
-            return new AssetBundleMetadata(name, description, license, logo, url, authors, credits);
+            return new AssetBundleMetadata(this);
         }
     }
 }

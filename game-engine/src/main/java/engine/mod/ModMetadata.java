@@ -33,21 +33,21 @@ public class ModMetadata {
     private final List<Dependency> dependencies;
     private final Map<String, JsonElement> elements;
 
-    protected ModMetadata(String id, Version version, String mainClass, String name, InstallationType installationType, String description, String license, String url, String logo, List<String> authors, List<String> credits, List<String> permissions, List<Dependency> dependencies, Map<String, JsonElement> elements) {
-        this.id = id;
-        this.version = version;
-        this.mainClass = mainClass;
-        this.name = name;
-        this.installationType = installationType;
-        this.description = description;
-        this.license = license;
-        this.url = url;
-        this.logo = logo;
-        this.authors = authors;
-        this.credits = credits;
-        this.permissions = permissions;
-        this.dependencies = dependencies;
-        this.elements = elements;
+    protected ModMetadata(Builder builder) {
+        this.id = builder.id;
+        this.version = builder.version;
+        this.mainClass = builder.mainClass;
+        this.name = builder.name;
+        this.installationType = builder.installationType;
+        this.description = builder.description;
+        this.license = builder.license;
+        this.url = builder.url;
+        this.logo = builder.logo;
+        this.authors = builder.authors;
+        this.credits = builder.credits;
+        this.permissions = builder.permissions;
+        this.dependencies = builder.dependencies;
+        this.elements = builder.elements;
     }
 
     @Nonnull
@@ -257,7 +257,7 @@ public class ModMetadata {
         }
 
         public ModMetadata build() {
-            return new ModMetadata(id, version, mainClass, name, installationType, description, license, url, logo, authors, credits, permissions, dependencies, elements);
+            return new ModMetadata(this);
         }
     }
 }
