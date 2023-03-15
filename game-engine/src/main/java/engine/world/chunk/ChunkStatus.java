@@ -4,11 +4,15 @@ public final class ChunkStatus {
     /**
      * state this chunk is just created
      */
-    public static final ChunkStatus EMPTY = new ChunkStatus("empty");
+    public static final ChunkStatus EMPTY = of("empty");
     /**
      * state this chunk is ready for gameplay
      */
-    public static final ChunkStatus GAMEPLAY = new ChunkStatus("gameplay");
+    public static final ChunkStatus GAMEPLAY = of("gameplay");
+
+    public static ChunkStatus of(String name) {
+        return new ChunkStatus(name);
+    }
 
     private final String name;
 

@@ -32,7 +32,7 @@ public class TestWorldProvider extends BaseWorldProvider {
         var noiseScaleY = 5;
         var xResolution = 64.0;
         var zResolution = 64.0;
-        info.addNodes(new ChunkGeneratorNodeInfo(new ChunkStatus.Builder().name("layers").build(), (chunk, ctx) -> {
+        info.addNodes(new ChunkGeneratorNodeInfo(ChunkStatus.of("layers"), (chunk, ctx) -> {
             int cx = chunk.getX();
             int cy = chunk.getY();
             int cz = chunk.getZ();
