@@ -9,46 +9,19 @@ import engine.client.event.i18n.I18nPostLoadLocaleEvent;
 import engine.client.event.i18n.I18nPreLoadLocaleEvent;
 import engine.mod.ModContainer;
 import engine.util.JsonUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 
 public class LocaleManager {
-
     public static final String DEFAULT_LOCALE = "en_us";
     public static final LocaleManager INSTANCE = new LocaleManager();
-
-    private static final Function<String, String> loadConvert;
-
-    static {
-        try {
-            var methodLoadConvert = Properties.class.getDeclaredMethod("loadConvert", char[].class, int.class, int.class, StringBuilder.class);
-            methodLoadConvert.setAccessible(true);
-            var properties = new Properties();
-            var buffer = new StringBuilder();
-            loadConvert = (str) -> {
-                var chars = str.toCharArray();
-                try {
-                    return methodLoadConvert.invoke(properties, chars, 0, chars.length, buffer).toString();
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new RuntimeException(e);
-                }
-            };
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private LocaleDefinition defaultLocale;
     private LocaleDefinition currentLocale = null;
@@ -131,37 +104,11 @@ public class LocaleManager {
         });
     }
 
-    private void loadFrom(BufferedReader reader) {
-        AtomicInteger lineNumberCounter = new AtomicInteger();
-        AtomicReference<Pair<String, StringBuilder>> pair = new AtomicReference<>();
-        reader.lines().forEach(line -> {
-            var lineNumber = lineNumberCounter.incrementAndGet();
-            try {
-                line = line.stripLeading();
-                if (line.isEmpty() || line.startsWith("#"))
-                    return;
-                if (pair.get() != null) {
-                    pair.get().getValue().append(line.substring(0, line.length() - 1)).append('\n');
-                    if (!line.endsWith("\\") || line.endsWith("\\\\")) {
-                        localeMap.put(pair.get().getKey(), loadConvert.apply(pair.get().getValue().toString().stripTrailing()));
-                        pair.set(null);
-                    }
-                } else {
-                    var separator = line.indexOf("=");
-                    if (separator == -1)
-                        throw new IllegalArgumentException("Line without separator(\"=\"): " + line);
-                    var key = line.substring(0, separator);
-                    var value = line.substring(separator + 1);
-                    if (value.endsWith("\\") && !value.endsWith("\\\\")) {
-                        pair.set(Pair.of(key, new StringBuilder(value.substring(0, value.length() - 1) + "\n")));
-                    } else {
-                        localeMap.put(key, loadConvert.apply(value));
-                    }
-                }
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid line " + lineNumber, e);
-            }
-        });
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void loadFrom(Reader reader) throws IOException {
+        Properties properties = new Properties();
+        properties.load(reader);
+        localeMap.putAll((Map) properties);
     }
 
     public void setLocale(LocaleDefinition locale) {

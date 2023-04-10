@@ -29,7 +29,7 @@ subprojects {
     group 'com.panguengine'
     version engineVersion
 
-    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
 
     repositories {
         mavenLocal()
