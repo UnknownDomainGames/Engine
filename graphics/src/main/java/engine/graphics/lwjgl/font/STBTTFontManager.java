@@ -9,9 +9,9 @@ import engine.graphics.util.BufferUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.lwjgl.stb.STBTTFontinfo;
+import org.lwjgl.system.JNI;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.system.dyncall.DynCall;
 import org.lwjgl.system.windows.User32;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +36,6 @@ import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 public final class STBTTFontManager extends FontManager {
-
     public static final Logger LOGGER = LoggerFactory.getLogger("Font");
 
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("engine.font.debug", "false"));
@@ -115,22 +114,14 @@ public final class STBTTFontManager extends FontManager {
             return new Font("Arial", Font.REGULAR, 16);
         }
 
-        long callVM = MemoryUtil.NULL;
         try (MemoryStack stack = stackPush()) {
             int sizeLOGFONT = Integer.BYTES * 5 + Byte.BYTES * 8 + Character.BYTES * 32;
-            ByteBuffer structLOGFONT = stack.malloc(sizeLOGFONT);
-            callVM = DynCall.dcNewCallVM(Integer.BYTES * 3 + Long.BYTES);
-            DynCall.dcArgInt(callVM, 0x001F); // SPI_GETICONTITLELOGFONT
-            DynCall.dcArgInt(callVM, sizeLOGFONT);
-            DynCall.dcArgPointer(callVM, MemoryUtil.memAddress(structLOGFONT));
-            DynCall.dcArgInt(callVM, 0);
-            DynCall.dcCallBool(callVM, systemParametersInfoW);
-            String defaultFontFamily = MemoryUtil.memUTF16Safe(structLOGFONT.position(Integer.BYTES * 5 + Byte.BYTES * 8)).trim();
-            return new Font(defaultFontFamily, Font.REGULAR, 16);
-        } finally {
-            if (callVM != MemoryUtil.NULL) {
-                DynCall.dcFree(callVM);
+            long pointerLOGFONT = stack.nmalloc(sizeLOGFONT);
+            if (JNI.callPI(0x001F, sizeLOGFONT, pointerLOGFONT, 0, systemParametersInfoW) == 0) {
+                return new Font("Arial", Font.REGULAR, 16);
             }
+            String fontFamily = MemoryUtil.memUTF16Safe(pointerLOGFONT + Integer.BYTES * 5 + Byte.BYTES * 8);
+            return new Font(fontFamily, Font.REGULAR, 16);
         }
     }
 

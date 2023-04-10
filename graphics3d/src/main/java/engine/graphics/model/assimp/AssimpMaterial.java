@@ -89,7 +89,7 @@ public class AssimpMaterial {
                     var texture = AITexture.createSafe(textures.get(Integer.parseInt(Pattern.compile("\\*(\\d+)").matcher(s).group(1))));
                     var width = texture.mWidth();
                     var height = texture.mHeight();
-                    var buf = texture.pcData(width * height);
+                    var buf = texture.pcData();
                     var buf1 = BufferUtils.createByteBuffer(width * height * 4);
                     for (AITexel aiTexel : buf) {
                         buf1.put(aiTexel.r()).put(aiTexel.g()).put(aiTexel.b()).put(aiTexel.a());
