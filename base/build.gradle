@@ -3,12 +3,12 @@ plugins {
 }
 
 dependencies {
-    api 'com.google.guava:guava:31.0.1-jre'
+    api 'com.google.guava:guava:31.1-jre'
     api 'org.apache.commons:commons-lang3:3.12.0'
-    api 'it.unimi.dsi:fastutil:8.5.6'
-    api 'com.google.code.gson:gson:2.8.9'
+    api 'it.unimi.dsi:fastutil:8.5.12'
+    api 'com.google.code.gson:gson:2.10.1'
     api 'commons-io:commons-io:2.11.0'
-    api 'org.ow2.asm:asm-commons:9.2'
+    api 'org.ow2.asm:asm-commons:9.4'
     api 'net.jodah:typetools:0.6.3'
-    api 'org.slf4j:slf4j-api:1.7.32'
+    api 'org.slf4j:slf4j-api:1.7.36'
 }

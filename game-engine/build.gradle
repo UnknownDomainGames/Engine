@@ -6,7 +6,7 @@ dependencies {
     api project(':gui')
     api project(':graphics3d')
 
-    api 'com.google.inject:guice:5.0.1'
+    api 'com.google.inject:guice:5.1.0'
     api 'com.github.Mouse0w0.Configuration:configuration-api:1.2.0'
-    api 'io.netty:netty-all:4.1.69.Final'
+    api 'io.netty:netty-all:4.1.90.Final'
 }
