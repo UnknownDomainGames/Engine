@@ -10,6 +10,7 @@ import engine.client.asset.EngineAssetManager;
 import engine.client.asset.reloading.AssetReloadHandler;
 import engine.client.asset.source.CompositeAssetSource;
 import engine.client.asset.source.FileSystemAssetSource;
+import engine.client.event.ClientTickEvent;
 import engine.client.game.GameClient;
 import engine.client.i18n.I18n;
 import engine.client.i18n.LocaleManager;
@@ -212,8 +213,10 @@ public class EngineClientImpl extends EngineBase implements EngineClient {
 
     private void clientTick() {
         if (isPlaying()) {
+            eventBus.post(new ClientTickEvent.Pre());
             game.clientTick();
             keyBindingManager.tick();
+            eventBus.post(new ClientTickEvent.Post());
         }
 
         // TODO: Remove it.

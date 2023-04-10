@@ -1,7 +1,7 @@
 package engine.gui;
 
 import engine.Platform;
-import engine.client.event.graphics.RenderEvent;
+import engine.client.event.ClientTickEvent;
 import engine.client.game.GameClient;
 import engine.client.hud.HUDControl;
 import engine.client.hud.HUDManager;
@@ -86,7 +86,7 @@ public final class EngineHUDManager implements HUDManager {
     }
 
     @Listener
-    public void onRenderPre(RenderEvent.Pre event) {
+    public void onClientTickPre(ClientTickEvent.Pre event) {
         if (isVisible()) {
             for (HUDControl hudControl : getControls()) {
                 if (hudControl.isVisible()) {
