@@ -1,5 +1,6 @@
 # Pangu Engine
-![Java Version](https://img.shields.io/badge/Java-11-blue)
+
+![Java Version](https://img.shields.io/badge/Java-17-blue)
 [![All Contributors](https://img.shields.io/github/contributors/UnknownDomainGames/PanguEngine)](https://github.com/UnknownDomainGames/PanguEngine/graphs/contributors)
 [![License](https://img.shields.io/github/license/UnknownDomainGames/PanguEngine)](https://github.com/UnknownDomainGames/PanguEngine/blob/dev/LICENSE)
 [![Discord Onlines](https://img.shields.io/discord/556150394057916426)](http://discord.gg/KRGMBw3)
