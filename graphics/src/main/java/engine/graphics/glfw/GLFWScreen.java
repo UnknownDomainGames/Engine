@@ -11,7 +11,7 @@ import java.nio.IntBuffer;
 import java.util.List;
 
 public final class GLFWScreen implements Screen {
-    private final long pointer;
+    private final long handle;
     private final String name;
     private final int workareaX;
     private final int workareaY;
@@ -24,22 +24,22 @@ public final class GLFWScreen implements Screen {
     private final VideoMode videoMode;
     private final List<VideoMode> videoModes;
 
-    public GLFWScreen(long pointer) {
-        this.pointer = pointer;
+    public GLFWScreen(long handle) {
+        this.handle = handle;
         try (MemoryStack memoryStack = MemoryStack.stackPush()) {
             IntBuffer workareaX = memoryStack.mallocInt(1);
             IntBuffer workareaY = memoryStack.mallocInt(1);
             IntBuffer workareaWidth = memoryStack.mallocInt(1);
             IntBuffer workareaHeight = memoryStack.mallocInt(1);
-            GLFW.glfwGetMonitorWorkarea(pointer, workareaX, workareaY, workareaWidth, workareaHeight);
+            GLFW.glfwGetMonitorWorkarea(handle, workareaX, workareaY, workareaWidth, workareaHeight);
             IntBuffer physicsWidth = memoryStack.mallocInt(1);
             IntBuffer physicsHeight = memoryStack.mallocInt(1);
-            GLFW.glfwGetMonitorPhysicalSize(pointer, physicsWidth, physicsHeight);
+            GLFW.glfwGetMonitorPhysicalSize(handle, physicsWidth, physicsHeight);
             FloatBuffer xScale = memoryStack.mallocFloat(1);
             FloatBuffer yScale = memoryStack.mallocFloat(1);
-            GLFW.glfwGetMonitorContentScale(pointer, xScale, yScale);
+            GLFW.glfwGetMonitorContentScale(handle, xScale, yScale);
 
-            this.name = GLFW.glfwGetMonitorName(pointer);
+            this.name = GLFW.glfwGetMonitorName(handle);
             this.workareaX = workareaX.get();
             this.workareaY = workareaY.get();
             this.workareaWidth = workareaWidth.get();
@@ -48,8 +48,8 @@ public final class GLFWScreen implements Screen {
             this.physicsHeight = physicsHeight.get();
             this.scaleX = xScale.get();
             this.scaleY = yScale.get();
-            this.videoMode = createVideoMode(GLFW.glfwGetVideoMode(pointer));
-            this.videoModes = createVideoModes(GLFW.glfwGetVideoModes(pointer));
+            this.videoMode = createVideoMode(GLFW.glfwGetVideoMode(handle));
+            this.videoModes = createVideoModes(GLFW.glfwGetVideoModes(handle));
         }
     }
 
@@ -67,8 +67,8 @@ public final class GLFWScreen implements Screen {
     }
 
     @Override
-    public long getPointer() {
-        return pointer;
+    public long getHandle() {
+        return handle;
     }
 
     @Override
@@ -130,7 +130,7 @@ public final class GLFWScreen implements Screen {
         try (MemoryStack memoryStack = MemoryStack.stackPush()) {
             FloatBuffer xScale = memoryStack.mallocFloat(1);
             FloatBuffer yScale = memoryStack.mallocFloat(1);
-            GLFW.glfwGetMonitorContentScale(pointer, xScale, yScale);
+            GLFW.glfwGetMonitorContentScale(handle, xScale, yScale);
             this.scaleX = xScale.get();
             this.scaleY = yScale.get();
         }

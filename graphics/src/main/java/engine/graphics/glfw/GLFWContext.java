@@ -27,7 +27,7 @@ public final class GLFWContext {
     private static boolean terminated;
 
     private static Screen primaryScreen;
-    private static Map<Long, Screen> pointerToScreen;
+    private static Map<Long, Screen> handleToScreen;
     private static Map<String, Screen> nameToScreen;
 
     private static ObservableList<Window> showingWindows = ObservableCollections.observableList(new ArrayList<>());
@@ -40,11 +40,11 @@ public final class GLFWContext {
     }
 
     public static Collection<Screen> getScreens() {
-        return pointerToScreen.values();
+        return handleToScreen.values();
     }
 
-    public static Screen getScreen(long pointer) {
-        return pointerToScreen.get(pointer);
+    public static Screen getScreen(long handle) {
+        return handleToScreen.get(handle);
     }
 
     public static Screen getScreen(String name) {
@@ -82,16 +82,16 @@ public final class GLFWContext {
     }
 
     private static void initScreens() {
-        PointerBuffer pointerBuffer = GLFW.glfwGetMonitors();
-        Map<Long, Screen> pointerToScreen = new HashMap<>();
+        PointerBuffer monitorHandles = GLFW.glfwGetMonitors();
+        Map<Long, Screen> handleToScreen = new HashMap<>();
         Map<String, Screen> nameToScreen = new HashMap<>();
-        for (int i = 0; i < pointerBuffer.capacity(); i++) {
-            long pointer = pointerBuffer.get();
-            Screen screen = new GLFWScreen(pointer);
-            pointerToScreen.put(pointer, screen);
+        for (int i = 0; i < monitorHandles.capacity(); i++) {
+            long handle = monitorHandles.get();
+            Screen screen = new GLFWScreen(handle);
+            handleToScreen.put(handle, screen);
             nameToScreen.put(screen.getName(), screen);
         }
-        GLFWContext.pointerToScreen = Map.copyOf(pointerToScreen);
+        GLFWContext.handleToScreen = Map.copyOf(handleToScreen);
         GLFWContext.nameToScreen = Map.copyOf(nameToScreen);
         GLFWContext.primaryScreen = getScreen(GLFW.glfwGetPrimaryMonitor());
     }
@@ -112,10 +112,10 @@ public final class GLFWContext {
         ((GLFWScreen) screen).refreshScale();
     }
 
-    static void makeContextCurrent(long pointer) {
-        if (contextCurrent.get() != pointer) {
-            contextCurrent.set(pointer);
-            glfwMakeContextCurrent(pointer);
+    static void makeContextCurrent(long handle) {
+        if (contextCurrent.get() != handle) {
+            contextCurrent.set(handle);
+            glfwMakeContextCurrent(handle);
         }
     }
 

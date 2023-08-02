@@ -28,7 +28,7 @@ public class GLFWWindow implements Window {
     private static final int[] GLFW_CURSOR_STATES = new int[]{GLFW_CURSOR_NORMAL, GLFW_CURSOR_HIDDEN, GLFW_CURSOR_DISABLED};
     private static final int[] GLFW_CURSOR_SHAPES = new int[]{0, GLFW_ARROW_CURSOR, GLFW_IBEAM_CURSOR, GLFW_CROSSHAIR_CURSOR, GLFW_HAND_CURSOR, GLFW_HRESIZE_CURSOR, GLFW_VRESIZE_CURSOR};
 
-    protected long pointer;
+    protected long handle;
     protected Cleaner.Cleanable cleanable;
 
     private final GLFWWindow parent;
@@ -98,8 +98,8 @@ public class GLFWWindow implements Window {
         this.height = height;
     }
 
-    public long getPointer() {
-        return pointer;
+    public long getHandle() {
+        return handle;
     }
 
     public void init() {
@@ -112,10 +112,10 @@ public class GLFWWindow implements Window {
         width = (int) Math.max(width * getContentScaleX(), minWindowSize);
         height = (int) Math.max(height * getContentScaleY(), minWindowSize); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
         initWindowHint();
-        pointer = glfwCreateWindow(width, height, title, NULL, parent == null ? NULL : getRootWindow().getPointer());
+        handle = glfwCreateWindow(width, height, title, NULL, parent == null ? NULL : getRootWindow().getHandle());
         checkCreated();
-        cleanable = createDisposable(pointer);
-        if (parent == null) glfwMakeContextCurrent(pointer);
+        cleanable = createDisposable(handle);
+        if (parent == null) glfwMakeContextCurrent(handle);
         initCallbacks();
         notifyResized();
     }
@@ -128,12 +128,12 @@ public class GLFWWindow implements Window {
         return window;
     }
 
-    protected Cleaner.Cleanable createDisposable(long pointer) {
-        return Cleaner.register(this, () -> glfwDestroyWindow(pointer));
+    protected Cleaner.Cleanable createDisposable(long handle) {
+        return Cleaner.register(this, () -> glfwDestroyWindow(handle));
     }
 
     protected void checkCreated() {
-        if (pointer == NULL) {
+        if (handle == NULL) {
             throw new RuntimeException("Failed to create the GLFW window");
         }
     }
@@ -166,7 +166,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void setPos(int x, int y) {
-        glfwSetWindowPos(pointer, x, y);
+        glfwSetWindowPos(handle, x, y);
     }
 
     private void relocate(int x, int y) {
@@ -216,7 +216,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void setSize(int width, int height) {
-        glfwSetWindowSize(pointer, width, height);
+        glfwSetWindowSize(handle, width, height);
     }
 
     protected void notifyResized() {
@@ -260,7 +260,7 @@ public class GLFWWindow implements Window {
         int finalWidth = 0, finalHeight = 0;
         switch (displayMode) {
             case FULLSCREEN:
-                glfwSetWindowMonitor(pointer, screen.getPointer(),
+                glfwSetWindowMonitor(handle, screen.getHandle(),
                         finalX, finalY,
                         finalWidth = width != -1 ? width : videoMode.getWidth(),
                         finalHeight = height != -1 ? height : videoMode.getHeight(),
@@ -269,7 +269,7 @@ public class GLFWWindow implements Window {
             case WINDOWED_FULLSCREEN:
                 setFloating(true);
                 setDecorated(false);
-                glfwSetWindowMonitor(pointer, NULL,
+                glfwSetWindowMonitor(handle, NULL,
                         finalX, finalY,
                         finalWidth = videoMode.getWidth(),
                         finalHeight = videoMode.getHeight(),
@@ -278,7 +278,7 @@ public class GLFWWindow implements Window {
             case WINDOWED:
                 setFloating(lastFloating);
                 setDecorated(lastDecorated);
-                glfwSetWindowMonitor(pointer, NULL,
+                glfwSetWindowMonitor(handle, NULL,
                         finalX = lastPosX, finalY = lastPosY,
                         finalWidth = width != -1 ? width : lastWidth,
                         finalHeight = height != -1 ? height : lastHeight,
@@ -298,7 +298,7 @@ public class GLFWWindow implements Window {
     @Override
     public void setTitle(String title) {
         this.title = Strings.nullToEmpty(title);
-        glfwSetWindowTitle(pointer, title);
+        glfwSetWindowTitle(handle, title);
     }
 
     @Override
@@ -307,12 +307,12 @@ public class GLFWWindow implements Window {
         for (int i = 0; i < icons.length; i++) {
             glfwImages.get(i).set(icons[i].getWidth(), icons[i].getHeight(), icons[i].getPixelBuffer());
         }
-        glfwSetWindowIcon(pointer, glfwImages);
+        glfwSetWindowIcon(handle, glfwImages);
     }
 
     @Override
     public void show() {
-        if (pointer == NULL) init();
+        if (handle == NULL) init();
 
         setShowing(true);
     }
@@ -327,11 +327,11 @@ public class GLFWWindow implements Window {
             return;
         this.showing = showing;
         if (showing) {
-            glfwShowWindow(pointer);
+            glfwShowWindow(handle);
             setFocused(true);
             GLFWContext.onShowWindow(this);
         } else {
-            glfwHideWindow(pointer);
+            glfwHideWindow(handle);
             GLFWContext.onHideWindow(this);
         }
     }
@@ -353,23 +353,23 @@ public class GLFWWindow implements Window {
 
     @Override
     public void prepareDraw() {
-        GLFWContext.makeContextCurrent(pointer);
+        GLFWContext.makeContextCurrent(handle);
     }
 
     @Override
     public void swapBuffers() {
-        glfwSwapBuffers(pointer);
+        glfwSwapBuffers(handle);
 
         if (resized) resized = false;
     }
 
     @Override
     public void dispose() {
-        if (pointer == NULL) return;
+        if (handle == NULL) return;
 
         hide();
         cleanable.clean();
-        pointer = NULL;
+        handle = NULL;
     }
 
     // ================= Window Attributes Start =================
@@ -380,7 +380,7 @@ public class GLFWWindow implements Window {
 
     @Override
     public void focus() {
-        glfwFocusWindow(pointer);
+        glfwFocusWindow(handle);
     }
 
     private void setFocused(boolean focused) {
@@ -399,7 +399,7 @@ public class GLFWWindow implements Window {
             return;
         }
         this.decorated = decorated;
-        glfwSetWindowAttrib(pointer, GLFW_DECORATED, decorated ? GLFW_TRUE : GLFW_FALSE);
+        glfwSetWindowAttrib(handle, GLFW_DECORATED, decorated ? GLFW_TRUE : GLFW_FALSE);
     }
 
     @Override
@@ -413,7 +413,7 @@ public class GLFWWindow implements Window {
             return;
         }
         this.resizable = resizable;
-        glfwSetWindowAttrib(pointer, GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
+        glfwSetWindowAttrib(handle, GLFW_RESIZABLE, resizable ? GLFW_TRUE : GLFW_FALSE);
     }
 
     @Override
@@ -427,7 +427,7 @@ public class GLFWWindow implements Window {
             return;
         }
         this.floating = floating;
-        glfwSetWindowAttrib(pointer, GLFW_FLOATING, floating ? GLFW_TRUE : GLFW_FALSE);
+        glfwSetWindowAttrib(handle, GLFW_FLOATING, floating ? GLFW_TRUE : GLFW_FALSE);
     }
 
     @Override
@@ -441,7 +441,7 @@ public class GLFWWindow implements Window {
             return;
         }
         this.transparent = transparent;
-        glfwSetWindowAttrib(pointer, GLFW_TRANSPARENT_FRAMEBUFFER, transparent ? GLFW_TRUE : GLFW_FALSE);
+        glfwSetWindowAttrib(handle, GLFW_TRANSPARENT_FRAMEBUFFER, transparent ? GLFW_TRUE : GLFW_FALSE);
     }
 
     @Override
@@ -456,17 +456,17 @@ public class GLFWWindow implements Window {
 
     @Override
     public void iconify() {
-        glfwIconifyWindow(pointer);
+        glfwIconifyWindow(handle);
     }
 
     @Override
     public void maximize() {
-        glfwMaximizeWindow(pointer);
+        glfwMaximizeWindow(handle);
     }
 
     @Override
     public void restore() {
-        glfwRestoreWindow(pointer);
+        glfwRestoreWindow(handle);
     }
 
     // ================= Window Attributes End =================
@@ -480,7 +480,7 @@ public class GLFWWindow implements Window {
     @Override
     public void setCursorState(CursorState state) {
         this.cursorState = notNull(state);
-        glfwSetInputMode(pointer, GLFW_CURSOR, GLFW_CURSOR_STATES[state.ordinal()]);
+        glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_STATES[state.ordinal()]);
     }
 
     @Override
@@ -499,7 +499,7 @@ public class GLFWWindow implements Window {
         } else {
             cursorPointer = glfwCreateStandardCursor(GLFW_CURSOR_SHAPES[shape.ordinal()]);
         }
-        glfwSetCursor(pointer, cursorPointer);
+        glfwSetCursor(handle, cursorPointer);
     }
     // ================= Window Cursor End =================
 
@@ -635,27 +635,27 @@ public class GLFWWindow implements Window {
     }
 
     protected void initCallbacks() {
-        glfwSetKeyCallback(pointer, (window, key, scancode, action, mods) -> {
+        glfwSetKeyCallback(handle, (window, key, scancode, action, mods) -> {
             KeyCode _key = KeyCode.valueOf(key);
             Action _action = Action.valueOf(action);
             Modifiers modifiers = Modifiers.of(mods);
             keyCallbacks.forEach(callback -> callback.invoke(this, _key, scancode, _action, modifiers));
         });
-        glfwSetMouseButtonCallback(pointer, (window, button, action, mods) -> {
+        glfwSetMouseButtonCallback(handle, (window, button, action, mods) -> {
             MouseButton _button = MouseButton.valueOf(button);
             Action _action = Action.valueOf(action);
             Modifiers modifiers = Modifiers.of(mods);
             mouseCallbacks.forEach(callback -> callback.invoke(this, _button, _action, modifiers));
         });
-        glfwSetCursorPosCallback(pointer, (window, xpos, ypos) ->
+        glfwSetCursorPosCallback(handle, (window, xpos, ypos) ->
                 cursorCallbacks.forEach(callback -> callback.invoke(this, xpos, ypos)));
-        glfwSetScrollCallback(pointer, (window, xoffset, yoffset) ->
+        glfwSetScrollCallback(handle, (window, xoffset, yoffset) ->
                 scrollCallbacks.forEach(callback -> callback.invoke(this, xoffset, yoffset)));
-        glfwSetCharModsCallback(pointer, (window, codepoint, mods) -> {
+        glfwSetCharModsCallback(handle, (window, codepoint, mods) -> {
             Modifiers modifiers = Modifiers.of(mods);
             charModsCallbacks.forEach(callback -> callback.invoke(this, (char) codepoint, modifiers));
         });
-        glfwSetWindowCloseCallback(pointer, window -> {
+        glfwSetWindowCloseCallback(handle, window -> {
             // Fix concurrent modification exception by cloning list.
             var callbacks = windowCloseCallbacks.toArray(WindowCloseCallback[]::new);
             for (var callback : callbacks) {
@@ -665,13 +665,13 @@ public class GLFWWindow implements Window {
                 dispose();
             }
         });
-        glfwSetWindowFocusCallback(pointer, (window, focused) -> setFocused(focused));
-        glfwSetCursorEnterCallback(pointer, (window, entered) ->
+        glfwSetWindowFocusCallback(handle, (window, focused) -> setFocused(focused));
+        glfwSetCursorEnterCallback(handle, (window, entered) ->
                 cursorEnterCallbacks.forEach(callback -> callback.invoke(this, entered)));
-        glfwSetWindowPosCallback(pointer, (window, xpos, ypos) -> relocate(xpos, ypos));
-        glfwSetWindowSizeCallback(pointer, (window, width, height) -> resize(width, height));
-        glfwSetWindowContentScaleCallback(pointer, ((window, xscale, yscale) -> GLFWContext.refreshScale(screen)));
-        glfwSetDropCallback(pointer, (window, count, names) -> {
+        glfwSetWindowPosCallback(handle, (window, xpos, ypos) -> relocate(xpos, ypos));
+        glfwSetWindowSizeCallback(handle, (window, width, height) -> resize(width, height));
+        glfwSetWindowContentScaleCallback(handle, ((window, xscale, yscale) -> GLFWContext.refreshScale(screen)));
+        glfwSetDropCallback(handle, (window, count, names) -> {
             Path[] paths = new Path[count];
             PointerBuffer buffer = MemoryUtil.memPointerBuffer(names, count);
             for (int i = 0; i < count; i++) {
@@ -680,11 +680,11 @@ public class GLFWWindow implements Window {
             List<Path> pathList = List.of(paths);
             dropCallbacks.forEach(callback -> callback.invoke(this, pathList));
         });
-        glfwSetWindowIconifyCallback(pointer, (window, iconified) -> {
+        glfwSetWindowIconifyCallback(handle, (window, iconified) -> {
             this.iconified = iconified;
             windowIconifyCallbacks.forEach(callback -> callback.invoke(this, iconified));
         });
-        glfwSetWindowMaximizeCallback(pointer, (window, maximized) -> {
+        glfwSetWindowMaximizeCallback(handle, (window, maximized) -> {
             this.maximized = maximized;
             windowMaximizeCallbacks.forEach(callback -> callback.invoke(this, maximized));
         });

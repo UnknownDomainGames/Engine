@@ -102,7 +102,7 @@ public class GLFWVulkanWindow extends GLFWWindow {
 //
 //    @Override
 //    public void endRender() {
-//        glfwSwapBuffers(pointer);
+//        glfwSwapBuffers(handle);
 //
 //        if (isResized()) {
 //            resized = false;
@@ -115,9 +115,9 @@ public class GLFWVulkanWindow extends GLFWWindow {
     public void init() {
         setScreen(GLFWContext.getPrimaryScreen());
         initWindowHint();
-        pointer = glfwCreateWindow(width, height, title, NULL, NULL);
+        handle = glfwCreateWindow(width, height, title, NULL, NULL);
         checkCreated();
-        cleanable = createDisposable(pointer);
+        cleanable = createDisposable(handle);
         width *= getContentScaleX();
         height *= getContentScaleY(); // pre-scale it to prevent weird behavior of Gui caused by missed call of resize()
         initCallbacks();
@@ -138,7 +138,7 @@ public class GLFWVulkanWindow extends GLFWWindow {
     public long getSurface(VulkanInstance instance){
         try(var stack = MemoryStack.stackPush()){
             var buf = stack.mallocLong(1);
-            GLFWVulkan.glfwCreateWindowSurface(instance.getNativeInstance(), getPointer(), null, buf);
+            GLFWVulkan.glfwCreateWindowSurface(instance.getNativeInstance(), getHandle(), null, buf);
             return buf.get(0);
         }
     }

@@ -22,7 +22,7 @@ public interface Screen {
         return GraphicsEngine.getGraphicsBackend().getWindowHelper().getScreen(x, y);
     }
 
-    long getPointer();
+    long getHandle();
 
     String getName();
 
