@@ -27,9 +27,10 @@ subprojects {
     sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
 
     repositories {
-        mavenLocal()
-        mavenCentral()
+        maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://jitpack.io' }
+        mavenCentral()
+        mavenLocal()
     }
 
     dependencies {
