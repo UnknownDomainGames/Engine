@@ -12,7 +12,9 @@ import org.joml.Vector3fc;
 import org.joml.Vector3ic;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public final class DrawableChunk extends Geometry {
 
@@ -28,7 +30,6 @@ public final class DrawableChunk extends Geometry {
 
     public DrawableChunk(ChunkRenderer renderer) {
         this.renderer = renderer;
-        setBounds(boundingBox);
         setTexture(VoxelGraphicsHelper.getVoxelTextureAtlas().getTexture());
         setVisible(false);
     }
@@ -77,16 +78,24 @@ public final class DrawableChunk extends Geometry {
         if (pieces == null) {
             pieces = new HashMap<>();
         }
-        buffers.forEach((type, vertexDataBuffer) -> {
-            pieces.computeIfAbsent(type, key -> {
-                var piece = new DrawableChunkPiece(key);
-                piece.setTexture(this.getTexture());
-                piece.setBounds(boundingBox);
-                DrawableChunk.this.addChild(piece);
-                return piece;
-            }).uploadData(vertexDataBuffer);
-        });
+
+        buffers.forEach((renderType, buffer) -> pieces.computeIfAbsent(renderType, this::createPiece).uploadData(buffer));
+
+        Set<RenderType> invisibleRenderTypes = new HashSet<>(pieces.keySet());
+        invisibleRenderTypes.removeAll(buffers.keySet());
+        for (RenderType invisibleRenderType : invisibleRenderTypes) {
+            pieces.get(invisibleRenderType).setVisible(false);
+        }
+
         baking = false;
+    }
+
+    private DrawableChunkPiece createPiece(RenderType renderType) {
+        var piece = new DrawableChunkPiece(renderType);
+        piece.setTexture(getTexture());
+        piece.setBounds(boundingBox);
+        addChild(piece);
+        return piece;
     }
 
     public void terminateBake() {
@@ -98,21 +107,17 @@ public final class DrawableChunk extends Geometry {
     }
 
     private static class DrawableChunkPiece extends Geometry {
-        private final RenderType type;
-        private SingleBufMesh mesh;
+        private final SingleBufMesh mesh;
 
         private DrawableChunkPiece(RenderType type) {
-            this.type = type;
+            mesh = SingleBufMesh.builder().setDynamic().drawMode(DrawMode.TRIANGLES).build();
             setRenderType(type);
-            setMesh(mesh = SingleBufMesh.builder().setDynamic().drawMode(DrawMode.TRIANGLES).build());
+            setMesh(mesh);
         }
 
         public void uploadData(VertexDataBuffer buffer) {
             mesh.uploadData(buffer);
-        }
-
-        public RenderType getType() {
-            return type;
+            setVisible(true);
         }
     }
 }
