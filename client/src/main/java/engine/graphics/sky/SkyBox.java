@@ -47,9 +47,9 @@ public final class SkyBox extends Geometry {
                 -256, -256, -256,
                 -256, -256, 256 //Down
         });
-        float[] floats = new float[24 * 4 * 4]; // 24 vertexes, 4 components, 4 bytes per component(float)
-        Arrays.fill(floats, 1f); // fill color white(1f, 1f, 1f, 1f)
-        ByteBuffer colors = BufferUtils.wrapAsByteBuffer(floats);
+        int[] ints = new int[24];
+        Arrays.fill(ints, 0xFFFFFFFF); // fill color white
+        ByteBuffer colors = BufferUtils.wrapAsByteBuffer(ints);
         ByteBuffer texCoords = BufferUtils.wrapAsByteBuffer(0.6666667f, 0.0f,
                 1.0f, 0.0f,
                 0.6666667f, 0.5f,

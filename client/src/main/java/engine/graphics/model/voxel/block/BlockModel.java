@@ -123,7 +123,7 @@ public final class BlockModel implements Model {
                 }
 
                 for (var vertex : vertexes.getValue()) {
-                    buffer.pos(vertex, 0).rgba(1, 1, 1, 1).tex(vertex, 3).normal(vertex, 5).endVertex();
+                    buffer.pos(vertex, 0).rgba(0xFFFFFFFF).tex(vertex, 3).normal(vertex, 5).endVertex();
                 }
             }
         }

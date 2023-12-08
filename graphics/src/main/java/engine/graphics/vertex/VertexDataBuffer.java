@@ -261,39 +261,48 @@ public class VertexDataBuffer {
         return rgba(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 
-    public VertexDataBuffer color(int argb) {
+    public VertexDataBuffer rgba(int rgba) {
         if (vertexFormat.isUsingColor()) {
-            float a = ((argb >> 24) & 255) / 255f;
-            float r = ((argb >> 16) & 255) / 255f;
-            float g = ((argb >> 8) & 255) / 255f;
-            float b = (argb & 255) / 255f;
-            if (!vertexFormat.isUsingAlpha()) {
-                return rgb(r, g, b);
+            if (vertexFormat.isUsingAlpha()) {
+                byteBuffer.putInt(rgba);
             } else {
-                return rgba(r, g, b, a);
+                byte r = (byte) ((rgba >> 24) & 0xFF);
+                byte g = (byte) ((rgba >> 16) & 0xFF);
+                byte b = (byte) ((rgba >> 8) & 0xFF);
+                byteBuffer.put(r).put(g).put(b);
+            }
+        }
+        return this;
+    }
+
+    public VertexDataBuffer rgb(int r, int g, int b) {
+        if (vertexFormat.isUsingColor()) {
+            if (vertexFormat.isUsingAlpha()) {
+                byteBuffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 0xFF);
+            } else {
+                byteBuffer.put((byte) r).put((byte) g).put((byte) b);
+            }
+        }
+        return this;
+    }
+
+    public VertexDataBuffer rgba(int r, int g, int b, int a) {
+        if (vertexFormat.isUsingColor()) {
+            if (vertexFormat.isUsingAlpha()) {
+                byteBuffer.put((byte) r).put((byte) g).put((byte) b).put((byte) a);
+            } else {
+                byteBuffer.put((byte) r).put((byte) g).put((byte) b);
             }
         }
         return this;
     }
 
     public VertexDataBuffer rgb(float r, float g, float b) {
-        if (vertexFormat.isUsingColor()) {
-            byteBuffer.putFloat(r).putFloat(g).putFloat(b);
-            if (vertexFormat.isUsingAlpha()) {
-                byteBuffer.putFloat(1f);
-            }
-        }
-        return this;
+        return rgb((int) (r * 255), (int) (g * 255), (int) (b * 255));
     }
 
     public VertexDataBuffer rgba(float r, float g, float b, float a) {
-        if (vertexFormat.isUsingColor()) {
-            byteBuffer.putFloat(r).putFloat(g).putFloat(b);
-            if (vertexFormat.isUsingAlpha()) {
-                byteBuffer.putFloat(a);
-            }
-        }
-        return this;
+        return rgba((int) (r * 255), (int) (g * 255), (int) (b * 255), (int) (a * 255));
     }
 
     public VertexDataBuffer rgb(float[] array, int start) {

@@ -19,8 +19,8 @@ public final class VertexElement {
     public static final String NAME_UNKNOWN = "Unknown";
 
     public static final VertexElement POSITION = new VertexElement(DataType.FLOAT, NAME_POSITION, 3);
-    public static final VertexElement COLOR_RGB = new VertexElement(DataType.FLOAT, NAME_COLOR, 3);
-    public static final VertexElement COLOR_RGBA = new VertexElement(DataType.FLOAT, NAME_COLOR, 4);
+    public static final VertexElement COLOR_RGB = new VertexElement(DataType.UNSIGNED_BYTE, NAME_COLOR, 3, true);
+    public static final VertexElement COLOR_RGBA = new VertexElement(DataType.UNSIGNED_BYTE, NAME_COLOR, 4, true);
     public static final VertexElement TEX_COORD = new VertexElement(DataType.FLOAT, NAME_TEX_COORD, 2);
     public static final VertexElement NORMAL = new VertexElement(DataType.FLOAT, NAME_NORMAL, 3, true);
     public static final VertexElement TANGENT = new VertexElement(DataType.FLOAT, NAME_TANGENT, 3, true);

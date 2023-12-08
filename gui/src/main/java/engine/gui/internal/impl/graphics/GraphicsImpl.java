@@ -309,10 +309,10 @@ public final class GraphicsImpl implements Graphics {
     public void drawTexture(Texture2D texture, float x, float y, float width, float height, float minU, float minV, float maxU, float maxV) {
         buffer.begin(VertexFormat.POSITION_COLOR_ALPHA_TEX_COORD);
         float x2 = x + width, y2 = y + height;
-        buffer.pos(x, y, 0).rgba(1, 1, 1, 1).tex(minU, minV).endVertex();
-        buffer.pos(x, y2, 0).rgba(1, 1, 1, 1).tex(minU, maxV).endVertex();
-        buffer.pos(x2, y, 0).rgba(1, 1, 1, 1).tex(maxU, minV).endVertex();
-        buffer.pos(x2, y2, 0).rgba(1, 1, 1, 1).tex(maxU, maxV).endVertex();
+        buffer.pos(x, y, 0).rgba(0xFFFFFFFF).tex(minU, minV).endVertex();
+        buffer.pos(x, y2, 0).rgba(0xFFFFFFFF).tex(minU, maxV).endVertex();
+        buffer.pos(x2, y, 0).rgba(0xFFFFFFFF).tex(maxU, minV).endVertex();
+        buffer.pos(x2, y2, 0).rgba(0xFFFFFFFF).tex(maxU, maxV).endVertex();
         uniformTexture.setTexture(texture);
         buffer.finish();
         renderer.drawStreamed(DrawMode.TRIANGLE_STRIP, buffer);
