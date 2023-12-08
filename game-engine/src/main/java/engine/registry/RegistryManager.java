@@ -1,6 +1,6 @@
 package engine.registry;
 
-import engine.annotation.Internal;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -21,7 +21,7 @@ public interface RegistryManager {
      * @deprecated Provide for {@link engine.event.mod.ModRegistrationEvent.Construction}. Waiting to remove.
      */
     @Deprecated
-    @Internal
+    @ApiStatus.Internal
     <T extends Registrable<T>> void addRegistry(Class<T> type, Supplier<Registry<T>> supplier);
 
     /**
