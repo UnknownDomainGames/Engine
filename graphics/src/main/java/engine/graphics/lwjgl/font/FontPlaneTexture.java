@@ -81,7 +81,7 @@ public final class FontPlaneTexture {
         int bitmapSize = getBitmapSize(fontSize);
         ByteBuffer bitmap = ByteBuffer.allocateDirect(bitmapSize * bitmapSize);
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            var context = STBTTPackContext.mallocStack(stack);
+            var context = STBTTPackContext.malloc(stack);
 
             var ranges = STBTTPackRange.malloc(blocks.size());
             for (Character.UnicodeBlock block : blocks) {
@@ -98,7 +98,7 @@ public final class FontPlaneTexture {
 
             texture = Texture2D.builder().format(ColorFormat.RED8).magFilter(FilterMode.LINEAR).minFilter(FilterMode.LINEAR).build(bitmap, bitmapSize, bitmapSize);
 
-            STBTTAlignedQuad stbQuad = STBTTAlignedQuad.mallocStack(stack);
+            STBTTAlignedQuad stbQuad = STBTTAlignedQuad.malloc(stack);
             FloatBuffer posX = stack.mallocFloat(1);
             FloatBuffer posY = stack.mallocFloat(1);
             for (int i = 0; i < blocks.size(); i++) {
