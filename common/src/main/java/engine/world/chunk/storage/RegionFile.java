@@ -4,9 +4,8 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.BitSet;
 
 import static engine.world.chunk.storage.RegionConstants.*;
 
@@ -21,30 +20,28 @@ public class RegionFile implements AutoCloseable {
 
     private final RandomAccessFile file;
     private final int[] chunkStartSectors;
-    private final List<Boolean> usedSectors;
+    private final BitSet usedSectors;
+    private int sectorCount;
 
     public RegionFile(File file) throws IOException {
         this.file = new RandomAccessFile(file, "rw");
         this.chunkStartSectors = new int[REGION_SIZE];
         Arrays.fill(chunkStartSectors, -1);
+        this.usedSectors = new BitSet();
 
         if (this.file.length() < REGION_HEADER_SIZE) { // Initialize empty region file
             this.file.seek(0);
             for (int i = 0; i < REGION_SIZE; i++) {
                 this.file.writeInt(-1);
             }
-            usedSectors = new ArrayList<>();
+            sectorCount = 0;
             return;
         }
 
         // Initialize exists region file
         loadChunkStartSectors();
 
-        int sectorCount = getSectorCount(this.file.length()) - 4;
-        usedSectors = new ArrayList<>(sectorCount);
-        for (int i = 0; i < sectorCount; i++) {
-            usedSectors.add(false);
-        }
+        sectorCount = getSectorCount(this.file.length()) - 4;
         initUsedSectors();
     }
 
@@ -61,8 +58,8 @@ public class RegionFile implements AutoCloseable {
                 continue;
             }
 
-            int sectorCount = getSectorCount(getChunkDataLength(startSector));
-            useSectors(startSector, startSector + sectorCount);
+            int chunkSectorCount = getSectorCount(getChunkDataLength(startSector));
+            useSectors(startSector, startSector + chunkSectorCount);
         }
     }
 
@@ -128,15 +125,11 @@ public class RegionFile implements AutoCloseable {
     }
 
     private void useSectors(int start, int end) {
-        for (int i = start; i < end; i++) {
-            usedSectors.set(i, true);
-        }
+        usedSectors.set(start, end);
     }
 
     private void freeSectors(int start, int end) {
-        for (int i = start; i < end; i++) {
-            usedSectors.set(i, false);
-        }
+        usedSectors.clear(start, end);
     }
 
     private void setStartSector(int chunkIndex, int startSector) throws IOException {
@@ -148,7 +141,7 @@ public class RegionFile implements AutoCloseable {
     private int allocateSectors(int count) {
         int startSector = -1;
         int allocatedSector = 0;
-        for (int i = 0; i < usedSectors.size(); i++) { // find unused sectors
+        for (int i = 0; i < sectorCount; i++) {
             if (usedSectors.get(i)) {
                 startSector = -1;
                 allocatedSector = 0;
@@ -166,16 +159,14 @@ public class RegionFile implements AutoCloseable {
         }
 
         if (startSector == -1) { // if no found sector
-            startSector = usedSectors.size();
+            startSector = sectorCount;
         }
 
-        useSectors(startSector, startSector + allocatedSector);
-
+        useSectors(startSector, startSector + count);
         if (allocatedSector < count) { // add enough sectors
-            for (int i = 0, size = count - allocatedSector; i < size; i++) {
-                usedSectors.add(true);
-            }
+            sectorCount += count - allocatedSector;
         }
+
         return startSector;
     }
 
